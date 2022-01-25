@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -760,25 +762,21 @@ class Utils {
 		$path = wp_normalize_path( $path );
 
 		/**
-		 * Is elementor path.
+		 * Elementor related paths.
 		 *
-		 * Filters whether the path is part of elementor.
+		 * Filters Elementor related paths.
 		 *
-		 * @param string $path The path.
+		 * @param string[] $available_paths
 		 */
-		$is_elementor_path = apply_filters( 'elementor/utils/is_elementor_path', false, $path );
+		$available_paths = apply_filters( 'elementor/utils/elementor_related_paths', [ ELEMENTOR_PATH ] );
 
-		if ( $is_elementor_path ) {
-			return true;
-		}
-
-		// `untrailingslashit` in order to include other plugins prefixed with elementor.
-		$elementor_path = untrailingslashit( wp_normalize_path( ELEMENTOR_PATH ) );
-
-		if ( false === strpos( $path, $elementor_path ) ) {
-			return false;
-		}
-
-		return true;
+		return (bool) ( new Collection( $available_paths ) )
+			->map( function ( $p ) {
+				// `untrailingslashit` in order to include other plugins prefixed with elementor.
+				return untrailingslashit( wp_normalize_path( $p ) );
+			} )
+			->find(function ( $p ) use ( $path ) {
+				return false !== strpos( $path, $p );
+			} );
 	}
 }
