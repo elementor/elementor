@@ -43,7 +43,7 @@ class Test_Kit extends Elementor_Test_Base {
 
 	public function test_save__kits_revision_ensure_same() {
 		// Arrange.
-		$initial_count = count( Revisions_Manager::get_revisions( $this->kit->get_main_id() ) );
+		$initial_count = 1;
 
 		$this->kit->save( [ 'settings' => $this->kit->get_settings() ] );
 
