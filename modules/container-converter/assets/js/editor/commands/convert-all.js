@@ -3,7 +3,7 @@ import CommandHistory from 'elementor-document/commands/base/command-history';
 export class ConvertAll extends CommandHistory {
 	getHistory() {
 		return {
-			type: __( 'Converted to Containers', 'elementor' ),
+			type: __( 'All Content', 'elementor' ),
 			title: __( 'Page', 'elementor' ),
 		};
 	}
