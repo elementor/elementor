@@ -66,6 +66,8 @@ class Manager extends BaseModule {
 			return false;
 		}
 
+		$error_data = $error->get_error_data();
+
 		// TODO: This part should be modular, temporary hard-coded.
 		// Notify $e.data.
 		if ( ! headers_sent() ) {
@@ -74,7 +76,7 @@ class Manager extends BaseModule {
 			http_response_code( 500 );
 
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				echo wp_json_encode( $error->get_error_data() );
+				echo wp_json_encode( $error_data );
 			} else {
 				echo wp_json_encode( [
 					'message' => 'Server error, see Elementor => System Info',
@@ -82,11 +84,7 @@ class Manager extends BaseModule {
 			}
 		}
 
-		$error_data = $error->get_error_data();
-
 		$this->shutdown( $error_data, true );
-
-		return $error_data;
 	}
 
 	public function register_error_handler() {
