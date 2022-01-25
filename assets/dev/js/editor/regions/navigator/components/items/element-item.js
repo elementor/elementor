@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils';
 import { BASE_ITEM_CLASS } from './';
 import { ElementProvider } from '../../context/item-context/providers';
 import { ItemHandle, ItemIndicatorList, ItemList } from '../';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useElementFolding, useElementSelection, useNavigatorJquerySortable } from '../../hooks';
 import { useItemContext } from 'elementor-regions/navigator/context/item-context';
 import Icon from 'elementor-app/ui/atoms/icon';
@@ -87,6 +87,10 @@ export function ElementItem( { itemId: elementId, level } ) {
 			{ setElementFolding }
 		);
 
+		useEffect( () => {
+			jQuery( listRef.current )[ elementFolding ? 'slideDown' : 'slideUp' ]();
+		}, [ elementFolding ] );
+
 		return (
 			<div
 				ref={ itemRef }
@@ -113,9 +117,7 @@ export function ElementItem( { itemId: elementId, level } ) {
 					</div>
 					<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection }/>
 				</ItemHandle>
-				<div style={ { display: elementFolding ? 'block' : 'none' } }>
-					<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ element.hasChildrenByDefault } />
-				</div>
+				<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ element.hasChildrenByDefault } />
 			</div>
 		);
 	};

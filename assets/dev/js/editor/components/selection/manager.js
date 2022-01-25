@@ -85,6 +85,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		}
 
 		this.updateEnvironment();
+
+		if ( options.section ) {
+			elementor.activateElementSection( options.section );
+		}
 	}
 
 	/**

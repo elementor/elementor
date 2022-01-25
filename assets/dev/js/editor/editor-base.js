@@ -524,7 +524,6 @@ export default class EditorBase extends Marionette.Application {
 		page.activateTab(
 			page.getControlModel( section ).get( 'tab' )
 		);
-		page.render();
 	}
 
 	getCurrentElement() {
