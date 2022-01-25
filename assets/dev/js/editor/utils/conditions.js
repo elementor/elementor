@@ -43,7 +43,7 @@ Conditions = function() {
 			let comparisonResult;
 
 			if ( term.terms ) {
-				comparisonResult = self.check( term, comparisonObject );
+				comparisonResult = self.check( term, comparisonObject, controls );
 			} else {
 				// A term consists of a control name to be examined, and a sub key if needed. For example, a term
 				// can look like 'image_overlay[url]' (the 'url' is the sub key). Here we want to isolate the
