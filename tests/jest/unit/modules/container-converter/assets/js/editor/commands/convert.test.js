@@ -525,6 +525,20 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 	} );
 } );
 
+/**
+ * Create a mock Container object.
+ *
+ * @param {string} type
+ * @param {string} widgetType
+ * @param {string} id
+ * @param {Object} settings
+ * @param {Object[]} children
+ * @param {Number} index
+ * @param {boolean} isInner
+ * @param {Object} args
+ *
+ * @return {Object}
+ */
 function createContainer( { type, widgetType, id, settings = {}, children = [], index = 0, isInner = false, ...args } ) {
 	const container = {
 		id,
@@ -553,6 +567,7 @@ function createContainer( { type, widgetType, id, settings = {}, children = [], 
 		...args,
 	};
 
+	// Attach the current Container as a parent of its children Containers.
 	children.forEach( ( child, i ) => {
 		child.parent = container;
 		child.view._index = i;
