@@ -368,19 +368,15 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @param array $categories Widget categories.
 	 */
-	protected function isWidgetShouldBeHidden( $categories ) {
-		$categories_to_hide = [ 'wordpress', 'theme-elements-archive' ];
-		$is_hidden_wordpress_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_hidden_wordpress_widgets' );
+	protected function isWidgetShouldBeHidden( array $categories ): bool {
+		$categories_to_hide = [ 'theme-elements-archive' ];
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_hidden_wordpress_widgets' ) ) {
+			array_push( $categories_to_hide, 'wordpress' );
+		}
 
 		foreach ( $categories_to_hide as $category_to_hide ) {
-			$is_category_exists = in_array( $category_to_hide, $categories, true );
-			$is_wordpress_category = 'wordpress' === $category_to_hide;
-
-			if ( $is_category_exists && ! $is_wordpress_category ) {
-				return true;
-			}
-
-			if ( $is_category_exists && $is_wordpress_category && $is_hidden_wordpress_feature_active ) {
+			if ( in_array( $category_to_hide, $categories, true ) ) {
 				return true;
 			}
 		}
