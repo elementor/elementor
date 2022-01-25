@@ -2,19 +2,11 @@
 namespace Elementor\Modules\Usage\Collection;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Usage\Module;
-use Elementor\Plugin;
 
-class DocumentSettingsUsage extends Collection {
-	/**
-	 * Add, adds the document to collection.
-	 *
-	 * @param Document $document
-	 *
-	 * @return $this
-	 */
-	public function add( $document ) {
+class DocumentSettingsUsage extends BaseUsage {
+
+	public function add( Document $document ) {
 		$current_usage = $document->get_usage();
 		$document_name = $document->get_name();
 
@@ -39,14 +31,7 @@ class DocumentSettingsUsage extends Collection {
 		return new static( $this->all() );
 	}
 
-	/**
-	 * Remove, remove's the document from the collection.
-	 *
-	 * @param Document $document
-	 *
-	 * @return $this
-	 */
-	public function remove( $document ) {
+	public function remove( Document $document ) {
 		$current_usage = $document->get_meta( Module::DOCUMENT_META_KEY );
 
 		if ( ! empty( $current_usage ) ) {

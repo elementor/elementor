@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage\Collection;
 
 use Elementor\Modules\Usage\Collection\DocumentSettingsUsage;
 use ElementorEditorTesting\Elementor_Test_Base;

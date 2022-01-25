@@ -105,18 +105,18 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$old_usage_option_name = 'elementor_elements_usage';
 		$old_usage_meta_key = '_elementor_elements_usage';
 
-		add_option( $old_usage_option_name, 'test' );
+		add_option( $old_usage_option_name, [] );
 		$document = $this->create_post();
-		$document->update_main_meta( $old_usage_meta_key, 'test' );
+		$document->update_main_meta( $old_usage_meta_key, [] );
 
-		$this->assertEquals( 'test', get_option( $old_usage_option_name ) );
-		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
+		$this->assertEquals( [], get_option( $old_usage_option_name ) );
+		$this->assertEquals( [], $document->get_main_meta( $old_usage_meta_key ) );
 
 		// Run upgrade.
 		Upgrades::_v_2_7_1_remove_old_usage_data();
 
-		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
-		$this->assertNotEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
+		$this->assertNotEquals( [], get_option( $old_usage_option_name ) );
+		$this->assertNotEquals( [], $document->get_main_meta( $old_usage_meta_key ) );
 	}
 
 	public function test_v_2_7_1_recalc_usage_data() {
@@ -568,13 +568,27 @@ class Test_Upgrades extends Elementor_Test_Base {
 	}
 
 	public function test_v_3_6_0_remove_old_elements_usage() {
-		$this->ensure_removed_old_usage_data(
-			'elementor_controls_usage',
-			'_elementor_controls_usage',
-			function () {
-				Upgrades::_v_3_6_0_remove_old_elements_usage();
-			}
-		);
+		// Arrange.
+		$old_usage_option_name = 'elementor_controls_usage';
+		$old_usage_meta_key = '_elementor_controls_usage';
+
+		add_option( $old_usage_option_name, 'test' );
+
+		$document = $this->create_post();
+
+		// Act.
+		$document->update_main_meta( $old_usage_meta_key, 'test' );
+
+		// Assert.
+		$this->assertEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
+
+		// Act.
+		Upgrades::_v_3_6_0_remove_old_elements_usage();
+
+		// Assert.
+		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertNotEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
 	}
 
 	private function run_breakpoint_assertions( $settings ) {
@@ -586,26 +600,5 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$actual_value = $settings['viewport_tablet'];
 
 		$this->assertEquals( $expected_value, $actual_value );
-	}
-
-	/**
-	 * @param string $old_usage_option_name
-	 * @param string $old_usage_meta_key
-	 * @param callable $remove_old_usage_callback
-	 */
-	private function ensure_removed_old_usage_data( $old_usage_option_name, $old_usage_meta_key, $remove_old_usage_callback ) {
-		add_option( $old_usage_option_name, 'test' );
-
-		$document = $this->create_post();
-		$document->update_main_meta( $old_usage_meta_key, 'test' );
-
-		$this->assertEquals( 'test', get_option( $old_usage_option_name ) );
-		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
-
-		// Run upgrade.
-		$remove_old_usage_callback();
-
-		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
-		$this->assertNotEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
 	}
 }

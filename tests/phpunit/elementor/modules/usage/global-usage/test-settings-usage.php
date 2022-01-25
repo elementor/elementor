@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage\GlobalUsage;
 
-use Elementor\Modules\Usage\Global_Settings_Page_Usage;
+use Elementor\Modules\Usage\GlobalUsage\Global_Documents_Usage;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Test_Global_Settings_Usage extends Elementor_Test_Base {
+class Test_Settings_Usage extends Elementor_Test_Base {
 
 	public function test_save_global() {
 		// Arrange.
@@ -15,7 +15,7 @@ class Test_Global_Settings_Usage extends Elementor_Test_Base {
 			],
 		] );
 
-		$global_settings_page_usage = new Global_Settings_Page_Usage();
+		$global_settings_page_usage = new Global_Documents_Usage();
 		$global_settings_page_usage->add( $document );
 
 		// Act.

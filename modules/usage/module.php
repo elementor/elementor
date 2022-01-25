@@ -4,9 +4,10 @@ namespace Elementor\Modules\Usage;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Core\Utils\Usage;
 use Elementor\Modules\System_Info\Module as System_Info;
-use Elementor\Modules\Usage\Global_Settings_Page_Usage;
-use Elementor\Modules\Usage\Collection\DocumentSettingsUsage;
+use Elementor\Modules\Usage\GlobalUsage\Global_Elements_Usage;
+use Elementor\Modules\Usage\GlobalUsage\Global_Documents_Usage;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
@@ -35,7 +36,12 @@ class Module extends BaseModule {
 	private $is_document_saving = false;
 
 	/**
-	 * @var \Elementor\Modules\Usage\Global_Settings_Page_Usage
+	 * @var \Elementor\Modules\Usage\GlobalUsage\Global_Elements_Usage
+	 */
+	private $global_elements_usage;
+
+	/**
+	 * @var \Elementor\Modules\Usage\GlobalUsage\Global_Documents_Usage
 	 */
 	private $global_settings_page_usage;
 
@@ -183,7 +189,7 @@ class Module extends BaseModule {
 	/**
 	 * After document save.
 	 *
-	 * Called on elementor/document/after_save, adds document to global & clear saving flag.
+	 * Called on `elementor/document/after_save`, adds document to global & clear saving flag.
 	 *
 	 * @param Document $document
 	 */
@@ -198,7 +204,7 @@ class Module extends BaseModule {
 	/**
 	 * On status change.
 	 *
-	 * Called on transition_post_status.
+	 * Called on `transition_post_status`.
 	 *
 	 * @param string $new_status
 	 * @param string $old_status
@@ -238,7 +244,7 @@ class Module extends BaseModule {
 	/**
 	 * On before delete post.
 	 *
-	 * Called on on_before_delete_post.
+	 * Called on `on_before_delete_post`.
 	 *
 	 * @param int $post_id
 	 */
@@ -253,16 +259,22 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Add's tracking data.
+	 * Add tracking data.
 	 *
-	 * Called on elementor/tracker/send_tracking_data_params.
+	 * Called on `elementor/tracker/send_tracking_data_params`.
 	 *
 	 * @param array $params
 	 *
 	 * @return array
 	 */
 	public function add_tracking_data( $params ) {
-		$params['usages']['elements'] = get_option( self::ELEMENTS_OPTION_NAME );
+		$elements_usage = $this->global_elements_usage
+			->create_from_global()
+			->get_collection()
+			->all();
+
+		$params['usages']['elements'] = empty( $elements_usage ) ? false : $elements_usage;
+
 		$params['usages']['documents'] = $this->global_settings_page_usage
 			->create_from_global()
 			->get_collection()
@@ -316,254 +328,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Increase controls amount.
-	 *
-	 * Increase controls amount, for each element.
-	 *
-	 * @param array &$element_ref
-	 * @param string $tab
-	 * @param string $section
-	 * @param string $control
-	 * @param int $amount
-	 */
-	private function increase_controls_amount( &$element_ref, $tab, $section, $control, $amount ) {
-		if ( ! isset( $element_ref['controls'][ $tab ] ) ) {
-			$element_ref['controls'][ $tab ] = [];
-		}
-
-		if ( ! isset( $element_ref['controls'][ $tab ][ $section ] ) ) {
-			$element_ref['controls'][ $tab ][ $section ] = [];
-		}
-
-		if ( ! isset( $element_ref['controls'][ $tab ][ $section ][ $control ] ) ) {
-			$element_ref['controls'][ $tab ][ $section ][ $control ] = 0;
-		}
-
-		$element_ref['controls'][ $tab ][ $section ][ $control ] += $amount;
-	}
-
-	/**
-	 * Add Controls
-	 *
-	 * Add's controls to this element_ref, returns changed controls count.
-	 *
-	 * @param array $settings_controls
-	 * @param array $element_controls
-	 * @param array &$element_ref
-	 *
-	 * @return int ($changed_controls_count).
-	 */
-	private function add_controls( $settings_controls, $element_controls, &$element_ref ) {
-		$changed_controls_count = 0;
-
-		// Loop over all element settings.
-		foreach ( $settings_controls as $control => $value ) {
-			if ( empty( $element_controls[ $control ] ) ) {
-				continue;
-			}
-
-			$control_config = $element_controls[ $control ];
-
-			if ( ! isset( $control_config['section'], $control_config['default'] ) ) {
-				continue;
-			}
-
-			$tab = $control_config['tab'];
-			$section = $control_config['section'];
-
-			// If setting value is not the control default.
-			if ( $value !== $control_config['default'] ) {
-				$this->increase_controls_amount( $element_ref, $tab, $section, $control, 1 );
-
-				$changed_controls_count++;
-			}
-		}
-
-		return $changed_controls_count;
-	}
-
-	/**
-	 * Add general controls.
-	 *
-	 * Extract general controls to element ref, return clean `$settings_control`.
-	 *
-	 * @param array $settings_controls
-	 * @param array &$element_ref
-	 *
-	 * @return array ($settings_controls).
-	 */
-	private function add_general_controls( $settings_controls, &$element_ref ) {
-		if ( ! empty( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] ) ) {
-			$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
-
-			// Add dynamic count to controls under `general` tab.
-			$this->increase_controls_amount(
-				$element_ref,
-				Settings::TAB_GENERAL,
-				Manager::DYNAMIC_SETTING_KEY,
-				'count',
-				count( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] )
-			);
-		}
-
-		return $settings_controls;
-	}
-
-	/**
-	 * Add document elements to global.
-	 *
-	 * Adds usage of document elements (update database).
-	 *
-	 * @param string $doc_name
-	 * @param array $doc_usage
-	 */
-	private function add_document_elements_to_global( $doc_name, $doc_usage ) {
-		$global_usage = get_option( self::ELEMENTS_OPTION_NAME, [] );
-
-		foreach ( $doc_usage as $element_type => $element_usage_data ) {
-			if ( ! isset( $global_usage[ $doc_name ] ) ) {
-				$global_usage[ $doc_name ] = [];
-			}
-
-			if ( ! isset( $global_usage[ $doc_name ][ $element_type ] ) ) {
-				$global_usage[ $doc_name ][ $element_type ] = [
-					'count' => 0,
-					'controls' => [],
-				];
-			}
-
-			$global_usage_ref = &$global_usage[ $doc_name ][ $element_type ];
-			$global_usage_ref['count'] += $element_usage_data['count'];
-
-			if ( empty( $element_usage_data['controls'] ) ) {
-				continue;
-			}
-
-			foreach ( $element_usage_data['controls'] as $tab => $sections ) {
-				foreach ( $sections as $section => $controls ) {
-					foreach ( $controls as $control => $count ) {
-						$this->increase_controls_amount( $global_usage_ref, $tab, $section, $control, $count );
-					}
-				}
-			}
-		}
-
-		update_option( self::ELEMENTS_OPTION_NAME, $global_usage, false );
-	}
-
-	/**
-	 * Remove document elements from global.
-	 *
-	 * Remove's usage of elements from global (update database).
-	 *
-	 * @param Document $document
-	 */
-	private function remove_document_elements_from_global( $document ) {
-		$prev_usage = $document->get_meta( self::ELEMENTS_META_KEY );
-
-		if ( empty( $prev_usage ) ) {
-			return;
-		}
-
-		$doc_name = $document->get_name();
-
-		$global_usage = get_option( self::ELEMENTS_OPTION_NAME, [] );
-
-		foreach ( $prev_usage as $element_type => $doc_value ) {
-			if ( isset( $global_usage[ $doc_name ][ $element_type ]['count'] ) ) {
-				$global_usage[ $doc_name ][ $element_type ]['count'] -= $prev_usage[ $element_type ]['count'];
-
-				if ( 0 === $global_usage[ $doc_name ][ $element_type ]['count'] ) {
-					unset( $global_usage[ $doc_name ][ $element_type ] );
-
-					if ( 0 === count( $global_usage[ $doc_name ] ) ) {
-						unset( $global_usage[ $doc_name ] );
-					}
-
-					continue;
-				}
-
-				foreach ( $prev_usage[ $element_type ]['controls'] as $tab => $sections ) {
-					foreach ( $sections as $section => $controls ) {
-						foreach ( $controls as $control => $count ) {
-							if ( isset( $global_usage[ $doc_name ][ $element_type ]['controls'][ $tab ][ $section ][ $control ] ) ) {
-								$section_ref = &$global_usage[ $doc_name ][ $element_type ]['controls'][ $tab ][ $section ];
-
-								$section_ref[ $control ] -= $count;
-
-								if ( 0 === $section_ref[ $control ] ) {
-									unset( $section_ref[ $control ] );
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		update_option( self::ELEMENTS_OPTION_NAME, $global_usage, false );
-
-		$document->delete_meta( self::ELEMENTS_META_KEY );
-	}
-
-	/**
-	 * Get elements usage.
-	 *
-	 * Get's the current elements usage by passed elements array parameter.
-	 *
-	 * @param array $elements
-	 *
-	 * @return array
-	 */
-	private function get_elements_usage( $elements ) {
-		$usage = [];
-
-		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
-			if ( empty( $element['widgetType'] ) ) {
-				$type = $element['elType'];
-				$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
-			} else {
-				$type = $element['widgetType'];
-				$element_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
-			}
-
-			if ( ! isset( $usage[ $type ] ) ) {
-				$usage[ $type ] = [
-					'count' => 0,
-					'control_percent' => 0,
-					'controls' => [],
-				];
-			}
-
-			$usage[ $type ]['count']++;
-
-			if ( ! $element_instance ) {
-				return $element;
-			}
-
-			$element_controls = $element_instance->get_controls();
-
-			if ( isset( $element['settings'] ) ) {
-				$settings_controls = $element['settings'];
-				$element_ref = &$usage[ $type ];
-
-				// Add dynamic values.
-				$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
-
-				$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
-
-				$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
-
-				$usage[ $type ] ['control_percent'] = (int) round( $percent );
-			}
-
-			return $element;
-		} );
-
-		return $usage;
-	}
-
-	/**
 	 * Save document usage.
 	 *
 	 * Save requested document usage, and update global.
@@ -575,11 +339,8 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// Get data manually to avoid conflict with `\Elementor\Core\Base\Document::get_elements_data... convert_to_elementor`.
-		$data = $document->get_json_meta( '_elementor_data' );
-
 		try {
-			$this->add_document_usage( $document, $data );
+			$this->add_document_usage( $document );
 		} catch ( \Exception $exception ) {
 			Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), [
 				'document_id' => $document->get_id(),
@@ -590,21 +351,13 @@ class Module extends BaseModule {
 		};
 	}
 
-	private function add_document_usage( $document, $data ) {
-		if ( $data ) {
-			$elements_usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
-
-			$document->update_meta( self::ELEMENTS_META_KEY, $elements_usage );
-
-			$this->add_document_elements_to_global( $document->get_name(), $elements_usage );
-		}
-
+	private function add_document_usage( $document ) {
+		$this->global_elements_usage->add( $document )->save_global();
 		$this->global_settings_page_usage->add( $document )->save_global();
 	}
 
 	private function remove_document_usage( $document ) {
-		$this->remove_document_elements_from_global( $document );
-
+		$this->global_elements_usage->remove( $document )->save_global();
 		$this->global_settings_page_usage->remove( $document )->save_global();
 	}
 
@@ -630,7 +383,8 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->global_settings_page_usage = new Global_Settings_Page_Usage();
+		$this->global_settings_page_usage = new Global_Documents_Usage();
+		$this->global_elements_usage = new Global_Elements_Usage();
 
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
