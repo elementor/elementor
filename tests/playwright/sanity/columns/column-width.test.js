@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { EditorPage } = require( '../../pages/editor-page' );
 
-test( 'Column width: Desktop value should not affect mobile in "post-content-widget" - Experiment Breakpoints:On', async ( { page } ) => {
+test( 'Column width: Desktop value should not affect mobile in post-content-widget - Experiment Breakpoints:On', async ( { page } ) => {
 	const editor = new EditorPage( page );
 
     await editor.init( {
