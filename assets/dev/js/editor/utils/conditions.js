@@ -54,7 +54,7 @@ Conditions = function() {
 
 				let value = comparisonObject[ conditionRealName ];
 
-				if ( ! value && controls ) {
+				if ( ! value ) {
 					let parent = controls[ conditionRealName ]?.parent;
 
 					while ( parent ) {
