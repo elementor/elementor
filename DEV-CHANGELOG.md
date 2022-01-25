@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev34 - 2022-01-25
+* Tweak: Handle deprecations [ED-5601]  (#17374)
+* Tweak: Change Developer Edition promotional notice triggers [ED-5562] (#17528)
+
 #### 3.6.0-dev33 - 2022-01-24
 * Tweak: Updated changelog to v3.5.4 (#17546)
 * Fix: When trying to import a kit, the general error try-again action is incorrect [ED-6273] (#17513)
