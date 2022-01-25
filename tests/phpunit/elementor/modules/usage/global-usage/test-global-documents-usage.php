@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage\GlobalUsage;
 use Elementor\Modules\Usage\GlobalUsage\Global_Documents_Usage;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Test_Settings_Usage extends Elementor_Test_Base {
+class Test_Global_Documents_Usage extends Elementor_Test_Base {
 
 	public function test_save_global() {
 		// Arrange.
