@@ -14,10 +14,7 @@ export default class Helper {
 				/**
 				 * TODO: Creating large amount of columns will reduce performance, try optimizing `document/elements/create`.
 				 */
-				$e.run( 'document/elements/create', {
-					container,
-					model,
-				} );
+				container.view.addChildModel( model );
 
 				/**
 				 * Manual history & not using of `$e.run('document/elements/create')`

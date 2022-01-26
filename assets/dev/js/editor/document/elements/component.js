@@ -53,7 +53,7 @@ export default class Component extends ComponentBase {
 				for ( const containerId of containerIds ) {
 					const container = state[ containerId ];
 
-					if ( container.elements?.length ) {
+					if ( container && container.elements.length ) {
 						// Remove children elements
 						defaultReducers.remove( state, {
 							payload: {
@@ -67,7 +67,9 @@ export default class Component extends ComponentBase {
 					delete state[ containerId ];
 
 					// Remove reference from parent element
-					parent.elements.splice( parent.elements.indexOf( containerId ), 1 );
+					if ( parent ) {
+						parent.elements.splice( parent.elements.indexOf( containerId ), 1 );
+					}
 				}
 
 				return state;
@@ -79,7 +81,9 @@ export default class Component extends ComponentBase {
 				// Act
 				for ( const containerId of containerIds ) {
 					// Set settings of the current element
-					state[ containerId ].settings = { ...state[ containerId ].settings, ...settings };
+					if ( state[ containerId ] ) {
+						state[ containerId ].settings = { ...state[ containerId ].settings, ...settings };
+					}
 				}
 			},
 			change: ( state, { payload } ) => {

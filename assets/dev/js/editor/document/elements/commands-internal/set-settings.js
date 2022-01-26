@@ -21,19 +21,19 @@ export class SetSettings extends CommandInternal {
 				container.settings.set( settings );
 			}
 
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.settings( {
+					containerIds: container.id,
+					settings: { ...settings },
+				} )
+			);
+
 			if ( renderUI ) {
 				container.renderUI();
 			} else if ( render ) {
 				container.render();
 			}
 		} );
-
-		$e.store.dispatch(
-			$e.store.get( 'document/elements' ).actions.settings( {
-				containerIds: containers.map( ( container ) => container.id ),
-				settings: { ...settings },
-			} )
-		);
 	}
 }
 
