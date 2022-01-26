@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev35 - 2022-01-26
+* Tweak: Test Responsive reverse columns control inoperative [ED-5931] (#17341)
+* Tweak: Internal - Import Kit - Allow to override Kit import temp directory path [ED-5914] (#17381)
+
 #### 3.6.0-dev34 - 2022-01-25
 * Tweak: Handle deprecations [ED-5601]  (#17374)
 * Tweak: Change Developer Edition promotional notice triggers [ED-5562] (#17528)
@@ -415,14 +419,3 @@
 * Fix: When additional breakpoints are active - responsive switcher is slow [ED-4411] (#15849)
 * Tweak: Updated getting started video course [ED-4570] (#15894)
 * Tweak: Preparation in Core for future Page Transitions in Pro [ED-4571] (#15891)
-
-#### 3.5.0-dev2 - 2021-08-04
-* Fix - When the inline-font-svg experiment is active the font-awesome library is not loaded by default inside the editor when not using a dedicated icons control. (#15855)
-* Fix: Additional Breakpoints - Responsive 'base-multiple' controls with a default value inherit the desktop default as an actual value and not passively (#15860)
-* Fix: Breakpoints/multiple default values (#15864)
-* Fix: Select 2 - UI glitch in Dark mode [ED-4458] (#15818)
-* Fix: Undefined "pro_widgets" array key in certain cases [ED-4528] (#15876)
-* Fix: Image placeholder only cascades one level down [ED-4506] (#15863)
-* Fix: Placeholder units not always reflected in dimension controls [ED-4505] (#15867)
-* Fix: Placeholder values on desktop don't cascade up from Desktop to Widescreen [ED-4509] (#15868)
-* Tweak: Change publish (#15879)
