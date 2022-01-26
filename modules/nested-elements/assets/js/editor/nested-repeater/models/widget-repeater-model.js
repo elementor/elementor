@@ -28,13 +28,10 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 
 		defaults.elements.forEach( ( element ) => {
 			element.id = elementorCommon.helpers.getUniqueId();
-			element.settings = new Backbone.Model( element.settings || {} );
+			element.settings = element.settings || {};
 			element.elements = element.elements || [];
 
-			const elementType = elementor.getElementType( element.elType, element.widgetType ),
-				ModelClass = elementType.getModel();
-
-			result.push( new ModelClass( element ) );
+			result.push( element );
 		} );
 
 		return result;

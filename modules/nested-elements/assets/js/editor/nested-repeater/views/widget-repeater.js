@@ -71,14 +71,6 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
 	}
-
-	createDefaultChildren() {
-		const defaultChildren = this.container.model.getDefaultChildren();
-
-		if ( defaultChildren.length ) {
-			defaultChildren.forEach( ( elementModel ) => this.addElement( elementModel, { internal: true } ) );
-		}
-	}
 }
 
 // TODO: Avoid mixins inheritance, create common base instead.
