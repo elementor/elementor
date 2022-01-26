@@ -10,14 +10,15 @@ export default function ImportContentDisplay( {
 	isAllRequiredPluginsSelected,
 	onResetProcess,
 } ) {
-	const contentData = kitContentData.filter( ( { type } ) => {
+	// Getting the kit data from the manifest.
+	const kitData = kitContentData.filter( ( { type } ) => {
 		const contentType = 'settings' === type ? 'site-settings' : type,
 			data = manifest?.[ contentType ];
 
 		return ! ! ( Array.isArray( data ) ? data.length : data );
 	} );
 
-	if ( ! contentData.length && hasPlugins ) {
+	if ( ! kitData.length && hasPlugins ) {
 		return (
 			<Notice color="info" label={ __( 'Note:', 'elementor' ) }>
 				{ __( 'The Template Kit you’re using contains plugins for functionality, but no content or pages, etc.', 'elementor' ) }
@@ -25,7 +26,7 @@ export default function ImportContentDisplay( {
 		);
 	}
 
-	if ( ! contentData.length ) {
+	if ( ! kitData.length ) {
 		return (
 			<Notice color="danger">
 				{ __( 'You can’t use this Template Kit because it doesn’t contain any content, pages, etc. Try again with a different file.', 'elementor' ) } <InlineLink onClick={ onResetProcess }>{ __( 'Go Back', 'elementor' ) }</InlineLink>
@@ -42,7 +43,7 @@ export default function ImportContentDisplay( {
 				</Notice>
 			}
 
-			<KitContent contentData={ contentData } hasPro={ hasPro } />;
+			<KitContent contentData={ kitData } hasPro={ hasPro } />;
 		</>
 	);
 }
