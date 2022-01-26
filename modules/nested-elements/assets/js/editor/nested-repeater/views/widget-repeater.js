@@ -14,7 +14,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 				view = this;
 
 			// For clicks on container.
-			if ( 'container' === closest.dataset.element_type ) {
+			if ( 'container' === closest?.dataset.element_type ) {
 				// In case the container empty, click should be handled by the EmptyView.
 				const container = elementor.getContainer( closest.dataset.id );
 
