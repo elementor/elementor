@@ -65,12 +65,12 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * @param {Container[]|Container} containers
 	 * @param {{}} options
 	 */
-	add( containers, options = { append: false } ) {
+	add( containers, { append = false, section } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		// If command/ctrl+click not clicked, clear selected elements.
-		if ( ! options.append ) {
-			this.remove( [], { all: true } );
+		if ( ! append ) {
+			this.remove( [], { all: true, updateEnvironment: false } );
 		}
 
 		for ( const container of containers ) {
@@ -86,8 +86,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 		this.updateEnvironment();
 
-		if ( options.section ) {
-			elementor.activateElementSection( options.section );
+		if ( section ) {
+			elementor.activateElementSection( section );
 		}
 	}
 
@@ -100,10 +100,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * @param {Container[]|Container} containers
 	 * @param {{}} options
 	 */
-	remove( containers, options = { all: false } ) {
+	remove( containers, { all = false, updateEnvironment = true } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
-		if ( options.all ) {
+		if ( all ) {
 			containers = this.getElements();
 		}
 
@@ -118,7 +118,9 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			container.view.deselect();
 		}
 
-		this.updateEnvironment();
+		if ( updateEnvironment ) {
+			this.updateEnvironment();
+		}
 	}
 
 	/**
