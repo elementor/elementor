@@ -62,8 +62,8 @@
 				}
 			}
 
-			&:focus {
-				text-decoration: underline;
+			&:focus-visible	 {
+				border: 1px solid $black;
 			}
 		}
 	}
