@@ -182,10 +182,10 @@
 
 	.e-container {
 		padding: 20px;
-	}
 
-	.elementor-tabs-content-wrapper > .e-container .elementor-editor-element-settings.elementor-editor-container-settings {
-		display: none;
+		.elementor-element-overlay::after {
+			outline-width: 1px;
+		}
 	}
 
 	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {

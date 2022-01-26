@@ -146,7 +146,7 @@
 
 	// Inner Container handle.
 	// TODO: Find a better solution.
-	& > & {
+	& > &, .elementor-widget & {
 		> .elementor-element-overlay {
 			// Hide any setting control which isn't the edit control.
 			.elementor-editor-element-setting {
