@@ -5,7 +5,7 @@ import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
+import ProcessFailedDialog from '../../../shared/process-failed-dialog/process-failed-dialog';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
@@ -102,7 +102,7 @@ export default function ImportKit() {
 					isLoading={ isLoading }
 				/>
 
-				{ errorType && <ImportFailedDialog errorType={ errorType } onApprove={ resetImportProcess } />	}
+				{ errorType && <ProcessFailedDialog errorType={ errorType } onApprove={ resetImportProcess } />	}
 			</section>
 		</Layout>
 	);

@@ -158,11 +158,6 @@ class AddSectionBase extends Marionette.ItemView {
 				columns: 1,
 				options: {
 					at: this.getOption( 'at' ),
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
 				},
 			} );
 
