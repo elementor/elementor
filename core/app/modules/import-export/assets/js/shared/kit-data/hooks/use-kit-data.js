@@ -37,9 +37,10 @@ export default function useKitData( kitData ) {
 			.filter( ( value ) => value );
 	},
 	getSiteSettings = () => {
-		const siteSettings = kitData?.[ 'site-settings' ] || [];
+		const siteSettings = kitData?.[ 'site-settings' ] || {};
 
-		return siteSettings
+		return Object
+			.values( siteSettings )
 			.map( ( item ) => getLabel( 'site-settings', item ) );
 	},
 	getContent = () => {
