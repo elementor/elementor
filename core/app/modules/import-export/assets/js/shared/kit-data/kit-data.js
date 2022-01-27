@@ -8,6 +8,8 @@ import useKitData from './hooks/use-kit-data';
 
 import './kit-data.scss';
 
+const siteEditorPath = elementorAppConfig.hasPro ? '#/site-editor' : '#/site-editor/promotion';
+
 function KitData( { data } ) {
 	const { templates, siteSettings, content, plugins } = useKitData( data ),
 		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = data?.configData || elementorAppConfig[ 'import-export' ],
@@ -19,7 +21,7 @@ function KitData( { data } ) {
 		rowsData = [
 			{
 				siteArea: __( 'Elementor Templates', 'elementor' ),
-				link: '/site-editor',
+				link: elementorAppConfig.base_url + siteEditorPath,
 				included: templates,
 			},
 			{
