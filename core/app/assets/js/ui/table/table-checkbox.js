@@ -7,15 +7,16 @@ import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function TableCheckbox( props ) {
 	const context = useContext( Context ),
+		{ selected, disabled, setSelected } = context || {},
 		isSelectAllCheckbox = props.hasOwnProperty( 'allSelectedCount' ),
-		isAllSelected = context.selected.length === props.allSelectedCount,
-		isIndeterminate = isSelectAllCheckbox ? ! ! ( context.selected.length && ! isAllSelected ) : false,
-		isSelected = isSelectAllCheckbox ? isAllSelected : context.selected.includes( props.index ),
-		isDisabled = ! isSelectAllCheckbox ? context.disabled.includes( props.index ) : null,
+		isAllSelected = selected.length === props.allSelectedCount,
+		isIndeterminate = isSelectAllCheckbox ? ! ! ( ( selected.length - disabled.length ) && ! isAllSelected ) : false,
+		isSelected = isSelectAllCheckbox ? isAllSelected : selected.includes( props.index ),
+		isDisabled = ! isSelectAllCheckbox ? disabled.includes( props.index ) : null,
 		onSelectAll = () => {
-			context.setSelected( () => {
+			setSelected( () => {
 				if ( isAllSelected || isIndeterminate ) {
-					return [];
+					return disabled.length ? [ ...disabled ] : [];
 				}
 
 				return Array( props.allSelectedCount )
@@ -24,7 +25,7 @@ export default function TableCheckbox( props ) {
 			} );
 		},
 		onSelectRow = () => {
-			context.setSelected( ( prevState ) => {
+			setSelected( ( prevState ) => {
 				const currentSelections = [ ...prevState ],
 					currentIndexPosition = currentSelections.indexOf( props.index );
 
