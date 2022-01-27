@@ -16,6 +16,7 @@ export default function TableCheckbox( props ) {
 		onSelectAll = () => {
 			setSelected( () => {
 				if ( isAllSelected || isIndeterminate ) {
+					// Disabled checkboxes should not be unchecked.
 					return disabled.length ? [ ...disabled ] : [];
 				}
 
