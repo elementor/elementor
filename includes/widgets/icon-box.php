@@ -384,7 +384,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'icon_padding',
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
@@ -404,14 +404,30 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'rotate',
 			[
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'deg' ],
+				'range' => [
+					'deg' => [
+						'min' => 0,
+						'max' => 360,
+						'step' => 1,
+					],
+				],
 				'default' => [
-					'size' => 0,
 					'unit' => 'deg',
+					'size' => '',
+				],
+				'tablet_default' => [
+					'unit' => 'deg',
+					'size' => '',
+				],
+				'mobile_default' => [
+					'unit' => 'deg',
+					'size' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
@@ -419,7 +435,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_width',
 			[
 				'label' => esc_html__( 'Border Width', 'elementor' ),
@@ -433,7 +449,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
