@@ -366,6 +366,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
+		// test comment
 		$this->add_control(
 			'border_radius',
 			[
