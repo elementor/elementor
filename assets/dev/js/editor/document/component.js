@@ -1,5 +1,4 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import BackwardsCompatibility from './backwards-compatibility.js';
 import CommandHistoryBase from '../document/command-bases/command-history-base';
 import CommandHistoryDebounceBase from '../document/command-bases/command-history-debounce-base';
 
@@ -19,8 +18,6 @@ export default class Component extends ComponentBase {
 	}
 
 	registerAPI() {
-		new BackwardsCompatibility();
-
 		Object.values( components ).forEach( ( ComponentClass ) =>
 			$e.components.register( new ComponentClass )
 		);

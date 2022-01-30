@@ -31,9 +31,6 @@ export class ResetStyle extends CommandHistoryBase {
 				settingsKeys.push( controlName );
 			} );
 
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:before:reset:style', container.model );
-
 			$e.run( 'document/elements/reset-settings', {
 				container,
 				settings: settingsKeys,
@@ -41,9 +38,6 @@ export class ResetStyle extends CommandHistoryBase {
 					external: true,
 				},
 			} );
-
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:after:reset:style', container.model );
 
 			container.view.allowRender = true;
 

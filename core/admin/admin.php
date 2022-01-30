@@ -4,6 +4,7 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Core\Admin\Notices\Update_Php_Notice;
 use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -715,6 +716,12 @@ class Admin extends App {
 
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
+		} );
+
+		add_filter( 'elementor/core/admin/notices', function( $notices ) {
+			$notices[] = new Update_Php_Notice();
+
+			return $notices;
 		} );
 	}
 

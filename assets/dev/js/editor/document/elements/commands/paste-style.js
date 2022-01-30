@@ -110,9 +110,6 @@ export class PasteStyle extends CommandHistoryBase {
 	 * @param {{}} settings
 	 */
 	pasteStyle( targetContainer, settings ) {
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		elementor.channels.data.trigger( 'element:before:paste:style', targetContainer.model );
-
 		const globals = settings.__globals__;
 
 		if ( globals ) {
@@ -140,9 +137,6 @@ export class PasteStyle extends CommandHistoryBase {
 
 			targetContainer.panel.refresh();
 		}
-
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		elementor.channels.data.trigger( 'element:after:paste:style', targetContainer.model );
 
 		targetContainer.render();
 	}
