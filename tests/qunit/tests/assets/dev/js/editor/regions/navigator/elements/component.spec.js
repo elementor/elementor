@@ -6,7 +6,7 @@ QUnit.module( 'Component: navigator/elements', ( hooks ) => {
 	hooks.beforeEach( () => {
 		// Have clean board with open navigator.
 		for ( const element of elementor.elements.models ) {
-			$e.run( 'document/elements/delete', { container: element.id } );
+			$e.run( 'document/elements/delete', { container: elementor.getContainer( element.id ) } );
 		}
 
 		if ( ! elementor.navigator.isOpen ) {
