@@ -1,9 +1,7 @@
-const WidgetView = elementor.modules.elements.views.Widget;
-
 /**
- * @extends {BaseElementView}
+ * @extends {BaseWidget}
  */
-export class WidgetRepeater extends elementor.modules.elements.views.BaseElement {
+export class WidgetRepeater extends elementor.modules.elements.views.BaseWidget {
 	events() {
 		const events = super.events();
 
@@ -14,7 +12,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 				view = this;
 
 			// For clicks on container.
-			if ( 'container' === closest?.dataset.element_type ) {
+			if ( 'container' === closest?.dataset.element_type ) { // eslint-disable-line camelcase
 				// In case the container empty, click should be handled by the EmptyView.
 				const container = elementor.getContainer( closest.dataset.id );
 
@@ -72,15 +70,5 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 			.remove();
 	}
 }
-
-// TODO: Avoid mixins inheritance, create common base instead.
-WidgetRepeater.prototype.initialize = WidgetView.prototype.initialize;
-WidgetRepeater.prototype.className = WidgetView.prototype.className;
-WidgetRepeater.prototype.getTemplate = WidgetView.prototype.getTemplate;
-WidgetRepeater.prototype.getEditButtons = WidgetView.prototype.getEditButtons;
-WidgetRepeater.prototype.getRepeaterSettingKey = WidgetView.prototype.getRepeaterSettingKey;
-WidgetRepeater.prototype.onModelBeforeRemoteRender = WidgetView.prototype.onModelBeforeRemoteRender;
-WidgetRepeater.prototype.onModelRemoteRender = WidgetView.prototype.onModelRemoteRender;
-WidgetRepeater.prototype.onBeforeDestroy = WidgetView.prototype.onBeforeDestroy;
 
 module.exports = WidgetRepeater;
