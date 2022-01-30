@@ -36,11 +36,9 @@ export default class Routes extends Commands {
 			return;
 		}
 
-		const component = this.getComponent( route );
+		this.detachCurrentTrace( container );
 
-		this.removeCurrentTrace( component );
-
-		component.onCloseRoute( route );
+		this.getComponent( route ).onCloseRoute( route );
 	}
 
 	clear() {
@@ -107,7 +105,7 @@ export default class Routes extends Commands {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.addCurrentTrace( container, route, args );
+		this.attachCurrentTrace( container, route, args );
 	}
 
 	to( route, args ) {
