@@ -2,7 +2,6 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
