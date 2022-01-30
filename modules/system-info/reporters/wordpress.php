@@ -47,6 +47,7 @@ class WordPress extends Base {
 			'is_multisite' => 'WP Multisite',
 			'max_upload_size' => 'Max Upload Size',
 			'memory_limit' => 'Memory limit',
+			'max_memory_limit' => 'Max Memory limit',
 			'permalink_structure' => 'Permalink Structure',
 			'language' => 'Language',
 			'timezone' => 'Timezone',
@@ -70,11 +71,26 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_memory_limit() {
-		$result = [
+		return [
+			'value' => (string) WP_MEMORY_LIMIT,
+		];
+	}
+
+	/**
+	 * Get WordPress max memory limit.
+	 *
+	 * Retrieve the WordPress max memory limit.
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress max memory limit.
+	 * }
+	 */
+	public function get_max_memory_limit() {
+		return [
 			'value' => (string) WP_MAX_MEMORY_LIMIT,
 		];
-
-		return $result;
 	}
 
 	/**
