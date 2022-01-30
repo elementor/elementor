@@ -2,7 +2,6 @@
 namespace Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Api;
-use WP_Site_Health;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -139,15 +138,16 @@ class Server extends Base {
 	 *    @type string $value          PHP memory limit.
 	 *    @type string $recommendation Recommendation memory limit.
 	 *    @type bool   $warning        Whether to display a warning. True if the limit
-	 *                                 is below the recommended 64M, False otherwise.
+	 *                                 is below the recommended 128M, False otherwise.
 	 * }
 	 */
 	public function get_php_memory_limit() {
 		$result = [
-			'value' => (string) WP_Site_Health::get_instance()->php_memory_limit,
+			'value' => (string) get_cfg_var( 'memory_limit' ),
 		];
 
-		$min_recommended_memory = '64M';
+		$min_recommended_memory = '128M';
+		$preferred_memory = '256M';
 
 		$memory_limit_bytes = wp_convert_hr_to_bytes( $result['value'] );
 
@@ -155,9 +155,10 @@ class Server extends Base {
 
 		if ( $memory_limit_bytes < $min_recommended_bytes ) {
 			$result['recommendation'] = sprintf(
-			/* translators: 1: Minimum recommended_memory, 2: WordPress wp-config memory documentation. */
-				_x( 'We recommend setting memory to at least %1$s. For more information, read about <a href="%2$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+			/* translators: 1: Minimum recommended_memory, 2: Preferred memory, 3: WordPress wp-config memory documentation. */
+				_x( 'We recommend setting memory to at least %1$s. (%2$sMB or higher is preferred) For more information, read about <a href="%3$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
 				$min_recommended_memory,
+				$preferred_memory,
 				'https://go.elementor.com/wordpress-wp-config-memory/'
 			);
 
