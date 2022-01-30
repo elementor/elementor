@@ -21,13 +21,13 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_rest_error_handler__error_in_elementor_path() {
 		// Assert (Expect).
 		$this->mock_manager->expects( $this->once() )
-		                   ->method( 'shutdown' )
-		                   ->with( [
-								'type' => 1,
-								'message' => 0,
-								'file' => __FILE__,
-								'line' => 0,
-							] );
+				->method( 'shutdown' )
+				->with( [
+						'type' => 1,
+						'message' => 0,
+						'file' => __FILE__,
+						'line' => 0,
+					] );
 
 		// Act.
 		$this->mock_manager->rest_error_handler( 1, 0, __FILE__, 0 );
