@@ -36,7 +36,7 @@ export default class Routes extends Commands {
 			return;
 		}
 
-		this.detachCurrentTrace( container );
+		this.detachCurrent( container );
 
 		this.getComponent( route ).onCloseRoute( route );
 	}
@@ -105,7 +105,7 @@ export default class Routes extends Commands {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.attachCurrentTrace( container, route, args );
+		this.attachCurrent( container, route, args );
 	}
 
 	to( route, args ) {

@@ -526,7 +526,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		Commands.trace.push( command );
 
-		this.attachCurrentTrace( container, command, args );
+		this.attachCurrent( container, command, args );
 	}
 
 	removeCurrentTrace( currentComponent ) {
@@ -536,15 +536,15 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		Commands.trace.pop();
 
-		this.detachCurrentTrace( container );
+		this.detachCurrent( container );
 	}
 
-	attachCurrentTrace( container, command, args ) {
+	attachCurrent( container, command, args ) {
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
 	}
 
-	detachCurrentTrace( container ) {
+	detachCurrent( container ) {
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
 	}
