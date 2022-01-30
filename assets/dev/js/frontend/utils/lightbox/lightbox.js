@@ -256,12 +256,14 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			$videoElement = $( '<video>', videoParams );
 		} else {
-			let apiProvider = elementorFrontend.utils.baseVideoLoader;
+			let apiProvider;
 
 			if ( -1 !== options.url.indexOf( 'vimeo.com' ) ) {
 				apiProvider = elementorFrontend.utils.vimeo;
 			} else if ( options.url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
 				apiProvider = elementorFrontend.utils.youtube;
+			} else {
+				return;
 			}
 
 			$videoElement = $( '<iframe>', { src: apiProvider.getAutoplayURL( options.url ), allowfullscreen: 1 } );
