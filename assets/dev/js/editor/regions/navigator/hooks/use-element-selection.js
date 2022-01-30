@@ -27,12 +27,10 @@ export function useElementSelection( elementId ) {
 	 */
 	const setElementSelection = useCallback(
 		( { append, section, scrollIntoView = true } ) => {
-			const container = elementor.getContainer( elementId );
-
-			if ( undefined !== elementId && container ) {
+			if ( undefined !== elementId ) {
 				// Toggle the provided elements state.
 				$e.run( 'document/elements/toggle-selection', {
-					container,
+					container: elementor.getContainer( elementId ),
 					options: {
 						scrollIntoView,
 						section,
