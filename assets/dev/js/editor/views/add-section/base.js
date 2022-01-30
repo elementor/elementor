@@ -119,10 +119,20 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			getDropIndex: () => this.getOption( 'at' ),
 			// Merge different options if provided by child elements
 			...this.getDroppableOptions?.(),
 		} );
+	}
+
+	getDroppableOptions() {
+		return {
+			onDropping: ( side, event ) => {
+				elementor.getPreviewView().onDropEvent(
+					event,
+					{ side, at: this.getOption( 'at' ) }
+				);
+			},
+		};
 	}
 
 	onPresetSelected( event ) {

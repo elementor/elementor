@@ -155,6 +155,28 @@ module.exports = Marionette.CompositeView.extend( {
 		return widget;
 	},
 
+	onDropEvent( event, options ) {
+		const input = event.originalEvent.dataTransfer.files;
+
+		if ( input.length ) {
+			$e.run( 'editor/browser-import/import', {
+				input,
+				target: this.getContainer(),
+				options: { event, target: { at: options.at } },
+			} );
+
+			return;
+		}
+
+		this.getContainer().view.createElementFromModel(
+			Object.fromEntries(
+				Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+					.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
+			),
+			options
+		);
+	},
+
 	getHistoryType( event ) {
 		if ( event ) {
 			if ( event.originalEvent ) {

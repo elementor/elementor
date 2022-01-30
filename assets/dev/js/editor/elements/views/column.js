@@ -230,8 +230,12 @@ ColumnView = BaseElementView.extend( {
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			getDropContainer: () => this.getContainer(),
-			getDropIndex,
+			onDropping: ( side, event ) => {
+				this.getContainer().view.onDropEvent(
+					event,
+					{ side, at: getDropIndex( side, event ) }
+				);
+			},
 		} );
 	},
 
