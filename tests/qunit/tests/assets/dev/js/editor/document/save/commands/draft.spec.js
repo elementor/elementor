@@ -90,7 +90,7 @@ export const Draft = () => {
 						document.editor.status = defaultStatus;
 					} );
 				},
-				new Error( 'Error: Document is not editable' ),
+				new Error( 'Error: document/save/auto: Document is not editable' ),
 			);
 		} );
 	} );

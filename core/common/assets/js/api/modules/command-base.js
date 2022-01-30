@@ -265,6 +265,6 @@ export default class CommandBase extends ArgsObject {
 	onCatchApply( e ) {
 		this.runCatchHooks( e );
 
-		elementorCommon.helpers.consoleError( e );
+		elementorCommon.helpers.consoleError( `${ this.currentCommand }: ${ e }` );
 	}
 }

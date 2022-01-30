@@ -5,7 +5,9 @@ import * as commands from './commands/index.spec';
 QUnit.module( 'Component: navigator/elements', ( hooks ) => {
 	hooks.beforeEach( () => {
 		// Have clean board with open navigator.
-		ElementsHelper.empty();
+		for ( const element of elementor.elements.models ) {
+			$e.run( 'document/elements/delete', { container: element.id } );
+		}
 
 		if ( ! elementor.navigator.isOpen ) {
 			$e.run( 'navigator/open' );
