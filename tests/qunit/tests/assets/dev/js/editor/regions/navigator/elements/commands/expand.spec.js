@@ -7,7 +7,7 @@ export const Expand = () => {
 			const eWidget = ElementsHelper.createAutoButton(),
 				eColumn = eWidget.parent,
 				eSection = eColumn.parent,
-				all = [ eSection, eColumn, eWidget ];
+				all = [ eSection, eColumn ];
 
 			$e.run( 'navigator/elements/toggle-folding-all', { state: true } );
 
@@ -17,10 +17,10 @@ export const Expand = () => {
 			} );
 
 			// Filter all active.
-			const actual = all.filter( ( container ) => elementor.navigator.elements.getElementView( container.id ).$el.children().hasClass( 'elementor-active' ) );
+			const actual = all.filter( ( container ) => elementor.navigator.region.$el.find( `[data-id="${ container.id }"]` ).children().hasClass( 'elementor-active' ) );
 
 			// Assert.
-			assert.equal( actual.length, all.length );
+			setTimeout( () => assert.equal( actual.length, all.length ) );
 		} );
 	} );
 };

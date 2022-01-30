@@ -28,9 +28,11 @@ export function useElementFolding( elementId ) {
 	const setElementFolding = useCallback(
 		( state ) => {
 			if ( undefined !== elementId ) {
+				const container = elementor.getContainer( elementId );
+
 				// Toggle the provided elements state.
 				$e.run( 'navigator/elements/toggle-folding', {
-					container: elementor.getContainer( elementId ),
+					container,
 					state,
 				} );
 			} else {

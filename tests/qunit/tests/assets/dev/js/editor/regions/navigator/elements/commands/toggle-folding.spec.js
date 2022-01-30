@@ -23,7 +23,7 @@ export const ToggleFolding = () => {
 
 				// Assert.
 				eSections.forEach( ( eSection ) => {
-					assert.equal( elementor.navigator.elements.getElementView( eSection.id ).$el.children().hasClass( 'elementor-active' ), state,
+					assert.equal( elementor.navigator.region.$el.find( `[data-id="${ eSection.id }"]` ).children().hasClass( 'elementor-active' ), state,
 						`section id: '${ eSection.id }' navigator element active state: '${ state }'` );
 				} );
 			} );

@@ -31,6 +31,10 @@ export default class Store {
 			// Use an empty function instead of empty object since an empty object
 			// isn't a valid reducer value.
 			reducer: () => {},
+			middleware: ( getDefaultMiddleware ) => getDefaultMiddleware( {
+				immutableCheck: { warnAfter: 256 },
+				serializableCheck: false,
+			} ),
 		} );
 	}
 

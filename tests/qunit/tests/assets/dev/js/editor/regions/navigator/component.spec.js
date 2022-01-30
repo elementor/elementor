@@ -15,8 +15,6 @@ jQuery( () => {
 		// After handling all test(s), keep it close.
 		hooks.after( () => {
 			$e.run( 'navigator/close' );
-
-			elementor.navigator.region.getLayout().destroy();
 		} );
 
 		DocumentHelper.testCommands( commands );

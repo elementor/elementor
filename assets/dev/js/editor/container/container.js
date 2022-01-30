@@ -469,7 +469,7 @@ export default class Container extends ArgsObject {
 	 * @returns {*}
 	 */
 	getTitle() {
-		return this.model.getTitle?.();
+		return this.model?.getTitle?.();
 	}
 
 	/**
@@ -478,7 +478,7 @@ export default class Container extends ArgsObject {
 	 * @returns {*}
 	 */
 	getIcon() {
-		return this.model.getIcon?.();
+		return this.model?.getIcon?.();
 	}
 
 	/**

@@ -9,10 +9,8 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	 *
 	 * @type {Container|false}
 	 */
-	const container = useMemo(
-		() => elementor.getContainer( elementId ),
-		[ elementId ]
-	);
+	const container = elementor.getContainer( elementId ) ||
+		new elementorModules.editor.Container( { type: 'element', id: 'fallback', model: new Backbone.Model( {} ), elements: new Backbone.Model( [] ), settings: new Backbone.Model( {} ) } );
 
 	/**
 	 * The element selector from store.
@@ -40,13 +38,16 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	 */
 	const item = useMemo(
 		() => ( {
-			settings: {},
-			elements: [],
+			...element,
+			elType: element.elType,
+			settings: element.settings || {},
+			elements: element.elements?.filter(
+				( _elementId ) => $e.store.getState( 'document/elements' )[ _elementId ]
+			) || [],
 			title: container.getTitle(),
 			icon: container.getIcon(),
 			root,
 			hasChildrenByDefault: container.hasChildrenByDefault,
-			...element,
 		} ),
 		[ container, element ]
 	);
