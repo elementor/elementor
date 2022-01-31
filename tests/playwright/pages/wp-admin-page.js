@@ -4,8 +4,12 @@ const { EditorPage } = require( './editor-page.js' );
 const CLEAN_POST_ID = 1;
 
 exports.WpAdminPage = class WpAdminPage extends BasePage {
-	async login() {
+    async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
+	}
+
+	async login() {
+		await this.gotoDashboard();
 
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 

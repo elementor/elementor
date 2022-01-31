@@ -3,7 +3,7 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-	timeout: 40000,
+	timeout: 90000,
 	globalTimeout: 900000,
 	reporter: 'list',
 	testDir: '../sanity/',
@@ -17,13 +17,15 @@ const config = {
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
 		baseURL: process.env.baseURL || 'http://localhost:8888',
-		viewport: { width: 1440, height: 960 },
+		viewport: { width: 1920, height: 1080 },
 		video: 'on',
+        trace: 'on-first-retry',
 		user: {
 			username: process.env.username || 'admin',
 			password: process.env.password || 'password',
 		},
 		baseURLPrefixProxy: false,
+
 	},
 	workers: 1,
 };

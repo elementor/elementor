@@ -130,11 +130,6 @@ module.exports = Marionette.CompositeView.extend( {
 				columns: Number( ! containerExperiment ),
 				options: {
 					at: this.getOption( 'at' ),
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
 				},
 			} );
 

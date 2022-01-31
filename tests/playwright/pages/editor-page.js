@@ -75,10 +75,10 @@ exports.EditorPage = class EditorPage extends BasePage {
 	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>}
 	 */
 	async getElementHandle( id ) {
-		return this.previewFrame.$( getElementSelector( id ) );
+		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
-	getFrame() {
+	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 };
