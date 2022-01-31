@@ -14,7 +14,7 @@ module.exports = async ( config ) => {
 	await page.waitForSelector( 'text=Dashboard' );
 
 	// Check if dismiss button is available and close it
-	const dismissButton = await this.page.$( 'text=Dismiss' );
+	const dismissButton = await page.$( 'text=Dismiss' );
 
 	if ( dismissButton ) {
 		await page.click( 'Text=Dismiss' );
