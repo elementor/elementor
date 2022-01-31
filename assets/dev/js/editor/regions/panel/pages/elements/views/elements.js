@@ -18,8 +18,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return true;
 		}
 
-		// Prevent from archive and wordpress widgets to show in search result.
-		if ( childModel.get( 'hideOnSearch' ) ) {
+		// Prevent from wordpress widgets to show in search result.
+		if ( ! childModel.get( 'showOnSearch' ) ) {
 			return false;
 		}
 

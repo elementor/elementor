@@ -224,6 +224,19 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Show on search.
+	 *
+	 * Whether to show the widget on search in the panel or not. By default returns true.
+	 *
+	 * @access public
+	 *
+	 * @return bool Whether to show the widget when searching for widget or not.
+	 */
+	public function show_on_search() {
+		return true;
+	}
+
+	/**
 	 * Start widget controls section.
 	 *
 	 * Used to add a new section of controls to the widget. Regular controls and
@@ -350,7 +363,7 @@ abstract class Widget_Base extends Element_Base {
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
-			'hide_on_search' => $this->isWidgetShouldBeHidden( $this->get_categories() ),
+			'show_on_search' => $this->show_on_search(),
 		];
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
@@ -361,27 +374,6 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return array_replace_recursive( parent::get_initial_config(), $config );
-	}
-
-	/**
-	 * Check if widget should be displayed in search result according to widget categories.
-	 *
-	 * @param array $categories Widget categories.
-	 */
-	protected function isWidgetShouldBeHidden( array $categories ): bool {
-		$categories_to_hide = [ 'theme-elements-archive' ];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_hidden_wordpress_widgets' ) ) {
-			array_push( $categories_to_hide, 'wordpress' );
-		}
-
-		foreach ( $categories_to_hide as $category_to_hide ) {
-			if ( in_array( $category_to_hide, $categories, true ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
