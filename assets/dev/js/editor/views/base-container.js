@@ -155,7 +155,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return widget;
 	},
 
-	onDropEvent( event, options ) {
+	onDrop( event, options ) {
 		const input = event.originalEvent.dataTransfer.files;
 
 		if ( input.length ) {
@@ -168,7 +168,7 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		this.getContainer().view.createElementFromModel(
+		this.createElementFromModel(
 			Object.fromEntries(
 				Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
 					.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )

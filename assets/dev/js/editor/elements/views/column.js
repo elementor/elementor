@@ -231,7 +231,7 @@ ColumnView = BaseElementView.extend( {
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: ( side, event ) => {
-				this.getContainer().view.onDropEvent(
+				this.onDrop(
 					event,
 					{ side, at: getDropIndex( side, event ) }
 				);
