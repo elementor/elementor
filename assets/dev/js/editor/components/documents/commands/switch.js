@@ -15,6 +15,9 @@ export class Switch extends CommandBase {
 		} )
 		.then( () => {
 			return $e.run( 'editor/documents/open', { id } );
+		} )
+		.then( () => {
+			elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
 		} );
 	}
 }

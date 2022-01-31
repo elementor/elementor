@@ -42,20 +42,14 @@ PanelMenu.initGroups = () => {
 				type: 'link',
 				link: elementor.config.document.urls.permalink,
 			},
-			// Todo: internal command.
-			{
-				name: 'exit-to-dashboard',
-				icon: 'eicon-wordpress-light',
-				title: __( 'Exit To Dashboard', 'elementor' ),
-				type: 'link',
-				link: elementor.config.document.urls.exit_to_dashboard,
-			},
 		],
 	} );
 
 	if ( elementor.config.user.is_administrator ) {
 		PanelMenu.addAdminMenu();
 	}
+
+	PanelMenu.addExitItem();
 };
 
 PanelMenu.addAdminMenu = () => {
@@ -80,6 +74,126 @@ PanelMenu.addAdminMenu = () => {
 		callback: () => $e.route( 'finder' ),
 	}, 'navigate_from_page', 'view-page' );
 };
+
+PanelMenu.addExitItem = () => {
+	const preferredExitUrl = PanelMenu.getExitUrl(),
+		preferredExitTitle = PanelMenu.getExitTitle();
+
+	let itemArgs;
+
+	if( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
+		itemArgs = {
+			callback: () => PanelMenu.exitDialog(),
+		};
+	} else {
+		itemArgs = {
+			type: 'link',
+			link: preferredExitUrl,
+		};
+	}
+
+	PanelMenu.addItem( {
+		name: 'exit-to-dashboard',
+		icon: 'eicon-exit',
+		title: preferredExitTitle,
+		...itemArgs,
+	} , 'navigate_from_page' );
+}
+
+PanelMenu.exitDialog = () => {
+	const template = document.querySelector( '#tmpl-elementor-exit-dialog' );
+	const { options } = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to;
+
+	const introduction = new elementorModules.editor.utils.Introduction( {
+		introductionKey: 'exit_to',
+		dialogType: 'confirm',
+		dialogOptions: {
+			id: 'elementor-change-exit-preference-dialog',
+			className: 'dialog-exit-preferences',
+			headerMessage: __( 'New options for "Exit to..."', 'elementor' ),
+			message: template.innerHTML,
+			strings: {
+				confirm: __( 'Apply', 'elementor' ),
+				cancel: __( 'Decide Later', 'elementor' ),
+			},
+		},
+	} );
+
+	//Edit template
+
+	const messageContainer = introduction.getDialog().getElements().message[ 0 ],
+		select = messageContainer.querySelector( '#exit-to-preferences' ),
+		link = messageContainer.querySelector( '#user-preferences' );
+
+	for ( const [ key, value ] of Object.entries( options ) ) {
+		const option = document.createElement( 'option' );
+		option.innerText = value;
+		option.value = key;
+		select.appendChild( option );
+	}
+
+	link.addEventListener( 'click', ( a ) => {
+		a.preventDefault();
+
+		introduction.getDialog().hide();
+		$e.route( 'panel/editor-preferences' );
+	});
+
+	introduction.getDialog().onConfirm = async () => {
+		introduction.setViewed();
+
+		$e.run( 'document/elements/settings', {
+			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
+			settings: {
+				exit_to: select.value,
+			},
+			options: {
+				external: true,
+			},
+		} );
+
+		await $e.run( 'document/save/draft' );
+
+		window.location.href = PanelMenu.getExitUrl();
+	};
+
+	introduction.getDialog().onCancel = () => {
+		introduction.setViewed();
+
+		window.location.href = PanelMenu.getExitUrl();
+	};
+
+	introduction.show();
+}
+
+PanelMenu.getExitUrl = () => {
+	const exitPreference = elementor.getPreferences( 'exit_to' );
+
+	switch ( exitPreference ) {
+		case 'dashboard':
+			return elementor.config.document.urls.main_dashboard;
+
+		default:
+			return elementor.config.document.urls.exit_to_dashboard;
+	}
+}
+
+PanelMenu.getExitTitle = () => {
+	const exitPreference = elementor.getPreferences( 'exit_to' );
+
+	switch ( exitPreference ) {
+		case 'dashboard':
+			return __( 'Exit to WP Dashboard', 'elementor' );
+
+		default:
+			let postTypeTitle = elementor.config.document.post_type_title;
+
+			if( 'Revision' === postTypeTitle ) {
+				postTypeTitle = 'Page';
+			}
+			return __( 'Exit to WP %s', 'elementor' ).replace( '%s', postTypeTitle );
+	}
+}
 
 PanelMenu.getGroups = () => {
 	if ( ! PanelMenu.groups ) {

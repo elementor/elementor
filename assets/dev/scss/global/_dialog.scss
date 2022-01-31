@@ -122,6 +122,26 @@
 	}
 }
 
+.dialog-exit-preferences {
+
+	.dialog-message {
+
+		& > div {
+			margin-bottom: 10px;
+		}
+	}
+	.dialog-buttons-wrapper {
+
+		> .dialog-button {
+
+			&.dialog-ok {
+				color: $editor-success;
+			}
+		}
+	}
+}
+
+
 .dialog-prevent-scroll {
 	overflow: hidden;
 	max-height: 100vh;

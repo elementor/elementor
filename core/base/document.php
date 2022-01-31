@@ -539,11 +539,12 @@ abstract class Document extends Controls_Stack {
 				'locked' => $locked_user,
 			],
 			'urls' => [
-				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
+				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(), // WP post type edit page
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),
 				'have_a_look' => $this->get_have_a_look_url(),
+				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
 
@@ -1582,6 +1583,14 @@ abstract class Document extends Controls_Stack {
 
 	protected function get_have_a_look_url() {
 		return $this->get_permalink();
+	}
+
+	protected function get_main_dashboard_url() {
+		$url = get_dashboard_url();
+
+		$url = apply_filters( 'elementor/document/urls/main_dashboard', $url, $this );
+
+		return $url;
 	}
 
 	public function handle_revisions_changed( $post_has_changed, $last_revision, $post ) {

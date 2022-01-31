@@ -137,6 +137,21 @@ class Model extends BaseModel {
 			]
 		);
 
+		$this->add_control(
+			'exit_to',
+			[
+				'label' => esc_html__( 'Exit to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
+				'description' => esc_html__( 'Decide where you want to go when you click the "Exit to" control.', 'elementor' ),
+				'default' => 'wp_post_type',
+				'options' => [
+					'wp_post_type' => esc_html__( 'WP Page/Post/Template', 'elementor' ),
+					'dashboard' => esc_html__( 'WP Dashboard', 'elementor' ),
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 }
