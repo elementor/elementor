@@ -29,6 +29,6 @@ module.exports = class {
         await this.page.click( 'text=Update' );
         await this.page.waitForSelector( '#elementor-toast' );
         await this.page.reload();
-        await this.page.waitForTimeout( 6000 ); //TODO: Find a way to detect when Iframe is fully loaded.
+		await this.page.waitForSelector( '#elementor-panel-header-title' );
     }
 };

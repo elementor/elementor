@@ -9,6 +9,7 @@ module.exports = class {
 	}
 
 	async open() {
+		await this.page.waitForTimeout( 1000 );
 		await this.editor.getPreviewFrame().click( '.elementor-add-section-button' );
 		await this.editor.getPreviewFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
 		await this.page.click( '#elementor-panel-footer-responsive' );
@@ -31,13 +32,12 @@ module.exports = class {
 			additional_custom_breakpoints: isExperimentBreakpoints,
 		} );
 
+		this.editor = await this.wpAdminPage.useElementorCleanPost();
+
 		if ( isExperimentBreakpoints ) {
-			const breakpoints = new Breakpoints( this.page );
+			const breakpoints = new Breakpoints( this.page, this.testInfo );
 			await breakpoints.addAllBreakpoints();
 		}
-
-		this.editor = await this.wpAdminPage.useElementorCleanPost();
-		await this.editor.ensurePanelLoaded();
 
 		await this.open();
 
