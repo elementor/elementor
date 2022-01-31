@@ -335,20 +335,20 @@ const ContainerView = BaseElementView.extend( {
 		return width.toFixed( 1 ) + '%';
 	},
 
-	// TODO: Copied from `views/column.js`.
-	changeSizeUI: function() {
-		if ( this.ui.percentsTooltip ) {
-			this.ui.percentsTooltip.text( this.getPercentsForDisplay() );
-		}
-	},
-
-	showPercentsTooltip: function() {
+	onResizeStart: function() {
 		if ( this.ui.percentsTooltip ) {
 			this.ui.percentsTooltip.show();
 		}
 	},
 
-	hidePercentsTooltip: function() {
+	onResize: function() {
+		// TODO: Copied from `views/column.js`.
+		if ( this.ui.percentsTooltip ) {
+			this.ui.percentsTooltip.text( this.getPercentsForDisplay() );
+		}
+	},
+
+	onResizeStop: function() {
 		if ( this.ui.percentsTooltip ) {
 			this.ui.percentsTooltip.hide();
 		}

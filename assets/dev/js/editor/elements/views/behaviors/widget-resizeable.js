@@ -80,8 +80,8 @@ export default class extends Marionette.Behavior {
 	onResizeStart( event ) {
 		event.stopPropagation();
 
-		if ( this.view.showPercentsTooltip ) {
-			this.view.showPercentsTooltip();
+		if ( this.view.onResizeStart ) {
+			this.view.onResizeStart( event );
 		}
 
 		// Don't open edit mode when the item is a Container item ( for UX ).
@@ -93,8 +93,8 @@ export default class extends Marionette.Behavior {
 	onResizeStop( event, ui ) {
 		event.stopPropagation();
 
-		if ( this.view.hidePercentsTooltip ) {
-			this.view.hidePercentsTooltip();
+		if ( this.view.onResizeStop ) {
+			this.view.onResizeStop( event, ui );
 		}
 
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
@@ -143,9 +143,8 @@ export default class extends Marionette.Behavior {
 	onResize( event, ui ) {
 		event.stopPropagation();
 
-		// TODO: Copied from `behaviors/column-resizable.js`.
-		if ( this.view.changeSizeUI ) {
-			this.view.changeSizeUI();
+		if ( this.view.onResize ) {
+			this.view.onResize( event, ui );
 		}
 
 		if ( ! this.isContainerItem() ) {
