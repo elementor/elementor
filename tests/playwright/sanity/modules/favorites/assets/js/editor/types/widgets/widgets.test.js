@@ -1,7 +1,7 @@
-import { expect, test } from '@playwright/test'
-import WpAdminPage from '../../../../../../../../pages/wp-admin-page.mjs'
-import FavoriteWidgetsHelper from './helpers.mjs';
-import NotificationsHelpers from '../../../../../../../assets/js/editor/utils/notifications/helpers.mjs'
+const { test, expect } = require( '@playwright/test' );
+const { WpAdminPage } = require( '../../../../../../../../pages/wp-admin-page' );
+const FavoriteWidgetsHelper = require( './helpers' );
+const NotificationsHelpers = require( '../../../../../../../assets/js/editor/utils/notifications/helpers' );
 
 test.describe( 'Favorite widgets', () => {
 	test( 'Add favorite', async ( { page }, testInfo ) => {
@@ -32,7 +32,7 @@ test.describe( 'Favorite widgets', () => {
 
 		await page.waitForTimeout( 1000 );
 
-		await editor.reload();
+		await page.reload();
 		await editor.ensurePanelLoaded();
 
 		await expectFavoriteVisible();

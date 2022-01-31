@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
-import WpAdminPage from '../pages/wp-admin-page.mjs';
+const { test, expect } = require( '@playwright/test' );
+const { WpAdminPage } = require( '../pages/wp-admin-page.js' );
 
-test( 'Button widget sanity test', async ( { page }, testInfo) => {
+test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.login();

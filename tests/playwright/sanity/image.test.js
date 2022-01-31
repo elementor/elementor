@@ -1,7 +1,7 @@
-import { expect, test } from '@playwright/test';
-import WpAdminPage from '../pages/wp-admin-page.mjs';
+const { test, expect } = require( '@playwright/test' );
+const { WpAdminPage } = require( '../pages/wp-admin-page.js' );
 
-test( 'Image widget sanity test', async ( { page }, testInfo)  => {
+test( 'Image widget sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.login();
@@ -30,5 +30,5 @@ test( 'Image widget sanity test', async ( { page }, testInfo)  => {
 	const img = await editor.previewFrame.waitForSelector( 'img' ),
 		src = await img.getAttribute( 'src' );
 
-	expect( src ).toContain( '.jpeg' );
+	expect( src ).toContain( '.jpg' );
 } );

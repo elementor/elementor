@@ -1,9 +1,9 @@
-import BasePage from './base-page.mjs';
-import EditorPage from './editor-page.mjs';
+const { BasePage } = require( './base-page.js' );
+const { EditorPage } = require( './editor-page.js' );
 
-export const CLEAN_POST_ID = 1;
+const CLEAN_POST_ID = 1;
 
-export default class wpAdminPage extends BasePage {
+exports.WpAdminPage = class WpAdminPage extends BasePage {
 	async login() {
 		await this.page.goto( '/wp-admin' );
 
@@ -46,7 +46,7 @@ export default class wpAdminPage extends BasePage {
 
 		await this.waitForPanel();
 
-		return new EditorPage( this.page, this.testInfo )
+		return new EditorPage( this.page, this.testInfo );
 	}
 
 	async useElementorCleanPost() {
@@ -80,7 +80,6 @@ export default class wpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setExperiments( experiments = {} ) {
-		// TODO Use client config, if experiments are set in the config, there no need to set them here.
 		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 
 		const prefix = 'e-experiment';

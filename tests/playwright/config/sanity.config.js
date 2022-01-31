@@ -23,6 +23,7 @@ const config = {
 			username: process.env.username || 'admin',
 			password: process.env.password || 'password',
 		},
+		baseURLPrefixProxy: false,
 	},
 	workers: 1,
 };

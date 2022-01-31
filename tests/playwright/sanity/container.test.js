@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
-import WpAdminPage from '../pages/wp-admin-page.mjs';
-import { getElementSelector } from '../assets/elements-utils.mjs';
+const { test, expect } = require( '@playwright/test' );
+const { WpAdminPage } = require( '../pages/wp-admin-page.js' );
+const { getElementSelector } = require( '../assets/elements-utils.js' );
 
-test( 'Sort items in a Container using DnD', async ( { page }, testInfo) => {
+test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 

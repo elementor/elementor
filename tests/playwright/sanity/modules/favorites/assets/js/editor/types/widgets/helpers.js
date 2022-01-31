@@ -1,4 +1,4 @@
-export default class {
+module.exports = class {
 	constructor( page ) {
 		this.page = page;
 	}
@@ -17,4 +17,4 @@ export default class {
 		await this.page.click( `.elementor-element >> :text("${ widgetTitle }")`, { button: 'right' } );
 		await this.page.waitForSelector( '.elementor-context-menu' );
 	}
-}
+};

@@ -1,17 +1,17 @@
-import { expect, test } from '@playwright/test'
-import WpAdminPage from "../../pages/wp-admin-page.mjs";
+const { test, expect } = require( '@playwright/test' );
+const { WpAdminPage } = require( '../../pages/wp-admin-page.js' );
 
 let page,
 	editor,
 	wpAdmin;
 
-const createTabsWidget = async( editor, targetID = null ) => {
+const createTabsWidget = async ( editorPage, targetID = null ) => {
 	if ( ! targetID ) {
-		targetID = await editor.addElement( { elType: 'container' }, 'document' );
+		targetID = await editorPage.addElement( { elType: 'container' }, 'document' );
 	}
 
-	return await editor.addWidget( 'nested-tabs', targetID );
-}
+	return await editorPage.addWidget( 'nested-tabs', targetID );
+};
 
 test.describe.serial( 'NestedElementsModule', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -46,7 +46,6 @@ test.describe.serial( 'NestedElementsModule', () => {
 
 	test.describe( 'Component: `nested-elements`', () => {
 		test.describe( 'Component: `nested-elements/nested-repeater`', () => {
-
 			test.describe( 'Commands', () => {
 				test( 'Command: `nested-elements/nested-repeater/select`', async () => {
 					// Arrange.
@@ -57,13 +56,13 @@ test.describe.serial( 'NestedElementsModule', () => {
 					await editor.page.evaluate( ( [ id, index ] ) => {
 						return $e.commands.run( 'nested-elements/nested-repeater/select', {
 								index,
-								container: elementor.getContainer( id )
+								container: elementor.getContainer( id ),
 							}
 						);
 					}, [ widgetId, indexToSelect ] );
 
 					// Assert, Ensure tab selected.
-					const tabTitle = await editor.previewFrame.locator( `:nth-match(:text("Tab #${indexToSelect}"), ${indexToSelect})` );
+					const tabTitle = await editor.previewFrame.locator( `:nth-match(:text("Tab #${ indexToSelect }"), ${ indexToSelect })` );
 
 					await expect( await tabTitle.getAttribute( 'aria-selected' ) ).toBeTruthy();
 				} );
@@ -86,7 +85,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 							'Container',
 							'Nested Tabs',
 							'Tab #1',
-							'Tab #2'
+							'Tab #2',
 						] );
 					} );
 
@@ -115,7 +114,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 
 						// Act.
 						await editor.page.evaluate( ( [ id ] ) => {
-							return $e.run( 'document/repeater/remove',  {
+							return $e.run( 'document/repeater/remove', {
 								container: elementor.getContainer( id ),
 								index: 1,
 								name: 'tabs',
@@ -123,7 +122,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 						}, [ widgetId ] );
 
 						// Assert.
-						await expect( await editor.previewFrame.locator( 'text=Tab #2' ) ).not.toBeVisible()
+						await expect( await editor.previewFrame.locator( 'text=Tab #2' ) ).not.toBeVisible();
 					} );
 				} );
 			} );

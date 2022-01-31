@@ -1,11 +1,11 @@
-import BasePage from './base-page.mjs';
-import { getElementSelector, addElement } from '../assets/elements-utils.mjs';
+const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const { BasePage } = require( './base-page.js' );
 
-export default class EditorPage extends BasePage {
+exports.EditorPage = class EditorPage extends BasePage {
 	isPanelLoaded = false;
 
 	constructor( page, testInfo ) {
-		super( page, testInfo )
+		super( page, testInfo );
 
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
@@ -13,10 +13,10 @@ export default class EditorPage extends BasePage {
 	async openNavigator() {
 		const isOpen = await this.previewFrame.evaluate( () =>
 			elementor.navigator.isOpen()
-		)
+		);
 
 		if ( ! isOpen ) {
-			await this.page.click('#elementor-panel-footer-navigator');
+			await this.page.click( '#elementor-panel-footer-navigator' );
 		}
 	}
 
@@ -76,5 +76,9 @@ export default class EditorPage extends BasePage {
 	 */
 	async getElementHandle( id ) {
 		return this.previewFrame.$( getElementSelector( id ) );
+	}
+
+	getFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 };
