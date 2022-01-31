@@ -32,8 +32,16 @@ export default class Store {
 			// isn't a valid reducer value.
 			reducer: () => {},
 			middleware: ( getDefaultMiddleware ) => getDefaultMiddleware( {
+				/**
+				 * Immutability-check middleware ensures the data inserted into redux slices is immutable. Sometimes
+				 * there are console warnings about time-consuming (30ms+) immutability-checks for certain reducers.
+				 * When running QUnit, it causes it to be "done with warnings", a situation that's not wanted, and
+				 * therefore warn-time should be increased. Same for serializable-check, which ensures data inserted to
+				 * redux slices is serializable. It's important to note that those checks are only performed in
+				 * development mode.
+				 */
 				immutableCheck: { warnAfter: 256 },
-				serializableCheck: false,
+				serializableCheck: { warnAfter: 1024 },
 			} ),
 		} );
 	}
