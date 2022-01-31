@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev36 - 2022-01-31
+* Tweak: Added "Convert to Container" control to each legacy section, inner section and page [ED-5488] (#17515)
+
 #### 3.6.0-dev35 - 2022-01-26
 * Tweak: Test Responsive reverse columns control inoperative [ED-5931] (#17341)
 * Tweak: Internal - Import Kit - Allow to override Kit import temp directory path [ED-5914] (#17381)
@@ -414,8 +417,3 @@
 * Fix: Responsive columns didn't reacted to the appropriate breakpoints (ED-4556) (#15927)
 * Fix: All styles under frontend/general were duplicated (#15925)
 * Tweak: Additional Custom Breakpoints Experiment changed to Beta phase (ED-4600) (#15928)
-
-#### 3.5.0-dev3 - 2021-08-06
-* Fix: When additional breakpoints are active - responsive switcher is slow [ED-4411] (#15849)
-* Tweak: Updated getting started video course [ED-4570] (#15894)
-* Tweak: Preparation in Core for future Page Transitions in Pro [ED-4571] (#15891)
