@@ -10,7 +10,7 @@
 	}
 
 	.elementor-control-dynamic-switcher {
-		border-radius: 0px 3px;
+		border-radius: 0 3px;
 	}
 
 	&:not(.elementor-control-dynamic-value) {
@@ -19,7 +19,7 @@
 			position: absolute;
 			top: 0;
 			z-index: $first-layer;
-			@include end(0);
+			right: 0; // It should always be LTR
 		}
 	}
 
