@@ -24,4 +24,3 @@ module.exports = async ( config ) => {
 	await page.context().storageState( { path: './tests/playwright/config/storageState.json' } );
 	await browser.close();
 };
-	
