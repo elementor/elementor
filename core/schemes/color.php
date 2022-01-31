@@ -284,7 +284,7 @@ class Color extends Base_UI {
 	 * @return string The current color scheme title.
 	 */
 	protected function _get_current_scheme_title() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_funtion( __METHOD__, '3.3.0' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.3.0' );
 
 		return esc_html__( 'Color Palette', 'elementor' );
 	}
