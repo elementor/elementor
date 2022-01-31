@@ -17,7 +17,7 @@ module.exports = async ( config ) => {
 	const dismissButton = await page.$( 'text=Dismiss' );
 
 	if ( dismissButton ) {
-		await page.click( 'Text=Dismiss' );
+		await page.click( 'text=Dismiss' );
 	}
 
 	// Save signed-in state to 'storageState.json'.
