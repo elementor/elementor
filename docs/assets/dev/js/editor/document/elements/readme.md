@@ -184,7 +184,7 @@
 
 ## Paste _Command_ -- `$e.run('document/elements/paste')`
 *  **Name**: Paste.
-*  **Description**: Paste to container.
+*  **Description**: Paste new element into an existing element.
 *  **Returns**: `{Container | Container[]}` *Pasted container(s)*.
 *  **Arguments**: 
 
