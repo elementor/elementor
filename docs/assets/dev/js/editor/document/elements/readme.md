@@ -76,7 +76,7 @@
     ```javascript
     const eColumn = eSection.children[ 0 ];
     ```
-    OR
+    In other cases, where a the column's container-id is provided, we can retrieve the corresponding container instance:
     ```javascript
     const eColumn = elementor.getContainer('cb70e3c');
     ```
