@@ -21,7 +21,7 @@
 
 ## Copy _Command_ -- `$e.run('document/elements/copy')`
 * **Name**: Copy.
-* **Description**: Copy container.
+* **Description**: Copy element.
 * **Returns**: `{void}`
 * **Arguments**: 
 
