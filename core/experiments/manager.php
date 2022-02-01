@@ -72,7 +72,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'mutable', 'on_state_change', 'dependency' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -105,8 +105,13 @@ class Manager extends Base_Object {
 		if ( $experimental_data['mutable'] && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
-			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
-				$this->on_feature_state_change( $experimental_data, $new_state );
+			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
+				try {
+					$this->on_feature_state_change( $experimental_data, $new_state, $feature_option_key );
+				} catch ( Exceptions\Dependency_Exception $e ) {
+					$script = 'history.back()';
+					wp_die( '<p>' . esc_html__( $e->getMessage(), 'elementor' ) . '</p> <p><a href="#" onclick="' . $script .  '">' . esc_html__( 'Back', 'elementor' ) . '</a>' ); // phpcs:ignore
+				}
 			};
 
 			add_action( 'add_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
@@ -504,7 +509,20 @@ class Manager extends Base_Object {
 				<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 			<?php } ?>
 		</div>
-		<?php
+		<?php $this->render_feature_dependency( $feature );
+	}
+
+	private function render_feature_dependency( $feature ) {
+		if ( ! empty( $feature['dependency'] ) ) {
+			?>
+			<div class="e-experiment__dependency">
+				<b class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on:', 'elementor' ); ?></b>
+			<?php foreach ( $feature['dependency'] as $dependency ) : ?>
+				<span class="e-experiment__dependency__item"><?php echo $dependency; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php endforeach; ?>
+			</div>
+			<?php
+		}
 	}
 
 	/**
@@ -602,14 +620,18 @@ class Manager extends Base_Object {
 	 * @param array $old_feature_data
 	 * @param string $new_state
 	 */
-	private function on_feature_state_change( array $old_feature_data, $new_state ) {
-		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
-
+	private function on_feature_state_change( array $old_feature_data, $new_state, $feature_option_key ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
+
+		if ( ! empty( $new_feature_data['dependency'] ) || 'inactive' === $new_state ) {
+			$this->validate_dependency( $new_feature_data, $new_state, $feature_option_key );
+		}
 
 		$actual_old_state = $this->get_feature_actual_state( $old_feature_data );
 
 		$actual_new_state = $this->get_feature_actual_state( $new_feature_data );
+
+		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
 
 		if ( $actual_old_state === $actual_new_state ) {
 			return;
@@ -619,6 +641,36 @@ class Manager extends Base_Object {
 
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
+		}
+
+	}
+
+	private function validate_dependency( array $feature_data, $new_state, $feature_option_key ) {
+		if ( self::STATE_ACTIVE === $new_state ) {
+			// Validate if the current feature dependency is available.
+			foreach ( $feature_data['dependency'] as $dependency ) {
+				$dependency_feature = $this->get_features( $dependency );
+
+				// If dependency is not active.
+				if ( self::STATE_INACTIVE === $dependency_feature['state'] ) {
+					// Rollback.
+					update_option( $feature_option_key, wp_json_encode( $feature_data ) );
+
+					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
+					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'To turn on "%1$s", Experiment: "%2$s" activity is required!', 'elementor' ), $feature_data['name'], $dependency_feature['name'] ) );
+				}
+			}
+		} elseif ( self::STATE_INACTIVE === $new_state ) {
+			// Validate if current feature that goes 'inactive' is not an dependency of current active feature.
+			foreach ( $this->get_features() as $feature ) {
+				if ( self::STATE_ACTIVE === $feature['state'] && ! empty( $feature['dependency'] ) && in_array( $feature_data['name'], $feature['dependency'], true ) ) {
+					// Rollback.
+					update_option( $feature_option_key, self::STATE_ACTIVE );
+
+					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
+					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'Cannot turn off "%1$s", Experiment: "%2$s" is still active!', 'elementor' ), $feature_data['name'], $feature['name'] ) );
+				}
+			}
 		}
 	}
 
