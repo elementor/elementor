@@ -1,7 +1,6 @@
 import tests from '../tests';
 
 /* global require */
-
 export default class EditorBootstrap {
 	constructor() {
 		jQuery( this.initialize.bind( this ) );
@@ -32,19 +31,23 @@ export default class EditorBootstrap {
 			cacheKey = elementorCommon.ajax.getCacheKey( request );
 		elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
-		ajax.silence();
+		ajax.mock();
 		eData.emptyFetch();
 
 		elementor.on( 'preview:loaded', () => {
+			QUnit.start();
+
 			// Disable UI Hooks.
 			$e.hooks.ui.deactivate();
 
 			this.runTests();
 		} );
 
-		elementor.start();
+		elementor.start().then( () => {
+			ajax.silence();
 
-		elementor.$preview.trigger( 'load' );
+			elementor.$preview.trigger( 'load' );
+		} );
 	}
 
 	runTests() {

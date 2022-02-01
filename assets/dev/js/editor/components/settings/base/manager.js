@@ -42,8 +42,10 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
-		const id = this.getContainerId(),
-			editModel = new Backbone.Model( {
+		const documentElementType = elementor.getElementType( 'document' ),
+			ModelClass = documentElementType.getModel(),
+			id = this.getContainerId(),
+			editModel = new ModelClass( {
 				id,
 				elType: id,
 				settings: this.model,
@@ -55,6 +57,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			model: editModel,
 			settings: editModel.get( 'settings' ),
 			view: false,
+			parent: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
 			document: this.getDocument(),

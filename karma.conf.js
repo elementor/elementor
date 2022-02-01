@@ -94,7 +94,7 @@ module.exports = function( config ) {
 		colors: true,
 		logLevel: config.LOG_INFO,
 		browsers: [ 'ChromeHeadless' ],
-		browserDisconnectTimeout: 4000,
+		browserDisconnectTimeout: 6000,
 		pingTimeout: 10000,
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
@@ -104,6 +104,7 @@ module.exports = function( config ) {
 		client: {
 			clearContext: true,
 			qunit: {
+				autostart: false,
 				isDebug,
 				showUI: false,
 				validateContainersAlive: true, // Validate all containers are alive recursively after each test done.

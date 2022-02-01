@@ -13,6 +13,7 @@ jQuery( () => {
 					settings: new Backbone.Model(),
 					model: new Backbone.Model(),
 					label: 'Fake Label',
+					parent: false,
 				},
 				container = new elementorModules.editor.Container( fakeArgs );
 
@@ -42,7 +43,10 @@ jQuery( () => {
 
 		QUnit.test( 'getAffectingControls(): Simple', ( assert ) => {
 			const eButtonSimple = ElementsHelper.createAutoButton(),
-				eButtonStyled = ElementsHelper.createAutoButtonStyled();
+				eButtonStyled = ElementsHelper.createAutoButton( null, {
+					text: 'createAutoButtonStyled',
+					background_color: '#000000',
+				} );
 
 			assert.deepEqual( eButtonSimple.getAffectingControls(), {} );
 			assert.deepEqual( Object.keys( eButtonStyled.getAffectingControls() ), [ 'text', 'background_color' ] );
@@ -93,6 +97,17 @@ jQuery( () => {
 
 			// Assert.
 			assert.equal( controls.text.dynamic.utilized, true );
+		} );
+
+		QUnit.test( 'getParentAncestry(): simple', ( assert ) => {
+			// Arrange.
+			const eButton = ElementsHelper.createAutoButton();
+
+			// Act.
+			const ancestry = eButton.getParentAncestry();
+
+			// Assert.
+			assert.equal( ancestry.length, 4 /* document>section>column>widget */ );
 		} );
 	} );
 } );

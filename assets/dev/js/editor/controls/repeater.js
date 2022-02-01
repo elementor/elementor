@@ -185,7 +185,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	onAddChild: function() {
 		this.updateChildIndexes();
-		this.updateActiveRow();
 	},
 
 	// BC since 3.0.0, ensure a new child is appear in container children.
