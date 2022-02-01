@@ -149,7 +149,7 @@ class Module extends BaseModule {
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
 
 		$result = [
-			'session' => basename( $session_dir ),
+			'session' => $session_dir,
 			'manifest' => $manifest_data,
 		];
 
@@ -175,8 +175,6 @@ class Module extends BaseModule {
 
 		$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
-		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
-
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
@@ -186,7 +184,7 @@ class Module extends BaseModule {
 			if ( 1 === $import_settings['stage'] ) {
 				$result = $this->import_stage_1();
 			} elseif ( 2 === $import_settings['stage'] ) {
-				$result = $this->import_stage_2( $import_settings['directory'] );
+				$result = $this->import_stage_2( $import_settings['session'] );
 			}
 
 			wp_send_json_success( $result );
