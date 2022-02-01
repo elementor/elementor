@@ -5,6 +5,16 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
+/**
+ * @typedef {{}} DataBinding
+ * @property {DOMStringMap} dataset
+ * @property {HTMLElement} el
+ */
+
+/**
+ * @name BaseElementView
+ * @extends {BaseContainer}
+ */
 BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
@@ -577,11 +587,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	renderOnChange( settings ) {
-		if ( ! this.allowRender ) {
-			return;
-		}
-
+	renderChanges( settings, shouldRenderUI = true ) {
 		// Make sure is correct model
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
@@ -619,14 +625,148 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			if ( ! isContentChanged ) {
+			if ( shouldRenderUI && ! isContentChanged ) {
 				this.renderUI();
+
 				return;
 			}
 		}
 
-		// Re-render the template
 		this.renderHTML();
+	},
+
+	/**
+	 * Function linkDataBindings().
+	 *
+	 * Link data to allow partial render, instead of full re-render
+	 *
+	 * How to use?
+	 *  If the element which should be rendered for a setting key is known in advance, it's possible to add the following attributes to the element to avoid full re-render:
+	 *  Example for repeater item:
+	 * 'data-binding-type': 'repeater-item',               // Type of binding (to know how to behave).
+	 * 'data-binding-setting': 'tab_title',                // Setting key that effect the binding.
+	 * 'data-binding-index': tabCount,                     // Index is required for repeater items.
+	 *
+	 * Example for content:
+	 * 'data-binding-type': 'content',                     // Type of binding.
+	 * 'data-binding-setting': 'testimonial_content',      // Setting change to capture, the value will replace the link.
+	 *
+	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
+	 *
+	 * Current Limitation:
+	 * Not working with dynamics, will required full re-render.
+	 */
+	linkDataBindings() {
+		/**
+		 * @type {Array.<DataBinding>}
+		 */
+		this.dataBindings = [];
+
+		const id = this.$el.data( 'id' );
+
+		if ( ! id ) {
+			return;
+		}
+
+		const $dataBinding = this.$el.find( '[data-binding-type]' );
+
+		if ( ! $dataBinding.length ) {
+			return;
+		}
+
+		const self = this;
+
+		$dataBinding.filter( function() {
+			const $current = jQuery( this );
+
+			// To support nested data-binding bypass nested data-binding that are not part of the current.
+			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
+				if ( this.dataset.bindingType ) {
+					self.dataBindings.push( {
+						el: this,
+						dataset: this.dataset,
+					} );
+				}
+			}
+		} );
+	},
+
+	/**
+	 * Function renderDataBindings().
+	 *
+	 * Render linked data.
+	 *
+	 * @param {Object} settings
+	 * @param {Array.<DataBinding>} dataBindings
+	 *
+	 * @returns {boolean} - false on fail.
+	 */
+	renderDataBindings( settings, dataBindings ) {
+		if ( ! this.dataBindings?.length ) {
+			return false;
+		}
+
+		let changed = false;
+
+		for ( const dataBinding of dataBindings ) {
+			switch ( dataBinding.dataset.bindingType ) {
+				case 'repeater-item': {
+					const repeater = this.container.repeaters[ dataBinding.dataset.bindingRepeaterName ];
+
+					if ( ! repeater ) {
+						break;
+					}
+
+					const container = repeater.children.find( ( i ) => i.id === settings.attributes._id );
+
+					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
+						const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+
+						if ( change !== undefined ) {
+							changed = true;
+							dataBinding.el.innerHTML = change;
+						}
+					}
+				}
+				break;
+
+				case 'content': {
+					if ( undefined !== settings.changed[ dataBinding.dataset.bindingSetting ] ) {
+						const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+
+						changed = true;
+						dataBinding.el.innerHTML = change;
+					}
+				}
+				break;
+			}
+
+			if ( changed ) {
+				break;
+			}
+		}
+
+		return changed;
+	},
+
+	/**
+	 * Function renderOnChange().
+	 *
+	 * Render the changes in the settings according to the current situation.
+	 *
+	 * @param {Object} settings
+	 */
+	renderOnChange( settings ) {
+		if ( ! this.allowRender ) {
+			return;
+		}
+
+		// If not a dynamic change, and renderDataBindings() was successful, then it was rendered.
+		if ( ! settings.__dynamic__ && this.renderDataBindings( settings, this.dataBindings ) ) {
+			return;
+		}
+
+		this.renderChanges( settings );
 	},
 
 	getDynamicParsingSettings() {
@@ -663,6 +803,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onRender() {
+		this.linkDataBindings();
+
 		this.renderUI();
 
 		this.runReadyTrigger();
@@ -749,6 +891,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onDestroy() {
+		if ( this.dataBindings ) {
+			delete this.dataBindings;
+		}
+
 		this.controlsCSSParser.removeStyleFromDocument();
 
 		this.getEditModel().get( 'settings' ).validators = {};
