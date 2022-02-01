@@ -1,5 +1,6 @@
 /* global ElementorConfig */
 
+import ElementBase from './elements/elements/base';
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
@@ -23,6 +24,9 @@ import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
+import WidgetBase from './elements/widgets/base';
+
+import * as elements from './elements/';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -180,6 +184,8 @@ export default class EditorBase extends Marionette.Application {
 			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
 		},
 		elements: {
+			Base: ElementBase,
+
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
@@ -190,6 +196,8 @@ export default class EditorBase extends Marionette.Application {
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
+				BaseElement: require( 'elementor-elements/views/base' ),
+				BaseWidget: require( 'elementor-elements/views/base-widget' ),
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 		},
@@ -216,7 +224,17 @@ export default class EditorBase extends Marionette.Application {
 				return elementorModules.editor.views.ControlsStack;
 			},
 		},
+		widgets: {
+			Base: WidgetBase,
+		},
 	};
+
+	/**
+	 * Registered elements types.
+	 *
+	 * @type {Object.<ElementBase>}
+	 */
+	registeredElements = {};
 
 	userCan( capability ) {
 		return -1 === this.config.user.restrictions.indexOf( capability );
@@ -1067,6 +1085,8 @@ export default class EditorBase extends Marionette.Application {
 			this.generateResponsiveControlsForElements();
 		}
 
+		this.registerElements();
+
 		this.initComponents();
 
 		if ( ! this.checkEnvCompatibility() ) {
@@ -1530,5 +1550,50 @@ export default class EditorBase extends Marionette.Application {
 			type = state ? 'text/css' : 'elementor/disabled-css';
 
 		$files.attr( { type } );
+	}
+
+	getElementType( elType, widgetType = false ) {
+		let index = elType,
+			result = this.registeredElements[ index ];
+
+		if ( 'widget' === elType ) {
+			if ( ! widgetType ) {
+				throw new TypeError( 'Missing widget type' );
+			}
+
+			index += '-' + widgetType;
+		}
+
+		if ( this.registeredElements[ index ] ) {
+			result = this.registeredElements[ index ];
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param {ElementBase} element
+	 */
+	registerElementType( element ) {
+		// Validate instanceOf `element`.
+		if ( ! ( element instanceof ElementBase ) ) {
+			throw new TypeError( 'The element argument must be an instance of ElementBase.' );
+		}
+
+		const index = element.getTypeIndex();
+
+		if ( this.registeredElements[ index ] ) {
+			throw new Error( 'Element type already registered' );
+		}
+
+		this.registeredElements[ index ] = element;
+	}
+
+	registerElements() {
+		Object.values( elements ).forEach( ( ElementClass ) => {
+			const element = new ElementClass();
+
+			this.registerElementType( element );
+		} );
 	}
 }

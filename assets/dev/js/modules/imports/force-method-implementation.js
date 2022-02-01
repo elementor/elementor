@@ -1,14 +1,19 @@
 // TODO: Wrong location used as `elementorModules.ForceMethodImplementation(); should be` `elementorUtils.forceMethodImplementation()`;
 
 export class ForceMethodImplementation extends Error {
-	constructor( info = {} ) {
-		super( `${ info.isStatic ? 'static ' : '' }${ info.fullName }() should be implemented, please provide '${ info.functionName || info.fullName }' functionality.` );
+	constructor( info = {}, args = {} ) {
+		super( `${ info.isStatic ? 'static ' : '' }${ info.fullName }() should be implemented, please provide '${ info.functionName || info.fullName }' functionality.`, args );
+
+		if ( Object.keys( args ).length ) {
+			// eslint-disable-next-line no-console
+			console.error( args );
+		}
 
 		Error.captureStackTrace( this, ForceMethodImplementation );
 	}
 }
 
-export default () => {
+export default ( args ) => {
 	const stack = Error().stack,
 		caller = stack.split( '\n' )[ 2 ].trim(),
 		callerName = caller.startsWith( 'at new' ) ?
@@ -27,5 +32,5 @@ export default () => {
 		info.isStatic = true;
 	}
 
-	throw new ForceMethodImplementation( info );
+	throw new ForceMethodImplementation( info, args );
 };
