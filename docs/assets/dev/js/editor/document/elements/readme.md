@@ -72,7 +72,7 @@
     } );  
     ```
     Result: ![empty-column](./_images/empty-column.png)
-    Now, in order to create the widget, we need a column. There are two ways to access the column:
+    Now, in order to create the widget, we need a column. There are two ways to access the automatically created column, depends on the context. When the section's container instance is available, we can simply access its children:
     ```javascript
     const eColumn = eSection.children[ 0 ];
     ```
