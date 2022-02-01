@@ -132,9 +132,10 @@ PanelMenu.exitDialog = () => {
 		select.appendChild( option );
 	}
 
-	link.addEventListener( 'click', ( a ) => {
-		a.preventDefault();
+	link.addEventListener( 'click', ( e ) => {
+		e.preventDefault();
 
+		introduction.setViewed();
 		introduction.getDialog().hide();
 		$e.route( 'panel/editor-preferences' );
 	});
