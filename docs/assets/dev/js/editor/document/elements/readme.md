@@ -2,7 +2,7 @@
 ## Component -- `$e.components.get('document/elements')`
 
 *  **Name**: Elements.
-*  **Description**: Provides a way to manipulate the document elements: create, edit, delete, copy, paste, etc...
+*  **Description**: Provides a way to manipulate and perform actions on the currently edited document: create, edit, delete, copy, paste, select, deselect, etc. It's possible using the elements container instances.
 
 ## Component `document/elements/` -- Commands
 | Command                                                                | Access                                             | Description         
