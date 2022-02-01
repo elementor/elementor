@@ -37,6 +37,5 @@
   "responsive": {
 	"breakpoints":  {},
 	"activeBreakpoints": {}
-  },
-  "experimentalFeatures": {}
+  }
 }

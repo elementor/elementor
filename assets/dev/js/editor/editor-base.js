@@ -2,7 +2,7 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from './components/documents/component';
+import EditorComponent from './component';
 import environment from 'elementor-common/utils/environment';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
@@ -366,7 +366,9 @@ export default class EditorBase extends Marionette.Application {
 
 		this.browserImport = new BrowserImport();
 
-		this.documents = $e.components.register( new EditorDocuments() );
+		$e.components.register( new EditorComponent() );
+
+		elementor.documents = $e.components.get( 'editor/documents' );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -1010,31 +1012,35 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	requestWidgetsConfig() {
-		const excludeWidgets = {};
+		return new Promise( ( resolve ) => {
+			const excludeWidgets = {};
 
-		jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
-			if ( widgetConfig.controls ) {
-				excludeWidgets[ widgetName ] = true;
-			}
-		} );
-
-		elementorCommon.ajax.addRequest( 'get_widgets_config', {
-			data: {
-				exclude: excludeWidgets,
-			},
-			success: ( data ) => {
-				this.addWidgetsCache( data );
-
-				if ( this.loaded ) {
-					this.kitManager.renderGlobalsDefaultCSS();
-
-					$e.internal( 'panel/state-ready' );
-				} else {
-					this.once( 'panel:init', () => {
-						$e.internal( 'panel/state-ready' );
-					} );
+			jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
+				if ( widgetConfig.controls ) {
+					excludeWidgets[ widgetName ] = true;
 				}
-			},
+			} );
+
+			elementorCommon.ajax.addRequest( 'get_widgets_config', {
+				data: {
+					exclude: excludeWidgets,
+				},
+				success: ( data ) => {
+					this.addWidgetsCache( data );
+
+					if ( this.loaded ) {
+						this.kitManager.renderGlobalsDefaultCSS();
+
+						$e.internal( 'panel/state-ready' );
+					} else {
+						this.once( 'panel:init', () => {
+							$e.internal( 'panel/state-ready' );
+						} );
+					}
+
+					resolve();
+				},
+			} );
 		} );
 	}
 
@@ -1052,7 +1058,20 @@ export default class EditorBase extends Marionette.Application {
 		return ElementorConfig;
 	}
 
-	onStart() {
+	/**
+	 * @inheritDoc
+	 *
+	 * Modify original start to pass the 'Promise' from 'onStart'.
+	 *
+	 * @returns {Promise}
+	 */
+	start( options ) {
+		this.triggerMethod( 'before:start', options );
+		this._initCallbacks.run( options, this );
+		return this.triggerMethod( 'start', options );
+	}
+
+	async onStart() {
 		this.config = this.getConfig();
 
 		Backbone.Radio.DEBUG = false;
@@ -1069,13 +1088,14 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initComponents();
 
+		// `initPreview` is depends on widgets config with available controls.
+		await this.requestWidgetsConfig();
+
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
 		}
 
 		this.initPreview();
-
-		this.requestWidgetsConfig();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
