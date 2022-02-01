@@ -4,7 +4,6 @@ namespace Elementor\Modules\Shapes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
-	// test comment
 }
 
 class Module extends \Elementor\Core\Base\Module {
