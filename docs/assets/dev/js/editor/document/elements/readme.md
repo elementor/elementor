@@ -118,7 +118,7 @@
 
 ## Duplicate _Command_ -- `$e.run('document/elements/duplicate')`
 *  **Name**: Duplicate.
-*  **Description**: Duplicate container.
+*  **Description**: Duplicate element.
 *  **Returns**: `{Container | Container[]}` *Created container(s)*.
 *  **Arguments**: 
 
