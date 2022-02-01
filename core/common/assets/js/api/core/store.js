@@ -35,10 +35,14 @@ export default class Store {
 				/**
 				 * Sometimes there are console warnings about time-consuming (32ms+) Redux middlewares (serializable,
 				 * immutable) for certain reducers in development mode. When running QUnit, it causes it to be "done
-				 * with warnings". To disable warnings, `warnAfter` is set to `Infinity`.
+				 * with warnings", and therefore in testing mode those middlewares should be deactivated.
+				 *
+				 * @see QUnit `EditorBootstrap` class, where the middlewares are disabled.
 				 */
-				immutableCheck: { warnAfter: Infinity },
-				serializableCheck: { warnAfter: Infinity },
+				...( elementorCommonConfig.isTesting ? {
+					immutableCheck: false,
+					serializableCheck: false,
+				} : {} ),
 			} ),
 		} );
 	}

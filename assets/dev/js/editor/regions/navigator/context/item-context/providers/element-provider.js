@@ -9,8 +9,10 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	 *
 	 * @type {Container|false}
 	 */
-	const container = elementor.getContainer( elementId ) ||
-		new elementorModules.editor.Container( { type: 'element', id: 'fallback', model: new Backbone.Model( {} ), elements: new Backbone.Model( [] ), settings: new Backbone.Model( {} ) } );
+	const container = useMemo(
+		() => elementor.getContainer( elementId ),
+	[]
+	);
 
 	/**
 	 * The element selector from store.
