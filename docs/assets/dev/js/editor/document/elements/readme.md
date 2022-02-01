@@ -246,7 +246,7 @@
 
 ## Reset-Style _Command_ -- `$e.run('document/elements/reset-style')`
 *  **Name**: Reset-Style.
-*  **Description**: Rest style of container.
+*  **Description**: Rest style of an element.
 *  **Returns**: `{void}`.
 *  **Arguments**: 
 
