@@ -274,7 +274,7 @@
 
 ## Settings _Command_ -- `$e.run('document/elements/settings')`
 *  **Name**: Settings.
-*  **Description**: Change container settings.
+*  **Description**: Change element settings.
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
