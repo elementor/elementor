@@ -94,7 +94,7 @@
 
 ## Delete _Command_ -- `$e.run('document/elements/delete')`
 *  **Name**: Delete.
-*  **Description**: Delete container.
+*  **Description**: Delete element.
 *  **Returns**: `{Container | Container[]}` *Deleted container(s)*.
 *  **Arguments**: 
 
