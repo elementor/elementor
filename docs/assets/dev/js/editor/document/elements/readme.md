@@ -2,22 +2,22 @@
 ## Component -- `$e.components.get('document/elements')`
 
 *  **Name**: Elements.
-*  **Description**: Provides a way to manipulate and perform actions on the currently edited document: create, edit, delete, copy, paste, select, deselect, etc. It's possible using the elements container instances.
+*  **Description**: Provides a way to manipulate and perform actions on the currently edited document: create, edit, delete, copy, paste, select, deselect, etc. It's possible using elements [Container](#) instances.
 
 ## Component `document/elements/` -- Commands
 | Command                                                                | Access                                             | Description         
 |------------------------------------------------------------------------|----------------------------------------------------|-----------------------------------------
-| [Copy](#copy-command----erundocumentelementscopy)                      | `$e.run('document/elements/copy')`                 | Copy element
-| [Copy-All](#copyall-command----erundocumentelementscopy-all)           | `$e.run('document/elements/copy-all')`             | Copy all elements in the document
-| [Create](#create-command----erundocumentelementscreate)                | `$e.run('document/elements/create')`               | Create element
-| [Delete](#delete-command----erundocumentelementsdelete)                | `$e.run('document/elements/delete')`               | Delete element
-| [Duplicate](#duplicate-command----erundocumentelementsduplicate)       | `$e.run('document/elements/duplicate')`            | Duplicate element
-| [Empty](#empty-command----erundocumentelementsempty)                   | `$e.run('document/elements/empty')`                | Empty document element
-| [Import](#import-command----erundocumentelementsimport)                | `$e.run('document/elements/import')`               | Import element to the document
-| [Paste](#paste-command----erundocumentelementspaste)                   | `$e.run('document/elements/paste')`                | Paste new element into an existing element
-| [Paste-Style](#paste-style-command----erundocumentelementspaste-style) | `$e.run('document/elements/paste-style')`          | Paste style to element
-| [Reset-Style](#reset-style-command----erundocumentelementsreset-style) | `$e.run('document/elements/reset-style')`          | Reset style to element
-| [Settings](#settings-command----erundocumentelementssettings)          | `$e.run('document/elements/settings')`             | Change settings of an element
+| [Copy](#copy-command----erundocumentelementscopy)                      | `$e.run('document/elements/copy')`                 | Copy element.
+| [Copy-All](#copyall-command----erundocumentelementscopy-all)           | `$e.run('document/elements/copy-all')`             | Copy all elements in the document.
+| [Create](#create-command----erundocumentelementscreate)                | `$e.run('document/elements/create')`               | Create element.
+| [Delete](#delete-command----erundocumentelementsdelete)                | `$e.run('document/elements/delete')`               | Delete element.
+| [Duplicate](#duplicate-command----erundocumentelementsduplicate)       | `$e.run('document/elements/duplicate')`            | Duplicate element.
+| [Empty](#empty-command----erundocumentelementsempty)                   | `$e.run('document/elements/empty')`                | Empty document element.
+| [Import](#import-command----erundocumentelementsimport)                | `$e.run('document/elements/import')`               | Import elements.
+| [Paste](#paste-command----erundocumentelementspaste)                   | `$e.run('document/elements/paste')`                | Paste new element(s) into an existing element/document.
+| [Paste-Style](#paste-style-command----erundocumentelementspaste-style) | `$e.run('document/elements/paste-style')`          | Paste style to element.
+| [Reset-Style](#reset-style-command----erundocumentelementsreset-style) | `$e.run('document/elements/reset-style')`          | Reset style to element.
+| [Settings](#settings-command----erundocumentelementssettings)          | `$e.run('document/elements/settings')`             | Change settings of an element.
 
 ## Copy _Command_ -- `$e.run('document/elements/copy')`
 * **Name**: Copy.
@@ -38,10 +38,10 @@
 *  **Arguments**: None.
 
 ## Create _Command_ -- `$e.run('document/elements/create')`
-*  **Name**: Create.
-*  **Description**: Create element from model.
-*  **Returns**: `{Container | Container[]}` *Created container(s)*.
-*  **Arguments**: 
+* **Name**: Create.
+* **Description**: Create element from model.
+* **Returns**: `{Container | Container[]}` *Created container(s)*.
+* **Arguments**: 
 
     | Property     | Type             | Description |
     |---           |---               |---|
@@ -71,7 +71,10 @@
       model: { elType: 'section' },
     } );  
     ```
-    Result: ![empty-column](./_images/empty-column.png)
+    Result: 
+    
+    ![empty-column](./_images/empty-column.png)
+    
     Now, in order to create the widget, we need a column. There are two ways to access the automatically created column, depends on the context. When the section's container instance is available, we can simply access its children:
     ```javascript
     const eColumn = eSection.children[ 0 ];
@@ -90,7 +93,9 @@
         },
     } );
     ```
-    Result: ![widget-heading](./_images/widget-heading.png)
+    Result: 
+    
+    ![widget-heading](./_images/widget-heading.png)
 
 ## Delete _Command_ -- `$e.run('document/elements/delete')`
 *  **Name**: Delete.
@@ -117,10 +122,10 @@
     Result: The section and all of its child elements are deleted.
 
 ## Duplicate _Command_ -- `$e.run('document/elements/duplicate')`
-*  **Name**: Duplicate.
-*  **Description**: Duplicate element.
-*  **Returns**: `{Container | Container[]}` *Created container(s)*.
-*  **Arguments**: 
+* **Name**: Duplicate.
+* **Description**: Duplicate element.
+* **Returns**: `{Container | Container[]}` *Created container(s)*.
+* **Arguments**: 
 
    | Property     | Type             | Description |
    |---           |---               |---|
@@ -139,6 +144,7 @@
     } );
     ```
     Result: 
+    
     ![widget-heading-duplicated](./_images/widget-heading-duplicated.png)
 
 ## Empty _Command_ -- `$e.run('document/elements/empty')`
@@ -153,7 +159,7 @@
 
 ## Import _Command_ -- `$e.run('document/elements/import')`
 *  **Name**: Import.
-*  **Description**: Import elements to the document.
+*  **Description**: Import elements.
 *  **Returns**: `{Container | Container[]}` *Imported container(s)*.
 *  **Arguments**:
 
@@ -183,10 +189,10 @@
     | trigger          | `{Boolean}`                       | `{false}` | *Deprecated*.
 
 ## Paste _Command_ -- `$e.run('document/elements/paste')`
-*  **Name**: Paste.
-*  **Description**: Paste new element into an existing element.
-*  **Returns**: `{Container | Container[]}` *Pasted container(s)*.
-*  **Arguments**: 
+* **Name**: Paste.
+* **Description**: Paste new element(s) into an existing element or document.
+* **Returns**: `{Container | Container[]}` *Pasted container(s)*.
+* **Arguments**: 
 
    | Property     | Type             | Description |
    |---           |---               |---|
@@ -211,13 +217,15 @@
     
     console.log( pastedContainers );
     ```
-    Result:![widget-heading-pasted](./_images/widget-heading-pasted.png)
+    Result:
+
+   ![widget-heading-pasted](./_images/widget-heading-pasted.png)
 
 ## Paste-Style _Command_ -- `$e.run('document/elements/paste-style')`
-*  **Name**: Paste-Style.
-*  **Description**: Paste style to element.
-*  **Returns**: `{void}`.
-*  **Arguments**: 
+* **Name**: Paste-Style.
+* **Description**: Paste style to element.
+* **Returns**: `{void}`.
+* **Arguments**: 
 
    | Property     | Type             | Description |
    |---           |---               |---|
@@ -242,7 +250,9 @@
         container: eSpecialWidget
     } );
     ```
-    Result:![widget-heading-pasted](./_images/widget-heading-pasted.png)
+    Result:
+
+   ![widget-heading-pasted](./_images/widget-heading-pasted.png)
 
 ## Reset-Style _Command_ -- `$e.run('document/elements/reset-style')`
 *  **Name**: Reset-Style.
