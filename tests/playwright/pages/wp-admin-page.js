@@ -1,12 +1,10 @@
-exports.WpAdminPage = class wpAdminPage {
-	/**
-	 * @param {import('@playwright/test').Page} page
-	 */
-	constructor( page ) {
-		this.page = page;
-	}
+const BasePage = require( './base-page.js' );
+const EditorPage = require( './editor-page.js' );
 
-	async gotoDashboard() {
+const CLEAN_POST_ID = 1;
+
+module.exports = class WpAdminPage extends BasePage {
+    async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
 	}
 
@@ -20,20 +18,60 @@ exports.WpAdminPage = class wpAdminPage {
 		}
 
 		await this.page.waitForSelector( 'text=Log In' );
-		await this.page.fill( 'input[name="log"]', 'admin' );
-		await this.page.waitForTimeout( 500 );
-		await this.page.fill( 'input[name="pwd"]', 'password' );
+		await this.page.fill( 'input[name="log"]', this.config.user.username );
+		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage() {
-		if ( ! await this.page.$( 'text=Create New Page' ) ) {
-			await this.gotoDashboard();
+	async waitForPanel() {
+		await this.page.waitForSelector( '#elementor-panel-header-title' );
+	}
+
+	async createNewPage() {
+		try {
+			await this.page.click( 'text=Create New Page', { timeout: 5000 } );
+		} catch ( err ) {
+			console.error( "Click on Elementor 'Create New Page' button failed" );
+			await this.page.waitForSelector( 'text=Dashboard' );
+			await this.page.click( 'text=Pages' );
+
+			await Promise.all( [
+				this.page.waitForNavigation( { url: '/wp-admin/post-new.php?post_type=page' } ),
+				this.page.click( 'div[role="main"] >> text=Add New' ),
+			] );
+
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				this.skipTutorial(),
+				this.page.click( 'text=← Back to WordPress Editor Edit with Elementor' ),
+			] );
 		}
 
-		await this.page.click( 'text=Create New Page' );
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
+		await this.waitForPanel();
+
+		return new EditorPage( this.page, this.testInfo );
+	}
+
+	async useElementorCleanPost() {
+		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
+
+		await this.waitForPanel();
+
+		const editor = new EditorPage( this.page, this.testInfo );
+
+		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
+
+		return editor;
+	}
+
+	async skipTutorial() {
+		await this.page.waitForTimeout( 1000 );
+		const next = await this.page.$( "text='Next'" );
+
+		if ( next ) {
+			await this.page.click( '[aria-label="Close dialog"]' );
+		}
 	}
 
 	/**
@@ -46,7 +84,7 @@ exports.WpAdminPage = class wpAdminPage {
 	 * @return {Promise<void>}
 	 */
 	async setExperiments( experiments = {} ) {
-		await this.page.goto( 'wp-admin/admin.php?page=elementor#tab-experiments' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 
 		const prefix = 'e-experiment';
 
@@ -57,10 +95,5 @@ exports.WpAdminPage = class wpAdminPage {
 		}
 
 		await this.page.click( '#submit' );
-	}
-
-	async createNewPage() {
-		await this.login();
-		await this.openNewPage();
 	}
 };
