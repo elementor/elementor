@@ -215,7 +215,7 @@
 
 ## Paste-Style _Command_ -- `$e.run('document/elements/paste-style')`
 *  **Name**: Paste-Style.
-*  **Description**: Paste style to container.
+*  **Description**: Paste style to element.
 *  **Returns**: `{void}`.
 *  **Arguments**: 
 
