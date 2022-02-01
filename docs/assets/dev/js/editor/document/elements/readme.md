@@ -33,7 +33,7 @@
 
 ## CopyAll _Command_ -- `$e.run('document/elements/copy-all')`
 *  **Name**: Copy-All.
-*  **Description**: Copy all containers.
+*  **Description**: Copy all elements in the document.
 *  **Returns**: `{void}`
 *  **Arguments**: None.
 
