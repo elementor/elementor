@@ -19,15 +19,15 @@ export class Import extends CommandHistory {
 
 	apply( args ) {
 		const { data, options = args.options || {} } = args,
-			previewContainer = elementor.getPreviewContainer(),
+			target = options.target || elementor.getPreviewContainer(),
 			result = [];
 
-		let at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
+		let at = isNaN( options.at ) ? target.view.collection.length : options.at;
 
 		// Each `data.content`.
 		Object.values( data.content ).forEach( ( model ) => {
 			result.push( $e.run( 'document/elements/create', {
-				container: elementor.getPreviewContainer(),
+				container: target,
 				model,
 				options: Object.assign( options, { at } ),
 			} ) );
