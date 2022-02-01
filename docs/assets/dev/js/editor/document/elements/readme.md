@@ -54,7 +54,7 @@
    
     | Property    | Type                              | Default   | Description                            |
     |-------------|-----------------------------------|-----------|----------------------------------------|
-    | at          | `{Number}`                        | `{null}`  | Position (`null` means last). 
+    | at          | `{Number}`                        | `{null}`  | Index position (`null` means last). 
     | clone       | `{Boolean}`                       | `{false}` | Generate unique id for the model.
     | edit        | `{Boolean}`                       | `{false}` | Whether to open the panel for editing after creating the element.
     | onBeforeAdd | `{function()}`                    |           | Run callback before add.
