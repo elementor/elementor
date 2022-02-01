@@ -6,7 +6,10 @@ export const PasteStyle = () => {
 		elementorCommon.storage.set( 'clipboard', '' );
 
 		const eSimpleButton = ElementsHelper.createAutoButton(),
-			eStyleButton = ElementsHelper.createAutoButtonStyled();
+			eStyleButton = ElementsHelper.createAutoButton( null, {
+				text: 'createAutoButtonStyled',
+				background_color: '#000000',
+			} );
 
 		ElementsHelper.copy( eStyleButton );
 

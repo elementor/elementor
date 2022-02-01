@@ -29,7 +29,7 @@ export const Create = () => {
 
 			QUnit.test( 'Widget', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					isButtonCreated = !! elementor.getPreviewContainer().children[ 0 ].children[ 0 ].children.find(
 						( widget ) => widget.id === eButton.id
 					);
@@ -189,7 +189,7 @@ export const Create = () => {
 			QUnit.test( 'Widgets', ( assert ) => {
 				const eColumn1 = ElementsHelper.createSection( 1, true ),
 					eColumn2 = ElementsHelper.createSection( 1, true ),
-					eButtons = ElementsHelper.multiCreateButton( [ eColumn1, eColumn2 ] ),
+					eButtons = ElementsHelper.multiCreateWidgetButton( [ eColumn1, eColumn2 ] ),
 					isButton1Created = !! eColumn1.children.find( ( widget ) => eButtons[ 0 ].id === widget.id ),
 					isButton2Created = !! eColumn2.children.find( ( widget ) => eButtons[ 1 ].id === widget.id );
 
