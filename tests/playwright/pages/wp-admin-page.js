@@ -28,7 +28,7 @@ exports.WpAdminPage = class wpAdminPage {
 	}
 
 	async openNewPage() {
-		if ( ! await this.page.$( 'text=Create New Page' ) ) {
+		if ( ! await this.page.$( '"text=Create New Page"' ) ) {
 			await this.gotoDashboard();
 		}
 
