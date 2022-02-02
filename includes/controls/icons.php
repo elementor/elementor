@@ -100,29 +100,85 @@ class Control_Icons extends Control_Base_Multiple {
 
 	public function render_inline_skin() {
 		?>
+		<#
+			const getLabel = ( choice, data ) => {
+				switch( choice ) {
+					case 'none':					
+						if ( data.skin_settings.inline.none.label ) {
+							return data.skin_settings.inline.none.label;
+						} else {
+							return '<?php echo esc_html__( 'None', 'elementor' ); ?>';
+						}
+					case 'svg':
+						if ( data.skin_settings.inline.svg.label !== undefined ) {
+							return data.skin_settings.inline.svg.label;
+						} else {
+							return '<?php echo esc_html__( 'Upload SVG', 'elementor' ); ?>';
+						}
+
+					case 'icon':
+						if ( data.skin_settings.inline.icon.label !== undefined ) {
+							return data.skin_settings.inline.icon.label;
+						} else {
+							return '<?php echo esc_html__( 'Icon Library', 'elementor' ); ?>';
+						}
+
+					default:
+						return '<?php echo esc_html__( 'None', 'elementor' ); ?>';
+				}
+			}
+
+			const getIcon = ( choice, data ) => {
+				switch( choice ) {
+					case 'none':
+						if ( data.skin_settings.inline.none.icon ) {
+							return data.skin_settings.inline.none.icon;
+						} else {
+							return 'eicon-ban';
+						}
+
+					case 'svg':
+						if ( data.skin_settings.inline.svg.icon ) {
+							return data.skin_settings.inline.svg.icon;
+						} else {
+							return 'eicon-upload';
+						}
+
+					case 'icon':
+						if ( data.skin_settings.inline.icon.icon ) {
+							return data.skin_settings.inline.icon.icon;
+						} else {
+							return 'eicon-circle';
+						}
+
+					default:
+						return 'eicon-ban';
+				}
+			}
+		#>
 		<div class="elementor-control-field elementor-control-inline-icon">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
 					<input id="<?php $this->print_control_uid(); ?>-none" type="radio" value="none">
-					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="<?php echo esc_html__( 'None', 'elementor' ); ?>" title="<?php echo esc_html__( 'None', 'elementor' ); ?>">
-						<i class="eicon-ban" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'None', 'elementor' ); ?></span>
+					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{{ getLabel( 'none', data ) }}}" title="{{{ getLabel( 'none', data ) }}}">
+						<i class="{{{ getIcon( 'none', data ) }}}" aria-hidden="true"></i>
+						<span class="elementor-screen-only">{{{ getLabel( 'none', data ) }}}</span>
 					</label>
 					<# if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-svg" type="radio" value="svg">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="<?php echo esc_html__( 'Upload SVG', 'elementor' ); ?>" title="<?php echo esc_html__( 'Upload SVG', 'elementor' ); ?>">
-							<i class="eicon-upload" aria-hidden="true"></i>
-							<span class="elementor-screen-only"><?php echo esc_html__( 'Upload SVG', 'elementor' ); ?></span>
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{{ getLabel( 'svg', data ) }}}" title="{{{ getLabel( 'svg', data ) }}}">
+							<i class="{{{ getIcon( 'svg', data ) }}}" aria-hidden="true"></i>
+							<span class="elementor-screen-only">{{{ getLabel( 'svg', data ) }}}</span>
 						</label>
 					<# }
 					if ( ! data.exclude_inline_options.includes( 'icon' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-icon" type="radio" value="icon">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="<?php echo esc_html__( 'Icon Library', 'elementor' ); ?>" title="<?php echo esc_html__( 'Icon Library', 'elementor' ); ?>">
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="{{{ getLabel( 'icon', data ) }}}" title="{{{ getLabel( 'icon', data ) }}}">
 							<span class="elementor-control-icons--inline__displayed-icon">
-								<i class="eicon-circle" aria-hidden="true"></i>
+								<i class="{{{ getIcon( 'icon', data ) }}}" aria-hidden="true"></i>
 							</span>
-							<span class="elementor-screen-only"><?php echo esc_html__( 'Icon Library', 'elementor' ); ?></span>
+							<span class="elementor-screen-only">{{{ getLabel( 'icon', data ) }}}</span>
 						</label>
 					<# } #>
 				</div>
@@ -157,6 +213,23 @@ class Control_Icons extends Control_Base_Multiple {
 			'recommended' => false,
 			'skin' => 'media',
 			'exclude_inline_options' => [],
+			'disable_initial_active_state' => false,
+			'skin_settings' => [
+				'inline' => [
+					'none' => [
+						'label' => 'None',
+						'icon' => 'eicon-ban',
+					],
+					'svg' => [
+						'label' => 'Upload SVG',
+						'icon' => 'eicon-upload',
+					],
+					'icon' => [
+						'label' => 'Icon Library',
+						'icon' => 'eicon-circle',
+					],
+				],
+			],
 		];
 	}
 

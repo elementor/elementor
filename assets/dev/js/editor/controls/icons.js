@@ -261,6 +261,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		const controlValue = this.getControlValue(),
 			skin = this.model.get( 'skin' ),
 			iconContainer = 'inline' === skin ? this.ui.inlineDisplayedIcon : this.ui.previewPlaceholder,
+			skinOptions = this.model.get( 'skin_settings' ),
+			disableActiveState = this.model.get( 'disable_initial_active_state' ),
 			defaultIcon = this.model.get( 'default' );
 
 		let iconValue = controlValue.value,
@@ -273,13 +275,15 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 		if ( 'media' === skin ) {
 			this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
-		} else {
+		}
+
+		if ( ( 'inline' === skin && ! disableActiveState ) || iconType ) {
 			this.markChecked( iconType );
 		}
 
 		if ( ! iconValue ) {
 			if ( 'inline' === skin ) {
-				this.setDefaultIconLibraryLabel( defaultIcon, iconContainer );
+				this.setDefaultIconLibraryLabel( defaultIcon, iconContainer, skinOptions );
 				return;
 			}
 
@@ -302,7 +306,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.enqueueIconFonts( iconType );
 	}
 
-	setDefaultIconLibraryLabel( defaultIcon, iconContainer ) {
+	setDefaultIconLibraryLabel( defaultIcon, iconContainer, skinOptions ) {
 		// Check if the control has a default icon
 		if ( '' !== defaultIcon.value && 'svg' !== defaultIcon.library ) {
 			// If the default icon is not an SVG, set the icon-library label's icon to the default icon
@@ -311,7 +315,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			// If (1) the control does NOT have a default icon,
 			// OR (2) the control DOES have a default icon BUT the default icon is an SVG,
 			// set the default icon-library label's icon to a simple circle
-			iconContainer.html( '<i class="eicon-circle"></i>' );
+			iconContainer.html( '<i class="' + skinOptions.inline.icon.icon + '"></i>' );
 		}
 	}
 
