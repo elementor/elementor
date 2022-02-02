@@ -45,14 +45,6 @@ export class Create extends CommandHistory {
 
 		let result = [];
 
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		if ( ! options.trigger ) {
-			options.trigger = {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add',
-			};
-		}
-
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
