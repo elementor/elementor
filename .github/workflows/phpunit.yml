@@ -41,17 +41,24 @@ jobs:
         with:
           php-version: ${{ matrix.php_versions }}
       - name: Install Dependencies
-        run: | # ignore php requirement for "thor-juhasz/phpunit-coverage-check" on php < 7.4
+        run: |
           bash bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
-          composer update --no-interaction --ignore-platform-req=php
       - name: Run Test with Coverage (PHP >= 7.4, WP == latest)
         if: ${{ matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' }}
-        run: composer run coverage
+        run: |
+          composer update --no-interaction
+          composer run coverage
       - name: Run Test (PHP < 7.4)
         if: ${{ matrix.php_versions < 7.4 }}
-        run: composer run test
+        run: | # remove unsupported packages PHP < 7.4
+          composer remove --dev thor-juhasz/phpunit-coverage-check --ignore-platform-reqs
+          composer update --no-interaction
+          composer run test
       - name: Run Test - Multisite
-        run: WP_MULTISITE=1 composer run test
+        run: |
+          WP_MULTISITE=1
+          composer update --no-interaction
+          composer run test
 
   test-result:
     needs: test
