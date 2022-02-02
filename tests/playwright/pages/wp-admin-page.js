@@ -32,7 +32,7 @@ exports.WpAdminPage = class wpAdminPage {
 			await this.gotoDashboard();
 		}
 
-		await this.page.click( 'text=Create New Page' );
+		await this.page.click( 'text="Create New Page"' );
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
 	}
 
