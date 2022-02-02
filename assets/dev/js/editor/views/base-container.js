@@ -167,20 +167,6 @@ module.exports = Marionette.CompositeView.extend( {
 		return 'add';
 	},
 
-	addChildElement: function( data, options ) {
-		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
-
-		if ( Object !== data.constructor ) {
-			data = jQuery.extend( {}, data );
-		}
-
-		$e.run( 'document/elements/create', {
-			container: this.getContainer(),
-			model: data,
-			options,
-		} );
-	},
-
 	cloneItem: function( item ) {
 		var self = this;
 
