@@ -19,7 +19,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 		}
 
 		// Prevent from wordpress widgets to show in search result.
-		if ( ! childModel.get( 'showOnSearch' ) ) {
+		if ( childModel.get( 'hideOnSearch' ) ) {
+			console.log( childModel.get( 'hideOnSearch' ) );
 			return false;
 		}
 

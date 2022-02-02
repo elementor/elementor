@@ -224,16 +224,16 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Show on search.
+	 * Hide on search.
 	 *
-	 * Whether to show the widget on search in the panel or not. By default returns true.
+	 * Whether to hide the widget on search in the panel or not. By default returns false.
 	 *
 	 * @access public
 	 *
-	 * @return bool Whether to show the widget when searching for widget or not.
+	 * @return bool Whether to hide the widget when searching for widget or not.
 	 */
-	public function show_on_search() {
-		return true;
+	public function hide_on_search() {
+		return false;
 	}
 
 	/**
@@ -363,7 +363,7 @@ abstract class Widget_Base extends Element_Base {
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
-			'show_on_search' => $this->show_on_search(),
+			'hide_on_search' => $this->hide_on_search(),
 		];
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
