@@ -13,13 +13,6 @@ module.exports = async ( config ) => {
 	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
 
-	// Check if dismiss button is available and close it
-	const dismissButton = await page.$( 'text=Dismiss' );
-
-	if ( dismissButton ) {
-		await page.click( 'text=Dismiss' );
-	}
-
 	// Save signed-in state to 'storageState.json'.
 	await page.context().storageState( { path: './tests/playwright/config/storageState.json' } );
 	await browser.close();
