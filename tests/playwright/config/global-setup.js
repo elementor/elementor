@@ -19,7 +19,7 @@ module.exports = async ( config ) => {
 	if ( dismissButton ) {
 		await page.click( 'text=Dismiss' );
 	}
-  
+
 	// Save signed-in state to 'storageState.json'.
 	await page.context().storageState( { path: './tests/playwright/config/storageState.json' } );
 	await browser.close();
