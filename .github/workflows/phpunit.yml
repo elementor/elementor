@@ -43,13 +43,13 @@ jobs:
       - name: Install Dependencies
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
-      - name: Run Test with Coverage (PHP >= 7.4, WP == latest)
+      - name: Run Tests with Coverage (latest PHP & WP)
         if: ${{ matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' }}
         run: |
           composer update --no-interaction
           composer run coverage
-      - name: Run Test (PHP < 7.4)
-        if: ${{ matrix.php_versions < 7.4 }}
+      - name: Run Tests without Coverage
+        if: ${{ ! ( matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' ) }}
         run: | # remove unsupported packages PHP < 7.4
           composer remove --dev thor-juhasz/phpunit-coverage-check --ignore-platform-reqs
           composer update --no-interaction
