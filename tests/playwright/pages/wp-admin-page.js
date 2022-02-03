@@ -28,11 +28,11 @@ exports.WpAdminPage = class wpAdminPage {
 	}
 
 	async openNewPage() {
-		if ( ! await this.page.$( 'text=Create New Page' ) ) {
+		if ( ! await this.page.$( '"text=Create New Page"' ) ) {
 			await this.gotoDashboard();
 		}
 
-		await this.page.click( 'text=Create New Page' );
+		await this.page.click( 'text="Create New Page"' );
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
 	}
 
