@@ -112,7 +112,11 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<section>
-				<FileProcess errorType={ errorType } onDialogDismiss={ onCancelProcess } />
+				<FileProcess
+					errorType={ errorType }
+					onDialogApprove={ onCancelProcess }
+					onDialogDismiss={ onCancelProcess }
+				/>
 
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }

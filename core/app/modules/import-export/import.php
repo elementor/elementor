@@ -18,7 +18,7 @@ class Import extends Iterator {
 	private $adapters = [];
 
 	final public function run() {
-		$this->temp_dir = $this->get_settings( 'directory' );
+		$this->temp_dir = $this->get_settings( 'session' );
 
 		$manifest_data = $this->read_json_file( 'manifest' );
 

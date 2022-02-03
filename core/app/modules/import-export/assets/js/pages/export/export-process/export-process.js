@@ -49,7 +49,7 @@ export default function ExportProcess() {
 		<Layout type="export">
 			<FileProcess
 				errorType={ errorType }
-				onDialogApprove={ () => window.open( 'https://elementor.com/help/export-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
+				onDialogApprove={ onDialogDismiss }
 				onDialogDismiss={ onDialogDismiss }
 			/>
 		</Layout>
