@@ -217,15 +217,15 @@ class Control_Icons extends Control_Base_Multiple {
 			'skin_settings' => [
 				'inline' => [
 					'none' => [
-						'label' => 'None',
+						'label' => esc_html__( 'None', 'elementor' ),
 						'icon' => 'eicon-ban',
 					],
 					'svg' => [
-						'label' => 'Upload SVG',
+						'label' => esc_html__( 'Upload SVG', 'elementor' ),
 						'icon' => 'eicon-upload',
 					],
 					'icon' => [
-						'label' => 'Icon Library',
+						'label' => esc_html__( 'Icon Library', 'elementor' ),
 						'icon' => 'eicon-circle',
 					],
 				],
