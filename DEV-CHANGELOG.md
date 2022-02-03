@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev37 - 2022-02-03
+* Fix: System info file displays inaccurate WP memory limit. [ED-5717] (#17252)
+
 #### 3.6.0-dev36 - 2022-01-31
 * Tweak: Added "Convert to Container" control to each legacy section, inner section and page [ED-5488] (#17515)
 
@@ -402,18 +405,3 @@
 
 #### 3.5.0-dev5 - 2021-08-11
 * Fix: Gallery widget with dynamic tags can't be edited [ED-4443] (#15912)
-
-#### 3.5.0-dev4 - 2021-08-11
-* Revert "Tweak: Preparation in Core for future Page Transitions in Pro [ED-4571] (#15891)" (#15911)
-* Tweak: Export `utils/escapeHTML()` to `elementorFrontend.utils` [ED-4308] (#15712)
-* Fix: "Auto" text not showing in section margin control [ED-4534] (#15880)
-* Fix: Theme builder not working when import export feature is inactive [ED-4563] (#15884)
-* Fix: Re-migrate Kit - The migration fails in some cases [ED-4457] (#15478)
-* Tweak: Blend Mode - Missing translations in section and column (#15900)
-* Tweak: Additional Breakpoints - Added new _NEXT SCSS vars for mobile & tablet extra (ED-4596) (#15915)
-* Fix: Breakpoints - Desktop max point when widescreen is inactive is 1439px instead of 99999px (ED-4595) (#15926)
-* Tweak: Missing translations (#15923)
-* Fix: UI glitch in Responsive bar in RTL sites [ED-4558] (#15924)
-* Fix: Responsive columns didn't reacted to the appropriate breakpoints (ED-4556) (#15927)
-* Fix: All styles under frontend/general were duplicated (#15925)
-* Tweak: Additional Custom Breakpoints Experiment changed to Beta phase (ED-4600) (#15928)
