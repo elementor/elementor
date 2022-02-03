@@ -161,6 +161,7 @@ class Api {
 		$data = self::get_info_data();
 
 		if ( ! isset( $data['pro_widgets'] ) ) {
+			if (!is_array($data)) $data = [];
 			$data['pro_widgets'] = [];
 		}
 
