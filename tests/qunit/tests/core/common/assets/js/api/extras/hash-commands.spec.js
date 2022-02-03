@@ -129,7 +129,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 		// Arrange.
 		let sharedReference = 0;
 
-		const callback = $e.commands.on( 'run', () => {
+		const callback = $e.commands.on( 'run:after', () => {
 			sharedReference++;
 		} );
 
@@ -150,6 +150,9 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 
 		// Ensure initial 'safe-command' run.
 		assert.equal( sharedReference, 1 );
+		// Why it works?
+		// Since the 'async-command' is still in callstack.
+		// Only the promise of 'async-command' is in the callstack.
 
 		// Give him tick to reach 2.
 		// When a waiting for promise, it will release the event loop, to run other callbacks in the stack.

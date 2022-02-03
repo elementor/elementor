@@ -1,7 +1,7 @@
-import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
 // TODO: Add dev-tools CSS to see if widget have globals.
-export class Unlink extends CommandContainerBase {
+export class Unlink extends CommandBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 		this.requireArgumentType( 'setting', 'string', args );
@@ -43,6 +43,10 @@ export class Unlink extends CommandContainerBase {
 				settings: localSettings,
 			} );
 		}
+	}
+
+	isDataChanged() {
+		return true;
 	}
 }
 

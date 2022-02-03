@@ -1,8 +1,9 @@
-import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
+import CommandHistory from 'elementor-document/commands/base/command-history';
+import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 import ComponentBase from 'elementor-api/modules/component-base';
-import CommandDataMock, { CommandDataExportedMock } from './mock/command-data.spec';
 import * as errors from 'elementor-api/core/data/errors/';
 
 jQuery( () => {
@@ -17,7 +18,7 @@ jQuery( () => {
 
 						defaultData() {
 							return this.importCommands( {
-								TestCommand: class TestCommand extends CommandDataMock {
+								TestCommand: class TestCommand extends CommandData {
 								},
 							} );
 						}
@@ -27,11 +28,11 @@ jQuery( () => {
 							type: 'get',
 						},
 					},
-					command = new CommandDataMock( args ),
+					command = new CommandData( args ),
 					commandFull = component.getNamespace() + '/test-command';
 
 				command.component = component;
-				command.command = commandFull;
+				command.currentCommand = commandFull;
 
 				const requestData = command.getRequestData();
 
@@ -44,23 +45,30 @@ jQuery( () => {
 				assert.equal( requestData.type, 'get' );
 			} );
 
+			// TODO: Same with all instanceOf validations, each file handle his own tests.
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
-				const validateCommand = ( command ) => {
-					assert.equal( command instanceof CommandInfra, true, );
+				const validateCommandData = ( command ) => {
 					assert.equal( command instanceof CommandBase, true, );
+					assert.equal( command instanceof CommandInternalBase, false );
 					assert.equal( command instanceof CommandData, true, );
+					assert.equal( command instanceof CommandHistory, false );
+					assert.equal( command instanceof CommandHistoryDebounce, false );
 					assert.equal( command instanceof $e.modules.CommandBase, true );
+					assert.equal( command instanceof $e.modules.CommandInternalBase, false );
 					assert.equal( command instanceof $e.modules.CommandData, true );
+					assert.equal( command instanceof $e.modules.document.CommandHistory, false );
+					assert.equal( command instanceof $e.modules.document.CommandHistoryDebounce, false );
 				};
 
-				validateCommand( new CommandDataMock( {} ) );
-				validateCommand( new CommandDataExportedMock( {} ) );
+				validateCommandData( new CommandData( {} ) );
+				validateCommandData( new $e.modules.CommandData( {} ) );
 			} );
 
 			QUnit.test( 'onCatchApply(): make sure it transform the error to our semantic errors', ( assert ) => {
-				const notFoundCalled = assert.async(),
-					defaultCalled = assert.async(),
-					commandData = new CommandDataMock( {} );
+				const notFoundCalled = assert.async();
+				const defaultCalled = assert.async();
+
+				const commandData = new CommandData( {} );
 
 				// Mock the notify functions.
 				errors.Error404.prototype.notify = () => {

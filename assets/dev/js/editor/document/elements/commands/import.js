@@ -1,6 +1,6 @@
-import CommandHistoryBase from '../../command-bases/command-history-base';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
-export class Import extends CommandHistoryBase {
+export class Import extends CommandHistory {
 	validateArgs( args ) {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 

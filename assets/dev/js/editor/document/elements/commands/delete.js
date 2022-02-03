@@ -1,6 +1,6 @@
-import CommandHistoryBase from '../../command-bases/command-history-base';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
-export class Delete extends CommandHistoryBase {
+export class Delete extends CommandHistory {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );
@@ -59,6 +59,10 @@ export class Delete extends CommandHistoryBase {
 		}
 
 		return containers;
+	}
+
+	isDataChanged() {
+		return true;
 	}
 }
 

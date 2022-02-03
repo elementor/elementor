@@ -136,12 +136,16 @@ module.exports = elementorModules.ViewModule.extend( {
 				data: settings,
 			} );
 
-		NProgress.start();
+		if ( ! elementorCommonConfig.isTesting ) {
+			NProgress.start();
+		}
 
 		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
-				NProgress.done();
+				if ( ! elementorCommonConfig.isTesting ) {
+					NProgress.done();
+				}
 
 				self.setSettings( 'settings', settings );
 

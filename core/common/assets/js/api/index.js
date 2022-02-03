@@ -24,7 +24,7 @@ export default class API {
 	/**
 	 * Function constructor().
 	 *
-	 * Creates 'elementor' api.
+	 * Create's 'elementor' api.
 	 */
 	constructor() {
 		window.$e = this;
@@ -44,6 +44,7 @@ export default class API {
 		this.modules = {
 			CommandBase,
 			CommandInternalBase,
+
 			CommandData,
 
 			ComponentBase,
@@ -69,7 +70,7 @@ export default class API {
 	 * Alias of `$e.commands.run()`.
 	 *
 	 * @param {string} command
-	 * @param {{}} [args={}]
+	 * @param [args={}]
 	 *
 	 * @returns {*}
 	 */
@@ -83,9 +84,9 @@ export default class API {
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
 	 * @param {string} command
-	 * @param {{}} [args={}]
+	 * @param [args={}]
 	 *
-	 * @returns {*}
+	 * @returns {boolean}
 	 */
 	internal( command, args = {} ) {
 		return $e.commandsInternal.run( command, args );

@@ -519,7 +519,7 @@ export default class EditorBase extends Marionette.Application {
 	getCurrentElement() {
 		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
-		if ( ! isPreview ) {
+		if ( ! isPreview && ! elementorCommonConfig.isTesting ) {
 			return false;
 		}
 

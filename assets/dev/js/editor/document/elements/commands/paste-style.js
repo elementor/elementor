@@ -1,6 +1,6 @@
-import CommandHistoryBase from '../../command-bases/command-history-base';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
-export class PasteStyle extends CommandHistoryBase {
+export class PasteStyle extends CommandHistory {
 	validateArgs( args ) {
 		this.requireContainer( args );
 

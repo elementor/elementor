@@ -62,7 +62,7 @@ export default class HistoryManager {
 		this.active = value;
 	}
 
-	getActive() {
+	getActive( value ) {
 		return this.active;
 	}
 

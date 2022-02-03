@@ -1,6 +1,6 @@
-import CommandHistoryInternalBase from '../base/command-history-internal-base';
+import Base from '../base/base';
 
-export class AddTransaction extends CommandHistoryInternalBase {
+export class AddTransaction extends Base {
 	initialize( args ) {
 		super.initialize( args );
 

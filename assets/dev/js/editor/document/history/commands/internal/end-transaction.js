@@ -1,6 +1,6 @@
-import CommandInternalBase from '../base/command-history-internal-base';
+import Base from '../base/base';
 
-export class EndTransaction extends CommandInternalBase {
+export class EndTransaction extends Base {
 	apply() {
 		if ( ! this.component.isTransactionStarted() ) {
 			return;

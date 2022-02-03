@@ -1,6 +1,6 @@
-import CommandHistoryInternalBase from '../base/command-history-internal-base';
+import Base from '../base/base';
 
-export class StartLog extends CommandHistoryInternalBase {
+export class StartLog extends Base {
 	initialize( args ) {
 		super.initialize( args );
 

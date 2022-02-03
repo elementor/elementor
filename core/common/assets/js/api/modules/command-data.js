@@ -84,12 +84,12 @@ export default class CommandData extends CommandBase {
 	 */
 	getRequestData() {
 		return {
+			component: this.component,
+			command: this.currentCommand,
 			type: this.type,
 			args: this.args,
 			timestamp: new Date().getTime(),
-			component: this.component,
-			command: this.command,
-			endpoint: $e.data.commandToEndpoint( this.command, elementorCommon.helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
+			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
 		};
 	}
 

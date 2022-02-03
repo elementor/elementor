@@ -1,6 +1,6 @@
-import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class ToggleSelection extends CommandContainerBase {
+export class ToggleSelection extends CommandBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}

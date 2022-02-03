@@ -42,10 +42,6 @@ export default class InstanceType {
 		return result;
 	}
 
-	static getInstanceType() {
-		elementorModules.ForceMethodImplementation();
-	}
-
 	constructor() {
 		// Since anonymous classes sometimes do not get validated by babel, do it manually.
 		let target = new.target;
@@ -57,5 +53,9 @@ export default class InstanceType {
 		}
 
 		prototypes.reverse().forEach( ( proto ) => this instanceof proto );
+	}
+
+	static getInstanceType() {
+		elementorModules.ForceMethodImplementation();
 	}
 }

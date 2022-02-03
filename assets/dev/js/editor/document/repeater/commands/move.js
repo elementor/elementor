@@ -1,6 +1,6 @@
-import CommandHistoryBase from '../../command-bases/command-history-base';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
-export class Move extends CommandHistoryBase {
+export class Move extends CommandHistory {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
