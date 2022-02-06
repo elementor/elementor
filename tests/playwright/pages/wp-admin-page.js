@@ -1,6 +1,10 @@
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
 
+/**
+ * This post used for any tests that need to a post, with empty elements.
+ * @type {number}
+ */
 const CLEAN_POST_ID = 1;
 
 module.exports = class WpAdminPage extends BasePage {
@@ -57,7 +61,7 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async waitForPanel() {
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 	}
 
 	/**

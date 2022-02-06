@@ -24,18 +24,17 @@ module.exports = class BasePage {
 		if ( this.config.baseURLPrefixProxy ) {
 			this.page = new Proxy( this.page, {
 				get: ( target, key ) => {
-					if ( 'goto' === key ) {
-						return ( path ) => {
-							return page.goto( this.config.baseURL + path );
-						};
-					} else if ( 'waitForNavigation' === key ) {
-						return ( args ) => {
-							if ( args.url ) {
-								return page.waitForNavigation( { url: this.config.baseURL + args.url } );
-							}
+					switch ( key ) {
+						case 'goto':
+							return ( path ) => page.goto( this.config.baseURL + path );
 
-							return page.waitForNavigation( args || {} );
-						};
+						case 'waitForNavigation': {
+							return ( args = {} ) => {
+								args = ( args.url ) ? { url: this.config.baseURL + args.url } : args;
+
+								return page.waitForNavigation( args );
+							};
+						}
 					}
 
 					return target[ key ];

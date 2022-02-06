@@ -2,14 +2,13 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
 test( 'Image widget sanity test', async ( { page }, testInfo ) => {
-	const wpAdmin = new WpAdminPage( page, testInfo );
-
-	await wpAdmin.login();
-
-	const editor = await wpAdmin.useElementorCleanPost();
+	// Arrange.
+	const wpAdmin = new WpAdminPage( page, testInfo ),
+		editor = await wpAdmin.useElementorCleanPost();
 
 	await editor.addWidget( 'image' );
 
+	// Act.
 	await page.click( '.elementor-control-media__preview' );
 	await page.click( 'text=Media Library' );
 	await page.waitForSelector( 'text=Insert Media' );
@@ -26,7 +25,10 @@ test( 'Image widget sanity test', async ( { page }, testInfo ) => {
 	}
 
 	await page.click( '.button.media-button' );
+
+	// Assert.
 	const img = await editor.getPreviewFrame().waitForSelector( 'img' );
 	const src = await img.getAttribute( 'src' );
+
 	expect( src ).toContain( '.jpeg' );
 } );

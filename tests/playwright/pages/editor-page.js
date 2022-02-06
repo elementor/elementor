@@ -56,8 +56,6 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<*>}
 	 */
 	async addElement( model, container = null ) {
-		await this.ensurePanelLoaded();
-
 		return await this.page.evaluate( addElement, { model, container } );
 	}
 
