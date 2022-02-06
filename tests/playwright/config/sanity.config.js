@@ -12,16 +12,15 @@ const config = {
 	use: {
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
-		baseURL: process.env.baseURL || 'http://localhost:8888',
+		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
 		video: 'on',
 		trace: 'on-first-retry',
 		user: {
-			username: process.env.username || 'admin',
-			password: process.env.password || 'password',
+			username: process.env.USERNAME || 'admin',
+			password: process.env.PASSWORD || 'password',
 		},
-		baseURLPrefixProxy: false,
-
+		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
 	},
 	workers: 1,
 };

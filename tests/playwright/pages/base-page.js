@@ -20,8 +20,7 @@ module.exports = class BasePage {
 
 		this.config = this.testInfo.config.projects[ 0 ].use;
 
-		// If you are wordpress located for e.g: at local/test-wordpress/ playwright baseURL cannot handle it.
-		// The next code handles it, use it only in local environment.
+		// If wordpress is not located on the domain's top-level (e.g:  http://local.host/test-wordpress ), playwright's `baseURL` cannot handle it.
 		if ( this.config.baseURLPrefixProxy ) {
 			this.page = new Proxy( this.page, {
 				get: ( target, key ) => {
