@@ -5,7 +5,6 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
-
 /**
  * @name BaseElementView
  * @extends {BaseContainer}

@@ -185,7 +185,6 @@ export default class EditorBase extends Marionette.Application {
 		},
 		elements: {
 			Base: ElementBase,
-
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
@@ -1553,19 +1552,19 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getElementType( elType, widgetType = false ) {
-		let index = elType,
-			result = this.registeredElements[ index ];
+		let key = elType,
+			result = this.registeredElements[ key ];
 
 		if ( 'widget' === elType ) {
 			if ( ! widgetType ) {
 				throw new TypeError( 'Missing widget type' );
 			}
 
-			index += '-' + widgetType;
+			key += '-' + widgetType;
 		}
 
-		if ( this.registeredElements[ index ] ) {
-			result = this.registeredElements[ index ];
+		if ( this.registeredElements[ key ] ) {
+			result = this.registeredElements[ key ];
 		}
 
 		return result;
@@ -1580,7 +1579,7 @@ export default class EditorBase extends Marionette.Application {
 			throw new TypeError( 'The element argument must be an instance of ElementBase.' );
 		}
 
-		const index = element.getTypeIndex();
+		const index = element.getTypeKey();
 
 		if ( this.registeredElements[ index ] ) {
 			throw new Error( 'Element type already registered' );

@@ -11,6 +11,6 @@ export default class Column extends Element {
 			return true;
 		}
 
-		return 'widget' === childElType || 'container' === childElType;
+		return [ 'widget', 'container' ].includes( childElType );
 	}
 }

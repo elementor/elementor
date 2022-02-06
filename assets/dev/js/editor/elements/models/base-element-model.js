@@ -1,5 +1,5 @@
 /**
- * The class propose is to share the common methods and properties between all available models.
+ * The class purpose is to share the common methods and properties between all available models.
  */
 export default class BaseElementModel extends Backbone.Model {
 	/**

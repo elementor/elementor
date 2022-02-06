@@ -30,7 +30,7 @@ export default class ElementBase {
 	/**
 	 * @return {String}
 	 */
-	getTypeIndex() {
+	getTypeKey() {
 		return this.getType();
 	}
 }
