@@ -2,7 +2,7 @@
 node_modules/
 .sass-cache/
 log/
-vendor/
+/vendor/
 local-site/
 tmp/
 
