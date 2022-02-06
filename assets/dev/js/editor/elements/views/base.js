@@ -587,7 +587,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	renderChanges( settings, shouldRenderUI = true ) {
+	renderChanges( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
@@ -625,7 +625,7 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			if ( shouldRenderUI && ! isContentChanged ) {
+			if ( ! isContentChanged ) {
 				this.renderUI();
 
 				return;
