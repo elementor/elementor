@@ -10,12 +10,17 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 		autoExpandTimerRef = useRef( null );
 
 	useEffect( () => {
+		// For disabling sortable in testing environments.
+		if ( false === container.sortable ) {
+			return;
+		}
+
 		jQuery( listRef.current ).sortable( {
 			items: '> *:not(.elementor-empty-view)',
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: `.${ BASE_ITEM_CLASS }-${ container.model.attributes.elType } .elementor-navigator__elements`,
+			connectWith: `.${ BASE_ITEM_CLASS }-${ container.model.get( 'elType' ) } .elementor-navigator__elements`,
 			cancel: '[contenteditable="true"]',
 			start: ( e, ui ) => {
 				container.model.trigger( 'request:sort:start', e, ui );

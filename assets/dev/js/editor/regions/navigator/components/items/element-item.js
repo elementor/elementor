@@ -56,7 +56,7 @@ export function ElementItem( { itemId: elementId, level } ) {
 		/**
 		 * Activate a specific section in the panel regarding the element.
 		 *
-		 * @void
+		 *  @void
 		 */
 		const handleActivateSection = useCallback(
 			( section ) => {
@@ -102,7 +102,8 @@ export function ElementItem( { itemId: elementId, level } ) {
 				] ) }
 				onClick={ handleToggleSelection }
 				onContextMenu={ handleContextMenu }
-				data-id={ elementId }>
+				data-id={ elementId }
+				role="element-item">
 				<ItemHandle
 					ref={ handleRef }
 					className={ arrayToClassName( [
@@ -112,7 +113,7 @@ export function ElementItem( { itemId: elementId, level } ) {
 					] ) }
 					onToggleFolding={ setElementFolding }
 					onTitleEdit={ handleTitleEdit }>
-					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
+					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility } role="toggle-visibility">
 						<Icon className="eicon-preview-medium"/>
 					</div>
 					<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection }/>

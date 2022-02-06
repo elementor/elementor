@@ -8,7 +8,7 @@ function ItemList( { items, indicateEmpty, ...props }, ref ) {
 	const { level } = useItemContext();
 
 	return (
-		<div { ...props} ref={ ref } className="elementor-navigator__elements">
+		<div { ...props} ref={ ref } className="elementor-navigator__elements" role="item-list">
 			{ items?.length ?
 				items.map(
 					( itemId ) => <ElementItem key={ itemId } itemId={ itemId } level={ level + 1 } />

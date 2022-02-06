@@ -26,7 +26,7 @@ export function useElementSelection( elementId ) {
 	 * @void
 	 */
 	const setElementSelection = useCallback(
-		( { append, section, scrollIntoView = true } ) => {
+		( { append, section, scrollIntoView = true } = {} ) => {
 			if ( undefined !== elementId ) {
 				// Toggle the provided elements state.
 				$e.run( 'document/elements/toggle-selection', {

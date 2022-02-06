@@ -1,9 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 export function ItemTitle( { title, onTitleEdit } ) {
-	const titleRef = useRef(),
-		[ editMode, setEditMode ] = useState( false );
+	const [ editMode, setEditMode ] = useState( false );
 
 	/**
 	 * Trigger Edit-Mode (the span becomes content-editable) when the user double-clicks the element. Also focus the
@@ -11,13 +10,13 @@ export function ItemTitle( { title, onTitleEdit } ) {
 	 *
 	 * @void
 	 */
-	const handleDoubleClick = () => {
+	const handleDoubleClick = ( e ) => {
 		if ( ! onTitleEdit ) {
 			return;
 		}
 
 		setEditMode( true );
-		setTimeout( () => titleRef.current.focus() );
+		setTimeout( () => e.target.focus() );
 	};
 
 	/**
@@ -29,7 +28,7 @@ export function ItemTitle( { title, onTitleEdit } ) {
 	 */
 	const handleKeyPress = ( e ) => {
 		if ( 'Enter' === e.key ) {
-			titleRef.current.blur();
+			handleBlur( e );
 		}
 	};
 
@@ -39,10 +38,10 @@ export function ItemTitle( { title, onTitleEdit } ) {
 	 * @param e
 	 */
 	const handleBlur = ( e ) => {
-		const newTitle = titleRef.current.innerText;
+		const newTitle = e.target.innerText;
 
 		if ( ! newTitle ) {
-			titleRef.current.innerText = title;
+			e.target.innerText = title;
 		} else {
 			onTitleEdit( newTitle );
 		}
@@ -51,9 +50,8 @@ export function ItemTitle( { title, onTitleEdit } ) {
 	};
 
 	return (
-		<div className="elementor-navigator__element__title">
+		<div className="elementor-navigator__element__title" role="item-title">
 			<span
-				ref={ titleRef }
 				className="elementor-navigator__element__title__text"
 				contentEditable={ editMode }
 				spellCheck={ false }
