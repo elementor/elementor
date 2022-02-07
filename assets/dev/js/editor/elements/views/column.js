@@ -1,5 +1,4 @@
 import { DEFAULT_MAX_COLUMNS } from 'elementor-elements/views/section';
-import BaseSectionsContainerView from 'elementor-views/base-sections-container';
 
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' ),
