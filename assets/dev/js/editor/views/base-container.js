@@ -127,7 +127,7 @@ module.exports = Marionette.CompositeView.extend( {
 				container,
 				columns: Number( ! containerExperiment ),
 				options: {
-					at: this.getOption( 'at' ),
+					at: options.at,
 				},
 			} );
 
