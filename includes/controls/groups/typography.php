@@ -146,7 +146,6 @@ class Group_Control_Typography extends Group_Control_Base {
 				'normal' => esc_html__( 'Normal', 'elementor' ),
 				'bold' => esc_html__( 'Bold', 'elementor' ),
 			],
-
 		];
 
 		$fields['text_transform'] = [
