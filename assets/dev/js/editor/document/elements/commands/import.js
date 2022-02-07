@@ -26,8 +26,10 @@ export class Import extends CommandHistory {
 	}
 
 	apply( args ) {
-		const { data, options = args.options || {} } = args,
-			container = args.container || elementor.getPreviewContainer(),
+		const { data,
+				options = args.options || {},
+				container = args.container || elementor.getPreviewContainer(),
+		} = args,
 			result = [];
 
 		let at = isNaN( options.at ) ? container.view.collection.length : options.at;
