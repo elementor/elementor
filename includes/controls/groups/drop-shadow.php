@@ -61,7 +61,7 @@ class Group_Control_Drop_Shadow extends Group_Control_Base {
 			'label' => _x( 'Drop Shadow', 'Drop Shadow Control', 'elementor' ),
 			'type' => Controls_Manager::DROP_SHADOW,
 			'selectors' => [
-				'{{SELECTOR}}' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{box_shadow_position.VALUE}};',
+				'{{SELECTOR}}' => 'filter: drop-shadow({{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}});',
 			],
 		];
 
