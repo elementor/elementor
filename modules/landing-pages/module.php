@@ -50,9 +50,6 @@ class Module extends BaseModule {
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
 			],
-			'dependency' => [
-				\Elementor\Modules\AdminTopBar\Module::class,
-			],
 		];
 	}
 
