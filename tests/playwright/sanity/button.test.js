@@ -8,6 +8,6 @@ test( 'Button widget sanity test', async ( { page } ) => {
 
 	const editor = new EditorPage( page );
 	await editor.addWidget( 'button' );
-	const button = await editor.previewFrame.waitForSelector( 'a[role="button"]:has-text("Click here")' );
+	const button = await editor.getFrame().waitForSelector( 'a[role="button"]:has-text("Click here")' );
 	expect( await button.innerText() ).toBe( 'Click here' );
 } );
