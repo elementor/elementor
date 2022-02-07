@@ -1,5 +1,5 @@
 import CommandContainerBase from './command-bases/command-container-base';
-import CommandContainerInternal from './command-bases/command-container-internal';
+import CommandContainerInternalBase from './command-bases/command-container-internal-base';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 
@@ -15,7 +15,7 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 
 $e.modules.editor = {
 	CommandContainerBase,
-	CommandContainerInternal,
+	CommandContainerInternalBase,
 
 	document: DocumentComponent.getModules(),
 };

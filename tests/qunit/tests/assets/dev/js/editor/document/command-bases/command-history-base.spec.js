@@ -1,7 +1,6 @@
 import CommandHistoryBase from 'elementor-editor/document/command-bases/command-history-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandData from 'elementor-api/modules/command-data';
 import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
 import CommandHistoryBaseMock, { CommandHistoryBaseExportedMock } from './mock/command-history-base.spec';
 
@@ -53,7 +52,6 @@ jQuery( () => {
 					// Base.
 					assert.equal( command instanceof CommandInfra, true );
 					assert.equal( command instanceof CommandBase, true );
-					assert.equal( command instanceof CommandData, false, );
 					// Editor.
 					assert.equal( command instanceof CommandContainerBase, true, );
 					// Editor-Document.

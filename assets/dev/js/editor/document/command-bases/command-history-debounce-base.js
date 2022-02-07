@@ -20,6 +20,9 @@ export const getDefaultDebounceDelay = () => {
 	return result;
 };
 
+/**
+ * @name $e.modules.editor.document.CommandHistoryDebounceBase
+ */
 export default class CommandHistoryDebounceBase extends CommandHistoryBase {
 	/**
 	 * Function debounce().
