@@ -231,6 +231,9 @@ ColumnView = BaseElementView.extend( {
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: ( side, event ) => {
+				// Triggering drag end manually, since it won't fired above iframe
+				elementor.getPreviewView().onPanelElementDragEnd();
+
 				this.onDrop(
 					event,
 					{ side, at: getDropIndex( side, event ) }
@@ -243,13 +246,6 @@ ColumnView = BaseElementView.extend( {
 		event.stopPropagation();
 
 		this.addNewColumn();
-	},
-
-	createElementFromModel( ...args ) {
-		// Triggering drag end manually, since it won't fired above iframe
-		elementor.getPreviewView().onPanelElementDragEnd();
-
-		return BaseSectionsContainerView.prototype.createElementFromModel.call( this, ...args );
 	},
 } );
 
