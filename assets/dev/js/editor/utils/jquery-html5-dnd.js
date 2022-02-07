@@ -109,7 +109,6 @@
 
 		var initSettings = function() {
 			$.extend( settings, defaultSettings, userSettings );
-			self.settings = settings;
 		};
 
 		var initElementsCache = function() {
