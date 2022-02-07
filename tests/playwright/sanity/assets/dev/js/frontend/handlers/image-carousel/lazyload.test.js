@@ -29,7 +29,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page } ) => {
     for ( const image of images ) {
         const alreadyLoaded = await page.$( '[aria-label="' + image + '"]' );
 
-        if( alreadyLoaded ) {
+        if ( alreadyLoaded ) {
             await page.click( '[aria-label="' + image + '"]' );
         } else {
             await page.click( 'text=Upload files' );
@@ -49,7 +49,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page } ) => {
     for ( const image of widgetImages ) {
         const src = await image.getAttribute( 'src' );
 
-        if( src ) {
+        if ( src ) {
             expect( src ).toContain( '.png' );
         } else {
             const dataSrc = await image.getAttribute( 'data-src' );
