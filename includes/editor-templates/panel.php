@@ -23,7 +23,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div id="elementor-panel-page-menu-content"></div>
 	<# if ( elementor.config.document.panel.needHelpUrl ) { #>
 	<div id="elementor-panel__editor__help">
-		<a id="elementor-panel__editor__help__link" href="{{{ elementor.config.document.panel.needHelpUrl }}}" target="_blank">
+		<a id="elementor-panel__editor__help__link" href="{{{ elementor.config.document.panel.needHelpUrl }}}" target="_blank" rel="noopener">
 			<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
 			<i class="eicon-help-o"></i>
 		</a>
@@ -155,7 +155,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div id="elementor-controls"></div>
 	<# if ( elementData.help_url ) { #>
 		<div id="elementor-panel__editor__help">
-			<a id="elementor-panel__editor__help__link" href="{{ elementData.help_url }}" target="_blank">
+			<a id="elementor-panel__editor__help__link" href="{{ elementData.help_url }}" target="_blank" rel="noopener">
 				<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
 				<i class="eicon-help-o"></i>
 			</a>
@@ -170,7 +170,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		printf(
 			/* translators: %1$s Link open tag, %2$s: Link close tag. */
 			esc_html__( 'You can enable it from the %1$sElementor settings page%2$s.', 'elementor' ),
-			'<a href="' . esc_url( Settings::get_url() ) . '" target="_blank">',
+			'<a href="' . esc_url( Settings::get_url() ) . '" target="_blank" rel="noopener">',
 			'</a>'
 		);
 		?></div>
@@ -282,7 +282,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<div class="elementor-tags-list__teaser-text">
 			<?php echo esc_html__( 'You’re missing out!', 'elementor' ); ?><br />
 			<?php echo esc_html__( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
-			<a href="{{{ promotionUrl }}}" class="elementor-tags-list__teaser-link" target="_blank">
+			<a href="{{{ promotionUrl }}}" class="elementor-tags-list__teaser-link" target="_blank" rel="noopener">
 				<?php echo esc_html__( 'See it in action', 'elementor' ); ?>
 			</a>
 		</div>

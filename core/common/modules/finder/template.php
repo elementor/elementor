@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<# if ( actions.length ) { #>
 		<div class="elementor-finder__results__item__actions">
 		<# jQuery.each( actions, function() { #>
-			<a class="elementor-finder__results__item__action elementor-finder__results__item__action--{{ this.name }}" href="{{ this.url }}" target="_blank">
+			<a class="elementor-finder__results__item__action elementor-finder__results__item__action--{{ this.name }}" href="{{ this.url }}" target="_blank" rel="noopener">
 				<i class="eicon-{{{ this.icon }}}"></i>
 			</a>
 		<# } ); #>

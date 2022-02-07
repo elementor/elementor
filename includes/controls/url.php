@@ -73,7 +73,7 @@ class Control_URL extends Control_Base_Multiple {
 				'property' => 'url',
 			],
 			'custom_attributes_description' => esc_html__( 'Set custom attributes for the link element. Separate attribute keys from values using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' )
-			. ' <a href="https://go.elementor.com/panel-link-custom-attributes/" target="_blank">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			. ' <a href="https://go.elementor.com/panel-link-custom-attributes/" target="_blank" rel="noopener">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
 		];
 	}
 

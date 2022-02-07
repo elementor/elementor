@@ -275,7 +275,7 @@ class Module extends \Elementor\Core\Base\Module {
 			<header>
 				<i class="eicon-warning"></i>
 				<h2><?php echo esc_html__( 'Safe Mode ON', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
+				<a class="elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" rel="noopener" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
 					<?php echo esc_html__( 'Disable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
@@ -292,7 +292,7 @@ class Module extends \Elementor\Core\Base\Module {
 								printf(
 									/* translators: %1$s Link open tag, %2$s: Link close tag. */
 									esc_html__( '%1$sClick here%2$s to troubleshoot', 'elementor' ),
-									'<a href="' . self::DOCS_HELPED_URL . '" target="_blank">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									'<a href="' . self::DOCS_HELPED_URL . '" target="_blank" rel="noopener">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 									'</a>'
 								);
 							?>
@@ -305,7 +305,7 @@ class Module extends \Elementor\Core\Base\Module {
 								printf(
 									/* translators: %1$s Link open tag, %2$s: Link close tag. */
 									esc_html__( '%1$sClick here%2$s to troubleshoot', 'elementor' ),
-									'<a href="' . self::DOCS_DIDNT_HELP_URL . '" target="_blank">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									'<a href="' . self::DOCS_DIDNT_HELP_URL . '" target="_blank" rel="noopener">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 									'</a>'
 								);
 							?>
@@ -321,7 +321,7 @@ class Module extends \Elementor\Core\Base\Module {
 						printf(
 							/* translators: %1$s Link open tag, %2$s: Link close tag. */
 							esc_html__( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please %1$sread more%2$s about this issue', 'elementor' ),
-							'<a href="' . self::DOCS_MU_PLUGINS_URL . '" target="_blank">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							'<a href="' . self::DOCS_MU_PLUGINS_URL . '" target="_blank" rel="noopener">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							'</a>'
 						);
 						?>
@@ -383,13 +383,13 @@ class Module extends \Elementor\Core\Base\Module {
 			<header>
 				<i class="eicon-warning"></i>
 				<h2><?php echo esc_html__( 'Can\'t Edit?', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button elementor-enable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
+				<a class="elementor-safe-mode-button elementor-enable-safe-mode" target="_blank" rel="noopener" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
 					<?php echo esc_html__( 'Enable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
 			<div class="elementor-toast-content">
 				<?php echo esc_html__( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot.', 'elementor' ); ?>
-				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
+				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank" rel="noopener"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		<?php else : ?>
 			<header>
@@ -398,7 +398,7 @@ class Module extends \Elementor\Core\Base\Module {
 			</header>
 			<div class="elementor-toast-content">
 				<?php echo esc_html__( 'If you are experiencing a loading issue, contact your site administrator to troubleshoot the problem using Safe Mode.', 'elementor' ); ?>
-				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
+				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank" rel="noopener"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		<?php endif; ?>
 		</div>

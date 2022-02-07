@@ -22,6 +22,7 @@ export default function Conflict( props ) {
 				className="e-app-import-resolver-conflicts__edit-template"
 				url={ editUrl }
 				target="_blank"
+				rel="noopener"
 				icon="eicon-editor-external-link"
 				text={ __( 'Edit Template', 'elementor' ) }
 				hideText

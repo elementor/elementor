@@ -280,7 +280,7 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash' ), esc_html__( 'Go Pro', 'elementor' ) );
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" rel="noopener" class="elementor-plugins-gopro">%2$s</a>', Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash' ), esc_html__( 'Go Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -305,8 +305,8 @@ class Admin extends App {
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
 			$row_meta = [
-				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Docs & FAQs', 'elementor' ) . '</a>',
-				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Video Tutorials', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Video Tutorials', 'elementor' ) . '</a>',
+				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Docs & FAQs', 'elementor' ) . '</a>',
+				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Video Tutorials', 'elementor' ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Video Tutorials', 'elementor' ) . '</a>',
 			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );
@@ -338,7 +338,7 @@ class Admin extends App {
 				/* translators: 1: Elementor, 2: Link to plugin review */
 				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
 				'<strong>' . esc_html__( 'Elementor', 'elementor' ) . '</strong>',
-				'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+				'<a href="https://go.elementor.com/admin-review/" target="_blank" rel="noopener">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
 		}
 
@@ -437,7 +437,7 @@ class Admin extends App {
 					<ul class="e-overview__posts">
 						<?php foreach ( $elementor_feed as $feed_item ) : ?>
 							<li class="e-overview__post">
-								<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank">
+								<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank" rel="noopener">
 									<?php if ( ! empty( $feed_item['badge'] ) ) : ?>
 										<span class="e-overview__badge"><?php echo esc_html( $feed_item['badge'] ); ?></span>
 									<?php endif; ?>
@@ -452,7 +452,7 @@ class Admin extends App {
 			<div class="e-overview__footer e-divider_top">
 				<ul>
 					<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
-						<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php echo esc_html__( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+						<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php echo esc_html__( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 					<?php endforeach; ?>
 				</ul>
 			</div>

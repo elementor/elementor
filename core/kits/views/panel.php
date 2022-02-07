@@ -8,7 +8,7 @@
 	const tabConfig = $e.components.get( 'panel/global' ).getActiveTabConfig();
 	if ( tabConfig.helpUrl ) { #>
 	<div id="elementor-panel__editor__help">
-		<a id="elementor-panel__editor__help__link" href="{{ tabConfig.helpUrl }}" target="_blank">
+		<a id="elementor-panel__editor__help__link" href="{{ tabConfig.helpUrl }}" target="_blank" rel="noopener">
 			<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
 			<i class="eicon-help-o"></i>
 		</a>

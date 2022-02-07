@@ -491,7 +491,7 @@ class Element_Section extends Element_Base {
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
 				'hide_in_inner' => true,
-				'description' => esc_html__( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', esc_html__( 'Learn more.', 'elementor' ) ),
+				'description' => esc_html__( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank" rel="noopener">%2$s</a>', 'https://go.elementor.com/stretch-section/', esc_html__( 'Learn more.', 'elementor' ) ),
 				'render_type' => 'none',
 				'frontend_available' => true,
 			]

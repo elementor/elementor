@@ -1052,7 +1052,7 @@ class Controls_Manager {
 
 			// Show a `Go Pro` button only if the user doesn't have Pro.
 			if ( $texts['link'] && ! Utils::has_pro() ) { ?>
-				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( Utils::get_pro_link( $texts['link'] ) ); ?>" target="_blank">
+				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( Utils::get_pro_link( $texts['link'] ) ); ?>" target="_blank" rel="noopener">
 					<?php echo esc_html__( 'Go Pro', 'elementor' ); ?>
 				</a>
 			<?php } ?>

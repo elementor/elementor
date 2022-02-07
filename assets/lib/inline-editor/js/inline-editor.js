@@ -174,7 +174,7 @@
 
 	function commandLink(ctx, tag, value) {
 		if (ctx.config.linksInNewWindow && 'unlink' !== tag) {
-			value = '<a href="' + value + '" target="_blank">' + (selection.toString()) + '</a>';
+			value = '<a href="' + value + '" target="_blank" rel="noopener">' + (selection.toString()) + '</a>';
 			return commandOverall('insertHTML', value);
 		} else {
 			return commandOverall(tag, value);

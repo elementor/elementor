@@ -221,7 +221,7 @@ class Module extends BaseModule {
 	}
 
 	private function render_import_export_tab_content() {
-		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
+		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank" rel="noopener">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
 			/* translators: 1: New line break, 2: Learn More link. */
@@ -273,7 +273,7 @@ class Module extends BaseModule {
 						</a>
 					</div>
 					<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
-					<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+					<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank" rel="noopener"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
 				</div>
 			<?php } ?>
 			</div>

@@ -366,14 +366,14 @@ class Maintenance_Mode {
 		}
 
 		?>
-		<a target="_blank" class="elementor-edit-template" style="display: none" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html__( 'Edit Template', 'elementor' ); ?></a>
+		<a target="_blank" rel="noopener" class="elementor-edit-template" style="display: none" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html__( 'Edit Template', 'elementor' ); ?></a>
 		<div class="elementor-maintenance-mode-error"><?php echo esc_html__( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ); ?></div>
 		<div class="elementor-maintenance-mode-error">
 			<?php
 				printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
 					esc_html__( 'Select one or go ahead and %1$screate one%2$s now.', 'elementor' ),
-					'<a target="_blank" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) . '">',
+					'<a target="_blank" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) . '" rel="noopener">',
 					'</a>'
 				);
 			?>

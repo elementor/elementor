@@ -47,6 +47,7 @@ export default class ErrorBoundary extends React.Component {
 				approveButtonUrl={ this.props.learnMoreUrl }
 				approveButtonColor="link"
 				approveButtonTarget="_blank"
+				approveButtonRel="noopener"
 				approveButtonText={ __( 'Learn More', 'elementor' ) }
 				dismissButtonText={ __( 'Go Back', 'elementor' ) }
 				dismissButtonOnClick={ this.goBack }

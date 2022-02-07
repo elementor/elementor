@@ -206,6 +206,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		class="elementor-template-library-template-action elementor-button elementor-go-pro"
 		href="{{{ promotionLink }}}"
 		target="_blank"
+		rel="noopener"
 	>
 		<i class="eicon-external-link-square" aria-hidden="true"></i>
 		<span class="elementor-button-title">{{{ promotionText }}}</span>
@@ -231,7 +232,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</form>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank" rel="noopener"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -247,7 +248,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
 		<div class="elementor-template-library-blank-footer">
 			<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank" rel="noopener"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
 		</div>
 	</form>
 </script>
@@ -260,7 +261,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message"></div>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank" rel="noopener"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
 	</div>
 </script>
 

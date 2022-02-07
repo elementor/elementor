@@ -49,6 +49,7 @@ const KitListItem = ( props ) => {
 									icon="eicon-external-link-square"
 									url={ subscriptionPlan.promotion_url }
 									target="_blank"
+									rel="noopener"
 								/>
 							}
 						</Grid>
