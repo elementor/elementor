@@ -1,6 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
-const { EditorPage } = require( '../pages/editor-page' );
-const { WpAdminPage } = require( '../pages/wp-admin-page' );
+const { EditorPage } = require( '../../../../../../../pages/editor-page' );
+const { WpAdminPage } = require( '../../../../../../../pages/wp-admin-page' );
 
 test( 'Image Carousel widget sanity test lazyload', async ( { page } ) => {
     const resourcesBaseDir = './tests/playwright/resources/';
@@ -14,8 +14,8 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page } ) => {
     // Set Image carousel settings
     await page.selectOption('.elementor-control-slides_to_show >> select', '1');
 
-    await page.click('text=Additional Options');
-    await page.click('text=Image Carousel Additional Options Lazyload Autoplay Yes No Pause on Hover Yes No >> span');
+    await page.click('.elementor-control-section_additional_options');
+    await page.click('.elementor-control-lazyload >> span');
     await page.selectOption('.elementor-control-autoplay >> select', 'no');
 
     // Add images
@@ -24,7 +24,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page } ) => {
 
     await page.click( '#elementor-controls >> text=Image Carousel');
     await page.click( '[aria-label="Add\\ Images"]');
-    await page.waitForTimeout( 3000 );
+    await page.waitForTimeout( 3000 ); //waitForNetwork
 
     for ( const image of images ) {
         const alreadyLoaded = await page.$( '[aria-label="' + image + '"]' );
@@ -42,16 +42,17 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page } ) => {
     await page.click('text=Insert gallery');
 
     const widget = await editor.getFrame().waitForSelector( '.elementor-image-carousel' );
-    const widgetImages = await widget.$$( '.swiper-slide' );
+    const widgetImages = await widget.$$( '.swiper-slide >> img' );
 
+    // The lazyload loads images from data-src into src.
+    // If the src does not exist, the data-src should exist with the image src.
     for ( const image of widgetImages ) {
-        const img = await image.$( 'img' );
-        const src = await img.getAttribute( 'src' );
+        const src = await image.getAttribute('src');
 
         if( src ) {
             expect( src ).toContain( '.png' );
         } else {
-            const dataSrc = await img.getAttribute( 'data-src' );
+            const dataSrc = await image.getAttribute('data-src');
             expect( dataSrc ).toContain( '.png' );
         }
     }
