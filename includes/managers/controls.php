@@ -237,6 +237,11 @@ class Controls_Manager {
 	const EXIT_ANIMATION = 'exit_animation';
 
 	/**
+	 * Drop Shadow control.
+	 */
+	const DROP_SHADOW = 'drop_shadow';
+
+	/**
 	 * Controls.
 	 *
 	 * Holds the list of all the controls. Default is `null`.
@@ -359,6 +364,7 @@ class Controls_Manager {
 			'css-filter',
 			'text-shadow',
 			'text-stroke',
+			'drop-shadow',
 		];
 	}
 
@@ -406,6 +412,7 @@ class Controls_Manager {
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
 			self::EXIT_ANIMATION,
+			self::DROP_SHADOW,
 		];
 	}
 

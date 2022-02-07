@@ -178,6 +178,7 @@ export default class EditorBase extends Marionette.Application {
 			Url: require( 'elementor-controls/url' ),
 			Wp_widget: require( 'elementor-controls/wp_widget' ),
 			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
+			Drop_shadow: require( 'elementor-controls/box-shadow' ),
 		},
 		elements: {
 			models: {
