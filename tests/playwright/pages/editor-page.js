@@ -13,6 +13,16 @@ exports.EditorPage = class EditorPage {
 
 	getFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
+    }
+
+	/**
+	 * Reload the editor page.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async reload() {
+		await this.page.reload();
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
 	/**

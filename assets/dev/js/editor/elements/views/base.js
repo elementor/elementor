@@ -316,59 +316,6 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
-	startTransport() {
-		elementorCommon.helpers.softDeprecated( 'element.startTransport', '2.8.0', "$e.run( 'document/elements/copy' )" );
-
-		$e.run( 'document/elements/copy', {
-			container: this.getContainer(),
-		} );
-	},
-
-	copy() {
-		elementorCommon.helpers.softDeprecated( 'element.copy', '2.8.0', "$e.run( 'document/elements/copy' )" );
-
-		$e.run( 'document/elements/copy', {
-			container: this.getContainer(),
-		} );
-	},
-
-	cut() {
-		elementorCommon.helpers.softDeprecated( 'element.cut', '2.8.0' );
-	},
-
-	paste() {
-		elementorCommon.helpers.softDeprecated( 'element.paste', '2.8.0', "$e.run( 'document/elements/paste' )" );
-
-		$e.run( 'document/elements/paste', {
-			container: this.getContainer(),
-			at: this._parent.collection.indexOf( this.model ),
-		} );
-	},
-
-	duplicate() {
-		elementorCommon.helpers.softDeprecated( 'element.duplicate', '2.8.0', "$e.run( 'document/elements/duplicate' )" );
-
-		$e.run( 'document/elements/duplicate', {
-			container: this.getContainer(),
-		} );
-	},
-
-	pasteStyle() {
-		elementorCommon.helpers.softDeprecated( 'element.pasteStyle', '2.8.0', "$e.run( 'document/elements/paste-style' )" );
-
-		$e.run( 'document/elements/paste-style', {
-			container: this.getContainer(),
-		} );
-	},
-
-	resetStyle() {
-		elementorCommon.helpers.softDeprecated( 'element.resetStyle', '2.8.0', "$e.run( 'document/elements/reset-style' )" );
-
-		$e.run( 'document/elements/reset-style', {
-			container: this.getContainer(),
-		} );
-	},
-
 	isStyleTransferControl( control ) {
 		if ( undefined !== control.style_transfer ) {
 			return control.style_transfer;
@@ -582,10 +529,14 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderUI: function() {
-		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
 		this.enqueueFonts();
+
+		_.defer( () => {
+			// Defer the styles render to make sure that the global colors are ready.
+			this.renderStyles();
+		} );
 	},
 
 	runReadyTrigger: function() {

@@ -127,12 +127,7 @@ module.exports = Marionette.CompositeView.extend( {
 				container,
 				columns: Number( ! containerExperiment ),
 				options: {
-					at: options.at,
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
+					at: this.getOption( 'at' ),
 				},
 			} );
 
@@ -193,20 +188,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return 'add';
-	},
-
-	addChildElement: function( data, options ) {
-		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
-
-		if ( Object !== data.constructor ) {
-			data = jQuery.extend( {}, data );
-		}
-
-		$e.run( 'document/elements/create', {
-			container: this.getContainer(),
-			model: data,
-			options,
-		} );
 	},
 
 	cloneItem: function( item ) {
