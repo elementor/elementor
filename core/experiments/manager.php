@@ -2,7 +2,6 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
@@ -53,6 +52,7 @@ class Manager extends Base_Object {
 	 * }
 	 *
 	 * @return array|null
+	 * @throws \Exception
 	 */
 	public function add_feature( array $options ) {
 		if ( isset( $this->features[ $options['name'] ] ) ) {
@@ -100,6 +100,16 @@ class Manager extends Base_Object {
 			$experimental_data['state'] = self::STATE_DEFAULT;
 		}
 
+		if ( ! empty( $experimental_data['dependency'] ) ) {
+			foreach ( $experimental_data['dependency'] as $key => $dependency ) {
+				if ( ! class_exists( $dependency ) ) {
+					throw new \Exception( sprintf( 'Dependency class %s not found', $dependency ) );
+				}
+
+				$experimental_data['dependency'][ $key ] = $dependency::instance();
+			}
+		}
+
 		$this->features[ $options['name'] ] = $experimental_data;
 
 		if ( $experimental_data['mutable'] && is_admin() ) {
@@ -109,8 +119,14 @@ class Manager extends Base_Object {
 				try {
 					$this->on_feature_state_change( $experimental_data, $new_state, $feature_option_key );
 				} catch ( Exceptions\Dependency_Exception $e ) {
-					$script = 'history.back()';
-					wp_die( '<p>' . esc_html__( $e->getMessage(), 'elementor' ) . '</p> <p><a href="#" onclick="' . $script .  '">' . esc_html__( 'Back', 'elementor' ) . '</a>' ); // phpcs:ignore
+					$message = sprintf(
+						'<p>%s</p> <p><a href="#" onclick="%s">%s</a></p>',
+						esc_html__( $e->getMessage(), 'elementor' ), // phpcs:ignore
+						'history.back()',
+						esc_html__( 'Back', 'elementor' )
+					);
+
+					wp_die( $message ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 			};
 
@@ -518,7 +534,7 @@ class Manager extends Base_Object {
 			<div class="e-experiment__dependency">
 				<b class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on:', 'elementor' ); ?></b>
 			<?php foreach ( $feature['dependency'] as $dependency ) : ?>
-				<span class="e-experiment__dependency__item"><?php echo $dependency; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<span class="e-experiment__dependency__item"><?php echo $dependency->get_name(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<?php endforeach; ?>
 			</div>
 			<?php
@@ -645,11 +661,15 @@ class Manager extends Base_Object {
 
 	}
 
+	/**
+	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
+	 */
 	private function validate_dependency( array $feature_data, $new_state, $feature_option_key ) {
 		if ( self::STATE_ACTIVE === $new_state ) {
 			// Validate if the current feature dependency is available.
 			foreach ( $feature_data['dependency'] as $dependency ) {
-				$dependency_feature = $this->get_features( $dependency );
+				$dependency = $dependency::instance();
+				$dependency_feature = $this->get_features( $dependency->get_name() );
 
 				// If dependency is not active.
 				if ( self::STATE_INACTIVE === $dependency_feature['state'] ) {
@@ -657,18 +677,37 @@ class Manager extends Base_Object {
 					update_option( $feature_option_key, wp_json_encode( $feature_data ) );
 
 					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
-					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'To turn on "%1$s", Experiment: "%2$s" activity is required!', 'elementor' ), $feature_data['name'], $dependency_feature['name'] ) );
+					throw new Exceptions\Dependency_Exception(
+						sprintf(
+							esc_html__( 'To turn on "%1$s", Experiment: "%2$s" activity is required!', 'elementor' ),
+							$feature_data['name'],
+							$dependency_feature['name']
+						)
+					);
 				}
 			}
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
-			// Validate if current feature that goes 'inactive' is not an dependency of current active feature.
+			// Validate if current feature that goes 'inactive' is not a dependency of current active feature.
 			foreach ( $this->get_features() as $feature ) {
-				if ( self::STATE_ACTIVE === $feature['state'] && ! empty( $feature['dependency'] ) && in_array( $feature_data['name'], $feature['dependency'], true ) ) {
-					// Rollback.
-					update_option( $feature_option_key, self::STATE_ACTIVE );
+				if ( empty( $feature['dependency'] ) ) {
+					continue;
+				}
 
-					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
-					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'Cannot turn off "%1$s", Experiment: "%2$s" is still active!', 'elementor' ), $feature_data['name'], $feature['name'] ) );
+				foreach ( $feature['dependency'] as $dependency ) {
+					if ( self::STATE_ACTIVE === $feature['state'] && $feature_data['name'] === $dependency->get_name() ) {
+						// Rollback.
+						$feature['state'] = self::STATE_ACTIVE;
+						update_option( $feature_option_key, wp_json_encode( $feature_data ) );
+
+						/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
+						throw new Exceptions\Dependency_Exception(
+							sprintf(
+								esc_html__( 'Cannot turn off "%1$s", Experiment: "%2$s" is still active!', 'elementor' ),
+								$feature_data['name'],
+								$feature['name']
+							)
+						);
+					}
 				}
 			}
 		}
