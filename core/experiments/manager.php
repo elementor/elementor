@@ -72,7 +72,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'mutable', 'on_state_change', 'dependency' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'mutable', 'on_state_change', 'dependencies' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -100,13 +100,13 @@ class Manager extends Base_Object {
 			$experimental_data['state'] = self::STATE_DEFAULT;
 		}
 
-		if ( ! empty( $experimental_data['dependency'] ) ) {
-			foreach ( $experimental_data['dependency'] as $key => $dependency ) {
+		if ( ! empty( $experimental_data['dependencies'] ) ) {
+			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 				if ( ! class_exists( $dependency ) ) {
 					throw new \Exception( sprintf( 'Dependency class %s not found', $dependency ) );
 				}
 
-				$experimental_data['dependency'][ $key ] = $dependency::instance();
+				$experimental_data['dependencies'][ $key ] = $dependency::instance();
 			}
 		}
 
@@ -120,8 +120,8 @@ class Manager extends Base_Object {
 					$this->on_feature_state_change( $experimental_data, $new_state, $feature_option_key );
 				} catch ( Exceptions\Dependency_Exception $e ) {
 					$message = sprintf(
-						'<p>%s</p> <p><a href="#" onclick="%s">%s</a></p>',
-						esc_html__( $e->getMessage(), 'elementor' ), // phpcs:ignore
+						'<p>%s</p><p><a href="#" onclick="%s">%s</a></p>',
+						esc_html( $e->getMessage() ),
 						'history.back()',
 						esc_html__( 'Back', 'elementor' )
 					);
@@ -529,12 +529,12 @@ class Manager extends Base_Object {
 	}
 
 	private function render_feature_dependency( $feature ) {
-		if ( ! empty( $feature['dependency'] ) ) {
+		if ( ! empty( $feature['dependencies'] ) ) {
 			?>
 			<div class="e-experiment__dependency">
-				<b class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on:', 'elementor' ); ?></b>
-			<?php foreach ( $feature['dependency'] as $dependency ) : ?>
-				<span class="e-experiment__dependency__item"><?php echo $dependency->get_name(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on:', 'elementor' ); ?></strong>
+			<?php foreach ( $feature['dependencies'] as $dependency ) : ?>
+				<span class="e-experiment__dependency__item"><?php echo esc_html( $dependency->get_name() ); ?></span>
 			<?php endforeach; ?>
 			</div>
 			<?php
@@ -635,11 +635,13 @@ class Manager extends Base_Object {
 	 *
 	 * @param array $old_feature_data
 	 * @param string $new_state
+	 *
+	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
 	private function on_feature_state_change( array $old_feature_data, $new_state, $feature_option_key ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
 
-		if ( ! empty( $new_feature_data['dependency'] ) || 'inactive' === $new_state ) {
+		if ( ! empty( $new_feature_data['dependencies'] ) || self::STATE_INACTIVE === $new_state ) {
 			$this->validate_dependency( $new_feature_data, $new_state, $feature_option_key );
 		}
 
@@ -665,10 +667,13 @@ class Manager extends Base_Object {
 	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
 	private function validate_dependency( array $feature_data, $new_state, $feature_option_key ) {
+		if ( self::STATE_DEFAULT === $new_state ) {
+			$new_state = $feature_data['default'];
+		}
+
 		if ( self::STATE_ACTIVE === $new_state ) {
 			// Validate if the current feature dependency is available.
-			foreach ( $feature_data['dependency'] as $dependency ) {
-				$dependency = $dependency::instance();
+			foreach ( $feature_data['dependencies'] as $dependency ) {
 				$dependency_feature = $this->get_features( $dependency->get_name() );
 
 				// If dependency is not active.
@@ -689,11 +694,11 @@ class Manager extends Base_Object {
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
 			// Validate if current feature that goes 'inactive' is not a dependency of current active feature.
 			foreach ( $this->get_features() as $feature ) {
-				if ( empty( $feature['dependency'] ) ) {
+				if ( empty( $feature['dependencies'] ) ) {
 					continue;
 				}
 
-				foreach ( $feature['dependency'] as $dependency ) {
+				foreach ( $feature['dependencies'] as $dependency ) {
 					if ( self::STATE_ACTIVE === $feature['state'] && $feature_data['name'] === $dependency->get_name() ) {
 						// Rollback.
 						$feature['state'] = self::STATE_ACTIVE;
