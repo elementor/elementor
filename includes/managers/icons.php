@@ -562,22 +562,6 @@ class Icons_Manager {
 	}
 
 	/**
-	 * @since 3.0.0
-	 * @deprecated 3.0.0
-	 */
-	public function register_ajax_actions() {
-		_deprecated_function( __METHOD__, '3.0.0' );
-	}
-
-	/**
-	 * @since 3.0.0.
-	 * @deprecated 3.0.0
-	 */
-	public function ajax_enable_svg_uploads() {
-		_deprecated_function( __METHOD__, '3.0.0' );
-	}
-
-	/**
 	 * Icons Manager constructor
 	 */
 	public function __construct() {

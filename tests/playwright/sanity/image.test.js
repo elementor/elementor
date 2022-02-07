@@ -24,7 +24,7 @@ test( 'Image widget sanity test', async ( { page } ) => {
 	}
 
 	await page.click( '.button.media-button' );
-	const img = await editor.previewFrame.waitForSelector( 'img' );
+	const img = await editor.getFrame().waitForSelector( 'img' );
 	const src = await img.getAttribute( 'src' );
 	expect( src ).toContain( '.jpeg' );
 } );
