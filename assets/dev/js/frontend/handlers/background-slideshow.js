@@ -55,7 +55,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				break;
 		}
 
-		if( 'yes' === elementSettings.background_slideshow_lazyload ) {
+		if ( 'yes' === elementSettings.background_slideshow_lazyload ) {
 			swiperOptions.lazy = {
 				loadPrevNext: true,
 				loadPrevNextAmount: 1,
@@ -84,7 +84,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			slideInnerClass += ' ' + classes[ kenBurnsDirection ];
 		}
 
-		if( lazyload ) {
+		if ( lazyload ) {
 			slideInnerClass += ' swiper-lazy';
 		}
 
@@ -95,7 +95,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 
 			let $slidebg;
 
-			if( lazyload ) {
+			if ( lazyload ) {
 				const $slideloader = jQuery( '<div>', { class: classes.swiperPreloader } );
 
 				$slidebg = jQuery( '<div>', {
