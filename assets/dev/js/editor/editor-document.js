@@ -1,23 +1,16 @@
 import CommandContainerBase from './command-bases/command-container-base';
 import CommandContainerInternalBase from './command-bases/command-container-internal-base';
-import DocumentComponent from './document/component';
-import DataGlobalsComponent from './data/globals/component';
-
-elementorCommon.elements.$window.on( 'elementor:init-components', () => {
-	// TODO: Move to elementor:init-data-components
-	$e.components.register( new DataGlobalsComponent() );
-
-	$e.components.register( new DocumentComponent() );
-
-	// TODO: Remove, BC Since 2.9.0.
-	elementor.saver = $e.components.get( 'document/save' );
-} );
+import CommandHistoryBase from 'elementor-document/command-bases/command-history-base';
+import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
 
 $e.modules.editor = {
 	CommandContainerBase,
 	CommandContainerInternalBase,
 
-	document: DocumentComponent.getModules(),
+	document: {
+		CommandHistoryBase,
+		CommandHistoryDebounceBase,
+	},
 };
 
 // TODO: Remove, BC.

@@ -1,6 +1,4 @@
-import CommandContainerInternalBase from 'elementor-editor/command-bases/command-container-internal-base';
-
-export default class CommandHistoryInternalBase extends CommandContainerInternalBase {
+export default class CommandHistoryInternalBase extends $e.modules.editor.CommandContainerInternalBase {
 	initialize( args ) {
 		super.initialize( args );
 

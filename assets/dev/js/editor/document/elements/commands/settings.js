@@ -1,6 +1,4 @@
-import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
-
-export class Settings extends CommandHistoryDebounceBase {
+export class Settings extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
 	 *
