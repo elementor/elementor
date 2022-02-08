@@ -11,16 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating drop shadows control. Displays input fields for
  * horizontal shadow, vertical shadow, shadow blur and shadow color.
  *
- * @since 1.6.0
+ * @since 3.7.0
  */
 class Control_Drop_Shadow extends Control_Base_Multiple {
 
 	/**
 	 * Get drop shadow control type.
 	 *
-	 * Retrieve the control type, in this case `text_shadow`.
+	 * Retrieve the control type, in this case `drop_shadow`.
 	 *
-	 * @since 1.6.0
+	 * @since 3.7.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -35,7 +35,7 @@ class Control_Drop_Shadow extends Control_Base_Multiple {
 	 * Retrieve the default value of the drop shadow control. Used to return the
 	 * default values while initializing the drop shadow control.
 	 *
-	 * @since 1.6.0
+	 * @since 3.7.0
 	 * @access public
 	 *
 	 * @return array Control default value.
@@ -55,7 +55,7 @@ class Control_Drop_Shadow extends Control_Base_Multiple {
 	 * Retrieve the sliders of the drop shadow control. Sliders are used while
 	 * rendering the control output in the editor.
 	 *
-	 * @since 1.6.0
+	 * @since 3.7.0
 	 * @access public
 	 *
 	 * @return array Control sliders.
@@ -87,7 +87,7 @@ class Control_Drop_Shadow extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 1.6.0
+	 * @since 3.7.0
 	 * @access public
 	 */
 	public function content_template() {

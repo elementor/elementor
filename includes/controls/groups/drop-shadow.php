@@ -6,35 +6,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor box shadow control.
+ * Elementor drop shadow control.
  *
- * A base control for creating box shadow control. Displays input fields to define
- * the box shadow including the horizontal shadow, vertical shadow, shadow blur,
- * shadow spread, shadow color and the position.
+ * A base control for creating drop shadow control. Displays input fields to define
+ * the drop shadow including the horizontal shadow, vertical shadow, shadow blur and shadow color.
  *
- * @since 1.2.2
+ * @since 3.7.0
  */
 class Group_Control_Drop_Shadow extends Group_Control_Base {
 
 	/**
 	 * Fields.
 	 *
-	 * Holds all the box shadow control fields.
+	 * Holds all the drop shadow control fields.
 	 *
-	 * @since 1.2.2
+	 * @since 3.7.0
 	 * @access protected
 	 * @static
 	 *
-	 * @var array Box shadow control fields.
+	 * @var array drop shadow control fields.
 	 */
 	protected static $fields;
 
 	/**
-	 * Get box shadow control type.
+	 * Get drop shadow control type.
 	 *
 	 * Retrieve the control type, in this case `box-shadow`.
 	 *
-	 * @since 1.0.0
+	 * @since 3.7.0
 	 * @access public
 	 * @static
 	 *
@@ -47,9 +46,9 @@ class Group_Control_Drop_Shadow extends Group_Control_Base {
 	/**
 	 * Init fields.
 	 *
-	 * Initialize box shadow control fields.
+	 * Initialize drop shadow control fields.
 	 *
-	 * @since 1.2.2
+	 * @since 3.7.0
 	 * @access protected
 	 *
 	 * @return array Control fields.
@@ -71,13 +70,13 @@ class Group_Control_Drop_Shadow extends Group_Control_Base {
 	/**
 	 * Get default options.
 	 *
-	 * Retrieve the default options of the box shadow control. Used to return the
-	 * default options while initializing the box shadow control.
+	 * Retrieve the default options of the drop shadow control. Used to return the
+	 * default options while initializing the drop shadow control.
 	 *
-	 * @since 1.9.0
+	 * @since 3.7.0
 	 * @access protected
 	 *
-	 * @return array Default box shadow control options.
+	 * @return array Default drop shadow control options.
 	 */
 	protected function get_default_options() {
 		return [
