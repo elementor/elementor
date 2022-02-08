@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Validate extends CommandBase {
+export class Validate extends $e.modules.CommandBase {
 	/**
 	 * @inheritDoc
 	 */

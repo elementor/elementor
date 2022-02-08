@@ -1,5 +1,8 @@
 import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
 
+/**
+ * @name $e.modules.editor.document.CommandHistoryBase
+ */
 export default class CommandHistoryBase extends CommandContainerBase {
 	static getInstanceType() {
 		return 'CommandHistoryBase';

@@ -17,5 +17,3 @@ CommandHistoryDebounceBaseMock.registerConfig = {};
 CommandHistoryDebounceBaseExportedMock.registerConfig = {};
 CommandHistoryDebounceBaseMock.prototype.getHistory = getHistory;
 CommandHistoryDebounceBaseExportedMock.prototype.getHistory = getHistory;
-
-

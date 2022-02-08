@@ -1,6 +1,4 @@
-import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
-
-export class Deselect extends CommandContainerBase {
+export class Deselect extends $e.modules.editor.CommandContainerBase {
 	validateArgs( args = {} ) {
 		if ( ! args.all ) {
 			this.requireContainer( args );

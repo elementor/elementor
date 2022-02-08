@@ -1,6 +1,4 @@
-import CommandHistoryBase from '../../command-bases/command-history-base';
-
-export class Empty extends CommandHistoryBase {
+export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );
