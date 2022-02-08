@@ -532,7 +532,7 @@ class Manager extends Base_Object {
 		if ( ! empty( $feature['dependencies'] ) ) {
 			?>
 			<div class="e-experiment__dependency">
-				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on:', 'elementor' ); ?></strong>
+				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on', 'elementor' ); ?>:</strong>
 			<?php foreach ( $feature['dependencies'] as $dependency ) : ?>
 				<span class="e-experiment__dependency__item"><?php echo esc_html( $dependency->get_name() ); ?></span>
 			<?php endforeach; ?>
