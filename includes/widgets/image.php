@@ -512,7 +512,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Drop_Shadow::get_type(),
 			[
-				'name' => 'drop_shadow',
+				'name' => 'image_drop_shadow',
 				'label' => esc_html__( 'Drop Shadow', 'elementor' ),
 				'selector' => '{{WRAPPER}} img',
 			]
