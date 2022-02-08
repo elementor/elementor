@@ -252,7 +252,7 @@ class Widget_Icon extends Widget_Base {
 				'condition' => [
 					'view!' => 'default',
 				],
-				'label' => esc_html__( 'Drop Shadow', 'elementor-pro' ),
+				'label' => esc_html__( 'Drop Shadow', 'elementor' ),
 				'selector' => '{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-stacked .elementor-icon, {{WRAPPER}}.elementor-view-stacked .elementor-icon svg',
 			]
 		);
