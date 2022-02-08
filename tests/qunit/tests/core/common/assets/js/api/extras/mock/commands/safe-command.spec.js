@@ -7,7 +7,7 @@ export class SafeCommand extends CommandBase {
 		};
 	}
 
-	apply( args = {} ) {
+	apply() {
 
 	}
 }
