@@ -233,8 +233,15 @@ ColumnView = BaseElementView.extend( {
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			getDropContainer: () => this.getContainer(),
-			getDropIndex,
+			onDropping: ( side, event ) => {
+				// Triggering drag end manually, since it won't fired above iframe
+				elementor.getPreviewView().onPanelElementDragEnd();
+
+				this.onDrop(
+					event,
+					{ side, at: getDropIndex( side, event ) }
+				);
+			},
 		} );
 	},
 

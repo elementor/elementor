@@ -1,6 +1,6 @@
 import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
-import ImportFailedDialog from '../import-failed-dialog/import-failed-dialog';
+import ProcessFailedDialog from '../process-failed-dialog/process-failed-dialog';
 import WizardStep from '../../ui/wizard-step/wizard-step';
 
 export default function FileProcess( props ) {
@@ -18,7 +18,7 @@ export default function FileProcess( props ) {
 			}
 		>
 			{ ! ! props.errorType &&
-				<ImportFailedDialog
+				<ProcessFailedDialog
 					onApprove={ props.onDialogApprove }
 					onDismiss={ props.onDialogDismiss }
 					errorType={ props.errorType }

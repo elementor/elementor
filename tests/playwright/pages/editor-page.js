@@ -1,4 +1,5 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const { WpAdminPage } = require( './wp-admin-page' );
 
 exports.EditorPage = class EditorPage {
 	isPanelLoaded = false;
@@ -8,8 +9,11 @@ exports.EditorPage = class EditorPage {
 	 */
 	constructor( page ) {
 		this.page = page;
-		this.previewFrame = page.frame( { name: 'elementor-preview-iframe' } );
 	}
+
+	getFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
+    }
 
 	/**
 	 * Reload the editor page.
@@ -33,7 +37,7 @@ exports.EditorPage = class EditorPage {
 
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
 		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-		await this.page.waitForTimeout( 5000 );
+		await this.page.waitForTimeout( 5000 ); //TODO: Find a way to detect when Iframe is fully loaded.
 
 		this.isPanelLoaded = true;
 	}
@@ -69,6 +73,27 @@ exports.EditorPage = class EditorPage {
 	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>}
 	 */
 	async getElementHandle( id ) {
-		return this.previewFrame.$( getElementSelector( id ) );
+		return this.getFrame().$( getElementSelector( id ) );
+	}
+
+	async addTwoColumns() {
+		await this.getFrame().click( '.elementor-add-section-button' );
+		await this.getFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
+	}
+
+	async init( experiments ) {
+		const wpAdmin = new WpAdminPage( this.page );
+
+		await wpAdmin.login();
+
+		if ( experiments ) {
+			await wpAdmin.setExperiments( experiments );
+		}
+
+		await wpAdmin.openNewPage();
+
+		await this.ensurePanelLoaded();
+
+		await this.page.waitForTimeout( 4000 );//TODO: Find a way to detect when Iframe is fully loaded.
 	}
 };
