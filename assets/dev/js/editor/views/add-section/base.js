@@ -129,7 +129,20 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
+			// Merge different options if provided by child elements
+			...this.getDroppableOptions(),
 		} );
+	}
+
+	getDroppableOptions() {
+		return {
+			onDropping: ( side, event ) => {
+				elementor.getPreviewView().onDrop(
+					event,
+					{ side, at: this.getOption( 'at' ) }
+				);
+			},
+		};
 	}
 
 	onPresetSelected( event ) {
@@ -184,11 +197,6 @@ class AddSectionBase extends Marionette.ItemView {
 				columns: 1,
 				options: {
 					at: this.getOption( 'at' ),
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
 				},
 			} );
 
