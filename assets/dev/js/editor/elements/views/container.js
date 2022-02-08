@@ -22,6 +22,15 @@ const ContainerView = BaseElementView.extend( {
 		return this.model.getSetting( 'html_tag' ) || 'div';
 	},
 
+	// TODO: Copied from `views/column.js`.
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
+
+		return ui;
+	},
+
 	getCurrentUiStates() {
 		const currentDirection = this.container.settings.get( 'flex_direction' );
 
@@ -109,24 +118,29 @@ const ContainerView = BaseElementView.extend( {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
-				let newIndex = widgets.indexOf( event.currentTarget );
+				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
+					draggingInSameParent = ( draggedView?.parent === this );
+
+				let $elements = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+
+				// Exclude the dragged element from the indexing calculations.
+				if ( draggingInSameParent ) {
+					$elements = $elements.not( draggedView.$el );
+				}
+
+				const widgetsArray = Object.values( $elements );
+
+				let newIndex = widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
 					newIndex++;
 				}
 
-				const draggedView = elementor.channels.editor.request( 'element:dragged' );
-
 				// User is sorting inside a Container.
 				if ( draggedView ) {
 					// Reset the dragged element cache.
 					elementor.channels.editor.reply( 'element:dragged', null );
-
-					if ( draggedView.parent === this ) {
-						newIndex++;
-					}
 
 					$e.run( 'document/elements/move', {
 						container: draggedView.getContainer(),
@@ -140,18 +154,9 @@ const ContainerView = BaseElementView.extend( {
 				}
 
 				// User is dragging an element from the panel.
-				this.addElementFromPanel( { at: newIndex } );
+				this.onDrop( event, { at: newIndex } );
 			},
 		};
-	},
-
-	changeContainerClasses: function() {
-		const emptyClass = 'e-element-empty',
-			populatedClass = 'e-element-populated',
-			state = this.collection.isEmpty();
-
-		this.$el.toggleClass( populatedClass, ! state )
-			.toggleClass( emptyClass, state );
 	},
 
 	/**
@@ -285,8 +290,6 @@ const ContainerView = BaseElementView.extend( {
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		this.changeContainerClasses();
-
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
@@ -302,6 +305,53 @@ const ContainerView = BaseElementView.extend( {
 
 	onDragEnd: function() {
 		this.$el.html5Droppable( this.getDroppableOptions() );
+	},
+
+	// TODO: Copied from `views/column.js`.
+	attachElContent: function() {
+		BaseElementView.prototype.attachElContent.apply( this, arguments );
+
+		const $tooltip = jQuery( '<div>', {
+			class: 'elementor-column-percents-tooltip',
+			'data-side': elementorCommon.config.isRTL ? 'right' : 'left',
+		} );
+
+		this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
+	},
+
+	// TODO: Copied from `views/column.js`.
+	getPercentSize: function( size ) {
+		if ( ! size ) {
+			size = this.el.getBoundingClientRect().width;
+		}
+
+		return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
+	},
+
+	// TODO: Copied from `views/column.js`.
+	getPercentsForDisplay: function() {
+		const width = +this.model.getSetting( 'width' ) || this.getPercentSize();
+
+		return width.toFixed( 1 ) + '%';
+	},
+
+	onResizeStart: function() {
+		if ( this.ui.percentsTooltip ) {
+			this.ui.percentsTooltip.show();
+		}
+	},
+
+	onResize: function() {
+		// TODO: Copied from `views/column.js`.
+		if ( this.ui.percentsTooltip ) {
+			this.ui.percentsTooltip.text( this.getPercentsForDisplay() );
+		}
+	},
+
+	onResizeStop: function() {
+		if ( this.ui.percentsTooltip ) {
+			this.ui.percentsTooltip.hide();
+		}
 	},
 } );
 

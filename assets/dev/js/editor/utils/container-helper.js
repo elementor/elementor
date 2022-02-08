@@ -118,6 +118,7 @@ export class ContainerHelper {
 
 			this.createContainer( {
 				flex_direction: this.DIRECTION_COLUMN,
+				content_width: 'full',
 				width: {
 					unit: '%',
 					size,
@@ -175,6 +176,7 @@ export class ContainerHelper {
 					}
 
 					settings = {
+						content_width: 'full',
 						width: {
 							unit: '%',
 							size: '50',

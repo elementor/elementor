@@ -3,14 +3,18 @@
 	--border-radius: 0;
 	--display: flex;
 	--flex-basis: auto;
-	--width: var( --container-max-width, 1140px ); // Use the width from `Site Settings` or default to 1140px.
+	--content-width: var( --container-max-width, 1140px ); // Use the width from `Site Settings` or default to 1140px.;
+	--width: 100%;
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
 	--margin: 0;
-	--padding: 10px;
+	--padding-top: var( --container-default-padding, 10px );
+	--padding-right: var( --container-default-padding, 10px );
+	--padding-bottom: var( --container-default-padding, 10px );
+	--padding-left: var( --container-default-padding, 10px );
 	--position: relative;
-	--z-index: auto;
+	--z-index: 0;
 	--overflow: visible;
 	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
@@ -35,13 +39,17 @@
 	height: var( --height );
 	border-radius: var( --border-radius );
 	margin: var( --margin );
-	padding: var( --padding );
+	// Custom content-width hack.
+	padding-left: calc( ( 100% - var( --content-width ) ) / 2 + var( --padding-left ) );
+	padding-right: calc( ( 100% - var( --content-width ) ) / 2 + var( --padding-right ) );
+	padding-top: var( --padding-top );
+	padding-bottom: var( --padding-bottom );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: var( --transition );
 
 	// Force center only top-level containers.
-	.elementor-section-wrap > & {
+	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
 		margin-right: auto;
 		margin-left: auto;
 	}
@@ -85,8 +93,18 @@
 		}
 
 		// Fix nested Containers DnD issues (ED-5424).
-		&[data-nesting-level]:not( [data-nesting-level = "0"] ) > .elementor-widget-placeholder {
-			margin-inline-end: var( --margin-end );
+		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
+			// Any placeholder which is not on first widget.
+			> .elementor-widget-placeholder {
+				margin-inline-end: 0;
+				margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
+			}
+
+			// Placeholder on first widget.
+			> :not( .elementor-element ) + .elementor-widget-placeholder {
+				margin-inline-end: var( --margin-end );
+				margin-inline-start: var( --margin-start );
+			}
 		}
 	}
 
@@ -148,19 +166,34 @@
 	// TODO: Find a better solution.
 	& > & {
 		> .elementor-element-overlay {
-			// Hide any setting control which isn't the edit control.
 			.elementor-editor-element-setting {
-				&:not( .elementor-editor-element-edit ),
-				&:first-child::before {
+				position: relative;
+				background-color: $editor-darker;
+
+				&:hover {
+					background-color: $editor-darkest;
+				}
+
+				// Hide any unwanted setting controls.
+				&.elementor-editor-element-add,
+				&.elementor-editor-element-edit + .elementor-editor-element-remove,
+				&:first-child::before,
+				&:last-child::after {
 					display: none;
+				}
+
+				// Extended actions ("editing handles").
+				&:not( .elementor-editor-element-edit ) {
+					margin-inline-start: -25px;
+					z-index: -1;
+					transition: .3s all;
+					will-change: margin-inline-start;
 				}
 			}
 
-			.elementor-editor-element-edit {
-				width: auto;
-
-				&:hover {
-					background-color: transparent;
+			> .elementor-editor-element-settings:hover {
+				> :is( .elementor-editor-element-duplicate, .elementor-editor-element-remove ) {
+					margin-inline-start: 0;
 				}
 			}
 
@@ -172,18 +205,18 @@
 				border-radius: 0;
 				border-end-end-radius: 3px;
 				height: auto;
-				background-color: $editor-darkest;
+				background-color: $editor-darker;
 
 				&:hover {
-					background-color: $editor-darker;
+					background-color: $editor-darkest;
 				}
 
 				// Replace the edit eicon with Container eicon.
-				i::before {
-					content: '\e98d'; // Container eicon.
-					font-size: 10px;
+				i.eicon-handle::before {
+					content: '\e9b4'; // eicon-inner-container.
+					font-size: 20px;
 					display: block;
-					padding: 7px;
+					padding: 2px;
 				}
 			}
 		}
