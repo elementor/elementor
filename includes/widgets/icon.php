@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Group_Control_Drop_Shadow;
 
 /**
  * Elementor icon widget.
@@ -237,6 +238,22 @@ class Widget_Icon extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon svg' => 'fill: {{VALUE}};',
 				],
+			]
+		);
+
+		// For testing only.
+		$this->add_group_control(
+			Group_Control_Drop_Shadow::get_type(),
+			[
+				'name' => 'drop_shadow',
+				'dynamic' => [
+					'active' => true,
+				],
+				'condition' => [
+					'view!' => 'default',
+				],
+				'label' => esc_html__( 'Drop Shadow', 'elementor-pro' ),
+				'selector' => '{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-stacked .elementor-icon, {{WRAPPER}}.elementor-view-stacked .elementor-icon svg',
 			]
 		);
 
