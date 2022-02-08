@@ -154,7 +154,7 @@ const ContainerView = BaseElementView.extend( {
 				}
 
 				// User is dragging an element from the panel.
-				this.addElementFromPanel( { at: newIndex } );
+				this.onDrop( event, { at: newIndex } );
 			},
 		};
 	},
