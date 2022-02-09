@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-use Elementor\Group_Control_Drop_Shadow;
 
 /**
  * Elementor icon widget.
