@@ -5,7 +5,7 @@ export class SafeCommand extends $e.modules.CommandBase {
 		};
 	}
 
-	apply( args = {} ) {
+	apply() {
 
 	}
 }
