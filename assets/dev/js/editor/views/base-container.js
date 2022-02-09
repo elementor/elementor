@@ -126,6 +126,7 @@ module.exports = Marionette.CompositeView.extend( {
 				columns: Number( ! containerExperiment ),
 				options: {
 					at: options.at,
+					edit: false, // Avoid useless element selection.
 				},
 			} );
 

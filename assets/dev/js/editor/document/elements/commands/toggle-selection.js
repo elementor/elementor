@@ -4,7 +4,8 @@ export class ToggleSelection extends $e.modules.editor.CommandContainerBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], append = false } = args;
+		const { containers = [ args.container ], options = {} } = args,
+			{ append = false } = options;
 
 		containers.forEach( ( container ) => {
 			$e.run(

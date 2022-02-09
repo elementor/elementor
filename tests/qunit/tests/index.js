@@ -38,6 +38,7 @@ export const tests = () => {
 
 	// JS API editor globals data.
 	require( './assets/dev/js/editor/data/globals/component.spec' );
+	require( './assets/dev/js/editor/regions/navigator/component.spec' );
 
 	// Kits.
 	require( './core/kits/assets/js/manager.spec' );

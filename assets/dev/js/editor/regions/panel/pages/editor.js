@@ -74,7 +74,9 @@ EditorView = ControlsStack.extend( {
 	},
 
 	scrollToEditedElement: function() {
-		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ).$el );
+		$e.internal( 'document/elements/scroll-to-view', {
+			$element: this.getOption( 'editedElementView' ).$el,
+		} );
 	},
 
 	onDestroy: function() {
