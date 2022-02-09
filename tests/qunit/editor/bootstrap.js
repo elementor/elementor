@@ -43,6 +43,8 @@ export default class EditorBootstrap {
 			this.runTests();
 		} );
 
+		// Since 'starts' become async.
+		// Ajax set to 'mock' status for widget config request.
 		elementor.start().then( () => {
 			ajax.silence();
 
