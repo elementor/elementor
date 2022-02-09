@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class ConvertAll extends CommandHistory {
+export class ConvertAll extends $e.modules.document.CommandHistory {
 	getHistory() {
 		return {
 			type: __( 'Converted to Containers', 'elementor' ),
