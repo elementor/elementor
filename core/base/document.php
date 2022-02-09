@@ -1559,7 +1559,6 @@ abstract class Document extends Controls_Stack {
 				'type' => Controls_Manager::TEXT,
 				'default' => $this->post->post_title,
 				'label_block' => true,
-				'separator' => 'none',
 			]
 		);
 
