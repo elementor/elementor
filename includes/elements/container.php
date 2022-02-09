@@ -475,6 +475,23 @@ class Container extends Element_Base {
 
 		$this->end_controls_section();
 
+	}
+
+	/**
+	 * Register the Container's layout tab.
+	 *
+	 * @return void
+	 */
+	protected function register_layout_tab() {
+		$this->register_container_layout_controls();
+	}
+
+	/**
+	 * Register the Container's items layout controls.
+	 *
+	 * @return void
+	 */
+	protected function register_items_layout_controls() {
 		$this->start_controls_section(
 			'section_layout_container_items',
 			[
@@ -507,12 +524,12 @@ class Container extends Element_Base {
 	}
 
 	/**
-	 * Register the Container's layout tab.
+	 * Register the Container's items layout tab.
 	 *
 	 * @return void
 	 */
-	protected function register_layout_tab() {
-		$this->register_container_layout_controls();
+	protected function register_items_layout_tab() {
+		$this->register_items_layout_controls();
 	}
 
 	/**
@@ -1594,6 +1611,7 @@ class Container extends Element_Base {
 	 */
 	protected function register_controls() {
 		$this->register_layout_tab();
+		$this->register_items_layout_tab();
 		$this->register_style_tab();
 		$this->register_advanced_tab();
 	}
