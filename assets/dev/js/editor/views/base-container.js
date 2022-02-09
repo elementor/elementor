@@ -1,5 +1,3 @@
-import ElementModel from 'elementor-elements/models/element';
-
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
@@ -127,7 +125,7 @@ module.exports = Marionette.CompositeView.extend( {
 				container,
 				columns: Number( ! containerExperiment ),
 				options: {
-					at: this.getOption( 'at' ),
+					at: options.at,
 					edit: false, // Avoid useless element selection.
 				},
 			} );
@@ -149,6 +147,29 @@ module.exports = Marionette.CompositeView.extend( {
 		$e.internal( 'document/history/end-log', { id: historyId } );
 
 		return widget;
+	},
+
+	onDrop( event, options ) {
+		const input = event.originalEvent.dataTransfer.files;
+
+		if ( input.length ) {
+			$e.run( 'editor/browser-import/import', {
+				input,
+				target: this.getContainer(),
+				options: { event, target: { at: options.at } },
+			} );
+
+			return;
+		}
+
+		this.createElementFromModel(
+			Object.fromEntries(
+				Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+					// The `custom` property is responsible for storing global-widgets related data.
+					.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
+			),
+			options
+		);
 	},
 
 	getHistoryType( event ) {

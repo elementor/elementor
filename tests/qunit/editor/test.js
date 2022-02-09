@@ -26,6 +26,7 @@ export default class EditorTest extends EditorBase {
 
 			if ( QUnit.config.validateContainersAlive ) {
 				if ( ! ContainerHelper.isAllAliveRecursive( elementor.getPreviewContainer() ) ) {
+					// eslint-disable-next-line no-console
 					console.error( `Not all the containers alive: ${ module } -> ${ name }` );
 				}
 			}
