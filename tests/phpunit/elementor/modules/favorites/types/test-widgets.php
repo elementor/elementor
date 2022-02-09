@@ -44,6 +44,9 @@ class Test_Widgets extends Elementor_Test_Base {
 			$module::CATEGORY_SLUG,
 			Plugin::$instance->widgets_manager->get_widget_types( $widget_type )->get_config()[ 'categories' ]
 		);
+
+		// Cleanup
+		Plugin::$instance->widgets_manager->unregister( 'mock-widget' );
 	}
 	/**
 	 * @doesNotPerformAssertions
