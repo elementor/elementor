@@ -1,5 +1,8 @@
 import CommandInfra from './command-infra';
 
+/**
+ * @name $e.modules.CommandBase
+ */
 export default class CommandBase extends CommandInfra {
 	static getInstanceType() {
 		return 'CommandBase';

@@ -17,5 +17,3 @@ CommandHistoryBaseMock.registerConfig = {};
 CommandHistoryBaseExportedMock.registerConfig = {};
 CommandHistoryBaseMock.prototype.getHistory = getHistory;
 CommandHistoryBaseExportedMock.prototype.getHistory = getHistory;
-
-

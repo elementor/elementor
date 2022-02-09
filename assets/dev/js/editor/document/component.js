@@ -1,19 +1,10 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import CommandHistoryBase from '../document/command-bases/command-history-base';
-import CommandHistoryDebounceBase from '../document/command-bases/command-history-debounce-base';
 
 import * as components from './';
 import * as hooks from './hooks/';
 import * as uiStates from './ui-states';
 
 export default class Component extends ComponentBase {
-	static getModules() {
-		return {
-			CommandHistoryBase,
-			CommandHistoryDebounceBase,
-		};
-	}
-
 	getNamespace() {
 		return 'document';
 	}

@@ -23,7 +23,7 @@ export const tests = () => {
 
 	// JS API editor
 	require( './assets/dev/js/editor/command-bases/command-container-base.spec' );
-	require( './assets/dev/js/editor/command-bases/command-container-internal.spec' );
+	require( './assets/dev/js/editor/command-bases/command-container-internal-base.spec' );
 
 	// JS API editor document.
 	require( './assets/dev/js/editor/document/command-bases/command-history-base.spec' );

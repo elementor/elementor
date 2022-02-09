@@ -1,6 +1,9 @@
 import CommandBase from './command-base';
 import * as errors from '../core/data/errors/';
 
+/**
+ * @name $e.modules.CommandData
+ */
 export default class CommandData extends CommandBase {
 	/**
 	 * Data returned from remote.

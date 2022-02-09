@@ -1,6 +1,4 @@
-import CommandHistoryBase from '../../command-bases/command-history-base';
-
-export class Delete extends CommandHistoryBase {
+export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );

@@ -1,6 +1,4 @@
-import CommandHistoryBase from '../../command-bases/command-history-base';
-
-export class Move extends CommandHistoryBase {
+export class Move extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
