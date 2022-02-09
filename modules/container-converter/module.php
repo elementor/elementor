@@ -68,9 +68,10 @@ class Module extends \Elementor\Core\Base\Module {
 			'convert_to_container',
 			[
 				'type' => Controls_Manager::BUTTON,
-				'label' => esc_html__( 'Convert to Container', 'elementor' ),
-				'text' => esc_html__( 'Apply', 'elementor' ),
+				'label' => esc_html__( 'Convert to container', 'elementor' ),
+				'text' => esc_html__( 'Convert', 'elementor' ),
 				'button_type' => 'default',
+				'description' => esc_html__( 'Copies all of the selected sections and columns and pastes them in a container beneath the original.', 'elementor' ),
 				'separator' => 'after',
 				'event' => static::EVENT_NAME,
 			]
@@ -100,9 +101,11 @@ class Module extends \Elementor\Core\Base\Module {
 			'convert_to_container',
 			[
 				'type' => Controls_Manager::BUTTON,
-				'label' => esc_html__( 'Convert All Sections to Containers', 'elementor' ),
-				'text' => esc_html__( 'Apply', 'elementor' ),
+				'label' => esc_html__( 'Convert to container', 'elementor' ),
+				'text' => esc_html__( 'Convert', 'elementor' ),
 				'button_type' => 'default',
+				'description' => esc_html__( 'Copies all of the selected sections and columns and pastes them in a container beneath the original.', 'elementor' ),
+				'separator' => 'after',
 				'event' => static::EVENT_NAME,
 			]
 		);
