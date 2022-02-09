@@ -36,8 +36,7 @@ export default class Routes extends Commands {
 			return;
 		}
 
-		delete this.current[ container ];
-		delete this.currentArgs[ container ];
+		this.detachCurrent( container );
 
 		this.getComponent( route ).onCloseRoute( route );
 	}
@@ -65,8 +64,8 @@ export default class Routes extends Commands {
 		return true;
 	}
 
-	beforeRun( route, args ) {
-		if ( ! super.beforeRun( route, args ) ) {
+	validateRun( route, args = {} ) {
+		if ( ! super.validateRun( route, args ) ) {
 			return false;
 		}
 
@@ -74,6 +73,26 @@ export default class Routes extends Commands {
 			return false;
 		}
 
+		return this.getComponent( route )?.isOpen;
+	}
+
+	run( route, args = {} ) {
+		if ( ! this.validateRun( route, args ) ) {
+			const component = this.getComponent( route );
+
+			if ( ! component.isOpen || args.reOpen ) {
+				component.isOpen = component.open( args );
+			}
+
+			if ( ! component.isOpen ) {
+				return false;
+			}
+		}
+
+		return super.run( route, args );
+	}
+
+	beforeRun( route, args ) {
 		const component = this.getComponent( route ),
 			container = component.getRootContainer(),
 			oldRoute = this.current[ container ];
@@ -82,11 +101,11 @@ export default class Routes extends Commands {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
 		}
 
-		if ( ! component.isOpen || args.reOpen ) {
-			component.isOpen = component.open( args );
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
 		}
 
-		return component.isOpen;
+		this.attachCurrent( container, route, args );
 	}
 
 	to( route, args ) {
@@ -126,7 +145,13 @@ export default class Routes extends Commands {
 
 	// Don't clear current route.
 	afterRun( route, args ) {
-		this.getComponent( route ).onRoute( route, args );
+		const component = this.getComponent( route );
+
+		component.onRoute( route, args );
+
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args ] );
+		}
 	}
 
 	is( route, args = {} ) {
