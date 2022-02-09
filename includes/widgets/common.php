@@ -1224,16 +1224,6 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		// For testing only.
-		$this->add_group_control(
-			Group_Control_Drop_Shadow::get_type(),
-			[
-				'name' => 'mask_drop_shadow',
-				'label' => esc_html__( 'Drop Shadow', 'elementor' ),
-				'selector' => '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container, {{WRAPPER}}.elementor-widget-image .elementor-widget-container img',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(

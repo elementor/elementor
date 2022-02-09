@@ -241,22 +241,6 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		// For testing only.
-		$this->add_group_control(
-			Group_Control_Drop_Shadow::get_type(),
-			[
-				'name' => 'drop_shadow',
-				'dynamic' => [
-					'active' => true,
-				],
-				'condition' => [
-					'view!' => 'default',
-				],
-				'label' => esc_html__( 'Drop Shadow', 'elementor' ),
-				'selector' => '{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-stacked .elementor-icon, {{WRAPPER}}.elementor-view-stacked .elementor-icon svg',
-			]
-		);
-
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
