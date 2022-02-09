@@ -414,26 +414,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Flex_Container::get_type(),
-			[
-				'name' => 'flex',
-				'selector' => '{{WRAPPER}}',
-				'fields_options' => [
-					'gap' => [
-						'label' => esc_html_x( 'Elements Gap', 'Flex Item Control', 'elementor' ),
-						'placeholder' => '20',
-					],
-					'direction' => [
-						'default' => 'column',
-					],
-				],
-				'condition' => [
-					'container_type' => 'flex',
-				],
-			]
-		);
-
 		$this->add_control(
 			'overflow',
 			[
@@ -490,6 +470,36 @@ class Container extends Element_Base {
 					'html_tag' => 'a',
 				],
 				'description' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_layout_container_items',
+			[
+				'label' => esc_html__( 'Items', 'elementor' ),
+				'tab' => Controls_Manager::TAB_LAYOUT,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Flex_Container::get_type(),
+			[
+				'name' => 'flex',
+				'selector' => '{{WRAPPER}}',
+				'fields_options' => [
+					'gap' => [
+						'label' => esc_html_x( 'Elements Gap', 'Flex Item Control', 'elementor' ),
+						'placeholder' => '20',
+					],
+					'direction' => [
+						'default' => 'column',
+					],
+				],
+				'condition' => [
+					'container_type' => 'flex',
+				],
 			]
 		);
 
