@@ -252,11 +252,6 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:edit', this.onEditRequest );
 
 		this.initControlsCSSParser();
-
-		_.defer( () => {
-			// Init container. Defer - in order to init the container after the element is fully initialized, and properties like `_parent` are available.
-			this.getContainer();
-		} );
 	},
 
 	getHandlesOverlay: function() {
@@ -673,6 +668,12 @@ BaseElementView = BaseContainer.extend( {
 
 	onBeforeRender() {
 		this.renderAttributes = {};
+	},
+
+	render() {
+		this.getContainer();
+
+		BaseContainer.prototype.render.apply( this, arguments );
 	},
 
 	onRender() {
