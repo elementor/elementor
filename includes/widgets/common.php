@@ -283,6 +283,9 @@ class Widget_Common extends Widget_Base {
 						'align_self',
 						'order',
 						'order_custom',
+						'size',
+						'grow',
+						'shrink',
 					],
 				]
 			);
