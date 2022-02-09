@@ -1,6 +1,4 @@
-import CommandInternal from 'elementor-api/modules/command-internal-base';
-
-export class ScrollToView extends CommandInternal {
+export class ScrollToView extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args = {} ) {
 		// Support containers.
 		if ( args.container ) {

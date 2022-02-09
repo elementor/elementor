@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Dock extends CommandBase {
+export class Dock extends $e.modules.CommandBase {
 	apply() {
 		if ( this.component.isDocked ) {
 			return false;

@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Undock extends CommandBase {
+export class Undock extends $e.modules.CommandBase {
 	apply( args ) {
 		const { silent } = args;
 

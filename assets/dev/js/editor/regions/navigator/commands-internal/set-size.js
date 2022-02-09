@@ -1,6 +1,4 @@
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
-
-export class SetSize extends CommandInternalBase {
+export class SetSize extends $e.modules.CommandInternalBase {
 	/**
 	 * Set the navigator size to a specific value or default to the storage-saved value.
 	 *

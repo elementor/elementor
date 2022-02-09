@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
 
-export class CommandNavigator extends CommandBase {
+export class CommandNavigator extends CommandContainerBase {
 	initialize() {
 		if ( ! elementor.navigator.isOpen ) {
 			$e.run( 'navigator/open' );

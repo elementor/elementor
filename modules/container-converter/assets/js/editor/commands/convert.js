@@ -1,7 +1,6 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
 import Migrator from '../migrator';
 
-export class Convert extends CommandHistory {
+export class Convert extends $e.modules.editor.document.CommandHistoryBase {
 	getHistory() {
 		return {
 			type: __( 'Converted to Container', 'elementor' ),
