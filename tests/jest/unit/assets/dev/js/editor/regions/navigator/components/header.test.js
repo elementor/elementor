@@ -1,13 +1,13 @@
 import { render, fireEvent } from '@testing-library/react';
 import { Header } from 'elementor-regions/navigator/components';
 
-const mockSetElementFolding = jest.fn(),
+const mockSetElementsFolding = jest.fn(),
 	mockStore = {
 		'navigator/folding': {},
 	};
 
 jest.mock( 'elementor-assets-js/editor/regions/navigator/hooks', () => ( {
-	useElementFolding: () => [ mockStore[ 'navigator/folding' ], mockSetElementFolding ],
+	useElementFolding: () => [ mockStore[ 'navigator/folding' ], mockSetElementsFolding ],
 } ) );
 
 describe( '<Header />', () => {
@@ -40,8 +40,8 @@ describe( '<Header />', () => {
 
 		fireEvent.click( component.getByRole( 'toggle-all' ) );
 
-		expect( mockSetElementFolding ).toBeCalledTimes( 1 );
-		expect( mockSetElementFolding ).toBeCalledWith( true );
+		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
+		expect( mockSetElementsFolding ).toBeCalledWith( true );
 
 		// Cleanup
 		delete mockStore[ 'navigator/folding' ][ 'test-element-1' ];
@@ -56,8 +56,8 @@ describe( '<Header />', () => {
 
 		fireEvent.click( component.getByRole( 'toggle-all' ) );
 
-		expect( mockSetElementFolding ).toBeCalledTimes( 1 );
-		expect( mockSetElementFolding ).toBeCalledWith( true );
+		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
+		expect( mockSetElementsFolding ).toBeCalledWith( true );
 
 		// Cleanup
 		delete mockStore[ 'navigator/folding' ][ 'test-element-1' ];
@@ -72,8 +72,8 @@ describe( '<Header />', () => {
 
 		fireEvent.click( component.getByRole( 'toggle-all' ) );
 
-		expect( mockSetElementFolding ).toBeCalledTimes( 1 );
-		expect( mockSetElementFolding ).toBeCalledWith( false );
+		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
+		expect( mockSetElementsFolding ).toBeCalledWith( false );
 
 		// Cleanup
 		delete mockStore[ 'navigator/folding' ][ 'test-element-1' ];

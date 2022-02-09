@@ -60,7 +60,11 @@ export function ElementItem( { itemId: elementId, level } ) {
 		 */
 		const handleActivateSection = useCallback(
 			( section ) => {
-				setElementSelection( { section } );
+				$e.run( 'panel/editor/open', {
+					model: container.model,
+					view: container.view,
+					section,
+				} );
 			},
 			[ setElementSelection ]
 		);
