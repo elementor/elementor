@@ -36,6 +36,16 @@ export default function ExportKit() {
 		exportContext.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
 	}, [] );
 
+	const getCustomPostTypes = () => {
+		const content = elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes;
+		const cptOptionsArray = [];
+		Object.keys( content ).forEach( ( key ) => cptOptionsArray.push( {
+			label: content[ key ].plural,
+			value: key,
+		} ) );
+		return cptOptionsArray;
+	};
+
 	return (
 		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export-kit">
@@ -49,7 +59,7 @@ export default function ExportKit() {
 					] }
 				/>
 
-				<KitContent contentData={ kitContentData } />
+				<KitContent contentData={ kitContentData } select2CustomPostTypesOptions={ getCustomPostTypes() } />
 
 				<KitInformation />
 			</section>

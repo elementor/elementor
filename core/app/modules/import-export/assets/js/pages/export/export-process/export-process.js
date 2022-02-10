@@ -18,6 +18,7 @@ export default function ExportProcess() {
 		[ errorType, setErrorType ] = useState( '' ),
 		{ plugins, exportedData, kitInfo, isExportProcessStarted } = exportContext.data || {},
 		{ pluginsData } = useExportPluginsData( plugins ),
+		{ customPostTypes } = sharedContext.data || {},
 		onDialogDismiss = () => {
 			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
@@ -34,6 +35,7 @@ export default function ExportProcess() {
 				include: [ ...includes, 'plugins' ],
 				kitInfo,
 				plugins: pluginsData,
+				customPostTypes,
 			} );
 		};
 

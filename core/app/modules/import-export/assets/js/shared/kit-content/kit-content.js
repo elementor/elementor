@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
+import CptSelections from '../cpt-options-select/cpt-options-select';
 import GoProButton from 'elementor-app/molecules/go-pro-button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
@@ -11,7 +12,7 @@ import Grid from 'elementor-app/ui/grid/grid';
 
 import './kit-content.scss';
 
-export default function KitContent( { contentData, hasPro } ) {
+export default function KitContent( { contentData, hasPro, select2CustomPostTypesOptions } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
@@ -42,7 +43,8 @@ export default function KitContent( { contentData, hasPro } ) {
 				{
 					contentData.map( ( { type, data }, index ) => {
 						const isLockedFeaturesNoPro = data.features?.locked && ! isProExist;
-
+						// places the select2 component in content section.
+						const isSelect = 'content' === type ? true : false;
 						return (
 							<List.Item padding="20" key={ type } className="e-app-export-kit-content__item">
 								<div
@@ -61,7 +63,10 @@ export default function KitContent( { contentData, hasPro } ) {
 												<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
 													{ data.description || getTemplateFeatures( data.features, index ) }
 												</Text>
-
+												{
+													isSelect &&
+													<CptSelections options = {select2CustomPostTypesOptions}/>
+												}
 												{
 													isLockedFeaturesNoPro &&
 													<GoProButton
@@ -86,6 +91,7 @@ KitContent.propTypes = {
 	className: PropTypes.string,
 	contentData: PropTypes.array.isRequired,
 	hasPro: PropTypes.bool,
+	select2CustomPostTypesOptions: PropTypes.array,
 };
 
 KitContent.defaultProps = {

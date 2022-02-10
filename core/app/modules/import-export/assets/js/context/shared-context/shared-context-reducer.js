@@ -10,6 +10,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, referrer: payload };
 		case 'SET_INCLUDES':
 			return { ...state, includes: payload };
+		case 'SET_CPT':
+			return { ...state, customPostTypes: payload };
 		default:
 			return state;
 	}

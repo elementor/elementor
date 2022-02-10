@@ -33,7 +33,7 @@ const kitContentData = [
 					__( 'Elementor Posts', 'elementor' ),
 					__( 'WP Pages', 'elementor' ),
 					__( 'WP Posts', 'elementor' ),
-					__( 'Custom Post Type', 'elementor' ),
+					__( 'Custom Post Types', 'elementor' ),
 				],
 			},
 		},
