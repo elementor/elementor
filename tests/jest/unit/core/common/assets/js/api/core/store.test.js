@@ -40,7 +40,7 @@ describe( '$e.store', () => {
 
 		// Assert.
 		expect( store.get( 'slice-1' ) ).toBe( slice1 );
-		expect( store.get() ).toEqual( { 'slice-1': slice1 } );
+		expect( store.getAllSlices() ).toEqual( { 'slice-1': slice1 } );
 		expect( store.getReduxStore().replaceReducer ).toHaveBeenNthCalledWith( 1, 'combine-reducers' );
 	} );
 
@@ -50,7 +50,7 @@ describe( '$e.store', () => {
 		store.register( 'slice-2', slice2 );
 
 		// Assert.
-		expect( store.get() ).toEqual( { 'slice-1': slice1, 'slice-2': slice2 } );
+		expect( store.getAllSlices() ).toEqual( { 'slice-1': slice1, 'slice-2': slice2 } );
 		expect( store.getReduxStore().replaceReducer ).toHaveBeenNthCalledWith( 2, 'combine-reducers' );
 		expect( combineReducers.mock.calls ).toEqual( [
 			[ { 'slice-1': slice1.reducer } ],
@@ -64,5 +64,26 @@ describe( '$e.store', () => {
 
 		// Assert.
 		expect( () => store.register( 'slice-1', slice2 ) ).toThrowError();
+	} );
+
+	test( 'get() -- Returns a slice by ID', () => {
+		// Act.
+		store.register( 'slice-1', slice1 );
+		store.register( 'slice-2', slice2 );
+
+		// Assert.
+		expect( store.get( 'slice-1' ) ).toEqual( slice1 );
+	} );
+
+	test( 'getAllSlices() -- Returns all slices', () => {
+		// Act.
+		store.register( 'slice-1', slice1 );
+		store.register( 'slice-2', slice2 );
+
+		// Assert.
+		expect( store.getAllSlices() ).toEqual( {
+			'slice-1': slice1,
+			'slice-2': slice2,
+		} );
 	} );
 } );
