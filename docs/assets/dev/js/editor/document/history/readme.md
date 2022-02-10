@@ -76,7 +76,7 @@
    | Property     | Type                  | Requirement   | Description |
    |---           |---                    |---            |---|
    | _container_  | `{Container}`         | **require**   | Container log.
-   | _containers_ | `{Array.<Container>}` | **require**   | Containers log.
+   | _containers_ | `{Container[]}`       | **require**   | Containers log.
    | _type_       | `{String}`            | **require**   | Type
    | _title_      | `{String}`            | **optional**  | Title.
    | _subTitle_   | `{String}`            | **optional**  | Sub title.
@@ -121,7 +121,7 @@
    |---           |---                    |---             |---|
    | _id_         | `{Number}`            | **optional**   | Id of history item, to be sub item of. default: `{elementor.documents.currentDocument.history.getCurrentId()}`.
    | _container_  | `{Container}`         | **optional**   | Container log.
-   | _containers_ | `{Array.<Container>}` | **optional**   | Containers log.
+   | _containers_ | `{Container[]}` | **optional**   | Containers log.
    | _type_       | `{String}`            | **optional**   | Type
    | _title_      | `{String}`            | **optional**   | Title.
    | _subTitle_   | `{String}`            | **optional**   | Sub title.
@@ -136,7 +136,7 @@
    | Property     | Type                  | Requirement   | Description |
    |---           |---                    |---            |---|
    | _container_  | `{Container}`         | **require**   | Container log.
-   | _containers_ | `{Array.<Container>}` | **require**   | Containers log.
+   | _containers_ | `{Container[]}`       | **require**   | Containers log.
    | _type_       | `{String}`            | **require**   | Type
    | _title_      | `{String}`            | **require**   | Title.
    | _subTitle_   | `{String}`            | **optional**  | Sub title.
