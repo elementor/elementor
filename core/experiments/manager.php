@@ -72,7 +72,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'mutable', 'on_state_change', 'dependencies' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change', 'dependencies' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -534,7 +534,7 @@ class Manager extends Base_Object {
 			<div class="e-experiment__dependency">
 				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on', 'elementor' ); ?>:</strong>
 			<?php foreach ( $feature['dependencies'] as $dependency ) : ?>
-				<span class="e-experiment__dependency__item"><?php echo esc_html( $dependency->get_name() ); ?></span>
+				<span class="e-experiment__dependency__item"><?php \Elementor\Utils::print_unescaped_internal_string( $dependency->get_name() ); ?></span>
 			<?php endforeach; ?>
 			</div>
 			<?php
