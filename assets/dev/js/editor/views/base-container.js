@@ -1,5 +1,3 @@
-import ElementModel from 'elementor-elements/models/element';
-
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
