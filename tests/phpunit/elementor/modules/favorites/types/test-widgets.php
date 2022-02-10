@@ -49,6 +49,9 @@ class Test_Widgets extends Elementor_Test_Base {
 		Plugin::$instance->widgets_manager->unregister( 'mock-widget' );
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function test_update_widget_categories_not_fails_given_unavailable_widget() {
 		$widget_type = 'unavailable_widget_type';
 
@@ -56,8 +59,5 @@ class Test_Widgets extends Elementor_Test_Base {
 		$module->merge( [ $widget_type ] );
 
 		$module->update_widget_categories( Plugin::$instance->documents->get_current() );
-
-		// That's a placeholder assertion, since the purpose of this test-case is to check if an error wasn't thrown.
-		$this->assertTrue( true );
 	}
 }
