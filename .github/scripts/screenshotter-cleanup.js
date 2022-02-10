@@ -8,7 +8,7 @@ const fs = require( 'fs' ),
 	{Canvas, Image, loadImage} = require( 'canvas' ),
 	basePath = '/tmp/wordpress/backstop_data',
 	configContent = fs.readFileSync( `${basePath}/html_report/config.js` ) + '' /* hack to get it as a string */,
-	// `report` is a built in function that the backstop config.js run's, use it to get the config object.
+	// `report` is a built-in function that the backstop config.js run's, use it to get the config object.
 	report = config => config,
 	config = eval( configContent ),
 	mergedFilesPath = '/tmp/merged-screenshots';
@@ -33,32 +33,32 @@ const onError = async( test ) => {
 	const testImage = await loadImage( reference ),
 		sources = [
 			{ src: reference, x: 0, y: 0},
-			{ src: testSrc, x: testImage.width + 10, y: 0},
-			{ src: diffSrc, x: (testImage.width + 10) * 2, y: 0}
+			{ src: testSrc, x: testImage.width + 10, y: 0 },
+			{ src: diffSrc, x: ( testImage.width + 10 ) * 2, y: 0 }
 		],
 		canvas = {
-			width: (testImage.width + 10) * 3,
+			width: ( testImage.width + 10 ) * 3,
 			height: testImage.height,
 			Canvas,
 			Image
-		};
+	};
 
 	return mergeImages( sources, canvas )
 		.then((base64String) => {
 			const base64Image = base64String.split( ';base64,' ).pop(),
 				filename = test.pair.test
-				.replace( /\\/g, '/' ) // Windows
-				.split( '/' )
-				.slice( -2 )
-				.join( '-' );
+					.replace( /\\/g, '/' ) // Windows
+					.split( '/' )
+					.slice( -2 )
+					.join( '-' );
 
-			fs.writeFileSync(`${mergedFilesPath}/${filename}`, base64Image, { encoding: 'base64' } );
+			fs.writeFileSync( `${mergedFilesPath}/${filename}`, base64Image, { encoding: 'base64' } );
 		} );
 }
 
 config.tests
-	.forEach(test => {
-		if ('pass' === test.status) {
+	.forEach( test => {
+		if ( 'pass' === test.status ) {
 			onSuccess( test );
 		} else {
 			onError( test );
