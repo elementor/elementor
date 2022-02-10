@@ -6,12 +6,12 @@ exports.WpAdminPage = class wpAdminPage {
 		this.page = page;
 	}
 
-	async goto() {
+	async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
 	}
 
 	async login() {
-		await this.goto();
+		await this.gotoDashboard();
 
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
@@ -28,35 +28,12 @@ exports.WpAdminPage = class wpAdminPage {
 	}
 
 	async openNewPage() {
-		try {
-			await this.page.click( 'text=Create New Page', { timeout: 5000 } );
-		} catch ( err ) {
-			console.error( "Click on Elementor 'Create New Page' button failed" );
-			await this.page.waitForSelector( 'text=Dashboard' );
-			await this.page.click( 'text=Pages' );
-
-			await Promise.all( [
-				this.page.waitForNavigation( { url: '/wp-admin/post-new.php?post_type=page' } ),
-				this.page.click( 'div[role="main"] >> text=Add New' ),
-			] );
-
-			await Promise.all( [
-				this.page.waitForNavigation(),
-				this.skipTutorial(),
-				this.page.click( 'text=← Back to WordPress Editor Edit with Elementor' ),
-			] );
+		if ( ! await this.page.$( '"text=Create New Page"' ) ) {
+			await this.gotoDashboard();
 		}
 
+		await this.page.click( 'text="Create New Page"' );
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
-	}
-
-	async skipTutorial() {
-		await this.page.waitForTimeout( 1000 );
-		const next = await this.page.$( "text='Next'" );
-
-		if ( next ) {
-			await this.page.click( '[aria-label="Close dialog"]' );
-		}
 	}
 
 	/**
