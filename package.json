@@ -85,7 +85,6 @@
         "mime": "^2.5.2",
         "prop-types": "^15.7.1",
         "reach-router-hash-history": "0.0.3",
-        "react-redux": "^7.2.6",
-        "sass-lint": "^1.13.1"
+        "react-redux": "^7.2.6"
     }
 }
