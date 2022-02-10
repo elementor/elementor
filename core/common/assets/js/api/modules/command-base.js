@@ -37,4 +37,33 @@ export default class CommandBase extends CommandInfra {
 		$e.hooks.runDataCatch( this.command, this.args, e );
 		$e.hooks.runUICatch( this.command, this.args, e );
 	}
+
+	/**
+	 * TODO - Remove - Backwards compatibility.
+	 *
+	 * Function requireContainer().
+	 *
+	 * Validate `arg.container` & `arg.containers`.
+	 *
+	 * @param {{}} args
+	 *
+	 * @throws {Error}
+	 */
+	requireContainer( args = this.args ) {
+		elementorCommon.helpers.softDeprecated( 'requireContainer', '3.6.0', 'Extend `$e.modules.editor.CommandContainerBase` or `$e.modules.editor.CommandContainerInternalBase`' );
+
+		if ( ! args.container && ! args.containers ) {
+			throw Error( 'container or containers are required.' );
+		}
+
+		if ( args.container && args.containers ) {
+			throw Error( 'container and containers cannot go together please select one of them.' );
+		}
+
+		const containers = args.containers || [ args.container ];
+
+		containers.forEach( ( container ) => {
+			this.requireArgumentInstance( 'container', elementorModules.editor.Container, { container } );
+		} );
+	}
 }
