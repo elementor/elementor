@@ -43,7 +43,7 @@ module.exports = BaseSettings.extend( {
 			settings: editModel.get( 'settings' ),
 			label: elementor.config.document.panel.title,
 			controls: this.model.controls,
-			children: ChildrenArray( ... elementor.elements || [] ),
+			children: new ChildrenArray( ... elementor.elements || [] ),
 			// Emulate a view that can render the style.
 			renderer: {
 				view: {
