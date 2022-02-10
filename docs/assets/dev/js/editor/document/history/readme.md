@@ -46,7 +46,7 @@
 *  **Returns**: `{void}`
 
    | Property     | Type                  | Requirement    | Description |
-       |---           |---                    |---             |---|
+   |---           |---                    |---             |---|
    | _index_         | `{Number}`         | **optional**   | Index of history item.
 
 ## _Command_ -- `$e.run('document/histroy/undo')`
@@ -74,7 +74,7 @@
 *  **Arguments**:
 
    | Property     | Type                  | Requirement   | Description |
-       |---           |---                    |---            |---|
+   |---           |---                    |---            |---|
    | _container_  | `{Container}`         | **require**   | Container log.
    | _containers_ | `{Array.<Container>}` | **require**   | Containers log.
    | _type_       | `{String}`            | **require**   | Type
@@ -95,7 +95,7 @@
 *  **Arguments**:
 
    | Property     | Type                  | Requirement   | Description |
-       |---           |---                    |---            |---|
+   |---           |---                    |---            |---|
    | _id_         | `{Number}`            | **required**  | Id of logged history to delete.
 
 ## _Command_ -- `$e.internal('document/histroy/end-log')`
@@ -118,7 +118,7 @@
 *  **Arguments**:
 
    | Property     | Type                  | Requirement    | Description |
-       |---           |---                    |---             |---|
+   |---           |---                    |---             |---|
    | _id_         | `{Number}`            | **optional**   | Id of history item, to be sub item of. default: `{elementor.documents.currentDocument.history.getCurrentId()}`.
    | _container_  | `{Container}`         | **optional**   | Container log.
    | _containers_ | `{Array.<Container>}` | **optional**   | Containers log.
@@ -134,7 +134,7 @@
 *  **Arguments**:
 
    | Property     | Type                  | Requirement   | Description |
-       |---           |---                    |---            |---|
+   |---           |---                    |---            |---|
    | _container_  | `{Container}`         | **require**   | Container log.
    | _containers_ | `{Array.<Container>}` | **require**   | Containers log.
    | _type_       | `{String}`            | **require**   | Type
