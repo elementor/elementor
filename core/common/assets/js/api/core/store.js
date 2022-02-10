@@ -99,7 +99,7 @@ export default class Store {
 	 * @return {Object}
 	 */
 	getAll() {
-		return Object.keys( this.slices );
+		return Object.keys( this.slices ).sort();
 	}
 
 	/**

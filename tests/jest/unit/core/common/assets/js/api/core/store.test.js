@@ -66,6 +66,15 @@ describe( '$e.store', () => {
 		expect( () => store.register( 'slice-1', slice2 ) ).toThrowError();
 	} );
 
+	test( 'getAll() -- Returns all slices IDs sorted', () => {
+		// Act.
+		store.register( 'b', slice1 );
+		store.register( 'a', slice2 );
+
+		// Assert.
+		expect( store.getAll() ).toEqual( [ 'a', 'b' ] );
+	} );
+
 	test( 'get() -- Returns a slice by ID', () => {
 		// Act.
 		store.register( 'slice-1', slice1 );
