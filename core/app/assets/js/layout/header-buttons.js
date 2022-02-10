@@ -25,7 +25,7 @@ export default function HeaderButtons( props ) {
 				text={ __( 'Close', 'elementor' ) }
 				icon="eicon-close"
 				className="eps-app__close-button"
-				onClick={ action.backToDashboard }
+				onClick={ action.backToReferrer }
 			/>
 			{ tools }
 		</div>
