@@ -7,6 +7,7 @@ use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -120,9 +121,9 @@ class Manager extends Base_Object {
 					$this->on_feature_state_change( $experimental_data, $new_state, $feature_option_key );
 				} catch ( Exceptions\Dependency_Exception $e ) {
 					$message = sprintf(
-						'<p>%s</p><p><a href="#" onclick="%s">%s</a></p>',
+						'<p>%s</p><p><a href="#" onclick="location.href=\'%s\'">%s</a></p>',
 						esc_html( $e->getMessage() ),
-						'history.back()',
+						site_url( 'wp-admin/admin.php?page=elementor#tab-experiments' ),
 						esc_html__( 'Back', 'elementor' )
 					);
 
@@ -204,7 +205,7 @@ class Manager extends Base_Object {
 	 * @access public
 	 *
 	 * @param string $feature_name
-	 * @param int $default_state
+	 * @param string $default_state
 	 */
 	public function set_feature_default_state( $feature_name, $default_state ) {
 		$feature = $this->get_features( $feature_name );
@@ -220,13 +221,13 @@ class Manager extends Base_Object {
 	 * Get Feature Option Key
 	 *
 	 * @since 3.1.0
-	 * @access private
+	 * @access public
 	 *
 	 * @param string $feature_name
 	 *
 	 * @return string
 	 */
-	private function get_feature_option_key( $feature_name ) {
+	public function get_feature_option_key( $feature_name ) {
 		return 'elementor_experiment-' . $feature_name;
 	}
 
@@ -534,7 +535,7 @@ class Manager extends Base_Object {
 			<div class="e-experiment__dependency">
 				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on', 'elementor' ); ?>:</strong>
 			<?php foreach ( $feature['dependencies'] as $dependency ) : ?>
-				<span class="e-experiment__dependency__item"><?php \Elementor\Utils::print_unescaped_internal_string( $dependency->get_name() ); ?></span>
+				<span class="e-experiment__dependency__item"><?php Utils::print_unescaped_internal_string( $dependency->get_name() ); ?></span>
 			<?php endforeach; ?>
 			</div>
 			<?php
@@ -641,9 +642,7 @@ class Manager extends Base_Object {
 	private function on_feature_state_change( array $old_feature_data, $new_state, $feature_option_key ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
 
-		if ( ! empty( $new_feature_data['dependencies'] ) || self::STATE_INACTIVE === $new_state ) {
-			$this->validate_dependency( $new_feature_data, $new_state, $feature_option_key );
-		}
+		$this->validate_dependency( $new_feature_data, $new_state );
 
 		$actual_old_state = $this->get_feature_actual_state( $old_feature_data );
 
@@ -660,32 +659,56 @@ class Manager extends Base_Object {
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
 		}
-
 	}
 
 	/**
 	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
-	private function validate_dependency( array $feature_data, $new_state, $feature_option_key ) {
+	private function validate_dependency( array $feature, $new_state ) {
+		$rollback = function ( $feature_option_key ) {
+			remove_all_actions( 'add_option_' . $feature_option_key );
+			remove_all_actions( 'update_option_' . $feature_option_key );
+
+			update_option( $feature_option_key, self::STATE_INACTIVE );
+		};
+
 		if ( self::STATE_DEFAULT === $new_state ) {
-			$new_state = $feature_data['default'];
+			$new_state = $this->get_feature_actual_state( $feature );
 		}
 
+		$feature_option_key = $this->get_feature_option_key( $feature['name'] );
+
 		if ( self::STATE_ACTIVE === $new_state ) {
+			if ( empty( $feature['dependencies'] ) ) {
+				return;
+			}
+
 			// Validate if the current feature dependency is available.
-			foreach ( $feature_data['dependencies'] as $dependency ) {
+			foreach ( $feature['dependencies'] as $dependency ) {
 				$dependency_feature = $this->get_features( $dependency->get_name() );
 
+				if ( ! $dependency_feature ) {
+					$rollback( $feature_option_key );
+
+					throw new Exceptions\Dependency_Exception(
+						sprintf( 'The feature `%s` has a dependency `%s` that is not available.',
+							$feature['name'],
+							$dependency->get_name()
+						)
+					);
+				}
+
+				$dependency_state = $this->get_feature_actual_state( $dependency_feature );
+
 				// If dependency is not active.
-				if ( self::STATE_INACTIVE === $dependency_feature['state'] ) {
-					// Rollback.
-					update_option( $feature_option_key, wp_json_encode( $feature_data ) );
+				if ( self::STATE_INACTIVE === $dependency_state ) {
+					$rollback( $feature_option_key );
 
 					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 					throw new Exceptions\Dependency_Exception(
 						sprintf(
-							esc_html__( 'To turn on "%1$s", Experiment: "%2$s" activity is required!', 'elementor' ),
-							$feature_data['name'],
+							esc_html__( 'To turn on `%1$s`, Experiment: `%2$s` activity is required!', 'elementor' ),
+							$feature['name'],
 							$dependency_feature['name']
 						)
 					);
@@ -693,23 +716,23 @@ class Manager extends Base_Object {
 			}
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
 			// Validate if current feature that goes 'inactive' is not a dependency of current active feature.
-			foreach ( $this->get_features() as $feature ) {
-				if ( empty( $feature['dependencies'] ) ) {
+			foreach ( $this->get_features() as $current_feature ) {
+				if ( empty( $current_feature['dependencies'] ) ) {
 					continue;
 				}
 
-				foreach ( $feature['dependencies'] as $dependency ) {
-					if ( self::STATE_ACTIVE === $feature['state'] && $feature_data['name'] === $dependency->get_name() ) {
-						// Rollback.
-						$feature['state'] = self::STATE_ACTIVE;
-						update_option( $feature_option_key, wp_json_encode( $feature_data ) );
+				$current_feature_state = $this->get_feature_actual_state( $current_feature );
+
+				foreach ( $current_feature['dependencies'] as $dependency ) {
+					if ( self::STATE_ACTIVE === $current_feature_state && $feature['name'] === $dependency->get_name() ) {
+						$rollback( $feature_option_key );
 
 						/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 						throw new Exceptions\Dependency_Exception(
 							sprintf(
-								esc_html__( 'Cannot turn off "%1$s", Experiment: "%2$s" is still active!', 'elementor' ),
-								$feature_data['name'],
-								$feature['name']
+								esc_html__( 'Cannot turn off `%1$s`, Experiment: `%2$s` is still active!', 'elementor' ),
+								$feature['name'],
+								$current_feature['name']
 							)
 						);
 					}
