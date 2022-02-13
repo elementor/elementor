@@ -19,7 +19,7 @@ module.exports = class EditorPage extends BasePage {
 			await this.page.click( '#elementor-panel-footer-navigator' );
 		}
 	}
-    
+
 	/**
 	 * Reload the editor page.
 	 *
