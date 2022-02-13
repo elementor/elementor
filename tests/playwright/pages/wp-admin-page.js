@@ -2,7 +2,7 @@ const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
 
 /**
- * This post used for any tests that need to a post, with empty elements.
+ * This post is used for any tests that need a post, with empty elements.
  * @type {number}
  */
 const CLEAN_POST_ID = 1;
