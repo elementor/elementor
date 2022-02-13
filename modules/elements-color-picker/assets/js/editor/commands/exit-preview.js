@@ -5,11 +5,9 @@ export class ExitPreview extends $e.modules.CommandBase {
 	/**
 	 * Initialize the command.
 	 *
-	 * @param {object} args
-	 *
 	 * @returns {void}
 	 */
-	apply( args ) {
+	apply() {
 		const { initialColor } = this.component.currentPicker;
 
 		if ( null === initialColor ) {
