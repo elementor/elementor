@@ -92,6 +92,13 @@ class Module extends BaseModule {
 			foreach ( $custom_post_types as $custom_post_type ) {
 
 				$custom_post_types_object = get_post_type_object( $custom_post_type );
+				//cpt data appears in two arrays:
+				//content array: in order to show the export summery when completed
+				//customPostTypes: in order to actually export the data.
+				$summary_titles['content'][ $custom_post_type ] = [
+					'single' => $custom_post_types_object->labels->singular_name,
+					'plural' => $custom_post_types_object->label,
+				];
 
 				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
 					'single' => $custom_post_types_object->labels->singular_name,

@@ -5,7 +5,6 @@ export default function useKitData( kitData ) {
 		// The summary-titles data will not exist in the kitData as part of the export process, and therefore should be taken from the elementorAppConfig.
 		const summaryTitlesData = kitData?.configData?.summaryTitles || elementorAppConfig[ 'import-export' ].summaryTitles,
 			label = summaryTitlesData[ type ][ key ];
-
 		if ( label?.single ) {
 			if ( ! amount ) {
 				return '';
@@ -63,17 +62,6 @@ export default function useKitData( kitData ) {
 	},
 	getPlugins = () => {
 		return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
-	},
-	getCustomPostTypes = () => {
-		const cptFromServer = elementorAppConfig[ 'import-export' ].summaryTitles.content.customPostTypes;
-
-		const customPostTypes = [];
-		Object.keys( cptFromServer ).forEach( ( key ) => customPostTypes.push( {
-			label: cptFromServer[ key ],
-			value: key,
-		} ) );
-		return customPostTypes;
-		//return customPostType && customPostType.map( ( { name } ) => name );
 	};
 
 	return useMemo( () => ( {
@@ -81,6 +69,5 @@ export default function useKitData( kitData ) {
 		siteSettings: getSiteSettings(),
 		content: getContent(),
 		plugins: getPlugins(),
-		// customPostTypes: getCustomPostTypes(),
 	} ), [ kitData ] );
 }

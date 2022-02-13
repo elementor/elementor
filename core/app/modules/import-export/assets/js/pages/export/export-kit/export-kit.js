@@ -37,12 +37,15 @@ export default function ExportKit() {
 	}, [] );
 
 	const getCustomPostTypes = () => {
-		const content = elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes;
+		const customPostTypeFromServer = elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes;
 		const cptOptionsArray = [];
-		Object.keys( content ).forEach( ( key ) => cptOptionsArray.push( {
-			label: content[ key ].plural,
-			value: key,
-		} ) );
+		// eslint-disable-next-line no-unused-expressions
+		{ customPostTypeFromServer &&
+			Object.keys( customPostTypeFromServer ).forEach( ( key ) => cptOptionsArray.push( {
+				label: customPostTypeFromServer[ key ].plural,
+				value: key,
+			} ) );
+		}
 		return cptOptionsArray;
 	};
 
@@ -59,7 +62,7 @@ export default function ExportKit() {
 					] }
 				/>
 
-				<KitContent contentData={ kitContentData } select2CustomPostTypesOptions={ getCustomPostTypes() } />
+				<KitContent contentData={ kitContentData } customPostTypesOptions={ getCustomPostTypes() } />
 
 				<KitInformation />
 			</section>

@@ -7,9 +7,10 @@ import './select2.scss';
  *
  * @returns {{placeholder: string, allowClear: boolean, dir: string}}
  */
-const getDefaultSettings = () => ( {
+
+const getDefaultSettings = ( placeholder ) => ( {
 	allowClear: true,
-	placeholder: '',
+	placeholder,
 	dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
 } );
 /**
@@ -27,7 +28,7 @@ export default function Select2( props ) {
 	React.useEffect( () => {
 		const $select2 = jQuery( ref.current )
 			.select2( {
-				...getDefaultSettings(),
+				...getDefaultSettings( props.placeholder ),
 				...props.settings,
 			} )
 			.on( 'select2:select select2:unselect', props.onChange );
@@ -46,7 +47,7 @@ export default function Select2( props ) {
 		jQuery( ref.current ).val( props.value ).trigger( 'change' );
 	}, [ props.value ] );
 
-	return <Select multiple={ props.multiple } value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options }/>;
+	return <Select multiple={ props.multiple } disable={true} value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options } placeholder={props.placeholder}/>;
 }
 Select2.propTypes = {
 	value: PropTypes.string,
@@ -55,9 +56,12 @@ Select2.propTypes = {
 	options: PropTypes.array,
 	settings: PropTypes.object,
 	multiple: PropTypes.bool,
+	disabled: PropTypes.bool,
+	placeholder: PropTypes.string,
 };
 Select2.defaultProps = {
 	settings: {},
 	options: [],
 	dependencies: [],
+	placeholder: '',
 };

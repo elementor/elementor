@@ -12,7 +12,7 @@ import Grid from 'elementor-app/ui/grid/grid';
 
 import './kit-content.scss';
 
-export default function KitContent( { contentData, hasPro, select2CustomPostTypesOptions } ) {
+export default function KitContent( { contentData, hasPro, customPostTypesOptions } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
@@ -44,7 +44,7 @@ export default function KitContent( { contentData, hasPro, select2CustomPostType
 					contentData.map( ( { type, data }, index ) => {
 						const isLockedFeaturesNoPro = data.features?.locked && ! isProExist;
 						// places the select2 component in content section.
-						const isSelect = 'content' === type ? true : false;
+						const isSelect = 'content' === type && customPostTypesOptions ? true : false;
 						return (
 							<List.Item padding="20" key={ type } className="e-app-export-kit-content__item">
 								<div
@@ -59,13 +59,13 @@ export default function KitContent( { contentData, hasPro, select2CustomPostType
 												{ data.title }
 											</Heading>
 
-											<Grid item container>
-												<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
+											<Grid item container direction="column">
+												<Text variant="sm" tag="p" className="e-app-export-kit-content__description">
 													{ data.description || getTemplateFeatures( data.features, index ) }
 												</Text>
 												{
 													isSelect &&
-													<CptSelections options = {select2CustomPostTypesOptions}/>
+													<CptSelections options = {customPostTypesOptions}/>
 												}
 												{
 													isLockedFeaturesNoPro &&
@@ -91,7 +91,7 @@ KitContent.propTypes = {
 	className: PropTypes.string,
 	contentData: PropTypes.array.isRequired,
 	hasPro: PropTypes.bool,
-	select2CustomPostTypesOptions: PropTypes.array,
+	customPostTypesOptions: PropTypes.array,
 };
 
 KitContent.defaultProps = {
