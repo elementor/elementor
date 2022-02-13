@@ -29,7 +29,6 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.reload();
 
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
-
 	}
 
     getFrame() {
