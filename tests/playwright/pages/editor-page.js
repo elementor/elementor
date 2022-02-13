@@ -30,7 +30,7 @@ module.exports = class EditorPage extends BasePage {
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
-	getFrame() {
+    getFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
     }
 
