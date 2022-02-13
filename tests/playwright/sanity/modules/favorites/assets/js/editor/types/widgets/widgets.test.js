@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../../../../../../pages/wp-admin-page' );
 const FavoriteWidgetsHelper = require( './helpers' );
+const NotificationsHelpers = require( '../../../../../../../assets/js/editor/utils/notifications/helpers' );
 
 test.describe( 'Favorite widgets', () => {
 	test( 'Add favorite', async ( { page }, testInfo ) => {
