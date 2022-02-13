@@ -8,7 +8,6 @@ use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
 use Elementor\Plugin;
 use Elementor\Modules\System_Info\Module as System_Info;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -24,7 +23,7 @@ class Manager extends BaseModule {
 		return 'log';
 	}
 
-	public function shutdown( $last_error = null, $should_exit = false ) {
+	public function shutdown( $last_error = null ) {
 		if ( ! $last_error ) {
 			$last_error = error_get_last();
 		}
@@ -37,7 +36,11 @@ class Manager extends BaseModule {
 			return;
 		}
 
-		if ( ! Utils::is_elementor_path( $last_error['file'] ) ) {
+		$error_path = ( wp_normalize_path( $last_error['file'] ) );
+		// `untrailingslashit` in order to include other plugins prefixed with elementor.
+		$elementor_path = untrailingslashit( wp_normalize_path( ELEMENTOR_PATH ) );
+
+		if ( false === strpos( $error_path, $elementor_path ) ) {
 			return;
 		}
 
@@ -47,10 +50,6 @@ class Manager extends BaseModule {
 		$item = new PHP( $last_error );
 
 		$this->get_logger()->log( $item );
-
-		if ( $should_exit ) {
-			exit;
-		}
 	}
 
 	public function rest_error_handler( $error_number, $error_message, $error_file, $error_line ) {
@@ -61,14 +60,6 @@ class Manager extends BaseModule {
 			'line' => $error_line,
 		] );
 
-		if ( ! Utils::is_elementor_path( $error_file ) ) {
-			// Do execute PHP internal error handler.
-			return false;
-		}
-
-		$error_data = $error->get_error_data();
-
-		// TODO: This part should be modular, temporary hard-coded.
 		// Notify $e.data.
 		if ( ! headers_sent() ) {
 			header( 'Content-Type: application/json; charset=UTF-8' );
@@ -76,7 +67,7 @@ class Manager extends BaseModule {
 			http_response_code( 500 );
 
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				echo wp_json_encode( $error_data );
+				echo wp_json_encode( $error->get_error_data() );
 			} else {
 				echo wp_json_encode( [
 					'message' => 'Server error, see Elementor => System Info',
@@ -84,11 +75,9 @@ class Manager extends BaseModule {
 			}
 		}
 
-		$this->shutdown( $error_data, true );
-	}
+		$this->shutdown( $error->get_error_data() );
 
-	public function register_error_handler() {
-		set_error_handler( [ $this, 'rest_error_handler' ], E_ALL );
+		exit;
 	}
 
 	public function add_system_info_report() {

@@ -117,9 +117,13 @@ class Manager extends BaseModule {
 	}
 
 	public function register_rest_error_handler() {
+		// TODO: Remove - Find better solution.
+		return;
+
 		if ( ! $this->is_internal() ) {
 			$logger_manager = \Elementor\Core\Logger\Manager::instance();
-			$logger_manager->register_error_handler();
+
+			set_error_handler( [ $logger_manager, 'rest_error_handler' ], E_ALL );
 		}
 	}
 
