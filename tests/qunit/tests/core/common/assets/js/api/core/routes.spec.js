@@ -3,7 +3,7 @@ import CommonHelper from 'elementor/tests/qunit/tests/core/common/helper';
 import ComponentBaseModal from 'elementor-api/modules/component-modal-base';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/core/routes.js', ( hooks ) => {
+	QUnit.module( 'File: core/common/assets/js/api/core/routes.js', () => {
 		QUnit.test( 'Error on register route without component', ( assert ) => {
 			assert.throws(
 				() => {
