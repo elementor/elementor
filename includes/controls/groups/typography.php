@@ -133,6 +133,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
+				'' => esc_html__( 'Default', 'elementor' ),
 				'100' => '100',
 				'200' => '200',
 				'300' => '300',
@@ -142,7 +143,6 @@ class Group_Control_Typography extends Group_Control_Base {
 				'700' => '700',
 				'800' => '800',
 				'900' => '900',
-				'' => esc_html__( 'Default', 'elementor' ),
 				'normal' => esc_html__( 'Normal', 'elementor' ),
 				'bold' => esc_html__( 'Bold', 'elementor' ),
 			],
