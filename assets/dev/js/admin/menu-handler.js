@@ -1,8 +1,17 @@
-export default class AdminMenuHandler extends elementorModules.ViewModule {
+export default class MenuHandler extends elementorModules.ViewModule {
+	getDefaultSettings() {
+		return {
+			selectors: {
+				currentSubmenuItems: '#adminmenu .current',
+			},
+		};
+	}
+
 	getDefaultElements() {
 		const settings = this.getSettings();
 
 		return {
+			$currentSubmenuItems: jQuery( settings.selectors.currentSubmenuItems ),
 			$adminPageMenuLink: jQuery( `a[href="${ settings.path }"]` ),
 		};
 	}
@@ -12,6 +21,10 @@ export default class AdminMenuHandler extends elementorModules.ViewModule {
 	// item will be the one highlighted.
 	highlightSubMenuItem( $element = null ) {
 		const $submenuItem = $element || this.elements.$adminPageMenuLink;
+
+		if ( this.elements.$currentSubmenuItems.length ) {
+			this.elements.$currentSubmenuItems.removeClass( 'current' );
+		}
 
 		$submenuItem.addClass( 'current' );
 
