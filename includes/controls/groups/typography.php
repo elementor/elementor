@@ -128,19 +128,24 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
 
-		$typo_weight_options = [
-			'' => esc_html__( 'Default', 'elementor' ),
-		];
-
-		foreach ( array_merge( [ 'normal', 'bold' ], range( 100, 900, 100 ) ) as $weight ) {
-			$typo_weight_options[ $weight ] = ucfirst( $weight );
-		}
-
 		$fields['font_weight'] = [
 			'label' => _x( 'Weight', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
-			'options' => $typo_weight_options,
+			'options' => [
+				'100' => '100',
+				'200' => '200',
+				'300' => '300',
+				'400' => '400',
+				'500' => '500',
+				'600' => '600',
+				'700' => '700',
+				'800' => '800',
+				'900' => '900',
+				'' => esc_html__( 'Default', 'elementor' ),
+				'normal' => esc_html__( 'Normal', 'elementor' ),
+				'bold' => esc_html__( 'Bold', 'elementor' ),
+			],
 		];
 
 		$fields['text_transform'] = [
