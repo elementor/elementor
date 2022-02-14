@@ -54,15 +54,7 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		$export_nonce = wp_create_nonce( 'elementor_export' );
-
-		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
-
-		return [
-			'exportURL' => $export_url,
-			'summaryTitles' => $this->get_summary_titles(),
-			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-		];
+		return $this->get_config_data();
 	}
 
 	public function get_summary_titles() {
@@ -149,7 +141,7 @@ class Module extends BaseModule {
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
 
 		$result = [
-			'session' => basename( $session_dir ),
+			'session' => $session_dir,
 			'manifest' => $manifest_data,
 		];
 
@@ -175,8 +167,6 @@ class Module extends BaseModule {
 
 		$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
-		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
-
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
@@ -186,7 +176,10 @@ class Module extends BaseModule {
 			if ( 1 === $import_settings['stage'] ) {
 				$result = $this->import_stage_1();
 			} elseif ( 2 === $import_settings['stage'] ) {
-				$result = $this->import_stage_2( $import_settings['directory'] );
+				$result = $this->import_stage_2( $import_settings['session'] );
+
+				// Adding the most updated data of the summaryTitles, in case that the data was changed during the process by new installed plugins.
+				$result['configData'] = $this->get_config_data();
 			}
 
 			wp_send_json_success( $result );
@@ -196,14 +189,14 @@ class Module extends BaseModule {
 	}
 
 	private function on_init() {
-		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['_nonce'], 'elementor_export' ) ) {
+		if ( ! isset( $_POST['action'] ) || self::EXPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
 
-		$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
+		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
 		try {
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo' ] ) );
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins' ] ) );
 
 			$export_result = $this->export->run();
 
@@ -283,6 +276,50 @@ class Module extends BaseModule {
 			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $info_text ); ?></p>
 		</div>
 		<?php
+	}
+
+	private function get_edit_elementor_home_page_url() {
+		if ( 'page' !== get_option( 'show_on_front' ) ) {
+			return '';
+		}
+
+		$frontpage_id = get_option( 'page_on_front' );
+
+		return $this->get_elementor_page_url( $frontpage_id );
+	}
+
+	private function get_recently_edited_elementor_page_url() {
+		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+
+		if ( ! isset( $query->post ) ) {
+			return '';
+		}
+
+		return $this->get_elementor_page_url( $query->post->ID );
+	}
+
+	private function get_elementor_page_url( $page_id ) {
+		$document = Plugin::$instance->documents->get( $page_id );
+
+		if ( ! $document->is_built_with_elementor() ) {
+			return '';
+		}
+
+		return $document->get_edit_url();
+	}
+
+	private function get_config_data() {
+		$export_nonce = wp_create_nonce( 'elementor_export' );
+
+		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+
+		return [
+			'exportURL' => $export_url,
+			'summaryTitles' => $this->get_summary_titles(),
+			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'editElementorHomePageUrl' => $this->get_edit_elementor_home_page_url(),
+			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+		];
 	}
 
 	public function register_settings_tab( Tools $tools ) {

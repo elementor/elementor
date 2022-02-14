@@ -96,6 +96,7 @@ class App extends BaseApp {
 			'hasPro' => Utils::has_pro(),
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
+			'base_url' => $this->get_base_url(),
 		];
 	}
 
@@ -150,7 +151,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.13.0'
+			'5.14.0'
 		);
 
 		wp_register_style(
