@@ -27,17 +27,17 @@ module.exports = BaseSettings.extend( {
 			return this.editedView;
 		}
 
-		const documentElementType = elementor.getElementType( 'document' ),
+		const documentElementType = elementor.elementsManager.getElementType( 'document' ),
 			ModelClass = documentElementType.getModel(),
-			id = this.getContainerId(),
+			type = this.getContainerType(),
 			editModel = new ModelClass( {
-				id,
-				elType: id,
+				id: type,
+				elType: type,
 				settings: this.model,
 				elements: elementor.elements,
 			} ),
 			container = new elementorModules.editor.Container( {
-				type: id,
+				type: type,
 				id: editModel.id,
 				model: editModel,
 				settings: editModel.get( 'settings' ),
@@ -64,7 +64,7 @@ module.exports = BaseSettings.extend( {
 		return this.editedView;
 	},
 
-	getContainerId() {
+	getContainerType() {
 		return 'document';
 	},
 } );

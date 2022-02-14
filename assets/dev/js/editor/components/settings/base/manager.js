@@ -36,24 +36,24 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getContainerId() {
+	getContainerType() {
 		return this.getSettings( 'name' ) + '_settings';
 	},
 
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
-		const documentElementType = elementor.getElementType( 'document' ),
+		const documentElementType = elementor.elementsManager.getElementType( 'document' ),
 			ModelClass = documentElementType.getModel(),
-			id = this.getContainerId(),
+			type = this.getContainerType(),
 			editModel = new ModelClass( {
-				id,
-				elType: id,
+				id: type,
+				elType: type,
 				settings: this.model,
 		} );
 
 		const container = new elementorModules.editor.Container( {
-			type: id,
-			id: editModel.id,
+			type: type,
+			id: type,
 			model: editModel,
 			settings: editModel.get( 'settings' ),
 			view: false,

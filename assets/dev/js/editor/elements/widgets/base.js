@@ -1,4 +1,4 @@
-import ElementBase from 'elementor-elements/elements/base';
+import ElementBase from '../types/base';
 
 export default class WidgetBase extends ElementBase {
 	/**

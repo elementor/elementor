@@ -3,7 +3,7 @@ const BaseElementView = require( 'elementor-elements/views/base' );
 /**
  * @extends BaseElementView
  */
-class BaseWidget extends BaseElementView {
+class BaseWidgetView extends BaseElementView {
 	initialize( options ) {
 		super.initialize( options );
 
@@ -94,4 +94,4 @@ class BaseWidget extends BaseElementView {
 	}
 }
 
-module.exports = BaseWidget;
+module.exports = BaseWidgetView;

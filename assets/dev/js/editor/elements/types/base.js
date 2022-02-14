@@ -28,9 +28,13 @@ export default class ElementBase {
 	}
 
 	/**
+	 * Function getTypeKey().
+	 *
+	 * Used to separate between elements and widgets.
+	 *
 	 * @return {String}
 	 */
 	getTypeKey() {
-		return this.getType();
+		return 'element-' + this.getType();
 	}
 }
