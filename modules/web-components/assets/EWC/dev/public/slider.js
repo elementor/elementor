@@ -1,4 +1,4 @@
-import { html } from 'https://cdn.skypack.dev/lit';
+import { html } from 'https://cdn.jsdelivr.net/npm/lit-html';
 
 export const slider = html`
 	<div class="splide" id="presentation">

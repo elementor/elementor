@@ -1,8 +1,9 @@
-import { html, LitElement } from 'https://cdn.skypack.dev/lit';
+import { html } from 'https://cdn.jsdelivr.net/npm/lit-html';
+import { LitElement } from 'https://cdn.jsdelivr.net/npm/lit';
 
 class Counter extends LitElement {
 	static properties = {
-		count: { state: true }
+		count: { state: true },
 	};
 
 	constructor() {

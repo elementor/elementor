@@ -118,6 +118,8 @@
 	--ewc-size-full: 100%;
 	--ewc-size-auto: auto;
 	--ewc-size-screen: 100vw;
+	--ewc-size-vw: 100vw;
+	--ewc-size-vh: 100vh;
 	--ewc-size-min: min-content;
 	--ewc-size-max: max-content;
 

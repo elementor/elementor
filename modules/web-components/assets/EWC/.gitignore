@@ -1,0 +1,10 @@
+
+dev/.firebaserc
+
+.DS_Store
+
+dev/firebase.json
+
+dev/public/firebase.js
+
+node_modules/

@@ -1,3 +1,10 @@
+* { box-sizing: border-box; }
+#presentation {display: none; opacity: 0; transition: opacity 0.5s;}
+.prism-live, sp-tab-panel {
+	width: 100%;
+	max-width: 600px;
+}
+
 html, body {
     font-family: var(--ewc-typography-font-family, 'Source Sans Pro', sans-serif);
 }

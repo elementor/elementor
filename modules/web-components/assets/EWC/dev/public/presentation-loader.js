@@ -1,46 +1,6 @@
 import { CodeJar } from 'https://medv.io/codejar/codejar.js';
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js';
-import { getAuth,
-	onAuthStateChanged,
-	signInWithRedirect,
-	getRedirectResult,
-	GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js';
 
-const firebaseConfig = {
-	apiKey: 'AIzaSyB5-JE7QVrWYNA7gzm1-OJh-6hjUqg3YHM',
-	authDomain: 'ewc.lmntor.xyz',
-	projectId: 'e-components-bb43a',
-	storageBucket: 'e-components-bb43a.appspot.com',
-	messagingSenderId: '100236721156',
-	appId: '1:100236721156:web:90f981ea11af050d7a8951',
-	measurementId: 'G-D6QYQSV6NB',
-};
-
-const app = initializeApp( firebaseConfig );
-const provider = new GoogleAuthProvider();
-const auth = getAuth();
-
-onAuthStateChanged( auth, ( user ) => {
-	if ( user ) {
-		console.log( 'Status Change' );
-		console.log( user );
-		loadPage();
-	} else {
-		getRedirectResult( auth ).then( ( result ) => {
-			// This gives you a Google Access Token. You can use it to access Google APIs.
-			// const credential = GoogleAuthProvider.credentialFromResult( result );
-			console.log( 'Redirect result' );
-			console.log( result );
-
-			if ( result.user ) {
-				loadPage();
-			}
-		} ).catch( ( error ) => {
-			console.error( error );
-			signInWithRedirect( auth, provider );
-		} );
-	}
-} );
+loadPage();
 
 function loadPage() {
 	import( '/slider.js' )
