@@ -17,6 +17,8 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	private $experiments;
 
+	private $features = [];
+
 	public function setUp() {
 		parent::setUp();
 
@@ -26,7 +28,9 @@ class Test_Manager extends Elementor_Test_Base {
 	public function tearDown() {
 		parent::tearDown();
 
-		$this->experiments->remove_feature( 'test_feature' );
+		foreach ( array_keys( $this->features) as $feature_name ) {
+			$this->experiments->remove_feature( $feature_name );
+		}
 	}
 
 	public function test_add_feature() {
@@ -226,9 +230,6 @@ class Test_Manager extends Elementor_Test_Base {
 			$this->experiments->get_feature_option_key( $test_feature_data['name'] ),
 			Experiments_Manager::STATE_ACTIVE
 		);
-
-		// Cleanup.
-		$this->experiments->remove_feature( $test_feature_data['name'] );
 	}
 
 	public function test_validate_dependency__ensure_cannot_depend_cannot_be_activated() {
@@ -259,10 +260,6 @@ class Test_Manager extends Elementor_Test_Base {
 			$this->experiments->get_feature_option_key( $test_feature_data_a['name'] ),
 			Experiments_Manager::STATE_ACTIVE
 		);
-
-		// Cleanup.
-		$this->experiments->remove_feature( $test_feature_data_a['name'] );
-		$this->experiments->remove_feature( $test_feature_data_b['name'] );
 	}
 
 	public function test_test_validate_dependency__ensure_depend_cannot_be_activated_if_dependency_is_inactive() {
@@ -293,10 +290,6 @@ class Test_Manager extends Elementor_Test_Base {
 			$this->experiments->get_feature_option_key( $test_feature_data_b['name'] ),
 			Experiments_Manager::STATE_INACTIVE
 		);
-
-		// Cleanup.
-		$this->experiments->remove_feature( $test_feature_data_a['name'] );
-		$this->experiments->remove_feature( $test_feature_data_b['name'] );
 	}
 
 	private function add_test_feature( array $args = [] ) {
@@ -307,6 +300,8 @@ class Test_Manager extends Elementor_Test_Base {
 		if ( $args ) {
 			$test_feature_data = array_merge( $test_feature_data, $args );
 		}
+
+		$this->features[ $test_feature_data['name'] ] = true;
 
 		return $this->experiments->add_feature( $test_feature_data );
 	}
