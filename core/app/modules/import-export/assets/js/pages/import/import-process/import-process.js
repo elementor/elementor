@@ -21,7 +21,7 @@ export default function ImportProcess() {
 		[ startImport, setStartImport ] = useState( false ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
-		{ includes, customPostTypes } = sharedContext.data || {},
+		{ includes, customPostTypes, selectedCustomPostTypes } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
@@ -75,6 +75,7 @@ export default function ImportProcess() {
 				include: includes,
 				overrideConditions: overrideConditions,
 				referrer,
+				selectedCustomPostTypes,
 			} );
 		}
 	}, [ startImport ] );

@@ -11,9 +11,22 @@ export default function ImportContentDisplay( {
 	onResetProcess,
 } ) {
 	//remove
-	const postTypes = Object.entries( manifest[ 'wp-content' ] ).map( ( item ) => item[ '0' ] );
-	const nativePostTypes = [ 'post', 'page' ];
-	const customPostTypesOptions = postTypes.filter( ( i ) => ! nativePostTypes.includes( i ) );
+	//const customPostTypesOptions = Object.entries( manifest[ 'custom-post-types' ] ).map( item  => [item[ '0' ]  );
+	// const nativePostTypes = [ 'post', 'page' ];
+	// const customPostTypesOptions = postTypes.filter( ( i ) => ! nativePostTypes.includes( i ) );
+
+	const getCustomPostTypes = () => {
+		const customPostTypeFromServer = manifest[ 'custom-post-types' ];
+		const cptOptionsArray = [];
+		// eslint-disable-next-line no-unused-expressions
+		{ customPostTypeFromServer &&
+		Object.keys( customPostTypeFromServer ).forEach( ( key ) => cptOptionsArray.push( {
+			label: customPostTypeFromServer[ key ].label,
+			value: key,
+		} ) );
+		}
+		return cptOptionsArray;
+	};
 
 	// Getting the kit data from the manifest.
 	const kitData = kitContentData.filter( ( { type } ) => {
@@ -48,7 +61,7 @@ export default function ImportContentDisplay( {
 				</Notice>
 			}
 
-			<KitContent contentData={ kitData } hasPro={ hasPro } customPostTypesOptions={customPostTypesOptions} />;
+			<KitContent contentData={ kitData } hasPro={ hasPro } customPostTypesOptions={ getCustomPostTypes() } />;
 		</>
 	);
 }
