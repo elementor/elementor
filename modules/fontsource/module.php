@@ -39,30 +39,105 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
 
-		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_google_fonts' ] );
+		add_action( 'elementor/frontend/before_print_google_fonts', [ $this, 'enqueue_google_fonts' ], 10, 1 );
 	}
 
-	public function enqueue_google_fonts() {
-		$google_fonts = Plugin::$instance->frontend->fonts_to_enqueue;
-
-		if ( empty( $google_fonts ) ) {
+	public function enqueue_google_fonts( $fonts ) {
+		if ( empty( $fonts ) ) {
 			return;
 		}
 
-		foreach ( $google_fonts as $key => $font ) {
+		$google_fonts = [];
 
-			$font_type = Fonts::get_font_type( $font );
-
-			if ( Fonts::GOOGLE !== $font_type ) {
-				continue;
-			}
-			var_dump( $font );
-
-			$local_font_data = $this->get_font( $font );
-
-			// var_dump( $font_url );
-			var_dump( $local_font_data[ 1 ] );
+		if ( ! isset( $fonts['google'] ) ) {
+			return;
 		}
+
+		$google_fonts = $fonts['google'];
+
+		if ( ! is_array( $google_fonts ) || ! count( $google_fonts ) ) {
+			return;
+		}
+
+		$css = '';
+		$subset_vars = [];
+
+		foreach ( $google_fonts as $key => $font ) {
+			$font_data = $this->retrieve_fontsource_data( $font );
+			$subsets = $this->get_required_subsets( $font_data );
+			$weights =  $font_data['weights'];
+			$styles = $font_data['styles'];
+			$slug = $this->get_font_slug( $font_data, $subsets, $weights, $styles );
+
+			$css_from_cache = get_transient( $slug );
+
+			if ( false === $css_from_cache ) {
+				$css_from_cache = $this->generate_font_css( $font_data, $subsets, $weights, $styles, $subset_vars );
+				set_transient( $slug, $css_from_cache, DAY_IN_SECONDS );
+			}
+
+			$css .= $css_from_cache[0];
+			$subset_vars = $css_from_cache[1];
+		}
+
+		$css = ':root{' . implode( '', $subset_vars ) . '}' . $css;
+		echo '<style class="e-self-hosted-google-fonts">' . $css . '</style>';
+	}
+
+	private static function get_font_slug( $font_data, $subsets, $weights, $styles ) {
+		$slug = $font_data['id'];
+		foreach ( $subsets as $subset ) {
+			$slug .= '-' . $subset;
+		}
+		foreach ( $weights as $weight ) {
+			$slug .= '-' . $weight;
+		}
+		foreach ( $styles as $style ) {
+			$slug .= '-' . $style;
+		}
+		return $slug;
+	}
+
+	private static function get_required_subsets( $data ) {
+		$required_subsets = [];
+
+		$required_subsets[] = $data['defSubset'];
+
+		$subsets = [
+			'ru_RU' => 'cyrillic',
+			'bg_BG' => 'cyrillic',
+			'he_IL' => 'hebrew',
+			'el' => 'greek',
+			'vi' => 'vietnamese',
+			'uk' => 'cyrillic',
+			'cs_CZ' => 'latin-ext',
+			'ro_RO' => 'latin-ext',
+			'pl_PL' => 'latin-ext',
+			'hr_HR' => 'latin-ext',
+			'hu_HU' => 'latin-ext',
+			'sk_SK' => 'latin-ext',
+			'tr_TR' => 'latin-ext',
+			'lt_LT' => 'latin-ext',
+		];
+
+		/**
+		 * Google font subsets.
+		 *
+		 * Filters the list of Google font subsets from which locale will be enqueued in frontend.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $subsets A list of font subsets.
+		 */
+		$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
+
+		$locale = get_locale();
+
+		if ( isset( $subsets[ $locale ] ) && ! in_array( $subsets[ $locale ], $required_subsets ) ) {
+			$required_subsets[] = $subsets[ $locale ];
+		}
+
+		return $required_subsets;
 	}
 
 
@@ -79,7 +154,29 @@ class Module extends BaseModule {
 	public static function retrieve_fontsource_data( $font_name ) {
 		$font_name = self::sanitize_font_name( $font_name );
 
+		$data = get_transient( 'e_fontsource_' . $font_name );
+
+		if ( false !== $data ) {
+			return json_decode( $data, true );
+		}
+
 		$response = wp_remote_get( self::FONTSOURCE_API . $font_name );
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+
+		$data = wp_remote_retrieve_body( $response );
+		if ( empty( $data ) ) {
+			return false;
+		}
+
+		set_transient( 'e_fontsource_' . $font_name, $data, WEEK_IN_SECONDS );
+
+		return json_decode( $data, true );
+	}
+
+	private static function download_font( $remote_font_url, $font_file_path ) {
+		$response = wp_remote_get( $remote_font_url );
 		if ( is_wp_error( $response ) ) {
 			return false;
 		}
@@ -89,12 +186,17 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		$response_body = json_decode( $response_body, true );
-		if ( empty( $response_body ) ) {
-			return false;
+		// Create the directory if it doesn't exist
+		$dir = dirname( $font_file_path );
+		if ( ! is_dir( $dir ) ) {
+			wp_mkdir_p( $dir );
 		}
 
-		return $response_body;
+		// Save the file
+		$file_saved = file_put_contents( $font_file_path, $response_body );
+		if ( ! $file_saved ) {
+			return false;
+		}
 	}
 
 
@@ -151,27 +253,7 @@ class Module extends BaseModule {
 		$font_file_path = self::get_font_file_path( $remote_font_url );
 
 		if ( ! file_exists( $font_file_path ) ) {
-			$response = wp_remote_get( $remote_font_url );
-			if ( is_wp_error( $response ) ) {
-				return false;
-			}
-
-			$response_body = wp_remote_retrieve_body( $response );
-			if ( empty( $response_body ) ) {
-				return false;
-			}
-
-			// Create the directory if it doesn't exist
-			$dir = dirname( $font_file_path );
-			if ( ! is_dir( $dir ) ) {
-				wp_mkdir_p( $dir );
-			}
-
-			// Save the file
-			$file_saved = file_put_contents( $font_file_path, $response_body );
-			if ( ! $file_saved ) {
-				return false;
-			}
+			$font_file_path = self::download_font( $remote_font_url, $font_file_path );
 		}
 
 		$local_font_url = self::get_local_font_url( $font_file_path );
@@ -227,29 +309,43 @@ class Module extends BaseModule {
 	 */
 
 	public static function get_css_font_face_declaration( $data, $weight, $style, $subset, $font_file_url ) {
-		$unicode_range = self::get_unicode_range( $data, $subset );
-
 		$css = '@font-face {';
 		$css .= 'font-family: ' . $data[ 'family' ] . ';';
 		$css .= 'src: url(\'' . $font_file_url . '\');';
 		$css .= 'font-weight: ' . $weight . ';';
 		$css .= 'font-style: ' . $style . ';';
-		$css .= $unicode_range ? 'unicode-range: \'' . $unicode_range . '\';' : '';
+		$css .= 'unicode-range: var(--'. $data['id'] .'-' . $subset . '-unicode-range);';
 		$css .= '}';
 
 		return $css;
 	}
 
 	private static function get_unicode_range( $data, $subset ) {
-		if ( ! $subset ) {
-			$subset = $data[ 'defSubset' ];
-		}
-
-		$available_subsets = $data[ 'subsets' ];
-		if ( ! in_array( $subset, $available_subsets ) ) {
+		if ( ! in_array( $subset, $data[ 'subsets' ] ) ) {
 			return false;
 		}
 
 		return $data[ 'unicodeRange' ][ $subset ];
+	}
+
+	private function generate_font_css( $font_data, array $subsets, $weights, $styles, $subset_vars ) {
+		$font = $font_data['id'];
+		$css = '';
+
+		foreach ( $subsets as $subset ) {
+			$unicode_range = $this->get_unicode_range( $font_data, $subset );
+			$subset_var = '--' . $font . '-' . $subset . '-unicode-range: ';
+			$subset_var .= '\'' . $unicode_range . '\'' . ';';
+			$subset_vars[] = $subset_var;
+
+			foreach ( $weights as $weight ) {
+				foreach ( $styles as $style ) {
+					$local_font = $this->get_font( $font, $weight, $style, $subset );
+					$css .= $local_font[1];
+				}
+			}
+		}
+
+		return [ $css, $subset_vars ];
 	}
 }
