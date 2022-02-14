@@ -404,6 +404,21 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$rotate_device_args = [];
+
+		$rotate_device_settings = array(
+			'default' => [
+				'unit' => 'deg',
+				'size' => '',
+			]
+		);
+
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$rotate_device_args[ $breakpoint_name ] = $rotate_device_settings;
+		}
+
 		$this->add_responsive_control(
 			'rotate',
 			[
@@ -421,14 +436,7 @@ class Widget_Icon_Box extends Widget_Base {
 					'unit' => 'deg',
 					'size' => '',
 				],
-				'tablet_default' => [
-					'unit' => 'deg',
-					'size' => '',
-				],
-				'mobile_default' => [
-					'unit' => 'deg',
-					'size' => '',
-				],
+				'device_args' => $rotate_device_args,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
