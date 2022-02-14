@@ -117,7 +117,7 @@ class Control_Icons extends Control_Base_Multiple {
 			const getIcon = ( choice, data ) => {
 				switch( choice ) {
 					case 'none':
-						eturn data.skin_settings.inline.none.icon;
+						return data.skin_settings.inline.none.icon;
 					case 'svg':
 						return data.skin_settings.inline.svg.icon;
 					case 'icon':
