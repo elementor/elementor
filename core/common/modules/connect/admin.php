@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
+use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -8,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Admin {
+class Admin extends App {
 
 	const PAGE_ID = 'elementor-connect';
 
@@ -87,6 +88,7 @@ class Admin {
 			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Base_App $app */
 			foreach ( $apps as $app ) {
 				echo '<div class="elementor-connect-app-wrapper">';
+				echo '<div id="elementor-connect-admin-test"></div>';
 				$app->render_admin_widget();
 				echo '</div>';
 			}
@@ -94,6 +96,40 @@ class Admin {
 			?>
 		</div><!-- /.wrap -->
 		<?php
+	}
+
+	/**
+	 * Check if the current admin page is the component page.
+	 *
+	 * @return bool
+	 */
+	private function is_current() {
+		// Nonce verification not required here.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return ( ! empty( $_GET['page'] ) && self::PAGE_ID === $_GET['page'] );
+	}
+
+	/**
+	 * Enqueue admin scripts
+	 */
+	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-connect-admin-test',
+			$this->get_js_assets_url( 'elementor-connect-admin-test' ),
+			[
+				'wp-url',
+				'wp-i18n',
+				'wp-date',
+				'react',
+				'react-dom',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	public function get_name() {
+		return 'elementor-connect-admin';
 	}
 
 	/**
@@ -105,5 +141,11 @@ class Admin {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 206 );
 		add_action( 'admin_head', [ $this, 'hide_menu_item' ] );
+
+		if ( $this->is_current() ) {
+			add_action( 'admin_enqueue_scripts', function () {
+				$this->enqueue_scripts();
+			} );
+		}
 	}
 }

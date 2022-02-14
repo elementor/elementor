@@ -20,4 +20,15 @@ class Str {
 			return $matches[1] . \Requests_IDNAEncoder::encode( $matches[2] );
 		}, $url );
 	}
+
+	/**
+	 * Format a string from camelCase or snake_case to Title case.
+	 *
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	public final static function to_title_case( $string ) {
+		return ucfirst( strtolower( trim( join( ' ', preg_split( '/(?<!_)(?=[A-Z])|_/', $string ) ) ) ) );
+	}
 }

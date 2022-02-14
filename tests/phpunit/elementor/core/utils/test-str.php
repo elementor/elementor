@@ -39,4 +39,21 @@ class Test_Str extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( $expected, $encoded_url );
 	}
+
+	public function test_to_title_case() {
+		// Arrange
+		$assertions = [
+			'helloWorldTest',
+			'HelloWorldTest',
+			'hello_world_test',
+			'Hello_World_Test',
+			'_hello_world_test',
+			'hello_world_test_',
+		];
+
+		// Assert
+		foreach( $assertions as $assertion ) {
+			$this->assertEquals( 'Hello world test', Str::to_title_case( $assertion ) );
+		}
+	}
 }
