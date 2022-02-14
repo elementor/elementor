@@ -104,25 +104,11 @@ class Control_Icons extends Control_Base_Multiple {
 			const getLabel = ( choice, data ) => {
 				switch( choice ) {
 					case 'none':					
-						if ( data.skin_settings.inline.none.label ) {
-							return data.skin_settings.inline.none.label;
-						} else {
-							return '<?php echo esc_html__( 'None', 'elementor' ); ?>';
-						}
+						return data.skin_settings.inline.none.label;
 					case 'svg':
-						if ( data.skin_settings.inline.svg.label !== undefined ) {
-							return data.skin_settings.inline.svg.label;
-						} else {
-							return '<?php echo esc_html__( 'Upload SVG', 'elementor' ); ?>';
-						}
-
+						return data.skin_settings.inline.svg.label;
 					case 'icon':
-						if ( data.skin_settings.inline.icon.label !== undefined ) {
-							return data.skin_settings.inline.icon.label;
-						} else {
-							return '<?php echo esc_html__( 'Icon Library', 'elementor' ); ?>';
-						}
-
+						return data.skin_settings.inline.icon.label;
 					default:
 						return '<?php echo esc_html__( 'None', 'elementor' ); ?>';
 				}
@@ -131,26 +117,11 @@ class Control_Icons extends Control_Base_Multiple {
 			const getIcon = ( choice, data ) => {
 				switch( choice ) {
 					case 'none':
-						if ( data.skin_settings.inline.none.icon ) {
-							return data.skin_settings.inline.none.icon;
-						} else {
-							return 'eicon-ban';
-						}
-
+						eturn data.skin_settings.inline.none.icon;
 					case 'svg':
-						if ( data.skin_settings.inline.svg.icon ) {
-							return data.skin_settings.inline.svg.icon;
-						} else {
-							return 'eicon-upload';
-						}
-
+						return data.skin_settings.inline.svg.icon;
 					case 'icon':
-						if ( data.skin_settings.inline.icon.icon ) {
-							return data.skin_settings.inline.icon.icon;
-						} else {
-							return 'eicon-circle';
-						}
-
+						return data.skin_settings.inline.icon.icon;
 					default:
 						return 'eicon-ban';
 				}
