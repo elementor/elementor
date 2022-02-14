@@ -15,6 +15,7 @@ const paths = {
 
 module.exports = {
 	verbose: true,
+	testEnvironment: 'jsdom',
 	testMatch: [ './**/?(*.)+(spec|test).[jt]s?(x)' ],
 	setupFilesAfterEnv: [
 		paths.jestSetup.libraries,
