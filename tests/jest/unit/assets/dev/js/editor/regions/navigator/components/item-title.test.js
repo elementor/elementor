@@ -1,6 +1,8 @@
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { ItemTitle } from 'elementor-regions/navigator/components';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 describe( '<ItemTitle />', () => {
 	const title = 'item-title';
 
@@ -45,8 +47,8 @@ describe( '<ItemTitle />', () => {
 			{ key: 'Enter', code: 13, charCode: 13 }
 		);
 
-		await waitFor( () => expect( handleTitleEdit ).toBeCalledTimes( 1 ) );
-		await waitFor( () => expect( handleTitleEdit ).toBeCalledWith( newTitle ) );
+		expect( handleTitleEdit ).toBeCalledTimes( 1 );
+		expect( handleTitleEdit ).toBeCalledWith( newTitle );
 	} );
 
 	it( 'Should update title on blur', async () => {

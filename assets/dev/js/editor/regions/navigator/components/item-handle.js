@@ -34,9 +34,9 @@ function ItemHandle( { className, style, onToggleFolding, onTitleEdit, children,
 				...style,
 			} }
 			tabIndex={ -1 }
-			role="item-handle">
+			data-testid="item-handle">
 			{ false === onToggleFolding ||
-				<div className="elementor-navigator__element__list-toggle" role="toggle-folding" onClick={ handleToggleFolding }>
+				<div className="elementor-navigator__element__list-toggle" data-testid="toggle-folding" onClick={ handleToggleFolding }>
 					<Icon className="eicon-sort-down"/>
 				</div>
 			}

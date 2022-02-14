@@ -26,10 +26,10 @@ export function Header( { onClose } ) {
 	}, [ isAllOpen ] );
 
 	return (
-		<div id="elementor-navigator__header" role="navigator-header">
-			<Icon id="elementor-navigator__toggle-all" className={ isAllOpen ? 'eicon-collapse' : 'eicon-expand' } onClick={ toggleAll } role="toggle-all" />
+		<div id="elementor-navigator__header" data-testid="navigator-header">
+			<Icon id="elementor-navigator__toggle-all" className={ isAllOpen ? 'eicon-collapse' : 'eicon-expand' } onClick={ toggleAll } data-testid="toggle-all" />
 			<div id="elementor-navigator__header__title">{ __( 'Navigator', 'elementor' ) }</div>
-			<Icon id="elementor-navigator__close" className="eicon-close" onClick={ onClose } role="close" />
+			<Icon id="elementor-navigator__close" className="eicon-close" onClick={ onClose } data-testid="close" />
 		</div>
 	);
 }

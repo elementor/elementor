@@ -2,6 +2,8 @@ import { render, fireEvent } from '@testing-library/react';
 import { ItemHandle } from 'elementor-regions/navigator/components';
 import { ElementProvider } from 'elementor-regions/navigator/context/item-context/providers';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 const element = $e.run( 'document/elements/create', {
 		model: {
 			elType: 'widget',
@@ -32,7 +34,7 @@ describe( '<ItemHandle />', () => {
 			</ElementProvider>
 		);
 
-		expect( component.queryByRole( 'item-handle' ) ).toHaveClass(
+		expect( component.queryByTestId( 'item-handle' ) ).toHaveClass(
 			'elementor-navigator__item', // Initial class name
 			'test-class-name' // Appended class name
 		);
@@ -46,7 +48,7 @@ describe( '<ItemHandle />', () => {
 				</ElementProvider>
 			);
 
-		expect( component.queryByRole( 'item-handle' ) ).toHaveStyle( style );
+		expect( component.queryByTestId( 'item-handle' ) ).toHaveStyle( style );
 	} );
 
 	it( 'Should render item title', () => {
@@ -57,7 +59,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'item-title' )
+			component.queryByTestId( 'item-title' )
 		).toBeInTheDocument();
 	} );
 
@@ -69,7 +71,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'item-icon' )
+			component.queryByTestId( 'item-icon' )
 		).toBeInTheDocument();
 	} );
 
@@ -81,7 +83,7 @@ describe( '<ItemHandle />', () => {
 				</ElementProvider>
 			);
 
-		expect( component.queryByRole( 'item-handle' ) ).toHaveStyle( {
+		expect( component.queryByTestId( 'item-handle' ) ).toHaveStyle( {
 			paddingLeft: level * 10,
 		} );
 	} );
@@ -94,7 +96,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'toggle-folding' )
+			component.queryByTestId( 'toggle-folding' )
 		).toBeInTheDocument();
 	} );
 
@@ -106,7 +108,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'toggle-folding' )
+			component.queryByTestId( 'toggle-folding' )
 		).not.toBeInTheDocument();
 	} );
 
@@ -119,7 +121,7 @@ describe( '<ItemHandle />', () => {
 			);
 
 		fireEvent.click(
-			component.getByRole( 'toggle-folding' )
+			component.getByTestId( 'toggle-folding' )
 		);
 
 		expect( handleToggleFolding ).toBeCalledTimes( 1 );

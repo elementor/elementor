@@ -19,6 +19,8 @@ jest.mock( 'react', () => ( {
 
 describe( 'useElementSelection()', () => {
 	beforeAll( () => {
+		require( 'elementor/tests/jest/setup/editor' );
+
 		global.$e.run = jest.fn();
 		global.elementor.getContainer = jest.fn( () => {} );
 	} );

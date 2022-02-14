@@ -1,6 +1,8 @@
 import { render } from '@testing-library/react';
 import { ItemIndicatorList } from 'elementor-regions/navigator/components';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 describe( '<ItemIndicator />', () => {
 	it( 'Should render indicators when corresponding settings are filled', () => {
 		const settings = {
@@ -13,7 +15,7 @@ describe( '<ItemIndicator />', () => {
 			);
 
 		expect(
-			component.queryAllByRole( 'item-indicator' ).length
+			component.queryAllByTestId( 'item-indicator' ).length
 		).toEqual( 3 );
 	} );
 
@@ -24,7 +26,7 @@ describe( '<ItemIndicator />', () => {
 			);
 
 		expect(
-			component.queryAllByRole( 'item-indicator' ).length
+			component.queryAllByTestId( 'item-indicator' ).length
 		).toEqual( 0 );
 	} );
 } );

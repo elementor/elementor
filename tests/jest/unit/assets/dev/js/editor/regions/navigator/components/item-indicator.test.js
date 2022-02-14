@@ -1,5 +1,7 @@
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { ItemIndicator } from 'elementor-regions/navigator/components';
+
+require( 'elementor/tests/jest/setup/editor' );
 
 describe( '<ItemIndicator />', () => {
 	const indicator = { title: 'item-indicator', icon: 'example', section: 'section-to-open' };
@@ -14,22 +16,6 @@ describe( '<ItemIndicator />', () => {
 		).not.toBeNull();
 	} );
 
-	it( 'Should display tispy tooltip on hover', async () => {
-		const component = render(
-			<ItemIndicator indicator={ indicator } />
-		);
-
-		fireEvent.mouseEnter(
-			component.queryByRole( 'item-indicator' )
-		);
-
-		await waitFor(
-			() => expect(
-				component.queryByText( indicator.title )
-			).toBeInTheDocument()
-		);
-	} );
-
 	it( 'Should activate section on click', () => {
 		const handleActivateSection = jest.fn(),
 			component = render(
@@ -37,7 +23,7 @@ describe( '<ItemIndicator />', () => {
 			);
 
 		fireEvent.click(
-			component.queryByRole( 'item-indicator' )
+			component.queryByTestId( 'item-indicator' )
 		);
 
 		expect( handleActivateSection ).toBeCalledTimes( 1 );

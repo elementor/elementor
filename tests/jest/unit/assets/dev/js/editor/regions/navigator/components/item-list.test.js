@@ -2,6 +2,8 @@ import { render } from '@testing-library/react';
 import { ItemList } from 'elementor-regions/navigator/components';
 import { ElementProvider } from 'elementor-regions/navigator/context/item-context/providers';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 const section = $e.run( 'document/elements/create', {
 		model: {
 			id: 'test-section-1',
@@ -68,7 +70,7 @@ describe( '<ItemList />', () => {
 		);
 
 		expect(
-			component.queryAllByRole( 'element-item' ).length
+			component.queryAllByTestId( 'element-item' ).length
 		).toEqual( 3 );
 	} );
 
@@ -80,7 +82,7 @@ describe( '<ItemList />', () => {
 		);
 
 		expect(
-			component.queryAllByRole( 'element-item' ).length
+			component.queryAllByTestId( 'element-item' ).length
 		).toEqual( 0 );
 	} );
 

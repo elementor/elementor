@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export function ItemIcon( { icon } ) {
 	if ( icon ) {
 		return (
-			<div className="elementor-navigator__element__element-type" role="item-icon">
+			<div className="elementor-navigator__element__element-type" data-testid="item-icon">
 				<Icon className={ icon } />
 			</div>
 		);

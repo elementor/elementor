@@ -1,6 +1,8 @@
 import { render } from '@testing-library/react';
 import { ItemIcon } from 'elementor-regions/navigator/components';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 describe( '<ItemIcon />', () => {
 	it( 'Should render icon', () => {
 		const iconName = 'eicon-heading',

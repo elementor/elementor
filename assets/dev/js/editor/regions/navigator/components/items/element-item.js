@@ -107,7 +107,7 @@ export function ElementItem( { itemId: elementId, level } ) {
 				onClick={ handleToggleSelection }
 				onContextMenu={ handleContextMenu }
 				data-id={ elementId }
-				role="element-item">
+				data-testid="element-item">
 				<ItemHandle
 					ref={ handleRef }
 					className={ arrayToClassName( [
@@ -117,7 +117,7 @@ export function ElementItem( { itemId: elementId, level } ) {
 					] ) }
 					onToggleFolding={ setElementFolding }
 					onTitleEdit={ handleTitleEdit }>
-					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility } role="toggle-visibility">
+					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility } data-testid="toggle-visibility">
 						<Icon className="eicon-preview-medium"/>
 					</div>
 					<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection }/>

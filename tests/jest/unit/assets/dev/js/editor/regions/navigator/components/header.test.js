@@ -1,6 +1,8 @@
 import { render, fireEvent } from '@testing-library/react';
 import { Header } from 'elementor-regions/navigator/components';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 const mockSetElementsFolding = jest.fn(),
 	mockStore = {
 		'navigator/folding': {},
@@ -27,7 +29,7 @@ describe( '<Header />', () => {
 		const handleClose = jest.fn(),
 			component = render( <Header onClose={ handleClose } /> );
 
-		fireEvent.click( component.getByRole( 'close' ) );
+		fireEvent.click( component.getByTestId( 'close' ) );
 
 		expect( handleClose ).toBeCalledTimes( 1 );
 	} );
@@ -38,7 +40,7 @@ describe( '<Header />', () => {
 
 		const component = render( <Header /> );
 
-		fireEvent.click( component.getByRole( 'toggle-all' ) );
+		fireEvent.click( component.getByTestId( 'toggle-all' ) );
 
 		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
 		expect( mockSetElementsFolding ).toBeCalledWith( true );
@@ -54,7 +56,7 @@ describe( '<Header />', () => {
 
 		const component = render( <Header /> );
 
-		fireEvent.click( component.getByRole( 'toggle-all' ) );
+		fireEvent.click( component.getByTestId( 'toggle-all' ) );
 
 		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
 		expect( mockSetElementsFolding ).toBeCalledWith( true );
@@ -70,7 +72,7 @@ describe( '<Header />', () => {
 
 		const component = render( <Header /> );
 
-		fireEvent.click( component.getByRole( 'toggle-all' ) );
+		fireEvent.click( component.getByTestId( 'toggle-all' ) );
 
 		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
 		expect( mockSetElementsFolding ).toBeCalledWith( false );

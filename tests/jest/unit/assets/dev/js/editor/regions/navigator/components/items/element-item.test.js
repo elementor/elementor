@@ -1,6 +1,8 @@
 import { render, fireEvent } from '@testing-library/react';
 import { BASE_ITEM_CLASS, ElementItem } from 'elementor-regions/navigator/components/items';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 const mockSetElementFolding = jest.fn(),
 	mockSetElementSelection = jest.fn(),
 	preview = elementor.getPreviewContainer(),
@@ -69,7 +71,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		fireEvent.click(
-			component.getAllByRole( 'element-item' )[ 0 ]
+			component.getAllByTestId( 'element-item' )[ 0 ]
 		);
 
 		expect( mockSetElementSelection ).toBeCalledTimes( 1 );
@@ -81,7 +83,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		fireEvent.contextMenu(
-			component.getAllByRole( 'element-item' )[ 0 ]
+			component.getAllByTestId( 'element-item' )[ 0 ]
 		);
 
 		expect(
@@ -96,7 +98,7 @@ describe( '<ElementItem />', () => {
 			);
 
 		expect(
-			component.getAllByRole( 'element-item' )[ 0 ]
+			component.getAllByTestId( 'element-item' )[ 0 ]
 		).toHaveAttribute( 'data-id', itemId );
 	} );
 
@@ -106,7 +108,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryAllByRole( 'element-item' )[ 0 ]
+			component.queryAllByTestId( 'element-item' )[ 0 ]
 		).toHaveClass( `${ BASE_ITEM_CLASS }--has-children` );
 	} );
 
@@ -116,7 +118,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'element-item' )
+			component.queryByTestId( 'element-item' )
 		).not.toHaveClass( `${ BASE_ITEM_CLASS }--has-children` );
 	} );
 
@@ -128,7 +130,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'element-item' )
+			component.queryByTestId( 'element-item' )
 		).toHaveClass( `${ BASE_ITEM_CLASS }--hidden` );
 
 		// Cleanup
@@ -141,7 +143,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'element-item' )
+			component.queryByTestId( 'element-item' )
 		).not.toHaveClass( `${ BASE_ITEM_CLASS }--hidden` );
 	} );
 
@@ -151,7 +153,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'item-handle' )
+			component.queryByTestId( 'item-handle' )
 		).toBeInTheDocument();
 	} );
 
@@ -161,7 +163,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'toggle-visibility' )
+			component.queryByTestId( 'toggle-visibility' )
 		).toBeInTheDocument();
 	} );
 
@@ -171,7 +173,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByRole( 'item-list' )
+			component.queryByTestId( 'item-list' )
 		).toBeInTheDocument();
 	} );
 
@@ -181,7 +183,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryAllByRole( 'item-handle' )[ 0 ]
+			component.queryAllByTestId( 'item-handle' )[ 0 ]
 		).toHaveClass( 'elementor-root' );
 	} );
 
@@ -193,7 +195,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByRole( 'item-handle' )
+			component.getByTestId( 'item-handle' )
 		).toHaveClass( 'elementor-editing' );
 
 		// Cleanup
@@ -209,7 +211,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByRole( 'item-handle' )
+			component.getByTestId( 'item-handle' )
 		).not.toHaveClass( 'elementor-editing' );
 	} );
 
@@ -221,7 +223,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByRole( 'item-handle' )
+			component.getByTestId( 'item-handle' )
 		).toHaveClass( 'elementor-active' );
 
 		// Cleanup
@@ -236,7 +238,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByRole( 'item-handle' )
+			component.getByTestId( 'item-handle' )
 		).not.toHaveClass( 'elementor-active' );
 
 		// Cleanup

@@ -2,6 +2,8 @@ import { render } from '@testing-library/react';
 import { Navigator } from 'elementor-regions/navigator/components';
 import { configureStore } from '@reduxjs/toolkit';
 
+require( 'elementor/tests/jest/setup/editor' );
+
 const preview = elementor.getPreviewContainer(),
 	mockStore = {
 	'document/elements': {
@@ -37,7 +39,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByRole( 'navigator-header' )
+			component.queryByTestId( 'navigator-header' )
 		).toBeInTheDocument();
 	} );
 
@@ -45,7 +47,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByRole( 'navigator-footer' )
+			component.queryByTestId( 'navigator-footer' )
 		).toBeInTheDocument();
 	} );
 
@@ -62,7 +64,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByRole( 'element-item' )
+			component.queryByTestId( 'element-item' )
 		).toBeInTheDocument();
 
 		// Cleanup
@@ -73,7 +75,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByRole( 'element-item' )
+			component.queryByTestId( 'element-item' )
 		).not.toBeInTheDocument();
 	} );
 

@@ -50,7 +50,7 @@ export function ItemTitle( { title, onTitleEdit } ) {
 	};
 
 	return (
-		<div className="elementor-navigator__element__title" role="item-title">
+		<div className="elementor-navigator__element__title" data-testid="item-title">
 			<span
 				className="elementor-navigator__element__title__text"
 				contentEditable={ editMode }
