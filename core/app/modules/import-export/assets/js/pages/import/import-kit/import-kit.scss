@@ -6,6 +6,8 @@ $root: e-app-import;
 .#{$root} {
 	--e-app-import-back-to-library-color: #{$e-app-import-back-to-library-color};
 
+	padding-bottom: spacing(20);
+
 	&__drop-zone {
 		margin-top: spacing(20);
 	}
