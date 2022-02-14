@@ -1,0 +1,33 @@
+$eps-panel-header-background-color: theme-colors(light);
+$eps-panel-header-dark-background-color: dark-tints(600);
+$eps-panel-body-background-color: rgba(theme-colors(light), $opacity-05);
+$eps-panel-body-dark-background-color: rgba(dark-tints(600), $opacity-05);
+
+$root: eps-panel;
+
+.#{$root} {
+	--eps-panel-header-background-color: #{$eps-panel-header-background-color};
+	--eps-panel-body-background-color: #{$eps-panel-body-background-color};
+
+	&,
+	&:hover {
+		background-color: initial;
+	}
+
+	&__header {
+		background-color: var(--eps-panel-header-background-color);
+		border-radius: $eps-radius;
+	}
+
+	&__body {
+		background-color: var(--eps-panel-body-background-color);
+		border-radius: 0 0 $eps-radius $eps-radius;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--eps-panel-header-background-color: #{$eps-panel-header-dark-background-color};
+		--eps-panel-body-background-color: #{$eps-panel-body-dark-background-color};
+	}
+}
