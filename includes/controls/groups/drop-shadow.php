@@ -31,7 +31,7 @@ class Group_Control_Drop_Shadow extends Group_Control_Base {
 	/**
 	 * Get drop shadow control type.
 	 *
-	 * Retrieve the control type, in this case `box-shadow`.
+	 * Retrieve the control type, in this case `drop-shadow`.
 	 *
 	 * @since 3.7.0
 	 * @access public
