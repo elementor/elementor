@@ -241,6 +241,14 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'alert_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-alert',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
