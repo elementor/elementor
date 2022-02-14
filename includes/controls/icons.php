@@ -101,6 +101,39 @@ class Control_Icons extends Control_Base_Multiple {
 	public function render_inline_skin() {
 		?>
 		<#
+			const defaultSkinSettings = {
+				inline: {
+					none: {
+						label: '<?php echo esc_html__( 'None', 'elementor' ); ?>',
+						icon: 'eicon-ban',
+					},
+					svg: {
+						label: '<?php echo esc_html__( 'Upload SVG', 'elementor' ); ?>',
+						icon: 'eicon-upload',
+					},
+					icon: {
+						label: '<?php echo esc_html__( 'Icon Library', 'elementor' ); ?>',
+						icon: 'eicon-circle',
+					},
+				}
+			};
+
+			const getIcon = ( type, skinSettings ) => {
+				if ( skinSettings[ type ] ) {
+					return skinSettings[ type ]?.icon || defaultSkinSettings['inline'][ type ].icon;
+				}
+
+				return defaultSkinSettings['inline'][ type ].icon;
+			}
+
+			const getLabel = ( type, skinSettings ) => {
+				if ( skinSettings[ type ] ) {
+					return skinSettings[ type ]?.label || defaultSkinSettings['inline'][ type ].label;
+				}
+
+				return defaultSkinSettings['inline'][ type ].label;
+			}
+
 			const skinSettings = data.skin_settings.inline;
 		#>
 		<div class="elementor-control-field elementor-control-inline-icon">
@@ -108,24 +141,24 @@ class Control_Icons extends Control_Base_Multiple {
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
 					<input id="<?php $this->print_control_uid(); ?>-none" type="radio" value="none">
-					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{{ skinSettings.none.label }}}" title="{{{ skinSettings.none.label }}}">
-						<i class="{{{ skinSettings.none.icon }}}" aria-hidden="true"></i>
-						<span class="elementor-screen-only">{{{ skinSettings.none.label }}}</span>
+					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{{ getLabel( 'none', skinSettings ) }}}" title="{{{ getLabel( 'none', skinSettings ) }}}">
+						<i class="{{{ getIcon( 'none', skinSettings ) }}}" aria-hidden="true"></i>
+						<span class="elementor-screen-only">{{{ getLabel( 'none', skinSettings ) }}}</span>
 					</label>
 					<# if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-svg" type="radio" value="svg">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{{ skinSettings.svg.label }}}" title="{{{ skinSettings.svg.label }}}">
-							<i class="{{{ skinSettings.svg.icon }}}" aria-hidden="true"></i>
-							<span class="elementor-screen-only">{{{ skinSettings.svg.label }}}</span>
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{{ getLabel( 'svg', skinSettings ) }}}" title="{{{ getLabel( 'svg', skinSettings ) }}}">
+							<i class="{{{ getIcon( 'svg', skinSettings ) }}}" aria-hidden="true"></i>
+							<span class="elementor-screen-only">{{{ getLabel( 'svg', skinSettings ) }}}</span>
 						</label>
 					<# }
 					if ( ! data.exclude_inline_options.includes( 'icon' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-icon" type="radio" value="icon">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="{{{ skinSettings.icon.label }}}" title="{{{ skinSettings.icon.label }}}">
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="{{{ getLabel( 'icon', skinSettings ) }}}" title="{{{ getLabel( 'icon', skinSettings ) }}}">
 							<span class="elementor-control-icons--inline__displayed-icon">
-								<i class="{{{ skinSettings.icon.icon }}}" aria-hidden="true"></i>
+								<i class="{{{ getIcon( 'icon', skinSettings ) }}}" aria-hidden="true"></i>
 							</span>
-							<span class="elementor-screen-only">{{{ skinSettings.icon.label }}}</span>
+							<span class="elementor-screen-only">{{{ getLabel( 'icon', skinSettings ) }}}</span>
 						</label>
 					<# } #>
 				</div>
