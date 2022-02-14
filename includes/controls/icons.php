@@ -101,55 +101,31 @@ class Control_Icons extends Control_Base_Multiple {
 	public function render_inline_skin() {
 		?>
 		<#
-			const getLabel = ( choice, data ) => {
-				switch( choice ) {
-					case 'none':					
-						return data.skin_settings.inline.none.label;
-					case 'svg':
-						return data.skin_settings.inline.svg.label;
-					case 'icon':
-						return data.skin_settings.inline.icon.label;
-					default:
-						return '<?php echo esc_html__( 'None', 'elementor' ); ?>';
-				}
-			}
-
-			const getIcon = ( choice, data ) => {
-				switch( choice ) {
-					case 'none':
-						return data.skin_settings.inline.none.icon;
-					case 'svg':
-						return data.skin_settings.inline.svg.icon;
-					case 'icon':
-						return data.skin_settings.inline.icon.icon;
-					default:
-						return 'eicon-ban';
-				}
-			}
+			const skinSettings = data.skin_settings.inline;
 		#>
 		<div class="elementor-control-field elementor-control-inline-icon">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
 					<input id="<?php $this->print_control_uid(); ?>-none" type="radio" value="none">
-					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{{ getLabel( 'none', data ) }}}" title="{{{ getLabel( 'none', data ) }}}">
-						<i class="{{{ getIcon( 'none', data ) }}}" aria-hidden="true"></i>
-						<span class="elementor-screen-only">{{{ getLabel( 'none', data ) }}}</span>
+					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{{ skinSettings.none.label }}}" title="{{{ skinSettings.none.label }}}">
+						<i class="{{{ skinSettings.none.icon }}}" aria-hidden="true"></i>
+						<span class="elementor-screen-only">{{{ skinSettings.none.label }}}</span>
 					</label>
 					<# if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-svg" type="radio" value="svg">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{{ getLabel( 'svg', data ) }}}" title="{{{ getLabel( 'svg', data ) }}}">
-							<i class="{{{ getIcon( 'svg', data ) }}}" aria-hidden="true"></i>
-							<span class="elementor-screen-only">{{{ getLabel( 'svg', data ) }}}</span>
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{{ skinSettings.svg.label }}}" title="{{{ skinSettings.svg.label }}}">
+							<i class="{{{ skinSettings.svg.icon }}}" aria-hidden="true"></i>
+							<span class="elementor-screen-only">{{{ skinSettings.svg.label }}}</span>
 						</label>
 					<# }
 					if ( ! data.exclude_inline_options.includes( 'icon' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-icon" type="radio" value="icon">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="{{{ getLabel( 'icon', data ) }}}" title="{{{ getLabel( 'icon', data ) }}}">
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="{{{ skinSettings.icon.label }}}" title="{{{ skinSettings.icon.label }}}">
 							<span class="elementor-control-icons--inline__displayed-icon">
-								<i class="{{{ getIcon( 'icon', data ) }}}" aria-hidden="true"></i>
+								<i class="{{{ skinSettings.icon.icon }}}" aria-hidden="true"></i>
 							</span>
-							<span class="elementor-screen-only">{{{ getLabel( 'icon', data ) }}}</span>
+							<span class="elementor-screen-only">{{{ skinSettings.icon.label }}}</span>
 						</label>
 					<# } #>
 				</div>
