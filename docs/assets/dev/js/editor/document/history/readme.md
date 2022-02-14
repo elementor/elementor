@@ -1,7 +1,7 @@
 ## Component -- `$e.components.get('document/history')`
 
 *  **Name**: History.
-*  **Description**: Provide a way to manage history, create/delete history items, undo and redo history items, add transactions to be saved as history item.
+*  **Description**: Provide a way to manage editor history, which means - to create and delete history items (milestones), time-travel between them (undo and redo), and starting transactions to be saved as history items.
 *  **Built in history types**:
 	```javascript
 	// Represent history item titles, used in some of the History component commands.
