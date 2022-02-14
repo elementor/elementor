@@ -7,7 +7,7 @@ export default function CptSelections( { options } ) {
 	const sharedContext = useContext( SharedContext );
 
 	const selectedCpt = ( e ) => {
-		sharedContext.dispatch( { type: 'SET_CPT', payload: Array.from( e.target.selectedOptions ).map( ( { value } ) => value ) } );
+		sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: Array.from( e.target.selectedOptions ).map( ( { value } ) => value ) } );
 	};
 	return (
 		<>

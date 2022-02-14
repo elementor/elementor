@@ -14,6 +14,7 @@ import './import-content.scss';
 
 export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
+		{ customPostTypes } = sharedContext.data,
 		importContext = useContext( ImportContext ),
 		{ includes } = sharedContext.data,
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,

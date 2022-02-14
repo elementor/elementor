@@ -12,6 +12,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, includes: payload };
 		case 'SET_CPT':
 			return { ...state, customPostTypes: payload };
+		case 'SET_SELECTED_CPT':
+			return { ...state, selectedCustomPostTypes: payload };
 		default:
 			return state;
 	}

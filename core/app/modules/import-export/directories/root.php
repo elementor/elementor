@@ -112,6 +112,8 @@ class Root extends Base {
 			$sub_directories[] = new Content( $this->iterator, $this );
 
 			$sub_directories[] = new WP_Content( $this->iterator, $this );
+
+			$sub_directories[] = new Custom_Post_Types( $this->iterator, $this );
 		}
 
 		if ( in_array( 'plugins', $include, true ) ) {

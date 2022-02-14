@@ -51,7 +51,7 @@ export default function useKit() {
 
 			setAjax( ajaxConfig );
 		},
-		exportKit = ( { include, kitInfo, plugins, customPostTypes } ) => {
+		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
 			setAjax( {
 				data: {
 					action: EXPORT_KIT_KEY,
@@ -59,7 +59,7 @@ export default function useKit() {
 						include,
 						kitInfo,
 						plugins,
-						customPostTypes,
+						selectedCustomPostTypes,
 					} ),
 				},
 			} );

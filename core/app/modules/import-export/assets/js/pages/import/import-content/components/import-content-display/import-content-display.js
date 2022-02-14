@@ -10,6 +10,11 @@ export default function ImportContentDisplay( {
 	isAllRequiredPluginsSelected,
 	onResetProcess,
 } ) {
+	//remove
+	const postTypes = Object.entries( manifest[ 'wp-content' ] ).map( ( item ) => item[ '0' ] );
+	const nativePostTypes = [ 'post', 'page' ];
+	const customPostTypesOptions = postTypes.filter( ( i ) => ! nativePostTypes.includes( i ) );
+
 	// Getting the kit data from the manifest.
 	const kitData = kitContentData.filter( ( { type } ) => {
 		const contentType = 'settings' === type ? 'site-settings' : type,
@@ -43,7 +48,7 @@ export default function ImportContentDisplay( {
 				</Notice>
 			}
 
-			<KitContent contentData={ kitData } hasPro={ hasPro } />;
+			<KitContent contentData={ kitData } hasPro={ hasPro } customPostTypesOptions={customPostTypesOptions} />;
 		</>
 	);
 }
