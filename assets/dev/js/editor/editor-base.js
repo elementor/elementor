@@ -1030,35 +1030,31 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	requestWidgetsConfig() {
-		return new Promise( ( resolve ) => {
-			const excludeWidgets = {};
+		const excludeWidgets = {};
 
-			jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
-				if ( widgetConfig.controls ) {
-					excludeWidgets[ widgetName ] = true;
-				}
-			} );
+		jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
+			if ( widgetConfig.controls ) {
+				excludeWidgets[ widgetName ] = true;
+			}
+		} );
 
-			elementorCommon.ajax.addRequest( 'get_widgets_config', {
-				data: {
-					exclude: excludeWidgets,
-				},
-				success: ( data ) => {
-					this.addWidgetsCache( data );
+		elementorCommon.ajax.addRequest( 'get_widgets_config', {
+			data: {
+				exclude: excludeWidgets,
+			},
+			success: ( data ) => {
+				this.addWidgetsCache( data );
 
-					if ( this.loaded ) {
-						this.kitManager.renderGlobalsDefaultCSS();
+				if ( this.loaded ) {
+					this.kitManager.renderGlobalsDefaultCSS();
 
+					$e.internal( 'panel/state-ready' );
+				} else {
+					this.once( 'panel:init', () => {
 						$e.internal( 'panel/state-ready' );
-					} else {
-						this.once( 'panel:init', () => {
-							$e.internal( 'panel/state-ready' );
-						} );
-					}
-
-					resolve();
-				},
-			} );
+					} );
+				}
+			},
 		} );
 	}
 
@@ -1076,20 +1072,7 @@ export default class EditorBase extends Marionette.Application {
 		return ElementorConfig;
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * Modify original start to pass the 'Promise' from 'onStart'.
-	 *
-	 * @returns {Promise}
-	 */
-	start( options ) {
-		this.triggerMethod( 'before:start', options );
-		this._initCallbacks.run( options, this );
-		return this.triggerMethod( 'start', options );
-	}
-
-	async onStart() {
+	onStart() {
 		this.config = this.getConfig();
 
 		Backbone.Radio.DEBUG = false;
@@ -1107,9 +1090,6 @@ export default class EditorBase extends Marionette.Application {
 		this.registerElements();
 
 		this.initComponents();
-
-		// `initPreview` is depends on widgets config with available controls.
-		await this.requestWidgetsConfig();
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();

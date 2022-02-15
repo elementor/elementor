@@ -1,11 +1,11 @@
 import EditorBase from './editor-base';
 
 export class Editor extends EditorBase {
-	async onStart( options ) {
+	onStart( options ) {
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
-		return super.onStart( options );
+		super.onStart( options );
 	}
 
 	onPreviewLoaded() {
