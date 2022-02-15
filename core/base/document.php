@@ -15,6 +15,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use ElementorPro\Modules\Library\Widgets\Template;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -1074,39 +1075,18 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param array $elements
 	 *
-	 * @param array $map_old_new_post_ids - Map of old exported post ids and new post ids.
+	 * @param array $map_old_new_post_ids
 	 */
 	public function on_import_replace_dynamics_elements_id( &$elements, $map_old_new_post_ids ) {
 		foreach ( $elements as &$element ) {
-			// Replace post id in template_id setting.
-			if ( isset( $element['settings']['template_id'] ) ) {
-				$element['settings']['template_id'] = $map_old_new_post_ids[ $element['settings']['template_id'] ];
-			}
+			$element = Template::on_import_replace_template_post_id( $element, $map_old_new_post_ids );
 
-			// Replace post id in dynamic settings.
-			if ( isset( $element['settings']['__dynamic__'] ) ) {
-				foreach ( $element['settings']['__dynamic__'] as $dynamic_name => $dynamic_value ) {
-					$element['settings']['__dynamic__'][ $dynamic_name ] = $this->replace_old_post_ids( $dynamic_value, $map_old_new_post_ids );
-				}
-			}
+			$element = Plugin::$instance->dynamic_tags->on_import_replace_post_id( $element, $map_old_new_post_ids );
 
 			$this->on_import_replace_dynamics_elements_id( $element['elements'], $map_old_new_post_ids );
 		}
 
 		$this->save_elements( $elements );
-	}
-
-	private function replace_old_post_ids( $dynamic_value, $map_old_new_post_ids ) {
-		$tag_data = Plugin::$instance->dynamic_tags->tag_text_to_tag_data( $dynamic_value );
-		$post_id_text = 'popup' === $tag_data['name'] ? 'popup' : 'post_id';
-
-		if ( $tag_data['settings'][ $post_id_text ] ) {
-			$tag_data['settings'][ $post_id_text ] = (string) $map_old_new_post_ids[ $tag_data['settings'][ $post_id_text ] ];
-
-			return Plugin::$instance->dynamic_tags->tag_data_to_tag_text( $tag_data['id'], $tag_data['name'], $tag_data['settings'] );
-		}
-
-		return $dynamic_value;
 	}
 
 	/**
