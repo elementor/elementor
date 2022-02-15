@@ -47,7 +47,7 @@ class WP_Post_Type extends Base {
 	protected function import( array $import_settings ) {
 		$wp_importer = new WP_Import( $this->importer->get_archive_file_full_path( $this->post_type . '.xml' ), [
 			'fetch_attachments' => true,
-		] );
+		], static::$mapped_already_imported );
 
 		$result = $wp_importer->run();
 

@@ -70,14 +70,16 @@ class WP_Import extends \WP_Importer {
 	private $page_on_front;
 
 	// Mappings from old information to new.
+	private static $processed_terms = [];
+	private static $processed_posts = [];
+
 	private $processed_authors = [];
 	private $author_mapping = [];
-	private $processed_terms = [];
-	private $processed_posts = [];
-	private $post_orphans = [];
 	private $processed_menu_items = [];
-	private $menu_item_orphans = [];
 	private $missing_menu_items = [];
+	private $post_orphans = [];
+	private $menu_item_orphans = [];
+	private $mapped_already_imported;
 
 	private $fetch_attachments = false;
 	private $url_remap = [];
@@ -189,7 +191,7 @@ class WP_Import extends \WP_Importer {
 			return $this->is_valid_meta_key( $key );
 		} );
 		add_filter( 'http_request_timeout', function () {
-			return self::DEFAULT_BUMP_REQUEST_TIMEOUT;
+			return static::DEFAULT_BUMP_REQUEST_TIMEOUT;
 		} );
 
 		if ( ! $this->import_start( $file ) ) {
@@ -326,7 +328,7 @@ class WP_Import extends \WP_Importer {
 			return;
 		}
 
-		$create_users = apply_filters( 'import_allow_create_users', self::DEFAULT_ALLOW_CREATE_USERS );
+		$create_users = apply_filters( 'import_allow_create_users', static::DEFAULT_ALLOW_CREATE_USERS );
 
 		foreach ( (array) $this->args['imported_authors'] as $i => $old_login ) {
 			// Multisite adds strtolower to sanitize_user. Need to sanitize here to stop breakage in process_posts.
@@ -408,7 +410,7 @@ class WP_Import extends \WP_Importer {
 					$term_id = $term_id['term_id'];
 				}
 				if ( isset( $cat['term_id'] ) ) {
-					$this->processed_terms[ intval( $cat['term_id'] ) ] = (int) $term_id;
+					static::$processed_terms[ intval( $cat['term_id'] ) ] = (int) $term_id;
 				}
 				continue;
 			}
@@ -426,7 +428,7 @@ class WP_Import extends \WP_Importer {
 			$id = wp_insert_category( $data );
 			if ( ! is_wp_error( $id ) && $id > 0 ) {
 				if ( isset( $cat['term_id'] ) ) {
-					$this->processed_terms[ intval( $cat['term_id'] ) ] = $id;
+					static::$processed_terms[ intval( $cat['term_id'] ) ] = $id;
 				}
 				$result++;
 			} else {
@@ -473,7 +475,7 @@ class WP_Import extends \WP_Importer {
 					$term_id = $term_id['term_id'];
 				}
 				if ( isset( $tag['term_id'] ) ) {
-					$this->processed_terms[ intval( $tag['term_id'] ) ] = (int) $term_id;
+					static::$processed_terms[ intval( $tag['term_id'] ) ] = (int) $term_id;
 				}
 				continue;
 			}
@@ -487,7 +489,7 @@ class WP_Import extends \WP_Importer {
 			$id = wp_insert_term( wp_slash( $tag['tag_name'] ), 'post_tag', $args );
 			if ( ! is_wp_error( $id ) ) {
 				if ( isset( $tag['term_id'] ) ) {
-					$this->processed_terms[ intval( $tag['term_id'] ) ] = $id['term_id'];
+					static::$processed_terms[ intval( $tag['term_id'] ) ] = $id['term_id'];
 				}
 				$result++;
 			} else {
@@ -534,7 +536,7 @@ class WP_Import extends \WP_Importer {
 					$term_id = $term_id['term_id'];
 				}
 				if ( isset( $term['term_id'] ) ) {
-					$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
+					static::$processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
 				}
 				continue;
 			}
@@ -558,7 +560,7 @@ class WP_Import extends \WP_Importer {
 			$id = wp_insert_term( wp_slash( $term['term_name'] ), $term['term_taxonomy'], $args );
 			if ( ! is_wp_error( $id ) ) {
 				if ( isset( $term['term_id'] ) ) {
-					$this->processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
+					static::$processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
 				}
 				$result++;
 			} else {
@@ -666,7 +668,7 @@ class WP_Import extends \WP_Importer {
 				continue;
 			}
 
-			if ( isset( $this->processed_posts[ $post['post_id'] ] ) && ! empty( $post['post_id'] ) ) {
+			if ( isset( static::$processed_posts[ $post['post_id'] ] ) && ! empty( $post['post_id'] ) ) {
 				continue;
 			}
 
@@ -675,7 +677,10 @@ class WP_Import extends \WP_Importer {
 			}
 
 			if ( 'nav_menu_item' === $post['post_type'] ) {
-				$this->process_menu_item( $post );
+				$process_result = $this->process_menu_item( $post );
+				foreach ( $process_result as $old_post_id => $new_post_id ) {
+					$result['succeed'][ $old_post_id ] = $new_post_id;
+				}
 				continue;
 			}
 
@@ -684,8 +689,8 @@ class WP_Import extends \WP_Importer {
 			$post_parent = (int) $post['post_parent'];
 			if ( $post_parent ) {
 				// if we already know the parent, map it to the new local ID.
-				if ( isset( $this->processed_posts[ $post_parent ] ) ) {
-					$post_parent = $this->processed_posts[ $post_parent ];
+				if ( isset( static::$processed_posts[ $post_parent ] ) ) {
+					$post_parent = static::$processed_posts[ $post_parent ];
 					// otherwise record the parent for later.
 				} else {
 					$this->post_orphans[ intval( $post['post_id'] ) ] = $post_parent;
@@ -702,8 +707,8 @@ class WP_Import extends \WP_Importer {
 			}
 
 			$postdata = [
-				'import_id' => $post['post_id'],
-				'post_author' => $author,
+				//              'import_id' => $post['post_id'],
+									'post_author' => $author,
 				'post_content' => $post['post_content'],
 				'post_excerpt' => $post['post_excerpt'],
 				'post_title' => $post['post_title'],
@@ -774,7 +779,7 @@ class WP_Import extends \WP_Importer {
 			}
 
 			// Map pre-import ID to local ID.
-			$this->processed_posts[ intval( $post['post_id'] ) ] = (int) $post_id;
+			static::$processed_posts[ intval( $post['post_id'] ) ] = (int) $post_id;
 
 			if ( ! isset( $post['terms'] ) ) {
 				$post['terms'] = [];
@@ -929,6 +934,8 @@ class WP_Import extends \WP_Importer {
 	 * @param array $item Menu item details from WXR file
 	 */
 	private function process_menu_item( $item ) {
+		$result = [];
+
 		// Skip draft, orphaned menu items.
 		if ( 'draft' === $item['status'] ) {
 			return;
@@ -949,7 +956,7 @@ class WP_Import extends \WP_Importer {
 		if ( ! $menu_slug ) {
 			$this->output['errors'][] = esc_html__( 'Menu item skipped due to missing menu slug', 'elementor' );
 
-			return;
+			return $result;
 		}
 
 		$menu_id = term_exists( $menu_slug, 'nav_menu' );
@@ -957,7 +964,7 @@ class WP_Import extends \WP_Importer {
 			/* translators: %s: Menu slug. */
 			$this->output['errors'][] = sprintf( esc_html__( 'Menu item skipped due to invalid menu slug: %s', 'elementor' ), $menu_slug );
 
-			return;
+			return $result;
 		} else {
 			$menu_id = is_array( $menu_id ) ? $menu_id['term_id'] : $menu_id;
 		}
@@ -967,19 +974,22 @@ class WP_Import extends \WP_Importer {
 			$post_meta_key_value[ $meta['key'] ] = $meta['value'];
 		}
 
-		$_menu_item_object_id = $post_meta_key_value['menu_item_object_id'];
-		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_terms[ intval( $_menu_item_object_id ) ] ) ) {
-			$_menu_item_object_id = $this->processed_terms[ intval( $_menu_item_object_id ) ];
-		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
-			$_menu_item_object_id = $this->processed_posts[ intval( $_menu_item_object_id ) ];
+		$_menu_item_object_id = $post_meta_key_value['_menu_item_object_id'];
+
+		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && isset( static::$processed_terms[ intval( $_menu_item_object_id ) ] ) ) {
+			$_menu_item_object_id = static::$processed_terms[ intval( $_menu_item_object_id ) ];
+		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( static::$processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
+			$_menu_item_object_id = static::$processed_posts[ intval( $_menu_item_object_id ) ];
+		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && array_key_exists( intval( $_menu_item_object_id ), $this->mapped_already_imported ) ) {
+			$_menu_item_object_id = $this->mapped_already_imported[ intval( $_menu_item_object_id ) ];
 		} elseif ( 'custom' !== $post_meta_key_value['_menu_item_type'] ) {
 			// Associated object is missing or not imported yet, we'll retry later.
 			$this->missing_menu_items[] = $item;
 
-			return;
+			return $result;
 		}
 
-		$_menu_item_menu_item_parent = $post_meta_key_value['menu_item_menu_item_parent'];
+		$_menu_item_menu_item_parent = $post_meta_key_value['_menu_item_menu_item_parent'];
 		if ( isset( $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ] ) ) {
 			$_menu_item_menu_item_parent = $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ];
 		} elseif ( $_menu_item_menu_item_parent ) {
@@ -1012,7 +1022,10 @@ class WP_Import extends \WP_Importer {
 		$id = wp_update_nav_menu_item( $menu_id, 0, $args );
 		if ( $id && ! is_wp_error( $id ) ) {
 			$this->processed_menu_items[ intval( $item['post_id'] ) ] = (int) $id;
+			$result[ $item['post_id'] ] = $id;
 		}
+
+		return $result;
 	}
 
 	/**
@@ -1134,7 +1147,7 @@ class WP_Import extends \WP_Importer {
 			return new WP_Error( 'import_file_error', esc_html__( 'Downloaded file has incorrect size', 'elementor' ) );
 		}
 
-		$max_size = (int) apply_filters( 'import_attachment_size_limit', self::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
+		$max_size = (int) apply_filters( 'import_attachment_size_limit', static::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
 			@unlink( $tmp_file_name );
 
@@ -1144,7 +1157,7 @@ class WP_Import extends \WP_Importer {
 
 		// Override file name with Content-Disposition header value.
 		if ( ! empty( $headers['content-disposition'] ) ) {
-			$file_name_from_disposition = self::get_filename_from_disposition( (array) $headers['content-disposition'] );
+			$file_name_from_disposition = static::get_filename_from_disposition( (array) $headers['content-disposition'] );
 			if ( $file_name_from_disposition ) {
 				$file_name = $file_name_from_disposition;
 			}
@@ -1153,7 +1166,7 @@ class WP_Import extends \WP_Importer {
 		// Set file extension if missing.
 		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
 		if ( ! $file_ext && ! empty( $headers['content-type'] ) ) {
-			$extension = self::get_file_extension_by_mime_type( $headers['content-type'] );
+			$extension = static::get_file_extension_by_mime_type( $headers['content-type'] );
 			if ( $extension ) {
 				$file_name = "{$file_name}.{$extension}";
 			}
@@ -1228,11 +1241,11 @@ class WP_Import extends \WP_Importer {
 			$local_child_id = false;
 			$local_parent_id = false;
 
-			if ( isset( $this->processed_posts[ $child_id ] ) ) {
-				$local_child_id = $this->processed_posts[ $child_id ];
+			if ( isset( static::$processed_posts[ $child_id ] ) ) {
+				$local_child_id = static::$processed_posts[ $child_id ];
 			}
-			if ( isset( $this->processed_posts[ $parent_id ] ) ) {
-				$local_parent_id = $this->processed_posts[ $parent_id ];
+			if ( isset( static::$processed_posts[ $parent_id ] ) ) {
+				$local_parent_id = static::$processed_posts[ $parent_id ];
 			}
 
 			if ( $local_child_id && $local_parent_id ) {
@@ -1242,8 +1255,7 @@ class WP_Import extends \WP_Importer {
 		}
 
 		// All other posts/terms are imported, retry menu items with missing associated object.
-		$missing_menu_items = $this->missing_menu_items;
-		foreach ( $missing_menu_items as $item ) {
+		foreach ( $this->missing_menu_items as $item ) {
 			$this->process_menu_item( $item );
 		}
 
@@ -1289,8 +1301,8 @@ class WP_Import extends \WP_Importer {
 	private function remap_featured_images() {
 		// Cycle through posts that have a featured image.
 		foreach ( $this->featured_images as $post_id => $value ) {
-			if ( isset( $this->processed_posts[ $value ] ) ) {
-				$new_id = $this->processed_posts[ $value ];
+			if ( isset( static::$processed_posts[ $value ] ) ) {
+				$new_id = static::$processed_posts[ $value ];
 				// Only update if there's a difference.
 				if ( $new_id !== $value ) {
 					update_post_meta( $post_id, '_thumbnail_id', $new_id );
@@ -1329,15 +1341,26 @@ class WP_Import extends \WP_Importer {
 		return $key;
 	}
 
+	public function cleanup() {
+		static::$processed_posts = [];
+		static::$processed_terms = [];
+	}
+
 	public function run() {
 		$this->import( $this->requested_file_path );
 
 		return $this->output;
 	}
 
-	public function __construct( $file, $args = [] ) {
+	/**
+	 * @param $file
+	 * @param $args
+	 * @param $already_imported // Posts that already imported using different importer
+	 */
+	public function __construct( $file, $args = [], $mapped_already_imported = [] ) {
 		$this->requested_file_path = $file;
 		$this->args = $args;
+		$this->mapped_already_imported = $mapped_already_imported;
 
 		if ( ! empty( $this->args['fetch_attachments'] ) ) {
 			$this->fetch_attachments = true;

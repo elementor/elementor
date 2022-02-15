@@ -21,6 +21,8 @@ class WP_Content extends Base {
 			'can_export' => true,
 		] );
 
+		$post_types['nav_menu_item'] = 'nav_menu_item';
+
 		unset(
 			$post_types['attachment'],
 			$post_types[ Landing_Pages_Module::CPT ],
