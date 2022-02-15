@@ -8,7 +8,7 @@ export class Apply extends $e.modules.CommandBase {
 	 * @param {object} args
 	 */
 	validateArgs( args ) {
-		this.requireArgumentType( 'value', 'string' );
+		this.requireArgumentType( 'value', 'string', args );
 	}
 
 	/**

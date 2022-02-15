@@ -1304,13 +1304,14 @@ export default class EditorBase extends Marionette.Application {
 			newControlsStack = {},
 			secondDesktopChild = devices[ devices.indexOf( 'desktop' ) + 1 ];
 
-		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
+		// Set the desktop to be the first device, so desktop will the the parent of all devices.
 		devices.unshift(
 			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ]
 		);
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
-			let responsiveControlName;
+			let responsiveControlName,
+				controlDevices;
 
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
@@ -1322,6 +1323,18 @@ export default class EditorBase extends Marionette.Application {
 				newControlsStack[ controlName ] = controlConfig;
 
 				return;
+			}
+
+			if ( controlConfig.responsive?.devices ) {
+				// Because of an `array_intersect` that happens on the PHP side, the devices array can become an object.
+				if ( 'object' === typeof controlConfig.responsive.devices ) {
+					controlConfig.responsive.devices = Object.values( controlConfig.responsive.devices );
+				}
+
+				// Filter the devices list according to the control's passed devices list.
+				controlDevices = devices.filter( ( device ) => controlConfig.responsive.devices.includes( device ) );
+
+				delete controlConfig.responsive.devices;
 			}
 
 			const popoverEndProperty = controlConfig.popover?.end;
@@ -1350,7 +1363,10 @@ export default class EditorBase extends Marionette.Application {
 				deleteControlDefault = false;
 			}
 
-			devices.forEach( ( device, index ) => {
+			// If the control passed its own 'devices' array, run through that. Otherwise, use the default devices list.
+			const devicesArrayToDuplicate = controlDevices || devices;
+
+			devicesArrayToDuplicate.forEach( ( device, index ) => {
 				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
 
 				if ( controlArgs.device_args ) {
@@ -1415,14 +1431,14 @@ export default class EditorBase extends Marionette.Application {
 				// If the control is inside a popover, AND this control is the last one in the popover, AND this is the
 				// last device in the devices array - add the 'popover.end = true' value to it to make sure it closes
 				// the popover.
-				if ( index === ( devices.length - 1 ) && popoverEndProperty ) {
+				if ( index === ( devicesArrayToDuplicate.length - 1 ) && popoverEndProperty ) {
 					controlArgs.popover = {
 						end: true,
 					};
 				}
 
 				// For each new responsive control, delete the responsive defaults
-				devices.forEach( ( breakpoint ) => {
+				devicesArrayToDuplicate.forEach( ( breakpoint ) => {
 					delete controlArgs[ breakpoint + '_default' ];
 				} );
 
