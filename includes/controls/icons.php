@@ -102,19 +102,17 @@ class Control_Icons extends Control_Base_Multiple {
 		?>
 		<#
 			const defaultSkinSettings = {
-				inline: {
-					none: {
-						label: '<?php echo esc_html__( 'None', 'elementor' ); ?>',
-						icon: 'eicon-ban',
-					},
-					svg: {
-						label: '<?php echo esc_html__( 'Upload SVG', 'elementor' ); ?>',
-						icon: 'eicon-upload',
-					},
-					icon: {
-						label: '<?php echo esc_html__( 'Icon Library', 'elementor' ); ?>',
-						icon: 'eicon-circle',
-					},
+				none: {
+					label: '<?php echo esc_html__( 'None', 'elementor' ); ?>',
+					icon: 'eicon-ban',
+				},
+				svg: {
+					label: '<?php echo esc_html__( 'Upload SVG', 'elementor' ); ?>',
+					icon: 'eicon-upload',
+				},
+				icon: {
+					label: '<?php echo esc_html__( 'Icon Library', 'elementor' ); ?>',
+					icon: 'eicon-circle',
 				}
 			};
 
@@ -122,10 +120,10 @@ class Control_Icons extends Control_Base_Multiple {
 
 			const get = ( type, key ) => {
 				if ( skinSettings[ type ] ) {
-					return skinSettings[ type ]?.[ key ] || defaultSkinSettings['inline'][ type ][ key ];
+					return skinSettings[ type ]?.[ key ] || defaultSkinSettings[ type ][ key ];
 				}
 
-				return defaultSkinSettings['inline'][ type ][ key ];
+				return defaultSkinSettings[ type ][ key ];
 			}
 		#>
 		<div class="elementor-control-field elementor-control-inline-icon">
