@@ -178,6 +178,11 @@ export default class EditorBase extends Marionette.Application {
 			Url: require( 'elementor-controls/url' ),
 			Wp_widget: require( 'elementor-controls/wp_widget' ),
 			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
+			/*
+			For the drop-shadow control we will use the box-shadow control's JavaScript
+			as they both require the same functionality. So for now it is not needed to
+			create a separate JS file for the drop-shadow control.
+			*/
 			Drop_shadow: require( 'elementor-controls/box-shadow' ),
 		},
 		elements: {
