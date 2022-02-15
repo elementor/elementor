@@ -1,4 +1,5 @@
 # directories
+coverage-report/
 node_modules/
 .sass-cache/
 log/
