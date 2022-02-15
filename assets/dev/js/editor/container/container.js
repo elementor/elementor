@@ -268,6 +268,26 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * Function getParentAncestry().
+	 *
+	 * Recursively run over all parents from current container till the top, and return them as flat array.
+	 *
+	 * @return {Array.<Container>}
+	 */
+	getParentAncestry() {
+		const result = [];
+
+		let parent = this;
+
+		while ( parent ) {
+			result.push( parent );
+			parent = parent.parent;
+		}
+
+		return result;
+	}
+
 	handleChildrenRecursive() {
 		if ( this.view.children?.length ) {
 			Object.values( this.view.children._views ).forEach( ( view ) => {
