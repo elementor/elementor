@@ -31,6 +31,10 @@ module.exports = class EditorPage extends BasePage {
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
+    getFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
+    }
+
 	/**
 	 * Make sure that the elements panel is loaded.
 	 *
