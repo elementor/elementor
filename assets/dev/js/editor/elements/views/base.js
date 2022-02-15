@@ -757,8 +757,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		// If not a dynamic change, and renderDataBindings() was successful, then it was rendered.
-		if ( ! settings.__dynamic__ && this.renderDataBindings( settings, this.dataBindings ) ) {
+		if ( this.renderDataBindings( settings, this.dataBindings ) ) {
 			return;
 		}
 
