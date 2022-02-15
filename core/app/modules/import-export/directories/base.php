@@ -5,6 +5,7 @@ use Elementor\Core\App\Modules\ImportExport\Export;
 use Elementor\Core\App\Modules\ImportExport\Import;
 use Elementor\Core\App\Modules\ImportExport\Iterator;
 use Elementor\Plugin;
+use Elementor\Core\App\Modules\ImportExport\Directories\Root;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -37,7 +38,7 @@ abstract class Base {
 	 */
 	protected $importer;
 
-	private static $map_old_new_post_ids = [];
+	protected static $map_old_new_post_ids = [];
 
 	private static $documents_elements;
 
@@ -120,9 +121,7 @@ abstract class Base {
 			$meta_data[ $sub_directory_name ] = $sub_directory->run_import( $settings[ $sub_directory_name ] );
 		}
 
-		$is_root = array_key_exists( 'site-settings', $settings );
-
-		if ( $is_root ) {
+		if ( $this instanceof Root ) {
 			$this->save_elements_of_imported_posts();
 		}
 
