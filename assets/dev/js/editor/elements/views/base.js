@@ -703,6 +703,17 @@ BaseElementView = BaseContainer.extend( {
 
 		let changed = false;
 
+		const renderDataBinding = ( dataBinding ) => {
+			const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+
+			if ( change !== undefined ) {
+				dataBinding.el.innerHTML = change;
+				return true;
+			}
+
+			return false;
+		};
+
 		for ( const dataBinding of dataBindings ) {
 			switch ( dataBinding.dataset.bindingType ) {
 				case 'repeater-item': {
@@ -715,23 +726,13 @@ BaseElementView = BaseContainer.extend( {
 					const container = repeater.children.find( ( i ) => i.id === settings.attributes._id );
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
-						const change = settings.changed[ dataBinding.dataset.bindingSetting ];
-
-						if ( change !== undefined ) {
-							changed = true;
-							dataBinding.el.innerHTML = change;
-						}
+						changed = renderDataBinding( dataBinding );
 					}
 				}
 				break;
 
 				case 'content': {
-					if ( undefined !== settings.changed[ dataBinding.dataset.bindingSetting ] ) {
-						const change = settings.changed[ dataBinding.dataset.bindingSetting ];
-
-						changed = true;
-						dataBinding.el.innerHTML = change;
-					}
+					changed = renderDataBinding( dataBinding );
 				}
 				break;
 			}
