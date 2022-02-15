@@ -32,6 +32,33 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		};
 	}
 
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @returns {string}
+	 */
+	getTabTitleFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @returns {string}
+	 */
+	getTabContentFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {HTMLElement} tabTitleElement
+
+	 * @returns {string}
+	 */
+	getTabIndex( tabTitleElement ) {
+		return tabTitleElement.getAttribute( 'data-tab' );
+	}
+
 	activateDefaultTab() {
 		const settings = this.getSettings();
 
@@ -89,7 +116,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 				return;
 		}
 
-		const tabIndex = tab.getAttribute( 'data-tab' ) - 1,
+		const tabIndex = this.getTabIndex( tab ) - 1,
 			direction = this.getSettings( 'keyDirection' )[ event.key ],
 			nextTab = $tabs[ tabIndex + direction ];
 
@@ -105,9 +132,10 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
-			$activeContent = this.elements.$tabContents.filter( activeFilter );
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
 		$activeTitle.add( $activeContent ).removeClass( activeClass );
 		$activeTitle.attr( {
@@ -123,8 +151,8 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
-			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' ),
+			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
 			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
@@ -139,7 +167,9 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
+		const settings = this.getSettings();
+
+		return this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ).hasClass( settings.classes.active );
 	}
 
 	bindEvents() {
@@ -164,13 +194,13 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 					case 'Enter':
 					case 'Space':
 						event.preventDefault();
-						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
+						this.changeActiveTab( this.getTabIndex( event.currentTarget ), true );
 						break;
 				}
 			},
 			click: ( event ) => {
 				event.preventDefault();
-				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
+				this.changeActiveTab( this.getTabIndex( event.currentTarget ), true );
 			},
 		} );
 	}
@@ -181,13 +211,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		this.activateDefaultTab();
 	}
 
-	onEditSettingsChange( propertyName ) {
-		if ( 'activeItemIndex' === propertyName ) {
-			this.activateDefaultTab();
-		}
-	}
-
-	changeActiveTab( tabIndex ) {
+	changeActiveTab( tabIndex, fromBindings = false ) {
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
