@@ -243,7 +243,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'icon_box_shadow',
+				'name' => 'icon_shadow',
 				'selector' => '{{WRAPPER}} .elementor-icon',
 				'condition' => [
 					'view!' => 'default',
@@ -294,8 +294,28 @@ class Widget_Icon extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'icon_box_hover_shadow',
+				'name' => 'icon_hover_shadow',
 				'selector' => '{{WRAPPER}} .elementor-icon:hover',
+				'condition' => [
+					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_hover_transition',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon:hover' => 'transition-duration: {{SIZE}}s',
+				],
 				'condition' => [
 					'view!' => 'default',
 				],
