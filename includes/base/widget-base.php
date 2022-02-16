@@ -525,7 +525,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 *
 	 */
-	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
+	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false, $element_type = null ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$is_global_image_lightbox_enabled = 'yes' === $kit->get_settings( 'global_image_lightbox' );
@@ -544,8 +544,21 @@ abstract class Widget_Base extends Element_Base {
 
 		$attributes['data-elementor-open-lightbox'] = 'yes';
 
+		$action_hash_params = [];
+
+		if ( $id ) {
+			$action_hash_params['id'] = $id;
+			$action_hash_params['url'] = wp_get_attachment_url( $id );
+		}
+
+		if ( $element_type ) {
+			$action_hash_params['type'] = $element_type;
+		}
+
 		if ( $group_id ) {
 			$attributes['data-elementor-lightbox-slideshow'] = $group_id;
+
+			$action_hash_params['slideshow'] = $group_id;
 		}
 
 		if ( $id ) {
@@ -559,6 +572,8 @@ abstract class Widget_Base extends Element_Base {
 				$attributes['data-elementor-lightbox-description'] = $lightbox_image_attributes['description'];
 			}
 		}
+
+		$attributes['e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
 
 		$this->add_render_attribute( $element, $attributes, null, $overwrite );
 

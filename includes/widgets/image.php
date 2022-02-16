@@ -686,7 +686,7 @@ class Widget_Image extends Widget_Base {
 			}
 
 			if ( 'custom' !== $settings['link_to'] ) {
-				$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'] );
+				$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'], null, false, 'image' );
 			}
 		} ?>
 		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>

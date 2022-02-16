@@ -16,8 +16,9 @@ export default class extends elementorModules.ViewModule {
 			lightbox: async ( settings ) => {
 				const lightbox = await elementorFrontend.utils.lightbox;
 
-				if ( settings.id ) {
-					lightbox.openSlideshow( settings.id, settings.url );
+				if ( settings.slideshow ) {
+					// Handle slideshow display
+					lightbox.openSlideshow( settings.slideshow, settings.url );
 				} else {
 					if ( settings.html ) {
 						delete settings.html;
@@ -64,8 +65,13 @@ export default class extends elementorModules.ViewModule {
 		this.runAction( jQuery( event.currentTarget ).attr( 'href' ), event );
 	}
 
+	findElementWithHash() {
+		return document.querySelector( `[e-action-hash="${ location.hash }"]` ) || document.querySelector( `a[href*="${ location.hash }"]` );
+	}
+
 	runHashAction() {
-		if ( location.hash ) {
+		// Look for elements with the action hash attribute.
+		if ( location.hash && this.findElementWithHash() ) {
 			this.runAction( location.hash );
 		}
 	}
