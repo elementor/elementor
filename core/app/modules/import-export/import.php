@@ -91,7 +91,7 @@ class Import extends Iterator {
 			}
 		}
 
-		foreach ( $this->$documents_elements as $new_id => $document_elements ) {
+		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
 			$document->on_import_replace_dynamics_elements_id( $document_elements, $map_old_new_post_ids );
 		}
