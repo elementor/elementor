@@ -8,7 +8,7 @@
 		&left,
 		&right {
 
-			.elementor-icon-box-wrapper {
+			.elementor-icon-box-wrapper	 {
 				display: flex;
 			}
 
@@ -127,7 +127,20 @@
 
 	@media (max-width: $screen-mobile-max ) {
 		@include icon-position(-mobile);
+
+		&.elementor-mobile-position- {
+
+			&left,
+			&right {
+
+				.elementor-icon-box-icon {
+					display: block;
+					flex: unset;
+				}
+			}
+		}
 	}
+
 
 	.elementor-icon-box-title {
 
