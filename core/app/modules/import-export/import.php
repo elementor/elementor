@@ -39,7 +39,7 @@ class Import extends Iterator {
 
 	public function prevent_saving_elements_on_post_creation( $data, $document ) {
 		if ( $data['elements'] ) {
-			$this->$documents_elements[ $document->get_main_id() ] = $data['elements'];
+			$this->documents_elements[ $document->get_main_id() ] = $data['elements'];
 
 			$data['elements'] = [];
 		}
