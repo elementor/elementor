@@ -70,6 +70,7 @@ class Module extends BaseModule {
 		}
 
 		$post_types = get_post_types_by_support( 'elementor' );
+		$post_types[] = 'nav_menu_item';
 
 		foreach ( $post_types as $post_type ) {
 			if ( Source_Local::CPT === $post_type ) {

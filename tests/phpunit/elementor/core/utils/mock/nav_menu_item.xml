@@ -15,7 +15,7 @@
 <!--    existing user on the site or to create a new user. -->
 <!-- 7. WordPress will then import each of the posts, pages, comments, categories, etc. -->
 <!--    contained in this file into your site. -->
-<!-- generator="WordPress/5.9" created="2022-02-13 10:25" -->
+<!-- generator="WordPress/5.9" created="2022-02-16 11:26" -->
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -27,13 +27,13 @@
 		<title>lcoal</title>
 		<link>http://wordpress.local</link>
 		<description>Just another WordPress site</description>
-		<pubDate>Sun, 13 Feb 2022 10:25:52 +0000</pubDate>
+		<pubDate>Wed, 16 Feb 2022 11:26:23 +0000</pubDate>
 		<language>en-US</language>
 		<wp:wxr_version>1.2</wp:wxr_version>
 		<wp:base_site_url>http://wordpress.local</wp:base_site_url>
 		<wp:base_blog_url>http://wordpress.local</wp:base_blog_url>
 		
-		<wp:author>
+				<wp:author>
 			<wp:author_id>1</wp:author_id>
 			<wp:author_login><![CDATA[manor]]></wp:author_login>
 			<wp:author_email><![CDATA[manorh@elementor.com]]></wp:author_email>
@@ -49,7 +49,7 @@
 		</wp:category>
 <generator>https://wordpress.org/?v=5.9</generator>
 		<wp:term>
-			<wp:term_id>53</wp:term_id>
+			<wp:term_id>3</wp:term_id>
 			<wp:term_taxonomy>nav_menu</wp:term_taxonomy>
 			<wp:term_slug><![CDATA[main-manu]]></wp:term_slug>
 			<wp:term_name><![CDATA[main manu]]></wp:term_name>
@@ -59,16 +59,16 @@
 			<link></link>
 			<pubDate></pubDate>
 			<dc:creator><![CDATA[manor]]></dc:creator>
-			<guid isPermaLink="false"><![CDATA[http://wordpress.local/?p=251]]></guid>
+			<guid isPermaLink="false"><![CDATA[http://wordpress.local/?p=11]]></guid>
 			<description></description>
 			<content:encoded><![CDATA[ ]]></content:encoded>
 			<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-			<wp:post_id>251</wp:post_id>
-			<wp:post_date><![CDATA[2022-02-13 10:25:42]]></wp:post_date>
-			<wp:post_date_gmt><![CDATA[2022-02-13 10:25:42]]></wp:post_date_gmt>
+			<wp:post_id>11</wp:post_id>
+			<wp:post_date><![CDATA[2022-02-16 11:24:11]]></wp:post_date>
+			<wp:post_date_gmt><![CDATA[2022-02-16 11:24:11]]></wp:post_date_gmt>
 			<wp:comment_status><![CDATA[closed]]></wp:comment_status>
 			<wp:ping_status><![CDATA[closed]]></wp:ping_status>
-			<wp:post_name><![CDATA[251]]></wp:post_name>
+			<wp:post_name><![CDATA[11]]></wp:post_name>
 			<wp:status><![CDATA[publish]]></wp:status>
 			<wp:post_parent><![CDATA[0]]></wp:post_parent>
 			<wp:menu_order>2</wp:menu_order>
@@ -86,7 +86,7 @@
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object_id]]></wp:meta_key>
-				<wp:meta_value><![CDATA[196]]></wp:meta_value>
+				<wp:meta_value><![CDATA[9]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object]]></wp:meta_key>
@@ -114,16 +114,16 @@
 			<link></link>
 			<pubDate></pubDate>
 			<dc:creator><![CDATA[manor]]></dc:creator>
-			<guid isPermaLink="false"><![CDATA[http://wordpress.local/?p=252]]></guid>
+			<guid isPermaLink="false"><![CDATA[http://wordpress.local/?p=12]]></guid>
 			<description></description>
 			<content:encoded><![CDATA[ ]]></content:encoded>
 			<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-			<wp:post_id>252</wp:post_id>
-			<wp:post_date><![CDATA[2022-02-13 10:25:42]]></wp:post_date>
-			<wp:post_date_gmt><![CDATA[2022-02-13 10:25:42]]></wp:post_date_gmt>
+			<wp:post_id>15</wp:post_id>
+			<wp:post_date><![CDATA[2022-02-16 11:24:11]]></wp:post_date>
+			<wp:post_date_gmt><![CDATA[2022-02-16 11:24:11]]></wp:post_date_gmt>
 			<wp:comment_status><![CDATA[closed]]></wp:comment_status>
 			<wp:ping_status><![CDATA[closed]]></wp:ping_status>
-			<wp:post_name><![CDATA[252]]></wp:post_name>
+			<wp:post_name><![CDATA[12]]></wp:post_name>
 			<wp:status><![CDATA[publish]]></wp:status>
 			<wp:post_parent><![CDATA[0]]></wp:post_parent>
 			<wp:menu_order>1</wp:menu_order>
@@ -141,7 +141,7 @@
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object_id]]></wp:meta_key>
-				<wp:meta_value><![CDATA[189]]></wp:meta_value>
+				<wp:meta_value><![CDATA[6]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object]]></wp:meta_key>

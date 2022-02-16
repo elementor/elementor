@@ -64,6 +64,7 @@ class WP_Import extends \WP_Importer {
 	private $authors = [];
 	private $posts = [];
 	private $terms = [];
+	private $menus = [];
 	private $categories = [];
 	private $tags = [];
 	private $base_url = '';
@@ -79,7 +80,6 @@ class WP_Import extends \WP_Importer {
 	private $missing_menu_items = [];
 	private $post_orphans = [];
 	private $menu_item_orphans = [];
-	private $mapped_already_imported;
 
 	private $fetch_attachments = false;
 	private $url_remap = [];
@@ -529,6 +529,7 @@ class WP_Import extends \WP_Importer {
 		}
 
 		foreach ( $this->terms as $term ) {
+
 			// if the term already exists in the correct taxonomy leave it alone
 			$term_id = term_exists( $term['slug'], $term['term_taxonomy'] );
 			if ( $term_id ) {
@@ -537,6 +538,10 @@ class WP_Import extends \WP_Importer {
 				}
 				if ( isset( $term['term_id'] ) ) {
 					static::$processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
+				}
+
+				if ( 'nav_menu' === $term['term_taxonomy'] ) {
+					$this->menus[ $term['term_id'] ] = $term_id['term_id'];
 				}
 				continue;
 			}
@@ -563,6 +568,10 @@ class WP_Import extends \WP_Importer {
 					static::$processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
 				}
 				$result++;
+
+				if ( 'nav_menu' === $term['term_taxonomy'] ) {
+					$this->menus[ $term['term_id'] ] = $id['term_id'];
+				}
 			} else {
 				/* translators: 1: Term taxonomy, 2: Term name. */
 				$error = sprintf( esc_html__( 'Failed to import %1$s %2$s', 'elementor' ), $term['term_taxonomy'], $term['term_name'] );
@@ -677,10 +686,9 @@ class WP_Import extends \WP_Importer {
 			}
 
 			if ( 'nav_menu_item' === $post['post_type'] ) {
-				$process_result = $this->process_menu_item( $post );
-				foreach ( $process_result as $old_post_id => $new_post_id ) {
-					$result['succeed'][ $old_post_id ] = $new_post_id;
-				}
+				$this->process_menu_item( $post );
+
+				$result['succeed'] = $this->menus;
 				continue;
 			}
 
@@ -707,8 +715,7 @@ class WP_Import extends \WP_Importer {
 			}
 
 			$postdata = [
-				//              'import_id' => $post['post_id'],
-									'post_author' => $author,
+				'post_author' => $author,
 				'post_content' => $post['post_content'],
 				'post_excerpt' => $post['post_excerpt'],
 				'post_title' => $post['post_title'],
@@ -934,8 +941,6 @@ class WP_Import extends \WP_Importer {
 	 * @param array $item Menu item details from WXR file
 	 */
 	private function process_menu_item( $item ) {
-		$result = [];
-
 		// Skip draft, orphaned menu items.
 		if ( 'draft' === $item['status'] ) {
 			return;
@@ -956,7 +961,7 @@ class WP_Import extends \WP_Importer {
 		if ( ! $menu_slug ) {
 			$this->output['errors'][] = esc_html__( 'Menu item skipped due to missing menu slug', 'elementor' );
 
-			return $result;
+			return;
 		}
 
 		$menu_id = term_exists( $menu_slug, 'nav_menu' );
@@ -964,7 +969,7 @@ class WP_Import extends \WP_Importer {
 			/* translators: %s: Menu slug. */
 			$this->output['errors'][] = sprintf( esc_html__( 'Menu item skipped due to invalid menu slug: %s', 'elementor' ), $menu_slug );
 
-			return $result;
+			return;
 		} else {
 			$menu_id = is_array( $menu_id ) ? $menu_id['term_id'] : $menu_id;
 		}
@@ -975,18 +980,15 @@ class WP_Import extends \WP_Importer {
 		}
 
 		$_menu_item_object_id = $post_meta_key_value['_menu_item_object_id'];
-
 		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && isset( static::$processed_terms[ intval( $_menu_item_object_id ) ] ) ) {
 			$_menu_item_object_id = static::$processed_terms[ intval( $_menu_item_object_id ) ];
 		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( static::$processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
 			$_menu_item_object_id = static::$processed_posts[ intval( $_menu_item_object_id ) ];
-		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && array_key_exists( intval( $_menu_item_object_id ), $this->mapped_already_imported ) ) {
-			$_menu_item_object_id = $this->mapped_already_imported[ intval( $_menu_item_object_id ) ];
 		} elseif ( 'custom' !== $post_meta_key_value['_menu_item_type'] ) {
 			// Associated object is missing or not imported yet, we'll retry later.
 			$this->missing_menu_items[] = $item;
 
-			return $result;
+			return;
 		}
 
 		$_menu_item_menu_item_parent = $post_meta_key_value['_menu_item_menu_item_parent'];
@@ -1022,10 +1024,7 @@ class WP_Import extends \WP_Importer {
 		$id = wp_update_nav_menu_item( $menu_id, 0, $args );
 		if ( $id && ! is_wp_error( $id ) ) {
 			$this->processed_menu_items[ intval( $item['post_id'] ) ] = (int) $id;
-			$result[ $item['post_id'] ] = $id;
 		}
-
-		return $result;
 	}
 
 	/**
@@ -1360,7 +1359,7 @@ class WP_Import extends \WP_Importer {
 	public function __construct( $file, $args = [], $mapped_already_imported = [] ) {
 		$this->requested_file_path = $file;
 		$this->args = $args;
-		$this->mapped_already_imported = $mapped_already_imported;
+		static::$processed_posts = array_merge( static::$processed_posts, $mapped_already_imported );
 
 		if ( ! empty( $this->args['fetch_attachments'] ) ) {
 			$this->fetch_attachments = true;
