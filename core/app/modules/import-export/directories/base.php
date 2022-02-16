@@ -4,8 +4,6 @@ namespace Elementor\Core\App\Modules\ImportExport\Directories;
 use Elementor\Core\App\Modules\ImportExport\Export;
 use Elementor\Core\App\Modules\ImportExport\Import;
 use Elementor\Core\App\Modules\ImportExport\Iterator;
-use Elementor\Plugin;
-use Elementor\Core\App\Modules\ImportExport\Directories\Root;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
