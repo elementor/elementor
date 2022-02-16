@@ -83,6 +83,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				widgetType: widget.widget_type,
 				custom: widget.custom,
 				editable: widget.editable,
+				hideOnSearch: widget.hide_on_search,
 			} );
 		} );
 
