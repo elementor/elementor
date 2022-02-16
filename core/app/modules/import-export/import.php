@@ -32,7 +32,7 @@ class Import extends Iterator {
 
 		$results = $root_directory->run_import( $manifest_data );
 
-		$this->save_elements_of_imported_posts();
+		$this->save_elements_of_imported_posts( $results );
 
 		return $results;
 	}
@@ -78,10 +78,22 @@ class Import extends Iterator {
 		}
 	}
 
-	private function save_elements_of_imported_posts() {
+	private function save_elements_of_imported_posts( $results ) {
+		$map_old_new_post_ids = []
+
+		if ( isset( $results['succeed'] ) ) {
+			$map_old_new_post_ids = $results['succeed'];
+		}
+
+		foreach( $results as $result ) {
+			if ( isset( $result['succeed'] ) ) {
+				$map_old_new_post_ids += $result['succeed'];
+			}
+		}
+
 		foreach ( $this->$documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
-			$document->on_import_replace_dynamics_elements_id( $document_elements, self::$map_old_new_post_ids );
+			$document->on_import_replace_dynamics_elements_id( $document_elements, $map_old_new_post_ids );
 		}
 	}
 }

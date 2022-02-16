@@ -36,8 +36,6 @@ abstract class Base {
 	 */
 	protected $importer;
 
-	protected static $map_old_new_post_ids = [];
-
 	abstract protected function get_name();
 
 	public function __construct( Iterator $iterator, Base $parent = null ) {
@@ -86,10 +84,6 @@ abstract class Base {
 		$this->importer->set_current_archive_path( $this->get_path() );
 
 		$meta_data = $this->import( $settings );
-
-		if ( isset( $meta_data['succeed'] ) ) {
-			self::$map_old_new_post_ids = $meta_data['succeed'] + self::$map_old_new_post_ids;
-		}
 
 		foreach ( $this->sub_directories as $sub_directory ) {
 			$sub_directory_name = $sub_directory->get_name();
