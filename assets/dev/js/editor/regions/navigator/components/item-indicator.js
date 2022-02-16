@@ -24,7 +24,11 @@ export function ItemIndicator( { indicator: { title, icon, section }, onActivate
 	};
 
 	return (
-		<div ref={ indicatorRef } className="elementor-navigator__element__indicator" title={ title } onClick={ handleClick } data-testid="item-indicator">
+		<div ref={ indicatorRef }
+			className="elementor-navigator__element__indicator"
+			title={ title }
+			onClick={ handleClick }
+			role="button">
 			<Icon className={ `eicon-${ icon }` } />
 		</div>
 	);

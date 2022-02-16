@@ -16,7 +16,7 @@ export function ItemIndicatorList( { settings, onActivateSection } ) {
 	);
 
 	return (
-		<div className="elementor-navigator__element__indicators" data-testid="item-indicator-list">
+		<div className="elementor-navigator__element__indicators">
 			{ list }
 		</div>
 	);

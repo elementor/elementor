@@ -70,7 +70,7 @@ describe( '<ItemList />', () => {
 		);
 
 		expect(
-			component.queryAllByTestId( 'element-item' ).length
+			component.queryAllByRole( 'treeitem' ).length
 		).toEqual( 3 );
 	} );
 
@@ -82,7 +82,7 @@ describe( '<ItemList />', () => {
 		);
 
 		expect(
-			component.queryAllByTestId( 'element-item' ).length
+			component.queryAllByRole( 'treeitem' ).length
 		).toEqual( 0 );
 	} );
 

@@ -71,7 +71,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		fireEvent.click(
-			component.getAllByTestId( 'element-item' )[ 0 ]
+			component.getAllByRole( 'treeitem' )[ 0 ]
 		);
 
 		expect( mockSetElementSelection ).toBeCalledTimes( 1 );
@@ -83,7 +83,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		fireEvent.contextMenu(
-			component.getAllByTestId( 'element-item' )[ 0 ]
+			component.getAllByRole( 'treeitem' )[ 0 ]
 		);
 
 		expect(
@@ -98,7 +98,7 @@ describe( '<ElementItem />', () => {
 			);
 
 		expect(
-			component.getAllByTestId( 'element-item' )[ 0 ]
+			component.getAllByRole( 'treeitem' )[ 0 ]
 		).toHaveAttribute( 'data-id', itemId );
 	} );
 
@@ -108,7 +108,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryAllByTestId( 'element-item' )[ 0 ]
+			component.queryAllByRole( 'treeitem' )[ 0 ]
 		).toHaveClass( `${ BASE_ITEM_CLASS }--has-children` );
 	} );
 
@@ -118,7 +118,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'element-item' )
+			component.queryByRole( 'treeitem' )
 		).not.toHaveClass( `${ BASE_ITEM_CLASS }--has-children` );
 	} );
 
@@ -130,7 +130,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'element-item' )
+			component.queryByRole( 'treeitem' )
 		).toHaveClass( `${ BASE_ITEM_CLASS }--hidden` );
 
 		// Cleanup
@@ -143,7 +143,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'element-item' )
+			component.queryByRole( 'treeitem' )
 		).not.toHaveClass( `${ BASE_ITEM_CLASS }--hidden` );
 	} );
 
@@ -153,7 +153,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'item-handle' )
+			component.container.querySelector( '.elementor-navigator__item' )
 		).toBeInTheDocument();
 	} );
 
@@ -163,7 +163,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'toggle-visibility' )
+			component.queryByTitle( 'Toggle visibility' )
 		).toBeInTheDocument();
 	} );
 
@@ -173,7 +173,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'item-list' )
+			component.queryByRole( 'tree' )
 		).toBeInTheDocument();
 	} );
 
@@ -183,7 +183,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.queryAllByTestId( 'item-handle' )[ 0 ]
+			component.container.querySelectorAll( '.elementor-navigator__item' )[ 0 ]
 		).toHaveClass( 'elementor-root' );
 	} );
 
@@ -195,7 +195,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByTestId( 'item-handle' )
+			component.container.querySelector( '.elementor-navigator__item' )
 		).toHaveClass( 'elementor-editing' );
 
 		// Cleanup
@@ -211,7 +211,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByTestId( 'item-handle' )
+			component.container.querySelector( '.elementor-navigator__item' )
 		).not.toHaveClass( 'elementor-editing' );
 	} );
 
@@ -223,7 +223,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByTestId( 'item-handle' )
+			component.container.querySelector( '.elementor-navigator__item' )
 		).toHaveClass( 'elementor-active' );
 
 		// Cleanup
@@ -238,7 +238,7 @@ describe( '<ElementItem />', () => {
 		);
 
 		expect(
-			component.getByTestId( 'item-handle' )
+			component.container.querySelector( '.elementor-navigator__item' )
 		).not.toHaveClass( 'elementor-active' );
 
 		// Cleanup

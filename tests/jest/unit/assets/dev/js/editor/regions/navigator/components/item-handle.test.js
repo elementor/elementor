@@ -34,7 +34,7 @@ describe( '<ItemHandle />', () => {
 			</ElementProvider>
 		);
 
-		expect( component.queryByTestId( 'item-handle' ) ).toHaveClass(
+		expect( component.container.querySelector( '.elementor-navigator__item' ) ).toHaveClass(
 			'elementor-navigator__item', // Initial class name
 			'test-class-name' // Appended class name
 		);
@@ -48,7 +48,7 @@ describe( '<ItemHandle />', () => {
 				</ElementProvider>
 			);
 
-		expect( component.queryByTestId( 'item-handle' ) ).toHaveStyle( style );
+		expect( component.container.querySelector( '.elementor-navigator__item' ) ).toHaveStyle( style );
 	} );
 
 	it( 'Should render item title', () => {
@@ -59,7 +59,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'item-title' )
+			component.container.querySelector( '.elementor-navigator__element__title' )
 		).toBeInTheDocument();
 	} );
 
@@ -71,7 +71,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'item-icon' )
+			component.container.querySelector( '.elementor-navigator__element__element-type' )
 		).toBeInTheDocument();
 	} );
 
@@ -83,7 +83,7 @@ describe( '<ItemHandle />', () => {
 				</ElementProvider>
 			);
 
-		expect( component.queryByTestId( 'item-handle' ) ).toHaveStyle( {
+		expect( component.container.querySelector( '.elementor-navigator__item' ) ).toHaveStyle( {
 			paddingLeft: level * 10,
 		} );
 	} );
@@ -96,7 +96,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'toggle-folding' )
+			component.queryByTitle( 'Toggle folding' )
 		).toBeInTheDocument();
 	} );
 
@@ -108,7 +108,7 @@ describe( '<ItemHandle />', () => {
 		);
 
 		expect(
-			component.queryByTestId( 'toggle-folding' )
+			component.queryByTitle( 'Toggle folding' )
 		).not.toBeInTheDocument();
 	} );
 
@@ -121,7 +121,7 @@ describe( '<ItemHandle />', () => {
 			);
 
 		fireEvent.click(
-			component.getByTestId( 'toggle-folding' )
+			component.getByTitle( 'Toggle folding' )
 		);
 
 		expect( handleToggleFolding ).toBeCalledTimes( 1 );

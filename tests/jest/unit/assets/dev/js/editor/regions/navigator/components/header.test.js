@@ -29,7 +29,7 @@ describe( '<Header />', () => {
 		const handleClose = jest.fn(),
 			component = render( <Header onClose={ handleClose } /> );
 
-		fireEvent.click( component.getByTestId( 'close' ) );
+		fireEvent.click( component.getByTitle( 'Close' ) );
 
 		expect( handleClose ).toBeCalledTimes( 1 );
 	} );
@@ -40,7 +40,7 @@ describe( '<Header />', () => {
 
 		const component = render( <Header /> );
 
-		fireEvent.click( component.getByTestId( 'toggle-all' ) );
+		fireEvent.click( component.getByTitle( 'Toggle folding all' ) );
 
 		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
 		expect( mockSetElementsFolding ).toBeCalledWith( true );
@@ -56,7 +56,7 @@ describe( '<Header />', () => {
 
 		const component = render( <Header /> );
 
-		fireEvent.click( component.getByTestId( 'toggle-all' ) );
+		fireEvent.click( component.getByTitle( 'Toggle folding all' ) );
 
 		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
 		expect( mockSetElementsFolding ).toBeCalledWith( true );
@@ -72,7 +72,7 @@ describe( '<Header />', () => {
 
 		const component = render( <Header /> );
 
-		fireEvent.click( component.getByTestId( 'toggle-all' ) );
+		fireEvent.click( component.getByTitle( 'Toggle folding all' ) );
 
 		expect( mockSetElementsFolding ).toBeCalledTimes( 1 );
 		expect( mockSetElementsFolding ).toBeCalledWith( false );

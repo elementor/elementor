@@ -39,7 +39,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByTestId( 'navigator-header' )
+			component.queryByText( 'Navigator' )
 		).toBeInTheDocument();
 	} );
 
@@ -47,7 +47,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByTestId( 'navigator-footer' )
+			component.queryByRole( 'separator' )
 		).toBeInTheDocument();
 	} );
 
@@ -64,7 +64,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByTestId( 'element-item' )
+			component.queryByRole( 'treeitem' )
 		).toBeInTheDocument();
 
 		// Cleanup
@@ -75,7 +75,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByTestId( 'element-item' )
+			component.queryByRole( 'treeitem' )
 		).not.toBeInTheDocument();
 	} );
 

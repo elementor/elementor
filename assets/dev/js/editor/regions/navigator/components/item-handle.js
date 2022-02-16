@@ -33,10 +33,12 @@ function ItemHandle( { className, style, onToggleFolding, onTitleEdit, children,
 				[ `padding${ elementorCommon.config.isRTL ? 'Right' : 'Left' }` ]: level * 10,
 				...style,
 			} }
-			tabIndex={ -1 }
-			data-testid="item-handle">
+			tabIndex={ -1 }>
 			{ false === onToggleFolding ||
-				<div className="elementor-navigator__element__list-toggle" data-testid="toggle-folding" onClick={ handleToggleFolding }>
+				<div className="elementor-navigator__element__list-toggle"
+					title={ __( 'Toggle folding' ) }
+					role="button"
+					onClick={ handleToggleFolding }>
 					<Icon className="eicon-sort-down"/>
 				</div>
 			}

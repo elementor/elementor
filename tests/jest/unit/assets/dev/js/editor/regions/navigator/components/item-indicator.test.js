@@ -23,7 +23,7 @@ describe( '<ItemIndicator />', () => {
 			);
 
 		fireEvent.click(
-			component.queryByTestId( 'item-indicator' )
+			component.queryByRole( 'button' )
 		);
 
 		expect( handleActivateSection ).toBeCalledTimes( 1 );

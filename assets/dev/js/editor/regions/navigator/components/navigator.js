@@ -26,12 +26,12 @@ const NavigatorBody = () => {
 	return (
 		<div id="elementor-navigator__inner">
 			<Header onClose={ handleClose } />
-			<div id="elementor-navigator__elements" data-testid="item-list">
+			<div id="elementor-navigator__elements" role="tree">
 				{ hasElements ?
 					<ElementItem itemId="document" level={ 0 } /> :
 					<Empty /> }
 			</div>
-			<div id="elementor-navigator__footer" data-testid="navigator-footer">
+			<div id="elementor-navigator__footer" role="separator" aria-orientation="horizontal">
 				<Icon className="eicon-ellipsis-h" />
 			</div>
 		</div>

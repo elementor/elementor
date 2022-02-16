@@ -15,7 +15,7 @@ describe( '<ItemIndicator />', () => {
 			);
 
 		expect(
-			component.queryAllByTestId( 'item-indicator' ).length
+			component.queryAllByRole( 'button' ).length
 		).toEqual( 3 );
 	} );
 
@@ -26,7 +26,7 @@ describe( '<ItemIndicator />', () => {
 			);
 
 		expect(
-			component.queryAllByTestId( 'item-indicator' ).length
+			component.queryAllByRole( 'button' ).length
 		).toEqual( 0 );
 	} );
 } );
