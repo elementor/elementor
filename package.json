@@ -12,7 +12,11 @@
         "test:qunit": "grunt qunit",
         "test:playwright": "playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "dev:start": "npm install && composer install",
-        "test:jest": "jest --config='./tests/jest/jest.config.js'"
+        "test:jest": "jest --config='./tests/jest/jest.config.js'",
+		"scripts": "grunt scripts",
+		"scripts:watch": "grunt watch_scripts",
+		"styles": "grunt styles",
+		"styles:watch": "grunt watch_styles"
     },
     "devDependencies": {
         "@babel/core": "7.0.0",
