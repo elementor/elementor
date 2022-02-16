@@ -298,7 +298,7 @@ class Widget_Icon_Box extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'icon_box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-icon-box-icon',
+				'selector' => '{{WRAPPER}} .elementor-icon',
 				'condition' => [
 					'view!' => 'default',
 				],
@@ -347,7 +347,7 @@ class Widget_Icon_Box extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'icon_box_hover_shadow',
-				'selector' => '{{WRAPPER}} .elementor-icon-box-icon:hover',
+				'selector' => '{{WRAPPER}} .elementor-icon:hover',
 				'condition' => [
 					'view!' => 'default',
 				],
@@ -359,6 +359,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
 				'range' => [
 					'px' => [
 						'max' => 3,
@@ -366,7 +369,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-icon:hover' => 'transition: box-shadow {{SIZE}}s ease-in-out',
+					'{{WRAPPER}} .elementor-icon:hover' => 'transition-duration: {{SIZE}}s',
 				],
 				'condition' => [
 					'view!' => 'default',

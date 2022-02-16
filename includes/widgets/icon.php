@@ -307,6 +307,9 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
 				'range' => [
 					'px' => [
 						'max' => 3,
