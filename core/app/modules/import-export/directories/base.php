@@ -40,8 +40,6 @@ abstract class Base {
 
 	protected static $map_old_new_post_ids = [];
 
-	private static $documents_elements;
-
 	abstract protected function get_name();
 
 	public function __construct( Iterator $iterator, Base $parent = null ) {
@@ -56,22 +54,6 @@ abstract class Base {
 		$this->parent = $parent;
 
 		$this->register_directories();
-
-		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
-	}
-
-	public function prevent_saving_elements_on_post_creation( $data, $document ) {
-		if ( $data['elements'] ) {
-			$this->set_documents_elements_by_id( $document->get_main_id(), $data['elements'] );
-
-			$data['elements'] = [];
-		}
-
-		return $data;
-	}
-
-	private function set_documents_elements_by_id( $id, $elements ) {
-		self::$documents_elements[ $id ] = $elements;
 	}
 
 	final public function get_path() {
@@ -121,18 +103,7 @@ abstract class Base {
 			$meta_data[ $sub_directory_name ] = $sub_directory->run_import( $settings[ $sub_directory_name ] );
 		}
 
-		if ( $this instanceof Root ) {
-			$this->save_elements_of_imported_posts();
-		}
-
 		return $meta_data;
-	}
-
-	private function save_elements_of_imported_posts() {
-		foreach ( self::$documents_elements as $new_id => $document_elements ) {
-			$document = Plugin::$instance->documents->get( $new_id );
-			$document->on_import_replace_dynamics_elements_id( $document_elements, self::$map_old_new_post_ids );
-		}
 	}
 
 	/**

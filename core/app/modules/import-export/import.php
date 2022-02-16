@@ -17,6 +17,8 @@ class Import extends Iterator {
 	 */
 	private $adapters = [];
 
+	private documents_elements = [];
+
 	final public function run() {
 		$this->temp_dir = $this->get_settings( 'session' );
 
@@ -26,7 +28,23 @@ class Import extends Iterator {
 
 		$root_directory = new Root( $this );
 
-		return $root_directory->run_import( $manifest_data );
+		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
+
+		$results = $root_directory->run_import( $manifest_data );
+
+		$this->save_elements_of_imported_posts();
+
+		return $results;
+	}
+
+	public function prevent_saving_elements_on_post_creation( $data, $document ) {
+		if ( $data['elements'] ) {
+			$this->$documents_elements[ $document->get_main_id() ] = $data['elements'];
+
+			$data['elements'] = [];
+		}
+
+		return $data;
 	}
 
 	final public function read_json_file( $name ) {
@@ -57,6 +75,13 @@ class Import extends Iterator {
 			if ( $adapter_type::is_compatibility_needed( $manifest_data, $this->get_settings() ) ) {
 				$this->adapters[] = new $adapter_type( $this );
 			}
+		}
+	}
+
+	private function save_elements_of_imported_posts() {
+		foreach ( $this->$documents_elements as $new_id => $document_elements ) {
+			$document = Plugin::$instance->documents->get( $new_id );
+			$document->on_import_replace_dynamics_elements_id( $document_elements, self::$map_old_new_post_ids );
 		}
 	}
 }
