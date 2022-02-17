@@ -82,19 +82,25 @@ class Import extends Iterator {
 	private function save_elements_of_imported_posts( $results ) {
 		$map_old_new_post_ids = [];
 
-		if ( isset( $results['succeed'] ) ) {
-			$map_old_new_post_ids = $results['succeed'];
-		}
-
-		foreach ( $results as $result ) {
-			if ( isset( $result['succeed'] ) ) {
-				$map_old_new_post_ids += $result['succeed'];
-			}
-		}
+		$map_old_new_post_ids = $this->map_old_new_post_ids( $results );
 
 		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
 			$document->on_import_replace_dynamics_elements_id( $document_elements, $map_old_new_post_ids );
 		}
+	}
+
+	private function map_old_new_post_ids( $results ) {
+		$map_old_new_post_ids = [];
+
+		foreach ( $results as $result ) {
+			if ( isset( $result['succeed'] ) ) {
+				$map_old_new_post_ids += $result['succeed'];
+			} else {
+				$map_old_new_post_ids += $this->map_old_new_post_ids( $result );
+			}
+		}
+
+		return $map_old_new_post_ids;
 	}
 }

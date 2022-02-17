@@ -80,18 +80,8 @@ abstract class Base_Tag extends Controls_Stack {
 		return false;
 	}
 
-	public function get_post_id_name() {
-		return 'post_id';
-	}
-
-	public function get_post_id() {
-		return $this->get_settings( $this->get_post_id_name() );
-	}
-
-	public function update_post_id( $post_id ) {
-		if ( $this->get_post_id() ) {
-			$this->set_settings( $this->get_post_id_name(), $post_id );
-		}
+	public function on_import_replace_dynamic_tag( $map_old_new_post_ids ) {
+		return null;
 	}
 
 	/**

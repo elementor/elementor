@@ -573,6 +573,21 @@ abstract class Element_Base extends Controls_Stack {
 		return $this->is_type_instance;
 	}
 
+	public function on_import_replace_dynamic_content( $element, $map_old_new_post_ids ) {
+		$dynamic_tags_manager = Plugin::$instance->dynamic_tags;
+
+		if ( isset( $element['settings'][ $dynamic_tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
+			foreach ( $element['settings'][ $dynamic_tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+				$tag_data = $dynamic_tags_manager->tag_text_to_tag_data( $dynamic_value );
+				$tag = $dynamic_tags_manager->create_tag( $tag_data['id'], $tag_data['name'], $tag_data['settings'] );
+				$tag->on_import_replace_dynamic_tag( $map_old_new_post_ids );
+				$element['settings'][ $dynamic_tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $dynamic_tags_manager->tag_data_to_tag_text( $tag->get_id(), $tag->get_name(), $tag->get_settings() );
+			}
+		}
+
+		return $element;
+	}
+
 	/**
 	 * Add render attributes.
 	 *

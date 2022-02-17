@@ -1079,9 +1079,9 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function on_import_replace_dynamics_elements_id( &$elements, $map_old_new_post_ids ) {
 		foreach ( $elements as &$element ) {
-			$element = Template::on_import_replace_template_post_id( $element, $map_old_new_post_ids );
+			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element );
 
-			$element = Plugin::$instance->dynamic_tags->on_import_replace_post_id( $element, $map_old_new_post_ids );
+			$element = $element_instance->on_import_replace_dynamic_content( $element, $map_old_new_post_ids );
 
 			$this->on_import_replace_dynamics_elements_id( $element['elements'], $map_old_new_post_ids );
 		}
