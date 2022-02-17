@@ -65,6 +65,7 @@ export default function ImportKit() {
 			navigate( url );
 		}
 	}, [ importContext.data.uploadedData ] );
+
 	return (
 		<Layout type="import">
 			<section className="e-app-import">

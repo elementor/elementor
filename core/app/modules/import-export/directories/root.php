@@ -120,6 +120,10 @@ class Root extends Base {
 			$sub_directories[] = new Plugins( $this->iterator, $this );
 		}
 
+		if ( in_array( 'plugins', $include, true ) ) {
+			$sub_directories[] = new Plugins( $this->iterator, $this );
+		}
+
 		return $sub_directories;
 	}
 }
