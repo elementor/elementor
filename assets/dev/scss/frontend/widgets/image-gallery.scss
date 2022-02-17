@@ -13,6 +13,7 @@
 
 		img {
 			margin: 0 auto;
+			transition: all var(--image-gallery-transition, 0.3s);
 		}
 
 		.gallery-caption {

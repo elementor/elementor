@@ -259,7 +259,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'icon_shadow',
+				'name' => 'gallery_shadow',
 				'selector' => '{{WRAPPER}} .gallery-item img',
 			]
 		);
@@ -276,7 +276,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'gallery_shadow_shadow',
+				'name' => 'gallery_shadow_hover_shadow',
 				'selector' => '{{WRAPPER}} .gallery-item img:hover',
 			]
 		);
@@ -296,7 +296,7 @@ class Widget_Image_Gallery extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .gallery-item img' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}}' => '--image-gallery-transition: {{SIZE}}s',
 				],
 			]
 		);
