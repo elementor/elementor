@@ -46,4 +46,10 @@
 			object-fit: cover;
 		}
 	}
+
+	.elementor-video {
+		&:hover {
+			transition: all .3s;
+		}
+	}
 }

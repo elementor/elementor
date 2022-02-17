@@ -652,10 +652,10 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->start_controls_tabs( 'icon_colors' );
+		$this->start_controls_tabs( 'video_shadows' );
 
 		$this->start_controls_tab(
-			'icon_colors_normal',
+			'video_shadows_normal',
 			[
 				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
@@ -665,14 +665,14 @@ class Widget_Video extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'icon_shadow',
-				'selector' => '{{WRAPPER}} .elementor-icon',
+				'selector' => '{{WRAPPER}} .elementor-video',
 			]
 		);
 
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
-			'icon_colors_hover',
+			'video_shadows_hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
@@ -681,13 +681,13 @@ class Widget_Video extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'icon_hover_shadow',
-				'selector' => '{{WRAPPER}} .elementor-icon:hover',
+				'name' => 'video_shadows_shadow',
+				'selector' => '{{WRAPPER}} .elementor-video:hover',
 			]
 		);
 
 		$this->add_control(
-			'icon_hover_transition',
+			'video_shadows_transition',
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -701,7 +701,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon:hover' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} .elementor-video:hover' => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
