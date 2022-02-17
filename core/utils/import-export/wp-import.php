@@ -80,6 +80,7 @@ class WP_Import extends \WP_Importer {
 	private $missing_menu_items = [];
 	private $post_orphans = [];
 	private $menu_item_orphans = [];
+	private $mapped_already_imported = [];
 
 	private $fetch_attachments = false;
 	private $url_remap = [];
@@ -686,9 +687,8 @@ class WP_Import extends \WP_Importer {
 			}
 
 			if ( 'nav_menu_item' === $post['post_type'] ) {
-				$this->process_menu_item( $post );
+				$result['succeed'][] = $this->process_menu_item( $post );
 
-				$result['succeed'] = $this->menus;
 				continue;
 			}
 
@@ -941,6 +941,8 @@ class WP_Import extends \WP_Importer {
 	 * @param array $item Menu item details from WXR file
 	 */
 	private function process_menu_item( $item ) {
+		$result = [];
+
 		// Skip draft, orphaned menu items.
 		if ( 'draft' === $item['status'] ) {
 			return;
@@ -984,6 +986,8 @@ class WP_Import extends \WP_Importer {
 			$_menu_item_object_id = static::$processed_terms[ intval( $_menu_item_object_id ) ];
 		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( static::$processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
 			$_menu_item_object_id = static::$processed_posts[ intval( $_menu_item_object_id ) ];
+		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( $this->mapped_already_imported[ intval( $_menu_item_object_id ) ] ) ) {
+			$_menu_item_object_id = $this->mapped_already_imported[ intval( $_menu_item_object_id ) ];
 		} elseif ( 'custom' !== $post_meta_key_value['_menu_item_type'] ) {
 			// Associated object is missing or not imported yet, we'll retry later.
 			$this->missing_menu_items[] = $item;
@@ -1024,7 +1028,10 @@ class WP_Import extends \WP_Importer {
 		$id = wp_update_nav_menu_item( $menu_id, 0, $args );
 		if ( $id && ! is_wp_error( $id ) ) {
 			$this->processed_menu_items[ intval( $item['post_id'] ) ] = (int) $id;
+			$result[ $item['post_id'] ] = $id;
 		}
+
+		return $result;
 	}
 
 	/**
@@ -1359,7 +1366,7 @@ class WP_Import extends \WP_Importer {
 	public function __construct( $file, $args = [], $mapped_already_imported = [] ) {
 		$this->requested_file_path = $file;
 		$this->args = $args;
-		static::$processed_posts = array_merge( static::$processed_posts, $mapped_already_imported );
+		$this->mapped_already_imported = $mapped_already_imported;
 
 		if ( ! empty( $this->args['fetch_attachments'] ) ) {
 			$this->fetch_attachments = true;

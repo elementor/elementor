@@ -17,7 +17,6 @@ abstract class Base {
 	private $sub_directories = [];
 
 	protected static $mapped_already_imported = [];
-
 	/**
 	 * @var Base
 	 */

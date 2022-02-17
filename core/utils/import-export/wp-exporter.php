@@ -43,8 +43,6 @@ class WP_Exporter {
 	 */
 	private $wpdb;
 
-	private $menus_ids = [];
-
 	/**
 	 * Run export, by requested args.
 	 * Returns XML with exported data.
@@ -175,8 +173,8 @@ class WP_Exporter {
 		}
 
 		return [
+			'ids' => $post_ids,
 			'xml' => $this->get_xml_export( $post_ids, $cats, $tags, $terms ),
-			'ids' => 'nav_menu_item' === $this->args['content'] ? $this->menus_ids : $post_ids,
 		];
 	}
 
@@ -641,15 +639,12 @@ class WP_Exporter {
 		$result = '';
 
 		foreach ( $nav_menus as $menu ) {
-			$this->menus_ids[] = strval( $menu->term_id );
-
 			$result .= $this->indent( 2 ) . '<wp:term>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $menu->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>nav_menu</wp:term_taxonomy>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $menu->slug ) . '</wp:term_slug>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_name>' . $this->wxr_cdata( $menu->name ) . '</wp:term_name>' . PHP_EOL;
-
-			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
+			$result .= $this->indent(2) . '</wp:term>' . PHP_EOL;
 		}
 
 		return $result;
