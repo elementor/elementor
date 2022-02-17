@@ -701,7 +701,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-video' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}}' => '--video-transition: {{SIZE}}s',
 				],
 			]
 		);

@@ -317,7 +317,7 @@ class Widget_Icon extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}}' => '--icon-hover-transition: {{SIZE}}s',
 				],
 				'condition' => [
 					'view!' => 'default',

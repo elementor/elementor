@@ -1,6 +1,7 @@
 //
 // Video
 //
+
 .elementor-widget-video {
 
 	.elementor-widget-container {
@@ -47,9 +48,8 @@
 		}
 	}
 
-	.elementor-video {
-		&:hover {
-			transition: all .3s;
-		}
+	.elementor-video,
+	.elementor-custom-embed-image-overlay {
+		transition: all var(--video-transition, 0.3s);
 	}
 }

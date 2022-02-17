@@ -97,4 +97,8 @@
 	.elementor-icon-box-description {
 		margin: 0;
 	}
+
+    .elementor-icon {
+        transition-duration: var(--icon-box-hover-transition, .3s);
+    }
 }

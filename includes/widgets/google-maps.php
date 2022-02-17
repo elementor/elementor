@@ -265,27 +265,7 @@ class Widget_Google_Maps extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} iframe' => 'transition-duration: {{SIZE}}s',
-				],
-				'condition' => [
-					'view!' => 'default',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hover_transition',
-			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} iframe' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}}' => '--google-maps-transition: {{SIZE}}s',
 				],
 			]
 		);

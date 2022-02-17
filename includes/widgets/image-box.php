@@ -357,7 +357,7 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}}' => '--image-box-transition: {{SIZE}}s',
 				],
 			]
 		);

@@ -79,6 +79,10 @@
 
 	.elementor-image-box-img {
 		display: inline-block; // For alignment content
+
+		img {
+			transition: all var(--image-box-transition, 0.3s);
+		}
 	}
 
 	.elementor-image-box-title {
