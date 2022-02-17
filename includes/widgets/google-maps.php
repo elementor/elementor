@@ -218,6 +218,14 @@ class Widget_Google_Maps extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'map_shadow',
+				'selector' => '{{WRAPPER}} iframe',
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'hover',
@@ -231,6 +239,37 @@ class Widget_Google_Maps extends Widget_Base {
 			[
 				'name' => 'css_filters_hover',
 				'selector' => '{{WRAPPER}}:hover iframe',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'map_hover_shadow',
+				'selector' => '{{WRAPPER}} iframe:hover',
+			]
+		);
+
+		$this->add_control(
+			'map_transition',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} iframe' => 'transition-duration: {{SIZE}}s',
+				],
+				'condition' => [
+					'view!' => 'default',
+				],
 			]
 		);
 
