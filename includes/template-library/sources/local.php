@@ -443,9 +443,7 @@ class Source_Local extends Source_Base {
 				$templates[] = $this->get_item( $post->ID );
 			}
 		}
-		
-		wp_reset_query();
-		
+
 		return $templates;
 	}
 
