@@ -5,6 +5,7 @@ use Elementor\Core\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\Core\App\Modules\ImportExport\Directories\Root;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -17,7 +18,7 @@ class Import extends Iterator {
 	 */
 	private $adapters = [];
 
-	private documents_elements = [];
+	private $documents_elements = [];
 
 	final public function run() {
 		$this->temp_dir = $this->get_settings( 'session' );
@@ -79,13 +80,13 @@ class Import extends Iterator {
 	}
 
 	private function save_elements_of_imported_posts( $results ) {
-		$map_old_new_post_ids = []
+		$map_old_new_post_ids = [];
 
 		if ( isset( $results['succeed'] ) ) {
 			$map_old_new_post_ids = $results['succeed'];
 		}
 
-		foreach( $results as $result ) {
+		foreach ( $results as $result ) {
 			if ( isset( $result['succeed'] ) ) {
 				$map_old_new_post_ids += $result['succeed'];
 			}
