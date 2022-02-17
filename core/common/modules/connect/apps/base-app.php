@@ -188,12 +188,7 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		$response = $this->request( 'get_token', [
-			'grant_type' => 'authorization_code',
-			'code' => $_REQUEST['code'],
-			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
-			'client_id' => $this->get( 'client_id' ),
-		] );
+		$response = $this->get_token_request();
 
 		if ( is_wp_error( $response ) ) {
 			$notice = 'Cannot Get Token:' . $response->get_error_message();
@@ -214,6 +209,18 @@ abstract class Base_App {
 		$this->add_notice( esc_html__( 'Connected Successfully.', 'elementor' ) );
 
 		$this->redirect_to_admin_page();
+	}
+
+	/**
+	 * @since 3.6.0
+	 * @access public
+	 */
+	public function get_token_request() {
+		return $this->request( 'get_token', [
+			'grant_type' => 'authorization_code',
+			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
+			'client_id' => $this->get( 'client_id' ),
+		] );
 	}
 
 	/**

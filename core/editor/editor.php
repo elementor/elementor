@@ -6,6 +6,7 @@ use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Common\Modules\Connect\Controller as Connect_Controller;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
@@ -867,6 +868,7 @@ class Editor {
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Data\Globals\Controller() );
+		Plugin::$instance->data_manager_v2->register_controller( new Connect_Controller() );
 
 		$this->notice_bar = new Notice_Bar();
 

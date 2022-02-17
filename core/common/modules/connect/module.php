@@ -68,6 +68,8 @@ class Module extends BaseModule {
 			'library' => Library::get_class_name(),
 		];
 
+		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
+
 		// When using REST API the parent module is construct after the action 'elementor/init'
 		// so this part of code make sure to register the module "apps".
 		if ( did_action( 'elementor/init' ) ) {

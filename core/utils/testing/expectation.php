@@ -3,21 +3,16 @@
 namespace Elementor\Core\Utils\Testing;
 
 use Elementor\Core\Utils\Testing\Exceptions\Expectation_Exception;
+use Elementor\Core\Utils\Testing\Interfaces\Diagnosable;
 
-class Expectation {
+class Expectation implements Diagnosable {
+
 	/**
-	 * A subject to check the expectations against.
+	 * A subject to check the expectation against.
 	 *
 	 * @var \Closure
 	 */
 	public $subject = null;
-
-	/**
-	 * A result for the expectation from the last inspection.
-	 *
-	 * @var boolean
-	 */
-	public $result;
 
 	/**
 	 * A description about the expectation purpose and what's inspecting.
@@ -25,6 +20,13 @@ class Expectation {
 	 * @var string
 	 */
 	public $description;
+
+	/**
+	 * An exception from last failure of the inspection (if failed).
+	 *
+	 * @var \Exception
+	 */
+	protected $exception;
 
 	/**
 	 * The Expectation constructor.
@@ -43,6 +45,20 @@ class Expectation {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function get_name() {
+		return $this->description ?: __( '(no description)' );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function get_diagnosables() {
+		return [];
+	}
+
+	/**
 	 * Set the closure that inspects the expectation constraints.
 	 *
 	 * @param \Closure $closure
@@ -51,23 +67,48 @@ class Expectation {
 	 * @throws \Exception
 	 */
 	public function to_meet( $closure ) {
-		$this->result = $closure->__invoke( $this->subject );
-
-		if ( ! $this->result ) {
-			throw new Expectation_Exception( 'Failed to assert that the subject meets with the given callback.' );
-		}
+		$this->inspect(
+			$closure,
+			'Failed to assert that the subject meets with the given callback.'
+		);
 
 		return $this;
 	}
 
 	/**
-	 * Get the expectation description.
+	 * Set the expectation description.
 	 *
 	 * @return static
 	 */
-	public function description( $text ) {
+	public function describe( $text ) {
 		$this->description = $text;
 
 		return $this;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function error() {
+		return $this->exception;
+	}
+
+	/**
+	 * Inspect the expectation by the given closure, and in case of failure - throw an exception with the given message.
+	 *
+	 * @param $closure
+	 * @param $exception_message
+	 *
+	 * @return void
+	 * @throws Expectation_Exception
+	 */
+	protected function inspect( $closure, $exception_message ) {
+		$this->exception = ! $closure->__invoke( $this->subject ) ?
+			new Expectation_Exception( $this->description ?: $exception_message ) :
+			null;
+
+		if ( $this->exception ) {
+			throw $this->exception;
+		}
 	}
 }

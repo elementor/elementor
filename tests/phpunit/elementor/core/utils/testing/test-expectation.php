@@ -41,49 +41,34 @@ class Test_Expectation extends Elementor_Test_Base {
 		$this->expectNotToPerformAssertions();
 	}
 
-	public function test_description_assigned_to_class() {
+	public function test_describe_text_assigned_to_class() {
 		// Arrange
 		$description = 'test-description';
 
 		// Act
 		$expectation = ( new Expectation( 'test-subject' ) )
-			->description( $description );
+			->describe( $description );
 
 		// Assert
 		$this->assertEqualFields( $expectation, compact( 'description' ) );
 	}
 
-	public function test_to_meet_closure_assigned_to_class() {
+	public function test_to_meet_closure_invoked_with_subject() {
 		// Arrange
-		$closure = function() {
-			return 'test-closure';
+		$subject = 'test-subject';
+
+		// Assert
+		$closure = function( $given_subject ) use( $subject ) {
+			$this->assertEquals( $subject, $given_subject );
+			return true;
 		};
 
 		// Act
-		$expectation = ( new Expectation( 'test-subject' ) )
-			->to_meet( $closure );
-
-		// Assert
-		$this->assertEquals( $expectation->closure, $closure );
-	}
-
-	public function test_to_meet_throws_exception_when_constraint_has_already_been_set() {
-		// Assert
-		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'An expectation constraint has already been set.' );
-
-		// Arrange
-		$closure = function() {
-			return 'test-closure';
-		};
-
-		// Act
-		( new Expectation( 'test-subject' ) )
-			->to_meet( $closure )
+		( new Expectation( $subject ) )
 			->to_meet( $closure );
 	}
 
-	public function test_inspect_set_result_when_inspection_succeeded() {
+	public function test_to_meet_set_result_when_inspection_succeeded() {
 		// Arrange
 		$closure = function( $subject ) {
 			return true;
@@ -93,41 +78,58 @@ class Test_Expectation extends Elementor_Test_Base {
 		$expectation = ( new Expectation( 'test-subject' ) )
 			->to_meet( $closure );
 
-		$expectation->inspect();
-
 		// Assert
-		$this->assertEqualFields( $expectation, [ 'result' => true ] );
+		$this->assertEquals( true, $expectation->result() );
 	}
 
-	public function test_inspect_throws_exception_when_inspection_failed() {
-		// Assert
-		$this->expectException( Expectation_Exception::class );
-
+	public function test_to_meet_set_result_when_inspection_failed() {
 		// Arrange
 		$closure = function( $subject ) {
 			return false;
 		};
+		$expectation = ( new Expectation( 'test-subject' ) );
 
 		// Act
-		$expectation = ( new Expectation( 'test-subject' ) )
-			->to_meet( $closure );
+		try{
+			$expectation->to_meet( $closure );
+		} catch( \Exception $e ) {}
 
-		$expectation->inspect();
+		// Assert
+		$this->assertEquals( false, $expectation->result() );
 	}
 
-	public function test_inspect_closure_provided_with_subject() {
+	public function test_to_meet_throws_exception_when_inspection_failed() {
 		// Arrange
-		$subject = 'test-subject';
-		$closure = function( $provided_subject ) use( $subject ) {
-			// Assert
-			$this->assertEquals( $subject, $provided_subject );
-			return true;
+		$closure = function( $subject ) {
+			return false;
 		};
+		$expectation = ( new Expectation( 'test-subject' ) );
+
+		// Assert
+		$this->expectException( Expectation_Exception::class );
+		$this->expectExceptionMessage( 'Failed to assert that the subject meets with the given callback.' );
 
 		// Act
-		$expectation = ( new Expectation( $subject ) )
-			->to_meet( $closure );
+		$expectation->to_meet( $closure );
+	}
 
-		$expectation->inspect();
+	public function test_to_meet_assign_exception_to_class_when_inspection_failed() {
+		// Arrange
+		$closure = function( $subject ) {
+			return false;
+		};
+		$expectation = ( new Expectation( 'test-subject' ) );
+
+		// Act
+		try{
+			$expectation->to_meet( $closure );
+		} catch( \Exception $e ) {}
+
+
+		// Assert
+		$this->assertEquals(
+			new Expectation_Exception( 'Failed to assert that the subject meets with the given callback.' ),
+			$expectation->error()
+		);
 	}
 }
