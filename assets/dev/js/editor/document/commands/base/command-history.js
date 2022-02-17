@@ -8,9 +8,10 @@ export default class CommandHistory extends CommandBase {
 	constructor( args ) {
 		super( args );
 
-		const { options = { useHistory: true } } = args;
+		const { options = {} } = args,
+			{ useHistory = true } = options;
 
-		if ( options.useHistory ) {
+		if ( useHistory ) {
 			/**
 			 * Get History from child command.
 			 *
