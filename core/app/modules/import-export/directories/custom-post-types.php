@@ -8,12 +8,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Adds CPT name and label values to manifest.json.
+ *
+ * @since 3.6.1
+ */
+
 class Custom_Post_Types extends Base {
 
 	protected function get_name() {
 		return 'custom-post-types';
 	}
 
+	/**
+	 * @since 3.6.1
+	 *
+	 * @return array
+	 */
 	protected function get_default_sub_directories() {
 		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 

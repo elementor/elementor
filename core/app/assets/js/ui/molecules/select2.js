@@ -47,10 +47,18 @@ export default function Select2( props ) {
 		jQuery( ref.current ).val( props.value ).trigger( 'change' );
 	}, [ props.value ] );
 
-	return <Select multiple={ props.multiple } disable={true} value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options } placeholder={props.placeholder}/>;
+	return <Select
+		multiple={ props.multiple }
+		disable={true}
+		value={ props.value }
+		onChange={ props.onChange }
+		elRef={ ref }
+		options={ props.options }
+		placeholder={props.placeholder}
+	/>;
 }
 Select2.propTypes = {
-	value: PropTypes.string,
+	value: PropTypes.array,
 	onChange: PropTypes.func,
 	onReady: PropTypes.func,
 	options: PropTypes.array,

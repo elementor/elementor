@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+
+import { SharedContext } from '../../context/shared-context/shared-context-provider';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
-import CptSelections from '../cpt-options-select/cpt-options-select';
+import CptOptionsSelect from '../cpt-options-select/cpt-options-select';
 import GoProButton from 'elementor-app/molecules/go-pro-button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
@@ -12,8 +14,10 @@ import Grid from 'elementor-app/ui/grid/grid';
 
 import './kit-content.scss';
 
-export default function KitContent( { contentData, hasPro, customPostTypesOptions } ) {
+export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
+		// sharedContext = useContext( SharedContext ),
+		// { customPostTypes } = sharedContext.data || {},
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
@@ -44,7 +48,7 @@ export default function KitContent( { contentData, hasPro, customPostTypesOption
 					contentData.map( ( { type, data }, index ) => {
 						const isLockedFeaturesNoPro = data.features?.locked && ! isProExist;
 						// places the select2 component in content section.
-						const isSelect = 'content' === type && customPostTypesOptions ? true : false;
+						const ctpSelectBox = 'content' === type ? true : false;
 						return (
 							<List.Item padding="20" key={ type } className="e-app-export-kit-content__item">
 								<div
@@ -64,8 +68,9 @@ export default function KitContent( { contentData, hasPro, customPostTypesOption
 													{ data.description || getTemplateFeatures( data.features, index ) }
 												</Text>
 												{
-													isSelect &&
-													<CptSelections options = {customPostTypesOptions}/>
+													ctpSelectBox &&
+													// <CptOptionsSelect options = { customPostTypes }/>
+													<CptOptionsSelect />
 												}
 												{
 													isLockedFeaturesNoPro &&

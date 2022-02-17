@@ -1,7 +1,10 @@
+import React, { useContext, useEffect } from 'react';
 import KitContent from '../../../../../shared/kit-content/kit-content';
+import { SharedContext } from '../../../../../context/shared-context/shared-context-provider';
 import kitContentData from '../../../../../shared/kit-content-data/kit-content-data';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import { getCustomPostTypes } from '../../../../../shared/cpt-options-select/cpt-options';
 
 export default function ImportContentDisplay( {
 	manifest,
@@ -10,24 +13,7 @@ export default function ImportContentDisplay( {
 	isAllRequiredPluginsSelected,
 	onResetProcess,
 } ) {
-	//remove
-	//const customPostTypesOptions = Object.entries( manifest[ 'custom-post-types' ] ).map( item  => [item[ '0' ]  );
-	// const nativePostTypes = [ 'post', 'page' ];
-	// const customPostTypesOptions = postTypes.filter( ( i ) => ! nativePostTypes.includes( i ) );
-
-	const getCustomPostTypes = () => {
-		const customPostTypeFromServer = manifest[ 'custom-post-types' ];
-		const cptOptionsArray = [];
-		// eslint-disable-next-line no-unused-expressions
-		{ customPostTypeFromServer &&
-		Object.keys( customPostTypeFromServer ).forEach( ( key ) => cptOptionsArray.push( {
-			label: customPostTypeFromServer[ key ].label,
-			value: key,
-		} ) );
-		}
-		return cptOptionsArray;
-	};
-
+	const sharedContext = useContext( SharedContext );
 	// Getting the kit data from the manifest.
 	const kitData = kitContentData.filter( ( { type } ) => {
 		const contentType = 'settings' === type ? 'site-settings' : type,
@@ -52,6 +38,10 @@ export default function ImportContentDisplay( {
 		);
 	}
 
+	useEffect( () => {
+		sharedContext.dispatch( { type: 'SET_CPT', payload: getCustomPostTypes( manifest?.[ 'custom-post-types' ], 'label' ) } );
+	}, [] );
+
 	return (
 		<>
 			{
@@ -61,7 +51,7 @@ export default function ImportContentDisplay( {
 				</Notice>
 			}
 
-			<KitContent contentData={ kitData } hasPro={ hasPro } customPostTypesOptions={ getCustomPostTypes() } />;
+			<KitContent contentData={ kitData } hasPro={ hasPro } />;
 		</>
 	);
 }

@@ -1,7 +1,9 @@
 import React, { useEffect, useContext } from 'react';
 
 import { ExportContext } from '../../../context/export-context/export-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 
+import { getCustomPostTypes } from '../../../shared/cpt-options-select/cpt-options';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import KitContent from '../../../shared/kit-content/kit-content';
@@ -16,6 +18,7 @@ import './export-kit.scss';
 
 export default function ExportKit() {
 	const exportContext = useContext( ExportContext ),
+	sharedContext = useContext( SharedContext ),
 		getFooter = () => (
 			<ActionsFooter>
 				<Button
@@ -34,20 +37,8 @@ export default function ExportKit() {
 
 	useEffect( () => {
 		exportContext.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+		sharedContext.dispatch( { type: 'SET_CPT', payload: getCustomPostTypes( elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes, 'plural' ) } );
 	}, [] );
-
-	const getCustomPostTypes = () => {
-		const customPostTypeFromServer = elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes;
-		const cptOptionsArray = [];
-		// eslint-disable-next-line no-unused-expressions
-		{ customPostTypeFromServer &&
-			Object.keys( customPostTypeFromServer ).forEach( ( key ) => cptOptionsArray.push( {
-				label: customPostTypeFromServer[ key ].plural,
-				value: key,
-			} ) );
-		}
-		return cptOptionsArray;
-	};
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -62,7 +53,7 @@ export default function ExportKit() {
 					] }
 				/>
 
-				<KitContent contentData={ kitContentData } customPostTypesOptions={ getCustomPostTypes() } />
+				<KitContent contentData={ kitContentData } />
 
 				<KitInformation />
 			</section>
