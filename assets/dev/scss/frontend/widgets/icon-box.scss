@@ -26,7 +26,7 @@
 			}
 
 			.elementor-icon-box-icon {
-				margin-left: var(--icon-box-icon-margin);
+				margin-left: var(--icon-box-icon-margin, 15px);
 				margin-right: 0;
 				margin-bottom: unset;
 			}
@@ -40,7 +40,7 @@
 			}
 
 			.elementor-icon-box-icon {
-				margin-right: var(--icon-box-icon-margin);
+				margin-right: var(--icon-box-icon-margin, 15px);
 				margin-left: 0;
 				margin-bottom: unset;
 			}
