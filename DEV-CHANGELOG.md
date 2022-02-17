@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev39 - 2022-02-17
+* Fix: `remove_responsive_control()` doesn't remove controls for additional Custom breakpoints [ED-6294] (#17529)
+
 #### 3.6.0-dev38 - 2022-02-14
 * Tweak: Updated changelog for v3.5.5 (#17691)
 * Fix: When the inline-font-icons experiment is active, the icon of the video lightbox is not getting the correct color (#17628)
@@ -410,10 +413,3 @@
 
 #### 3.5.0-dev7 - 2021-08-13
 * Fix: Responsive values cascade wrongly with different dimensions on different breakpoints [ED-4665] (#15955)
-
-#### 3.5.0-dev6 - 2021-08-12
-* New: Add dev-changelog.md on developer-edition release [ED-4286] (#15893)
-* Fix: Widescreen breakpoint preview didn't fit the screen [ED-4504] (#15941)
-* Fix: The position of the SVG icon is different from the i tag icon position. (#15937)
-* Fix: Column width value cascading bottom limit was tablet instead of mobile-extra (ED-4661) (#15949)
-* Tweak: Make the section element extendable (#13618)
