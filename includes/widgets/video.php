@@ -701,7 +701,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-video:hover' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} .elementor-video' => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);

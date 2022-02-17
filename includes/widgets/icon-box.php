@@ -369,7 +369,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon:hover' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} .elementor-icon' => 'transition-duration: {{SIZE}}s',
 				],
 				'condition' => [
 					'view!' => 'default',
