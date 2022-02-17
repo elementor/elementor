@@ -24,6 +24,11 @@ export default class extends elementorModules.ViewModule {
 						delete settings.html;
 					}
 
+					// If the settings has an ID - the lightbox target content is an image - the ID is an attachment ID.
+					if ( settings.id ) {
+						settings.type = 'image';
+					}
+
 					lightbox.showModal( settings );
 				}
 			},
@@ -66,13 +71,15 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	findElementWithHash() {
-		return document.querySelector( `[e-action-hash="${ location.hash }"]` ) || document.querySelector( `a[href*="${ location.hash }"]` );
+		return document.querySelector( `[e-action-hash="${ location.hash }"], a[href*="${ location.hash }"]` );
 	}
 
 	runHashAction() {
-		// Look for elements with the action hash attribute.
-		if ( location.hash && this.findElementWithHash() ) {
-			this.runAction( location.hash );
+		// Only if an element with this action hash exists on the page do we allow running the action.
+		const elementWithHash = this.findElementWithHash();
+
+		if ( location.hash && elementWithHash ) {
+			this.runAction( elementWithHash.getAttribute( 'e-action-hash' ) );
 		}
 	}
 
