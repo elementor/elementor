@@ -260,7 +260,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'icon_shadow',
-				'selector' => '{{WRAPPER}} .elementor-video',
+				'selector' => '{{WRAPPER}} .gallery-item img',
 			]
 		);
 
@@ -277,7 +277,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'gallery_shadow_shadow',
-				'selector' => '{{WRAPPER}} .elementor-video:hover',
+				'selector' => '{{WRAPPER}} .gallery-item img:hover',
 			]
 		);
 
@@ -296,7 +296,7 @@ class Widget_Image_Gallery extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-video' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} .gallery-item img' => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
