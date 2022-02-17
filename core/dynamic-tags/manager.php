@@ -506,4 +506,29 @@ class Manager {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'elementor/css-file/post/enqueue', [ $this, 'after_enqueue_post_css' ] );
 	}
+
+	/**
+	 * @since 3.6.0
+	 * @access public
+	 */
+	public function on_import_replace_post_id( $element, $map_old_new_post_ids ) {
+		if ( isset( $element['settings'][ self::DYNAMIC_SETTING_KEY ] ) ) {
+			foreach ( $element['settings'][ self::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+				$element['settings'][ self::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $this->replace_dynamic_post_id( $dynamic_value, $map_old_new_post_ids );
+			}
+		}
+
+		return $element;
+	}
+
+	/**
+	 * @since 3.6.0
+	 * @access private
+	 */
+	private function replace_dynamic_post_id( $dynamic_value, $map_old_new_post_ids ) {
+		$tag_data = $this->tag_text_to_tag_data( $dynamic_value );
+		$tag = $this->create_tag( $tag_data['id'], $tag_data['name'], $tag_data['settings'] );
+		$tag->update_post_id( (string) $map_old_new_post_ids[ $tag->get_post_id() ] );
+		return $this->tag_data_to_tag_text( $tag->get_id(), $tag->get_name(), $tag->get_settings() );
+	}
 }
