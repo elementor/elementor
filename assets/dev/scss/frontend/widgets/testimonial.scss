@@ -42,6 +42,7 @@
 				border-radius: 50%;
 				object-fit: cover;
 				max-width: none;
+				transition: all var(--testimonial-image-transition, 0.3s);
 			}
 		}
 

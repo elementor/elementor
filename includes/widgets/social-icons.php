@@ -477,6 +477,14 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'social_icon_shadow',
+				'selector' => '{{WRAPPER}} .elementor-social-icon',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -529,6 +537,34 @@ class Widget_Social_Icons extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-social-icon:hover' => 'border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'social_icon_hover_shadow',
+				'selector' => '{{WRAPPER}} .elementor-social-icon:hover',
+			]
+		);
+
+		$this->add_control(
+			'social_icon_transition',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--social-icon-transition: {{SIZE}}s',
 				],
 			]
 		);

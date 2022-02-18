@@ -205,6 +205,64 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'alert_shadow_controls' );
+
+		$this->start_controls_tab(
+			'alert_shadow_controls_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'alert_shadow_controls',
+				'selector' => '{{WRAPPER}} .elementor-alert',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'alert_shadow_controls_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'alert_shadow_controls_shadow',
+				'selector' => '{{WRAPPER}} .elementor-alert:hover',
+			]
+		);
+
+		$this->add_control(
+			'alert_shadow_controls_transition',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--alert-transition: {{SIZE}}s',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
