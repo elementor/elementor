@@ -7,7 +7,7 @@ export class Media extends CommandData {
 		return 'media';
 	}
 
-	validateArgs( args = {} ) {
+	validateArgs() {
 		this.requireArgumentInstance( 'file', File );
 	}
 

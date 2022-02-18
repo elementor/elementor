@@ -96,6 +96,7 @@ class App extends BaseApp {
 			'hasPro' => Utils::has_pro(),
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
+			'base_url' => $this->get_base_url(),
 		];
 	}
 
