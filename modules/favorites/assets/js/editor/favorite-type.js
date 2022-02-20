@@ -13,6 +13,7 @@ export default class FavoriteType {
 	 *
 	 * @return {*}
 	 */
+	// eslint-disable-next-line no-unused-vars
 	create( slug ) {}
 
 	/**
@@ -22,6 +23,7 @@ export default class FavoriteType {
 	 *
 	 * @return {*}
 	 */
+	// eslint-disable-next-line no-unused-vars
 	delete( slug ) {}
 
 	/**
@@ -31,5 +33,6 @@ export default class FavoriteType {
 	 *
 	 * @return {*}
 	 */
+	// eslint-disable-next-line no-unused-vars
 	toggle( slug ) {}
 }

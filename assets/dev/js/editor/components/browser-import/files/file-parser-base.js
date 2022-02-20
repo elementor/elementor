@@ -1,5 +1,3 @@
-import Container from '../../../container/container';
-
 /**
  * @abstract
  */
@@ -60,9 +58,12 @@ export default class FileParserBase {
 	 * very accurate and specific so if the parser can't handle the file for sure, the next parsers will have the
 	 * opportunity to do so.
 	 *
+	 * @param reader
+	 *
 	 * @abstract
 	 * @returns {boolean}
 	 */
+	// eslint-disable-next-line no-unused-vars
 	static async validate( reader ) {
 		return false;
 	}
