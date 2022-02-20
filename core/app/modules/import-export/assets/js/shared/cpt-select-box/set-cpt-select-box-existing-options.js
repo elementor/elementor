@@ -1,4 +1,4 @@
-export const getCustomPostTypes = ( customPostTypeFromServer, label ) => {
+export const setCptSelectBoxExistingOptions = ( customPostTypeFromServer, label ) => {
 	const cptOptionsArray = [];
 	// eslint-disable-next-line no-unused-expressions
 	{ customPostTypeFromServer &&
@@ -6,6 +6,7 @@ export const getCustomPostTypes = ( customPostTypeFromServer, label ) => {
 			label: customPostTypeFromServer[ key ][ label ],
 			value: key,
 		} ) );
+		//cptOptionsArray.push( { label: '+', value: '+' } );
 	}
 	return cptOptionsArray;
 };

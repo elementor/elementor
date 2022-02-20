@@ -18,13 +18,12 @@ export default function ExportProcess() {
 		[ errorType, setErrorType ] = useState( '' ),
 		{ plugins, exportedData, kitInfo, isExportProcessStarted } = exportContext.data || {},
 		{ pluginsData } = useExportPluginsData( plugins ),
-		{ selectedCustomPostTypes } = sharedContext.data || {},
 		onDialogDismiss = () => {
 			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
 		},
 		exportKit = () => {
-			const { includes } = sharedContext.data;
+			const { includes, selectedCustomPostTypes } = sharedContext.data || {};
 
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.

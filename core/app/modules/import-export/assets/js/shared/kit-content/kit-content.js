@@ -1,10 +1,8 @@
-import { useContext, useState } from 'react';
-
-import { SharedContext } from '../../context/shared-context/shared-context-provider';
+import { useState } from 'react';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
-import CptOptionsSelect from '../cpt-options-select/cpt-options-select';
+import CptOptionsSelectBox from '../cpt-select-box/cpt-select-box';
 import GoProButton from 'elementor-app/molecules/go-pro-button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
@@ -16,8 +14,6 @@ import './kit-content.scss';
 
 export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
-		// sharedContext = useContext( SharedContext ),
-		// { customPostTypes } = sharedContext.data || {},
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
@@ -47,8 +43,6 @@ export default function KitContent( { contentData, hasPro } ) {
 				{
 					contentData.map( ( { type, data }, index ) => {
 						const isLockedFeaturesNoPro = data.features?.locked && ! isProExist;
-						// places the select2 component in content section.
-						const ctpSelectBox = 'content' === type ? true : false;
 						return (
 							<List.Item padding="20" key={ type } className="e-app-export-kit-content__item">
 								<div
@@ -67,11 +61,7 @@ export default function KitContent( { contentData, hasPro } ) {
 												<Text variant="sm" tag="p" className="e-app-export-kit-content__description">
 													{ data.description || getTemplateFeatures( data.features, index ) }
 												</Text>
-												{
-													ctpSelectBox &&
-													// <CptOptionsSelect options = { customPostTypes }/>
-													<CptOptionsSelect />
-												}
+												{ 'content' === type && <CptOptionsSelectBox /> }
 												{
 													isLockedFeaturesNoPro &&
 													<GoProButton
@@ -96,7 +86,6 @@ KitContent.propTypes = {
 	className: PropTypes.string,
 	contentData: PropTypes.array.isRequired,
 	hasPro: PropTypes.bool,
-	customPostTypesOptions: PropTypes.array,
 };
 
 KitContent.defaultProps = {

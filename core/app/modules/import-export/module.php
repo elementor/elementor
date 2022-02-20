@@ -87,13 +87,13 @@ class Module extends BaseModule {
 			];
 		}
 
-		$custom_post_types = $this->get_cpt_names();
+		$custom_post_types = $this->get_registered_cpt_names();
 		if (! empty( $custom_post_types )){
 			foreach ( $custom_post_types as $custom_post_type ) {
 
 				$custom_post_types_object = get_post_type_object( $custom_post_type );
 				//cpt data appears in two arrays:
-				//1. content object: in order to show the export summary when completed
+				//1. content object: in order to show the export summary when completed in getLabel function
 				$summary_titles['content'][ $custom_post_type ] = [
 					'single' => $custom_post_types_object->labels->singular_name,
 					'plural' => $custom_post_types_object->label,
@@ -118,10 +118,16 @@ class Module extends BaseModule {
 		return $summary_titles;
 	}
 
+
 	/**
-	 * since 3.7.0
+	 * Retrieve custom post type names.
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 *
+	 * @return array custom post type names.
 	 */
-	public function get_cpt_names() {
+	public function get_registered_cpt_names() {
 
 		$post_types = get_post_types( [
 			'public' => true,

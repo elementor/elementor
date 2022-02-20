@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.6.1
  */
 
-class Custom_Post_Types extends Base {
+class Custom_Post_Type_Title extends Base {
 
 	protected function get_name() {
-		return 'custom-post-types';
+		return 'custom-post-type-title';
 	}
 
 	/**
@@ -44,7 +44,7 @@ class Custom_Post_Types extends Base {
 		$sub_directories = [];
 
 		foreach ( $post_types as $post_type ) {
-			$sub_directories[] = new WP_Custom_Post_Types( $this->iterator, $this, $post_type );
+			$sub_directories[] = new WP_Custom_Post_Type_Title( $this->iterator, $this, $post_type );
 		}
 
 		return $sub_directories;

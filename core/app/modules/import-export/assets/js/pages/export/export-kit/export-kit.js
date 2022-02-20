@@ -3,7 +3,7 @@ import React, { useEffect, useContext } from 'react';
 import { ExportContext } from '../../../context/export-context/export-context-provider';
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 
-import { getCustomPostTypes } from '../../../shared/cpt-options-select/cpt-options';
+import { setCptSelectBoxExistingOptions } from '../../../shared/cpt-select-box/set-cpt-select-box-existing-options';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import KitContent from '../../../shared/kit-content/kit-content';
@@ -37,7 +37,7 @@ export default function ExportKit() {
 
 	useEffect( () => {
 		exportContext.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
-		sharedContext.dispatch( { type: 'SET_CPT', payload: getCustomPostTypes( elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes, 'plural' ) } );
+		sharedContext.dispatch( { type: 'SET_CPT', payload: setCptSelectBoxExistingOptions( elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes, 'plural' ) } );
 	}, [] );
 
 	return (

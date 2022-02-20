@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class WP_Custom_Post_Types extends Base {
+class WP_Custom_Post_Type_Title extends Base {
 
 	private $post_type;
 
