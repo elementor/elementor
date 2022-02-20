@@ -10,7 +10,7 @@ export class Apply extends CommandBase {
 	 * @param {object} args
 	 */
 	validateArgs( args ) {
-		this.requireArgumentType( 'value', 'string' );
+		this.requireArgumentType( 'value', 'string', args );
 	}
 
 	/**
