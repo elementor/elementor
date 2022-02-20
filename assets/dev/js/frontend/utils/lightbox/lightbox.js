@@ -260,7 +260,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			if ( -1 !== options.url.indexOf( 'vimeo.com' ) ) {
 				apiProvider = elementorFrontend.utils.vimeo;
-			} else if ( options.url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+			} else if ( options.url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com|youtube-nocookie\.com)/ ) ) {
 				apiProvider = elementorFrontend.utils.youtube;
 			} else {
 				return;

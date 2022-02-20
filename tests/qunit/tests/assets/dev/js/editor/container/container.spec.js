@@ -95,6 +95,17 @@ jQuery( () => {
 			// Assert.
 			assert.equal( controls.text.dynamic.utilized, true );
 		} );
+
+		QUnit.test( 'getParentAncestry(): simple', ( assert ) => {
+			// Arrange.
+			const eButton = ElementsHelper.createAutoButton();
+
+			// Act.
+			const ancestry = eButton.getParentAncestry();
+
+			// Assert.
+			assert.equal( ancestry.length, 4 /* document>section>column>widget */ );
+		} );
 	} );
 } );
 
