@@ -6,7 +6,7 @@ export const setCptSelectBoxExistingOptions = ( customPostTypeFromServer, label 
 			label: customPostTypeFromServer[ key ][ label ],
 			value: key,
 		} ) );
-		//cptOptionsArray.push( { label: '+', value: '+' } );
+		// cptOptionsArray.push( { label: '+', value: '+' } );
 	}
 	return cptOptionsArray;
 };

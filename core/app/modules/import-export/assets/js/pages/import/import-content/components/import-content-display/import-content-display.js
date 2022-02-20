@@ -51,7 +51,7 @@ export default function ImportContentDisplay( {
 				</Notice>
 			}
 
-			<KitContent contentData={ kitData } hasPro={ hasPro } />;
+			<KitContent contentData={ kitData } hasPro={ hasPro } />
 		</>
 	);
 }

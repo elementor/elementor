@@ -49,10 +49,10 @@ export default function KitContent( { contentData, hasPro } ) {
 									onMouseEnter={ () => isLockedFeaturesNoPro && setContainerHoverState( index, true ) }
 									onMouseLeave={ () => isLockedFeaturesNoPro && setContainerHoverState( index, false ) }
 								>
-									<Grid container noWrap>
+									<Grid container noWrap >
 										<KitContentCheckbox type={ type } className="e-app-export-kit-content__checkbox" />
 
-										<Grid item>
+										<Grid item container>
 											<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
 												{ data.title }
 											</Heading>
