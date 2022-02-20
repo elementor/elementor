@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import { SharedContext } from '../../context/shared-context/shared-context-provider';
 import Select2 from '../../../../../../assets/js/ui/molecules/select2';
 import Text from 'elementor-app/ui/atoms/text';
@@ -14,14 +13,6 @@ export default function CptSelectBox() {
 		setSelected( Array.from( e.target.selectedOptions ).map( ( { value } ) => value ) );
 	};
 
-	const pg = <li className="select2-results__option">+</li>;
-
-	const addPlusButtonToSelect = () => {
-		const plusButton = document.createElement( 'li' );
-		plusButton.className = 'select2-results__option';
-		plusButton.innerHTML = '+';
-	};
-
 	useEffect( () => {
 		setSelected( customPostTypes.map( ( item ) => item.value ) );
 	}, [ customPostTypes ] );
@@ -30,12 +21,6 @@ export default function CptSelectBox() {
 		sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: selected } );
 	}, [ selected ] );
 
-	useEffect( () => {
-		//ReactDOM.render( <li className="select2-results__option">+</li>, document.querySelector( '.select2-selection__rendered' ) );
-		// const el = React.createElement( 'h2', null, 'Lift History!' );
-		// const target = document.getElementsByClassName( '.select2-selection__rendered' )[ 0 ];
-		// ReactDOM.render( el, target );
-	} );
 	return (
 		<>
 			<Text variant="sm" tag="p" className="e-app-export-kit-content__description">
