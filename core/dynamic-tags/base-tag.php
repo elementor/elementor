@@ -80,6 +80,12 @@ abstract class Base_Tag extends Controls_Stack {
 		return false;
 	}
 
+	/**
+	 * Each tag should replace its own dynamic data.
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 */
 	public function on_import_replace_dynamic_tag( $map_old_new_post_ids ) {
 		return null;
 	}
