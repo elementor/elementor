@@ -1067,9 +1067,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * On import Kit.
-	 *
-	 * Replace exported post-ids from settings with the new created posts ids.
 	 *
 	 * @since 3.6.0
 	 *
@@ -1077,13 +1074,15 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param array $map_old_new_post_ids
 	 */
-	public function on_import_replace_dynamics_elements_id( &$elements, $map_old_new_post_ids ) {
-		foreach ( $elements as &$element ) {
-			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+	public function on_import_replace_dynamic_content( &$elements, $map_old_new_post_ids ) {
+		foreach ( $elements as &$element_config ) {
+			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
-			$element = $element_instance->on_import_replace_dynamic_content( $element, $map_old_new_post_ids );
+			if ( $element_instance ) {
+				$element_config = $element_instance->on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
 
-			$this->on_import_replace_dynamics_elements_id( $element['elements'], $map_old_new_post_ids );
+				$this->on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
+			}
 		}
 
 		$this->save_elements( $elements );

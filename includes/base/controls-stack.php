@@ -1962,6 +1962,15 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 */
+	public function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		return $config;
+	}
+
+	/**
 	 * Start injection.
 	 *
 	 * Used to inject controls and sections to a specific position in the stack.

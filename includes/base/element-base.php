@@ -581,19 +581,20 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public function on_import_replace_dynamic_content( $element, $map_old_new_post_ids ) {
+	public function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
-		if ( isset( $element['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
-			foreach ( $element['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
-				$tag_data = $tags_manager->tag_text_to_tag_data( $dynamic_value );
-				$tag = $tags_manager->create_tag( $tag_data['id'], $tag_data['name'], $tag_data['settings'] );
-				$tag->on_import_replace_dynamic_tag( $map_old_new_post_ids );
-				$element['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag->get_id(), $tag->get_name(), $tag->get_settings() );
+		foreach ( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+			$tag_config = $tags_manager->tag_text_to_tag_data( $dynamic_value );
+			$tag_instance = $tags_manager->create_tag( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+
+			if ( $tag_instance ) {
+				$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $map_old_new_post_ids );
+				$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
 			}
 		}
 
-		return $element;
+		return $config;
 	}
 
 	/**
