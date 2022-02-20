@@ -157,7 +157,6 @@ export default class extends Marionette.Behavior {
 			right: '',
 			'flex-shrink': 0,
 			'flex-grow': 0,
-			'flex-basis': ui.size.width + 'px',
 		} );
 	}
 }

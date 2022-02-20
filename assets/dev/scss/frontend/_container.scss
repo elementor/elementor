@@ -3,6 +3,8 @@
 	--border-radius: 0;
 	--display: flex;
 	--flex-basis: auto;
+	--flex-grow: 0;
+	--flex-shrink: 1;
 	--content-width: var( --container-max-width, 1140px ); // Use the width from `Site Settings` or default to 1140px.;
 	--width: 100%;
 	--min-height: initial;
@@ -26,7 +28,7 @@
 	position: var( --position );
 	display: var( --display );
 	text-align: var( --text-align );
-	flex: 1 1 var( --flex-basis );
+	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
