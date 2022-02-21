@@ -120,7 +120,7 @@
 
 ## _Command_ -- `$e.internal('document/histroy/log-sub-item')`
 *  **Name**: Log-Sub-Item.
-*  **Description**: Log sub item, Each history item can have sub items ( non visual at history panel ).
+*  **Description**: Log sub-item. Each history item can have sub-items (not visualized in the history panel).
 *  **Returns**: `{void}`
 *  **Arguments**:
 
