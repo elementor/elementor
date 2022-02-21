@@ -129,7 +129,7 @@ WidgetView = BaseElementView.extend( {
 			return;
 		}
 
-		Marionette.CompositeView.prototype.render.apply( this, arguments );
+		BaseElementView.prototype.render.apply( this, arguments );
 	},
 
 	handleEmptyWidget: function() {
