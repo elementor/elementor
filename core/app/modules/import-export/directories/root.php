@@ -113,11 +113,11 @@ class Root extends Base {
 			$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 			$custom_post_types = $export_settings['selectedCustomPostTypes'] ?? [];
 
-			$sub_directories[] = new Content( $this->iterator, $this);
+			$sub_directories[] = new Content( $this->iterator, $this );
 
-			$sub_directories[] = new WP_Content( $this->iterator, $this);
+			$sub_directories[] = new WP_Content( $this->iterator, $this );
 
-			if(!empty ($custom_post_types)){
+			if ( ! empty ( $custom_post_types ) ) {
 				$sub_directories[] = new Custom_Post_Type_Title( $this->iterator, $this );
 			}
 		}

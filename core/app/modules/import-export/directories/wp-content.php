@@ -18,17 +18,17 @@ class WP_Content extends Base {
 	protected function get_default_sub_directories() {
 		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
-		$native_post_types = ['page', 'post'];
+		$native_post_types = [ 'page', 'post' ];
 		$custom_post_types = $export_settings['selectedCustomPostTypes'];
-		$post_types_to_export = array_merge($native_post_types, $custom_post_types);
+		$post_types_to_export = array_merge( $native_post_types, $custom_post_types );
 		$post_types = get_post_types( [
 			'public' => true,
 			'can_export' => true,
 		] );
 
-		foreach ($post_types as $post_type) {
-			if(! in_array( $post_type, $post_types_to_export)) {
-				unset( $post_types[$post_type] );
+		foreach ( $post_types as $post_type ) {
+			if ( ! in_array( $post_type, $post_types_to_export ) ) {
+				unset( $post_types[ $post_type ] );
 			}
 		}
 

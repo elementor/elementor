@@ -22,8 +22,8 @@ class WP_Custom_Post_Type_Title extends Base {
 
 		$post_type_object = get_post_type_object( $this->post_type );
 		return [
-			'name'=> $post_type_object->name,
-			'label'=> $post_type_object->label,
+			'name' => $post_type_object->name,
+			'label' => $post_type_object->label,
 		];
 	}
 

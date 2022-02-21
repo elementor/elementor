@@ -35,9 +35,9 @@ class Custom_Post_Type_Title extends Base {
 			'can_export' => true,
 		] );
 
-		foreach ($post_types as $post_type) {
-			if(! in_array( $post_type, $custom_post_types ) ) {
-				unset( $post_types[$post_type] );
+		foreach ( $post_types as $post_type ) {
+			if ( ! in_array( $post_type, $custom_post_types ) ) {
+				unset( $post_types[ $post_type ] );
 			}
 		}
 

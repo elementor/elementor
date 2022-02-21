@@ -88,7 +88,7 @@ class Module extends BaseModule {
 		}
 
 		$custom_post_types = $this->get_registered_cpt_names();
-		if (! empty( $custom_post_types )){
+		if ( ! empty( $custom_post_types ) ) {
 			foreach ( $custom_post_types as $custom_post_type ) {
 
 				$custom_post_types_object = get_post_type_object( $custom_post_type );
@@ -113,11 +113,8 @@ class Module extends BaseModule {
 			$summary_titles['site-settings'][ $key ] = $tab->get_title();
 		}
 
-
-
 		return $summary_titles;
 	}
-
 
 	/**
 	 * Retrieve custom post type names.
@@ -145,7 +142,7 @@ class Module extends BaseModule {
 		$custom_post_types = [];
 
 		foreach ( $post_types as $post_type ) {
-			array_push($custom_post_types, $post_type);
+			array_push( $custom_post_types, $post_type );
 		}
 
 		return $custom_post_types;
