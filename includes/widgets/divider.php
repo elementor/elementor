@@ -884,7 +884,7 @@ class Widget_Divider extends Widget_Base {
 				'name' => 'icon_shadow',
 				'selector' => '{{WRAPPER}} .elementor-icon',
 				'condition' => [
-					'view!' => 'default',
+					'icon_view!' => 'default',
 				],
 			]
 		);
