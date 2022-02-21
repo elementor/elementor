@@ -1074,18 +1074,18 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param array $map_old_new_post_ids
 	 */
-	public static function on_import_replace_dynamic_content( $elements, $map_old_new_post_ids ) {
-		foreach ( $elements as &$element_config ) {
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
 			if ( $element_instance ) {
-				$element_config = $element_instance->on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
+				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
 
 				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
 			}
 		}
 
-		return $elements;
+		return $config;
 	}
 
 	/**
