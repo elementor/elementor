@@ -142,10 +142,10 @@
 
    | Property     | Type                  | Requirement   | Description |
    |---           |---                    |---            |---|
-   | _container_  | `{Container}`         | **require**   | Container log.
-   | _containers_ | `{Container[]}`       | **require**   | Containers log.
-   | _type_       | `{String}`            | **require**   | Type
-   | _title_      | `{String}`            | **require**   | Title.
+   | _container_  | `{Container}`         | **required**   | Container log.
+   | _containers_ | `{Container[]}`       | **required**   | Containers log.
+   | _type_       | `{String}`            | **required**   | Type
+   | _title_      | `{String}`            | **required**   | Title.
    | _subTitle_   | `{String}`            | **optional**  | Sub title.
    | _restore_    | `{function()}`        | **optional**  | Restore function.
 
