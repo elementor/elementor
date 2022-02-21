@@ -27,8 +27,6 @@ export default class API {
 	 * Create's 'elementor' api.
 	 */
 	constructor() {
-		window.$e = this;
-
 		this.components = new Components();
 
 		this.commands = new Commands();

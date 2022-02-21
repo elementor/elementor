@@ -41,7 +41,7 @@ export default class Data extends Commands {
 		this.args = Object.assign( args, {
 			namespace: 'elementor',
 			version: '1',
-			baseEndpointURL: elementorCommon.config.urls.rest,
+			baseEndpointURL: 'https://dev.local/wp-json/',
 		} );
 
 		this.cache = new Cache( this );
