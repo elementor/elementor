@@ -117,7 +117,7 @@ class Root extends Base {
 
 			$sub_directories[] = new WP_Content( $this->iterator, $this );
 
-			if ( ! empty ( $custom_post_types ) ) {
+			if ( ! empty( $custom_post_types ) ) {
 				$sub_directories[] = new Custom_Post_Type_Title( $this->iterator, $this );
 			}
 		}
