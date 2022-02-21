@@ -75,7 +75,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 
 		const ensureCallbackPerformed = [];
 
-		dispatcherOrig.runner = ( command, args ) => {
+		dispatcherOrig.runner = () => ( command, args ) => {
 			ensureCallbackPerformed.push( {
 				command,
 				args,

@@ -1,3 +1,5 @@
+import Helpers from 'elementor-api/utils/helpers';
+
 export default class CommandsBackwardsCompatibility extends elementorModules.Module {
 	__construct() {
 		this.onOrig = this.on;
@@ -10,7 +12,7 @@ export default class CommandsBackwardsCompatibility extends elementorModules.Mod
 			// Regex takes the first letter and convert it to lower case.
 			componentName = componentName.replace( /^./, ( val ) => val.toLowerCase() );
 
-			elementorCommon.helpers.softDeprecated(
+			Helpers.softDeprecated(
 				`$e.${ componentName }.on( 'run', ... )`,
 				'3.0.0',
 				`$e.${ componentName }.on( 'run:before', ... )`

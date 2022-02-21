@@ -1,3 +1,5 @@
+import Helpers from 'elementor-api/utils/helpers';
+
 export default class BaseError extends Error {
 	/**
 	 * The server error code.
@@ -50,6 +52,6 @@ export default class BaseError extends Error {
 	 * Notify a message when the error occurs.
 	 */
 	notify() {
-		elementorCommon.helpers.consoleError( { message: this.message, ...this } );
+		Helpers.consoleError( { message: this.message, ...this } );
 	}
 }

@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Modules\WebCli;
 
-use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Base\App;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Module extends BaseModule {
+class Module extends App {
 
 	public function get_name() {
 		return 'web-cli';
@@ -29,5 +29,17 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		$this->print_config( 'web-cli' );
+	}
+
+	protected function get_init_settings() {
+		return [
+			'isDebug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
+			'urls' => [
+				'rest' => get_rest_url(),
+				'assets' => ELEMENTOR_ASSETS_URL,
+			],
+		];
 	}
 }

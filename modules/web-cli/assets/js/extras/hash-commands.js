@@ -4,6 +4,7 @@
  * @property {string} command
  * @property {object} args
  */
+import Helpers from 'elementor-api/utils/helpers';
 
 export default class HashCommands {
 	/**
@@ -126,7 +127,7 @@ export default class HashCommands {
 				decodeURI( rawArgs || '{}' ),
 			);
 		} catch ( e ) {
-			elementorCommon.helpers.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
+			Helpers.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
 
 			return {};
 		}

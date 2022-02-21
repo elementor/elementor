@@ -1,3 +1,5 @@
+import Helpers from 'elementor-api/utils/helpers';
+
 export default class HooksBase extends elementorModules.Module {
 	/**
 	 * Function constructor().
@@ -367,7 +369,7 @@ export default class HooksBase extends elementorModules.Module {
 						throw e;
 					}
 
-					elementorCommon.helpers.consoleError( e );
+					Helpers.consoleError( e );
 				}
 			}
 

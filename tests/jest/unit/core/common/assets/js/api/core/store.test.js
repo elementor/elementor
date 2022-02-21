@@ -1,4 +1,4 @@
-import Store from 'elementor-common/api/core/store';
+import Store from 'elementor-api/core/store';
 import { createSlice, combineReducers } from '@reduxjs/toolkit';
 
 jest.mock( '@reduxjs/toolkit', () => ( {

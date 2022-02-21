@@ -1,4 +1,5 @@
-import environment from 'elementor-common/utils/environment';
+import environment from 'elementor-api/utils/environment';
+import Helpers from 'elementor-api/utils/helpers';
 
 export default class Shortcuts {
 	constructor( $window ) {
@@ -93,8 +94,8 @@ export default class Shortcuts {
 			return;
 		}
 
-		if ( 1 < filteredHandlers.length && elementorCommon.config.isDebug ) {
-			elementorCommon.helpers.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
+		if ( 1 < filteredHandlers.length && elementorWebCliConfig.isDebug ) {
+			Helpers.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
 		}
 
 		event.preventDefault();

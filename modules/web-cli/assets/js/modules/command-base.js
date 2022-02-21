@@ -1,4 +1,5 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
+import Helpers from 'elementor-api/utils/helpers';
 
 export default class CommandBase extends ArgsObject {
 	static getInstanceType() {
@@ -265,6 +266,6 @@ export default class CommandBase extends ArgsObject {
 	onCatchApply( e ) {
 		this.runCatchHooks( e );
 
-		elementorCommon.helpers.consoleError( e );
+		Helpers.consoleError( e );
 	}
 }
