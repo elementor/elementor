@@ -44,7 +44,7 @@
 | [Delete-Log](#command----einternaldocumenthistroydelete-log)                | `$e.internal('document/history/delete-log')`        | Delete log.
 | [End-Log](#command----einternaldocumenthistroyend-log)                      | `$e.internal('document/history/end-log')`           | End log.
 | [End-Transaction](#command----einternaldocumenthistroyend-transaction)      | `$e.internal('document/history/end-transaction')`   | End Transaction.
-| [Log-Sub-Item](#command----einternaldocumenthistroylog-sub-item)            | `$e.internal('document/history/log-sub-item')`      | Lob sub item.
+| [Log-Sub-Item](#command----einternaldocumenthistroylog-sub-item)            | `$e.internal('document/history/log-sub-item')`      | Log sub item.
 | [Start-Log](#command----einternaldocumenthistroystart-log)                  | `$e.internal('document/history/start-log')`         | Start log.
 
 ## _Command_ -- `$e.run('document/histroy/do')`
