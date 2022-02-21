@@ -41,7 +41,6 @@ const config = {
 	templates: [
 		'accordion',
 		'alert',
-		'audio',
 		'buttons',
 		'canvas',
 		'counter',
@@ -66,7 +65,6 @@ const config = {
 		'text-editor',
 		'text-path',
 		'toggle',
-		'video',
 		'wp-widget-text',
 	],
 	/**
