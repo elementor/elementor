@@ -63,8 +63,7 @@ export default class FileParserBase {
 	 * @abstract
 	 * @returns {boolean}
 	 */
-	// eslint-disable-next-line no-unused-vars
-	static async validate( reader ) {
+	static async validate( reader ) { // eslint-disable-line no-unused-vars
 		return false;
 	}
 }

@@ -46,8 +46,7 @@ export default class FileReaderBase {
 	 * @param input
 	 * @returns {string|boolean}
 	 */
-	// eslint-disable-next-line no-unused-vars
-	static async resolve( input ) {
+	static async resolve( input ) { // eslint-disable-line no-unused-vars
 		return false;
 	}
 

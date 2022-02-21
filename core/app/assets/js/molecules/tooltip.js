@@ -60,8 +60,8 @@ export default function Tooltip( props ) {
 				isAborted.current = true;
 
 				// Cleanup of existing tipsy element in case of re-render.
-				// eslint-disable-next-line no-jquery/no-sizzle
-				jQuery( '.tipsy:last' ).remove();
+				const nodes = document.querySelectorAll( '.tipsy' );
+				nodes[ nodes.length - 1 ].remove();
 			}
 		};
 	}, [ props.disabled ] );

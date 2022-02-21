@@ -13,8 +13,7 @@ export default class FavoriteType {
 	 *
 	 * @return {*}
 	 */
-	// eslint-disable-next-line no-unused-vars
-	create( slug ) {}
+	create( slug ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Delete existing favorite from the type.
@@ -23,8 +22,7 @@ export default class FavoriteType {
 	 *
 	 * @return {*}
 	 */
-	// eslint-disable-next-line no-unused-vars
-	delete( slug ) {}
+	delete( slug ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Toggle favorite of this type.
@@ -33,6 +31,5 @@ export default class FavoriteType {
 	 *
 	 * @return {*}
 	 */
-	// eslint-disable-next-line no-unused-vars
-	toggle( slug ) {}
+	toggle( slug ) {} // eslint-disable-line no-unused-vars
 }
