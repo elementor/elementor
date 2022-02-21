@@ -3,7 +3,7 @@ import ElementsHelper from './elements/helper';
 import * as hooksData from './hooks/data/document/elements/index.spec';
 import * as eData from 'elementor/tests/qunit/mock/e-data';
 
-QUnit.module( 'Component: document', ( rootHooks ) => {
+QUnit.module( 'Component: document', () => {
 	QUnit.test( 'History per document', ( assert ) => {
 		eData.attachCache();
 

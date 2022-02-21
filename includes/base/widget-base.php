@@ -224,6 +224,19 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Hide on search.
+	 *
+	 * Whether to hide the widget on search in the panel or not. By default returns false.
+	 *
+	 * @access public
+	 *
+	 * @return bool Whether to hide the widget when searching for widget or not.
+	 */
+	public function hide_on_search() {
+		return false;
+	}
+
+	/**
 	 * Start widget controls section.
 	 *
 	 * Used to add a new section of controls to the widget. Regular controls and
@@ -350,6 +363,7 @@ abstract class Widget_Base extends Element_Base {
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
+			'hide_on_search' => $this->hide_on_search(),
 		];
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );

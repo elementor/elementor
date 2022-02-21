@@ -98,15 +98,12 @@ class Widgets_Manager {
 		 *
 		 * @param Widgets_Manager $this The widgets manager.
 		 */
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
-		//	'elementor/widgets/widgets_registered',
-		//	[ $this ],
-		//	'3.5.0',
-		//	'elementor/widgets/register'
-		//);
-
-		do_action( 'elementor/widgets/widgets_registered', $this );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+			'elementor/widgets/widgets_registered',
+			[ $this ],
+			'3.5.0',
+			'elementor/widgets/register'
+		);
 
 		/**
 		 * After widgets registered.
@@ -209,12 +206,11 @@ class Widgets_Manager {
 	 * @return true True if the widget was registered.
 	*/
 	public function register_widget_type( Widget_Base $widget ) {
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-		//	__METHOD__,
-		//	'3.5.0',
-		//	'register'
-		//);
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
 
 		return $this->register( $widget );
 	}
@@ -253,12 +249,11 @@ class Widgets_Manager {
 	 * @return true True if the widget was unregistered, False otherwise.
 	*/
 	public function unregister_widget_type( $name ) {
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-		//	__METHOD__,
-		//	'3.5.0',
-		//	'unregister'
-		//);
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'unregister'
+		);
 
 		return $this->unregister( $name );
 	}
