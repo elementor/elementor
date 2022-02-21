@@ -31,9 +31,9 @@ const NavigatorBody = () => {
 					<ElementItem itemId="document" level={ 0 } /> :
 					<Empty /> }
 			</div>
-			<div id="elementor-navigator__footer" role="separator" aria-orientation="horizontal">
+			<footer id="elementor-navigator__footer" role="separator" aria-orientation="horizontal">
 				<Icon className="eicon-ellipsis-h" />
-			</div>
+			</footer>
 		</div>
 	);
 };

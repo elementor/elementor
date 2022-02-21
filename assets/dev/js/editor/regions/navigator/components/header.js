@@ -26,7 +26,7 @@ export function Header( { onClose } ) {
 	}, [ isAllOpen ] );
 
 	return (
-		<div id="elementor-navigator__header">
+		<header id="elementor-navigator__header">
 			<Icon id="elementor-navigator__toggle-all"
 				className={ isAllOpen ? 'eicon-collapse' : 'eicon-expand' }
 				title={ __( 'Toggle folding all' ) }
@@ -40,7 +40,7 @@ export function Header( { onClose } ) {
 				title={ __( 'Close' ) }
 				onClick={ onClose }
 				role="button" />
-		</div>
+		</header>
 	);
 }
 

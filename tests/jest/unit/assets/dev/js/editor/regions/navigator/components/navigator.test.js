@@ -39,7 +39,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByText( 'Navigator' )
+			component.container.querySelector( 'header' )
 		).toBeInTheDocument();
 	} );
 
@@ -47,7 +47,7 @@ describe( '<Navigator />', () => {
 		const component = render( <Navigator /> );
 
 		expect(
-			component.queryByRole( 'separator' )
+			component.container.querySelector( 'footer' )
 		).toBeInTheDocument();
 	} );
 
