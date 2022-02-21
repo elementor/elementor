@@ -1074,18 +1074,18 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param array $map_old_new_post_ids
 	 */
-	public function on_import_replace_dynamic_content( &$elements, $map_old_new_post_ids ) {
+	public function on_import_replace_dynamic_content( $elements, $map_old_new_post_ids ) {
 		foreach ( $elements as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
 			if ( $element_instance ) {
 				$element_config = $element_instance->on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
 
-				$this->on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
+				$element_config['elements'] = $this->on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
 			}
 		}
 
-		$this->save_elements( $elements );
+		return $elements;
 	}
 
 	/**
@@ -1094,11 +1094,11 @@ abstract class Document extends Controls_Stack {
 	 * Save data from the editor to the database.
 	 *
 	 * @since 2.0.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @param array $elements
 	 */
-	protected function save_elements( $elements ) {
+	public function save_elements( $elements ) {
 		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
