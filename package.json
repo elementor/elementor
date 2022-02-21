@@ -17,7 +17,7 @@
         "scripts": "grunt scripts",
         "scripts:watch": "grunt watch_scripts",
         "styles": "grunt styles",
-        "styles:watch": "grunt watch_styles"
+        "styles:watch": "grunt watch_styles",
         "lint:js": "eslint ."
     },
     "devDependencies": {
