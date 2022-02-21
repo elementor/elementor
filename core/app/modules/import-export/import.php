@@ -31,13 +31,13 @@ class Import extends Iterator {
 
 		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
-		$results = $root_directory->run_import( $manifest_data );
+		$imported_posts = $root_directory->run_import( $manifest_data );
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
-		$this->save_elements_of_imported_posts( $results );
+		$this->save_elements_of_imported_posts( $imported_posts );
 
-		return $results;
+		return $imported_posts;
 	}
 
 	public function prevent_saving_elements_on_post_creation( $data, $document ) {
@@ -81,10 +81,10 @@ class Import extends Iterator {
 		}
 	}
 
-	private function save_elements_of_imported_posts( $results ) {
+	private function save_elements_of_imported_posts( $imported_posts ) {
 		$map_old_new_post_ids = [];
 
-		$map_old_new_post_ids = $this->map_old_new_post_ids( $results );
+		$map_old_new_post_ids = $this->map_old_new_post_ids( $imported_posts );
 
 		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
@@ -93,14 +93,14 @@ class Import extends Iterator {
 		}
 	}
 
-	private function map_old_new_post_ids( $results ) {
+	private function map_old_new_post_ids( $imported_posts ) {
 		$map_old_new_post_ids = [];
 
-		foreach ( $results as $result ) {
-			if ( isset( $result['succeed'] ) ) {
-				$map_old_new_post_ids += $result['succeed'];
+		foreach ( $imported_posts as $imported_post ) {
+			if ( isset( $imported_post['succeed'] ) ) {
+				$map_old_new_post_ids += $imported_post['succeed'];
 			} else {
-				$map_old_new_post_ids += $this->map_old_new_post_ids( $result );
+				$map_old_new_post_ids += $this->map_old_new_post_ids( $imported_post );
 			}
 		}
 
