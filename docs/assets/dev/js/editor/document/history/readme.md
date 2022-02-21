@@ -1,24 +1,31 @@
 ## Component -- `$e.components.get('document/history')`
 
-*  **Name**: History.
-*  **Description**: Provide a way to manage editor history, which means - to create and delete history items (milestones), time-travel between them (undo and redo), and starting transactions to be saved as history items.
-*  **Built in history types**:
-	```javascript
-	// Represent history item titles, used in some of the History component commands.
-	const historyTypes = {
-		"add": "Added",
-		"change": "Edited",
-		"disable": "Disabled",
-		"duplicate": "Duplicate",
-		"enable": "Enabled",
-		"move": "Moved",
-		"paste": "Pasted",
-		"paste_style": "Style Pasted",
-		"remove": "Removed",
-		"reset_style": "Style Reset",
-		"reset_settings": "Settings Reset"
-	}
-	```
+* **Name**: History.
+* **Description**: Provide a way to manage editor history, which means - to create and delete history items (milestones), time-travel between them (undo and redo), and starting transactions to be saved as history items.
+* **Built in history types**:
+    ```javascript
+    // Represent history item titles, used in some of the History component commands.
+    const historyTypes = {
+        "add": "Added",
+        "change": "Edited",
+        "disable": "Disabled",
+        "duplicate": "Duplicate",
+        "enable": "Enabled",
+        "move": "Moved",
+        "paste": "Pasted",
+        "paste_style": "Style Pasted",
+        "remove": "Removed",
+        "reset_style": "Style Reset",
+        "reset_settings": "Settings Reset"
+    }
+    ```
+   History component works with few entities:
+
+
+* **Items**: Primary item which is visible may include sub-items.
+* **Sub-Items**: Changes in sub-items are not visible in the primary item, but effects the document in undo/redo.
+* **Transactions**: Saves only the first, and the last items of the transactions.
+
 
 ## Component `document/history/` -- Commands
 | Command                                                                | Access                                             | Description
@@ -57,7 +64,7 @@
 
 ## _Command_ -- `$e.run('document/histroy/undo-all')`
 *  **Name**: Undo-All.
-*  **Description**: Undo all history step.
+*  **Description**: Undo all history steps.
 *  **Returns**: `{void}`
 *  **Arguments**: None.
 
@@ -90,7 +97,7 @@
 
 ## _Command_ -- `$e.internal('document/histroy/delete-log')`
 *  **Name**: Delete-Log.
-*  **Description**: Delete logged history.
+*  **Description**: Delete history item and all sub-items of the item.
 *  **Returns**: `{void}`
 *  **Arguments**:
 
@@ -100,13 +107,13 @@
 
 ## _Command_ -- `$e.internal('document/histroy/end-log')`
 *  **Name**: End-Log.
-*  **Description**: End logged history.
+*  **Description**: End logging history item.
 *  **Returns**: `{void}`
 *  **Arguments**: None.
 
 ## _Command_ -- `$e.internal('document/histroy/end-transaction')`
 *  **Name**: End-Transaction.
-*  **Description**: End transaction, will log the first and the last transaction, as new logged history.
+*  **Description**: End transaction, will log the first and the last transaction, as new logged history item.
    title, subTitle will be taken from the first transaction item.
 *  **Returns**: `{void}`
 *  **Arguments**: None.
@@ -121,7 +128,7 @@
    |---           |---                    |---             |---|
    | _id_         | `{Number}`            | **optional**   | Id of history item, to be sub item of. default: `{elementor.documents.currentDocument.history.getCurrentId()}`.
    | _container_  | `{Container}`         | **optional**   | Container log.
-   | _containers_ | `{Container[]}` | **optional**   | Containers log.
+   | _containers_ | `{Container[]}`       | **optional**   | Containers log.
    | _type_       | `{String}`            | **optional**   | Type
    | _title_      | `{String}`            | **optional**   | Title.
    | _subTitle_   | `{String}`            | **optional**   | Sub title.
