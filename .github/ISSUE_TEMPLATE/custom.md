@@ -1,5 +1,5 @@
 ---
-name: "❓Support Question"
+name: "❓ Support Question"
 about: If you have a support question, please refer to our docs or our Facebook Elementor community.
 If this doesn't look right, choose a different type.
 
