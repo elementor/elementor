@@ -18,7 +18,7 @@ const Test = () => {
 	return (
 		<React.Fragment>
 			<Button onClick={ refetch } />
-			{ data?.length && <Result /> }
+			{ Boolean( data?.length ) && <Result /> }
 		</React.Fragment>
 	);
 };

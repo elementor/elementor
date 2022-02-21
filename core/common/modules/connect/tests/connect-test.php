@@ -11,6 +11,7 @@ class Connect_Test extends Test {
 		$response = Plugin::$instance->common->get_component( 'connect' )->get_app( 'connect' )
 			->get_token_request();
 
+		// Assert
 		$this->expect( property_exists( $response, 'code' ) )
 			->describe( 'The `code` property doesn\'t exist in the response, which means it ended up with 200' )
 			->to_meet( function( $subject ) {

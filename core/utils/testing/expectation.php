@@ -3,9 +3,8 @@
 namespace Elementor\Core\Utils\Testing;
 
 use Elementor\Core\Utils\Testing\Exceptions\Expectation_Exception;
-use Elementor\Core\Utils\Testing\Interfaces\Diagnosable;
 
-class Expectation implements Diagnosable {
+class Expectation extends Diagnosable {
 
 	/**
 	 * A subject to check the expectation against.

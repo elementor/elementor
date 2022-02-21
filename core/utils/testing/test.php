@@ -5,9 +5,8 @@ namespace Elementor\Core\Utils\Testing;
 use Elementor\Core\Utils\Str;
 use Elementor\Core\Utils\Testing\Exceptions\Test_Case_Exception;
 use Elementor\Core\Utils\Testing\Exceptions\Test_Exception;
-use Elementor\Core\Utils\Testing\Interfaces\Diagnosable;
 
-abstract class Test implements Diagnosable {
+abstract class Test extends Diagnosable {
 
 	/**
 	 * A Configuration instance with customized options regarding the test.
@@ -26,9 +25,9 @@ abstract class Test implements Diagnosable {
 	/**
 	 * A list of test-cases to be invoked by the test.
 	 *
-	 * @var Test_Case[]
+	 * @var Array<string, Test_Case>
 	 */
-	protected $cases = [];
+	protected $cases;
 
 	/**
 	 * The Test constructor.
@@ -58,13 +57,13 @@ abstract class Test implements Diagnosable {
 	 * @inheritDoc
 	 */
 	public function get_diagnosables() {
-		return $this->cases;
+		return array_values( $this->cases );
 	}
 
 	/**
 	 * Run all tests-cases inspecting their expectations.
 	 *
-	 * @return void
+	 * @return static
 	 * @throws \Exception|Test_Exception|\LogicException
 	 */
 	public function run() {
@@ -96,22 +95,8 @@ abstract class Test implements Diagnosable {
 			// Generally assign the thrown exception to the class to indicate failure.
 			throw $this->exception = $e;
 		}
-	}
 
-	/**
-	 * Run a specific test-case while inspecting its expectations.
-	 *
-	 * @param \ReflectionMethod $test_method
-	 *
-	 * @return void
-	 * @throws \DomainException|Test_Case_Exception
-	 */
-	public function test( $test_method ) {
-		if ( ! array_key_exists( $test_method->name, $this->cases ) ) {
-			$this->cases[ $test_method->name ] = new Test_Case( $this, $test_method );
-		}
-
-		$this->cases[ $test_method->name ]->test();
+		return $this;
 	}
 
 	/**
@@ -153,6 +138,23 @@ abstract class Test implements Diagnosable {
 				return Test_Case::is_test_case( $method );
 			}
 		);
+	}
+
+	/**
+	 * Run a specific test-case while inspecting its expectations.
+	 *
+	 * @param \ReflectionMethod|string $test_method
+	 *
+	 * @return void
+	 * @throws \DomainException|Test_Case_Exception
+	 */
+	protected function test( $test_method ) {
+		!!!!!
+		if ( ! array_key_exists( $test_method, $this->cases ) ) {
+			$this->cases[ $test_method ] = new Test_Case( $this, $test_method );
+		}
+
+		$this->cases[ $test_method ]->test();
 	}
 
 	/**

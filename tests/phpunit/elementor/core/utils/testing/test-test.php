@@ -292,7 +292,7 @@ class Test_Test extends Elementor_Test_Base {
 			$mocked_methods
 		);
 
-		$class->__constructor( ...$constructor_args );
+		$class->__construct( ...$constructor_args );
 
 		return $class;
 	}
@@ -303,7 +303,7 @@ class Test_Test extends Elementor_Test_Base {
 			->setMethods( $mocked_methods )
 			->getMock();
 
-		$class->__constructor( ...$constructor_args );
+		$class->__construct( ...$constructor_args );
 
 		return $class;
 	}

@@ -1,8 +1,7 @@
 import React from 'react';
+import ConnectComponent from 'elementor-common-modules/connect/assets/js/e-component';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Test } from './test';
-
-import ConnectComponent from 'elementor-common-modules/connect/assets/js/e-component';
 
 window.top.$e.components.register( new ConnectComponent() );
 

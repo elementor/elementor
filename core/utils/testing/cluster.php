@@ -3,9 +3,8 @@
 namespace Elementor\Core\Utils\Testing;
 
 use Elementor\Core\Utils\Testing\Exceptions\Test_Exception;
-use Elementor\Core\Utils\Testing\Interfaces\Diagnosable;
 
-class Cluster implements Diagnosable {
+class Cluster extends Diagnosable {
 
 	/**
 	 * A list of Test classes linked to the cluster.
@@ -17,7 +16,7 @@ class Cluster implements Diagnosable {
 	/**
 	 * A list of Test instances linked to the cluster.
 	 *
-	 * @var Test[]
+	 * @var Array<string, Test>
 	 */
 	protected $instances = [];
 
@@ -54,7 +53,7 @@ class Cluster implements Diagnosable {
 	 * @inheritDoc
 	 */
 	public function get_name() {
-		return get_class( $this ) . spl_object_hash( $this );
+		return get_class( $this );
 	}
 
 	/**
@@ -63,7 +62,7 @@ class Cluster implements Diagnosable {
 	 * @inheritDoc
 	 */
 	public function get_diagnosables() {
-		return $this->instances;
+		return array_values( $this->instances );
 	}
 
 	/**
@@ -90,7 +89,7 @@ class Cluster implements Diagnosable {
 	/**
 	 * Run all cluster's tests.
 	 *
-	 * @return void
+	 * @return static
 	 * @throws \Exception|Test_Exception
 	 */
 	public function run() {
@@ -101,6 +100,8 @@ class Cluster implements Diagnosable {
 		foreach( $this->instances as $test ) {
 			$test->run();
 		}
+
+		return $this;
 	}
 
 	/**

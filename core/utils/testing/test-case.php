@@ -45,12 +45,30 @@ class Test_Case implements Diagnosable {
 	/**
 	 * The Test_Case constructor.
 	 *
-	 * @param Test $test
-	 * @param \ReflectionMethod $method
+	 * @param Test                     $test
+	 * @param \ReflectionMethod|string $method
 	 *
 	 * @return void
+	 * @throws Test_Case_Exception
 	 */
 	public function __construct( $test, $method ) {
+		$method_name = $method instanceof \ReflectionMethod ?
+			$method->name :
+			$method;
+
+		try {
+			$method = ( new \ReflectionClass( $test ) )
+				->getMethod( $method_name );
+		} catch( \ReflectionException $e ) {
+			throw new Test_Case_Exception(
+				sprintf(
+					'The test-case `%s` is not exists in test `%s`.',
+					$method_name,
+					$this->test->get_test_class()
+				)
+			);
+		}
+
 		$this->test = $test;
 		$this->method = $method;
 	}
@@ -74,7 +92,7 @@ class Test_Case implements Diagnosable {
 	/**
 	 * Run the test-case and inspect its expectations.
 	 *
-	 * @return void
+	 * @return static
 	 * @throws \Exception|Test_Case_Exception
 	 */
 	public function test() {
@@ -82,14 +100,6 @@ class Test_Case implements Diagnosable {
 			try {
 				// Execute test-case and register its expectations.
 				$this->method->invoke( $this->test );
-			} catch( \ReflectionException $e ) {
-				throw new Test_Case_Exception(
-					sprintf(
-						'The test-case `%s` is not exists in test `%s`.',
-						$this->method->name,
-						$this->test->get_test_class()
-					)
-				);
 			} catch( Expectation_Exception $e ) {
 				throw new Test_Case_Exception();
 			}
@@ -107,6 +117,8 @@ class Test_Case implements Diagnosable {
 			// Generally assign the thrown exception to the class to indicate failure
 			throw $this->exception = $e;
 		}
+
+		return $this;
 	}
 
 	/**

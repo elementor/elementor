@@ -7,73 +7,123 @@ use Elementor\Core\Utils\Testing\Interfaces\Diagnosable;
 class Diagnostics {
 
 	/**
-	 * @var Diagnosable[]
+	 * A list of diagnosable to diagnose.
+	 *
+	 * @var Diagnosable
 	 */
-	protected $diagnosables;
+	protected $diagnosable;
+
+	/**
+	 * A list of diagnostics objects for the given diagnosables.
+	 *
+	 * @var Diagnostics[]
+	 */
+	protected $diagnostics = [];
 
 	/**
 	 * The Diagnostics constructor.
 	 *
-	 * @param $diagnosables
+	 * @param Diagnosable $diagnosable
 	 *
 	 * @return void
 	 */
-	public function __construct( $diagnosables ) {
-		$this->diagnosables = $diagnosables;
+	public function __construct( $diagnosable ) {
+		$this->diagnosable = $diagnosable;
+
+		$this->build();
 	}
 
 	/**
-	 * Return all successful diagnosables.
+	 * Retrieve the diagnosable instance being diagnosed.
 	 *
-	 * @return Diagnosable[]
+	 * @return Diagnosable
+	 */
+	public function get_diagnosable() {
+		return $this->diagnosable;
+	}
+
+	/**
+	 * Return diagnostics for all diagnosables.
+	 *
+	 * @return Diagnostics[]
+	 */
+	public function all() {
+		return $this->diagnostics;
+	}
+
+	/**
+	 * Return diagnostics for all successful diagnosables.
+	 *
+	 * @return Diagnostics[]
 	 */
 	public function successful() {
 		return array_filter(
-			$this->diagnosables,
-			function( $diagnosable ) {
-				return ! $diagnosable->error();
+			$this->all(),
+			function( $diagnostics ) {
+				return ! $diagnostics->get_diagnosable()
+					->error();
 			}
 		);
 	}
 
 	/**
-	 * Return all diagnosables that ended up with a failure.
+	 * Return diagnostics for all diagnosables end up with a failure.
 	 *
-	 * @return Diagnosable[]
+	 * @return Diagnostics[]
 	 */
 	public function failed() {
 		return array_filter(
-			$this->diagnosables,
-			function( $diagnosable ) {
-				return $diagnosable->error();
+			$this->all(),
+			function( $diagnostics ) {
+				return $diagnostics->get_diagnosable()
+                    ->error();
 			}
 		);
 	}
 
 	/**
-	 * @param Diagnosable[] $diagnosables
+	 * Get the error message if diagnosable failed.
+	 *
+	 * @return string|null
+	 */
+	public function message() {
+		$error = $this->diagnosable->error();
+
+		return $error instanceof \Exception ?
+			$error->getMessage():
+			null;
+	}
+
+	/**
+	 * Transform the diagnostics into an array format.
 	 *
 	 * @return array
 	 */
-	public function recursive_serialize( $diagnosables = [] ) {
-		$serialized = [];
-
-		foreach( $diagnosables as $key => $diagnosable ) {
-			$serialized[] = [
-				'id' => $key,
-				'name' => $diagnosable->get_name(),
-				'result' => ! $diagnosable->error(),
-				'error' => $diagnosable->error() ?
-					$diagnosable->error()->getMessage() :
-					null,
-				'diagnosables' => $this->recursive_serialize( $diagnosable->get_diagnosables() )
-			];
-		}
-
-		return $serialized;
+	public function to_array() {
+		return [
+			'id' => spl_object_hash( $this->diagnosable ),
+			'name' => $this->diagnosable->get_name(),
+			'result' => ! $this->diagnosable->error(),
+			'error' => $this->message(),
+			'diagnosables' => array_reduce(
+				$this->all(),
+				function( $previous, $diagnostics ) {
+					$previous[] = $diagnostics->to_array();
+					return $previous;
+				},
+				[]
+			),
+		];
 	}
 
-	public function to_array() {
-		return $this->recursive_serialize( $this->diagnosables );
+	/**
+	 * Build the diagnostics for this diagnosable child diagnosables.
+	 *
+	 * @return void
+	 */
+	protected function build() {
+		foreach( $this->diagnosable->get_diagnosables() as $diagnosable ) {
+			$this->diagnostics[] = new Diagnostics( $diagnosable );
+		}
 	}
 }

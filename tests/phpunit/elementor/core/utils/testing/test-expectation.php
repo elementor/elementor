@@ -41,6 +41,26 @@ class Test_Expectation extends Elementor_Test_Base {
 		$this->expectNotToPerformAssertions();
 	}
 
+	public function test_get_name_return_description_when_set() {
+		// Arrange
+		$description = 'test-description';
+
+		// Act
+		$expectation = ( new Expectation( 'test-subject' ) )
+			->describe( $description );
+
+		// Assert
+		$this->assertEquals( $expectation->get_name(), $description );
+	}
+
+	public function test_get_name_return_suitable_text_when_description_is_not_set() {
+		// Arrange
+		$expectation = new Expectation( 'test-subject' );
+
+		// Assert
+		$this->assertEquals( $expectation->get_name(), '(no description)' );
+	}
+
 	public function test_describe_text_assigned_to_class() {
 		// Arrange
 		$description = 'test-description';
@@ -79,7 +99,7 @@ class Test_Expectation extends Elementor_Test_Base {
 			->to_meet( $closure );
 
 		// Assert
-		$this->assertEquals( true, $expectation->result() );
+		$this->assertEquals( null, $expectation->error() );
 	}
 
 	public function test_to_meet_set_result_when_inspection_failed() {
@@ -95,7 +115,7 @@ class Test_Expectation extends Elementor_Test_Base {
 		} catch( \Exception $e ) {}
 
 		// Assert
-		$this->assertEquals( false, $expectation->result() );
+		$this->assertInstanceOf( \Exception::class, $expectation->error() );
 	}
 
 	public function test_to_meet_throws_exception_when_inspection_failed() {

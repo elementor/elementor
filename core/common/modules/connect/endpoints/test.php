@@ -27,13 +27,9 @@ class Test extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		$cluster = ( new Cluster( [ Connect_Test::class ], [] ) );
-		$cluster->run();
-
-		return (
-			new Diagnostics(
-				$cluster->get_diagnosables()
-			)
-		)->to_array();
+		return ( new Cluster( [ Connect_Test::class ], [] ) )
+			->run()
+			->diagnose()
+			->to_array()[ 'diagnosables' ];
 	}
 }
