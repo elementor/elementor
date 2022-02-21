@@ -17,20 +17,19 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	private $experiments;
 
-	private $features = [];
+	private $originalFeatures = [];
 
 	public function setUp() {
 		parent::setUp();
 
 		$this->experiments = $this->elementor()->experiments;
+		$this->originalFeatures = $this->experiments->features;
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 
-		foreach ( array_keys( $this->features) as $feature_name ) {
-			$this->experiments->remove_feature( $feature_name );
-		}
+		$this->experiments->features = $this->originalFeatures;
 	}
 
 	public function test_add_feature() {
@@ -300,8 +299,6 @@ class Test_Manager extends Elementor_Test_Base {
 		if ( $args ) {
 			$test_feature_data = array_merge( $test_feature_data, $args );
 		}
-
-		$this->features[ $test_feature_data['name'] ] = true;
 
 		return $this->experiments->add_feature( $test_feature_data );
 	}
