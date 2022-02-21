@@ -33,13 +33,15 @@ class Import extends Iterator {
 
 		$results = $root_directory->run_import( $manifest_data );
 
+		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
+
 		$this->save_elements_of_imported_posts( $results );
 
 		return $results;
 	}
 
 	public function prevent_saving_elements_on_post_creation( $data, $document ) {
-		if ( $data['elements'] ) {
+		if ( isset( $data['elements'] ) ) {
 			$this->documents_elements[ $document->get_main_id() ] = $data['elements'];
 
 			$data['elements'] = [];
@@ -87,7 +89,7 @@ class Import extends Iterator {
 		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
 			$updated_elements = $document->on_import_replace_dynamic_content( $document_elements, $map_old_new_post_ids );
-			$document->save_elements( $updated_elements );
+			$document->save( [ 'elements' => $updated_elements ] );
 		}
 	}
 

@@ -581,7 +581,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( isset( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {

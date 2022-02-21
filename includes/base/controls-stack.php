@@ -1966,7 +1966,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 3.6.0
 	 * @access public
 	 */
-	public function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
 		return $config;
 	}
 
