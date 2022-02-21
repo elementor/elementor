@@ -1,12 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export class CommandNavigator extends CommandBase {
-	initialize() {
-		if ( ! elementor.navigator.isOpen ) {
-			$e.run( 'navigator/open' );
-		}
-	}
-
 	validateArgs( args ) {
 		if ( ! elementor.navigator.isOpen ) {
 			throw Error( `Cannot use: '${ this.component.getNamespace() }' while navigator is closed.` );
