@@ -67,6 +67,13 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
+		// Allow passing custom `_title` from model.
+		const customTitle = this.get( '_title' );
+
+		if ( customTitle ) {
+			settings._title = customTitle;
+		}
+
 		settings = new SettingsModel( settings, {
 			controls: elementor.getElementControls( this ),
 		} );
