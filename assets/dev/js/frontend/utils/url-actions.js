@@ -20,10 +20,6 @@ export default class extends elementorModules.ViewModule {
 					// Handle slideshow display
 					lightbox.openSlideshow( settings.slideshow, settings.url );
 				} else {
-					if ( settings.html ) {
-						delete settings.html;
-					}
-
 					// If the settings has an ID - the lightbox target content is an image - the ID is an attachment ID.
 					if ( settings.id ) {
 						settings.type = 'image';
