@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 
 test.describe( 'URL Actions', () => {
-	test.only( 'Test Lightbox and URL Actions', async ( { page }, testInfo ) => {
+	test( 'Test Lightbox and URL Actions', async ( { page }, testInfo ) => {
 		/**
 		 * Open new empty page.
 		 */
