@@ -16,7 +16,7 @@ https://www.youtube.com/watch?v=lBu9TKg7dFM
 
 = THE #1 WEB CREATION PLATFORM, POWERING OVER 10M WEBSITES WORLDWIDE. =
 
-Elementor is the leading website building platform for WordPress, enabling web creators to build professional, pixel-perfect websites with an intuitive visual builder. Quickly create amazing websites for your clients or your business with complete control over every piece without writing a single line of code. Join a vast community of web creators from all around the world who deliver exceptional websites using Elementor.
+Elementor is the leading website building platform for WordPress, enabling web creators to build professional, pixel-perfect websites with an intuitive visual builder. Quickly create amazing websites for your clients or your business with complete control over every piece, without writing a single line of code. Join a vast community of web creators from all around the world who deliver exceptional websites using Elementor.
 
 [Check out Elementor Website Builder](https://go.elementor.com/wp-repo-description-tab-homepage-check-out-elementor-website-builder/).
 
@@ -47,16 +47,16 @@ Take your professional workflow to the next level with [Dynamic Content](https:/
 Enjoy fast-loading websites that rank well on Google search. Enhance your website performance using built-in features, and benefit from Elementor's ongoing performance improvements, such as reduced CSS and JS files, lazy loading, and more. To learn more, check out our [performance page](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/).
 
 = PROMOTING ACCESSIBILITY =
-Elementor is built with Accessibility in mind and offers tools and enhancements to help you provide a better experience for all users. These include HTML 5 semantic, full keyboard navigation menu, ongoing accessibility improvement of features and widget, and more.
+Elementor is built with Accessibility in mind and offers tools and enhancements to help you provide a better experience for all users. These include HTML 5 semantic, full keyboard navigation menu, ongoing accessibility improvement of features, widget, and more
 
 = SUPPORTED BY A STRONG COMMUNITY =
 Join a thriving global community that helps each other achieve their goals. Get answers to your questions, solve problems with other members, share knowledge, and so much more. Join the community discussions, meetups, enjoy hundreds of YouTube videos, articles, and tutorials made by members worldwide.
 
 - [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - with over 120K members, who are constantly offering support, advice, feedback, and tutorials about new features and how to achieve complex website scenarios.
-- [Dozens of Elementor]() Addons - a multitude of addons that extends Elementor’s solution with over 900 addons, so you can achieve nearly every capability you can think of, no matter how niche it is.
+- [Dozens of Elementor](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) Addons - a multitude of addons that extends Elementor’s solution with over 900 addons, so you can achieve nearly every capability you can think of, no matter how niche it is.
 - [Experts Community](https://go.elementor.com/wp-repo-description-tab-experts-experts-community/) - the Elementor experts market is the place for you to find and hire an Expert, or become an Expert and offer your services to clients.
 - [Community Hub](https://go.elementor.com/wp-repo-description-tab-community-hub-community-hub/) - connect with other community members, get informed about new releases and updates in the developer's edition.
-- [Github Community]() - get information about all the latest releases, request features, or report a bug.
+- [Github Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about all the latest releases, request features, or report a bug.
 
 = OVER 40+ FREE WIDGETS AND COUNTING =
 Elementor includes a variety of 40+ free widgets for you to build professional and engaging websites:
@@ -64,23 +64,23 @@ Elementor includes a variety of 40+ free widgets for you to build professional a
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
 - **Text Editor**. A WYSIWYG text editor, just like the WordPress editor.
-- **Video**. Add YouTube, Vimeo, Dailymotion or self-hosted video to your page.
+- **Video**. Add YouTube, Vimeo, Dailymotion or self-hosted videos to your page.
 - **Button**. Controlling every aspect of the button design.
 - **Image Box**. A box that includes image, headline and text.
 - **Testimonials**. Customer testimonials that show social proof.
 - **Icon**. Place one or more of 600+ icons available.
-- **Icon Box**. Works the same as the image box, only with icons.
-- **Social Icons**. Icons to your social pages like Facebook / Twitter.
+- **Icon Box**. Include an icon, headline, and text with one widget.
+- **Social Icons**. Link to your social pages with the relevant icon like Facebook/Twitter.
 - **Image Gallery**. Displays your images in an aligned grid.
-- **Image Carousel**. A rotating carousel or slider of chosen images.
-- **Icon List**. A bullet list with any chosen icon and text.
+- **Image Carousel**. Create a rotating carousel or slider for chosen images.
+- **Icon List**. Use any icon to create a bullet list.
 - **Counter**. Show stats and numbers in an escalating manner.
 - **Progress Bar**. Include an escalating progress bar.
-- **Tabs**. Vertical or horizontal tabs that display different pieces of content.
-- **Accordion**. A collapsable display of content.
-- **Toggle**. Like Accordion, for FAQ pages.
-- **Star Rating**. Add some social proof with a styled star rating.
-- **Alert**. A colored alert box to draw the attention of the visitor.
+- **Tabs**. Display different pieces of content in vertical or horizontal tabs.
+- **Accordion**. Display content in multiple collapsable sections.
+- **Toggle**. Use the Toggle to hide or display content, like FAQ.
+- **Star Rating**. Allow your visitors to rate you on your website.
+- **Alert**. Include a colored alert box to draw visitor’s attention.
 - **HTML**. Insert code into the page.
 - **Shortcode**. Easily insert shortcodes from any plugin into the page.
 - **Menu Anchor**. Link any menu to this anchor.
@@ -88,15 +88,15 @@ Elementor includes a variety of 40+ free widgets for you to build professional a
 - **Sidebar**. Add any sidebar into the page.
 - **Google Maps**. Embed maps into the page.
 - **SoundCloud**. Add audio bits from SoundCloud.
-- **Divider**. A line that divides different elements in the page.
-- **Spacer**. A space that divides the various elements.
+- **Divider**. Separate content with a designed divider.
+- **Spacer**. Add space between elements.
 - **Columns**. Create inner columns within the column.
 - **Text Path**. Attach your text to a path..
 - **And counting...**
 
 = Developer API =
 
-As an open-source platform, developers can extend Elementor’s capabilities and explore various resources to get started. This includes a [developer's website](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/), [Developers Docs](https://go.elementor.com/wp-repo-description-tab-developers-developers-docs-2/), [Developers Blog](https://go.elementor.com/wp-repo-description-tab-developers-developers-blog/), GitHub, [addon newsletter](https://go.elementor.com/wp-repo-description-tab-newsletter-addon-newsletter/), the [Community Hub’s development room](https://go.elementor.com/wp-repo-description-tab-community-hub-community-hubs-development-room/), and more.
+As an open-source platform, developers can extend Elementor’s capabilities and explore various resources to get started. This includes a [developer's website](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/), [Developers Docs](https://go.elementor.com/wp-repo-description-tab-developers-developers-docs-2/), [Developers Blog](https://go.elementor.com/wp-repo-description-tab-developers-developers-blog/), [GitHub](https://go.elementor.com/wp-repo-description-tab-github-repo/), [Add-on Developers Newsletter](https://go.elementor.com/wp-repo-description-tab-newsletter-addon-newsletter/), the [Community Hub’s development room](https://go.elementor.com/wp-repo-description-tab-community-hub-community-hubs-development-room/), and more.
 
 = TRANSLATED TO 59+ LANGUAGES, INCLUDES RTL SUPPORT =
 Elementor supports multiple languages and typographies and is RTL compatible, so you get an Editor and Panel that supports [over 59 languages](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/) out of the box. Elementor is also compatible with WPML, Polylang, TranslatePress, Weglot, and more.
@@ -176,7 +176,7 @@ To install the free version of Elementor, follow the steps below:
 From your WordPress dashboard -> Go to Plugins -> Click on 'Add new'-> In the Search field, enter Elementor and choose Elementor website builder.
 Press install -> After installation, click Activate.
 
-**Does it work with all the themes?**
+**Does Elementor work with all the themes?**
 
 Elementor works all the themes that respect the coding standards of WordPress set by its Codex. It is recommended to use Elementor's [Hello Theme](https://go.elementor.com/wp-repo-description-tab-hello-theme-hello-theme/), a lightweight blank canvas, to enjoy full flexibility when using Elementor, and optimize your experience.
 
@@ -184,6 +184,48 @@ Elementor works all the themes that respect the coding standards of WordPress se
 
 Elementor and Gutenberg work seamlessly together. As a user, you can easily decide which editor to use at every point while editing your site.
 
+**Can I create an online store?**
+
+Yes, with the Elementor Pro WooCommerce Builder you can customize every page of your store to create an amazing customer experience that drives sales.
+
+**Does it work with other WordPress plugins? **
+
+It works with almost all the plugins. If you experience an incompatibility issue, please report it to us and to the plugin that conflicts with Elementor.
+
+**Do I need to know how to code?**
+
+No! Elementor provides you with all the widgets and features that you need to build a proffesional website without using code.
+
+**Do i need to know how to design?**
+
+No, you can choose between professionaly designed kits and templates that fit toevery industry and have all you need to create your own profesional website.
+
+**Will elementor slow down my website?**
+
+As Elementor prioritizes speed and performance, you enjoy better and faster performance with each new version of Elementor. When testing the same page layout on older versions you can see a significant performance improvement, from a score of 82 in Google PageSpeed Insight in version 3.1, to a score of 95 i in version 3.5.
+
+**Is my site secure with Elementor?**
+
+The security of your website is extremely important to us and we take proactive measures to assure that your websites are secure. Elementor is ISO 27001 certified, and has a dedicated team of security professionals that implements industry best-practices for maximum security and compliance, 24/7.
+
+There is also a managed security Bug Bounty program, utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection."
+
+**Can I buy templates separately?**
+
+Of course, you can use any template that supports Elementor.
+
+**Is Elementor compatible with Post and Custom Post Types?**
+
+Of course! You can set which post types will enable Elementor in the settings page.
+
+**What is the difference between Elementor's free Plugin and Elementor Pro**
+
+Elementor’s Free version allows you to explore our revolutionary drag & drop live editor, basic widgets and templates. Elementor Pro (Essential, Advanced, Expert, Studio, and Agency) empowers you with more professional tools that speed up your workflow, give you access to human-powered support, help you build more advanced content, and convert visitors. See full comparison here.
+
+**How can I become a Contributor**
+
+If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/elementor/elementor) and see where you can help.
+You can also add a new language via [translate.wordpress.org](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/). We’ve built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate-faq/).
 
 == Screenshots ==
 
