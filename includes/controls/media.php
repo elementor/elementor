@@ -68,7 +68,15 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
-		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
+		if ( strpos( $settings['url'], 'images/placeholder.png' ) !== false ) {
+			$settings = [
+				'id' => '',
+				'url' => Utils::get_placeholder_image_src(),
+			];
+			return $settings;
+		}
+
+		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import($settings);
 
 		if ( ! $settings ) {
 			$settings = [
