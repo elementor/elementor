@@ -48,8 +48,6 @@ module.exports = class WpAdminPage extends BasePage {
 
 		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
 
-		await this.page.evaluate( () => $e.run( 'document/save/default' ) );
-
 		return editor;
 	}
 
