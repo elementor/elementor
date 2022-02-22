@@ -140,7 +140,7 @@ PanelMenu.exitDialog = () => {
 		$e.route( 'panel/editor-preferences' );
 	});
 
-	introduction.getDialog().onConfirm = async () => {
+	introduction.getDialog().onConfirm = () => {
 		introduction.setViewed();
 
 		$e.run( 'document/elements/settings', {
@@ -153,9 +153,9 @@ PanelMenu.exitDialog = () => {
 			},
 		} );
 
-		await $e.run( 'document/save/draft' );
-
-		window.location.href = PanelMenu.getExitUrl();
+		elementor.settings.editorPreferences.save( () => {
+			window.location.href = PanelMenu.getExitUrl();
+		} )
 	};
 
 	introduction.getDialog().onCancel = () => {
