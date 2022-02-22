@@ -2,15 +2,19 @@ import CommandNavigator from './base/command-navigator';
 
 export class Expand extends CommandNavigator {
 	apply( args ) {
-		const { containers = [ args.container ], callback } = args;
+		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			const view = container.args.navigatorView;
+			if ( ! this.isFoldingAllowed( container ) ) {
+				return;
+			}
 
-			// TODO: Hook UI or Use the new uiState manager.
-			view.ui.item.toggleClass( 'elementor-active', true );
-
-			view.ui.elements.slideDown( 300, callback );
+			$e.store.dispatch(
+				$e.store.get( 'navigator/folding' ).actions.toggle( {
+					elementId: container.id,
+					state: true,
+				} )
+			);
 		} );
 	}
 }

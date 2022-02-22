@@ -35,6 +35,13 @@ export class Delete extends CommandHistory {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.remove( {
+					containerId: container.id,
+					parentId: container.parent.id,
+				} )
+			);
+
 			container = container.lookup();
 
 			if ( this.isHistoryActive() ) {

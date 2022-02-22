@@ -18,4 +18,5 @@ export { ResetStyle } from './reset-style';
 export { Select } from './select';
 export { SelectAll } from './select-all';
 export { Settings } from './settings';
+export { SetTitle } from './set-title';
 export { ToggleSelection } from './toggle-selection';

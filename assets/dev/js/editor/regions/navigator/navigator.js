@@ -1,4 +1,5 @@
-import NavigatorLayout from './layout';
+import ReactDOM from 'react-dom';
+import NavigatorComponent from './components/navigator';
 
 const BaseRegion = require( 'elementor-regions/base' );
 
@@ -8,6 +9,8 @@ export default class Navigator extends BaseRegion {
 
 		// `BaseRegion` created before the component exist, in this case `setTimeout` handle it.
 		setTimeout( () => this.component = $e.components.get( 'navigator' ) );
+
+		this.el = this.$el[ 0 ];
 
 		this.indicators = {
 			customPosition: {
@@ -84,7 +87,7 @@ export default class Navigator extends BaseRegion {
 	}
 
 	initLayout() {
-		this.show( new NavigatorLayout() );
+		ReactDOM.render( <NavigatorComponent />, this.el );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );

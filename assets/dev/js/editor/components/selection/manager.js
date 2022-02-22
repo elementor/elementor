@@ -21,31 +21,20 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Manager constructor.
 	 *
-	 * @returns {Manager}
+	 * @constructor
 	 */
 	constructor() {
 		super();
 
-		// Using a Proxy in order to use update methods only once on external invocations, but internally the `add` or
-		// `remove` methods may be executed many times, when update methods will be used only once.
-		return new Proxy( this, {
-			get: function( target, prop ) {
-				if ( [ 'add', 'remove' ].includes( prop ) ) {
-					return ( ...args ) => {
-						const result = target[ prop ]( ...args );
-
-						target.updateType();
-						target.updateSortable();
-						target.updatePanelPage();
-						target.updateNavigator();
-
-						return result;
-					};
-				}
-
-				return Reflect.get( ...arguments );
-			},
-		} );
+		// Subscribe to the selection state kept in redux.
+		$e.store.selector(
+			( state ) => state?.[ 'document/elements/selection' ],
+			( newState = [] ) => {
+				this.elements = Object.fromEntries( newState.map(
+					( elementId ) => [ elementId, elementor.getContainer( elementId ) ]
+				) );
+			}
+		);
 	}
 
 	/**
@@ -74,20 +63,31 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * active, in which case the new elements are just added to the current selection.
 	 *
 	 * @param {Container[]|Container} containers
-	 * @param {bool} append
+	 * @param {{}} options
 	 */
-	add( containers, append = false ) {
+	add( containers, { append = false, section } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		// If command/ctrl+click not clicked, clear selected elements.
 		if ( ! append ) {
-			this.remove( [], true );
+			this.remove( [], { all: true, updateEnvironment: false } );
 		}
 
 		for ( const container of containers ) {
-			this.elements[ container.id ] = container;
+			$e.store.dispatch(
+				$e.store.get( 'document/elements/selection' ).actions.toggle( {
+					containerId: container.id,
+					state: true,
+				} )
+			);
 
 			container.view.select();
+		}
+
+		this.updateEnvironment();
+
+		if ( section ) {
+			elementor.activateElementSection( section );
 		}
 	}
 
@@ -98,9 +98,9 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * active, in which case the the whole selection is cleared.
 	 *
 	 * @param {Container[]|Container} containers
-	 * @param {bool} all
+	 * @param {{}} options
 	 */
-	remove( containers, all = false ) {
+	remove( containers, { all = false, updateEnvironment = true } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		if ( all ) {
@@ -108,9 +108,18 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		}
 
 		for ( const container of containers ) {
-			delete this.elements[ container.id ];
+			$e.store.dispatch(
+				$e.store.get( 'document/elements/selection' ).actions.toggle( {
+					containerId: container.id,
+					state: false,
+				} )
+			);
 
 			container.view.deselect();
+		}
+
+		if ( updateEnvironment ) {
+			this.updateEnvironment();
 		}
 	}
 
@@ -146,6 +155,18 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	}
 
 	/**
+	 * Update environment.
+	 *
+	 * When a change to the selection state is applied, some environmental components should be noticed or modified
+	 * accordingly.
+	 */
+	updateEnvironment() {
+		this.updateType();
+		this.updateSortable();
+		this.updatePanelPage();
+	}
+
+	/**
 	 * Update sortable state.
 	 *
 	 * In case more than one element is selected, currently sorting supposed to be disabled, and vice-versa.
@@ -173,20 +194,6 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			$e.internal( 'panel/open-default', {
 				autoFocusSearch: false,
 			} );
-		}
-	}
-
-	/**
-	 * Update navigator selections.
-	 *
-	 * Any change in the document selected elements should be reflected in the navigator, this method is responsible for
-	 * updating the navigator.
-	 */
-	updateNavigator() {
-		const elements = elementor.navigator.region.getLayout()?.elements;
-
-		if ( elements ) {
-			elements.currentView.recursiveChildInvoke( 'updateSelection' );
 		}
 	}
 

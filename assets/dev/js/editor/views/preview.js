@@ -6,6 +6,20 @@ const Preview = BaseSectionsContainerView.extend( {
 	initialize: function() {
 		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
+		// Subscribe to the selection state kept in redux.
+		$e.store.selector(
+			( state ) => state?.[ 'document/elements/selection' ],
+			( newState = [], prevState = [] ) => {
+				const lastSelected = newState[ newState.length - 1 ];
+
+				if ( newState.length >= prevState.length && lastSelected ) {
+					$e.internal( 'document/elements/scroll-to-view', {
+						container: elementor.getContainer( lastSelected ),
+					} );
+				}
+			}
+		);
+
 		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
 	},
 

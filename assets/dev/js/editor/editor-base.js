@@ -24,6 +24,7 @@ import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
+import ElementModel from 'elementor-elements/models/element';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};

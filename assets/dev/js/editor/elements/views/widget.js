@@ -51,6 +51,16 @@ WidgetView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
 	},
 
+	/**
+	 * Widget usually doesn't contain elements, unless it's in nested state. Therefore we should inform its container
+	 * using this method that it has no children by default.
+	 *
+	 * @returns {boolean}
+	 */
+	hasChildrenByDefault: function() {
+		return false;
+	},
+
 	getEditButtons: function() {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};

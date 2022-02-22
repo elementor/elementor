@@ -68,6 +68,14 @@ export class Create extends CommandHistory {
 					},
 				} );
 			}
+
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.add( {
+					containerId: container.id,
+					model: createdContainer.model.toJSON(),
+					index: options.at,
+				} )
+			);
 		} );
 
 		if ( 1 === result.length ) {

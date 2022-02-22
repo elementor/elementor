@@ -233,14 +233,19 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.receiveSort( event, ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
-	onSortUpdate: function( event, ui ) {
+	onSortUpdate: function( event, ui, newIndex ) {
 		event.stopPropagation();
 
 		if ( this.getChildViewContainer()[ 0 ] !== ui.item.parent()[ 0 ] ) {
 			return;
 		}
 
-		this.updateSort( ui, this.getSortedElementNewIndex( ui.item ) );
+		this.updateSort(
+			ui,
+			undefined === newIndex ?
+				this.getSortedElementNewIndex( ui.item ) :
+				newIndex
+		);
 	},
 
 	onAddChild: function( view ) {

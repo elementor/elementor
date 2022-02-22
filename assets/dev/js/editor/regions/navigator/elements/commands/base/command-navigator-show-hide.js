@@ -17,12 +17,16 @@ export class CommandNavigatorShowHide extends CommandNavigator {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			const view = container.args.navigatorView,
-				model = view.model;
+			container.model.set( 'hidden', this.shouldHide() );
 
-			model.set( 'hidden', this.shouldHide() );
-
-			view.toggleHiddenClass();
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.change( {
+					containerId: container.id,
+					changes: {
+						hidden: container.model.get( 'hidden' ),
+					},
+				} )
+			);
 		} );
 	}
 }

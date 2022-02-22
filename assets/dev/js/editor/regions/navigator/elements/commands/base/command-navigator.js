@@ -9,23 +9,21 @@ export class CommandNavigator extends CommandBase {
 		// Not all navigator commands require container to work, eg: 'navigator/elements/toggle-folding-all'.
 		if ( this.shouldRequireContainer() ) {
 			this.requireContainer( args );
-
-			const { containers = [ args.container ] } = args;
-
-			containers.forEach( ( container ) => {
-				const navView = this.component.getElementView( container.id );
-
-				if ( ! navView ) {
-					throw Error( `$e.components.get( 'navigator/elements' ).getElementView( '${ container.id }' ); is required.` );
-				}
-
-				container.args.navigatorView = navView;
-			} );
 		}
 	}
 
 	shouldRequireContainer() {
 		return true;
+	}
+
+	/**
+	 * Folding currently allowed for elements which has children by default and which are not the root.
+	 *
+	 * @param container
+	 * @returns {boolean|*|boolean}
+	 */
+	isFoldingAllowed( container ) {
+		return container.hasChildrenByDefault && 'document' !== container.id;
 	}
 }
 

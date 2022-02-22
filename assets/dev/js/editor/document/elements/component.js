@@ -15,6 +15,129 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commandsInternal );
 	}
 
+	defaultStates() {
+		const defaultReducers = {
+			add: ( state, { payload } ) => {
+				// Prepare
+				const { containerId, models = [ payload.model ], index } = payload,
+					parent = state[ containerId ];
+
+				// Act
+				for ( const model of models.slice() ) {
+					// Store the newly created element, reset `elements` in order to make a flat list
+					state[ model.id ] = { ...model, elements: [] };
+
+					if ( model.elements?.length ) {
+						// Add children elements
+						defaultReducers.add( state, {
+							payload: {
+								containerId: model.id,
+								models: model.elements,
+							},
+						} );
+					}
+
+					// Create reference on parent element. When the added container is the document (root), it has no
+					// parent to create a reference on.
+					if ( parent ) {
+						parent.elements.splice( undefined !== index ? index : parent.elements.length, 0, model.id );
+					}
+				}
+			},
+			remove: ( state, { payload } ) => {
+				// Prepare
+				const { containerIds = [ payload.containerId ], parentId } = payload,
+					parent = state[ parentId ];
+
+				// Act
+				for ( const containerId of containerIds ) {
+					const container = state[ containerId ];
+
+					if ( container && container.elements.length ) {
+						// Remove children elements
+						defaultReducers.remove( state, {
+							payload: {
+								containerIds: container.elements,
+								parentId: containerId,
+							},
+						} );
+					}
+
+					// Remove current element
+					delete state[ containerId ];
+
+					// Remove reference from parent element
+					if ( parent ) {
+						parent.elements.splice( parent.elements.indexOf( containerId ), 1 );
+					}
+				}
+
+				return state;
+			},
+			settings: ( state, { payload } ) => {
+				// Prepare
+				const { containerIds = [ payload.containerId ], settings } = payload;
+
+				// Act
+				for ( const containerId of containerIds ) {
+					// Set settings of the current element
+					if ( state[ containerId ] ) {
+						state[ containerId ].settings = { ...state[ containerId ].settings, ...settings };
+					}
+				}
+			},
+			change: ( state, { payload } ) => {
+				// Prepare
+				const { containerIds = [ payload.containerId ], changes = {} } = payload;
+
+				// Act
+				for ( const containerId of containerIds ) {
+					// Set settings of the current element
+					state[ containerId ] = { ...state[ containerId ], ...changes };
+				}
+			},
+			reset: ( state, { payload } ) => {
+				// Act
+				return {};
+			},
+		};
+
+		return {
+			'': {
+				initialState: {},
+				reducers: defaultReducers,
+			},
+			selection: {
+				initialState: [],
+				reducers: {
+					toggle: ( state, { payload } ) => {
+						// Prepare
+						const { containerIds = [ payload.containerId ], state: selectionState, all = false } = payload;
+
+						// Act
+						for ( const containerId of ( all ? state : containerIds ) ) {
+							// When no `selectionState` provided, it means toggle, in which case the new state should be
+							// determined.
+							const newState = undefined === selectionState ?
+								state.indexOf( containerId ) < 1 :
+								selectionState;
+
+							if ( newState ) {
+								state.push( containerId );
+							} else {
+								state.splice( state.indexOf( containerId ), 1 );
+							}
+						}
+					},
+					reset: ( state, { payload } ) => {
+						// Act
+						return [];
+					},
+				},
+			},
+		};
+	}
+
 	defaultUtils() {
 		return {
 			isValidChild: ( childModel, parentModel ) => {

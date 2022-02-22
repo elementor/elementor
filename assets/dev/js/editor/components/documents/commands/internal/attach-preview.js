@@ -1,6 +1,13 @@
 import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
+import ElementsCollection from 'elementor-elements/collections/elements';
 
 export class AttachPreview extends CommandInternalBaseBase {
+	slicesToReset = [
+		'document/elements',
+		'document/elements/selection',
+		'navigator/folding',
+	];
+
 	apply() {
 		const document = elementor.documents.getCurrent();
 
@@ -18,6 +25,20 @@ export class AttachPreview extends CommandInternalBaseBase {
 				elementor.checkPageStatus();
 
 				elementor.trigger( 'document:loaded', document );
+
+				// Reset all redux stores on document switch.
+				Object.entries( $e.store.get() ).forEach(
+					( [ key, { actions } ] ) => this.slicesToReset.includes( key ) &&
+						$e.store.dispatch( actions.reset() )
+				);
+
+				$e.store.dispatch(
+					$e.store.get( 'document/elements' ).actions.add( {
+						models: new ElementsCollection( [
+							{ id: 'document', elements: elementor.elementsModel.get( 'elements' ).toJSON() },
+						] ).toJSON(),
+					} )
+				);
 
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
