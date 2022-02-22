@@ -1,1 +1,5 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Elementor Community Support
+    url: https://wordpress.org/support/plugin/elementor
+    about: If you have questions or need general support,  Please use our support.
