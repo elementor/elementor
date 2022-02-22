@@ -21,7 +21,7 @@ class Module extends App {
 
 	public function register_scripts() {
 		wp_register_script(
-			'web-cli',
+			'elementor-web-cli',
 			$this->get_js_assets_url( 'web-cli' ),
 			[
 				'elementor-common-modules',
@@ -30,7 +30,7 @@ class Module extends App {
 			true
 		);
 
-		$this->print_config( 'web-cli' );
+		$this->print_config( 'elementor-web-cli' );
 	}
 
 	protected function get_init_settings() {

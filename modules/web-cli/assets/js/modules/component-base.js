@@ -400,10 +400,10 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	toggleRouteClass( route, state ) {
-		elementorCommon.elements.$body.toggleClass( this.getBodyClass( route ), state );
+		document.body.classList.toggle( this.getBodyClass( route ), state );
 	}
 
 	toggleHistoryClass() {
-		elementorCommon.elements.$body.toggleClass( 'e-routes-has-history', !! $e.routes.getHistory( this.getRootContainer() ).length );
+		document.body.classList.toggle( 'e-routes-has-history', !! $e.routes.getHistory( this.getRootContainer() ).length );
 	}
 }

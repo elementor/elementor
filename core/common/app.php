@@ -134,7 +134,7 @@ class App extends BaseApp {
 				'backbone-marionette',
 				'backbone-radio',
 				'elementor-common-modules',
-				'web-cli',
+				'elementor-web-cli',
 				'elementor-dialog',
 				'wp-api-request',
 			],
