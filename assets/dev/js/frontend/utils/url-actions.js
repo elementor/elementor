@@ -70,15 +70,15 @@ export default class extends elementorModules.ViewModule {
 		this.runAction( jQuery( event.currentTarget ).attr( 'href' ), event );
 	}
 
-	findElementWithHash() {
-		return document.querySelector( `[e-action-hash="${ location.hash }"], a[href*="${ location.hash }"]` );
-	}
-
 	runHashAction() {
-		// Only if an element with this action hash exists on the page do we allow running the action.
-		const elementWithHash = this.findElementWithHash();
+		if ( ! location.hash ) {
+			return;
+		}
 
-		if ( location.hash && elementWithHash ) {
+		// Only if an element with this action hash exists on the page do we allow running the action.
+		const elementWithHash = document.querySelector( `[e-action-hash="${ location.hash }"], a[href*="${ location.hash }"]` );
+
+		if ( elementWithHash ) {
 			this.runAction( elementWithHash.getAttribute( 'e-action-hash' ) );
 		}
 	}
