@@ -81,7 +81,7 @@ PanelMenu.addExitItem = () => {
 
 	let itemArgs;
 
-	if( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
+	if ( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
 		itemArgs = {
 			callback: () => PanelMenu.exitDialog(),
 		};
@@ -97,8 +97,8 @@ PanelMenu.addExitItem = () => {
 		icon: 'eicon-exit',
 		title: preferredExitTitle,
 		...itemArgs,
-	} , 'navigate_from_page' );
-}
+	}, 'navigate_from_page' );
+};
 
 PanelMenu.exitDialog = () => {
 	const template = document.querySelector( '#tmpl-elementor-exit-dialog' );
@@ -138,7 +138,7 @@ PanelMenu.exitDialog = () => {
 		introduction.setViewed();
 		introduction.getDialog().hide();
 		$e.route( 'panel/editor-preferences' );
-	});
+	} );
 
 	introduction.getDialog().onConfirm = () => {
 		introduction.setViewed();
@@ -155,7 +155,7 @@ PanelMenu.exitDialog = () => {
 
 		elementor.settings.editorPreferences.save( () => {
 			window.location.href = PanelMenu.getExitUrl();
-		} )
+		} );
 	};
 
 	introduction.getDialog().onCancel = () => {
@@ -165,7 +165,7 @@ PanelMenu.exitDialog = () => {
 	};
 
 	introduction.show();
-}
+};
 
 PanelMenu.getExitUrl = () => {
 	const exitPreference = elementor.getPreferences( 'exit_to' );
@@ -177,7 +177,7 @@ PanelMenu.getExitUrl = () => {
 		default:
 			return elementor.config.document.urls.exit_to_dashboard;
 	}
-}
+};
 
 PanelMenu.getExitTitle = () => {
 	const exitPreference = elementor.getPreferences( 'exit_to' );
@@ -189,12 +189,12 @@ PanelMenu.getExitTitle = () => {
 		default:
 			let postTypeTitle = elementor.config.document.post_type_title;
 
-			if( 'Revision' === postTypeTitle ) {
+			if ( 'Revision' === postTypeTitle ) {
 				postTypeTitle = 'Page';
 			}
 			return __( 'Exit to WP %s', 'elementor' ).replace( '%s', postTypeTitle );
 	}
-}
+};
 
 PanelMenu.getGroups = () => {
 	if ( ! PanelMenu.groups ) {

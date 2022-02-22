@@ -24,6 +24,6 @@ test( 'Exit to sanity test', async ( { page } ) => {
 
 const setExitUserPreference = async ( option ) => {
     await this.editor.page.click( '.elementor-panel-menu-item-editor-preferences' );
-    await this.editor.page.selectOption('.elementor-control-exit_to >> select', option);
+    await this.editor.page.selectOption( '.elementor-control-exit_to >> select', option );
     await this.editor.page.click( '#elementor-panel-header-menu-button' );
-}
+};
