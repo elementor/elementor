@@ -18,7 +18,7 @@ class Mock_Internal_URL extends Data_Tag {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Internal URL', 'elementor-pro' );
+		return esc_html__( 'Internal URL', 'elementor' );
 	}
 
 	public function get_panel_template() {

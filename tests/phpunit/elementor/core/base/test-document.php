@@ -43,26 +43,6 @@ class Test_Document extends Elementor_Test_Base {
 								'elements' => [],
 								'widgetType' => 'divider',
 							],
-							[
-								'id' => '233273c4',
-								'elType' => 'widget',
-								'settings' => [
-									'__dynamic__' => [
-										'link' => '[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2235%22%7D"]'
-									],
-								],
-								'elements' => [],
-								'widgetType' => 'button',
-							],
-							[
-								'id' => '75341731',
-								'elType' => 'widget',
-								'settings' => [
-									'template_id' => '37',
-								],
-								'elements' => [],
-								'widgetType' => 'template',
-							],
 						],
 					],
 				],
@@ -113,6 +93,31 @@ class Test_Document extends Elementor_Test_Base {
 		$map_old_new_post_ids = [ '35' => '36', '37' => '38' ];
 
 		$config = self::$document_mock_default[ 'elements' ];
+
+		$dynamic_widgets = [
+			[
+				'id' => '233273c4',
+				'elType' => 'widget',
+				'settings' => [
+					'__dynamic__' => [
+						'link' => '[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2235%22%7D"]'
+					],
+				],
+				'elements' => [],
+				'widgetType' => 'button',
+			],
+			[
+				'id' => '75341731',
+				'elType' => 'widget',
+				'settings' => [
+					'template_id' => '37',
+				],
+				'elements' => [],
+				'widgetType' => 'template',
+			],
+		];
+
+		$config[0]['elements'][0]['elements'] = array_merge(  $config[0]['elements'][0]['elements'], $dynamic_widgets);
 		
 		$updated_config = $document::on_import_replace_dynamic_content( $config, $map_old_new_post_ids );
 
