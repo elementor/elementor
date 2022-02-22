@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev40 - 2022-02-22
+* Fix: Navigator keeps opening when dragging in a new widget [Dev edition] [ED-5776] (#17905)
+
 #### 3.6.0-dev39 - 2022-02-17
 * Fix: `remove_responsive_control()` doesn't remove controls for additional Custom breakpoints [ED-6294] (#17529)
 
@@ -410,6 +413,3 @@
 * Tweak: Kit Library - Missing post types in Site Parts overview screen [ED-4485] (#15988)
 * Fix: Placeholder values of column width shouldn't cascade to mobile [ED-4664] (#15966)
 * Fix: Activation bug for IDN domains [ED-886] (#15983)
-
-#### 3.5.0-dev7 - 2021-08-13
-* Fix: Responsive values cascade wrongly with different dimensions on different breakpoints [ED-4665] (#15955)
