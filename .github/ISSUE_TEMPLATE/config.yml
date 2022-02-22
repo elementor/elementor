@@ -1,5 +1,7 @@
 blank_issues_enabled: false
 contact_links:
+  - name: ❓ Support Question
+    about: Please create GitHub issues only for bugs and feature requests. GitHub issues ARE NOT FOR SUPPORT!
   - name: Elementor Support
     url: https://wordpress.org/support/plugin/elementor
     about: If you have questions or need general support, please use this.
@@ -12,5 +14,3 @@ contact_links:
   - name: Elementor Developers
     url: https://developers.elementor.com
     about: Developers docs are located here.
-  - name: Test
-    about: Test
