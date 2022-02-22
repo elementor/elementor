@@ -4,10 +4,12 @@ const BasePage = require( './base-page.js' );
 module.exports = class EditorPage extends BasePage {
 	isPanelLoaded = false;
 
-	constructor( page, testInfo ) {
+	constructor( page, testInfo, cleanPostId = null ) {
 		super( page, testInfo );
 
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		this.postId = cleanPostId;
 	}
 
 	async openNavigator() {
