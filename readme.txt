@@ -208,7 +208,7 @@ As Elementor prioritizes speed and performance, you enjoy better and faster perf
 
 The security of your website is extremely important to us and we take proactive measures to assure that your websites are secure. Elementor is ISO 27001 certified, and has a dedicated team of security professionals that implements industry best-practices for maximum security and compliance, 24/7.
 
-There is also a managed security Bug Bounty program, utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection."
+There is also a managed security Bug Bounty program, utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
 
 **Can I buy templates separately?**
 
