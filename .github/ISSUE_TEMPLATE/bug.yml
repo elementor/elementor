@@ -1,7 +1,7 @@
-name: "🐞 Bug Report - Dev Edition"
-description: "Report a bug if something isn't working as expected in the Elementor development versions"
+name: "🐞 Bug Report"
+description: "Report a bug if something isn't working as expected in Elementor"
 title: "🐞 Bug report: "
-labels: [bug,"developer-edition"]
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
@@ -14,7 +14,7 @@ body:
 
         - For help and support from the Elementor community, see: https://www.facebook.com/groups/Elementors/
 
-        - To read more about Elementor, check out our documentation: https://elementor.com/help/
+        - To read more about Elementor, check out our documentation: https://docs.elementor.com
 
         - Developers docs are located at https://developers.elementor.com/
 
@@ -38,7 +38,7 @@ body:
       options:
         - label: "I have searched for similar issues in both open and closed tickets and cannot find a duplicate."
           required: true
-        - label: "The issue still exists against the latest development version of Elementor."
+        - label: "The issue still exists against the latest stable version of Elementor."
           required: true
   - type: textarea
     id: description
@@ -62,8 +62,8 @@ body:
     attributes:
       label: "Isolating the problem"
       options:
-        - label: "This bug happens with only Elementor plugin active (and Elementor Pro) with development versions."
-        - label: "This bug happens with a vanilla WordPress theme active ([Hello theme](https://wordpress.org/themes/hello-elementor/))."
+        - label: "This bug happens with only Elementor plugin active (and Elementor Pro)."
+        - label: "This bug happens with a Blank WordPress theme active ([Hello theme](https://wordpress.org/themes/hello-elementor/))."
         - label: "I can reproduce this bug consistently using the steps above."
   - type: markdown
     attributes:
