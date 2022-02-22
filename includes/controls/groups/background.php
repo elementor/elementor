@@ -777,6 +777,12 @@ class Group_Control_Background extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
+		$fields['dimension'] = [
+			'label' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+		];
+
+
 		return $fields;
 	}
 
@@ -850,7 +856,99 @@ class Group_Control_Background extends Group_Control_Base {
 
 		$fields['background']['options'] = $choose_types;
 
+		self::prepare_dimension_fields( $fields, $args );
+
 		return parent::prepare_fields( $fields );
+	}
+
+	/**
+	 * Get all image sizes.
+	 *
+	 * Retrieve available image sizes with data like `width`, `height` and `crop`.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return array An array of available image sizes.
+	 */
+	public static function get_all_image_sizes() {
+		global $_wp_additional_image_sizes;
+
+		$default_image_sizes = [ 'thumbnail', 'medium', 'medium_large', 'large' ];
+
+		$image_sizes = [];
+
+		foreach ( $default_image_sizes as $size ) {
+			$image_sizes[ $size ] = [
+				'width' => (int) get_option( $size . '_size_w' ),
+				'height' => (int) get_option( $size . '_size_h' ),
+				'crop' => (bool) get_option( $size . '_crop' ),
+			];
+		}
+
+		if ( $_wp_additional_image_sizes ) {
+			$image_sizes = array_merge( $image_sizes, $_wp_additional_image_sizes );
+		}
+
+		/** This filter is documented in wp-admin/includes/media.php */
+		return apply_filters( 'image_size_names_choose', $image_sizes );
+	}
+
+	/**
+	 * Get image sizes.
+	 *
+	 * Retrieve available image sizes after filtering `include` and `exclude` arguments.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 *
+	 * @return array Filtered image sizes.
+	 */
+	private function get_image_sizes() {
+		$wp_image_sizes = self::get_all_image_sizes();
+
+		$args = $this->get_args();
+
+		if ( $args['include'] ) {
+			$wp_image_sizes = array_intersect_key( $wp_image_sizes, array_flip( $args['include'] ) );
+		} elseif ( $args['exclude'] ) {
+			$wp_image_sizes = array_diff_key( $wp_image_sizes, array_flip( $args['exclude'] ) );
+		}
+
+		$image_sizes = [];
+
+		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
+			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
+			if ( is_array( $size_attributes ) ) {
+				$control_title .= sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
+			}
+
+			$image_sizes[ $size_key ] = $control_title;
+		}
+
+		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );
+
+		if ( ! empty( $args['include']['custom'] ) || ! in_array( 'custom', $args['exclude'] ) ) {
+			$image_sizes['custom'] = _x( 'Custom', 'Image Size Control', 'elementor' );
+		}
+
+		return $image_sizes;
+	}
+
+	protected function prepare_dimension_fields( $fields, $args ) {
+		$image_sizes = $this->get_image_sizes();
+
+		if ( ! empty(  ['default'] ) && isset( $image_sizes[ $args['default'] ] ) ) {
+			$default_value = $args['default'];
+		} else {
+			// Get the first item for default value.
+			$default_value = array_keys( $image_sizes );
+			$default_value = array_shift( $default_value );
+		}
+		$fields['dimension']['options'] = $image_sizes;
+
+		$fields['dimension']['default'] = $default_value;
 	}
 
 	/**
