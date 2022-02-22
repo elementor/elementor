@@ -181,15 +181,16 @@ test.describe( 'URL Actions', () => {
 		 */
 		await page.goto( `/wp-admin/post.php?post=${ editor.postId }&action=elementor` );
 
-		// Go to page settings, save it as draft.
-		await page.click( '#elementor-panel-footer-settings' );
+		// Save as a draft
+		await page.evaluate( () => {
+			$e.run( 'document/elements/settings', {
+				container: elementor.documents.getCurrent().container,
+				settings: {
+					post_status: 'draft',
+				},
+			} );
 
-		await page.selectOption( '.elementor-control-post_status select', 'draft' );
-
-		await page.click( '#elementor-panel-saver-button-save-options' );
-
-		await page.click( '#elementor-panel-footer-sub-menu-item-save-draft' );
-
-		await page.waitForSelector( '#elementor-panel-saver-button-publish:has-text("PUBLISH")' );
+			$e.run( 'document/save/draft' );
+		} );
 	} );
 } );
