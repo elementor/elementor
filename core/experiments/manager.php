@@ -35,7 +35,7 @@ class Manager extends Base_Object {
 
 	private $release_statuses;
 
-	public $features;
+	private $features;
 
 	/**
 	 * Add Feature
