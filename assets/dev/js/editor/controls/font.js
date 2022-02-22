@@ -60,8 +60,7 @@ module.exports = ControlSelect2View.extend( {
 	},
 
 	enqueueFontsInView() {
-		const self = this,
-			containerOffset = this.$previewContainer.offset(),
+		const containerOffset = this.$previewContainer.offset(),
 			top = containerOffset.top,
 			bottom = top + this.$previewContainer.innerHeight(),
 			fontsInView = [];
