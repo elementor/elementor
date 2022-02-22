@@ -175,5 +175,21 @@ test.describe( 'URL Actions', () => {
 		await page.reload();
 		// Test that the lightbox was NOT OPENED on this page.
 		await expect( frontendSinglelightboxImage ).not.toBeVisible();
+
+		/**
+		 * Cleanup - change the page back to draft.
+		 */
+		await page.goto( `/wp-admin/post.php?post=${ editor.postId }&action=elementor` );
+
+		// Go to page settings, save it as draft.
+		await page.click( '#elementor-panel-footer-settings' );
+
+		await page.selectOption( '.elementor-control-post_status select', 'draft' );
+
+		await page.click( '#elementor-panel-saver-button-save-options' );
+
+		await page.click( '#elementor-panel-footer-sub-menu-item-save-draft' );
+
+		await page.waitForSelector( '#elementor-panel-saver-button-publish:has-text("PUBLISH")' );
 	} );
 } );
