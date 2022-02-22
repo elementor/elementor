@@ -3,6 +3,8 @@ namespace Elementor\Core\Admin;
 
 use Elementor\Api;
 use Elementor\Beta_Testers;
+use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Core\Admin\Notices\Update_Php_Notice;
 use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -14,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin extends App {
+
+	private $menus = [];
 
 	/**
 	 * Get module name.
@@ -73,10 +77,19 @@ class Admin extends App {
 	 */
 	public function enqueue_scripts() {
 		wp_register_script(
+			'elementor-admin-modules',
+			$this->get_js_assets_url( 'admin-modules' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
 			[
 				'elementor-common',
+				'elementor-admin-modules',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -681,6 +694,10 @@ class Admin extends App {
 		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			$this->register_menu();
+		}
+
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
@@ -708,6 +725,12 @@ class Admin extends App {
 
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
+		} );
+
+		add_filter( 'elementor/core/admin/notices', function( $notices ) {
+			$notices[] = new Update_Php_Notice();
+
+			return $notices;
 		} );
 	}
 
@@ -752,5 +775,9 @@ class Admin extends App {
 		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
 
 		return $settings;
+	}
+
+	private function register_menu() {
+		$this->menus['main'] = new MainMenu();
 	}
 }
