@@ -1070,7 +1070,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @since 3.6.0
 	 *
-	 * @param array $elements
+	 * @param array $config
 	 *
 	 * @param array $map_old_new_post_ids
 	 */
