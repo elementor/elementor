@@ -22,14 +22,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->experiments = $this->elementor()->experiments;
-		$this->originalFeatures = $this->experiments->features;
-	}
-
-	public function tearDown() {
-		parent::tearDown();
-
-		$this->experiments->features = $this->originalFeatures;
+		$this->experiments = new Experiments_Manager();
 	}
 
 	public function test_add_feature() {
