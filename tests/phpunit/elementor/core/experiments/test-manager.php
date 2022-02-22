@@ -17,8 +17,6 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	private $experiments;
 
-	private $originalFeatures = [];
-
 	public function setUp() {
 		parent::setUp();
 
