@@ -30,7 +30,7 @@ test.describe( 'URL Actions', () => {
 		await page.click( 'text=Media Library' );
 		await page.waitForSelector( 'text=Insert Media' );
 		// takes time to load the media library assets.
-		await page.waitForTimeout( 2000 );
+		await page.waitForTimeout( 1000 );
 
 		// Check if previous image is already uploaded.
 		const previousImage = await page.$( '[aria-label*="mountain-image"]' );
@@ -54,8 +54,6 @@ test.describe( 'URL Actions', () => {
 
 		// Click on the image to open the lightbox.
 		await mountainImg.click();
-
-		await page.waitForTimeout( 1000 );
 
 		const singlelightboxImage = editor.getPreviewFrame().locator( '.elementor-lightbox-image' );
 
@@ -90,7 +88,6 @@ test.describe( 'URL Actions', () => {
 		await page.click( '.elementor-control-gallery-add' );
 		await page.click( 'text=Media Library' );
 		await page.waitForTimeout( 1000 );
-		await page.waitForSelector( 'li[tabindex="0"]' );
 
 		// Check if field image is already uploaded.
 		const fieldImage = await page.$( '[aria-label="field-image"]' );
@@ -113,12 +110,10 @@ test.describe( 'URL Actions', () => {
 		await page.click( wpMediaAddButtonSelector );
 
 		// Could take time to create the gallery.
-		await page.waitForTimeout( 500 );
+		await page.waitForSelector( 'li[tabindex="0"]' );
 
 		// Insert the gallery.
 		await page.click( 'text=Insert gallery', { delay: 500, clickCount: 2 } );
-
-		await page.waitForTimeout( 500 );
 
 		const galleryItems = editor.getPreviewFrame().locator( '.elementor-image-gallery figure.gallery-item' );
 
