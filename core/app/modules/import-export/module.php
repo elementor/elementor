@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport;
 
+use Elementor\Core\App\Modules\ImportExport\Directories\WP_Content;
+use Elementor\Core\App\Modules\ImportExport\Directories\WP_Post_Type;
+use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
@@ -84,6 +87,26 @@ class Module extends BaseModule {
 			];
 		}
 
+		$custom_post_types = $this->get_registered_cpt_names();
+		if ( ! empty( $custom_post_types ) ) {
+			foreach ( $custom_post_types as $custom_post_type ) {
+
+				$custom_post_types_object = get_post_type_object( $custom_post_type );
+				//cpt data appears in two arrays:
+				//1. content object: in order to show the export summary when completed in getLabel function
+				$summary_titles['content'][ $custom_post_type ] = [
+					'single' => $custom_post_types_object->labels->singular_name,
+					'plural' => $custom_post_types_object->label,
+				];
+
+				//2. customPostTypes object: in order to actually export the data
+				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
+					'single' => $custom_post_types_object->labels->singular_name,
+					'plural' => $custom_post_types_object->label,
+				];
+			}
+		}
+
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		foreach ( $active_kit->get_tabs() as $key => $tab ) {
@@ -91,6 +114,38 @@ class Module extends BaseModule {
 		}
 
 		return $summary_titles;
+	}
+
+	/**
+	 * Retrieve custom post type names.
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 *
+	 * @return array custom post type names.
+	 */
+	public function get_registered_cpt_names() {
+
+		$post_types = get_post_types( [
+			'public' => true,
+			'can_export' => true,
+		] );
+
+		unset(
+			$post_types['attachment'],
+			$post_types['page'],
+			$post_types['post'],
+			$post_types[ Landing_Pages_Module::CPT ],
+			$post_types[ Source_Local::CPT ]
+		);
+
+		$custom_post_types = [];
+
+		foreach ( $post_types as $post_type ) {
+			array_push( $custom_post_types, $post_type );
+		}
+
+		return $custom_post_types;
 	}
 
 	private function import_stage_1() {
@@ -196,7 +251,7 @@ class Module extends BaseModule {
 		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
 		try {
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins' ] ) );
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins', 'selectedCustomPostTypes' ] ) );
 
 			$export_result = $this->export->run();
 
@@ -219,7 +274,7 @@ class Module extends BaseModule {
 		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
-			/* translators: 1: New line break, 2: Learn More link. */
+		/* translators: 1: New line break, 2: Learn More link. */
 			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
 			'<br>',
 			$intro_text_link
@@ -259,18 +314,18 @@ class Module extends BaseModule {
 			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $intro_text ); ?></p>
 
 			<div class="tab-import-export-kit__wrapper">
-			<?php foreach ( $content_data as $data ) { ?>
-				<div class="tab-import-export-kit__container">
-					<div class="tab-import-export-kit__box">
-						<h2><?php Utils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-						<a href="<?php Utils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
-							<?php Utils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-						</a>
+				<?php foreach ( $content_data as $data ) { ?>
+					<div class="tab-import-export-kit__container">
+						<div class="tab-import-export-kit__box">
+							<h2><?php Utils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+							<a href="<?php Utils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+								<?php Utils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+							</a>
+						</div>
+						<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
+						<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
 					</div>
-					<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
-					<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-				</div>
-			<?php } ?>
+				<?php } ?>
 			</div>
 
 			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $info_text ); ?></p>
