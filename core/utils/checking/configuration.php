@@ -1,25 +1,25 @@
 <?php
 
-namespace Elementor\Core\Utils\Testing;
+namespace Elementor\Core\Utils\Checking;
 
 class Configuration {
 
 	/**
-	 * A subject to perform tests on, unless specified otherwise in test-case `expect` method.
+	 * A subject to perform checks on, unless specified otherwise in check-case `expect` method.
 	 *
 	 * @var mixed
 	 */
 	public $subject;
 
 	/**
-	 * A min number of expectations each test-case should describe.
+	 * A min number of expectations each check-case should describe.
 	 *
 	 * @var int
 	 */
 	public $min_expectations = 1;
 
 	/**
-	 * Whether to stop the testing workflow after first failure of test, which means - one of the subjects didn't meet
+	 * Whether to stop the checking workflow after first failure of check, which means - one of the subjects didn't meet
 	 * the expectations.
 	 *
 	 * @var bool
@@ -27,8 +27,8 @@ class Configuration {
 	public $stop_on_failure = false;
 
 	/**
-	 * Whether to stop the testing workflow after first error of test, which means - an exception was thrown while
-	 * inspecting one of the test-case.
+	 * Whether to stop the checking workflow after first error of check, which means - an exception was thrown while
+	 * inspecting one of the check-case.
 	 *
 	 * @var bool
 	 */
@@ -70,9 +70,9 @@ class Configuration {
 	 * @throws \Exception
 	 */
 	protected function parse_config( $config ) {
-		foreach( $config as $key => $value ) {
+		foreach ( $config as $key => $value ) {
 			if ( ! property_exists( $this, $key ) ) {
-				throw new \Exception( "Testing configuration is not supporting `$key` property." );
+				throw new \Exception( "Checking configuration is not supporting `$key` property." );
 			}
 
 			$this->$key = $value;

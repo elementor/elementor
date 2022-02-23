@@ -1,7 +1,7 @@
 import React from 'react';
 import ConnectComponent from 'elementor-common-modules/connect/assets/js/e-component';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Test } from './test';
+import { Check } from './health-check';
 
 window.top.$e.components.register( new ConnectComponent() );
 
@@ -20,7 +20,7 @@ const App = () => {
 	return (
 		<React.Fragment>
 			<QueryClientProvider client={ queryClient }>
-				<Test />
+				<Check />
 			</QueryClientProvider>
 		</React.Fragment>
 	);

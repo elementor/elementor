@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 
-const useConnectionTest = () => {
+const useHealthCheck = () => {
 	return useQuery(
 		[],
 		async () => {
 			return ( await window.top.$e.data.get(
-				'connect/test',
+				'connect/health-check',
 				{},
 				{ refresh: true },
 			) ).data;
@@ -13,5 +13,5 @@ const useConnectionTest = () => {
 	);
 };
 
-export { useConnectionTest };
-export default useConnectionTest;
+export { useHealthCheck };
+export default useHealthCheck;

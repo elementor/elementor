@@ -1,14 +1,14 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Core\Utils\Mock;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Utils\Checking\Mock;
 
-use Elementor\Core\Utils\Testing\Test;
+use Elementor\Core\Utils\Checking\Check;
 
-class Test_Mock extends Test {
+class Check_Mock extends Check {
 
-	public function test_some_case_with_success_single_expectation() {
+	public function check_some_case_with_success_single_expectation() {
 		// Arrange
-		$subject = 'test-subject';
+		$subject = 'check-subject';
 
 		// Assert
 		$this->expect( $subject )
@@ -17,9 +17,9 @@ class Test_Mock extends Test {
 			} );
 	}
 
-	public function test_some_case_with_success_multiple_expectations() {
+	public function check_some_case_with_success_multiple_expectations() {
 		// Arrange
-		$subject = 'test-subject';
+		$subject = 'check-subject';
 
 		// Assert
 		for( $i = 0; $i < 3; $i++ ) {
@@ -30,11 +30,11 @@ class Test_Mock extends Test {
 		}
 	}
 
-	public function test_some_case_without_any_expectations() {}
+	public function check_some_case_without_any_expectations() {}
 
-	public function test_some_case_with_failure_single_expectation() {
+	public function check_some_case_with_failure_single_expectation() {
 		// Arrange
-		$subject = 'test-subject';
+		$subject = 'check-subject';
 
 		// Assert
 		$this->expect( $subject )
@@ -43,9 +43,9 @@ class Test_Mock extends Test {
 		     } );
 	}
 
-	public function test_some_case_with_failure_multiple_expectation() {
+	public function check_some_case_with_failure_multiple_expectation() {
 		// Arrange
-		$subject = 'test-subject';
+		$subject = 'check-subject';
 
 		// Assert
 		for( $i = 0; $i < 3; $i++ ) {
@@ -56,7 +56,7 @@ class Test_Mock extends Test {
 		}
 	}
 
-	public function test_some_case_with_error() {
-		throw new \Exception( 'test-exception' );
+	public function check_some_case_with_error() {
+		throw new \Exception( 'check-exception' );
 	}
 }

@@ -1,2 +1,2 @@
 export { Button } from './button';
-export { Test } from './test';
+export { Check } from './check';

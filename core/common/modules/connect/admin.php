@@ -15,6 +15,10 @@ class Admin extends App {
 
 	public static $url = '';
 
+	public function get_name() {
+		return 'elementor-connect-admin';
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public
@@ -126,10 +130,6 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
-	}
-
-	public function get_name() {
-		return 'elementor-connect-admin';
 	}
 
 	/**

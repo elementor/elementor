@@ -2,13 +2,11 @@
 
 namespace Elementor\Core\Common\Modules\Connect;
 
+use Elementor\Data\V2\Base\Controller as Controller_Base;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-use Elementor\Core\Common\Modules\Connect\Endpoints\Test;
-use Elementor\Data\V2\Base\Controller as Controller_Base;
-use Elementor\Plugin;
 
 class Controller extends Controller_Base {
 
@@ -17,11 +15,14 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		$this->index_endpoint->register_sub_endpoint( new Test( $this ) );
+		$this->register_endpoint( new Endpoints\Health_Check( $this ) );
+	}
+
+	protected function register_index_endpoint() {
+		// Bypass, currently not required.
 	}
 
 	public function get_permission_callback( $request ) {
-		//return current_user_can( 'administrator' );
-		return true;
+		return current_user_can( 'edit_posts' );
 	}
 }

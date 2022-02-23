@@ -1,8 +1,6 @@
 <?php
 
-namespace Elementor\Core\Utils\Testing;
-
-use Elementor\Core\Utils\Testing\Interfaces\Diagnosable;
+namespace Elementor\Core\Utils\Checking;
 
 class Diagnostics {
 
@@ -76,7 +74,7 @@ class Diagnostics {
 			$this->all(),
 			function( $diagnostics ) {
 				return $diagnostics->get_diagnosable()
-                    ->error();
+					->error();
 			}
 		);
 	}
@@ -90,7 +88,7 @@ class Diagnostics {
 		$error = $this->diagnosable->error();
 
 		return $error instanceof \Exception ?
-			$error->getMessage():
+			$error->getMessage() :
 			null;
 	}
 
@@ -122,7 +120,7 @@ class Diagnostics {
 	 * @return void
 	 */
 	protected function build() {
-		foreach( $this->diagnosable->get_diagnosables() as $diagnosable ) {
+		foreach ( $this->diagnosable->get_diagnosables() as $diagnosable ) {
 			$this->diagnostics[] = new Diagnostics( $diagnosable );
 		}
 	}

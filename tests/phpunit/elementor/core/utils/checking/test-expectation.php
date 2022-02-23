@@ -1,8 +1,9 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Utils;
 
-use Elementor\Core\Utils\Testing\Exceptions\Expectation_Exception;
-use Elementor\Core\Utils\Testing\Expectation;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Utils\Checking;
+
+use Elementor\Core\Utils\Checking\Exceptions\Expectation_Exception;
+use Elementor\Core\Utils\Checking\Expectation;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Expectation extends Elementor_Test_Base {
 	public function test_initialization_subject_assigned_to_class() {
 		// Arrange
-		$subject = 'test-subject';
+		$subject = 'check-subject';
 
 		// Act
 		$expectation = new Expectation( $subject );
@@ -43,10 +44,10 @@ class Test_Expectation extends Elementor_Test_Base {
 
 	public function test_get_name_return_description_when_set() {
 		// Arrange
-		$description = 'test-description';
+		$description = 'check-description';
 
 		// Act
-		$expectation = ( new Expectation( 'test-subject' ) )
+		$expectation = ( new Expectation( 'check-subject' ) )
 			->describe( $description );
 
 		// Assert
@@ -55,7 +56,7 @@ class Test_Expectation extends Elementor_Test_Base {
 
 	public function test_get_name_return_suitable_text_when_description_is_not_set() {
 		// Arrange
-		$expectation = new Expectation( 'test-subject' );
+		$expectation = new Expectation( 'check-subject' );
 
 		// Assert
 		$this->assertEquals( $expectation->get_name(), '(no description)' );
@@ -63,10 +64,10 @@ class Test_Expectation extends Elementor_Test_Base {
 
 	public function test_describe_text_assigned_to_class() {
 		// Arrange
-		$description = 'test-description';
+		$description = 'check-description';
 
 		// Act
-		$expectation = ( new Expectation( 'test-subject' ) )
+		$expectation = ( new Expectation( 'check-subject' ) )
 			->describe( $description );
 
 		// Assert
@@ -75,7 +76,7 @@ class Test_Expectation extends Elementor_Test_Base {
 
 	public function test_to_meet_closure_invoked_with_subject() {
 		// Arrange
-		$subject = 'test-subject';
+		$subject = 'check-subject';
 
 		// Assert
 		$closure = function( $given_subject ) use( $subject ) {
@@ -95,7 +96,7 @@ class Test_Expectation extends Elementor_Test_Base {
 		};
 
 		// Act
-		$expectation = ( new Expectation( 'test-subject' ) )
+		$expectation = ( new Expectation( 'check-subject' ) )
 			->to_meet( $closure );
 
 		// Assert
@@ -107,7 +108,7 @@ class Test_Expectation extends Elementor_Test_Base {
 		$closure = function( $subject ) {
 			return false;
 		};
-		$expectation = ( new Expectation( 'test-subject' ) );
+		$expectation = ( new Expectation( 'check-subject' ) );
 
 		// Act
 		try{
@@ -123,7 +124,7 @@ class Test_Expectation extends Elementor_Test_Base {
 		$closure = function( $subject ) {
 			return false;
 		};
-		$expectation = ( new Expectation( 'test-subject' ) );
+		$expectation = ( new Expectation( 'check-subject' ) );
 
 		// Assert
 		$this->expectException( Expectation_Exception::class );
@@ -138,7 +139,7 @@ class Test_Expectation extends Elementor_Test_Base {
 		$closure = function( $subject ) {
 			return false;
 		};
-		$expectation = ( new Expectation( 'test-subject' ) );
+		$expectation = ( new Expectation( 'check-subject' ) );
 
 		// Act
 		try{

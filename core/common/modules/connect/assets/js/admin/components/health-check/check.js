@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from './';
 import { List as DiagnosticsList } from './diagnostics';
-import { useConnectionTest } from '../../hooks';
+import { useHealthCheck } from '../../hooks';
 
-const Test = () => {
-	const { data, refetch } = useConnectionTest();
+const Check = () => {
+	const { data, refetch } = useHealthCheck();
 
 	const Result = () => (
 		<div>
@@ -23,5 +23,5 @@ const Test = () => {
 	);
 };
 
-export { Test };
-export default Test;
+export { Check };
+export default Check;

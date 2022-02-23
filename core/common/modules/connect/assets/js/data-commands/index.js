@@ -1,1 +1,1 @@
-export { Test } from './test';
+export { HealthCheck } from './health-check';

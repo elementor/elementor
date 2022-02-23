@@ -2,22 +2,21 @@
 
 namespace Elementor\Core\Common\Modules\Connect\Endpoints;
 
-use Elementor\Core\Common\Modules\Connect\Tests\Connect_Test;
-use Elementor\Core\Utils\Testing\Cluster;
-use Elementor\Core\Utils\Testing\Diagnostics;
+use Elementor\Core\Common\Modules\Connect\Checks\Health_Check as Health_Check_Class;
+use Elementor\Core\Utils\Checking\Cluster;
 use Elementor\Data\V2\Base\Endpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test extends Endpoint {
+class Health_Check extends Endpoint {
 	public function get_name() {
-		return 'test';
+		return 'health-check';
 	}
 
 	public function get_format() {
-		return 'connect/test';
+		return 'connect/heath-check';
 	}
 
 	protected function register() {
@@ -27,9 +26,9 @@ class Test extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		return ( new Cluster( [ Connect_Test::class ], [] ) )
+		return ( new Cluster( [ Health_Check_Class::class ], [] ) )
 			->run()
 			->diagnose()
-			->to_array()[ 'diagnosables' ];
+			->to_array()['diagnosables'];
 	}
 }

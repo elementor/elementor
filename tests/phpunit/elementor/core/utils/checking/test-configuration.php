@@ -1,7 +1,8 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Utils;
 
-use Elementor\Core\Utils\Testing\Configuration;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Utils\Checking;
+
+use Elementor\Core\Utils\Checking\Configuration;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +13,7 @@ class Test_Configuration extends Elementor_Test_Base {
 	public function test_initialization_config_parsed() {
 		// Arrange
 		$config = [
-			'subject' => 'test_subject',
+			'subject' => 'check_subject',
 			'stop_on_failure' => true,
 			'stop_on_error' => true,
 		];
@@ -27,7 +28,7 @@ class Test_Configuration extends Elementor_Test_Base {
 	public function test_create_returns_new_configuration_when_config_array_provided() {
 		// Arrange
 		$config = [
-			'subject' => 'test_subject',
+			'subject' => 'check_subject',
 			'stop_on_failure' => true,
 			'stop_on_error' => true,
 		];

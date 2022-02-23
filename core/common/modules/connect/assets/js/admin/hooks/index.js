@@ -1,1 +1,1 @@
-export { useConnectionTest } from './use-connection-test';
+export { useHealthCheck } from './use-health-check';
