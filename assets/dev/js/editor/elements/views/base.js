@@ -669,17 +669,14 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		const self = this;
-
-		$dataBinding.filter( function() {
-			const $current = jQuery( this );
+			$dataBinding.filter( ( current )  => {
 
 			// To support nested data-binding bypass nested data-binding that are not part of the current.
-			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
+			if ( jQuery( current ).closest( '.elementor-element' ).data( 'id' ) === id ) {
 				if ( this.dataset.bindingType ) {
 					self.dataBindings.push( {
-						el: this,
-						dataset: this.dataset,
+						el: current,
+						dataset: current.dataset,
 					} );
 				}
 			}
