@@ -136,7 +136,7 @@ class Module extends BaseModule {
 			$post_types['page'],
 			$post_types['post'],
 			$post_types[ Landing_Pages_Module::CPT ],
-			$post_types[ Source_Local::CPT ],
+			$post_types[ Source_Local::CPT ]
 		);
 
 		$custom_post_types = [];
