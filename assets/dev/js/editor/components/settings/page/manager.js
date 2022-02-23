@@ -27,31 +27,33 @@ module.exports = BaseSettings.extend( {
 			return this.editedView;
 		}
 
-		const id = this.getContainerId(),
-			editModel = new Backbone.Model( {
-				id,
-				elType: id,
+		const documentElementType = elementor.elementsManager.getElementType( 'document' ),
+			ModelClass = documentElementType.getModel(),
+			type = this.getContainerType(),
+			editModel = new ModelClass( {
+				id: type,
+				elType: type,
 				settings: this.model,
 				elements: elementor.elements,
-			} );
-
-		const container = new elementorModules.editor.Container( {
-			type: id,
-			id: editModel.id,
-			model: editModel,
-			settings: editModel.get( 'settings' ),
-			label: elementor.config.document.panel.title,
-			controls: this.model.controls,
-			children: elementor.elements,
-			// Emulate a view that can render the style.
-			renderer: {
-				view: {
-					lookup: () => container,
-					renderOnChange: () => this.updateStylesheet(),
-					renderUI: () => this.updateStylesheet(),
+			} ),
+			container = new elementorModules.editor.Container( {
+				type: type,
+				id: editModel.id,
+				model: editModel,
+				settings: editModel.get( 'settings' ),
+				label: elementor.config.document.panel.title,
+				controls: this.model.controls,
+				children: elementor.elements,
+				parent: false,
+				// Emulate a view that can render the style.
+				renderer: {
+					view: {
+						lookup: () => container,
+						renderOnChange: () => this.updateStylesheet(),
+						renderUI: () => this.updateStylesheet(),
+					},
 				},
-			},
-		} );
+			} );
 
 		this.editedView = {
 			getContainer: () => container,
@@ -62,7 +64,7 @@ module.exports = BaseSettings.extend( {
 		return this.editedView;
 	},
 
-	getContainerId() {
+	getContainerType() {
 		return 'document';
 	},
 } );
