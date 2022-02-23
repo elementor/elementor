@@ -106,6 +106,12 @@ class Import_Images {
 	 * @return false|array Imported image data, or false.
 	 */
 	public function import( $attachment, $parent_post_id = null ) {
+
+		// Check for placeholder image and return if placeholder image is found
+		if( strpos( $attachment['url'], 'elementor/assets/images/placeholder.png' ) !== false ) {
+			return $attachment;
+		}
+
 		if ( ! empty( $attachment['id'] ) ) {
 			$saved_image = $this->get_saved_image( $attachment );
 
