@@ -53,7 +53,7 @@ export default function InlineLink( props ) {
 
 InlineLink.propTypes = {
 	className: PropTypes.string,
-	children: PropTypes.string,
+	children: PropTypes.any,
 	url: PropTypes.string,
 	target: PropTypes.string,
 	rel: PropTypes.string,

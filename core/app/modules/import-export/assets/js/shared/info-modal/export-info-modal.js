@@ -6,25 +6,24 @@ export default function ExportInfoModal( props ) {
 		<InfoModal { ...props } title={ __( 'Export a Template Kit', 'elementor' ) }>
 			<InfoModal.Section>
 				<InfoModal.Heading>{ __( 'What’s a Template Kit?', 'elementor' ) }</InfoModal.Heading>
-				<InfoModal.Text>{ __( 'A kit is a zip file containing anything from an entire site to individual components.', 'elementor' ) }</InfoModal.Text>
+				<InfoModal.Text>
+					<>
+						{ __( 'A Template Kit is a .zip file that contains all the parts of a complete site. It’s an easy way to get a site up and running quickly.', 'elementor' ) }
+						<br /><br />
+						<InlineLink url="https://go.elementor.com/app-what-are-kits">{ __( ' Learn more about Template Kits', 'elementor' ) }</InlineLink>
+					</>
+				</InfoModal.Text>
 			</InfoModal.Section>
 
 			<InfoModal.Section>
 				<InfoModal.Heading>{ __( 'How does exporting work?', 'elementor' ) }</InfoModal.Heading>
 				<InfoModal.Text>
 					<>
-						{ __( 'Select what to include from your site. We’ll use that to create a zip file.', 'elementor' ) }
-						<br />
-						{ __( 'That’s it!', 'elementor' ) } <InlineLink url="http://go.elementor.com/app-export-kit">{ __( 'Learn More', 'elementor' ) }</InlineLink>
+						{ __( 'To turn your site into a Template Kit, select the templates, content, settings and plugins you want to include. Once it’s ready, you’ll get a .zip file that you can import to other sites.', 'elementor' ) }
+						<br /><br />
+						<InlineLink url="http://go.elementor.com/app-export-kit">{ __( 'Learn More', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
-			</InfoModal.Section>
-
-			<InfoModal.Section>
-				<InfoModal.Tip
-					title={ __( 'Tip!', 'elementor' ) }
-					description={ __( 'Once your download is complete, import your kit to another site and get it up and running quickly.', 'elementor' ) }
-				/>
 			</InfoModal.Section>
 		</InfoModal>
 	);

@@ -104,7 +104,7 @@ export default class UiStateBase {
 	 *
 	 * @return {void}
 	 */
-	onChange( oldValue, newValue ) {
+	onChange( oldValue, newValue ) { // eslint-disable-line no-unused-vars
 		// Override this method if needed.
 	}
 

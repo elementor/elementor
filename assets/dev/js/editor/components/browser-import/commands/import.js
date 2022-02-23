@@ -4,7 +4,7 @@ export class Import extends CommandBase {
 	/**
 	 * @inheritDoc
 	 */
-	validateArgs( args ) {
+	validateArgs() {
 		this.requireArgumentInstance( 'target', elementorModules.editor.Container );
 	}
 
