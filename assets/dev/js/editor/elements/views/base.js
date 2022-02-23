@@ -5,6 +5,10 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
+/**
+ * @name BaseElementView
+ * @extends {BaseContainer}
+ */
 BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
@@ -85,28 +89,13 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChildView( model ) {
-		let ChildView;
-		const elType = model.get( 'elType' );
+		const elementType = elementor.elementsManager.getElementType( model.get( 'elType' ), model.get( 'widgetType' ) );
 
-		switch ( elType ) {
-			case 'section':
-				ChildView = require( 'elementor-elements/views/section' );
-				break;
-
-			case 'column':
-				ChildView = require( 'elementor-elements/views/column' );
-				break;
-
-			case 'container':
-				ChildView = require( 'elementor-elements/views/container' );
-				break;
-
-			default:
-				ChildView = elementor.modules.elements.views.Widget;
-				break;
+		if ( ! elementType ) {
+			throw new Error( 'Element type not found: ' + model.get( 'elType' ) );
 		}
 
-		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
+		return elementor.hooks.applyFilters( 'element/view', elementType.getView(), model, this );
 	},
 
 	getTemplateType() {
@@ -127,11 +116,12 @@ BaseElementView = BaseContainer.extend( {
 				model: this.model,
 				settings: settingsModel,
 				view: this,
-				parent: this._parent ? this._parent.getContainer() : {},
+				parent: this._parent ? this._parent.getContainer() : false,
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
 		}
+
 		return this.container;
 	},
 

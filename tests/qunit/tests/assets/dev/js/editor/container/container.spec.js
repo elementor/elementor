@@ -13,6 +13,7 @@ jQuery( () => {
 					settings: new Backbone.Model(),
 					model: new Backbone.Model(),
 					label: 'Fake Label',
+					parent: false,
 				},
 				container = new elementorModules.editor.Container( fakeArgs );
 
