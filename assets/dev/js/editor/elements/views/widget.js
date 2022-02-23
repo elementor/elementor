@@ -135,7 +135,11 @@ const WidgetView = BaseWidget.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				if ( ! self.$el.children( '.elementor-widget-container' ).outerHeight() ) {
+				// Since 'outerHeight' will not handle hidden elements, and mark them as empty (e.g. nested tabs).
+				const $widgetContainer = self.$el.children( '.elementor-widget-container' ),
+					shouldHandleEmptyWidget = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
+
+				if ( shouldHandleEmptyWidget ) {
 					self.handleEmptyWidget();
 				}
 			}, 200 );
@@ -143,9 +147,12 @@ const WidgetView = BaseWidget.extend( {
 		} );
 	},
 
-	onClickEdit: function( event ) {
+	onClickEdit: function( e ) {
+		// `stopPropagation()` is used here to prevent ancestry `request:edit` trigger to aim the current clicked element.
+		e.stopPropagation();
+
 		if ( this.container.isEditable() ) {
-			this.onEditButtonClick( event );
+			this.onEditButtonClick( e );
 		}
 	},
 } );
