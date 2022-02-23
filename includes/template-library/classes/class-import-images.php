@@ -108,15 +108,14 @@ class Import_Images {
 	 * @return false|array Imported image data, or false.
 	 */
 	public function import( $attachment, $parent_post_id = null ) {
-		if ( isset( $attachment['tmp_name'] ) ) {
-			// Used when called to import a directly-uploaded file.
-			$filename = $attachment['name'];
 
-			$file_content = Utils::file_get_contents( $attachment['tmp_name'] );
-		} else {
-			// Used when attachment information is passed to this method.
-			if ( ! empty( $attachment['id'] ) ) {
-				$saved_image = $this->get_saved_image( $attachment );
+		// Check for placeholder image and return if placeholder image is found
+		if( strpos( $attachment['url'], 'elementor/assets/images/placeholder.png' ) !== false ) {
+			return $attachment;
+		}
+
+		if ( ! empty( $attachment['id'] ) ) {
+			$saved_image = $this->get_saved_image( $attachment );
 
 				if ( $saved_image ) {
 					return $saved_image;

@@ -65,7 +65,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @return array Control settings.
 	 */
 	public function on_import( $settings ) {
-		if ( empty( $settings['url'] ) || strpos( $settings['url'], 'images/placeholder.png' ) !== false ) {
+		if ( empty( $settings['url'] ) ) {
 			return $settings;
 		}
 
