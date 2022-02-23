@@ -23,7 +23,7 @@ export default function ImportContentDisplay( {
 	} );
 
 	useEffect( () => {
-		sharedContext.dispatch( { type: 'SET_CPT', payload: cptObjectToOptionsArray( manifest?.[ 'custom-post-type-title' ], label ) } );
+		sharedContext.dispatch( { type: 'SET_CPT', payload: cptObjectToOptionsArray( manifest?.[ 'custom-post-type-title' ], 'label' ) } );
 	}, [] );
 
 	if ( ! kitData.length && hasPlugins ) {
