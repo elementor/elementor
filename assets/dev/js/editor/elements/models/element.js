@@ -1,7 +1,12 @@
+import BaseElementModel from './base-element-model';
+
 var ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
 	ElementModel;
 
-ElementModel = Backbone.Model.extend( {
+/**
+ * @name ElementModel
+ */
+ElementModel = BaseElementModel.extend( {
 	defaults: {
 		id: '',
 		elType: '',
@@ -66,6 +71,13 @@ ElementModel = Backbone.Model.extend( {
 
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
+
+		// Allow passing custom `_title` from model.
+		const customTitle = this.get( '_title' );
+
+		if ( customTitle ) {
+			settings._title = customTitle;
+		}
 
 		settings = new SettingsModel( settings, {
 			controls: elementor.getElementControls( this ),
