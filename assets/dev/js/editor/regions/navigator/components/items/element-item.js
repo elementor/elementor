@@ -8,7 +8,7 @@ import { useItemContext } from 'elementor-regions/navigator/context/item-context
 import Icon from 'elementor-app/ui/atoms/icon';
 import PropTypes from 'prop-types';
 
-export function ElementItem( { itemId: elementId, level } ) {
+function ElementItem( { itemId: elementId, level } ) {
 	const ElementBody = () => {
 		const { item: element, container } = useItemContext(),
 			[ elementSelection, setElementSelection ] = useElementSelection( elementId ),
@@ -33,7 +33,9 @@ export function ElementItem( { itemId: elementId, level } ) {
 		 * @void
 		 */
 		const handleToggleVisibility = useCallback(
-			() => {
+			( e ) => {
+				e.stopPropagation();
+
 				$e.run( 'navigator/elements/toggle-visibility', {
 					container,
 				} );
@@ -92,8 +94,20 @@ export function ElementItem( { itemId: elementId, level } ) {
 		);
 
 		useEffect( () => {
-			jQuery( listRef.current )[ elementFolding ? 'slideDown' : 'slideUp' ]();
-		}, [ elementFolding ] );
+			// Whether the folding state is `true` or it's the root element, display its children.
+			jQuery( listRef.current )[ elementFolding || element.root ? 'slideDown' : 'slideUp' ]();
+		}, [ elementFolding, element.root ] );
+
+		useEffect( () => {
+			// Scroll to the element when selected.
+			if ( elementSelection ) {
+				elementor.helpers.scrollToView(
+					jQuery( itemRef.current ),
+					400,
+					elementor.navigator.region.$el.find( '[role="tree"]' )
+				);
+			}
+		}, [ elementSelection ] );
 
 		return (
 			<div
@@ -135,7 +149,11 @@ export function ElementItem( { itemId: elementId, level } ) {
 			<ElementBody />
 		</ElementProvider>
 	);
- }
+}
+
+module.exports = {
+	ElementItem: React.memo( ElementItem ),
+};
 
 ElementItem.propTypes = {
 	itemId: PropTypes.string,

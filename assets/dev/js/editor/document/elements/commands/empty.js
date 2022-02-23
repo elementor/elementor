@@ -30,6 +30,9 @@ export class Empty extends CommandHistory {
 
 	apply( args ) {
 		if ( args.force && elementor.elements ) {
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.reset()
+			);
 			elementor.elements.reset();
 			elementor.getPreviewContainer().panel.closeEditor();
 			return;
