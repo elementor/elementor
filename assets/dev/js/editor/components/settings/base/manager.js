@@ -36,25 +36,28 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getContainerId() {
+	getContainerType() {
 		return this.getSettings( 'name' ) + '_settings';
 	},
 
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
-		const id = this.getContainerId(),
-			editModel = new Backbone.Model( {
-				id,
-				elType: id,
+		const documentElementType = elementor.elementsManager.getElementType( 'document' ),
+			ModelClass = documentElementType.getModel(),
+			type = this.getContainerType(),
+			editModel = new ModelClass( {
+				id: type,
+				elType: type,
 				settings: this.model,
 		} );
 
 		const container = new elementorModules.editor.Container( {
-			type: id,
-			id: editModel.id,
+			type: type,
+			id: type,
 			model: editModel,
 			settings: editModel.get( 'settings' ),
 			view: false,
+			parent: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
 			document: this.getDocument(),
