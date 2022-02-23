@@ -1,5 +1,3 @@
-import Container from '../../../container/container';
-
 /**
  * @abstract
  */
@@ -63,7 +61,7 @@ export default class FileParserBase {
 	 * @abstract
 	 * @returns {boolean}
 	 */
-	static async validate( reader ) {
+	static async validate() {
 		return false;
 	}
 }
