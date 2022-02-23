@@ -408,4 +408,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 } );
 
+/**
+ * @name BaseSettingsModel
+ */
 module.exports = BaseSettingsModel;
