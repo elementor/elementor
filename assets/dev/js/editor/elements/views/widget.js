@@ -2,9 +2,10 @@ import WidgetDraggable from './behaviors/widget-draggable';
 import WidgetResizable from './behaviors/widget-resizeable';
 import BaseWidget from './base-widget';
 
-const BaseElementView = require( 'elementor-elements/views/base' );
+var BaseElementView = require( 'elementor-elements/views/base' ),
+	WidgetView;
 
-const WidgetView = BaseWidget.extend( {
+WidgetView = BaseElementView.extend( {
 	_templateType: null,
 
 	toggleEditTools: true,
