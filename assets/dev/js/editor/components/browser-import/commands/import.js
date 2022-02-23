@@ -2,7 +2,7 @@ export class Import extends $e.modules.CommandBase {
 	/**
 	 * @inheritDoc
 	 */
-	validateArgs( args ) {
+	validateArgs() {
 		this.requireArgumentInstance( 'target', elementorModules.editor.Container );
 	}
 
