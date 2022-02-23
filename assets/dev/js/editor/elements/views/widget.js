@@ -2,6 +2,8 @@ import WidgetDraggable from './behaviors/widget-draggable';
 import WidgetResizable from './behaviors/widget-resizeable';
 import BaseWidget from './base-widget';
 
+const BaseElementView = require( 'elementor-elements/views/base' );
+
 const WidgetView = BaseWidget.extend( {
 	_templateType: null,
 

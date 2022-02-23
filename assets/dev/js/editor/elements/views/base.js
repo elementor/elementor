@@ -665,11 +665,10 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-			$dataBinding.filter( ( current )  => {
-
+		$dataBinding.filter( ( current ) => {
 			// To support nested data-binding bypass nested data-binding that are not part of the current.
 			if ( jQuery( current ).closest( '.elementor-element' ).data( 'id' ) === id ) {
-				if ( this.dataset.bindingType ) {
+				if ( current.dataset.bindingType ) {
 					self.dataBindings.push( {
 						el: current,
 						dataset: current.dataset,
