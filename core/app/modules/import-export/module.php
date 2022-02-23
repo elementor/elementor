@@ -251,7 +251,7 @@ class Module extends BaseModule {
 		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
 		try {
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins' ] ) );
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins', 'selectedCustomPostTypes' ] ) );
 
 			$export_result = $this->export->run();
 

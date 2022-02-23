@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 export default function useKitData( kitData ) {
 	const getLabel = ( type, key, amount ) => {
 		// The summary-titles data will not exist in the kitData as part of the export process, and therefore should be taken from the elementorAppConfig.
-		const summaryTitlesData = kitData?.configData?.summaryTitles || elementorAppConfig[ 'import-export' ].summaryTitles;
-		const label = summaryTitlesData[ type ][ key ];
+		const summaryTitlesData = kitData?.configData?.summaryTitles || elementorAppConfig[ 'import-export' ].summaryTitles,
+			label = summaryTitlesData[ type ][ key ];
 
 		if ( label?.single ) {
 			if ( ! amount ) {

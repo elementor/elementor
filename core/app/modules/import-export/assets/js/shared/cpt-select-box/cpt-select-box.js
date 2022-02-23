@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { SharedContext } from '../../context/shared-context/shared-context-provider';
-import Select2 from '../../../../../../assets/js/ui/molecules/select2';
+import Select2 from 'elementor-app/ui/molecules/select2';
 import Text from 'elementor-app/ui/atoms/text';
 import TextField from 'elementor-app/ui/atoms/text-field';
 
@@ -9,17 +9,21 @@ export default function CptSelectBox() {
 	{ customPostTypes } = sharedContext.data || [],
 	[ selected, setSelected ] = useState( [] );
 
-	const selectedCpt = ( e ) => {
-		setSelected( Array.from( e.target.selectedOptions ).map( ( { value } ) => value ) );
-	};
-
 	useEffect( () => {
-		setSelected( customPostTypes.map( ( item ) => item.value ) );
+		setSelected( arrayValueIterator( customPostTypes ) );
 	}, [ customPostTypes ] );
 
 	useEffect( () => {
 		sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: selected } );
 	}, [ selected ] );
+
+	const arrayValueIterator = ( array ) => {
+		return array.map( ( { value } ) => value );
+	};
+
+	const selectedCpt = ( e ) => {
+		setSelected( arrayValueIterator( Array.from( e ) ) );
+	};
 
 	return (
 		<>
@@ -31,7 +35,7 @@ export default function CptSelectBox() {
 					multiple
 					settings={ { width: '100%' } }
 					options={customPostTypes}
-					onChange={( e ) => selectedCpt( e )}
+					onChange={( e ) => selectedCpt( e.target.selectedOptions )}
 					value={ selected }
 					placeholder={ __( 'Click to select custom post types', 'elementor' )}
 				/> :

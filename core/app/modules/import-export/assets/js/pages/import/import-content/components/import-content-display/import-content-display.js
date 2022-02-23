@@ -4,7 +4,7 @@ import { SharedContext } from '../../../../../context/shared-context/shared-cont
 import kitContentData from '../../../../../shared/kit-content-data/kit-content-data';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import { setCptSelectBoxExistingOptions } from '../../../../../shared/cpt-select-box/set-cpt-select-box-existing-options';
+import { cptObjectToOptionsArray } from '../../../../../shared/cpt-select-box/cpt-object-to-options-array';
 
 export default function ImportContentDisplay( {
 	manifest,
@@ -23,7 +23,7 @@ export default function ImportContentDisplay( {
 	} );
 
 	useEffect( () => {
-		sharedContext.dispatch( { type: 'SET_CPT', payload: setCptSelectBoxExistingOptions( manifest?.[ 'custom-post-type-title' ], 'label' ) } );
+		sharedContext.dispatch( { type: 'SET_CPT', payload: cptObjectToOptionsArray( manifest?.[ 'custom-post-type-title' ], label ) } );
 	}, [] );
 
 	if ( ! kitData.length && hasPlugins ) {
