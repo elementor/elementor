@@ -100,17 +100,8 @@ class Admin extends App {
 			?>
 		</div><!-- /.wrap -->
 		<?php
-	}
 
-	/**
-	 * Check if the current admin page is the component page.
-	 *
-	 * @return bool
-	 */
-	private function is_current() {
-		// Nonce verification not required here.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return ( ! empty( $_GET['page'] ) && self::PAGE_ID === $_GET['page'] );
+		$this->enqueue_scripts();
 	}
 
 	/**
@@ -141,11 +132,5 @@ class Admin extends App {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 206 );
 		add_action( 'admin_head', [ $this, 'hide_menu_item' ] );
-
-		if ( $this->is_current() ) {
-			add_action( 'admin_enqueue_scripts', function () {
-				$this->enqueue_scripts();
-			} );
-		}
 	}
 }
