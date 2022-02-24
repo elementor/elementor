@@ -56,6 +56,80 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		$fields['align_self'] = [
+			'label' => esc_html_x( 'Align Self', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'flex-start' => [
+					'title' => esc_html_x( 'Flex Start', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-start-v',
+				],
+				'center' => [
+					'title' => esc_html_x( 'Center', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-center-v',
+				],
+				'flex-end' => [
+					'title' => esc_html_x( 'Flex End', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-end-v',
+				],
+				'stretch' => [
+					'title' => esc_html_x( 'Stretch', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-stretch-v',
+				],
+			],
+			'default' => '',
+			'selectors' => [
+				'{{SELECTOR}}' => '--align-self: {{VALUE}};',
+			],
+			'responsive' => true,
+			'description' => esc_html_x( 'This control will affect contained elements only.', 'Flex Item Control', 'elementor' ),
+		];
+
+		$fields['order'] = [
+			'label' => esc_html_x( 'Order', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'default' => '',
+			'options' => [
+				'start' => [
+					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-order-start',
+				],
+				'end' => [
+					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-order-end',
+				],
+				'custom' => [
+					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-ellipsis-v',
+				],
+			],
+			'selectors_dictionary' => [
+				// Hacks to set the order to start / end.
+				// For example, if the user has 10 widgets, but wants to set the 5th one to be first,
+				// this hack should do the trick while taking in account elements with `order: 0` or less.
+				'start' => '-99999 /* order start hack */',
+				'end' => '99999 /* order end hack */',
+				'custom' => '',
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--order: {{VALUE}};',
+			],
+			'responsive' => true,
+			'description' => esc_html_x( 'This control will affect contained elements only.', 'Flex Item Control', 'elementor' ),
+		];
+
+		$fields['order_custom'] = [
+			'label' => esc_html_x( 'Custom Order', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'selectors' => [
+				'{{SELECTOR}}' => '--order: {{VALUE}};',
+			],
+			'responsive' => true,
+			'condition' => [
+				'order' => 'custom',
+			],
+		];
+
 		$fields['size'] = [
 			'label' => esc_html_x( 'Size', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
@@ -115,78 +189,6 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'responsive' => true,
 			'condition' => [
 				'size' => 'custom',
-			],
-		];
-
-		$fields['align_self'] = [
-			'label' => esc_html_x( 'Align Self', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'options' => [
-				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
-				],
-				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
-				],
-				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
-				],
-				'stretch' => [
-					'title' => esc_html_x( 'Stretch', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
-				],
-			],
-			'default' => '',
-			'selectors' => [
-				'{{SELECTOR}}' => '--align-self: {{VALUE}};',
-			],
-			'responsive' => true,
-		];
-
-		$fields['order'] = [
-			'label' => esc_html_x( 'Order', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'default' => '',
-			'options' => [
-				'start' => [
-					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-order-start',
-				],
-				'end' => [
-					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-order-end',
-				],
-				'custom' => [
-					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-ellipsis-v',
-				],
-			],
-			'selectors_dictionary' => [
-				// Hacks to set the order to start / end.
-				// For example, if the user has 10 widgets, but wants to set the 5th one to be first,
-				// this hack should do the trick while taking in account elements with `order: 0` or less.
-				'start' => '-99999 /* order start hack */',
-				'end' => '99999 /* order end hack */',
-				'custom' => '',
-			],
-			'selectors' => [
-				'{{SELECTOR}}' => '--order: {{VALUE}};',
-			],
-			'responsive' => true,
-		];
-
-		$fields['order_custom'] = [
-			'label' => esc_html_x( 'Custom Order', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::NUMBER,
-			'selectors' => [
-				'{{SELECTOR}}' => '--order: {{VALUE}};',
-			],
-			'responsive' => true,
-			'condition' => [
-				'order' => 'custom',
 			],
 		];
 

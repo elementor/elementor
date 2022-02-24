@@ -1,21 +1,20 @@
 const { test, expect } = require( '@playwright/test' );
 const { getElementSelector } = require( '../assets/elements-utils' );
-const { EditorPage } = require( '../pages/editor-page' );
-const { WpAdminPage } = require( '../pages/wp-admin-page' );
+const WpAdminPage = require( '../pages/wp-admin-page' );
 
-test( 'Sort items in a Container using DnD', async ( { page } ) => {
+test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page );
-	await wpAdmin.login();
+	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.setExperiments( {
 		container: true,
 	} );
-	await wpAdmin.openNewPage();
 
-	const editor = new EditorPage( page ),
+	const editor = await wpAdmin.useElementorCleanPost(),
 		container = await editor.addElement( { elType: 'container' }, 'document' );
 
-	await page.selectOption( '[data-setting="flex_direction"]', 'row' );
+	// Set row direction.
+	await page.click( '.elementor-control-section_layout_items' );
+	await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 	// Add widgets.
 	const button = await editor.addWidget( 'button', container ),
@@ -41,4 +40,8 @@ test( 'Sort items in a Container using DnD', async ( { page } ) => {
 	// Assert.
 	// Test that the image is between the heading & button.
 	expect( elBeforeButton ).toBe( elAfterHeading );
+
+	await wpAdmin.setExperiments( {
+		container: false,
+	} );
 } );

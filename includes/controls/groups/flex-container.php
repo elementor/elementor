@@ -21,12 +21,8 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields['direction'] = [
 			'label' => esc_html_x( 'Direction', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
+			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'' => [
-					'title' => esc_html_x( 'Default', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-arrow-' . $end,
-				],
 				'row' => [
 					'title' => esc_html_x( 'Row', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-' . $end,

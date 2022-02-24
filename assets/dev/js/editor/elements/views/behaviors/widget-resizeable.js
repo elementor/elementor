@@ -69,22 +69,6 @@ export default class extends Marionette.Behavior {
 		return 'container' === this.view.getContainer().parent?.model?.get( 'elType' );
 	}
 
-	/**
-	 * Get the parent container flex direction.
-	 *
-	 * @returns {null|string}
-	 */
-	getParentFlexDirection() {
-		if ( ! this.isContainerItem() ) {
-			return null;
-		}
-
-		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
-			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode;
-
-		return this.view.getContainer().parent?.model?.getSetting( `flex_direction${ deviceSuffix }` );
-	}
-
 	onRender() {
 		_.defer( () => this.toggle() );
 	}
@@ -96,6 +80,10 @@ export default class extends Marionette.Behavior {
 	onResizeStart( event ) {
 		event.stopPropagation();
 
+		if ( this.view.onResizeStart ) {
+			this.view.onResizeStart( event );
+		}
+
 		// Don't open edit mode when the item is a Container item ( for UX ).
 		if ( ! this.isContainerItem() ) {
 			this.view.model.trigger( 'request:edit' );
@@ -105,16 +93,27 @@ export default class extends Marionette.Behavior {
 	onResizeStop( event, ui ) {
 		event.stopPropagation();
 
+		if ( this.view.onResizeStop ) {
+			this.view.onResizeStop( event, ui );
+		}
+
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
 			editModel = this.view.getEditModel(),
-			widthKey = ( 'container' === this.view.model.get( 'elType' ) ) ? 'width' : '_element_custom_width',
+			isContainer = ( 'container' === this.view.model.get( 'elType' ) ),
+			widthKey = isContainer ? 'width' : '_element_custom_width',
 			unit = editModel.getSetting( widthKey + deviceSuffix ).unit,
 			width = elementor.helpers.elementSizeToUnit( this.$el, ui.size.width, unit ),
 			settingToChange = {};
 
 		// TODO: For BC controls.
-		if ( ! elementorCommon.config.experimentalFeatures.container ) {
+		if ( elementorCommon.config.experimentalFeatures.container ) {
+			settingToChange._flex_size = 'none';
+
+			if ( isContainer ) {
+				settingToChange.content_width = 'full';
+			}
+		} else {
 			settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
 		}
 
@@ -128,16 +127,25 @@ export default class extends Marionette.Behavior {
 			},
 		} );
 
-		this.$el.css( {
-			width: '',
-			height: '',
-			left: '',
-			flexBasis: '',
+		// Defer to wait for the widget to re-render and prevent UI glitches.
+		setTimeout( () => {
+			this.$el.css( {
+				width: '',
+				height: '',
+				left: '',
+				'flex-shrink': '',
+				'flex-grow': '',
+				'flex-basis': '',
+			} );
 		} );
 	}
 
 	onResize( event, ui ) {
 		event.stopPropagation();
+
+		if ( this.view.onResize ) {
+			this.view.onResize( event, ui );
+		}
 
 		if ( ! this.isContainerItem() ) {
 			return;
@@ -149,7 +157,6 @@ export default class extends Marionette.Behavior {
 			right: '',
 			'flex-shrink': 0,
 			'flex-grow': 0,
-			'flex-basis': ui.size.width + 'px',
 		} );
 	}
 }

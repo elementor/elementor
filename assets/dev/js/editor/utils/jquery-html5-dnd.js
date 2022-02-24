@@ -377,19 +377,6 @@
 			if ( settings.onDropping ) {
 				settings.onDropping( currentSide, event );
 			}
-
-			// Override the onDrop callback with a user-provided one if present.
-			if ( settings.onDropping ) {
-				settings.onDropping( currentSide, event );
-				return;
-			}
-
-			settings.getDropContainer().view.createElementFromModel(
-				elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
-				{
-					at: settings.getDropIndex( currentSide, event ),
-				}
-			);
 		};
 
 		var attachEvents = function() {
