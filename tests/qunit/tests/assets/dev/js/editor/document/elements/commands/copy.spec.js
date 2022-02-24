@@ -18,7 +18,7 @@ export const Copy = () => {
 				eColumns = [];
 
 			for ( let i = 0; i < columnsCount; i++ ) {
-				eColumns.push( ElementsHelper.createAutoButton() );
+				eColumns.push( ElementsHelper.createWrappedButton() );
 			}
 
 			ElementsHelper.multiCopy( eColumns );

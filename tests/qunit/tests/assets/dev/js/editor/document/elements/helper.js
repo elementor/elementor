@@ -37,7 +37,7 @@ export default class ElementsHelper {
 	/**
 	 * @return {Container}
 	 */
-	static createAutoButton( eContainer = null, settings = {} ) {
+	static createWrappedButton( eContainer = null, settings = {} ) {
 		if ( ! eContainer ) {
 			eContainer = this.createSection( 1, true );
 		}
@@ -45,7 +45,7 @@ export default class ElementsHelper {
 		return this.createWidgetButton( eContainer, settings );
 	}
 
-	static multiCreateAutoButton( eContainers = null, settings = {} ) {
+	static multiCreateWrappedButton( eContainers = null, settings = {} ) {
 		if ( ! eContainers ) {
 			eContainers = [];
 			eContainers.push( this.createSection( 1, true ) );

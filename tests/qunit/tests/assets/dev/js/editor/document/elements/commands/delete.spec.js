@@ -27,7 +27,7 @@ export const Delete = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidget = ElementsHelper.createAutoButton();
+				const eWidget = ElementsHelper.createWrappedButton();
 
 				ElementsHelper.delete( eWidget );
 

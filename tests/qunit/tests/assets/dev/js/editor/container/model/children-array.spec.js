@@ -83,9 +83,9 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 	QUnit.test( 'someRecursive(): Ensure nested', ( assert ) => {
 		// Arrange.
 		ElementsHelper.empty();
-		ElementsHelper.createAutoButton();
+		ElementsHelper.createWrappedButton();
 
-		const eButtonInSection2 = ElementsHelper.createAutoButton();
+		const eButtonInSection2 = ElementsHelper.createWrappedButton();
 
 		let iterationCounter = 0;
 

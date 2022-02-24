@@ -23,7 +23,7 @@ export const Duplicate = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidget = ElementsHelper.createAutoButton(),
+				const eWidget = ElementsHelper.createWrappedButton(),
 					eWidgetDuped = ElementsHelper.duplicate( eWidget ),
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
@@ -58,7 +58,7 @@ export const Duplicate = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgets = ElementsHelper.multiCreateAutoButton(),
+				const eWidgets = ElementsHelper.multiCreateWrappedButton(),
 					eWidgetsDuped = ElementsHelper.multiDuplicate( eWidgets ),
 					historyItem = HistoryHelper.getFirstItem().attributes;
 

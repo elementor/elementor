@@ -5,7 +5,7 @@ export const ResetSettings = () => {
 	QUnit.module( 'ResetSettings', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonStyled = ElementsHelper.createAutoButton( null, {
+				const eButtonStyled = ElementsHelper.createWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} );
@@ -23,7 +23,7 @@ export const ResetSettings = () => {
 			} );
 
 			QUnit.test( 'Specific properties', ( assert ) => {
-				const eButtonStyled = ElementsHelper.createAutoButton( null, {
+				const eButtonStyled = ElementsHelper.createWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} );
@@ -36,7 +36,7 @@ export const ResetSettings = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetStyled = ElementsHelper.createAutoButton( null, {
+				const eWidgetStyled = ElementsHelper.createWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} ),
@@ -70,8 +70,8 @@ export const ResetSettings = () => {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					},
-					eButtonStyled1 = ElementsHelper.createAutoButton( null, settings ),
-					eButtonStyled2 = ElementsHelper.createAutoButton( null, settings );
+					eButtonStyled1 = ElementsHelper.createWrappedButton( null, settings ),
+					eButtonStyled2 = ElementsHelper.createWrappedButton( null, settings );
 
 				ElementsHelper.multiResetSettings( [ eButtonStyled1, eButtonStyled2 ] );
 
@@ -83,7 +83,7 @@ export const ResetSettings = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetsStyled = ElementsHelper.multiCreateAutoButton( null, {
+				const eWidgetsStyled = ElementsHelper.multiCreateWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} ),

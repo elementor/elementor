@@ -5,7 +5,7 @@ export const Settings = () => {
 	QUnit.module( 'Settings', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton(),
+				const eButton = ElementsHelper.createWrappedButton(),
 					text = 'i test it';
 
 				// Change button text.
@@ -24,7 +24,7 @@ export const Settings = () => {
 
 			QUnit.module( 'History', () => {
 				QUnit.test( 'Simple', ( assert ) => {
-					const eWidget = ElementsHelper.createAutoButton(),
+					const eWidget = ElementsHelper.createWrappedButton(),
 						defaultText = eWidget.settings.attributes.text,
 						text = 'i test it';
 
@@ -115,7 +115,7 @@ export const Settings = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgets = ElementsHelper.multiCreateAutoButton(),
+				const eWidgets = ElementsHelper.multiCreateWrappedButton(),
 					text = 'i test it',
 					defaultText = eWidgets[ 0 ].settings.attributes.text;
 

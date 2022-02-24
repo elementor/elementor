@@ -50,7 +50,7 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widget: Custom Position', ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton();
+				const eButton = ElementsHelper.createWrappedButton();
 
 				ElementsHelper.settings( eButton, {
 					_position: 'absolute',
@@ -108,7 +108,7 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widget', ( assert ) => {
-					const eWidget = ElementsHelper.createAutoButton(),
+					const eWidget = ElementsHelper.createWrappedButton(),
 						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
@@ -222,7 +222,7 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widgets', ( assert ) => {
-					const eWidgets = ElementsHelper.multiCreateAutoButton(),
+					const eWidgets = ElementsHelper.multiCreateWrappedButton(),
 						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.

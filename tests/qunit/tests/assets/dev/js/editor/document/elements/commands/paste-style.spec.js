@@ -6,8 +6,8 @@ export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonSimple = ElementsHelper.createAutoButton(),
-					eButtonStyled = ElementsHelper.createAutoButton( null, {
+				const eButtonSimple = ElementsHelper.createWrappedButton(),
+					eButtonStyled = ElementsHelper.createWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} ),
@@ -29,7 +29,7 @@ export const PasteStyle = () => {
 
 			QUnit.test( 'On column', ( assert ) => {
 				const eColumnSimple = ElementsHelper.createAuto( 'column' ),
-					eColumnStyled = ElementsHelper.createAutoButton( null, {
+					eColumnStyled = ElementsHelper.createWrappedButton( null, {
 						background_background: 'gradient',
 						background_color: '#D51D1D',
 					} ),
@@ -44,8 +44,8 @@ export const PasteStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetSimple = ElementsHelper.createAutoButton(),
-					eWidgetStyled = ElementsHelper.createAutoButton( null, {
+				const eWidgetSimple = ElementsHelper.createWrappedButton(),
+					eWidgetStyled = ElementsHelper.createWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} ),
@@ -76,8 +76,8 @@ export const PasteStyle = () => {
 
 			QUnit.test( 'Globals', async ( assert ) => {
 				// Create widget.
-				const eButton = ElementsHelper.createAutoButton(),
-					eButtonGlobal = ElementsHelper.createAutoButton(),
+				const eButton = ElementsHelper.createWrappedButton(),
+					eButtonGlobal = ElementsHelper.createWrappedButton(),
 					id = elementorCommon.helpers.getUniqueId();
 
 				$e.data.setCache( $e.components.get( 'globals' ), 'globals/typography', {}, {
@@ -113,9 +113,9 @@ export const PasteStyle = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonSimple1 = ElementsHelper.createAutoButton(),
-					eButtonSimple2 = ElementsHelper.createAutoButton(),
-					eButtonStyled = ElementsHelper.createAutoButton( null, {
+				const eButtonSimple1 = ElementsHelper.createWrappedButton(),
+					eButtonSimple2 = ElementsHelper.createWrappedButton(),
+					eButtonStyled = ElementsHelper.createWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} ),
@@ -133,8 +133,8 @@ export const PasteStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetsSimple = ElementsHelper.multiCreateAutoButton(),
-					eWidgetStyled = ElementsHelper.createAutoButton( null, {
+				const eWidgetsSimple = ElementsHelper.multiCreateWrappedButton(),
+					eWidgetStyled = ElementsHelper.createWrappedButton( null, {
 						text: 'createAutoButtonStyled',
 						background_color: '#000000',
 					} ),
