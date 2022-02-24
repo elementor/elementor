@@ -1,5 +1,8 @@
 var BaseSettingsModel;
 
+/**
+ * @name BaseSettingsModel
+ */
 BaseSettingsModel = Backbone.Model.extend( {
 	options: {},
 
