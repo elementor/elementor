@@ -1,6 +1,6 @@
-import ElementBase from './types/base';
+import ElementBase from './types/base/element-base';
 
-import * as elementsTypes from './types/index';
+import * as elementsTypes from './types/';
 
 export default class ElementsManager {
 	/**
@@ -28,7 +28,7 @@ export default class ElementsManager {
 			result = this.elementTypes[ key ];
 
 		if ( 'widget' === elType ) {
-			key += '-' + widgetType;
+			key = 'widget-' + widgetType;
 
 			if ( this.elementTypes[ key ] ) {
 				result = this.elementTypes[ key ];

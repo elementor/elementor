@@ -1,4 +1,4 @@
-import ElementBase from '../types/base';
+import ElementBase from './element-base';
 
 export default class WidgetBase extends ElementBase {
 	/**
