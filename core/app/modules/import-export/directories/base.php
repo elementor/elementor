@@ -16,7 +16,6 @@ abstract class Base {
 	 */
 	private $sub_directories = [];
 
-	protected static $mapped_already_imported = [];
 	/**
 	 * @var Base
 	 */
@@ -108,7 +107,6 @@ abstract class Base {
 
 	/**
 	 * @param array $import_settings
-	 *
 	 * @return array
 	 */
 	protected function import( array $import_settings ) {
