@@ -36,7 +36,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container model.
 	 *
-	 * @type {(Backbone.Model|BaseModel)}
+	 * @type {(Backbone.Model|BaseElementModel)}
 	 */
 	model;
 

@@ -29,6 +29,7 @@ import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 
 import * as elementTypes from './elements/types';
+import * as elementTypesBases from './elements/types/base/';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -186,7 +187,10 @@ export default class EditorBase extends Marionette.Application {
 			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
 		},
 		elements: {
-			types: elementTypes,
+			types: {
+				base: elementTypesBases,
+				... elementTypes,
+			},
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
