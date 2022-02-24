@@ -20,6 +20,8 @@ class Import extends Iterator {
 
 	private $documents_elements = [];
 
+	private $map_old_new_post_ids = [];
+
 	final public function run() {
 		$this->temp_dir = $this->get_settings( 'session' );
 
@@ -35,7 +37,11 @@ class Import extends Iterator {
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
-		$this->save_elements_of_imported_posts( $imported_posts );
+		$this->map_old_new_post_ids = $this->map_old_new_post_ids( $imported_posts );
+
+		$this->save_elements_of_imported_posts();
+
+		$this->update_object_id_of_imported_menu_items();
 
 		return $imported_posts;
 	}
@@ -81,15 +87,33 @@ class Import extends Iterator {
 		}
 	}
 
-	private function save_elements_of_imported_posts( $imported_posts ) {
-		$map_old_new_post_ids = [];
-
-		$map_old_new_post_ids = $this->map_old_new_post_ids( $imported_posts );
-
+	private function save_elements_of_imported_posts() {
 		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
-			$updated_elements = $document->on_import_replace_dynamic_content( $document_elements, $map_old_new_post_ids );
+			$updated_elements = $document->on_import_replace_dynamic_content( $document_elements, $this->map_old_new_post_ids );
 			$document->save( [ 'elements' => $updated_elements ] );
+		}
+	}
+
+	private function update_object_id_of_imported_menu_items() {
+		foreach ( $this->map_old_new_post_ids as $old_post_id => $new_post_id ) {
+			if( 'nav_menu_item' !== get_post_type( $new_post_id ) ) {
+				continue;
+			}
+
+			$menu_item_type = get_post_meta( $new_post_id, '_menu_item_type' )[0];
+
+			if( 'post_type' !== $menu_item_type ) {
+				continue;
+			}
+
+			$old_menu_item_object_id = get_post_meta( $new_post_id, '_menu_item_object_id' )[ 0 ];
+
+			$update_meta = update_post_meta( $new_post_id, '_menu_item_object_id', $this->map_old_new_post_ids[ $old_menu_item_object_id ] );
+
+			if( ! $update_meta ) {
+				wp_delete_post( $new_post_id );
+			}
 		}
 	}
 

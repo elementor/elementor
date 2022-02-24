@@ -70,14 +70,14 @@ class WP_Import extends \WP_Importer {
 	private $page_on_front;
 
 	// Mappings from old information to new.
-	private $processed_authors = [];
-	private $author_mapping = [];
 	private $processed_terms = [];
 	private $processed_posts = [];
-	private $post_orphans = [];
+	private $processed_authors = [];
+	private $author_mapping = [];
 	private $processed_menu_items = [];
-	private $menu_item_orphans = [];
 	private $missing_menu_items = [];
+	private $post_orphans = [];
+	private $menu_item_orphans = [];
 
 	private $fetch_attachments = false;
 	private $url_remap = [];
@@ -189,7 +189,7 @@ class WP_Import extends \WP_Importer {
 			return $this->is_valid_meta_key( $key );
 		} );
 		add_filter( 'http_request_timeout', function () {
-			return self::DEFAULT_BUMP_REQUEST_TIMEOUT;
+			return static::DEFAULT_BUMP_REQUEST_TIMEOUT;
 		} );
 
 		if ( ! $this->import_start( $file ) ) {
@@ -326,7 +326,7 @@ class WP_Import extends \WP_Importer {
 			return;
 		}
 
-		$create_users = apply_filters( 'import_allow_create_users', self::DEFAULT_ALLOW_CREATE_USERS );
+		$create_users = apply_filters( 'import_allow_create_users', static::DEFAULT_ALLOW_CREATE_USERS );
 
 		foreach ( (array) $this->args['imported_authors'] as $i => $old_login ) {
 			// Multisite adds strtolower to sanitize_user. Need to sanitize here to stop breakage in process_posts.
@@ -527,6 +527,7 @@ class WP_Import extends \WP_Importer {
 		}
 
 		foreach ( $this->terms as $term ) {
+
 			// if the term already exists in the correct taxonomy leave it alone
 			$term_id = term_exists( $term['slug'], $term['term_taxonomy'] );
 			if ( $term_id ) {
@@ -536,6 +537,7 @@ class WP_Import extends \WP_Importer {
 				if ( isset( $term['term_id'] ) ) {
 					$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
 				}
+
 				continue;
 			}
 
@@ -561,6 +563,7 @@ class WP_Import extends \WP_Importer {
 					$this->processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
 				}
 				$result++;
+
 			} else {
 				/* translators: 1: Term taxonomy, 2: Term name. */
 				$error = sprintf( esc_html__( 'Failed to import %1$s %2$s', 'elementor' ), $term['term_taxonomy'], $term['term_name'] );
@@ -675,7 +678,8 @@ class WP_Import extends \WP_Importer {
 			}
 
 			if ( 'nav_menu_item' === $post['post_type'] ) {
-				$this->process_menu_item( $post );
+				$result['succeed'] += $this->process_menu_item( $post );
+
 				continue;
 			}
 
@@ -702,7 +706,6 @@ class WP_Import extends \WP_Importer {
 			}
 
 			$postdata = [
-				'import_id' => $post['post_id'],
 				'post_author' => $author,
 				'post_content' => $post['post_content'],
 				'post_excerpt' => $post['post_excerpt'],
@@ -929,6 +932,8 @@ class WP_Import extends \WP_Importer {
 	 * @param array $item Menu item details from WXR file
 	 */
 	private function process_menu_item( $item ) {
+		$result = [];
+
 		// Skip draft, orphaned menu items.
 		if ( 'draft' === $item['status'] ) {
 			return;
@@ -967,19 +972,14 @@ class WP_Import extends \WP_Importer {
 			$post_meta_key_value[ $meta['key'] ] = $meta['value'];
 		}
 
-		$_menu_item_object_id = $post_meta_key_value['menu_item_object_id'];
+		$_menu_item_object_id = $post_meta_key_value['_menu_item_object_id'];
 		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_terms[ intval( $_menu_item_object_id ) ] ) ) {
 			$_menu_item_object_id = $this->processed_terms[ intval( $_menu_item_object_id ) ];
 		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
 			$_menu_item_object_id = $this->processed_posts[ intval( $_menu_item_object_id ) ];
-		} elseif ( 'custom' !== $post_meta_key_value['_menu_item_type'] ) {
-			// Associated object is missing or not imported yet, we'll retry later.
-			$this->missing_menu_items[] = $item;
-
-			return;
 		}
 
-		$_menu_item_menu_item_parent = $post_meta_key_value['menu_item_menu_item_parent'];
+		$_menu_item_menu_item_parent = $post_meta_key_value['_menu_item_menu_item_parent'];
 		if ( isset( $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ] ) ) {
 			$_menu_item_menu_item_parent = $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ];
 		} elseif ( $_menu_item_menu_item_parent ) {
@@ -1012,7 +1012,10 @@ class WP_Import extends \WP_Importer {
 		$id = wp_update_nav_menu_item( $menu_id, 0, $args );
 		if ( $id && ! is_wp_error( $id ) ) {
 			$this->processed_menu_items[ intval( $item['post_id'] ) ] = (int) $id;
+			$result[ $item['post_id'] ] = $id;
 		}
+
+		return $result;
 	}
 
 	/**
@@ -1134,7 +1137,7 @@ class WP_Import extends \WP_Importer {
 			return new WP_Error( 'import_file_error', esc_html__( 'Downloaded file has incorrect size', 'elementor' ) );
 		}
 
-		$max_size = (int) apply_filters( 'import_attachment_size_limit', self::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
+		$max_size = (int) apply_filters( 'import_attachment_size_limit', static::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
 			@unlink( $tmp_file_name );
 
@@ -1144,7 +1147,7 @@ class WP_Import extends \WP_Importer {
 
 		// Override file name with Content-Disposition header value.
 		if ( ! empty( $headers['content-disposition'] ) ) {
-			$file_name_from_disposition = self::get_filename_from_disposition( (array) $headers['content-disposition'] );
+			$file_name_from_disposition = static::get_filename_from_disposition( (array) $headers['content-disposition'] );
 			if ( $file_name_from_disposition ) {
 				$file_name = $file_name_from_disposition;
 			}
@@ -1153,7 +1156,7 @@ class WP_Import extends \WP_Importer {
 		// Set file extension if missing.
 		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
 		if ( ! $file_ext && ! empty( $headers['content-type'] ) ) {
-			$extension = self::get_file_extension_by_mime_type( $headers['content-type'] );
+			$extension = static::get_file_extension_by_mime_type( $headers['content-type'] );
 			if ( $extension ) {
 				$file_name = "{$file_name}.{$extension}";
 			}
@@ -1239,12 +1242,6 @@ class WP_Import extends \WP_Importer {
 				$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
 				clean_post_cache( $local_child_id );
 			}
-		}
-
-		// All other posts/terms are imported, retry menu items with missing associated object.
-		$missing_menu_items = $this->missing_menu_items;
-		foreach ( $missing_menu_items as $item ) {
-			$this->process_menu_item( $item );
 		}
 
 		// Find parents for menu item orphans.
@@ -1335,6 +1332,11 @@ class WP_Import extends \WP_Importer {
 		return $this->output;
 	}
 
+	/**
+	 * @param $file
+	 * @param $args
+	 * @param $already_imported // Posts that already imported using different importer
+	 */
 	public function __construct( $file, $args = [] ) {
 		$this->requested_file_path = $file;
 		$this->args = $args;

@@ -64,14 +64,14 @@ class WP_Exporter {
 			$where = $this->wpdb->prepare( "{$this->wpdb->posts}.post_type IN (" . implode( ',', $esses ) . ')', $post_types );// phpcs:ignore
 		}
 
-		if ( $this->args['status'] && ( 'post' === $this->args['content'] || 'page' === $this->args['content'] ) ) {
+		if ( $this->args['status'] && ( 'post' === $this->args['content'] || 'page' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) ) {
 			$where .= $this->wpdb->prepare( " AND {$this->wpdb->posts}.post_status = %s", $this->args['status'] );// phpcs:ignore
 		} else {
 			$where .= " AND {$this->wpdb->posts}.post_status != 'auto-draft'";
 		}
 
 		$join = '';
-		if ( $this->args['category'] && 'post' === $this->args['content'] ) {
+		if ( $this->args['category'] && ( 'post' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) ) {
 			$term = term_exists( $this->args['category'], 'category' );
 			if ( $term ) {
 				$join = "INNER JOIN {$this->wpdb->term_relationships} ON ({$this->wpdb->posts}.ID = {$this->wpdb->term_relationships}.object_id)";
@@ -141,7 +141,7 @@ class WP_Exporter {
 			$cat = get_term( $term['term_id'], 'category' );
 			$cats = [ $cat->term_id => $cat ];
 			unset( $term, $cat );
-		} elseif ( 'all' === $this->args['content'] ) {
+		} elseif ( 'all' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) {
 			$categories = (array) get_categories( [ 'get' => 'all' ] );
 			$tags = (array) get_tags( array( 'get' => 'all' ) );
 
@@ -520,7 +520,7 @@ class WP_Exporter {
 					$result .= $this->indent( 3 ) . '<link>' . esc_url( get_permalink() ) . '</link>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<pubDate>' . mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) . '</pubDate>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<dc:creator>' . $this->wxr_cdata( get_the_author_meta( 'login' ) ) . '</dc:creator>' . PHP_EOL;
-					$result .= $this->indent( 3 ) . '<guid isPermaLink="false">' . $this->wxr_cdata( get_the_author_meta( 'login' ) ) . '</guid>' . PHP_EOL;
+					$result .= $this->indent( 3 ) . '<guid isPermaLink="false">' . $this->wxr_cdata( $post->guid ) . '</guid>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<description></description>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<content:encoded>' . $content . '</content:encoded>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<excerpt:encoded>' . $excerpt . '</excerpt:encoded>' . PHP_EOL;
@@ -640,13 +640,11 @@ class WP_Exporter {
 
 		foreach ( $nav_menus as $menu ) {
 			$result .= $this->indent( 2 ) . '<wp:term>' . PHP_EOL;
-
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $menu->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>nav_menu</wp:term_taxonomy>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $menu->slug ) . '</wp:term_slug>' . PHP_EOL;
-			$result .= wxr_term_name( $menu );
-
-			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
+			$result .= $this->indent( 3 ) . '<wp:term_name>' . $this->wxr_cdata( $menu->name ) . '</wp:term_name>' . PHP_EOL;
+			$result .= $this->indent(2) . '</wp:term>' . PHP_EOL;
 		}
 
 		return $result;
@@ -722,7 +720,7 @@ class WP_Exporter {
 
 		$dynamic .= $rss2_head;
 
-		if ( 'all' === $this->args['content'] ) {
+		if ( 'all' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) {
 			$dynamic .= $this->wxr_nav_menu_terms();
 		}
 
@@ -764,7 +762,7 @@ $generator
 		<wp:base_site_url>$wxr_site_url</wp:base_site_url>
 		<wp:base_blog_url>$rss_info_url</wp:base_blog_url>
 		$page_on_front_xml
-$dynamic
+		$dynamic
 	</channel>
 </rss>
 EOT;

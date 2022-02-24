@@ -26,7 +26,7 @@ class WP_Content extends Base {
 
 	protected function get_default_sub_directories() {
 
-		$native_post_types = [ 'page', 'post' ];
+		$native_post_types = [ 'page', 'post', 'nav_menu_item' ];
 		$post_types_to_export = array_merge( $native_post_types, $this->custom_post_types );
 
 		$post_types = get_post_types( [
