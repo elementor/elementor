@@ -103,7 +103,6 @@ class Import extends Iterator {
 
 			$menu_item_type = get_post_meta( $new_post_id, '_menu_item_type' )[0];
 
-			file_put_contents('text.txt', [ $new_post_id, $menu_item_type ], FILE_APPEND);
 			if( 'post_type' !== $menu_item_type ) {
 				continue;
 			}
