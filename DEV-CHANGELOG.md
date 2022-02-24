@@ -1,5 +1,12 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev41 - 2022-02-24
+* Fix: GitHub issue creation minor fixes [ED-6376] (#17918)
+* Fix: GitHub issue creation minor fixes (#2) [ED-6376]
+* Fix: GitHub issue creation minor fixes (#3) [ED-6376] (#17936)
+* Tweak: Lightbox [ED-6517] (#17847)
+* Tweak: Nested Infra - Allow dependencies for experiments [ED-6421] (#17663)
+
 #### 3.6.0-dev40 - 2022-02-22
 * Fix: Navigator keeps opening when dragging in a new widget [Dev edition] [ED-5776] (#17905)
 
