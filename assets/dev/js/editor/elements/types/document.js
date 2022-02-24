@@ -1,4 +1,4 @@
-import Base from './base.js';
+import Base from '../types/base/element-base';
 import Model from 'elementor-elements/models/document';
 
 export default class Document extends Base {
