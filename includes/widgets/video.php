@@ -652,64 +652,6 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->start_controls_tabs( 'video_shadows' );
-
-		$this->start_controls_tab(
-			'video_shadows_normal',
-			[
-				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'icon_shadow',
-				'selector' => '{{WRAPPER}} .elementor-video',
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab(
-			'video_shadows_hover',
-			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'video_shadows_shadow',
-				'selector' => '{{WRAPPER}} .elementor-video:hover',
-			]
-		);
-
-		$this->add_control(
-			'video_shadows_transition',
-			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--video-transition: {{SIZE}}s',
-				],
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
-
 		$this->add_control(
 			'play_icon_title',
 			[
@@ -812,7 +754,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button' => 'color: {{VALUE}}',
-					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button svg' => 'fill: {{VALUE}}',
 				],
 			]
 		);
@@ -824,7 +765,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover' => 'color: {{VALUE}}',
-					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover svg' => 'fill: {{VALUE}}',
 				],
 				'separator' => 'after',
 			]

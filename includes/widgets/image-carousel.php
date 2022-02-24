@@ -450,7 +450,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'heading_style_dots',
 			[
-				'label' => esc_html__( 'Pagination', 'elementor' ),
+				'label' => esc_html__( 'Dots', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 				'condition' => [
@@ -497,24 +497,9 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'dots_inactive_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					// The opacity property will override the default inactive dot color which is opacity 0.2.
-					'{{WRAPPER}} .swiper-pagination-bullet:not(.swiper-pagination-bullet-active)' => 'background: {{VALUE}}; opacity: 1',
-				],
-				'condition' => [
-					'navigation' => [ 'dots', 'both' ],
-				],
-			]
-		);
-
-		$this->add_control(
 			'dots_color',
 			[
-				'label' => esc_html__( 'Active Color', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}};',
@@ -622,64 +607,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 			]
 		);
-
-		$this->start_controls_tabs( 'image_shadow' );
-
-		$this->start_controls_tab(
-			'image_shadow_normal',
-			[
-				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'image_shadow',
-				'selector' => '{{WRAPPER}} .swiper-slide-image',
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab(
-			'image_shadow_hover',
-			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'image_shadow_shadow',
-				'selector' => '{{WRAPPER}} .swiper-slide-image:hover',
-			]
-		);
-
-		$this->add_control(
-			'image_shadow_transition',
-			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--image-transition: {{SIZE}}s',
-				],
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 

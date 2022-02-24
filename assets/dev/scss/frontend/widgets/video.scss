@@ -1,7 +1,6 @@
 //
 // Video
 //
-
 .elementor-widget-video {
 
 	.elementor-widget-container {
@@ -46,10 +45,5 @@
 		.elementor-video {
 			object-fit: cover;
 		}
-	}
-
-	.elementor-video,
-	.elementor-custom-embed-image-overlay {
-		transition: all var(--video-transition, 0.3s);
 	}
 }
