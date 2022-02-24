@@ -864,6 +864,8 @@ class Frontend extends App {
 	 *                            Default is an empty array.
 	 */
 	private function enqueue_google_fonts( $google_fonts = [] ) {
+		do_action( 'elementor/frontend/before_print_google_fonts', $google_fonts );
+
 		static $google_fonts_index = 0;
 
 		$print_google_fonts = true;
