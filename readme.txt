@@ -241,6 +241,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.5.6 - 2022-02-27 =
+* Fix: Favorite WooCommerce widgets causes fatal error when WooCommerce is deactivated ([#17641](https://github.com/elementor/elementor/issues/17641))
+* Fix: Vimeo privacy mode videos are not playing in the Video widget ([#17749](https://github.com/elementor/elementor/issues/17749))
+* Fix: Global widgets search didn't work properly ([#17270](https://github.com/elementor/elementor/issues/17270))
+* Fix: `remove_responsive_control()` doesn't remove controls for Additional Custom breakpoints which generates PHP errors
+* Fix: Lightbox video icon color control not working when Inline Font Icons experiment is active
+* Fix: Hardened the Lightbox action module sanitization to prevent potential security issues
+
 = 3.5.5 - 2022-02-03 =
 * Tweak: Changed Developer Edition promotional notice triggers
 * Tweak: Added a filter to allow modifying the imported Kit temp directory path
