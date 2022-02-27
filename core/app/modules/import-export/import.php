@@ -95,20 +95,20 @@ class Import extends Iterator {
 
 	private function update_object_id_of_imported_menu_items( $map_old_new_post_ids ) {
 		foreach ( $map_old_new_post_ids as $new_post_id ) {
-			if( 'nav_menu_item' !== get_post_type( $new_post_id ) ) {
+			if ( 'nav_menu_item' !== get_post_type( $new_post_id ) ) {
 				continue;
 			}
 
 			$post_meta = get_post_meta( $new_post_id );
 
 			// Skip items that not related to posts.
-			if( 'post_type' !== $post_meta[ '_menu_item_type' ][0] ) {
+			if ( 'post_type' !== $post_meta['_menu_item_type'][0] ) {
 				continue;
 			}
 
-			$update_meta = update_post_meta( $new_post_id, '_menu_item_object_id', $map_old_new_post_ids[ $post_meta[ '_menu_item_object_id' ][0] ] );
+			$update_meta = update_post_meta( $new_post_id, '_menu_item_object_id', $map_old_new_post_ids[ $post_meta['_menu_item_object_id'][0] ] );
 
-			if( ! $update_meta ) {
+			if ( ! $update_meta ) {
 				wp_delete_post( $new_post_id );
 			}
 		}
