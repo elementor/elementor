@@ -189,7 +189,7 @@ class WP_Import extends \WP_Importer {
 			return $this->is_valid_meta_key( $key );
 		} );
 		add_filter( 'http_request_timeout', function () {
-			return static::DEFAULT_BUMP_REQUEST_TIMEOUT;
+			return self::DEFAULT_BUMP_REQUEST_TIMEOUT;
 		} );
 
 		if ( ! $this->import_start( $file ) ) {
@@ -326,7 +326,7 @@ class WP_Import extends \WP_Importer {
 			return;
 		}
 
-		$create_users = apply_filters( 'import_allow_create_users', static::DEFAULT_ALLOW_CREATE_USERS );
+		$create_users = apply_filters( 'import_allow_create_users', self::DEFAULT_ALLOW_CREATE_USERS );
 
 		foreach ( (array) $this->args['imported_authors'] as $i => $old_login ) {
 			// Multisite adds strtolower to sanitize_user. Need to sanitize here to stop breakage in process_posts.
@@ -1137,7 +1137,7 @@ class WP_Import extends \WP_Importer {
 			return new WP_Error( 'import_file_error', esc_html__( 'Downloaded file has incorrect size', 'elementor' ) );
 		}
 
-		$max_size = (int) apply_filters( 'import_attachment_size_limit', static::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
+		$max_size = (int) apply_filters( 'import_attachment_size_limit', self::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
 			@unlink( $tmp_file_name );
 
@@ -1147,7 +1147,7 @@ class WP_Import extends \WP_Importer {
 
 		// Override file name with Content-Disposition header value.
 		if ( ! empty( $headers['content-disposition'] ) ) {
-			$file_name_from_disposition = static::get_filename_from_disposition( (array) $headers['content-disposition'] );
+			$file_name_from_disposition = self::get_filename_from_disposition( (array) $headers['content-disposition'] );
 			if ( $file_name_from_disposition ) {
 				$file_name = $file_name_from_disposition;
 			}
@@ -1156,7 +1156,7 @@ class WP_Import extends \WP_Importer {
 		// Set file extension if missing.
 		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
 		if ( ! $file_ext && ! empty( $headers['content-type'] ) ) {
-			$extension = static::get_file_extension_by_mime_type( $headers['content-type'] );
+			$extension = self::get_file_extension_by_mime_type( $headers['content-type'] );
 			if ( $extension ) {
 				$file_name = "{$file_name}.{$extension}";
 			}
@@ -1335,7 +1335,6 @@ class WP_Import extends \WP_Importer {
 	/**
 	 * @param $file
 	 * @param $args
-	 * @param $already_imported // Posts that already imported using different importer
 	 */
 	public function __construct( $file, $args = [] ) {
 		$this->requested_file_path = $file;
