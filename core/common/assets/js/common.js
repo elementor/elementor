@@ -4,7 +4,7 @@ import Debug from './utils/debug';
 import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
 import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
-import WordpressComponent from 'elementor-api/components/wordpress/component';
+import WordpressComponent from './components/wordpress/component';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
