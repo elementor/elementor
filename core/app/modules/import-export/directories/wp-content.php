@@ -16,22 +16,24 @@ class WP_Content extends Base {
 	}
 
 	protected function get_default_sub_directories() {
+
 		$post_types = get_post_types( [
 			'public' => true,
 			'can_export' => true,
 		] );
 
-		$post_types['nav_menu_item'] = 'nav_menu_item';
+		foreach ( $post_types as $post_type ) {
+			if ( ! in_array( $post_type, $this->custom_post_types ) ) {
+				unset( $post_types[ $post_type ] );
+			}
+		}
 
-		unset(
-			$post_types['attachment'],
-			$post_types[ Landing_Pages_Module::CPT ],
-			$post_types[ Source_Local::CPT ]
-		);
+		$native_post_types = [ 'page', 'post', 'nav_menu_item' ];
+		$post_types_to_export = array_values(array_merge( $native_post_types, $post_types ));
 
 		$sub_directories = [];
 
-		foreach ( $post_types as $post_type ) {
+		foreach ( $post_types_to_export as $post_type ) {
 			$sub_directories[] = new WP_Post_Type( $this->iterator, $this, $post_type );
 		}
 

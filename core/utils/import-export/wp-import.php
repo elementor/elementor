@@ -78,6 +78,7 @@ class WP_Import extends \WP_Importer {
 	private $missing_menu_items = [];
 	private $post_orphans = [];
 	private $menu_item_orphans = [];
+	private $mapped_terms_slug = [];
 
 	private $fetch_attachments = false;
 	private $url_remap = [];
@@ -535,10 +536,26 @@ class WP_Import extends \WP_Importer {
 					$term_id = $term_id['term_id'];
 				}
 				if ( isset( $term['term_id'] ) ) {
-					$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
-				}
+					// If the exists term is nav_menu, create duplicate term.
+					if ( 'nav_menu' === $term['term_taxonomy'] ) {
 
-				continue;
+						$duplicate_slug = $term['slug'] . '-duplicate';
+						$duplicate_name = $term['term_name'] .= ' duplicate';
+
+						while ( term_exists( $duplicate_slug, 'nav_menu' ) ) {
+							$duplicate_slug .= '-duplicate';
+							$duplicate_name .= ' duplicate';
+						}
+
+						$this->mapped_terms_slug[ $term['slug'] ] = $duplicate_slug;
+						$term['slug'] = $duplicate_slug;
+						$term['term_name'] = $duplicate_name;
+					}
+					else {
+						$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
+						continue;
+					}
+				}
 			}
 
 			if ( empty( $term['term_parent'] ) ) {
@@ -955,6 +972,11 @@ class WP_Import extends \WP_Importer {
 			$this->output['errors'][] = esc_html__( 'Menu item skipped due to missing menu slug', 'elementor' );
 
 			return;
+		}
+
+		// If menu was already exists, refer the items to the duplicated menu created.
+		if ( array_key_exists( $menu_slug, $this->mapped_terms_slug ) ) {
+			$menu_slug = $this->mapped_terms_slug[ $menu_slug ];
 		}
 
 		$menu_id = term_exists( $menu_slug, 'nav_menu' );
