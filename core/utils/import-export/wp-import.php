@@ -1339,7 +1339,7 @@ class WP_Import extends \WP_Importer {
 	 * @param $term
 	 * @return mixed
 	 */
-	private function handle_duplicated_nav_menu_term( $term )	{
+	private function handle_duplicated_nav_menu_term( $term ) {
 		$duplicate_slug = $term['slug'] . '-duplicate';
 		$duplicate_name = $term['term_name'] . ' duplicate';
 
@@ -1374,6 +1374,4 @@ class WP_Import extends \WP_Importer {
 			$this->fetch_attachments = true;
 		}
 	}
-
-
 }
