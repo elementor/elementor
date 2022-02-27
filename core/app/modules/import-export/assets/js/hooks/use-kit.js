@@ -30,7 +30,7 @@ export default function useKit() {
 				},
 			} );
 		},
-		importKit = ( { session, include, overrideConditions, referrer } ) => {
+		importKit = ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
 			const ajaxConfig = {
 				data: {
 					action: IMPORT_KIT_KEY,
@@ -47,11 +47,15 @@ export default function useKit() {
 				ajaxConfig.data.data.referrer = referrer;
 			}
 
+			if ( selectedCustomPostTypes ) {
+				ajaxConfig.data.data.selectedCustomPostTypes = selectedCustomPostTypes;
+			}
+
 			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
 
 			setAjax( ajaxConfig );
 		},
-		exportKit = ( { include, kitInfo, plugins } ) => {
+		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
 			setAjax( {
 				data: {
 					action: EXPORT_KIT_KEY,
@@ -59,6 +63,7 @@ export default function useKit() {
 						include,
 						kitInfo,
 						plugins,
+						selectedCustomPostTypes,
 					} ),
 				},
 			} );

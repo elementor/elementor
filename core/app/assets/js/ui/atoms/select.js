@@ -19,11 +19,11 @@ export default function Select( props ) {
 }
 Select.propTypes = {
 	className: PropTypes.string,
-	value: PropTypes.string,
 	onChange: PropTypes.func,
 	options: PropTypes.array,
 	elRef: PropTypes.object,
 	multiple: PropTypes.bool,
+	value: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string ] ),
 };
 Select.defaultProps = {
 	className: '',

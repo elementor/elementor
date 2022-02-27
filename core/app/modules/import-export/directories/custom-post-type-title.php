@@ -3,14 +3,19 @@
 namespace Elementor\Core\App\Modules\ImportExport\Directories;
 
 use Elementor\Core\App\Modules\ImportExport\Iterator;
-use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
-use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class WP_Content extends Base {
+/**
+ * Adds CPT name and label values to manifest.json.
+ *
+ * @since 3.6.0
+ */
+
+class Custom_Post_Type_Title extends Base {
 
 	public $custom_post_types;
 
@@ -21,10 +26,11 @@ class WP_Content extends Base {
 	}
 
 	protected function get_name() {
-		return 'wp-content';
+		return 'custom-post-type-title';
 	}
 
 	protected function get_default_sub_directories() {
+
 		$post_types = get_post_types( [
 			'public' => true,
 			'can_export' => true,
@@ -36,18 +42,10 @@ class WP_Content extends Base {
 			}
 		}
 
-		$native_post_types = [
-			'page' => 'page',
-			'post' => 'post',
-			'nav_menu_item' => 'nav_menu_item',
-		];
-
-		$post_types_to_export = array_merge( $native_post_types, $post_types );
-
 		$sub_directories = [];
 
-		foreach ( $post_types_to_export as $post_type ) {
-			$sub_directories[] = new WP_Post_Type( $this->iterator, $this, $post_type );
+		foreach ( $post_types as $post_type ) {
+			$sub_directories[] = new WP_Custom_Post_Type_Title( $this->iterator, $this, $post_type );
 		}
 
 		return $sub_directories;
