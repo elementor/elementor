@@ -141,7 +141,7 @@ class WP_Exporter {
 			$cat = get_term( $term['term_id'], 'category' );
 			$cats = [ $cat->term_id => $cat ];
 			unset( $term, $cat );
-		} elseif ( 'all' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) {
+		} elseif ( 'all' === $this->args['content'] ) {
 			$categories = (array) get_categories( [ 'get' => 'all' ] );
 			$tags = (array) get_tags( array( 'get' => 'all' ) );
 
