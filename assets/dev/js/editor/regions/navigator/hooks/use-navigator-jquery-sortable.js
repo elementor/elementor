@@ -79,6 +79,9 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 				}
 
 				autoExpandTimerRef.current = setTimeout( () => {
+					// Using `slideDown` instead of `setElementFolding` because changing element's state re-renders the
+					// component, and a new sortable-instance is generated, and dragging elements to an auto-expanded
+					// list is not working as expected.
 					jQuery( listRef.current ).slideDown( () => {
 						jQuery( listRef.current ).sortable( 'refreshPositions' );
 						autoExpand = true;
