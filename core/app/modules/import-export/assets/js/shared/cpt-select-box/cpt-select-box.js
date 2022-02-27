@@ -21,8 +21,8 @@ export default function CptSelectBox() {
 		return array.map( ( { value } ) => value );
 	};
 
-	const selectedCpt = ( e ) => {
-		setSelected( arrayValueIterator( Array.from( e ) ) );
+	const selectedCpt = ( selectedValue ) => {
+		setSelected( arrayValueIterator( Array.from( selectedValue ) ) );
 	};
 
 	return (
