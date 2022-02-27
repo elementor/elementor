@@ -15,7 +15,7 @@
 <!--    existing user on the site or to create a new user. -->
 <!-- 7. WordPress will then import each of the posts, pages, comments, categories, etc. -->
 <!--    contained in this file into your site. -->
-<!-- generator="WordPress/5.9" created="2022-02-16 11:26" -->
+<!-- generator="WordPress/5.9.1" created="2022-02-27 12:03" -->
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -24,10 +24,10 @@
 	xmlns:wp="http://wordpress.org/export/1.2/"
 >
 	<channel>
-		<title>lcoal</title>
+		<title>wordpress</title>
 		<link>http://wordpress.local</link>
 		<description>Just another WordPress site</description>
-		<pubDate>Wed, 16 Feb 2022 11:26:23 +0000</pubDate>
+		<pubDate>Sun, 27 Feb 2022 12:03:07 +0000</pubDate>
 		<language>en-US</language>
 		<wp:wxr_version>1.2</wp:wxr_version>
 		<wp:base_site_url>http://wordpress.local</wp:base_site_url>
@@ -41,56 +41,50 @@
 			<wp:author_first_name><![CDATA[]]></wp:author_first_name>
 			<wp:author_last_name><![CDATA[]]></wp:author_last_name>
 		</wp:author>
-		<wp:category>
-			<wp:term_id>1</wp:term_id>
-			<wp:category_nicename><![CDATA[uncategorized]]></wp:category_nicename>
-			<wp:category_parent><![CDATA[]]></wp:category_parent>
-			<wp:cat_name><![CDATA[Uncategorized]]></wp:cat_name>
-		</wp:category>
-<generator>https://wordpress.org/?v=5.9</generator>
+<generator>https://wordpress.org/?v=5.9.1</generator>
 		<wp:term>
-			<wp:term_id>3</wp:term_id>
+			<wp:term_id>17</wp:term_id>
 			<wp:term_taxonomy>nav_menu</wp:term_taxonomy>
-			<wp:term_slug><![CDATA[main-manu]]></wp:term_slug>
-			<wp:term_name><![CDATA[main manu]]></wp:term_name>
+			<wp:term_slug><![CDATA[main-menu]]></wp:term_slug>
+			<wp:term_name><![CDATA[main menu]]></wp:term_name>
 		</wp:term>
 		<item>
-			<title></title>
+			<title>Elementor</title>
 			<link></link>
 			<pubDate></pubDate>
 			<dc:creator><![CDATA[manor]]></dc:creator>
-			<guid isPermaLink="false"><![CDATA[http://wordpress.local/?p=11]]></guid>
+			<guid isPermaLink="false"><![CDATA[manor]]></guid>
 			<description></description>
-			<content:encoded><![CDATA[ ]]></content:encoded>
+			<content:encoded><![CDATA[]]></content:encoded>
 			<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-			<wp:post_id>11</wp:post_id>
-			<wp:post_date><![CDATA[2022-02-16 11:24:11]]></wp:post_date>
-			<wp:post_date_gmt><![CDATA[2022-02-16 11:24:11]]></wp:post_date_gmt>
+			<wp:post_id>17</wp:post_id>
+			<wp:post_date><![CDATA[2022-02-27 12:02:54]]></wp:post_date>
+			<wp:post_date_gmt><![CDATA[2022-02-27 12:02:54]]></wp:post_date_gmt>
 			<wp:comment_status><![CDATA[closed]]></wp:comment_status>
 			<wp:ping_status><![CDATA[closed]]></wp:ping_status>
-			<wp:post_name><![CDATA[11]]></wp:post_name>
+			<wp:post_name><![CDATA[elementor]]></wp:post_name>
 			<wp:status><![CDATA[publish]]></wp:status>
 			<wp:post_parent><![CDATA[0]]></wp:post_parent>
-			<wp:menu_order>2</wp:menu_order>
+			<wp:menu_order>4</wp:menu_order>
 			<wp:post_type><![CDATA[nav_menu_item]]></wp:post_type>
 			<wp:post_password><![CDATA[]]></wp:post_password>
 			<wp:is_sticky>0</wp:is_sticky>
-			<category domain="nav_menu" nicename="main-manu"><![CDATA[main manu]]></category>
+			<category domain="nav_menu" nicename="main-menu"><![CDATA[main menu]]></category>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_type]]></wp:meta_key>
-				<wp:meta_value><![CDATA[post_type]]></wp:meta_value>
+				<wp:meta_value><![CDATA[custom]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_menu_item_parent]]></wp:meta_key>
-				<wp:meta_value><![CDATA[0]]></wp:meta_value>
+				<wp:meta_value><![CDATA[16]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object_id]]></wp:meta_key>
-				<wp:meta_value><![CDATA[9]]></wp:meta_value>
+				<wp:meta_value><![CDATA[17]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object]]></wp:meta_key>
-				<wp:meta_value><![CDATA[page]]></wp:meta_value>
+				<wp:meta_value><![CDATA[custom]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_target]]></wp:meta_key>
@@ -106,7 +100,7 @@
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_url]]></wp:meta_key>
-				<wp:meta_value><![CDATA[]]></wp:meta_value>
+				<wp:meta_value><![CDATA[http://elementor.com]]></wp:meta_value>
 			</wp:postmeta>
 		</item>
 		<item>
@@ -114,26 +108,26 @@
 			<link></link>
 			<pubDate></pubDate>
 			<dc:creator><![CDATA[manor]]></dc:creator>
-			<guid isPermaLink="false"><![CDATA[http://wordpress.local/?p=12]]></guid>
+			<guid isPermaLink="false"><![CDATA[manor]]></guid>
 			<description></description>
 			<content:encoded><![CDATA[ ]]></content:encoded>
 			<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-			<wp:post_id>15</wp:post_id>
-			<wp:post_date><![CDATA[2022-02-16 11:24:11]]></wp:post_date>
-			<wp:post_date_gmt><![CDATA[2022-02-16 11:24:11]]></wp:post_date_gmt>
+			<wp:post_id>18</wp:post_id>
+			<wp:post_date><![CDATA[2022-02-27 12:02:54]]></wp:post_date>
+			<wp:post_date_gmt><![CDATA[2022-02-27 12:02:54]]></wp:post_date_gmt>
 			<wp:comment_status><![CDATA[closed]]></wp:comment_status>
 			<wp:ping_status><![CDATA[closed]]></wp:ping_status>
-			<wp:post_name><![CDATA[12]]></wp:post_name>
+			<wp:post_name><![CDATA[18]]></wp:post_name>
 			<wp:status><![CDATA[publish]]></wp:status>
 			<wp:post_parent><![CDATA[0]]></wp:post_parent>
-			<wp:menu_order>1</wp:menu_order>
+			<wp:menu_order>5</wp:menu_order>
 			<wp:post_type><![CDATA[nav_menu_item]]></wp:post_type>
 			<wp:post_password><![CDATA[]]></wp:post_password>
 			<wp:is_sticky>0</wp:is_sticky>
-			<category domain="nav_menu" nicename="main-manu"><![CDATA[main manu]]></category>
+			<category domain="nav_menu" nicename="main-menu"><![CDATA[main menu]]></category>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_type]]></wp:meta_key>
-				<wp:meta_value><![CDATA[post_type]]></wp:meta_value>
+				<wp:meta_value><![CDATA[taxonomy]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_menu_item_parent]]></wp:meta_key>
@@ -141,11 +135,11 @@
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object_id]]></wp:meta_key>
-				<wp:meta_value><![CDATA[6]]></wp:meta_value>
+				<wp:meta_value><![CDATA[1]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_object]]></wp:meta_key>
-				<wp:meta_value><![CDATA[page]]></wp:meta_value>
+				<wp:meta_value><![CDATA[category]]></wp:meta_value>
 			</wp:postmeta>
 			<wp:postmeta>
 				<wp:meta_key><![CDATA[_menu_item_target]]></wp:meta_key>

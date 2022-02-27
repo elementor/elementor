@@ -29,12 +29,11 @@ class Test_WP_Import extends Elementor_Test_Base {
 		], $result );
 	}
 
-	public function test_run__import_menu() {
-
+	public function test_run_import_menu() {
 		// Arrange.
-		$menu_importer = new WP_Import( __DIR__ . '/mock/nav_menu_item.xml' );
-		$post_importer = new WP_Import( __DIR__ . '/mock/post.xml' );
 		$page_importer = new WP_Import( __DIR__ . '/mock/page.xml' );
+		$post_importer = new WP_Import( __DIR__ . '/mock/post.xml' );
+		$menu_importer = new WP_Import( __DIR__ . '/mock/nav_menu_item.xml' );
 
 		// Act.
 		$page_result = $page_importer->run();
@@ -42,43 +41,14 @@ class Test_WP_Import extends Elementor_Test_Base {
 		$menu_result = $menu_importer->run();
 
 		// Assert.
-		$pages = get_posts( [
-			'numberposts' => -1,
-			'post_status' => 'any',
-			'post_type' => 'page',
-		] );
+		$this->assertEqualSets( [ 5 ],array_keys( $page_result['summary']['posts']['succeed'] ) );
+		$this->assertNotNull( get_posts( $page_result['summary']['posts']['succeed'][5] ) );
 
-		$post = get_post( 8 );
+		$this->assertEqualSets( [ 1 ],array_keys( $post_result['summary']['posts']['succeed'] ) );
+		$this->assertNotNull( get_posts( $post_result['summary']['posts']['succeed'][1] ) );
 
-		$menu_items = get_posts( [
-			'numberposts' => -1,
-			'post_status' => 'any',
-			'post_type' => 'nav_menu_item',
-		] );
-
-		$this->assert_valid_result( [
-			6 => 6,
-			9 => 7,
-		], $page_result );
-		$this->assertCount( 2, $pages );
-
-		$this->assert_valid_result( [ 1 => 8 ], $post_result );
-		$this->assertEquals( 'publish', $post->post_status );
-
-		$this->assertEquals( [
-			'status' => 'success',
-			'errors' => [],
-			'summary' => [
-				'categories' => 0,
-				'tags' => 0,
-				'terms' => 1,
-				'posts' => [
-					'failed' => [],
-					'succeed' => [ 3 => 2 ],
-				],
-			],
-		], $menu_result );
-
-		$this->assertCount( 2, $menu_items );
+		$this->assertEqualSets( [ 17, 18 ],array_keys( $menu_result['summary']['posts']['succeed'] ) );
+		$this->assertNotNull( get_posts( $menu_result['summary']['posts']['succeed'][17] ) );
+		$this->assertNotNull( get_posts( $menu_result['summary']['posts']['succeed'][18] ) );
 	}
 }

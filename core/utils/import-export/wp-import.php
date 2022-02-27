@@ -75,9 +75,9 @@ class WP_Import extends \WP_Importer {
 	private $processed_authors = [];
 	private $author_mapping = [];
 	private $processed_menu_items = [];
-	private $missing_menu_items = [];
 	private $post_orphans = [];
 	private $menu_item_orphans = [];
+	private $mapped_terms_slug = [];
 
 	private $fetch_attachments = false;
 	private $url_remap = [];
@@ -189,7 +189,7 @@ class WP_Import extends \WP_Importer {
 			return $this->is_valid_meta_key( $key );
 		} );
 		add_filter( 'http_request_timeout', function () {
-			return static::DEFAULT_BUMP_REQUEST_TIMEOUT;
+			return self::DEFAULT_BUMP_REQUEST_TIMEOUT;
 		} );
 
 		if ( ! $this->import_start( $file ) ) {
@@ -326,7 +326,7 @@ class WP_Import extends \WP_Importer {
 			return;
 		}
 
-		$create_users = apply_filters( 'import_allow_create_users', static::DEFAULT_ALLOW_CREATE_USERS );
+		$create_users = apply_filters( 'import_allow_create_users', self::DEFAULT_ALLOW_CREATE_USERS );
 
 		foreach ( (array) $this->args['imported_authors'] as $i => $old_login ) {
 			// Multisite adds strtolower to sanitize_user. Need to sanitize here to stop breakage in process_posts.
@@ -534,11 +534,15 @@ class WP_Import extends \WP_Importer {
 				if ( is_array( $term_id ) ) {
 					$term_id = $term_id['term_id'];
 				}
-				if ( isset( $term['term_id'] ) ) {
-					$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
-				}
 
-				continue;
+				if ( isset( $term['term_id'] ) ) {
+					if ( 'nav_menu' === $term['term_taxonomy'] ) {
+						$term = $this->handle_duplicated_nav_menu_term( $term );
+					} else {
+						$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
+						continue;
+					}
+				}
 			}
 
 			if ( empty( $term['term_parent'] ) ) {
@@ -957,6 +961,11 @@ class WP_Import extends \WP_Importer {
 			return;
 		}
 
+		// If menu was already exists, refer the items to the duplicated menu created.
+		if ( array_key_exists( $menu_slug, $this->mapped_terms_slug ) ) {
+			$menu_slug = $this->mapped_terms_slug[ $menu_slug ];
+		}
+
 		$menu_id = term_exists( $menu_slug, 'nav_menu' );
 		if ( ! $menu_id ) {
 			/* translators: %s: Menu slug. */
@@ -1137,7 +1146,7 @@ class WP_Import extends \WP_Importer {
 			return new WP_Error( 'import_file_error', esc_html__( 'Downloaded file has incorrect size', 'elementor' ) );
 		}
 
-		$max_size = (int) apply_filters( 'import_attachment_size_limit', static::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
+		$max_size = (int) apply_filters( 'import_attachment_size_limit', self::DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT );
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
 			@unlink( $tmp_file_name );
 
@@ -1147,7 +1156,7 @@ class WP_Import extends \WP_Importer {
 
 		// Override file name with Content-Disposition header value.
 		if ( ! empty( $headers['content-disposition'] ) ) {
-			$file_name_from_disposition = static::get_filename_from_disposition( (array) $headers['content-disposition'] );
+			$file_name_from_disposition = self::get_filename_from_disposition( (array) $headers['content-disposition'] );
 			if ( $file_name_from_disposition ) {
 				$file_name = $file_name_from_disposition;
 			}
@@ -1156,7 +1165,7 @@ class WP_Import extends \WP_Importer {
 		// Set file extension if missing.
 		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
 		if ( ! $file_ext && ! empty( $headers['content-type'] ) ) {
-			$extension = static::get_file_extension_by_mime_type( $headers['content-type'] );
+			$extension = self::get_file_extension_by_mime_type( $headers['content-type'] );
 			if ( $extension ) {
 				$file_name = "{$file_name}.{$extension}";
 			}
@@ -1326,6 +1335,27 @@ class WP_Import extends \WP_Importer {
 		return $key;
 	}
 
+	/**
+	 * @param $term
+	 * @return mixed
+	 */
+	private function handle_duplicated_nav_menu_term( $term )	{
+		$duplicate_slug = $term['slug'] . '-duplicate';
+		$duplicate_name = $term['term_name'] . ' duplicate';
+
+		while ( term_exists( $duplicate_slug, 'nav_menu' ) ) {
+			$duplicate_slug .= '-duplicate';
+			$duplicate_name .= ' duplicate';
+		}
+
+		$this->mapped_terms_slug[ $term['slug'] ] = $duplicate_slug;
+
+		$term['slug'] = $duplicate_slug;
+		$term['term_name'] = $duplicate_name;
+
+		return $term;
+	}
+
 	public function run() {
 		$this->import( $this->requested_file_path );
 
@@ -1335,7 +1365,6 @@ class WP_Import extends \WP_Importer {
 	/**
 	 * @param $file
 	 * @param $args
-	 * @param $already_imported // Posts that already imported using different importer
 	 */
 	public function __construct( $file, $args = [] ) {
 		$this->requested_file_path = $file;
@@ -1345,4 +1374,6 @@ class WP_Import extends \WP_Importer {
 			$this->fetch_attachments = true;
 		}
 	}
+
+
 }
