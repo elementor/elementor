@@ -41,7 +41,6 @@ class Check_Case extends Diagnosable {
 	 * @param \ReflectionMethod|string $method
 	 *
 	 * @return void
-	 * @throws \Exception
 	 * @throws Check_Case_Exception
 	 */
 	public function __construct( $check, $method ) {
@@ -70,7 +69,7 @@ class Check_Case extends Diagnosable {
 	 * Run the check-case and inspect its expectations.
 	 *
 	 * @return static
-	 * @throws \Exception|Check_Case_Exception
+	 * @throws \Throwable|Check_Case_Exception
 	 */
 	public function check() {
 		try {
@@ -90,10 +89,10 @@ class Check_Case extends Diagnosable {
 					)
 				);
 			}
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			// Generally assign the thrown exception to the class to indicate failure
 			// phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
-			throw $this->exception = $e;
+			throw $this->error = $e;
 		}
 
 		return $this;
@@ -105,7 +104,6 @@ class Check_Case extends Diagnosable {
 	 * @param mixed $subject
 	 *
 	 * @return Expectation
-	 * @throws \Exception
 	 */
 	public function expect( $subject = null ) {
 		// Return the currently added expectation instance.
@@ -142,7 +140,6 @@ class Check_Case extends Diagnosable {
 	 * @param \ReflectionMethod|string $method
 	 *
 	 * @return void
-	 * @throws \Exception
 	 * @throws Check_Case_Exception
 	 */
 	protected function set_method( $method ) {

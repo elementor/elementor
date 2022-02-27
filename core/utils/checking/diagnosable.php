@@ -7,9 +7,9 @@ abstract class Diagnosable {
 	/**
 	 * An exception that's kept when the diagnosable fails.
 	 *
-	 * @var \Exception
+	 * @var \Throwable
 	 */
-	protected $exception;
+	protected $error;
 
 	/**
 	 * Create a diagnostics instance for the diagnosable.
@@ -23,10 +23,10 @@ abstract class Diagnosable {
 	/**
 	 * If there was an error from the last inspection of the diagnosable, retrieve it.
 	 *
-	 * @return \Exception
+	 * @return \Throwable
 	 */
 	public function error() {
-		return $this->exception;
+		return $this->error;
 	}
 
 	/**

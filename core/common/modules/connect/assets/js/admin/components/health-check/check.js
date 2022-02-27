@@ -1,24 +1,21 @@
 import React from 'react';
-import { Button } from './';
+import { Button, Result } from './';
 import { List as DiagnosticsList } from './diagnostics';
 import { useHealthCheck } from '../../hooks';
 
 const Check = () => {
-	const { data, refetch } = useHealthCheck();
-
-	const Result = () => (
-		<div>
-			<h2>{ __( 'Result:' ) }</h2>
-			<hr />
-			<DiagnosticsList items={ data } />
-			<hr />
-		</div>
-	);
+	const { data, refetch, isError, isIdle, isLoading, isSuccess } = useHealthCheck();
 
 	return (
 		<React.Fragment>
 			<Button onClick={ refetch } />
-			{ Boolean( data?.length ) && <Result /> }
+			{ ! isIdle &&
+				<Result>
+					{ isLoading && <span>{ __( 'Loading...' ) }</span> }
+					{ isSuccess && <DiagnosticsList items={ data }/> }
+					{ isError && <span>{ __( 'There was an error trying to perform the connection test.' ) }</span> }
+				</Result>
+			}
 		</React.Fragment>
 	);
 };

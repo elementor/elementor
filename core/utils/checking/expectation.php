@@ -58,7 +58,7 @@ class Expectation extends Diagnosable {
 	 * @param \Closure $closure
 	 *
 	 * @return static
-	 * @throws \Exception
+	 * @throws Expectation_Exception
 	 */
 	public function to_meet( $closure ) {
 		$this->inspect(
@@ -90,12 +90,14 @@ class Expectation extends Diagnosable {
 	 * @throws Expectation_Exception
 	 */
 	protected function inspect( $closure, $exception_message ) {
-		$this->exception = ! $closure->__invoke( $this->subject ) ?
-			new Expectation_Exception( $exception_message ) :
-			null;
-
-		if ( $this->exception ) {
-			throw $this->exception;
+		try {
+			if ( ! $closure->__invoke( $this->subject ) ) {
+				throw new Expectation_Exception( $exception_message );
+			}
+		} catch ( \Throwable $e ) {
+			// phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+			$this->error = $e;
+			throw new Expectation_Exception();
 		}
 	}
 }

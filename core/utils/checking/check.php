@@ -57,7 +57,7 @@ abstract class Check extends Diagnosable {
 	 * Run all checks-cases inspecting their expectations.
 	 *
 	 * @return static
-	 * @throws \Exception|Check_Exception|\LogicException
+	 * @throws \Throwable|Check_Exception|\LogicException
 	 */
 	public function run() {
 		$check_methods = $this->get_check_methods();
@@ -76,7 +76,7 @@ abstract class Check extends Diagnosable {
 					if ( $this->configuration->stop_on_failure ) {
 						throw new Check_Exception();
 					}
-				} catch ( \Exception $e ) {
+				} catch ( \Throwable $e ) {
 					// In case that a check-case end up with an error, only throw the exception and break the checking
 					// workflow when `stop_on_error` is on.
 					if ( $this->configuration->stop_on_error ) {
@@ -84,10 +84,10 @@ abstract class Check extends Diagnosable {
 					}
 				}
 			}
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			// Generally assign the thrown exception to the class to indicate failure.
 			// phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
-			throw $this->exception = $e;
+			throw $this->error = $e;
 		}
 
 		return $this;
@@ -133,7 +133,7 @@ abstract class Check extends Diagnosable {
 	 * @param \ReflectionMethod|string $check_method
 	 *
 	 * @return void
-	 * @throws \DomainException|Check_Case_Exception
+	 * @throws \Throwable|Check_Case_Exception
 	 */
 	public function check( $check_method ) {
 		$check_method_name = $check_method instanceof \ReflectionMethod ?
@@ -157,7 +157,6 @@ abstract class Check extends Diagnosable {
 	 * @param mixed $subject
 	 *
 	 * @return Expectation
-	 * @throws \Exception
 	 */
 	protected function expect( $subject = null ) {
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace

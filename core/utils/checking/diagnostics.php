@@ -87,7 +87,7 @@ class Diagnostics {
 	public function message() {
 		$error = $this->diagnosable->error();
 
-		return $error instanceof \Exception ?
+		return $error instanceof \Throwable ?
 			$error->getMessage() :
 			null;
 	}

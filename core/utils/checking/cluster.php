@@ -83,7 +83,7 @@ class Cluster extends Diagnosable {
 	 * Run all cluster's checks.
 	 *
 	 * @return static
-	 * @throws \Exception|Check_Exception
+	 * @throws \Throwable|\Exception|Check_Exception
 	 */
 	public function run() {
 		if ( empty( $this->instances ) ) {
