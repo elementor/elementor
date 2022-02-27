@@ -1,5 +1,5 @@
 export const tests = () => {
-	require( './modules/web-cli/assets/js/api/index' );
+	require( './modules/web-cli/assets/js/index' );
 
 	require( './assets/dev/js/editor/container/container.spec' );
 
