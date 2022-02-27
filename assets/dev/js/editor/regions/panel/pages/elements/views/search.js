@@ -6,7 +6,6 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 
 	localizedValue: '',
 	localizedValueStore: new LocalizedValueStore(),
-	inputUtils: new InputUtils,
 
 	id: 'elementor-panel-elements-search-wrapper',
 
@@ -15,7 +14,7 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'keyup @ui.input': 'onInputChanged',
+		'keyDown @ui.input': 'onInputChanged',
 		'input @ui.input': 'onInputChanged',
 	},
 
@@ -29,7 +28,7 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 			this.clearInput();
 		}
 		this.localizedValueStore.sendKey( event );
-		if ( inputUtils.isPaste( event ) ) {
+		if ( InputUtils.isPaste( event ) ) {
 			this.localizedValue = event.target.value;
 		} else {
 			this.localizedValue = this.localizedValueStore.getLocalizedValue();
