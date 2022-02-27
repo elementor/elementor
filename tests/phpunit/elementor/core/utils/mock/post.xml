@@ -15,7 +15,7 @@
 <!--    existing user on the site or to create a new user. -->
 <!-- 7. WordPress will then import each of the posts, pages, comments, categories, etc. -->
 <!--    contained in this file into your site. -->
-<!-- generator="WordPress/5.9" created="2022-02-16 11:26" -->
+<!-- generator="WordPress/5.9.1" created="2022-02-27 12:03" -->
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -24,10 +24,10 @@
 	xmlns:wp="http://wordpress.org/export/1.2/"
 >
 	<channel>
-		<title>lcoal</title>
+		<title>wordpress</title>
 		<link>http://wordpress.local</link>
 		<description>Just another WordPress site</description>
-		<pubDate>Wed, 16 Feb 2022 11:26:23 +0000</pubDate>
+		<pubDate>Sun, 27 Feb 2022 12:03:07 +0000</pubDate>
 		<language>en-US</language>
 		<wp:wxr_version>1.2</wp:wxr_version>
 		<wp:base_site_url>http://wordpress.local</wp:base_site_url>
@@ -41,21 +41,21 @@
 			<wp:author_first_name><![CDATA[]]></wp:author_first_name>
 			<wp:author_last_name><![CDATA[]]></wp:author_last_name>
 		</wp:author>
-<generator>https://wordpress.org/?v=5.9</generator>
+<generator>https://wordpress.org/?v=5.9.1</generator>
 		<item>
 			<title>Hello world!</title>
 			<link></link>
 			<pubDate></pubDate>
 			<dc:creator><![CDATA[manor]]></dc:creator>
-			<guid isPermaLink="false"><![CDATA[http://wordpress.local/?p=1]]></guid>
+			<guid isPermaLink="false"><![CDATA[manor]]></guid>
 			<description></description>
 			<content:encoded><![CDATA[<!-- wp:paragraph -->
 <p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
 <!-- /wp:paragraph -->]]></content:encoded>
 			<excerpt:encoded><![CDATA[]]></excerpt:encoded>
 			<wp:post_id>1</wp:post_id>
-			<wp:post_date><![CDATA[2022-02-16 11:23:05]]></wp:post_date>
-			<wp:post_date_gmt><![CDATA[2022-02-16 11:23:05]]></wp:post_date_gmt>
+			<wp:post_date><![CDATA[2022-02-27 11:59:29]]></wp:post_date>
+			<wp:post_date_gmt><![CDATA[2022-02-27 11:59:29]]></wp:post_date_gmt>
 			<wp:comment_status><![CDATA[open]]></wp:comment_status>
 			<wp:ping_status><![CDATA[open]]></wp:ping_status>
 			<wp:post_name><![CDATA[hello-world]]></wp:post_name>
@@ -72,8 +72,8 @@
 				<wp:comment_author_email><![CDATA[wapuu@wordpress.example]]></wp:comment_author_email>
 				<wp:comment_author_url><![CDATA[https://wordpress.org/]]></wp:comment_author_url>
 				<wp:comment_author_IP><![CDATA[]]></wp:comment_author_IP>
-				<wp:comment_date><![CDATA[2022-02-16 11:23:05]]></wp:comment_date>
-				<wp:comment_date_gmt><![CDATA[2022-02-16 11:23:05]]></wp:comment_date_gmt>
+				<wp:comment_date><![CDATA[2022-02-27 11:59:29]]></wp:comment_date>
+				<wp:comment_date_gmt><![CDATA[2022-02-27 11:59:29]]></wp:comment_date_gmt>
 				<wp:comment_content><![CDATA[Hi, this is a comment.
 To get started with moderating, editing, and deleting comments, please visit the Comments screen in the dashboard.
 Commenter avatars come from <a href="https://gravatar.com">Gravatar</a>.]]></wp:comment_content>
