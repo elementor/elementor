@@ -535,23 +535,11 @@ class WP_Import extends \WP_Importer {
 				if ( is_array( $term_id ) ) {
 					$term_id = $term_id['term_id'];
 				}
+
 				if ( isset( $term['term_id'] ) ) {
-					// If the exists term is nav_menu, create duplicate term.
 					if ( 'nav_menu' === $term['term_taxonomy'] ) {
-
-						$duplicate_slug = $term['slug'] . '-duplicate';
-						$duplicate_name = $term['term_name'] .= ' duplicate';
-
-						while ( term_exists( $duplicate_slug, 'nav_menu' ) ) {
-							$duplicate_slug .= '-duplicate';
-							$duplicate_name .= ' duplicate';
-						}
-
-						$this->mapped_terms_slug[ $term['slug'] ] = $duplicate_slug;
-						$term['slug'] = $duplicate_slug;
-						$term['term_name'] = $duplicate_name;
-					}
-					else {
+						$term = $this->handle_duplicated_nav_menu_term( $term );
+					} else {
 						$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
 						continue;
 					}
@@ -1348,6 +1336,27 @@ class WP_Import extends \WP_Importer {
 		return $key;
 	}
 
+	/**
+	 * @param $term
+	 * @return mixed
+	 */
+	private function handle_duplicated_nav_menu_term( $term )	{
+		$duplicate_slug = $term['slug'] . '-duplicate';
+		$duplicate_name = $term['term_name'] . ' duplicate';
+
+		while ( term_exists( $duplicate_slug, 'nav_menu' ) ) {
+			$duplicate_slug .= '-duplicate';
+			$duplicate_name .= ' duplicate';
+		}
+
+		$this->mapped_terms_slug[ $term['slug'] ] = $duplicate_slug;
+
+		$term['slug'] = $duplicate_slug;
+		$term['term_name'] = $duplicate_name;
+
+		return $term;
+	}
+
 	public function run() {
 		$this->import( $this->requested_file_path );
 
@@ -1366,4 +1375,6 @@ class WP_Import extends \WP_Importer {
 			$this->fetch_attachments = true;
 		}
 	}
+
+
 }
