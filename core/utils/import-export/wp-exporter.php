@@ -644,7 +644,7 @@ class WP_Exporter {
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>nav_menu</wp:term_taxonomy>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $menu->slug ) . '</wp:term_slug>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_name>' . $this->wxr_cdata( $menu->name ) . '</wp:term_name>' . PHP_EOL;
-			$result .= $this->indent(2) . '</wp:term>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
 		}
 
 		return $result;
