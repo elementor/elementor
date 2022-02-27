@@ -37,7 +37,12 @@ class WP_Content extends Base {
 			}
 		}
 
-		$native_post_types = [ 'page', 'post', 'nav_menu_item' ];
+		$native_post_types = [
+			'page' => 'page',
+			'post' => 'post',
+			'nav_menu_item' => 'nav_menu_item'
+		];
+
 		$post_types_to_export = array_merge( $native_post_types, $post_types );
 
 		$sub_directories = [];
