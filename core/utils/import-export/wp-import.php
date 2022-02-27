@@ -75,7 +75,6 @@ class WP_Import extends \WP_Importer {
 	private $processed_authors = [];
 	private $author_mapping = [];
 	private $processed_menu_items = [];
-	private $missing_menu_items = [];
 	private $post_orphans = [];
 	private $menu_item_orphans = [];
 	private $mapped_terms_slug = [];
