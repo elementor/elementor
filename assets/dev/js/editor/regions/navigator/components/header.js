@@ -9,7 +9,7 @@ export function Header( { onClose } ) {
 	/**
 	 * Whether all elements folding state is open.
 	 *
-	 * @var boolean
+	 * @type boolean
 	 */
 	const isAllOpen = useMemo(
 		() => Object.values( elementsFolding ).every( ( state ) => state ),
@@ -26,11 +26,21 @@ export function Header( { onClose } ) {
 	}, [ isAllOpen ] );
 
 	return (
-		<div id="elementor-navigator__header">
-			<Icon id="elementor-navigator__toggle-all" className={ isAllOpen ? 'eicon-collapse' : 'eicon-expand' } onClick={ toggleAll } />
-			<div id="elementor-navigator__header__title">{ __( 'Navigator', 'elementor' ) }</div>
-			<Icon id="elementor-navigator__close" className="eicon-close" onClick={ onClose } />
-		</div>
+		<header id="elementor-navigator__header">
+			<Icon id="elementor-navigator__toggle-all"
+				className={ isAllOpen ? 'eicon-collapse' : 'eicon-expand' }
+				title={ __( 'Toggle folding all' ) }
+				onClick={ toggleAll }
+				role="button" />
+			<div id="elementor-navigator__header__title">
+				{ __( 'Navigator', 'elementor' ) }
+			</div>
+			<Icon id="elementor-navigator__close"
+				className="eicon-close"
+				title={ __( 'Close' ) }
+				onClick={ onClose }
+				role="button" />
+		</header>
 	);
 }
 

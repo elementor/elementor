@@ -31,6 +31,19 @@ export default class Store {
 			// Use an empty function instead of empty object since an empty object
 			// isn't a valid reducer value.
 			reducer: () => {},
+			middleware: ( getDefaultMiddleware ) => getDefaultMiddleware( {
+				/**
+				 * Sometimes there are console warnings about time-consuming (32ms+) Redux middlewares (serializable,
+				 * immutable) for certain reducers in development mode. When running QUnit, it causes it to be "done
+				 * with warnings", and therefore in testing mode those middlewares should be deactivated.
+				 *
+				 * @see QUnit `EditorBootstrap` class, where the middlewares are disabled.
+				 */
+				...( elementorCommonConfig.isTesting ? {
+					immutableCheck: false,
+					serializableCheck: false,
+				} : {} ),
+			} ),
 		} );
 	}
 
@@ -78,13 +91,18 @@ export default class Store {
 	 *
 	 * @param {string|null} sliceId - Slice ID to get.
 	 *
-	 * @return {Slice|Object}
+	 * @return {Slice}
 	 */
-	get( sliceId = null ) {
-		if ( sliceId ) {
-			return this.slices[ sliceId ];
-		}
+	get( sliceId ) {
+		return this.slices[ sliceId ];
+	}
 
+	/**
+	 * Get all slices.
+	 *
+	 * @return {Object}
+	 */
+	getAllSlices() {
 		return this.slices;
 	}
 
@@ -94,7 +112,7 @@ export default class Store {
 	 * @return {Object}
 	 */
 	getAll() {
-		return Object.keys( this.slices );
+		return Object.keys( this.slices ).sort();
 	}
 
 	/**
@@ -129,12 +147,45 @@ export default class Store {
 	}
 
 	/**
-	 * Proxy to Redux's `getState()` function.
+	 * Select and subscribe to a specific part of the store.
+	 *
+	 * @see https://github.com/reduxjs/redux/issues/303#issuecomment-125184409
+	 * @param select
+	 * @param onChange
+	 * @returns {*}
+	 */
+	selector( select, onChange ) {
+		let currentState;
+
+		const handleChange = () => {
+			const nextState = select( this.getState() );
+
+			if ( nextState !== currentState ) {
+				onChange( nextState, currentState );
+				currentState = nextState;
+			}
+		};
+
+		const unsubscribe = this.subscribe( handleChange );
+
+		handleChange();
+
+		return unsubscribe;
+	}
+
+	/**
+	 * Proxy to Redux's `getState()` function, with the ability to get a specific slice.
 	 *
 	 * @return {*}
 	 */
-	getState() {
-		return this.reduxStore.getState( ...arguments );
+	getState( sliceId ) {
+		let state = this.reduxStore.getState();
+
+		if ( sliceId ) {
+			state = state[ sliceId ];
+		}
+
+		return state;
 	}
 
 	/**

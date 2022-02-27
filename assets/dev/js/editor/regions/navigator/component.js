@@ -58,7 +58,6 @@ export default class Component extends ComponentBase {
 						}
 					},
 					reset: ( state, { payload } ) => {
-						// Prepare
 						// Act
 						return {};
 					},

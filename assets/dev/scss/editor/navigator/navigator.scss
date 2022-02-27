@@ -169,7 +169,7 @@ body {
 
 		&.elementor-dragging-on-child {
 
-			> .elementor-navigator__elements {
+			> div > .elementor-navigator__elements {
 
 				> .elementor-empty-view {
 					border-top: 2px solid $editor-info;
@@ -217,6 +217,13 @@ body {
 						color: #fff;
 					}
 				}
+			}
+		}
+
+		> .elementor-navigator__item {
+
+			&.elementor-root {
+				display: none;
 			}
 		}
 

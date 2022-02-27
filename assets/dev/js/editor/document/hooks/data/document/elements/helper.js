@@ -12,12 +12,17 @@ export default class Helper {
 				};
 
 				/**
-				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.
+				 * TODO: Creating large amount of columns will reduce performance, try optimizing `document/elements/create`.
 				 */
-				$e.run( 'document/elements/create', {
-					container,
-					model,
-				} );
+				const createdContainer = container.view.addElement( model ).getContainer();
+
+				$e.store.dispatch(
+					$e.store.get( 'document/elements' ).actions.add( {
+						containerId: container.id,
+						model: createdContainer.model.toJSON(),
+						index: options.at,
+					} )
+				);
 
 				/**
 				 * Manual history & not using of `$e.run('document/elements/create')`

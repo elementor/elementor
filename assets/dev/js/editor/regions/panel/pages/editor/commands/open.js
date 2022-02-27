@@ -24,6 +24,15 @@ export class Open extends CommandBase {
 			args.model,
 			args.view
 		);
+
+		if ( args.section ) {
+			const page = elementor.getPanelView().currentPageView;
+
+			page.activateSection( args.section );
+			page.activateTab(
+				page.getControlModel( args.section ).get( 'tab' )
+			);
+		}
 	}
 }
 

@@ -2,7 +2,7 @@ import CommandNavigator from './base/command-navigator';
 
 export class ToggleFolding extends CommandNavigator {
 	apply( args ) {
-		const { containers = [ args.container ], callback, state } = args;
+		const { containers = [ args.container ], state } = args;
 
 		containers.forEach( ( container ) => {
 			const isActive = ( ( _state ) => _state[ 'navigator/folding' ][ container.id ] )(
@@ -17,10 +17,6 @@ export class ToggleFolding extends CommandNavigator {
 				newState = undefined === state ?
 					! isActive :
 					state;
-
-			if ( callback ) {
-				newArgs.callback = callback;
-			}
 
 			if ( newState ) {
 				$e.run( 'navigator/elements/expand', newArgs );

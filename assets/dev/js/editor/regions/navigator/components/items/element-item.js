@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils';
 import { BASE_ITEM_CLASS } from './';
 import { ElementProvider } from '../../context/item-context/providers';
 import { ItemHandle, ItemIndicatorList, ItemList } from '../';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useElementFolding, useElementSelection, useNavigatorJquerySortable } from '../../hooks';
 import { useItemContext } from 'elementor-regions/navigator/context/item-context';
 import Icon from 'elementor-app/ui/atoms/icon';
@@ -56,11 +56,15 @@ export function ElementItem( { itemId: elementId, level } ) {
 		/**
 		 * Activate a specific section in the panel regarding the element.
 		 *
-		 * @void
+		 *  @void
 		 */
 		const handleActivateSection = useCallback(
 			( section ) => {
-				setElementSelection( { section } );
+				$e.run( 'panel/editor/open', {
+					model: container.model,
+					view: container.view,
+					section,
+				} );
 			},
 			[ setElementSelection ]
 		);
@@ -79,19 +83,6 @@ export function ElementItem( { itemId: elementId, level } ) {
 		);
 
 		/**
-		 * Whether the element usually contain children (regardless to nested elements).
-		 *
-		 * @var { boolean }
-		 */
-		const hasChildrenByDefault = useMemo(
-			() => {
-				return element.elType &&
-					( 'widget' !== element.elType || Boolean( element.elements.length ) );
-			},
-			[ elementId, element.elements ]
-		);
-
-		/**
 		 * Use the navigator jQuery sortable helper. This is temporary, till the development of a new react-way sortable
 		 * package.
 		 */
@@ -100,34 +91,41 @@ export function ElementItem( { itemId: elementId, level } ) {
 			{ setElementFolding }
 		);
 
+		useEffect( () => {
+			jQuery( listRef.current )[ elementFolding ? 'slideDown' : 'slideUp' ]();
+		}, [ elementFolding ] );
+
 		return (
 			<div
 				ref={ itemRef }
 				className={ arrayToClassName( [
 					{ [ BASE_ITEM_CLASS ]: true },
 					{ [ `${ BASE_ITEM_CLASS }-${ element.elType }` ]: element.elType },
-					{ [ `${ BASE_ITEM_CLASS }--has-children` ]: hasChildrenByDefault || element.elements.length },
+					{ [ `${ BASE_ITEM_CLASS }--has-children` ]: element.hasChildrenByDefault || element.elements.length },
 					{ [ `${ BASE_ITEM_CLASS }--hidden` ]: element.hidden },
 				] ) }
 				onClick={ handleToggleSelection }
 				onContextMenu={ handleContextMenu }
-				data-id={ elementId }>
+				data-id={ elementId }
+				role="treeitem">
 				<ItemHandle
 					ref={ handleRef }
 					className={ arrayToClassName( [
 						{ 'elementor-active': elementFolding },
 						{ 'elementor-editing': elementSelection },
+						{ 'elementor-root': element.root },
 					] ) }
 					onToggleFolding={ setElementFolding }
 					onTitleEdit={ handleTitleEdit }>
-					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
+					<div className="elementor-navigator__element__toggle"
+						title={ __( 'Toggle visibility' ) }
+						onClick={ handleToggleVisibility }
+						role="button">
 						<Icon className="eicon-preview-medium"/>
 					</div>
-					<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection } />
+					<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection }/>
 				</ItemHandle>
-				<div style={ { display: elementFolding ? 'block' : 'none' } }>
-					<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ hasChildrenByDefault } />
-				</div>
+				<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ element.hasChildrenByDefault } />
 			</div>
 		);
 	};

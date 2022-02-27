@@ -1,8 +1,10 @@
 # directories
+coverage-report/
 node_modules/
 .sass-cache/
 log/
-vendor/
+# Only exlude root-path's `vendor` directory, not nested ones
+/vendor/
 local-site/
 tmp/
 

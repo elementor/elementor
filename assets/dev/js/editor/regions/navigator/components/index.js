@@ -1,5 +1,4 @@
 export { Empty } from './empty';
-export { ItemEdit } from './item-edit';
 export { ItemHandle } from './item-handle';
 export { ItemIcon } from './item-icon';
 export { ItemIndicator } from './item-indicator';

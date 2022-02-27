@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 /**
  * The Item Context instance.
  *
- * @var {React.Context<{}>}
+ * @type {React.Context<{}>}
  */
 export const ItemContext = createContext( {} );
 

@@ -45,14 +45,6 @@ export class Create extends CommandHistory {
 
 		let result = [];
 
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		if ( ! options.trigger ) {
-			options.trigger = {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add',
-			};
-		}
-
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
@@ -79,8 +71,8 @@ export class Create extends CommandHistory {
 
 			$e.store.dispatch(
 				$e.store.get( 'document/elements' ).actions.add( {
-					containerId: 'document' === container.id ? undefined : container.id,
-					model: { id: createdContainer.id, ...createdContainer.model.toJSON() },
+					containerId: container.id,
+					model: createdContainer.model.toJSON(),
 					index: options.at,
 				} )
 			);

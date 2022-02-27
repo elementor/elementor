@@ -7,34 +7,49 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	/**
 	 * The element's Container instance.
 	 *
-	 * @var {Container|false}
+	 * @type {Container|false}
 	 */
 	const container = useMemo(
 		() => elementor.getContainer( elementId ),
-		[ elementId ]
+	[]
 	);
 
 	/**
 	 * The element selector from store.
 	 *
-	 * @var {{}}
+	 * @type {{}}
 	 */
 	const element = useSelector(
 		( state ) => state[ 'document/elements' ][ elementId ]
 	);
 
 	/**
+	 * Whether the is the document's tree root.
+	 *
+	 * @type {boolean}
+	 */
+	const root = useMemo(
+		() => 'document' === elementId,
+		[ elementId ]
+	);
+
+	/**
 	 * The item representation of the element.
 	 *
-	 * @var {{}}
+	 * @type {{}}
 	 */
 	const item = useMemo(
 		() => ( {
-			settings: {},
-			elements: [],
-			title: container.model.getTitle(),
-			icon: container.model.getIcon(),
 			...element,
+			elType: element.elType,
+			settings: element.settings || {},
+			elements: element.elements?.filter(
+				( _elementId ) => $e.store.getState( 'document/elements' )[ _elementId ]
+			) || [],
+			title: container.getTitle(),
+			icon: container.getIcon(),
+			root,
+			hasChildrenByDefault: container.hasChildrenByDefault,
 		} ),
 		[ container, element ]
 	);

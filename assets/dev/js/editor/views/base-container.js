@@ -1,5 +1,3 @@
-import ElementModel from 'elementor-elements/models/element';
-
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
@@ -127,12 +125,7 @@ module.exports = Marionette.CompositeView.extend( {
 				container,
 				columns: Number( ! containerExperiment ),
 				options: {
-					at: this.getOption( 'at' ),
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
+					at: options.at,
 					edit: false, // Avoid useless element selection.
 				},
 			} );
@@ -156,6 +149,29 @@ module.exports = Marionette.CompositeView.extend( {
 		return widget;
 	},
 
+	onDrop( event, options ) {
+		const input = event.originalEvent.dataTransfer.files;
+
+		if ( input.length ) {
+			$e.run( 'editor/browser-import/import', {
+				input,
+				target: this.getContainer(),
+				options: { event, target: { at: options.at } },
+			} );
+
+			return;
+		}
+
+		this.createElementFromModel(
+			Object.fromEntries(
+				Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+					// The `custom` property is responsible for storing global-widgets related data.
+					.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
+			),
+			options
+		);
+	},
+
 	getHistoryType( event ) {
 		if ( event ) {
 			if ( event.originalEvent ) {
@@ -171,20 +187,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return 'add';
-	},
-
-	addChildElement: function( data, options ) {
-		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
-
-		if ( Object !== data.constructor ) {
-			data = jQuery.extend( {}, data );
-		}
-
-		$e.run( 'document/elements/create', {
-			container: this.getContainer(),
-			model: data,
-			options,
-		} );
 	},
 
 	cloneItem: function( item ) {

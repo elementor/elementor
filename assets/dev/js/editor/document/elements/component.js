@@ -19,12 +19,12 @@ export default class Component extends ComponentBase {
 		const defaultReducers = {
 			add: ( state, { payload } ) => {
 				// Prepare
-				const { containerId, models = [ payload.model ], index = 0 } = payload,
+				const { containerId, models = [ payload.model ], index } = payload,
 					parent = state[ containerId ];
 
 				// Act
 				for ( const model of models.slice() ) {
-					// Store the newly created element
+					// Store the newly created element, reset `elements` in order to make a flat list
 					state[ model.id ] = { ...model, elements: [] };
 
 					if ( model.elements?.length ) {
@@ -37,9 +37,10 @@ export default class Component extends ComponentBase {
 						} );
 					}
 
-					// Create reference on parent element
+					// Create reference on parent element. When the added container is the document (root), it has no
+					// parent to create a reference on.
 					if ( parent ) {
-						parent.elements.splice( index, 0, model.id );
+						parent.elements.splice( undefined !== index ? index : parent.elements.length, 0, model.id );
 					}
 				}
 			},
@@ -52,7 +53,7 @@ export default class Component extends ComponentBase {
 				for ( const containerId of containerIds ) {
 					const container = state[ containerId ];
 
-					if ( container.elements?.length ) {
+					if ( container && container.elements.length ) {
 						// Remove children elements
 						defaultReducers.remove( state, {
 							payload: {
@@ -80,7 +81,9 @@ export default class Component extends ComponentBase {
 				// Act
 				for ( const containerId of containerIds ) {
 					// Set settings of the current element
-					state[ containerId ].settings = { ...state[ containerId ].settings, ...settings };
+					if ( state[ containerId ] ) {
+						state[ containerId ].settings = { ...state[ containerId ].settings, ...settings };
+					}
 				}
 			},
 			change: ( state, { payload } ) => {
@@ -94,7 +97,6 @@ export default class Component extends ComponentBase {
 				}
 			},
 			reset: ( state, { payload } ) => {
-				// Prepare
 				// Act
 				return {};
 			},
@@ -106,29 +108,30 @@ export default class Component extends ComponentBase {
 				reducers: defaultReducers,
 			},
 			selection: {
-				initialState: {},
+				initialState: [],
 				reducers: {
 					toggle: ( state, { payload } ) => {
 						// Prepare
 						const { containerIds = [ payload.containerId ], state: selectionState, all = false } = payload;
 
 						// Act
-						for ( const containerId of ( all ? Object.keys( state ) : containerIds ) ) {
+						for ( const containerId of ( all ? state : containerIds ) ) {
+							// When no `selectionState` provided, it means toggle, in which case the new state should be
+							// determined.
 							const newState = undefined === selectionState ?
-								! state[ containerId ] :
+								state.indexOf( containerId ) < 1 :
 								selectionState;
 
 							if ( newState ) {
-								state[ containerId ] = newState;
+								state.push( containerId );
 							} else {
-								delete state[ containerId ];
+								state.splice( state.indexOf( containerId ), 1 );
 							}
 						}
 					},
 					reset: ( state, { payload } ) => {
-						// Prepare
 						// Act
-						return {};
+						return [];
 					},
 				},
 			},

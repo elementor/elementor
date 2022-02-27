@@ -21,39 +21,20 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Manager constructor.
 	 *
-	 * @returns {Manager}
+	 * @constructor
 	 */
 	constructor() {
 		super();
 
 		// Subscribe to the selection state kept in redux.
-		$e.store.subscribe( () => {
-			const selectionSelector = ( state ) => state[ 'document/elements/selection' ];
-			this.elements = Object.fromEntries(
-				Object.keys( selectionSelector( $e.store.getState() ) || {} )
-					.map( ( elementId ) => [ elementId, elementor.getContainer( elementId ) ] )
-			);
-		} );
-
-		// Using a Proxy in order to use update methods only once on external invocations, but internally the `add` or
-		// `remove` methods may be executed many times, when update methods will be used only once.
-		return new Proxy( this, {
-			get: function( target, prop ) {
-				if ( [ 'add', 'remove' ].includes( prop ) ) {
-					return ( ...args ) => {
-						const result = target[ prop ]( ...args );
-
-						target.updateType();
-						target.updateSortable();
-						target.updatePanelPage();
-
-						return result;
-					};
-				}
-
-				return Reflect.get( ...arguments );
-			},
-		} );
+		$e.store.selector(
+			( state ) => state?.[ 'document/elements/selection' ],
+			( newState = [] ) => {
+				this.elements = Object.fromEntries( newState.map(
+					( elementId ) => [ elementId, elementor.getContainer( elementId ) ]
+				) );
+			}
+		);
 	}
 
 	/**
@@ -84,12 +65,12 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * @param {Container[]|Container} containers
 	 * @param {{}} options
 	 */
-	add( containers, options = { append: false } ) {
+	add( containers, { append = false, section } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		// If command/ctrl+click not clicked, clear selected elements.
-		if ( ! options.append ) {
-			this.remove( [], { all: true } );
+		if ( ! append ) {
+			this.remove( [], { all: true, updateEnvironment: false } );
 		}
 
 		for ( const container of containers ) {
@@ -102,6 +83,12 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			container.view.select();
 		}
+
+		this.updateEnvironment();
+
+		if ( section ) {
+			elementor.activateElementSection( section );
+		}
 	}
 
 	/**
@@ -113,7 +100,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * @param {Container[]|Container} containers
 	 * @param {{}} options
 	 */
-	remove( containers, options = { all: false } ) {
+	remove( containers, { all = false, updateEnvironment = true } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		if ( options.all ) {
@@ -129,6 +116,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			);
 
 			container.view.deselect();
+		}
+
+		if ( updateEnvironment ) {
+			this.updateEnvironment();
 		}
 	}
 
@@ -161,6 +152,18 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			return false;
 		}, elements[ 0 ].type );
+	}
+
+	/**
+	 * Update environment.
+	 *
+	 * When a change to the selection state is applied, some environmental components should be noticed or modified
+	 * accordingly.
+	 */
+	updateEnvironment() {
+		this.updateType();
+		this.updateSortable();
+		this.updatePanelPage();
 	}
 
 	/**

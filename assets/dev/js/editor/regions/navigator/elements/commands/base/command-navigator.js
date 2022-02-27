@@ -1,12 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export class CommandNavigator extends CommandBase {
-	initialize() {
-		if ( ! elementor.navigator.isOpen ) {
-			$e.run( 'navigator/open' );
-		}
-	}
-
 	validateArgs( args ) {
 		if ( ! elementor.navigator.isOpen ) {
 			throw Error( `Cannot use: '${ this.component.getNamespace() }' while navigator is closed.` );
@@ -20,6 +14,16 @@ export class CommandNavigator extends CommandBase {
 
 	shouldRequireContainer() {
 		return true;
+	}
+
+	/**
+	 * Folding currently allowed for elements which has children by default and which are not the root.
+	 *
+	 * @param container
+	 * @returns {boolean|*|boolean}
+	 */
+	isFoldingAllowed( container ) {
+		return container.hasChildrenByDefault && 'document' !== container.id;
 	}
 }
 
