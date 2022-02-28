@@ -1,29 +1,28 @@
 const { test, expect } = require( '@playwright/test' );
-const { EditorPage } = require( '../../../../../../../../../pages/editor-page' );
-const { WpAdminPage } = require( '../../../../../../../../../pages/wp-admin-page' );
+const WpAdminPage = require( '../../../../../../../../../pages/wp-admin-page' );
 
-test( 'Exit to sanity test', async ( { page } ) => {
-    const wpAdmin = new WpAdminPage( page );
-    await wpAdmin.createNewPage();
+test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
+    // Arrange.
+    const wpAdmin = new WpAdminPage( page, testInfo ),
+        editor = await wpAdmin.openNewPage();
 
-    this.editor = new EditorPage( page );
-    await this.editor.page.click( '#elementor-panel-header-menu-button' );
+    await editor.page.click( '#elementor-panel-header-menu-button' );
 
-    const exit = await page.locator( '.elementor-panel-menu-item-exit-to-dashboard > a' );
+    const exit = await page.locator( '.elementor-panel-menu-item-exit' );
 
     // Select dashboard
-    setExitUserPreference( 'dashboard' );
+    setExitUserPreference( page, 'dashboard' );
 
-    await expect( exit ).toContainText( 'Exit to WP Dashboard' );
+    await expect( exit ).toContainText( 'Exit To WP Dashboard' );
 
     // // Select wp_post_type
-    setExitUserPreference( 'wp_post_type' );
+    setExitUserPreference( page, 'wp_post_type' );
 
-    await expect( exit ).toContainText( 'Exit to WP Page' );
+    await expect( exit ).toContainText( 'Exit To WP Page' );
 } );
 
-const setExitUserPreference = async ( option ) => {
-    await this.editor.page.click( '.elementor-panel-menu-item-editor-preferences' );
-    await this.editor.page.selectOption( '.elementor-control-exit_to >> select', option );
-    await this.editor.page.click( '#elementor-panel-header-menu-button' );
+const setExitUserPreference = async ( page, option ) => {
+    await page.click( '.elementor-panel-menu-item-editor-preferences' );
+    await page.selectOption( '.elementor-control-exit_to >> select', option );
+    await page.click( '#elementor-panel-header-menu-button' );
 };
