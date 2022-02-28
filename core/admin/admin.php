@@ -5,7 +5,9 @@ use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Admin\Notices\Update_Php_Notice;
+use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -52,15 +54,23 @@ class Admin extends App {
 			return;
 		}
 
-		global $wpdb;
+		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
 
-		$has_elementor_page = ! ! $wpdb->get_var( "SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_elementor_edit_mode' LIMIT 1;" );
+		// Get the latest installation from Elementor's Install log in the DB.
+		$latest_install = key( Upgrade_Manager::get_installs_history() );
 
-		if ( $has_elementor_page ) {
+		if ( ! empty( $latest_install ) ) {
+			$is_new_install = version_compare( $latest_install, '3.6.0-beta', '>=' );
+		} else {
+			// If `$latest_install` is not set, Elementor was never installed on this site.
+			$is_new_install = true;
+		}
+
+		if ( $already_had_onboarding || ! $is_new_install ) {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-app#onboarding' ) );
 
 		exit;
 	}
