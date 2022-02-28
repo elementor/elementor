@@ -93,7 +93,7 @@ PanelMenu.addExitItem = () => {
 	}
 
 	PanelMenu.addItem( {
-		name: 'exit-to-dashboard',
+		name: 'exit',
 		icon: 'eicon-exit',
 		title: preferredExitTitle,
 		...itemArgs,
@@ -184,7 +184,7 @@ PanelMenu.getExitTitle = () => {
 
 	switch ( exitPreference ) {
 		case 'dashboard':
-			return __( 'Exit to WP Dashboard', 'elementor' );
+			return __( 'Exit To WP Dashboard', 'elementor' );
 
 		default:
 			let postTypeTitle = elementor.config.document.post_type_title;
@@ -192,7 +192,7 @@ PanelMenu.getExitTitle = () => {
 			if ( 'Revision' === postTypeTitle ) {
 				postTypeTitle = 'Page';
 			}
-			return __( 'Exit to WP %s', 'elementor' ).replace( '%s', postTypeTitle );
+			return __( 'Exit To WP %s', 'elementor' ).replace( '%s', postTypeTitle );
 	}
 };
 
