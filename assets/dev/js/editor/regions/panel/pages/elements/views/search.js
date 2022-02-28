@@ -1,5 +1,5 @@
-import LocalizedValueStore from '../../../../../utils/localized-value-store';
-import InputUtils from '../../../../../utils/input-utils';
+import LocalizedValueStore from 'elementor-editor-utils/localized-value-store';
+import InputUtils from 'elementor-editor-utils/input';
 
 const PanelElementsSearchView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-element-search',
