@@ -16,5 +16,5 @@ export default function CheckBoxWithLabel( props ) {
 CheckBoxWithLabel.propTypes = {
 	checked: PropTypes.any,
 	labelText: PropTypes.string,
-	onChangeCallback: PropTypes.func,
+	onChangeCallback: PropTypes.func.isRequired,
 };

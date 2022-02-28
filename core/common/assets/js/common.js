@@ -6,7 +6,7 @@ import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
 import API from './api/';
 import WordpressComponent from 'elementor-api/components/wordpress/component';
-import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
+//import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
 import events from 'elementor-common-modules/event-tracker/assets/js/events';
 
 class ElementorCommonApp extends elementorModules.ViewModule {

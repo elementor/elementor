@@ -1,4 +1,4 @@
-import { Context } from '../context/context';
+import { OnboardingContext } from '../context/context';
 
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 import Checklist from './checklist';
@@ -7,15 +7,15 @@ import Button from './button';
 import { useCallback, useContext } from 'react';
 
 export default function GoProPopover( props ) {
-	const { state, updateState } = useContext( Context );
+	const { state, updateState } = useContext( OnboardingContext );
 
 	// Handle the Pro Upload popup window.
-	const getProButtonRef = useCallback( ( getProButton ) => {
-		if ( ! getProButton ) {
+	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
+		if ( ! alreadyHaveProButton ) {
 			return;
 		}
 
-		getProButton.addEventListener( 'click', ( event ) => {
+		alreadyHaveProButton.addEventListener( 'click', ( event ) => {
 			event.preventDefault();
 
 			elementorCommon.events.dispatchEvent( {
@@ -26,7 +26,7 @@ export default function GoProPopover( props ) {
 
 			// Open the Pro Upload screen in a popup.
 			window.open(
-				jQuery( getProButton ).attr( 'href' ) + '&mode=popup',
+				alreadyHaveProButton.href + '&mode=popup',
 				'elementorUploadPro',
 				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`
 			);
@@ -39,7 +39,8 @@ export default function GoProPopover( props ) {
 		} );
 	}, [] );
 
-	const goProButton = props.buttons.find( ( button ) => 'go-pro' === button.id ),
+	// The buttonsConfig prop is an array of objects. To find the 'Go Pro' button, we need to iterate over the object.
+	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
 		getElProButton = {
 			text: __( 'Get Elementor Pro', 'elementor' ),
 			className: 'e-onboarding__go-pro-cta',
@@ -53,11 +54,6 @@ export default function GoProPopover( props ) {
 				} );
 			},
 		};
-
-	elementorCommon.elements.$window
-		.on( 'elementor/upload-and-install-pro/success/', () => {
-			updateState( { hasPro: true } );
-		} );
 
 	return (
 		<PopoverDialog
@@ -75,10 +71,10 @@ export default function GoProPopover( props ) {
 					{ __( 'And so much more!', 'elementor' ) }
 				</div>
 				<div className="e-onboarding__go-pro-paragraph">
-					<Button button={ getElProButton } />
+					<Button buttonSettings={ getElProButton } />
 				</div>
 				<div className="e-onboarding__go-pro-paragraph">
-					<a tabIndex="0" className="e-onboarding__go-pro-already-have" ref={ getProButtonRef } href={ elementorAppConfig.onboarding.urls.uploadPro } rel="opener">
+					<a tabIndex="0" className="e-onboarding__go-pro-already-have" ref={ alreadyHaveProButtonRef } href={ elementorAppConfig.onboarding.urls.uploadPro } rel="opener">
 						{ __( 'Already have Elementor Pro?', 'elementor' ) }
 					</a>
 				</div>
@@ -88,5 +84,5 @@ export default function GoProPopover( props ) {
 }
 
 GoProPopover.propTypes = {
-	buttons: PropTypes.array.isRequired,
+	buttonsConfig: PropTypes.array.isRequired,
 };

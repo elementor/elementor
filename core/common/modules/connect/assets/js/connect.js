@@ -11,7 +11,7 @@ export default class extends elementorModules.ViewModule {
 					const width = options.popup?.width || 600,
 						height = options.popup?.height || 700;
 
-					window.open( jQuery( this ).attr( 'href' ) + '&mode=popup', 'elementorConnect', `toolbar=no, menubar=no, width=${ width }, height=${ height }, top=100, left=100` );
+					window.open( jQuery( this ).attr( 'href' ) + '&mode=popup', 'elementorConnect', `toolbar=no, menubar=no, width=${ width }, height=${ height }, top=200, left=0` );
 				} );
 
 				delete options.popup;

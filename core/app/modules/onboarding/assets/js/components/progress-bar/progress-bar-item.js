@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { Context } from '../../context/context';
+import { OnboardingContext } from '../../context/context';
 
 export default function ProgressBarItem( props ) {
-	const { state } = useContext( Context ),
+	const { state } = useContext( OnboardingContext ),
 		stepCompleted = 'completed' === state.steps[ props.id ],
 		stepSkipped = 'skipped' === state.steps[ props.id ];
 

@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState, useCallback } from 'react';
-import { Context } from '../context/context';
+import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function HelloTheme() {
-	const { state, updateState, getStateObjectToUpdate } = useContext( Context ),
+	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		{ ajaxState: activateHelloThemeAjaxState, setAjax: setActivateHelloThemeAjaxState } = useAjax(),
 		// Allow navigating back to this screen if it was completed in the onboarding.
 		[ helloInstalledInOnboarding, setHelloInstalledInOnboarding ] = useState( false ),

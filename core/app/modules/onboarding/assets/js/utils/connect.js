@@ -1,8 +1,8 @@
 import { useEffect, useContext } from 'react';
-import { Context } from '../context/context';
+import { OnboardingContext } from '../context/context';
 
 export default function Connect( props ) {
-	const { state, updateState, getStateObjectToUpdate } = useContext( Context );
+	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
 
 	const connectSuccessCallback = ( data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', 'account', 'completed' );
@@ -15,22 +15,20 @@ export default function Connect( props ) {
 		updateState( stateToUpdate );
 	};
 
-	if ( props.buttonRef ) {
-		useEffect( () => {
-			jQuery( props.buttonRef.current ).elementorConnect( {
-				success: ( data ) => props.successCallback ? props.successCallback( data ) : connectSuccessCallback( data ),
-				error: () => {
-					if ( props.errorCallback ) {
-						props.errorCallback();
-					}
-				},
-				popup: {
-					width: 726,
-					height: 534,
-				},
-			} );
-		}, [] );
-	}
+	useEffect( () => {
+		jQuery( props.buttonRef.current ).elementorConnect( {
+			success: ( data ) => props.successCallback ? props.successCallback( data ) : connectSuccessCallback( data ),
+			error: () => {
+				if ( props.errorCallback ) {
+					props.errorCallback();
+				}
+			},
+			popup: {
+				width: 726,
+				height: 534,
+			},
+		} );
+	}, [] );
 
 	return null;
 }

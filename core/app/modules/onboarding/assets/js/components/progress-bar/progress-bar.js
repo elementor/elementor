@@ -1,17 +1,17 @@
 import { useContext } from 'react';
-import { Context } from '../../context/context';
+import { OnboardingContext } from '../../context/context';
 import { useNavigate } from '@reach/router';
 
 import ProgressBarItem from './progress-bar-item';
 
 export default function ProgressBar() {
-	const { state } = useContext( Context ),
+	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 		progressBarItemsConfig = [
 			{
 				id: 'account',
 				title: __( 'Elementor Account', 'elementor' ),
-				route: '',
+				route: 'account',
 			},
 		];
 

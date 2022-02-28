@@ -1,6 +1,6 @@
 import { createContext, useCallback, useState } from 'react';
 
-export const Context = createContext( {} );
+export const OnboardingContext = createContext( {} );
 
 export function ContextProvider( props ) {
 	const onboardingConfig = elementorAppConfig.onboarding,
@@ -29,18 +29,18 @@ export function ContextProvider( props ) {
 		updateState = useCallback( ( newState ) => {
 			setState( ( prev ) => ( { ...prev, ...newState } ) );
 		}, [ setState ] ),
-		getStateObjectToUpdate = useCallback( ( stateObject, mainChangedPropertyKey, subChangedPropertyKey, subChangedPropertyValue ) => {
+		getStateObjectToUpdate = ( stateObject, mainChangedPropertyKey, subChangedPropertyKey, subChangedPropertyValue ) => {
 			const mutatedStateCopy = JSON.parse( JSON.stringify( stateObject ) );
 
 			mutatedStateCopy[ mainChangedPropertyKey ][ subChangedPropertyKey ] = subChangedPropertyValue;
 
 			return mutatedStateCopy;
-		}, [] );
+		};
 
 	return (
-		<Context.Provider value={ { state, setState, updateState, getStateObjectToUpdate } }>
+		<OnboardingContext.Provider value={ { state, setState, updateState, getStateObjectToUpdate } }>
 			{ props.children }
-		</Context.Provider>
+		</OnboardingContext.Provider>
 	);
 }
 

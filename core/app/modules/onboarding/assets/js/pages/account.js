@@ -1,14 +1,14 @@
 import { useRef, useContext, useState, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
-import { Context } from '../context/context';
+import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import CheckBoxWithLabel from '../components/checkbox-with-label';
 
 export default function Account() {
-	const { state, updateState, getStateObjectToUpdate } = useContext( Context ),
+	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ dataSharingCheckboxState, setDataSharingCheckboxState ] = useState( true ),
 		{ ajaxState: dataSharingAjaxState, setAjax: setDataSharingAjaxState } = useAjax(),

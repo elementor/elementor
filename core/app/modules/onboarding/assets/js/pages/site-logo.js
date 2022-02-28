@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useCallback } from 'react';
-import { Context } from '../context/context';
+import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import DropZone from 'elementor-app/organisms/drop-zone';
@@ -9,7 +9,7 @@ import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function SiteLogo() {
-	const { state, updateState, getStateObjectToUpdate } = useContext( Context ),
+	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ file, setFile ] = useState( state.siteLogo.id ? state.siteLogo : null ),
 		[ isUploading, setIsUploading ] = useState( false ),
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
@@ -79,7 +79,7 @@ export default function SiteLogo() {
 		} );
 	}, [ file ] );
 
-	const uploadSiteLogo = useCallback( ( fileToUpload ) => {
+	const uploadSiteLogo = ( fileToUpload ) => {
 		setIsUploading( true );
 
 		setUploadImageAjax( {
@@ -88,15 +88,33 @@ export default function SiteLogo() {
 				fileToUpload: fileToUpload,
 			},
 		} );
-	}, [] );
+	};
 
-	const dismissUnfilteredFilesCallback = useCallback( () => {
+	const dismissUnfilteredFilesCallback = () => {
 		setIsUploading( false );
 
 		setFile( null );
 
 		setShowUnfilteredFilesDialog( false );
-	}, [] );
+	};
+
+	const onFileSelect = ( selectedFile ) => {
+		setFileSource( 'drop' );
+
+		if ( 'image/svg+xml' === selectedFile.type && ! elementorAppConfig.onboarding.isUnfilteredFilesEnabled ) {
+			setFile( selectedFile );
+
+			setIsUploading( true );
+
+			setShowUnfilteredFilesDialog( true );
+		} else {
+			setFile( selectedFile );
+
+			setNoticeState( null );
+
+			uploadSiteLogo( selectedFile );
+		}
+	};
 
 	/**
 	 * Ajax Callbacks
@@ -217,23 +235,7 @@ export default function SiteLogo() {
 							icon={''}
 							type="wp-media"
 							filetypes={ [ 'jpg', 'jpeg', 'png', 'svg' ] }
-							onFileSelect={ ( selectedFile ) => {
-								setFileSource( 'drop' );
-
-								if ( 'image/svg+xml' === selectedFile.type && ! elementorAppConfig.onboarding.isUnfilteredFilesEnabled ) {
-									setFile( selectedFile );
-
-									setIsUploading( true );
-
-									setShowUnfilteredFilesDialog( true );
-								} else {
-									setFile( selectedFile );
-
-									setNoticeState( null );
-
-									uploadSiteLogo( selectedFile );
-								}
-							} }
+							onFileSelect={ ( selectedFile ) => onFileSelect( selectedFile ) }
 							onWpMediaSelect={ ( frame ) => {
 								// Get media attachment details from the frame state
 								var attachment = frame.state().get( 'selection' ).first().toJSON();

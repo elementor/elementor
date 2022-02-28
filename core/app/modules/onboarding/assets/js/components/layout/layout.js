@@ -1,5 +1,5 @@
 import { useRef, useContext, useEffect } from 'react';
-import { Context } from '../../context/context';
+import { OnboardingContext } from '../../context/context';
 
 import Header from './header';
 import ProgressBar from '../progress-bar/progress-bar';
@@ -15,16 +15,21 @@ export default function Layout( props ) {
 			step: props.pageId,
 			user_state: elementorCommon.config.library_connect.is_connected ? 'logged' : 'anon',
 		} );
+
+		updateState( {
+			currentStep: props.pageId,
+			nextStep: props.nextStep || '',
+		} );
 	}, [] );
 
-	const { state, updateState } = useContext( Context ),
+	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],
 		goProButtonRef = useRef(),
 		createAccountButton = {
 			id: 'create-account',
 			text: __( 'Create Account', 'elementor-pro' ),
 			hideText: false,
-			ref: useRef(),
+			elRef: useRef(),
 			url: elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectTopBar,
 			target: '_blank',
 			rel: 'opener',
@@ -63,19 +68,12 @@ export default function Layout( props ) {
 		} );
 	}
 
-	useEffect( () => {
-		updateState( {
-			currentStep: props.pageId,
-			nextStep: props.nextStep || '',
-		} );
-	}, [] );
-
 	return (
 		<div className="eps-app__lightbox">
 			<div className="eps-app e-onboarding">
 				{ ! state.isLibraryConnected &&
 					<Connect
-						buttonRef={ createAccountButton.ref }
+						buttonRef={ createAccountButton.elRef }
 					/>
 				}
 				<Header

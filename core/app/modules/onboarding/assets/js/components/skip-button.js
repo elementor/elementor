@@ -1,12 +1,12 @@
 import { useContext } from 'react';
-import { Context } from '../context/context';
+import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 
 import Button from './button';
 
 export default function SkipButton( props ) {
 	const { button, className } = props,
-		{ state, updateState } = useContext( Context ),
+		{ state, updateState } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 		skipStep = () => {
 			const mutatedState = JSON.parse( JSON.stringify( state ) );
@@ -37,7 +37,7 @@ export default function SkipButton( props ) {
 		}
 	};
 
-	return <Button button={ button } className={ className } type="skip"/>;
+	return <Button buttonSettings={ button } className={ className } type="skip"/>;
 }
 
 SkipButton.propTypes = {

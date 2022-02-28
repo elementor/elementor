@@ -1,6 +1,4 @@
-export default function Card( props ) {
-	const { image, imageAlt, text, link, name } = props;
-
+export default function Card( { image, imageAlt, text, link, name, clickAction } ) {
 	const onClick = () => {
 		elementorCommon.events.dispatchEvent( {
 			placement: elementorAppConfig.onboarding.eventPlacement,
@@ -8,8 +6,8 @@ export default function Card( props ) {
 			selection: name,
 		} );
 
-		if ( props.clickAction ) {
-			props.clickAction();
+		if ( clickAction ) {
+			clickAction();
 		}
 	};
 
@@ -26,6 +24,6 @@ Card.propTypes = {
 	imageAlt: PropTypes.string.isRequired,
 	text: PropTypes.string.isRequired,
 	link: PropTypes.string.isRequired,
-	name: PropTypes.string,
+	name: PropTypes.string.isRequired,
 	clickAction: PropTypes.func,
 };

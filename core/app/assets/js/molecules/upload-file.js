@@ -53,9 +53,7 @@ export default function UploadFile( props ) {
 
 						if ( 'file-explorer' === props.type ) {
 							fileInput.current.click();
-						}
-
-						if ( 'wp-media' === props.type ) {
+						} else if ( 'wp-media' === props.type ) {
 							if ( frame ) {
 								frame.open();
 								return;
@@ -69,7 +67,11 @@ export default function UploadFile( props ) {
 								},
 							} );
 
-							frame.on( 'select', () => props.onWpMediaSelect( frame ) );
+							frame.on( 'select', ( currentFrame ) => {
+								if ( props.onWpMediaSelect ) {
+									props.onWpMediaSelect( currentFrame );
+								}
+							} );
 
 							frame.open();
 						}

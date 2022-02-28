@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Context } from '../../context/context';
+import { OnboardingContext } from '../../context/context';
 import Grid from 'elementor-app/ui/grid/grid';
 import GoProPopover from '../go-pro-popover';
 import HeaderButtons from 'elementor-app/layout/header-buttons';
@@ -8,14 +8,13 @@ import usePageTitle from 'elementor-app/hooks/use-page-title';
 export default function Header( props ) {
 	usePageTitle( { title: props.title } );
 
-	const { state } = useContext( Context );
+	const { state } = useContext( OnboardingContext );
 
 	const onClose = () => {
 		elementorCommon.events.dispatchEvent( {
 			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'close modal',
 			step: state.currentStep,
-			connect_id: '',
 		} );
 
 		window.top.location = elementorAppConfig.admin_url;
@@ -31,7 +30,7 @@ export default function Header( props ) {
 				/>
 			</div>
 			<HeaderButtons buttons={ props.buttons } onClose={ onClose } />
-			{ ! state.hasPro && <GoProPopover buttons={ props.buttons } /> }
+			{ ! state.hasPro && <GoProPopover buttonsConfig={ props.buttons } /> }
 		</Grid>
 	);
 }
