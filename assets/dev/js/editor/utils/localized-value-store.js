@@ -3,24 +3,40 @@ export default class LocalizedValueStore {
 		this.store = [];
 	}
 
+	/**
+	 * Receives the incoming event and builds the localized store
+	 * @param event
+	 */
 	sendKey( event ) {
-		const isLetter = event.keyCode >= 65 && event.keyCode <= 90;
-		const isSpace = 32 === event.keyCode || ' ' === event.originalEvent.data;
-
-		if ( isLetter || isSpace ) {
-			this.store.push( { original: event.originalEvent.key, localized: String.fromCharCode( event.keyCode ) } );
-		}
-		if ( event.currentTarget.value?.length < this.store.length ) {
+		if ( this.isLetter( event ) || this.isSpace( event ) ) {
+			this.addCharToStore( event );
+		} else if ( this.isInputValueShorterThanStoreLength( event ) ) {
 			this.store = this.rebuildStore( event.target.value );
 		}
 	}
 
-	shouldBeIgnored( event ) {
-		return event.shiftKey || event.ctrlKey || event.altKey;
+	/**
+	 * Return the localized value from the store
+	 * @returns {string}
+	 */
+	get() {
+		return this.store.map( ( x ) => x.localized ).join( '' );
 	}
 
-	getLocalizedValue() {
-		return this.store.map( ( x ) => x.english ).join( '' );
+	isInputValueShorterThanStoreLength( event ) {
+		return event.target.value?.length < this.store.length;
+	}
+
+	addCharToStore( event ) {
+		this.store.push( { original: event.originalEvent.key, localized: String.fromCharCode( event.keyCode ) } );
+	}
+
+	isSpace( event ) {
+		return 32 === event.keyCode || ' ' === event.originalEvent.data;
+	}
+
+	isLetter( event ) {
+		return event.keyCode >= 65 && event.keyCode <= 90;
 	}
 
 	rebuildStore( value ) {
