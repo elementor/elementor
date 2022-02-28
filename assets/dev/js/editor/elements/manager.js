@@ -69,5 +69,11 @@ export default class ElementsManager {
 
 			this.registerElementType( element );
 		} );
+
+		if ( elementorCommon.config.experimentalFeatures.container ) {
+			const ContainerClass = require( './types/container' ).default;
+
+			this.registerElementType( new ContainerClass() );
+		}
 	}
 }

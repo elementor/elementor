@@ -88,7 +88,13 @@ export default class Component extends ComponentBase {
 	onRoute( route ) {
 		super.onRoute( route );
 
-		SetDirectionMode.set( elementor.getCurrentElement().getContainer() );
+		const currentElement = elementor.getCurrentElement();
+
+		if ( ! currentElement ) {
+			return;
+		}
+
+		SetDirectionMode.set( currentElement.getContainer() );
 	}
 
 	/**

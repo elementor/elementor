@@ -12,8 +12,9 @@ import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
-
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+import NestedElements from 'elementor/modules/nested-elements/assets/js/frontend/frontend';
+
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
@@ -318,6 +319,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	 */
 	initModules() {
 		const handlers = {
+			'nested-elements': NestedElements,
 			shapes: Shapes,
 		};
 

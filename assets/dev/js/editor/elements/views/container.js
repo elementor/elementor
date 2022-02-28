@@ -1,18 +1,24 @@
 // Most of the code has been copied from `section.js`.
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
-import { DIRECTION_COLUMN, DIRECTION_COLUMN_REVERSE, DIRECTION_ROW, DIRECTION_ROW_REVERSE } from 'elementor-document/ui-states/direction-mode';
+import EmptyView from './container/empty-view';
+import { DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
-const BaseElementView = require( 'elementor-elements/views/base' ),
-	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
+const BaseElementView = require( 'elementor-elements/views/base' );
 
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ColumnEmptyView,
+	emptyView: EmptyView,
 
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',
+
+	emptyViewOptions: function() {
+		return {
+			emptyViewOwner: this,
+		};
+	},
 
 	className: function() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
