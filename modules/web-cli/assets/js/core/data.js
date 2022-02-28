@@ -286,9 +286,8 @@ export default class Data extends Commands {
 	 * @returns {{}} params
 	 */
 	prepareHeaders( requestData ) {
-		/* global wpApiSettings */
 		const type = requestData.type,
-			nonce = wpApiSettings.nonce,
+			nonce = elementorWebCliConfig.nonce,
 			params = {
 				signal: requestData.args?.options?.signal,
 				credentials: 'include', // cookies is required for wp reset.
