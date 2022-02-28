@@ -10,7 +10,7 @@ export default class LocalizedValueStore {
 		if ( isLetter || isSpace ) {
 			this.store.push( { original: event.originalEvent.key, english: String.fromCharCode( event.keyCode ) } );
 		}
-		if ( ! event.target.value || event.target.value.length < this.store.length ) {
+		if ( event.currentTarget.value?.length < this.store.length ) {
 			this.store = this.rebuildStore( event.target.value );
 		}
 	}
