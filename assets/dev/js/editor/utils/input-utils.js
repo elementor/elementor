@@ -1,4 +1,4 @@
-export default class InputUtils {
+export default class UserEvents {
 	static isPaste( inputEvent ) {
 		const PASTE_EVENT = 'insertFromPaste';
 		const KEY_V = 'KeyV';
