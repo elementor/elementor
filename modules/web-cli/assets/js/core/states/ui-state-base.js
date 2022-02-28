@@ -1,3 +1,5 @@
+import forceMethodImplementation from '../../utils/force-method-implementation';
+
 export default class UiStateBase {
 	/**
 	 * Initialize the state object.
@@ -56,7 +58,7 @@ export default class UiStateBase {
 	 * @return {string}
 	 */
 	getId() {
-		elementorModules.forceMethodImplementation();
+		forceMethodImplementation();
 	}
 
 	/**

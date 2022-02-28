@@ -1,6 +1,7 @@
 import Helpers from 'elementor-api/utils/helpers';
+import Module from 'elementor-assets-js/modules/imports/module.js';
 
-export default class CommandsBackwardsCompatibility extends elementorModules.Module {
+export default class CommandsBackwardsCompatibility extends Module {
 	__construct() {
 		this.onOrig = this.on;
 	}

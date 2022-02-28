@@ -1,7 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/core/components.js', ( hooks ) => {
+	QUnit.module( 'File: modules/web-cli/assets/js/core/components.js', ( hooks ) => {
 		hooks.beforeEach( () => {
 			$e.routes.clear();
 		} );

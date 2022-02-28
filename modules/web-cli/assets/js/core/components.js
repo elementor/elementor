@@ -1,4 +1,6 @@
-export default class extends elementorModules.Module {
+import Module from 'elementor-assets-js/modules/imports/module.js';
+
+export default class extends Module {
 	constructor( ...args ) {
 		super( ...args );
 

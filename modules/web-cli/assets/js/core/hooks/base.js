@@ -1,6 +1,8 @@
 import Helpers from 'elementor-api/utils/helpers';
+import Module from 'elementor-assets-js/modules/imports/module.js';
+import forceMethodImplementation from '../../utils/force-method-implementation';
 
-export default class HooksBase extends elementorModules.Module {
+export default class HooksBase extends Module {
 	/**
 	 * Function constructor().
 	 *
@@ -68,7 +70,7 @@ export default class HooksBase extends elementorModules.Module {
 	 * @returns {string} type
 	 */
 	getType() {
-		elementorModules.forceMethodImplementation();
+		forceMethodImplementation();
 	}
 
 	get( id ) {
@@ -394,7 +396,7 @@ export default class HooksBase extends elementorModules.Module {
 	 * @throw {Error}
 	 */
 	runCallback( event, callback, args, result ) { // eslint-disable-line no-unused-vars
-		elementorModules.forceMethodImplementation();
+		forceMethodImplementation();
 	}
 
 	/**
@@ -409,7 +411,7 @@ export default class HooksBase extends elementorModules.Module {
 	 * @throw {Error}
 	 */
 	onRun( command, args, event ) { // eslint-disable-line no-unused-vars
-		elementorModules.forceMethodImplementation();
+		forceMethodImplementation();
 	}
 
 	/**
@@ -425,6 +427,6 @@ export default class HooksBase extends elementorModules.Module {
 	 * @throw {Error}
 	 */
 	onCallback( command, args, event, id ) { // eslint-disable-line no-unused-vars
-		elementorModules.forceMethodImplementation();
+		forceMethodImplementation();
 	}
 }

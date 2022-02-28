@@ -1,7 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/core/commands.js', () => {
+	QUnit.module( 'File: modules/web-cli/assets/js/core/commands.js', () => {
 		QUnit.test( 'Error on register command without component', ( assert ) => {
 			assert.throws(
 				() => $e.commands.register( '', 'save', () => {} ),

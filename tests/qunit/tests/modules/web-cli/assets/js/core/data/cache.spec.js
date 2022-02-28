@@ -11,7 +11,7 @@ const TEST_OBJECT = {
 };
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/core/data/cache.js', ( hooks ) => {
+	QUnit.module( 'File: modules/web-cli/assets/js/core/data/cache.js', ( hooks ) => {
 		hooks.beforeEach( () => {
 			$e.data.cache.storage.clear();
 		} );

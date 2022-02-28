@@ -1,5 +1,6 @@
 import ComponentBase from './component-base';
 import * as commands from './commands/';
+import ForceMethodImplementation from '../utils/force-method-implementation';
 
 export default class ComponentModalBase extends ComponentBase {
 	registerAPI() {
@@ -45,6 +46,6 @@ export default class ComponentModalBase extends ComponentBase {
 	}
 
 	getModalLayout() {
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 }

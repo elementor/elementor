@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import Module from 'elementor-assets-js/modules/imports/module.js';
+import ForceMethodImplementation from '../utils/force-method-implementation';
 
-export default class ComponentBase extends elementorModules.Module {
+export default class ComponentBase extends Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
 			this.manager = args.manager;
@@ -43,7 +45,7 @@ export default class ComponentBase extends elementorModules.Module {
 	 * @returns {string}
 	 */
 	getNamespace() {
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	getRootContainer() {

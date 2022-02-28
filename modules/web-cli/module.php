@@ -24,9 +24,7 @@ class Module extends App {
 		wp_register_script(
 			'elementor-web-cli',
 			$this->get_js_assets_url( 'web-cli' ),
-			[
-				'elementor-common-modules',
-			],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);

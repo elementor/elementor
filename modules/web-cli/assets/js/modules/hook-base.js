@@ -1,3 +1,5 @@
+import ForceMethodImplementation from '../utils/force-method-implementation';
+
 export default class HookBase {
 	/**
 	 * Callback type, eg ( hook, event ).
@@ -49,7 +51,7 @@ export default class HookBase {
 	 * @throws {Error}
 	 */
 	register() {
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	/**
@@ -62,7 +64,7 @@ export default class HookBase {
 	 * @throws {Error}
 	 */
 	getType() {
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	/**
@@ -77,7 +79,7 @@ export default class HookBase {
 	 * @throws {Error}
 	 */
 	getCommand() {
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	/**
@@ -90,7 +92,7 @@ export default class HookBase {
 	 * @throws {Error}
 	 */
 	getId() {
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	/**
@@ -128,7 +130,7 @@ export default class HookBase {
 	 * @returns {*}
 	 */
 	apply( args ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	/**

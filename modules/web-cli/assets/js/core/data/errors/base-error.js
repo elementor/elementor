@@ -1,4 +1,5 @@
 import Helpers from 'elementor-api/utils/helpers';
+import ForceMethodImplementation from '../../../utils/force-method-implementation';
 
 export default class BaseError extends Error {
 	/**
@@ -31,7 +32,7 @@ export default class BaseError extends Error {
 	 * Returns the status code of the error.
 	 */
 	static getHTTPErrorCode() {
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	/**

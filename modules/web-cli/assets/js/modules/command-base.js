@@ -1,5 +1,6 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Helpers from 'elementor-api/utils/helpers';
+import ForceMethodImplementation from '../utils/force-method-implementation';
 
 export default class CommandBase extends ArgsObject {
 	static getInstanceType() {
@@ -115,7 +116,7 @@ export default class CommandBase extends ArgsObject {
 	 * @returns {*}
 	 */
 	apply( args = {} ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
+		ForceMethodImplementation();
 	}
 
 	/**

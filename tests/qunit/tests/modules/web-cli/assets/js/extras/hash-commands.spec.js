@@ -1,6 +1,6 @@
 import Component from './mock/component.spec';
 
-QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks ) => {
+QUnit.module( 'File: modules/web-cli/assets/jsextras/hash-commands.js', ( hooks ) => {
 	let originalWarnFunction;
 
 	hooks.before( () => {
