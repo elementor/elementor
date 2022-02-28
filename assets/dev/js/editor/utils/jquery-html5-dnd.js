@@ -100,8 +100,6 @@
 				placeholderClass: 'html5dnd-placeholder',
 				hasDraggingOnChildClass: 'html5dnd-has-dragging-on-child',
 				groups: null,
-				getDropContainer: () => elementor.getPreviewContainer(),
-				getDropIndex: () => 0,
 				isDroppingAllowed: null,
 				onDragEnter: null,
 				onDragging: null,
@@ -332,7 +330,7 @@
 		};
 
 		var onDrop = function( event ) {
-			const input = event.originalEvent.dataTransfer.files;
+			event.preventDefault();
 
 			setSide( event );
 
@@ -340,34 +338,9 @@
 				return;
 			}
 
-			event.preventDefault();
-
-			if ( input.length ) {
-				$e.run( 'editor/browser-import/import', {
-					input,
-					target: settings.getDropContainer(),
-					options: {
-						event,
-						target: {
-							at: settings.getDropIndex( currentSide, event ),
-						},
-					},
-				} );
-			} else {
-				// Override the onDrop callback with a user-provided one if present.
-				if ( settings.onDropping ) {
-					settings.onDropping( currentSide, event );
-					return;
-				}
-
-				const dragged = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
-
-				settings.getDropContainer().view.createElementFromModel(
-					{ elType: dragged.elType, widgetType: dragged.widgetType, custom: dragged.custom },
-					{
-						at: settings.getDropIndex( currentSide, event ),
-					}
-				);
+			// Trigger a Droppable-specific `onDropping` callback.
+			if ( settings.onDropping ) {
+				settings.onDropping( currentSide, event );
 			}
 		};
 

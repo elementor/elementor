@@ -1,34 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 
+import { ExportContext } from '../../../context/export-context/export-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+
+import { cptObjectToOptionsArray } from '../../../shared/cpt-select-box/cpt-object-to-options-array';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ExportButton from './components/export-button/export-button';
 import KitContent from '../../../shared/kit-content/kit-content';
-import Panel from '../../../ui/panel/panel';
-import KitName from './components/kit-name/kit-name';
-import KitDescription from './components/kit-description/kit-description';
-import KitInfoModal from './components/kit-info-modal/kit-info-modal';
-import Grid from 'elementor-app/ui/grid/grid';
-import Heading from 'elementor-app/ui/atoms/heading';
+import KitInformation from './components/kit-information/kit-information';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
+
+import kitContentData from '../../../shared/kit-content-data/kit-content-data';
 
 import './export-kit.scss';
 
 export default function ExportKit() {
-	const [ showKitInfoModal, setShowKitInfoModal ] = useState( false ),
-		kitInfoTitle = __( 'Kit Information', 'elementor' ),
+	const exportContext = useContext( ExportContext ),
+	sharedContext = useContext( SharedContext ),
 		getFooter = () => (
-			<WizardFooter separator justify="end">
-				<ExportButton />
-			</WizardFooter>
+			<ActionsFooter>
+				<Button
+					variant="contained"
+					text={ __( 'Next', 'elementor' ) }
+					color="primary"
+					url="/export/plugins"
+				/>
+			</ActionsFooter>
 		),
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		);
+
+	useEffect( () => {
+		exportContext.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+		sharedContext.dispatch( { type: 'SET_CPT', payload: cptObjectToOptionsArray( elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes, 'plural' ) } );
+	}, [] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -43,58 +53,9 @@ export default function ExportKit() {
 					] }
 				/>
 
-				<KitContent />
+				<KitContent contentData={ kitContentData } />
 
-				<Panel className="e-app-export-kit-information">
-					<Panel.Header>
-						<Panel.Headline>
-							{ kitInfoTitle }
-							<Button
-								className="e-app-export-kit-info-modal__icon"
-								icon="eicon-info-circle"
-								color="secondary"
-								hideText={ true }
-								text={ kitInfoTitle }
-								onClick={ ( event ) => {
-									event.stopPropagation();
-									setShowKitInfoModal( ( prevState ) => ! prevState );
-								} }
-							/>
-						</Panel.Headline>
-					</Panel.Header>
-
-					<Panel.Body>
-						<Grid container spacing={20}>
-							<Grid item md={4}>
-								<Grid container direction="column">
-									<Grid className="e-app-export-kit-information__field-header" container alignItems="center">
-										<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
-											{ __( 'Kit Name', 'elementor' ) }
-										</Heading>
-									</Grid>
-
-									<Grid item>
-										<KitName />
-									</Grid>
-								</Grid>
-							</Grid>
-
-							<Grid item md={4}>
-								<Grid className="e-app-export-kit-information__field-header" container alignItems="center">
-									<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
-										{ __( 'Kit Description', 'elementor' ) }
-									</Heading>
-								</Grid>
-
-								<Grid item>
-									<KitDescription />
-								</Grid>
-							</Grid>
-						</Grid>
-					</Panel.Body>
-				</Panel>
-
-				<KitInfoModal show={ showKitInfoModal } setShow={ setShowKitInfoModal } />
+				<KitInformation />
 			</section>
 		</Layout>
 	);
