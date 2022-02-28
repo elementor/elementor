@@ -27,7 +27,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 				elementor.trigger( 'document:loaded', document );
 
 				// Reset all redux stores on document switch.
-				Object.entries( $e.store.get() ).forEach(
+				Object.entries( $e.store.get() || {} ).forEach(
 					( [ key, { actions } ] ) => this.slicesToReset.includes( key ) &&
 						$e.store.dispatch( actions.reset() )
 				);

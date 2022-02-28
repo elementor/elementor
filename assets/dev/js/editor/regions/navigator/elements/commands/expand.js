@@ -4,6 +4,10 @@ export class Expand extends CommandNavigator {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
+		if ( ! containers.filter( ( container ) => container ).length ) {
+			containers[ 0 ] = elementor.selection.getElements()[ 0 ];
+		}
+
 		containers.forEach( ( container ) => {
 			if ( ! this.isFoldingAllowed( container ) ) {
 				return;
@@ -16,6 +20,10 @@ export class Expand extends CommandNavigator {
 				} )
 			);
 		} );
+	}
+
+	shouldRequireContainer() {
+		return false;
 	}
 }
 

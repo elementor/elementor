@@ -14,4 +14,21 @@ export default class Component extends ComponentBase {
 	defaultHooks() {
 		return this.importHooks( hooks );
 	}
+
+	defaultShortcuts() {
+		return {
+			up: {
+				keys: 'up',
+			},
+			down: {
+				keys: 'down',
+			},
+			expand: {
+				keys: 'right',
+			},
+			collapse: {
+				keys: 'left',
+			},
+		};
+	}
 }
