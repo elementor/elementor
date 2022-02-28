@@ -4,7 +4,6 @@ namespace Elementor;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;

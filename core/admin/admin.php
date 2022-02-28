@@ -5,7 +5,9 @@ use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Admin\Notices\Update_Php_Notice;
+use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -54,13 +56,14 @@ class Admin extends App {
 
 		global $wpdb;
 
-		$has_elementor_page = ! ! $wpdb->get_var( "SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_elementor_edit_mode' LIMIT 1;" );
+		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
+		$is_new_install = Upgrade_Manager::install_compare( '3.6.0', '>=' );
 
-		if ( $has_elementor_page ) {
+		if ( $already_had_onboarding || ! $is_new_install ) {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-app#onboarding' ) );
 
 		exit;
 	}
