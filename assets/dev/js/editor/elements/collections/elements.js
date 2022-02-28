@@ -1,5 +1,3 @@
-var ElementModel = require( 'elementor-elements/models/element' );
-
 var ElementsCollection = Backbone.Collection.extend( {
 	add: function( models, options, isCorrectSet ) {
 		if ( ( ! options || ! options.silent ) && ! isCorrectSet ) {
@@ -13,7 +11,13 @@ var ElementsCollection = Backbone.Collection.extend( {
 		var ModelClass = Backbone.Model;
 
 		if ( attrs.elType ) {
-			ModelClass = elementor.hooks.applyFilters( 'element/model', ElementModel, attrs );
+			const elementType = elementor.elementsManager.getElementType( attrs.elType, attrs.widgetType );
+
+			if ( ! elementType ) {
+				throw new Error( 'Element type not found: ' + attrs.elType );
+			}
+
+			ModelClass = elementor.hooks.applyFilters( 'element/model', elementType.getModel(), attrs );
 		}
 
 		return new ModelClass( attrs, options );
