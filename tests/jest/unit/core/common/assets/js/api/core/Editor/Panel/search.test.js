@@ -56,11 +56,11 @@ describe( 'User events', () => {
 		};
 	}
 	const insertFromPaste = 'insertFromPaste';
-	test( 'should return true is Control + V was pressed', () => {
+	test( 'should return true when Control + V was pressed', () => {
 		const isPaste = UserEvents.isPaste( builtPasteEvent( undefined, true, 'KeyV' ) );
 		expect( isPaste ).toBe( true );
 	} );
-	test( 'should return false is Control + V was not', () => {
+	test( 'should return false when Control + V was not', () => {
 		const isPaste = UserEvents.isPaste( builtPasteEvent( undefined, true, 'KeyC' ) );
 		expect( isPaste ).toBe( false );
 	} );
