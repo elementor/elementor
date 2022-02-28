@@ -27,6 +27,7 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 		if ( ESC_KEY === event.keyCode ) {
 			this.clearInput();
 		}
+
 		this.localizedValueStore.sendKey( event );
 		if ( InputUtils.isPaste( event ) ) {
 			this.localizedValue = event.target.value;
