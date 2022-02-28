@@ -41,15 +41,15 @@ export default class LocalizedValueStore {
 
 	rebuildStore( value ) {
 		const chars = value.split( '' );
-		const newStore = [];
+		const tempStore = [];
 		let charsIndex = 0;
 		for ( let storeIndex = 0; storeIndex < this.store.length; storeIndex++ ) {
 			if ( this.store[ storeIndex ].original === chars[ charsIndex ] ) {
-				newStore.push( this.store[ storeIndex ] );
+				tempStore.push( this.store[ storeIndex ] );
 				charsIndex++;
 			}
 		}
 
-		return newStore;
+		return tempStore;
 	}
 }
