@@ -215,7 +215,9 @@ class App extends BaseApp {
 			true
 		);
 
-		$this->enqueue_dark_theme_detection_script();
+		if ( ! $this->get_settings( 'disable_dark_theme' ) ) {
+			$this->enqueue_dark_theme_detection_script();
+		}
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
@@ -246,6 +248,8 @@ class App extends BaseApp {
 			// Kit library is depended on import-export
 			$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
 		}
+
+		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 21 /* after Elementor page */ );
 
