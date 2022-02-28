@@ -8,7 +8,7 @@ export default class LocalizedValueStore {
 		const isSpace = 32 === event.keyCode || ' ' === event.originalEvent.data;
 
 		if ( isLetter || isSpace ) {
-			this.store.push( { original: event.originalEvent.key, english: String.fromCharCode( event.keyCode ) } );
+			this.store.push( { original: event.originalEvent.key, localized: String.fromCharCode( event.keyCode ) } );
 		}
 		if ( event.currentTarget.value?.length < this.store.length ) {
 			this.store = this.rebuildStore( event.target.value );
