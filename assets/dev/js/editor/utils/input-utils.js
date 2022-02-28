@@ -7,5 +7,5 @@ export default class UserEvents {
 		const ctrlPlusV = inputEvent.code === KEY_V && inputEvent.ctrlKey;
 
 		return ( originalEventPaste || ctrlPlusV );
-}
+	}
 }
