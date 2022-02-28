@@ -1,14 +1,12 @@
 const { test, expect } = require( '@playwright/test' );
-const { EditorPage } = require( '../../../../../../../pages/editor-page' );
-const { WpAdminPage } = require( '../../../../../../../pages/wp-admin-page' );
+const WpAdminPage = require( '../../../../../../../pages/wp-admin-page' );
 
-test( 'Image Carousel widget sanity test lazyload', async ( { page } ) => {
+test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo ) => {
     const resourcesBaseDir = './tests/playwright/resources/';
 
-    const wpAdmin = new WpAdminPage( page );
-    await wpAdmin.createNewPage();
+    const wpAdmin = new WpAdminPage( page, testInfo ),
+        editor = await wpAdmin.useElementorCleanPost();
 
-    const editor = new EditorPage( page );
     await editor.addWidget( 'image-carousel' );
 
     // Set Image carousel settings
