@@ -30,12 +30,14 @@ $info:			#5bc0de;
 $info-text:		#31708f;
 $info-bg:		#d9edf7;
 $info-border:	darken($info-bg, 7%);
+$info-wc-bg:	#F6F9FB;
 
 // Success Alert
 $success:		#5cb85c;
 $success-text:	#3c763d;
 $success-bg:	#dff0d8;
 $success-border:darken($success-bg, 7%);
+$success-wc-bg:	#FAFBF5;
 
 // Warning Alert
 $warning:		#f0ad4e;
@@ -48,6 +50,7 @@ $danger:		#d9534f;
 $danger-text:	#a94442;
 $danger-bg:		#f2dede;
 $danger-border:	darken($danger-bg, 7%);
+$danger-wc-bg:	#F9F2F5;
 
 // Progress Bar
 $progress-bg:	#eeeeee;

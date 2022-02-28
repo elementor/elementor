@@ -544,8 +544,17 @@ abstract class Widget_Base extends Element_Base {
 
 		$attributes['data-elementor-open-lightbox'] = 'yes';
 
+		$action_hash_params = [];
+
+		if ( $id ) {
+			$action_hash_params['id'] = $id;
+			$action_hash_params['url'] = wp_get_attachment_url( $id );
+		}
+
 		if ( $group_id ) {
 			$attributes['data-elementor-lightbox-slideshow'] = $group_id;
+
+			$action_hash_params['slideshow'] = $group_id;
 		}
 
 		if ( $id ) {
@@ -559,6 +568,8 @@ abstract class Widget_Base extends Element_Base {
 				$attributes['data-elementor-lightbox-description'] = $lightbox_image_attributes['description'];
 			}
 		}
+
+		$attributes['e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
 
 		$this->add_render_attribute( $element, $attributes, null, $overwrite );
 
