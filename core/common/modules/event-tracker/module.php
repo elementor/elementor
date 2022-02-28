@@ -36,6 +36,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+		//Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
 }

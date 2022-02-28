@@ -43,7 +43,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.api = new API();
 
-		$e.components.register( new EventsDispatcherComponent() );
+		// TODO: UNCOMMENT
+		//$e.components.register( new EventsDispatcherComponent() );
 
 		elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 			$e.components.register( new WordpressComponent() );

@@ -20,22 +20,50 @@ class DB extends Base_Object {
 	private $table_name;
 
 	const TABLE_NAME = 'e_events';
-
 	const DB_VERSION_OPTION_KEY = 'elementor_events_db_version';
-
 	const CURRENT_DB_VERSION = 1;
 
 	// Create DB entry
 	// Delete DB entry
 
-	public function create_entry( $event_data ) {
-		$event_data['created_at'] = time();
-		$this->wpdb->insert( $this->get_table_name(), $event_data );
+	/**
+	 * Prepare Database for Entry
+	 *
+	 * The events database should have a limit of up to 1000 event entries stored daily.
+	 * That limit is managed in the FIFO method -  If the limit is reached, the last
+	 *
+	 * @since 3.6.0
+	 */
+	public function prepare_db_for_entry() {
+		$events = $this->get_events_from_db();
+
+		if ( 1000 <= count( $events ) ) {
+			// Sort the array by entry ID
+			$id_col = array_column( $events, 'id' );
+			array_multisort( $id_col, SORT_ASC, $events );
+
+			$this->delete_entry( $events[0]['id'] );
+		}
 	}
 
-	public function fetch_events() {
-		$query = $this->wpdb->prepare( "SELECT * FROM $this->wpdb->{$this->table_name}" );
-		$this->wpdb->get_results( $query );
+	public function delete_entry( $id ) {
+		$this->wpdb->insert( $this->get_table_name(), [ 'ID' => $id ] );
+	}
+
+	public function create_entry( $event_data ) {
+		$this->prepare_db_for_entry();
+
+		$entry = [
+			'event_data' => wp_json_encode( $event_data ),
+		];
+
+		$this->wpdb->insert( $this->get_table_name(), $entry );
+	}
+
+	public function get_events_from_db() {
+		$query = $this->wpdb->prepare( "SELECT `id` FROM {$this->get_table_name()}" );
+
+		return $this->wpdb->get_results( $query );
 	}
 
 	public function get_events_count() {

@@ -54,10 +54,8 @@ class Admin extends App {
 			return;
 		}
 
-		global $wpdb;
-
 		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
-		$is_new_install = Upgrade_Manager::install_compare( '3.6.0', '>=' );
+		$is_new_install = Upgrade_Manager::install_compare( '3.6.0-beta', '>=' );
 
 		if ( $already_had_onboarding || ! $is_new_install ) {
 			return;

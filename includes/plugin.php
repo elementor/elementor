@@ -864,7 +864,7 @@ class Plugin {
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
-		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
+		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ], 9 );
 	}
 
 	final public static function get_title() {
