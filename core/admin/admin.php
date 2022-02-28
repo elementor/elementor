@@ -55,7 +55,16 @@ class Admin extends App {
 		}
 
 		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
-		$is_new_install = Upgrade_Manager::install_compare( '3.6.0-beta', '>=' );
+
+		// Get the latest installation from Elementor's Install log in the DB.
+		$latest_install = key( Upgrade_Manager::get_installs_history() );
+
+		if ( ! empty( $latest_install ) ) {
+			$is_new_install = version_compare( $latest_install, '3.6.0-beta', '>=' );
+		} else {
+			// If `$latest_install` is not set, Elementor was never installed on this site.
+			$is_new_install = true;
+		}
 
 		if ( $already_had_onboarding || ! $is_new_install ) {
 			return;
