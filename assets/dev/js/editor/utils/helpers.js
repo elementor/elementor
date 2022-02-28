@@ -1,5 +1,6 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -21,6 +22,7 @@ const allowedHTMLWrapperTags = [
 ];
 
 module.exports = {
+	container: ContainerHelper,
 	document: DocumentHelper,
 
 	_enqueuedFonts: {

@@ -166,7 +166,7 @@
 
 	// Inner Container handle.
 	// TODO: Find a better solution.
-	& > & {
+	& > &, .elementor-widget & {
 		> .elementor-element-overlay {
 			.elementor-editor-element-setting {
 				position: relative;

@@ -1,4 +1,4 @@
-import Base from './base';
+import Base from '../types/base/element-base';
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 import Model from 'elementor-elements/models/container';
 import { default as View } from 'elementor-elements/views/container';
