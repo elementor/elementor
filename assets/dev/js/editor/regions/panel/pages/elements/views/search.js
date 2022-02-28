@@ -29,10 +29,9 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 		}
 
 		this.localizedValueStore.sendKey( event );
-		if ( InputUtils.isPaste( event ) ) {
-			this.localizedValue = event.target.value;
-		} else {
-			this.localizedValue = this.localizedValueStore.getLocalizedValue();
+		this.localizedValue = InputUtils.isPaste( event ) 
+			? event.target.value
+			: this.localizedValueStore.getLocalizedValue();
 		}
 		// Broadcast the localized value.
 		elementor.channels.panelElements.reply( 'filter:localized', this.localizedValue );
