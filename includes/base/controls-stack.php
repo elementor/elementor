@@ -962,11 +962,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $id Responsive control ID.
 	 */
 	final public function remove_responsive_control( $id ) {
-		$devices = [
-			Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP,
-			Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
-		];
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 		foreach ( $devices as $device_name ) {
 			$id_suffix = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_name ? '' : '_' . $device_name;

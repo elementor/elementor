@@ -224,6 +224,19 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Hide on search.
+	 *
+	 * Whether to hide the widget on search in the panel or not. By default returns false.
+	 *
+	 * @access public
+	 *
+	 * @return bool Whether to hide the widget when searching for widget or not.
+	 */
+	public function hide_on_search() {
+		return false;
+	}
+
+	/**
 	 * Start widget controls section.
 	 *
 	 * Used to add a new section of controls to the widget. Regular controls and
@@ -350,6 +363,7 @@ abstract class Widget_Base extends Element_Base {
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
+			'hide_on_search' => $this->hide_on_search(),
 		];
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
@@ -530,8 +544,17 @@ abstract class Widget_Base extends Element_Base {
 
 		$attributes['data-elementor-open-lightbox'] = 'yes';
 
+		$action_hash_params = [];
+
+		if ( $id ) {
+			$action_hash_params['id'] = $id;
+			$action_hash_params['url'] = wp_get_attachment_url( $id );
+		}
+
 		if ( $group_id ) {
 			$attributes['data-elementor-lightbox-slideshow'] = $group_id;
+
+			$action_hash_params['slideshow'] = $group_id;
 		}
 
 		if ( $id ) {
@@ -545,6 +568,8 @@ abstract class Widget_Base extends Element_Base {
 				$attributes['data-elementor-lightbox-description'] = $lightbox_image_attributes['description'];
 			}
 		}
+
+		$attributes['e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
 
 		$this->add_render_attribute( $element, $attributes, null, $overwrite );
 

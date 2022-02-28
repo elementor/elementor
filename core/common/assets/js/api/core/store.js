@@ -78,13 +78,18 @@ export default class Store {
 	 *
 	 * @param {string|null} sliceId - Slice ID to get.
 	 *
-	 * @return {Slice|Object}
+	 * @return {Slice}
 	 */
-	get( sliceId = null ) {
-		if ( sliceId ) {
-			return this.slices[ sliceId ];
-		}
+	get( sliceId ) {
+		return this.slices[ sliceId ];
+	}
 
+	/**
+	 * Get all slices.
+	 *
+	 * @return {Object}
+	 */
+	getAllSlices() {
 		return this.slices;
 	}
 
@@ -94,7 +99,7 @@ export default class Store {
 	 * @return {Object}
 	 */
 	getAll() {
-		return Object.keys( this.slices );
+		return Object.keys( this.slices ).sort();
 	}
 
 	/**
