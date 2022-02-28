@@ -62,13 +62,13 @@ class DB extends Base_Object {
 
 	public function get_events_from_db() {
 		$query = $this->wpdb->prepare( 'SELECT `id` FROM %s', $this->get_table_name() );
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $this->wpdb->get_results( $query );
 	}
 
 	public function get_events_count() {
-		$query = $this->wpdb->prepare( "SELECT COUNT(*) FROM %s", $this->get_table_name() );
-
+		$query = $this->wpdb->prepare( 'SELECT COUNT(*) FROM %s', $this->get_table_name() );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $this->wpdb->get_results( $query );
 	}
 
@@ -87,6 +87,7 @@ class DB extends Base_Object {
 	}
 
 	private function add_indexes() {
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$this->wpdb->query( 'ALTER TABLE ' . $this->get_table_name() . '
     		ADD INDEX `created_at_index` (`created_at`)
 		' );

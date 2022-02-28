@@ -404,12 +404,12 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$rotate_device_args = [];
 
-		$rotate_device_settings = array(
+		$rotate_device_settings = [
 			'default' => [
 				'unit' => 'deg',
 				'size' => '',
-			]
-		);
+			],
+		];
 
 		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
 			$rotate_device_args[ $breakpoint_name ] = $rotate_device_settings;

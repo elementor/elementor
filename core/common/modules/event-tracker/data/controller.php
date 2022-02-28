@@ -27,7 +27,7 @@ class Controller extends Controller_Base {
 		] );
 	}
 
-	public function get_permission_callback( $request ) : bool {
+	public function get_permission_callback( $request ) {
 		// TODO: CHECK FOR NONCE
 		if ( WP_REST_Server::CREATABLE !== $request->get_method() ) {
 			return false;
