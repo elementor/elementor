@@ -1,6 +1,4 @@
-import CommandHistory from '../../commands/base/command-history';
-
-export class ResetSettings extends CommandHistory {
+export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}

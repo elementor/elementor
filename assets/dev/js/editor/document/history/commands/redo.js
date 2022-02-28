@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Redo extends CommandBase {
+export class Redo extends $e.modules.CommandBase {
 	apply() {
 		elementor.documents.getCurrent().history.navigate( true );
 	}
