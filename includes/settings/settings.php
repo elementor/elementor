@@ -489,30 +489,6 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 					],
 				],
 			],
-			self::TAB_STYLE => [
-				'label' => esc_html__( 'Style', 'elementor' ),
-				'sections' => [
-					'style' => [
-						'fields' => [
-							'notice' => [
-								'label' => esc_html__( 'Looking for the Style settings?', 'elementor' ),
-								'field_args' => [
-									'type' => 'raw_html',
-									'html' => sprintf(
-										/* translators: 1: Bold open tag, 2: Bold close tag */
-										esc_html__( 'The Style settings changed its location and can now be found within Elementor Editor\'s %1$sPanel > Hamburger Menu > Site Settings%2$s.', 'elementor' ),
-										'<strong>',
-										'</strong>'
-									) .
-									'<br>' .
-									esc_html__( 'You can use the Site Settings to make changes and see them live!', 'elementor' ) .
-									sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', esc_html__( 'Learn More', 'elementor' ) ),
-								],
-							],
-						],
-					],
-				],
-			],
 			self::TAB_INTEGRATIONS => [
 				'label' => esc_html__( 'Integrations', 'elementor' ),
 				'sections' => [

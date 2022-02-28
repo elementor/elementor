@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -754,5 +756,27 @@ class Utils {
 		}
 
 		echo wp_kses( $string, $allowed_html );
+	}
+
+	public static function is_elementor_path( $path ) {
+		$path = wp_normalize_path( $path );
+
+		/**
+		 * Elementor related paths.
+		 *
+		 * Filters Elementor related paths.
+		 *
+		 * @param string[] $available_paths
+		 */
+		$available_paths = apply_filters( 'elementor/utils/elementor_related_paths', [ ELEMENTOR_PATH ] );
+
+		return (bool) ( new Collection( $available_paths ) )
+			->map( function ( $p ) {
+				// `untrailingslashit` in order to include other plugins prefixed with elementor.
+				return untrailingslashit( wp_normalize_path( $p ) );
+			} )
+			->find(function ( $p ) use ( $path ) {
+				return false !== strpos( $path, $p );
+			} );
 	}
 }
