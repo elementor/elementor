@@ -19,7 +19,7 @@ export default class LocalizedValueStore {
 		return event.shiftKey || event.ctrlKey || event.altKey;
 	}
 
-	getLocalizedValue() {
+	get() {
 		return this.store.map( ( x ) => x.english ).join( '' );
 	}
 
