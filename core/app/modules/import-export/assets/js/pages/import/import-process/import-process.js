@@ -1,62 +1,65 @@
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useMemo } from 'react';
 import { useNavigate } from '@reach/router';
+
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
 
-import { Context } from '../../../context/context-provider';
-
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
+import useImportActions from '../hooks/use-import-actions';
 
 export default function ImportProcess() {
-	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ errorType, setErrorType ] = useState( '' ),
-		context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
-		isApplyAllForced = 'apply-all' === actionType,
-		isUnfilteredFilesEnabled = elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled,
+		[ errorType, setErrorType ] = useState( '' ),
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
-		isKitHasSvgAssets = () => context.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
+		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
+		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
+		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
+		{ navigateToMainScreen } = useImportActions(),
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
-			if ( referrer ) {
-				context.dispatch( { type: 'SET_REFERRER', payload: referrer } );
-			}
-
-			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
+			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
 			kitActions.upload( { file: decodedFileURL } );
 		},
 		importKit = () => {
-			if ( isUnfilteredFilesEnabled || ! isKitHasSvgAssets() ) {
+			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {
 				setStartImport( true );
 			} else {
 				setShowUnfilteredFilesDialog( true );
 			}
 		},
 		onCancelProcess = () => {
-			context.dispatch( { type: 'SET_FILE', payload: null } );
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
-			if ( 'kit-library' === referrer ) {
-				navigate( '/kit-library' );
-			} else {
-				navigate( '/import' );
-			}
+			navigateToMainScreen();
 		};
 
 	// on load.
 	useEffect( () => {
-		if ( fileURL && ! context.data.file ) {
+		// Saving the referrer value globally.
+		if ( referrer ) {
+			sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
+		}
+
+		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
-		} else if ( context.data.uploadedData ) {
+		} else if ( uploadedData ) {
 			// When the import/process is the second step of the kit import process, after selecting the kit content.
 			importKit();
+		} else {
+			navigate( 'import' );
 		}
 	}, [] );
 
@@ -64,10 +67,11 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( startImport ) {
 			kitActions.import( {
-				session: context.data.uploadedData.session,
-				include: context.data.includes,
-				overrideConditions: context.data.overrideConditions,
-				referrer: context.data.referrer,
+				session: uploadedData.session,
+				include: includes,
+				overrideConditions: overrideConditions,
+				referrer,
+				selectedCustomPostTypes,
 			} );
 		}
 	}, [ startImport ] );
@@ -77,10 +81,10 @@ export default function ImportProcess() {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
 			switch ( kitState.status ) {
 				case KIT_STATUS_MAP.IMPORTED:
-					context.dispatch( { type: 'SET_IMPORTED_DATA', payload: kitState.data } );
+					importContext.dispatch( { type: 'SET_IMPORTED_DATA', payload: kitState.data } );
 					break;
 				case KIT_STATUS_MAP.UPLOADED:
-					context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+					importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 					break;
 				case KIT_STATUS_MAP.ERROR:
 					setErrorType( kitState.data );
@@ -92,10 +96,10 @@ export default function ImportProcess() {
 	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
-			if ( context.data.importedData ) { // After kit upload.
+			if ( importedData ) { // After kit upload.
 				navigate( '/import/complete' );
-			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
-				if ( context.data.uploadedData.conflicts ) {
+			} else if ( 'apply-all' === actionType ) { // Forcing apply-all kit content.
+				if ( uploadedData.conflicts ) {
 					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
@@ -104,15 +108,16 @@ export default function ImportProcess() {
 					importKit();
 				}
 			} else {
-				navigate( '/import/content' );
+				navigate( '/import/plugins' );
 			}
 		}
-	}, [ context.data.uploadedData, context.data.importedData ] );
+	}, [ uploadedData, importedData ] );
 
 	return (
 		<Layout type="import">
 			<section>
 				<FileProcess
+					info={ uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
 					errorType={ errorType }
 					onDialogApprove={ onCancelProcess }
 					onDialogDismiss={ onCancelProcess }

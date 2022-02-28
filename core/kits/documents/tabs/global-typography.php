@@ -149,6 +149,14 @@ class Global_Typography extends Tab_Base {
 		];
 
 		$this->add_control(
+			'heading_system_typography',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'System Fonts', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'system_typography',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
@@ -158,6 +166,15 @@ class Global_Typography extends Tab_Base {
 					'add' => false,
 					'remove' => false,
 				],
+				'separator' => 'after',
+			]
+		);
+
+		$this->add_control(
+			'heading_custom_typography',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Custom Fonts', 'elementor' ),
 			]
 		);
 

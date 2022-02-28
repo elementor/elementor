@@ -103,7 +103,7 @@ export default class Widgets extends FavoriteType {
 		return 'favorites';
 	}
 
-	addCategoryBehavior( behaviors, context ) {
+	addCategoryBehavior( behaviors ) {
 		return Object.assign( {}, behaviors, {
 			favoriteWidgets: {
 				behaviorClass: PanelCategoryBehavior,
@@ -134,7 +134,15 @@ export default class Widgets extends FavoriteType {
 						title: this.isFavorite( widget ) ?
 							__( 'Remove from Favorites', 'elementor' ) :
 							__( 'Add to Favorites', 'elementor' ),
-						callback: () => this.toggle( widget ),
+						callback: () => {
+							this.toggle( widget );
+
+							if ( this.isFavorite( widget ) ) {
+								elementor.notifications.showToast( {
+									message: __( 'Added', 'elementor' ),
+								} );
+							}
+						},
 					},
 				],
 			},

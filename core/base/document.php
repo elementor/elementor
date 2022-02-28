@@ -15,6 +15,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use ElementorPro\Modules\Library\Widgets\Template;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -312,7 +313,10 @@ abstract class Document extends Controls_Stack {
 		if ( Plugin::$instance->preview->is_preview() ) {
 			$attributes['data-elementor-title'] = static::get_title();
 		} else {
-			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
+			$elementor_settings = $this->get_frontend_settings();
+			if ( ! empty( $elementor_settings ) ) {
+				$attributes['data-elementor-settings'] = wp_json_encode( $elementor_settings );
+			}
 		}
 
 		return $attributes;
@@ -995,15 +999,15 @@ abstract class Document extends Controls_Stack {
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( ! $is_dom_optimization_active ) { ?>
+			<?php if ( ! $is_dom_optimization_active ) : ?>
 			<div class="elementor-inner">
-			<?php } ?>
 				<div class="elementor-section-wrap">
-					<?php $this->print_elements( $elements_data ); ?>
+			<?php endif; ?>
+				<?php $this->print_elements( $elements_data ); ?>
+			<?php if ( ! $is_dom_optimization_active ) : ?>
 				</div>
-			<?php if ( ! $is_dom_optimization_active ) { ?>
 			</div>
-			<?php } ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -1063,6 +1067,28 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $deleted && ! is_wp_error( $deleted );
+	}
+
+	/**
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $config
+	 *
+	 * @param array $map_old_new_post_ids
+	 */
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		foreach ( $config as &$element_config ) {
+			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
+
+			if ( $element_instance ) {
+				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
+
+				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
+			}
+		}
+
+		return $config;
 	}
 
 	/**
