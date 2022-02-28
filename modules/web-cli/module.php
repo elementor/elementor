@@ -17,6 +17,7 @@ class Module extends App {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
 	}
 
 	public function register_scripts() {
