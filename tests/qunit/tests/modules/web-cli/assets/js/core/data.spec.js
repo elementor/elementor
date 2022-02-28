@@ -151,7 +151,7 @@ jQuery( () => {
 				},
 				params = $e.data.prepareHeaders( requestData );
 
-			assert.equal( params.headers[ 'X-WP-Nonce' ], wpApiSettings.nonce );
+			assert.equal( params.headers[ 'X-WP-Nonce' ], elementorWebCliConfig.nonce );
 		} );
 
 		QUnit.test( 'prepareHeaders(): with POST', ( assert ) => {
