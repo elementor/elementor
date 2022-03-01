@@ -1,6 +1,4 @@
-import CommandsBase from './base';
-
-export class Toggle extends CommandsBase {
+export class Toggle extends $e.modules.CommandBase {
 	apply( args ) {
 		const manager = this.component.manager;
 

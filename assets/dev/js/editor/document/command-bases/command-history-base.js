@@ -1,24 +1,30 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
 
-export default class CommandHistory extends CommandBase {
+/**
+ * @name $e.modules.editor.document.CommandHistoryBase
+ */
+export default class CommandHistoryBase extends CommandContainerBase {
 	static getInstanceType() {
-		return 'CommandHistory';
+		return 'CommandHistoryBase';
 	}
 
-	constructor( args ) {
-		super( args );
+	initialize( args = {} ) {
+		const { options = {} } = args,
+			{ useHistory = true } = options;
 
-		/**
-		 * Get History from child command.
-		 *
-		 * @type {{}|boolean}
-		 */
-		this.history = this.getHistory( args );
+		if ( useHistory ) {
+			/**
+			 * Get History from child command.
+			 *
+			 * @type {{}|boolean}
+			 */
+			this.history = this.getHistory( args );
 
-		/**
-		 * @type {number|boolean}
-		 */
-		this.historyId = false;
+			/**
+			 * @type {number|boolean}
+			 */
+			this.historyId = false;
+		}
 	}
 
 	/**
@@ -61,12 +67,25 @@ export default class CommandHistory extends CommandBase {
 		}
 	}
 
-	onCatchApply( e ) {
-		super.onCatchApply( e );
+	onAfterApply( args = {}, result ) {
+		super.onAfterApply( args, result );
 
+		if ( this.isDataChanged() ) {
+			$e.internal( 'document/save/set-is-modified', { status: true } );
+		}
+	}
+
+	onCatchApply( e ) {
 		// Rollback history on failure.
 		if ( e instanceof $e.modules.HookBreak && this.historyId ) {
 			$e.internal( 'document/history/delete-log', { id: this.historyId } );
 		}
+
+		super.onCatchApply( e );
+	}
+
+	isDataChanged() {
+		// All the commands who use history are commands that changing the data.
+		return true;
 	}
 }
