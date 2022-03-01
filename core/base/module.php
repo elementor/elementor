@@ -314,6 +314,23 @@ abstract class Module extends Base_Object {
 	}
 
 	/**
+	 * Enqueue the module script according to its own name.
+	 *
+	 * @param array $dependencies
+	 */
+	final protected function enqueue_module_assets( $dependencies = [] ) {
+		add_action( 'elementor/common/after_register_scripts', function () use ( $dependencies ) {
+			wp_enqueue_script(
+				$this->get_name(),
+				$this->get_js_assets_url( $this->get_name() ),
+				$dependencies,
+				ELEMENTOR_VERSION,
+				true
+			);
+		} );
+	}
+
+	/**
 	 * Initialize the module related widgets.
 	 */
 	public function init_widgets() {
