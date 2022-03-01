@@ -344,22 +344,6 @@
 	@include button-alignment(mobile);
 }
 
-// Admin Bar - Icon (Front-End)
-#wpadminbar {
-
-	#wp-admin-bar-elementor_edit_page > .ab-item::before {
-		content: "\e813";
-		font-family: eicons;
-		top: 3px;
-		font-size: 18px;
-	}
-
-	#wp-admin-bar-elementor_inspector > .ab-item::before {
-		content: "\f348";
-		top: 2px;
-	}
-}
-
 // Elementor Page Title
 :root {
 	--page-title-display: block;
