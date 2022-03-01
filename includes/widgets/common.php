@@ -61,7 +61,7 @@ class Widget_Common extends Widget_Base {
 	 */
 	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ) {
 		$device_args = [];
-		$breakpoints = Breakpoints_Manager::get_default_config();
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
 			// If the device is not excluded, add it to the device args array.

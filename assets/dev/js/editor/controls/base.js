@@ -112,7 +112,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	toggleControlVisibility: function() {
 		const settings = this.container.settings;
 
-		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes );
+		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes, settings.controls );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 
