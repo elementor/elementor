@@ -120,13 +120,13 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'lazyload'
+			'lazyload',
 			[
 				'label' => esc_html__( 'Lazyload', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'fronted_avaible' => true,
 				]
-			);
+		);
 
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
@@ -672,17 +672,17 @@ class Widget_Image extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		
+
 		$lazyload = 'yes' === $settings['lazyload'];
 
 		if ( empty( $settings['image']['url'] ) ) {
 			return;
 		}
-		
+
 		if ( $lazyload ) {
 				$image_html = '<img class="elementor-image lazy" data-src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
-			} else {
-				$image_html = '<img class="elementor-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+		} else {
+			$image_html = '<img class="elementor-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 			}
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
@@ -692,6 +692,10 @@ class Widget_Image extends Widget_Base {
 		$has_caption = $this->has_caption( $settings );
 
 		$link = $this->get_link_url( $settings );
+
+		if ( $lazyload ) {
+				$image_html .= '<div class="image-lazy-preloader"></div>';
+			}
 
 		if ( $link ) {
 			$this->add_link_attributes( 'link', $link );
@@ -704,10 +708,6 @@ class Widget_Image extends Widget_Base {
 
 			if ( 'custom' !== $settings['link_to'] ) {
 				$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'] );
-			}
-
-		if ( $lazyload ) {
-				$image_html .= '<div class="image-lazy-preloader"></div>';
 			}
 
 		} ?>
