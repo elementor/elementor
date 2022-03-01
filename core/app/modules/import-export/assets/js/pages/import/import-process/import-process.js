@@ -21,7 +21,7 @@ export default function ImportProcess() {
 		[ startImport, setStartImport ] = useState( false ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
-		{ includes } = sharedContext.data || {},
+		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
@@ -71,6 +71,7 @@ export default function ImportProcess() {
 				include: includes,
 				overrideConditions: overrideConditions,
 				referrer,
+				selectedCustomPostTypes,
 			} );
 		}
 	}, [ startImport ] );
@@ -125,6 +126,8 @@ export default function ImportProcess() {
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }
 					setShow={ setShowUnfilteredFilesDialog }
+					confirmModalText={ __( 'This allows Elementor to scan your SVGs for malicious content. Otherwise, you can skip any SVGs in this import.', 'elementor' ) }
+					errorModalText={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
 					onReady={ () => {
 						setShowUnfilteredFilesDialog( false );
 						setStartImport( true );
