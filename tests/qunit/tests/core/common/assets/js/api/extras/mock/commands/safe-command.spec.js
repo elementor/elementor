@@ -4,10 +4,11 @@ export class SafeCommand extends CommandBase {
 	static getInfo() {
 		return {
 			isSafe: true,
+			isSafeWithArgs: true,
 		};
 	}
 
-	apply( args = {} ) {
+	apply() {
 
 	}
 }

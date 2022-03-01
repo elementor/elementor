@@ -255,7 +255,7 @@ export class ShowSwatches extends CommandBase {
 	 * @returns {void}
 	 */
 	addColorSwatches( picker ) {
-		Object.entries( this.colors ).map( ( [ control, value ] ) => {
+		Object.entries( this.colors ).map( ( [ , value ] ) => {
 			const swatch = document.createElement( 'div' );
 			swatch.classList.add( this.classes.swatch );
 			swatch.style = `--color: ${ value }`;

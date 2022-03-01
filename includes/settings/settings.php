@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -488,30 +489,6 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 					],
 				],
 			],
-			self::TAB_STYLE => [
-				'label' => esc_html__( 'Style', 'elementor' ),
-				'sections' => [
-					'style' => [
-						'fields' => [
-							'notice' => [
-								'label' => esc_html__( 'Looking for the Style settings?', 'elementor' ),
-								'field_args' => [
-									'type' => 'raw_html',
-									'html' => sprintf(
-										/* translators: 1: Bold open tag, 2: Bold close tag */
-										esc_html__( 'The Style settings changed its location and can now be found within Elementor Editor\'s %1$sPanel > Hamburger Menu > Site Settings%2$s.', 'elementor' ),
-										'<strong>',
-										'</strong>'
-									) .
-									'<br>' .
-									esc_html__( 'You can use the Site Settings to make changes and see them live!', 'elementor' ) .
-									sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', esc_html__( 'Learn More', 'elementor' ) ),
-								],
-							],
-						],
-					],
-				],
-			],
 			self::TAB_INTEGRATIONS => [
 				'label' => esc_html__( 'Integrations', 'elementor' ),
 				'sections' => [
@@ -612,6 +589,10 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			return __( 'Settings', 'elementor' );
+		}
+
 		return __( 'Elementor', 'elementor' );
 	}
 
@@ -625,6 +606,8 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
+			'e-form-submissions',
+			'elementor_custom_custom_code',
 			'popup_templates',
 		];
 
@@ -663,10 +646,16 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 		parent::__construct();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
-		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+			add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+			add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+			add_filter( 'custom_menu_order', '__return_true' );
+			add_filter( 'menu_order', [ $this, 'menu_order' ] );
+		}
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 
@@ -681,8 +670,5 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			add_action( "add_option_{$option_name}", $clear_cache_callback );
 			add_action( "update_option_{$option_name}", $clear_cache_callback );
 		}
-
-		add_filter( 'custom_menu_order', '__return_true' );
-		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 	}
 }
