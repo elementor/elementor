@@ -394,6 +394,7 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'separator' => 'before',
 				'default' => [
 					'size' => 15,
 				],
