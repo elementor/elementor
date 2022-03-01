@@ -78,6 +78,9 @@ export default function ItemHeader( props ) {
 			onSuccess: ( { data } ) => setDownloadLinkData( data ),
 			onError: ( errorResponse ) => {
 				if ( 401 === errorResponse.code ) {
+					elementorCommon.config.library_connect.is_connected = false;
+					elementorCommon.config.library_connect.current_access_level = 0;
+
 					updateSettings( {
 						is_library_connected: false,
 						access_level: 0,
@@ -133,9 +136,14 @@ export default function ItemHeader( props ) {
 					pageId={ props.pageId }
 					onClose={ () => setIsConnectDialogOpen( false ) }
 					onSuccess={ ( data ) => {
+						const accessLevel = data.kits_access_level || data.access_level || 0;
+
+						elementorCommon.config.library_connect.is_connected = true;
+						elementorCommon.config.library_connect.current_access_level = accessLevel;
+
 						updateSettings( {
 							is_library_connected: true,
-							access_level: data.kits_access_level || data.access_level || 0, // BC: Check for 'access_level' prop
+							access_level: accessLevel, // BC: Check for 'access_level' prop
 						} );
 
 						if ( data.access_level < props.model.accessLevel ) {

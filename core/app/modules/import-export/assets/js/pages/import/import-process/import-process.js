@@ -126,6 +126,8 @@ export default function ImportProcess() {
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }
 					setShow={ setShowUnfilteredFilesDialog }
+					confirmModalText={ __( 'This allows Elementor to scan your SVGs for malicious content. Otherwise, you can skip any SVGs in this import.', 'elementor' ) }
+					errorModalText={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
 					onReady={ () => {
 						setShowUnfilteredFilesDialog( false );
 						setStartImport( true );
