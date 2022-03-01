@@ -9,6 +9,8 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 			this.onElementCreate();
 		}
 
+		this.set( 'supportRepeaterChildren', true );
+
 		super.initialize( options );
 	}
 
