@@ -118,7 +118,7 @@ export class ShowSwatches extends CommandBase {
 
 			// Determine if the current control is active.
 			const isActive = () => {
-				return ( elementor.helpers.isActiveControl( container.controls[ control ], container.settings.attributes ) );
+				return ( elementor.helpers.isActiveControl( container.controls[ control ], container.settings.attributes, container.settings.controls ) );
 			};
 
 			// Throw non-color and non-background-image controls.
@@ -255,7 +255,7 @@ export class ShowSwatches extends CommandBase {
 	 * @returns {void}
 	 */
 	addColorSwatches( picker ) {
-		Object.entries( this.colors ).map( ( [ control, value ] ) => {
+		Object.entries( this.colors ).map( ( [ , value ] ) => {
 			const swatch = document.createElement( 'div' );
 			swatch.classList.add( this.classes.swatch );
 			swatch.style = `--color: ${ value }`;

@@ -84,9 +84,11 @@ jobs:
         with:
           php-version: '5.6'
       - name: Run PHP Syntax Lint 5.6
-        run: |
+        run: | # remove unsupported packages PHP < 7.4
           export PATH=$HOME/.composer/vendor/bin:$PATH
           php -v
+          composer remove --dev thor-juhasz/phpunit-coverage-check --ignore-platform-reqs
+          composer update --no-interaction
           php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
       - name: Setup PHP 7.0 # not included in ubuntu 18.04
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2

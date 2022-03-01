@@ -13,11 +13,13 @@ export default class HashCommands {
 		'e:run': {
 			runner: $e.run,
 			isSafe: ( command ) => $e.commands.getCommandClass( command )?.getInfo().isSafe,
+			isSafeWithArgs: ( command ) => $e.commands.getCommandClass( command )?.getInfo().isSafeWithArgs,
 		},
 
 		'e:route': {
 			runner: $e.route,
 			isSafe: () => true,
+			isSafeWithArgs: () => false,
 		},
 	};
 
@@ -99,7 +101,12 @@ export default class HashCommands {
 
 		// This logic will run the promises by sequence (will wait for dispatcher to finish, before run again).
 		for ( const hashCommand of commands ) {
-			await this.dispatchersList[ hashCommand.method ].runner( hashCommand.command, hashCommand.args );
+			const dispatcher = this.dispatchersList[ hashCommand.method ];
+
+			await dispatcher.runner(
+				hashCommand.command,
+				dispatcher.isSafeWithArgs( hashCommand.command ) ? hashCommand.args : undefined
+			);
 		}
 	}
 
