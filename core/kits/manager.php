@@ -119,15 +119,17 @@ class Manager {
 		return $kit->get_id();
 	}
 
-	public function create_new_kit( $kit_name = '', $settings = [] ) {
-		$kit_name = $kit_name ? $kit_name : 'Custom';
+	public function create_new_kit( $kit_name = '', $settings = [], $active = true ) {
+		$kit_name = $kit_name ? $kit_name : esc_html__( 'Custom', 'elementor' );
 
 		$id = $this->create( [
 			'post_title' => $kit_name,
 			'settings' => $settings,
 		] );
 
-		update_option( self::OPTION_ACTIVE, $id );
+		if ( $active ) {
+			update_option( self::OPTION_ACTIVE, $id );
+		}
 
 		return $id;
 	}
