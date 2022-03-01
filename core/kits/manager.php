@@ -119,6 +119,19 @@ class Manager {
 		return $kit->get_id();
 	}
 
+	public function create_new_kit( $kit_name = '', $settings = [] ) {
+		$kit_name = $kit_name ? $kit_name : 'Custom';
+
+		$id = $this->create( [
+			'post_title' => $kit_name,
+			'settings' => $settings,
+		] );
+
+		update_option( self::OPTION_ACTIVE, $id );
+
+		return $id;
+	}
+
 	public function create_default() {
 		return $this->create( [
 			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
