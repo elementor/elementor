@@ -95,6 +95,7 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'nested-elements',
+			'container-converter',
 		];
 	}
 
