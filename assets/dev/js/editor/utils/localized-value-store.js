@@ -4,23 +4,36 @@ export default class LocalizedValueStore {
 	}
 
 	/**
-	 * Receives the incoming event and builds the localized store
-	 * @param event
+	 * Receives the incoming event and returns the stored localized value
+	 * English values will be returned as is
+	 * Paste will return an empty value
+	 * @param event - the incoming event
+	 * @returns string
 	 */
-	sendKey( event ) {
-		if ( this.isLetter( event ) || this.isSpace( event ) ) {
-			this.addCharToStore( event );
+
+	appendAndParseLocalizedData( event ) {
+		if ( this.isPaste( event ) ) {
+			this.resetStore();
 		} else if ( this.isInputValueShorterThanStoreLength( event ) ) {
-			this.store = this.rebuildStore( event.target.value );
+			this.rebuildStore( event );
+		} else if ( this.isLetter( event ) || this.isSpace( event ) ) {
+			this.addCharToStore( event );
 		}
+		return this.store.map( ( x ) => x.localized ).join( '' );
 	}
 
-	/**
-	 * Return the localized value from the store
-	 * @returns {string}
-	 */
-	get() {
-		return this.store.map( ( x ) => x.localized ).join( '' );
+	resetStore() {
+		this.store = [];
+	}
+
+	isPaste( event ) {
+		const PASTE_EVENT = 'insertFromPaste';
+		const KEY_V = 'KeyV';
+
+		const originalEventPaste = PASTE_EVENT === event.originalEvent.inputType;
+		const ctrlPlusV = event.code === KEY_V && event.ctrlKey;
+
+		return ( originalEventPaste || ctrlPlusV );
 	}
 
 	isInputValueShorterThanStoreLength( event ) {
@@ -28,7 +41,16 @@ export default class LocalizedValueStore {
 	}
 
 	addCharToStore( event ) {
-		this.store.push( { original: event.originalEvent.key, localized: String.fromCharCode( event.keyCode ) } );
+		let localizedValue = String.fromCharCode( event.keyCode );
+		if ( ! this.LocalizationRequired( localizedValue, event ) ) {
+			localizedValue = event.originalEvent.key;
+		}
+
+		this.store.push( { original: event.originalEvent.key, localized: localizedValue } );
+	}
+
+	LocalizationRequired( localizedValue, event ) {
+		return localizedValue.toLowerCase() !== event.originalEvent.key.toLowerCase();
 	}
 
 	isSpace( event ) {
@@ -39,17 +61,13 @@ export default class LocalizedValueStore {
 		return event.keyCode >= 65 && event.keyCode <= 90;
 	}
 
-	rebuildStore( value ) {
-		const chars = value.split( '' );
-		const tempStore = [];
-		let charsIndex = 0;
-		for ( let storeIndex = 0; storeIndex < this.store.length; storeIndex++ ) {
-			if ( this.store[ storeIndex ].original === chars[ charsIndex ] ) {
-				tempStore.push( this.store[ storeIndex ] );
-				charsIndex++;
-			}
-		}
+	rebuildStore( event ) {
+		const chars = event.target.value.split( '' );
 
-		return tempStore;
+		this.store = chars.map( ( char ) => this.buildLocalizationElement( char ) );
+	}
+
+	buildLocalizationElement( char ) {
+		return { original: char, localized: this.store.find( ( element ) => element.original === char ).localized };
 	}
 }

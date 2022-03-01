@@ -1,5 +1,4 @@
 import LocalizedValueStore from 'elementor-editor-utils/localized-value-store';
-import UserEvents from 'elementor-editor-utils/user-events';
 
 const PanelElementsSearchView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-element-search',
@@ -14,8 +13,8 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'keydown @ui.input': 'onInputChanged',
-		'input @ui.input': 'onInputChanged',
+		'keydown @ui.input': 'onInputChanged', // used to capture the ctrl+V
+		'input @ui.input': 'onInputChanged', // will capture the context menu paste
 	},
 
 	clearInput: function() {
@@ -27,11 +26,7 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 		if ( ESC_KEY === event.keyCode ) {
 			this.clearInput();
 		}
-
-		this.localizedValueStore.sendKey( event );
-		this.localizedValue = UserEvents.isPaste( event ) ?
-			event.target.value :
-			this.localizedValueStore.get();
+		this.localizedValue = this.localizedValueStore.appendAndParseLocalizedData( event );
 		// Broadcast the localized value.
 		elementor.channels.panelElements.reply( 'filter:localized', this.localizedValue );
 		this.triggerMethod( 'search:change:input' );
