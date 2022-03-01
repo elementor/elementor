@@ -1,19 +1,32 @@
-$e-app-export-complete-kit-data-border-color: tints(300);
-$e-app-export-complete-kit-data-border-dark-color: dark-tints(500);
+$e-app-import-export-kit-data-site-area-color: tints(700);
+$e-app-import-export-kit-data-site-area-dark-color: dark-tints(200);
+$e-app-import-export-kit-data-included-color: tints(500);
+$e-app-import-export-kit-data-included-dark-color: dark-tints(300);
 
-$root: e-app-export-complete-kit-data-list;
+$root: e-app-import-export-kit-data;
 
 .#{$root} {
-	--e-app-export-complete-kit-data-border-color: #{$e-app-export-complete-kit-data-border-color};
+	--e-app-import-export-kit-data-site-area-color: #{$e-app-import-export-kit-data-site-area-color};
+	--e-app-import-export-kit-data-included-color: #{$e-app-import-export-kit-data-included-color};
 
-	&__item {
-		padding: spacing(10) 0;
-		border-bottom: 1px solid var(--e-app-export-complete-kit-data-border-color);
+	&__site-area,
+	&__included {
+		margin-bottom: 0;
+	}
+
+	&__site-area {
+		color: var(--e-app-import-export-kit-data-site-area-color);
+		font-weight: bold;
+	}
+
+	&__included {
+		color: var(--e-app-import-export-kit-data-included-color);
 	}
 }
 
 .eps-theme-dark {
 	.#{$root} {
-		--e-app-export-complete-kit-data-border-color: #{$e-app-export-complete-kit-data-border-dark-color};
+		--e-app-import-export-kit-data-site-area-color: #{$e-app-import-export-kit-data-site-area-dark-color};
+		--e-app-import-export-kit-data-included-color: #{$e-app-import-export-kit-data-included-dark-color};
 	}
 }

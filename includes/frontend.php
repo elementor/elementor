@@ -253,7 +253,7 @@ class Frontend extends App {
 	 */
 	public function add_theme_color_meta_tag() {
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$mobile_theme_color = $kit->get_settings( 'mobile_theme_color' );
+		$mobile_theme_color = $kit->get_settings( 'mobile_browser_background' );
 
 		if ( ! empty( $mobile_theme_color ) ) {
 			?>

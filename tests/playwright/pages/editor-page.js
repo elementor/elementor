@@ -1,19 +1,41 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
-const { WpAdminPage } = require( './wp-admin-page' );
+const BasePage = require( './base-page.js' );
 
-exports.EditorPage = class EditorPage {
+module.exports = class EditorPage extends BasePage {
 	isPanelLoaded = false;
 
-	/**
-	 * @param {import('@playwright/test').Page} page
-	 */
-	constructor( page ) {
-		this.page = page;
+	constructor( page, testInfo, cleanPostId = null ) {
+		super( page, testInfo );
+
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		this.postId = cleanPostId;
 	}
 
-	getFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
+	async openNavigator() {
+		const isOpen = await this.previewFrame.evaluate( () =>
+			elementor.navigator.isOpen()
+		);
+
+		if ( ! isOpen ) {
+			await this.page.click( '#elementor-panel-footer-navigator' );
+		}
 	}
+
+	/**
+	 * Reload the editor page.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async reload() {
+		await this.page.reload();
+
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+	}
+
+    getFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
+    }
 
 	/**
 	 * Make sure that the elements panel is loaded.
@@ -27,7 +49,6 @@ exports.EditorPage = class EditorPage {
 
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
 		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-		await this.page.waitForTimeout( 5000 ); //TODO: Find a way to detect when Iframe is fully loaded.
 
 		this.isPanelLoaded = true;
 	}
@@ -41,15 +62,11 @@ exports.EditorPage = class EditorPage {
 	 * @return {Promise<*>}
 	 */
 	async addElement( model, container = null ) {
-		await this.ensurePanelLoaded();
-
 		return await this.page.evaluate( addElement, { model, container } );
 	}
 
 	/**
 	 * Add a widget by `widgetType`.
-	 *
-	 * @shortcut `this.addElement()`
 	 */
 	async addWidget( widgetType, container = null ) {
 		return await this.addElement( { widgetType, elType: 'widget' }, container );
@@ -63,27 +80,10 @@ exports.EditorPage = class EditorPage {
 	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>}
 	 */
 	async getElementHandle( id ) {
-		return this.getFrame().$( getElementSelector( id ) );
+		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
-	async addTwoColumns() {
-		await this.getFrame().click( '.elementor-add-section-button' );
-		await this.getFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
-	}
-
-	async init( experiments ) {
-		const wpAdmin = new WpAdminPage( this.page );
-
-		await wpAdmin.login();
-
-		if ( experiments ) {
-			await wpAdmin.setExperiments( experiments );
-		}
-
-		await wpAdmin.openNewPage();
-
-		await this.ensurePanelLoaded();
-
-		await this.page.waitForTimeout( 4000 );//TODO: Find a way to detect when Iframe is fully loaded.
+	getPreviewFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 };
