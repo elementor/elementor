@@ -1,5 +1,10 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev44 - 2022-03-02
+* Fix: Lower custom breakpoints didn't inherits upper breakpoints values in frontend [ED-6235] (#17475)
+* New: Updated Elementor Icons library to v5.15.0 (#17632)
+* Fix: Elementor React App - Back to Dashboard and Close (x) button can lead to wrong page [ED-6443] (#17752)
+
 #### 3.6.0-dev43 - 2022-03-01
 * Tweak: Added focus state and description on play icon in Video widget (#17559)
 * Tweak: Added new variables colors to variables.scss file [OBXT-361] (#17560)
