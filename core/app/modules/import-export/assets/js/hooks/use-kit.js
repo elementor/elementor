@@ -23,8 +23,12 @@ export default function useKit() {
 				},
 			};
 		},
-		uploadKit = ( { file } ) => {
+		uploadKit = ( { file, kitLibraryNonce } ) => {
 			const ajaxConfig = getAjaxConfig();
+
+			if ( kitLibraryNonce ) {
+				ajaxConfig.data.e_kit_library_nonce = kitLibraryNonce;
+			}
 
 			ajaxConfig.data.e_import_file = file;
 			ajaxConfig.data.data = JSON.stringify( {

@@ -104,7 +104,12 @@ class Module extends BaseModule {
 	private function import_stage_1() {
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$file_url = $_POST['e_import_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( ! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' ) ) {
+				throw new \Error( __( 'Cannot verify import file url', 'elementor' ) );
+			}
+
+			$file_url = $_POST['e_import_file'];
+
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
 				throw new \Error( __( 'Invalid URL', 'elementor' ) );
 			}
