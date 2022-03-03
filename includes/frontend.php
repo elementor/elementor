@@ -253,7 +253,7 @@ class Frontend extends App {
 	 */
 	public function add_theme_color_meta_tag() {
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$mobile_theme_color = $kit->get_settings( 'mobile_theme_color' );
+		$mobile_theme_color = $kit->get_settings( 'mobile_browser_background' );
 
 		if ( ! empty( $mobile_theme_color ) ) {
 			?>
@@ -484,7 +484,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.14.0'
+			'5.15.0'
 		);
 
 		wp_register_style(

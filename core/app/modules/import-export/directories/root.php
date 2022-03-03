@@ -109,9 +109,16 @@ class Root extends Base {
 		}
 
 		if ( in_array( 'content', $include, true ) ) {
+
+			$custom_post_types = $this->iterator->get_settings( 'selectedCustomPostTypes' );
+
 			$sub_directories[] = new Content( $this->iterator, $this );
 
-			$sub_directories[] = new WP_Content( $this->iterator, $this );
+			$sub_directories[] = new WP_Content( $this->iterator, $this, $custom_post_types );
+
+			if ( ! empty( $custom_post_types ) ) {
+				$sub_directories[] = new Custom_Post_Type_Title( $this->iterator, $this, $custom_post_types );
+			}
 		}
 
 		if ( in_array( 'plugins', $include, true ) ) {

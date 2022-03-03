@@ -2,6 +2,7 @@ import ComponentBase from 'elementor-api/modules/component-base';
 
 import * as components from './';
 import * as hooks from './hooks/';
+import * as uiStates from './ui-states';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -24,6 +25,10 @@ export default class Component extends ComponentBase {
 
 	defaultHooks() {
 		return this.importHooks( hooks );
+	}
+
+	defaultUiStates() {
+		return this.importUiStates( uiStates );
 	}
 
 	defaultUtils() {

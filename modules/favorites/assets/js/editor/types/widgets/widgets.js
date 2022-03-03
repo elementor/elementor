@@ -103,7 +103,7 @@ export default class Widgets extends FavoriteType {
 		return 'favorites';
 	}
 
-	addCategoryBehavior( behaviors, context ) {
+	addCategoryBehavior( behaviors ) {
 		return Object.assign( {}, behaviors, {
 			favoriteWidgets: {
 				behaviorClass: PanelCategoryBehavior,
