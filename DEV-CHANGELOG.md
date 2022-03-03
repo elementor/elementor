@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev45 - 2022-03-03
+* Fix: Initial site name loads incorrectly in input, selecting image for logo causes JS error (#18036)
+* Fix: Revert `elementSettingsModel` deprecation from #17374 [ED-6575] (#18044)
+
 #### 3.6.0-dev44 - 2022-03-02
 * Fix: Lower custom breakpoints didn't inherits upper breakpoints values in frontend [ED-6235] (#17475)
 * New: Updated Elementor Icons library to v5.15.0 (#17632)
@@ -413,13 +417,3 @@
 * Fix: Motion effects popover is not visible since v3.4.1 (#16044) [ED-4788] (#16061)
 * Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active (ED-4787) (#16060)
 * Tweak: Updated Changelog to v3.4.2 (#16066)
-
-#### 3.5.0-dev10 - 2021-08-18
-* Fix: Internal - `{device}_default` control properties are not deleted for responsive controls (ED-4741) (#16004)
-* Fix: Gradient control doesn't work on frontend when using Global Colors (ED-3517) (#16002)
-* Tweak: Added source=generic parameter when connecting through the top bar [ED-4459] (#15998)
-* Fix: Control conditions are not being executed when has dash or underscore in the control slug (ED-4747) (#16014)
-* Tweak - Adding SVG support to the global video play-icon. (#16031)
-* Fix: Placeholder values of column width shouldn't cascade to mobile [ED-4664] (#16038)
-* Tweak: Updated changelog for v3.4.1 (#16039)
-* Fix: Source param at get_client_id request [ED-4459] (#16041)
