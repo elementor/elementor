@@ -176,7 +176,7 @@ class Module extends BaseModule {
 		return $result;
 	}
 
-	public function on_admin_init() {
+	private function on_admin_init() {
 		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
