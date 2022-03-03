@@ -61,12 +61,66 @@ export default class extends Marionette.Behavior {
 	}
 
 	/**
+	 * Determine if the current element is a Container element.
+	 *
+	 * @returns {boolean}
+	 */
+	isContainer() {
+		return ( 'container' === this.view.model.get( 'elType' ) );
+	}
+
+	/**
 	 * Determine if the current element is a flex container item.
 	 *
 	 * @returns {boolean}
 	 */
 	isContainerItem() {
 		return 'container' === this.view.getContainer().parent?.model?.get( 'elType' );
+	}
+
+	/**
+	 * Determine if the Container element is active.
+	 *
+	 * @returns {boolean}
+	 */
+	isContainerActive() {
+		return !! elementorCommon.config.experimentalFeatures.container;
+	}
+
+	/**
+	 * Get the width control ID to change when resizing.
+	 *
+	 * @returns {string}
+	 */
+	getWidthKey() {
+		return this.isContainer() ? 'width' : '_element_custom_width';
+	}
+
+	/**
+	 * Get a device-suffixed setting.
+	 *
+	 * @param {string} setting - Setting name.
+	 *
+	 * @returns {string}
+	 */
+	getDeviceSetting( setting ) {
+		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
+			deviceSuffix = ( 'desktop' === currentDeviceMode ) ? '' : '_' + currentDeviceMode;
+
+		return setting + deviceSuffix;
+	}
+
+	/**
+	 * Get a setting value from the current edited model.
+	 *
+	 * @param {string} setting - Setting name.
+	 *
+	 * @returns {*}
+	 */
+	getSetting( setting ) {
+		const editModel = this.view.getEditModel();
+
+		return editModel.getSetting( setting );
 	}
 
 	onRender() {
@@ -97,27 +151,21 @@ export default class extends Marionette.Behavior {
 			this.view.onResizeStop( event, ui );
 		}
 
-		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
-			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
-			editModel = this.view.getEditModel(),
-			isContainer = ( 'container' === this.view.model.get( 'elType' ) ),
-			widthKey = isContainer ? 'width' : '_element_custom_width',
-			unit = editModel.getSetting( widthKey + deviceSuffix ).unit,
-			width = elementor.helpers.elementSizeToUnit( this.$el, ui.size.width, unit ),
-			settingToChange = {};
+		const elementWidthSettingKey = this.getDeviceSetting( '_element_width' ),
+			widthSettingKey = this.getDeviceSetting( this.getWidthKey() );
 
-		// TODO: For BC controls.
-		if ( elementorCommon.config.experimentalFeatures.container ) {
-			settingToChange._flex_size = 'none';
+		const { unit } = this.getSetting( widthSettingKey ),
+			width = elementor.helpers.elementSizeToUnit( this.$el, ui.size.width, unit );
 
-			if ( isContainer ) {
-				settingToChange.content_width = 'full';
-			}
-		} else {
-			settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
-		}
-
-		settingToChange[ widthKey + deviceSuffix ] = { unit, size: width };
+		const settingToChange = {
+			...( this.isContainerActive() ? { _flex_size: 'none' } : {} ),
+			...( this.isContainer() ? { content_width: 'full' } : {} ),
+			[ elementWidthSettingKey ]: 'initial',
+			[ widthSettingKey ]: {
+				unit,
+				size: width,
+			},
+		};
 
 		$e.run( 'document/elements/settings', {
 			container: this.view.container,
