@@ -23,6 +23,14 @@ export default function Account() {
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
+			action: () => {
+				// If the user skips the "Connect" step, but did check the Data Sharing checkbox - handle data sharing.
+				if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
+					setDataSharingAjaxState( {
+						data: { action: 'elementor_update_data_sharing' },
+					} );
+				}
+			},
 		};
 	}
 
@@ -86,7 +94,7 @@ export default function Account() {
 			elementorCommon.events.dispatchEvent( {
 				placement: elementorAppConfig.onboarding.eventPlacement,
 				event: 'create account',
-				contributor: state.isUsageDataShared,
+				contributor: dataSharingCheckboxState,
 				source: 'cta',
 			} );
 		};
@@ -160,7 +168,19 @@ export default function Account() {
 		if ( 'initial' !== dataSharingAjaxState.status ) {
 			if ( 'success' === dataSharingAjaxState.status && dataSharingAjaxState.response?.usageDataShared ) {
 				elementorCommon.config[ 'event-tracker' ].isUserDataShared = true;
-				updateState( { isUsageDataShared: true } );
+
+				// If connect was successful
+				if ( state.isLibraryConnected ) {
+					updateState( { isUsageDataShared: true } );
+				} else {
+					const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'skipped' );
+
+					stateToUpdate.isUsageDataShared = true;
+
+					updateState( stateToUpdate );
+
+					navigate( 'onboarding/' + state.nextStep );
+				}
 			} else if ( 'error' === dataSharingAjaxState.status ) {
 				elementorCommon.events.dispatchEvent( {
 					placement: elementorAppConfig.onboarding.eventPlacement,
@@ -213,7 +233,7 @@ export default function Account() {
 						onChangeCallback={ ( event ) => {
 							elementorCommon.events.dispatchEvent( {
 								placement: elementorAppConfig.onboarding.eventPlacement,
-								event: 'contributor checkbox',
+								event: 'contributor checkbox click',
 								state: event.target.checked,
 							} );
 
@@ -235,7 +255,7 @@ export default function Account() {
 									elementorCommon.events.dispatchEvent( {
 										placement: elementorAppConfig.onboarding.eventPlacement,
 										event: 'connect account',
-										contributor: state.isUsageDataShared,
+										contributor: dataSharingCheckboxState,
 									} );
 								} }
 							>

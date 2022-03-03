@@ -6,6 +6,7 @@ import Button from './button';
 
 export default function SkipButton( props ) {
 	const { button, className } = props,
+		action = button.action,
 		{ state, updateState } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 		skipStep = () => {
@@ -20,6 +21,9 @@ export default function SkipButton( props ) {
 			}
 		};
 
+	// Make sure the 'action' prop doesn't get printed on the button markup which causes and error.
+	delete button.action;
+
 	// If the button is a link, no onClick functionality should be added.
 	button.onClick = () => {
 		elementorCommon.events.dispatchEvent( {
@@ -29,8 +33,8 @@ export default function SkipButton( props ) {
 		} );
 
 		if ( ! button.href ) {
-			if ( props.action ) {
-				props.action();
+			if ( action ) {
+				action();
 			} else {
 				skipStep();
 			}
@@ -43,5 +47,4 @@ export default function SkipButton( props ) {
 SkipButton.propTypes = {
 	button: PropTypes.object.isRequired,
 	className: PropTypes.string,
-	action: PropTypes.func,
 };
