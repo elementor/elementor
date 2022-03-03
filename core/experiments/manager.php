@@ -315,7 +315,7 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'container',
-			'title' => esc_html__( 'Container', 'elementor' ),
+			'title' => esc_html__( 'Flex Container', 'elementor' ),
 			'description' => esc_html__(
 				'Create advanced layouts and responsive designs using the new Container element.
 				When this experiment is active, Containers will be the default building block.
