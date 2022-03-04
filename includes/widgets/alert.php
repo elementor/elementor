@@ -314,6 +314,127 @@ class Widget_Alert extends Widget_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'section_dismiss_icon',
+			[
+				'label' => esc_html__( 'Dismiss Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_dismiss' => 'show',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'dismiss_icon_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'dismiss_icon_vertical_position',
+			[
+				'label' => esc_html__( 'Vertical Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ '%', 'px' ],
+				'selectors' => [
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'dismiss_icon_horizontal_position',
+			[
+				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ '%', 'px' ],
+				'selectors' => [
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->start_controls_tabs( 'dismiss_icon_colors' );
+
+		$this->start_controls_tab( 'dismiss_icon_normal_colors', [
+			'label' => esc_html__( 'Normal', 'elementor-pro' ),
+		] );
+
+		$this->add_control(
+			'dismiss_icon_normal_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor-pro' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-normal-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'dismiss_icon_hover_colors', [
+			'label' => esc_html__( 'Hover', 'elementor-pro' ),
+		] );
+
+		$this->add_control(
+				'dismiss_icon_hover_color',
+				[
+					'label' => esc_html__( 'Color', 'elementor-pro' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}}' => '--dismiss-icon-hover-color: {{VALUE}};',
+					],
+				]
+		);
+
+		$this->add_control(
+			'dismiss_icon_hover_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}ms',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3000,
+					],
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
 	}
 
 	/**
