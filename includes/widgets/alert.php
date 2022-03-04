@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Icons_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -137,13 +138,39 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'show_dismiss',
 			[
-				'label' => esc_html__( 'Dismiss Button', 'elementor' ),
+				'label' => esc_html__( 'Dismiss Icon', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
 				'options' => [
 					'show' => esc_html__( 'Show', 'elementor' ),
 					'hide' => esc_html__( 'Hide', 'elementor' ),
 				],
+			]
+		);
+
+		$this->add_control(
+			'selected_icon',
+			[
+					'label' => esc_html__( 'Icon', 'elementor' ),
+					'type' => Controls_Manager::ICONS,
+					'fa4compatibility' => 'icon',
+					'skin' => 'inline',
+					'label_block' => false,
+					'render_type' => 'template',
+					'skin_settings' => [
+						'inline' => [
+							'none' => [
+								'label' => 'Default',
+								'icon' => 'eicon-close',
+							],
+							'icon' => [
+								'icon' => 'eicon-star',
+							],
+						],
+					],
+					'condition' => [
+						'show_dismiss' => 'show',
+					],
 			]
 		);
 
@@ -326,7 +353,14 @@ class Widget_Alert extends Widget_Base {
 			<?php endif; ?>
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
 				<button type="button" class="elementor-alert-dismiss">
-					<span aria-hidden="true">&times;</span>
+					<?php
+					if ( ! empty( $settings['selected_icon']['value'] ) ) {
+						Icons_Manager::render_icon( $settings['selected_icon'], [
+								'aria-hidden' => 'true',
+						] );
+					} else { ?>
+						<span aria-hidden="true">&times;</span>
+					<?php } ?>
 					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
 				</button>
 			<?php endif; ?>
@@ -352,13 +386,20 @@ class Widget_Alert extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'alert_title', 'none' );
 			view.addInlineEditingAttributes( 'alert_description' );
+
+			var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 			#>
 			<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
 				<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
 				<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
 				<# if ( 'show' === settings.show_dismiss ) { #>
 					<button type="button" class="elementor-alert-dismiss">
-						<span aria-hidden="true">&times;</span>
+						<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+						{{{ iconHTML.value }}}
+						<# } else { #>
+							<span aria-hidden="true">&times;</span>
+						<# } #>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
 					</button>
 				<# } #>
