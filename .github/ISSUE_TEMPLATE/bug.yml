@@ -1,7 +1,7 @@
 name: "🐞 Bug Report"
 description: "Report a bug if something isn't working as expected in Elementor"
 title: "🐞 Bug report: "
-labels: [bug]
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
