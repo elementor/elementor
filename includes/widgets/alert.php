@@ -151,26 +151,26 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'selected_icon',
 			[
-					'label' => esc_html__( 'Icon', 'elementor' ),
-					'type' => Controls_Manager::ICONS,
-					'fa4compatibility' => 'icon',
-					'skin' => 'inline',
-					'label_block' => false,
-					'render_type' => 'template',
-					'skin_settings' => [
-						'inline' => [
-							'none' => [
-								'label' => 'Default',
-								'icon' => 'eicon-close',
-							],
-							'icon' => [
-								'icon' => 'eicon-star',
-							],
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'render_type' => 'template',
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
+							'label' => 'Default',
+							'icon' => 'eicon-close',
+						],
+						'icon' => [
+							'icon' => 'eicon-star',
 						],
 					],
-					'condition' => [
-						'show_dismiss' => 'show',
-					],
+				],
+				'condition' => [
+					'show_dismiss' => 'show',
+				],
 			]
 		);
 
