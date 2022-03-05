@@ -11,6 +11,8 @@ import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dial
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
+// import UseImportKitLibraryPlugins from '../import-plugins/hooks/use-import-kit-library-plugins';
+import ImportKitLibraryPlugins from '../import-plugins/components/import-kit-library-plugins/import-kit-library-plugins';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -22,7 +24,7 @@ export default function ImportProcess() {
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
-		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
+		{ file, uploadedData, importedData, overrideConditions, plugins, importedPlugins } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
 		uploadKit = () => {
@@ -39,6 +41,11 @@ export default function ImportProcess() {
 				setShowUnfilteredFilesDialog( true );
 			}
 		},
+		importPlugins = ( allPlugins ) => {
+			importContext.dispatch( { type: 'SET_PLUGINS', payload: allPlugins } );
+			console.log( 'allPlugins: ', allPlugins );
+			// UseImportKitLibraryPlugins();
+		},
 		onCancelProcess = () => {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
@@ -51,7 +58,6 @@ export default function ImportProcess() {
 		if ( referrer ) {
 			sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
 		}
-
 		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
@@ -66,6 +72,7 @@ export default function ImportProcess() {
 	// Starting the import process.
 	useEffect( () => {
 		if ( startImport ) {
+			console.log( 'startImport' );
 			kitActions.import( {
 				session: uploadedData.session,
 				include: includes,
@@ -104,7 +111,10 @@ export default function ImportProcess() {
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
-
+					//If plugins are included in this kit
+					// if ( kitState.data.manifest.plugins && kitState.data.manifest.plugins.length > 0 ) {
+					// 	importPlugins( kitState.data.manifest.plugins );
+					// }
 					importKit();
 				}
 			} else {
@@ -116,6 +126,10 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<section>
+				{/*{ plugins && 0 === importedPlugins.length &&*/}
+				{/*	<ImportKitLibraryPlugins />*/}
+				{/*}*/}
+
 				<FileProcess
 					info={ uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
 					errorType={ errorType }
