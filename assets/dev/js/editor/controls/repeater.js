@@ -107,13 +107,16 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	updateActiveRow: function() {
-		var activeItemIndex = 1;
+		let activeItemIndex = 1;
 
 		if ( this.currentEditableChild ) {
 			activeItemIndex = this.currentEditableChild.itemIndex;
 		}
 
-		this.setEditSetting( 'activeItemIndex', activeItemIndex );
+		$e.run( 'document/repeater/select', {
+			container: this.container,
+			index: activeItemIndex,
+		} );
 	},
 
 	updateChildIndexes: function() {
@@ -185,7 +188,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	onAddChild: function() {
 		this.updateChildIndexes();
-		this.updateActiveRow();
 	},
 
 	// BC since 3.0.0, ensure a new child is appear in container children.
