@@ -90,7 +90,7 @@ export default class Component extends ComponentBase {
 
 		const currentElement = elementor.getCurrentElement();
 
-		if ( ! currentElement?.getCotnainer?.() ) {
+		if ( ! currentElement ) {
 			return;
 		}
 
