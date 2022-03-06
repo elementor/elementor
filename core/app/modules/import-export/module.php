@@ -334,7 +334,7 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	private function get_edit_elementor_home_page_url() {
+	private function get_elementor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
 			return '';
 		}
@@ -361,7 +361,7 @@ class Module extends BaseModule {
 			return '';
 		}
 
-		return $document->get_edit_url();
+		return $document->get_preview_url();
 	}
 
 	private function get_config_data() {
@@ -373,7 +373,7 @@ class Module extends BaseModule {
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'editElementorHomePageUrl' => $this->get_edit_elementor_home_page_url(),
+			'editElementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
 		];
 	}
