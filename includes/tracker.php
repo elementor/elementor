@@ -142,7 +142,7 @@ class Tracker {
 
 		// Tracking data is used for System Info reports, and events should not be included in System Info reports,
 		// so it is added here
-		$params['events'] = self::get_events();
+		$params['analytics_events'] = self::get_events();
 
 		add_filter( 'https_ssl_verify', '__return_false' );
 
