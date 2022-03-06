@@ -1,41 +1,8 @@
 /**
- * @extends {BaseWidget}
+ * @name WidgetRepeaterViewBase
+ * @extends {BaseWidgetView}
  */
-export class WidgetRepeater extends elementor.modules.elements.views.BaseWidget {
-	events() {
-		const events = super.events();
-
-		events.click = ( e ) => {
-			const closest = e.target.closest( '.elementor-element' );
-
-			let model = this.options.model,
-				view = this;
-
-			// For clicks on container.
-			if ( 'container' === closest?.dataset.element_type ) { // eslint-disable-line camelcase
-				// In case the container empty, click should be handled by the EmptyView.
-				const container = elementor.getContainer( closest.dataset.id );
-
-				if ( container.view.isEmpty() ) {
-					return true;
-				}
-
-				// If not empty, open it.
-				model = container.model;
-				view = container.view;
-			}
-
-			e.stopPropagation();
-
-			$e.run( 'panel/editor/open', {
-				model,
-				view,
-			} );
-		};
-
-		return events;
-	}
-
+export default class WidgetRepeaterViewBase extends elementor.modules.elements.views.BaseWidget {
 	/**
 	 * @inheritDoc
 	 *
@@ -70,5 +37,3 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseWidget 
 			.remove();
 	}
 }
-
-module.exports = WidgetRepeater;

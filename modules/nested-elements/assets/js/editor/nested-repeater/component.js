@@ -1,18 +1,20 @@
+import WidgetRepeaterModelBase from './models/widget-repeater-model-base';
+import WidgetRepeaterViewBase from './views/widget-repeater-view-base';
+
 import RepeaterControl from './controls/repeater';
 
 import * as hooks from './hooks/';
-import * as commands from './commands/';
-import * as widgets from './widgets/';
 
 export default class Component extends $e.modules.ComponentBase {
+	exports = {
+		WidgetRepeaterModelBase,
+		WidgetRepeaterViewBase,
+	};
+
 	registerAPI() {
 		super.registerAPI();
 
 		elementor.addControlView( 'nested-elements-repeater', RepeaterControl );
-
-		Object.values( widgets ).forEach(
-			( WidgetClass ) => elementor.elementsManager.registerElementType( new WidgetClass )
-		);
 	}
 
 	getNamespace() {
@@ -21,10 +23,6 @@ export default class Component extends $e.modules.ComponentBase {
 
 	defaultHooks() {
 		return this.importHooks( hooks );
-	}
-
-	defaultCommands() {
-		return this.importCommands( commands );
 	}
 
 	getChildrenTitle( container, index ) {

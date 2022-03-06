@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\NestedElements\Widgets;
+namespace Elementor\Modules\NestedTabs\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
@@ -50,19 +50,15 @@ class NestedTabs extends Widget_Repeater_Base {
 		];
 	}
 
-	protected function get_default_repeater_name() {
-		return 'tabs';
-	}
-
 	protected function get_default_repeater_title_setting() {
 		return 'tab_title';
 	}
 
 	protected function get_defaults_children_title() {
-		return __( 'Tab #%d', 'elementor' );
+		return esc_html__( 'Tab #%d', 'elementor' );
 	}
 
-	protected function get_default_children_placeholder() {
+	protected function get_default_children_placeholder_selector() {
 		return '.elementor-tabs-content-wrapper';
 	}
 

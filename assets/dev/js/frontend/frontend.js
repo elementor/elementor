@@ -13,7 +13,7 @@ import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
-import NestedElements from 'elementor/modules/nested-elements/assets/js/frontend/frontend';
+import TabsV2 from 'elementor/modules/nested-tabs/assets/js/frontend/frontend';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
@@ -319,7 +319,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	 */
 	initModules() {
 		const handlers = {
-			'nested-elements': NestedElements,
+			'tabs-v2': TabsV2,
 			shapes: Shapes,
 		};
 

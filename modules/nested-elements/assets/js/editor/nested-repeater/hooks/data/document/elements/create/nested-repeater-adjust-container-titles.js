@@ -17,7 +17,8 @@ export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.A
 	getConditions( args ) {
 		const { model } = args;
 
-		return 'widget' === model.elType && $e.components.get( 'nested-elements' ).isWidgetSupportNesting( model.widgetType );
+		return 'widget' === model.elType &&
+			$e.components.get( 'nested-elements' ).isWidgetSupportNesting( model.widgetType );
 	}
 
 	/**

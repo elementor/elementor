@@ -10,25 +10,6 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 
 	/**
 	 * @inheritDoc
-	 * Override to avoid the default behavior which applied via `editSettings.set( 'activeItemIndex', index )`.
-	 * Since default behavior does not save history.
-	 * Use command 'nested-elements/nested-repeater/select' instead.
-	 */
-	updateActiveRow() {
-		let activeItemIndex = 1;
-
-		if ( this.currentEditableChild ) {
-			activeItemIndex = this.currentEditableChild.itemIndex;
-		}
-
-		$e.run( 'nested-elements/nested-repeater/select', {
-			container: this.container,
-			index: activeItemIndex,
-		} );
-	}
-
-	/**
-	 * @inheritDoc
 	 * Override to avoid the default behavior to adjust the title of the row.
 	 */
 	getDefaults() {
@@ -41,9 +22,5 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 			_id: '',
 			[ defaults.repeater_title_setting ]: component.getChildrenTitle( widgetContainer, index ),
 		};
-	}
-
-	onAddChild() {
-		this.updateChildIndexes();
 	}
 }

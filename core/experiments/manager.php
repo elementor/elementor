@@ -104,10 +104,10 @@ class Manager extends Base_Object {
 		if ( ! empty( $experimental_data['dependencies'] ) ) {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 				if ( ! class_exists( $dependency ) ) {
-					throw new \Exception( sprintf( 'Dependency class %s not found', $dependency ) );
+					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $this->get_features( $dependency ) );
+				} else {
+					$experimental_data['dependencies'][ $key ] = $dependency::instance();
 				}
-
-				$experimental_data['dependencies'][ $key ] = $dependency::instance();
 			}
 		}
 

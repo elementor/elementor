@@ -10,21 +10,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Widget_Repeater_Base extends Widget_Base {
 
+	/**
+	 * Get default children elements structure.
+	 *
+	 * @return array
+	 */
 	abstract protected function get_default_children_elements();
 
-	abstract protected function get_default_repeater_name();
-
+	/**
+	 * Get repeater title setting name.
+	 *
+	 * @return string
+	 */
 	abstract protected function get_default_repeater_title_setting();
 
+	/**
+	 * Get default children title using `%d` as index in the format.
+	 *
+	 * @return string
+	 */
 	protected function get_defaults_children_title() {
 		return __( 'Item #%d', 'elementor' );
 	}
 
-	protected function get_default_children_placeholder() {
-		// Empty string, means will be added at the end.
+	/**
+	 * Get default children placeholder selector, Empty string, means will be added at the end view.
+	 *
+	 * @return string
+	 */
+	protected function get_default_children_placeholder_selector() {
 		return '';
 	}
 
+	/**
+	 * @inheritDoc
+	 *
+	 * To support nesting.
+	 */
 	protected function _get_default_child_type( array $element_data ) {
 		if ( ! empty( $element_data['widgetType'] ) ) {
 			Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -33,22 +55,31 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 		return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 	}
 
+	/**
+	 * @inheritDoc
+	 *
+	 * Adding new 'defaults' config for handling children elements.
+	 */
 	protected function get_initial_config() {
-		$result = parent::get_initial_config();
+		$config = parent::get_initial_config();
 
-		$defaults = [];
-		$defaults['elements'] = $this->get_default_children_elements();
-		$defaults['elements_title'] = $this->get_defaults_children_title();
-		$defaults['elements_placeholder_selector'] = $this->get_default_children_placeholder();
-		$defaults['repeater_name'] = $this->get_default_repeater_name();
-		$defaults['repeater_title_setting'] = $this->get_default_repeater_title_setting();
+		$config['defaults'] = [
+			'elements' => $this->get_default_children_elements(),
+			'elements_title' => $this->get_defaults_children_title(),
+			'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
+			'repeater_title_setting' => $this->get_default_repeater_title_setting(),
+		];
 
-		$result['support_nesting'] = true;
-		$result['defaults'] = $defaults;
+		$config['support_nesting'] = true;
 
-		return $result;
+		return $config;
 	}
 
+	/**
+	 * @inheritDoc
+	 *
+	 * Each element including its children elements.
+	 */
 	public function get_raw_data( $with_html_content = false ) {
 		$elements = [];
 		$data = $this->get_data();
@@ -70,6 +101,11 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 		];
 	}
 
+	/**
+	 * Print children, helper method to print the children elements.
+	 *
+	 * @param int $index
+	 */
 	public function print_children( $index ) {
 		$children = $this->get_children();
 

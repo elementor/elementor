@@ -8,8 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Used to override the default repeater control behavior. since `updateActiveRow` should work via:
- * 'nested-elements/nested-repeater/select` command to support history.
+ * Changing the default repeater control behavior for custom item title defaults.
  */
 class Nested_Repeater extends Control_Repeater {
 

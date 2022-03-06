@@ -1,6 +1,6 @@
-import BaseNestedTabs from './base-nested-tabs';
+import BaseTabsV2 from './base-tabs-v2';
 
-export default class NestedTabs extends BaseNestedTabs {
+export default class TabsV2 extends BaseTabsV2 {
 	getDefaultSettings() {
 		const defaultSettings = { ... super.getDefaultSettings() };
 
@@ -46,16 +46,5 @@ export default class NestedTabs extends BaseNestedTabs {
 		if ( 'activeItemIndex' === propertyName ) {
 			this.changeActiveTab( value, false );
 		}
-	}
-
-	changeActiveTab( tabIndex, fromBindings = false ) {
-		if ( fromBindings && this.isEdit ) {
-			return window.top.$e.run( 'nested-elements/nested-repeater/select', {
-				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
-				index: parseInt( tabIndex ),
-			} );
-		}
-
-		super.changeActiveTab( tabIndex, fromBindings );
 	}
 }
