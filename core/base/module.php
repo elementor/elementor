@@ -315,15 +315,20 @@ abstract class Module extends Base_Object {
 
 	/**
 	 * Enqueue the module script according to its own name.
+	 * With minimal dependency over 'elementor-common' script.
 	 *
-	 * @param array $dependencies
+	 * @param array $additional_dependencies
 	 */
-	final protected function enqueue_module_assets( $dependencies = [] ) {
-		add_action( 'elementor/common/after_register_scripts', function () use ( $dependencies ) {
+	final protected function enqueue_module_assets_with_common_dependencies( array $additional_dependencies = [] ) {
+		$additional_dependencies = array_merge( $additional_dependencies, [
+			'elementor-common',
+		] );
+
+		add_action( 'elementor/common/after_register_scripts', function () use ( $additional_dependencies ) {
 			wp_enqueue_script(
 				$this->get_name(),
 				$this->get_js_assets_url( $this->get_name() ),
-				$dependencies,
+				$additional_dependencies,
 				ELEMENTOR_VERSION,
 				true
 			);
