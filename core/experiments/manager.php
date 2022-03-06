@@ -678,11 +678,11 @@ class Manager extends Base_Object {
 	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
 	private function validate_dependency( array $feature, $new_state ) {
-		$rollback = function ( $feature_option_key ) {
+		$rollback = function ( $feature_option_key, $state ) {
 			remove_all_actions( 'add_option_' . $feature_option_key );
 			remove_all_actions( 'update_option_' . $feature_option_key );
 
-			update_option( $feature_option_key, self::STATE_INACTIVE );
+			update_option( $feature_option_key, $state );
 		};
 
 		if ( self::STATE_DEFAULT === $new_state ) {
@@ -701,7 +701,7 @@ class Manager extends Base_Object {
 				$dependency_feature = $this->get_features( $dependency->get_name() );
 
 				if ( ! $dependency_feature ) {
-					$rollback( $feature_option_key );
+					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					throw new Exceptions\Dependency_Exception(
 						sprintf( 'The feature `%s` has a dependency `%s` that is not available.',
@@ -715,7 +715,7 @@ class Manager extends Base_Object {
 
 				// If dependency is not active.
 				if ( self::STATE_INACTIVE === $dependency_state ) {
-					$rollback( $feature_option_key );
+					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 					throw new Exceptions\Dependency_Exception(
@@ -738,7 +738,7 @@ class Manager extends Base_Object {
 
 				foreach ( $current_feature['dependencies'] as $dependency ) {
 					if ( self::STATE_ACTIVE === $current_feature_state && $feature['name'] === $dependency->get_name() ) {
-						$rollback( $feature_option_key );
+						$rollback( $feature_option_key, self::STATE_ACTIVE );
 
 						/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 						throw new Exceptions\Dependency_Exception(
