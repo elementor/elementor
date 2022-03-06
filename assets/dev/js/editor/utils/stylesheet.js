@@ -54,7 +54,14 @@
 				var aQuery = hashToQuery( a ),
 					bQuery = hashToQuery( b );
 
-				return bQuery.max - aQuery.max;
+				// Using the max or the min value of the queries.
+				var aQueryValue, bQueryValue;
+
+				aQueryValue = aQuery.max ?? aQuery.min;
+
+				bQueryValue = bQuery.max ?? bQuery.min;
+
+				return bQueryValue - aQueryValue;
 			} );
 
 			var sortedRules = {};
