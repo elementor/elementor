@@ -63,7 +63,7 @@ class DB extends Base_Object {
 			$event_data['connect_id'] = $user_connect_data['client_id'];
 		}
 
-		$timestamp = current_time( 'mysql' );
+		$timestamp = ( new \DateTime() )->format( \DateTime::ATOM );
 
 		$event_data['timestamp'] = $timestamp;
 
