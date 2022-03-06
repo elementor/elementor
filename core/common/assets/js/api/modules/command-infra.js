@@ -43,6 +43,13 @@ export default class CommandInfra extends ArgsObject {
 		this.registerConfig = Object.freeze( config );
 	}
 
+	// TODO - Remove backwards compatibility.
+	get currentCommand() {
+		elementorCommon.helpers.softDeprecated( 'this.currentCommand', '3.7.0', 'this.command' );
+
+		return this.command;
+	}
+
 	/**
 	 * Function constructor().
 	 *
@@ -59,15 +66,6 @@ export default class CommandInfra extends ArgsObject {
 
 		// Acknowledge self about which command it run.
 		this.command = this.constructor.getCommand();
-
-		// TODO - Remove backwards compatibility.
-		Object.defineProperty( this, 'currentCommand', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'this.currentCommand', '3.7.0', 'this.command' );
-
-				return this.command;
-			},
-		} );
 
 		// Assign instance of current component.
 		this.component = this.constructor.getComponent();
