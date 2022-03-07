@@ -48,7 +48,7 @@ export default class extends Marionette.Behavior {
 	}
 
 	onDragStart( event ) {
-		event.stopPropagation();
+		event.stopImmediatePropagation();
 
 		this.view.model.trigger( 'request:edit' );
 	}
