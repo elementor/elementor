@@ -1155,13 +1155,6 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
-				'allowed_dimensions' => 'vertical',
-				'placeholder' => [
-					'top' => '',
-					'right' => 'auto',
-					'bottom' => '',
-					'left' => 'auto',
-				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
