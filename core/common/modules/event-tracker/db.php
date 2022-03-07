@@ -47,9 +47,14 @@ class DB extends Base_Object {
 		$events = $this->get_event_ids_from_db();
 
 		if ( 1000 <= count( $events ) ) {
+			$event_ids = [];
+
+			foreach ( $events as $event ) {
+				$event_ids[] = $event->id;
+			}
+
 			// Sort the array by entry ID
-			$id_col = array_column( $events, 'id' );
-			array_multisort( $id_col, SORT_ASC, $events );
+			array_multisort( $event_ids, SORT_ASC, $events );
 
 			// Delete the smallest ID (which is the earliest DB entry)
 			$this->wpdb->delete( $this->get_table_name(), [ 'ID' => $events[0]->id ] );
