@@ -22,6 +22,19 @@ class DB extends Base_Object {
 	const CURRENT_DB_VERSION = '1.0.0';
 
 	/**
+	 * Get Table Name
+	 *
+	 * Returns the Events database table's name with the `wpdb` prefix.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return string
+	 */
+	public function get_table_name() {
+		return $this->wpdb->prefix . self::TABLE_NAME;
+	}
+
+	/**
 	 * Prepare Database for Entry
 	 *
 	 * The events database should have a limit of up to 1000 event entries stored daily.
@@ -53,8 +66,9 @@ class DB extends Base_Object {
 	public function create_entry( $event_data ) {
 		$this->prepare_db_for_entry();
 
+		$connect = Plugin::$instance->common->get_component( 'connect' );
 		/** @var Library $library */
-		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		$library = $connect->get_apps()['library'];
 
 		if ( $library->is_connected() ) {
 			$user_connect_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
@@ -63,7 +77,8 @@ class DB extends Base_Object {
 			$event_data['connect_id'] = $user_connect_data['client_id'];
 		}
 
-		$timestamp = ( new \DateTime() )->format( \DateTime::ATOM );
+		//$timestamp = ( new \DateTime() )->format( \DateTime::ATOM );
+		$timestamp = current_time( \DateTime::ATOM );
 
 		$event_data['timestamp'] = $timestamp;
 
@@ -85,24 +100,23 @@ class DB extends Base_Object {
 	 * @return array|object|null
 	 */
 	public function get_event_ids_from_db() {
-		$query = $this->wpdb->prepare( "SELECT id FROM {$this->get_table_name()}" );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		return $this->wpdb->get_results( $query );
+		return $this->wpdb->get_results( "SELECT id FROM {$this->get_table_name()}" );
 	}
 
 	/**
-	 * Get Events Count
+	 * Reset Table
 	 *
-	 * Fetches a count of the number of events saved in the database.
+	 * Empties the contents of the Events DB table.
 	 *
 	 * @since 3.6.0
-	 *
-	 * @return array|object|null
 	 */
-	public function get_events_count() {
-		$query = $this->wpdb->prepare( 'SELECT COUNT(*) FROM %s', $this->get_table_name() );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		return $this->wpdb->get_results( $query );
+	public static function reset_table() {
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . self::TABLE_NAME;
+
+		// Delete all content of the table.
+		$wpdb->query( "TRUNCATE TABLE {$table_name}" );
 	}
 
 	/**
@@ -136,22 +150,6 @@ class DB extends Base_Object {
 	}
 
 	/**
-	 * Reset Table
-	 *
-	 * Empties the contents of the Events DB table.
-	 *
-	 * @since 3.6.0
-	 */
-	public static function reset_table() {
-		global $wpdb;
-
-		$table_name = $wpdb->prefix . self::TABLE_NAME;
-
-		// Delete all content of the table.
-		$wpdb->query( $wpdb->prepare( "truncate table {$table_name};" ) );
-	}
-
-	/**
 	 * Add Indexes
 	 *
 	 * Adds an index to the events table for the creation date column.
@@ -163,19 +161,6 @@ class DB extends Base_Object {
 		$this->wpdb->query( 'ALTER TABLE ' . $this->get_table_name() . '
     		ADD INDEX `created_at_index` (`created_at`)
 		' );
-	}
-
-	/**
-	 * Get Table Name
-	 *
-	 * Returns the Events database table's name with the `wpdb` prefix.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return string
-	 */
-	public function get_table_name() {
-		return $this->wpdb->prefix . self::TABLE_NAME;
 	}
 
 	public function __construct() {
