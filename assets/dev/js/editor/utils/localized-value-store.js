@@ -42,7 +42,7 @@ export default class LocalizedValueStore {
 
 	addCharToStore( event ) {
 		let localizedValue = String.fromCharCode( event.keyCode );
-		if ( ! this.LocalizationRequired( localizedValue, event ) ) {
+		if ( ! this.localizationRequired( localizedValue, event ) ) {
 			localizedValue = event.originalEvent.key;
 		}
 
