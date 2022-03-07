@@ -49,7 +49,7 @@ export default class LocalizedValueStore {
 		this.store.push( { original: event.originalEvent.key, localized: localizedValue } );
 	}
 
-	LocalizationRequired( localizedValue, event ) {
+	localizationRequired( localizedValue, event ) {
 		return localizedValue.toLowerCase() !== event.originalEvent.key.toLowerCase();
 	}
 
