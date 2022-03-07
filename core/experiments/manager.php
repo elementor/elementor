@@ -103,8 +103,9 @@ class Manager extends Base_Object {
 
 		if ( ! empty( $experimental_data['dependencies'] ) ) {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
-				if ( ! class_exists( $dependency ) ) {
-					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $this->get_features( $dependency ) );
+				$feature = $this->get_features( $dependency );
+				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
+					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
 				} else {
 					$experimental_data['dependencies'][ $key ] = $dependency::instance();
 				}
