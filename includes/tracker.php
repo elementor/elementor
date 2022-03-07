@@ -494,11 +494,12 @@ class Tracker {
 		global $wpdb;
 		$table_name = $wpdb->prefix . Events_DB_Manager::TABLE_NAME;
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$results = $wpdb->get_results( "SELECT event_data FROM {$table_name}" );
 
 		$events_data = [];
 
-		foreach( $results as $event ) {
+		foreach ( $results as $event ) {
 			// Results are stored in the database as a JSON string. Since all tracking data is encoded right before
 			// being sent, it is now decoded.
 			$events_data[] = json_decode( $event->event_data, true );
