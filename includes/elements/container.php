@@ -301,6 +301,8 @@ class Container extends Element_Base {
 			]
 		);
 
+		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+
 		$this->add_control(
 			'content_width',
 			[
@@ -311,6 +313,7 @@ class Container extends Element_Base {
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
+				'render_type' => 'ui',
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
@@ -341,6 +344,13 @@ class Container extends Element_Base {
 			],
 			'default' => [
 				'unit' => '%',
+			],
+			'min_affected_device' => [
+				Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
 			'separator' => 'none',
 		];
