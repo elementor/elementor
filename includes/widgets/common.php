@@ -227,7 +227,7 @@ class Widget_Common extends Widget_Base {
 				'selectors_dictionary' => [
 					'inherit' => '100%',
 				],
-				'condition' => $is_container_active ? [ '_element_width!' => '' ] : [], // TODO: For BC.
+				'condition' => $is_container_active ? [ '_element_width!' => 'initial' ] : [], // TODO: For BC.
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
@@ -258,15 +258,12 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
 				'separator' => 'after',
-				// TODO: BC settings:
-				'condition' => $is_container_active ? [] : [ '_element_width' => 'initial' ],
-				'device_args' => $is_container_active
-					? []
-					: $this->get_responsive_device_args( [
-						'condition' => [
-							'_element_width_{{DEVICE}}' => [ 'initial' ],
-						],
-					] ),
+				'condition' => [ '_element_width' => 'initial' ],
+				'device_args' => $this->get_responsive_device_args( [
+					'condition' => [
+						'_element_width_{{DEVICE}}' => [ 'initial' ],
+					],
+				] ),
 			]
 		);
 
