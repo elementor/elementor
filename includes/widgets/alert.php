@@ -337,7 +337,7 @@ class Widget_Alert extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--dismiss-icon-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -355,7 +355,7 @@ class Widget_Alert extends Widget_Base {
 				],
 				'size_units' => [ '%', 'px' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--dismiss-icon-vertical-position: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -373,7 +373,7 @@ class Widget_Alert extends Widget_Base {
 				],
 				'size_units' => [ '%', 'px' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--dismiss-icon-horizontal-position: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -381,13 +381,13 @@ class Widget_Alert extends Widget_Base {
 		$this->start_controls_tabs( 'dismiss_icon_colors' );
 
 		$this->start_controls_tab( 'dismiss_icon_normal_colors', [
-			'label' => esc_html__( 'Normal', 'elementor-pro' ),
+			'label' => esc_html__( 'Normal', 'elementor' ),
 		] );
 
 		$this->add_control(
 			'dismiss_icon_normal_color',
 			[
-				'label' => esc_html__( 'Color', 'elementor-pro' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-normal-color: {{VALUE}};',
@@ -398,13 +398,13 @@ class Widget_Alert extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'dismiss_icon_hover_colors', [
-			'label' => esc_html__( 'Hover', 'elementor-pro' ),
+			'label' => esc_html__( 'Hover', 'elementor' ),
 		] );
 
 		$this->add_control(
 				'dismiss_icon_hover_color',
 				[
-					'label' => esc_html__( 'Color', 'elementor-pro' ),
+					'label' => esc_html__( 'Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}}' => '--dismiss-icon-hover-color: {{VALUE}};',
@@ -415,7 +415,7 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'dismiss_icon_hover_transition_duration',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}ms',
