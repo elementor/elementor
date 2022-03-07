@@ -41,10 +41,18 @@ export default function ImportProcess() {
 				setShowUnfilteredFilesDialog( true );
 			}
 		},
-		importPlugins = ( allPlugins ) => {
-			importContext.dispatch( { type: 'SET_PLUGINS', payload: allPlugins } );
-			console.log( 'allPlugins: ', allPlugins );
-			// UseImportKitLibraryPlugins();
+		setCptFromKitLibrary = () => {
+			if ( kitState.data.manifest[ 'custom-post-type-title' ] ) {
+				const cptArray = Object.keys( kitState.data.manifest[ 'custom-post-type-title' ] );
+				sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: cptArray } );
+				console.log( 'cptArray: ', cptArray );
+			}
+		},
+		importPlugins = () => {
+			if ( kitState.data.manifest.plugins && kitState.data.manifest.plugins.length > 0 ) {
+				importContext.dispatch( { type: 'SET_PLUGINS', payload: kitState.data.manifest.plugins } );
+				console.log( 'kitState.data.manifest.plugins: ', kitState.data.manifest.plugins );
+			}
 		},
 		onCancelProcess = () => {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
@@ -72,7 +80,7 @@ export default function ImportProcess() {
 	// Starting the import process.
 	useEffect( () => {
 		if ( startImport ) {
-			console.log( 'startImport' );
+			console.log( 'selectedCustomPostTypes', selectedCustomPostTypes );
 			kitActions.import( {
 				session: uploadedData.session,
 				include: includes,
@@ -111,10 +119,13 @@ export default function ImportProcess() {
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
+
+					//check if cpt are included in this kit and ad them to sharedContext
+					// setCptFromKitLibrary();
+
 					//If plugins are included in this kit
-					// if ( kitState.data.manifest.plugins && kitState.data.manifest.plugins.length > 0 ) {
-					// 	importPlugins( kitState.data.manifest.plugins );
-					// }
+					importPlugins();
+
 					importKit();
 				}
 			} else {
