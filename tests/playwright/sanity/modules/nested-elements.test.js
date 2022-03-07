@@ -42,28 +42,6 @@ test.describe.serial( 'NestedElementsModule', () => {
 
 	test.describe( 'Component: `nested-elements`', () => {
 		test.describe( 'Component: `nested-elements/nested-repeater`', () => {
-			test.describe( 'Commands', () => {
-				test( 'Command: `nested-elements/nested-repeater/select`', async () => {
-					// Arrange.
-					const indexToSelect = 2,
-						widgetId = await createTabsWidget( editor );
-
-					// Act.
-					await editor.page.evaluate( ( [ id, index ] ) => {
-						return $e.commands.run( 'nested-elements/nested-repeater/select', {
-								index,
-								container: elementor.getContainer( id ),
-							}
-						);
-					}, [ widgetId, indexToSelect ] );
-
-					// Assert, Ensure tab selected.
-					const tabTitle = await editor.previewFrame.locator( `:nth-match(:text("Tab #${ indexToSelect }"), ${ indexToSelect })` );
-
-					await expect( await tabTitle.getAttribute( 'aria-selected' ) ).toBeTruthy();
-				} );
-			} );
-
 			test.describe( 'Hooks', () => {
 				test.describe( 'Data', () => {
 					test( 'Hook: `nested-repeater-adjust-container-titles`', async () => {
