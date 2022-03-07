@@ -175,6 +175,80 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'navigation_left_icon',
+			[
+				'label' => esc_html__( 'Left Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
+							'label' => 'Default',
+							'icon' => 'eicon-chevron-left',
+						],
+						'icon' => [
+							'icon' => 'eicon-star',
+						],
+					],
+				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'both',
+						],
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'arrows',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'navigation_right_icon',
+			[
+				'label' => esc_html__( 'Right Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
+							'label' => 'Default',
+							'icon' => 'eicon-chevron-right',
+						],
+						'icon' => [
+							'icon' => 'eicon-star',
+						],
+					],
+				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'both',
+						],
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'arrows',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
 			'link_to',
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
@@ -898,12 +972,19 @@ class Widget_Image_Carousel extends Widget_Base {
 
 	private function render_swiper_button( $type ) {
 		$direction = 'next' === $type ? 'right' : 'left';
+		$icon_settings = $this->get_settings_for_display('navigation_' . $direction . '_icon');
 
-		$icon_value = 'eicon-chevron-' . $direction;
+		if ( ! empty( $icon_settings['value'] ) ) {
+			Icons_Manager::render_icon( $icon_settings, [
+					'aria-hidden' => 'true',
+			] );
+		} else {
+			$icon_value = 'eicon-chevron-' . $direction;
 
-		Icons_Manager::render_icon( [
-			'library' => 'eicons',
-			'value' => $icon_value,
-		], [ 'aria-hidden' => 'true' ] );
+			Icons_Manager::render_icon( [
+					'library' => 'eicons',
+					'value' => $icon_value,
+			], [ 'aria-hidden' => 'true' ] );
+		}
 	}
 }
