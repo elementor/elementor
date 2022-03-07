@@ -240,6 +240,11 @@ class Tracker {
 	private static function get_system_reports_data() {
 		$reports = Plugin::$instance->system_info->load_reports( System_Info_Module::get_allowed_reports() );
 
+		// The log report should not be sent with the usage data - it is not used and causes bloat.
+		if ( isset( $reports['log'] ) ) {
+			unset( $reports['log'] );
+		}
+
 		$system_reports = [];
 		foreach ( $reports as $report_key => $report_details ) {
 			$system_reports[ $report_key ] = [];
