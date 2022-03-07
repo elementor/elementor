@@ -315,13 +315,13 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'container',
-			'title' => esc_html__( 'Flex Container', 'elementor' ),
-			'description' => esc_html__(
-				'Create advanced layouts and responsive designs using the new Container element.
-				When this experiment is active, Containers will be the default building block.
-				Existing Sections, Inner Sections and Columns will not be affected.',
+			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
+			'description' => sprintf( esc_html__(
+				'Create advanced layouts and responsive designs with the new Flexbox Container element.
+				This experiment replaces the current section/column structure, but you\'ll still keep your existing
+				Sections, Inner Sections and Columns and be able to edit them. %1$sLearn More%2$s',
 				'elementor'
-			),
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container">', '</a>' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
