@@ -349,7 +349,7 @@ class Widget_Alert extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
+						'min' => -100,
 						'max' => 100,
 					],
 				],
@@ -367,7 +367,7 @@ class Widget_Alert extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
+						'min' => -100,
 						'max' => 100,
 					],
 				],
