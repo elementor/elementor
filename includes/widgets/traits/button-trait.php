@@ -244,7 +244,7 @@ trait Button_Trait {
 				'condition' => $args['section_condition'],
 			]
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
 			[
