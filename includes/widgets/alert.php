@@ -168,6 +168,15 @@ class Widget_Alert extends Widget_Base {
 						],
 					],
 				],
+				'recommended' => [
+					'fa-regular' => [
+						'times-circle',
+					],
+					'fa-solid' => [
+						'times',
+						'times-circle',
+					],
+				],
 				'condition' => [
 					'show_dismiss' => 'show',
 				],
