@@ -410,7 +410,7 @@ class Widget_Testimonial extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
 			[
