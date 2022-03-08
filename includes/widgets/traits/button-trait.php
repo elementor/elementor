@@ -244,6 +244,15 @@ trait Button_Trait {
 				'condition' => $args['section_condition'],
 			]
 		);
+		
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'text_stroke',
+				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
