@@ -148,9 +148,6 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	onClickEdit: function( e ) {
-		// `stopPropagation()` is used here to prevent ancestry `request:edit` trigger to aim the current clicked element.
-		e.stopPropagation();
-
 		if ( this.container.isEditable() ) {
 			this.onEditButtonClick( e );
 		}
