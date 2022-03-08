@@ -177,7 +177,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'navigation_left_icon',
 			[
-				'label' => esc_html__( 'Left Icon', 'elementor' ),
+				'label' => esc_html__( 'Left Arrow Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
@@ -191,6 +191,24 @@ class Widget_Image_Carousel extends Widget_Base {
 						'icon' => [
 							'icon' => 'eicon-star',
 						],
+					],
+				],
+				'recommended' => [
+					'fa-regular' => [
+						'arrow-alt-circle-left',
+						'caret-square-left',
+					],
+					'fa-solid' => [
+						'angle-double-left',
+						'angle-left',
+						'arrow-alt-circle-left',
+						'arrow-circle-left',
+						'arrow-left',
+						'caret-left',
+						'caret-square-left',
+						'chevron-circle-left',
+						'chevron-left',
+						'long-arrow-alt-left',
 					],
 				],
 				'conditions' => [
@@ -214,7 +232,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'navigation_right_icon',
 			[
-				'label' => esc_html__( 'Right Icon', 'elementor' ),
+				'label' => esc_html__( 'Right Arrow Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
@@ -228,6 +246,24 @@ class Widget_Image_Carousel extends Widget_Base {
 						'icon' => [
 							'icon' => 'eicon-star',
 						],
+					],
+				],
+				'recommended' => [
+					'fa-regular' => [
+						'arrow-alt-circle-right',
+						'caret-square-right',
+					],
+					'fa-solid' => [
+						'angle-double-right',
+						'angle-right',
+						'arrow-alt-circle-right',
+						'arrow-circle-right',
+						'arrow-right',
+						'caret-right',
+						'caret-square-right',
+						'chevron-circle-right',
+						'chevron-right',
+						'long-arrow-alt-right',
 					],
 				],
 				'conditions' => [
