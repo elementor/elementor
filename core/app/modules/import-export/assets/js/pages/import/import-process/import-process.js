@@ -21,6 +21,7 @@ export default function ImportProcess() {
 		[ errorType, setErrorType ] = useState( '' ),
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
+		[ startImportAfterResolve, setStartImportAfterResolve ] = useState( true ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
@@ -42,16 +43,17 @@ export default function ImportProcess() {
 			}
 		},
 		setCptFromKitLibrary = () => {
-			if ( kitState.data.manifest[ 'custom-post-type-title' ] ) {
-				const cptArray = Object.keys( kitState.data.manifest[ 'custom-post-type-title' ] );
+		const cpt = kitState?.data?.manifest[ 'custom-post-type-title' ] || importContext?.data?.uploadedData?.manifest[ 'custom-post-type-title' ];
+			if ( cpt ) {
+				const cptArray = Object.keys( cpt );
 				sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: cptArray } );
-				console.log( 'cptArray: ', cptArray );
 			}
 		},
 		importPlugins = () => {
-			if ( kitState.data.manifest.plugins && kitState.data.manifest.plugins.length > 0 ) {
-				importContext.dispatch( { type: 'SET_PLUGINS', payload: kitState.data.manifest.plugins } );
-				console.log( 'kitState.data.manifest.plugins: ', kitState.data.manifest.plugins );
+		const allPlugins = kitState.data?.manifest?.plugins || importContext.data.uploadedData.manifest.plugins;
+
+			if ( allPlugins && allPlugins.length > 0 ) {
+				importContext.dispatch( { type: 'SET_PLUGINS', payload: allPlugins } );
 			}
 		},
 		onCancelProcess = () => {
@@ -69,9 +71,18 @@ export default function ImportProcess() {
 		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
-		} else if ( uploadedData ) {
+		} else if ( uploadedData && startImportAfterResolve ) {
 			// When the import/process is the second step of the kit import process, after selecting the kit content.
+
+			if ( 'apply-all' === importContext.data.actionType ) {
+			// 	//If plugins are included in this kit
+			// 	importPlugins();
+			//
+				//check if cpt are included in this kit and ad them to sharedContext
+				setCptFromKitLibrary();
+			}
 			importKit();
+			setStartImportAfterResolve( false );
 		} else {
 			navigate( 'import' );
 		}
@@ -114,17 +125,20 @@ export default function ImportProcess() {
 			if ( importedData ) { // After kit upload.
 				navigate( '/import/complete' );
 			} else if ( 'apply-all' === actionType ) { // Forcing apply-all kit content.
+				importContext.dispatch( { type: 'SET_ACTIONTYPE', payload: actionType } );
+
 				if ( uploadedData.conflicts ) {
-					navigate( '/import/resolver' );
+					// navigate( '/import/resolver' );
+					navigate( '/import/plugins' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
 
-					//check if cpt are included in this kit and ad them to sharedContext
-					// setCptFromKitLibrary();
-
 					//If plugins are included in this kit
 					importPlugins();
+
+					//check if cpt are included in this kit and ad them to sharedContext
+					setCptFromKitLibrary();
 
 					importKit();
 				}
@@ -137,9 +151,9 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<section>
-				{/*{ plugins && 0 === importedPlugins.length &&*/}
-				{/*	<ImportKitLibraryPlugins />*/}
-				{/*}*/}
+				{ plugins && 0 === importedPlugins.length &&
+					<ImportKitLibraryPlugins />
+				}
 
 				<FileProcess
 					info={ uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }

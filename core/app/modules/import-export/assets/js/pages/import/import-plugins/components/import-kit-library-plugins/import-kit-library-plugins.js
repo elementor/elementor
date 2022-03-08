@@ -12,7 +12,7 @@ import { useNavigate } from '@reach/router';
 
 export default function ImportKitLibraryPlugins() {
 	const importContext = useContext( ImportContext ),
-		{ plugins } = importContext.data || {},
+		plugins = importContext.data.plugins || importContext.data.uploadedData.manifest.plugins || {},
 		navigate = useNavigate(),
 		{ response, pluginsActions } = usePlugins(),
 		//all installed plugins
@@ -34,18 +34,12 @@ export default function ImportKitLibraryPlugins() {
 		};
 
 		useEffect( () => {
-			console.log( 'plugins: ', plugins );
 			handleRequiredPlugins();
 			handleProInstallationStatus();
 		}, [ plugins ] );
 
 	return (
-		<Layout>
-			{plugins &&
-				<h1>plugins dav</h1>
-			}
-
-		</Layout>
+		<p>Plugins are coming...</p>
 	);
 }
 
