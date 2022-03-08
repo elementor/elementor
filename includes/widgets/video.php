@@ -618,6 +618,15 @@ class Widget_Video extends Widget_Base {
 						],
 					],
 				],
+				'recommended' => [
+					'fa-regular' => [
+						'play-circle',
+					],
+					'fa-solid' => [
+						'play',
+						'play-circle',
+					],
+				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'show_play_icon!' => '',
@@ -743,6 +752,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
+					'selected_icon[library]!' => 'svg',
 				],
 			]
 		);
