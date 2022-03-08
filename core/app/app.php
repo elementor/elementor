@@ -96,6 +96,7 @@ class App extends BaseApp {
 			'hasPro' => Utils::has_pro(),
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
+			'base_url' => $this->get_base_url(),
 		];
 	}
 
@@ -150,7 +151,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.13.0'
+			'5.15.0'
 		);
 
 		wp_register_style(
@@ -214,7 +215,9 @@ class App extends BaseApp {
 			true
 		);
 
-		$this->enqueue_dark_theme_detection_script();
+		if ( ! $this->get_settings( 'disable_dark_theme' ) ) {
+			$this->enqueue_dark_theme_detection_script();
+		}
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
@@ -245,6 +248,8 @@ class App extends BaseApp {
 			// Kit library is depended on import-export
 			$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
 		}
+
+		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 21 /* after Elementor page */ );
 

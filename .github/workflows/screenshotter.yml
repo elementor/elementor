@@ -34,9 +34,13 @@ jobs:
           npm i -g @elementor/screenshotter
           npm i -g grunt-cli
       - name: Install Dependencies
-        run: | # Also, enable import SVG
+        run: | 
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
-          cd /tmp/wordpress && wp option update elementor_unfiltered_files_upload 1
+      - name: Prepare Test
+        run: | # Enable the container experiment & enable import SVG
+          cd /tmp/wordpress
+          wp elementor experiments activate container
+          wp option update elementor_unfiltered_files_upload 1
       - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
@@ -46,9 +50,15 @@ jobs:
       - name: Clean up report data
         if: failure()
         run: |
+          npm i canvas@^2.8.0 merge-images@^2.0.0
           node ./.github/scripts/screenshotter-cleanup.js
       - uses: actions/upload-artifact@master
         if: failure()
         with:
           name: backstop-output
           path: /tmp/wordpress/backstop_data
+      - uses: actions/upload-artifact@master
+        if: failure()
+        with:
+          name: backstop-summary-core
+          path: /tmp/merged-screenshots
