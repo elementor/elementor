@@ -23,15 +23,16 @@ export default function Account() {
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
-			action: () => {
-				// If the user skips the "Connect" step, but did check the Data Sharing checkbox - handle data sharing.
-				if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
-					setDataSharingAjaxState( {
-						data: { action: 'elementor_update_data_sharing' },
-					} );
-				}
-			},
 		};
+
+		// If the user skips the "Connect" step, but did check the Data Sharing checkbox - handle data sharing.
+		if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
+			skipButton.action = () => {
+				setDataSharingAjaxState( {
+					data: { action: 'elementor_update_data_sharing' },
+				} );
+			};
+		}
 	}
 
 	let pageTexts = {};
