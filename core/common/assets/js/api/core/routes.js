@@ -105,6 +105,8 @@ export default class Routes extends Commands {
 			args.onBefore.apply( component, [ args ] );
 		}
 
+		this.trigger( 'run:before', component, route, args );
+
 		this.attachCurrent( container, route, args );
 	}
 
@@ -144,7 +146,7 @@ export default class Routes extends Commands {
 	}
 
 	// Don't clear current route.
-	afterRun( route, args ) {
+	afterRun( route, args, results = undefined ) {
 		const component = this.getComponent( route );
 
 		component.onRoute( route, args );
@@ -152,6 +154,8 @@ export default class Routes extends Commands {
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
 		}
+
+		this.trigger( 'run:after', component, route, args, results );
 	}
 
 	is( route, args = {} ) {
