@@ -109,7 +109,6 @@ class Manager extends Base_Object {
 				} else {
 					$experimental_data['dependencies'][ $key ] = $dependency::instance();
 				}
-				$experimental_data['dependencies'][ $key ] = $dependency::instance();
 			}
 		}
 
