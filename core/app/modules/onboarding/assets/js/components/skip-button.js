@@ -27,9 +27,12 @@ export default function SkipButton( props ) {
 	// If the button is a link, no onClick functionality should be added.
 	button.onClick = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'skip',
-			step: state.currentStep,
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+			},
 		} );
 
 		if ( ! button.href ) {

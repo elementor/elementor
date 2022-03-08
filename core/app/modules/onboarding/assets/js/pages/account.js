@@ -68,9 +68,12 @@ export default function Account() {
 
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
-				placement: elementorAppConfig.onboarding.eventPlacement,
 				event: 'next',
-				step: state.currentStep,
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: state.currentStep,
+				},
 			} );
 
 			// If connected to Elementor, handle the data sharing permission when the user clicks the Next button.
@@ -92,10 +95,13 @@ export default function Account() {
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
-				placement: elementorAppConfig.onboarding.eventPlacement,
 				event: 'create account',
-				contributor: dataSharingCheckboxState,
-				source: 'cta',
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					contributor: dataSharingCheckboxState,
+					source: 'cta',
+				},
 			} );
 		};
 	}
@@ -117,11 +123,14 @@ export default function Account() {
 		updateState( stateToUpdate );
 
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'success',
-			action: 'connect account',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'success',
+				action: 'connect account',
+			},
 		} );
 
 		setNoticeState( {
@@ -140,11 +149,14 @@ export default function Account() {
 
 	const connectFailureCallback = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'failure',
-			action: 'connect account',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'failure',
+				action: 'connect account',
+			},
 		} );
 
 		setNoticeState( {
@@ -183,11 +195,14 @@ export default function Account() {
 				}
 			} else if ( 'error' === dataSharingAjaxState.status ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					step: state.currentStep,
-					action_state: 'failure',
-					action: 'connect data',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						action_state: 'failure',
+						action: 'connect data',
+					},
 				} );
 
 				setNoticeState( {
@@ -232,9 +247,12 @@ export default function Account() {
 						checked={ dataSharingCheckboxState }
 						onChangeCallback={ ( event ) => {
 							elementorCommon.events.dispatchEvent( {
-								placement: elementorAppConfig.onboarding.eventPlacement,
 								event: 'contributor checkbox click',
-								state: event.target.checked,
+								version: '',
+								details: {
+									placement: elementorAppConfig.onboarding.eventPlacement,
+									state: event.target.checked,
+								},
 							} );
 
 							setDataSharingCheckboxState( event.target.checked );
@@ -253,9 +271,12 @@ export default function Account() {
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
 									elementorCommon.events.dispatchEvent( {
-										placement: elementorAppConfig.onboarding.eventPlacement,
 										event: 'connect account',
-										contributor: dataSharingCheckboxState,
+										version: '',
+										details: {
+											placement: elementorAppConfig.onboarding.eventPlacement,
+											contributor: dataSharingCheckboxState,
+										},
 									} );
 								} }
 							>

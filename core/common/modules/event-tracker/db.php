@@ -84,7 +84,7 @@ class DB extends Base_Object {
 
 		$timestamp = current_time( \DateTime::ATOM );
 
-		$event_data['timestamp'] = $timestamp;
+		$event_data['ts'] = $timestamp;
 
 		$entry = [
 			'event_data' => wp_json_encode( $event_data ),

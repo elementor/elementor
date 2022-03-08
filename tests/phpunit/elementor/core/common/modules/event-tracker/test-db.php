@@ -22,7 +22,7 @@ class Test_DB extends Elementor_Test_Base {
 		self::$timestamp = current_time( \DateTime::ATOM );
 
 		self::$event_mock = [
-			'event_data' => '{"placement":"Onboarding wizard","event":"modal load","step":"account","user_state":"anon","timestamp":"' . self::$timestamp . '"}',
+			'event_data' => '{"placement":"Onboarding wizard","event":"modal load","step":"account","user_state":"anon","ts":"' . self::$timestamp . '"}',
 			'created_at' => self::$timestamp,
 		];
 	}
