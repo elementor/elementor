@@ -248,7 +248,7 @@ class Widget_Counter extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
 			]
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
 			[
@@ -299,7 +299,7 @@ class Widget_Counter extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
 			]
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
 			[
