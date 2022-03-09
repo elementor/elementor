@@ -21,7 +21,7 @@ export default function SkipButton( props ) {
 			}
 		};
 
-	// Make sure the 'action' prop doesn't get printed on the button markup which causes and error.
+	// Make sure the 'action' prop doesn't get printed on the button markup which causes an error.
 	delete button.action;
 
 	// If the button is a link, no onClick functionality should be added.
