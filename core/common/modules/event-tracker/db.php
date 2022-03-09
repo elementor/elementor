@@ -86,6 +86,10 @@ class DB extends Base_Object {
 
 		$event_data['ts'] = $timestamp;
 
+		if ( isset( $event_data['details'] ) ) {
+			$event_data['details'] = json_encode( $event_data['details'] );
+		}
+
 		$entry = [
 			'event_data' => wp_json_encode( $event_data ),
 			'created_at' => $timestamp,
