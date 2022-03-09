@@ -9,7 +9,7 @@
 	color: #fff;
 	fill: #fff;
 	text-align: center;
-	transition: $transition-hover;
+	transition: all var(--button-transition, 0.3s);
 
 	&:hover,
 	&:focus,

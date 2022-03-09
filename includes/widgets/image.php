@@ -413,6 +413,17 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
+				'selector' => '{{WRAPPER}} img',
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'hover',
@@ -447,11 +458,25 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow_hover',
+				'exclude' => [
+					'box_shadow_position',
+				],
+				'selector' => '{{WRAPPER}}:hover img',
+			]
+		);
+
 		$this->add_control(
 			'background_hover_transition',
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
 				'range' => [
 					'px' => [
 						'max' => 3,
@@ -494,17 +519,6 @@ class Widget_Image extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'image_box_shadow',
-				'exclude' => [
-					'box_shadow_position',
-				],
-				'selector' => '{{WRAPPER}} img',
 			]
 		);
 
