@@ -448,7 +448,7 @@ class Container extends Element_Base {
 			'' => esc_html__( 'Default', 'elementor' ),
 		] + $possible_tags;
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'html_tag',
 			[
 				'label' => esc_html__( 'HTML Tag', 'elementor' ),
