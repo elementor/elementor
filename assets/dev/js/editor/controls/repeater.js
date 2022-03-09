@@ -107,7 +107,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	updateActiveRow: function() {
-		const activeItemIndex = this.currentEditableChild?.itemIndex ?? 1;
+		const activeItemIndex = this.currentEditableChild?.itemIndex || 1;
 
 		$e.run( 'document/repeater/select', {
 			container: this.container,
