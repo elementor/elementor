@@ -87,3 +87,23 @@
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
 	}
 }
+
+/* TODO: REMOVE THIS EXCEPTION AFTER PRO 3.7 RELEASES */
+.elementor-menu-cart__toggle .elementor-button-icon {
+	order: 15;
+}
+//END
+
+.elementor-element.elementor-button- {
+	@include button-types( '.elementor-button' );
+
+}
+
+.elementor-widget-button {
+	.elementor-button {
+		.elementor-button- {
+
+			@include button-types( '' );
+		}
+	}
+}
