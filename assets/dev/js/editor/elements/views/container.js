@@ -1,7 +1,7 @@
 // Most of the code has been copied from `section.js`.
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
-import { DIRECTION_COLUMN, DIRECTION_COLUMN_REVERSE, DIRECTION_ROW, DIRECTION_ROW_REVERSE } from 'elementor-document/ui-states/direction-mode';
+import { DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
 const BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
