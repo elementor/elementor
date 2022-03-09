@@ -163,8 +163,7 @@ class Icons_Manager {
 		 * @param array $additional_tabs Additional icon manager tabs. Default is an empty array.
 		 */
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', $additional_tabs );
-
-		return array_merge( self::$tabs, $additional_tabs );
+		return array_replace( self::$tabs, $additional_tabs );
 	}
 
 	public static function enqueue_shim() {
