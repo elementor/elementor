@@ -15,7 +15,7 @@ export default function ImportProcess() {
 		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
 		isApplyAllForced = 'apply-all' === actionType,
 		isUnfilteredFilesEnabled = elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled,
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
@@ -30,7 +30,7 @@ export default function ImportProcess() {
 
 			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-			kitActions.upload( { file: decodedFileURL } );
+			kitActions.upload( { file: decodedFileURL, kitLibraryNonce: nonce } );
 		},
 		importKit = () => {
 			if ( isUnfilteredFilesEnabled || ! isKitHasSvgAssets() ) {
