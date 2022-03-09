@@ -110,7 +110,7 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_add_document_usage__ensure_settings_increased_global() {
 		// Arrange.
 		$count = 2;
-		for ( $i = 0 ; $i != $count; $i++ ) {
+		for ( $i = 0 ; $i < $count; $i++ ) {
 			// Act.
 			$document = $this->factory()->documents->publish_and_get( [
 				'meta_input' => [
