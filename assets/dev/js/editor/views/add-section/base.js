@@ -1,11 +1,19 @@
+import ContainerHelper from 'elementor-editor-utils/container-helper';
+
 class AddSectionBase extends Marionette.ItemView {
+	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
+
+	// Views.
+	static VIEW_CHOOSE_ACTION = 'choose-action';
+	static VIEW_SELECT_PRESET = ( AddSectionBase.IS_CONTAINER_ACTIVE ) ? 'select-container-preset' : 'select-preset';
+
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
 	}
 
 	attributes() {
 		return {
-			'data-view': 'choose-action',
+			'data-view': AddSectionBase.VIEW_CHOOSE_ACTION,
 		};
 	}
 
@@ -17,6 +25,7 @@ class AddSectionBase extends Marionette.ItemView {
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
+			containerPresets: '.e-container-preset',
 		};
 	}
 
@@ -26,6 +35,7 @@ class AddSectionBase extends Marionette.ItemView {
 			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.presets': 'onPresetSelected',
+			'click @ui.containerPresets': 'onContainerPresetSelected',
 		};
 	}
 
@@ -47,11 +57,11 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	showSelectPresets() {
-		this.setView( 'select-preset' );
+		this.setView( AddSectionBase.VIEW_SELECT_PRESET );
 	}
 
 	closeSelectPresets() {
-		this.setView( 'choose-action' );
+		this.setView( AddSectionBase.VIEW_CHOOSE_ACTION );
 	}
 
 	getTemplatesModalOptions() {
@@ -119,8 +129,20 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind( this ),
+			// Merge different options if provided by child elements
+			...this.getDroppableOptions(),
 		} );
+	}
+
+	getDroppableOptions() {
+		return {
+			onDropping: ( side, event ) => {
+				elementor.getPreviewView().onDrop(
+					event,
+					{ side, at: this.getOption( 'at' ) }
+				);
+			},
+		};
 	}
 
 	onPresetSelected( event ) {
@@ -140,6 +162,23 @@ class AddSectionBase extends Marionette.ItemView {
 		} );
 	}
 
+	/**
+	 * Create a Container preset when the user chooses a preset.
+	 *
+	 * @param {MouseEvent} e - Click event.
+	 *
+	 * @return {Container}
+	 */
+	onContainerPresetSelected( e ) {
+		this.closeSelectPresets();
+
+		return ContainerHelper.createContainerFromPreset(
+			e.currentTarget.dataset.preset,
+			elementor.getPreviewContainer(),
+			this.options
+		);
+	}
+
 	onDropping() {
 		if ( elementor.helpers.maybeDisableWidget() ) {
 			return;
@@ -150,24 +189,24 @@ class AddSectionBase extends Marionette.ItemView {
 				type: 'add',
 				title: elementor.helpers.getModelLabel( selectedElement.model ),
 			} ),
-			eSection = $e.run( 'document/elements/create', {
+			containingElement = $e.run( 'document/elements/create', {
 				model: {
-					elType: 'section',
+					elType: AddSectionBase.IS_CONTAINER_ACTIVE ? 'container' : 'section',
 				},
 				container: elementor.getPreviewContainer(),
 				columns: 1,
 				options: {
 					at: this.getOption( 'at' ),
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
 				},
 			} );
 
-		// Create the element in column.
-		eSection.view.children.findByIndex( 0 ).addElementFromPanel();
+		if ( ! AddSectionBase.IS_CONTAINER_ACTIVE ) {
+			// Create the element in column.
+			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
+		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
+			// Create the element in a Container, only if the dragged element is not a Container already.
+			containingElement.view.addElementFromPanel();
+		}
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
 	}
