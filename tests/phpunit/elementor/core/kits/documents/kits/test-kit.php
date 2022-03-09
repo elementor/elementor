@@ -48,7 +48,7 @@ class Test_Kit extends Elementor_Test_Base {
 		$this->kit->save( [ 'settings' => $this->kit->get_settings() ] );
 
 		$excepted_count = count( Revisions_Manager::get_revisions( $this->kit->get_main_id() ) );
-		$excepted_count += $initial_count;
+		$excepted_count = 2;
 
 		// Act.
 		$this->kit->save( [ 'settings' => $this->kit->get_settings() ] );
