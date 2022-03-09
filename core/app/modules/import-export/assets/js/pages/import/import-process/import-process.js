@@ -52,7 +52,7 @@ export default function ImportProcess() {
 		importPlugins = () => {
 		const allPlugins = kitState.data?.manifest?.plugins || importContext.data.uploadedData.manifest.plugins;
 
-			if ( allPlugins && allPlugins.length > 0 ) {
+			if ( allPlugins?.length > 0 ) {
 				importContext.dispatch( { type: 'SET_PLUGINS', payload: allPlugins } );
 			}
 		},
@@ -71,16 +71,19 @@ export default function ImportProcess() {
 		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
-		} else if ( uploadedData && startImportAfterResolve ) {
+		// } else if ( uploadedData && ! importContext.data.isResolvedData ) {
+		} else if ( uploadedData ) {
 			// When the import/process is the second step of the kit import process, after selecting the kit content.
 
-			if ( 'apply-all' === importContext.data.actionType ) {
+			// if ( 'apply-all' === importContext.data.actionType ) {
+			// 	kitActions.reset();
+			//
 			// 	//If plugins are included in this kit
 			// 	importPlugins();
 			//
-				//check if cpt are included in this kit and ad them to sharedContext
-				setCptFromKitLibrary();
-			}
+			// 	//check if cpt are included in this kit and ad them to sharedContext
+			// 	setCptFromKitLibrary();
+			// }
 			importKit();
 			setStartImportAfterResolve( false );
 		} else {
@@ -121,19 +124,20 @@ export default function ImportProcess() {
 
 	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
-		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || importContext.data.isResolvedData ) {
 			if ( importedData ) { // After kit upload.
 				navigate( '/import/complete' );
-			} else if ( 'apply-all' === actionType ) { // Forcing apply-all kit content.
+			} else if ( 'apply-all' === actionType || 'kit-library' === sharedContext.data.referrer ) { // Forcing apply-all kit content.
 				importContext.dispatch( { type: 'SET_ACTIONTYPE', payload: actionType } );
 
-				if ( uploadedData.conflicts ) {
-					// navigate( '/import/resolver' );
-					navigate( '/import/plugins' );
+				if ( uploadedData.conflicts && ! importContext.data.isResolvedData ) {
+					navigate( '/import/resolver' );
+					// navigate( '/import/plugins' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
 
+					console.log( 'aaa' );
 					//If plugins are included in this kit
 					importPlugins();
 
@@ -151,7 +155,7 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<section>
-				{ plugins && 0 === importedPlugins.length &&
+				{ plugins?.length > 0 && 0 === importedPlugins.length &&
 					<ImportKitLibraryPlugins />
 				}
 

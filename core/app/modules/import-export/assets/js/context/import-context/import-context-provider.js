@@ -15,6 +15,7 @@ export default function ImportContextProvider( props ) {
 		overrideConditions: [],
 		isProInstalledDuringProcess: false,
 		actionType: null,
+		isResolvedData: false,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

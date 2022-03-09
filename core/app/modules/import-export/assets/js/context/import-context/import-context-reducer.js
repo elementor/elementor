@@ -22,6 +22,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, isProInstalledDuringProcess: payload };
 		case 'SET_ACTIONTYPE':
 			return { ...state, actionType: payload };
+		case 'SET_IS_RESOLVED':
+			return { ...state, isResolvedData: payload };
 		default:
 			return state;
 	}

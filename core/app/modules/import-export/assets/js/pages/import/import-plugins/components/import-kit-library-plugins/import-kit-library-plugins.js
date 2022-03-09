@@ -12,7 +12,7 @@ import { useNavigate } from '@reach/router';
 
 export default function ImportKitLibraryPlugins() {
 	const importContext = useContext( ImportContext ),
-		plugins = importContext.data.plugins || importContext.data.uploadedData.manifest.plugins || {},
+		plugins = importContext.data.plugins || {},
 		navigate = useNavigate(),
 		{ response, pluginsActions } = usePlugins(),
 		//all installed plugins
@@ -20,7 +20,7 @@ export default function ImportKitLibraryPlugins() {
 		{ importPluginsData } = useImportPluginsData( plugins, pluginsData ),
 		{ missing, existing, minVersionMissing, proData } = importPluginsData || {},
 		handleRequiredPlugins = () => {
-			if ( missing && missing.length ) {
+			if ( missing?.length ) {
 				// Saving globally the plugins data that the kit requires in order to work properly.
 				importContext.dispatch( { type: 'SET_PLUGINS', payload: missing } );
 				navigate( '/import/plugins-activation' );
@@ -36,7 +36,7 @@ export default function ImportKitLibraryPlugins() {
 		useEffect( () => {
 			handleRequiredPlugins();
 			handleProInstallationStatus();
-		}, [ plugins ] );
+		}, [ plugins, missing ] );
 
 	return (
 		<p>Plugins are coming...</p>
