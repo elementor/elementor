@@ -6,6 +6,7 @@ use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Ac
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Includes\Elements\Container;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
@@ -15,6 +16,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use ElementorPro\Modules\Library\Widgets\Template;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -554,8 +556,17 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
+			$container = [];
+			$experiments_manager = Plugin::$instance->experiments;
+
+			if ( $experiments_manager->is_feature_active( 'container' ) ) {
+				$container = [
+					'container' => ( new Container() )->get_config(),
+				];
+			}
+
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
+			$config['widgets'] = $container + Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
 		$additional_config = [];
@@ -1070,6 +1081,28 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $config
+	 *
+	 * @param array $map_old_new_post_ids
+	 */
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		foreach ( $config as &$element_config ) {
+			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
+
+			if ( $element_instance ) {
+				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
+
+				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
+			}
+		}
+
+		return $config;
+	}
+
+	/**
 	 * Save editor elements.
 	 *
 	 * Save data from the editor to the database.
@@ -1550,7 +1583,6 @@ abstract class Document extends Controls_Stack {
 				'type' => Controls_Manager::TEXT,
 				'default' => $this->post->post_title,
 				'label_block' => true,
-				'separator' => 'none',
 			]
 		);
 
