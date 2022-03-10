@@ -16,17 +16,25 @@ class Test_Global_Documents_Usage extends Elementor_Test_Base {
 		] );
 
 		$global_settings_page_usage = new Global_Documents_Usage();
+
+		// Assert current.
+		$this->assertEqualSets( [
+			'wp-post' => [
+				'background_background' => 1,
+			],
+		], $global_settings_page_usage->create_from_global()->get_collection()->all() );
+
+
+		// Act - add & save, manually add the same document to global usage.
 		$global_settings_page_usage->add( $document );
-
-		// Act.
 		$global_settings_page_usage->save_global();
-		$collection_from_global = $global_settings_page_usage->create_from_global()->get_collection();
 
+		// That's why it will be 2. since we are testing functionality of `save_global`.
 		// Assert.
 		$this->assertEqualSets( [
 			'wp-post' => [
 				'background_background' => 2,
 			],
-		], $collection_from_global->all() );
+		], $global_settings_page_usage->create_from_global()->get_collection()->all() );
 	}
 }
