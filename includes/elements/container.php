@@ -505,9 +505,6 @@ class Container extends Element_Base {
 						// Use the default "elements gap" from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 					],
-					'direction' => [
-						'default' => 'column',
-					],
 				],
 				'condition' => [
 					'container_type' => 'flex',
