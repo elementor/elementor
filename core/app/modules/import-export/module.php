@@ -31,7 +31,8 @@ class Module extends BaseModule {
 
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
-	const PERMISSIONS_ERROR_KEY = 'permissions-error';
+	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
+
 
 	/**
 	 * @var Export
