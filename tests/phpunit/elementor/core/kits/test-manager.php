@@ -21,6 +21,28 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( $manager->get_active_id(), $id );
 	}
 
+	public function test_create_new_kit() {
+		// Arrange
+		$manager = Plugin::$instance->kits_manager;
+
+		// Act
+		$id = $manager->create_new_kit();
+
+		// Assert
+		$this->assertEquals( $manager->get_active_id(), $id );
+	}
+
+	public function test_create_new_kit_with_title_and_settings() {
+		// Arrange
+		$manager = Plugin::$instance->kits_manager;
+
+		// Act
+		$id = $manager->create_new_kit( 'test_title', ['test_setting' => 'test_setting'] );
+
+		// Assert
+		$this->assertEquals( $manager->get_active_id(), $id );
+	}
+
 	public function test_get_active_kit() {
 		// Arrange
 		$manager = Plugin::$instance->kits_manager;
