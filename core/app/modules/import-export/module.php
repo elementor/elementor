@@ -152,9 +152,17 @@ class Module extends BaseModule {
 	private function import_stage_1() {
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$file_url = $_POST['e_import_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if (
+				! isset( $_POST['e_kit_library_nonce'] ) ||
+				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
+			) {
+				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
+			}
+
+			$file_url = $_POST['e_import_file'];
+
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( __( 'Invalid URL', 'elementor' ) );
+				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
 			}
 
 			$remote_zip_request = wp_remote_get( $file_url );
@@ -334,7 +342,7 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	private function get_edit_elementor_home_page_url() {
+	private function get_elementor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
 			return '';
 		}
@@ -361,7 +369,7 @@ class Module extends BaseModule {
 			return '';
 		}
 
-		return $document->get_edit_url();
+		return $document->get_preview_url();
 	}
 
 	private function get_config_data() {
@@ -373,7 +381,7 @@ class Module extends BaseModule {
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'editElementorHomePageUrl' => $this->get_edit_elementor_home_page_url(),
+			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
 		];
 	}

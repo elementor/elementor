@@ -63,7 +63,7 @@ class Module extends BaseModule {
 
 		$custom_site_logo_id = get_theme_mod( 'custom_logo' );
 		$custom_logo_src = wp_get_attachment_image_src( $custom_site_logo_id, 'full' );
-		$site_name = get_option( 'blogname' ) || '';
+		$site_name = get_option( 'blogname', '' );
 
 		$hello_theme = wp_get_theme( 'hello-elementor' );
 		$hello_theme_errors = is_object( $hello_theme->errors() ) ? $hello_theme->errors()->errors : [];

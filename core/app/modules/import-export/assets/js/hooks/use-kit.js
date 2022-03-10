@@ -19,7 +19,7 @@ export default function useKit() {
 			data: null,
 		},
 		[ kitState, setKitState ] = useState( kitStateInitialState ),
-		uploadKit = ( { file } ) => {
+		uploadKit = ( { file, kitLibraryNonce } ) => {
 			setAjax( {
 				data: {
 					action: IMPORT_KIT_KEY,
@@ -27,6 +27,7 @@ export default function useKit() {
 					data: JSON.stringify( {
 						stage: 1,
 					} ),
+					...( kitLibraryNonce ? { e_kit_library_nonce: kitLibraryNonce } : {} ),
 				},
 			} );
 		},

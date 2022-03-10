@@ -138,6 +138,7 @@ class App extends BaseApp {
 				'backbone-marionette',
 				'backbone-radio',
 				'elementor-common-modules',
+				'elementor-web-cli',
 				'elementor-dialog',
 				'wp-api-request',
 			],
@@ -166,7 +167,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.14.0'
+			'5.15.0'
 		);
 
 		wp_enqueue_style(
