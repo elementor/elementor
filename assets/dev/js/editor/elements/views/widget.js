@@ -147,9 +147,9 @@ const WidgetView = BaseWidget.extend( {
 		} );
 	},
 
-	onClickEdit: function( e ) {
-		if ( this.container.isEditable() ) {
-			this.onEditButtonClick( e );
+	onClickEdit: function( event ) {
+		if ( this.container?.isEditable() ) {
+			this.onEditButtonClick( event );
 		}
 	},
 } );

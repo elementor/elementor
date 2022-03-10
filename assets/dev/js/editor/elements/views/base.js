@@ -960,6 +960,12 @@ BaseElementView = BaseContainer.extend( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
+				// Need to stop this event when the element is absolute since it clashes with this one.
+				// See `behaviors/widget-draggable.js`.
+				if ( this.options.draggable.isActive ) {
+					return;
+				}
+
 				const helper = this.getDraggableHelper();
 				this.$el[ 0 ].appendChild( helper );
 
@@ -974,9 +980,7 @@ BaseElementView = BaseContainer.extend( {
 
 				this.onDragStart( e );
 
-				const container = this.getContainer();
-
-				elementor.channels.editor.reply( 'element:dragged', container.view );
+				elementor.channels.editor.reply( 'element:dragged', this );
 			},
 			onDragEnd: ( e ) => {
 				e.stopPropagation();

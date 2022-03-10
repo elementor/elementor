@@ -1,8 +1,8 @@
 import elementorModules from 'elementor-assets-js/modules/modules';
 import ModalLayout from './views/modal/layout';
-import ComponentBase from './api/modules/component-base';
+import ComponentBase from 'elementor-api/modules/component-base';
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
-import HookBreak from './api/modules/hook-break';
+import HookBreak from 'elementor-api/modules/hook-break';
 
 elementorModules.common = {
 	get Component() {

@@ -1,24 +1,6 @@
 export const tests = () => {
-	// JS API modules.
-	require( './core/common/assets/js/api/modules/command-infra.spec.js' );
-	require( './core/common/assets/js/api/modules/command-base.spec.js' );
-	require( './core/common/assets/js/api/modules/command-callback.spec.js' );
-	require( './core/common/assets/js/api/modules/command-data.spec.js' );
-	require( './core/common/assets/js/api/modules/command-internal-base.spec.js' );
+	require( './modules/web-cli/assets/js/index' );
 
-	// JS API core.
-	require( './core/common/assets/js/api/core/commands.spec.js' );
-	require( './core/common/assets/js/api/core/components.spec.js' );
-	require( './core/common/assets/js/api/core/data.spec.js' );
-	require( './core/common/assets/js/api/core/routes.spec.js' );
-
-	require( './core/common/assets/js/api/core/hooks/base.spec.js' );
-
-	// JS API extras.
-	require( './core/common/assets/js/api/extras/hash-commands.spec' );
-
-	// Editor.
-	require( './assets/dev/js/editor/utils/helpers.spec' );
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	// JS API editor

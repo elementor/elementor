@@ -350,7 +350,6 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
 			'separator' => 'none',
 		];
@@ -383,8 +382,12 @@ class Container extends Element_Base {
 				'default' => [
 					'unit' => 'px',
 				],
-				// Use the default width from the kit as a placeholder.
-				'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+				'device_args' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						// Use the default width from the kit as a placeholder.
+						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+					],
+				],
 			] )
 		);
 
@@ -501,9 +504,6 @@ class Container extends Element_Base {
 						'label' => esc_html_x( 'Elements Gap', 'Flex Container Control', 'elementor' ),
 						// Use the default "elements gap" from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-					],
-					'direction' => [
-						'default' => 'column',
 					],
 				],
 				'condition' => [
@@ -1155,13 +1155,6 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
-				'allowed_dimensions' => 'vertical',
-				'placeholder' => [
-					'top' => '',
-					'right' => 'auto',
-					'bottom' => '',
-					'left' => 'auto',
-				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
