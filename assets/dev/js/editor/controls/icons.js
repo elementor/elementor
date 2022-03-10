@@ -280,12 +280,12 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			this.markChecked( iconType );
 		}
 
-		if ( ! iconValue ) {
-			if ( 'inline' === skin ) {
-				this.setDefaultIconLibraryLabel( defaultIcon, iconContainer );
-				return;
-			}
+		if ( 'inline' === skin ) {
+			this.setDefaultIconLibraryLabel( defaultIcon, iconContainer );
+			return;
+		}
 
+		if ( ! iconValue ) {
 			this.ui.previewPlaceholder.html( '' );
 			return;
 		}
