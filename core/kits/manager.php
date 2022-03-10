@@ -29,6 +29,10 @@ class Manager {
 		return get_option( self::OPTION_ACTIVE );
 	}
 
+	public function get_previous_id() {
+        return get_option( self::OPTION_PREVIOUS);
+    }
+
 	public function get_active_kit() {
 		$kit = Plugin::$instance->documents->get( $this->get_active_id() );
 
