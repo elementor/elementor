@@ -21,7 +21,6 @@ export default function ImportProcess() {
 		[ errorType, setErrorType ] = useState( '' ),
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
-		[ startImportAfterResolve, setStartImportAfterResolve ] = useState( true ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
@@ -71,21 +70,9 @@ export default function ImportProcess() {
 		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
-		// } else if ( uploadedData && ! importContext.data.isResolvedData ) {
 		} else if ( uploadedData ) {
 			// When the import/process is the second step of the kit import process, after selecting the kit content.
-
-			// if ( 'apply-all' === importContext.data.actionType ) {
-			// 	kitActions.reset();
-			//
-			// 	//If plugins are included in this kit
-			// 	importPlugins();
-			//
-			// 	//check if cpt are included in this kit and ad them to sharedContext
-			// 	setCptFromKitLibrary();
-			// }
 			importKit();
-			setStartImportAfterResolve( false );
 		} else {
 			navigate( 'import' );
 		}
@@ -94,7 +81,6 @@ export default function ImportProcess() {
 	// Starting the import process.
 	useEffect( () => {
 		if ( startImport ) {
-			console.log( 'selectedCustomPostTypes', selectedCustomPostTypes );
 			kitActions.import( {
 				session: uploadedData.session,
 				include: includes,
@@ -124,7 +110,7 @@ export default function ImportProcess() {
 
 	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
-		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || importContext.data.isResolvedData ) {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( importContext.data.isResolvedData && 'kit-library' === sharedContext.data.referrer ) ) {
 			if ( importedData ) { // After kit upload.
 				navigate( '/import/complete' );
 			} else if ( 'apply-all' === actionType || 'kit-library' === sharedContext.data.referrer ) { // Forcing apply-all kit content.
@@ -132,12 +118,10 @@ export default function ImportProcess() {
 
 				if ( uploadedData.conflicts && ! importContext.data.isResolvedData ) {
 					navigate( '/import/resolver' );
-					// navigate( '/import/plugins' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
 
-					console.log( 'aaa' );
 					//If plugins are included in this kit
 					importPlugins();
 
