@@ -35,12 +35,22 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_create_new_kit_with_title_and_settings() {
 		// Arrange
 		$manager = Plugin::$instance->kits_manager;
+		$test_title = 'Test Title';
+		$test_settings = [
+			'test_setting_key' => 'test_setting_value',
+		];
 
 		// Act
-		$id = $manager->create_new_kit( 'test_title', ['test_setting' => 'test_setting'] );
+		$id = $manager->create_new_kit( $test_title, $test_settings );		
+
+		$document = Plugin::$instance->documents->get( $id );
+		$post_title = $document->get_main_post()->post_title;
+		$post_settings = $document->get_settings();
 
 		// Assert
 		$this->assertEquals( $manager->get_active_id(), $id );
+		$this->assertEquals( $test_title, $post_title );
+		$this->assertEquals( $test_settings, $post_settings );
 	}
 
 	public function test_update_previous_kit_id() {
