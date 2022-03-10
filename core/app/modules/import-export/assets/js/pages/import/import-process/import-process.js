@@ -24,7 +24,7 @@ export default function ImportProcess() {
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
-		{ file, uploadedData, importedData, overrideConditions, plugins, importedPlugins } = importContext.data || {},
+		{ file, uploadedData, importedData, overrideConditions, plugins, importedPlugins, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
 		uploadKit = () => {
@@ -66,6 +66,9 @@ export default function ImportProcess() {
 		// Saving the referrer value globally.
 		if ( referrer ) {
 			sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
+		}
+		if ( actionType ) {
+			importContext.dispatch( { type: 'SET_ACTIONTYPE', payload: actionType } );
 		}
 		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
@@ -110,13 +113,11 @@ export default function ImportProcess() {
 
 	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
-		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( importContext.data.isResolvedData && 'kit-library' === sharedContext.data.referrer ) ) {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( isResolvedData && 'apply-all' === importContext.data.actionType ) ) {
 			if ( importedData ) { // After kit upload.
 				navigate( '/import/complete' );
-			} else if ( 'apply-all' === actionType || 'kit-library' === sharedContext.data.referrer ) { // Forcing apply-all kit content.
-				importContext.dispatch( { type: 'SET_ACTIONTYPE', payload: actionType } );
-
-				if ( uploadedData.conflicts && ! importContext.data.isResolvedData ) {
+			} else if ( 'apply-all' === importContext.data.actionType ) { // Forcing apply-all kit content.
+				if ( uploadedData.conflicts && ! isResolvedData ) {
 					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
