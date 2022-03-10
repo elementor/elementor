@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\App;
 
+use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
@@ -138,6 +139,11 @@ class App extends BaseApp {
 
 	private function enqueue_assets() {
 		Plugin::$instance->init_common();
+
+		/** @var WebCLIModule $web_cli */
+		$web_cli = Plugin::$instance->modules_manager->get_modules( 'web-cli' );
+		$web_cli->register_scripts();
+
 		Plugin::$instance->common->register_scripts();
 
 		wp_register_style(
