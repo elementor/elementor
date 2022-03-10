@@ -43,14 +43,8 @@ class Test_Manager extends Elementor_Test_Base {
 		// Act
 		$id = $manager->create_new_kit( $test_title, $test_settings );		
 
-		$document = Plugin::$instance->documents->get( $id );
-		$post_title = $document->get_main_post()->post_title;
-		$post_setting = $document->get_settings( 'test_setting_key' );
-
 		// Assert
 		$this->assertEquals( $manager->get_active_id(), $id );
-		$this->assertEquals( $test_title, $post_title );
-		$this->assertEquals( $test_settings['test_setting_key'], $post_setting );
 	}
 
 	public function test_update_previous_kit_id() {
