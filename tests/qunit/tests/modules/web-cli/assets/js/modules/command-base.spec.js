@@ -5,7 +5,7 @@ import CommandHistory from 'elementor-document/commands/base/command-history';
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 
 jQuery( () => {
-	QUnit.module( 'File: modules/web-cli/assets/jsmodules/command-base.js', () => {
+	QUnit.module( 'File: modules/web-cli/assets/js/modules/command-base.js', () => {
 		QUnit.module( 'CommandBase', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
