@@ -37,7 +37,7 @@ export class Select extends CommandHistory {
 		return {
 			container,
 			type: 'selected',
-			subTitle: __( 'Item #', 'elementor' ) + index,
+			subTitle: wp.i18n.sprintf( __( 'Item #%d', 'elementor' ), index ),
 			restore: this.constructor.restore,
 			data: {
 				current: index,
