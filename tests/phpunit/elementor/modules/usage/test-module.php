@@ -278,6 +278,8 @@ class Test_Module extends Elementor_Test_Base {
 
 			$i--;
 		}
+
+		$i=5;
 	}
 
 	public function test_remove_document_usage__ensure_elements_from_same_document_decreased_global() {

@@ -66,6 +66,22 @@ class DocumentElementsUsage extends BaseUsage {
 		$global_usage = &$this->items;
 
 		foreach ( $prev_usage as $element_type => $doc_value ) {
+			foreach ( $prev_usage[ $element_type ]['controls'] as $tab => $sections ) {
+				foreach ( $sections as $section => $controls ) {
+					foreach ( $controls as $control => $count ) {
+						if ( isset( $global_usage[ $document_name ][ $element_type ]['controls'][ $tab ][ $section ][ $control ] ) ) {
+							$section_ref = &$global_usage[ $document_name ][ $element_type ]['controls'][ $tab ][ $section ];
+
+							$section_ref[ $control ] -= $count;
+
+							if ( 0 === $section_ref[ $control ] ) {
+								unset( $section_ref[ $control ] );
+							}
+						}
+					}
+				}
+			}
+
 			if ( isset( $global_usage[ $document_name ][ $element_type ]['count'] ) ) {
 				$global_usage[ $document_name ][ $element_type ]['count'] -= $prev_usage[ $element_type ]['count'];
 
@@ -74,24 +90,6 @@ class DocumentElementsUsage extends BaseUsage {
 
 					if ( 0 === count( $global_usage[ $document_name ] ) ) {
 						unset( $global_usage[ $document_name ] );
-					}
-
-					continue;
-				}
-
-				foreach ( $prev_usage[ $element_type ]['controls'] as $tab => $sections ) {
-					foreach ( $sections as $section => $controls ) {
-						foreach ( $controls as $control => $count ) {
-							if ( isset( $global_usage[ $document_name ][ $element_type ]['controls'][ $tab ][ $section ][ $control ] ) ) {
-								$section_ref = &$global_usage[ $document_name ][ $element_type ]['controls'][ $tab ][ $section ];
-
-								$section_ref[ $control ] -= $count;
-
-								if ( 0 === $section_ref[ $control ] ) {
-									unset( $section_ref[ $control ] );
-								}
-							}
-						}
 					}
 				}
 			}
