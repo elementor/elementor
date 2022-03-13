@@ -121,6 +121,8 @@
 /modules/system-info                                             @matipojo @kobizz
 /modules/gutenberg                                               @kingyes
 /modules/usage                                                   @matipojo @inewlegend
+/modules/web-cli                                                 @matipojo @inewlegend
+/docs/modules/web-cli                                            @matipojo @inewlegend
 
 # Tests
 /tests                                                           @matipojo
