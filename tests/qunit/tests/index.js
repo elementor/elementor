@@ -1,15 +1,5 @@
 export const tests = () => {
-	require( './core/common/assets/js/api/modules/command-base.spec.js' );
-	require( './core/common/assets/js/api/modules/command-data.spec.js' );
-
-	require( './core/common/assets/js/api/core/commands.spec.js' );
-	require( './core/common/assets/js/api/core/components.spec.js' );
-	require( './core/common/assets/js/api/core/data.spec.js' );
-	require( './core/common/assets/js/api/core/routes.spec.js' );
-
-	require( './core/common/assets/js/api/core/hooks/base.spec.js' );
-
-	require( './core/common/assets/js/api/extras/hash-commands.spec' );
+	require( './modules/web-cli/assets/js/index' );
 
 	require( './assets/dev/js/editor/container/container.spec' );
 

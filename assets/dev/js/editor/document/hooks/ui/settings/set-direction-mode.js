@@ -5,7 +5,7 @@ import After from 'elementor-api/modules/hooks/ui/after';
  * Currently used to determine the direction of the flex icons in the Container element.
  * It should be generic and work with any element, and since each element might use a different
  * setting to determine its direction mode, the hook should listen to any setting change.
- * Therefore, there isn't a `getConditions()` method.
+ * Therefore, the `getConditions()` method just checks if the view exists and has UI states.
  */
 export class SetDirectionMode extends After {
 	getCommand() {
@@ -14,6 +14,10 @@ export class SetDirectionMode extends After {
 
 	getId() {
 		return 'set-direction-mode--document/elements/settings';
+	}
+
+	getConditions( args = {} ) {
+		return ! ! args.container.renderer?.view?.getCurrentUiStates;
 	}
 
 	apply( args ) {
