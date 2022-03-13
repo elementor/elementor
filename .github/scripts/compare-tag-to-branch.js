@@ -1,6 +1,6 @@
 'use strict';
 
-const { repoToOwnerAndOwner } = require('./repo-utils');
+const { repoToOwnerAndOwner, getPrCommits } = require('./repo-utils');
 const { Octokit } = require("@octokit/core");
 const { REPOSITORY, HEAD_BRANCH_NAME, BASE_TAG_NAME, TOKEN } = process.env;
 
@@ -42,7 +42,11 @@ const octokit = new Octokit({ auth: TOKEN });
 		const compareStatus = res.data.status;
 		console.log(`Tag: ${BASE_TAG_NAME} '${compareStatus}' to branch: ${HEAD_BRANCH_NAME}`);
 		if (compareStatus !== 'identical') {
-			process.exit(1);
+			// A Dev Edition version must include some Change Log lines. so, validate that there are commits that are not "Internal" and contain a Squash commiit pattern
+			const prAndVerifiedCommits = getPrCommits(res.data);
+			if (prAndVerifiedCommits.length > 0) {
+				process.exit(1);
+			}
 		}
 	} catch (err) {
 		console.error(`Failed to compare tag: ${BASE_TAG_NAME} to branch: ${HEAD_BRANCH_NAME} error: ${err.message}`);

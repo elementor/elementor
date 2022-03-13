@@ -18,6 +18,7 @@ export default class HistoryManager {
 		disable: __( 'Disabled', 'elementor' ),
 		duplicate: __( 'Duplicate', 'elementor' ),
 		enable: __( 'Enabled', 'elementor' ),
+		import: __( 'Imported', 'elementor' ),
 		move: __( 'Moved', 'elementor' ),
 		paste: __( 'Pasted', 'elementor' ),
 		paste_style: __( 'Style Pasted', 'elementor' ),
@@ -61,7 +62,7 @@ export default class HistoryManager {
 		this.active = value;
 	}
 
-	getActive( value ) {
+	getActive() {
 		return this.active;
 	}
 

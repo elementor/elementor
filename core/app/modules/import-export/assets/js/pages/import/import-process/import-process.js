@@ -1,96 +1,143 @@
-import { useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useState, useMemo } from 'react';
 import { useNavigate } from '@reach/router';
+
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
+import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
 
-import { Context } from '../../../context/context-provider';
-
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+import useKit from '../../../hooks/use-kit';
+import useImportActions from '../hooks/use-import-actions';
 
 export default function ImportProcess() {
-	const { ajaxState, setAjax } = useAjax(),
-		context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		urlSearchParams = new URLSearchParams( window.location.search ),
-		queryParams = Object.fromEntries( urlSearchParams.entries() ),
-		// We need to support query-params for external navigations, but also parsing the value from the hash for internal navigation between different routes.
-		fileURL = queryParams?.[ 'file_url' ] || location.hash.match( 'file_url=([^&]+)' )?.[ 1 ],
-		onLoad = () => {
-			const ajaxConfig = {
-				data: {
-					action: 'elementor_import_kit',
-				},
-			};
+		[ errorType, setErrorType ] = useState( '' ),
+		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
+		[ startImport, setStartImport ] = useState( false ),
+		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
+		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
+		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
+		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
+		{ navigateToMainScreen } = useImportActions(),
+		uploadKit = () => {
+			const decodedFileURL = decodeURIComponent( fileURL );
 
-			if ( fileURL || context.data.fileResponse ) {
-				if ( fileURL && ! context.data.file ) { // When the starting point of the app is the import/process screen and importing via file_url.
-					const decodedFileURL = decodeURIComponent( fileURL );
+			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-					context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
-
-					ajaxConfig.data.e_import_file = decodedFileURL;
-					ajaxConfig.data.data = JSON.stringify( {
-						stage: 1,
-					} );
-
-					const referrer = location.hash.match( 'referrer=([^&]+)' );
-
-					if ( referrer ) {
-						context.dispatch( { type: 'SET_REFERRER', payload: referrer[ 1 ] } );
-					}
-				} else { // When the import/process is the second step of the kit import process, after selecting the kit content.
-					ajaxConfig.data.data = {
-						stage: 2,
-						session: context.data.fileResponse.stage1.session,
-						include: context.data.includes,
-						overrideConditions: context.data.overrideConditions,
-					};
-
-					if ( context.data.referrer ) {
-						ajaxConfig.data.data.referrer = context.data.referrer;
-					}
-
-					ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
-				}
-
-				setAjax( ajaxConfig );
-			}
+			kitActions.upload( { file: decodedFileURL, kitLibraryNonce: nonce } );
 		},
-		onSuccess = () => {
-			if ( context.data.fileResponse?.stage1 ) {
-				const previousFileResponse = context.data.fileResponse,
-					fileResponse = { ...previousFileResponse, stage2: ajaxState.response };
-
-				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: fileResponse } );
+		importKit = () => {
+			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {
+				setStartImport( true );
 			} else {
-				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
+				setShowUnfilteredFilesDialog( true );
 			}
 		},
-		onDialogDismiss = () => {
-			context.dispatch( { type: 'SET_FILE', payload: null } );
-			navigate( '/import' );
+		onCancelProcess = () => {
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+
+			navigateToMainScreen();
 		};
 
+	// on load.
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			if ( context.data.fileResponse.hasOwnProperty( 'stage2' ) ) {
-				navigate( '/import/complete' );
-			} else {
-				navigate( '/import/content' );
+		// Saving the referrer value globally.
+		if ( referrer ) {
+			sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
+		}
+
+		if ( fileURL && ! file ) {
+			// When the starting point of the app is the import/process screen and importing via file_url.
+			uploadKit();
+		} else if ( uploadedData ) {
+			// When the import/process is the second step of the kit import process, after selecting the kit content.
+			importKit();
+		} else {
+			navigate( 'import' );
+		}
+	}, [] );
+
+	// Starting the import process.
+	useEffect( () => {
+		if ( startImport ) {
+			kitActions.import( {
+				session: uploadedData.session,
+				include: includes,
+				overrideConditions: overrideConditions,
+				referrer,
+				selectedCustomPostTypes,
+			} );
+		}
+	}, [ startImport ] );
+
+	// Updating the kit data after upload/import.
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			switch ( kitState.status ) {
+				case KIT_STATUS_MAP.IMPORTED:
+					importContext.dispatch( { type: 'SET_IMPORTED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.UPLOADED:
+					importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.ERROR:
+					setErrorType( kitState.data );
+					break;
 			}
 		}
-	}, [ context.data.fileResponse ] );
+	}, [ kitState.status ] );
+
+	// Actions after the kit upload/import data was updated.
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			if ( importedData ) { // After kit upload.
+				navigate( '/import/complete' );
+			} else if ( 'apply-all' === actionType ) { // Forcing apply-all kit content.
+				if ( uploadedData.conflicts ) {
+					navigate( '/import/resolver' );
+				} else {
+					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
+					kitActions.reset();
+
+					importKit();
+				}
+			} else {
+				navigate( '/import/plugins' );
+			}
+		}
+	}, [ uploadedData, importedData ] );
 
 	return (
 		<Layout type="import">
-			<FileProcess
-				status={ ajaxState.status }
-				onLoad={ onLoad }
-				onSuccess={ onSuccess }
-				onDialogApprove={ () => {} }
-				onDialogDismiss={ onDialogDismiss }
-			/>
+			<section>
+				<FileProcess
+					info={ uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
+					errorType={ errorType }
+					onDialogApprove={ onCancelProcess }
+					onDialogDismiss={ onCancelProcess }
+				/>
+
+				<UnfilteredFilesDialog
+					show={ showUnfilteredFilesDialog }
+					setShow={ setShowUnfilteredFilesDialog }
+					confirmModalText={ __( 'This allows Elementor to scan your SVGs for malicious content. Otherwise, you can skip any SVGs in this import.', 'elementor' ) }
+					errorModalText={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
+					onReady={ () => {
+						setShowUnfilteredFilesDialog( false );
+						setStartImport( true );
+					} }
+					onCancel={ () => {
+						setShowUnfilteredFilesDialog( false );
+						onCancelProcess();
+					} }
+				/>
+			</section>
 		</Layout>
 	);
 }

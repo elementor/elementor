@@ -4,7 +4,9 @@ import Debug from './utils/debug';
 import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
 import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
-import API from './api/';
+//import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
+import events from 'elementor-common-modules/event-tracker/assets/js/events';
+import WordpressComponent from './components/wordpress/component';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -28,6 +30,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 	}
 
 	initComponents() {
+		this.events = events;
+
 		this.debug = new Debug();
 
 		this.helpers = new Helpers();
@@ -36,7 +40,14 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.dialogsManager = new DialogsManager.Instance();
 
-		this.api = new API();
+		this.api = window.$e;
+
+		// TODO: UNCOMMENT
+		//$e.components.register( new EventsDispatcherComponent() );
+
+		elementorCommon.elements.$window.on( 'elementor:init-components', () => {
+			$e.components.register( new WordpressComponent() );
+		} );
 
 		this.initModules();
 	}

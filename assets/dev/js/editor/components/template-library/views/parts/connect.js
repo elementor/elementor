@@ -14,7 +14,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	onRender: function() {
 		this.ui.connect.elementorConnect( {
-			UTM: () => `&utm_source=editor-panel&utm_medium=wp-dash&utm_campaign=insert-${ this.model.get( 'type' ) }`,
+			parseUrl: ( url ) => url.replace( '%%template_type%%', this.model.get( 'type' ) ),
 			success: () => {
 				elementor.config.library_connect.is_connected = true;
 

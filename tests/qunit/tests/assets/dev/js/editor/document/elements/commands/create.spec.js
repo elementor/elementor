@@ -298,6 +298,49 @@ export const Create = () => {
 				} );
 			} );
 		} );
+
+		QUnit.module( 'Drag and Drop', () => {
+			// This module is about simulating the creation of elements by the dnd mechanism, which uses the `create`
+			// command indirectly. This is done by the `createElementFromModel` method.
+			QUnit.test( 'Widget: Inner Section into Column', ( assert ) => {
+				const eSection = ElementsHelper.createSection( 1 ),
+					eColumn = eSection.children[ 0 ],
+					eInnerSection = ( () => {
+						try {
+							return eColumn.view.createElementFromModel( {
+								elType: 'section',
+								isInner: true,
+							} );
+						} catch ( e ) {
+							return false;
+						}
+					} )();
+
+				const isInnerSectionCreated = !! eColumn.children.find( ( widget ) => eInnerSection.id === widget.id );
+
+				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
+				assert.equal( eInnerSection.children?.length, DEFAULT_INNER_SECTION_COLUMNS,
+					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
+			} );
+
+			QUnit.test( 'Widget: Inner Section into Preview', ( assert ) => {
+				elementorCommonConfig.experimentalFeatures.container = false;
+
+				const eInnerSection = elementor.getPreviewContainer().view.createElementFromModel( {
+						elType: 'section',
+						isInner: true,
+					} ),
+					ePreviewChildren = elementor.getPreviewContainer().children,
+					isInnerSectionCreated = !! ePreviewChildren[ ePreviewChildren.length - 1 ].children[ 0 ].children
+						.find( ( widget ) => eInnerSection.id === widget.id );
+
+				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
+				assert.equal( eInnerSection.children.length, DEFAULT_INNER_SECTION_COLUMNS,
+					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
+
+				elementorCommonConfig.experimentalFeatures.container = true;
+			} );
+		} );
 	} );
 };
 

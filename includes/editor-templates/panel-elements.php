@@ -29,6 +29,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-panel-category-items elementor-responsive-panel"></div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-panel-elements-category-empty">
+	<div class="elementor-panel-category-items-empty elementor-panel-alert elementor-panel-alert-info">
+		<?php echo esc_html__( 'For easy access, favorite the widgets you use most often by right clicking > Add to Favorites.', 'elementor' ); ?>
+	</div>
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-element-search">
 	<label for="elementor-panel-elements-search-input" class="screen-reader-text"><?php echo esc_html__( 'Search Widget:', 'elementor' ); ?></label>
 	<input type="search" id="elementor-panel-elements-search-input" placeholder="<?php esc_attr_e( 'Search Widget...', 'elementor' ); ?>" autocomplete="off"/>

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,21 +23,31 @@ class Tools extends Settings_Page {
 	 */
 	const PAGE_ID = 'elementor-tools';
 
+	private function register_admin_menu( MainMenu $menu ) {
+		$menu->add_submenu( [
+			'page_title' => esc_html__( 'Tools', 'elementor' ),
+			'menu_title' => esc_html__( 'Tools', 'elementor' ),
+			'menu_slug' => self::PAGE_ID,
+			'function' => [ $this, 'display_settings_page' ],
+			'index' => 50,
+		] );
+	}
+
 	/**
-	 * Register admin menu.
+	 * Register admin menu legacy.
 	 *
 	 * Add new Elementor Tools admin menu.
 	 *
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function register_admin_menu() {
+	private function register_admin_menu_legacy() {
 		add_submenu_page(
 			Settings::PAGE_ID,
-			__( 'Tools', 'elementor' ),
-			__( 'Tools', 'elementor' ),
+			esc_html__( 'Tools', 'elementor' ),
+			esc_html__( 'Tools', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ]
@@ -78,18 +89,18 @@ class Tools extends Settings_Page {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( $kit->get_id() ) {
-			wp_send_json_error( [ 'message' => __( 'There\'s already an active kit.', 'elementor' ) ], 400 );
+			wp_send_json_error( [ 'message' => esc_html__( 'There\'s already an active kit.', 'elementor' ) ], 400 );
 		}
 
 		$created_default_kit = Plugin::$instance->kits_manager->create_default();
 
 		if ( ! $created_default_kit ) {
-			wp_send_json_error( [ 'message' => __( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
+			wp_send_json_error( [ 'message' => esc_html__( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
 		}
 
 		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
 
-		wp_send_json_success( __( 'New kit have been created successfully', 'elementor' ) );
+		wp_send_json_success( esc_html__( 'New kit have been created successfully', 'elementor' ) );
 	}
 
 	/**
@@ -130,6 +141,10 @@ class Tools extends Settings_Page {
 	public function post_elementor_rollback() {
 		check_admin_referer( 'elementor_rollback' );
 
+		if ( ! static::can_user_rollback_versions() ) {
+			wp_die( esc_html__( 'Not allowed to rollback versions', 'elementor' ) );
+		}
+
 		$rollback_versions = $this->get_rollback_versions();
 		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
@@ -166,7 +181,15 @@ class Tools extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
+				$this->register_admin_menu( $menu );
+			} );
+		} else {
+			add_action( 'admin_menu', function() {
+				$this->register_admin_menu_legacy();
+			}, 205 );
+		}
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
@@ -286,7 +309,7 @@ class Tools extends Settings_Page {
 					'replace_url' => [
 						'callback' => function() {
 							$intro_text = sprintf(
-								/* translators: %s: Codex URL */
+								/* translators: %s: WordPress backups documentation. */
 								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
 								'http://go.elementor.com/wordpress-backups/'
 							);
@@ -309,14 +332,15 @@ class Tools extends Settings_Page {
 				],
 			],
 			'versions' => [
+				'show_if' => static::can_user_rollback_versions(),
 				'label' => esc_html__( 'Version Control', 'elementor' ),
 				'sections' => [
 					'rollback' => [
 						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
 						'callback' => function() {
 							$intro_text = sprintf(
-								/* translators: %s: Elementor version */
-								__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
+								/* translators: %s: Elementor version. */
+								esc_html__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
 								ELEMENTOR_VERSION
 							);
 							$intro_text = '<p>' . $intro_text . '</p>';
@@ -331,7 +355,7 @@ class Tools extends Settings_Page {
 									'html' => sprintf(
 										$rollback_html . '<a data-placeholder-text="' . esc_html__( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
 										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' ),
-										__( 'Reinstall', 'elementor' )
+										esc_html__( 'Reinstall', 'elementor' )
 									),
 									'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
@@ -345,7 +369,7 @@ class Tools extends Settings_Page {
 								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
 								'</p>';
 							echo sprintf(
-								/* translators: %1$s Link open tag, %2$s: Link close tag. */
+								/* translators: 1: Link open tag, 2: Link close tag. */
 								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
 								'<a id="beta-tester-first-to-know" href="#">',
 								'</a>'
@@ -376,7 +400,7 @@ class Tools extends Settings_Page {
 				'field_args' => [
 					'type' => 'raw_html',
 					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), __( 'Recreate Kit', 'elementor' ) ),
-					'desc' => __( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
+					'desc' => esc_html__( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
 				],
 			];
 		}
@@ -394,6 +418,15 @@ class Tools extends Settings_Page {
 	 * @return string Tools page title.
 	 */
 	protected function get_page_title() {
-		return __( 'Tools', 'elementor' );
+		return esc_html__( 'Tools', 'elementor' );
+	}
+
+	/**
+	 * Check if the current user can access the version control tab and rollback versions.
+	 *
+	 * @return bool
+	 */
+	public static function can_user_rollback_versions() {
+		return current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
 	}
 }

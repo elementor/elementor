@@ -1,7 +1,6 @@
 //
 // Grid
 //
-
 // Section
 .elementor-section {
 	position: relative;
@@ -137,6 +136,11 @@
 	> .elementor-element {
 		width: 100%;
 	}
+
+	// The Swiper will overlap the column width when applying custom margin values on the column.
+	&.e-swiper-container {
+		width: calc(100% - (var(--e-column-margin-left, 0px) + var(--e-column-margin-right, 0px)));
+	}
 }
 
 .elementor-widget {
@@ -260,8 +264,45 @@
 	}
 }
 
+@mixin reverse-columns-initial($device) {
+
+	.elementor-reverse#{$device} > .elementor-container {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: initial;
+			}
+		}
+	}
+}
+
+@media (min-width:$screen-widescreen-min) {
+	@include reverse-columns(-widescreen);
+}
+
+@media (min-width:$screen-tablet-next) and (max-width: $screen-laptop-max) {
+	@include reverse-columns(-laptop);
+}
+
+@media (min-width:$screen-tablet-extra-next) and (max-width: $screen-laptop-max) {
+	@include reverse-columns(-laptop);
+}
+
+@media (min-width:$screen-tablet-next) and (max-width: $screen-tablet-extra-max) {
+	@include reverse-columns-initial(-laptop);
+	@include reverse-columns(-tablet_extra);
+}
+
 @media (min-width:$screen-mobile-next) and (max-width: $screen-tablet-max) {
 	@include reverse-columns(-tablet);
+}
+
+@media (min-width:$screen-mobile-extra-next) and (max-width: $screen-tablet-max) {
+	@include reverse-columns(-tablet);
+}
+
+@media (min-width:$screen-mobile-next) and (max-width: $screen-mobile-extra-max) {
+	@include reverse-columns-initial(-tablet);
+	@include reverse-columns(-mobile_extra);
 }
 
 @media (max-width: $screen-mobile-max) {

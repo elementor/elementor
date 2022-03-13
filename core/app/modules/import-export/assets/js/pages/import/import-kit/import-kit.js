@@ -1,32 +1,34 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
+import ProcessFailedDialog from '../../../shared/process-failed-dialog/process-failed-dialog';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { ajaxState, setAjax, ajaxActions } = useAjax(),
-		[ isImportFailed, setIsImportFailed ] = useState( false ),
-		[ isLoading, setIsLoading ] = useState( false ),
-		context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		referrer = location.hash.match( 'referrer=([^&]+)' ),
+		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		[ errorType, setErrorType ] = useState( '' ),
+		[ isLoading, setIsLoading ] = useState( false ),
+		{ referrer } = sharedContext.data,
 		resetImportProcess = () => {
-			context.dispatch( { type: 'SET_FILE', payload: null } );
-			setIsImportFailed( false );
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+			setErrorType( null );
 			setIsLoading( false );
-			ajaxActions.reset();
+			kitActions.reset();
 		},
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>
@@ -34,48 +36,46 @@ export default function ImportKit() {
 			</InlineLink>
 		);
 
+	// On load.
 	useEffect( () => {
-		if ( context.data.file ) {
-			setAjax( {
-				data: {
-					e_import_file: context.data.file,
-					action: 'elementor_import_kit',
-					data: JSON.stringify( {
-						stage: 1,
-					} ),
-				},
-			} );
-		}
-	}, [ context.data.file ] );
-
-	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
-		} else if ( 'error' === ajaxState.status ) {
-			setIsImportFailed( true );
-		}
-	}, [ ajaxState.status ] );
-
-	useEffect( () => {
-		if ( context.data.fileResponse && context.data.file ) {
-			navigate( '/import/content' );
-		}
-	}, [ context.data.fileResponse ] );
-
-	useEffect( () => {
-		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
 	}, [] );
+
+	// Uploading the kit after file is selected.
+	useEffect( () => {
+		if ( importContext.data.file ) {
+			kitActions.upload( { file: importContext.data.file } );
+		}
+	}, [ importContext.data.file ] );
+
+	// Listening to kit upload state.
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
+			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+		} else if ( 'error' === kitState.status ) {
+			setErrorType( kitState.data );
+		}
+	}, [ kitState.status ] );
+
+	// After kit was uploaded.
+	useEffect( () => {
+		if ( importContext.data.uploadedData && importContext.data.file ) {
+			const url = importContext.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
+
+			navigate( url );
+		}
+	}, [ importContext.data.uploadedData ] );
 
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
 				{
-					'kit-library' === referrer?.[1] &&
+					'kit-library' === referrer &&
 					<Button
 						className="e-app-import__back-to-library"
 						icon="eicon-chevron-left"
 						text={ __( 'Back to Kit Library', 'elementor' ) }
-						onClick={ () => navigate( '/kit-library' ) }
+						url="/kit-library"
 					/>
 				}
 
@@ -87,7 +87,7 @@ export default function ImportKit() {
 					] }
 				/>
 
-				<Notice label={ __( 'Important', 'elementor' ) } color="warning" className="e-app-import__notice">
+				<Notice label={ __( 'Important:', 'elementor' ) } color="warning" className="e-app-import__notice">
 					{ __( 'We recommend that you backup your site before importing a kit file.', 'elementor' ) }
 				</Notice>
 
@@ -99,20 +99,14 @@ export default function ImportKit() {
 					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {
 						setIsLoading( true );
-						context.dispatch( { type: 'SET_FILE', payload: file } );
+						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
-					onError={ () => setIsImportFailed( true ) }
+					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 				/>
 
-				{ isImportFailed &&
-					<ImportFailedDialog
-						onApprove={ () => window.open( 'https://elementor.com/help/import-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
-						onDismiss={ resetImportProcess }
-					/>
-				}
+				{ errorType && <ProcessFailedDialog errorType={ errorType } onApprove={ resetImportProcess } />	}
 			</section>
 		</Layout>
 	);
 }
-

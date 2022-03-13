@@ -4,9 +4,11 @@ import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
+import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
+import BrowserImport from './components/browser-import/manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -15,10 +17,12 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
+import Selection from './components/selection/manager';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
+import Events from 'elementor-utils/events';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -332,6 +336,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.hooks = new EventManager();
 
+		this.selection = new Selection();
+
 		this.settings = new Settings();
 
 		this.dynamicTags = new DynamicTags();
@@ -348,11 +354,17 @@ export default class EditorBase extends Marionette.Application {
 
 		this.noticeBar = new NoticeBar();
 
+		if ( elementorCommon.config.experimentalFeatures[ 'favorite-widgets' ] ) {
+			this.favorites = new Favorites();
+		}
+
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
 
 		this.devTools = new DevTools();
+
+		this.browserImport = new BrowserImport();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
@@ -365,7 +377,31 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
-		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
+	}
+
+	/**
+	 * Toggle sortable state globally.
+	 *
+	 * @param state
+	 */
+	toggleSortableState( state = true ) {
+		const sections = [
+			jQuery( '#elementor-navigator' ),
+			elementor.documents.getCurrent()?.$element,
+		];
+
+		for ( const $section of sections ) {
+			if ( $section ) {
+				$section.find( '.ui-sortable' ).each( () => {
+					const $element = jQuery( this );
+
+					if ( $element.sortable( 'instance' ) ) {
+						$element.sortable( state ? 'enable' : 'disable' );
+					}
+				} );
+			}
+		}
 	}
 
 	// TODO: BC method since 2.3.0
@@ -625,27 +661,27 @@ export default class EditorBase extends Marionette.Application {
 					maxHeight: 896,
 				},
 				mobile_extra: {
-					minHeight: 320,
+					minHeight: 480,
 					height: 736,
 					maxHeight: 896,
 				},
 				tablet: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				tablet_extra: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				laptop: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				widescreen: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1200,
 				},
@@ -721,7 +757,7 @@ export default class EditorBase extends Marionette.Application {
 			// It's a click on the preview area, not in the edit area,
 			// and a document is open and has an edit area.
 			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
-				$e.internal( 'panel/open-default' );
+				$e.run( 'document/elements/deselect-all' );
 			}
 		} );
 	}
@@ -811,6 +847,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	enterDeviceMode() {
+		this.channels.responsivePreview.trigger( 'open' );
+
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
 
 		this.activatePreviewResizable();
@@ -1051,11 +1089,11 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
-				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
 				this.initNavigator();
 			} );
 
@@ -1256,13 +1294,14 @@ export default class EditorBase extends Marionette.Application {
 			newControlsStack = {},
 			secondDesktopChild = devices[ devices.indexOf( 'desktop' ) + 1 ];
 
-		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
+		// Set the desktop to be the first device, so desktop will the the parent of all devices.
 		devices.unshift(
 			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ]
 		);
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
-			let responsiveControlName;
+			let responsiveControlName,
+				controlDevices;
 
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
@@ -1274,6 +1313,18 @@ export default class EditorBase extends Marionette.Application {
 				newControlsStack[ controlName ] = controlConfig;
 
 				return;
+			}
+
+			if ( controlConfig.responsive?.devices ) {
+				// Because of an `array_intersect` that happens on the PHP side, the devices array can become an object.
+				if ( 'object' === typeof controlConfig.responsive.devices ) {
+					controlConfig.responsive.devices = Object.values( controlConfig.responsive.devices );
+				}
+
+				// Filter the devices list according to the control's passed devices list.
+				controlDevices = devices.filter( ( device ) => controlConfig.responsive.devices.includes( device ) );
+
+				delete controlConfig.responsive.devices;
 			}
 
 			const popoverEndProperty = controlConfig.popover?.end;
@@ -1302,7 +1353,10 @@ export default class EditorBase extends Marionette.Application {
 				deleteControlDefault = false;
 			}
 
-			devices.forEach( ( device, index ) => {
+			// If the control passed its own 'devices' array, run through that. Otherwise, use the default devices list.
+			const devicesArrayToDuplicate = controlDevices || devices;
+
+			devicesArrayToDuplicate.forEach( ( device, index ) => {
 				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
 
 				if ( controlArgs.device_args ) {
@@ -1358,16 +1412,23 @@ export default class EditorBase extends Marionette.Application {
 					controlArgs.default = '';
 				}
 
-				// If the control belongs to a group control with a popover, and this control is the last one, add the
-				// popover.end = true value to it to make sure it closes the popover.
-				if ( index === ( devices.length - 1 ) && popoverEndProperty ) {
+				// If the control is the first inside a popover, only the first device starts the popover,
+				// so the 'start' property has to be deleted from all other devices.
+				if ( 0 !== index && controlArgs.popover?.start ) {
+					delete controlArgs.popover.start;
+				}
+
+				// If the control is inside a popover, AND this control is the last one in the popover, AND this is the
+				// last device in the devices array - add the 'popover.end = true' value to it to make sure it closes
+				// the popover.
+				if ( index === ( devicesArrayToDuplicate.length - 1 ) && popoverEndProperty ) {
 					controlArgs.popover = {
 						end: true,
 					};
 				}
 
 				// For each new responsive control, delete the responsive defaults
-				devices.forEach( ( breakpoint ) => {
+				devicesArrayToDuplicate.forEach( ( breakpoint ) => {
 					delete controlArgs[ breakpoint + '_default' ];
 				} );
 

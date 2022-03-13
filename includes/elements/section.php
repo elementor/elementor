@@ -707,6 +707,9 @@ class Element_Section extends Element_Base {
 					'saturation' => esc_html__( 'Saturation', 'elementor' ),
 					'color' => esc_html__( 'Color', 'elementor' ),
 					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
+					'difference' => esc_html__( 'Difference', 'elementor' ),
+					'exclusion' => esc_html__( 'Exclusion', 'elementor' ),
+					'hue' => esc_html__( 'Hue', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
@@ -1314,27 +1317,21 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'reverse_order_tablet',
-			[
-				'label' => esc_html__( 'Reverse Columns', 'elementor' ) . ' (' . esc_html__( 'Tablet', 'elementor' ) . ')',
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'return_value' => 'reverse-tablet',
-			]
-		);
+		// The controls should be displayed from largest to smallest breakpoint, so we reverse the array.
+		$active_breakpoints = array_reverse( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
-		$this->add_control(
-			'reverse_order_mobile',
-			[
-				'label' => esc_html__( 'Reverse Columns', 'elementor' ) . ' (' . esc_html__( 'Mobile', 'elementor' ) . ')',
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'return_value' => 'reverse-mobile',
-			]
-		);
+		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
+			$this->add_control(
+				'reverse_order_' . $breakpoint_key,
+				[
+					'label' => esc_html__( 'Reverse Columns', 'elementor' ) . ' (' . $breakpoint->get_label() . ')',
+					'type' => Controls_Manager::SWITCHER,
+					'default' => '',
+					'prefix_class' => 'elementor-',
+					'return_value' => 'reverse-' . $breakpoint_key,
+				]
+			);
+		}
 
 		$this->add_control(
 			'heading_visibility',

@@ -16,6 +16,16 @@ export default class ElementsHelper {
 		return eSection;
 	}
 
+	static createContainer( options = {} ) {
+		return $e.run( 'document/elements/create', {
+			model: {
+				elType: 'container',
+			},
+			container: elementor.getPreviewContainer(),
+			options,
+		} );
+	}
+
 	static createSectionStructure( columns = 1, structure, returnFirstColumn = false, options = {} ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
@@ -81,6 +91,17 @@ export default class ElementsHelper {
 			model: {
 				elType: 'widget',
 				widgetType: 'button',
+				settings,
+			},
+		} );
+	}
+
+	static createHeading( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'heading',
 				settings,
 			},
 		} );

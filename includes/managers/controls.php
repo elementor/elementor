@@ -358,6 +358,9 @@ class Controls_Manager {
 			'box-shadow',
 			'css-filter',
 			'text-shadow',
+			'flex-container',
+			'flex-item',
+			'text-stroke',
 		];
 	}
 
@@ -451,12 +454,15 @@ class Controls_Manager {
 		 *
 		 * @param Controls_Manager $this The controls manager.
 		 */
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
-			'elementor/controls/controls_registered',
-			[ $this ],
-			'3.5.0',
-			'elementor/controls/register'
-		);
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+		//	'elementor/controls/controls_registered',
+		//	[ $this ],
+		//	'3.5.0',
+		//	'elementor/controls/register'
+		//);
+
+		do_action( 'elementor/controls/controls_registered', $this );
 
 		/**
 		 * After controls registered.
@@ -485,11 +491,12 @@ class Controls_Manager {
 	 *                                       current instance.
 	 */
 	public function register_control( $control_id, Base_Control $control_instance ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-			__METHOD__,
-			'3.5.0',
-			'register'
-		);
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+		//	__METHOD__,
+		//	'3.5.0',
+		//	'register'
+		//);
 
 		$this->register( $control_instance, $control_id );
 	}
@@ -509,6 +516,7 @@ class Controls_Manager {
 	 * @return void
 	 */
 	public function register( Base_Control $control_instance, $control_id = null ) {
+
 		// TODO: For BC. Remove in the future.
 		if ( $control_id ) {
 			Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
@@ -967,7 +975,7 @@ class Controls_Manager {
 		);
 
 		$messages = [
-			__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
+			esc_html__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
 		];
 
 		if ( $additional_messages ) {
@@ -1006,13 +1014,13 @@ class Controls_Manager {
 		$controls_stack->start_controls_section(
 			'section_page_transitions_teaser',
 			[
-				'label' => __( 'Page Transitions', 'elementor' ),
+				'label' => esc_html__( 'Page Transitions', 'elementor' ),
 				'tab' => $tab,
 			]
 		);
 
 		$messages = [
-			__( 'Page Transitions let you style entrance and exit animations between pages as well as display loader until your page assets load.', 'elementor' ),
+			esc_html__( 'Page Transitions let you style entrance and exit animations between pages as well as display loader until your page assets load.', 'elementor' ),
 		];
 
 		if ( $additional_messages ) {
@@ -1024,7 +1032,7 @@ class Controls_Manager {
 			[
 				'type' => self::RAW_HTML,
 				'raw' => $this->get_teaser_template( [
-					'title' => __( 'Meet Page Transitions', 'elementor' ),
+					'title' => esc_html__( 'Meet Page Transitions', 'elementor' ),
 					'messages' => $messages,
 					'link' => 'https://elementor.com/pro/?utm_source=panel-page-transitions&utm_campaign=gopro&utm_medium=wp-dash',
 				] ),
@@ -1084,7 +1092,7 @@ class Controls_Manager {
 				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Our Attributes', 'elementor' ),
 					'messages' => [
-						__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
+						esc_html__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
 					],
 					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash',
 				] ),

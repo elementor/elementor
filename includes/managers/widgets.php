@@ -42,6 +42,7 @@ class Widgets_Manager {
 	private function init_widgets() {
 		$build_widgets_filename = [
 			'common',
+			'inner-section',
 			'heading',
 			'image',
 			'text-editor',

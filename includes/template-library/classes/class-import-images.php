@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\TemplateLibrary\Classes;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -103,22 +107,55 @@ class Import_Images {
 	 * @return false|array Imported image data, or false.
 	 */
 	public function import( $attachment, $parent_post_id = null ) {
-		if ( ! empty( $attachment['id'] ) ) {
-			$saved_image = $this->get_saved_image( $attachment );
+		if ( isset( $attachment['tmp_name'] ) ) {
+			// Used when called to import a directly-uploaded file.
+			$filename = $attachment['name'];
 
-			if ( $saved_image ) {
-				return $saved_image;
+			$file_content = file_get_contents( $attachment['tmp_name'] );
+		} else {
+			// Used when attachment information is passed to this method.
+			if ( ! empty( $attachment['id'] ) ) {
+				$saved_image = $this->get_saved_image( $attachment );
+
+				if ( $saved_image ) {
+					return $saved_image;
+				}
 			}
+
+			// Extract the file name and extension from the url.
+			$filename = basename( $attachment['url'] );
+
+			$request = wp_safe_remote_get( $attachment['url'] );
+
+			// Make sure the request returns a valid result.
+			if ( is_wp_error( $request ) || ( ! empty( $request['response']['code'] ) && 200 !== (int) $request['response']['code'] ) ) {
+				return false;
+			}
+
+			$file_content = wp_remote_retrieve_body( $request );
 		}
-
-		// Extract the file name and extension from the url.
-		$filename = basename( $attachment['url'] );
-
-		$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
 
 		if ( empty( $file_content ) ) {
 			return false;
 		}
+
+		$filetype = wp_check_filetype( $filename );
+
+		// If the file type is not recognized by WordPress, exit here to avoid creation of an empty attachment document.
+		if ( ! $filetype['ext'] ) {
+			return false;
+		}
+
+		if ( 'svg' === $filetype['ext'] ) {
+			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
+			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
+				return false;
+			}
+
+			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+			$file_content = $svg_handler->sanitizer( $file_content );
+		};
 
 		$upload = wp_upload_bits(
 			$filename,
@@ -132,6 +169,7 @@ class Import_Images {
 		];
 
 		$info = wp_check_filetype( $upload['file'] );
+
 		if ( $info ) {
 			$post['post_mime_type'] = $info['type'];
 		} else {

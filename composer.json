@@ -8,17 +8,22 @@
 		"php": ">=5.6"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^5|^6|^7",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+		"inewlegend/elementor-editor-testing": "0.0.1",
 		"justinrainbow/json-schema": "^5.2",
+		"phpunit/phpunit": "^5|^6|^7",
 		"squizlabs/php_codesniffer": "^3.6",
 		"wp-coding-standards/wpcs": "^2.3",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
-		"inewlegend/elementor-editor-testing": "0.0.1"
+		"yoast/phpunit-polyfills": "^1.0",
+		"thor-juhasz/phpunit-coverage-check": "^0.3.0"
 	},
 	"scripts": {
-		"lint": "phpcs --standard=phpcs.xml",
-		"test": "phpunit",
-		"test:install": "bash ./bin/install-wp-tests-local.sh"
+	  "lint": "phpcs --standard=phpcs.xml",
+	  "test": "phpunit",
+	  "test:install": "bash ./bin/install-wp-tests-local.sh",
+	  "coverage": "composer run coverage:test && composer run coverage:check",
+	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
+	  "coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml"
 	},
 	"authors": [
 		{
