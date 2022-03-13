@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Core\Upgrade\Manager;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_A;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B;
@@ -51,6 +52,33 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( $test_set, $new_feature );
 
 		$this->assertEquals( null, $re_added_feature );
+	}
+
+	public function test_add_feature__ensure_wrap_core_dependency() {
+		// Arrange.
+		$test_core_feature = [
+			'name' => 'core_feature',
+			'state' => Experiments_Manager::STATE_INACTIVE,
+		];
+
+		$depended_feature = [
+			'name' => 'depended_feature',
+			'state' => Experiments_Manager::STATE_INACTIVE,
+			'dependencies' => [
+				'core_feature'
+			]
+		];
+
+		$this->add_test_feature( $test_core_feature );
+
+		// Act.
+		$depended_feature = $this->add_test_feature( $depended_feature );
+
+		$depended_feature_dependency = $depended_feature['dependencies'][0];
+
+		// Assert.
+		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
+		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
 	}
 
 	public function test_get_features() {
