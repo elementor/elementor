@@ -75,8 +75,8 @@ class Test_Manager extends Elementor_Test_Base {
 		$depended_feature = $this->add_test_feature( $depended_feature );
 
 		$depended_feature_dependency = $depended_feature['dependencies'][0];
-		// Assert.
 
+		// Assert.
 		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
 	}
