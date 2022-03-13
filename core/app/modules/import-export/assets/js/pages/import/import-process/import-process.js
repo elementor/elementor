@@ -20,7 +20,7 @@ export default function ImportProcess() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
@@ -30,7 +30,7 @@ export default function ImportProcess() {
 
 			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-			kitActions.upload( { file: decodedFileURL } );
+			kitActions.upload( { file: decodedFileURL, kitLibraryNonce: nonce } );
 		},
 		importKit = () => {
 			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {
