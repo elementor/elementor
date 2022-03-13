@@ -22,7 +22,7 @@ class Test_DB extends Elementor_Test_Base {
 		self::$timestamp = current_time( \DateTime::ATOM );
 
 		self::$event_mock = [
-			'event_data' => '{"placement":"Onboarding wizard","event":"modal load","step":"account","user_state":"anon","ts":"' . self::$timestamp . '"}',
+			'event_data' => '{"placement":"Onboarding wizard","event":"modal load","step":"account","user_state":"anon","ts":"' . self::$timestamp . '", "details":{}}',
 			'created_at' => self::$timestamp,
 		];
 	}
@@ -94,7 +94,9 @@ class Test_DB extends Elementor_Test_Base {
 
 		$entry = $wpdb->get_row( "SELECT event_data FROM {$table_name} ORDER BY created_at DESC LIMIT 1" );
 
-		$this->assertEquals( self::$event_mock['event_data'], $entry->event_data );
+		$expected = '{"placement":"Onboarding wizard","event":"modal load","step":"account","user_state":"anon","ts":"' . self::$timestamp . '","details":"[]"}';
+
+		$this->assertEquals( $expected, $entry->event_data );
 	}
 
 	public function test_get_event_ids_from_db() {

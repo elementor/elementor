@@ -75,24 +75,22 @@ class DB extends Base_Object {
 		/** @var Library $library */
 		$library = $connect->get_apps()['library'];
 
+		if ( ! isset( $event_data['details'] ) ) {
+			$event_data['details'] = [];
+		}
+
 		if ( $library->is_connected() ) {
 			$user_connect_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
 
-			// TODO: add user meta client_id here
-			$event_data['connect_id'] = $user_connect_data['client_id'];
+			// Add the user's client ID to the event.
+			$event_data['details']['connect_id'] = $user_connect_data['client_id'];
 		}
 
-		$timestamp = current_time( \DateTime::ATOM );
-
-		$event_data['ts'] = $timestamp;
-
-		if ( isset( $event_data['details'] ) ) {
-			$event_data['details'] = json_encode( $event_data['details'] );
-		}
+		$event_data['details'] = json_encode( $event_data['details'] );
 
 		$entry = [
 			'event_data' => wp_json_encode( $event_data ),
-			'created_at' => $timestamp,
+			'created_at' => $event_data['ts'],
 		];
 
 		$this->wpdb->insert( $this->get_table_name(), $entry );
