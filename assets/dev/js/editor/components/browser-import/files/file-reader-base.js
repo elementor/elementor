@@ -46,7 +46,7 @@ export default class FileReaderBase {
 	 * @param input
 	 * @returns {string|boolean}
 	 */
-	static async resolve( input ) {
+	static async resolve() {
 		return false;
 	}
 
