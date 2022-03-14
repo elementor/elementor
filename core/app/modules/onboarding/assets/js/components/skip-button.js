@@ -6,7 +6,6 @@ import Button from './button';
 
 export default function SkipButton( props ) {
 	const { button, className } = props,
-		action = button.action,
 		{ state, updateState } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 		skipStep = () => {
@@ -19,7 +18,8 @@ export default function SkipButton( props ) {
 			if ( state.nextStep ) {
 				navigate( 'onboarding/' + state.nextStep );
 			}
-		};
+		},
+		action = button.action || skipStep;
 
 	// Make sure the 'action' prop doesn't get printed on the button markup which causes an error.
 	delete button.action;
@@ -36,11 +36,7 @@ export default function SkipButton( props ) {
 		} );
 
 		if ( ! button.href ) {
-			if ( action ) {
-				action();
-			} else {
-				skipStep();
-			}
+			action();
 		}
 	};
 
