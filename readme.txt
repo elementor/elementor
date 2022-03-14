@@ -2,9 +2,9 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 3.5.3
+Stable tag: 3.5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -14,53 +14,73 @@ The Elementor Website Builder has it all: drag and drop page builder, pixel perf
 
 https://www.youtube.com/watch?v=lBu9TKg7dFM
 
-Introducing a WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
+= THE #1 WEB CREATION PLATFORM, POWERING OVER 10M WEBSITES WORLDWIDE. =
 
-It's time for **[Elementor Website Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
+Elementor is the leading website building platform for WordPress, enabling web creators to build professional, pixel-perfect websites with an intuitive visual builder. Quickly create amazing websites for your clients or your business with complete control over every piece, without writing a single line of code. Join a vast community of web creators from all around the world who deliver exceptional websites using Elementor.
 
-= The Leading Website & Page Builder =
-Whether you’re a web designer looking for a way to achieve pixel-perfect websites, a marketer looking to get online fast or a developer who wants to expand their capabilities, Elementor’s website builder has what you need - intuitive drag-and-drop Editor, advanced design features and a full open-source approach.
+[Check out Elementor Website Builder](https://go.elementor.com/wp-repo-description-tab-homepage-check-out-elementor-website-builder/).
 
-= Faster. Much Faster. =
-Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop website builder, instant live edit, instant page load. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
+= ONE PLATFORM, UNLIMITED WEB CREATIONS =
+Whether you’re looking to achieve pixel-perfect designs, scale and accelerate your website creation process, or increase lead generation, Elementor has what you need to create any type of website.
 
-= Live design. Truly Live. =
-Never again work on the backend and guess what the frontend will look like. With Elementor, you’re editing the site live, and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode. It also works perfectly with or without Gutenberg.
+With an instant, live design and inline editing drag-and-drop Editor, you can create your website while seeing exactly how it would look. Elementor’s open-source solution comes with dozens of out-of-the-box widgets and features for you to use. Additionally,  you can integrate with other marketing services or extend Elementor’s capabilities even more with the [Developers Docs](https://go.elementor.com/wp-repo-description-tab-developers-developers-docs/).
 
-= Professional Features Right Out of the Box =
-With Elementor’s unique features, you can create websites that have that certain ‘designer touch’. Among our design features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
+To edit elements from your Theme, including its Header, Footer, Single Post, and Archive Page, check out our [Pro features](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
-= 100s of Pre-Designed Templates & Blocks =
-Choose from 100+ of beautiful full page [WordPress templates](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and customize them to make them your own. You can also build your website by choosing and combining from over 300+ Blocks.
+= PIXEL-PERFECT DESIGNS =
+With Elementor’s robust design features, you can create unique, show-stopping websites. Adjust every element's spacing, positioning, padding, and margins exactly as you want it, down to the very last pixel. Elevate your website’s design with over 40 widgets and features like Box Shadow, Background Overlays, Hover Effects, Headline Effects, Animations, Gradient Backgrounds, CSS Transform, Mask Options, Shape Dividers, Coming Soon Mode, and many more.
 
-Blocks are pre-designed section templates that can be easily combined into any page. Blocks include a variety of categories: services, testimonials, call to action and more. Save and reuse Elementor templates on different pages, or export them to a different website with a click.
+To view a complete list of Elementor’s features, visit the [feature page](https://go.elementor.com/wp-repo-description-tab-pro-features-feature-page/).
 
-= Responsive Live Editing =
-Elementor Website  Builder comes with an exclusive toolset, that lets you create a truly responsive website in a whole new and visual way. From different font size, padding and margin per device, to reverse column ordering, this is the most powerful mobile site builder for creating perfect responsive websites.
+= FULL WEBSITE KITS AND TEMPLATE LIBRARY =
+Save valuable time, jumpstart your website creation process, or find inspiration with our designer-made website kits and templates. Apply a [Full Website Kit](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/) to get a website in a snap, including the Homepage, Service Page, and more. Use the library to import Single Pages, Blocks, or Popup templates to your website. You can also create and export your own templates and import them to another website to create reusable website blueprints and accelerate your website creation process.
 
-= 40+ free widgets and counting =
-No other page builder or website builder can compare to Elementor. We packed 40+ of the most useful widgets into our website builder. True, that’s way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+= FULLY RESPONSIVE =
+Seamlessly adjust the content and presentation of your website to every device. With [Custom Breakpoints](https://go.elementor.com/wp-repo-description-tab-pro-features-custom-breakpoints/), you can deliver the most optimized experience for each visitor, whether they’re viewing your website on Desktop, Mobile, Tablet, Wide Screen, and more.
+
+= ACCELERATED CREATION WORKFLOW =
+Streamline your workflow and introduce efficient methodologies to accelerate your website creation process. Leverage global fonts and colors for consistency throughout your website. Drag media files directly from your desktop into the editor, mark widgets as favorites, create a blueprint of your website so you can reuse it, and more.
+
+Take your professional workflow to the next level with [Dynamic Content](https://go.elementor.com/wp-repo-description-tab-pro-features-dynamic-content/).
+
+= FAST LOADING WEBSITES =
+Enjoy fast-loading websites that rank well on Google search. Enhance your website performance using built-in features, and benefit from Elementor's ongoing performance improvements, such as reduced CSS and JS files, lazy loading, and more. To learn more, check out our [performance page](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/).
+
+= PROMOTING ACCESSIBILITY =
+Elementor is built with Accessibility in mind and offers tools and enhancements to help you provide a better experience for all users. These include HTML 5 semantic, full keyboard navigation menu, ongoing accessibility improvement of features, widget, and more
+
+= SUPPORTED BY A STRONG COMMUNITY =
+Join a thriving global community that helps each other achieve their goals. Get answers to your questions, solve problems with other members, share knowledge, and so much more. Join the community discussions, meetups, enjoy hundreds of YouTube videos, articles, and tutorials made by members worldwide.
+
+- [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - with over 120K members, who are constantly offering support, advice, feedback, and tutorials about new features and how to achieve complex website scenarios.
+- [Dozens of Elementor](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) Addons - a multitude of addons that extends Elementor’s solution with over 900 addons, so you can achieve nearly every capability you can think of, no matter how niche it is.
+- [Experts Community](https://go.elementor.com/wp-repo-description-tab-experts-experts-community/) - the Elementor experts market is the place for you to find and hire an Expert, or become an Expert and offer your services to clients.
+- [Community Hub](https://go.elementor.com/wp-repo-description-tab-community-hub-community-hub/) - connect with other community members, get informed about new releases and updates in the developer's edition.
+- [Github Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about all the latest releases, request features, or report a bug.
+
+= OVER 40+ FREE WIDGETS AND COUNTING =
+Elementor includes a variety of 40+ free widgets for you to build professional and engaging websites:
 
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
 - **Text Editor**. A WYSIWYG text editor, just like the WordPress editor.
-- **Video**. Add YouTube \ Vimeo to your page.
+- **Video**. Add YouTube, Vimeo, Dailymotion or self-hosted videos to your page.
 - **Button**. Controlling every aspect of the button design.
 - **Image Box**. A box that includes image, headline and text.
 - **Testimonials**. Customer testimonials that show social proof.
 - **Icon**. Place one or more of 600+ icons available.
-- **Icon Box**. Works the same as the image box, only with icons.
-- **Social Icons**. Icons to your social pages like Facebook / Twitter.
+- **Icon Box**. Include an icon, headline, and text with one widget.
+- **Social Icons**. Link to your social pages with the relevant icon like Facebook/Twitter.
 - **Image Gallery**. Displays your images in an aligned grid.
-- **Image Carousel**. A rotating carousel or slider of chosen images.
-- **Icon List**. A bullet list with any chosen icon and text.
+- **Image Carousel**. Create a rotating carousel or slider for chosen images.
+- **Icon List**. Use any icon to create a bullet list.
 - **Counter**. Show stats and numbers in an escalating manner.
 - **Progress Bar**. Include an escalating progress bar.
-- **Tabs**. Vertical or horizontal tabs that display different pieces of content.
-- **Accordion**. A collapsable display of content.
-- **Toggle**. Like Accordion, for FAQ pages.
-- **Star Rating**. Add some social proof with a styled star rating.
-- **Alert**. A colored alert box to draw the attention of the visitor.
+- **Tabs**. Display different pieces of content in vertical or horizontal tabs.
+- **Accordion**. Display content in multiple collapsable sections.
+- **Toggle**. Use the Toggle to hide or display content, like FAQ.
+- **Star Rating**. Allow your visitors to rate you on your website.
+- **Alert**. Include a colored alert box to draw visitor’s attention.
 - **HTML**. Insert code into the page.
 - **Shortcode**. Easily insert shortcodes from any plugin into the page.
 - **Menu Anchor**. Link any menu to this anchor.
@@ -68,59 +88,59 @@ No other page builder or website builder can compare to Elementor. We packed 40+
 - **Sidebar**. Add any sidebar into the page.
 - **Google Maps**. Embed maps into the page.
 - **SoundCloud**. Add audio bits from SoundCloud.
-- **Divider**. A line that divides different elements in the page.
-- **Spacer**. A space that divides the various elements.
+- **Divider**. Separate content with a designed divider.
+- **Spacer**. Add space between elements.
 - **Columns**. Create inner columns within the column.
+- **Text Path**. Attach your text to a path..
 - **And counting...**
 
-= Take it a step further with Elementor Pro =
-The most professional WordPress Website Builder out there. [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) vastly improves your design workflow and lets you design faster and better than ever. Get access to more professional widgets, options and tools to really push your design to the next level.
+= Developer API =
 
-Elementor is much more than a page builder! Making changes to your theme shouldn't be so hard. Endless coding, dealing with developers, switching themes. The [Theme Builder](https://go.elementor.com/theme-builder/) in Elementor Pro turns the entire process of creating WordPress websites 100% visual including your site's header, footer, single post and archive page design.
+As an open-source platform, developers can extend Elementor’s capabilities and explore various resources to get started. This includes a [developer's website](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/), [Developers Docs](https://go.elementor.com/wp-repo-description-tab-developers-developers-docs-2/), [Developers Blog](https://go.elementor.com/wp-repo-description-tab-developers-developers-blog/), [GitHub](https://go.elementor.com/wp-repo-description-tab-github-repo/), [Add-on Developers Newsletter](https://go.elementor.com/wp-repo-description-tab-newsletter-addon-newsletter/), the [Community Hub’s development room](https://go.elementor.com/wp-repo-description-tab-community-hub-community-hubs-development-room/), and more.
 
-There are many other [features](https://elementor.com/features/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to help you build better websites:
+= TRANSLATED TO 59+ LANGUAGES, INCLUDES RTL SUPPORT =
+Elementor supports multiple languages and typographies and is RTL compatible, so you get an Editor and Panel that supports [over 59 languages](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/) out of the box. Elementor is also compatible with WPML, Polylang, TranslatePress, Weglot, and more.
+If you would like to contribute, you can add a new language via translate.wordpress.org. We’ve built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/wp-repo-description-tab-help-center-translate/).
 
-* [Motion Effects](https://go.elementor.com/motion-effects/)
-* [Industry leading Theme Builder](https://go.elementor.com/theme-builder/)
-* [WooCommerce Builder](https://go.elementor.com/woocomemrce-builder/)
-* [Advanced Popup Builder](https://go.elementor.com/popup-builder/)
-* [Visual and intuitive form builder](https://go.elementor.com/form-builder/)
-* Marketing automation and CRM integrations
-* Custom fonts & icons
-* Role manager
-* Blog post layout widget
-* Image & video sliders
-* Global widgets
-* Custom CSS
-* And many more.
+= TAKE IT TO THE NEXT LEVEL WITH ELEMENTOR PRO =
+Create immersive web experiences while saving time and resources, keeping costs manageable with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro/). Get access to +90 professional widgets, features, and tools to create comprehensive website experiences.
 
-Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
+Elementor Pro’s features include:
+- [Exclusive Pro Kits and Templates](https://go.elementor.com/wp-repo-description-tab-library-exclusive-pro-kits-and-templates/)
+- [Advanced Motion Effects](https://go.elementor.com/wp-repo-description-tab-pro-features-motion-effects/)
+- [Industry-leading Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/)
+- [WooCommerce Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-woocommerce-builder/)
+- [Professional Form Builder and Submission Log](https://go.elementor.com/wp-repo-description-tab-pro-features-professional-form-builder-and-submission-log/)
+- [Popup Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-popup-builder/)
+- [Dynamic Content](https://go.elementor.com/wp-repo-description-tab-pro-features-dynamic-content-2/)
+- Marketing automation and CRM integrations
+- Scroll Snap
+- Custom fonts & icons
+- Role manager
+- Blog post layout widget
+- Image & video sliders
+- Global widgets
+- Custom CSS
+- Custom Code
+- 90+ Professional widgets
+- And many more.
 
-= Translated to 59+ Languages & RTL supported. =
-We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (59+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
+Join the elite web creators who enjoy [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro-2/)!
 
-= Developer API. =
-Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
+= SECURITY AND COMPLIANCE =
+Elementor is ISO 27001 certified and has a dedicated team of security professionals that implements industry best practices for maximum security and compliance 24/7.
 
-To help you get started and learn just how to integrate with Elementor, we have created the official [Elementor Developers Center](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme). Check the [Developers Blog](https://developers.elementor.com/blog/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to discover the latest information from the programmers working on the newest Elementor versions, or visit the [Developers Docs](https://developers.elementor.com/docs/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to learn how to extend Elementor core and create your own addons.
+There is also a managed security [Bug Bounty program](https://go.elementor.com/wp-repo-description-tab-bug-crowd-bug-bounty-program/), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
 
-= Be a contributor =
-If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/elementor/elementor) and see where you can help.
-
-You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
-
-= Security Report =
-We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
-
-= Documentation and Support =
-- For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
-- If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
-- For more information about features, FAQs and documentation, check out our website at [Elementor website Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+= ELEMENTOR RESOURCES AND SUPPORT =
+- To learn how to get started with Elementor, or view tutorials about new features, go to the [Elementor Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) or the [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/).
+- If you have any more questions or need support, visit the support on the [Plugin’s forum](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-forum/). Elementor Pro users can also reach out to a dedicated support channel for premium 24/7 support.
+- For more information about Elementor and Elementor Pro features, visit [Elementor Website Builder](https://go.elementor.com/wp-repo-description-tab-homepage-elementor-website-builder/).
 
 = Liked Elementor? =
-- Join our [Facebook Group](https://www.facebook.com/groups/Elementors/).
-- Learn from our tutorials on [YouTube Channel](https://www.youtube.com/c/elementor).
-- Or rate us on [WordPress](https://wordpress.org/support/plugin/elementor/reviews/?filter=5/#new-post) :)
+- Join our [Facebook Group](https://go.elementor.com/wp-repo-description-tab-facebook-group/).
+- Learn from our tutorials on [YouTube Channel](https://go.elementor.com/wp-repo-description-tab-youtube-channel/).
+- Or rate us on [WordPress](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-review/) :)
 
 == Installation ==
 
@@ -146,33 +166,66 @@ https://www.youtube.com/watch?v=Ypn6fltn_7s
 4. Press the 'Edit with Elementor' button.
 5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
 
-For documentation and tutorials visit our [Knowledge Base](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+For documentation and tutorials visit our [Knowledge Base](https://elementor.com/help/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 == Frequently Asked Questions ==
 
-**With Elementor, do I still need a theme?**
+**How do I install Elementor?**
 
-Yes. Think of it like this: a theme is like the frame of the picture, and Elementor is the tool to paint the picture inside the frame.
+To install the free version of Elementor, follow the steps below:
+From your WordPress dashboard -> Go to Plugins -> Click on 'Add new'-> In the Search field, enter Elementor and choose Elementor website builder.
+Press install -> After installation, click Activate.
 
-**Is Elementor compatible with Posts and Custom Post Types?**
+**Does Elementor work with all the themes?**
 
-It sure is! You can set which post types will enable Elementor in the settings page.
+Elementor works all the themes that respect the coding standards of WordPress set by its Codex. It is recommended to use Elementor's [Hello Theme](https://go.elementor.com/wp-repo-description-tab-hello-theme-hello-theme/), a lightweight blank canvas, to enjoy full flexibility when using Elementor, and optimize your experience.
 
-**Can I use other plugin widgets inside Elementor?**
+**Is Elementor compatible with Gutenberg?**
 
-Sure can! Plugin widgets that appear in the WordPress widgets menu will also appear inside Elementor automatically. Just drag and drop them onto the page.
+Elementor and Gutenberg work seamlessly together. As a user, you can easily decide which editor to use at every point while editing your site.
 
-**Do I need to know how to code to use Elementor?**
+**Can I create an online store?**
 
-Absolutely not! Elementor is a live frontend website builder, that lets you reach a high end design with no need to write even a line of code or CSS.
+Yes, with the Elementor Pro WooCommerce Builder you can customize every page of your store to create an amazing customer experience that drives sales.
 
-**Will Elementor work with RTL or other languages?**
+**Does it work with other WordPress plugins? **
 
-Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language. You can read more about [translation and localization](https://go.elementor.com/translate/).
+It works with almost all the plugins. If you experience an incompatibility issue, please report it to us and to the plugin that conflicts with Elementor.
 
-**My site is working with WordPress 2.6, will Elementor work for me?**
+**Do I need to know how to code?**
 
-No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No! Elementor provides you with all the widgets and features that you need to build a proffesional website without using code.
+
+**Do i need to know how to design?**
+
+No, you can choose between professionaly designed kits and templates that fit toevery industry and have all you need to create your own profesional website.
+
+**Will elementor slow down my website?**
+
+As Elementor prioritizes speed and performance, you enjoy better and faster performance with each new version of Elementor. When testing the same page layout on older versions you can see a significant performance improvement, from a score of 82 in Google PageSpeed Insight in version 3.1, to a score of 95 i in version 3.5.
+
+**Is my site secure with Elementor?**
+
+The security of your website is extremely important to us and we take proactive measures to assure that your websites are secure. Elementor is ISO 27001 certified, and has a dedicated team of security professionals that implements industry best-practices for maximum security and compliance, 24/7.
+
+There is also a managed security Bug Bounty program, utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
+
+**Can I buy templates separately?**
+
+Of course, you can use any template that supports Elementor.
+
+**Is Elementor compatible with Post and Custom Post Types?**
+
+Of course! You can set which post types will enable Elementor in the settings page.
+
+**What is the difference between Elementor's free Plugin and Elementor Pro**
+
+Elementor’s Free version allows you to explore our revolutionary drag & drop live editor, basic widgets and templates. Elementor Pro (Essential, Advanced, Expert, Studio, and Agency) empowers you with more professional tools that speed up your workflow, give you access to human-powered support, help you build more advanced content, and convert visitors. See full comparison here.
+
+**How can I become a Contributor**
+
+If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/elementor/elementor) and see where you can help.
+You can also add a new language via [translate.wordpress.org](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/). We’ve built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate-faq/).
 
 == Screenshots ==
 
@@ -188,8 +241,31 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.5.6 - 2022-02-28 =
+* Fix: Favorite WooCommerce widgets causes fatal error when WooCommerce is deactivated ([#17641](https://github.com/elementor/elementor/issues/17641))
+* Fix: Video inserted with privacy mode are not playing in the Video widget lightbox ([#17749](https://github.com/elementor/elementor/issues/17749))
+* Fix: Global widgets search didn't work properly ([#17270](https://github.com/elementor/elementor/issues/17270))
+* Fix: `remove_responsive_control()` doesn't remove controls for Additional Custom breakpoints which generates PHP errors
+* Fix: Lightbox video icon color control not working when Inline Font Icons experiment is active
+* Fix: Hardened the Lightbox action module sanitization to prevent potential security issues
+
+= 3.5.5 - 2022-02-03 =
+* Tweak: Changed Developer Edition promotional notice triggers
+* Tweak: Added a filter to allow modifying the imported Kit temp directory path
+* Fix: When trying to import a Kit and getting a general error the try-again action is incorrect
+* Fix: Hardened the Lightbox action module sanitization to prevent potential security issues
+
+= 3.5.4 - 2022-01-23 =
+* Tweak: Update `e-icons` library to `v5.14.0`
+* Fix: Can't edit the page if Favorite Widgets are in use in edge cases ([#17364](https://github.com/elementor/elementor/issues/17364))
+* Fix: `onError` throws an error because of bad parameters in Debug Util ([#14571](https://github.com/elementor/elementor/issues/14571))
+* Fix: Swiper Util accepts only `jQuery` instances as the container parameter ([#17262](https://github.com/elementor/elementor/issues/17262))
+* Fix: "Page template" string presented as "Library Page" in Finder results
+* Fix: SVG icons are not being imported properly in Template Library
+* Fix: Dynamic Tag switcher disappear in RTL
+
 = 3.5.3 - 2021-12-28 =
-Fix: Global Widgets appears with the default widget style and not with the styling of the Global widget([#17296](https://github.com/elementor/elementor/issues/17296))
+* Fix: Global Widgets appears with the default widget style and not with the styling of the Global widget([#17296](https://github.com/elementor/elementor/issues/17296))
 
 = 3.5.2 - 2021-12-22 =
 * Fix: Responsive Reverse Columns control are not working properly ([#17240](https://github.com/elementor/elementor/issues/17240), [#17174](https://github.com/elementor/elementor/issues/17174))

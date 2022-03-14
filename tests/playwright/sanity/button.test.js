@@ -1,13 +1,16 @@
 const { test, expect } = require( '@playwright/test' );
-const { EditorPage } = require( '../pages/editor-page' );
-const { WpAdminPage } = require( '../pages/wp-admin-page' );
+const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'Button widget sanity test', async ( { page } ) => {
-	const wpAdmin = new WpAdminPage( page );
-	await wpAdmin.createNewPage();
+test( 'Button widget sanity test', async ( { page }, testInfo ) => {
+	// Arrange.
+	const wpAdmin = new WpAdminPage( page, testInfo ),
+		editor = await wpAdmin.useElementorCleanPost();
 
-	const editor = new EditorPage( page );
+	// Act.
 	await editor.addWidget( 'button' );
-	const button = await editor.previewFrame.waitForSelector( 'a[role="button"]:has-text("Click here")' );
+
+	const button = await editor.getPreviewFrame().waitForSelector( 'a[role="button"]:has-text("Click here")' );
+
+	// Assert.
 	expect( await button.innerText() ).toBe( 'Click here' );
 } );
