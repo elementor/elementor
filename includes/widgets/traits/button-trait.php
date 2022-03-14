@@ -7,7 +7,6 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
-use Elementor\Group_Control_Text_Stroke;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
@@ -241,15 +240,6 @@ trait Button_Trait {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 				],
-				'selector' => '{{WRAPPER}} .elementor-button',
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Text_Stroke::get_type(),
-			[
-				'name' => 'text_stroke',
 				'selector' => '{{WRAPPER}} .elementor-button',
 				'condition' => $args['section_condition'],
 			]
