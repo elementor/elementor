@@ -8,9 +8,9 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
     await editor.page.click( '#elementor-panel-header-menu-button' );
 
     // Trigger dialog by click on the "Exit" button
-    await editor.page.click('text=Exit');
-    await editor.page.click('a:has-text("User Preferences")');
-    
+    await editor.page.click( 'text=Exit' );
+    await editor.page.click( 'a:has-text("User Preferences")' );
+
     await editor.page.click( '#elementor-panel-header-menu-button' );
 
     const exit = await page.locator( '.elementor-panel-menu-item-exit >> a' );
