@@ -42,6 +42,12 @@ export default function WizardStep( props ) {
 				</Text>
 				}
 
+				{ props.info &&
+				<Text variant="xl" className="e-app-import-export-wizard-step__info" >
+					{ props.info }
+				</Text>
+				}
+
 				{ props.children &&
 				<Grid item className="e-app-import-export-wizard-step__content">
 					{ props.children }
@@ -64,6 +70,7 @@ WizardStep.propTypes = {
 	icon: PropTypes.string,
 	heading: PropTypes.string,
 	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	info: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	notice: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	children: PropTypes.any,
 };

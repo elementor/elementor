@@ -232,7 +232,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		if ( this.container.isEditable() ) {
+		if ( this.container?.isEditable() ) {
 			this.onEditButtonClick( event );
 		}
 	},
