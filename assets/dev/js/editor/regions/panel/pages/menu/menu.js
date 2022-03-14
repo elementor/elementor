@@ -123,7 +123,7 @@ PanelMenu.createExitIntroductionDialog = () => {
 			},
 			effects: {
 				show: 'fadeIn',
-				hide: 'fadeOut'
+				hide: 'fadeOut',
 			},
 		},
 	} );
