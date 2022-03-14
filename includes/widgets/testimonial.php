@@ -253,14 +253,6 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Text_Stroke::get_type(),
-			[
-				'name' => 'content_stroke',
-				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
-			]
-		);
-
-		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'content_shadow',
@@ -359,14 +351,6 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Text_Stroke::get_type(),
-			[
-				'name' => 'name_stroke',
-				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
-			]
-		);
-
-		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'name_shadow',
@@ -407,14 +391,6 @@ class Widget_Testimonial extends Widget_Base {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
 				],
-				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Text_Stroke::get_type(),
-			[
-				'name' => 'job_stroke',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]
 		);
