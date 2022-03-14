@@ -20,16 +20,17 @@ export default class Events {
 	 * @returns {Date}
 	 */
 	getTimestamp() {
-		const date = new Date();
+		const date = new Date(),
+			timezoneOffset = date.getTimezoneOffset();
 
 		// Local time for the user
-		let UTCTimestamp = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 ) ).toISOString();
+		let UTCTimestamp = new Date( date.getTime() - ( timezoneOffset * 60000 ) ).toISOString();
 
 		// Remove the milliseconds and Z suffix from the string.
 		UTCTimestamp = UTCTimestamp.slice( 0, UTCTimestamp.length - 5 );
 
 		// Create the offset string in the format `+HH:00` (or minus (-) prefix for negative offset instead of plus)
-		const timezoneOffsetInHours = ( new Date() ).getTimeZoneOffset() / 60,
+		const timezoneOffsetInHours = timezoneOffset / 60,
 			sign = 0 <= timezoneOffsetInHours ? '+' : '-',
 			addedZero = 10 < ( timezoneOffsetInHours ) ? '0' : '';
 
