@@ -384,6 +384,31 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get url of the page which display all the posts of the current active document's post type.
+	 */
+	public function get_all_post_type_url() {
+		$post_type = get_post_type( $this->get_main_id() );
+
+		$url = get_admin_url() . 'edit.php';
+
+		if ( 'post' !== $post_type ) {
+			$url .= '?post_type=' . $post_type;
+		}
+
+		/**
+		 * Document "display all post type" URL.
+		 *
+		$url
+		 *
+		 * @param string   $url  The URL
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/all_post_type', $url, $this );
+
+		return $url;
+	}
+
+	/**
 	 * Get auto-saved post revision.
 	 *
 	 * Retrieve the auto-saved post revision that is newer than current post.
@@ -545,6 +570,7 @@ abstract class Document extends Controls_Stack {
 			],
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(), // WP post type edit page
+				'all_post_type' => $this->get_all_post_type_url(),
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),

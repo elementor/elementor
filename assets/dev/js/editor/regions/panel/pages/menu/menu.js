@@ -76,14 +76,15 @@ PanelMenu.addAdminMenu = () => {
 };
 
 PanelMenu.addExitItem = () => {
-	const preferredExitUrl = PanelMenu.getExitUrl(),
-		preferredExitTitle = PanelMenu.getExitTitle();
+	const preferredExitUrl = PanelMenu.getExitUrl();
 
 	let itemArgs;
 
 	if ( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
+		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
+
 		itemArgs = {
-			callback: () => PanelMenu.exitDialog(),
+			callback: () => exitIntroduction.show(),
 		};
 	} else {
 		itemArgs = {
@@ -95,12 +96,12 @@ PanelMenu.addExitItem = () => {
 	PanelMenu.addItem( {
 		name: 'exit',
 		icon: 'eicon-exit',
-		title: preferredExitTitle,
+		title: __( 'Exit', 'elementor' ),
 		...itemArgs,
 	}, 'navigate_from_page' );
 };
 
-PanelMenu.exitDialog = () => {
+PanelMenu.createExitIntroductionDialog = () => {
 	const template = document.querySelector( '#tmpl-elementor-exit-dialog' );
 	const { options } = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to;
 
@@ -112,15 +113,22 @@ PanelMenu.exitDialog = () => {
 			className: 'dialog-exit-preferences',
 			headerMessage: __( 'New options for "Exit to..."', 'elementor' ),
 			message: template.innerHTML,
+			position: {
+				my: 'center center',
+				at: 'center center',
+			},
 			strings: {
 				confirm: __( 'Apply', 'elementor' ),
 				cancel: __( 'Decide Later', 'elementor' ),
 			},
+			effects: {
+				show: 'fadeIn',
+				hide: 'fadeOut'
+			},
 		},
 	} );
 
-	//Edit template
-
+	//Edit the template inside the dialog
 	const messageContainer = introduction.getDialog().getElements().message[ 0 ],
 		select = messageContainer.querySelector( '#exit-to-preferences' ),
 		link = messageContainer.querySelector( '#user-preferences' );
@@ -132,12 +140,17 @@ PanelMenu.exitDialog = () => {
 		select.appendChild( option );
 	}
 
+	// Bind click event to the link in the dialog to open the editor preferences.
 	link.addEventListener( 'click', ( e ) => {
 		e.preventDefault();
 
 		introduction.setViewed();
+		elementor.config.user.introduction.exit_to = true;
 		introduction.getDialog().hide();
 		$e.route( 'panel/editor-preferences' );
+
+		// Force the exit button to rerender by creating new exit button.
+		PanelMenu.addExitItem();
 	} );
 
 	introduction.getDialog().onConfirm = () => {
@@ -164,9 +177,12 @@ PanelMenu.exitDialog = () => {
 		window.location.href = PanelMenu.getExitUrl();
 	};
 
-	introduction.show();
+	return introduction;
 };
 
+/**
+ * Get the exit url according to the 'exit_to' user preference.
+ */
 PanelMenu.getExitUrl = () => {
 	const exitPreference = elementor.getPreferences( 'exit_to' );
 
@@ -174,25 +190,14 @@ PanelMenu.getExitUrl = () => {
 		case 'dashboard':
 			return elementor.config.document.urls.main_dashboard;
 
+		case 'all_posts':
+			return elementor.config.document.urls.all_post_type;
+
+		case 'this_post':
+			return elementor.config.document.urls.exit_to_dashboard;
+
 		default:
 			return elementor.config.document.urls.exit_to_dashboard;
-	}
-};
-
-PanelMenu.getExitTitle = () => {
-	const exitPreference = elementor.getPreferences( 'exit_to' );
-
-	switch ( exitPreference ) {
-		case 'dashboard':
-			return __( 'Exit To WP Dashboard', 'elementor' );
-
-		default:
-			let postTypeTitle = elementor.config.document.post_type_title;
-
-			if ( 'Revision' === postTypeTitle ) {
-				postTypeTitle = 'Page';
-			}
-			return __( 'Exit To WP %s', 'elementor' ).replace( '%s', postTypeTitle );
 	}
 };
 

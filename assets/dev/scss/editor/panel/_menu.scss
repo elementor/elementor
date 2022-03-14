@@ -70,6 +70,7 @@
 
 			&:hover {
 				background-color: darken($wp-primary, 5%);
+				transition: 0.3s;
 			}
 
 			.elementor-panel-menu-item-title,

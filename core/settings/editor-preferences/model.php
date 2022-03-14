@@ -143,10 +143,11 @@ class Model extends BaseModel {
 				'label' => esc_html__( 'Exit to', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'separator' => 'before',
-				'description' => esc_html__( 'Decide where you want to go when you click the "Exit to" control.', 'elementor' ),
-				'default' => 'wp_post_type',
+				'description' => esc_html__( 'Decide where you want to go when you click the "Exit" button.', 'elementor' ),
+				'default' => 'this_post',
 				'options' => [
-					'wp_post_type' => esc_html__( 'WP Page/Post/Template', 'elementor' ),
+					'this_post' => esc_html__( 'This Post', 'elementor' ),
+					'all_posts' => esc_html__( 'All Posts', 'elementor' ),
 					'dashboard' => esc_html__( 'WP Dashboard', 'elementor' ),
 				],
 			]

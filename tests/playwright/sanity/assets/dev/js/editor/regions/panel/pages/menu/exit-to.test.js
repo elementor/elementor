@@ -8,17 +8,29 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 
     await editor.page.click( '#elementor-panel-header-menu-button' );
 
-    const exit = await page.locator( '.elementor-panel-menu-item-exit' );
+    const exit = await page.locator( '.elementor-panel-menu-item-exit >> a' );
+    let exitHref = '';
 
     // Select dashboard
-    setExitUserPreference( page, 'dashboard' );
+    await setExitUserPreference( page, 'dashboard' );
 
-    await expect( exit ).toContainText( 'Exit To WP Dashboard' );
+    exitHref = await exit.getAttribute( 'href' );
 
-    // // Select wp_post_type
-    setExitUserPreference( page, 'wp_post_type' );
+    await expect( exitHref ).toContain( '/wp-admin/' );
 
-    await expect( exit ).toContainText( 'Exit To WP Page' );
+    // Select wp_post_type
+    await setExitUserPreference( page, 'this_post' );
+
+    exitHref = await exit.getAttribute( 'href' );
+
+    await expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
+
+    // Select all_posts
+    await setExitUserPreference( page, 'all_posts' );
+
+    exitHref = await exit.getAttribute( 'href' );
+
+    await expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );
 } );
 
 const setExitUserPreference = async ( page, option ) => {
