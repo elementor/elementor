@@ -543,14 +543,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderUI: function() {
+		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
 		this.enqueueFonts();
-
-		_.defer( () => {
-			// Defer the styles render to make sure that the global colors are ready.
-			this.renderStyles();
-		} );
 	},
 
 	runReadyTrigger: function() {
@@ -832,6 +828,12 @@ BaseElementView = BaseContainer.extend( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
+				// Need to stop this event when the element is absolute since it clashes with this one.
+				// See `behaviors/widget-draggable.js`.
+				if ( this.options.draggable.isActive ) {
+					return;
+				}
+
 				const helper = this.getDraggableHelper();
 				this.$el[ 0 ].appendChild( helper );
 
@@ -846,9 +848,7 @@ BaseElementView = BaseContainer.extend( {
 
 				this.onDragStart( e );
 
-				const container = this.getContainer();
-
-				elementor.channels.editor.reply( 'element:dragged', container.view );
+				elementor.channels.editor.reply( 'element:dragged', this );
 			},
 			onDragEnd: ( e ) => {
 				e.stopPropagation();
