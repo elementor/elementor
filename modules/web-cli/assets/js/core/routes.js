@@ -94,7 +94,7 @@ export default class Routes extends Commands {
 
 	beforeRun( route, args ) {
 		const component = this.getComponent( route ),
-			container = component.getRootContainer(),
+			container = component.getServiceName(),
 			oldRoute = this.current[ container ];
 
 		if ( oldRoute ) {
@@ -113,7 +113,7 @@ export default class Routes extends Commands {
 	to( route, args ) {
 		this.run( route, args );
 
-		const namespaceRoot = this.getComponent( route ).getRootContainer();
+		const namespaceRoot = this.getComponent( route ).getServiceName();
 
 		if ( ! this.historyPerComponent[ namespaceRoot ] ) {
 			this.historyPerComponent[ namespaceRoot ] = [];
@@ -163,7 +163,7 @@ export default class Routes extends Commands {
 			return false;
 		}
 
-		const container = this.getComponent( route ).getRootContainer();
+		const container = this.getComponent( route ).getServiceName();
 
 		return _.isEqual( args, this.currentArgs[ container ] );
 	}
