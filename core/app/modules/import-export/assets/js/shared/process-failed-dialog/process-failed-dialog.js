@@ -18,6 +18,9 @@ const messagesContent = {
 		'no-write-permissions': {
 			text: __( 'Elementor is not authorized to read or write from this file. Contact your site host.', 'elementor' ),
 		},
+		'plugin-installation-permissions-error': {
+			text: __( 'This kit requires new plugin installation. Unfortunately, you do not have permissions to install new plugins. Contact your site host.', 'elementor' ),
+		},
 	},
 	dialogTitle = __( 'Something went wrong.', 'elementor' ),
 	tryAgainText = __( 'Try Again', 'elementor' );
