@@ -49,9 +49,6 @@ export default function ImportPlugins() {
 
 	// On load.
 	useEffect( () => {
-		// if ( 'apply-all' === importContext.data.actionType && ! missing?.length ) {
-		// 	navigate( 'import/resolver' );
-		// } else
 		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}

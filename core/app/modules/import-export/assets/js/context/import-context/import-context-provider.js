@@ -16,6 +16,7 @@ export default function ImportContextProvider( props ) {
 		isProInstalledDuringProcess: false,
 		actionType: null,
 		isResolvedData: false,
+		pluginsState: '',
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 
@@ -24,6 +25,10 @@ export default function ImportContextProvider( props ) {
 			{ props.children }
 		</ImportContext.Provider>
 	);
+}
+
+export function shouldResolveConflict() {
+
 }
 
 ImportContextProvider.propTypes = {

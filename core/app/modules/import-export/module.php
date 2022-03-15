@@ -197,8 +197,6 @@ class Module extends BaseModule {
 			throw new \Error( self::MANIFEST_ERROR_KEY );
 		}
 
-		//Check that the user have install_plugins permissions.
-
 		if ( $manifest_data['plugins'] && ! current_user_can( 'install_plugins' ) ) {
 			throw new \Error( self::PERMISSIONS_ERROR_KEY );
 		}
