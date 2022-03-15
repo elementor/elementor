@@ -1,4 +1,4 @@
-export default class baseTabs extends elementorModules.frontend.handlers.Base {
+export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
