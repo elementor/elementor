@@ -1,8 +1,8 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistory from 'elementor-document/commands/base/command-history';
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
+import CommandHistory from 'elementor-document/command-bases/command-history-base';
+import CommandHistoryDebounce from 'elementor-document/command-bases/command-history-debounce-base';
 
 jQuery( () => {
 	QUnit.module( 'File: modules/web-cli/assets/js/modules/command-base.js', () => {
