@@ -24,9 +24,12 @@ export default function SiteLogo() {
 			role: 'button',
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'next',
-					step: state.currentStep,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+					},
 				} );
 
 				if ( file.id ) {
@@ -124,10 +127,13 @@ export default function SiteLogo() {
 		if ( 'initial' !== uploadImageAjaxState.status ) {
 			if ( 'success' === uploadImageAjaxState.status && uploadImageAjaxState.response?.imageAttachment?.id ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'logo image uploaded',
-					step: state.currentStep,
-					source: fileSource,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						source: fileSource,
+					},
 				} );
 
 				setIsUploading( false );
@@ -143,10 +149,13 @@ export default function SiteLogo() {
 				setFile( null );
 
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					action_state: 'failure',
-					action: 'logo image upload',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						action_state: 'failure',
+						action: 'logo image upload',
+					},
 				} );
 
 				setNoticeState( {
@@ -163,8 +172,11 @@ export default function SiteLogo() {
 		if ( 'initial' !== updateLogoAjaxState.status ) {
 			if ( 'success' === updateLogoAjaxState.status && updateLogoAjaxState.response?.siteLogoUpdated ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'logo image updated',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+					},
 				} );
 
 				setIsUploading( false );
@@ -187,11 +199,14 @@ export default function SiteLogo() {
 				setIsUploading( false );
 
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					step: state.currentStep,
-					action_state: 'failure',
-					action: 'update site logo',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						action_state: 'failure',
+						action: 'update site logo',
+					},
 				} );
 
 				setNoticeState( {
@@ -247,19 +262,25 @@ export default function SiteLogo() {
 							} }
 							onButtonClick={ () => {
 								elementorCommon.events.dispatchEvent( {
-									placement: elementorAppConfig.onboarding.eventPlacement,
 									event: 'browse file click',
+									version: '',
+									details: {
+										placement: elementorAppConfig.onboarding.eventPlacement,
+									},
 								} );
 							} }
 							// TODO: DEAL WITH ERROR
 							onError={ ( error ) => {
 								if ( 'file_not_allowed' === error.id ) {
 									elementorCommon.events.dispatchEvent( {
-										placement: elementorAppConfig.onboarding.eventPlacement,
 										event: 'indication prompt',
-										step: state.currentStep,
-										action_state: 'failure',
-										action: 'logo upload format',
+										version: '',
+										details: {
+											placement: elementorAppConfig.onboarding.eventPlacement,
+											step: state.currentStep,
+											action_state: 'failure',
+											action: 'logo upload format',
+										},
 									} );
 
 									setNoticeState( {

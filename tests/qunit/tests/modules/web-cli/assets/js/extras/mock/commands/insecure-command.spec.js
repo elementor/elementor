@@ -1,2 +1,4 @@
-export class InsecureCommand extends $e.modules.CommandBase {
+import CommandBase from 'elementor-api/modules/command-base';
+
+export class InsecureCommand extends CommandBase {
 }
