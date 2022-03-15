@@ -47,6 +47,7 @@ export const Select = () => {
 				RepeaterHelper.select( eTabs, indexToSelect );
 				RepeaterHelper.select( eTabs, indexToSelect );
 
+				// Assert.
 				assert.equal( elementor.history.history.getItems().length, 4 );
 			} );
 		} );
