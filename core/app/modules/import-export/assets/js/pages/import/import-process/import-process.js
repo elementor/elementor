@@ -23,7 +23,7 @@ export default function ImportProcess() {
 		[ plugins, setPlugins ] = useState( [] ),
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
@@ -33,7 +33,7 @@ export default function ImportProcess() {
 
 			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-			kitActions.upload( { file: decodedFileURL } );
+			kitActions.upload( { file: decodedFileURL, kitLibraryNonce: nonce } );
 		},
 		importKit = () => {
 			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {

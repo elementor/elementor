@@ -43,6 +43,7 @@ const config = {
 		'alert',
 		'buttons',
 		'canvas',
+		'container',
 		'counter',
 		'dividers',
 		'global-settings',
