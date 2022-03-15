@@ -1,12 +1,5 @@
 import * as mockClasses from './mock/';
 
-// eslint-disable-next-line no-unused-vars
-/* global wpApiSettings */
-
-window.wpApiSettings = {
-	nonce: 'test_nonce',
-};
-
 export const fetchOriginal = $e.data.fetch;
 
 /**

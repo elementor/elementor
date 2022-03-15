@@ -103,11 +103,12 @@ class Manager extends Base_Object {
 
 		if ( ! empty( $experimental_data['dependencies'] ) ) {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
-				if ( ! class_exists( $dependency ) ) {
-					throw new \Exception( sprintf( 'Dependency class %s not found', $dependency ) );
+				$feature = $this->get_features( $dependency );
+				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
+					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
+				} else {
+					$experimental_data['dependencies'][ $key ] = $dependency::instance();
 				}
-
-				$experimental_data['dependencies'][ $key ] = $dependency::instance();
 			}
 		}
 
@@ -337,13 +338,13 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'container',
-			'title' => esc_html__( 'Flex Container', 'elementor' ),
-			'description' => esc_html__(
-				'Create advanced layouts and responsive designs using the new Container element.
-				When this experiment is active, Containers will be the default building block.
-				Existing Sections, Inner Sections and Columns will not be affected.',
+			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
+			'description' => sprintf( esc_html__(
+				'Create advanced layouts and responsive designs with the new Flexbox Container element.
+				This experiment replaces the current section/column structure, but you\'ll still keep your existing
+				Sections, Inner Sections and Columns and be able to edit them. %1$sLearn More%2$s',
 				'elementor'
-			),
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container">', '</a>' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
@@ -678,11 +679,11 @@ class Manager extends Base_Object {
 	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
 	private function validate_dependency( array $feature, $new_state ) {
-		$rollback = function ( $feature_option_key ) {
+		$rollback = function ( $feature_option_key, $state ) {
 			remove_all_actions( 'add_option_' . $feature_option_key );
 			remove_all_actions( 'update_option_' . $feature_option_key );
 
-			update_option( $feature_option_key, self::STATE_INACTIVE );
+			update_option( $feature_option_key, $state );
 		};
 
 		if ( self::STATE_DEFAULT === $new_state ) {
@@ -701,7 +702,7 @@ class Manager extends Base_Object {
 				$dependency_feature = $this->get_features( $dependency->get_name() );
 
 				if ( ! $dependency_feature ) {
-					$rollback( $feature_option_key );
+					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					throw new Exceptions\Dependency_Exception(
 						sprintf( 'The feature `%s` has a dependency `%s` that is not available.',
@@ -715,7 +716,7 @@ class Manager extends Base_Object {
 
 				// If dependency is not active.
 				if ( self::STATE_INACTIVE === $dependency_state ) {
-					$rollback( $feature_option_key );
+					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 					throw new Exceptions\Dependency_Exception(
@@ -738,7 +739,7 @@ class Manager extends Base_Object {
 
 				foreach ( $current_feature['dependencies'] as $dependency ) {
 					if ( self::STATE_ACTIVE === $current_feature_state && $feature['name'] === $dependency->get_name() ) {
-						$rollback( $feature_option_key );
+						$rollback( $feature_option_key, self::STATE_ACTIVE );
 
 						/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 						throw new Exceptions\Dependency_Exception(
