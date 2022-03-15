@@ -18,7 +18,7 @@ $e.modules.document = {
 	get CommandHistory() {
 		elementorCommon.helpers.softDeprecated(
 			'$e.modules.document.CommandHistory',
-			'3.5.0',
+			'3.7.0',
 			'$e.modules.editor.document.CommandHistoryBase'
 		);
 
