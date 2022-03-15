@@ -177,7 +177,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'navigation_left_icon',
 			[
-				'label' => esc_html__( 'Left Arrow Icon', 'elementor' ),
+				'label' => esc_html__( 'Previous Arrow Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
@@ -232,7 +232,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'navigation_right_icon',
 			[
-				'label' => esc_html__( 'Right Arrow Icon', 'elementor' ),
+				'label' => esc_html__( 'Next Arrow Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
