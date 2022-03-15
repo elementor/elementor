@@ -1,7 +1,6 @@
 import Component from './mock/component.spec';
-import Helpers from 'elementor-api/utils/helpers';
 
-QUnit.module( 'File: modules/web-cli/assets/jsextras/hash-commands.js', ( hooks ) => {
+QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks ) => {
 	let originalWarnFunction;
 
 	hooks.before( () => {

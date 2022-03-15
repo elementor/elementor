@@ -3,7 +3,7 @@ import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBaseMock, { CommandBaseExportedMock } from './mock/command-base.spec';
 
 jQuery( () => {
-	QUnit.module( 'File: modules/web-cli/assets/jsmodules/command-base.js', () => {
+	QUnit.module( 'File: modules/web-cli/assets/js/modules/command-base.js', () => {
 		QUnit.module( 'CommandBase', () => {
 			QUnit.test( 'run(): on catch apply', ( assert ) => {
 				const random = Math.random().toString();

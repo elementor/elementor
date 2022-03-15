@@ -6,7 +6,7 @@ import CommandDataMock, { CommandDataExportedMock } from './mock/command-data.sp
 import * as errors from 'elementor-api/core/data/errors/';
 
 jQuery( () => {
-	QUnit.module( 'File: modules/web-cli/assets/jsmodules/command-data.js', () => {
+	QUnit.module( 'File: modules/web-cli/assets/js/modules/command-data.js', () => {
 		QUnit.module( 'CommandData', () => {
 			QUnit.test( 'getRequestData(): simple', ( assert ) => {
 				// Register test data command.
