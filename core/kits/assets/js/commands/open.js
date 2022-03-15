@@ -12,7 +12,7 @@ export class Open extends $e.modules.CommandBase {
 			return jQuery.Deferred().resolve();
 		}
 
-		$e.routes.clearHistory( this.component.getRootContainer() );
+		$e.routes.clearHistory( this.component.getServiceName() );
 
 		this.component.toggleHistoryClass();
 

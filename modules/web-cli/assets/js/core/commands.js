@@ -547,7 +547,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	removeCurrentTrace( currentComponent ) {
-		const container = currentComponent.getRootContainer();
+		const container = currentComponent.getServiceName();
 
 		this.currentTrace.pop();
 
