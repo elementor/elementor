@@ -1,56 +1,46 @@
 import CommandInfra from './command-infra';
 
-export default class CommandBase extends ArgsObject {
+/**
+ * @name $e.modules.CommandBase
+ */
+export default class CommandBase extends CommandInfra {
 	static getInstanceType() {
 		return 'CommandBase';
 	}
 
-	/**
-	 * Get info of command.
-	 *
-	 * Use to provide 'extra' information about the command.
-	 *
-	 * @returns {Object}
-	 */
-	static getInfo() {
-		return {};
+	onBeforeRun( args = {} ) {
+		$e.hooks.runUIBefore( this.command, args );
+	}
+
+	onAfterRun( args = {}, result ) {
+		$e.hooks.runUIAfter( this.command, args, result );
+	}
+
+	onBeforeApply( args = {} ) {
+		$e.hooks.runDataDependency( this.command, args );
+	}
+
+	onAfterApply( args = {}, result ) {
+		$e.hooks.runDataAfter( this.command, args, result );
+	}
+
+	onCatchApply( e ) {
+		this.runCatchHooks( e );
 	}
 
 	/**
-	 * Current component.
+	 * Run all the catch hooks.
 	 *
-	 * @type {Component}
+	 * @param {Error} e
 	 */
-	component;
-
-	/**
-	 * Function constructor().
-	 *
-	 * Create Commands Base.
-	 *
-	 * @param [args={}]
-	 * @param [commandsAPI={}]
-	 */
-	constructor( args, commandsAPI = $e.commands ) {
-		super( args );
-
-		// Acknowledge self about which command it run.
-		this.currentCommand = commandsAPI.getCurrentLast();
-
-		// Assign instance of current component.
-		this.component = commandsAPI.getComponent( this.currentCommand );
-
-		// Who ever need do something before without `super` the constructor can use `initialize` method.
-		this.initialize( args );
-
-		// Refresh args, maybe the changed via `initialize`.
-		args = this.args;
-
-		// Validate args before run.
-		this.validateArgs( args );
+	runCatchHooks( e ) {
+		$e.hooks.runDataCatch( this.command, this.args, e );
+		$e.hooks.runUICatch( this.command, this.args, e );
 	}
 
 	/**
+	 * TODO - Remove - Backwards compatibility.
+	 *
 	 * Function requireContainer().
 	 *
 	 * Validate `arg.container` & `arg.containers`.
@@ -60,6 +50,8 @@ export default class CommandBase extends ArgsObject {
 	 * @throws {Error}
 	 */
 	requireContainer( args = this.args ) {
+		elementorCommon.helpers.softDeprecated( 'requireContainer', '3.6.0', 'Extend `$e.modules.editor.CommandContainerBase` or `$e.modules.editor.CommandContainerInternalBase`' );
+
 		if ( ! args.container && ! args.containers ) {
 			throw Error( 'container or containers are required.' );
 		}
