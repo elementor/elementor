@@ -2,7 +2,7 @@ import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandInfraMock from './mock/command-infra.spec';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/modules/command-infra.js', () => {
+	QUnit.module( 'File: modules/web-cli/assets/js/modules/command-infra.js', () => {
 		QUnit.module( 'CommandInfra', () => {
 			QUnit.test( 'constructor(): Doing it wrong', ( assert ) => {
 				assert.throws(

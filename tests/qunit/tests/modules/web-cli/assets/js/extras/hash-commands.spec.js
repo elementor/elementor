@@ -7,12 +7,12 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 		$e.components.register( new Component() );
 
 		// Make sure the original warn function will not be triggered to avoid printing on the console.
-		originalWarnFunction = elementorCommon.helpers.consoleWarn;
-		elementorCommon.helpers.consoleWarn = () => {};
+		originalWarnFunction = console.warn;
+		console.warn = () => {};
 	} );
 
 	hooks.after( () => {
-		elementorCommon.helpers.consoleWarn = originalWarnFunction;
+		console.warn = originalWarnFunction;
 	} );
 
 	QUnit.test( 'get(): Ensure valid return format', ( assert ) => {

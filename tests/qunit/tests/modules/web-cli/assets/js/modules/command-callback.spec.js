@@ -4,7 +4,7 @@ import CommandCallback from 'elementor-api/modules/command-callback';
 import CommandCallbackMock from './mock/command-callback.spec';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/modules/command-callback.js', () => {
+	QUnit.module( 'File: modules/web-cli/assets/js/modules/command-callback.js', () => {
 		QUnit.module( 'CommandCallback', () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const command = new CommandCallbackMock( {} );

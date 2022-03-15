@@ -1,13 +1,14 @@
 export const tests = () => {
+	// WEB CLI.
 	require( './modules/web-cli/assets/js/index' );
 
 	require( './assets/dev/js/editor/container/container.spec' );
 
-	// JS API editor
+	// WEB CLI editor
 	require( './assets/dev/js/editor/command-bases/command-container-base.spec' );
 	require( './assets/dev/js/editor/command-bases/command-container-internal-base.spec' );
 
-	// JS API editor document.
+	// WEB CLI editor document.
 	require( './assets/dev/js/editor/document/command-bases/command-history-base.spec' );
 	require( './assets/dev/js/editor/document/command-bases/command-history-debounce-base.spec' );
 	require( './assets/dev/js/editor/document/command-bases/command-disable-enable.spec' );
@@ -15,16 +16,16 @@ export const tests = () => {
 	require( './assets/dev/js/editor/document/dynamic/commands/base/disable-enable.spec' );
 	require( './assets/dev/js/editor/document/globals/commands/base/disable-enable.spec' );
 
-	// JS API editor document components & commands.
+	// WEB CLI editor document components & commands.
 	require( './assets/dev/js/editor/document/component.spec' );
 
-	// JS API editor globals data.
+	// WEB CLI editor globals data.
 	require( './assets/dev/js/editor/data/globals/component.spec' );
 
 	// Kits.
 	require( './core/kits/assets/js/manager.spec' );
 
-	// JS API kits components & commands.
+	// WEB CLI kits components & commands.
 	require( './core/kits/assets/js/component.spec' );
 
 	// Modules.

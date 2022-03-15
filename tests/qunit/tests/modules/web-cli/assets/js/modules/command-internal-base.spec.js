@@ -4,7 +4,7 @@ import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandInternalBaseMock, { CommandInternalBaseExportedMock } from './mock/command-internal-base.spec';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/modules/command-internal-base.js', () => {
+	QUnit.module( 'File: modules/web-cli/assets/js/modules/command-internal-base.js', () => {
 		QUnit.module( 'CommandInternalBase', () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommand = ( command ) => {
