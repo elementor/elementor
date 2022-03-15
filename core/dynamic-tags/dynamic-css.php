@@ -98,26 +98,29 @@ class Dynamic_CSS extends Post_Local_Cache {
 	 * @access public
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
-		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
+		$dynamic_settings = ! empty( $values['__dynamic__'] ) ? $values['__dynamic__'] : [];
 
-		if ( ! empty( $dynamic_settings ) ) {
-			$controls = array_intersect_key( $controls, $dynamic_settings );
+		$controls = array_merge(
+			array_intersect_key( $controls, $dynamic_settings ),
+			array_filter( $controls, function( $values ) {
+				return ( ! empty( $values['style_fields'] ) );
+			} )
+		);
 
-			$all_controls = $controls_stack->get_controls();
+		foreach ( $controls as $control ) {
 
-			$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, $controls );
-
-			foreach ( $controls as $control ) {
-				if ( ! empty( $control['style_fields'] ) ) {
-					$this->add_repeater_control_style_rules( $controls_stack, $control, $values[ $control['name'] ], $placeholders, $replacements );
-				}
-
-				if ( empty( $control['selectors'] ) ) {
-					continue;
-				}
-
-				$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
+			if ( ! empty( $control['style_fields'] ) ) {
+				$this->add_repeater_control_style_rules( $controls_stack, $control, $values[ $control['name'] ], $placeholders, $replacements );
+				continue;
 			}
+
+			if ( empty( $control['selectors'] ) ) {
+				continue;
+			}
+
+			$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, [ $control['name'] => $control ], $values );
+
+			$this->add_control_style_rules( $control, $parsed_dynamic_settings, $controls, $placeholders, $replacements );
 		}
 	}
 }
