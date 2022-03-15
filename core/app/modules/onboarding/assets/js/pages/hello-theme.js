@@ -59,11 +59,14 @@ export default function HelloTheme() {
 		setIsInstalling( false );
 
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'success',
-			action: 'hello theme activation',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'success',
+				action: 'hello theme activation',
+			},
 		} );
 
 		setNoticeState( noticeStateSuccess );
@@ -83,11 +86,14 @@ export default function HelloTheme() {
 
 	const onErrorInstallHelloTheme = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'failure',
-			action: 'hello theme install',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'failure',
+				action: 'hello theme install',
+			},
 		} );
 
 		setNoticeState( {
@@ -123,9 +129,12 @@ export default function HelloTheme() {
 
 	const sendNextButtonEvent = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'next',
-			step: state.currentStep,
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+			},
 		} );
 	};
 
@@ -225,11 +234,14 @@ export default function HelloTheme() {
 				onHelloThemeActivationSuccess();
 			} else if ( 'error' === activateHelloThemeAjaxState.status ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					step: state.currentStep,
-					action_state: 'failure',
-					action: 'hello theme activation',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						action_state: 'failure',
+						action: 'hello theme activation',
+					},
 				} );
 
 				setNoticeState( {
