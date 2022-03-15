@@ -198,7 +198,7 @@ class Module extends BaseModule {
 		}
 
 		if ( $manifest_data['plugins'] && ! current_user_can( 'install_plugins' ) ) {
-			throw new \Error( self::PERMISSIONS_ERROR_KEY );
+			throw new \Error( static::PERMISSIONS_ERROR_KEY );
 		}
 
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );

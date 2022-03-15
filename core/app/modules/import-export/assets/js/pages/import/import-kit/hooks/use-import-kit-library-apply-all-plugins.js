@@ -11,7 +11,7 @@ export function useImportKitLibraryApplyAllPlugins( plugins ) {
 		{ missing } = importPluginsData || {};
 
 	useEffect( () => {
-		if ( ! plugins.length ) {
+		if ( plugins && ! plugins.length ) {
 			return;
 		}
 		setMissingPlugins( missing );

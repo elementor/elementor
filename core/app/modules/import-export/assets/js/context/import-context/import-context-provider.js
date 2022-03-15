@@ -27,10 +27,6 @@ export default function ImportContextProvider( props ) {
 	);
 }
 
-export function shouldResolveConflict() {
-
-}
-
 ImportContextProvider.propTypes = {
 	children: PropTypes.object.isRequired,
 };
