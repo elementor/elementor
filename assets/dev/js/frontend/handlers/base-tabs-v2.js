@@ -168,13 +168,13 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 					case 'Enter':
 					case 'Space':
 						event.preventDefault();
-						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
+						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
 						break;
 				}
 			},
 			click: ( event ) => {
 				event.preventDefault();
-				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
 			},
 		} );
 	}
@@ -185,13 +185,26 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		this.activateDefaultTab();
 	}
 
-	onEditSettingsChange( propertyName ) {
+	onEditSettingsChange( propertyName, value ) {
 		if ( 'activeItemIndex' === propertyName ) {
-			this.activateDefaultTab();
+			this.changeActiveTab( value );
 		}
 	}
 
-	changeActiveTab( tabIndex ) {
+	/**
+	 * @param {string} tabIndex
+	 * @param {boolean} fromUser - Whether the call is caused by the user or internal.
+	 */
+	changeActiveTab( tabIndex, fromUser = false ) {
+		// `document/repeater/select` is used only in edit mod, and only when its not internal call,
+		// in other words only in editor and when user triggered the change.
+		if ( fromUser && this.isEdit ) {
+			return window.top.$e.run( 'document/repeater/select', {
+				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
+				index: parseInt( tabIndex ),
+			} );
+		}
+
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
