@@ -28,7 +28,7 @@ $e.modules.document = {
 	get CommandHistoryDebounce() {
 		elementorCommon.helpers.softDeprecated(
 			'$e.modules.CommandHistoryDebounce',
-			'3.5.0',
+			'3.7.0',
 			'$e.modules.editor.document.CommandHistoryDebounceBase'
 		);
 
