@@ -96,7 +96,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			\WP_CLI::error( 'Please specify a file to import' );
 		}
 
-		\WP_CLI::line( 'Kit export started' );
+		\WP_CLI::line( 'Kit import started' );
 
 		\WP_CLI::line( 'Extracting zip archive...' );
 
@@ -125,7 +125,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$import_settings = [
 			'include' => [ 'templates', 'content', 'site-settings' ],
-			'directory' => $extraction_result['extraction_directory'],
+			'session' => $extraction_result['extraction_directory'],
 		];
 
 		foreach ( $assoc_args as $key => $value ) {
@@ -143,7 +143,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::line( 'Removing temp files...' );
 
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['session'] );
 
 			// The file was created from remote or library request and it should be removed.
 			if ( $url ) {
@@ -152,7 +152,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::success( 'Kit imported successfully' );
 		} catch ( \Error $error ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['session'] );
 
 			\WP_CLI::error( $error->getMessage() );
 		}

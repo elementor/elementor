@@ -205,7 +205,7 @@ class Module extends BaseModule {
 			throw new \Error( self::MANIFEST_ERROR_KEY );
 		}
 
-		if ( $manifest_data['plugins'] && ! current_user_can( 'install_plugins' ) ) {
+		if ( isset( $manifest_data['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
 			throw new \Error( static::PERMISSIONS_ERROR_KEY );
 		}
 
