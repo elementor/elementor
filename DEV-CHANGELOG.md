@@ -1,5 +1,32 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev1 - 2022-03-16
+* Fix: Overlay of image upload appeared as dark mode even when editor was set to light mode [ED-5870] (#17903)
+* New: Added container element [ED-2609] (#16926)
+* Fix: Container - Widget width control is broken when Container experiment is active [ED-6565] (#18033)
+* Fix: Posts, Archive Posts - Widget appears empty while using PHP 8.1 [ED-6466] (#17869)
+* Fix: Container is not functioning as expected [ED-6592] (#18078)
+* Fix: PHP 8.1 throws errors and notices [ED-6708] (#18076)
+* Fix: JS API Refactor Backward Compatibility [ED-6692] (#18068)
+* Fix: Visit site link when finishing the import process leads to the wrong place [ED-6509] (#18080)
+* Tweak: Added the Revisions link to Import/Export intro screen [ED-2696] (#18082)
+* Fix: Edit areas - Error is thrown when changing edit mode [ED-6745] (#18101)
+* Fix: Container is not functioning as expected [ED-6709] (#18085)
+* Fix: Import export from kit library [ED-6684] (#18047)
+* Fix: Import export from kit library [ED-6684] (#18122)
+* Fix: Web-CLI was not loaded in the React app [ED-6768] (#18119)
+* Fix: Container - Direction control selection is not being reflected in responsive devices [ED-6710] (#18129)
+* Tweak: Add the ability to identify a kit [ED-6511] (#18024)
+* Tweak: Added previous active kit to the site options for future restore option [ED-6751] (#18088)
+* Fix: Accordion/toggle Widget with sticky caused the page to scroll after clicking [ED-6766] (#18114)
+* Fix: CSS render is delayed in the Editor [ED-6767] (#18148)
+* Fix: Imported kit doesn't contain the global design [ED-6783] (#18150)
+* Tweak: Admin Dashboard - Open the Go Pro link in a new tab [ED-6347] (#18112)
+* New: Onboarding Analytics [ED-6162] (#18049)
+* Fix: Menu Cart Widget with 3.6.4 Pro - The icon moved to the left [ED-6797] (#18158)
+* Revert "Fix: Image size with a link shrunk in Image widget [ED-3397] (#17245)" (#18159)
+* Tweak: Import All command should skip the Plugins screen and start import process[ED-6510] (#18131)
+
 #### 3.6.0-dev45 - 2022-03-03
 * Fix: Initial site name loads incorrectly in input, selecting image for logo causes JS error (#18036)
 * Fix: Revert `elementSettingsModel` deprecation from #17374 [ED-6575] (#18044)
@@ -399,21 +426,3 @@
 * Fix: When the inline-SVG experiment is active the list icons alignment can not be changed [ED-4758] (#16109)
 * Fix: Autoplay not working for Vimeo videos in Lightbox (ED-4796) (#16068)
 * Fix: Missing translations escaping in default values module (#16151)
-
-#### 3.5.0-dev13 - 2021-08-23
-* New: Docs - UI States [ED-4628] (#15961)
-* Fix: Reflect inherited value in slider control [ED-4766] (#16040)
-* Tweak: Library - On open, don't query all templates [ED-3149] (#15662)
-* Fix: Custom Code Promotion [ED-508] (#15960)
-* Tweak: Changed default cards view in Kit Library [ED-4484] (#15982)
-* Tweak: Added the option to search by tag names in Kit Library [ED-4482] (#15959)
-* Tweak: Changed Kit Library tab name [ED-3727] (#15986)
-* Fix: Finder incorrectly identifies pages created. [ED-3708] (#15352)
-* Fix: Admin Top Bar conflicts with WP customizer [ED-4768] (#16101)
-
-#### 3.5.0-dev11 - 2021-08-19
-* Revert: Fix: Gradient control doesn't work on frontend when using Global Colors (#16053)
-* Fix: Background image controls missing when using dynamic image (Closes #16050) [ED-4785] (#16062)
-* Fix: Motion effects popover is not visible since v3.4.1 (#16044) [ED-4788] (#16061)
-* Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active (ED-4787) (#16060)
-* Tweak: Updated Changelog to v3.4.2 (#16066)
