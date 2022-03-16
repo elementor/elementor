@@ -1,4 +1,3 @@
-import CommandBase from 'elementor-api/modules/command-base';
 import CommandCallback from 'elementor-api/modules/command-callback';
 
 import { createSlice } from '@reduxjs/toolkit';
