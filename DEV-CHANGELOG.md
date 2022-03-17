@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev2 - 2022-03-17
+* Fix: Issues in the CLI Import command which caused the import failure [ED-6805] (#18171)
+
 #### 3.7.0-dev1 - 2022-03-16
 * Fix: Overlay of image upload appeared as dark mode even when editor was set to light mode [ED-5870] (#17903)
 * New: Added container element [ED-2609] (#16926)
@@ -410,19 +413,3 @@
 * Tweak: Responsive bar - Make the minimum height smaller for all responsive devices (ED-4359) (#16017)
 * Tweak: Internal - Add external filter for Context Menu Groups [ED-4483] (#16160)
 * Tweak: Add CSS Transform section [ED-4767] (#16064)
-
-#### 3.5.0-dev14 - 2021-08-26
-* Fix: consistent hook names (#16099)
-* New: Default values first iteration [ED-3683] (#15518)
-* Fix: Landing page builder experiments causes page not found/ 404 errors with media files URLs (#15943) (ED-4806) (#16096)
-* Fix: Animated elements disappear before entering the viewport (#2806) (ED-2513) (#16095)
-* Tweak: Added Elementor price plan filter to Kit Library (closes #16075) [ED-4804] (#16102)
-* Tweak: Entrance Animations - Once the element has been animated, unobserve it [ED-4845] (#16127)
-* Tweak: Internal - Remove all usages of `Elementor\Utils::get_create_new_post_url()` (#16128)
-* Fix: Controls in the Editor's JS system always have an empty string value as default, so they cannot be deleted (ED-4772) (#16042)
-* Fix: Can't upload SVG files using Elementor (#16084, #16119, #16088) [ED-4813] (#16125)
-* Fix: `wp_kses_post` strips `srcset` attribute from images (#16111) [ED-4840] (#16122)
-* Fix: Inline CSS is parsed to an invalid charcaters. (#16143)
-* Fix: When the inline-SVG experiment is active the list icons alignment can not be changed [ED-4758] (#16109)
-* Fix: Autoplay not working for Vimeo videos in Lightbox (ED-4796) (#16068)
-* Fix: Missing translations escaping in default values module (#16151)
