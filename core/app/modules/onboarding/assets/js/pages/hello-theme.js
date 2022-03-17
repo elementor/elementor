@@ -260,20 +260,26 @@ export default function HelloTheme() {
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Hello.svg' }
-				title={ __( 'We always start with Hello.', 'elementor' ) }
+				title={ __( 'Every site starts with a theme.', 'elementor' ) }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
 			>
-				<span>
-					{ __( 'Every WordPress site needs a theme. Join over 1M people already using Elementor’s Hello theme and build your website exactly the way you want.', 'elementor' ) }
-				</span>
+				<p>
+					{ __( 'Hello is Elementor\'s official blank canvas theme optimized to build your website exactly the way you want.', 'elementor' ) }
+				</p>
+				<p>
+					{ __( 'Here\'s why:', 'elementor' ) }
+				</p>
 				<ul className="e-onboarding__feature-list">
-					<li>{ __( 'It’s a flexible, lightweight canvas', 'elementor' ) }</li>
-					<li>{ __( 'Super-fast loading time', 'elementor' ) }</li>
-					<li>{ __( 'And it’s great for SEO', 'elementor' ) }</li>
+					<li>{ __( 'Light-weight and fast loading', 'elementor' ) }</li>
+					<li>{ __( 'Great for SEO', 'elementor' ) }</li>
+					<li>{ __( 'Already being used by 1M+ web creators', 'elementor' ) }</li>
 				</ul>
 			</PageContentLayout>
+			<div className="e-onboarding__footnote">
+				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }
+			</div>
 		</Layout>
 	);
 }
