@@ -30,9 +30,11 @@ class WP_Content extends Base {
 			'can_export' => true,
 		] );
 
-		foreach ( $post_types as $post_type ) {
-			if ( ! in_array( $post_type, $this->custom_post_types ) ) {
-				unset( $post_types[ $post_type ] );
+		if ( null !== $this->custom_post_types ) {
+			foreach ( $post_types as $post_type ) {
+				if ( ! in_array( $post_type, $this->custom_post_types ) ) {
+					unset( $post_types[ $post_type ] );
+				}
 			}
 		}
 
