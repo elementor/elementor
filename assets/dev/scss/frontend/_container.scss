@@ -2,10 +2,14 @@
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--display: flex;
+	--flex-direction: column;
 	--flex-basis: auto;
 	--flex-grow: 0;
 	--flex-shrink: 1;
-	--content-width: var( --container-max-width, 1140px ); // Use the width from `Site Settings` or default to 1140px.;
+	// Use the width from `Site Settings` or default to 1140px.
+	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
+	// isn't working properly.
+	--content-width: Min( 100%, var( --container-max-width, 1140px ) );
 	--width: 100%;
 	--min-height: initial;
 	--height: auto;
@@ -28,6 +32,7 @@
 	position: var( --position );
 	display: var( --display );
 	text-align: var( --text-align );
+	flex-direction: var( --flex-direction );
 	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).

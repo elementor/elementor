@@ -102,6 +102,7 @@ const entry = {
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
+	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 };
 
 const frontendEntries = {
