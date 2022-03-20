@@ -61,18 +61,15 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 	 * Adding new 'defaults' config for handling children elements.
 	 */
 	protected function get_initial_config() {
-		$config = parent::get_initial_config();
-
-		$config['defaults'] = [
-			'elements' => $this->get_default_children_elements(),
-			'elements_title' => $this->get_defaults_children_title(),
-			'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
-			'repeater_title_setting' => $this->get_default_repeater_title_setting(),
-		];
-
-		$config['support_nesting'] = true;
-
-		return $config;
+		return array_merge( parent::get_initial_config(), [
+			'defaults' => [
+				'elements' => $this->get_default_children_elements(),
+				'elements_title' => $this->get_defaults_children_title(),
+				'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
+				'repeater_title_setting' => $this->get_default_repeater_title_setting(),
+			],
+			'support_nesting' => true,
+		] );
 	}
 
 	/**
