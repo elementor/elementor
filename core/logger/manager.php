@@ -54,6 +54,10 @@ class Manager extends BaseModule {
 	}
 
 	public function rest_error_handler( $error_number, $error_message, $error_file, $error_line ) {
+		if ( Utils::is_wp_cli() ) {
+			return null;
+		}
+		
 		$error = new \WP_Error( $error_number, $error_message, [
 			'type' => $error_number,
 			'message' => $error_message,
