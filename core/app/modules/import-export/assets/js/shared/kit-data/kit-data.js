@@ -12,8 +12,8 @@ const siteEditorPath = elementorAppConfig.hasPro ? '#/site-editor' : '#/site-edi
 
 function KitData( { data } ) {
 	const { templates, siteSettings, content, plugins } = useKitData( data ),
-		{ elementorHomePageUrl, recentlyEditedElementorPageUrl } = data?.configData || elementorAppConfig[ 'import-export' ],
-		siteSettingsUrl = elementorHomePageUrl || recentlyEditedElementorPageUrl,
+		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = data?.configData || elementorAppConfig[ 'import-export' ],
+		siteSettingsUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl,
 		headers = [
 			__( 'Site Area', 'elementor' ),
 			__( 'Included', 'elementor' ),
