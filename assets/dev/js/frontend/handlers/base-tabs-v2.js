@@ -103,24 +103,6 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 		$activeContent.attr( 'hidden', 'hidden' );
 	}
 
-	activateTab( tabIndex ) {
-		const settings = this.getSettings(),
-			activeClass = settings.classes.active,
-			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
-			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
-			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
-
-		$requestedTitle.add( $requestedContent ).addClass( activeClass );
-		$requestedTitle.attr( {
-			tabindex: '0',
-			'aria-selected': 'true',
-			'aria-expanded': 'true',
-		} );
-
-		$requestedContent[ settings.showTabFn ]( animationDuration, () => elementorFrontend.elements.$window.trigger( 'resize' ) );
-		$requestedContent.removeAttr( 'hidden' );
-	}
-
 	handleKeyboardNavigation( event ) {
 		const tab = event.currentTarget,
 			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
