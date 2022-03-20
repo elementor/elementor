@@ -1,4 +1,3 @@
-import CommandBase from 'elementor-api/modules/command-base';
 import CommandCallback from 'elementor-api/modules/command-callback';
 
 import { createSlice } from '@reduxjs/toolkit';
@@ -52,8 +51,17 @@ export default class ComponentBase extends Module {
 	}
 
 	getRootContainer() {
-		const parts = this.getNamespace().split( '/' );
-		return parts[ 0 ];
+		elementorCommon.helpers.softDeprecated(
+			'getRootContainer()',
+			'3.7.0',
+			'getServiceName()',
+		);
+
+		return this.getServiceName();
+	}
+
+	getServiceName() {
+		return this.getNamespace().split( '/' )[ 0 ];
 	}
 
 	defaultTabs() {
@@ -257,7 +265,7 @@ export default class ComponentBase extends Module {
 
 		$e.routes.clearCurrent( this.getNamespace() );
 
-		$e.routes.clearHistory( this.getRootContainer() );
+		$e.routes.clearHistory( this.getServiceName() );
 
 		return true;
 	}
@@ -434,6 +442,6 @@ export default class ComponentBase extends Module {
 	}
 
 	toggleHistoryClass() {
-		document.body.classList.toggle( 'e-routes-has-history', !! $e.routes.getHistory( this.getRootContainer() ).length );
+		document.body.classList.toggle( 'e-routes-has-history', !! $e.routes.getHistory( this.getServiceName() ).length );
 	}
 }

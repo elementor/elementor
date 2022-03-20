@@ -19,6 +19,23 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
+
+		Object.defineProperty( this, 'classes', {
+			get() {
+				elementorCommon.helpers.softDeprecated(
+					'$e.commands.classes',
+					'3.7.0',
+					'$e.commands.getCommandClass(), $e.commandsInternal.getCommandClass(), $e.data.getCommandClass(), $e.routes.getCommandClass() according to the requested command infra-structure,'
+				);
+
+				return {
+					... $e.commands.commands,
+					... $e.commandsInternal.commands,
+					... $e.data.commands,
+					... $e.routes.commands,
+				};
+			},
+		} );
 	}
 
 	/**
@@ -147,7 +164,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			return false;
 		}
 
-		return command === this.current[ component.getRootContainer() ];
+		return command === this.current[ component.getServiceName() ];
 	}
 
 	/**
@@ -251,7 +268,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 */
 	beforeRun( command, args = {} ) {
 		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+			container = component.getServiceName();
 
 		this.addCurrentTrace( container, command, args );
 
@@ -530,7 +547,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	removeCurrentTrace( currentComponent ) {
-		const container = currentComponent.getRootContainer();
+		const container = currentComponent.getServiceName();
 
 		this.currentTrace.pop();
 
