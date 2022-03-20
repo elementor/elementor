@@ -113,6 +113,10 @@ class Wp_Cli extends \WP_CLI_Command {
 			$url = $args[0];
 		}
 
+		if ( 'enable' === $assoc_args['unfilteredFilesUpload'] ) {
+			Plugin::$instance->uploads_manager->enable_unfiltered_files_upload();
+		}
+
 		if ( $url ) {
 			$file_path = $this->create_temp_file_from_url( $url );
 		}
