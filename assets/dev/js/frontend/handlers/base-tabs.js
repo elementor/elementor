@@ -168,13 +168,13 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 					case 'Enter':
 					case 'Space':
 						event.preventDefault();
-						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 						break;
 				}
 			},
 			click: ( event ) => {
 				event.preventDefault();
-				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 			},
 		} );
 	}
@@ -185,20 +185,13 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		this.activateDefaultTab();
 	}
 
-	onEditSettingsChange( propertyName, value ) {
+	onEditSettingsChange( propertyName ) {
 		if ( 'activeItemIndex' === propertyName ) {
-			this.changeActiveTab( value, false );
+			this.activateDefaultTab();
 		}
 	}
 
-	changeActiveTab( tabIndex, fromBindings = false ) {
-		if ( fromBindings && this.isEdit ) {
-			return window.top.$e.run( 'document/repeater/select', {
-				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
-				index: parseInt( tabIndex ),
-			} );
-		}
-
+	changeActiveTab( tabIndex ) {
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
