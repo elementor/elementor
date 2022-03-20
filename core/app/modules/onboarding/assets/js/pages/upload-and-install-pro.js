@@ -25,11 +25,14 @@ export default function UploadAndInstallPro() {
 		const errorMessage = error?.message || 'That didn\'t work. Try uploading your file again.';
 
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'failure',
-			action: 'install pro',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'failure',
+				action: 'install pro',
+			},
 		} );
 
 		setNoticeState( {
@@ -47,10 +50,13 @@ export default function UploadAndInstallPro() {
 		if ( 'initial' !== installProZipAjaxState.status ) {
 			if ( 'success' === installProZipAjaxState.status && installProZipAjaxState.response?.elementorProInstalled ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'pro uploaded',
-					step: state.currentStep,
-					source: fileSource,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						source: fileSource,
+					},
 				} );
 
 				if ( opener && opener !== window ) {
@@ -67,9 +73,12 @@ export default function UploadAndInstallPro() {
 
 	const onProUploadHelpLinkClick = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'pro plugin upload help',
-			step: state.currentStep,
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+			},
 		} );
 	};
 

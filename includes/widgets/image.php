@@ -279,7 +279,7 @@ class Widget_Image extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--img-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} img' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
