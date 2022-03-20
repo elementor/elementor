@@ -109,6 +109,8 @@ class Test_Usage extends Base_Schema {
 		$this->assert_array_have_keys( ['not-supported'], $usage['library'] );
 		$this->assert_array_have_keys( ['wp-post'], $usage['elements'] );
 		$this->assertCount( 4, $usage['elements']['wp-post'] );
+		$this->assertCount( 1, $usage['documents']['kit'] );
+		$this->assertCount( 1, $usage['documents']['wp-post'] );
 		$this->assert_array_have_keys( ['__dynamic__'], $usage['elements']['wp-post']['heading']['controls']['general'] );
 
 		// Assert - Validate schema.
