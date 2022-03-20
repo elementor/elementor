@@ -84,25 +84,6 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 		this.setSettings( originalToggleMethods );
 	}
 
-	deactivateActiveTab( tabIndex ) {
-		const settings = this.getSettings(),
-			activeClass = settings.classes.active,
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
-			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
-			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
-
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
-		$activeTitle.attr( {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
-		} );
-
-		$activeContent[ settings.hideTabFn ]();
-		$activeContent.attr( 'hidden', 'hidden' );
-	}
-
 	handleKeyboardNavigation( event ) {
 		const tab = event.currentTarget,
 			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
@@ -146,6 +127,25 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 		} else {
 			$tabs.first().trigger( 'focus' );
 		}
+	}
+
+	deactivateActiveTab( tabIndex ) {
+		const settings = this.getSettings(),
+			activeClass = settings.classes.active,
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
+
+		$activeTitle.add( $activeContent ).removeClass( activeClass );
+		$activeTitle.attr( {
+			tabindex: '-1',
+			'aria-selected': 'false',
+			'aria-expanded': 'false',
+		} );
+
+		$activeContent[ settings.hideTabFn ]();
+		$activeContent.attr( 'hidden', 'hidden' );
 	}
 
 	activateTab( tabIndex ) {
