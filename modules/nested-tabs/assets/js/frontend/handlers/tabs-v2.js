@@ -41,10 +41,4 @@ export default class TabsV2 extends BaseTabsV2 {
 
 		super.onInit( ...args );
 	}
-
-	onEditSettingsChange( propertyName, value ) {
-		if ( 'activeItemIndex' === propertyName ) {
-			this.changeActiveTab( value, false );
-		}
-	}
 }

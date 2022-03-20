@@ -97,4 +97,10 @@ export default class BaseTabsV2 extends Tabs {
 			},
 		} );
 	}
+
+	onEditSettingsChange( propertyName, value ) {
+		if ( 'activeItemIndex' === propertyName ) {
+			this.changeActiveTab( value, false );
+		}
+	}
 }

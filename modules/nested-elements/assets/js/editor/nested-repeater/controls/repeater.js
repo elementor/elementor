@@ -23,4 +23,21 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 			[ defaults.repeater_title_setting ]: component.getChildrenTitle( widgetContainer, index ),
 		};
 	}
+
+	updateActiveRow() {
+		let activeItemIndex = 1;
+
+		if ( this.currentEditableChild ) {
+			activeItemIndex = this.currentEditableChild.itemIndex;
+		}
+
+		$e.run( 'document/repeater/select', {
+			container: this.container,
+			index: activeItemIndex,
+		} );
+	}
+
+	onAddChild() {
+		this.updateChildIndexes();
+	}
 }
