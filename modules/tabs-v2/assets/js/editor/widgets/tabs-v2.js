@@ -10,7 +10,7 @@ export class TabsV2 extends elementor.modules.elements.types.base.WidgetBase {
 	}
 
 	getWidgetType() {
-		return 'nested-tabs';
+		return 'tabs-v2';
 	}
 
 	getView() {

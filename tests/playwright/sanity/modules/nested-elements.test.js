@@ -10,7 +10,7 @@ const createTabsWidget = async ( editorPage, targetID = null ) => {
 		targetID = await editorPage.addElement( { elType: 'container' }, 'document' );
 	}
 
-	return await editorPage.addWidget( 'nested-tabs', targetID );
+	return await editorPage.addWidget( 'tabs-v2', targetID );
 };
 
 test.describe.serial( 'NestedElementsModule', () => {

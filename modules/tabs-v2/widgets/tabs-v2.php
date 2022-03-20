@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class NestedTabs extends Widget_Repeater_Base {
+class TabsV2 extends Widget_Repeater_Base {
 
 	public function get_name() {
-		return 'nested-tabs';
+		return 'tabs-v2';
 	}
 
 	public function get_title() {

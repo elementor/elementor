@@ -26,7 +26,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	protected function get_widgets() {
-		return [ 'NestedTabs' ];
+		return [ 'TabsV2' ];
 	}
 
 	public function __construct() {
