@@ -70,6 +70,7 @@ export default class ElementsManager {
 			this.registerElementType( element );
 		} );
 
+		// TODO: Find better place, since container is not module.
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			const ContainerClass = require( './types/container' ).default;
 

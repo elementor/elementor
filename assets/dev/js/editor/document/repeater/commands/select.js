@@ -18,10 +18,8 @@ export class Select extends CommandHistory {
 		this.requireContainer( args );
 		this.requireArgumentType( 'index', 'number', args );
 
-		const { containers = [ args.container ] } = args;
-
 		// When there multiple containers, then its not supported.
-		if ( containers.length > 1 ) {
+		if ( args.containers ) {
 			throw new Error( 'Multiple containers are not supported.' );
 		}
 	}
@@ -39,7 +37,7 @@ export class Select extends CommandHistory {
 		return {
 			container,
 			type: 'selected',
-			subTitle: __( 'Item #' + index ),
+			subTitle: wp.i18n.sprintf( __( 'Item #%d', 'elementor' ), index ),
 			restore: this.constructor.restore,
 			data: {
 				current: index,

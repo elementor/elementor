@@ -19,9 +19,12 @@ export default function GoProPopover( props ) {
 			event.preventDefault();
 
 			elementorCommon.events.dispatchEvent( {
-				placement: elementorAppConfig.onboarding.eventPlacement,
 				event: 'already have pro',
-				step: state.currentStep,
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: state.currentStep,
+				},
 			} );
 
 			// Open the Pro Upload screen in a popup.
@@ -49,9 +52,12 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'get elementor pro',
-					step: state.currentStep,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+					},
 				} );
 			},
 		};

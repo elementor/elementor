@@ -97,6 +97,7 @@ class Modules_Manager {
 			'nested-elements',
 			'nested-tabs',
 			'container-converter',
+			'web-cli',
 		];
 	}
 

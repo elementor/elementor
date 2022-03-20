@@ -104,6 +104,7 @@ const entry = {
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/index.js' ),
 	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/index.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
+	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 };
 
 const frontendEntries = {

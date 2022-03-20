@@ -18,6 +18,6 @@ class Wrap_Core_Dependency {
 	}
 
 	public static function instance( $feature_data ) {
-		return new self( $feature_data );
+		return new static( $feature_data );
 	}
 }
