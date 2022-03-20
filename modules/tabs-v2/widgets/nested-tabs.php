@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\NestedTabs\Widgets;
+namespace Elementor\Modules\TabsV2\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
