@@ -95,7 +95,7 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'nested-elements',
-			'nested-tabs',
+			'tabs-v2',
 			'container-converter',
 			'web-cli',
 		];
