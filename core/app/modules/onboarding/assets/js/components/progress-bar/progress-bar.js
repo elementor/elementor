@@ -46,10 +46,13 @@ export default function ProgressBar() {
 		if ( state.steps[ itemConfig.id ] ) {
 			itemConfig.onClick = () => {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'step click',
-					step: state.currentStep,
-					next_step: itemConfig.id,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						next_step: itemConfig.id,
+					},
 				} );
 
 				navigate( '/onboarding/' + itemConfig.id );

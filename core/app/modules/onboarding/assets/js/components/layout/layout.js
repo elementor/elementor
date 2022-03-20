@@ -10,10 +10,13 @@ export default function Layout( props ) {
 	useEffect( () => {
 		// Send modal load event for current step.
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'modal load',
-			step: props.pageId,
-			user_state: elementorCommon.config.library_connect.is_connected ? 'logged' : 'anon',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: props.pageId,
+				user_state: elementorCommon.config.library_connect.is_connected ? 'logged' : 'anon',
+			},
 		} );
 
 		updateState( {
@@ -59,10 +62,13 @@ export default function Layout( props ) {
 			elRef: goProButtonRef,
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'go pro',
-					step: state.currentStep,
-					contributor: state.isUsageDataShared,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						contributor: state.isUsageDataShared,
+					},
 				} );
 			},
 		} );
