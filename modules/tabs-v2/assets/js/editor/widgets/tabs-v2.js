@@ -1,10 +1,10 @@
-import { default as NestedTabsView } from '../views/nested-tabs';
-import NestedTabsEmptyView from '../views/empty';
+import { default as View } from '../views/view';
+import EmptyView from '../views/empty';
 
 /**
  * @extends {WidgetBase}
  */
-export class NestedTabs extends elementor.modules.elements.types.base.WidgetBase {
+export class TabsV2 extends elementor.modules.elements.types.base.WidgetBase {
 	getType() {
 		return 'widget';
 	}
@@ -14,11 +14,11 @@ export class NestedTabs extends elementor.modules.elements.types.base.WidgetBase
 	}
 
 	getView() {
-		return NestedTabsView;
+		return View;
 	}
 
 	getEmptyView() {
-		return NestedTabsEmptyView;
+		return EmptyView;
 	}
 
 	getModel() {

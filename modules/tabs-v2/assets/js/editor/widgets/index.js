@@ -1,1 +1,1 @@
-export { NestedTabs } from './nested-tabs';
+export { TabsV2 } from './tabs-v2';

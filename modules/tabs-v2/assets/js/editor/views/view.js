@@ -1,7 +1,7 @@
 /**
  * @extends {WidgetRepeaterViewBase}
  */
-export class NestedTabs extends $e.components.get( 'nested-elements/nested-repeater' ).exports.WidgetRepeaterViewBase {
+export class View extends $e.components.get( 'nested-elements/nested-repeater' ).exports.WidgetRepeaterViewBase {
 	events() {
 		const events = super.events();
 
@@ -37,4 +37,4 @@ export class NestedTabs extends $e.components.get( 'nested-elements/nested-repea
 	}
 }
 
-module.exports = NestedTabs;
+module.exports = View;
