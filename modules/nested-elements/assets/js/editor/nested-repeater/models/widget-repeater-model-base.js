@@ -1,7 +1,7 @@
 /**
  * @extends {ElementModel}
  */
-export default class WidgetRepeaterModelBase extends elementor.modules.elements.models.Element {
+export default class NestedModelBase extends elementor.modules.elements.models.Element {
 	initialize( options ) {
 		this.config = elementor.widgetsCache[ options.widgetType ];
 

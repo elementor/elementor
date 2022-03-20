@@ -1,8 +1,8 @@
 /**
- * @name WidgetRepeaterViewBase
+ * @name NestedViewBase
  * @extends {BaseWidgetView}
  */
-export default class WidgetRepeaterViewBase extends elementor.modules.elements.views.BaseWidget {
+export default class NestedViewBase extends elementor.modules.elements.views.BaseWidget {
 	/**
 	 * @inheritDoc
 	 *

@@ -1,7 +1,7 @@
 /**
- * @extends {WidgetRepeaterViewBase}
+ * @extends {NestedViewBase}
  */
-export class View extends $e.components.get( 'nested-elements/nested-repeater' ).exports.WidgetRepeaterViewBase {
+export class View extends $e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase {
 	events() {
 		const events = super.events();
 

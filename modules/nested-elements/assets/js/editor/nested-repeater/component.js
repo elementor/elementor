@@ -1,5 +1,5 @@
-import WidgetRepeaterModelBase from './models/widget-repeater-model-base';
-import WidgetRepeaterViewBase from './views/widget-repeater-view-base';
+import NestedModelBase from './models/widget-repeater-model-base';
+import NestedViewBase from './views/widget-repeater-view-base';
 
 import RepeaterControl from './controls/repeater';
 
@@ -7,8 +7,8 @@ import * as hooks from './hooks/';
 
 export default class Component extends $e.modules.ComponentBase {
 	exports = {
-		WidgetRepeaterModelBase,
-		WidgetRepeaterViewBase,
+		NestedModelBase,
+		NestedViewBase,
 	};
 
 	registerAPI() {

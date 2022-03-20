@@ -22,6 +22,6 @@ export class TabsV2 extends elementor.modules.elements.types.base.WidgetBase {
 	}
 
 	getModel() {
-		return $e.components.get( 'nested-elements/nested-repeater' ).exports.WidgetRepeaterModelBase;
+		return $e.components.get( 'nested-elements/nested-repeater' ).exports.NestedModelBase;
 	}
 }
