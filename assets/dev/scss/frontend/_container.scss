@@ -171,6 +171,12 @@
 		&-google_maps {
 			flex-basis: 100%;
 		}
+
+		// Fix media carousel widget broken (ED-6796).
+		// TODO: Find a better solution.
+		&-media-carousel {
+			max-width: 100%;
+		}
 	}
 
 	// Inner Container handle.
