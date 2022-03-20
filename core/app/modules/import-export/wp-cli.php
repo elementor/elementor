@@ -124,7 +124,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		$import_settings = [
-			'include' => [ 'templates', 'content', 'site-settings' ],
+			'include' => [ 'templates', 'content', 'settings' ],
 			'session' => $extraction_result['extraction_directory'],
 		];
 
