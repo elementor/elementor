@@ -1,4 +1,31 @@
 export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base {
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @returns {string}
+	 */
+	getTabTitleFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @returns {string}
+	 */
+	getTabContentFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {HTMLElement} tabTitleElement
+
+	 * @returns {string}
+	 */
+	getTabIndex( tabTitleElement ) {
+		return tabTitleElement.getAttribute( 'data-tab' );
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -57,6 +84,43 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 		this.setSettings( originalToggleMethods );
 	}
 
+	deactivateActiveTab( tabIndex ) {
+		const settings = this.getSettings(),
+			activeClass = settings.classes.active,
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
+
+		$activeTitle.add( $activeContent ).removeClass( activeClass );
+		$activeTitle.attr( {
+			tabindex: '-1',
+			'aria-selected': 'false',
+			'aria-expanded': 'false',
+		} );
+
+		$activeContent[ settings.hideTabFn ]();
+		$activeContent.attr( 'hidden', 'hidden' );
+	}
+
+	activateTab( tabIndex ) {
+		const settings = this.getSettings(),
+			activeClass = settings.classes.active,
+			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
+			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
+
+		$requestedTitle.add( $requestedContent ).addClass( activeClass );
+		$requestedTitle.attr( {
+			tabindex: '0',
+			'aria-selected': 'true',
+			'aria-expanded': 'true',
+		} );
+
+		$requestedContent[ settings.showTabFn ]( animationDuration, () => elementorFrontend.elements.$window.trigger( 'resize' ) );
+		$requestedContent.removeAttr( 'hidden' );
+	}
+
 	handleKeyboardNavigation( event ) {
 		const tab = event.currentTarget,
 			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
@@ -102,29 +166,11 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 		}
 	}
 
-	deactivateActiveTab( tabIndex ) {
-		const settings = this.getSettings(),
-			activeClass = settings.classes.active,
-			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
-			$activeContent = this.elements.$tabContents.filter( activeFilter );
-
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
-		$activeTitle.attr( {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
-		} );
-
-		$activeContent[ settings.hideTabFn ]();
-		$activeContent.attr( 'hidden', 'hidden' );
-	}
-
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
-			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' ),
+			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
 			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
@@ -134,11 +180,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 			'aria-expanded': 'true',
 		} );
 
-		$requestedContent[ settings.showTabFn ](
-			animationDuration,
-			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' )
-		);
-
+		$requestedContent[ settings.showTabFn ]( animationDuration, () => elementorFrontend.elements.$window.trigger( 'resize' ) );
 		$requestedContent.removeAttr( 'hidden' );
 	}
 
@@ -187,7 +229,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 
 	onEditSettingsChange( propertyName, value ) {
 		if ( 'activeItemIndex' === propertyName ) {
-			this.changeActiveTab( value );
+			this.changeActiveTab( value, false );
 		}
 	}
 

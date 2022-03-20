@@ -1,4 +1,4 @@
-import BaseTabsV2 from './base-tabs-v2';
+import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
 
 export default class TabsV2 extends BaseTabsV2 {
 	getDefaultSettings() {
