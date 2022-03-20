@@ -30,7 +30,7 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 	 * @return string
 	 */
 	protected function get_defaults_children_title() {
-		return __( 'Item #%d', 'elementor' );
+		return esc_html__( 'Item #%d', 'elementor' );
 	}
 
 	/**
