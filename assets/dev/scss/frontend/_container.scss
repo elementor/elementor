@@ -160,9 +160,13 @@
 		border-radius: var( --border-radius );
 	}
 
-	// Fix iframe-based widgets (ED-5338).
-	// TODO: Find a better solution.
 	.elementor-widget {
+		// Fix swiper-based widgets (ED-6716).
+		// Since the default is `min-width: auto` for flex items.
+		min-width: 0;
+
+		// Fix iframe-based widgets (ED-5338).
+		// TODO: Find a better solution.
 		&-video,
 		&-google_maps {
 			flex-basis: 100%;
