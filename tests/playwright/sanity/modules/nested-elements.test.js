@@ -48,13 +48,13 @@ test.describe.serial( 'NestedElementsModule', () => {
 						// Arrange, Open navigator.
 						await editor.openNavigator();
 
-						// Act - Add nested-tabs widget.
+						// Act - Add tabs-v2 widget.
 						await createTabsWidget( editor );
 
 						// Click #elementor-navigator__toggle-all
 						await editor.page.click( '#elementor-navigator__toggle-all' );
 
-						// Assert - Ensure nested-tabs widget has correct `_title`.
+						// Assert - Ensure tabs-v2 widget has correct `_title`.
 						await expect( editor.page.locator( '.elementor-navigator__element__title__text' ) ).toHaveText( [
 							'Container',
 							'Nested Tabs',
