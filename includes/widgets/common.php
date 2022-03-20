@@ -255,7 +255,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
-				'separator' => 'after',
 				'condition' => [ '_element_width' => 'initial' ],
 				'device_args' => $this->get_responsive_device_args( [
 					'condition' => [
@@ -281,6 +280,11 @@ class Widget_Common extends Widget_Base {
 						'size',
 						'grow',
 						'shrink',
+					],
+					'fields_options' => [
+						'align_self' => [
+							'separator' => 'before',
+						],
 					],
 				]
 			);
