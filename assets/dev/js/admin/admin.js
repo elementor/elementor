@@ -2,6 +2,7 @@ import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 import environment from '../../../../core/common/assets/js/utils/environment';
 import Events from 'elementor-utils/events';
+import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -19,7 +20,10 @@ import Events from 'elementor-utils/events';
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
+				$importNowButton: $( '#e-import-template-action' ),
 				$importArea: $( '#elementor-import-template-area' ),
+				$importForm: $( '#elementor-import-template-form' ),
+				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
@@ -344,9 +348,10 @@ import Events from 'elementor-utils/events';
 				return;
 			}
 
-			var self = this,
+			const self = this,
 				$importButton = self.elements.$importButton,
-				$importArea = self.elements.$importArea;
+				$importArea = self.elements.$importArea,
+				$importNowButton = self.elements.$importNowButton;
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
@@ -356,6 +361,18 @@ import Events from 'elementor-utils/events';
 
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
+			} );
+
+			$importNowButton.on( 'click', ( event ) => {
+				if ( self.elements.$importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+					event.preventDefault();
+
+					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						self.elements.$importForm.trigger( 'submit' );
+					} );
+
+					enableUnfilteredFilesModal.show();
+				}
 			} );
 		},
 

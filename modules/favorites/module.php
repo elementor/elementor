@@ -56,7 +56,7 @@ class Module extends BaseModule {
 			'name' => 'favorite-widgets',
 			'title' => esc_html__( 'Favorite Widgets', 'elementor' ),
 			'description' => esc_html__( 'Mark widgets as favorites by right clicking them. Favorite widgets will always appear at the top of the editor panel for easy access.', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_BETA,
+			'release_status' => Manager::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 			],
