@@ -31,6 +31,9 @@ class Module extends BaseModule {
 
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
+	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
+
+
 	/**
 	 * @var Export
 	 */
@@ -200,6 +203,10 @@ class Module extends BaseModule {
 		// In case that the manifest content is not a valid JSON or empty.
 		if ( ! $manifest_data ) {
 			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
+
+		if ( isset( $manifest_data['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
+			throw new \Error( static::PERMISSIONS_ERROR_KEY );
 		}
 
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
