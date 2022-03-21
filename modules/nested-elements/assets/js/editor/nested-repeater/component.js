@@ -1,5 +1,5 @@
-import NestedModelBase from './models/widget-repeater-model-base';
-import NestedViewBase from './views/widget-repeater-view-base';
+import NestedModelBase from './models/nested-model-base';
+import NestedViewBase from './views/nested-view-base';
 
 import RepeaterControl from './controls/repeater';
 
