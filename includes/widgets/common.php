@@ -211,7 +211,6 @@ class Widget_Common extends Widget_Base {
 		$experiments_manager = Plugin::$instance->experiments;
 		$is_container_active = $experiments_manager->is_feature_active( 'container' );
 
-		// TODO: For BC - Remove in the future.
 		$this->add_responsive_control(
 			'_element_width',
 			[
@@ -227,7 +226,6 @@ class Widget_Common extends Widget_Base {
 				'selectors_dictionary' => [
 					'inherit' => '100%',
 				],
-				'condition' => $is_container_active ? [ '_element_width!' => 'initial' ] : [], // TODO: For BC.
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
@@ -257,7 +255,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
-				'separator' => 'after',
 				'condition' => [ '_element_width' => 'initial' ],
 				'device_args' => $this->get_responsive_device_args( [
 					'condition' => [
@@ -283,6 +280,11 @@ class Widget_Common extends Widget_Base {
 						'size',
 						'grow',
 						'shrink',
+					],
+					'fields_options' => [
+						'align_self' => [
+							'separator' => 'before',
+						],
 					],
 				]
 			);
