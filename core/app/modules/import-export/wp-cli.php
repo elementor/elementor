@@ -84,6 +84,9 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * 3. wp elementor kit import path/to/elementor-kit.zip --overrideConditions=3478,4520
 	 *      - This will import all content and will override conditions for the given template ids.
 	 *
+	 * 4. wp elementor kit import path/to/elementor-kit.zip --unfilteredFilesUpload=enable
+	 *      - This will allow the import process to import unfiltered files.
+	 *
 	 * @param array $args
 	 * @param array $assoc_args
 	 */
