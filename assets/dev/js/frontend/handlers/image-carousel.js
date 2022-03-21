@@ -92,6 +92,13 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			};
 		}
 
+		if ( 'yes' === elementSettings.lazyload ) {
+			swiperOptions.lazy = {
+				loadPrevNext: true,
+				loadPrevNextAmount: 1,
+			};
+		}
+
 		return swiperOptions;
 	}
 
