@@ -147,7 +147,7 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'type',
+			'position',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
