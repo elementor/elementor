@@ -99,7 +99,7 @@ class TabsV2 extends Widget_Repeater_Base {
 			'title_field' => '{{{ tab_title }}}',
 		] );
 
-		$this->add_control( 'type', [
+		$this->add_control( 'position', [
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'horizontal',
