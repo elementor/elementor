@@ -413,16 +413,6 @@ class Module extends BaseModule {
 		return $document->get_edit_url();
 	}
 
-	private function get_elementor_editor_page_url( $page_id ) {
-		$document = Plugin::$instance->documents->get( $page_id );
-
-		if ( ! $document->is_built_with_elementor() ) {
-			return '';
-		}
-
-		return $document->get_edit_url();
-	}
-
 	private function get_config_data() {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 
