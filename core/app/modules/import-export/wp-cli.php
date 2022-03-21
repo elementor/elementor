@@ -113,6 +113,11 @@ class Wp_Cli extends \WP_CLI_Command {
 			$url = $args[0];
 		}
 
+		if ( 'enable' === $assoc_args['unfilteredFilesUpload'] ) {
+			Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+			Plugin::$instance->uploads_manager->enable_unfiltered_files_upload();
+		}
+
 		if ( $url ) {
 			$file_path = $this->create_temp_file_from_url( $url );
 		}
@@ -124,13 +129,17 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		$import_settings = [
-			'include' => [ 'templates', 'content', 'site-settings' ],
+			'include' => [ 'templates', 'content', 'settings' ],
 			'session' => $extraction_result['extraction_directory'],
 		];
 
 		foreach ( $assoc_args as $key => $value ) {
 			$import_settings[ $key ] = explode( ',', $value );
 		}
+
+		// Remove unrelevant settings from the $import_settings array
+		$remove_unrelevant = [ 'sourceType', 'unfilteredFilesUpload' ];
+		$import_settings = array_diff_key( $import_settings, array_flip( $remove_unrelevant ) );
 
 		try {
 			\WP_CLI::line( 'Importing data...' );
