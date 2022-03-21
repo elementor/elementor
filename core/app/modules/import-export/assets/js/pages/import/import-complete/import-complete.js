@@ -22,8 +22,8 @@ export default function ImportComplete() {
 		{ importedPlugins, uploadedData, importedData, isProInstalledDuringProcess } = importContext.data || {},
 		{ getTemplates, getContent, getWPContent, getPlugins } = useImportedKitData(),
 		{ activePlugins, failedPlugins } = getPlugins( importedPlugins ),
-		{ elementorHomePageUrl, recentlyEditedElementorPageUrl } = importedData?.configData || {},
-		seeItLiveUrl = elementorHomePageUrl || recentlyEditedElementorPageUrl || null,
+		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importedData?.configData || {},
+		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
 		getKitData = () => {
 			if ( ! uploadedData || ! importedData ) {
 				return {};
