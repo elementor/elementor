@@ -84,6 +84,9 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * 3. wp elementor kit import path/to/elementor-kit.zip --overrideConditions=3478,4520
 	 *      - This will import all content and will override conditions for the given template ids.
 	 *
+	 * 4. wp elementor kit import path/to/elementor-kit.zip --unfilteredFilesUpload=enable
+	 *      - This will allow the import process to import unfiltered files.
+	 *
 	 * @param array $args
 	 * @param array $assoc_args
 	 */
@@ -96,7 +99,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			\WP_CLI::error( 'Please specify a file to import' );
 		}
 
-		\WP_CLI::line( 'Kit export started' );
+		\WP_CLI::line( 'Kit import started' );
 
 		\WP_CLI::line( 'Extracting zip archive...' );
 
@@ -113,6 +116,11 @@ class Wp_Cli extends \WP_CLI_Command {
 			$url = $args[0];
 		}
 
+		if ( 'enable' === $assoc_args['unfilteredFilesUpload'] ) {
+			Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+			Plugin::$instance->uploads_manager->enable_unfiltered_files_upload();
+		}
+
 		if ( $url ) {
 			$file_path = $this->create_temp_file_from_url( $url );
 		}
@@ -124,13 +132,17 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		$import_settings = [
-			'include' => [ 'templates', 'content', 'site-settings' ],
-			'directory' => $extraction_result['extraction_directory'],
+			'include' => [ 'templates', 'content', 'settings' ],
+			'session' => $extraction_result['extraction_directory'],
 		];
 
 		foreach ( $assoc_args as $key => $value ) {
 			$import_settings[ $key ] = explode( ',', $value );
 		}
+
+		// Remove irrelevant settings from the $import_settings array
+		$remove_irrelevant = [ 'sourceType', 'unfilteredFilesUpload' ];
+		$import_settings = array_diff_key( $import_settings, array_flip( $remove_irrelevant ) );
 
 		try {
 			\WP_CLI::line( 'Importing data...' );
@@ -143,7 +155,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::line( 'Removing temp files...' );
 
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['session'] );
 
 			// The file was created from remote or library request and it should be removed.
 			if ( $url ) {
@@ -152,7 +164,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::success( 'Kit imported successfully' );
 		} catch ( \Error $error ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['session'] );
 
 			\WP_CLI::error( $error->getMessage() );
 		}
