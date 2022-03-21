@@ -137,8 +137,8 @@ class Wp_Cli extends \WP_CLI_Command {
 			$import_settings[ $key ] = explode( ',', $value );
 		}
 
-		// Remove unrelevant settings from the $import_settings array
-		$remove_unrelevant = [ 'sourceType', 'unfilteredFilesUpload' ];
+		// Remove irrelevant settings from the $import_settings array
+		$remove_irrelevant = [ 'sourceType', 'unfilteredFilesUpload' ];
 		$import_settings = array_diff_key( $import_settings, array_flip( $remove_unrelevant ) );
 
 		try {
