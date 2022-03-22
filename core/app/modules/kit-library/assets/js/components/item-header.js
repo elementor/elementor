@@ -45,6 +45,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 				color: 'cta',
 				size: 'sm',
 				url: subscriptionPlan.promotion_url,
+				rel: 'noopener',
 				target: '_blank',
 				includeHeaderBtnClass: false,
 			};

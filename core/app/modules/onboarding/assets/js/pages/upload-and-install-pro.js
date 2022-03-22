@@ -104,7 +104,7 @@ export default function UploadAndInstallPro() {
 				<div className="e-onboarding__upload-pro-get-file">
 					{ __( 'Don\'t know where to get the file from?', 'elementor' ) + ' ' }
 					{/* eslint-disable-next-line react/jsx-no-target-blank */}
-					<a onClick={ () => onProUploadHelpLinkClick() } href={ 'https://my.elementor.com/subscriptions/' + elementorAppConfig.onboarding.utms.downloadPro } target="_blank">
+					<a onClick={ () => onProUploadHelpLinkClick() } href={ 'https://my.elementor.com/subscriptions/' + elementorAppConfig.onboarding.utms.downloadPro } target="_blank" rel="noopener">
 						{ __( 'Click here', 'elementor' ) }
 					</a>
 				</div>

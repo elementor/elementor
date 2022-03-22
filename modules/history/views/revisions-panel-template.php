@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		revisions_disabled_2 = '<?php printf(
 			/* translators: %1$s Link open tag, %2$s: Link close tag. */
 			esc_html__( 'Learn more about %1$sWordPress revisions%2$s', 'elementor' ),
-			'<a target="_blank" href="https://go.elementor.com/wordpress-revisions/">',
+			'<a target="_blank" rel="noopener" href="https://go.elementor.com/wordpress-revisions/">',
 			'</a>'
 		); ?>';
 	#>

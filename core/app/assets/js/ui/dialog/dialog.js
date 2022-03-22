@@ -29,6 +29,7 @@ export default function Dialog( props ) {
 					text={ props.approveButtonText }
 					onClick={ props.approveButtonOnClick }
 					url={ props.approveButtonUrl }
+					rel={ props.approveButtonRel }
 					target={ props.approveButtonTarget }
 					color={ props.approveButtonColor }
 					elRef={ props.approveButtonRef }
@@ -52,6 +53,7 @@ Dialog.propTypes = {
 	approveButtonText: PropTypes.string.isRequired,
 	approveButtonOnClick: PropTypes.func,
 	approveButtonUrl: PropTypes.string,
+	approveButtonRel: PropTypes.string,
 	approveButtonColor: PropTypes.string,
 	approveButtonTarget: PropTypes.string,
 	approveButtonRef: PropTypes.object,

@@ -644,7 +644,10 @@ class Widget_Social_Icons extends Widget_Base {
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
 				<span class="elementor-grid-item">
-					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
+					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}"
+						rel="noopener"
+						href="{{ link }}"
+					>
 						<span class="elementor-screen-only">{{{ social }}}</span>
 						<#
 							iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );

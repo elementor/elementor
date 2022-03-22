@@ -46,6 +46,7 @@ export default function Layout( props ) {
 			icon: 'eicon-user-circle-o',
 			url: 'https://my.elementor.com/',
 			target: '_blank',
+			rel: 'noopener',
 		} );
 	} else {
 		headerButtons.push( createAccountButton );
@@ -59,6 +60,7 @@ export default function Layout( props ) {
 			icon: 'eicon-pro-icon',
 			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			target: '_blank',
+			rel: 'noopener',
 			elRef: goProButtonRef,
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {

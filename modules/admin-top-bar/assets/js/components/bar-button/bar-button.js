@@ -15,7 +15,7 @@ export default function BarButton( props ) {
 	}, [] );
 
 	return (
-		<a className="e-admin-top-bar__bar-button" ref={props.buttonRef} onClick={props.onClick} data-info={props.dataInfo} href={props.href} target={props.target}>
+		<a className="e-admin-top-bar__bar-button" ref={props.buttonRef} onClick={props.onClick} data-info={props.dataInfo} href={props.href} target={props.target} rel={props.rel}>
 			<i className= {`e-admin-top-bar__bar-button-icon ${ props.icon }`} />
 			<h1 className="e-admin-top-bar__bar-button-title">{ props.children }</h1>
 		</a>
@@ -30,4 +30,5 @@ BarButton.propTypes = {
 	buttonRef: PropTypes.object,
 	href: PropTypes.string,
 	target: PropTypes.string,
+	rel: PropTypes.string,
 };

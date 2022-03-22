@@ -40,7 +40,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			if ( isTryAgainAction ) {
 				onApprove();
 			} else {
-				window.open( 'https://elementor.com/help/how-to-fix-common-errors-with-import-export/', '_blank' );
+				window.open( 'https://elementor.com/help/how-to-fix-common-errors-with-import-export/', '_blank', 'noopener' );
 			}
 		},
 		handleOnDismiss = () => {

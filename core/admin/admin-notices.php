@@ -229,7 +229,7 @@ class Admin_Notices extends Module {
 		 */
 		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
 
-		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">' . esc_html__( 'Learn more.', 'elementor' ) . '</a>';
+		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank" rel="noopener">' . esc_html__( 'Learn more.', 'elementor' ) . '</a>';
 
 		$options = [
 			'title' => esc_html__( 'Love using Elementor?', 'elementor' ),

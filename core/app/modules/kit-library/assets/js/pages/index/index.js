@@ -226,6 +226,7 @@ export default function Index( props ) {
 									text: __( 'Learn More', 'elementor' ),
 									url: 'http://go.elementor.com/app-kit-library-error',
 									target: '_blank',
+									rel: 'noopener',
 								} }
 							/>
 						}

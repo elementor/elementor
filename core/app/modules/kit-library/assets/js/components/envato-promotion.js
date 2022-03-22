@@ -11,7 +11,7 @@ export default function EnvatoPromotion() {
 				color="link"
 				url="https://go.elementor.com/app-envato-kits/"
 				target="_blank"
-				rel="noreferrer"
+				rel="noreferrer noopener"
 				text={ __( 'Check out Elementor Template Kits on ThemeForest', 'elementor' ) }
 			/>
 		</Text>

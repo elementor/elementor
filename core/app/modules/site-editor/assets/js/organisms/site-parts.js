@@ -19,7 +19,7 @@ const InfoButton = ( props ) => {
 					<h3>{ props.type }</h3>
 					<p>
 						{ props.content }<br/>
-						<Button text={ __( 'Learn More', 'elementor' ) } color="link" target="_blank" url={ props.docs } />
+						<Button text={ __( 'Learn More', 'elementor' ) } rel="noopener" color="link" target="_blank" url={ props.docs } />
 					</p>
 					<div className="eps-modal__tip">
 						<h3>{ __( 'Tip', 'elementor' ) }</h3>

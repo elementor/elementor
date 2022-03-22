@@ -824,7 +824,7 @@ export default class EditorBase extends Marionette.Application {
 
 					introduction.getDialog().hide();
 				},
-				onConfirm: () => open( this.config.help_flexbox_bc_url, '_blank' ),
+				onConfirm: () => open( this.config.help_flexbox_bc_url, '_blank', 'noopener' ),
 			},
 		} );
 
@@ -1209,7 +1209,7 @@ export default class EditorBase extends Marionette.Application {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
-				onConfirm: () => open( debugData.doc_url, '_blank' ),
+				onConfirm: () => open( debugData.doc_url, '_blank', 'noopener' ),
 			};
 
 		if ( debugData.error ) {
@@ -1226,7 +1226,7 @@ export default class EditorBase extends Marionette.Application {
 				message: response.statusText + ' ' + response.status + ' ' + previewDebugLink,
 				onConfirm: () => {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
-					open( url, '_blank' );
+					open( url, '_blank', 'noopener' );
 				},
 			} );
 		} );
@@ -1243,7 +1243,7 @@ export default class EditorBase extends Marionette.Application {
 			};
 		}
 
-		args.onConfirm = () => open( args.confirmURL, '_blank' );
+		args.onConfirm = () => open( args.confirmURL, '_blank', 'noopener' );
 
 		this.showFatalErrorDialog( args );
 	}

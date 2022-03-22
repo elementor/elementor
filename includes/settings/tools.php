@@ -310,7 +310,7 @@ class Tools extends Settings_Page {
 						'callback' => function() {
 							$intro_text = sprintf(
 								/* translators: %s: WordPress backups documentation. */
-								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
+								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" rel="noopener" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
 								'http://go.elementor.com/wordpress-backups/'
 							);
 							$intro_text = '<div>' . $intro_text . '</div>';

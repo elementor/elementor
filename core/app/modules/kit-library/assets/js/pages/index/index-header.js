@@ -64,7 +64,7 @@ export default function IndexHeader( props ) {
 						<Button
 							url="https://go.elementor.com/app-kit-library-how-to-use-kits"
 							target="_blank"
-							rel="noreferrer"
+							rel="noreferrer noopener"
 							text={ __( 'Learn more', 'elementor' ) }
 							color="link"
 						/>{ ' ' }

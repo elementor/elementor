@@ -214,7 +214,7 @@ class Manager extends Base_Object {
 			'name' => 'e_dom_optimization',
 			'title' => esc_html__( 'Optimized DOM Output', 'elementor' ),
 			'description' => esc_html__( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" rel="noopener" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
@@ -227,7 +227,7 @@ class Manager extends Base_Object {
 			'name' => 'e_optimized_assets_loading',
 			'title' => esc_html__( 'Improved Asset Loading', 'elementor' ),
 			'description' => esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" rel="noopener" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
@@ -240,7 +240,7 @@ class Manager extends Base_Object {
 			'name' => 'e_optimized_css_loading',
 			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" rel="noopener" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
@@ -253,7 +253,7 @@ class Manager extends Base_Object {
 			'name' => 'e_font_icon_svg',
 			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
 			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awsome and the eicons libraries and its related CSS files and fonts. Learn More.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" rel="noopener" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
@@ -263,7 +263,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Accessibility Improvements', 'elementor' ),
 			'description' => esc_html__( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
 				. '<br><strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" rel="noopener" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
@@ -291,7 +291,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
 			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
 							. '<br /><strong>' . esc_html__( 'Please note! Conditioning controls on values of responsive controls is not supported when this mode is active.', 'elementor' ) . '</strong>'
-				. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" rel="noopener" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
@@ -321,7 +321,7 @@ class Manager extends Base_Object {
 				This experiment replaces the current section/column structure, but you\'ll still keep your existing
 				Sections, Inner Sections and Columns and be able to edit them. %1$sLearn More%2$s',
 				'elementor'
-			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container">', '</a>' ),
+			), '<a target="_blank" rel="noopener" href="https://go.elementor.com/wp-dash-flex-container">', '</a>' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
@@ -467,7 +467,7 @@ class Manager extends Base_Object {
 				printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
 					esc_html__( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. %1$sLearn More.%2$s', 'elementor' ),
-					'<a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">',
+					'<a href="https://go.elementor.com/wp-dash-experiments/" rel="noopener" target="_blank">',
 					'</a>'
 				);
 			?>
@@ -480,7 +480,7 @@ class Manager extends Base_Object {
 				printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
 					esc_html__( 'Your feedback is important - %1$shelp us%2$s improve these features by sharing your thoughts and inputs.', 'elementor' ),
-					'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
+					'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" rel="noopener" target="_blank">',
 					'</a>'
 				);
 			?>
