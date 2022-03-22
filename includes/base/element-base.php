@@ -395,6 +395,8 @@ abstract class Element_Base extends Controls_Stack {
 			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
 		}
 
+		$attributes = apply_filters( 'elementor/element/link-attributes', $attributes, $url_control );
+
 		if ( $attributes ) {
 			$this->add_render_attribute( $element, $attributes, $overwrite );
 		}
