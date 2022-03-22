@@ -1,4 +1,4 @@
-import CommandCallback from 'elementor-api/modules/command-callback';
+import CommandCallbackBase from 'elementor-api/modules/command-callback-base';
 
 import { createSlice } from '@reduxjs/toolkit';
 import Module from 'elementor-assets-js/modules/imports/module.js';
@@ -163,9 +163,28 @@ export default class ComponentBase extends Module {
 	/**
 	 * @param {string} command
 	 * @param {(function()|typeof CommandInfra)} context
-	 * @param commandsAPI
+	 * @param {'default'|'internal'|'data'} commandsType
 	 */
-	registerCommand( command, context, commandsAPI = $e.commands ) {
+	registerCommand( command, context, commandsType = 'default' ) {
+		let commandsManager;
+
+		switch ( commandsType ) {
+			case 'default':
+				commandsManager = $e.commands;
+				break;
+
+			case 'internal':
+				commandsManager = $e.commandsInternal;
+				break;
+
+			case 'data':
+				commandsManager = $e.data;
+				break;
+
+			default:
+				throw new Error( `Invalid commands type: '${ command }'` );
+		}
+
 		const fullCommand = this.getNamespace() + '/' + command,
 			instanceType = context.getInstanceType ? context.getInstanceType() : false,
 			registerConfig = {
@@ -176,17 +195,18 @@ export default class ComponentBase extends Module {
 		// Support pure callback.
 		if ( ! instanceType ) {
 			if ( $e.devTools ) {
-				$e.devTools.log.warn( `Attach command-callback, on command: '${ fullCommand }', context is unknown type.` );
+				$e.devTools.log.warn( `Attach command-callback-base, on command: '${ fullCommand }', context is unknown type.` );
 			}
 
 			registerConfig.callback = context;
 
-			context = CommandCallback;
+			// Unique class.
+			context = class extends CommandCallbackBase {};
 		}
 
 		context.setRegisterConfig( registerConfig );
 
-		commandsAPI.register( this, command, context );
+		commandsManager.register( this, command, context );
 	}
 
 	/**
@@ -197,7 +217,7 @@ export default class ComponentBase extends Module {
 	}
 
 	registerCommandInternal( command, context ) {
-		this.registerCommand( command, context, $e.commandsInternal );
+		this.registerCommand( command, context, 'internal' );
 	}
 
 	/**
@@ -235,7 +255,7 @@ export default class ComponentBase extends Module {
 	}
 
 	registerData( command, context ) {
-		this.registerCommand( command, context, $e.data );
+		this.registerCommand( command, context, 'data' );
 	}
 
 	unregisterRoute( route ) {
