@@ -154,7 +154,7 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 	}
 
 	public function test_add_link_custom_attributes() {
-		// Remove `Cross-Origin Destinations` hook.
+		// Remove `Cross-Origin Destination` experiment hook.
 		remove_all_filters( 'elementor/element/link-attributes' );
 
 		$element = Plugin::$instance->elements_manager->create_element_instance( self::$element_mock );
