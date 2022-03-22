@@ -73,25 +73,18 @@ export default class Routes extends Commands {
 			return false;
 		}
 
-		return this.getComponent( route )?.isOpen;
-	}
+		const component = this.getComponent( route );
 
-	run( route, args = {} ) {
-		if ( ! this.validateRun( route, args ) ) {
-			const component = this.getComponent( route );
-
-			if ( ! component.isOpen || args.reOpen ) {
-				component.isOpen = component.open( args );
-			}
-
-			if ( ! component.isOpen ) {
-				return false;
-			}
+		if ( ! component.isOpen || args.reOpen ) {
+			component.isOpen = component.open( args );
 		}
 
-		return super.run( route, args );
+		return component.isOpen;
 	}
 
+	/**
+	 * @override
+	 */
 	beforeRun( route, args ) {
 		const component = this.getComponent( route ),
 			container = component.getServiceName(),
@@ -101,11 +94,7 @@ export default class Routes extends Commands {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
 		}
 
-		if ( args.onBefore ) {
-			args.onBefore.apply( component, [ args ] );
-		}
-
-		this.trigger( 'run:before', component, route, args );
+		super.beforeRun( route, args, false );
 
 		this.attachCurrent( container, route, args );
 	}
@@ -151,11 +140,7 @@ export default class Routes extends Commands {
 
 		component.onRoute( route, args );
 
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args ] );
-		}
-
-		this.trigger( 'run:after', component, route, args, results );
+		super.afterRun( route, args, results, false );
 	}
 
 	is( route, args = {} ) {

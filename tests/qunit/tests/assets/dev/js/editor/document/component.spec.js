@@ -59,11 +59,11 @@ QUnit.module( 'Component: document', () => {
 			assert.equal( elementor.documents.getCurrent().history.getItems().length, 3,
 				'Master document still have "3" items in history.' );
 
-			done();
-
 			elementor.documents.setCurrent( documentTemp );
 
 			eData.restoreFetch();
+
+			done();
 		} );
 	} );
 
