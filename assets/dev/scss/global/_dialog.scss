@@ -126,18 +126,16 @@
 
 	.dialog-message {
 
+		a {
+			cursor: pointer;
+		}
+
 		& > div {
 			margin-bottom: 10px;
 		}
 	}
-	.dialog-buttons-wrapper {
-
-		> .dialog-button {
-
-			&.dialog-ok {
-				color: $editor-success;
-			}
-		}
+	.dialog-ok {
+		color: $editor-success;
 	}
 }
 

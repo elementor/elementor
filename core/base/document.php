@@ -384,7 +384,13 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get All Post Type URL
+	 *
 	 * Get url of the page which display all the posts of the current active document's post type.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
 	 */
 	public function get_all_post_type_url() {
 		$post_type = get_post_type( $this->get_main_id() );
@@ -398,9 +404,9 @@ abstract class Document extends Controls_Stack {
 		/**
 		 * Document "display all post type" URL.
 		 *
-		$url
+		 * @since 3.7.0
 		 *
-		 * @param string   $url  The URL
+		 * @param string $url The URL.
 		 * @param Document $this The document instance.
 		 */
 		$url = apply_filters( 'elementor/document/urls/all_post_type', $url, $this );

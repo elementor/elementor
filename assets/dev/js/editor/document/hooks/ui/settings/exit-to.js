@@ -17,7 +17,7 @@ export class ExitTo extends After {
 		return undefined !== args.settings.exit_to;
 	}
 
-	apply( args ) {
+	apply() {
 		elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
 	}
 }

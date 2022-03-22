@@ -76,8 +76,6 @@ PanelMenu.addAdminMenu = () => {
 };
 
 PanelMenu.addExitItem = () => {
-	const preferredExitUrl = PanelMenu.getExitUrl();
-
 	let itemArgs;
 
 	if ( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
@@ -89,7 +87,7 @@ PanelMenu.addExitItem = () => {
 	} else {
 		itemArgs = {
 			type: 'link',
-			link: preferredExitUrl,
+			link: PanelMenu.getExitUrl(),
 		};
 	}
 
@@ -125,6 +123,28 @@ PanelMenu.createExitIntroductionDialog = () => {
 				show: 'fadeIn',
 				hide: 'fadeOut',
 			},
+			onConfirm: () => {
+				introduction.setViewed();
+
+				$e.run( 'document/elements/settings', {
+					container: elementor.settings.editorPreferences.getEditedView().getContainer(),
+					settings: {
+						exit_to: select.value,
+					},
+					options: {
+						external: true,
+					},
+				} );
+
+				elementor.settings.editorPreferences.save( () => {
+					window.location.href = PanelMenu.getExitUrl();
+				} );
+			},
+			onCancel: () => {
+				introduction.setViewed();
+
+				window.location.href = PanelMenu.getExitUrl();
+			},
 		},
 	} );
 
@@ -153,30 +173,6 @@ PanelMenu.createExitIntroductionDialog = () => {
 		PanelMenu.addExitItem();
 	} );
 
-	introduction.getDialog().onConfirm = () => {
-		introduction.setViewed();
-
-		$e.run( 'document/elements/settings', {
-			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
-			settings: {
-				exit_to: select.value,
-			},
-			options: {
-				external: true,
-			},
-		} );
-
-		elementor.settings.editorPreferences.save( () => {
-			window.location.href = PanelMenu.getExitUrl();
-		} );
-	};
-
-	introduction.getDialog().onCancel = () => {
-		introduction.setViewed();
-
-		window.location.href = PanelMenu.getExitUrl();
-	};
-
 	return introduction;
 };
 
@@ -194,8 +190,6 @@ PanelMenu.getExitUrl = () => {
 			return elementor.config.document.urls.all_post_type;
 
 		case 'this_post':
-			return elementor.config.document.urls.exit_to_dashboard;
-
 		default:
 			return elementor.config.document.urls.exit_to_dashboard;
 	}
