@@ -181,7 +181,8 @@ export default class ComponentBase extends Module {
 
 			registerConfig.callback = context;
 
-			context = CommandCallback;
+			// Unique class.
+			context = class extends CommandCallback {};
 		}
 
 		context.setRegisterConfig( registerConfig );
