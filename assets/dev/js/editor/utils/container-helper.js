@@ -151,9 +151,16 @@ export class ContainerHelper {
 
 		try {
 			switch ( preset ) {
-				// Single Container without sub Containers.
-				case '100':
+				// Single column Container without sub Containers.
+				case 'c100':
 					newContainer = ContainerHelper.createContainer( {}, target, options );
+					break;
+
+				// Single row Container without sub Containers.
+				case 'r100':
+					newContainer = ContainerHelper.createContainer( {
+						flex_direction: ContainerHelper.DIRECTION_ROW,
+					}, target, options );
 					break;
 
 				// Exceptional preset.
