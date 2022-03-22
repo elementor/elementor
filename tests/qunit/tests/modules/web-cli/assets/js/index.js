@@ -1,7 +1,7 @@
 // WEB CLI modules.
 require( './modules/command-infra.spec.js' );
 require( './modules/command-base.spec.js' );
-require( './modules/command-callback.spec.js' );
+require( './modules/command-callback-base.spec.js' );
 require( './modules/command-data.spec.js' );
 require( './modules/command-internal-base.spec.js' );
 

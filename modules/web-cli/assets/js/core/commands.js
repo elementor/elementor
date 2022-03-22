@@ -265,12 +265,15 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} command
 	 * @param {{}} args
+	 * @param {boolean} [addTrace=true]
 	 */
-	beforeRun( command, args = {} ) {
+	beforeRun( command, args = {}, addTrace = true ) {
 		const component = this.getComponent( command ),
 			container = component.getServiceName();
 
-		this.addCurrentTrace( container, command, args );
+		if ( addTrace ) {
+			this.addCurrentTrace( container, command, args );
+		}
 
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
@@ -481,8 +484,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @param {string} command
 	 * @param {{}} args
 	 * @param {*} results
+	 * @param {boolean} [removeTrace=true]
 	 */
-	afterRun( command, args, results = undefined ) {
+	afterRun( command, args, results = undefined, removeTrace = true ) {
 		const component = this.getComponent( command );
 
 		if ( args.onAfter ) {
@@ -491,7 +495,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		this.trigger( 'run:after', component, command, args, results );
 
-		this.removeCurrentTrace( component );
+		if ( removeTrace ) {
+			this.removeCurrentTrace( component );
+		}
 	}
 
 	/**

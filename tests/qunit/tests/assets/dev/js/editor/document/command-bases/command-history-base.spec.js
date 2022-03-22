@@ -19,6 +19,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'onCatchApply()`', ( assert ) => {
+				// Arrange.
 				const fakeHistory = class extends CommandHistoryBaseMock {
 						// eslint-disable-next-line no-unused-vars
 						getHistory( args ) {
@@ -39,11 +40,14 @@ jQuery( () => {
 
 				$e.commandsInternal.on( 'run:before', callback );
 
+				// Act.
 				instance.onCatchApply( new $e.modules.HookBreak() );
 
+				// Assert.
 				assert.equal( tempCommand, 'document/history/delete-log' );
 				assert.equal( tempArgs.id, instance.historyId );
 
+				// Clean up.
 				$e.commandsInternal.off( 'run:before', callback );
 			} );
 
