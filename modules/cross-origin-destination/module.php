@@ -20,25 +20,6 @@ class Module extends \Elementor\Core\Base\Module {
 		$this->add_filters();
 	}
 
-	protected function add_filters() {
-		add_filter( 'elementor/element/link-attributes', function ( $attributes ) {
-			$rel = empty( $attributes['rel'] ) ? '' : $attributes['rel'];
-
-			$rel_attributes = new Collection( preg_split(
-				'/\s+/',
-				$rel,
-				-1,
-				PREG_SPLIT_NO_EMPTY
-			) );
-
-			$rel_attributes->push( 'noopener' );
-
-			$attributes['rel'] = $rel_attributes->unique()->implode( ' ' );
-
-			return $attributes;
-		} );
-	}
-
 	public static function get_experimental_data() {
 		return [
 			'name' => 'cross-origin-destinations',
@@ -48,7 +29,31 @@ class Module extends \Elementor\Core\Base\Module {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'new_site' => [
 				'default_active' => true,
+				'minimum_installation_version' => '3.7.0-beta',
 			],
 		];
+	}
+
+	protected function add_filters() {
+		add_filter( 'elementor/element/link-attributes', function ( $attributes ) {
+			$rel = empty( $attributes['rel'] ) ? '' : $attributes['rel'];
+
+			// Need to split the rel string into an array in order to remove redundant spaces (if present), push new
+			// rel attributes, and remove duplicates.
+			$rel = preg_split(
+				'/\s+/',
+				$rel,
+				-1, // Default value.
+				PREG_SPLIT_NO_EMPTY
+			);
+
+			$rel = new Collection( $rel );
+
+			$rel->push( 'noopener' );
+
+			$attributes['rel'] = $rel->unique()->implode( ' ' );
+
+			return $attributes;
+		} );
 	}
 }
