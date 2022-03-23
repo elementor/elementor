@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 3.6.0
+Stable tag: 3.6.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -241,7 +241,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
-= 3.6.0 - 2022-03-23 =
+= 3.6.1 - 2022-03-23 =
+* Fix: Editor fails to load due to 3rd party deprecation conflicts ([#18235](https://github.com/elementor/elementor/issues/18235))
+
+= 3.6.0 - 2022-03-22 =
 * New: Introducing Flexbox Container element as an alpha status experiment
 * Tweak: Removed `elementor-section-wrap` by adding it to the DOM experiment ([#16950](https://github.com/elementor/elementor/issues/16950), [#10633](https://github.com/elementor/elementor/issues/10633))
 * Tweak: Updated Google Fonts list ([#13501](https://github.com/elementor/elementor/issues/13501), [#17930](https://github.com/elementor/elementor/issues/17930), [#16516](https://github.com/elementor/elementor/issues/16516))
