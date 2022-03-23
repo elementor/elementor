@@ -66,6 +66,7 @@ class Manager extends BaseModule {
 			'line' => $error_line,
 		] );
 
+
 		if ( ! Utils::is_elementor_path( $error_file ) ) {
 			// Do execute PHP internal error handler.
 			return false;
