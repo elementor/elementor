@@ -17,7 +17,7 @@ export default function ConnectionButton() {
 		connectUrl = elementorAdminTopBarConfig.connect_url,
 		buttonText = __( 'Connect Account', 'elementor' ),
 		targetUrl = '_self',
-		rel = '';
+		rel = null;
 
 	if ( isUserConnected ) {
 		tooltipText = '';
