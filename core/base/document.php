@@ -415,6 +415,29 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get Main WP dashboard URL.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	protected function get_main_dashboard_url() {
+		$url = get_dashboard_url();
+
+		/**
+		 * Document "Main Dashboard" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/main_dashboard', $url, $this );
+
+		return $url;
+	}
+
+	/**
 	 * Get auto-saved post revision.
 	 *
 	 * Retrieve the auto-saved post revision that is newer than current post.
@@ -1650,14 +1673,6 @@ abstract class Document extends Controls_Stack {
 
 	protected function get_have_a_look_url() {
 		return $this->get_permalink();
-	}
-
-	protected function get_main_dashboard_url() {
-		$url = get_dashboard_url();
-
-		$url = apply_filters( 'elementor/document/urls/main_dashboard', $url, $this );
-
-		return $url;
 	}
 
 	public function handle_revisions_changed( $post_has_changed, $last_revision, $post ) {
