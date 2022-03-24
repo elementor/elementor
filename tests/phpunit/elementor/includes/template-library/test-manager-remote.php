@@ -4,13 +4,15 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
+	const ELEMENTOR_LIBRARY_REMOTE_META_KEY = 'elementor_library_remote';
+	const FAVORITES = 'favorites';
 
 	/**
 	 * @var \Elementor\TemplateLibrary\Manager
 	 */
 	protected static $manager;
 	private $fake_template_id = '777';
-    private $second_fake_template_id = '123';
+	private $second_fake_template_id = '123';
 
 
 
@@ -19,46 +21,29 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 	}
 
 	public function test_should_mark_template_as_favorite() {
-
+        $user= $this->act_as_admin();
         $this->mark_template_as_favorite($this->fake_template_id, true);
 
-        $user_meta = get_user_meta(get_current_user_id(),'elementor_library_remote',true);
-
-        $this->assertTrue(
-            $user_meta['favorites'][$this->fake_template_id]
-		);
+		$user_meta = get_user_meta($user->ID, self::ELEMENTOR_LIBRARY_REMOTE_META_KEY,true);
+        $this->assertTrue($user_meta[self::FAVORITES][$this->fake_template_id]);
 	}
     public function test_should_mark_multiple_templates_as_favorite() {
-
+        $user= $this->act_as_admin();
         $this->mark_template_as_favorite($this->fake_template_id, true);
         $this->mark_template_as_favorite($this->second_fake_template_id, true);
-
-        $user_meta = get_user_meta(get_current_user_id(),'elementor_library_remote',true);
-
-        $this->assertTrue(
-            $user_meta['favorites'][$this->fake_template_id]
-        );
-        $this->assertTrue(
-            $user_meta['favorites'][$this->second_fake_template_id]
-        );
+        $user_meta = get_user_meta($user->ID,self::ELEMENTOR_LIBRARY_REMOTE_META_KEY,true);
+        $this->assertTrue($user_meta[self::FAVORITES][$this->fake_template_id]);
+        $this->assertTrue($user_meta[self::FAVORITES][$this->second_fake_template_id]);
     }
 
     public function test_should_unmark_favorite_template() {
-
+        $user= $this->act_as_admin();
         $this->mark_template_as_favorite($this->fake_template_id, true);
         $this->mark_template_as_favorite($this->second_fake_template_id, true);
-
         $this->mark_template_as_favorite($this->fake_template_id, false);
-
-        $user_meta = get_user_meta(get_current_user_id(),'elementor_library_remote',true);
-
-        $this->assertTrue(
-            $user_meta['favorites'][$this->second_fake_template_id]
-        );
-
-        $this->assertEquals(
-            1, count($user_meta['favorites'])
-        );
+        $user_meta = get_user_meta($user->ID,self::ELEMENTOR_LIBRARY_REMOTE_META_KEY,true);
+        $this->assertTrue($user_meta[self::FAVORITES][$this->second_fake_template_id]);
+		$this->assertCount(1, $user_meta[self::FAVORITES]);
 
     }
 
@@ -103,9 +88,6 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 
     private function mark_template_as_favorite($template_id, $is_favorite): void
     {
-        $user = $this->factory()->create_and_get_administrator_user();
-        wp_set_current_user($user->ID);
-
         self::$manager->mark_template_as_favorite(
             [
                 'source' => 'remote',
