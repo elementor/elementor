@@ -86,7 +86,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 
 	}
 
-    private function mark_template_as_favorite($template_id, $is_favorite): void
+    private function mark_template_as_favorite($template_id, $is_favorite)
     {
         self::$manager->mark_template_as_favorite(
             [
