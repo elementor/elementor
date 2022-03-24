@@ -47,11 +47,10 @@ class Module extends \Elementor\Core\Base\Module {
 				PREG_SPLIT_NO_EMPTY
 			);
 
-			$rel = new Collection( $rel );
-
-			$rel->push( 'noopener' );
-
-			$attributes['rel'] = $rel->unique()->implode( ' ' );
+			$attributes['rel'] = ( new Collection( $rel ) )
+				->push( 'noopener' )
+				->unique()
+				->implode( ' ' );
 
 			return $attributes;
 		} );
