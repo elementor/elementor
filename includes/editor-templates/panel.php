@@ -49,6 +49,19 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<# } #>
 </script>
 
+<script type="text/template" id="tmpl-elementor-exit-dialog">
+	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
+	<div>
+		<!-- translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. -->
+		<?php echo sprintf(
+			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
+			'<a id="user-preferences">',
+			'</a>'
+		); ?>
+	</div>
+	<select id="exit-to-preferences"></select> <!--  Adding options by JS  -->
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-header">
 	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>

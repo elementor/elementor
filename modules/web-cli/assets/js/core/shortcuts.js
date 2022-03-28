@@ -141,7 +141,7 @@ export default class Shortcuts {
 		}
 
 		const namespace = component.getNamespace(),
-			namespaceRoot = component.getRootContainer();
+			namespaceRoot = component.getServiceName();
 
 		const filteredByNamespace = scopes.some( ( scope ) => namespace === scope );
 

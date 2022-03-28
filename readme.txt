@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 3.5.6
+Stable tag: 3.6.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -240,6 +240,59 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.6.1 - 2022-03-23 =
+* Fix: Editor fails to load due to 3rd party deprecation conflicts ([#18235](https://github.com/elementor/elementor/issues/18235))
+
+= 3.6.0 - 2022-03-22 =
+* New: Introducing Flexbox Container element as an alpha status experiment
+* Tweak: Removed `elementor-section-wrap` by adding it to the DOM experiment ([#16950](https://github.com/elementor/elementor/issues/16950), [#10633](https://github.com/elementor/elementor/issues/10633))
+* Tweak: Updated Google Fonts list ([#13501](https://github.com/elementor/elementor/issues/13501), [#17930](https://github.com/elementor/elementor/issues/17930), [#16516](https://github.com/elementor/elementor/issues/16516))
+* Tweak: Allowed rearranging global colors and fonts ([#12203](https://github.com/elementor/elementor/issues/12203))
+* Tweak: Adding Responsive option to Text Stroke ([#17212](https://github.com/elementor/elementor/issues/17212))
+* Tweak: Added responsive capability to Icon Position control in Icon Box widget ([#3040](https://github.com/elementor/elementor/issues/3040))
+* Tweak: Added an option to Export and Import WP repository plugins as part of the Kit content
+* Tweak: Added an option to Export and Import specific Custom post types as part of the Kit content
+* Tweak: Updated `eicons` library to v5.15.0
+* Tweak: Added an option to change the color of the navigation dots in Image Carousel widget
+* Tweak: Added the Revisions link to Import / Export tools screen
+* Tweak: Added an indication when a widget is added to the Favorites section
+* Tweak: Added a deprecation notice for PHP 5.6 in WP dashboard
+* Tweak Added previous active Kit reference to the site options
+* Tweak: Added Kit reference to its imported items
+* Tweak: Added `Difference`, `Exclusion` and `Hue` to Column and Section blend mode options
+* Tweak: Add border options in Image Box widget
+* Tweak: Removed legacy style tab in Elementor dashboard settings screen
+* Tweak: Prompt the user permission to allow unfiltered file uploads in Import Template flow
+* Tweak: Promoted some experiments to Stable status
+* Tweak: Navigator appears by default when loading the editor for the first time
+* Tweak: Made typography weight strings translatable
+* Tweak: Adjusted the inline icon control for design flexibility
+* Tweak: Adjusted the Document settings import prompt texts to be more friendly
+* Tweak: Added Kit Library to the Finder
+* Tweak: Adding Import Export to the Finder
+* Tweak: Added WordPress menus to Export / Import Kit flow
+* Tweak: Added Lazy load option to Image Carousel widget
+* Tweak: Added Lazy load option to Background Slideshow
+* Tweak: Added informative summary screen to Export / Import Kit flow
+* Tweak: Added focus state and description on the play icon in Video widget
+* Tweak: Added dynamic tag controls to Menu Anchor widget
+* Tweak: Added dynamic tag controls to Image Carousel widget
+* Tweak: Added dynamic tag controls to Icon Box widget
+* Tweak: Added dynamic tag controls to HTML widget
+* Tweak: Added a reusable button trait
+* Fix: Sticky caused scrolling issues after clicking an element that expands the page height ([#17821](https://github.com/elementor/elementor/issues/17821), [#17839](https://github.com/elementor/elementor/issues/17839), [#18069](https://github.com/elementor/elementor/issues/18069))
+* Fix: Missing escaping for WordPress dashboard strings (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Fix: Widescreen breakpoint values affect other devices in the Editor preview in some cases
+* Fix: Dynamic references are not being reassigned in Export / Import Kit flow
+* Fix: System info file displays inaccurate WP memory limit
+* Fix: Widget appears empty while using PHP 8.1 in Posts and Posts archive widgets
+* Fix: Lower custom breakpoints didn't inherit upper breakpoints values in frontend
+* Fix: JS Error is thrown when switching between documents in some cases
+* Fix: CLI Import command caused the import process to fail
+* Fix: JS error is thrown when clearing select2 control
+* Fix: Dev Edition notice appears inside the Form Submission window
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-6-planned-deprecations/)
 
 = 3.5.6 - 2022-02-28 =
 * Fix: Favorite WooCommerce widgets causes fatal error when WooCommerce is deactivated ([#17641](https://github.com/elementor/elementor/issues/17641))
