@@ -30,6 +30,11 @@ export default class Deprecation {
 	}
 
 	/**
+	 * Get total of major.
+	 *
+	 * Since `get_total_major` cannot determine how much really versions between 2.9.0 and 3.3.0 if there is 2.10.0 version for example,
+	 * versions with major2 more then 9 will be added to total.
+	 *
 	 * @param {Version} versionObj
 	 *
 	 * @return {number}
