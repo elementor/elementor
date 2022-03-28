@@ -22,11 +22,11 @@ export default class Deprecation {
 		const [ major1, major2, minor, build = '' ] = versionParts;
 
 		return {
-				major1: parseInt( major1 ),
-				major2: parseInt( major2 ),
-				minor: parseInt( minor ),
-				build,
-			};
+			major1: parseInt( major1 ),
+			major2: parseInt( major2 ),
+			minor: parseInt( minor ),
+			build,
+		};
 	}
 
 	/**
