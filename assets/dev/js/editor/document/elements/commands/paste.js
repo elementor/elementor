@@ -49,6 +49,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
+					case 'container':
 					case 'section': {
 						// If is inner create section for `inner-section`.
 						if ( model.isInner ) {
