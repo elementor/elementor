@@ -7,8 +7,4 @@ export default class WidgetBase extends ElementBase {
 	getWidgetType() {
 		elementorModules.ForceMethodImplementation();
 	}
-
-	getTypeKey() {
-		return this.getType() + '-' + this.getWidgetType();
-	}
 }

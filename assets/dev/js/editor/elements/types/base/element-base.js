@@ -26,15 +26,4 @@ export default class ElementBase {
 	getModel() {
 		elementorModules.ForceMethodImplementation();
 	}
-
-	/**
-	 * Function getTypeKey().
-	 *
-	 * Used to separate between elements and widgets.
-	 *
-	 * @return {String}
-	 */
-	getTypeKey() {
-		return 'element-' + this.getType();
-	}
 }
