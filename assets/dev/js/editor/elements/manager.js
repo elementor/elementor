@@ -25,7 +25,7 @@ export default class ElementsManager {
 	 * @param {string|false} widgetType
 	 */
 	getElementType( elType, widgetType = false ) {
-		if ( widgetType ) {
+		if ( widgetType && this.elementTypes[ widgetType ] ) {
 			return this.elementTypes[ widgetType ];
 		}
 
