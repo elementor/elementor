@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					elementor.presetsFactory.getContainerPresets().forEach( ( preset ) => {
 					#>
 					<div class="e-container-preset" data-preset="{{ preset }}">
-						{{{ elementor.presetsFactory.getContainerPreset( preset ) }}}
+						{{{ elementor.presetsFactory.generateContainerPreset( preset ) }}}
 					</div>
 					<#
 				} );
