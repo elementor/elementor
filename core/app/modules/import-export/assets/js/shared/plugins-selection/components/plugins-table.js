@@ -24,7 +24,7 @@ function PluginsTable( {
 		),
 		CellLink = ( cellLinkProps ) => (
 			<InlineLink url={ cellLinkProps.url } underline="none">
-				Version { cellLinkProps.text } <Icon className="eicon-editor-external-link" />
+				{ `${ __( 'Version' ) } ${ cellLinkProps.text }` } <Icon className="eicon-editor-external-link" />
 			</InlineLink>
 		),
 		getHeaders = () => {

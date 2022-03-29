@@ -10,7 +10,7 @@ PanelMenu.groups = null;
 
 PanelMenu.createGroupItems = ( groupName ) => {
 	const tabs = $e.components.get( 'panel/global' ).getTabs(),
-		groupTabs = Object.entries( tabs ).filter( ( [ tabId, tabConfig ] ) => groupName === tabConfig.group );
+		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group );
 
 	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
 		return {

@@ -198,6 +198,9 @@ class Widget_Image_Carousel extends Widget_Base {
 					'link_to' => 'custom',
 				],
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -248,6 +251,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			'section_additional_options',
 			[
 				'label' => esc_html__( 'Additional Options', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'lazyload',
+			[
+				'label' => esc_html__( 'Lazyload', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 			]
 		);
 
@@ -712,6 +724,8 @@ class Widget_Image_Carousel extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$lazyload = 'yes' === $settings['lazyload'];
+
 		if ( empty( $settings['carousel'] ) ) {
 			return;
 		}
@@ -725,7 +739,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_url = $attachment['url'];
 			}
 
-			$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			if ( $lazyload ) {
+				$image_html = '<img class="swiper-slide-image swiper-lazy" data-src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			} else {
+				$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			}
 
 			$link_tag = '';
 
@@ -750,6 +768,10 @@ class Widget_Image_Carousel extends Widget_Base {
 			$image_caption = $this->get_image_caption( $attachment );
 
 			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
+
+			if ( $lazyload ) {
+				$slide_html .= '<div class="swiper-lazy-preloader"></div>';
+			}
 
 			if ( ! empty( $image_caption ) ) {
 				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
