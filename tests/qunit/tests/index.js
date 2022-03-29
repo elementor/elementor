@@ -2,6 +2,8 @@ export const tests = () => {
 	// WEB CLI.
 	require( './modules/web-cli/assets/js/index' );
 
+	// Editor.
+	require( './assets/dev/js/editor/utils/helpers.spec' );
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	// WEB CLI editor
