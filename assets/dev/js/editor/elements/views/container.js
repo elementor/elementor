@@ -105,7 +105,7 @@ const ContainerView = BaseElementView.extend( {
 			[ ContainerHelper.DIRECTION_COLUMN_REVERSED ]: 'vertical',
 			[ ContainerHelper.DIRECTION_ROW ]: 'horizontal',
 			[ ContainerHelper.DIRECTION_ROW_REVERSED ]: 'horizontal',
-			'': isColumnDefault ? 'vertical' : 'horizontal', // Default control value.
+			'': isColumnDefault ? 'vertical' : 'horizontal',
 		};
 
 		return axisMap[ currentDirection ];
