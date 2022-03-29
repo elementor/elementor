@@ -57,7 +57,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 				}
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {
-					$selector = $this->removeCommasFromSelectorBrackets($selector);
+					$selector = $this->removeCommasFromSelectorBrackets( $selector );
 
 					foreach ( explode( ',', $selector ) as $item ) {
 						preg_match( '/\{\{(WRAPPER)|(ID)\}\}/', $item, $matches );
@@ -109,16 +109,14 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		}
 	}
 
-
-	private function removeCommasFromSelectorBrackets($selector)
-	{
+	private function removeCommasFromSelectorBrackets( $selector ) {
 		$isContainCommaRegex = '/\(.*,+.*\)/';
 		preg_match( $isContainCommaRegex, $selector, $matches );
-		foreach($matches as $match) {
-			$matchWithoutCommas =str_replace(',', '', $match);
-			$selector = str_replace($match, $matchWithoutCommas, $selector);
+		foreach ( $matches as $match ) {
+			$matchWithoutCommas = str_replace( ',', '', $match );
+			$selector = str_replace( $match, $matchWithoutCommas, $selector );
 		}
+		
 		return $selector;
-
 	}
 }
