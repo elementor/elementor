@@ -109,15 +109,18 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		}
 	}
 
-	private function removeCommasFromSelectorBrackets( $selector ) {
-		$isContainCommaRegex = '/\(.*,+.*\)/';
+	private function removeCommasFromSelectorBrackets($selector)
+	{
+		$isContainCommaRegex = '/\([^(]+,[^(]+\)/';
 		preg_match( $isContainCommaRegex, $selector, $matches );
-		
-		foreach ( $matches as $match ) {
-			$matchWithoutCommas = str_replace( ',', '', $match );
-			$selector = str_replace( $match, $matchWithoutCommas, $selector );
+
+		foreach($matches as $match) {
+			$matchWithoutCommas =str_replace(',', '', $match);
+			$selector = str_replace($match, $matchWithoutCommas, $selector);
+			return $this->removeCommasFromSelectorBrackets($selector);
 		}
-		
+
 		return $selector;
+
 	}
 }
