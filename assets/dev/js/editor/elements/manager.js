@@ -1,5 +1,4 @@
 import ElementBase from './types/base/element-base';
-import WidgetBase from './types/base/widget-base';
 
 import * as elementsTypes from './types/';
 
@@ -18,24 +17,18 @@ export default class ElementsManager {
 	/**
 	 * Function getElementType().
 	 *
-	 * Get element type by elType, and widgetType, if exact widgetType is not found
-	 * the method will return the element type.
+	 * Get element type by key.
 	 *
-	 * @param {string} elType
-	 * @param {string|false} widgetType
+	 * @param {string} key
 	 */
-	getElementType( elType, widgetType = false ) {
-		if ( widgetType && this.elementTypes[ widgetType ] ) {
-			return this.elementTypes[ widgetType ];
-		}
-
-		return this.elementTypes[ elType ];
+	getElementType( key ) {
+		return this.elementTypes[ key ];
 	}
 
 	/**
 	 * Function registerElementType().
 	 *
-	 * @param {ElementBase|WidgetBase} element
+	 * @param {ElementBase} element
 	 */
 	registerElementType( element ) {
 		// Validate instanceOf `element`.
@@ -43,13 +36,13 @@ export default class ElementsManager {
 			throw new TypeError( 'The element argument must be an instance of ElementBase.' );
 		}
 
-		const index = element instanceof WidgetBase ? element.getWidgetType() : element.getType();
+		const key = element.getType();
 
-		if ( this.elementTypes[ index ] ) {
+		if ( this.elementTypes[ key ] ) {
 			throw new Error( 'Element type already registered' );
 		}
 
-		this.elementTypes[ index ] = element;
+		this.elementTypes[ key ] = element;
 	}
 
 	/**

@@ -1,3 +1,6 @@
+/**
+ * @name elementor.modules.elements.types.Base
+ */
 export default class ElementBase {
 	/**
 	 * @return {string}

@@ -15,27 +15,22 @@ describe( 'ElementsManager', () => {
 		expect( section.getType() ).toBe( 'section' );
 	} );
 
-	test( 'getElementType() -- Ensure widget', async () => {
+	test( 'registerElementType() -- Sanity', async () => {
 		// Arrange.
-		const WidgetBase = ( await import( 'elementor-elements/types/base/widget-base' ) ).default,
+		const WidgetBase = ( await import( 'elementor-elements/types/widget' ) ).default,
 			WidgetTest = class extends WidgetBase {
 				getType() {
-					return 'widget';
-				}
-
-				getWidgetType() {
 					return 'widget-test';
 				}
 			};
 
+		// Act.
 		elementsManager.registerElementType( new WidgetTest() );
 
-		// Act.
-		const widgetTest = elementsManager.getElementType( 'widget', 'widget-test' );
+		const widgetTest = elementsManager.getElementType( 'widget-test' );
 
 		// Assert.
-		expect( widgetTest.getType() ).toBe( 'widget' );
-		expect( widgetTest.getWidgetType() ).toBe( 'widget-test' );
+		expect( widgetTest.getType() ).toBe( 'widget-test' );
 	} );
 } );
 
