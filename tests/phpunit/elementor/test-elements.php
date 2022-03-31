@@ -39,7 +39,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 	}
 
 	public function test_redeclareControl() {
-		$this->expect_doing_it_wrong('Elementor\Controls_Manager::add_control_to_stack');
+		$this->expect_doing_it_wrong( 'Elementor\Controls_Manager::add_control_to_stack' );
 
 		$element_obj = $this->elementor()->elements_manager->get_element_types( 'section' );
 
@@ -57,7 +57,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 				}
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {
-					$selector = $this->removeCommasFromSelectorBrackets( $selector );
+					$selector = $this->remove_commas_from_selector_brackets( $selector );
 
 					foreach ( explode( ',', $selector ) as $item ) {
 						preg_match( '/\{\{(WRAPPER)|(ID)\}\}/', $item, $matches );
@@ -109,15 +109,14 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		}
 	}
 
-	private function removeCommasFromSelectorBrackets($selector)
-	{
-		$isContainCommaRegex = '/\([^(]+,[^(]+\)/';
-		preg_match( $isContainCommaRegex, $selector, $matches );
+	private function remove_commas_from_selector_brackets( $selector ) {
+		$is_contain_comma_regex = '/\([^(]+,[^(]+\)/';
+		preg_match( $is_contain_comma_regex, $selector, $matches );
 
-		foreach($matches as $match) {
-			$matchWithoutCommas =str_replace(',', '', $match);
-			$selector = str_replace($match, $matchWithoutCommas, $selector);
-			return $this->removeCommasFromSelectorBrackets($selector);
+		foreach ( $matches as $match ) {
+			$match_without_commas = str_replace( ',', '', $match );
+			$selector = str_replace( $match, $match_without_commas, $selector );
+			return $this->remove_commas_from_selector_brackets( $selector );
 		}
 
 		return $selector;
