@@ -151,7 +151,9 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			$import = new Import( $import_settings );
 
-			$manifest_data = $this->get_manifest_data( $import, $import_settings['session'] );
+			$manifest_data = $this->get_manifest_data( $import_settings['session'] );
+			$manifest_data = $import->adapt_manifest_structure( $manifest_data );
+
 			if ( isset( $manifest_data['plugins'] ) ) {
 				$successfully_imported_plugins = $this->import_plugins( $manifest_data['plugins'] );
 
@@ -227,13 +229,12 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
-	 * Helper to get the manifest data from the file using the 'import' instance
+	 * Helper to get the manifest data from the 'manifest.json' file.
 	 *
-	 * @param Import $import
 	 * @param string $extraction_directory
 	 * @return array
 	 */
-	private function get_manifest_data( $import, $extraction_directory ) {
+	private function get_manifest_data( $extraction_directory ) {
 		$manifest_file_content = file_get_contents( $extraction_directory . 'manifest.json', true );
 
 		if ( ! $manifest_file_content ) {
@@ -247,13 +248,13 @@ class Wp_Cli extends \WP_CLI_Command {
 			\WP_CLI::error( 'Manifest content is not valid json' );
 		}
 
-		return $import->adapt_manifest_structure( $manifest_data );
+		return $manifest_data;
 	}
 
 	/**
 	 * Handle the import process of plugins.
 	 *
-	 * Returns a string contains the successfully imported and activated plugins.
+	 * Returns a string contains the successfully installed and activated plugins.
 	 *
 	 * @param array $plugins
 	 * @return string
@@ -269,12 +270,12 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$plugins_manager = new Plugins_Manager();
 
-		$installed_plugins = $plugins_manager->install( $slugs );
-		$activated_plugins = $plugins_manager->activate( $installed_plugins['succeeded'] );
+		$install = $plugins_manager->install( $slugs );
+		$activate = $plugins_manager->activate( $install['succeeded'] );
 
 		$names = $plugins_collection
-			->filter( function ( $item ) use ( $activated_plugins ) {
-				return in_array( $item['plugin'], $activated_plugins['succeeded'], true );
+			->filter( function ( $item ) use ( $activate ) {
+				return in_array( $item['plugin'], $activate['succeeded'], true );
 			} )
 			->map( function ( $item ) {
 				return $item['name'];

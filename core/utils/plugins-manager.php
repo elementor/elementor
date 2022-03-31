@@ -32,6 +32,8 @@ class Plugins_Manager {
 	/**
 	 * Install plugin or an array of plugins.
 	 *
+	 * @since 3.6.2
+	 *
 	 * @param string|array $plugins
 	 * @return array [ 'succeeded' => [] , 'failed' => [] ]
 	 */
@@ -74,6 +76,7 @@ class Plugins_Manager {
 
 			if ( ! isset( $api->download_link ) ) {
 				$failed[] = $plugin;
+				continue;
 			}
 
 			$installation = $this->upgrader->install( $api->download_link );
@@ -93,6 +96,8 @@ class Plugins_Manager {
 
 	/**
 	 * Activate plugin or array off plugins.
+	 *
+	 * @since 3.6.2
 	 *
 	 * @param array|string $plugins
 	 * @return array [ 'succeeded' => [] , 'failed' => [] ]

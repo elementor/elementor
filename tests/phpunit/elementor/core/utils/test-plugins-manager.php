@@ -88,7 +88,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	}
 
-	public function test_install__single_plugin() {
+	public function test_install__single_plugin_as_a_string() {
 		// Arrange
 		$plugin = 'elementor/elementor-test';
 
@@ -117,7 +117,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 		$this->assertEquals( $install['succeeded'], [ $plugin ] );
 	}
 
-	public function test_install__failed() {
+	public function test_install__failed_by_plugin_upgrader() {
 		// Arrange
 		$plugins = [ 'elementor/elementor-test' ];
 
@@ -136,6 +136,34 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'install' )
 			->willReturn( false );
+
+		$plugins_manager = new Plugins_Manager( $this->plugin_upgrader_mock );
+
+		// Act
+		$install = $plugins_manager->install( $plugins );
+
+		// Assert
+		$this->assertEquals( $install['failed'], $plugins );
+	}
+
+	public function test_install__failed_by_missing_download_link() {
+		// Arrange
+		$plugins = [ 'elementor/elementor-test' ];
+
+		$this->wp_api_mock
+			->expects( $this->once() )
+			->method( 'get_plugins' )
+			->willReturn( $this->get_plugins_mock() );
+
+		$this->wp_api_mock
+			->expects( $this->once() )
+			->method( 'plugins_api' )
+			->with( ...$this->plugins_api_parameters_mock( 'elementor' ) )
+			->willReturn( [] );
+
+		$this->plugin_upgrader_mock
+			->expects( $this->never() )
+			->method( 'install' );
 
 		$plugins_manager = new Plugins_Manager( $this->plugin_upgrader_mock );
 
@@ -174,7 +202,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 		$this->assertEquals( $activate['succeeded'], $plugins );
 	}
 
-	public function test_activate__single_plugin() {
+	public function test_activate__single_plugin_as_a_string() {
 		// Arrange
 		$plugin = 'elementor/elementor-test';
 
@@ -200,7 +228,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	public function test_activate__failed() {
 		// Arrange
-		$plugin = 'elementor/elementor-test';
+		$plugin = [ 'elementor/elementor-test' ];
 
 		$this->wp_api_mock
 			->expects( $this->exactly( 2 ) )
@@ -219,7 +247,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 		$activate = $plugins_manager->activate( $plugin );
 
 		// Assert
-		$this->assertEquals( $activate['failed'], [ $plugin ] );
+		$this->assertEquals( $activate['failed'], $plugin );
 	}
 
 	private function plugins_api_return_mock() {
