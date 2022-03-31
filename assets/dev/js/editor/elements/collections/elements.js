@@ -11,7 +11,7 @@ var ElementsCollection = Backbone.Collection.extend( {
 		var ModelClass = Backbone.Model;
 
 		if ( attrs.elType ) {
-			const elementType = elementor.elementsManager.getElementType( attrs.elType, attrs.widgetType );
+			const elementType = elementor.elementsManager.getElementType( attrs.widgetType || attrs.elType );
 
 			if ( ! elementType ) {
 				throw new Error( 'Element type not found: ' + attrs.elType );
