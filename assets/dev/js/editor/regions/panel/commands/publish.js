@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Publish extends CommandBase {
+export class Publish extends $e.modules.CommandBase {
 	apply() {
 		$e.run( 'document/save/publish' );
 	}
