@@ -1,6 +1,4 @@
-import CommandData from 'elementor-api/modules/command-data';
-
-export class Templates extends CommandData {
+export class Templates extends $e.modules.CommandData {
 	static getEndpointFormat() {
 		return 'template-library/templates';
 	}
