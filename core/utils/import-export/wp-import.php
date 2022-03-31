@@ -982,7 +982,7 @@ class WP_Import extends \WP_Importer {
 		}
 
 		// Skip menu items 'taxonomy' type, when the taxonomy is not exits.
-		if( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && ! get_taxonomy( $post_meta_key_value['_menu_item_object'] ) ) {
+		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && ! get_taxonomy( $post_meta_key_value['_menu_item_object'] ) ) {
 			return $result;
 		}
 
