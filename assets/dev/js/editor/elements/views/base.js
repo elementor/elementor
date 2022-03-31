@@ -95,9 +95,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChildView( model ) {
-		const elementType = elementor.elementsManager.getElementType(
-			model.get( 'widgetType' ) || model.get( 'elType' )
-		);
+		const elementType = elementor.elementsManager.getElementType( model.get( 'elType' ), model.get( 'widgetType' ) );
 
 		if ( ! elementType ) {
 			throw new Error( 'Element type not found: ' + model.get( 'elType' ) );
