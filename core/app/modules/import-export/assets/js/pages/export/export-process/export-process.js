@@ -23,7 +23,7 @@ export default function ExportProcess() {
 			navigate( 'export' );
 		},
 		exportKit = () => {
-			const { includes } = sharedContext.data;
+			const { includes, selectedCustomPostTypes } = sharedContext.data;
 
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
@@ -34,6 +34,7 @@ export default function ExportProcess() {
 				include: [ ...includes, 'plugins' ],
 				kitInfo,
 				plugins: pluginsData,
+				selectedCustomPostTypes,
 			} );
 		};
 

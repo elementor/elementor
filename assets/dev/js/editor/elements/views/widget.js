@@ -125,7 +125,7 @@ WidgetView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( elementorCommonConfig.isTesting && this.isDestroyed ) {
+		if ( this.isDestroyed ) {
 			return;
 		}
 
@@ -232,7 +232,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		if ( this.container.isEditable() ) {
+		if ( this.container?.isEditable() ) {
 			this.onEditButtonClick( event );
 		}
 	},

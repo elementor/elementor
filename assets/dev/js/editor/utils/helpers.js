@@ -1,5 +1,6 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -21,6 +22,7 @@ const allowedHTMLWrapperTags = [
 ];
 
 module.exports = {
+	container: ContainerHelper,
 	document: DocumentHelper,
 
 	_enqueuedFonts: {
@@ -36,7 +38,15 @@ module.exports = {
 				column: {
 					widget: null,
 					section: null,
+					container: {
+						widget: null,
+						container: null,
+					},
 				},
+			},
+			container: {
+				widget: null,
+				container: null,
 			},
 		},
 	},
@@ -417,7 +427,7 @@ module.exports = {
 		} );
 	},
 
-	isActiveControl: function( controlModel, values ) {
+	isActiveControl: function( controlModel, values, controls ) {
 		const condition = controlModel.condition || controlModel.get?.( 'condition' );
 		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
 
@@ -456,7 +466,7 @@ module.exports = {
 			};
 		}
 
-		return ! ( conditions && ! elementor.conditions.check( conditions, values ) );
+		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
 	cloneObject( object ) {

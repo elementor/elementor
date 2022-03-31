@@ -134,7 +134,11 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 			'aria-expanded': 'true',
 		} );
 
-		$requestedContent[ settings.showTabFn ]( animationDuration, () => elementorFrontend.elements.$window.trigger( 'resize' ) );
+		$requestedContent[ settings.showTabFn ](
+			animationDuration,
+			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' )
+		);
+
 		$requestedContent.removeAttr( 'hidden' );
 	}
 
@@ -156,7 +160,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 				}
 			},
 			keyup: ( event ) => {
-				switch ( event.key ) {
+				switch ( event.code ) {
 					case 'ArrowLeft':
 					case 'ArrowRight':
 						this.handleKeyboardNavigation( event );
