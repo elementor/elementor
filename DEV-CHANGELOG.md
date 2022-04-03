@@ -1,5 +1,30 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev3 - 2022-04-03
+* Tweak: Nested Infra - Select repeater item command [ED-6682] (#18039)
+* Fix: Container is not functioning as expected [ED-6747] (#18199)
+* Tweak: Added the Revisions link to Import/Export intro screen [ED-2696] (#18200)
+* Fix: Editor Panel - Pasting a term in the widget search doesn't show the results [ED-5823] (#18004)
+* Fix: Revert - ED-2696 [ED-6844] (#18198)
+* Fix: Custom icons disappear at frontend if name contains numbers [ED-1040] (#18110)
+* Fix : Custom Fonts - the font disappears if the name contains only numbers [ED-6760] (#18116)
+* Fix: Tabs a11y is not performing as expected [ED-5409] (#17491)
+* Nullish operator added to e-select2 library (#18203)
+* Fix: Issues in the CLI Import command which caused the import failure [ED-6857] (#18206)
+* Fix: JS API - Partial refactor history versions are not clickable [ED-6588] (#18219)
+* Fix: Review requests (#18221)
+* Fix: Merge issue cancelling 6509 and fixing call to `get_elementor_home_page_url()` [ED-6861] (#18225)
+* Fix: Editor - Not loading with some 3rd party plugins [ED-6882] (#18237)
+* Tweak: Updated changelog to v3.6.1 (#18239)
+* Fix: Alignment didn't respond to additional custom breakpoints in Icon List widget [ED-4966] (#18250)
+* Tweak: Allow exiting to different WP screens [ED-6238] (#17637)
+* Fix: Container is not functioning as expected [ED-6904] (#18292)
+* Tweak: Added another preset to include option for both row and column single container directions [ED-6493] (#18214)
+* Fix: Nav Menu Hamburger - Menu missing on iOS 14 or macOS 13 [ED-6886] (#18276)
+* Revert "Internal: Nested Elements - Infra fixes & tests [ED-6591] (#18297)" (#18320)
+* Fix: Word spacing in Global Font Typography affects all texts on the site [ED-5749] (#18287)
+* Fix: Missing esc translations (#17923)
+
 #### 3.7.0-dev2 - 2022-03-17
 * Fix: Issues in the CLI Import command which caused the import failure [ED-6805] (#18171)
 
@@ -385,31 +410,3 @@
 
 #### 3.5.0-dev19 - 2021-09-06
 * Fix: Editor doesn't load on v3.5.0 if `ELEMENTOR_DEBUG` is enabled [ED-4937] (#16256)
-
-#### 3.5.0-dev18 - 2021-09-05
-* Fix: Default global values override local global values [ED-4917] (#16206)
-
-#### 3.5.0-dev16 - 2021-09-03
-* JS API/Editor: Fix - Move 'Editor/Documents' to components folder. (#14602)
-* Fix: Image content html tags appeared on Image carousel widget [ED-4828] (#16129)
-* Tweak: Controls PHPCS (#16141)
-* Tweak: Added "Justified" text alignment to columns & sections (#11512)
-* Tweak: Add new "Word Spacing" control to typography controls [ED-4621] (#9152)
-* Fix: PHP Lint failing during syntax lint (#16165)
-* Tweak: Add step size to typography "Word Spacing" control [ED-4621] (#16167)
-* Fix: Unable to import a kit via URL when not logged-in to WP [ED-4836] (#16157)
-* Tweak: Show admin-top-bar only on elementor pages [ED-4879, ED-4899] (#16190)
-* Tweak: Updated changelog for v3.4.3 (#16194)
-* Tweak: Updated changelog for v3.4.3 (#16197)
-* Fix: Page settings layout description [ED-1210] (#13360)
-* Tweak: Add perspective to CSS transform [ED-4304] (#15774)
-* Tweak: Changed default values experiment name [ED-4876] (#16155)
-* Fix: Lighthouse CI test is failing - removed unused css [ED-3698] (#16200)
-* Tweak: CSS Transform - Change flip icon [ED-4462] (#15933)
-* Fix: Optimize Kit library index page performance [ED-4669] (#16201)
-* Revert "Fix: Lighthouse CI test is failing - removed unused css [ED-3698] (#16200)" (#16207)
-* Fix: Data Updater causes fatal error due to DB corruption [ED-4839] (#16195)
-* Fix: SVG sanitizer is failing if there is a line break after "</svg" [ED-4853] (#16132)
-* Tweak: Responsive bar - Make the minimum height smaller for all responsive devices (ED-4359) (#16017)
-* Tweak: Internal - Add external filter for Context Menu Groups [ED-4483] (#16160)
-* Tweak: Add CSS Transform section [ED-4767] (#16064)
