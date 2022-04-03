@@ -49,7 +49,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		$element_obj->remove_control( $control_id );
 	}
 
-	public function test_controlsSelectorsDataShouldContainWrapperReference() {
+	public function test_controls_selectors_data_should_contain_wrapper_reference() {
 		foreach ( $this->elementor()->elements_manager->get_element_types() as $element ) {
 			foreach ( $element->get_controls() as $control ) {
 				if ( empty( $control['selectors'] ) ) {
