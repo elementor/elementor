@@ -260,7 +260,13 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return string
 	 */
 	private function import_plugins( $plugins ) {
-		$plugins_collection = new Collection( $plugins );
+		$plugins_collection = ( new Collection( $plugins ) )
+			->map( function ( $item ) {
+				if ( ! $this->ends_with( $item['plugin'], '.php' ) ) {
+					$item['plugin'] .= '.php';
+				}
+				return $item;
+			} );
 
 		$slugs = $plugins_collection
 			->map( function ( $item ) {
@@ -283,5 +289,9 @@ class Wp_Cli extends \WP_CLI_Command {
 			->implode( ', ' );
 
 		return $names;
+	}
+
+	private function ends_with( $haystack, $needle ) {
+		return substr( $haystack, -strlen( $needle ) ) === $needle;
 	}
 }

@@ -47,7 +47,7 @@ class Plugins_Manager {
 		}
 
 		foreach ( $plugins as $plugin ) {
-			if ( in_array( $plugin . '.php', $already_installed_plugins->keys(), true ) ) {
+			if ( in_array( $plugin, $already_installed_plugins->keys(), true ) ) {
 				$succeeded[] = $plugin;
 				continue;
 			}
@@ -111,14 +111,14 @@ class Plugins_Manager {
 		}
 
 		foreach ( $plugins as $plugin ) {
-			if ( Plugin::$instance->wp->is_plugin_active( $plugin . '.php' ) ) {
+			if ( Plugin::$instance->wp->is_plugin_active( $plugin ) ) {
 				$succeeded[] = $plugin;
 				continue;
 			}
 
-			Plugin::$instance->wp->activate_plugin( $plugin . '.php' );
+			Plugin::$instance->wp->activate_plugin( $plugin );
 
-			if ( Plugin::$instance->wp->is_plugin_active( $plugin . '.php' ) ) {
+			if ( Plugin::$instance->wp->is_plugin_active( $plugin ) ) {
 				$succeeded[] = $plugin;
 			} else {
 				$failed[] = $plugin;
