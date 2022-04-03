@@ -3,6 +3,8 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
+use Elementor\Core\Kits\Documents\Tabs\Typography\Default_Typography_Type;
+use Elementor\Core\Kits\Documents\Tabs\Typography\Typography_Default_Configuration_Builder;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
 
@@ -73,80 +75,59 @@ class Global_Typography extends Tab_Base {
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-family: "{{VALUE}}"',
 						],
+						'responsive' => true,
 					],
 					'font_size' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-size: {{SIZE}}{{UNIT}}',
 						],
+						'responsive' => true,
 					],
 					'font_weight' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-weight: {{VALUE}}',
 						],
+						'responsive' => true,
 					],
 					'text_transform' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-text-transform: {{VALUE}}',
 						],
+						'responsive' => true,
 					],
 					'font_style' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-style: {{VALUE}}',
 						],
+						'responsive' => true,
 					],
 					'text_decoration' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-text-decoration: {{VALUE}}',
 						],
+						'responsive' => true,
 					],
 					'line_height' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-line-height: {{SIZE}}{{UNIT}}',
 						],
+						'responsive' => true,
 					],
 					'letter_spacing' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
 						],
+						'responsive' => true,
+					],
+					'word_spacing' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-word-spacing: {{SIZE}}{{UNIT}}',
+						],
+						'responsive' => true,
 					],
 				],
 			]
 		);
-
-		$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . 'typography';
-		$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_family';
-		$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_weight';
-
-		$default_typography = [
-			[
-				'_id' => 'primary',
-				'title' => esc_html__( 'Primary', 'elementor' ),
-				$typography_key => 'custom',
-				$font_family_key => 'Roboto',
-				$font_weight_key => '600',
-			],
-			[
-				'_id' => 'secondary',
-				'title' => esc_html__( 'Secondary', 'elementor' ),
-				$typography_key => 'custom',
-				$font_family_key => 'Roboto Slab',
-				$font_weight_key => '400',
-			],
-			[
-				'_id' => 'text',
-				'title' => esc_html__( 'Text', 'elementor' ),
-				$typography_key => 'custom',
-				$font_family_key => 'Roboto',
-				$font_weight_key => '400',
-			],
-			[
-				'_id' => 'accent',
-				'title' => esc_html__( 'Accent', 'elementor' ),
-				$typography_key => 'custom',
-				$font_family_key => 'Roboto',
-				$font_weight_key => '500',
-			],
-		];
 
 		$this->add_control(
 			'heading_system_typography',
@@ -155,6 +136,14 @@ class Global_Typography extends Tab_Base {
 				'label' => esc_html__( 'System Fonts', 'elementor' ),
 			]
 		);
+
+		$default_configuration_builder = new Typography_Default_Configuration_Builder();
+		$default_typography = [
+			$default_configuration_builder->build_typography( Default_Typography_Type::PRIMARY ),
+			$default_configuration_builder->build_typography( Default_Typography_Type::SECONDARY ),
+			$default_configuration_builder->build_typography( Default_Typography_Type::TEXT ),
+			$default_configuration_builder->build_typography( Default_Typography_Type::ACCENT ),
+		];
 
 		$this->add_control(
 			'system_typography',
