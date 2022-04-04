@@ -4,6 +4,20 @@
 .e-onboarding {
 	font-family: 'DM Sans', 'Roboto', sans-serif;
 
+	.eps-app__main {
+		justify-content: center;
+		// For small screens, move the scrollbar from the padded content container to the top level main container.
+		overflow-y: auto;
+	}
+
+	&__content {
+		max-width: 1135px;
+		padding: initial;
+		margin: 2.75rem;
+		// For small screens, move the scrollbar from the padded content container to the top level main container.
+		overflow-y: initial;
+	}
+
 	&__checkbox {
 
 		&-label {
@@ -50,6 +64,17 @@
 
 		&::placeholder {
 			color: $platform-gray-lighter;
+		}
+	}
+
+	&__footnote {
+		margin-top: 24px;
+		width: 325px;
+		text-align: center;
+
+		a {
+			text-decoration: underline;
+			color: $platform-darker-gray;
 		}
 	}
 }
