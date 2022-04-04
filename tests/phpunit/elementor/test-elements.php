@@ -116,10 +116,10 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		foreach ( $matches as $match ) {
 			$match_without_commas = str_replace( ',', '', $match );
 			$selector = str_replace( $match, $match_without_commas, $selector );
+
 			return $this->remove_commas_from_selector_brackets( $selector );
 		}
 
 		return $selector;
-
 	}
 }
