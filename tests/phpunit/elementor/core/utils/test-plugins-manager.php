@@ -55,9 +55,10 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 		Plugin::$instance->wp = $this->original_wp_api;
 	}
 
-	public function test_install__array_of_plugins() {
+	public function test_install__array_of_plugins_without_php_in_the_slug() {
 		// Arrange
 		$plugins = [ 'elementor/elementor-test', 'elementor-pro/elementor-pro-test' ];
+		$expected_result = [ 'elementor/elementor-test.php', 'elementor-pro/elementor-pro-test.php' ];
 
 		$this->wp_api_mock
 			->expects( $this->once() )
@@ -84,13 +85,13 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 		$install = $plugins_manager->install( $plugins );
 
 		// Assert
-		$this->assertEquals( $install['succeeded'], $plugins );
+		$this->assertEquals( $install['succeeded'], $expected_result );
 
 	}
 
 	public function test_install__single_plugin_as_a_string() {
 		// Arrange
-		$plugin = 'elementor/elementor-test';
+		$plugin = 'elementor/elementor-test.php';
 
 		$this->wp_api_mock
 			->expects( $this->once() )
@@ -119,7 +120,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	public function test_install__failed_by_plugin_upgrader() {
 		// Arrange
-		$plugins = [ 'elementor/elementor-test' ];
+		$plugins = [ 'elementor/elementor-test.php' ];
 
 		$this->wp_api_mock
 			->expects( $this->once() )
@@ -148,7 +149,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	public function test_install__failed_by_missing_download_link() {
 		// Arrange
-		$plugins = [ 'elementor/elementor-test' ];
+		$plugins = [ 'elementor/elementor-test.php' ];
 
 		$this->wp_api_mock
 			->expects( $this->once() )
@@ -176,7 +177,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	public function test_activate__array_of_plugins_with_one_already_activated() {
 		// Arrange
-		$plugins = [ 'elementor/elementor-test', 'elementor-pro/elementor-pro-test' ];
+		$plugins = [ 'elementor/elementor-test.php', 'elementor-pro/elementor-pro-test.php' ];
 
 		$this->wp_api_mock
 			->expects( $this->exactly( 3 ) )
@@ -204,7 +205,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	public function test_activate__single_plugin_as_a_string() {
 		// Arrange
-		$plugin = 'elementor/elementor-test';
+		$plugin = 'elementor/elementor-test.php';
 
 		$this->wp_api_mock
 			->expects( $this->exactly( 2 ) )
@@ -228,7 +229,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	public function test_activate__failed() {
 		// Arrange
-		$plugin = [ 'elementor/elementor-test' ];
+		$plugin = [ 'elementor/elementor-test.php' ];
 
 		$this->wp_api_mock
 			->expects( $this->exactly( 2 ) )
