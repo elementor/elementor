@@ -253,7 +253,6 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: Trying to D&D widgets into a Container will make the dragged element position in an incorrect location when using column direction
 * Fix: When copying and pasting a Container, it's being pasted in a Section
 * Fix: When converting a section with `z-index` the value is active but can't be edited using the interface
-* Fix: Can't drag an element on top of the first element when the container is the first item on the page
 
 = 3.6.1 - 2022-03-23 =
 * Fix: Editor fails to load due to 3rd party deprecation conflicts ([#18235](https://github.com/elementor/elementor/issues/18235))
