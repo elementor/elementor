@@ -550,7 +550,7 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->add_control(
-			'social_icon_transition',
+			'social_icon_hover_transition',
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,

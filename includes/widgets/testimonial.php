@@ -362,7 +362,7 @@ class Widget_Testimonial extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--testimonial-image-transition: {{SIZE}}s',
+					'{{WRAPPER}}' => '--testimonial-image-hover-transition: {{SIZE}}s',
 				],
 			]
 		);
