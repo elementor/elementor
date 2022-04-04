@@ -333,7 +333,7 @@ class Widget_Testimonial extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
-			'testimonial_shadow_hover',
+			'testimonial_tabs_hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
@@ -342,13 +342,13 @@ class Widget_Testimonial extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'testimonial_shadow_hover_shadow',
+				'name' => 'testimonial_shadow_hover',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-image img:hover',
 			]
 		);
 
 		$this->add_control(
-			'testimonial_shadow_transition',
+			'testimonial_hover_transition',
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -362,7 +362,7 @@ class Widget_Testimonial extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--testimonial-image-hover-transition: {{SIZE}}s',
+					'{{WRAPPER}}' => '--testimonial-image-transition: {{SIZE}}s',
 				],
 			]
 		);

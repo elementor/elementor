@@ -346,7 +346,7 @@ class Widget_Icon_Box extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'icon_box_hover_shadow',
+				'name' => 'icon_box_shadow_hover',
 				'selector' => '{{WRAPPER}} .elementor-icon:hover',
 				'condition' => [
 					'view!' => 'default',

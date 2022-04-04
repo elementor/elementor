@@ -254,7 +254,7 @@ class Widget_Icon extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
-			'icon_colors_hover',
+			'icon_tabs_hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
@@ -294,7 +294,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'icon_hover_shadow',
+				'name' => 'icon_shadow_hover',
 				'selector' => '{{WRAPPER}} .elementor-icon:hover',
 				'condition' => [
 					'view!' => 'default',

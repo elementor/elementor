@@ -399,7 +399,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'image_hover_shadow',
+				'name' => 'image_shadow_hover',
 				'selector' => '{{WRAPPER}} .elementor-image-box-img:hover img',
 			]
 		);

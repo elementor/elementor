@@ -544,7 +544,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'social_icon_hover_shadow',
+				'name' => 'social_icon_shadow_hover',
 				'selector' => '{{WRAPPER}} .elementor-social-icon:hover',
 			]
 		);
