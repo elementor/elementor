@@ -55,10 +55,9 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 		Plugin::$instance->wp = $this->original_wp_api;
 	}
 
-	public function test_install__array_of_plugins_without_php_in_the_slug() {
+	public function test_install__array_of_plugins() {
 		// Arrange
-		$plugins = [ 'elementor/elementor-test', 'elementor-pro/elementor-pro-test' ];
-		$expected_result = [ 'elementor/elementor-test.php', 'elementor-pro/elementor-pro-test.php' ];
+		$plugins = [ 'elementor/elementor-test.php', 'elementor-pro/elementor-pro-test.php' ];
 
 		$this->wp_api_mock
 			->expects( $this->once() )
@@ -85,7 +84,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 		$install = $plugins_manager->install( $plugins );
 
 		// Assert
-		$this->assertEquals( $install['succeeded'], $expected_result );
+		$this->assertEquals( $install['succeeded'], $plugins );
 
 	}
 
