@@ -241,6 +241,20 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.6.2 - 2022-04-04 =
+* Tweak: Added plugins support to the CLI Kit import process
+* Tweak: Updated strings for several screens in Onboarding wizard
+* Tweak: Added structure preset to include both row and column directions in Container element
+* Fix: Alignment control doesn’t affect additional custom breakpoints in Icon List widget ([#16291](https://github.com/elementor/elementor/issues/16291))
+* Fix: Carousel widgets do not being displayed correctly when placed in a Container element ([#18298](https://github.com/elementor/elementor/issues/16291))
+* Fix: Import flow fails when trying to import unregistered taxonomies
+* Fix: Missing prefix classes caused compatibility issues in iOS 14 and macOS 13 devices
+* Fix: Inner Container element gets duplicated when dragging it from the handle
+* Fix: Trying to D&D widgets into a Container will make the dragged element position in an incorrect location when using column direction
+* Fix: When copying and pasting a Container, it's being pasted in a Section
+* Fix: When converting a section with `z-index` the value is active but can't be edited using the interface
+* Fix: Can't drag an element on top of the first element when the container is the first item on the page
+
 = 3.6.1 - 2022-03-23 =
 * Fix: Editor fails to load due to 3rd party deprecation conflicts ([#18235](https://github.com/elementor/elementor/issues/18235))
 
