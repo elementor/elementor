@@ -248,7 +248,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: Alignment control doesn’t affect additional custom breakpoints in Icon List widget ([#16291](https://github.com/elementor/elementor/issues/16291))
 * Fix: Carousel widgets do not being displayed correctly when placed in a Container element ([#18298](https://github.com/elementor/elementor/issues/16291))
 * Fix: Import flow fails when trying to import unregistered taxonomies
-* Fix: Missing prefix classes caused compatibility issues in iOS 14 and macOS 13 devices
+* Fix: Compatibility issues for several widgets in iOS 14 and macOS 13 devices
 * Fix: Inner Container element gets duplicated when dragging it from the handle
 * Fix: Trying to D&D widgets into a Container will make the dragged element position in an incorrect location when using column direction
 * Fix: When copying and pasting a Container, it's being pasted in a Section
