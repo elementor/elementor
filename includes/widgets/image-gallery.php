@@ -296,7 +296,7 @@ class Widget_Image_Gallery extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--image-gallery-transition: {{SIZE}}s',
+					'{{WRAPPER}}' => '--image-gallery-hover-transition: {{SIZE}}s',
 				],
 			]
 		);

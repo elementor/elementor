@@ -254,7 +254,7 @@ class Widget_Alert extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--alert-transition: {{SIZE}}s',
+					'{{WRAPPER}}' => '--alert-hover-transition: {{SIZE}}s',
 				],
 			]
 		);

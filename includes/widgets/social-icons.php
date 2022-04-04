@@ -564,7 +564,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--social-icon-transition: {{SIZE}}s',
+					'{{WRAPPER}}' => '--social-icon-hover-transition: {{SIZE}}s',
 				],
 			]
 		);

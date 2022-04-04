@@ -47,7 +47,7 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	justify-content: center;
 	text-align: center;
 	cursor: pointer;
-	transition-duration: var(--social-icon-transition, 0.3s);
+	transition-duration: var(--social-icon-hover-transition, 0.3s);
 
 	i {
 		color: var(--e-social-icon-icon-color);

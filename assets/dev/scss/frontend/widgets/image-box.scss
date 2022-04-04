@@ -81,7 +81,7 @@
 		display: inline-block; // For alignment content
 
 		img {
-			transition: all var(--image-box-transition, 0.3s);
+			transition: all var(--image-box-hover-transition, 0.3s);
 		}
 	}
 
