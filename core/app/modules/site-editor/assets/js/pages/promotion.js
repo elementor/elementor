@@ -47,7 +47,7 @@ export default function Promotion() {
 							variant="contained"
 							url={ promotionUrl }
 							target="_blank"
-							text={__( 'Go Pro', 'elementor' )}
+							text={ __( 'Go Pro', 'elementor' ) }
 						/>
 					</Grid>
 				</Grid>
