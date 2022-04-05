@@ -275,8 +275,17 @@ class Server extends Base {
 
 		$db_server_version = $wpdb->get_results( "SHOW VARIABLES WHERE `Variable_name` IN ( 'version_comment', 'innodb_version' )", OBJECT_K );
 
+		$db_server_version_string = $db_server_version['version_comment']->Value . ' v';
+
+		// On some hosts, `innodb_version` is empty, in PHP 8.1.
+		if ( isset( $db_server_version['innodb_version'] ) ) {
+			$db_server_version_string .= $db_server_version['innodb_version']->Value;
+		} else {
+			$db_server_version_string .= $wpdb->get_var( 'SELECT VERSION() AS version' );
+		}
+
 		return [
-			'value' => $db_server_version['version_comment']->Value . ' v' . $db_server_version['innodb_version']->Value,
+			'value' => $db_server_version_string,
 		];
 	}
 
