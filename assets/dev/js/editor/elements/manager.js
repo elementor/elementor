@@ -20,9 +20,18 @@ export default class ElementsManager {
 	 * Get element type by key.
 	 *
 	 * @param {string} key
+	 *
+	 * @returns {ElementBase}
 	 */
 	getElementType( key ) {
-		return this.elementTypes[ key ];
+		const type = this.elementTypes[ key ];
+
+		// When exact widget is not registered, return widget base instead.
+		if ( ! type && elementor.widgetsCache[ key ] ) {
+			return this.elementTypes.widget;
+		}
+
+		return type;
 	}
 
 	/**
