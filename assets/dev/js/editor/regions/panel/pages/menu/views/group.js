@@ -17,7 +17,7 @@ module.exports = Marionette.CompositeView.extend( {
 		const callback = childView.model.get( 'callback' );
 
 		if ( _.isFunction( callback ) ) {
-			callback.call( childView );
+			callback.call( childView, childView );
 		}
 	},
 } );
