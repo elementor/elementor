@@ -24,9 +24,11 @@ import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
+import DocumentComponent from './document/component';
+import DataGlobalsComponent from './data/globals/component';
 
 import * as elementTypes from './elements/types';
-import * as elementTypesBases from './elements/types/base/';
+import * as ElementBase from './elements/types/base/element-base';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -185,7 +187,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		elements: {
 			types: {
-				base: elementTypesBases,
+				Base: ElementBase,
 				... elementTypes,
 			},
 			models: {
@@ -387,6 +389,14 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
+		// TODO: Move to elementor:init-data-components
+		$e.components.register( new DataGlobalsComponent() );
+
+		$e.components.register( new DocumentComponent() );
+
+		// TODO: Remove, BC Since 2.9.0.
+		elementor.saver = $e.components.get( 'document/save' );
+
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}
 
@@ -519,7 +529,7 @@ export default class EditorBase extends Marionette.Application {
 	getCurrentElement() {
 		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
-		if ( ! isPreview && ! elementorCommonConfig.isTesting ) {
+		if ( ! isPreview ) {
 			return false;
 		}
 

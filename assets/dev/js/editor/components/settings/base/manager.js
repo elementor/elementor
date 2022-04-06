@@ -40,6 +40,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		return this.getSettings( 'name' ) + '_settings';
 	},
 
+	getContainerId() {
+		elementorCommon.helpers.softDeprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+
+		return this.getContainerType();
+	},
+
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
 		const documentElementType = elementor.elementsManager.getElementType( 'document' ),
@@ -139,16 +145,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				data: settings,
 			} );
 
-		if ( ! elementorCommonConfig.isTesting ) {
-			NProgress.start();
-		}
+		NProgress.start();
 
 		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
-				if ( ! elementorCommonConfig.isTesting ) {
-					NProgress.done();
-				}
+				NProgress.done();
 
 				self.setSettings( 'settings', settings );
 

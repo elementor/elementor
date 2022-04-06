@@ -65,7 +65,7 @@ const WidgetView = BaseWidget.extend( {
 			return;
 		}
 
-		if ( elementorCommonConfig.isTesting && this.isDestroyed ) {
+		if ( this.isDestroyed ) {
 			return;
 		}
 

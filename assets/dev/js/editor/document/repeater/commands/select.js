@@ -1,9 +1,7 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
 /**
  * Command used to select current working repeater item.
  */
-export class Select extends CommandHistory {
+export class Select extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );

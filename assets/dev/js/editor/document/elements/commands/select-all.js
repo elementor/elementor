@@ -1,7 +1,5 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class SelectAll extends CommandBase {
-	apply() {
+export class SelectAll extends $e.modules.CommandBase {
+	apply( args ) {
 		elementor.selection.add(
 			this.flattenContainersList(
 				// The selection mechanism keeps selected elements in a single-dimension object. Therefore, In order to

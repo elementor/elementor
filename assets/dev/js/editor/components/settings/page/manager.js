@@ -1,4 +1,5 @@
 import Component from './component';
+import ChildrenArray from 'elementor-editor/container/model/children-array';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
@@ -43,7 +44,7 @@ module.exports = BaseSettings.extend( {
 				settings: editModel.get( 'settings' ),
 				label: elementor.config.document.panel.title,
 				controls: this.model.controls,
-				children: elementor.elements,
+				children: new ChildrenArray( ... elementor.elements || [] ),
 				parent: false,
 				// Emulate a view that can render the style.
 				renderer: {
@@ -66,5 +67,11 @@ module.exports = BaseSettings.extend( {
 
 	getContainerType() {
 		return 'document';
+	},
+
+	getContainerId() {
+		elementorCommon.helpers.softDeprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+
+		return this.getContainerType();
 	},
 } );
