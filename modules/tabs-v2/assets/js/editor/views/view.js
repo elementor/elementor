@@ -37,4 +37,4 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 	}
 }
 
-module.exports = View;
+export default View;

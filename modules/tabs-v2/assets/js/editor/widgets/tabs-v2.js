@@ -1,15 +1,11 @@
-import { default as View } from '../views/view';
+import View from '../views/view';
 import EmptyView from '../views/empty';
 
 /**
  * @extends {WidgetBase}
  */
-export class TabsV2 extends elementor.modules.elements.types.base.WidgetBase {
+export class TabsV2 extends elementor.modules.elements.types.Base {
 	getType() {
-		return 'widget';
-	}
-
-	getWidgetType() {
 		return 'tabs-v2';
 	}
 
