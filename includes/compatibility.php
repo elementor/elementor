@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +31,10 @@ class Compatibility {
 	public static function register_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
-		self::polylang_compatibility();
+		self::set_editor_language();
+
+		// Copy elementor data while polylang creates a translation copy
+		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
 
 		if ( is_admin() || defined( 'WP_LOAD_IMPORTERS' ) ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
@@ -229,37 +231,71 @@ class Compatibility {
 	}
 
 	/**
-	 * Polylang compatibility.
+	 * Set editor language.
 	 *
-	 * Fix Polylang compatibility with Elementor.
-	 *
-	 * @since 2.0.0
+	 * @since 3.7.0
 	 * @access private
 	 * @static
 	 */
-	private static function polylang_compatibility() {
-		// Fix language if the `get_user_locale` is difference from the `get_locale
+	private static function set_editor_language() {
 		if ( isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
 			add_action( 'set_current_user', function() {
 				global $current_user;
-				$current_user->locale = get_locale();
-			} );
 
-			// Fix for Polylang
-			define( 'PLL_AJAX_ON_FRONT', true );
+				$elementor_preferences = get_user_meta( $current_user->ID, 'elementor_preferences' );
+				$user_interface = isset( $elementor_preferences[0]['user_interface'] ) ? $elementor_preferences[0]['user_interface'] : null;
 
-			add_action( 'pll_pre_init', function( $polylang ) {
-				if ( isset( $_REQUEST['post'] ) ) {
-					$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
-					if ( ! empty( $post_language ) ) {
-						$_REQUEST['lang'] = $post_language->locale;
+				if ( 'user_language' === $user_interface ) {
+					self::wpml_set_editor_language( $user_interface );
+				} else {
+					if ( ! self::wpml_set_editor_language( $user_interface ) ) {
+						$current_user->locale = get_locale();
 					}
 				}
 			} );
+
+			// I think we don't need this code anymore. I deleted it because it was causing problems for editor translations.
+			// Fix for Polylang
+			// define( 'PLL_AJAX_ON_FRONT', true );
+
+			// add_action( 'pll_pre_init', function( $polylang ) {
+			// 	if ( isset( $_REQUEST['post'] ) ) {
+			// 		$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
+			// 		if ( ! empty( $post_language ) ) {
+			// 			$_REQUEST['lang'] = $post_language->locale;
+			// 		}
+			// 	}
+			// } );
+		}
+	}
+
+	/**
+	 * Set editor language.
+	 *
+	 * @since 3.7.0
+	 * @access public
+	 * @static
+	 */
+	public static function wpml_set_editor_language( $user_interface ) {
+		global $sitepress, $current_user;
+
+		if ( $sitepress ) {
+			$language = 'user_language' === $user_interface ? $sitepress->get_language_code_from_locale( $current_user->locale ) : $sitepress->get_default_language();
+
+			$_REQUEST['lang'] = $language;
+			$current_user->locale = 'user_language' === $user_interface ? $current_user->locale : $sitepress->get_locale_from_language_code( $language );
+			$sitepress->switch_lang( $language );
+
+			// Disable String Translation plugin for the editor - It overwrites the $l10n global variable and messed up the editor translations for some cases.
+			// Temporary Fix: We need to contact WPML to get a fix from their side.
+			add_action( 'plugins_loaded', function() {
+				remove_action( 'wpml_before_init', 'load_wpml_st_basics' );
+			} );
+
+			return $language;
 		}
 
-		// Copy elementor data while polylang creates a translation copy
-		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
+		return false;
 	}
 
 	/**

@@ -484,13 +484,15 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.9.2
 	 * @access public
+	 * 
+	 * @param bool $force_init_controls Optional. Whether to force the init_controls() function.
 	 *
 	 * @return array Stack of controls.
 	 */
-	public function get_stack() {
+	public function get_stack( $force_init_controls = false ) {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
-		if ( null === $stack ) {
+		if ( null === $stack || $force_init_controls ) {
 			$this->init_controls();
 
 			return Plugin::$instance->controls_manager->get_element_stack( $this );
@@ -1479,7 +1481,8 @@ abstract class Controls_Stack extends Base_Object {
 		$this->add_control( $section_id, $args );
 
 		if ( null !== $this->current_section ) {
-			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section "%s".', $this->current_section['section'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			// This error send status 200OK for ajax request, why not sending 500?
+			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section "%s".', $this->current_section['section'] ), 500 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$this->current_section = $this->get_section_args( $section_id );

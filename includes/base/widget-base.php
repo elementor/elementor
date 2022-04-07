@@ -170,11 +170,12 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 *
 	 * @param bool $with_common_controls Optional. Whether to include the common controls. Default is true.
+	 * @param bool $force_init_controls Optional. Whether to force the init_controls() function.
 	 *
 	 * @return array Widget stack of controls.
 	 */
-	public function get_stack( $with_common_controls = true ) {
-		$stack = parent::get_stack();
+	public function get_stack( $with_common_controls = true, $force_init_controls = false ) {
+		$stack = parent::get_stack( $force_init_controls );
 
 		if ( $with_common_controls && 'common' !== $this->get_unique_name() ) {
 			/** @var Widget_Common $common_widget */

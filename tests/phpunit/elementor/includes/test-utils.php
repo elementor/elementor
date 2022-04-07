@@ -173,4 +173,108 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
 			"[ 'key' => '0' ] is empty" );
 	}
+
+	public function test_get_current_locale() {
+		// Act
+		$language = Utils::get_current_locale();
+
+		// Assert
+		$this->assertIsString( $language );
+	}
+
+	public function test_get_polylang_post_locale() {
+		global $polylang;
+
+		// Arrange
+		$polylang = new \stdClass();
+		$polylang->model = new \stdClass();
+		$polylang->model->post = new \stdClass();
+		$polylang->model->post = new PolylangLanguageMock();
+
+		// Act
+		$language = Utils::get_polylang_post_locale();
+
+		// Assert
+		$this->assertEquals( $language, 'en_US' );
+	}
+
+	public function test_get_wpml_post_locale() {
+		// Arrange
+		add_action( 'wpml_post_language_details', function () {
+			return [
+				'locale' => 'en_US',
+			];
+		} );
+
+		// Act
+		$language = Utils::get_wpml_post_locale();
+
+		// Assert
+		$this->assertEquals( $language, 'en_US' );
+	}
+
+	public function test_change_language_of_textdomain__return_false_if_not_changed() {
+		// Arrange
+		load_textdomain( 'elementor', __DIR__ . '/../languages/elementor-he_IL.mo' );
+
+		// Act
+		$is_textdomain_changed = Utils::change_language_of_textdomain( 'he_IL', __DIR__ . '/../languages/' );
+
+		// Assert
+		$this->assertNotTrue( $is_textdomain_changed );
+	}
+
+	public function test_change_language_of_textdomain__l10n_is_empty() {
+		global $l10n;
+
+		// Arrange
+		load_textdomain( 'elementor', __DIR__ . '/../languages/elementor-he_IL.mo' );
+
+		// Act
+		$is_textdomain_changed = Utils::change_language_of_textdomain( 'en_US', __DIR__ . '/../languages/' );
+
+		// Assert
+		$this->assertTrue( $is_textdomain_changed );
+		$this->assertNotTrue( isset( $l10n['elementor'] ) );
+	}
+
+	public function test_change_language_of_textdomain__file_not_exist() {
+		global $l10n;
+
+		// Arrange
+		load_textdomain( 'elementor', __DIR__ . '/../languages/elementor-he_IL.mo' );
+
+		// Act
+		$is_textdomain_changed = Utils::change_language_of_textdomain( 'de_DE_not_exist', __DIR__ . '/../languages/' );
+
+		// Assert
+		$this->assertNotTrue( $is_textdomain_changed );
+		$this->assertNotTrue( isset( $l10n['elementor'] ) );
+	}
+
+	public function test_change_language_of_textdomain() {
+		global $l10n;
+
+		// Arrange
+		load_textdomain( 'elementor', __DIR__ . '/../languages/elementor-he_IL.mo' );
+
+		// Act
+		$is_textdomain_changed = Utils::change_language_of_textdomain( 'de_DE', __DIR__ . '/../languages/' );
+
+		// Assert
+		$this->assertTrue( $is_textdomain_changed );
+		$this->assertTrue( isset( $l10n['elementor'] ) );
+
+		// Cleanup - Back to en_US
+		Utils::change_language_of_textdomain( 'en_US', __DIR__ . '/../languages/' );
+	}
+}
+
+// Mock Polylang language.
+class PolylangLanguageMock {
+	public $locale = 'en_US';
+
+	public function get_language( $post_id, $lang_type ) {
+		return $this;
+	}
 }

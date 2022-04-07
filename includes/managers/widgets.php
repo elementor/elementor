@@ -338,6 +338,41 @@ class Widgets_Manager {
 			];
 		}
 
+		$config = $this->translate_default_values_to_site_locale( $config );
+
+		return $config;
+	}
+
+	public function translate_default_values_to_site_locale( $config, $path = WP_LANG_DIR . '/plugins/' ) {
+		global $l10n;
+
+		$backup = $l10n;
+
+		$locale = Utils::get_current_locale();
+
+		if ( ! Utils::change_language_of_textdomain( $locale, $path ) ) {
+			return $config;
+		}
+
+		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
+			// There is a bug in Elementor-Pro that causes the function get_stack() to fail.
+			// The bug in Elementor-Pro is fixed in 3.7.0. 
+			// This is a temporary fix until Elementor-Pro 3.7.0 will be released.
+			if ( 'progress-tracker' === $widget_key || 'facebook-embed' === $widget_key ) {
+				continue;
+			}
+
+			$widget_controls = $widget->get_stack( false, true )['controls'];
+
+			foreach ( $widget_controls as $control_key => $control ) {
+				if ( isset( $control['default'] ) ) {
+					$config[ $widget_key ]['controls'][ $control_key ]['default'] = $control['default'];
+				}
+			}
+		}
+
+		$l10n = $backup;
+
 		return $config;
 	}
 

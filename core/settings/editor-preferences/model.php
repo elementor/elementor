@@ -103,6 +103,19 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
+			'user_interface',
+			[
+				'label' => esc_html__( 'User Interface', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'site_language',
+				'options' => [
+					'site_language' => esc_html__( 'Site language (WP)', 'elementor' ),
+					'user_language' => esc_html__( 'User language', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'responsive_heading',
 			[
 				'label' => __( 'Responsive Preview', 'elementor' ),
