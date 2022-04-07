@@ -73,13 +73,13 @@ test('All widgets sanity test', async ({page}) => {
 	const widgetsConfig = {
 		heading: {
 			controls: {
-				"title": {"label": "Title", "type": "textarea"},
-				"link": {"label": "Link", "type": "url"},
-				"size": {"label": "Size", "type": "select"},
-				"header_size": {"label": "HTML Tag", "type": "select"},
-				"align": {"label": "Alignment", "type": "choose"},
-				"align_tablet": {"label": "Alignment", "type": "choose"},
-				"align_mobile": {"label": "Alignment", "type": "choose"},
+				"title": {"label": "Title", "type": "textarea", "default": "Add Your Heading Text Here"},
+				"link": {"label": "Link", "type": "url", "default":{"url":"","is_external":"","nofollow":"","custom_attributes":""}},
+				"size": {"label": "Size", "type": "select", "default":"default"},
+				"header_size": {"label": "HTML Tag", "type": "select", "default":"h2"},
+				"align": {"label": "Alignment", "type": "choose", "default":""},
+				"align_tablet": {"label": "Alignment", "type": "choose", "default":""},
+				"align_mobile": {"label": "Alignment", "type": "choose", "default":""},
 				"view": {"label": "View", "type": "hidden"},
 			}
 		}
@@ -105,6 +105,8 @@ test('All widgets sanity test', async ({page}) => {
 		for (const controlName in config.controls) {
 			const controlConfig = config.controls[controlName];
 
+			console.log(controlName);
+
 			// Focus on top frame.
 			await page.click(`#elementor-panel-header-title`);
 
@@ -115,26 +117,36 @@ test('All widgets sanity test', async ({page}) => {
 					await element.screenshot({path: `./tests/playwright/test-screenshots/${widgetsName}-${controlName}.png`});
 
 					// Reset.
-					await page.fill(`[data-setting="${controlName}"]`, `${widgetsName} Test`);
+					await page.fill(`[data-setting="${controlName}"]`, controlConfig.default);
 
 					break;
 				case 'select':
-					const options = await page.evaluate((controlName) => {
-						const select = document.querySelector(`[data-setting="${controlName}"]`);
-						console.log( controlName, select.classNames );
-						const values = select.options.map(option => option.value);
-						console.log('values', values);
+					const options = await page.evaluate( ( args ) => {
+						const options = document.querySelector(`[data-setting="${args.controlName}"]`).options;
+						const values = [];
+						for (let i = 0; i < options.length; i++) {
+							// Skip default value.
+							if ( options[i].value !== args.defaultValue ) {
+								values.push(options[i].value);
+							}
+						}
 						return values;
-					});
+					}, { controlName, defaultValue: controlConfig.default } );
+
+
+					console.log(controlConfig);
 
 					for (const optionValue of options) {
 						await page.selectOption(`[data-setting="${controlName}"]`, optionValue);
 
-						await element.screenshot({path: `./tests/playwright/test-screenshots/${widgetsName}-${controlName}-${optionValue}.png`});
+						// delay for rendering
+						await page.waitForTimeout(800);
 
-						// Reset.
-						await page.selectOption(`[data-setting="${controlName}"]`, '');
+						await element.screenshot({path: `./tests/playwright/test-screenshots/${widgetsName}-${controlName}-${optionValue}.png`});
 					}
+
+					// Reset.
+					await page.selectOption(`[data-setting="${controlName}"]`, controlConfig.default );
 
 					break;
 			}
