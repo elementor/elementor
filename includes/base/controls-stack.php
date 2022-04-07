@@ -484,7 +484,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.9.2
 	 * @access public
-	 * 
+	 *
 	 * @param bool $force_init_controls Optional. Whether to force the init_controls() function.
 	 *
 	 * @return array Stack of controls.

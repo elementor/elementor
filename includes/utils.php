@@ -782,9 +782,9 @@ class Utils {
 
 	/**
 	 * Get the correct locale for WPML, Polylang or WordPress.
-	 * 
+	 *
 	 * @since 3.7.0
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function get_current_locale() {
@@ -792,16 +792,16 @@ class Utils {
 			return self::get_polylang_post_locale();
 		} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
 			return self::get_wpml_post_locale();
-		}else {
+		} else {
 			return get_locale();
 		}
 	}
 
 	/**
 	 * Get Polylang post locale.
-	 * 
+	 *
 	 * @since 3.7.0
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function get_polylang_post_locale() {
@@ -814,33 +814,33 @@ class Utils {
 
 	/**
 	 * Get WPML post locale.
-	 * 
+	 *
 	 * @since 3.7.0
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function get_wpml_post_locale() {
 		$post_id = filter_input( INPUT_POST, 'editor_post_id' );
-			
+
 		return apply_filters( 'wpml_post_language_details', NULL, $post_id )['locale'];
 	}
 
 	/**
 	 * Change language of textdomain.
-	 * 
+	 *
 	 * @param string $locale
 	 *
 	 * @param string $path - Path to the languages folder.
 	 *
 	 * @since 3.7.0
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function change_language_of_textdomain( $locale, $path = WP_LANG_DIR . '/plugins/' ) {
 		global $l10n;
 
 		$locale_textdomain_loaded = isset( $l10n['elementor']->headers['Language'] ) && $l10n['elementor']->headers['Language'] === $locale;
-		
+
 		if ( $locale_textdomain_loaded ) {
 			return false;
 		}
@@ -850,14 +850,17 @@ class Utils {
 		unload_textdomain( 'elementor' );
 		unload_textdomain( 'elementor-pro' );
 
-		if ( $locale === 'en_US' ) {
+		if ( 'en_US' === $locale ) {
 			// There is no MO file for en_US.
 			$current_user->locale = 'en_US';
 		} else {
-			$elementor_textdomain_loaded = load_textdomain( 'elementor', $path . 'elementor' . '-' . $locale . '.mo' );
-			Utils::has_pro() && $elementor_pro_textdomain_loaded = load_textdomain( 'elementor-pro', $path . 'elementor-pro' . '-' . $locale . '.mo' );
-			
-			if( ! $elementor_textdomain_loaded || ( Utils::has_pro() && ! $elementor_pro_textdomain_loaded ) ) {
+			$elementor_textdomain_loaded = load_textdomain( 'elementor', $path . 'elementor-' . $locale . '.mo' );
+
+			if ( self::has_pro() ) {
+				$elementor_pro_textdomain_loaded = load_textdomain( 'elementor-pro', $path . 'elementor-pro-' . $locale . '.mo' );
+			}
+
+			if ( ! $elementor_textdomain_loaded || ( self::has_pro() && ! $elementor_pro_textdomain_loaded ) ) {
 				return false;
 			}
 		}
