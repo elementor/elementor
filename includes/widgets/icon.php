@@ -254,7 +254,7 @@ class Widget_Icon extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
-			'icon_tabs_hover',
+			'icon_colors_hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
