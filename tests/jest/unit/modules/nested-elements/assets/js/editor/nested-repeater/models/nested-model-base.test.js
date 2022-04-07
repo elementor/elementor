@@ -52,6 +52,7 @@ describe( 'NestedModelBase', () => {
 
 		nestedModelBase.set( 'elType', 'widget' );
 		nestedModelBase.set( 'widgetType', 'accordion' );
+
 		// Act.
 		const isValidChild = nestedModelBase.isValidChild( childModel );
 
