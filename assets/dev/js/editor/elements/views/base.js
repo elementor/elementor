@@ -830,7 +830,7 @@ BaseElementView = BaseContainer.extend( {
 
 				// Need to stop this event when the element is absolute since it clashes with this one.
 				// See `behaviors/widget-draggable.js`.
-				if ( this.options.draggable.isActive ) {
+				if ( this.options.draggable?.isActive ) {
 					return;
 				}
 
