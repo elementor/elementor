@@ -28,7 +28,7 @@ export default class ElementsManager {
 
 		// When exact widget is not registered, return widget base instead.
 		if ( ! type && elementor.widgetsCache[ key ] ) {
-			return this.elementTypes.widget;
+			type = this.elementTypes.widget;
 		}
 
 		return type;
