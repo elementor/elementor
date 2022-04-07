@@ -1,5 +1,4 @@
 <?php
-// reset for testing purposes
 namespace Elementor\Includes\Widgets\Traits;
 
 use Elementor\Controls_Manager;
