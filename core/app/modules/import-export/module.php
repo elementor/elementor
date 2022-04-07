@@ -363,6 +363,16 @@ class Module extends BaseModule {
 		return $this->get_elementor_editor_page_url( $frontpage_id );
 	}
 
+	private function get_elementor_home_page_url() {
+		if ( 'page' !== get_option( 'show_on_front' ) ) {
+			return '';
+		}
+
+		$frontpage_id = get_option( 'page_on_front' );
+
+		return $this->get_elementor_editor_page_url( $frontpage_id );
+	}
+
 	private function get_edit_elementor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
 			return '';
