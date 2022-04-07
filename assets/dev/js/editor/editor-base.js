@@ -28,7 +28,7 @@ import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 
 import * as elementTypes from './elements/types';
-import * as elementTypesBases from './elements/types/base/';
+import ElementBase from './elements/types/base/element-base';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -187,7 +187,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		elements: {
 			types: {
-				base: elementTypesBases,
+				Base: ElementBase,
 				... elementTypes,
 			},
 			models: {
