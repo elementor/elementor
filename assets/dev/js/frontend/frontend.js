@@ -190,6 +190,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			environment: environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
+			events: Events,
 		};
 
 		// TODO: BC since 2.4.0

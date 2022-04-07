@@ -36,4 +36,25 @@ class Wp_Api {
 		return $this->get_plugins()
 			->only( get_option( 'active_plugins' ) );
 	}
+
+	/**
+	 * @return object|array
+	 */
+	public function plugins_api( $action, $args ) {
+		return plugins_api( $action, $args );
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_plugin_active( $plugin ) {
+		return is_plugin_active( $plugin );
+	}
+
+	/**
+	 * @return bool|int|null|true
+	 */
+	public function activate_plugin( $plugin ) {
+		return activate_plugin( $plugin );
+	}
 }

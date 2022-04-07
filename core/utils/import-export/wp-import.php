@@ -958,7 +958,7 @@ class WP_Import extends \WP_Importer {
 		if ( ! $menu_slug ) {
 			$this->output['errors'][] = esc_html__( 'Menu item skipped due to missing menu slug', 'elementor' );
 
-			return;
+			return $result;
 		}
 
 		// If menu was already exists, refer the items to the duplicated menu created.
@@ -971,7 +971,7 @@ class WP_Import extends \WP_Importer {
 			/* translators: %s: Menu slug. */
 			$this->output['errors'][] = sprintf( esc_html__( 'Menu item skipped due to invalid menu slug: %s', 'elementor' ), $menu_slug );
 
-			return;
+			return $result;
 		} else {
 			$menu_id = is_array( $menu_id ) ? $menu_id['term_id'] : $menu_id;
 		}
@@ -979,6 +979,11 @@ class WP_Import extends \WP_Importer {
 		$post_meta_key_value = [];
 		foreach ( $item['postmeta'] as $meta ) {
 			$post_meta_key_value[ $meta['key'] ] = $meta['value'];
+		}
+
+		// Skip menu items 'taxonomy' type, when the taxonomy is not exits.
+		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && ! get_taxonomy( $post_meta_key_value['_menu_item_object'] ) ) {
+			return $result;
 		}
 
 		$_menu_item_object_id = $post_meta_key_value['_menu_item_object_id'];
