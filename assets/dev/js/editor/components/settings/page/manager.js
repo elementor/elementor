@@ -68,4 +68,10 @@ module.exports = BaseSettings.extend( {
 	getContainerType() {
 		return 'document';
 	},
+
+	getContainerId() {
+		elementorCommon.helpers.softDeprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+
+		return this.getContainerType();
+	},
 } );
