@@ -59,7 +59,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 		$controls = [];
 
 		$controls['blur'] = [
-			'label' => _x( 'Blur', 'Filter Control', 'elementor' ),
+			'label' => esc_html_x( 'Blur', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'required' => 'true',
 			'range' => [
@@ -78,7 +78,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 		];
 
 		$controls['brightness'] = [
-			'label' => _x( 'Brightness', 'Filter Control', 'elementor' ),
+			'label' => esc_html_x( 'Brightness', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
@@ -95,7 +95,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 		];
 
 		$controls['contrast'] = [
-			'label' => _x( 'Contrast', 'Filter Control', 'elementor' ),
+			'label' => esc_html_x( 'Contrast', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
@@ -112,7 +112,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 		];
 
 		$controls['saturate'] = [
-			'label' => _x( 'Saturation', 'Filter Control', 'elementor' ),
+			'label' => esc_html_x( 'Saturation', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
@@ -129,7 +129,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 		];
 
 		$controls['hue'] = [
-			'label' => _x( 'Hue', 'Filter Control', 'elementor' ),
+			'label' => esc_html_x( 'Hue', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
@@ -163,7 +163,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 		return [
 			'popover' => [
 				'starter_name' => 'css_filter',
-				'starter_title' => _x( 'CSS Filters', 'Filter Control', 'elementor' ),
+				'starter_title' => esc_html_x( 'CSS Filters', 'Filter Control', 'elementor' ),
 				'settings' => [
 					'render_type' => 'ui',
 				],

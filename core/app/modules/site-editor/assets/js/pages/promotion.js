@@ -41,7 +41,14 @@ export default function Promotion() {
 						</Text>
 					</Grid>
 					<Grid item container justify="end" alignItems="start" sm={5}>
-						<Button size="sm" color="cta" variant="contained" url={ promotionUrl }text={__( 'Go Pro', 'elementor' )} />
+						<Button
+							size="sm"
+							color="cta"
+							variant="contained"
+							url={ promotionUrl }
+							target="_blank"
+							text={ __( 'Go Pro', 'elementor' ) }
+						/>
 					</Grid>
 				</Grid>
 				<hr className="eps-separator"/>

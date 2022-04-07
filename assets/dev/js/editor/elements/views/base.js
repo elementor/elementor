@@ -1,4 +1,5 @@
 import environment from 'elementor-common/utils/environment';
+import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -95,10 +96,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChildView( model ) {
-		const elementType = elementor.elementsManager.getElementType( model.get( 'elType' ), model.get( 'widgetType' ) );
+		const elementTypeKey = model.get( 'widgetType' ) || model.get( 'elType' ),
+			elementType = elementor.elementsManager.getElementType( elementTypeKey );
 
 		if ( ! elementType ) {
-			throw new Error( 'Element type not found: ' + model.get( 'elType' ) );
+			throw new ElementTypeNotFound( elementTypeKey );
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', elementType.getView(), model, this );
@@ -959,7 +961,7 @@ BaseElementView = BaseContainer.extend( {
 
 				// Need to stop this event when the element is absolute since it clashes with this one.
 				// See `behaviors/widget-draggable.js`.
-				if ( this.options.draggable.isActive ) {
+				if ( this.options.draggable?.isActive ) {
 					return;
 				}
 

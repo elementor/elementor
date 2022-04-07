@@ -264,7 +264,7 @@ export default function Account() {
 			</PageContentLayout>
 			{
 				! state.isLibraryConnected && (
-					<div className="e-onboarding__already-have-account-text">
+					<div className="e-onboarding__footnote">
 						<p>
 							{ __( 'Already have one?', 'elementor' ) + ' ' }
 							<a

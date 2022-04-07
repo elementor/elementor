@@ -37,7 +37,7 @@ jobs:
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x    
+          node-version: 14.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -83,6 +83,7 @@ jobs:
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
         with:
           php-version: '5.6'
+          tools: composer:v2.2.0 # composer 2.3+ is not supporting php 5.6
       - name: Run PHP Syntax Lint 5.6
         run: | # remove unsupported packages PHP < 7.4
           export PATH=$HOME/.composer/vendor/bin:$PATH

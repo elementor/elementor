@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Import extends CommandHistory {
+export class Import extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 
