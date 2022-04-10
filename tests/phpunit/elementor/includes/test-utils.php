@@ -179,7 +179,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$language = Utils::get_current_locale();
 
 		// Assert
-		$this->assertIsString( $language );
+		$this->assertNotEmpty( $language );
 	}
 
 	public function test_get_polylang_post_locale() {

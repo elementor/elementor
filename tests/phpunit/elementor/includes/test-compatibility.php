@@ -20,7 +20,7 @@ class Test_Compatibility extends Elementor_Test_Base {
         $is_wpml_exist = Compatibility::wpml_set_editor_language( $user_interface );
 
         // Assert
-        $this->assertIsString( $is_wpml_exist );
+        $this->assertNotEmpty( $is_wpml_exist );
     }
 
     public function test_wpml_set_editor_language__wpml_not_exist() {
@@ -36,7 +36,7 @@ class Test_Compatibility extends Elementor_Test_Base {
         // Assert
         $this->assertNotTrue( $is_wpml_exist );
 
-        $GLOBALS[ 'sitepress' ] = new Mock_WPML();
+        $sitepress = new Mock_WPML();
     }
 
     public function test_wpml_set_editor_language__user_interface_is_in_the_correct_language() {
