@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes\Elements;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,19 +28,32 @@ class Test_Widgets_Manager extends Elementor_Test_Base {
 				],
 			],
 		] ];
-
+		
 		foreach ( $translations as $locale1 => $translation1 ) {
 			foreach ( $translations as $locale2 => $translation2 ) {
-				// Act
 				$locale = $locale1; // Site locale
-				$current_user->locale = $locale2; // User locale
+				$current_user->locale = $locale2; // User locale, Editor locale
 
+				$config = [ 'heading' => [
+					'controls' => [
+						'title' => [
+							'default' => $translation1,
+						],
+					],
+				] ];
+				
+				// Act
 				$translated_config = plugin::$instance->widgets_manager->translate_default_values_to_site_locale( $config, __DIR__ . '/../../languages/' );
 
 				// Assert
-				$this->assertEquals( $translated_config['heading']['controls']['title']['default'], $translations[ $locale ] );
+				$this->assertEquals( $translations[ $locale ], $translated_config['heading']['controls']['title']['default'] );
 			}
 		}
+
+		// Cleanup - Back to en_US
+		$locale = 'en_US';
+		$current_user->locale = 'en_US';
+		Utils::change_language_of_textdomain( 'en_US', __DIR__ . '/../languages/' );
     }
 
 }
