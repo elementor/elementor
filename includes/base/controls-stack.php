@@ -1481,7 +1481,6 @@ abstract class Controls_Stack extends Base_Object {
 		$this->add_control( $section_id, $args );
 
 		if ( null !== $this->current_section ) {
-			// This error send status 200OK for ajax request, why not sending 500?
 			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section "%s".', $this->current_section['section'] ), 500 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
