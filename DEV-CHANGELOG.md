@@ -1,5 +1,17 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev4 - 2022-04-10
+* Fix: Container is not functioning as expected [ED-6845] (#18339)
+* Tweak: Onboarding - Updated copy for Hello screen, added footnote [ED-6817] (#18342)
+* Fix: Import Export fail when trying to import unregister taxonomies [ED-6919] (#18322)
+* Tweak: Add plugins support to the CLI import process [ED-6902] (#18316)
+* Closes 18155 - verify if svg file exists before updating _elementor_inline_svg (#18162) [ED-6872]
+* Fix: Favorites in Template Library doesn't work properly [ED-6528] (#18102)
+* Tweak: Theme Builder - Open "Go Pro" link in new tab [ED-6396] (#18350)
+* Fix: Nested Infra - Display Conditions window is blank [ED-6874] (#18301)
+* Fix: PHP 8.1 - Throws warnings in System info [ED-6869] (#18277)
+* Tweak: Allowing manual insertion of negative values to numeric fields [ED-6909] (#18371)
+
 #### 3.7.0-dev3 - 2022-04-03
 * Tweak: Nested Infra - Select repeater item command [ED-6682] (#18039)
 * Fix: Container is not functioning as expected [ED-6747] (#18199)
@@ -407,6 +419,3 @@
 
 #### 3.5.0-dev21 - 2021-09-10
 * Tweak: CSS Transform - Change flip icon [ED-4462] (#16284)
-
-#### 3.5.0-dev19 - 2021-09-06
-* Fix: Editor doesn't load on v3.5.0 if `ELEMENTOR_DEBUG` is enabled [ED-4937] (#16256)
