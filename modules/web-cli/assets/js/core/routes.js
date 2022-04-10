@@ -90,11 +90,11 @@ export default class Routes extends Commands {
 			container = component.getServiceName(),
 			oldRoute = this.current[ container ];
 
+		Commands.trace.push( route );
+
 		if ( oldRoute ) {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
 		}
-
-		Commands.trace.push( route );
 
 		super.beforeRun( route, args, false );
 
@@ -142,9 +142,9 @@ export default class Routes extends Commands {
 
 		component.onRoute( route, args );
 
-		Commands.trace.pop();
-
 		super.afterRun( route, args, results, false );
+
+		Commands.trace.pop();
 	}
 
 	is( route, args = {} ) {
