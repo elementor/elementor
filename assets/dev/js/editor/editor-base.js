@@ -2,13 +2,12 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
+import EditorComponent from './component';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
-import BrowserImport from './components/browser-import/manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -366,9 +365,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.devTools = new DevTools();
 
-		this.browserImport = new BrowserImport();
-
-		this.documents = $e.components.register( new EditorDocuments() );
+		$e.components.register( new EditorComponent( { manager: this } ) );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
