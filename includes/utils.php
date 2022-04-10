@@ -822,7 +822,7 @@ class Utils {
 	public static function get_wpml_post_locale() {
 		$post_id = filter_input( INPUT_POST, 'editor_post_id' );
 
-		return apply_filters( 'wpml_post_language_details', NULL, $post_id )['locale'];
+		return apply_filters( 'wpml_post_language_details', null, $post_id )['locale'];
 	}
 
 	/**
