@@ -4,9 +4,9 @@ export const setupMock = async () => {
 			this.__construct( args );
 		}
 
-		__construct( args ) {}
+		__construct() {}
 
-		trigger( event, ...args ) {}
+		trigger() {}
 	} );
 
 	global.navigator = {
@@ -45,7 +45,7 @@ export const setupMock = async () => {
 			classList: {
 				add: () => {},
 				remove: () => {},
-				toggle( token, force ) {},
+				toggle() {},
 			},
 		},
 	};
