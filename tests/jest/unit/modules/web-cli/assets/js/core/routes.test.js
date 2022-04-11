@@ -45,7 +45,7 @@ describe( '$e.routes', () => {
 		// Act
 		$e.route( 'test-component/test-route' );
 
-		// Assert - Ensure route leave global commands trace.
+		// Assert.
 		expect( $e.commands.constructor.trace ).toEqual( [] );
 	} );
 } );
