@@ -4,15 +4,19 @@ import usePageTitle from 'elementor-app/hooks/use-page-title';
 import Content from '../../../../../assets/js/layout/content';
 import DropZone from '../../../../../assets/js/organisms/drop-zone';
 import Notice from '../components/notice';
+import ElementorLoading from 'elementor-app/molecules/elementor-loading';
 
 export default function UploadAndInstallPro() {
 	usePageTitle( { title: __( 'Upload and Install Elementor Pro', 'elementor' ) } );
 
 	const { ajaxState: installProZipAjaxState, setAjax: setInstallProZipAjaxState } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
+		[ isLoading, setIsLoading ] = useState( false ),
 		[ fileSource, setFileSource ] = useState();
 
 	const uploadProZip = useCallback( ( file ) => {
+		setIsLoading( true );
+
 		setInstallProZipAjaxState( {
 			data: {
 				action: 'elementor_upload_and_install_pro',
@@ -48,6 +52,8 @@ export default function UploadAndInstallPro() {
 	// Run the callback that runs when the Pro Upload Ajax returns a response.
 	useEffect( () => {
 		if ( 'initial' !== installProZipAjaxState.status ) {
+			setIsLoading( false );
+
 			if ( 'success' === installProZipAjaxState.status && installProZipAjaxState.response?.elementorProInstalled ) {
 				elementorCommon.events.dispatchEvent( {
 					event: 'pro uploaded',
@@ -81,6 +87,10 @@ export default function UploadAndInstallPro() {
 			},
 		} );
 	};
+
+	if ( isLoading ) {
+		return <ElementorLoading loadingText={ __( 'Uploading', 'elementor' ) } />;
+	}
 
 	return (
 		<div className="eps-app e-onboarding__upload-pro">
