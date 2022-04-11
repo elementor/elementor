@@ -167,7 +167,9 @@ module.exports = Marionette.CompositeView.extend( {
 				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
 		);
 
-		$e.run( 'editor/drop', args );
+		args.options = options;
+
+		$e.run( 'preview/drop', args );
 	},
 
 	getHistoryType( event ) {

@@ -2,12 +2,14 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
+import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
-import EditorComponent from './component';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
+import BrowserImport from './components/browser-import/manager';
+import PreviewComponent from './components/preview/component';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -365,7 +367,9 @@ export default class EditorBase extends Marionette.Application {
 
 		this.devTools = new DevTools();
 
-		$e.components.register( new EditorComponent( { manager: this } ) );
+		this.browserImport = new BrowserImport();
+
+		this.documents = $e.components.register( new EditorDocuments() );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -380,6 +384,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.components.register( new DataGlobalsComponent() );
 
 		$e.components.register( new DocumentComponent() );
+
+		$e.components.register( new PreviewComponent() );
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
