@@ -13,7 +13,7 @@ export default function getUserTimestamp() {
 	let UTCTimestamp = new Date( date.getTime() - ( timezoneOffset * 60000 ) ).toISOString();
 
 	// Remove the milliseconds and Z suffix from the string.
-	UTCTimestamp = UTCTimestamp.slice( 0, UTCTimestamp.length - 5 );
+	UTCTimestamp = UTCTimestamp.slice( 0, -1 );
 
 	// Create the offset string in the format `+HH:00` (or minus (-) prefix for negative offset instead of plus)
 	const timezoneOffsetInHours = timezoneOffset / 60,
