@@ -68,4 +68,6 @@ export const freeMock = () => {
 	delete global.localStorage;
 	delete global.location;
 	delete global.window;
+	delete global._;
+	delete global.$e;
 };
