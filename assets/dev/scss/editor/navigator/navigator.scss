@@ -304,8 +304,9 @@ body {
 			}
 		}
 
-		&-section {
-			background-color: #fff;
+		&-section,
+		&-container, {
+			background-color: $white;
 		}
 	}
 }

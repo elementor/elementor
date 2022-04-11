@@ -87,3 +87,17 @@
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
 	}
 }
+
+.elementor-element.elementor-button- {
+	@include button-types( '.elementor-button' );
+
+}
+
+.elementor-widget-button {
+	.elementor-button {
+		.elementor-button- {
+
+			@include button-types( '' );
+		}
+	}
+}

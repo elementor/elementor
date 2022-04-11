@@ -1,7 +1,6 @@
-import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
 import ElementsCollection from 'elementor-elements/collections/elements';
 
-export class AttachPreview extends CommandInternalBaseBase {
+export class AttachPreview extends $e.modules.CommandInternalBase {
 	slicesToReset = [
 		'document/elements',
 		'document/elements/selection',

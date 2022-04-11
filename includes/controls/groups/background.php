@@ -750,6 +750,17 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
+		$fields['slideshow_lazyload'] = [
+			'label' => esc_html__( 'Lazyload', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'separator' => 'before',
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
 		$fields['slideshow_ken_burns'] = [
 			'label' => esc_html__( 'Ken Burns Effect', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
