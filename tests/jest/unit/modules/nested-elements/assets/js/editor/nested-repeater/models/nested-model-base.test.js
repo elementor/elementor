@@ -30,7 +30,12 @@ describe( 'NestedModelBase', () => {
 		nestedModelBase = new ( await import( 'elementor/modules/nested-elements/assets/js/editor/nested-repeater/models/nested-model-base' ) ).default;
 	} );
 
-	afterEach( freeMock );
+	afterEach( () => {
+		delete global.elementor;
+		delete global.$e;
+
+		freeMock();
+	} );
 
 	test( 'isValidChild() -- Sanity', () => {
 		// Arrange.
