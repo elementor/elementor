@@ -36,6 +36,9 @@ describe( '$e.routes', () => {
 
 		// Assert - Ensure route added to commands global trace.
 		expect( trace ).toEqual( [ 'test-component/test-route' ] );
+
+		// Cleanup.
+		$e.routes.beforeRun = beforeRunOrig;
 	} );
 
 	test( 'afterRun() -- Ensure route leave global commands trace', () => {
