@@ -400,7 +400,7 @@ class Module extends BaseModule {
 			return '';
 		}
 
-		return $document->get_preview_url();
+		return $document->get_wp_preview_url();
 	}
 
 	private function get_elementor_editor_page_url( $page_id ) {
