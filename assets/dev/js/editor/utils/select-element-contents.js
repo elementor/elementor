@@ -9,4 +9,4 @@ export const selectElementContents = ( element ) => {
 	const sel = window.getSelection();
 	sel.removeAllRanges();
 	sel.addRange( range );
-}
+};

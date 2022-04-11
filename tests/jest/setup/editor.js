@@ -93,8 +93,14 @@ const createContainer = ( { type, widgetType, id, settings = {}, children = [], 
 };
 
 global.elementor = {
+	helpers: {
+		scrollToView: jest.fn(),
+	},
 	navigator: {
 		region: {
+			$el: {
+				find: jest.fn(),
+			},
 			indicators: {
 				customPosition: {
 					title: 'Custom Positioning',

@@ -39,12 +39,6 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( ( selector ) => selector( mockStore ) ),
 } ) );
 
-jest.mock( 'elementor', () => ( {
-	helpers:{
-		scrollToView: jest.fn(),
-	}
-} ) );
-
 jest.mock( 'elementor-assets-js/editor/regions/navigator/hooks', () => ( {
 	...jest.requireActual( 'elementor-assets-js/editor/regions/navigator/hooks' ),
 	useElementFolding: ( elementId ) => [ mockStore[ 'navigator/folding' ][ elementId ], mockSetElementFolding ],
