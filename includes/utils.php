@@ -825,46 +825,66 @@ class Utils {
 		return apply_filters( 'wpml_post_language_details', null, $post_id )['locale'];
 	}
 
-	/**
+		/**
 	 * Change language of textdomain.
 	 *
 	 * @param string $locale
 	 *
 	 * @param string $path - Path to the languages folder.
 	 *
+	 * @param array $textdomain - Textdomain to change.
+	 *
 	 * @since 3.7.0
 	 *
 	 * @return bool
 	 */
-	public static function change_language_of_textdomain( $locale, $path = WP_LANG_DIR . '/plugins/' ) {
-		global $l10n;
+	public static function change_language_of_textdomain( $locale, $path = WP_LANG_DIR . '/plugins/', $textdomain = 'elementor' ) {
+		global $l10n, $current_user;
 
-		$locale_textdomain_loaded = isset( $l10n['elementor']->headers['Language'] ) && $l10n['elementor']->headers['Language'] === $locale;
+		$locale_textdomain_loaded = isset( $l10n[ $textdomain ]->headers['Language'] ) && $l10n[ $textdomain ]->headers['Language'] === $locale;
+		$no_need_to_changed = 'en_US' === $locale && ! isset( $l10n[ $textdomain ] );
 
-		if ( $locale_textdomain_loaded ) {
+		if ( $locale_textdomain_loaded || $no_need_to_changed ) {
 			return false;
 		}
 
-		global $current_user;
-
-		unload_textdomain( 'elementor' );
-		unload_textdomain( 'elementor-pro' );
+		unload_textdomain( $textdomain );
 
 		if ( 'en_US' === $locale ) {
 			// There is no MO file for en_US.
 			$current_user->locale = 'en_US';
 		} else {
-			$elementor_textdomain_loaded = load_textdomain( 'elementor', $path . 'elementor-' . $locale . '.mo' );
+			$textdomain_loaded = load_textdomain( $textdomain, $path . $textdomain . '-' . $locale . '.mo' );
 
-			if ( self::has_pro() ) {
-				$elementor_pro_textdomain_loaded = load_textdomain( 'elementor-pro', $path . 'elementor-pro-' . $locale . '.mo' );
-			}
-
-			if ( ! $elementor_textdomain_loaded || ( self::has_pro() && ! $elementor_pro_textdomain_loaded ) ) {
+			if ( ! $textdomain_loaded ) {
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Change language of textdomains.
+	 *
+	 * @param string $locale
+	 *
+	 * @param string $path - Path to the languages folder.
+	 *
+	 * @param array $textdomains - Textdomains to change.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return bool
+	 */
+	public static function change_language_of_textdomains( $locale, $path = WP_LANG_DIR . '/plugins/', $textdomains = [ 'elementor', 'elementor-pro' ] ) {
+		$changed_textdomains = [];
+
+		foreach ( $textdomains as $textdomain ) {
+			$is_textdomain_changed = self::change_language_of_textdomain( $locale, $path, $textdomain );
+			$changed_textdomains[ $textdomain ] = $is_textdomain_changed;
+		}
+
+		return $changed_textdomains;
 	}
 }

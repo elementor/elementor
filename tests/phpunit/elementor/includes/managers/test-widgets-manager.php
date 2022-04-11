@@ -53,7 +53,7 @@ class Test_Widgets_Manager extends Elementor_Test_Base {
 		// Cleanup - Back to en_US
 		$locale = 'en_US';
 		$current_user->locale = 'en_US';
-		Utils::change_language_of_textdomain( 'en_US', __DIR__ . '/../languages/' );
+		Utils::change_language_of_textdomains( 'en_US', __DIR__ . '/../languages/' );
     }
 
 }

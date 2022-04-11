@@ -489,10 +489,10 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Stack of controls.
 	 */
-	public function get_stack( $force_init_controls = false ) {
+	public function get_stack( $cache = true ) {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
-		if ( null === $stack || $force_init_controls ) {
+		if ( null === $stack || ! $cache ) {
 			$this->init_controls();
 
 			return Plugin::$instance->controls_manager->get_element_stack( $this );

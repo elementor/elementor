@@ -174,8 +174,8 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @return array Widget stack of controls.
 	 */
-	public function get_stack( $with_common_controls = true, $force_init_controls = false ) {
-		$stack = parent::get_stack( $force_init_controls );
+	public function get_stack( $with_common_controls = true, $cache = true ) {
+		$stack = parent::get_stack( $cache );
 
 		if ( $with_common_controls && 'common' !== $this->get_unique_name() ) {
 			/** @var Widget_Common $common_widget */

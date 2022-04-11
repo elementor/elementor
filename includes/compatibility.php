@@ -253,19 +253,6 @@ class Compatibility {
 					}
 				}
 			} );
-
-			// I think we don't need this code anymore. I deleted it because it was causing problems for editor translations.
-			// Fix for Polylang
-			// define( 'PLL_AJAX_ON_FRONT', true );
-
-			// add_action( 'pll_pre_init', function( $polylang ) {
-			// 	if ( isset( $_REQUEST['post'] ) ) {
-			// 		$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
-			// 		if ( ! empty( $post_language ) ) {
-			// 			$_REQUEST['lang'] = $post_language->locale;
-			// 		}
-			// 	}
-			// } );
 		}
 	}
 

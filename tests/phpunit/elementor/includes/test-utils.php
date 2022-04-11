@@ -268,6 +268,35 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		// Cleanup - Back to en_US
 		Utils::change_language_of_textdomain( 'en_US', __DIR__ . '/../languages/' );
 	}
+
+	public function test_change_language_of_textdomains__en_not_changed() {
+		// Act
+		$changed_textdomains = Utils::change_language_of_textdomains( 'en_US', __DIR__ . '/../languages/' );
+
+		// Assert
+		$this->assertNotTrue( $changed_textdomains[ 'elementor' ] );
+		$this->assertNotTrue( $changed_textdomains[ 'elementor-pro' ] );
+	}
+
+	public function test_change_language_of_textdomains__empty_not_changed() {
+		// Act
+		$changed_textdomains = Utils::change_language_of_textdomains( 'en_US', __DIR__ . '/../languages/', [] );
+
+		// Assert
+		$this->assertEmpty( $changed_textdomains );
+	}
+
+	public function test_change_language_of_textdomains() {
+		// Act
+		$changed_textdomains = Utils::change_language_of_textdomains( 'de_DE', __DIR__ . '/../languages/', [ 'elementor', 'not-exist' ] );
+
+		// Assert
+		$this->assertTrue( $changed_textdomains[ 'elementor' ] );
+		$this->assertNotTrue( $changed_textdomains[ 'not-exist' ] );
+
+		// Cleanup - Back to en_US
+		Utils::change_language_of_textdomains( 'en_US', __DIR__ . '/../languages/' );
+	}
 }
 
 // Mock Polylang language.
