@@ -2,11 +2,9 @@
 namespace Elementor\Core\App\Modules\Onboarding;
 
 use Automatic_Upgrader_Skin;
-use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
-use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -92,6 +90,14 @@ class Module extends BaseModule {
 					'utm_medium' => 'wp-dash',
 					'utm_term' => self::VERSION,
 					'source' => 'generic',
+				] ),
+				'signUp' => $library->get_admin_url( 'authorize', [
+					'utm_source' => 'onboarding-wizard',
+					'utm_campaign' => 'connect-account',
+					'utm_medium' => 'wp-dash',
+					'utm_term' => self::VERSION,
+					'source' => 'generic',
+					'screen_hint' => 'signup',
 				] ),
 				'uploadPro' => Plugin::$instance->app->get_base_url() . '#/onboarding/uploadAndInstallPro?mode=popup',
 			],
