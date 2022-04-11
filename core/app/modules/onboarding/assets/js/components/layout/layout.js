@@ -22,8 +22,9 @@ export default function Layout( props ) {
 		updateState( {
 			currentStep: props.pageId,
 			nextStep: props.nextStep || '',
+			proNotice: null,
 		} );
-	}, [] );
+	}, [ props.pageId ] );
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],

@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useContext, useState } from 'react';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import Content from '../../../../../assets/js/layout/content';
 import DropZone from '../../../../../assets/js/organisms/drop-zone';
 import Notice from '../components/notice';
+import { OnboardingContext } from '../context/context';
 import ElementorLoading from 'elementor-app/molecules/elementor-loading';
 
 export default function UploadAndInstallPro() {
 	usePageTitle( { title: __( 'Upload and Install Elementor Pro', 'elementor' ) } );
 
-	const { ajaxState: installProZipAjaxState, setAjax: setInstallProZipAjaxState } = useAjax(),
+	const { state, updateState } = useContext( OnboardingContext ),
+		{ ajaxState: installProZipAjaxState, setAjax: setInstallProZipAjaxState } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		[ fileSource, setFileSource ] = useState();
@@ -25,7 +27,7 @@ export default function UploadAndInstallPro() {
 		} );
 	}, [] );
 
-	const setErrorNotice = ( error = null ) => {
+	const setErrorNotice = ( error = null, step = 'upload' ) => {
 		const errorMessage = error?.message || 'That didn\'t work. Try uploading your file again.';
 
 		elementorCommon.events.dispatchEvent( {
@@ -35,7 +37,8 @@ export default function UploadAndInstallPro() {
 				placement: elementorAppConfig.onboarding.eventPlacement,
 				step: state.currentStep,
 				action_state: 'failure',
-				action: 'install pro',
+				action: step + ' pro',
+				source: fileSource,
 			},
 		} );
 
@@ -66,13 +69,13 @@ export default function UploadAndInstallPro() {
 				} );
 
 				if ( opener && opener !== window ) {
-					opener.jQuery( 'body' ).trigger( 'elementor/upload-and-install-pro/success/' );
+					opener.jQuery( 'body' ).trigger( 'elementor/upload-and-install-pro/success' );
 
 					window.close();
 					opener.focus();
 				}
 			} else if ( 'error' === installProZipAjaxState.status ) {
-				setErrorNotice();
+				setErrorNotice( 'install' );
 			}
 		}
 	}, [ installProZipAjaxState.status ] );
@@ -101,7 +104,7 @@ export default function UploadAndInstallPro() {
 						setFileSource( source );
 						uploadProZip( file );
 					} }
-					onError={ ( error ) => setErrorNotice( error ) }
+					onError={ ( error ) => setErrorNotice( error, 'upload' ) }
 					filetypes={ [ 'zip' ] }
 					buttonColor="cta"
 					buttonVariant="contained"
