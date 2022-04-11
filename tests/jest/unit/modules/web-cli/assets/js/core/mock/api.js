@@ -50,6 +50,10 @@ export const setupMock = async () => {
 		},
 	};
 
+	global._ = {
+		isEqual: ( a, b ) => a === b,
+	};
+
 	global.$e = new ( await import( 'elementor-api/api' ) ).default;
 
 	return $e;
