@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { selectElementContents } from 'elementor-editor-utils/helpers';
+import { selectElementContents } from 'elementor/assets/dev/js/editor/utils/select-element-contents';
 
 export function ItemTitle( { title, onTitleEdit } ) {
 	const [ editMode, setEditMode ] = useState( false );

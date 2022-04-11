@@ -111,19 +111,6 @@ module.exports = {
 		} );
 	},
 
-	/**
-	 * @see https://stackoverflow.com/a/6150060
-	 * @param element
-	 */
-	selectElementContents( element ) {
-		const range = document.createRange();
-		range.selectNodeContents( element );
-
-		const sel = window.getSelection();
-		sel.removeAllRanges();
-		sel.addRange( range );
-	},
-
 	enqueueIconFonts( iconType ) {
 		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config[ 'icons_update_needed' ] ) {
 			return;
