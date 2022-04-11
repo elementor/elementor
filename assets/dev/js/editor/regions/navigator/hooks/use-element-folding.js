@@ -49,10 +49,7 @@ export function useElementFolding( elementId ) {
 	}, [ elementId ] );
 
 	return [
-		// If element folding state is undefined, the default is open.
-		undefined === elementFolding ?
-			true :
-			elementFolding,
+		elementFolding,
 		setElementFolding,
 	];
 }

@@ -98,7 +98,12 @@ export default class Component extends ComponentBase {
 			},
 			reset: ( state, { payload } ) => {
 				// Act
-				return {};
+				return {
+					document: {
+						id: 'document',
+						elements: [],
+					},
+				};
 			},
 		};
 
