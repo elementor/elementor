@@ -48,7 +48,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
-		const documentElementType = elementor.elementsManager.getElementType( 'document' ),
+		const documentElementType = elementor.elementsManager.getElementTypeClass( 'document' ),
 			ModelClass = documentElementType.getModel(),
 			type = this.getContainerType(),
 			editModel = new ModelClass( {
