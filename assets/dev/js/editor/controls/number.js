@@ -3,6 +3,8 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlNumberItemView = ControlBaseDataView.extend( {
 
+	behaviors: { Scrubbing: { behaviorClass: require( './behaviors/scrubbing.js' ) } },
+
 	registerValidators: function() {
 		ControlBaseDataView.prototype.registerValidators.apply( this, arguments );
 

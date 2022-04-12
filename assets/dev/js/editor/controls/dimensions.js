@@ -2,6 +2,9 @@ var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlDimensionsItemView;
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
+
+	behaviors: { Scrubbing: { behaviorClass: require( './behaviors/scrubbing.js' ) } },
+
 	ui: function() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 
