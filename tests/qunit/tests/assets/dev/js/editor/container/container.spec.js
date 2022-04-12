@@ -34,15 +34,18 @@ jQuery( () => {
 					typography_typography: '',
 					button_text_color: '',
 				},
-				eButton = ElementsHelper.createAutoButton(),
+				eButton = ElementsHelper.createWrappedButton(),
 				controls = eButton.getGroupRelatedControls( settings );
 
 			assert.deepEqual( Object.keys( controls ), excepted );
 		} );
 
 		QUnit.test( 'getAffectingControls(): Simple', ( assert ) => {
-			const eButtonSimple = ElementsHelper.createAutoButton(),
-				eButtonStyled = ElementsHelper.createAutoButtonStyled();
+			const eButtonSimple = ElementsHelper.createWrappedButton(),
+				eButtonStyled = ElementsHelper.createWrappedButton( null, {
+					text: 'createAutoButtonStyled',
+					background_color: '#000000',
+				} );
 
 			assert.deepEqual( eButtonSimple.getAffectingControls(), {} );
 			assert.deepEqual( Object.keys( eButtonStyled.getAffectingControls() ), [ 'text', 'background_color' ] );
@@ -50,7 +53,7 @@ jQuery( () => {
 
 		QUnit.test( 'getAffectingControls(): Ensure global control', ( assert ) => {
 			// Arrange.
-			const eButton = ElementsHelper.createAutoButton(),
+			const eButton = ElementsHelper.createWrappedButton(),
 				id = elementorCommon.helpers.getUniqueId(),
 				background_color = `globals/colors?id=${ id }`; // eslint-disable-line camelcase
 
@@ -74,7 +77,7 @@ jQuery( () => {
 
 		QUnit.test( 'getAffectingControls(): Ensure dynamic control', ( assert ) => {
 			// Arrange.
-			const eButton = ElementsHelper.createAutoButton(),
+			const eButton = ElementsHelper.createWrappedButton(),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 				dynamicValue = '{ dynamic text }',
 				{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),

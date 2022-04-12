@@ -161,14 +161,15 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		this.createElementFromModel(
-			Object.fromEntries(
-				Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
-					// The `custom` property is responsible for storing global-widgets related data.
-					.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
-			),
-			options
+		const args = Object.fromEntries(
+			Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+				// The `custom` property is responsible for storing global-widgets related data.
+				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
 		);
+
+		args.options = options;
+
+		$e.run( 'preview/drop', args );
 	},
 
 	getHistoryType( event ) {

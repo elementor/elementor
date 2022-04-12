@@ -9,6 +9,7 @@ import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
 import BrowserImport from './components/browser-import/manager';
+import PreviewComponent from './components/preview/component';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -383,6 +384,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.components.register( new DataGlobalsComponent() );
 
 		$e.components.register( new DocumentComponent() );
+
+		$e.components.register( new PreviewComponent() );
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
