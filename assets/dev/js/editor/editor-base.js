@@ -346,6 +346,8 @@ export default class EditorBase extends Marionette.Application {
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
+		this.elementsManager = new ElementsManager();
+
 		this.hooks = new EventManager();
 
 		this.selection = new Selection();
@@ -1086,8 +1088,6 @@ export default class EditorBase extends Marionette.Application {
 			// Duplicate responsive controls for section and column default configs.
 			this.generateResponsiveControlsForElements();
 		}
-
-		this.elementsManager = new ElementsManager();
 
 		this.initComponents();
 
