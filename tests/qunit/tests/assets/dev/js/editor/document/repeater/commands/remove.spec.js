@@ -7,7 +7,7 @@ export const Remove = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn );
+					eTabs = ElementsHelper.createWidgetTabs( eColumn );
 
 				RepeaterHelper.remove( eTabs, 'tabs', 1 );
 
@@ -17,7 +17,7 @@ export const Remove = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn ),
+					eTabs = ElementsHelper.createWidgetTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
 
 				RepeaterHelper.remove( eTabs, 'tabs', 1 );
@@ -46,8 +46,8 @@ export const Remove = () => {
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn );
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn );
 
 				RepeaterHelper.multiRemove( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
@@ -58,8 +58,8 @@ export const Remove = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn ),
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 

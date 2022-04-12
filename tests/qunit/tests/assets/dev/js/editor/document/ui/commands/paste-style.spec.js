@@ -5,8 +5,11 @@ export const PasteStyle = () => {
 	QUnit.test( 'PasteStyle', ( assert ) => {
 		elementorCommon.storage.set( 'clipboard', '' );
 
-		const eSimpleButton = ElementsHelper.createAutoButton(),
-			eStyleButton = ElementsHelper.createAutoButtonStyled();
+		const eSimpleButton = ElementsHelper.createWrappedButton(),
+			eStyleButton = ElementsHelper.createWrappedButton( null, {
+				text: 'createAutoButtonStyled',
+				background_color: '#000000',
+			} );
 
 		ElementsHelper.copy( eStyleButton );
 
