@@ -241,6 +241,15 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.6.3 - 2022-04-13 =
+* Tweak: Verify if SVG file exists before updating `_elementor_inline_svg` (props [@filipecsweb](https://github.com/filipecsweb), [#18155](https://github.com/elementor/elementor/issues/18155))
+* Tweak: Added "Uploading" screen to the Pro upload process
+* Tweak: Added a notice for when Elementor Pro is installed successfully
+* Fix: JS error is thrown after installing Elementor Pro in the Onboarding wizard
+* Fix: Wrong return type in `Skin Base get_instance_value()` method's PHPDoc
+* Fix: "Create my account" shuold lead to "Sign Up" instead of "Login" in Onboarding wizard
+* Fix: Allow file uploads based on the user capability to enforce better security policies in Onboarding wizard
+
 = 3.6.2 - 2022-04-04 =
 * Tweak: Added plugins support to the CLI Kit import process
 * Tweak: Updated strings for several screens in Onboarding wizard
