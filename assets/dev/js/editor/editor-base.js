@@ -364,7 +364,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
-		// TODO: BC for `elementor.devTools`.
 		Object.defineProperty( this, 'devTools', {
 			get() {
 				const devToolsModule = elementorDevToolsModule;
