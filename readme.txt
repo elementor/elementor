@@ -247,7 +247,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Tweak: Added a notice for when Elementor Pro is installed successfully
 * Fix: JS error is thrown after installing Elementor Pro in the Onboarding wizard
 * Fix: Wrong return type in `Skin Base get_instance_value()` method's PHPDoc
-* Fix: "Create my account" shuold lead to "Sign Up" instead of "Login" in Onboarding wizard
+* Fix: "Create my account" should lead to "Sign Up" instead of "Login" in Onboarding wizard
 * Fix: Allow file uploads based on the user capability to enforce better security policies in Onboarding wizard
 
 = 3.6.2 - 2022-04-04 =
