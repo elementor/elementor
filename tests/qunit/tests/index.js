@@ -31,7 +31,7 @@ export const tests = () => {
 	require( './core/kits/assets/js/component.spec' );
 
 	// Modules.
-	require( './modules/dev-tools/assets/js/editor/dev-tools.spec' );
+	require( './modules/dev-tools/assets/dev-tools.spec' );
 };
 
 // Export for external build.

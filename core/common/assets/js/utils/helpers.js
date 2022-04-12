@@ -25,12 +25,12 @@ export default class Helpers {
 		elementorDevToolsModule.deprecation.softDeprecated(
 			'elementorCommon.helpers.deprecatedMessage',
 			'3.7.0',
-			'el ementorDevTools.deprecation.deprecatedMessage'
+			'elementorDevTools.deprecation.deprecatedMessage'
 		);
 	}
 
 	consoleWarn( ...args ) {
-		elementorDevToolsModule.deprecation.consoleWarn( ...args );
+		elementorDevToolsModule.consoleWarn( ...args );
 
 		elementorDevToolsModule.deprecation.softDeprecated(
 			'elementorCommon.helpers.consoleWarn',
