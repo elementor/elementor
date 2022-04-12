@@ -1,3 +1,5 @@
+/* global elementorDevToolsConfig */
+
 /**
  * @typedef {Object} Version
  * @property {number} major1
@@ -7,12 +9,16 @@
  */
 
 export default class Deprecation {
+	constructor( parent ) {
+		this.parent = parent;
+	}
+
 	/**
 	 * @param {string} version
 	 *
 	 * @return {Version}
 	 */
-	static parseVersion( version ) {
+	parseVersion( version ) {
 		const versionParts = version.split( '.' );
 
 		if ( versionParts.length < 3 || versionParts.length > 4 ) {
@@ -39,7 +45,7 @@ export default class Deprecation {
 	 *
 	 * @return {number}
 	 */
-	static getTotalMajor( versionObj ) {
+	getTotalMajor( versionObj ) {
 		let total = parseInt( `${ versionObj.major1 }${ versionObj.major2 }0` );
 
 		total = Number( ( total / 10 ).toFixed( 0 ) );
@@ -57,7 +63,7 @@ export default class Deprecation {
 	 *
 	 * @return {number}
 	 */
-	static compareVersion( version1, version2 ) {
+	compareVersion( version1, version2 ) {
 		return [ this.parseVersion( version1 ), this.parseVersion( version2 ) ]
 			.map( ( versionObj ) => this.getTotalMajor( versionObj ) )
 			.reduce( ( acc, major ) => acc - major );
@@ -68,19 +74,46 @@ export default class Deprecation {
 	 *
 	 * @return {boolean}
 	 */
-	static isSoftDeprecated( version ) {
-		const total = this.compareVersion( version, elementor.config.dev_tools.deprecation.current_version );
+	isSoftDeprecated( version ) {
+		const total = this.compareVersion( version, elementorDevToolsConfig.deprecation.current_version );
 
-		return total <= elementor.config.dev_tools.deprecation.soft_version_count;
+		return total <= elementorDevToolsConfig.deprecation.soft_version_count;
 	}
 
 	/**
 	 * @param {string} version
 	 * @return {boolean}
 	 */
-	static isHardDeprecated( version ) {
-		const total = this.compareVersion( version, elementor.config.dev_tools.deprecation.current_version );
+	isHardDeprecated( version ) {
+		const total = this.compareVersion( version, elementorDevToolsConfig.deprecation.current_version );
 
-		return total >= elementor.config.dev_tools.deprecation.hard_version_count;
+		return total >= elementorDevToolsConfig.deprecation.hard_version_count;
+	}
+
+	softDeprecated( name, version, replacement ) {
+		if ( elementorDevToolsConfig.isDebug ) {
+			this.deprecatedMessage( 'soft', name, version, replacement );
+		}
+	}
+
+	hardDeprecated( name, version, replacement ) {
+		this.deprecatedMessage( 'hard', name, version, replacement );
+	}
+
+	deprecatedMessage( type, name, version, replacement ) {
+		let message = `\`${ name }\` is ${ type } deprecated since ${ version }`;
+
+		if ( replacement ) {
+			message += ` - Use \`${ replacement }\` instead`;
+		}
+
+		this.parent.consoleWarn( message );
+	}
+
+	deprecatedMethod( methodName, version, replacement ) {
+		this.deprecatedMessage( 'hard', methodName, version, replacement );
+
+		// This itself is deprecated.
+		this.softDeprecated( 'elementor.devTools.deprecation.deprecatedMethod', '2.8.0', 'elementor.devTools.deprecation.softDeprecated || elementor.devTools.deprecation.hardDeprecated' );
 	}
 }

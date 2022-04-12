@@ -95,7 +95,7 @@ export default class Shortcuts {
 		}
 
 		if ( 1 < filteredHandlers.length && elementorWebCliConfig.isDebug ) {
-			Helpers.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
+			elementorDevToolsModule.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
 		}
 
 		event.preventDefault();

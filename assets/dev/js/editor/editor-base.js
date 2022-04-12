@@ -19,7 +19,6 @@ import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import Selection from './components/selection/manager';
-import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
@@ -365,7 +364,16 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
-		this.devTools = new DevTools();
+		// TODO: BC for `elementor.devTools`.
+		Object.defineProperty( this, 'devTools', {
+			get() {
+				const devToolsModule = elementorDevToolsModule;
+
+				devToolsModule.deprecation.softDeprecated( 'elementor.devTools', '2.9.0', 'elementorDevToolsModule' );
+
+				return devToolsModule;
+			},
+		} );
 
 		this.browserImport = new BrowserImport();
 

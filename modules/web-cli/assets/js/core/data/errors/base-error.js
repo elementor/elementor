@@ -53,6 +53,6 @@ export default class BaseError extends Error {
 	 * Notify a message when the error occurs.
 	 */
 	notify() {
-		Helpers.consoleError( { message: this.message, ...this } );
+		Helpers.error( { message: this.message, ...this } );
 	}
 }

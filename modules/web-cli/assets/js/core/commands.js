@@ -1,5 +1,6 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
 import CommandBase from '../modules/command-base';
+import Helpers from '../utils/helpers';
 
 export default class Commands extends CommandsBackwardsCompatibility {
 	static trace = [];
@@ -507,8 +508,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	catchApply( e, instance ) {
 		instance.onCatchApply( e );
 
-		// TODO: Should be part of $e.API.
-		elementorCommon.helpers.consoleError( e );
+		Helpers.error( e );
 	}
 
 	/**

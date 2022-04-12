@@ -371,7 +371,7 @@ export default class HooksBase extends Module {
 						throw e;
 					}
 
-					Helpers.consoleError( e );
+					Helpers.error( e );
 				}
 			}
 

@@ -134,7 +134,7 @@ export default class HashCommands {
 				decodeURI( rawArgs || '{}' ),
 			);
 		} catch ( e ) {
-			Helpers.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
+			elementorDevToolsModule.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
 
 			return {};
 		}

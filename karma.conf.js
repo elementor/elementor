@@ -32,6 +32,10 @@ module.exports = function( config ) {
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
 
+			// Dev tools.
+			'tests/qunit/setup/dev-tools.js',
+			'assets/js/dev-tools.js',
+
 			// Elementor Common.
 			'tests/qunit/setup/elementor-common.js',
 			'tests/qunit/setup/web-cli.js',
