@@ -28,6 +28,7 @@ describe( '$e.routes', () => {
 		$e.routes.beforeRun = ( ... args ) => {
 			beforeRunOrig.apply( $e.routes, args );
 
+			// Save it for the assertion.
 			trace.push( ... $e.commands.constructor.trace );
 		};
 
