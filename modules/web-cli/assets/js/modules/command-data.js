@@ -1,6 +1,5 @@
 import CommandBase from './command-base';
 import * as errors from '../core/data/errors/';
-import Helpers from 'elementor-api/utils/helpers';
 
 /**
  * @name $e.modules.CommandData

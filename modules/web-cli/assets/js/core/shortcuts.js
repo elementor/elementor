@@ -1,5 +1,4 @@
 import environment from 'elementor-api/utils/environment';
-import Helpers from 'elementor-api/utils/helpers';
 
 export default class Shortcuts {
 	constructor( $window ) {

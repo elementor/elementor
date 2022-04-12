@@ -4,7 +4,6 @@
  * @property {string} command
  * @property {object} args
  */
-import Helpers from 'elementor-api/utils/helpers';
 
 export default class HashCommands {
 	/**

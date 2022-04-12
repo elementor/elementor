@@ -51,7 +51,7 @@ export default class Helpers {
 	}
 
 	deprecatedMethod( methodName, version, replacement ) {
-		this.deprecatedMessage( 'hard', methodName, version, replacement );
+		elementorDevToolsModule.deprecation.deprecatedMessage( 'hard', methodName, version, replacement );
 
 		// This itself is deprecated.
 		this.softDeprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementorDevToolsModule.deprecation.softDeprecated || elementorDevToolsModule.deprecation.hardDeprecated' );
