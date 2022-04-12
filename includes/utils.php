@@ -825,7 +825,7 @@ class Utils {
 		return apply_filters( 'wpml_post_language_details', null, $post_id )['locale'];
 	}
 
-		/**
+	/**
 	 * Change language of textdomain.
 	 *
 	 * @param string $locale
@@ -848,13 +848,25 @@ class Utils {
 			return false;
 		}
 
-		unload_textdomain( $textdomain );
+		$textdomain_data = [
+			'locale' => $locale,
+			'path' => $path,
+			'textdomain' => $textdomain,
+		];
 
-		if ( 'en_US' === $locale ) {
+		$textdomain_data = apply_filters( 'elementor/utils/change_language_of_textdomain', $textdomain_data );
+
+		if ( ! $textdomain_data['textdomain'] ) {
+			return false;
+		}
+
+		unload_textdomain( $textdomain_data['textdomain'] );
+
+		if ( 'en_US' === $textdomain_data['locale'] ) {
 			// There is no MO file for en_US.
 			$current_user->locale = 'en_US';
 		} else {
-			$textdomain_loaded = load_textdomain( $textdomain, $path . $textdomain . '-' . $locale . '.mo' );
+			$textdomain_loaded = load_textdomain( $textdomain_data['textdomain'], $textdomain_data['path'] . $textdomain_data['textdomain'] . '-' . $textdomain_data['locale'] . '.mo' );
 
 			if ( ! $textdomain_loaded ) {
 				return false;
@@ -877,7 +889,7 @@ class Utils {
 	 *
 	 * @return bool
 	 */
-	public static function change_language_of_textdomains( $locale, $path = WP_LANG_DIR . '/plugins/', $textdomains = [ 'elementor', 'elementor-pro' ] ) {
+	public static function change_language_of_textdomains( $locale, $path = WP_LANG_DIR . '/plugins/', $textdomains = [ 'elementor' ] ) {
 		$changed_textdomains = [];
 
 		foreach ( $textdomains as $textdomain ) {

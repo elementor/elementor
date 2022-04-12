@@ -245,6 +245,7 @@ class Compatibility {
 				$elementor_preferences = get_user_meta( $current_user->ID, 'elementor_preferences' );
 				$user_interface = isset( $elementor_preferences[0]['user_interface'] ) ? $elementor_preferences[0]['user_interface'] : null;
 
+				// Temporary fix until WPML will support the filter 'elementor/compatibility/set_editor_language'.
 				if ( 'user_language' === $user_interface ) {
 					self::wpml_set_editor_language( $user_interface );
 				} else {
@@ -252,6 +253,13 @@ class Compatibility {
 						$current_user->locale = get_locale();
 					}
 				}
+
+				// Use this code instead when WPML will support the filter 'elementor/compatibility/set_editor_language'.
+				// if ( 'user_language' !== $user_interface ) {
+				// 	$current_user->locale = get_locale();
+				// }
+
+				apply_filters( 'elementor/compatibility/set_editor_language', $user_interface );
 			} );
 		}
 	}

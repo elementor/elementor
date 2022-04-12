@@ -275,7 +275,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertNotTrue( $changed_textdomains[ 'elementor' ] );
-		$this->assertNotTrue( $changed_textdomains[ 'elementor-pro' ] );
 	}
 
 	public function test_change_language_of_textdomains__empty_not_changed() {

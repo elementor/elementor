@@ -346,9 +346,12 @@ class Widgets_Manager {
 	public function translate_default_values_to_site_locale( $config, $path = WP_LANG_DIR . '/plugins/' ) {
 		$locale = Utils::get_current_locale();
 
-		$changed_textdomains = Utils::change_language_of_textdomains( $locale, $path );
+		$textdomains = apply_filters( 'elementor/widgets/change_textdomains_for_default_values', [ 'elementor', 'elementor-pro' ] );
 
-		if ( ! $changed_textdomains['elementor'] || ( isset( $changed_textdomains['elementor-pro'] ) && ! $changed_textdomains['elementor-pro'] ) ) {
+		$changed_textdomains = Utils::change_language_of_textdomains( $locale, $path, $textdomains );
+
+		// If none of the textdomains were changed, return the original config.
+		if ( ! in_array( true, $changed_textdomains, true ) ) {
 			return $config;
 		}
 
