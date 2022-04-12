@@ -1,5 +1,5 @@
 /* global elementorDevToolsConfig */
-/* global elemeelementorDevTools */
+/* global elemeelementorDevToolsModule */
 
 QUnit.module( 'File: modules/dev-tools/assets/js/editor/dev-tools.js', () => {
 	QUnit.test( 'notifyBackendDeprecations()', ( assert ) => {
