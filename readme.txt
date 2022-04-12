@@ -243,7 +243,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 
 = 3.6.3 - 2022-04-13 =
 * Tweak: Verify if SVG file exists before updating `_elementor_inline_svg` (props [@filipecsweb](https://github.com/filipecsweb), [#18155](https://github.com/elementor/elementor/issues/18155))
-* Tweak: Added "Uploading" screen to the Pro upload process
+* Tweak: Added "Uploading" screen to the Pro upload process in Onboarding wizard
 * Tweak: Added a notice for when Elementor Pro is installed successfully in Onboarding wizard
 * Fix: JS error is thrown after installing Elementor Pro in the Onboarding wizard
 * Fix: Wrong return type in `Skin Base get_instance_value()` method's PHPDoc
