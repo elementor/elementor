@@ -347,6 +347,8 @@ export default class EditorBase extends Marionette.Application {
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
+		this.elementsManager = new ElementsManager();
+
 		this.hooks = new EventManager();
 
 		this.selection = new Selection();

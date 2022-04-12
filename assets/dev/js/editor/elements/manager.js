@@ -15,23 +15,21 @@ export default class ElementsManager {
 	}
 
 	/**
-	 * Function getElementType().
+	 * Function getElementTypeClass().
 	 *
-	 * Get element type by key.
-	 *
-	 * @param {string} key
+	 * @param {string} type
 	 *
 	 * @returns {ElementBase}
 	 */
-	getElementType( key ) {
-		let type = this.elementTypes[ key ];
+	getElementTypeClass( type ) {
+		let typeClass = this.elementTypes[ type ];
 
 		// When exact widget is not registered, return widget base instead.
-		if ( ! type && elementor.widgetsCache[ key ] ) {
-			type = this.elementTypes.widget;
+		if ( ! typeClass && elementor.widgetsCache[ type ] ) {
+			typeClass = this.elementTypes.widget;
 		}
 
-		return type;
+		return typeClass;
 	}
 
 	/**
@@ -45,13 +43,13 @@ export default class ElementsManager {
 			throw new TypeError( 'The element argument must be an instance of ElementBase.' );
 		}
 
-		const key = element.getType();
+		const type = element.getType();
 
-		if ( this.elementTypes[ key ] ) {
+		if ( this.elementTypes[ type ] ) {
 			throw new Error( 'Element type already registered' );
 		}
 
-		this.elementTypes[ key ] = element;
+		this.elementTypes[ type ] = element;
 	}
 
 	/**

@@ -101,7 +101,7 @@ jQuery( () => {
 
 		QUnit.test( 'getParentAncestry(): simple', ( assert ) => {
 			// Arrange.
-			const eButton = ElementsHelper.createAutoButton();
+			const eButton = ElementsHelper.createAuto( 'widget', 'button' );
 
 			// Act.
 			const ancestry = eButton.getParentAncestry();
