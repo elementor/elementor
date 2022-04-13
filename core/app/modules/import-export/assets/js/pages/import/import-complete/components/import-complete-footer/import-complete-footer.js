@@ -1,10 +1,10 @@
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
-
-import useImportActions from '../../../hooks/use-import-actions';
+import useAction from 'elementor-app/hooks/use-action';
 
 export default function ImportCompleteFooter( { seeItLiveUrl } ) {
-	const { closeApp } = useImportActions();
+	const action = useAction();
+
 	return (
 		<ActionsFooter>
 			{
@@ -20,7 +20,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl } ) {
 				text={ __( 'Close', 'elementor' ) }
 				variant="contained"
 				color="primary"
-				onClick={ closeApp }
+				onClick={ action.backToDashboard }
 			/>
 		</ActionsFooter>
 	);
