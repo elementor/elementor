@@ -173,6 +173,10 @@
 				position: absolute;
 			}
 		}
+
+		&:focus-visible	 {
+			border: 1px solid $black;
+		}
 	}
 
 	.elementor-tab-mobile-title {
