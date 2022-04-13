@@ -241,6 +241,9 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.6.4 - 2022-04-13 =
+* Fix: Optimized controls sanitization to enforce better security policies in Onboarding wizard
+
 = 3.6.3 - 2022-04-12 =
 * Tweak: Verify if SVG file exists before updating `_elementor_inline_svg` (props [@filipecsweb](https://github.com/filipecsweb), [#18155](https://github.com/elementor/elementor/issues/18155))
 * Tweak: Added "Uploading" screen to the Pro upload process in Onboarding wizard
