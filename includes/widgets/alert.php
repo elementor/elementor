@@ -411,14 +411,14 @@ class Widget_Alert extends Widget_Base {
 		] );
 
 		$this->add_control(
-				'dismiss_icon_hover_color',
-				[
-					'label' => esc_html__( 'Color', 'elementor' ),
-					'type' => Controls_Manager::COLOR,
-					'selectors' => [
-						'{{WRAPPER}}' => '--dismiss-icon-hover-color: {{VALUE}};',
-					],
-				]
+			'dismiss_icon_hover_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-hover-color: {{VALUE}};',
+				],
+			]
 		);
 
 		$this->add_control(
@@ -426,13 +426,16 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}ms',
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 3000,
+						'max' => 3,
+						'step' => 0.1,
 					],
 				],
 			]
@@ -486,7 +489,7 @@ class Widget_Alert extends Widget_Base {
 					<?php
 					if ( ! empty( $settings['selected_icon']['value'] ) ) {
 						Icons_Manager::render_icon( $settings['selected_icon'], [
-								'aria-hidden' => 'true',
+							'aria-hidden' => 'true',
 						] );
 					} else { ?>
 						<span aria-hidden="true">&times;</span>
