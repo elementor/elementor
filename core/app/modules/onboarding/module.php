@@ -195,6 +195,7 @@ class Module extends BaseModule {
 		 */
 		$new_site_name = apply_filters( 'elementor/onboarding/site-name', $data['siteName'] );
 
+		// The site name is sanitized in `update_options()`
 		update_option( 'blogname', $new_site_name );
 
 		return [
