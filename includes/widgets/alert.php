@@ -430,7 +430,7 @@ class Widget_Alert extends Widget_Base {
 					'size' => 0.3,
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}ms',
+					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
 				],
 				'range' => [
 					'px' => [
