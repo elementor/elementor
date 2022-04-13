@@ -1,18 +1,31 @@
-const UPDATE_VALUE = 'UPDATE-VALUE';
-const UPDATE_VALUE_ENHANCED = 'UPDATE-VALUE-ENHANCED';
+const SCRUB_REGULAR = 'UPDATE-VALUE';
+const SCRUB_ENHANCED = 'UPDATE-VALUE-ENHANCED';
+const SKIP_SCRUB = 'SKIP-UPDATE-VALUE';
 
-module.exports = class FooterSaver extends Marionette.Behavior {
+module.exports = class Scrubbing extends Marionette.Behavior {
+	getSetting( settingKey ) {
+		const propertyObject = this.getOption( 'scrubSettings' ) || {};
+
+		return propertyObject[ settingKey ];
+	}
+
 	intentVerified = false;
 
 	checkIntentTimeout = null;
 
-	intentTime = 600;
-
 	skipperCount = 0;
 
-	skipperMax = 10;
+	intentTime = this.getSetting( 'intentTime' ) ?? 600;
 
-	enhancedNumber = 10;
+	skipperMax = this.getSetting( 'skipperMax' ) ?? 10;
+
+	enhancedNumber = this.getSetting( 'enhancedNumber' ) ?? 10;
+
+	scrubbingClass = this.getSetting( 'scrubbingClass' ) ?? 'e-scrubbing';
+
+	scrubbingElementClass = this.getSetting( 'scrubbingElementClass' ) ?? 'e-scrubbing-element';
+
+	scrubbingOverClass = this.getSetting( 'scrubbingOverClass' ) ?? 'e-scrubbing-over';
 
 	ui() {
 		return {
@@ -25,25 +38,25 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		return {
 			'mousedown @ui.input': 'onMouseDownInput',
 			'mousedown @ui.label': 'onMouseDownLabel',
-			'mouseover @ui.label': 'onMouseOverLabel',
+			'mouseenter  @ui.label': 'onMouseEnterLabel',
 		};
 	}
 
 	scrub( input, movementEvent ) {
 		// Determine the updating rhythm.
-		const movementType = this.checkKeyDown( movementEvent );
+		const movementType = this.getMovementType( movementEvent );
 
-		if ( ! movementType ) {
+		if ( SKIP_SCRUB === movementType ) {
 			return;
 		}
 
 		// Actually change the input by scrubbing.
 		switch ( movementType ) {
-			case UPDATE_VALUE:
+			case SCRUB_REGULAR:
 				input.value = +input.value + movementEvent.movementX;
 				break;
 
-			case UPDATE_VALUE_ENHANCED:
+			case SCRUB_ENHANCED:
 				input.value = +input.value + ( movementEvent.movementX * this.enhancedNumber );
 				break;
 
@@ -51,29 +64,39 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 				break;
 		}
 
-		// Fire inputEvent after changing input data, for validation purposes.
+		// Fire an input event so other behaviors/validators can handle the new input
 		input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
 	}
 
-	checkKeyDown( movementEvent ) {
-		if ( movementEvent.altKey && ! movementEvent.ctrlKey ) {
+	getMovementType( movementEvent ) {
+		if ( movementEvent.altKey ) {
 			this.skipperCount++;
+
 			// When ALT key is pressed, skipping x times before updating input value.
 			if ( this.skipperCount <= this.skipperMax ) {
-				return;
+				return SKIP_SCRUB;
 			}
+
 			// Skipped x time, now (update value &) restart counting.
 			this.skipperCount = 0;
-		} else if ( movementEvent.ctrlKey && ! movementEvent.altKey ) {
-			// When CTRL key is pressed, updating input value In an improved way.
-			return UPDATE_VALUE_ENHANCED;
+
+			return SCRUB_REGULAR;
 		}
 
-		return UPDATE_VALUE;
+		if ( movementEvent.ctrlKey ) {
+			// When CTRL key is pressed, updating input value In an improved way.
+			return SCRUB_ENHANCED;
+		}
+
+		return SCRUB_REGULAR;
 	}
 
 	onMouseDownInput( e ) {
 		const input = e.target;
+
+		if ( this.checkInputDisabled( input ) ) {
+			return;
+		}
 
 		const trackMovement = ( movementEvent ) => {
 			if ( this.intentVerified ) {
@@ -89,16 +112,18 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		// For input, scrubbing effect works only after X time the mouse is down.
 		this.checkIntentTimeout = setTimeout( () => {
 			this.intentVerified = true;
-			document.body.classList.add( 'e-scrubbing' );
-			input.classList.add( 'e-scrubbing-element' );
+
+			document.body.classList.add( this.scrubbingClass );
+			input.classList.add( this.scrubbingElementClass );
 		}, this.intentTime );
 
 		document.addEventListener( 'mouseup', () => {
 				document.removeEventListener( 'mousemove', trackMovement );
 				clearTimeout( this.checkIntentTimeout );
 				this.intentVerified = false;
-				document.body.classList.remove( 'e-scrubbing' );
-				input.classList.remove( 'e-scrubbing-element' );
+
+				document.body.classList.remove( this.scrubbingClass );
+				input.classList.remove( this.scrubbingElementClass );
 			},
 			{ once: true }
 		);
@@ -108,9 +133,13 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		const label = e.target;
 		const input = e.target.control;
 
-		document.body.classList.add( 'e-scrubbing' );
-		label.classList.add( 'e-scrubbing-element' );
-		input.classList.add( 'e-scrubbing-element' );
+		if ( this.checkInputDisabled( input ) ) {
+			return;
+		}
+
+		document.body.classList.add( this.scrubbingClass );
+		label.classList.add( this.scrubbingElementClass );
+		input.classList.add( this.scrubbingElementClass );
 
 		const trackMovement = ( movementEvent ) => {
 			this.scrub( input, movementEvent );
@@ -120,15 +149,25 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 		document.addEventListener( 'mouseup', () => {
 				document.removeEventListener( 'mousemove', trackMovement );
-				document.body.classList.remove( 'e-scrubbing' );
-				label.classList.remove( 'e-scrubbing-element' );
-				input.classList.remove( 'e-scrubbing-element' );
+				document.body.classList.remove( this.scrubbingClass );
+				label.classList.remove( this.scrubbingElementClass );
+				input.classList.remove( this.scrubbingElementClass );
 			},
 			{ once: true }
 		);
 	}
 
-	onMouseOverLabel( e ) {
-		e.target.classList.add( 'e-scrubbing-over' );
+	onMouseEnterLabel( e ) {
+		if ( this.checkInputDisabled( e.target.control ) ) {
+			return;
+		}
+
+		e.target.classList.add( this.scrubbingOverClass );
+	}
+
+	checkInputDisabled( input ) {
+		if ( input.disabled ) {
+			return true;
+		}
 	}
 };

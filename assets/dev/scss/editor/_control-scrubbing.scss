@@ -1,23 +1,27 @@
-.e-scrubbing,
-.e-scrubbing * {
+.e-scrubbing {
+	
 	cursor: e-resize;
-}
 
-.e-scrubbing input.e-scrubbing-element, 
-.e-scrubbing input.e-scrubbing-element:focus {
-	border-color: #{ darken($editor-info, 20%) };
-}
+	* {
+	   cursor: e-resize;
+	}
 
-.e-scrubbing label.e-scrubbing-element {
-	color: #{ darken($editor-info, 20%) };
-	user-select: none;
+	input.e-scrubbing-element, 
+	input.e-scrubbing-element:focus {
+		border-color: #{ darken($editor-info, 20%) } !important;
+	}
+	
+	label.e-scrubbing-element {
+		color: #{ darken($editor-info, 20%) };
+		user-select: none;
+	}
+	
+	// When scrubbing, enable scrubbing cursor effects also on the 'preview' iframe area.
+	iframe {
+		pointer-events: none;
+	}
 }
 
 label.e-scrubbing-over {
 	cursor: e-resize;
 }
-
-.e-scrubbing iframe {
-	pointer-events: none;
-}
-

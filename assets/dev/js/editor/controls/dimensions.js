@@ -3,7 +3,12 @@ var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
-	behaviors: { Scrubbing: { behaviorClass: require( './behaviors/scrubbing.js' ) } },
+	behaviors: {
+		Scrubbing: {
+			behaviorClass: require( './behaviors/scrubbing.js' ),
+			scrubSettings: { intentTime: 800 },
+		},
+	},
 
 	ui: function() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
