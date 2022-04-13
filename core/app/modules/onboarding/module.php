@@ -26,8 +26,6 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
-	private $permission_error_response;
-
 	/**
 	 * Get name.
 	 *
@@ -118,6 +116,24 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Get Permission Error Response
+	 *
+	 * Returns the response that is returned when the user's capabilities are not sufficient for performing an action.
+	 *
+	 * @since 3.6.4
+	 *
+	 * @return array
+	 */
+	private function get_permission_error_response() {
+		return [
+			'status' => 'error',
+			'payload' => [
+				'error_message' => __( 'you are not allowed to perform this action', 'elementor' ),
+			],
+		];
+	}
+
+	/**
 	 * Set Opt In
 	 *
 	 * This method opts the user into sharing non-sensitive usage data with Elementor.
@@ -147,18 +163,24 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_update_site_name() {
+		$problem_error = [
+			'status' => 'error',
+			'payload' => [
+				'error_message' => 'There was a problem setting your site name',
+			],
+		];
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( empty( $_POST['data'] ) ) {
-			return [
-				'status' => 'error',
-				'payload' => [
-					'error_message' => 'there was a problem setting your site name',
-				],
-			];
+			return $problem_error;
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$data = json_decode( stripslashes( $_POST['data'] ), true );
+
+		if ( ! isset( $data['siteName'] ) ) {
+			return $problem_error;
+		}
 
 		/**
 		 * Onboarding Site Name
@@ -193,15 +215,14 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_update_site_logo() {
-		// Validate capability
 		if ( ! current_user_can( 'edit_theme_options' ) ) {
-			return $this->permission_error_response;
+			return $this->get_permission_error_response();
 		}
 
 		$data_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'there was a problem setting your site logo', 'elementor' ),
+				'error_message' => esc_html__( 'There was a problem setting your site logo', 'elementor' ),
 			],
 		];
 
@@ -214,7 +235,13 @@ class Module extends BaseModule {
 		$data = json_decode( stripslashes( $_POST['data'] ), true );
 
 		// If there is no attachment ID passed or it is not a valid ID, exit here.
-		if ( empty( $data['attachmentId'] ) || 0 === absint( $data['attachmentId'] ) ) {
+		if ( empty( $data['attachmentId'] ) ) {
+			return $data_error;
+		}
+
+		$absint_attachment_id = absint( $data['attachmentId'] );
+
+		if ( 0 === $absint_attachment_id ) {
 			return $data_error;
 		}
 
@@ -225,7 +252,7 @@ class Module extends BaseModule {
 			return $data_error;
 		}
 
-		set_theme_mod( 'custom_logo', $data['attachmentId'] );
+		set_theme_mod( 'custom_logo', $absint_attachment_id );
 
 		return [
 			'status' => 'success',
@@ -303,7 +330,7 @@ class Module extends BaseModule {
 	 */
 	private function maybe_activate_hello_theme() {
 		if ( ! current_user_can( 'switch_themes' ) ) {
-			return $this->permission_error_response;
+			return $this->get_permission_error_response();
 		}
 
 		switch_theme( 'hello-elementor' );
@@ -324,11 +351,10 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function upload_and_install_pro() {
-		if ( ! current_user_can( 'install_plugins' ) ||  ! current_user_can( 'activate_plugins' ) ) {
-			return $this->permission_error_response;
+		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
+			return $this->get_permission_error_response();
 		}
 
-		$result = [];
 		$error_message = __( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -340,6 +366,8 @@ class Module extends BaseModule {
 				],
 			];
 		}
+
+		$result = [];
 
 		if ( ! class_exists( 'Automatic_Upgrader_Skin' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -439,13 +467,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		$this->permission_error_response = [
-			'status' => 'error',
-			'payload' => [
-				'error_message' => __( 'you are not allowed to perform this action', 'elementor' ),
-			],
-		];
-
 		add_action( 'elementor/init', function() {
 			// Only load when viewing the onboarding app.
 			if ( Plugin::$instance->app->is_current() ) {
