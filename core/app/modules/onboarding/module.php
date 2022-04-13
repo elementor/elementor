@@ -26,6 +26,8 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
+	private $permission_error_response;
+
 	/**
 	 * Get name.
 	 *
@@ -146,9 +148,7 @@ class Module extends BaseModule {
 	 */
 	private function maybe_update_site_name() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = $_POST['data'];
-
-		if ( empty( $data ) ) {
+		if ( empty( $_POST['data'] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
@@ -157,7 +157,8 @@ class Module extends BaseModule {
 			];
 		}
 
-		$data = json_decode( stripslashes( $data ), true );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$data = json_decode( stripslashes( $_POST['data'] ), true );
 
 		/**
 		 * Onboarding Site Name
@@ -170,7 +171,7 @@ class Module extends BaseModule {
 		 *
 		 * @param string Escaped new site name
 		 */
-		$new_site_name = apply_filters( 'elementor/onboarding/site-name', esc_html( $data['siteName'] ) );
+		$new_site_name = apply_filters( 'elementor/onboarding/site-name', $data['siteName'] );
 
 		update_option( 'blogname', $new_site_name );
 
@@ -192,30 +193,46 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_update_site_logo() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = $_POST['data'];
-
-		if ( empty( $data ) ) {
-			$result = [
-				'status' => 'error',
-				'payload' => [
-					'error_message' => __( 'there was a problem setting your site logo', 'elementor' ),
-				],
-			];
-		} else {
-			$data = json_decode( stripslashes( $data ), true );
-
-			set_theme_mod( 'custom_logo', esc_html( $data['attachmentId'] ) );
-
-			$result = [
-				'status' => 'success',
-				'payload' => [
-					'siteLogoUpdated' => true,
-				],
-			];
+		// Validate capability
+		if ( ! current_user_can( 'edit_theme_options' ) ) {
+			return $this->permission_error_response;
 		}
 
-		return $result;
+		$data_error = [
+			'status' => 'error',
+			'payload' => [
+				'error_message' => esc_html__( 'there was a problem setting your site logo', 'elementor' ),
+			],
+		];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( empty( $_POST['data'] ) ) {
+			return $data_error;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$data = json_decode( stripslashes( $_POST['data'] ), true );
+
+		// If there is no attachment ID passed or it is not a valid ID, exit here.
+		if ( empty( $data['attachmentId'] ) || 0 === absint( $data['attachmentId'] ) ) {
+			return $data_error;
+		}
+
+		$attachment_url = wp_get_attachment_url( $data['attachmentId'] );
+
+		// Check if the attachment exists. If it does not, exit here.
+		if ( ! $attachment_url ) {
+			return $data_error;
+		}
+
+		set_theme_mod( 'custom_logo', $data['attachmentId'] );
+
+		return [
+			'status' => 'success',
+			'payload' => [
+				'siteLogoUpdated' => true,
+			],
+		];
 	}
 
 	/**
@@ -228,19 +245,16 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_upload_logo_image() {
-		$result = [];
 		$error_message = __( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) ) {
-			$result = [
+		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+			return [
 				'status' => 'error',
 				'payload' => [
 					'error_message' => $error_message,
 				],
 			];
-
-			return $result;
 		}
 
 		// If the user has allowed it, set the Request's state as an "Elementor Upload" request, in order to add
@@ -253,6 +267,7 @@ class Module extends BaseModule {
 			}
 		}
 
+		// If the image is an SVG file, sanitation is performed during the import (upload) process.
 		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $_FILES['fileToUpload'] );
 
 		if ( 'image/svg+xml' === $_FILES['fileToUpload']['type'] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
@@ -286,7 +301,11 @@ class Module extends BaseModule {
 	 *
 	 * @return array
 	 */
-	private function activate_hello_theme() {
+	private function maybe_activate_hello_theme() {
+		if ( ! current_user_can( 'switch_themes' ) ) {
+			return $this->permission_error_response;
+		}
+
 		switch_theme( 'hello-elementor' );
 
 		return [
@@ -305,19 +324,21 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function upload_and_install_pro() {
+		if ( ! current_user_can( 'install_plugins' ) ||  ! current_user_can( 'activate_plugins' ) ) {
+			return $this->permission_error_response;
+		}
+
 		$result = [];
 		$error_message = __( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) ) {
-			$result = [
+		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+			return [
 				'status' => 'error',
 				'payload' => [
 					'error_message' => $error_message,
 				],
 			];
-
-			return $result;
 		}
 
 		if ( ! class_exists( 'Automatic_Upgrader_Skin' ) ) {
@@ -326,7 +347,7 @@ class Module extends BaseModule {
 
 		$skin = new Automatic_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
-		$upload_result   = $upgrader->install( $_FILES['fileToUpload']['tmp_name'], [ 'overwrite_package' => false ] );
+		$upload_result = $upgrader->install( $_FILES['fileToUpload']['tmp_name'], [ 'overwrite_package' => false ] );
 
 		if ( ! $upload_result || is_wp_error( $upload_result ) ) {
 			$result = [
@@ -399,7 +420,7 @@ class Module extends BaseModule {
 				$result = $this->set_usage_data_opt_in();
 				break;
 			case 'elementor_activate_hello_theme':
-				$result = $this->activate_hello_theme();
+				$result = $this->maybe_activate_hello_theme();
 				break;
 			case 'elementor_upload_and_install_pro':
 				$result = $this->upload_and_install_pro();
@@ -418,6 +439,13 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		$this->permission_error_response = [
+			'status' => 'error',
+			'payload' => [
+				'error_message' => __( 'you are not allowed to perform this action', 'elementor' ),
+			],
+		];
+
 		add_action( 'elementor/init', function() {
 			// Only load when viewing the onboarding app.
 			if ( Plugin::$instance->app->is_current() ) {
