@@ -1,3 +1,5 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlDimensionsItemView;
 
@@ -5,7 +7,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
 	behaviors: {
 		Scrubbing: {
-			behaviorClass: require( './behaviors/scrubbing.js' ),
+			behaviorClass: Scrubbing,
 			scrubSettings: { intentTime: 800 },
 		},
 	},

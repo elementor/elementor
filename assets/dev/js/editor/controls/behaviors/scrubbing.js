@@ -2,30 +2,26 @@ const SCRUB_REGULAR = 'UPDATE-VALUE';
 const SCRUB_ENHANCED = 'UPDATE-VALUE-ENHANCED';
 const SKIP_SCRUB = 'SKIP-UPDATE-VALUE';
 
-module.exports = class Scrubbing extends Marionette.Behavior {
-	getSetting( settingKey ) {
-		const propertyObject = this.getOption( 'scrubSettings' ) || {};
-
-		return propertyObject[ settingKey ];
-	}
-
-	intentVerified = false;
-
+export default class Scrubbing extends Marionette.Behavior {
 	checkIntentTimeout = null;
 
 	skipperCount = 0;
 
-	intentTime = this.getSetting( 'intentTime' ) ?? 600;
+	constructor( ...args ) {
+		super( ...args );
 
-	skipperMax = this.getSetting( 'skipperMax' ) ?? 10;
+		const userOptions = this.getOption( 'scrubSettings' ) || {};
 
-	enhancedNumber = this.getSetting( 'enhancedNumber' ) ?? 10;
-
-	scrubbingClass = this.getSetting( 'scrubbingClass' ) ?? 'e-scrubbing';
-
-	scrubbingElementClass = this.getSetting( 'scrubbingElementClass' ) ?? 'e-scrubbing-element';
-
-	scrubbingOverClass = this.getSetting( 'scrubbingOverClass' ) ?? 'e-scrubbing-over';
+		this.scrubSettings = {
+			intentTime: 600,
+			skipperSteps: 10,
+			enhancedNumber: 10,
+			scrubbingClass: 'e-scrubbing',
+			scrubbingElementClass: 'e-scrubbing-element',
+			scrubbingOverClass: 'e-scrubbing-over',
+			...userOptions,
+		};
+	}
 
 	ui() {
 		return {
@@ -57,7 +53,7 @@ module.exports = class Scrubbing extends Marionette.Behavior {
 				break;
 
 			case SCRUB_ENHANCED:
-				input.value = +input.value + ( movementEvent.movementX * this.enhancedNumber );
+				input.value = +input.value + ( movementEvent.movementX * this.scrubSettings.enhancedNumber );
 				break;
 
 			default:
@@ -73,57 +69,44 @@ module.exports = class Scrubbing extends Marionette.Behavior {
 			this.skipperCount++;
 
 			// When ALT key is pressed, skipping x times before updating input value.
-			if ( this.skipperCount <= this.skipperMax ) {
+			if ( this.skipperCount <= this.scrubSettings.skipperSteps ) {
 				return SKIP_SCRUB;
 			}
 
-			// Skipped x time, now (update value &) restart counting.
 			this.skipperCount = 0;
 
 			return SCRUB_REGULAR;
 		}
 
-		if ( movementEvent.ctrlKey ) {
-			// When CTRL key is pressed, updating input value In an improved way.
-			return SCRUB_ENHANCED;
-		}
-
-		return SCRUB_REGULAR;
+		return ( movementEvent.ctrlKey ) ? SCRUB_ENHANCED : SCRUB_REGULAR;
 	}
 
 	onMouseDownInput( e ) {
 		const input = e.target;
 
-		if ( this.checkInputDisabled( input ) ) {
+		if ( input.disabled ) {
 			return;
 		}
 
 		const trackMovement = ( movementEvent ) => {
-			if ( this.intentVerified ) {
 				this.scrub( input, movementEvent );
-			}
 		};
-
-		document.addEventListener( 'mousemove', trackMovement );
-
-		clearTimeout( this.checkIntentTimeout );
-		this.intentVerified = false;
 
 		// For input, scrubbing effect works only after X time the mouse is down.
 		this.checkIntentTimeout = setTimeout( () => {
-			this.intentVerified = true;
+			clearTimeout( this.checkIntentTimeout );
+			document.addEventListener( 'mousemove', trackMovement );
 
-			document.body.classList.add( this.scrubbingClass );
-			input.classList.add( this.scrubbingElementClass );
-		}, this.intentTime );
+			document.body.classList.add( this.scrubSettings.scrubbingClass );
+			input.classList.add( this.scrubSettings.scrubbingElementClass );
+		}, this.scrubSettings.intentTime );
 
 		document.addEventListener( 'mouseup', () => {
 				document.removeEventListener( 'mousemove', trackMovement );
 				clearTimeout( this.checkIntentTimeout );
-				this.intentVerified = false;
 
-				document.body.classList.remove( this.scrubbingClass );
-				input.classList.remove( this.scrubbingElementClass );
+				document.body.classList.remove( this.scrubSettings.scrubbingClass );
+				input.classList.remove( this.scrubSettings.scrubbingElementClass );
 			},
 			{ once: true }
 		);
@@ -133,13 +116,13 @@ module.exports = class Scrubbing extends Marionette.Behavior {
 		const label = e.target;
 		const input = e.target.control;
 
-		if ( this.checkInputDisabled( input ) ) {
+		if ( input.disabled ) {
 			return;
 		}
 
-		document.body.classList.add( this.scrubbingClass );
-		label.classList.add( this.scrubbingElementClass );
-		input.classList.add( this.scrubbingElementClass );
+		document.body.classList.add( this.scrubSettings.scrubbingClass );
+		label.classList.add( this.scrubSettings.scrubbingElementClass );
+		input.classList.add( this.scrubSettings.scrubbingElementClass );
 
 		const trackMovement = ( movementEvent ) => {
 			this.scrub( input, movementEvent );
@@ -149,25 +132,19 @@ module.exports = class Scrubbing extends Marionette.Behavior {
 
 		document.addEventListener( 'mouseup', () => {
 				document.removeEventListener( 'mousemove', trackMovement );
-				document.body.classList.remove( this.scrubbingClass );
-				label.classList.remove( this.scrubbingElementClass );
-				input.classList.remove( this.scrubbingElementClass );
+				document.body.classList.remove( this.scrubSettings.scrubbingClass );
+				label.classList.remove( this.scrubSettings.scrubbingElementClass );
+				input.classList.remove( this.scrubSettings.scrubbingElementClass );
 			},
 			{ once: true }
 		);
 	}
 
 	onMouseEnterLabel( e ) {
-		if ( this.checkInputDisabled( e.target.control ) ) {
+		if ( e.target.control.disabled ) {
 			return;
 		}
 
-		e.target.classList.add( this.scrubbingOverClass );
+		e.target.classList.add( this.scrubSettings.scrubbingOverClass );
 	}
-
-	checkInputDisabled( input ) {
-		if ( input.disabled ) {
-			return true;
-		}
-	}
-};
+}

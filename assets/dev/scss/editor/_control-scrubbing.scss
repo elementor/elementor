@@ -1,18 +1,17 @@
 .e-scrubbing {
 	
-	cursor: e-resize;
-
-	* {
-	   cursor: e-resize;
+	&, * {
+		cursor: e-resize;
 	}
 
-	input.e-scrubbing-element, 
-	input.e-scrubbing-element:focus {
-		border-color: #{ darken($editor-info, 20%) } !important;
+	input.e-scrubbing-element {
+		&, &:focus {
+			box-shadow: 0 0 0 1px #{ darken( $editor-info, 20% ) } inset;
+		}
 	}
 	
 	label.e-scrubbing-element {
-		color: #{ darken($editor-info, 20%) };
+		color: #{ darken( $editor-info, 20% ) };
 		user-select: none;
 	}
 	
