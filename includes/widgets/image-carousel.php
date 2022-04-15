@@ -220,6 +220,19 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 			]
 		);
+		
+		$this->add_control(
+			'show_title_on_caption',
+			[
+				'label' => esc_html__( 'Title', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'no',
+				'options' => [
+					'yes' => esc_html__( 'Yes', 'elementor' ),
+					'no' => esc_html__( 'No', 'elementor' ),
+				],
+			]
+		);
 
 		$this->add_control(
 			'caption_type',
@@ -710,6 +723,80 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+			
+		$this->start_controls_section(
+			'section_title',
+			[
+				'label' => esc_html__( 'Title', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_title_on_caption!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_align',
+			[
+				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-text-align-right',
+					],
+					'justify' => [
+						'title' => esc_html__( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'default' => 'center',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-title' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'title_typography',
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
+				],
+				'selector' => '{{WRAPPER}} .elementor-image-carousel-title',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-image-carousel-title',
+			]
+		);
+
+		$this->end_controls_section();
 
 	}
 
@@ -765,12 +852,17 @@ class Widget_Image_Carousel extends Widget_Base {
 				$link_tag = '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 			}
 
+			$image_title_caption = $this->get_image_caption_title( $attachment );
 			$image_caption = $this->get_image_caption( $attachment );
 
 			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
 
 			if ( $lazyload ) {
 				$slide_html .= '<div class="swiper-lazy-preloader"></div>';
+			}
+			
+			if ( ! empty($image_title_caption ) ) {
+				$slide_html .= '<figcaption class="elementor-image-carousel-title">' . wp_kses_post( $image_title_caption ) . '</figcaption>';
 			}
 
 			if ( ! empty( $image_caption ) ) {
@@ -894,6 +986,22 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		return $attachment_post->post_content;
+	}
+	
+	private function get_image_caption_title( $attachment ) {
+		$show_title_on_caption = $this->get_settings_for_display( 'show_title_on_caption' );
+
+		if ( empty( $show_title_on_caption ) ) {
+			return '';
+		}
+		
+
+		if ( 'yes' === $show_title_on_caption ) {
+			$attachment_post = get_post( $attachment['id'] );
+			return $attachment_post->post_title;
+		}		
+
+		return '';
 	}
 
 	private function render_swiper_button( $type ) {
