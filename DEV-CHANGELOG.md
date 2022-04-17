@@ -1,5 +1,11 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev5 - 2022-04-17
+* Tweak: Onboarding [ED-6991] (#18417)
+* Tweak: Onboarding fixes and tweaks [ED-6924, ED-6832] (#18411)
+* Tweak: Nested Elements - Infra [ED-6591] (#17957)
+* Tweak: Update Onboarding module (#18440)
+
 #### 3.7.0-dev4 - 2022-04-10
 * Fix: Container is not functioning as expected [ED-6845] (#18339)
 * Tweak: Onboarding - Updated copy for Hello screen, added footnote [ED-6817] (#18342)
@@ -416,6 +422,3 @@
 
 #### 3.5.0-dev23 - 2021-09-13
 * Fix: Element dragging after ctrl + click on Mac [ED-1827] (#15980)
-
-#### 3.5.0-dev21 - 2021-09-10
-* Tweak: CSS Transform - Change flip icon [ED-4462] (#16284)
