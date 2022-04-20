@@ -39,7 +39,7 @@ export const Move = () => {
 				const eSection = ElementsHelper.createSection(),
 					eColumn1 = ElementsHelper.createColumn( eSection ),
 					eColumn2 = ElementsHelper.createColumn( eSection ),
-					eButton = ElementsHelper.createButton( eColumn1 );
+					eButton = ElementsHelper.createWidgetButton( eColumn1 );
 
 				ElementsHelper.move( eButton, eColumn2 );
 
@@ -151,12 +151,12 @@ export const Move = () => {
 					const eSection = ElementsHelper.createSection(),
 						eColumn1 = ElementsHelper.createColumn( eSection ),
 						eColumn2 = ElementsHelper.createColumn( eSection ),
-						eWidget = ElementsHelper.createButton( eColumn1 ),
+						eWidget = ElementsHelper.createWidgetButton( eColumn1 ),
 						originalPosition = eWidget.view._index,
 						targetPosition = 1;
 
-					ElementsHelper.createButton( eColumn2 );
-					ElementsHelper.createButton( eColumn2 );
+					ElementsHelper.createWidgetButton( eColumn2 );
+					ElementsHelper.createWidgetButton( eColumn2 );
 
 					ElementsHelper.move( eWidget, eColumn2, { at: targetPosition } );
 
@@ -224,8 +224,8 @@ export const Move = () => {
 				const eSection = ElementsHelper.createSection(),
 					eColumn1 = ElementsHelper.createColumn( eSection ),
 					eColumn2 = ElementsHelper.createColumn( eSection ),
-					eButton1 = ElementsHelper.createButton( eColumn1 ),
-					eButton2 = ElementsHelper.createButton( eColumn1 );
+					eButton1 = ElementsHelper.createWidgetButton( eColumn1 ),
+					eButton2 = ElementsHelper.createWidgetButton( eColumn1 );
 
 				ElementsHelper.multiMove( [ eButton1, eButton2 ], eColumn2 );
 

@@ -86,98 +86,7 @@
 						"_column_size": 50,
 						"_inline_size": null
 					},
-					"elements": [
-						{
-							"id": "e939047",
-							"settings": {
-								"social_icon_list": [
-									{
-										"social": "fa fa-facebook",
-										"_id": "oj9fk8m",
-										"link": {
-											"url": "",
-											"is_external": "true",
-											"nofollow": ""
-										},
-										"social_icon": {
-											"value": "fab fa-wordpress",
-											"library": "fa-brands"
-										},
-										"item_icon_color": "default",
-										"item_icon_primary_color": "",
-										"item_icon_secondary_color": ""
-									},
-									{
-										"social": "fa fa-twitter",
-										"_id": "jyjjyth",
-										"link": {
-											"url": "",
-											"is_external": "true",
-											"nofollow": ""
-										},
-										"social_icon": {
-											"value": "fab fa-wordpress",
-											"library": "fa-brands"
-										},
-										"item_icon_color": "default",
-										"item_icon_primary_color": "",
-										"item_icon_secondary_color": ""
-									},
-									{
-										"social": "fa fa-google-plus",
-										"_id": "1ez5p5f",
-										"link": {
-											"url": "",
-											"is_external": "true",
-											"nofollow": ""
-										},
-										"social_icon": {
-											"value": "fab fa-wordpress",
-											"library": "fa-brands"
-										},
-										"item_icon_color": "default",
-										"item_icon_primary_color": "",
-										"item_icon_secondary_color": ""
-									},
-									{
-										"social": "fa fa-envelope",
-										"link": {
-											"url": "",
-											"is_external": "true",
-											"nofollow": ""
-										},
-										"_id": "aq66v58",
-										"social_icon": {
-											"value": "fab fa-wordpress",
-											"library": "fa-brands"
-										},
-										"item_icon_color": "default",
-										"item_icon_primary_color": "",
-										"item_icon_secondary_color": ""
-									}
-								],
-								"shape": "circle",
-								"align": "right",
-								"align_tablet": "right",
-								"icon_size": {
-									"unit": "px",
-									"size": "17"
-								},
-								"icon_padding": {
-									"unit": "em",
-									"size": "0.8"
-								},
-								"icon_spacing": {
-									"unit": "px",
-									"size": "10"
-								}
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "social-icons",
-							"elType": "widget"
-						}
-					],
+					"elements": [],
 					"isInner": false,
 					"elType": "column"
 				}
@@ -431,19 +340,6 @@
 							"elType": "widget"
 						},
 						{
-							"id": "344d2c41",
-							"settings": {
-								"editor": "<p>I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/p>",
-								"align_mobile": "center",
-								"typography_typography": "custom",
-								"typography_font_family": "Roboto"
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "text-editor",
-							"elType": "widget"
-						},
-						{
 							"id": "2380a0da",
 							"settings": {
 								"text": "Read More",
@@ -481,47 +377,6 @@
 						"_inline_size": null
 					},
 					"elements": [
-						{
-							"id": "15b9345",
-							"settings": {
-								"image": {
-									"id": "2875",
-									"url": "http:\/\/localhost\/elementor\/wp-content\/uploads\/2019\/12\/main2.jpg"
-								},
-								"image_size": "full",
-								"image_border_border": "solid",
-								"image_border_width": {
-									"unit": "px",
-									"top": "10",
-									"right": "10",
-									"bottom": "10",
-									"left": "10",
-									"isLinked": true
-								},
-								"image_border_color": "#ffffff",
-								"image_box_shadow_box_shadow_type": "yes",
-								"image_box_shadow_box_shadow": {
-									"horizontal": "10",
-									"vertical": "10",
-									"blur": "20",
-									"spread": 0,
-									"inset": "",
-									"color": "rgba(0,0,0,0.12)"
-								},
-								"_padding_mobile": {
-									"unit": "px",
-									"top": "0",
-									"right": "0",
-									"bottom": "30",
-									"left": "0",
-									"isLinked": false
-								}
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "image",
-							"elType": "widget"
-						}
 					],
 					"isInner": false,
 					"elType": "column"
@@ -564,47 +419,6 @@
 						"_inline_size": null
 					},
 					"elements": [
-						{
-							"id": "5a2f3248",
-							"settings": {
-								"image": {
-									"id": "2876",
-									"url": "http:\/\/localhost\/elementor\/wp-content\/uploads\/2019\/12\/main3.jpg"
-								},
-								"image_size": "full",
-								"image_border_border": "solid",
-								"image_border_width": {
-									"unit": "px",
-									"top": "10",
-									"right": "10",
-									"bottom": "10",
-									"left": "10",
-									"isLinked": true
-								},
-								"image_border_color": "#ffffff",
-								"image_box_shadow_box_shadow_type": "yes",
-								"image_box_shadow_box_shadow": {
-									"horizontal": "-10",
-									"vertical": "10",
-									"blur": "20",
-									"spread": 0,
-									"inset": "",
-									"color": "rgba(0,0,0,0.12)"
-								},
-								"_padding_mobile": {
-									"unit": "px",
-									"top": "0",
-									"right": "0",
-									"bottom": "30",
-									"left": "0",
-									"isLinked": false
-								}
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "image",
-							"elType": "widget"
-						}
 					],
 					"isInner": false,
 					"elType": "column"
@@ -650,19 +464,6 @@
 							"elements": [],
 							"isInner": false,
 							"widgetType": "heading",
-							"elType": "widget"
-						},
-						{
-							"id": "3fa33c10",
-							"settings": {
-								"editor": "<p>I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/p>",
-								"align_mobile": "center",
-								"typography_typography": "custom",
-								"typography_font_family": "Roboto"
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "text-editor",
 							"elType": "widget"
 						},
 						{
@@ -772,19 +573,6 @@
 							"elType": "widget"
 						},
 						{
-							"id": "10212b8e",
-							"settings": {
-								"editor": "<p>I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/p>",
-								"align_mobile": "center",
-								"typography_typography": "custom",
-								"typography_font_family": "Roboto"
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "text-editor",
-							"elType": "widget"
-						},
-						{
 							"id": "148dd6cc",
 							"settings": {
 								"text": "Read More",
@@ -821,48 +609,7 @@
 						"_column_size": 50,
 						"_inline_size": null
 					},
-					"elements": [
-						{
-							"id": "65d1a141",
-							"settings": {
-								"image": {
-									"id": "2877",
-									"url": "http:\/\/localhost\/elementor\/wp-content\/uploads\/2019\/12\/0003.jpg"
-								},
-								"image_border_border": "solid",
-								"image_border_width": {
-									"unit": "px",
-									"top": "10",
-									"right": "10",
-									"bottom": "10",
-									"left": "10",
-									"isLinked": true
-								},
-								"image_border_color": "#ffffff",
-								"image_box_shadow_box_shadow_type": "yes",
-								"image_box_shadow_box_shadow": {
-									"horizontal": "10",
-									"vertical": "10",
-									"blur": "20",
-									"spread": 0,
-									"inset": "",
-									"color": "rgba(0,0,0,0.12)"
-								},
-								"_padding_mobile": {
-									"unit": "px",
-									"top": "0",
-									"right": "0",
-									"bottom": "30",
-									"left": "0",
-									"isLinked": false
-								}
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "image",
-							"elType": "widget"
-						}
-					],
+					"elements": [],
 					"isInner": false,
 					"elType": "column"
 				}
@@ -976,53 +723,6 @@
 							"elements": [],
 							"isInner": false,
 							"widgetType": "video",
-							"elType": "widget"
-						},
-						{
-							"id": "4324c32b",
-							"settings": {
-								"testimonial_content": "\"Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo\"",
-								"testimonial_image": {
-									"id": "2879",
-									"url": "http:\/\/localhost\/elementor\/wp-content\/uploads\/2019\/12\/groomsman3.jpg"
-								},
-								"testimonial_name": "Chris Jones",
-								"testimonial_job": "Travel Blogger",
-								"testimonial_image_position": "top",
-								"content_content_color": "#003e53",
-								"content_typography_typography": "custom",
-								"content_typography_font_family": "Playfair Display",
-								"image_size": {
-									"unit": "px",
-									"size": 79
-								},
-								"name_text_color": "#e4bc36",
-								"name_typography_typography": "custom",
-								"name_typography_font_family": "Roboto",
-								"name_typography_font_weight": "500",
-								"name_typography_text_transform": "uppercase",
-								"name_typography_letter_spacing": {
-									"unit": "px",
-									"size": 2.4
-								},
-								"job_typography_typography": "custom",
-								"job_typography_font_family": "Roboto",
-								"job_typography_line_height": {
-									"unit": "em",
-									"size": 1.6
-								},
-								"_padding": {
-									"unit": "px",
-									"top": "50",
-									"right": "0",
-									"bottom": "0",
-									"left": "0",
-									"isLinked": false
-								}
-							},
-							"elements": [],
-							"isInner": false,
-							"widgetType": "testimonial",
 							"elType": "widget"
 						}
 					],
