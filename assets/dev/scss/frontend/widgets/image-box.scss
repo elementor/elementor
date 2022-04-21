@@ -1,46 +1,55 @@
 //
 // Image Box
 //
+@mixin image-margins($device) {
+
+	&.elementor-position#{$device} {
+
+		&-top {
+
+			.elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
+				margin-inline-start: auto;
+				margin-inline-end: auto;
+				margin-bottom: var(--image-spacing, 15px);
+			}
+		}
+
+		&-left {
+
+			.elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
+				margin-inline-start: 0;
+				margin-inline-end: var(--image-spacing, 15px);
+				margin-bottom: 0;
+			}
+		}
+
+		&-right {
+
+			.elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
+				margin-inline-start: var(--image-spacing, 15px);
+				margin-inline-end: 0;
+				margin-bottom: 0;
+			}
+		}
+	}
+}
+
 .elementor-widget-image-box {
 
-	.elementor-image-box-content {
-		width: 100%; // Hack for Chrome in flex mode
+	.elementor-image-box {
+
+		&-content {
+			width: 100%; // Hack for Chrome in flex mode
+		}
+
+		&-wrapper {
+			display: var(--wrapper-display, block);
+			text-align: getValueByDirection( var(--wrapper-align-ltr, center), var(--wrapper-align-rtl, center) );
+			flex-direction: getValueByDirection( var(--wrapper-direction-ltr), var(--wrapper-direction-ltr) );
+		}
 	}
 
 	@media (min-width: $screen-mobile-next) {
-
-		&.elementor-position- {
-
-			&left, &right {
-
-				.elementor-image-box-wrapper {
-					display: flex;
-				}
-			}
-
-			&right {
-
-				.elementor-image-box-wrapper {
-					text-align: $end;
-					flex-direction: getValueByDirection(row-reverse, row);
-				}
-			}
-
-			&left {
-
-				.elementor-image-box-wrapper {
-					text-align: $start;
-					flex-direction: getValueByDirection(row, row-reverse);
-				}
-			}
-
-			&top {
-
-				.elementor-image-box-img {
-					margin: auto;
-				}
-			}
-		}
 
 		&.elementor-vertical-align- {
 
@@ -67,16 +76,6 @@
 		}
 	}
 
-	@media (max-width: $screen-mobile-max) {
-
-		// TEMP code to override the image spacing
-		.elementor-image-box-img {
-			margin-left: auto !important;
-			margin-right: auto !important;
-			margin-bottom: 15px;
-		}
-	}
-
 	.elementor-image-box-img {
 		display: inline-block; // For alignment content
 	}
@@ -88,11 +87,33 @@
 		}
 	}
 
-	.elementor-image-box-wrapper {
-		text-align: center;
-	}
-
 	.elementor-image-box-description {
 		margin: 0;
+	}
+
+	@include image-margins('');
+
+	@media (min-width: $screen-widescreen-min) {
+		@include image-margins(-widescreen);
+	}
+
+	@media (max-width: $screen-laptop-max) {
+		@include image-margins(-laptop);
+	}
+
+	@media (max-width: $screen-tablet-extra-max) {
+		@include image-margins(-tablet_extra);
+	}
+
+	@media (max-width: $screen-tablet-max) {
+		@include image-margins(-tablet);
+	}
+
+	@media (max-width: $screen-mobile-extra-max) {
+		@include image-margins(-mobile_extra);
+	}
+
+	@media (max-width: $screen-mobile-max) {
+		@include image-margins(-mobile);
 	}
 }

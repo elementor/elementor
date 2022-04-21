@@ -155,12 +155,13 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'position',
 			[
 				'label' => esc_html__( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'top',
+				'mobile_default' => 'top',
 				'options' => [
 					'left' => [
 						'title' => esc_html__( 'Left', 'elementor' ),
@@ -175,7 +176,15 @@ class Widget_Image_Box extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
-				'prefix_class' => 'elementor-position-',
+				'selectors_dictionary' => [
+					'left' => '--wrapper-display: flex; --wrapper-align-ltr: left; --wrapper-align-rtl: right; --wrapper-direction-ltr: row; --wrapper-direction-rtl: row-reverse; --image-margin-left: 0; --image-margin-bottom: 0;',
+					'right' => '--wrapper-display: flex; --wrapper-align-ltr: right; --wrapper-align-rtl: left; --wrapper-direction-ltr: row-reverse; --wrapper-direction-rtl: row; --image-margin-right: 0; --image-margin-bottom: 0;',
+					'top' => '--wrapper-display: block;  --wrapper-align-ltr: center; --wrapper-align-ltr: center; --image-margin-left: auto; --image-margin-right: auto;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}};',
+				],
+				'prefix_class' => 'elementor-position%s-',
 				'toggle' => false,
 			]
 		);
@@ -234,10 +243,8 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-position-right .elementor-image-box-img' => 'margin-left: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}}.elementor-position-left .elementor-image-box-img' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}}.elementor-position-top .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
-					'(mobile){{WRAPPER}} .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--image-spacing: {{SIZE}}{{UNIT}};'
+					// '(mobile){{WRAPPER}} .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -407,6 +414,7 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'mobile_default' => 'center',
 				'options' => [
 					'left' => [
 						'title' => esc_html__( 'Left', 'elementor' ),
