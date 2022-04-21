@@ -414,7 +414,6 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'mobile_default' => 'center',
 				'options' => [
 					'left' => [
 						'title' => esc_html__( 'Left', 'elementor' ),
