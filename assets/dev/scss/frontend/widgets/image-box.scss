@@ -115,5 +115,16 @@
 
 	@media (max-width: $screen-mobile-max) {
 		@include image-margins(-mobile);
+
+		&.elementor-position {
+
+			&-left, &-right {
+
+				// BC compatibility code since 3.7.0
+				.elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
+					margin-bottom: 0;
+				}
+			}
+		}
 	}
 }
