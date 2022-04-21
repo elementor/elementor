@@ -236,6 +236,9 @@ class Widget_Image_Box extends Widget_Base {
 				'default' => [
 					'size' => 15,
 				],
+				'mobile_default' => [
+					'size' => 0,
+				],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -244,7 +247,6 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--image-spacing: {{SIZE}}{{UNIT}};'
-					// '(mobile){{WRAPPER}} .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
