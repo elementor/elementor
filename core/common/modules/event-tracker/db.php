@@ -83,7 +83,7 @@ class DB extends Base_Object {
 			$user_connect_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
 
 			// Add the user's client ID to the event.
-			$event_data['details']['connect_id'] = $user_connect_data['client_id'];
+			$event_data['details']['client_id'] = $user_connect_data['client_id'];
 		}
 
 		$event_data['details'] = json_encode( $event_data['details'] );

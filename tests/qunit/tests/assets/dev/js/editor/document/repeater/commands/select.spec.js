@@ -9,7 +9,7 @@ export const Select = () => {
 				// Arrange.
 				const indexToSelect = 2,
 					eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn );
+					eTabs = ElementsHelper.createWidgetTabs( eColumn );
 
 				// Act.
 				RepeaterHelper.select( eTabs, indexToSelect );
@@ -22,7 +22,7 @@ export const Select = () => {
 				// Arrange.
 				const indexToSelect = 2,
 					eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn );
+					eTabs = ElementsHelper.createWidgetTabs( eColumn );
 
 				// Act.
 				RepeaterHelper.select( eTabs, indexToSelect );
@@ -41,7 +41,7 @@ export const Select = () => {
 
 				const indexToSelect = 2,
 					eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn );
+					eTabs = ElementsHelper.createWidgetTabs( eColumn );
 
 				// Act.
 				RepeaterHelper.select( eTabs, indexToSelect );

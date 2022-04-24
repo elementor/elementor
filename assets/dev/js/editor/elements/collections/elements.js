@@ -13,14 +13,14 @@ var ElementsCollection = Backbone.Collection.extend( {
 		var ModelClass = Backbone.Model;
 
 		if ( attrs.elType ) {
-			const elementTypeKey = attrs.widgetType || attrs.elType,
-				elementType = elementor.elementsManager.getElementType( elementTypeKey );
+			const elementType = attrs.widgetType || attrs.elType,
+				elementTypeClass = elementor.elementsManager.getElementTypeClass( elementType );
 
-			if ( ! elementType ) {
-				throw new ElementTypeNotFound( elementTypeKey );
+			if ( ! elementTypeClass ) {
+				throw new ElementTypeNotFound( elementType );
 			}
 
-			ModelClass = elementor.hooks.applyFilters( 'element/model', elementType.getModel(), attrs );
+			ModelClass = elementor.hooks.applyFilters( 'element/model', elementTypeClass.getModel(), attrs );
 		}
 
 		return new ModelClass( attrs, options );
