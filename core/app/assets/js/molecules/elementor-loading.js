@@ -1,4 +1,4 @@
-export default function ElementorLoading() {
+export default function ElementorLoading( props ) {
 	return (
 		<div className="elementor-loading">
 			<div className="elementor-loader-wrapper">
@@ -10,8 +10,16 @@ export default function ElementorLoading() {
 						<div className="elementor-loader-box"/>
 					</div>
 				</div>
-				<div className="elementor-loading-title">{ __( 'Loading', 'elementor' ) }</div>
+				<div className="elementor-loading-title">{ props.loadingText }</div>
 			</div>
 		</div>
 	);
 }
+
+ElementorLoading.propTypes = {
+	loadingText: PropTypes.string,
+};
+
+ElementorLoading.defaultProps = {
+	loadingText: __( 'Loading', 'elementor' ),
+};

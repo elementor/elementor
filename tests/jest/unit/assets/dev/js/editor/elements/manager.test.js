@@ -7,9 +7,9 @@ describe( 'ElementsManager', () => {
 
 	afterAll( freeMock );
 
-	test( 'getElementType() -- Sanity', () => {
+	test( 'getElementTypeClass() -- Sanity', () => {
 		// Act.
-		const section = elementsManager.getElementType( 'section' );
+		const section = elementsManager.getElementTypeClass( 'section' );
 
 		// Assert.
 		expect( section.getType() ).toBe( 'section' );
@@ -27,7 +27,7 @@ describe( 'ElementsManager', () => {
 		// Act.
 		elementsManager.registerElementType( new WidgetTest() );
 
-		const widgetTest = elementsManager.getElementType( 'widget-test' );
+		const widgetTest = elementsManager.getElementTypeClass( 'widget-test' );
 
 		// Assert.
 		expect( widgetTest.getType() ).toBe( 'widget-test' );
