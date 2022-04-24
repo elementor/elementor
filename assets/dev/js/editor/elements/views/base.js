@@ -96,14 +96,14 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChildView( model ) {
-		const elementTypeKey = model.get( 'widgetType' ) || model.get( 'elType' ),
-			elementType = elementor.elementsManager.getElementType( elementTypeKey );
+		const elementType = model.get( 'widgetType' ) || model.get( 'elType' ),
+			elementTypeClass = elementor.elementsManager.getElementTypeClass( elementType );
 
-		if ( ! elementType ) {
-			throw new ElementTypeNotFound( elementTypeKey );
+		if ( ! elementTypeClass ) {
+			throw new ElementTypeNotFound( elementType );
 		}
 
-		return elementor.hooks.applyFilters( 'element/view', elementType.getView(), model, this );
+		return elementor.hooks.applyFilters( 'element/view', elementTypeClass.getView(), model, this );
 	},
 
 	getTemplateType() {

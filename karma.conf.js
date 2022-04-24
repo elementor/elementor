@@ -95,7 +95,13 @@ module.exports = function( config ) {
 		port: 9876,
 		colors: true,
 		logLevel: config.LOG_INFO,
-		browsers: [ 'ChromeHeadless' ],
+		browsers: [ 'ChromeHeadlessCustom', 'ChromeHeadless' ],
+		customLaunchers: {
+			ChromeHeadlessCustom: {
+				base: 'ChromeHeadless',
+					flags: [ '--no-sandbox', '--single-process' ],
+			},
+		},
 		browserDisconnectTimeout: 6000,
 		pingTimeout: 10000,
 		// Continuous Integration mode

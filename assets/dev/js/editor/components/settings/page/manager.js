@@ -28,7 +28,7 @@ module.exports = BaseSettings.extend( {
 			return this.editedView;
 		}
 
-		const documentElementType = elementor.elementsManager.getElementType( 'document' ),
+		const documentElementType = elementor.elementsManager.getElementTypeClass( 'document' ),
 			ModelClass = documentElementType.getModel(),
 			type = this.getContainerType(),
 			editModel = new ModelClass( {
