@@ -17,7 +17,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			skipperSteps: 10,
 			enhancedNumber: 10,
 			scrubbingClass: 'e-scrubbing',
-			scrubbingElementClass: 'e-scrubbing-element',
+			scrubbingActiveClass: 'e-scrubbing--active',
 			scrubbingOverClass: 'e-scrubbing-over',
 			...userOptions,
 		};
@@ -34,19 +34,18 @@ export default class Scrubbing extends Marionette.Behavior {
 		return {
 			'mousedown @ui.input': 'onMouseDownInput',
 			'mousedown @ui.label': 'onMouseDownLabel',
-			'mouseenter  @ui.label': 'onMouseEnterLabel',
+			'mouseenter @ui.label': 'onMouseEnterLabel',
+			'mouseleave @ui.label': 'onMouseLeaveLabel',
 		};
 	}
 
 	scrub( input, movementEvent ) {
-		// Determine the updating rhythm.
 		const movementType = this.getMovementType( movementEvent );
 
 		if ( SKIP_SCRUB === movementType ) {
 			return;
 		}
 
-		// Actually change the input by scrubbing.
 		switch ( movementType ) {
 			case SCRUB_REGULAR:
 				input.value = +input.value + movementEvent.movementX;
@@ -89,27 +88,25 @@ export default class Scrubbing extends Marionette.Behavior {
 		}
 
 		const trackMovement = ( movementEvent ) => {
-				this.scrub( input, movementEvent );
+			this.scrub( input, movementEvent );
 		};
 
 		// For input, scrubbing effect works only after X time the mouse is down.
-		this.checkIntentTimeout = setTimeout( () => {
-			clearTimeout( this.checkIntentTimeout );
+		const checkIntentTimeout = setTimeout( () => {
+			clearTimeout( checkIntentTimeout );
 			document.addEventListener( 'mousemove', trackMovement );
 
 			document.body.classList.add( this.scrubSettings.scrubbingClass );
-			input.classList.add( this.scrubSettings.scrubbingElementClass );
+			input.classList.add( this.scrubSettings.scrubbingActiveClass );
 		}, this.scrubSettings.intentTime );
 
 		document.addEventListener( 'mouseup', () => {
-				document.removeEventListener( 'mousemove', trackMovement );
-				clearTimeout( this.checkIntentTimeout );
+			document.removeEventListener( 'mousemove', trackMovement );
+			clearTimeout( checkIntentTimeout );
 
-				document.body.classList.remove( this.scrubSettings.scrubbingClass );
-				input.classList.remove( this.scrubSettings.scrubbingElementClass );
-			},
-			{ once: true }
-		);
+			document.body.classList.remove( this.scrubSettings.scrubbingClass );
+			input.classList.remove( this.scrubSettings.scrubbingActiveClass );
+		}, { once: true } );
 	}
 
 	onMouseDownLabel( e ) {
@@ -121,8 +118,8 @@ export default class Scrubbing extends Marionette.Behavior {
 		}
 
 		document.body.classList.add( this.scrubSettings.scrubbingClass );
-		label.classList.add( this.scrubSettings.scrubbingElementClass );
-		input.classList.add( this.scrubSettings.scrubbingElementClass );
+		label.classList.add( this.scrubSettings.scrubbingActiveClass );
+		input.classList.add( this.scrubSettings.scrubbingActiveClass );
 
 		const trackMovement = ( movementEvent ) => {
 			this.scrub( input, movementEvent );
@@ -131,13 +128,12 @@ export default class Scrubbing extends Marionette.Behavior {
 		document.addEventListener( 'mousemove', trackMovement );
 
 		document.addEventListener( 'mouseup', () => {
-				document.removeEventListener( 'mousemove', trackMovement );
-				document.body.classList.remove( this.scrubSettings.scrubbingClass );
-				label.classList.remove( this.scrubSettings.scrubbingElementClass );
-				input.classList.remove( this.scrubSettings.scrubbingElementClass );
-			},
-			{ once: true }
-		);
+			document.removeEventListener( 'mousemove', trackMovement );
+
+			document.body.classList.remove( this.scrubSettings.scrubbingClass );
+			label.classList.remove( this.scrubSettings.scrubbingActiveClass );
+			input.classList.remove( this.scrubSettings.scrubbingActiveClass );
+		}, { once: true } );
 	}
 
 	onMouseEnterLabel( e ) {
@@ -146,5 +142,13 @@ export default class Scrubbing extends Marionette.Behavior {
 		}
 
 		e.target.classList.add( this.scrubSettings.scrubbingOverClass );
+	}
+
+	onMouseLeaveLabel( e ) {
+		if ( e.target.control.disabled ) {
+			return;
+		}
+
+		e.target.classList.remove( this.scrubSettings.scrubbingOverClass );
 	}
 }

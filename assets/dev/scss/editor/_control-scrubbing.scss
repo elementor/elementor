@@ -4,13 +4,13 @@
 		cursor: e-resize;
 	}
 
-	input.e-scrubbing-element {
+	input.e-scrubbing--active {
 		&, &:focus {
 			box-shadow: 0 0 0 1px #{ darken( $editor-info, 20% ) } inset;
 		}
 	}
 	
-	label.e-scrubbing-element {
+	label.e-scrubbing--active {
 		color: #{ darken( $editor-info, 20% ) };
 		user-select: none;
 	}
