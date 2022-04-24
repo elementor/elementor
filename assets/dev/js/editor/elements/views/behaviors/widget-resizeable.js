@@ -123,15 +123,6 @@ export default class extends Marionette.Behavior {
 		return editModel.getSetting( setting );
 	}
 
-	/**
-	 * Determine if the current element is a flex container item.
-	 *
-	 * @returns {boolean}
-	 */
-	isContainerItem() {
-		return 'container' === this.view.getContainer().parent?.model?.get( 'elType' );
-	}
-
 	onRender() {
 		_.defer( () => this.toggle() );
 	}
