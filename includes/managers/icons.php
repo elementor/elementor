@@ -502,18 +502,42 @@ class Icons_Manager {
 			},
 			'fields' => [
 				[
-					'label'      => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
+					'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
-						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
+						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" data-redirect-url="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
+							esc_url( $this->get_upgrade_redirect_url() ),
 							esc_html__( 'Upgrade To Font Awesome 5', 'elementor' )
 						),
 					],
 				],
 			],
 		] );
+	}
+
+	/**
+	 * Get redirect URL when uprating font awesome.
+	 *
+	 * @return string
+	 */
+	public function get_upgrade_redirect_url() {
+		// PHPCS - No need to verify nonce, the 'redirect_to' could be only post id, and if it is not the
+		// URL will be empty.
+		$document_id = ! empty( $_GET['redirect_to'] ) ? $_GET['redirect_to'] : null; // phpcs:ignore
+
+		if ( ! is_numeric( $document_id ) ) {
+			return '';
+		}
+
+		$document = Plugin::$instance->documents->get( intval( $document_id ) );
+
+		if ( ! $document ) {
+			return '';
+		}
+
+		return $document->get_edit_url();
 	}
 
 	/**
@@ -524,7 +548,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => '<p>' . esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
+		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ] );
 	}
 
 	/**
