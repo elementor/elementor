@@ -696,6 +696,22 @@ abstract class Base extends Base_File {
 
 		$value = $values[ $control['name'] ];
 
+		// If the control value is empty, and the control has a global default set, fetch the global value and use it.
+		if ( ! $value && ! empty( $control['global']['default'] ) ) {
+			$global_enabled = false;
+
+			if ( 'color' === $control['type'] ) {
+				$global_enabled = Plugin::$instance->kits_manager->is_custom_colors_enabled();
+			} elseif ( isset( $control['groupType'] ) && 'typography' === $control['groupType'] ) {
+				$global_enabled = Plugin::$instance->kits_manager->is_custom_typography_enabled();
+			}
+
+			// Only apply the global default if Global Colors are enabled.
+			if ( $global_enabled ) {
+				$value = $this->get_selector_global_value( $control, $control['global']['default'] );
+			}
+		}
+
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
 		}
