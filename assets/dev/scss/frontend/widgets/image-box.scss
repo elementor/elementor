@@ -1,39 +1,6 @@
 //
 // Image Box
 //
-@mixin image-margins($device) {
-
-	&.elementor-position#{$device} {
-
-		&-top {
-
-			.elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
-				margin-inline-start: auto;
-				margin-inline-end: auto;
-				margin-bottom: var(--image-spacing, 15px);
-			}
-		}
-
-		&-left {
-
-			.elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
-				margin-inline-start: 0;
-				margin-inline-end: var(--image-spacing, 15px);
-				margin-bottom: 0;
-			}
-		}
-
-		&-right {
-
-			.elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
-				margin-inline-start: var(--image-spacing, 15px);
-				margin-inline-end: 0;
-				margin-bottom: 0;
-			}
-		}
-	}
-}
-
 .elementor-widget-image-box {
 
 	.elementor-image-box {
@@ -80,6 +47,12 @@
 		display: inline-block; // For alignment content
 	}
 
+	&.elementor-element .elementor-widget-container .elementor-image-box-wrapper .elementor-image-box-img {
+		margin-left: var(--image-margin-left, var(--image-spacing, 15px));
+		margin-right: var(--image-margin-right, var(--image-spacing, 15px));
+		margin-bottom: var(--image-margin-bottom, var(--image-spacing, 15px));
+	}
+
 	.elementor-image-box-title {
 
 		a {
@@ -91,30 +64,7 @@
 		margin: 0;
 	}
 
-	@include image-margins('');
-
-	@media (min-width: $screen-widescreen-min) {
-		@include image-margins(-widescreen);
-	}
-
-	@media (max-width: $screen-laptop-max) {
-		@include image-margins(-laptop);
-	}
-
-	@media (max-width: $screen-tablet-extra-max) {
-		@include image-margins(-tablet_extra);
-	}
-
-	@media (max-width: $screen-tablet-max) {
-		@include image-margins(-tablet);
-	}
-
-	@media (max-width: $screen-mobile-extra-max) {
-		@include image-margins(-mobile_extra);
-	}
-
 	@media (max-width: $screen-mobile-max) {
-		@include image-margins(-mobile);
 
 		&.elementor-position {
 
