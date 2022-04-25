@@ -518,20 +518,20 @@ class Icons_Manager {
 	}
 
 	/**
-	 * Get redirect URL when uprating font awesome.
+	 * Get redirect URL when upgrading font awesome.
 	 *
 	 * @return string
 	 */
 	public function get_upgrade_redirect_url() {
 		// PHPCS - No need to verify nonce, the 'redirect_to' could be only post id, and if it is not the
 		// URL will be empty.
-		$document_id = ! empty( $_GET['redirect_to'] ) ? $_GET['redirect_to'] : null; // phpcs:ignore
+		$document_id = ! empty( $_GET['redirect_to_document'] ) ? $_GET['redirect_to_document'] : null; // phpcs:ignore
 
 		if ( ! is_numeric( $document_id ) ) {
 			return '';
 		}
 
-		$document = Plugin::$instance->documents->get( intval( $document_id ) );
+		$document = Plugin::$instance->documents->get( $document_id );
 
 		if ( ! $document ) {
 			return '';
