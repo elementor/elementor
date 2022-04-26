@@ -47,10 +47,16 @@ export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.A
 				// Set container tab title according to its repeater item name.
 				const index = childContainer.parent.children.indexOf( childContainer ) + 1;
 
-				$e.components.get( 'nested-elements/nested-repeater' ).setChildrenTitle(
-					childContainer,
-					index,
-				);
+				$e.internal( 'document/elements/set-settings', {
+					container,
+					settings: {
+						_title: this.getChildrenTitle( container.parent, index ),
+					},
+					options: {
+						render: false,
+						external: true,
+					},
+				} );
 			} );
 		} );
 	}
