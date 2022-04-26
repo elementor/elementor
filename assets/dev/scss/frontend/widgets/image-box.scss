@@ -12,7 +12,7 @@
 		&-wrapper {
 			display: var(--wrapper-display, block);
 			text-align: getValueByDirection( var(--wrapper-align-ltr, center), var(--wrapper-align-rtl, center) );
-			flex-direction: getValueByDirection( var(--wrapper-direction-ltr), var(--wrapper-direction-ltr) );
+			flex-direction: getValueByDirection( var(--wrapper-direction-ltr), var(--wrapper-direction-rtl) );
 		}
 	}
 
