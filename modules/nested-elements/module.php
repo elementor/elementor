@@ -33,7 +33,7 @@ class Module extends \Elementor\Core\Base\Module {
 			$controls_manager->register_control( Controls\Nested_Repeater::CONTROL_TYPE, new Controls\Nested_Repeater() );
 		} );
 
-		add_action( 'elementor/common/after_register_scripts', function () {
+		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
 				'elementor-common',
 			], ELEMENTOR_VERSION, true );
