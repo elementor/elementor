@@ -36,25 +36,34 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getContainerId() {
+	getContainerType() {
 		return this.getSettings( 'name' ) + '_settings';
+	},
+
+	getContainerId() {
+		elementorCommon.helpers.softDeprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+
+		return this.getContainerType();
 	},
 
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
-		const id = this.getContainerId(),
-			editModel = new Backbone.Model( {
-				id,
-				elType: id,
+		const documentElementType = elementor.elementsManager.getElementTypeClass( 'document' ),
+			ModelClass = documentElementType.getModel(),
+			type = this.getContainerType(),
+			editModel = new ModelClass( {
+				id: type,
+				elType: type,
 				settings: this.model,
 		} );
 
 		const container = new elementorModules.editor.Container( {
-			type: id,
-			id: editModel.id,
+			type: type,
+			id: type,
 			model: editModel,
 			settings: editModel.get( 'settings' ),
 			view: false,
+			parent: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
 			document: this.getDocument(),
@@ -136,16 +145,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				data: settings,
 			} );
 
-		if ( ! elementorCommonConfig.isTesting ) {
-			NProgress.start();
-		}
+		NProgress.start();
 
 		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
-				if ( ! elementorCommonConfig.isTesting ) {
-					NProgress.done();
-				}
+				NProgress.done();
 
 				self.setSettings( 'settings', settings );
 

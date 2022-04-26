@@ -16,6 +16,17 @@
 			$element.on( 'click', function() {
 				openShareLink( networkName );
 			} );
+
+			// Add "Enter" and "Space" event only if the element has role=button attribute.
+			if ( 'button' === $element.attr( 'role' ) ) {
+				$element.on( 'keyup', ( event ) => {
+					if ( 13 === event.keyCode || 32 === event.keyCode ) {
+						event.preventDefault();
+
+						openShareLink( networkName );
+					}
+				} );
+			}
 		};
 
 		var openShareLink = function( networkName ) {

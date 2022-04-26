@@ -1,14 +1,38 @@
-import DocumentComponent from './document/component';
-import DataGlobalsComponent from './data/globals/component';
+import CommandContainerBase from './command-bases/command-container-base';
+import CommandContainerInternalBase from './command-bases/command-container-internal-base';
+import CommandHistoryBase from 'elementor-document/command-bases/command-history-base';
+import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
 
-elementorCommon.elements.$window.on( 'elementor:init-components', () => {
-	// TODO: Move to elementor:init-data-components
-	$e.components.register( new DataGlobalsComponent() );
+$e.modules.editor = {
+	CommandContainerBase,
+	CommandContainerInternalBase,
 
-	$e.components.register( new DocumentComponent() );
+	document: {
+		CommandHistoryBase,
+		CommandHistoryDebounceBase,
+	},
+};
 
-	// TODO: Remove, BC Since 2.9.0.
-	elementor.saver = $e.components.get( 'document/save' );
-} );
+// TODO: Remove, BC.
+$e.modules.document = {
+	get CommandHistory() {
+		elementorCommon.helpers.softDeprecated(
+			'$e.modules.document.CommandHistory',
+			'3.7.0',
+			'$e.modules.editor.document.CommandHistoryBase'
+		);
 
-$e.modules.document = DocumentComponent.getModules();
+		return $e.modules.editor.document.CommandHistoryBase;
+	},
+
+	get CommandHistoryDebounce() {
+		elementorCommon.helpers.softDeprecated(
+			'$e.modules.CommandHistoryDebounce',
+			'3.7.0',
+			'$e.modules.editor.document.CommandHistoryDebounceBase'
+		);
+
+		return $e.modules.editor.document.CommandHistoryDebounceBase;
+	},
+};
+

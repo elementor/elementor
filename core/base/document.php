@@ -384,6 +384,60 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get All Post Type URL
+	 *
+	 * Get url of the page which display all the posts of the current active document's post type.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	public function get_all_post_type_url() {
+		$post_type = get_post_type( $this->get_main_id() );
+
+		$url = get_admin_url() . 'edit.php';
+
+		if ( 'post' !== $post_type ) {
+			$url .= '?post_type=' . $post_type;
+		}
+
+		/**
+		 * Document "display all post type" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/all_post_type', $url, $this );
+
+		return $url;
+	}
+
+	/**
+	 * Get Main WP dashboard URL.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	protected function get_main_dashboard_url() {
+		$url = get_dashboard_url();
+
+		/**
+		 * Document "Main Dashboard" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/main_dashboard', $url, $this );
+
+		return $url;
+	}
+
+	/**
 	 * Get auto-saved post revision.
 	 *
 	 * Retrieve the auto-saved post revision that is newer than current post.
@@ -544,28 +598,30 @@ abstract class Document extends Controls_Stack {
 				'locked' => $locked_user,
 			],
 			'urls' => [
-				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
+				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(), // WP post type edit page
+				'all_post_type' => $this->get_all_post_type_url(),
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),
 				'have_a_look' => $this->get_have_a_look_url(),
+				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
 
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$container = [];
+			$container_config = [];
 			$experiments_manager = Plugin::$instance->experiments;
 
 			if ( $experiments_manager->is_feature_active( 'container' ) ) {
-				$container = [
-					'container' => ( new Container() )->get_config(),
+				$container_config = [
+					'container' => Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config(),
 				];
 			}
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = $container + Plugin::$instance->widgets_manager->get_widget_types_config();
+			$config['widgets'] = $container_config + Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
 		$additional_config = [];

@@ -1,10 +1,16 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Import extends CommandHistory {
+export class Import extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 
 		this.requireArgumentConstructor( 'data', Object, args );
+
+		if ( args.containers ) {
+			throw new TypeError( 'Multi containers are not supported' );
+		}
+
+		if ( args.container ) {
+			this.requireContainer();
+		}
 	}
 
 	getHistory( args ) {
@@ -18,16 +24,18 @@ export class Import extends CommandHistory {
 	}
 
 	apply( args ) {
-		const { data, options = args.options || {} } = args,
-			previewContainer = elementor.getPreviewContainer(),
+		const { data,
+				options = args.options || {},
+				container = args.container || elementor.getPreviewContainer(),
+		} = args,
 			result = [];
 
-		let at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
+		let at = isNaN( options.at ) ? container.view.collection.length : options.at;
 
 		// Each `data.content`.
 		Object.values( data.content ).forEach( ( model ) => {
 			result.push( $e.run( 'document/elements/create', {
-				container: elementor.getPreviewContainer(),
+				container,
 				model,
 				options: Object.assign( options, { at } ),
 			} ) );

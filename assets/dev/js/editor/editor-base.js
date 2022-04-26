@@ -4,11 +4,13 @@ import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
+import ElementsManager from './elements/manager';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
 import BrowserImport from './components/browser-import/manager';
+import PreviewComponent from './components/preview/component';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -23,6 +25,11 @@ import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
+import DocumentComponent from './document/component';
+import DataGlobalsComponent from './data/globals/component';
+
+import * as elementTypes from './elements/types';
+import ElementBase from './elements/types/base/element-base';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -180,6 +187,10 @@ export default class EditorBase extends Marionette.Application {
 			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
 		},
 		elements: {
+			types: {
+				Base: ElementBase,
+				... elementTypes,
+			},
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
@@ -190,6 +201,8 @@ export default class EditorBase extends Marionette.Application {
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
+				BaseElement: require( 'elementor-elements/views/base' ),
+				BaseWidget: require( 'elementor-elements/views/base-widget' ),
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 		},
@@ -334,6 +347,8 @@ export default class EditorBase extends Marionette.Application {
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
+		this.elementsManager = new ElementsManager();
+
 		this.hooks = new EventManager();
 
 		this.selection = new Selection();
@@ -376,6 +391,16 @@ export default class EditorBase extends Marionette.Application {
 		if ( elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
+
+		// TODO: Move to elementor:init-data-components
+		$e.components.register( new DataGlobalsComponent() );
+
+		$e.components.register( new DocumentComponent() );
+
+		$e.components.register( new PreviewComponent() );
+
+		// TODO: Remove, BC Since 2.9.0.
+		elementor.saver = $e.components.get( 'document/save' );
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}
@@ -509,7 +534,7 @@ export default class EditorBase extends Marionette.Application {
 	getCurrentElement() {
 		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
-		if ( ! isPreview && ! elementorCommonConfig.isTesting ) {
+		if ( ! isPreview ) {
 			return false;
 		}
 
