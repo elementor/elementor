@@ -62,15 +62,18 @@ describe( `$e.run( 'preview/drop' )`, () => {
 				model: new Backbone.Model( {} ),
 				parent: false,
 				view: {
-					createElementFromModel: jest.fn(),
+					createElementFromModel: () => {
+						return {
+							fakeModel: 'true',
+						};
+					},
 					on: jest.fn(),
 				},
 			} );
 
 		$e.components.register( new Component() );
 
-		// Create 'document' container.
-		const droppedContainer = $e.run( 'preview/drop', {
+		const result = $e.run( 'preview/drop', {
 			container,
 			model: {
 				elType: 'widget',
@@ -79,7 +82,9 @@ describe( `$e.run( 'preview/drop' )`, () => {
 		} );
 
 		// Assert.
-		expect( droppedContainer ).toBeInstanceOf( MockContainerClass );
+		expect( result ).toEqual( {
+			fakeModel: 'true',
+		} );
 	} );
 } );
 

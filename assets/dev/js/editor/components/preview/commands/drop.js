@@ -6,16 +6,17 @@ export class Drop extends $e.modules.CommandBase {
 	}
 
 	apply( args = {} ) {
-		const { containers = [ args.container ], options = {} } = args;
+		const { containers = [ args.container ], options = {} } = args,
+			result = [];
 
 		containers.forEach( ( container ) => {
-			container.view.createElementFromModel( args.model, options );
+			result.push( container.view.createElementFromModel( args.model, options ) );
 		} );
 
 		if ( 1 === containers.length ) {
-			return containers[ 0 ];
+			return result[ 0 ];
 		}
 
-		return containers;
+		return result;
 	}
 }
