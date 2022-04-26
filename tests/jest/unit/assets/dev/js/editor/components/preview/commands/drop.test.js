@@ -62,29 +62,35 @@ describe( `$e.run( 'preview/drop' )`, () => {
 				model: new Backbone.Model( {} ),
 				parent: false,
 				view: {
-					createElementFromModel: () => {
+					createElementFromModel: jest.fn( () => {
 						return {
 							fakeModel: 'true',
 						};
-					},
+					} ),
 					on: jest.fn(),
 				},
 			} );
 
 		$e.components.register( new Component() );
 
-		const result = $e.run( 'preview/drop', {
-			container,
-			model: {
+		const model = {
 				elType: 'widget',
 				widgetType: 'text-editor',
 			},
-		} );
+			args = {
+				container,
+				model,
+			},
+			result = $e.run( 'preview/drop', args );
 
 		// Assert.
 		expect( result ).toEqual( {
 			fakeModel: 'true',
 		} );
+		expect( container.view.createElementFromModel ).toHaveBeenCalledWith( {
+			elType: 'widget',
+			widgetType: 'text-editor',
+		}, {} );
 	} );
 } );
 
