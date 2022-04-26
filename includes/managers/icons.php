@@ -525,9 +525,9 @@ class Icons_Manager {
 	public function get_upgrade_redirect_url() {
 		// PHPCS - No need to verify nonce, the 'redirect_to' could be only post id, and if it is not the
 		// URL will be empty.
-		$document_id = ! empty( $_GET['redirect_to_document'] ) ? $_GET['redirect_to_document'] : null; // phpcs:ignore
+		$document_id = ! empty( $_GET['redirect_to_document'] ) ? absint( $_GET['redirect_to_document'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification
 
-		if ( ! is_numeric( $document_id ) ) {
+		if ( ! $document_id ) {
 			return '';
 		}
 
