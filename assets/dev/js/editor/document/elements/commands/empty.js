@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Empty extends CommandHistory {
+export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );
@@ -39,9 +37,7 @@ export class Empty extends CommandHistory {
 	}
 
 	isDataChanged() {
-		if ( this.args.force ) {
-			return true;
-		}
+		return this.args.force;
 	}
 }
 
