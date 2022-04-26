@@ -1,3 +1,5 @@
+import Base from '../../../base';
+
 /**
  * On each nested widget creation.
  *
@@ -5,20 +7,13 @@
  * according to the nested repeater title, e.g: the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
  * '_title' is used by the navigator.
  */
-export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.After ) {
+export class NestedRepeaterAdjustContainerTitles extends Base {
 	getId() {
 		return 'nested-repeater-adjust-container-titles';
 	}
 
 	getCommand() {
 		return 'document/elements/create';
-	}
-
-	getConditions( args ) {
-		const { model } = args;
-
-		return 'widget' === model.elType &&
-			$e.components.get( 'nested-elements' ).isWidgetSupportNesting( model.widgetType );
 	}
 
 	/**
