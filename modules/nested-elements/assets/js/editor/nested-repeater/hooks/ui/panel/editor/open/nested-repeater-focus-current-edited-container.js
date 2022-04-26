@@ -1,3 +1,8 @@
+/**
+ * Since the nested tabs can have different depths, it should focus the current edited container,
+ * but the problem is, without timeout it will be so fast, that the USER will not be able to see it.
+ * using `NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT` it will be delayed. formula: `NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT * depth`.
+ */
 const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
 
 /**
