@@ -243,7 +243,7 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--image-spacing: {{SIZE}}{{UNIT}};'
+					'{{WRAPPER}}' => '--image-spacing: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
