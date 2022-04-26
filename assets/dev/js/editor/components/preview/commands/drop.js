@@ -11,5 +11,11 @@ export class Drop extends $e.modules.CommandBase {
 		containers.forEach( ( container ) => {
 			container.view.createElementFromModel( args.model, options );
 		} );
+
+		if ( 1 === containers.length ) {
+			return containers[ 0 ];
+		}
+
+		return containers;
 	}
 }
