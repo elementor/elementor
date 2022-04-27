@@ -93,7 +93,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	getGeneralSettings( settingName ) {
 		if ( this.isEditMode() ) {
-			parent.elementorCommon.helpers.softDeprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
+			parent.elementorCommon.helpers.hardDeprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
 		}
 
 		return this.getKitSettings( `elementor_${ settingName }` );

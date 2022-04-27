@@ -366,7 +366,7 @@ export default class Container extends ArgsObject {
 			if ( 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
-						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						elementorCommon.helpers.hardDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
 						return this.repeaters[ repeaters[ 0 ].name ].children;
 					},
 				} );

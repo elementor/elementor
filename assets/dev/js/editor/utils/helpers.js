@@ -322,7 +322,7 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		elementorCommon.helpers.softDeprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
 
 		return elementorCommon.helpers.getUniqueId();
 	},
@@ -505,7 +505,7 @@ module.exports = {
 	},
 
 	wpColorPicker( $element ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},

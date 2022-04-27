@@ -13,7 +13,7 @@ export default class CommandsBackwardsCompatibility extends Module {
 			// Regex takes the first letter and convert it to lower case.
 			componentName = componentName.replace( /^./, ( val ) => val.toLowerCase() );
 
-			Helpers.softDeprecated(
+			Helpers.hardDeprecated(
 				`$e.${ componentName }.on( 'run', ... )`,
 				'3.0.0',
 				`$e.${ componentName }.on( 'run:before', ... )`

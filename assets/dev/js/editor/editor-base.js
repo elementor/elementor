@@ -64,7 +64,7 @@ export default class EditorBase extends Marionette.Application {
 	};
 
 	get debug() {
-		elementorCommon.helpers.softDeprecated(
+		elementorCommon.helpers.hardDeprecated(
 			'elementor.debug',
 			'3.0.0',
 			'elementorCommon.debug'
@@ -141,7 +141,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		saver: {
 			get footerBehavior() {
-				elementorCommon.helpers.softDeprecated( 'elementor.modules.saver.footerBehavior.',
+				elementorCommon.helpers.hardDeprecated( 'elementor.modules.saver.footerBehavior.',
 					'2.9.0',
 					'elementor.modules.components.saver.behaviors.FooterSaver' );
 
@@ -1528,12 +1528,12 @@ export default class EditorBase extends Marionette.Application {
 			Object.defineProperty( this.config, key, {
 				get() {
 					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', replacement );
+					elementorCommon.helpers.hardDeprecated( 'elementor.config.' + key, '2.9.0', replacement );
 					// return from current document.
 					return data.value();
 				},
 				set() {
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					elementorCommon.helpers.hardDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
 					throw Error( 'Deprecated' );
 				},
 			} );
@@ -1541,21 +1541,21 @@ export default class EditorBase extends Marionette.Application {
 
 		Object.defineProperty( this.config.settings, 'page', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
+				elementorCommon.helpers.hardDeprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
 				return elementor.config.document.settings;
 			},
 		} );
 
 		Object.defineProperty( this.config, 'widgets', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
+				elementorCommon.helpers.hardDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
 				return elementor.widgetsCache;
 			},
 		} );
 
 		Object.defineProperty( this, '$previewElementorEl', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
+				elementorCommon.helpers.hardDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
 
 				return elementor.documents.getCurrent().$element;
 			},
