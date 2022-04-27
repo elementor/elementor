@@ -42,13 +42,6 @@ export default class Helpers {
 		}
 	}
 
-	static deprecatedMethod( methodName, version, replacement ) {
-		this.deprecatedMessage( 'hard', methodName, version, replacement );
-
-		// This itself is deprecated.
-		this.softDeprecated( 'Helpers.deprecatedMethod', '2.8.0', 'Helpers.softDeprecated || Helpers.hardDeprecated' );
-	}
-
 	static cloneObject( object ) {
 		return JSON.parse( JSON.stringify( object ) );
 	}
