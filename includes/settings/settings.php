@@ -415,6 +415,22 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	}
 
 	/**
+	 * Update CSS print method.
+	 *
+	 * Clear post CSS cache.
+	 *
+	 * Fired by `add_option_elementor_css_print_method` and
+	 * `update_option_elementor_css_print_method` actions.
+	 *
+	 * @since 1.7.5
+	 * @access public
+	 * @deprecated 3.0.0
+	 */
+	public function update_css_print_method() {
+		Plugin::$instance->files_manager->clear_cache();
+	}
+
+	/**
 	 * Create tabs.
 	 *
 	 * Return the settings page tabs, sections and fields.
