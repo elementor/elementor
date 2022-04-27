@@ -241,6 +241,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.6.5 - 2022-04-27 =
+* Fix: PHP Error is thrown in System Info report for experiments that don't have a title
+* Fix: Optimized template file uploads for better security enforcement
+
 = 3.6.4 - 2022-04-13 =
 * Fix: Optimized controls sanitization to enforce better security policies in Onboarding wizard
 
