@@ -22,8 +22,9 @@ export default function Layout( props ) {
 		updateState( {
 			currentStep: props.pageId,
 			nextStep: props.nextStep || '',
+			proNotice: null,
 		} );
-	}, [] );
+	}, [ props.pageId ] );
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],
@@ -33,9 +34,21 @@ export default function Layout( props ) {
 			text: __( 'Create Account', 'elementor-pro' ),
 			hideText: false,
 			elRef: useRef(),
-			url: elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectTopBar,
+			url: elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectTopBar,
 			target: '_blank',
 			rel: 'opener',
+			onClick: () => {
+				elementorCommon.events.dispatchEvent( {
+					event: 'create account',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						source: 'header',
+						contributor: state.isUsageDataShared,
+					},
+				} );
+			},
 		};
 
 	if ( state.isLibraryConnected ) {
@@ -44,8 +57,20 @@ export default function Layout( props ) {
 			text: __( 'My Elementor', 'elementor-pro' ),
 			hideText: false,
 			icon: 'eicon-user-circle-o',
-			url: 'https://my.elementor.com/',
+			url: 'https://my.elementor.com/?utm_source=onboarding-wizard&utm_medium=wp-dash&utm_campaign=my-account&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			target: '_blank',
+			onClick: () => {
+				elementorCommon.events.dispatchEvent( {
+					event: 'my elementor click',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						source: 'header',
+						contributor: state.isUsageDataShared,
+					},
+				} );
+			},
 		} );
 	} else {
 		headerButtons.push( createAccountButton );
