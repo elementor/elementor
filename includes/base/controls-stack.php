@@ -2025,6 +2025,27 @@ abstract class Controls_Stack extends Base_Object {
 	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
 	 * `start_controls_tab()`.
 	 *
+	 * @since 1.4.0
+	 * @access protected
+	 * @deprecated 3.1.0 Use `Controls_Stack::register_controls()` instead
+	 */
+	protected function _register_controls() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_controls()' );
+
+		$this->register_controls();
+	}
+
+	/**
+	 * Register controls.
+	 *
+	 * Used to add new controls to any element type. For example, external
+	 * developers use this method to register controls in a widget.
+	 *
+	 * Should be inherited and register new controls using `add_control()`,
+	 * `add_responsive_control()` and `add_group_control()`, inside control
+	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
+	 * `start_controls_tab()`.
+	 *
 	 * @since 3.1.0
 	 * @access protected
 	 */
@@ -2178,7 +2199,15 @@ abstract class Controls_Stack extends Base_Object {
 	protected function init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
-		$this->register_controls();
+		// TODO: This is for backwards compatibility starting from 2.9.0
+		// This `if` statement should be removed when the method is removed
+		if ( $this->has_own_method( '_register_controls', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_controls', '3.1.0', __CLASS__ . '::register_controls()' );
+
+			$this->_register_controls();
+		} else {
+			$this->register_controls();
+		}
 	}
 
 	protected function handle_control_position( array $args, $control_id, $overwrite ) {
