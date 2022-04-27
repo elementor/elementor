@@ -171,24 +171,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * @since 1.0.0
-	 * @deprecated 2.6.0
-	 * @access public
-	 * @static
-	 */
-	final public static function add_edit_tool() {}
-
-	/**
-	 * @since 2.2.0
-	 * @deprecated 2.6.0
-	 * @access public
-	 * @static
-	 */
-	final public static function is_edit_buttons_enabled() {
-		return get_option( 'elementor_edit_buttons' );
-	}
-
-	/**
 	 * Get default child type.
 	 *
 	 * Retrieve the default child type based on element data.

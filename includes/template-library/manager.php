@@ -127,25 +127,6 @@ class Manager {
 	}
 
 	/**
-	 * Unregister template source.
-	 *
-	 * Remove an existing template sources from the list of registered template
-	 * sources.
-	 *
-	 * @deprecated 2.7.0
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param string $id The source ID.
-	 *
-	 * @return bool Whether the source was unregistered.
-	 */
-	public function unregister_source( $id ) {
-		return true;
-	}
-
-	/**
 	 * Get registered template sources.
 	 *
 	 * Retrieve registered template sources.

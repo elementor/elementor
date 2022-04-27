@@ -193,45 +193,35 @@ class Autoloader {
 		return ucwords( str_replace( '-', '_', $string ), $delimiter );
 	}
 
+	/**
+	 * Init classes aliases.
+	 *
+	 * When Elementor classes renamed or moved to different folders, developers
+	 * can still use the old names by setting an aliase.
+	 * 
+	 * While in deprecation period both classes will work. When the deprecation
+	 * period ends, the alies should be removed from the list of aliases.
+	 *
+	 * Usage:
+	 *
+	 *	self::$classes_aliases = [
+	 *		'Namespace\OldClassName' => [
+	 *			'replacement' => 'Namespace\NewClassName',
+	 *			'version' => '3.0.0',
+	 *		],
+	 *		'Namespace\OldModule\ClassName' => [
+	 *			'replacement' => 'Namespace\NewModule\ClassName',
+	 *			'version' => '3.5.0',
+	 *		],
+	 *	];
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @return void
+	 */
 	private static function init_classes_aliases() {
-		self::$classes_aliases = [
-			'System_Info\Main' => [
-				'replacement' => 'Modules\System_Info\Module',
-				'version' => '2.9.0',
-			],
-			'System_Info\Classes\Abstracts\Base_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\Base',
-				'version' => '2.9.0',
-			],
-			'System_Info\Classes\Server_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\Server',
-				'version' => '2.9.0',
-			],
-			'System_Info\Classes\MU_Plugins_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\MU_Plugins',
-				'version' => '2.9.0',
-			],
-			'System_Info\Classes\Network_Plugins_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\Network_Plugins',
-				'version' => '2.9.0',
-			],
-			'System_Info\Classes\Plugins_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\Plugins',
-				'version' => '2.9.0',
-			],
-			'System_Info\Classes\Theme_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\Theme',
-				'version' => '2.9.0',
-			],
-			'System_Info\Classes\User_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\User',
-				'version' => '2.9.0',
-			],
-			'System_Info\Helpers\Model_Helper' => [
-				'replacement' => 'Modules\System_Info\Helpers\Model_Helper',
-				'version' => '2.9.0',
-			],
-		];
+		self::$classes_aliases = [];
 	}
 
 	/**
