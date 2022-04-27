@@ -112,9 +112,7 @@ class Experiments_Reporter extends Base {
 			// If the state is default, add the default state to the string.
 			$state = Plugin::$instance->experiments->get_feature_state_label( $experiment );
 
-			$title = isset( $experiment['title'] ) ? $experiment['title'] : $experiment['name'];
-
-			$output .= '<tr><td>' . esc_html( $title ) . ': </td>';
+			$output .= '<tr><td>' . esc_html( $experiment['title'] ) . ': </td>';
 			$output .= '<td>' . esc_html( $state ) . '</td>';
 			$output .= '</tr>';
 		}
