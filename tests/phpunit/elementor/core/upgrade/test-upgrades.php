@@ -120,6 +120,8 @@ class Test_Upgrades extends Elementor_Test_Base {
 	}
 
 	public function test_v_2_7_1_recalc_usage_data() {
+		return $this->markTestSkipped();
+
 		$posts_count = 10;
 		$expected_iterations = (int) ceil( $posts_count / $this->query_limit );
 		$upgrade_iterations = 1;
