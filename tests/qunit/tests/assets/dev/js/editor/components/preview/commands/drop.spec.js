@@ -17,9 +17,7 @@ export const Drop = () => {
 			} );
 
 			// Assert.
-			const eWidget = elementor.getPreviewContainer().children.findRecursive(
-				( container ) => container.model.get( 'widgetType' )
-			);
+			const eWidget = elementor.getPreviewContainer().children[ 0 ].children[ 0 ];
 
 			assert.equal( eWidget.model.get( 'widgetType' ), 'heading' );
 		} );
@@ -38,10 +36,9 @@ export const Drop = () => {
 			} );
 
 			// Assert.
-			const eWidget = elementor.getPreviewContainer().children.findRecursive(
-				( container ) => container.model.get( 'widgetType' )
-			);
+			const eWidget = elementor.getPreviewContainer().children[ 0 ].children[ 0 ];
 
+			assert.equal( eWidget.parent.id, eContainer.id );
 			assert.equal( eWidget.model.get( 'widgetType' ), 'heading' );
 		} );
 	} );
