@@ -1,16 +1,5 @@
 const config = require( './config' );
 
-const getDelay = ( pathname ) => {
-	switch ( pathname ) {
-		case 'audio':
-		case 'video':
-		case 'image-gallery':
-			return 3000;
-		default:
-			return 1000;
-	}
-};
-
 const getScenarios = () => {
 	const scenarios = [];
 	const origin = config.url_origin;
@@ -22,9 +11,10 @@ const getScenarios = () => {
 			referenceUrl: `${ origin }/${ pathname }`,
 			readyEvent: '',
 			readySelector: '',
-			delay: getDelay( pathname ),
-			selectors: [ 'document' ], // With the `document` selector it takes a full page shot.
-			onBeforeScript: `${ __dirname }/scripts/on-before-ready.js`,
+			delay: 1000,
+			selectors: [ 'document' ],
+			onBeforeScript: `${ __dirname }/scripts/playwright/on-before-ready-playwright.js`,
+			onReadyScript: `${ __dirname }/scripts/playwright/on-ready-playwright.js`,
 			misMatchThreshold: 0,
 			requireSameDimensions: true,
 		} );
@@ -58,16 +48,16 @@ module.exports = {
 		html_report: `backstop_data/html_report`,
 		ci_report: `backstop_data/ci_report`,
 	},
-	report: [ 'browser', 'CI' ],
+	report: [ 'CI' ],
 	ciReport: {
 		format: 'junit',
 	},
-	engine: 'puppeteer',
+	engine: 'playwright',
 	engineOptions: {
-		args: [ '--no-sandbox' ],
-		slowMo: 500,
+		browser: 'chromium',
+		args: [ '--no-sandbox', '--disable-setuid-sandbox' ],
 	},
-	asyncCaptureLimit: 30,
+	asyncCaptureLimit: 10,
 	asyncCompareLimit: 30,
 	debug: false,
 	debugWindow: false,
