@@ -1,7 +1,9 @@
 <?php
-// 1. Copy js and json folders(created by elementor) from old font-awesome to new font-awesome
-// 2. run this script
-// Elementor files should be updated with the new icons
+// How to update a version for Font Awesome:
+// 1. Download the new version of Font Awesome
+// 2. Copy /js and /json folders(created by elementor) from old font-awesome to new font-awesome.
+// 3. run this script.
+// Files in /js and /json folders should be updated with the new icons.
 
 // Metadata - All icons data
 $metadata = file_get_contents( 'metadata/icons.json' );
