@@ -18,10 +18,7 @@ export default class EmptyView extends Marionette.ItemView {
 
 		// If parent widget, the empty child-view should be depend on the parent.
 		if ( 'widget' === parent.model.get( 'elType' ) ) {
-			const elementType = elementor.elementsManager.getElementType(
-				parent.model.get( 'elType' ),
-				parent.model.get( 'widgetType' )
-			);
+			const elementType = elementor.elementsManager.getElementTypeClass( parent.model.get( 'widgetType' ) );
 
 			if ( elementType ) {
 				const Type = elementType.getEmptyView();

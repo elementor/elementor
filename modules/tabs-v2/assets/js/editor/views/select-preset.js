@@ -22,7 +22,7 @@ export default function SelectPreset( props ) {
 						elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
 							<div onClick={() => onPresetSelected( preset, props.container )}
 								key={preset} className="e-container-preset" data-preset={preset}
-								dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.getContainerPreset( preset ) }}/>
+								dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.generateContainerPreset( preset ) }}/>
 						) )
 					}
 				</div>
