@@ -15,6 +15,6 @@ class Nested_Repeater extends Control_Repeater {
 	const CONTROL_TYPE = 'nested-elements-repeater';
 
 	public function get_type() {
-		return self::CONTROL_TYPE;
+		return static::CONTROL_TYPE;
 	}
 }
