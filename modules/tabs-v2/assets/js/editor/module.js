@@ -1,10 +1,8 @@
-import * as widgets from './widgets/';
+import TabsV2 from './tabs-v2';
 
 export default class Module {
 	constructor() {
-		Object.values( widgets ).forEach(
-			( WidgetClass ) => elementor.elementsManager.registerElementType( new WidgetClass )
-		);
+		elementor.elementsManager.registerElementType( new TabsV2() );
 	}
 }
 

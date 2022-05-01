@@ -18,11 +18,11 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 	abstract protected function get_default_children_elements();
 
 	/**
-	 * Get repeater title setting name.
+	 * Get repeater title setting key name.
 	 *
 	 * @return string
 	 */
-	abstract protected function get_default_repeater_title_setting();
+	abstract protected function get_default_repeater_title_setting_key();
 
 	/**
 	 * Get default children title using `%d` as index in the format.
@@ -48,10 +48,6 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 	 * To support nesting.
 	 */
 	protected function _get_default_child_type( array $element_data ) {
-		if ( ! empty( $element_data['widgetType'] ) ) {
-			Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
-		}
-
 		return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 	}
 
@@ -66,7 +62,7 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 				'elements' => $this->get_default_children_elements(),
 				'elements_title' => $this->get_defaults_children_title(),
 				'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
-				'repeater_title_setting' => $this->get_default_repeater_title_setting(),
+				'repeater_title_setting' => $this->get_default_repeater_title_setting_key(),
 			],
 			'support_nesting' => true,
 		] );

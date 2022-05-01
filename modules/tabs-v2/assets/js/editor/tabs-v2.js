@@ -1,5 +1,5 @@
-import View from '../views/view';
-import EmptyView from '../views/empty';
+import View from './views/view';
+import EmptyView from './views/empty';
 
 /**
  * @extends {WidgetBase}
@@ -21,3 +21,5 @@ export class TabsV2 extends elementor.modules.elements.types.Base {
 		return $e.components.get( 'nested-elements/nested-repeater' ).exports.NestedModelBase;
 	}
 }
+
+export default TabsV2;

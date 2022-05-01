@@ -50,7 +50,7 @@ class TabsV2 extends Widget_Repeater_Base {
 		];
 	}
 
-	protected function get_default_repeater_title_setting() {
+	protected function get_default_repeater_title_setting_key() {
 		return 'tab_title';
 	}
 
