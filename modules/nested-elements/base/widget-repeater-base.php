@@ -99,7 +99,7 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 	}
 
 	/**
-	 * Print children, helper method to print the children elements.
+	 * Print child, helper method to print the child element.
 	 *
 	 * @param int $index
 	 */
