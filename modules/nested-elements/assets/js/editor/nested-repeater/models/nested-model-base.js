@@ -5,8 +5,12 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 	initialize( options ) {
 		this.config = elementor.widgetsCache[ options.widgetType ];
 
-		if ( $e.commands.isCurrentFirstTrace( 'preview/drop' ) ) {
-			this.onElementDrop();
+		// Both commands used, since it may be created via WEB Cli.
+		const isNewElementCreated = $e.commands.isCurrentFirstTrace( 'preview/drop' ) ||
+			$e.commands.isCurrentFirstTrace( 'document/elements/create' );
+
+		if ( isNewElementCreated ) {
+			this.onElementCreate();
 		}
 
 		this.set( 'supportRepeaterChildren', true );
@@ -38,7 +42,7 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 		return result;
 	}
 
-	onElementDrop() {
+	onElementCreate() {
 		this.set( 'elements', this.getDefaultChildren() );
 	}
 }
