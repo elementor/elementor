@@ -92,13 +92,13 @@ test.describe.serial( 'NestedElementsModule', () => {
 						await editor.page.evaluate( ( [ id ] ) => {
 							return $e.run( 'document/repeater/remove', {
 								container: elementor.getContainer( id ),
-								index: 1,
+								index: 2,
 								name: 'tabs',
 							} );
 						}, [ widgetId ] );
 
 						// Assert.
-						await expect( await editor.previewFrame.locator( 'text=Tab #2' ) ).not.toBeVisible();
+						await expect( await editor.previewFrame.locator( 'text=Tab #3' ) ).not.toBeVisible();
 					} );
 				} );
 			} );
