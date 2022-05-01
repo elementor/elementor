@@ -1,5 +1,10 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev6 - 2022-05-01
+* Fix: Missing escaping translation to module onboarding (#18445) [ED-7022]
+* Fix: Template library - Clear leftovers [ED-7030] (#18507)
+* Fix: PHP Error when fetching System Info report for Experiments that don't have a title [ED-6879] (#18233)
+
 #### 3.7.0-dev5 - 2022-04-17
 * Tweak: Onboarding [ED-6991] (#18417)
 * Tweak: Onboarding fixes and tweaks [ED-6924, ED-6832] (#18411)
@@ -414,11 +419,3 @@
 #### 3.5.0-dev25 - 2021-09-14
 * Fix: Elements panel UI glitch [ED-4959] (#16282)
 * Fix: Offsets not working properly with an absolutely positioned widget and Improved DOM experiment [ED-4945] (#16253)
-
-#### 3.5.0-dev24 - 2021-09-13
-* Fix: If a responsive control is the first control in a popover, it breaks the popover for non-desktop devices   [ED-4979] (#16318)
-* Fix: Large images are fully displayed before the swiper is initialized. (#16317)
-* Tweak: Updated changelog for v3.4.4 (#16326)
-
-#### 3.5.0-dev23 - 2021-09-13
-* Fix: Element dragging after ctrl + click on Mac [ED-1827] (#15980)
