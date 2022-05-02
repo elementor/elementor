@@ -58,6 +58,7 @@ module.exports = BaseSettings.extend( {
 			getContainer: () => container,
 			getEditModel: () => editModel,
 			model: editModel,
+			container,
 		};
 
 		return this.editedView;

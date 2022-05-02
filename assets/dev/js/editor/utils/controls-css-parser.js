@@ -220,7 +220,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	getStyleControlValue: function( control, values ) {
-		const container = this.getSettings()?.context?.getContainer(),
+		const container = this.getSettings()?.context?.container,
 			isGlobalApplied = container?.isGlobalApplied( control.name ),
 			globalKey = values.__globals__?.[ control.name ] || control.global?.default;
 

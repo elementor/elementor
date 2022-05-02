@@ -65,6 +65,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			getContainer: () => container,
 			getEditModel: () => editModel,
 			model: editModel,
+			container,
 		};
 	},
 
