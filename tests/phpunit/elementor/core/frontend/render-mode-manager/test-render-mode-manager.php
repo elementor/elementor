@@ -54,13 +54,18 @@ class Test_Render_Mode_Manager extends Elementor_Test_Base {
 
 	/**
 	 * @dataProvider get_query_params
-	 *
-	 * @param $name
-	 * @param $post_id
-	 * @param $nonce
 	 */
-	public function test_it_should_set_default_render_mock_if_query_params_are_not_valid( $name, $post_id, $nonce ) {
-		$this->prepare( Render_Mode_Mock::class, $name, $post_id, $nonce );
+	public function test_it_should_set_default_render_mock_if_query_params_are_not_valid( $state ) {
+		$post = $this->factory()->create_and_get_default_post();
+		$nonce = wp_create_nonce( Render_Mode_Manager::get_nonce_action( $post->ID ) );
+		$name = Render_Mode_Mock::get_name();
+
+		$this->prepare(
+			Render_Mode_Mock::class,
+			$state === 'fake-name' ? null : $name,
+			$state === 'fake-post-id' ? 99999999 : $post->ID,
+			$state === 'fake-nonce' ? 'This is a fake nonce' : $nonce
+		);
 
 		$render_mode_manager = new Render_Mode_Manager();
 
@@ -71,14 +76,10 @@ class Test_Render_Mode_Manager extends Elementor_Test_Base {
 	 * @return array[]
 	 */
 	public function get_query_params() {
-		$post = $this->factory()->create_and_get_default_post();
-		$nonce = wp_create_nonce( Render_Mode_Manager::get_nonce_action( $post->ID ) );
-		$name = Render_Mode_Mock::get_name();
-
 		return [
-			'name is not valid' => [ null, $post->ID, $nonce ],
-			'post id is not valid' => [ $name, 9999999, $nonce ],
-			'nonce is not valid' => [ $name, $post->ID, 'This is a fake nonce' ],
+			'name is not valid' => [ 'fake-name' ],
+			'post id is not valid' => [ 'fake-post-id' ],
+			'nonce is not valid' => [ 'fake-nonce' ],
 		];
 	}
 
