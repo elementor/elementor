@@ -584,7 +584,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
 
 		// Act.
-		Upgrades::_v_3_6_0_remove_old_elements_usage();
+		Upgrades::_v_3_7_0_remove_old_elements_usage();
 
 		// Assert.
 		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
