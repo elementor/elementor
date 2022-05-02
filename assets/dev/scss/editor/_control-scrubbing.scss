@@ -1,7 +1,7 @@
-.e-scrubbing {
-	
+.e-ui-state--document-scrubbing-mode__on {
+
 	&, * {
-		cursor: e-resize;
+		cursor: ew-resize;
 	}
 
 	input.e-scrubbing--active {
@@ -9,12 +9,12 @@
 			box-shadow: 0 0 0 1px #{ darken( $editor-info, 20% ) } inset;
 		}
 	}
-	
+
 	label.e-scrubbing--active {
 		color: #{ darken( $editor-info, 20% ) };
 		user-select: none;
 	}
-	
+
 	// When scrubbing, enable scrubbing cursor effects also on the 'preview' iframe area.
 	iframe {
 		pointer-events: none;
@@ -22,5 +22,6 @@
 }
 
 label.e-scrubbing-over {
-	cursor: e-resize;
+	cursor: ew-resize;
 }
+

@@ -16,7 +16,6 @@ export default class Scrubbing extends Marionette.Behavior {
 			intentTime: 600,
 			skipperSteps: 10,
 			enhancedNumber: 10,
-			scrubbingClass: 'e-scrubbing',
 			scrubbingActiveClass: 'e-scrubbing--active',
 			scrubbingOverClass: 'e-scrubbing-over',
 			...userOptions,
@@ -25,7 +24,7 @@ export default class Scrubbing extends Marionette.Behavior {
 
 	ui() {
 		return {
-			input: 'input',
+			input: 'input[type=number]',
 			label: 'label',
 		};
 	}
@@ -68,6 +67,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			this.skipperCount++;
 
 			// When ALT key is pressed, skipping x times before updating input value.
+			// 'skipperSteps' defines the exact times to skip, can be changed to any number.
 			if ( this.skipperCount <= this.scrubSettings.skipperSteps ) {
 				return SKIP_SCRUB;
 			}
@@ -77,13 +77,17 @@ export default class Scrubbing extends Marionette.Behavior {
 			return SCRUB_REGULAR;
 		}
 
-		return ( movementEvent.ctrlKey ) ? SCRUB_ENHANCED : SCRUB_REGULAR;
+		return ( movementEvent.ctrlKey || movementEvent.metaKey ) ? SCRUB_ENHANCED : SCRUB_REGULAR;
+	}
+
+	isInputValidForScrubbing( input ) {
+		return input && ! input.disabled && 'number' === input.type;
 	}
 
 	onMouseDownInput( e ) {
 		const input = e.target;
 
-		if ( input.disabled ) {
+		if ( ! this.isInputValidForScrubbing( input ) ) {
 			return;
 		}
 
@@ -95,16 +99,14 @@ export default class Scrubbing extends Marionette.Behavior {
 		const checkIntentTimeout = setTimeout( () => {
 			clearTimeout( checkIntentTimeout );
 			document.addEventListener( 'mousemove', trackMovement );
-
-			document.body.classList.add( this.scrubSettings.scrubbingClass );
+			$e.uiStates.set( 'document/scrubbing-mode', 'on' );
 			input.classList.add( this.scrubSettings.scrubbingActiveClass );
 		}, this.scrubSettings.intentTime );
 
 		document.addEventListener( 'mouseup', () => {
 			document.removeEventListener( 'mousemove', trackMovement );
 			clearTimeout( checkIntentTimeout );
-
-			document.body.classList.remove( this.scrubSettings.scrubbingClass );
+			$e.uiStates.remove( 'document/scrubbing-mode' );
 			input.classList.remove( this.scrubSettings.scrubbingActiveClass );
 		}, { once: true } );
 	}
@@ -113,11 +115,11 @@ export default class Scrubbing extends Marionette.Behavior {
 		const label = e.target;
 		const input = e.target.control;
 
-		if ( input.disabled ) {
+		if ( ! this.isInputValidForScrubbing( input ) ) {
 			return;
 		}
 
-		document.body.classList.add( this.scrubSettings.scrubbingClass );
+		$e.uiStates.set( 'document/scrubbing-mode', 'on' );
 		label.classList.add( this.scrubSettings.scrubbingActiveClass );
 		input.classList.add( this.scrubSettings.scrubbingActiveClass );
 
@@ -130,14 +132,16 @@ export default class Scrubbing extends Marionette.Behavior {
 		document.addEventListener( 'mouseup', () => {
 			document.removeEventListener( 'mousemove', trackMovement );
 
-			document.body.classList.remove( this.scrubSettings.scrubbingClass );
+			$e.uiStates.remove( 'document/scrubbing-mode' );
 			label.classList.remove( this.scrubSettings.scrubbingActiveClass );
 			input.classList.remove( this.scrubSettings.scrubbingActiveClass );
 		}, { once: true } );
 	}
 
 	onMouseEnterLabel( e ) {
-		if ( e.target.control.disabled ) {
+		const input = e.target.control;
+
+		if ( ! this.isInputValidForScrubbing( input ) ) {
 			return;
 		}
 
@@ -145,7 +149,9 @@ export default class Scrubbing extends Marionette.Behavior {
 	}
 
 	onMouseLeaveLabel( e ) {
-		if ( e.target.control.disabled ) {
+		const input = e.target.control;
+
+		if ( ! this.isInputValidForScrubbing( input ) ) {
 			return;
 		}
 
