@@ -170,6 +170,19 @@ class Kit extends PageBase {
 		];
 	}
 
+	public function get_usage() {
+		$result = [];
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		// Do not count usage of non-active kits.
+		if ( $kit->get_id() === $this->get_id() ) {
+			$result = parent::get_usage();
+		}
+
+		return $result;
+	}
+
 	public function add_repeater_row( $control_id, $item ) {
 		$meta_key = PageManager::META_KEY;
 		$document_settings = $this->get_meta( $meta_key );

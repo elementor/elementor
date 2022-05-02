@@ -4,12 +4,14 @@ namespace Elementor\Tests\Phpunit\Schemas;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 use Elementor\Tracker;
 use ElementorEditorTesting\Base_Schema;
 use ElementorEditorTesting\Factories\Documents;
+use Elementor\Utils;
 use JsonSchema\Exception\ValidationException;
 
 class Test_Usage extends Base_Schema {
@@ -60,7 +62,7 @@ class Test_Usage extends Base_Schema {
 		$this->factory()->documents->publish_and_get( [
 			'meta_input' => [
 				'_elementor_data' => Documents::DOCUMENT_DATA_MOCK_WITH_DYNAMIC_WIDGET,
-			]
+			],
 		] );
 
 		// Add missing tabs to page settings.
@@ -78,15 +80,37 @@ class Test_Usage extends Base_Schema {
 			],
 		] );
 
+		// Documents.
+		$this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				Document::PAGE_META_KEY => [
+					'background_background' => 'red',
+				],
+			],
+		] );
+
+		// Documents with kit.
+		$kit = Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
+
+		$kit->add_repeater_row( 'custom_colors', [
+			'_id' => Utils::generate_random_string(),
+			'title' => 'color 1',
+			'color' => 'green',
+		] );
+
+		$kit->save( [] );
+
 		// Act.
 		$tracking_data = Tracker::get_tracking_data();
-		$usage = $tracking_data[ 'usages' ];
+		$usage = $tracking_data['usages'];
 
 		// Assert - Ensure tracking data have arranged data.
 		$this->assert_array_have_keys( ['publish'], $usage['posts']['post'] );
 		$this->assert_array_have_keys( ['not-supported'], $usage['library'] );
 		$this->assert_array_have_keys( ['wp-post'], $usage['elements'] );
 		$this->assertCount( 4, $usage['elements']['wp-post'] );
+		$this->assertCount( 1, $usage['documents']['kit'] );
+		$this->assertCount( 1, $usage['documents']['wp-post'] );
 		$this->assert_array_have_keys( ['__dynamic__'], $usage['elements']['wp-post']['heading']['controls']['general'] );
 
 		// Assert - Validate schema.
