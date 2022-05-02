@@ -551,6 +551,32 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'size_units' => [ 'px', '%', 'vw' ],
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .widget-image-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'text_color',
 			[
