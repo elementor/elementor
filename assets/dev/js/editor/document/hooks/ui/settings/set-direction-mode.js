@@ -17,11 +17,17 @@ export class SetDirectionMode extends After {
 	}
 
 	getConditions( args = {} ) {
-		return ! ! args.container.renderer?.view?.getCurrentUiStates;
+		const containers = args.container ? [ args.container ] : args.containers;
+
+		return containers.some( ( container ) => !! container.renderer?.view?.getCurrentUiStates );
 	}
 
 	apply( args ) {
-		SetDirectionMode.set( args.container );
+		const containers = args.container ? [ args.container ] : args.containers;
+
+		containers
+			.filter( ( container ) => !! container.renderer?.view?.getCurrentUiStates )
+			.forEach( ( container ) => SetDirectionMode.set( container ) );
 	}
 
 	/**
