@@ -13,11 +13,15 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 
  // Click [aria-label="Add Images"]
   await page.locator('[aria-label="Add Images"]').click();
-  // Click text=Select Files
-  await page.locator('text=Select Files').click();
+
+  // Click text=Media Library
+  await page.click('text=Media Library');
   // Upload A.png, B.png, C.png, D.png, E.png
-  await page.locator('text=Select Files').setInputFiles(['./tests/playwright/resources/A.png', './tests/playwright/resources/B.png', './tests/playwright/resources/C.png', './tests/playwright/resources/D.png', './tests/playwright/resources/E.png']);
- 
+  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
+  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
+  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
+  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
+  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
  // Click text=Create a new gallery
   await page.locator('text=Create a new gallery').click();
   // Click text=Insert gallery
