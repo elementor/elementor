@@ -1,6 +1,8 @@
 import UiStateBase from 'elementor-api/core/states/ui-state-base';
 
 export class ScrubbingMode extends UiStateBase {
+	static ON = 'on';
+
 	getId() {
 		return 'scrubbing-mode';
 	}
@@ -8,7 +10,7 @@ export class ScrubbingMode extends UiStateBase {
 	getOptions() {
 		// When scrubbing mode is on, body gets class 'e-ui-state--document-scrubbing-mode__on'
 		return {
-			on: '',
+			[ this.constructor.ON ]: '',
 		};
 	}
 

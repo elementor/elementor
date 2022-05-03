@@ -1,3 +1,5 @@
+import { ScrubbingMode } from 'elementor-document/ui-states';
+
 const SCRUB_REGULAR = 'UPDATE-VALUE';
 const SCRUB_ENHANCED = 'UPDATE-VALUE-ENHANCED';
 const SKIP_SCRUB = 'SKIP-UPDATE-VALUE';
@@ -25,7 +27,7 @@ export default class Scrubbing extends Marionette.Behavior {
 	ui() {
 		return {
 			input: 'input[type=number]',
-			label: 'label',
+			label: 'label[for^="elementor-control-"]',
 		};
 	}
 
@@ -99,13 +101,15 @@ export default class Scrubbing extends Marionette.Behavior {
 		const checkIntentTimeout = setTimeout( () => {
 			clearTimeout( checkIntentTimeout );
 			document.addEventListener( 'mousemove', trackMovement );
-			$e.uiStates.set( 'document/scrubbing-mode', 'on' );
+
+			$e.uiStates.set( 'document/scrubbing-mode', ScrubbingMode.ON );
 			input.classList.add( this.scrubSettings.scrubbingActiveClass );
 		}, this.scrubSettings.intentTime );
 
 		document.addEventListener( 'mouseup', () => {
 			document.removeEventListener( 'mousemove', trackMovement );
 			clearTimeout( checkIntentTimeout );
+
 			$e.uiStates.remove( 'document/scrubbing-mode' );
 			input.classList.remove( this.scrubSettings.scrubbingActiveClass );
 		}, { once: true } );
@@ -119,7 +123,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			return;
 		}
 
-		$e.uiStates.set( 'document/scrubbing-mode', 'on' );
+		$e.uiStates.set( 'document/scrubbing-mode', ScrubbingMode.ON );
 		label.classList.add( this.scrubSettings.scrubbingActiveClass );
 		input.classList.add( this.scrubSettings.scrubbingActiveClass );
 
