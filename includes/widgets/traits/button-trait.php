@@ -365,6 +365,24 @@ trait Button_Trait {
 			]
 		);
 
+		$this->add_control(
+			'button_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'litho-addons' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'render_type' => 'ui',
+				'selectors' => [
+					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button, {{WRAPPER}} .elementor-button-icon svg' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
