@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Create extends CommandHistory {
+export class Create extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' ),
@@ -75,10 +73,6 @@ export class Create extends CommandHistory {
 		}
 
 		return result;
-	}
-
-	isDataChanged() {
-		return true;
 	}
 }
 
