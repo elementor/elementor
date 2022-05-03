@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Widget_Repeater_Base extends Widget_Base {
+abstract class Widget_Nested_Base extends Widget_Base {
 
 	/**
 	 * Get default children elements structure.
@@ -99,7 +99,7 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 	 *
 	 * @param int $index
 	 */
-	public function print_children( $index ) {
+	public function print_child( $index ) {
 		$children = $this->get_children();
 
 		if ( ! empty( $children[ $index ] ) ) {

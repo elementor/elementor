@@ -6,7 +6,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Modules\NestedElements\Base\Widget_Repeater_Base;
+use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class TabsV2 extends Widget_Repeater_Base {
+class TabsV2 extends Widget_Nested_Base {
 
 	public function get_name() {
 		return 'tabs-v2';
@@ -378,7 +378,7 @@ class TabsV2 extends Widget_Repeater_Base {
 
 			// Tabs content.
 			ob_start();
-			$this->print_children( $index );
+			$this->print_child( $index );
 			$tab_content = ob_get_clean();
 
 			$tabs_content_html .= "<div $mobile_title_attributes>$tab_title</div>$tab_content";
