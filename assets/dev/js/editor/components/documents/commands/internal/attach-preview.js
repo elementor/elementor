@@ -46,7 +46,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 
 			// If not the same document.
 			if ( document.id !== elementor.config.initial_document.id ) {
-				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
+				elementor.documents.getCurrent().$element.addClass( 'elementor-embedded-editor' );
 			}
 
 			elementor.initElements();

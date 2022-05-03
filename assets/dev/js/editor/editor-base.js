@@ -25,6 +25,7 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
+import { default as DevToolsModule } from 'elementor/modules/dev-tools/assets/js/module';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -364,15 +365,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
-		Object.defineProperty( this, 'devTools', {
-			get() {
-				const devToolsModule = elementorDevToolsModule;
-
-				devToolsModule.deprecation.softDeprecated( 'elementor.devTools', '2.9.0', 'elementorDevToolsModule' );
-
-				return devToolsModule;
-			},
-		} );
+		this.devTools = new DevToolsModule();
 
 		this.browserImport = new BrowserImport();
 

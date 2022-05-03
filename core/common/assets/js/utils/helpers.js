@@ -1,41 +1,47 @@
+import { softDeprecated, deprecatedMessage } from 'elementor/modules/dev-tools/assets/js/deprecation/utils';
+
 export default class Helpers {
 	softDeprecated( name, version, replacement ) {
-		elementorDevToolsModule.deprecation.softDeprecated( name, version, replacement );
+		softDeprecated( name, version, replacement );
 
-		elementorDevToolsModule.deprecation.softDeprecated(
+		// This is is self is deprecated.
+		softDeprecated(
 			'elementorCommon.helpers.softDeprecated',
 			'3.7.0',
-			'elementorDevToolsModule.deprecation.softDeprecated'
+			'elementor.devTools.deprecation.deprecated'
 		);
 	}
 
 	hardDeprecated( name, version, replacement ) {
-		elementorDevToolsModule.deprecation.hardDeprecated( 'hard', name, version, replacement );
+		deprecatedMessage( 'hard', name, version, replacement );
 
-		elementorDevToolsModule.deprecation.softDeprecated(
+		// This is is self is deprecated.
+		softDeprecated(
 			'elementorCommon.helpers.hardDeprecated',
 			'3.7.0',
-			'elementorDevToolsModule.deprecation.hardDeprecated'
+			'elementor.devTools.deprecation.deprecated'
 		);
 	}
 
 	deprecatedMessage( type, name, version, replacement ) {
-		elementorDevToolsModule.deprecation.deprecatedMessage( type, name, version, replacement );
+		deprecatedMessage( type, name, version, replacement );
 
-		elementorDevToolsModule.deprecation.softDeprecated(
+		// This is is self is deprecated.
+		deprecatedMessage(
 			'elementorCommon.helpers.deprecatedMessage',
 			'3.7.0',
-			'elementorDevTools.deprecation.deprecatedMessage'
+			'elementor.devTools.deprecation.deprecated'
 		);
 	}
 
 	consoleWarn( ...args ) {
-		elementorDevToolsModule.consoleWarn( ...args );
+		elementor.devTools.consoleWarn( ...args );
 
-		elementorDevToolsModule.deprecation.softDeprecated(
+		// This is is self is deprecated.
+		softDeprecated(
 			'elementorCommon.helpers.consoleWarn',
 			'3.7.0',
-			'elementorDevToolsModule.deprecation.consoleWarn'
+			'elementor.devTools.consoleWarn'
 		);
 	}
 
@@ -43,7 +49,8 @@ export default class Helpers {
 		// eslint-disable-next-line no-console
 		console.error( message );
 
-		elementorDevToolsModule.deprecation.softDeprecated(
+		// This is is self is deprecated.
+		softDeprecated(
 			'elementorCommon.helpers.consoleError',
 			'3.7.0',
 			'console.error'
@@ -51,10 +58,10 @@ export default class Helpers {
 	}
 
 	deprecatedMethod( methodName, version, replacement ) {
-		elementorDevToolsModule.deprecation.deprecatedMessage( 'hard', methodName, version, replacement );
+		deprecatedMessage( 'hard', methodName, version, replacement );
 
 		// This itself is deprecated.
-		this.softDeprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementorDevToolsModule.deprecation.softDeprecated || elementorDevToolsModule.deprecation.hardDeprecated' );
+		elementor.devTools.deprecation.deprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementor.devTools.deprecation.deprecated' );
 	}
 
 	cloneObject( object ) {

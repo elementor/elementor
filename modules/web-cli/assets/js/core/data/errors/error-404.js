@@ -1,4 +1,5 @@
 import BaseError from './base-error';
+import { consoleWarn } from 'elementor/modules/dev-tools/assets/js/utils';
 
 export class Error404 extends BaseError {
 	static getHTTPErrorCode() {
@@ -6,7 +7,7 @@ export class Error404 extends BaseError {
 	}
 
 	notify() {
-		elementorDevToolsModule.consoleWarn( this.message );
+		consoleWarn( this.message );
 	}
 }
 

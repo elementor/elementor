@@ -505,7 +505,7 @@ module.exports = {
 	},
 
 	wpColorPicker( $element ) {
-		elementor.devTools.deprecation.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementor.devTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},

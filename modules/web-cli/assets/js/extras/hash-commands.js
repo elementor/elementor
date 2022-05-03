@@ -1,3 +1,5 @@
+import { consoleWarn } from 'elementor/modules/dev-tools/assets/js/utils';
+
 /**
  * @typedef HashCommand
  * @property {string} method,
@@ -133,7 +135,7 @@ export default class HashCommands {
 				decodeURI( rawArgs || '{}' ),
 			);
 		} catch ( e ) {
-			elementorDevToolsModule.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
+			consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
 
 			return {};
 		}
