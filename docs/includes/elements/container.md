@@ -1,4 +1,4 @@
-# Container Element - `Container.php`
+# Container Element
 
 Elementor's new replacement for Sections & Columns.
 
