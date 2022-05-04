@@ -797,6 +797,17 @@ BaseElementView = BaseContainer.extend( {
 		BaseContainer.prototype.render.apply( this, arguments );
 	},
 
+	editAttributes() {
+		const editModel = this.getEditModel(),
+			skinType = editModel.getSetting( '_skin' ) || 'default';
+
+		this.$el
+			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
+			.removeClass( 'elementor-widget-empty' )
+			.children( '.elementor-widget-empty-icon' )
+			.remove();
+	},
+
 	onRender() {
 		this.linkDataBindings();
 

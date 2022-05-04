@@ -26,14 +26,6 @@ export default class NestedViewBase extends elementor.modules.elements.views.Bas
 	onRender() {
 		super.onRender();
 
-		const editModel = this.getEditModel(),
-			skinType = editModel.getSetting( '_skin' ) || 'default';
-
-		// To support handlers - Copied from widget-base.
-		this.$el
-			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
-			.removeClass( 'elementor-widget-empty' )
-			.children( '.elementor-widget-empty-icon' )
-			.remove();
+		this.editAttributes();
 	}
 }

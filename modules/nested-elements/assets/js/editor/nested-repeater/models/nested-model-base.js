@@ -11,7 +11,7 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 			$e.commands.currentTrace.includes( 'document/elements/create' );
 
 		if ( isNewElementCreate ) {
-			this.onNewElementCreate();
+			this.onElementCreate();
 		}
 
 		super.initialize( options );
@@ -41,7 +41,7 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 		return result;
 	}
 
-	onNewElementCreate() {
+	onElementCreate() {
 		this.set( 'elements', this.getDefaultChildren() );
 	}
 }

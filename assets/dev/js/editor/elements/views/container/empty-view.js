@@ -1,5 +1,10 @@
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
+/**
+ * This empty view used when the container is empty, then it writes React component into the view.
+ * In case of rendering different/custom React component, the switch in 'renderReactDefaultElement' method,
+ * can be used to print custom React component in case it registered in `elementsManager`.
+ */
 export default class EmptyView extends Marionette.ItemView {
 	template = '<div></div>';
 
@@ -16,7 +21,8 @@ export default class EmptyView extends Marionette.ItemView {
 
 		let defaultElement;
 
-		// If parent widget, the empty child-view should be depend on the parent.
+		// If the emptyView is parent of widget. then the emptyView can be searched for in `elementor.elementsManager`,
+		// according to the `widgetType`.
 		if ( 'widget' === parent.model.get( 'elType' ) ) {
 			const elementType = elementor.elementsManager.getElementTypeClass( parent.model.get( 'widgetType' ) );
 

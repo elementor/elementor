@@ -8,6 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Used to create a new widget that can be nested inside other widgets.
+ */
 abstract class Widget_Nested_Base extends Widget_Base {
 
 	/**
