@@ -169,6 +169,9 @@ class Widget_Text_Editor extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'column-gap: {{SIZE}}{{UNIT}};',
 				],
+				'condition' => [
+					'text_columns!' => [ '', '1' ],
+				],
 			]
 		);
 
