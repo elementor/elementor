@@ -29,10 +29,10 @@ export const deprecatedMessage = ( type, name, version, replacement ) => {
 };
 
 export const deprecated = ( name, version, replacement ) => {
-	if ( isSoftDeprecated( version ) ) {
-		softDeprecated( name, version, replacement );
-	} else if ( isHardDeprecated( version ) ) {
+	if ( isHardDeprecated( version ) ) {
 		hardDeprecated( name, version, replacement );
+	} else {
+		softDeprecated( name, version, replacement );
 	}
 };
 

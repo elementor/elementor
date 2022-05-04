@@ -6,7 +6,7 @@ import { softDeprecated } from '../js/deprecation/utils';
 
 export default class Module {
 	constructor() {
-		this.deprecation = new Deprecation( this );
+		this.deprecation = new Deprecation();
 
 		this.notifyBackendDeprecations();
 	}
@@ -19,7 +19,9 @@ export default class Module {
 			softDeprecated( key, ...notice );
 		} );
 	}
-}
 
-Module.prototype.consoleWarn = consoleWarn;
+	consoleWarn( ...args ) {
+		consoleWarn( ...args );
+	}
+}
 

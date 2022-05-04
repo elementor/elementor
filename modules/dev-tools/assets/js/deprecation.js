@@ -1,8 +1,16 @@
-import * as tools from './deprecation/utils';
+import * as utils from './deprecation/utils';
 
-export default class Deprecation {}
+export default class Deprecation {
+	deprecated( name, version, replacement ) {
+		return utils.deprecated( name, version, replacement );
+	}
 
-// Inject tools into Deprecation.
-Object.keys( tools ).forEach( ( key ) => {
-	Deprecation.prototype[ key ] = tools[ key ];
-} );
+	isSoftDeprecated( version ) {
+		return utils.isSoftDeprecated( version );
+	}
+
+	isHardDeprecated( version ) {
+		return utils.isHardDeprecated( version );
+	}
+}
+
