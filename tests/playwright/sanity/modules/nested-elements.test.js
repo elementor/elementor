@@ -5,14 +5,6 @@ let page,
 	editor,
 	wpAdmin;
 
-const createTabsWidget = async ( editorPage, targetID = null ) => {
-	if ( ! targetID ) {
-		targetID = await editorPage.addElement( { elType: 'container' }, 'document' );
-	}
-
-	return await editorPage.addWidget( 'tabs-v2', targetID );
-};
-
 test.describe.serial( 'NestedElementsModule', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		page = await browser.newPage();
@@ -51,7 +43,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 						await editor.openNavigator();
 
 						// Act - Add tabs-v2 widget.
-						await createTabsWidget( editor );
+						await editor.addWidget( 'tabs-v2' );
 
 						// Click #elementor-navigator__toggle-all
 						await editor.page.click( '#elementor-navigator__toggle-all' );
@@ -67,7 +59,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 
 					test( 'Hook `nested-repeater-create-container`', async () => {
 						// Arrange.
-						const widgetId = await createTabsWidget( editor );
+						const widgetId = await editor.addWidget( 'tabs-v2' );
 
 						// Act.
 						await editor.page.evaluate( ( [ id ] ) => {
@@ -86,7 +78,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 
 					test( 'Hook `nested-repeater-remove-container`', async () => {
 						// Arrange.
-						const widgetId = await createTabsWidget( editor );
+						const widgetId = await editor.addWidget( 'tabs-v2' );
 
 						// Act.
 						await editor.page.evaluate( ( [ id ] ) => {
