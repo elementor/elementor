@@ -63,7 +63,7 @@ Another aspect is the new elements hierarchy. We needed to decide which elements
 - There is a temporary `sortable.js` behavior applied to the Containers, only because there is a bug when sorting
   Containers in the Navigator due to the removal of jQuery UI Sortable.
   Should be removed when the Navigator will be migrated to React.
-- The whole DnD is based on an internal DnD library by @kobizz:
+- The whole DnD is based on an internal library by Elementor:
     - It's the only library that could handle nested Containers for some reason. We've tried others such as
       [SortableJS](https://github.com/SortableJS/Sortable) but with no luck.
     - There is a "magic number" (5) in the `horizontalThreshold` property, not sure why it works. Everything lower didn't work. 🤷‍♂️
