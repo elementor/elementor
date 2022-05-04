@@ -300,6 +300,8 @@ class Server extends Base {
 		$paths_to_check = [
 			ABSPATH => 'WordPress root directory',
 		];
+		
+		$paths_to_check = apply_filters('elementor/modules/system-info/reporters/server/initial_paths_to_check', $paths_to_check);
 
 		$write_problems = [];
 
