@@ -75,7 +75,7 @@ class Article extends \Elementor\Modules\Library\Documents\Library_Document {
 	}
 	
 	public static function get_title() {
-		return __( 'Article', 'plugin-domain' );
+		return __( 'Article', 'plugin-textdomain' );
 	}
 }
 ```
@@ -92,7 +92,7 @@ class Article extends \Elementor\Modules\Library\Documents\Library_Document {
 	}
 	
 	public static function get_title() {
-		return __( 'Article', 'plugin-domain' );
+		return __( 'Article', 'plugin-textdomain' );
 	}
 	
 	// Assume that the there are widgets that belongs to a new category called `article-elements`
