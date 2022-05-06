@@ -195,7 +195,7 @@ export default class Component extends ComponentModalBase {
 			dialog: null,
 
 			showImportDialog: function( model ) {
-				var dialog = InsertTemplateHandler.getDialog();
+				const dialog = InsertTemplateHandler.getDialog( model );
 
 				dialog.onConfirm = function() {
 					$e.run( 'library/insert-template', {
@@ -214,21 +214,21 @@ export default class Component extends ComponentModalBase {
 				dialog.show();
 			},
 
-			initDialog: function() {
+			initDialog: function( model ) {
 				InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'elementor-insert-template-settings-dialog',
-					headerMessage: __( 'Import Document Settings', 'elementor' ),
-					message: __( 'Do you want to also import the document settings of the template?', 'elementor' ) + '<br>' + __( 'Attention: Importing may override previous settings.', 'elementor' ),
+					headerMessage: __( 'Apply the settings of this %s too?', 'elementor' ).replace( '%s', elementor.translate( model.attributes.type ) ),
+					message: __( 'This will override the design, layout, and other settings of the %s you’re working on.', 'elementor' ).replace( '%s', elementor.documents.getCurrent().container.label ),
 					strings: {
-						confirm: __( 'Yes', 'elementor' ),
-						cancel: __( 'No', 'elementor' ),
+						confirm: __( 'Apply', 'elementor' ),
+						cancel: __( 'Don’t apply', 'elementor' ),
 					},
 				} );
 			},
 
-			getDialog: function() {
+			getDialog: function( model ) {
 				if ( ! InsertTemplateHandler.dialog ) {
-					InsertTemplateHandler.initDialog();
+					InsertTemplateHandler.initDialog( model );
 				}
 
 				return InsertTemplateHandler.dialog;
