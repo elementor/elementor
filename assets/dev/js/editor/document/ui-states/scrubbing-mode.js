@@ -1,3 +1,5 @@
+// TODO: Move the `editor` component when it's available, because it's not a document related state.
+
 import UiStateBase from 'elementor-api/core/states/ui-state-base';
 
 export class ScrubbingMode extends UiStateBase {

@@ -86,6 +86,24 @@ export default class Scrubbing extends Marionette.Behavior {
 		return input && ! input.disabled && 'number' === input.type;
 	}
 
+	/**
+	 * @param {HTMLElement[]} elements
+	 */
+	addClasses( elements ) {
+		elements.forEach( ( element ) => {
+			element.classList.add( this.scrubSettings.scrubbingActiveClass );
+		} );
+	}
+
+	/**
+	 * @param {HTMLElement[]} elements
+	 */
+	removeClasses( elements ) {
+		elements.forEach( ( element ) => {
+			element.classList.remove( this.scrubSettings.scrubbingActiveClass );
+		} );
+	}
+
 	onMouseDownInput( e ) {
 		const input = e.target;
 
@@ -103,7 +121,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			document.addEventListener( 'mousemove', trackMovement );
 
 			$e.uiStates.set( 'document/scrubbing-mode', ScrubbingMode.ON );
-			input.classList.add( this.scrubSettings.scrubbingActiveClass );
+			this.addClasses( [ input ] );
 		}, this.scrubSettings.intentTime );
 
 		document.addEventListener( 'mouseup', () => {
@@ -111,7 +129,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			clearTimeout( checkIntentTimeout );
 
 			$e.uiStates.remove( 'document/scrubbing-mode' );
-			input.classList.remove( this.scrubSettings.scrubbingActiveClass );
+			this.removeClasses( [ input ] );
 		}, { once: true } );
 	}
 
@@ -124,8 +142,7 @@ export default class Scrubbing extends Marionette.Behavior {
 		}
 
 		$e.uiStates.set( 'document/scrubbing-mode', ScrubbingMode.ON );
-		label.classList.add( this.scrubSettings.scrubbingActiveClass );
-		input.classList.add( this.scrubSettings.scrubbingActiveClass );
+		this.addClasses( [ input, label ] );
 
 		const trackMovement = ( movementEvent ) => {
 			this.scrub( input, movementEvent );
@@ -137,8 +154,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			document.removeEventListener( 'mousemove', trackMovement );
 
 			$e.uiStates.remove( 'document/scrubbing-mode' );
-			label.classList.remove( this.scrubSettings.scrubbingActiveClass );
-			input.classList.remove( this.scrubSettings.scrubbingActiveClass );
+			this.removeClasses( [ input, label ] );
 		}, { once: true } );
 	}
 
