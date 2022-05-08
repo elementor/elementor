@@ -19,7 +19,7 @@ break the original behavior of the product.
 3. In the opened popup, select "Page" as type, and the name of the widget you're testing as a name.
 4. After the Editor is loaded, drag the widget you are testing, and add as many variations/combinations of controls as possible.
 5. Add an explanatory title (e.g. with the name of the control) that represents each block of control values/options/variations.
-   (Example: For Button widget, create a title called "Type" and drag 5 buttons. In each button, set the test to the 
+   (Example: For Button widget, create a title called "Type" and drag 5 buttons. In each button, set the text to the 
    control value you are currently testing: "Default", "Info", etc.). 
 6. When finished, go back to the "Templates" page in the Dashboard and export the template you've just created into a JSON file.
    (Hover over the name and click "Export Template").
