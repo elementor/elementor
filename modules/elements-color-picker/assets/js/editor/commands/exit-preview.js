@@ -7,7 +7,7 @@ export class ExitPreview extends CommandBase {
 	/**
 	 * Initialize the command.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	apply() {
 		const { initialColor } = this.component.currentPicker;

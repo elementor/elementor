@@ -15,6 +15,7 @@ export default function PluginsToImport( { plugins } ) {
 		return null;
 	}
 
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const importContext = useContext( ImportContext ),
 		getPluginsToImport = () => {
 			const { name, status } = plugins[ 0 ];
@@ -26,8 +27,11 @@ export default function PluginsToImport( { plugins } ) {
 
 			return plugins;
 		},
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		handleOnSelect = useCallback( ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ), [] ),
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		pluginsToImport = useMemo( () => getPluginsToImport(), [ plugins ] ),
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		initialSelected = useMemo( () => pluginsToImport.map( ( plugin, index ) => index ), [ plugins ] ),
 		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length;
 
@@ -39,9 +43,9 @@ export default function PluginsToImport( { plugins } ) {
 		<div className="e-app-import-plugins__section">
 			<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">
 				{
-					isAllRequiredPluginsSelected ?
-					__( 'Plugins to add:', 'elementor' ) :
-					__( 'Missing Required Plugins:', 'elementor' )
+					isAllRequiredPluginsSelected
+					? __( 'Plugins to add:', 'elementor' )
+					: __( 'Missing Required Plugins:', 'elementor' )
 				}
 			</Heading>
 

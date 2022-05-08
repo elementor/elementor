@@ -13,7 +13,7 @@ const map = ( { isInner } ) => {
 					break;
 
 				case 'min-height':
-					value = settings[ 'custom_height' ] || { size: 400, unit: 'px' }; // Default section's height.
+					value = settings.custom_height || { size: 400, unit: 'px' }; // Default section's height.
 					break;
 			}
 

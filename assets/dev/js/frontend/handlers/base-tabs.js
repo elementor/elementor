@@ -60,6 +60,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	handleKeyboardNavigation( event ) {
 		const tab = event.currentTarget,
 			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
+			// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 			$tabs = $tabList.find( this.getSettings( 'selectors' ).tabTitle ),
 			isVertical = 'vertical' === $tabList.attr( 'aria-orientation' );
 
@@ -136,7 +137,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
-			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' )
+			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' ),
 		);
 
 		$requestedContent.removeAttr( 'hidden' );

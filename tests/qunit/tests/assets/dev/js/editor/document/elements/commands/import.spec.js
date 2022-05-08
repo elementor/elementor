@@ -9,6 +9,7 @@ export const Import = () => {
 			QUnit.test( 'History', ( assert ) => {
 				// eslint-disable-next-line camelcase
 				const { model, content, page_settings } = BlockFaq,
+					// eslint-disable-next-line camelcase
 					data = { content, page_settings };
 
 				ElementsHelper.import( data, new Backbone.Model( model ) );
@@ -31,6 +32,7 @@ export const Import = () => {
 			QUnit.test( 'Validate positions', ( assert ) => {
 				// eslint-disable-next-line camelcase
 				const { model, content, page_settings } = BlockFaq,
+					// eslint-disable-next-line camelcase
 					data = { content, page_settings },
 					importPosition = 1;
 
@@ -52,7 +54,7 @@ export const Import = () => {
 				ElementsHelper.import( BlockFaq, new Backbone.Model( BlockFaq.model ) );
 				ElementsHelper.import( PageLandingPageHotel,
 					new Backbone.Model( PageLandingPageHotel.model ),
-					{ at: 0 }
+					{ at: 0 },
 				);
 
 				// Level depth.

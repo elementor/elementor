@@ -5,7 +5,7 @@ const SettingsContext = createContext( {} );
 /**
  * Consume the context
  *
- * @returns {{emptyTrashDays: number}}
+ * @return {{emptyTrashDays: number}} context value
  */
 export function useSettingsContext() {
 	return useContext( SettingsContext );
@@ -14,9 +14,9 @@ export function useSettingsContext() {
 /**
  * Settings Provider
  *
- * @param props
- * @returns {JSX.Element}
- * @constructor
+ * @param {*} props
+ * @return {JSX.Element} element
+ * @function Object() { [native code] }
  */
 export function SettingsProvider( props ) {
 	const [ settings, setSettings ] = useState( {} );

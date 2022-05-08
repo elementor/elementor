@@ -13,7 +13,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		Breakpoint: BreakpointValidator,
 	},
 
-	ui: function() {
+	ui() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
 		_.extend( ui, {
@@ -29,7 +29,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return ui;
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		var controlData = ControlBaseView.prototype.templateHelpers.apply( this, arguments );
 
 		controlData.data.controlValue = this.getControlValue();
@@ -37,7 +37,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return controlData;
 	},
 
-	events: function() {
+	events() {
 		return {
 			'input @ui.input': 'onBaseInputTextChange',
 			'change @ui.checkbox': 'onBaseInputChange',
@@ -49,7 +49,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		};
 	},
 
-	behaviors: function() {
+	behaviors() {
 		const behaviors = ControlBaseView.prototype.behaviors.apply( this, arguments ),
 			dynamicSettings = this.options.model.get( 'dynamic' );
 
@@ -61,8 +61,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			if ( tags.length || elementor.config.user.is_administrator ) {
 				behaviors.tags = {
 					behaviorClass: TagsBehavior,
-					tags: tags,
-					dynamicSettings: dynamicSettings,
+					tags,
+					dynamicSettings,
 				};
 			}
 		}
@@ -70,7 +70,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return behaviors;
 	},
 
-	initialize: function() {
+	initialize() {
 		ControlBaseView.prototype.initialize.apply( this, arguments );
 
 		this.registerValidators();
@@ -89,19 +89,19 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.listenTo( settings, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
-	getControlValue: function() {
+	getControlValue() {
 		return this.container.settings.get( this.model.get( 'name' ) );
 	},
 
-	getGlobalKey: function() {
+	getGlobalKey() {
 		return this.container.globals.get( this.model.get( 'name' ) );
 	},
 
-	getGlobalValue: function() {
+	getGlobalValue() {
 		return this.globalValue;
 	},
 
-	getGlobalDefault: function() {
+	getGlobalDefault() {
 		const controlGlobalArgs = this.model.get( 'global' );
 
 		if ( controlGlobalArgs?.default ) {
@@ -120,7 +120,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return '';
 	},
 
-	getCurrentValue: function() {
+	getCurrentValue() {
 		if ( this.getGlobalKey() && ! this.globalValue ) {
 			return '';
 		}
@@ -138,15 +138,15 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return this.getGlobalDefault();
 	},
 
-	isGlobalActive: function() {
+	isGlobalActive() {
 		return this.options.model.get( 'global' )?.active;
 	},
 
-	setValue: function( value ) {
+	setValue( value ) {
 		this.setSettingsModel( value );
 	},
 
-	setSettingsModel: function( value ) {
+	setSettingsModel( value ) {
 		const key = this.model.get( 'name' );
 		$e.run( 'document/elements/settings', {
 			container: this.options.container,
@@ -158,11 +158,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'settings:change' );
 	},
 
-	applySavedValue: function() {
+	applySavedValue() {
 		this.setInputValue( '[data-setting="' + this.model.get( 'name' ) + '"]', this.getControlValue() );
 	},
 
-	getEditSettings: function( setting ) {
+	getEditSettings( setting ) {
 		var settings = this.getOption( 'elementEditSettings' ).toJSON();
 
 		if ( setting ) {
@@ -172,7 +172,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return settings;
 	},
 
-	setEditSetting: function( settingKey, settingValue ) {
+	setEditSetting( settingKey, settingValue ) {
 		const settings = this.getOption( 'elementEditSettings' ) || this.getOption( 'container' ).settings;
 
 		settings.set( settingKey, settingValue );
@@ -180,7 +180,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	/**
 	 * Get the placeholder for the current control.
-	 * @returns {*}
+	 *
+	 * @return {*} placeholder
 	 */
 	getControlPlaceholder() {
 		let placeholder = this.model.get( 'placeholder' );
@@ -195,9 +196,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	/**
 	 * Get the responsive parent view if exists.
 	 *
-	 * @returns {ControlBaseDataView|null}
+	 * @return {ControlBaseDataView|null} responsive parent view if exists
 	 */
-	getResponsiveParentView: function() {
+	getResponsiveParentView() {
 		const parent = this.model.get( 'parent' );
 
 		try {
@@ -208,9 +209,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	/**
 	 * Get the responsive children views if exists.
 	 *
-	 * @returns {ControlBaseDataView|null}
+	 * @return {ControlBaseDataView|null} responsive children views if exists
 	 */
-	getResponsiveChildrenViews: function() {
+	getResponsiveChildrenViews() {
 		const children = this.model.get( 'inheritors' ),
 			views = [];
 
@@ -227,7 +228,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * Get prepared placeholder from the responsive parent, and put it into current
 	 * control model as placeholder.
 	 */
-	setPlaceholderFromParent: function() {
+	setPlaceholderFromParent() {
 		const parent = this.getResponsiveParentView();
 
 		if ( parent ) {
@@ -245,9 +246,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * eventually be: { top: 10, right: 15, left: 15, bottom: 10 }, because of the
 	 * inheritance of multiple values.
 	 *
-	 * @returns {*}
+	 * @return {*} value of the current control if exists, or the parent value if not
 	 */
-	preparePlaceholderForChildren: function() {
+	preparePlaceholderForChildren() {
 		const cleanValue = this.getCleanControlValue(),
 			parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren();
 
@@ -264,7 +265,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * to update all responsive children. In this case, the re-rendering is supposed
 	 * to be applied only from the responsive child of this control and on.
 	 */
-	propagatePlaceholder: function() {
+	propagatePlaceholder() {
 		const children = this.getResponsiveChildrenViews();
 
 		for ( const child of children ) {
@@ -277,7 +278,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * The purpose of those actions is to recursively re-render all responsive
 	 * children.
 	 */
-	renderWithChildren: function() {
+	renderWithChildren() {
 		this.render();
 
 		this.propagatePlaceholder();
@@ -286,15 +287,15 @@ ControlBaseDataView = ControlBaseView.extend( {
 	/**
 	 * Get control value without empty properties, and without default values.
 	 *
-	 * @returns {{}}
+	 * @return {{}} control value without empty properties, and without default values
 	 */
-	getCleanControlValue: function() {
+	getCleanControlValue() {
 		const value = this.getControlValue();
 
 		return value && value !== this.model.get( 'default' ) ? value : undefined;
 	},
 
-	onAfterChange: function( control ) {
+	onAfterChange( control ) {
 		if ( Object.keys( control.changed ).includes( this.model.get( 'name' ) ) ) {
 			this.propagatePlaceholder();
 		}
@@ -302,7 +303,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		ControlBaseView.prototype.onAfterChange.apply( this, arguments );
 	},
 
-	getInputValue: function( input ) {
+	getInputValue( input ) {
 		var $input = this.$( input );
 
 		if ( $input.is( '[contenteditable="true"]' ) ) {
@@ -328,7 +329,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return inputValue;
 	},
 
-	setInputValue: function( input, value ) {
+	setInputValue( input, value ) {
 		var $input = this.$( input ),
 			inputType = $input.attr( 'type' );
 
@@ -341,11 +342,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 	},
 
-	addValidator: function( validator ) {
+	addValidator( validator ) {
 		this.validators.push( validator );
 	},
 
-	registerValidators: function() {
+	registerValidators() {
 		this.validators = [];
 
 		var validationTerms = {};
@@ -356,7 +357,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
 			this.addValidator( new this.validatorTypes.Base( {
-				validationTerms: validationTerms,
+				validationTerms,
 			} ) );
 		}
 
@@ -371,11 +372,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 	},
 
-	onBeforeRender: function() {
+	onBeforeRender() {
 		this.setPlaceholderFromParent();
 	},
 
-	onRender: function() {
+	onRender() {
 		ControlBaseView.prototype.onRender.apply( this, arguments );
 
 		if ( this.model.get( 'responsive' ) ) {
@@ -391,11 +392,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.addTooltip();
 	},
 
-	onBaseInputTextChange: function( event ) {
+	onBaseInputTextChange( event ) {
 		this.onBaseInputChange( event );
 	},
 
-	onBaseInputChange: function( event ) {
+	onBaseInputChange( event ) {
 		clearTimeout( this.correctionTimeout );
 
 		var input = event.currentTarget,
@@ -426,7 +427,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'input:change', event );
 	},
 
-	onResponsiveSwitchersClick: function( event ) {
+	onResponsiveSwitchersClick( event ) {
 		const $switcher = jQuery( event.currentTarget ),
 			device = $switcher.data( 'device' ),
 			$switchersWrapper = this.ui.responsiveSwitchersWrapper,
@@ -440,7 +441,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		elementor.changeDeviceMode( device );
 	},
 
-	renderResponsiveSwitchers: function() {
+	renderResponsiveSwitchers() {
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
@@ -448,13 +449,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.ui.responsiveSwitchersWrapper = this.$el.find( '.elementor-control-responsive-switchers' );
 	},
 
-	onAfterExternalChange: function() {
+	onAfterExternalChange() {
 		this.hideTooltip();
 
 		this.applySavedValue();
 	},
 
-	addTooltip: function() {
+	addTooltip() {
 		this.ui.tooltipTargets = this.$el.find( '.tooltip-target' );
 
 		if ( ! this.ui.tooltipTargets.length ) {
@@ -463,7 +464,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		// Create tooltip on controls
 		this.ui.tooltipTargets.tipsy( {
-			gravity: function() {
+			gravity() {
 				// `n` for down, `s` for up
 				var gravity = jQuery( this ).data( 'tooltip-pos' );
 
@@ -472,24 +473,24 @@ ControlBaseDataView = ControlBaseView.extend( {
 				}
 				return 's';
 			},
-			title: function() {
+			title() {
 				return this.getAttribute( 'data-tooltip' );
 			},
 		} );
 	},
 
-	hideTooltip: function() {
+	hideTooltip() {
 		if ( this.ui.tooltipTargets.length ) {
 			this.ui.tooltipTargets.tipsy( 'hide' );
 		}
 	},
 
-	updateElementModel: function( value ) {
+	updateElementModel( value ) {
 		this.setValue( value );
 	},
 }, {
 	// Static methods
-	getStyleValue: function( placeholder, controlValue, controlData ) {
+	getStyleValue( placeholder, controlValue, controlData ) {
 		if ( 'DEFAULT' === placeholder ) {
 			return controlData.default;
 		}
@@ -497,7 +498,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return controlValue;
 	},
 
-	onPasteStyle: function() {
+	onPasteStyle() {
 		return true;
 	},
 } );

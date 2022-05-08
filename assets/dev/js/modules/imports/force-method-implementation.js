@@ -11,8 +11,8 @@ export class ForceMethodImplementation extends Error {
 export default () => {
 	const stack = Error().stack,
 		caller = stack.split( '\n' )[ 2 ].trim(),
-		callerName = caller.startsWith( 'at new' ) ?
-			'constructor' : caller.split( ' ' )[ 1 ],
+		callerName = caller.startsWith( 'at new' )
+			? 'constructor' : caller.split( ' ' )[ 1 ],
 		info = {};
 
 	info.functionName = callerName;

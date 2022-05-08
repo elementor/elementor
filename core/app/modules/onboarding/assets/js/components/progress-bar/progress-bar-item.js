@@ -17,9 +17,10 @@ export default function ProgressBarItem( props ) {
 	}
 
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div onClick={ props.onClick } className={ itemClasses }>
 			<div className="e-onboarding__progress-bar-item-icon">
-				{ stepCompleted ? <i className="eicon-check"/> : props.index + 1 }
+				{ stepCompleted ? <i className="eicon-check" /> : props.index + 1 }
 			</div>
 			{ props.title }
 		</div>

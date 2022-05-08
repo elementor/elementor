@@ -9,7 +9,7 @@ export class Paste extends CommandBase {
 		this.storage = elementorCommon.storage.get( 'clipboard' ) || [];
 
 		this.storage = this.storage.map( ( model ) =>
-			new Backbone.Model( model )
+			new Backbone.Model( model ),
 		);
 
 		if ( ! containers[ 0 ] ) {

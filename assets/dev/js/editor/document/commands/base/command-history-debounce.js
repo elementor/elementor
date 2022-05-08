@@ -8,7 +8,7 @@ export const DEFAULT_DEBOUNCE_DELAY = 800;
  *
  * Returns default debounce delay time, if exists in config override.
  *
- * @returns {number}
+ * @return {number} default debounce delay time
  */
 export const getDefaultDebounceDelay = () => {
 	let result = DEFAULT_DEBOUNCE_DELAY;
@@ -26,7 +26,7 @@ export default class CommandHistoryDebounce extends CommandHistory {
 	 *
 	 * Will debounce every function you pass in, at the same debounce flow.
 	 *
-	 * @param {(function())}
+	 * @param {Function}
 	 */
 	static debounce = undefined;
 

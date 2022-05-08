@@ -543,16 +543,16 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 /**
  * Create a mock Container object.
  *
- * @param {string} type
- * @param {string} widgetType
- * @param {string} id
- * @param {Object} settings
- * @param {Object[]} children
- * @param {Number} index
- * @param {boolean} isInner
- * @param {Object} args
- *
- * @return {Object}
+ * @param {Object}   root0
+ * @param {string}   root0.type
+ * @param {string}   root0.widgetType
+ * @param {string}   root0.id
+ * @param {Object}   root0.settings
+ * @param {Object[]} root0.children
+ * @param {number}   root0.index
+ * @param {boolean}  root0.isInner
+ * @param {Object}   root0.args
+ * @return {Object} container
  */
 function createContainer( { type, widgetType, id, settings = {}, children = [], index = 0, isInner = false, ...args } ) {
 	const container = {

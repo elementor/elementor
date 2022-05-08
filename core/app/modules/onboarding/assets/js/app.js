@@ -33,12 +33,12 @@ export default function App() {
 		<ContextProvider>
 			<LocationProvider history={ router.appHistory }>
 				<Router>
-					<Account default/>
-					<HelloTheme path="hello"/>
-					<SiteName path="siteName"/>
-					<SiteLogo path="siteLogo"/>
-					<GoodToGo path="goodToGo"/>
-					<InstallPro path="uploadAndInstallPro"/>
+					<Account default />
+					<HelloTheme path="hello" />
+					<SiteName path="siteName" />
+					<SiteLogo path="siteLogo" />
+					<GoodToGo path="goodToGo" />
+					<InstallPro path="uploadAndInstallPro" />
 				</Router>
 			</LocationProvider>
 		</ContextProvider>

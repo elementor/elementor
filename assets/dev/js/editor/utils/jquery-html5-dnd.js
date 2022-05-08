@@ -1,5 +1,7 @@
 /**
  * HTML5 - Drag and Drop
+ *
+ * @param {jQuery} $
  */
 ( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
@@ -46,7 +48,7 @@
 		var onDragStart = function( event ) {
 			var groups = settings.groups || [],
 				dataContainer = {
-					groups: groups,
+					groups,
 				};
 
 			if ( hasFullDataTransferSupport( event ) ) {

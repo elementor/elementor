@@ -19,7 +19,7 @@ export default class extends Marionette.Behavior {
 	/**
 	 * Get the resizable options object.
 	 *
-	 * @return {Object}
+	 * @return {Object} options object
 	 */
 	getOptions() {
 		// jQuery UI handles are using Cardinal Directions (n, e, s, w, etc.).
@@ -63,7 +63,7 @@ export default class extends Marionette.Behavior {
 	/**
 	 * Determine if the current element is a Container element.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is a container
 	 */
 	isContainer() {
 		return ( 'container' === this.view.model.get( 'elType' ) );
@@ -72,7 +72,7 @@ export default class extends Marionette.Behavior {
 	/**
 	 * Determine if the current element is a flex container item.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is a container item
 	 */
 	isContainerItem() {
 		return 'container' === this.view.getContainer().parent?.model?.get( 'elType' );
@@ -81,7 +81,7 @@ export default class extends Marionette.Behavior {
 	/**
 	 * Determine if the Container element is active.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is container active
 	 */
 	isContainerActive() {
 		return !! elementorCommon.config.experimentalFeatures.container;
@@ -90,7 +90,7 @@ export default class extends Marionette.Behavior {
 	/**
 	 * Get the width control ID to change when resizing.
 	 *
-	 * @returns {string}
+	 * @return {string} width key
 	 */
 	getWidthKey() {
 		return this.isContainer() ? 'width' : '_element_custom_width';
@@ -101,7 +101,7 @@ export default class extends Marionette.Behavior {
 	 *
 	 * @param {string} setting - Setting name.
 	 *
-	 * @returns {string}
+	 * @return {string} device setting
 	 */
 	getDeviceSetting( setting ) {
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
@@ -115,7 +115,7 @@ export default class extends Marionette.Behavior {
 	 *
 	 * @param {string} setting - Setting name.
 	 *
-	 * @returns {*}
+	 * @return {*} setting
 	 */
 	getSetting( setting ) {
 		const editModel = this.view.getEditModel();

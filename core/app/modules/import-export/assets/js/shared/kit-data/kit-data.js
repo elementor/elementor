@@ -43,6 +43,7 @@ function KitData( { data } ) {
 		rows = rowsData
 			.map( ( { siteArea, included, link } ) => {
 				if ( ! included.length ) {
+					// eslint-disable-next-line array-callback-return
 					return;
 				}
 

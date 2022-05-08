@@ -7,11 +7,11 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 
 	className: 'elementor-responsive-panel',
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.panelElements, 'filter:change', this.onFilterChanged );
 	},
 
-	filter: function( childModel ) {
+	filter( childModel ) {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
@@ -40,7 +40,7 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 		} );
 	},
 
-	onFilterChanged: function() {
+	onFilterChanged() {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
@@ -52,7 +52,7 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 		this.triggerMethod( 'children:render' );
 	},
 
-	onFilterEmpty: function() {
+	onFilterEmpty() {
 		$e.routes.refreshContainer( 'panel' );
 	},
 } );

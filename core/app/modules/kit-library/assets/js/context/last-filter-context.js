@@ -5,7 +5,7 @@ const LastFilterContext = createContext( {} );
 /**
  * Consume the context
  *
- * @returns {{}}
+ * @return {{}} context value
  */
 export function useLastFilterContext() {
 	return useContext( LastFilterContext );
@@ -14,9 +14,9 @@ export function useLastFilterContext() {
 /**
  * Settings Provider
  *
- * @param props
- * @returns {JSX.Element}
- * @constructor
+ * @param {*} props
+ * @return {JSX.Element} element
+ * @function Object() { [native code] }
  */
 export function LastFilterProvider( props ) {
 	const [ lastFilter, setLastFilter ] = useState( {} );

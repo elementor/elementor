@@ -106,7 +106,7 @@ export default class Component extends ComponentBase {
 				const pasteOptions = this.utils.getPasteOptions( storage[ 0 ], targetContainer );
 
 				return Object.values( pasteOptions ).some(
-					( opt ) => !! opt
+					( opt ) => !! opt,
 				);
 			},
 		};

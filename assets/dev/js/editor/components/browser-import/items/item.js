@@ -1,6 +1,13 @@
 import isInstanceof from '../../../utils/is-instanceof';
 import Mime from 'mime';
 
+/**
+ * @typedef {import('../files/file-parser-base')} FileParserBase
+ */
+/**
+ * @typedef {import('../files/file-reader-base')} FileReaderBase
+ */
+
 export default class Item {
 	/**
 	 * The item File object.
@@ -19,8 +26,8 @@ export default class Item {
 	/**
 	 * The Item constructor.
 	 *
-	 * @param input
-	 * @param options
+	 * @param {*} input
+	 * @param {*} options
 	 */
 	constructor( input, options = {} ) {
 		this.file = this.toFile( input );
@@ -30,8 +37,8 @@ export default class Item {
 	/**
 	 * Convert the input into a File object.
 	 *
-	 * @param input
-	 * @returns {File}
+	 * @param {*} input
+	 * @return {File} file
 	 */
 	toFile( input ) {
 		if ( ! isInstanceof( input, File ) ) {
@@ -42,7 +49,7 @@ export default class Item {
 			input = new File(
 				Array.isArray( input ) ? input : [ input ],
 				fileName || this.constructor.createFileName( options ),
-				options
+				options,
 			);
 		}
 
@@ -52,8 +59,8 @@ export default class Item {
 	/**
 	 * Create a random file name from a Blob/File object while using the suitable extension for the blob mime-type.
 	 *
-	 * @param blob
-	 * @returns {string}
+	 * @param {*} blob
+	 * @return {string} file name
 	 */
 	static createFileName( blob ) {
 		return [
@@ -65,7 +72,7 @@ export default class Item {
 	/**
 	 * Get the item File object.
 	 *
-	 * @returns {File}
+	 * @return {File} file
 	 */
 	getFile() {
 		return this.file;
@@ -74,7 +81,7 @@ export default class Item {
 	/**
 	 * Get the file-reader of the Item.
 	 *
-	 * @returns {FileReaderBase}
+	 * @return {FileReaderBase} reader
 	 */
 	getReader() {
 		return this.options.reader;
@@ -83,7 +90,7 @@ export default class Item {
 	/**
 	 * Get the file-parser of the Item.
 	 *
-	 * @returns {FileParserBase}
+	 * @return {FileParserBase} parser
 	 */
 	getParser() {
 		return this.options.parser;
@@ -92,7 +99,7 @@ export default class Item {
 	/**
 	 * Set the file-reader of the Item.
 	 *
-	 * @param reader
+	 * @param {FileReaderBase} reader
 	 */
 	setReader( reader ) {
 		this.options.reader = reader;
@@ -101,7 +108,7 @@ export default class Item {
 	/**
 	 * Set the file-parser of the Item.
 	 *
-	 * @param parser
+	 * @param {FileParserBase} parser
 	 */
 	setParser( parser ) {
 		this.options.parser = parser;

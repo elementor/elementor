@@ -26,7 +26,7 @@ export default function ConnectionButton() {
 	}
 
 	return (
-		<BarButton icon="eicon-user-circle-o" buttonRef={buttonRef} dataInfo={tooltipText} href={connectUrl} target={targetUrl}>{ buttonText }</BarButton>
+		<BarButton icon="eicon-user-circle-o" buttonRef={ buttonRef } dataInfo={ tooltipText } href={ connectUrl } target={ targetUrl }>{ buttonText }</BarButton>
 	);
 }
 

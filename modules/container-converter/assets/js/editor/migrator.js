@@ -33,9 +33,9 @@ export default class Migrator {
 	 * Migrate element settings into new settings object, using a map object.
 	 *
 	 * @param {Object} settings - Settings to migrate.
-	 * @param {Object} map - Mapping object.
+	 * @param {Object} map      - Mapping object.
 	 *
-	 * @return {Object}
+	 * @return {Object} new settings
 	 */
 	static migrate( settings, map ) {
 		return Object.fromEntries( Object.entries( { ...settings } ).map( ( [ key, value ] ) => {
@@ -65,9 +65,9 @@ export default class Migrator {
 	/**
 	 * Determine if an element can be converted to a Container.
 	 *
-	 * @param {String} elType
+	 * @param {string} elType
 	 *
-	 * @return {boolean}
+	 * @return {boolean} true, if element can be converted
 	 */
 	static canConvertToContainer( elType ) {
 		return Object.keys( this.config ).includes( elType );
@@ -78,7 +78,7 @@ export default class Migrator {
 	 *
 	 * @param {Object} model - Element model.
 	 *
-	 * @return {Object}
+	 * @return {Object} mapping object
 	 */
 	static getLegacyControlsMapping( model ) {
 		const config = this.config[ model.elType ];
@@ -95,7 +95,7 @@ export default class Migrator {
 	/**
 	 * Normalize element settings (adding defaults, etc.) by elType,
 	 *
-	 * @param {Object} model - Element model.
+	 * @param {Object} model    - Element model.
 	 * @param {Object} settings - Settings object after migration.
 	 *
 	 * @return {Object} - normalized settings.

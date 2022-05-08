@@ -1,5 +1,5 @@
 module.exports = elementorModules.ViewModule.extend( {
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				modeSelect: '.elementor_maintenance_mode_mode select',
@@ -17,7 +17,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var elements = {},
 			selectors = this.getSettings( 'selectors' );
 
@@ -33,7 +33,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		return elements;
 	},
 
-	handleModeSelectChange: function() {
+	handleModeSelectChange() {
 		var settings = this.getSettings(),
 			elements = this.elements;
 
@@ -42,13 +42,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		elements.$maintenanceModeDescriptions.filter( '[data-value="' + elements.$modeSelect.val() + '"]' ).show();
 	},
 
-	handleExcludeModeSelectChange: function() {
+	handleExcludeModeSelectChange() {
 		var elements = this.elements;
 
 		elements.$excludeRolesArea.toggle( 'custom' === elements.$excludeModeSelect.val() );
 	},
 
-	handleTemplateSelectChange: function() {
+	handleTemplateSelectChange() {
 		var elements = this.elements;
 
 		var templateID = elements.$templateSelect.val();
@@ -67,7 +67,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		elements.$maintenanceModeError.hide();
 	},
 
-	bindEvents: function() {
+	bindEvents() {
 		var elements = this.elements;
 
 		elements.$modeSelect.on( 'change', this.handleModeSelectChange.bind( this ) );
@@ -77,13 +77,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		elements.$templateSelect.on( 'change', this.handleTemplateSelectChange.bind( this ) );
 	},
 
-	onAdminInit: function() {
+	onAdminInit() {
 		this.handleModeSelectChange();
 		this.handleExcludeModeSelectChange();
 		this.handleTemplateSelectChange();
 	},
 
-	onInit: function() {
+	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		elementorCommon.elements.$window.on( 'elementor/admin/init', this.onAdminInit );

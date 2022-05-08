@@ -1,4 +1,7 @@
-export default class Panel {
+/**
+ * @typedef {import('./container')} Container
+ */
+ export default class Panel {
 	/**
 	 * Function constructor().
 	 *
@@ -39,6 +42,6 @@ export default class Panel {
 	getControlModel( name ) {
 		const editor = elementor.getPanelView().getCurrentPageView();
 
-		return editor.collection.findWhere( { name: name } );
+		return editor.collection.findWhere( { name } );
 	}
 }

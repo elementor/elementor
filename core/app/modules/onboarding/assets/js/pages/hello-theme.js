@@ -188,7 +188,7 @@ export default function HelloTheme() {
 		if ( isInstalling ) {
 			setActionButtonText( (
 				<>
-					<i className="eicon-loading eicon-animation-spin" aria-hidden="true"/>
+					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
 				</>
 			) );
 		}
@@ -202,8 +202,8 @@ export default function HelloTheme() {
 
 			setActionButtonText( (
 				<>
-					<i className="eicon-loading eicon-animation-spin" aria-hidden="true"/>
-					<span className="e-onboarding__action-button-text">{ __( 'Hold on, this can take a minute...', 'elementor' ) }</span>
+					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
+					<span className="e-onboarding__action-button-text">{ __( 'Hold on, this can take a minute…', 'elementor' ) }</span>
 				</>
 			) );
 		}, 4000 );
@@ -217,8 +217,8 @@ export default function HelloTheme() {
 
 			setActionButtonText( (
 				<>
-					<i className="eicon-loading eicon-animation-spin" aria-hidden="true"/>
-					<span className="e-onboarding__action-button-text">{ __( 'Okay, now we\'re really close...', 'elementor' ) }</span>
+					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
+					<span className="e-onboarding__action-button-text">{ __( 'Okay, now we\'re really close…', 'elementor' ) }</span>
 				</>
 			) );
 		}, 30000 );

@@ -7,7 +7,7 @@ export class Apply extends CommandBase {
 	/**
 	 * Validate the command arguments.
 	 *
-	 * @param {object} args
+	 * @param {Object} args
 	 */
 	validateArgs( args ) {
 		this.requireArgumentType( 'value', 'string', args );
@@ -16,10 +16,11 @@ export class Apply extends CommandBase {
 	/**
 	 * Execute the color apply command.
 	 *
-	 * @param {string} value The new color to apply.
-	 * @param {HTMLElement} trigger The element which triggered the Apply command. Used to show `Selected` text & listen to `mouseleave`.
+	 * @param {Object}      root0
+	 * @param {string}      root0.value   The new color to apply.
+	 * @param {HTMLElement} root0.trigger The element which triggered the Apply command. Used to show `Selected` text & listen to `mouseleave`.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	apply( { value, trigger } ) {
 		this.setColor( value );
@@ -49,9 +50,9 @@ export class Apply extends CommandBase {
 	/**
 	 * Set a color to the current selected element.
 	 *
-	 * @param color
+	 * @param {*} color
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	setColor( color ) {
 		$e.run( 'document/elements/settings', {

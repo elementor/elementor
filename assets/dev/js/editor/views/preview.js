@@ -3,17 +3,17 @@ import AddSectionView from './add-section/independent';
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
 const Preview = BaseSectionsContainerView.extend( {
-	initialize: function() {
+	initialize() {
 		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
 		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
 	},
 
-	getChildViewContainer: function() {
+	getChildViewContainer() {
 		return this.$childViewContainer;
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var parentBehaviors = BaseSectionsContainerView.prototype.behaviors.apply( this, arguments ),
 			behaviors = {
 				contextMenu: {
@@ -29,7 +29,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		return elementor.settings.page.getEditedView().getContainer();
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var hasContent = function() {
 			return elementor.elements.length > 0;
 		};
@@ -70,7 +70,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		];
 	},
 
-	createElementFromModel: function( model, options = {} ) {
+	createElementFromModel( model, options = {} ) {
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
@@ -78,10 +78,10 @@ const Preview = BaseSectionsContainerView.extend( {
 		);
 	},
 
-	onRender: function() {
+	onRender() {
 		let $contentContainer;
 
-		if ( elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+		if ( elementorCommon.config.experimentalFeatures.e_dom_optimization ) {
 			$contentContainer = this.$el;
 		} else {
 			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );

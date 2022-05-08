@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/iframe-has-title */
 import { useRef, useEffect } from 'react';
 import { Grid } from '@elementor/app-ui';
 

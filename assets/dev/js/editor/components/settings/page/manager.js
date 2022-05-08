@@ -3,19 +3,19 @@ import Component from './component';
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
-	getStyleId: function() {
+	getStyleId() {
 		return this.getSettings( 'name' ) + '-' + elementor.documents.getCurrent().id;
 	},
 
-	onInit: function() {
+	onInit() {
 		BaseSettings.prototype.onInit.apply( this );
 
 		$e.components.register( new Component( { manager: this } ) );
 	},
 
-	save: function() {},
+	save() {},
 
-	getDataToSave: function( data ) {
+	getDataToSave( data ) {
 		data.id = elementor.config.document.id;
 
 		return data;

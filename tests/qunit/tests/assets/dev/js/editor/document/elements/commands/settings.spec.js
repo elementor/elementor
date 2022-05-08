@@ -135,14 +135,14 @@ export const Settings = () => {
 
 					eWidgets.forEach( ( eWidget ) =>
 						assert.equal( eWidget.settings.attributes.text, defaultText,
-							'Settings back to default.' )
+							'Settings back to default.' ),
 					);
 
 					// Redo.
 					HistoryHelper.redoValidate( assert, historyItem );
 
 					eWidgets.forEach( ( eWidget ) =>
-						assert.equal( eWidget.settings.attributes.text, text, 'Settings restored.' )
+						assert.equal( eWidget.settings.attributes.text, text, 'Settings restored.' ),
 					);
 
 					done();

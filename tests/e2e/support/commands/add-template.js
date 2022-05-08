@@ -4,10 +4,10 @@
  * add a new elementor tempalte
  *
  * @param {Object} options
- * @param {string} options.templateType the post type ( Page | Section )
- * @param {string} [options.presetSearch] what to search in Elementor template library
+ * @param {string} options.templateType      the post type ( Page | Section )
+ * @param {string} [options.presetSearch]    what to search in Elementor template library
  * @param {number} [options.PreDesignNumber] the place of the template in the library
- * @param {string} [options.name] the place of the template in the library
+ * @param {string} [options.name]            the place of the template in the library
  */
 function addTemplate( options ) {
 	cy.visit( '/wp-admin/edit.php?post_type=elementor_library' );

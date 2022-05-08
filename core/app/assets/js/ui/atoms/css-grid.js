@@ -11,7 +11,7 @@ export default function CssGrid( props ) {
 	};
 
 	return (
-		<div style={gridStyle} className={`eps-css-grid ${ props.className }`}>
+		<div style={ gridStyle } className={ `eps-css-grid ${ props.className }` }>
 			{ props.children }
 		</div>
 	);

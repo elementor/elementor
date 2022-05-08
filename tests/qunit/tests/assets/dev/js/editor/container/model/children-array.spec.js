@@ -32,7 +32,7 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 		eWidgets.forEach( ( eWidget ) => {
 			// Act.
 			const foundChildren = elementor.getPreviewContainer().children.findRecursive(
-				( container ) => container.id === eWidget.id
+				( container ) => container.id === eWidget.id,
 			);
 
 			// Assert.

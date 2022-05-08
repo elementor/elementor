@@ -78,7 +78,7 @@
 	};
 
 	var screenfull = {
-		request: function( element ) {
+		request( element ) {
 			return new Promise( function( resolve, reject ) {
 				var onFullScreenEntered = function() {
 					this.off( 'change', onFullScreenEntered );
@@ -92,7 +92,7 @@
 				Promise.resolve( element[ fn.requestFullscreen ]() ).catch( reject );
 			}.bind( this ) );
 		},
-		exit: function() {
+		exit() {
 			return new Promise( function( resolve, reject ) {
 				if ( ! this.isFullscreen ) {
 					resolve();
@@ -109,22 +109,22 @@
 				Promise.resolve( document[ fn.exitFullscreen ]() ).catch( reject );
 			}.bind( this ) );
 		},
-		toggle: function( element ) {
+		toggle( element ) {
 			return this.isFullscreen ? this.exit() : this.request( element );
 		},
-		onchange: function( callback ) {
+		onchange( callback ) {
 			this.on( 'change', callback );
 		},
-		onerror: function( callback ) {
+		onerror( callback ) {
 			this.on( 'error', callback );
 		},
-		on: function( event, callback ) {
+		on( event, callback ) {
 			var eventName = eventNameMap[ event ];
 			if ( eventName ) {
 				document.addEventListener( eventName, callback, false );
 			}
 		},
-		off: function( event, callback ) {
+		off( event, callback ) {
 			var eventName = eventNameMap[ event ];
 			if ( eventName ) {
 				document.removeEventListener( eventName, callback, false );
@@ -145,19 +145,19 @@
 
 	Object.defineProperties( screenfull, {
 		isFullscreen: {
-			get: function() {
+			get() {
 				return Boolean( document[ fn.fullscreenElement ] );
 			},
 		},
 		element: {
 			enumerable: true,
-			get: function() {
+			get() {
 				return document[ fn.fullscreenElement ];
 			},
 		},
 		isEnabled: {
 			enumerable: true,
-			get: function() {
+			get() {
 				// Coerce to boolean in case of old WebKit
 				return Boolean( document[ fn.fullscreenEnabled ] );
 			},

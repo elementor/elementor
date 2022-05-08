@@ -3,19 +3,19 @@ var ControlBaseMultipleItemView = require( 'elementor-controls/base-multiple' ),
 
 ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
-	ui: function() {
+	ui() {
 		return Object.assign( ControlBaseMultipleItemView.prototype.ui.apply( this, arguments ), {
 			units: '.elementor-units-choices>input',
 		} );
 	},
 
-	events: function() {
+	events() {
 		return Object.assign( ControlBaseMultipleItemView.prototype.events.apply( this, arguments ), {
 			'change @ui.units': 'onUnitChange',
 		} );
 	},
 
-	updatePlaceholder: function() {
+	updatePlaceholder() {
 		const placeholder = this.getControlPlaceholder()?.unit;
 
 		this.ui.units.removeClass( 'e-units-placeholder' );
@@ -48,22 +48,22 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 		}
 	},
 
-	onRender: function() {
+	onRender() {
 		ControlBaseMultipleItemView.prototype.onRender.apply( this, arguments );
 
 		this.updatePlaceholder();
 	},
 
-	onUnitChange: function() {
+	onUnitChange() {
 		this.recursiveUnitChange( false );
 		this.updatePlaceholder();
 	},
 
-	getCurrentRange: function() {
+	getCurrentRange() {
 		return this.getUnitRange( this.getControlValue( 'unit' ) );
 	},
 
-	getUnitRange: function( unit ) {
+	getUnitRange( unit ) {
 		var ranges = this.model.get( 'range' );
 
 		if ( ! ranges || ! ranges[ unit ] ) {

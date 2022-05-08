@@ -12,7 +12,7 @@ export default class FileReaderBase {
 	/**
 	 * FileReaderBase constructor.
 	 *
-	 * @param file
+	 * @param {File} file
 	 */
 	constructor( file ) {
 		this.file = file;
@@ -21,7 +21,7 @@ export default class FileReaderBase {
 	 * Get the file-reader name.
 	 *
 	 * @abstract
-	 * @returns {string}
+	 * @return {string} name
 	 */
 	static getName() {
 		return '';
@@ -32,7 +32,7 @@ export default class FileReaderBase {
 	 * to it accordingly.
 	 *
 	 * @abstract
-	 * @returns {string[]}
+	 * @return {string[]} mime types
 	 */
 	static get mimeTypes() {
 		return [];
@@ -43,8 +43,8 @@ export default class FileReaderBase {
 	 * objects), here it can decide whether it can handle it and eventually return a suitable mime-type.
 	 *
 	 * @abstract
-	 * @param input
-	 * @returns {string|boolean}
+	 * @param {*} input
+	 * @return {string|boolean} mime type
 	 */
 	static async resolve( input ) { // eslint-disable-line no-unused-vars
 		return false;
@@ -53,13 +53,13 @@ export default class FileReaderBase {
 	/**
 	 * Validate that a file can be handled by the file-reader, according to its mime-type.
 	 *
-	 * @param file
+	 * @param {File} file
 	 */
 	static async validate( file ) {
 		if ( ! this.validator ) {
 			this.validator = new RegExp(
 				this.mimeTypes.join( '|' ),
-				'i'
+				'i',
 			);
 		}
 
@@ -69,7 +69,7 @@ export default class FileReaderBase {
 	/**
 	 * Get the file-reader File object.
 	 *
-	 * @returns {*}
+	 * @return {*} file
 	 */
 	getFile() {
 		return this.file;
@@ -78,7 +78,7 @@ export default class FileReaderBase {
 	/**
 	 * Get the file-reader File object content as string.
 	 *
-	 * @returns {Promise<string>}
+	 * @return {Promise<string>} handler
 	 */
 	async getContent() {
 		const fileReader = new FileReader(),
@@ -94,7 +94,7 @@ export default class FileReaderBase {
 	/**
 	 * Get the file-reader File object data url string.
 	 *
-	 * @returns {Promise<string>}
+	 * @return {Promise<string>} data URI
 	 */
 	async getDataUrl() {
 		const fileReader = new FileReader(),

@@ -1,12 +1,13 @@
 /**
  * Add element to the page using model and parent container.
  *
- * @param {Object} model - Model definition.
- * @param {string|null} container - Parent container ID. Optional.
+ * @param {Object}      model           - Model definition.
+ * @param {*}           model.model
  *
- * @return {Promise<*>}
+ * @param {string|null} model.container - Parent container ID. Optional.
+ * @return {Promise<*>} element id
  */
-const addElement = async ( { model, container = null } ) => {
+ const addElement = async ( { model, container = null } ) => {
 	let parent;
 
 	if ( container ) {
@@ -19,7 +20,7 @@ const addElement = async ( { model, container = null } ) => {
 				model: { elType: 'section' },
 				columns: 1,
 				container: elementor.getContainer( 'document' ),
-			}
+			},
 		);
 
 		parent = section.children[ 0 ];
@@ -30,7 +31,7 @@ const addElement = async ( { model, container = null } ) => {
 		{
 			model,
 			container: parent,
-		}
+		},
 	);
 
 	return element.id;
@@ -41,9 +42,9 @@ const addElement = async ( { model, container = null } ) => {
  *
  * @param {string} id - Container ID.
  *
- * @return {string}
+ * @return {string} css selector
  */
-const getElementSelector = ( id ) => {
+ const getElementSelector = ( id ) => {
 	return `[data-id = "${ id }"]`;
 };
 

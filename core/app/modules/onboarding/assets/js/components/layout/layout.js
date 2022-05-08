@@ -113,7 +113,7 @@ export default function Layout( props ) {
 				/>
 				<div className={ 'eps-app__main e-onboarding__page-' + props.pageId }>
 					<Content className="e-onboarding__content">
-						<ProgressBar/>
+						<ProgressBar />
 						{ props.children }
 					</Content>
 				</div>

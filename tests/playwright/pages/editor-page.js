@@ -14,7 +14,7 @@ module.exports = class EditorPage extends BasePage {
 
 	async openNavigator() {
 		const isOpen = await this.previewFrame.evaluate( () =>
-			elementor.navigator.isOpen()
+			elementor.navigator.isOpen(),
 		);
 
 		if ( ! isOpen ) {
@@ -25,7 +25,7 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Reload the editor page.
 	 *
-	 * @returns {Promise<void>}
+	 * @return {Promise<void>}
 	 */
 	async reload() {
 		await this.page.reload();
@@ -56,10 +56,10 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Add element to the page using a model.
 	 *
-	 * @param {Object} model - Model definition.
+	 * @param {Object} model     - Model definition.
 	 * @param {string} container - Optional Container to create the element in.
 	 *
-	 * @return {Promise<*>}
+	 * @return {Promise<*>} Element ID
 	 */
 	async addElement( model, container = null ) {
 		return await this.page.evaluate( addElement, { model, container } );
@@ -67,17 +67,23 @@ module.exports = class EditorPage extends BasePage {
 
 	/**
 	 * Add a widget by `widgetType`.
+	 *
+	 * @param {string} widgetType
+	 * @param {string} container  - Optional Container to create the element in.
 	 */
 	async addWidget( widgetType, container = null ) {
 		return await this.addElement( { widgetType, elType: 'widget' }, container );
 	}
 
 	/**
+	 * @typedef {import('@playwright/test').ElementHandle} ElementHandle
+	 */
+	/**
 	 * Get element handle from the preview frame using its Container ID.
 	 *
 	 * @param {string} id - Container ID.
 	 *
-	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>}
+	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>} element handle
 	 */
 	async getElementHandle( id ) {
 		return this.getPreviewFrame().$( getElementSelector( id ) );

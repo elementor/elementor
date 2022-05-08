@@ -4,7 +4,7 @@ export default function DialogTitle( props ) {
 	return (
 		<Heading
 			{ ...props }
-			className={`eps-dialog__title ${ props.className }`}
+			className={ `eps-dialog__title ${ props.className }` }
 		/>
 	);
 }

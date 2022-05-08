@@ -1,17 +1,17 @@
 module.exports = elementorModules.editor.views.ControlsStack.extend( {
-	id: function() {
+	id() {
 		return 'elementor-panel-' + this.getOption( 'name' ) + '-settings';
 	},
 
-	getTemplate: function() {
+	getTemplate() {
 		return '#tmpl-elementor-panel-' + this.getOption( 'name' ) + '-settings';
 	},
 
-	childViewContainer: function() {
+	childViewContainer() {
 		return '#elementor-panel-' + this.getOption( 'name' ) + '-settings-controls';
 	},
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			container: this.getOption( 'editedView' ).getContainer(),
 		};

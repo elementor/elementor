@@ -2,11 +2,11 @@ var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
 	PanelSchemeTypographyView;
 
 PanelSchemeTypographyView = PanelSchemeItemView.extend( {
-	getUIType: function() {
+	getUIType() {
 		return 'typography';
 	},
 
-	className: function() {
+	className() {
 		var classes = PanelSchemeItemView.prototype.className.apply( this, arguments );
 
 		return classes + ' elementor-panel-box';
@@ -26,7 +26,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		'click @ui.heading': 'toggleVisibility',
 	},
 
-	onRender: function() {
+	onRender() {
 		var self = this;
 
 		this.ui.inputFields.add( this.ui.selectFields ).each( function() {
@@ -42,11 +42,11 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		} );
 	},
 
-	toggleVisibility: function() {
+	toggleVisibility() {
 		this.$el.toggleClass( 'elementor-open' );
 	},
 
-	changeUIValue: function( newValue ) {
+	changeUIValue( newValue ) {
 		this.ui.allFields.each( function() {
 			var $this = jQuery( this ),
 				thisName = $this.attr( 'name' ),
@@ -56,7 +56,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		} );
 	},
 
-	onFieldChange: function() {
+	onFieldChange() {
 		var currentValue = elementor.schemes.getSchemeValue( 'typography', this.model.get( 'key' ) ).value;
 
 		this.triggerMethod( 'value:change', currentValue );

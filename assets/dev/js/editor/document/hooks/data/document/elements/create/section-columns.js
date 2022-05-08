@@ -2,7 +2,10 @@ import After from 'elementor-api/modules/hooks/data/after';
 import Helper from '../helper';
 import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
-export class SectionColumns extends After {
+/**
+ * @typedef {import('../../../../../../container/container')} Container
+ */
+ export class SectionColumns extends After {
 	getCommand() {
 		return 'document/elements/create';
 	}
@@ -22,10 +25,8 @@ export class SectionColumns extends After {
 	/**
 	 * @inheritDoc
 	 *
-	 * @param {{}} args
-	 * @param {Container||Container[]} containers
-	 *
-	 * @returns {boolean}
+	 * @param {{}}                         args
+	 * @param {Container|Array<Container>} containers
 	 */
 	apply( args, containers ) {
 		const { structure = false, options = {} } = args;

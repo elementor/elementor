@@ -2,19 +2,19 @@ var NewTemplateView = require( 'elementor-admin/new-template/view' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 
-	getModalOptions: function() {
+	getModalOptions() {
 		return {
 			id: 'elementor-new-template-modal',
 		};
 	},
 
-	getLogoOptions: function() {
+	getLogoOptions() {
 		return {
 			title: __( 'New Template', 'elementor' ),
 		};
 	},
 
-	initialize: function() {
+	initialize() {
 		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
 		this.showLogo();
@@ -22,7 +22,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.showContentView();
 	},
 
-	showContentView: function() {
+	showContentView() {
 		this.modalContent.show( new NewTemplateView() );
 	},
 } );

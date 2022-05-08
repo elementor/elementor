@@ -2,7 +2,7 @@ var PanelSchemeBaseView = require( 'elementor-panel/pages/schemes/base' ),
 	PanelSchemeColorsView;
 
 PanelSchemeColorsView = PanelSchemeBaseView.extend( {
-	ui: function() {
+	ui() {
 		var ui = PanelSchemeBaseView.prototype.ui.apply( this, arguments );
 
 		ui.systemSchemes = '.elementor-panel-scheme-color-system-scheme';
@@ -10,7 +10,7 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 		return ui;
 	},
 
-	events: function() {
+	events() {
 		var events = PanelSchemeBaseView.prototype.events.apply( this, arguments );
 
 		events[ 'click @ui.systemSchemes' ] = 'onSystemSchemeClick';
@@ -18,11 +18,11 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 		return events;
 	},
 
-	getType: function() {
+	getType() {
 		return 'color';
 	},
 
-	onSystemSchemeClick: function( event ) {
+	onSystemSchemeClick( event ) {
 		const $schemeClicked = jQuery( event.currentTarget ),
 			schemeName = $schemeClicked.data( 'schemeName' ),
 			scheme = elementor.config.system_schemes[ this.getType() ][ schemeName ].items;

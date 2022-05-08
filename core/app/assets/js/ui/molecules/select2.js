@@ -5,7 +5,7 @@ import './select2.scss';
 /**
  * Default settings of the select 2
  *
- * @returns {{placeholder: string, allowClear: boolean, dir: string}}
+ * @return {{placeholder: string, allowClear: boolean, dir: string}}
  */
 
 const getDefaultSettings = () => ( {
@@ -16,9 +16,9 @@ const getDefaultSettings = () => ( {
 /**
  * Main component
  *
- * @param props
- * @returns {*}
- * @constructor
+ * @param {*} props
+ * @return {*} component
+ * @function Object() { [native code] }
  */
 export default function Select2( props ) {
 	const ref = React.useRef( null );
@@ -54,7 +54,7 @@ export default function Select2( props ) {
 		onChange={ props.onChange }
 		elRef={ ref }
 		options={ props.options }
-		placeholder={props.placeholder}
+		placeholder={ props.placeholder }
 	/>;
 }
 Select2.propTypes = {

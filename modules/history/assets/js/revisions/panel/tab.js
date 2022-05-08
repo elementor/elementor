@@ -25,7 +25,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	document: null,
 
-	initialize: function( options ) {
+	initialize( options ) {
 		this.document = options.document;
 
 		this.collection = this.document.revisions.getItems();
@@ -35,7 +35,7 @@ module.exports = Marionette.CompositeView.extend( {
 		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
-	getRevisionViewData: function( revisionView ) {
+	getRevisionViewData( revisionView ) {
 		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: ( data ) => {
 				if ( this.document.config.panel.has_elements ) {
@@ -57,19 +57,20 @@ module.exports = Marionette.CompositeView.extend( {
 
 				this.currentPreviewId = null;
 
+				// eslint-disable-next-line no-alert
 				alert( errorMessage );
 			},
 		} );
 	},
 
-	setRevisionsButtonsActive: function( active ) {
+	setRevisionsButtonsActive( active ) {
 		// Check the tab is open.
 		if ( ! this.isDestroyed ) {
 			this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
 		}
 	},
 
-	deleteRevision: function( revisionView ) {
+	deleteRevision( revisionView ) {
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
 		this.document.revisions.deleteRevision( revisionView.model, {
@@ -83,20 +84,21 @@ module.exports = Marionette.CompositeView.extend( {
 			error: () => {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
+				// eslint-disable-next-line no-alert
 				alert( 'An error occurred' );
 			},
 		} );
 	},
 
-	enterReviewMode: function() {
+	enterReviewMode() {
 		elementor.changeEditMode( 'review' );
 	},
 
-	exitReviewMode: function() {
+	exitReviewMode() {
 		elementor.changeEditMode( 'edit' );
 	},
 
-	navigate: function( reverse ) {
+	navigate( reverse ) {
 		if ( ! this.currentPreviewId || ! this.currentPreviewItem || this.children.length <= 1 ) {
 			return;
 		}
@@ -115,7 +117,7 @@ module.exports = Marionette.CompositeView.extend( {
 		this.children.findByIndex( requiredIndex ).ui.detailsArea.trigger( 'click' );
 	},
 
-	onEditorSaved: function() {
+	onEditorSaved() {
 		this.exitReviewMode();
 
 		this.setRevisionsButtonsActive( false );
@@ -123,7 +125,7 @@ module.exports = Marionette.CompositeView.extend( {
 		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
-	onApplyClick: function() {
+	onApplyClick() {
 		$e.internal( 'document/save/set-is-modified', { status: true } );
 
 		$e.run( 'document/save/auto', { force: true } );
@@ -135,7 +137,7 @@ module.exports = Marionette.CompositeView.extend( {
 		this.document.history.getItems().reset();
 	},
 
-	onDiscardClick: function() {
+	onDiscardClick() {
 		if ( this.document.config.panel.has_elements ) {
 			this.document.revisions.setEditorData( elementor.config.document.elements );
 		}
@@ -155,13 +157,13 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.document.revisions.current_id ) {
 			this.onDiscardClick();
 		}
 	},
 
-	onRenderCollection: function() {
+	onRenderCollection() {
 		if ( ! this.currentPreviewId ) {
 			return;
 		}
@@ -175,7 +177,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onChildviewDetailsAreaClick: function( childView ) {
+	onChildviewDetailsAreaClick( childView ) {
 		const revisionID = childView.model.get( 'id' );
 
 		if ( revisionID === this.currentPreviewId ) {

@@ -3,11 +3,11 @@
  * NOTE: Might cause memory leaks if the element is removed from then DOM without removing its `nsEvents`.
  *
  * @param {HTMLElement|NodeList} elements - An HTML element to attach the event to.
- * @param {string} nsEvent - Namespaced event name, e.g. `click.color-picker`.
- * @param {function} callback - Callback handler to the attached event.
- * @param {object} options - Additional event options.
+ * @param {string}               nsEvent  - Namespaced event name, e.g. `click.color-picker`.
+ * @param {Function}             callback - Callback handler to the attached event.
+ * @param {Object}               options  - Additional event options.
  *
- * @returns {void}
+ * @return {void}
  */
 export const addNamespaceHandler = ( elements, nsEvent, callback, options = {} ) => {
 	const [ event ] = nsEvent.split( '.' );
@@ -31,9 +31,9 @@ export const addNamespaceHandler = ( elements, nsEvent, callback, options = {} )
  * Remove custom namespaced event using ES6. Equivalent to jQuery's `.off()`.
  *
  * @param {NodeList} elements - An HTML element to remove the event from.
- * @param {string} nsEvent - Namespaced event name, e.g. `click.color-picker`.
+ * @param {string}   nsEvent  - Namespaced event name, e.g. `click.color-picker`.
  *
- * @returns {void}
+ * @return {void}
  */
 export const removeNamespaceHandler = ( elements, nsEvent ) => {
 	const [ event ] = nsEvent.split( '.' );

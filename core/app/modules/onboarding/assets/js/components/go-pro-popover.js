@@ -31,7 +31,7 @@ export default function GoProPopover( props ) {
 			window.open(
 				alreadyHaveProButton.href + '&mode=popup',
 				'elementorUploadPro',
-				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`
+				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`,
 			);
 
 			// Run the callback for when the upload succeeds.

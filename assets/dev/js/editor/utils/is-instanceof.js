@@ -3,9 +3,9 @@
  * object (from events, etc.) and the actual JavaScript object so a regular instanceof doesn't work. This function can
  * check whether it's instanceof by using the objects constructor and prototype names.
  *
- * @param object
- * @param constructors
- * @returns {boolean}
+ * @param  object
+ * @param  constructors
+ * @return {boolean}
  */
 
 export default ( object, constructors ) => {

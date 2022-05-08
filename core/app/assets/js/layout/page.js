@@ -20,13 +20,13 @@ export default function Page( props ) {
 		}
 		return (
 			<Footer>
-				{props.footer}
+				{ props.footer }
 			</Footer>
 		);
 	};
 
 	return (
-		<div className={`eps-app__lightbox ${ props.className }`}>
+		<div className={ `eps-app__lightbox ${ props.className }` }>
 			<div className="eps-app">
 				<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />
 				<div className="eps-app__main">

@@ -4,7 +4,7 @@ export default function DialogButton( props ) {
 	return (
 		<Button
 			{ ...props }
-			className={`eps-dialog__button ${ props.className }`}
+			className={ `eps-dialog__button ${ props.className }` }
 		/>
 	);
 }

@@ -7,7 +7,7 @@ module.exports = Marionette.ItemView.extend( {
 		click: 'onClick',
 	},
 
-	onClick: function() {
+	onClick() {
 		$e.routes.restoreState( 'library' );
 	},
 } );

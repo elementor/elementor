@@ -42,8 +42,8 @@ export class ColorPicking extends UiStateBase {
 	/**
 	 * Toggle CSS class to the scopes.
 	 *
-	 * @param {string} className - CSS class to toggle.
-	 * @param {boolean} state - The class state (on/off).
+	 * @param {string}  className - CSS class to toggle.
+	 * @param {boolean} state     - The class state (on/off).
 	 *
 	 * @return {void}
 	 */

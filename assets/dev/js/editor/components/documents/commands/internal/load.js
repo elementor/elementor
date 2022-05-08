@@ -51,7 +51,7 @@ export class Load extends CommandInternalBase {
 			// TODO: Find better solution - Fix issue when globals does not render after saving from kit.
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
 			return $e.data.get( 'globals/index' ).then( () =>
-				$e.internal( 'editor/documents/attach-preview' )
+				$e.internal( 'editor/documents/attach-preview' ),
 			);
 		}
 

@@ -5,10 +5,10 @@
  *  1. responsive( 'old_key', 'new_key' );
  *  2. responsive( 'old_key', ( { key, value, deviceValue, settings, breakpoint } ) => { return [ key, value ] } );
  *
- * @param {string} key - Control name without device suffix.
- * @param {string|function} value - New control name without device suffix, or a callback.
+ * @param {string}            key   - Control name without device suffix.
+ * @param {string | Function} value - New control name without device suffix, or a callback.
  *
- * @return {Object}
+ * @return {Object} mapping object
  */
 export function responsive( key, value ) {
 	const breakpoints = [
@@ -48,10 +48,10 @@ export function responsive( key, value ) {
  *  1. getDeviceKey( 'some_control', 'mobile' ) => 'some_control_mobile'.
  *  2. getDeviceKey( 'some_control', '' ) => 'some_control'.
  *
- * @param {string} key - Setting key.
+ * @param {string} key        - Setting key.
  * @param {string} breakpoint - Breakpoint name.
  *
- * @return {string}
+ * @return {string} device key
  */
 export function getDeviceKey( key, breakpoint ) {
 	return [ key, breakpoint ].filter( ( v ) => !! v ).join( '_' );

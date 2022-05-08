@@ -11,11 +11,11 @@ export default function AllPartsButton( props ) {
 
 				return (
 					<MenuItem
-						text={__( 'All Parts', 'elementor' )}
+						text={ __( 'All Parts', 'elementor' ) }
 						className={ className }
 						icon="eicon-filter"
 						url={ props.url }
-					/> );
+				/> );
 				}
 			}
 		</Match>

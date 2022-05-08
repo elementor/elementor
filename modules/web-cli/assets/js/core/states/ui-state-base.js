@@ -1,5 +1,9 @@
 import forceMethodImplementation from '../../utils/force-method-implementation';
 
+/**
+ * @typedef {import('../../modules/component-base')} ComponentBase
+ */
+
 export default class UiStateBase {
 	/**
 	 * Initialize the state object.
@@ -46,16 +50,17 @@ export default class UiStateBase {
 	/**
 	 * Get current state value.
 	 *
-	 * @return {string}
+	 * @return {string} current state
 	 */
 	getCurrent() {
 		return this.currentState;
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Get state ID.
 	 *
-	 * @return {string}
+	 * @return {string} state ID
 	 */
 	getId() {
 		forceMethodImplementation();
@@ -64,7 +69,7 @@ export default class UiStateBase {
 	/**
 	 * Return the state ID prefix.
 	 *
-	 * @return {string}
+	 * @return {string} state ID prefix
 	 */
 	getPrefix() {
 		return this.component?.getNamespace() || '';
@@ -73,7 +78,7 @@ export default class UiStateBase {
 	/**
 	 * Get the prefixed state ID.
 	 *
-	 * @return {string}
+	 * @return {string} prefixed state ID
 	 */
 	getPrefixedId() {
 		const prefix = this.getPrefix();
@@ -89,7 +94,7 @@ export default class UiStateBase {
 	 * Get state options.
 	 * Each option should have unique ID as key and a callback if needed (should be an inner class method).
 	 *
-	 * @return {object}
+	 * @return {Object} state options
 	 */
 	getOptions() {
 		return {
@@ -113,7 +118,7 @@ export default class UiStateBase {
 	/**
 	 * Retrieve an array of scopes that the state will be applied to.
 	 *
-	 * @return {HTMLElement[]}
+	 * @return {HTMLElement[]} scopes
 	 */
 	getScopes() {
 		return [

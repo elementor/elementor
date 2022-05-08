@@ -22,7 +22,7 @@ export default function ApplyKitDialog( props ) {
 			title={ __( 'Apply %s?', 'elementor' ).replace( '%s', props.title ) }
 			text={ <>
 				{ __( 'You can use everything in this kit, or Customize to only include some items.', 'elementor' ) }
-				<br/><br/>
+				<br /><br />
 				{ __( 'By applying the entire kit, you\'ll override any styles, settings or content already on your site.', 'elementor' ) }
 			</> }
 			approveButtonText={ __( 'Apply All', 'elementor' ) }

@@ -80,8 +80,8 @@ export default class Widgets extends FavoriteType {
 	/**
 	 * Check whether a given widget is already favorite.
 	 *
-	 * @param widget
-	 * @returns {boolean}
+	 * @param {*} widget
+	 * @return {boolean} true if this widget is a favorite widget
 	 */
 	isFavorite( widget ) {
 		const widgetCache = this.getWidgetCache( widget );
@@ -97,7 +97,7 @@ export default class Widgets extends FavoriteType {
 	/**
 	 * Get favorites category name in widgets panel.
 	 *
-	 * @returns {string}
+	 * @return {string} favorites category
 	 */
 	getCategorySlug() {
 		return 'favorites';
@@ -115,9 +115,9 @@ export default class Widgets extends FavoriteType {
 	 * A filter callback to add the favorites context menu groups to
 	 * element view.
 	 *
-	 * @param groups
-	 * @param context
-	 * @returns {[]}
+	 * @param {*} groups
+	 * @param {*} context
+	 * @return {[]} groups
 	 */
 	addContextMenuGroups( groups, context ) {
 		const widget = context.options.model.get( 'widgetType' ) || context.options.model.get( 'elType' );
@@ -128,12 +128,12 @@ export default class Widgets extends FavoriteType {
 				actions: [
 					{
 						name: 'toggle',
-						icon: this.isFavorite( widget ) ?
-							'eicon-heart-o' :
-							'eicon-heart',
-						title: this.isFavorite( widget ) ?
-							__( 'Remove from Favorites', 'elementor' ) :
-							__( 'Add to Favorites', 'elementor' ),
+						icon: this.isFavorite( widget )
+							? 'eicon-heart-o'
+							: 'eicon-heart',
+						title: this.isFavorite( widget )
+							? __( 'Remove from Favorites', 'elementor' )
+							: __( 'Add to Favorites', 'elementor' ),
 						callback: () => {
 							this.toggle( widget );
 
@@ -169,8 +169,8 @@ export default class Widgets extends FavoriteType {
 	/**
 	 * Get the widget cache object which stores the widgets config.
 	 *
-	 * @param widget
-	 * @returns {{}}
+	 * @param {*} widget
+	 * @return {{}} widget cache object
 	 */
 	getWidgetCache( widget ) {
 		return elementor.widgetsCache[ widget ];

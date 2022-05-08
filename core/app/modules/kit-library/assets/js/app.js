@@ -25,14 +25,14 @@ export default function App() {
 				<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
 					<LastFilterProvider>
 						<Router>
-							<Index path="/"/>
-							<Favorites path="/favorites"/>
-							<Preview path="/preview/:id"/>
-							<Overview path="/overview/:id"/>
+							<Index path="/" />
+							<Favorites path="/favorites" />
+							<Preview path="/preview/:id" />
+							<Overview path="/overview/:id" />
 						</Router>
 					</LastFilterProvider>
 				</SettingsProvider>
-				{ elementorCommon.config.isElementorDebug && <ReactQueryDevtools initialIsOpen={ false }/> }
+				{ elementorCommon.config.isElementorDebug && <ReactQueryDevtools initialIsOpen={ false } /> }
 			</QueryClientProvider>
 		</div>
 	);

@@ -15,7 +15,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		'click @ui.title': 'onTitleClick',
 	},
 
-	id: function() {
+	id() {
 		return 'elementor-panel-category-' + this.model.get( 'name' );
 	},
 
@@ -23,13 +23,13 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '.elementor-panel-category-items',
 
-	initialize: function() {
+	initialize() {
 		let items = this.model.get( 'items' ) || [];
 
 		switch ( this.model.get( 'sort' ) ) {
 			case 'a-z':
 				items = items.sort(
-					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1
+					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1,
 				);
 				break;
 		}
@@ -37,11 +37,11 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		this.collection = new PanelElementsElementsCollection( items );
 	},
 
-	behaviors: function() {
+	behaviors() {
 		return elementor.hooks.applyFilters( 'panel/category/behaviors', {}, this );
 	},
 
-	onRender: function() {
+	onRender() {
 		let isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
 
 		if ( undefined === isActive ) {
@@ -59,11 +59,11 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onTitleClick: function() {
+	onTitleClick() {
 		this.toggle();
 	},
 
-	toggle: function( state, animate = true ) {
+	toggle( state, animate = true ) {
 		var $items = this.ui.items,
 			activeClass = 'elementor-active',
 			isActive = undefined !== state ? ! state : this.$el.hasClass( activeClass ),

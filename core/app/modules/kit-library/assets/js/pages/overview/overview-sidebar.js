@@ -77,6 +77,6 @@ export default function OverviewSidebar( props ) {
 OverviewSidebar.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
 	groupedKitContent: PropTypes.arrayOf(
-		PropTypes.instanceOf( ContentType )
+		PropTypes.instanceOf( ContentType ),
 	),
 };

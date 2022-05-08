@@ -11,13 +11,13 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		resize: 'onResize',
 	},
 
-	initialize: function() {
+	initialize() {
 		Marionette.Behavior.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 	},
 
-	active: function() {
+	active() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
@@ -34,13 +34,13 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		$childViewContainer.resizable( resizableOptions );
 	},
 
-	deactivate: function() {
+	deactivate() {
 		if ( this.getChildViewContainer().resizable( 'instance' ) ) {
 			this.getChildViewContainer().resizable( 'destroy' );
 		}
 	},
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched( activeMode ) {
 		if ( 'edit' === activeMode ) {
 			this.active();
 		} else {
@@ -48,7 +48,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
-	onRender: function() {
+	onRender() {
 		var self = this;
 
 		_.defer( function() {
@@ -56,11 +56,11 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		} );
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		this.deactivate();
 	},
 
-	onResizeStart: function( event ) {
+	onResizeStart( event ) {
 		event.stopPropagation();
 
 		this.view.$el.data( 'originalWidth', this.view.el.getBoundingClientRect().width );
@@ -68,19 +68,19 @@ ResizableBehavior = Marionette.Behavior.extend( {
 		this.view.triggerMethod( 'request:resize:start', event );
 	},
 
-	onResizeStop: function( event ) {
+	onResizeStop( event ) {
 		event.stopPropagation();
 
 		this.view.triggerMethod( 'request:resize:stop' );
 	},
 
-	onResize: function( event, ui ) {
+	onResize( event, ui ) {
 		event.stopPropagation();
 
 		this.view.triggerMethod( 'request:resize', ui, event );
 	},
 
-	getChildViewContainer: function() {
+	getChildViewContainer() {
 		return this.$el;
 	},
 } );

@@ -21,7 +21,7 @@ export class Elements extends FileParserBase {
 	 */
 	async parse() {
 		return ( await this.reader.getData() ).content.map(
-			( element ) => ContainerFactory.createElementContainer( element )
+			( element ) => ContainerFactory.createElementContainer( element ),
 		);
 	}
 

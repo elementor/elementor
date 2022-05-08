@@ -34,7 +34,7 @@ jQuery( () => {
 						callbacks.register( 'after', callableBase );
 						callbacks.register( 'after', callableBase );
 					},
-					new Error( `id: '${ random.toString() }' is already in use.` )
+					new Error( `id: '${ random.toString() }' is already in use.` ),
 				);
 			} );
 		} );

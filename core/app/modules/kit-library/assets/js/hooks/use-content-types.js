@@ -7,14 +7,14 @@ export const KEY = 'content-types';
  * The data should come from the server, this is a temp solution that helps to demonstrate that data comes from the server
  * but for now this is a local data.
  *
- * @returns {UseQueryResult<Promise.constructor, unknown>}
+ * @return {import('react-query').UseQueryResult<Promise.constructor, unknown>} result
  */
 export default function useContentTypes() {
 	return useQuery( [ KEY ], fetchContentTypes );
 }
 
 /**
- * @returns {Promise.constructor}
+ * @return {Promise.constructor} content types
  */
 function fetchContentTypes() {
 	return Promise.resolve( [

@@ -1,5 +1,15 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
 
+/**
+ * @typedef {import('../modules/component-base')} ComponentBase
+ */
+/**
+ * @typedef {import('../modules/command-base')} CommandBase
+ */
+/**
+ * @typedef {{}} Component
+ */
+
 export default class Commands extends CommandsBackwardsCompatibility {
 	/**
 	 * Function constructor().
@@ -21,8 +31,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-	 * @param id
-	 * @returns {CommandBase}
+	 * @param {string} id
+	 * @return {CommandBase} command class
 	 */
 	getCommandClass( id ) {
 		return this.classes[ id ];
@@ -33,7 +43,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * Receive all loaded commands.
 	 *
-	 * @returns {string[]}
+	 * @return {string[]} commands
 	 */
 	getAll() {
 		return Object.keys( this.commands ).sort();
@@ -45,10 +55,10 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Register new command.
 	 *
 	 * @param {ComponentBase|string} component
-	 * @param {string} command
-	 * @param {function()} callback
+	 * @param {string}               command
+	 * @param {Function}             callback
 	 *
-	 * @returns {Commands}
+	 * @return {Commands} commands
 	 */
 	register( component, command, callback ) {
 		let namespace;
@@ -123,7 +133,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} command
 	 *
-	 * @returns {Component}
+	 * @return {Component} component
 	 */
 	getComponent( command ) {
 		const namespace = this.components[ command ];
@@ -138,7 +148,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} command
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is this command the same as the one passed in the arguments
 	 */
 	is( command ) {
 		const component = this.getComponent( command );
@@ -157,7 +167,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} command
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is parameter command the first command in trace that currently running
 	 */
 	isCurrentFirstTrace( command ) {
 		return command === this.getCurrentFirstTrace();
@@ -170,7 +180,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} container
 	 *
-	 * @returns {{}|boolean|*}
+	 * @return {{}|boolean|*} currently running components
 	 */
 	getCurrent( container = '' ) {
 		if ( container ) {
@@ -191,7 +201,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} container
 	 *
-	 * @returns {{}|boolean|*}
+	 * @return {{}|boolean|*} current arguments
 	 */
 	getCurrentArgs( container = '' ) {
 		if ( container ) {
@@ -210,7 +220,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * Receive first command that currently running.
 	 *
-	 * @returns {string}
+	 * @return {string} first running command
 	 */
 	getCurrentFirst() {
 		return Object.values( this.current )[ 0 ];
@@ -221,7 +231,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * Receive last command that currently running.
 	 *
-	 * @returns {string}
+	 * @return {string} last running command
 	 */
 	getCurrentLast() {
 		const current = Object.values( this.current );
@@ -234,7 +244,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * Receive first command in trace that currently running
 	 *
-	 * @returns {string}
+	 * @return {string} first command in trace
 	 */
 	getCurrentFirstTrace() {
 		return this.currentTrace[ 0 ];
@@ -244,9 +254,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Function beforeRun().
 	 *
 	 * @param {string} command
-	 * @param {} args
+	 * @param {*}      args
 	 *
-	 * @returns {boolean} dependency result
+	 * @return {boolean} dependency result
 	 */
 	beforeRun( command, args = {} ) {
 		if ( ! this.commands[ command ] ) {
@@ -264,9 +274,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Runs a command.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
+	 * @param {{}}     args
 	 *
-	 * @returns {boolean|*} results
+	 * @return {boolean|*} results
 	 */
 	run( command, args = {} ) {
 		if ( ! this.beforeRun( command, args ) ) {
@@ -311,9 +321,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * It's separated in order to allow override.
 	 *
 	 * @param {string} command
-	 * @param {*} event
+	 * @param {*}      event
 	 *
-	 * @returns {boolean|*}
+	 * @return {boolean|*} result
 	 */
 	runShortcut( command, event ) {
 		return this.run( command, event );
@@ -341,7 +351,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * Throws error.
 	 *
-	 * @throw {Error}
+	 * @throws {Error}
 	 *
 	 * @param {string} message
 	 */

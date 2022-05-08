@@ -4,7 +4,7 @@ var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
 ControlMediaItemView = ControlMultipleBaseItemView.extend( {
-	ui: function() {
+	ui() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
@@ -17,14 +17,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return ui;
 	},
 
-	events: function() {
+	events() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
 		} );
 	},
 
-	getMediaType: function() {
+	getMediaType() {
 		// `get( 'media_type' )` is for BC.
 		return this.mediaType || this.model.get( 'media_type' ) || this.model.get( 'media_types' )[ 0 ];
 	},
@@ -32,10 +32,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	/**
 	 * Get library type for `wp.media` using a given media type.
 	 *
-	 * @param {String} mediaType - The media type to get the library for.
-	 * @returns {String}
+	 * @param {string} mediaType - The media type to get the library for.
+	 * @return {string} library media type
 	 */
-	getLibraryType: function( mediaType ) {
+	getLibraryType( mediaType ) {
 		if ( ! mediaType ) {
 			mediaType = this.getMediaType();
 		}
@@ -43,7 +43,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
 
-	applySavedValue: function() {
+	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
 			mediaType = this.getMediaType();
@@ -64,7 +64,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
 	},
 
-	openFrame: function( e ) {
+	openFrame( e ) {
 		const mediaType = e?.target?.dataset?.mediaType || this.getMediaType();
 		this.mediaType = mediaType;
 
@@ -98,7 +98,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.frame.state().get( 'selection' ).add( wp.media.attachment( selectedId ) );
 	},
 
-	deleteImage: function( event ) {
+	deleteImage( event ) {
 		event.stopPropagation();
 
 		this.setValue( {
@@ -112,7 +112,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	/**
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
-	initFrame: function() {
+	initFrame() {
 		const mediaType = this.getMediaType();
 		this.currentLibraryType = this.getLibraryType( mediaType );
 
@@ -201,7 +201,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Callback handler for when an attachment is selected in the media modal.
 	 * Gets the selected image information, and sets it within the control.
 	 */
-	select: function() {
+	select() {
 		this.trigger( 'before:select' );
 
 		const state = this.frame.state();
@@ -240,7 +240,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.trigger( 'after:select' );
 	},
 
-	onBeforeDestroy: function() {
+	onBeforeDestroy() {
 		this.$el.remove();
 	},
 } );

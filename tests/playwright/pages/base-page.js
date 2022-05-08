@@ -1,6 +1,6 @@
 module.exports = class BasePage {
 	/**
-	 * @param {import('@playwright/test').Page} page
+	 * @param {import('@playwright/test').Page}     page
 	 * @param {import('@playwright/test').TestInfo} testInfo
 	 */
 	constructor( page, testInfo ) {

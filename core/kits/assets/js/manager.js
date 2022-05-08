@@ -223,7 +223,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 					widget.controls, // controls
 					[ '{{WRAPPER}}' ],
 					[ '.elementor-widget-' + widget.widget_type ],
-					globalValues
+					globalValues,
 				);
 			} );
 		} );

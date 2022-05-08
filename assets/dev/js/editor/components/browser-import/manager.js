@@ -4,6 +4,16 @@ import ItemCollection from 'elementor-editor/components/browser-import/items/ite
 import Normalizer from './normalizer';
 import Session from 'elementor-editor/components/browser-import/session';
 
+/**
+ * @typedef {import('../../container/container')} Container
+ */
+/**
+ * @typedef {import('./files/file-reader-base')} FileReaderBase
+ */
+/**
+ * @typedef {import('./files/file-parser-base')} FileParserBase
+ */
+
 export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * File-readers list.
@@ -28,7 +38,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		this.normalizer = new Normalizer( this );
 
 		$e.components.register(
-			new Component( { manager: this } )
+			new Component( { manager: this } ),
 		);
 
 		this.parseConfig( DefaultConfig );
@@ -37,7 +47,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Parse the config for the Manager.
 	 *
-	 * @param config
+	 * @param {*} config
 	 */
 	parseConfig( config = {} ) {
 		for ( const reader of config.readers || {} ) {
@@ -52,7 +62,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Create a new Session instance and normalize input if needed.
 	 *
-	 * @returns {Session}
+	 * @param {*}              input
+	 * @param {Container|null} target
+	 * @param {{}}             options
+	 * @return {Session} session
 	 */
 	async createSession( input, target, options = {} ) {
 		if ( ! ( input instanceof ItemCollection ) ) {
@@ -65,7 +78,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Register a new file-reader.
 	 *
-	 * @param reader
+	 * @param {{}} reader
 	 */
 	registerFileReader( reader ) {
 		this.readers[ reader.getName() ] = reader;
@@ -74,7 +87,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Register a new file-parser.
 	 *
-	 * @param parser
+	 * @param {*} parser
 	 */
 	registerFileParser( parser ) {
 		for ( const readerName of parser.getReaders() ) {
@@ -91,9 +104,9 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Get the file-handler that can handle the File of the given Item.
 	 *
-	 * @param item
-	 * @param instantiate
-	 * @returns {FileReaderBase|boolean}
+	 * @param {*}       item
+	 * @param {boolean} instantiate
+	 * @return {FileReaderBase|boolean} file handler
 	 */
 	async getReaderOf( item, instantiate = false ) {
 		const file = item.getFile(),
@@ -116,9 +129,9 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Get the file-parser that can handle the File of the given Item.
 	 *
-	 * @param item
-	 * @param instantiate
-	 * @returns {Promise<FileParserBase|boolean>}
+	 * @param {*}       item
+	 * @param {boolean} instantiate
+	 * @return {Promise<FileParserBase|boolean>} file parser
 	 */
 	async getParserOf( item, instantiate = false ) {
 		const reader = await this.getReaderOf( item, true ),
@@ -127,7 +140,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		if ( reader ) {
 			const parsers = this.getParsers(
 				reader.constructor.getName(),
-				parserName
+				parserName,
 			);
 
 			for ( const parser of Object.values( parsers ) ) {
@@ -147,8 +160,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Resolve the mime-type for an input using the registered parsers.
 	 *
-	 * @param input
-	 * @returns {Promise<string|boolean>}
+	 * @param {*} input
+	 * @return {Promise<string|boolean>} mime type, or false if not found
 	 */
 	async getMimeTypeOf( input ) {
 		for ( const reader of Object.values( this.getReaders() ) ) {
@@ -165,7 +178,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Get the Normalizer instance.
 	 *
-	 * @returns {Normalizer}
+	 * @return {Normalizer} normalizer
 	 */
 	getNormalizer() {
 		return this.normalizer;
@@ -174,8 +187,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Get all registered file-readers.
 	 *
-	 * @param readers
-	 * @returns {{}}
+	 * @param {*|Array<*>} readers
+	 * @return {{}} registered file readers
 	 */
 	getReaders( readers = [] ) {
 		readers = Array.isArray( readers ) ? readers : [ readers ];
@@ -186,16 +199,16 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 		return Object.fromEntries(
 			readers.filter( ( reader ) => reader in this.readers )
-				.map( ( reader ) => [ reader, this.readers[ reader ] ] )
+				.map( ( reader ) => [ reader, this.readers[ reader ] ] ),
 		);
 	}
 
 	/**
 	 * Get all registered file-parsers, unless a reader name is specified, in which case its parsers are returned.
 	 *
-	 * @param reader
-	 * @param parsers
-	 * @returns {{}}
+	 * @param {*} reader
+	 * @param {*} parsers
+	 * @return {{}} parsers
 	 */
 	getParsers( reader, parsers = [] ) {
 		parsers = Array.isArray( parsers ) ? parsers : [ parsers ];
@@ -206,7 +219,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 		return Object.fromEntries(
 			parsers.filter( ( parser ) => parser in this.parsers[ reader ] )
-				.map( ( parser ) => [ parser, this.parsers[ reader ][ parser ] ] )
+				.map( ( parser ) => [ parser, this.parsers[ reader ][ parser ] ] ),
 		);
 	}
 }

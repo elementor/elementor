@@ -8,7 +8,7 @@ EditorView = ControlsStack.extend( {
 
 	childViewContainer: '#elementor-controls',
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			element: this.getOption( 'editedElementView' ),
 			container: this.getOption( 'editedElementView' ).getContainer(),
@@ -19,7 +19,7 @@ EditorView = ControlsStack.extend( {
 		};
 	},
 
-	getNamespaceArray: function() {
+	getNamespaceArray() {
 		var eventNamespace = elementorModules.editor.views.ControlsStack.prototype.getNamespaceArray();
 
 		const model = this.getOption( 'editedElementView' ).getEditModel(),
@@ -36,7 +36,7 @@ EditorView = ControlsStack.extend( {
 		return eventNamespace;
 	},
 
-	initialize: function() {
+	initialize() {
 		ControlsStack.prototype.initialize.apply( this, arguments );
 
 		const editSettings = this.model.get( 'editSettings' );
@@ -52,7 +52,7 @@ EditorView = ControlsStack.extend( {
 		}
 	},
 
-	activateSection: function() {
+	activateSection() {
 		ControlsStack.prototype.activateSection.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'panel', {
@@ -63,33 +63,33 @@ EditorView = ControlsStack.extend( {
 		return this;
 	},
 
-	openActiveSection: function() {
+	openActiveSection() {
 		ControlsStack.prototype.openActiveSection.apply( this, arguments );
 
 		elementor.channels.editor.trigger( 'section:activated', this.activeSection, this );
 	},
 
-	isVisibleSectionControl: function( sectionControlModel ) {
+	isVisibleSectionControl( sectionControlModel ) {
 		return ControlsStack.prototype.isVisibleSectionControl.apply( this, arguments ) && elementor.helpers.isActiveControl( sectionControlModel, this.model.get( 'settings' ).attributes, this.model.get( 'settings' ).controls );
 	},
 
-	scrollToEditedElement: function() {
+	scrollToEditedElement() {
 		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ).$el );
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		this.model.trigger( 'editor:close' );
 
 		this.triggerMethod( 'editor:destroy' );
 	},
 
-	onDeviceModeChange: function() {
+	onDeviceModeChange() {
 		ControlsStack.prototype.onDeviceModeChange.apply( this, arguments );
 
 		this.scrollToEditedElement();
 	},
 
-	onChildviewSettingsChange: function( childView ) {
+	onChildviewSettingsChange( childView ) {
 		var editedElementView = this.getOption( 'editedElementView' ),
 			editedElementType = editedElementView.model.get( 'elType' );
 

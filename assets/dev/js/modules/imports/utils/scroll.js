@@ -1,11 +1,11 @@
 // Moved from elementor pro: 'assets/dev/js/frontend/utils'
 export default class Scroll {
 	/**
-	 * @param {object} obj
-	 * @param {number} obj.sensitivity - Value between 0-100 - Will determine the intersection trigger points on the element
-	 * @param {function} obj.callback - Will be triggered on each intersection point between the element and the viewport top/bottom
-	 * @param {string} obj.offset - Offset between the element intersection points and the viewport, written like in CSS: '-50% 0 -25%'
-	 * @param {HTMLElement} obj.root - The element that the events will be relative to, if 'null' will be relative to the viewport
+	 * @param {Object}      obj
+	 * @param {number}      obj.sensitivity - Value between 0-100 - Will determine the intersection trigger points on the element
+	 * @param {Function}    obj.callback    - Will be triggered on each intersection point between the element and the viewport top/bottom
+	 * @param {string}      obj.offset      - Offset between the element intersection points and the viewport, written like in CSS: '-50% 0 -25%'
+	 * @param {HTMLElement} obj.root        - The element that the events will be relative to, if 'null' will be relative to the viewport
 	 */
 	static scrollObserver( obj ) {
 		let lastScrollY = 0;
@@ -54,10 +54,10 @@ export default class Scroll {
 	}
 
 	/**
-	 * @param {jQuery Element} $element
-	 * @param {object} offsetObj
-	 * @param {number} offsetObj.start - Offset start value in percentages
-	 * @param {number} offsetObj.end - Offset end value in percentages
+	 * @param {jQuery.Element} $element
+	 * @param {Object}         offsetObj
+	 * @param {number}         offsetObj.start - Offset start value in percentages
+	 * @param {number}         offsetObj.end   - Offset end value in percentages
 	 */
 	static getElementViewportPercentage( $element, offsetObj = {} ) {
 		const elementOffset = $element[ 0 ].getBoundingClientRect(),
@@ -75,9 +75,9 @@ export default class Scroll {
 	}
 
 	/**
-	 * @param {object} offsetObj
+	 * @param {Object} offsetObj
 	 * @param {number} offsetObj.start - Offset start value in percentages
-	 * @param {number} offsetObj.end - Offset end value in percentages
+	 * @param {number} offsetObj.end   - Offset end value in percentages
 	 * @param {number} limitPageHeight - Will limit the page height calculation
 	 */
 	static getPageScrollPercentage( offsetObj = {}, limitPageHeight ) {

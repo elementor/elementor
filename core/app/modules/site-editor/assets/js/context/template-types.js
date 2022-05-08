@@ -45,20 +45,20 @@ class TemplateTypesContext extends React.Component {
 
 		if ( this.state.loading ) {
 			return (
-			<div className="elementor-loading">
-				<div className="elementor-loader-wrapper">
-					<div className="elementor-loader">
-						<div className="elementor-loader-boxes">
-							<div className="elementor-loader-box"/>
-							<div className="elementor-loader-box"/>
-							<div className="elementor-loader-box"/>
-							<div className="elementor-loader-box"/>
+				<div className="elementor-loading">
+					<div className="elementor-loader-wrapper">
+						<div className="elementor-loader">
+							<div className="elementor-loader-boxes">
+								<div className="elementor-loader-box" />
+								<div className="elementor-loader-box" />
+								<div className="elementor-loader-box" />
+								<div className="elementor-loader-box" />
+							</div>
 						</div>
+						<div className="elementor-loading-title">{ __( 'Loading', 'elementor' ) }</div>
 					</div>
-					<div className="elementor-loading-title">{ __( 'Loading', 'elementor' ) }</div>
 				</div>
-			</div> );
-			// <div className="e-loading-wrapper"><h3>{ __( 'Loading', 'elementor' ) }...</h3></div>;
+			);
 		}
 
 		return (

@@ -17,7 +17,7 @@ export default function SearchInput( props ) {
 	return (
 		<div className={ `eps-search-input__container ${ props.className }` }>
 			<input
-				className={`eps-search-input eps-search-input--${ props.size }`}
+				className={ `eps-search-input eps-search-input--${ props.size }` }
 				placeholder={ props.placeholder }
 				value={ localValue }
 				onChange={ ( e ) => {
@@ -25,13 +25,13 @@ export default function SearchInput( props ) {
 					debouncedOnChange( e.target.value );
 				} }
 			/>
-			<Icon className={`eicon-search-bold eps-search-input__icon eps-search-input__icon--${ props.size }`}/>
+			<Icon className={ `eicon-search-bold eps-search-input__icon eps-search-input__icon--${ props.size }` } />
 			{
 				props.value &&
 				<Button
 					text={ __( 'Clear', 'elementor' ) }
 					hideText={ true }
-					className={`eicon-close-circle eps-search-input__clear-icon eps-search-input__clear-icon--${ props.size }`}
+					className={ `eicon-close-circle eps-search-input__clear-icon eps-search-input__clear-icon--${ props.size }` }
 					onClick={ () => props.onChange( '' ) }
 				/>
 			}

@@ -31,7 +31,7 @@ export default class Taxonomy extends BaseModel {
 	/**
 	 * Create a tag from server response
 	 *
-	 * @param taxonomy
+	 * @param {Taxonomy} taxonomy
 	 */
 	static createFromResponse( taxonomy ) {
 		return new Taxonomy().init( {

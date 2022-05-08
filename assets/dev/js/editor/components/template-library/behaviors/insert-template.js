@@ -9,7 +9,7 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 		'click @ui.insertButton': 'onInsertButtonClick',
 	},
 
-	onInsertButtonClick: function() {
+	onInsertButtonClick() {
 		const args = {
 			model: this.view.model,
 		};

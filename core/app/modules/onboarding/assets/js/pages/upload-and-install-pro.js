@@ -113,10 +113,10 @@ export default function UploadAndInstallPro() {
 					secondaryText={ __( 'or', 'elementor' ) }
 					buttonText={ __( 'Browse', 'elementor' ) }
 				/>
-				{ noticeState && <Notice noticeState={ noticeState }/> }
+				{ noticeState && <Notice noticeState={ noticeState } /> }
 				<div className="e-onboarding__upload-pro-get-file">
 					{ __( 'Don\'t know where to get the file from?', 'elementor' ) + ' ' }
-					{/* eslint-disable-next-line react/jsx-no-target-blank */}
+					{ /* eslint-disable-next-line react/jsx-no-target-blank */ }
 					<a onClick={ () => onProUploadHelpLinkClick() } href={ 'https://my.elementor.com/subscriptions/' + elementorAppConfig.onboarding.utms.downloadPro } target="_blank">
 						{ __( 'Click here', 'elementor' ) }
 					</a>

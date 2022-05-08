@@ -4,15 +4,15 @@ import * as parsers from './files/parsers';
 /**
  * Recursively convert objects to arrays of values.
  *
- * @param object
- * @returns {[]}
+ * @param {*} object
+ * @return {[]} values
  */
 const recursiveValues = ( object ) => {
 	return Object.values( object )
 		.map( ( value ) => {
-			return 'object' === typeof value ?
-				Object.values( value ) :
-				value;
+			return 'object' === typeof value
+				? Object.values( value )
+				: value;
 		} );
 };
 

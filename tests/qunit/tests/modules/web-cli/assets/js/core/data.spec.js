@@ -125,14 +125,14 @@ jQuery( () => {
 			assert.throws( () => {
 					$e.data.validateRequestData( {} );
 				},
-				new Error( 'component is required.' )
+				new Error( 'component is required.' ),
 			);
 			assert.throws( () => {
 					$e.data.validateRequestData( {
 						component: {},
 					} );
 				},
-				new Error( 'command is required.' )
+				new Error( 'command is required.' ),
 			);
 			assert.throws( () => {
 					$e.data.validateRequestData( {
@@ -140,7 +140,7 @@ jQuery( () => {
 						command: '',
 					} );
 				},
-				new Error( 'endpoint is required.' )
+				new Error( 'endpoint is required.' ),
 			);
 		} );
 
@@ -171,7 +171,7 @@ jQuery( () => {
 			const type = 'some-invalid-type';
 
 			assert.throws( () => $e.data.prepareHeaders( { type } ),
-				new Error( `Invalid type: '${ type }'` )
+				new Error( `Invalid type: '${ type }'` ),
 			);
 		} );
 
@@ -182,7 +182,7 @@ jQuery( () => {
 				};
 
 			assert.throws( () => $e.data.prepareHeaders( requestData ),
-				new Error( `Invalid requestData.args.data` )
+				new Error( `Invalid requestData.args.data` ),
 			);
 		} );
 
@@ -340,7 +340,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 				},
 				someData = {
 					someKey: 'someValue',
@@ -367,7 +367,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), args ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 					args,
 				},
 				someData = {

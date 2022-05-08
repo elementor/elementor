@@ -1,4 +1,11 @@
 /**
+ * @typedef {import('../../../container/container')} Container
+ */
+/**
+ * @typedef {import('./file-reader-base')} FileReaderBase
+ */
+
+/**
  * @abstract
  */
 export default class FileParserBase {
@@ -19,7 +26,7 @@ export default class FileParserBase {
 	/**
 	 * FileParseBase constructor.
 	 *
-	 * @param reader
+	 * @param {FileReaderBase} reader
 	 */
 	constructor( reader ) {
 		this.reader = reader;
@@ -29,7 +36,7 @@ export default class FileParserBase {
 	 * Get the file-parser name.
 	 *
 	 * @abstract
-	 * @returns {string}
+	 * @return {string} name
 	 */
 	static getName() {
 		return '';
@@ -39,7 +46,7 @@ export default class FileParserBase {
 	 * Get all readers the parser can handle with.
 	 *
 	 * @abstract
-	 * @returns {string[]}
+	 * @return {string[]} readers
 	 */
 	static getReaders() {
 		return [];
@@ -49,7 +56,7 @@ export default class FileParserBase {
 	 * Parse the the input as needed by this parser, and return Container objects to be processed.
 	 *
 	 * @abstract
-	 * @returns {Container[]}
+	 * @return {Container[]} containers
 	 */
 	async parse() {}
 
@@ -58,10 +65,10 @@ export default class FileParserBase {
 	 * very accurate and specific so if the parser can't handle the file for sure, the next parsers will have the
 	 * opportunity to do so.
 	 *
-	 * @param reader
+	 * @param {*} reader
 	 *
 	 * @abstract
-	 * @returns {boolean}
+	 * @return {boolean} is valid
 	 */
 	static async validate( reader ) { // eslint-disable-line no-unused-vars
 		return false;

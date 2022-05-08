@@ -4,7 +4,7 @@ export default class ElementsColorPicker extends elementorModules.ViewModule {
 	/**
 	 * Initialize the Eye-Dropper module.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	onInit() {
 		super.onInit();

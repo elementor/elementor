@@ -16,11 +16,11 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		'input @ui.input': 'onInputChanged',
 	},
 
-	clearInput: function() {
+	clearInput() {
 		this.ui.input.val( '' );
 	},
 
-	onInputChanged: function( event ) {
+	onInputChanged( event ) {
 		const ESC_KEY = 27;
 
 		if ( ESC_KEY === event.keyCode ) {

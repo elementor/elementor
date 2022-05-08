@@ -70,7 +70,7 @@ export const Paste = () => {
 					assert.equal(
 						eColumns[ 1 ].model.get( 'elements' ).models[ i ].get( 'widgetType' ),
 						toCopy[ i ].model.get( 'widgetType' ),
-						`Element ${ i + 1 } preserved its order.`
+						`Element ${ i + 1 } preserved its order.`,
 					);
 				}
 			} );
@@ -100,7 +100,7 @@ export const Paste = () => {
 					assert.equal(
 						toCopy[ i ].children[ 0 ].model.get( 'widgetType' ),
 						eSection2.children[ i + 1 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						`Column ${ i + 1 } preserved its order.`
+						`Column ${ i + 1 } preserved its order.`,
 					);
 				}
 			} );
@@ -128,7 +128,7 @@ export const Paste = () => {
 					assert.equal(
 						toCopy[ i ].children[ 0 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
 						pasted[ i ].model.get( 'elements' ).models[ 0 ].get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						`Column ${ i + 1 } preserved its order.`
+						`Column ${ i + 1 } preserved its order.`,
 					);
 				}
 			} );
@@ -152,7 +152,7 @@ export const Paste = () => {
 					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
 						.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-					'Elements preserved their position.'
+					'Elements preserved their position.',
 				);
 			} );
 

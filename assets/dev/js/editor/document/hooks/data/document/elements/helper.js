@@ -39,7 +39,7 @@ export default class Helper {
 			} );
 		} else if ( columns ) {
 			containers.forEach( ( /* Container */ container ) =>
-				container.view.resetLayout()
+				container.view.resetLayout(),
 			);
 
 			// Focus on last container.

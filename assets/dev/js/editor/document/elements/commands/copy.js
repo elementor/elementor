@@ -6,8 +6,7 @@ export class Copy extends CommandBase {
 	}
 
 	apply( args ) {
-		const { storageKey = 'clipboard', containers = [ args.container ] } = args,
-			elements = elementor.getPreviewView().$el.find( '.elementor-element' );
+		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
 		if ( ! elementor.selection.isSameType() ) {
 			elementor.notifications.showToast( {
@@ -23,11 +22,12 @@ export class Copy extends CommandBase {
 			return false;
 		}
 
+		const elements = elementor.getPreviewView().$el.find( '.elementor-element' );
 		elementorCommon.storage.set(
 			storageKey,
 			containers.sort( ( first, second ) => {
 				return elements.index( first.view.el ) - elements.index( second.view.el );
-			} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
+			} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) ),
 		);
 	}
 }

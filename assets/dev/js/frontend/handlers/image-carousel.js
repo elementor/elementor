@@ -105,8 +105,6 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 	async onInit( ...args ) {
 		super.onInit( ...args );
 
-		const elementSettings = this.getElementSettings();
-
 		if ( ! this.elements.$swiperContainer.length || 2 > this.elements.$slides.length ) {
 			return;
 		}
@@ -118,6 +116,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		// Expose the swiper instance in the frontend
 		this.elements.$swiperContainer.data( 'swiper', this.swiper );
 
+		const elementSettings = this.getElementSettings();
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}

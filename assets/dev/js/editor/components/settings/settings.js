@@ -11,11 +11,11 @@ module.exports = elementorModules.Module.extend( {
 		base: require( 'elementor-editor/components/settings/base/panel' ),
 	},
 
-	onInit: function() {
+	onInit() {
 		this.initSettings();
 	},
 
-	initSettings: function() {
+	initSettings() {
 		var self = this;
 
 		_.each( elementor.config.settings, function( config, name ) {

@@ -18,6 +18,7 @@ export default function WizardStep( props ) {
 				<Grid className="e-app-import-export-wizard-step__media-container" justify="center" alignItems="end" container>
 					{
 						props.image &&
+						// eslint-disable-next-line jsx-a11y/alt-text
 						<img
 							className="e-app-import-export-wizard-step__image"
 							src={ props.image }

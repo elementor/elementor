@@ -87,7 +87,7 @@ export default function ImportProcess() {
 			kitActions.import( {
 				session: uploadedData.session,
 				include: includes,
-				overrideConditions: overrideConditions,
+				overrideConditions,
 				referrer,
 				selectedCustomPostTypes,
 			} );
