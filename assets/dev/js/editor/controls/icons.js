@@ -135,7 +135,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				event.stopPropagation();
 
 				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link + '&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
 						'#tab-fontawesome4_migration';
 				};
 				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
