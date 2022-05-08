@@ -1,5 +1,11 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev7 - 2022-05-08
+* New: Modules/Usage - Add page settings to tracking data [ED-1229] (#13408)
+* Tweak: Custom size in image widget can no longer accept non-numeric characters [ED-7101] (#18570)
+* Tweak: Added WooCommerce CSS variables (#18571)
+* Fix: Container - Sometimes changing a control breaks the Editor [ED-7100] (#18569)
+
 #### 3.7.0-dev6 - 2022-05-01
 * Fix: Missing escaping translation to module onboarding (#18445) [ED-7022]
 * Fix: Template library - Clear leftovers [ED-7030] (#18507)
@@ -415,7 +421,3 @@
 
 #### 3.5.0-dev26 - 2021-09-15
 * Tweak: Updated featured video in readme.txt (#16332)
-
-#### 3.5.0-dev25 - 2021-09-14
-* Fix: Elements panel UI glitch [ED-4959] (#16282)
-* Fix: Offsets not working properly with an absolutely positioned widget and Improved DOM experiment [ED-4945] (#16253)
