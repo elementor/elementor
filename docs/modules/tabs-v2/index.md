@@ -18,7 +18,7 @@
 					- 📄 [view.js](#assetsjseditorviewsviewjs---custom-view-for-the-widget) - `The widget view, actually used to manipulate clicks on the widget (view), register the model, view. emptyView for the widget.`
 			- 📂 __frontend__
 				- 📂 __handlers__
-					- 📄 [tabs\-v2.js](assets/js/frontend/handlers/tabs-v2.js) - `Frontend handler(s), custom handlers for interacting with the widget.`
+					- 📄 [tabs\-v2.js](#assetsjsfrontendhandlerstabs-v2js---custom-frontend-handler) - `Frontend handler(s), custom handlers for interacting with the widget.`
 		- 📂 __scss__
 			- 📄 [frontend.scss](assets/scss/frontend.scss) - `All CSS will be used in frontend, how visually the widget will looks`
 	- 📄 [module.php](#assetsjseditormodulejs---the-module-register-the-widget) - `The module, enable the experiment to work on/off, register editor scripts`
@@ -140,10 +140,8 @@ How to register a module?
   ```
 ## `assets/js/frontend/handlers/tabs-v2.js` - Custom frontend handler.
 * **Link to the actual file** - [tabs-v2.js](../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js)
-* Requirement:
+* Since NestedElements, and TabV2, are modules, it will be required to create such custom handler.
 ```javascript
-import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
-
 export default class YourCustomHandler extends elementorModules.frontend.handlers.TabsV2 {
 	// Create your custom handler.
 }
