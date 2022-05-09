@@ -50,9 +50,9 @@
     * Backend Widget:
         * __TabsV2__ Widget registration `modules/tabs-v2/widgets/tabs-v2.php`
 
-> The views are extra, and are not required to be used.
+	> The views are extra, and are not required to be used.
 
-###The flow:
+The flow:
 * Editor:
     - `module.php` -> register the widget -> `widgets/tabs-v2.php`
     - ... -> load editor script `assets/js/editor/index.js`
@@ -343,6 +343,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
        - `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`.
 
 ## `assets/js/editor/views/add-section-area.js` - Custom `AddSectionArea` for nested tabs.
+* **Link to the actual file** - [add-section-area.js](../../../modules/tabs-v2/assets/js/editor/views/add-section-area.js)
 ```javascript
 import { useEffect, useRef } from 'react';
 
@@ -433,8 +434,9 @@ AddSectionArea.propTypes = {
     };
 	
     ```
-	- This component determine which component to print `SelectPreset` or `AddSectionArea`.
-## `assets/js/editor/views/select-preset.js` - Custom react component to print the presets avilable for children containers.
+	- This component determines which component to print `SelectPreset` or `AddSectionArea`.
+## `assets/js/editor/views/select-preset.js` - Custom react component to print the presets available for children containers.
+* **Link to the actual file** - [select-preset.js](../../../modules/tabs-v2/assets/js/editor/views/select-preset.js)
 ```javascript
 export default function SelectPreset( props ) {
 	const containerHelper = elementor.helpers.container,
@@ -475,9 +477,27 @@ SelectPreset.propTypes = {
 };
 ```
 
-# TBD
-- !! Data binding.
-
-
-
-
+## Another useful feature that used in nested tabs is partial data render
+* Since the default render mechanism is render all the children each render,
+  * There is issue with the nested-tabs, when you modify the 'tab-title' or 'tab-content' for example, and the whoe nested-tabs children hierarchy is affected, and gets re-render which create huge performance impact 
+  * The new nested infrastructure is allowing to avoid it, using new feature called partial render:
+    * The feature will avoid the full re-render and select this exact node/markup and modify only it.
+    * You will be able to achieve that using the following markup in the element:
+      - for repeater items, example:
+      ```html
+        <element 
+            'data-binding-type': 'repeater-item',  // Type of binding (to know how to behave).
+            'data-binding-repeater-name': 'tabs',  // Repeater setting key that effect the binding.
+            'data-binding-setting': 'tab_title',   // The key in the repeater that effect the binding.
+            'data-binding-index': tabCount,        // Index is required for repeater items.
+        >
+        </element>
+      ```
+        - for simple settings items, example:
+	  ```html
+		 <element
+		 	'data-binding-type': 'content', 		 // Type of binding (to know how to behave).
+		 	'data-binding-setting': 'testimonial_content',   // Setting change to capture, the value will replace the data-binding.
+		 </element>
+	  ```
+      > Use it in the `_content_template()` method.
