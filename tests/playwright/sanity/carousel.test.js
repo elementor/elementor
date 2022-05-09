@@ -26,6 +26,9 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
   await page.locator('text=Create a new gallery').click();
   // Click text=Insert gallery
   await page.locator('text=Insert gallery').click();
+    // Click #elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)
+    await page.click('#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)');
+    // Select no
+    await page.selectOption('select', 'no');
+  expect(await page.screenshot()).toMatchSnapshot('carousel.png');
 } );
-
-
