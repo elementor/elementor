@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Changing the default repeater control behavior for custom item title defaults.
  * For custom management of nested repeater controls.
  */
-class Nested_Repeater extends Control_Repeater {
+class Control_Nested_Repeater extends Control_Repeater {
 
 	const CONTROL_TYPE = 'nested-elements-repeater';
 
