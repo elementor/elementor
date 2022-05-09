@@ -89,7 +89,7 @@ export default class Scrubbing extends Marionette.Behavior {
 	/**
 	 * @param {HTMLElement[]} elements
 	 */
-	addClasses( elements ) {
+	setActive( elements ) {
 		elements.forEach( ( element ) => {
 			element.classList.add( this.scrubSettings.scrubbingActiveClass );
 		} );
@@ -98,7 +98,7 @@ export default class Scrubbing extends Marionette.Behavior {
 	/**
 	 * @param {HTMLElement[]} elements
 	 */
-	removeClasses( elements ) {
+	setInactive( elements ) {
 		elements.forEach( ( element ) => {
 			element.classList.remove( this.scrubSettings.scrubbingActiveClass );
 		} );
@@ -121,7 +121,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			document.addEventListener( 'mousemove', trackMovement );
 
 			$e.uiStates.set( 'document/scrubbing-mode', ScrubbingMode.ON );
-			this.addClasses( [ input ] );
+			this.setActive( [ input ] );
 		}, this.scrubSettings.intentTime );
 
 		document.addEventListener( 'mouseup', () => {
@@ -129,7 +129,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			clearTimeout( checkIntentTimeout );
 
 			$e.uiStates.remove( 'document/scrubbing-mode' );
-			this.removeClasses( [ input ] );
+			this.setInactive( [ input ] );
 		}, { once: true } );
 	}
 
@@ -142,7 +142,7 @@ export default class Scrubbing extends Marionette.Behavior {
 		}
 
 		$e.uiStates.set( 'document/scrubbing-mode', ScrubbingMode.ON );
-		this.addClasses( [ input, label ] );
+		this.setActive( [ input, label ] );
 
 		const trackMovement = ( movementEvent ) => {
 			this.scrub( input, movementEvent );
@@ -154,7 +154,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			document.removeEventListener( 'mousemove', trackMovement );
 
 			$e.uiStates.remove( 'document/scrubbing-mode' );
-			this.removeClasses( [ input, label ] );
+			this.setInactive( [ input, label ] );
 		}, { once: true } );
 	}
 
