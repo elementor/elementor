@@ -51,6 +51,8 @@
     * Backend Widget:
         * __TabsV2__ Widget registration `modules/tabs-v2/widgets/tabs-v2.php`
 
+> The views are extra, and are not required to be used.
+
 The following guide will help you to understand how the module works, step by step.
 
 Let start by registering the module:
@@ -240,7 +242,7 @@ How to register a module?
       }
   }
   ```
-* More advance example of registering the widget and manipulate the views.
+* More advance example of register the widget and manipulate the views.
     ```javascript
     import View from './views/view';            // Custom view for handling the clicks.
     import EmptyView from './views/empty';      // Customn empty view for handling empty in the widget.
@@ -317,6 +319,72 @@ How to register a module?
 	```
      - The view logic is handles the clicks on the widget, thats what it used in this senario, if there is no custom logic, the default nested view can be used:
        - `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`.
+
+## `assets/js/editor/views/add-section-area.js` - Custom `AddSectionArea` for nested tabs.
+```javascript
+import { useEffect, useRef } from 'react';
+
+export default function AddSectionArea( props ) {
+	const addAreaElementRef = useRef(),
+		containerHelper = elementor.helpers.container,
+		args = {
+			importOptions: {
+				target: props.container,
+			},
+		};
+
+	// Make droppable area.
+	useEffect( () => {
+		if ( props.container.view.isDisconnected() ) {
+			return;
+		}
+
+		const $addAreaElementRef = jQuery( addAreaElementRef.current ),
+			defaultDroppableOptions = props.container.view.getDroppableOptions();
+
+		// Make some adjustments to behave like 'AddSectionArea', use default droppable options from container element.
+		defaultDroppableOptions.placeholder = false;
+		defaultDroppableOptions.items = '> .elementor-add-section-inner';
+		defaultDroppableOptions.hasDraggingOnChildClass = 'elementor-dragging-on-child';
+
+		// Make element drop-able.
+		$addAreaElementRef.html5Droppable( defaultDroppableOptions );
+
+		// Cleanup.
+		return () => {
+			$addAreaElementRef.html5Droppable( 'destroy' );
+		};
+	}, [] );
+
+	return (
+		<div className="elementor-add-section" onClick={() => containerHelper.openEditMode( props.container )}
+				ref={addAreaElementRef}>
+			<div className="elementor-add-section-inner">
+				<div className="e-view elementor-add-new-section">
+					<div className="elementor-add-section-area-button elementor-add-section-button"
+						onClick={() => props.setIsRenderPresets( true )}
+						title={__( 'Add new container', 'elementor' )}>
+						<i className="eicon-plus"/>
+					</div>
+					<div className="elementor-add-section-area-button elementor-add-template-button"
+						onClick={() => $e.run( 'library/open', args )}
+						title={__( 'Add Template', 'elementor' )}>
+						<i className="eicon-folder"/>
+					</div>
+					<div className="elementor-add-section-drag-title">
+						{__( 'Drag widgets here to create nested widget.', 'elementor' )}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+AddSectionArea.propTypes = {
+	container: PropTypes.object.isRequired,
+	setIsRenderPresets: PropTypes.func.isRequired,
+};
+```
 ## `assets/js/editor/views/empty.js` - Custom empty-view for the widget.
 * **Link to the actual file** - [empty.js](../../../modules/tabs-v2/assets/js/editor/views/empty.js)
 
@@ -344,7 +412,46 @@ How to register a module?
 	
     ```
 	- This component determine which component to print `SelectPreset` or `AddSectionArea`.
+## `assets/js/editor/views/select-preset.js` - Custom react component to print the presets avilable for children containers.
+```javascript
+export default function SelectPreset( props ) {
+	const containerHelper = elementor.helpers.container,
+		onPresetSelected = ( preset, container ) => {
+			const options = {
+				createWrapper: false,
+			};
 
+			// Create new one by selected preset.
+			containerHelper.createContainerFromPreset( preset, container, options );
+		};
+
+	return (
+		<>
+			<div className="elementor-add-section-close">
+				<i onClick={() => props.setIsRenderPresets( false )} className="eicon-close" aria-hidden="true"/>
+				<span className="elementor-screen-only">{__( 'Close', 'elementor' )}</span>
+			</div>
+			<div className="e-view e-container-select-preset">
+				<div className="e-container-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
+				<div className="e-container-select-preset__list">
+					{
+						elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
+							<div onClick={() => onPresetSelected( preset, props.container )}
+								key={preset} className="e-container-preset" data-preset={preset}
+								dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.generateContainerPreset( preset ) }}/>
+						) )
+					}
+				</div>
+			</div>
+		</>
+	);
+}
+
+SelectPreset.propTypes = {
+	container: PropTypes.object.isRequired,
+	setIsRenderPresets: PropTypes.func.isRequired,
+};
+```
 
 # TBD
 -- Show minimal requirement for createing new widget, separate the extra from the main.
