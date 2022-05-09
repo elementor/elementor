@@ -409,7 +409,7 @@ AddSectionArea.propTypes = {
 ```
 ## `assets/js/editor/views/empty.js` - Custom empty-view for the widget.
 * **Link to the actual file** - [empty.js](../../../modules/tabs-v2/assets/js/editor/views/empty.js)
-
+* ![img](./_images/1.png)
 * The view should be `React` component, it will be the empty view for the widget children, in this case, the tabs.
     ```javascript
     import { useState } from 'react';
@@ -433,9 +433,10 @@ AddSectionArea.propTypes = {
     };
 	
     ```
-	- This component determines which component to print `SelectPreset` or `AddSectionArea`.
+    - This component determines which component to print `SelectPreset` or `AddSectionArea`.
 ## `assets/js/editor/views/select-preset.js` - Custom react component to print the presets available for children containers.
 * **Link to the actual file** - [select-preset.js](../../../modules/tabs-v2/assets/js/editor/views/select-preset.js)
+* ![img](./_images/2.jpg)
 ```javascript
 export default function SelectPreset( props ) {
 	const containerHelper = elementor.helpers.container,
