@@ -50,7 +50,7 @@
     * Backend Widget:
         * __TabsV2__ Widget registration `modules/tabs-v2/widgets/tabs-v2.php`
 
-	> The views are extra, and are not required to be used.
+	> The views are extra, and they are not required.
 
 The flow:
 * Editor:
@@ -479,7 +479,7 @@ SelectPreset.propTypes = {
 
 ## Another useful feature that used in nested tabs is partial data render
 * Since the default render mechanism is render all the children each render,
-  * There is issue with the nested-tabs, when you modify the 'tab-title' or 'tab-content' for example, and the whoe nested-tabs children hierarchy is affected, and gets re-render which create huge performance impact 
+  * There is issue with the nested-tabs, when you modify the 'tab-title' or 'tab-content' for example, and the whole nested-tabs children hierarchy is affected, it gets re-render which create huge performance impact 
   * The new nested infrastructure is allowing to avoid it, using new feature called partial render:
     * The feature will avoid the full re-render and select this exact node/markup and modify only it.
     * You will be able to achieve that using the following markup in the element:
