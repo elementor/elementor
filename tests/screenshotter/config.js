@@ -29,7 +29,7 @@ const config = {
 		'toggle',
 		'wp-widget-text',
 	],
-	url_origin: 'http://tests-wordpress:8889',
+	url_origin: 'http://e3-local-tests:8889',
 	tests_viewports: [
 		{
 			label: 'phone',
