@@ -1,5 +1,5 @@
 import Content from 'elementor/core/app/assets/js/layout/content';
-import ElementorLoading from '../../components/elementor-loading';
+import ElementorLoading from 'elementor-app/molecules/elementor-loading';
 import ItemHeader from '../../components/item-header';
 import Layout from '../../components/layout';
 import OverviewContentGroup from './overview-content-group';

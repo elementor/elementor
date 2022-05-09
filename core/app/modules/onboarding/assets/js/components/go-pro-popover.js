@@ -35,9 +35,16 @@ export default function GoProPopover( props ) {
 			);
 
 			// Run the callback for when the upload succeeds.
-			elementorCommon.elements.$window
-				.on( 'elementor/upload-and-install-pro/success/', () => {
-					updateState( { hasPro: true } );
+			elementorCommon.elements.$body
+				.on( 'elementor/upload-and-install-pro/success', () => {
+					updateState( {
+						hasPro: true,
+						proNotice: {
+							type: 'success',
+							icon: 'eicon-check-circle-o',
+							message: __( 'Elementor Pro has been successfully installed.', 'elementor' ),
+						},
+					} );
 				} );
 		} );
 	}, [] );
