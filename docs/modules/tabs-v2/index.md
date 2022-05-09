@@ -32,7 +32,7 @@
 * What are the difference between __TabsV2__ and __Nested Elements__ modules?
   > __Nested Elements__ is a base module for all nested elements, it includes the infrastructure for creating nested elements.
 
-  > __TabsV2__ is a module that allows you to created nested tabs.
+  > __TabsV2__ is a module that allows you to create nested tabs.
 
 	* __TabsV2__ module includes:
 		* Editor scripts:
@@ -63,11 +63,11 @@ The flow:
 * Frontend:
   - `module.php` -> register the widget -> `widgets/tabs-v2.php`
   - Load the handler `assets/js/frontend/handlers/tabs-v2.js`
-  - load the styles `assets/scss/frontend.scss`
+  - Load the styles `assets/scss/frontend.scss`
 
 The following guide will help you to understand how the module works, step by step.
 
-Let start by registering the module:
+Start by registering the module:
 
 ## `- Module.php` - How to register a module.
 * **Link to the actual file** - [module.php](../../../modules/tabs-v2/module.php)
@@ -168,7 +168,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 * Requirements:
 	* Before creating a __Widget__ you have to be familiar with the [simple widget creation process](https://developers.elementor.com/docs/widgets/).
 * Is it requirement?
-	* Yes, in other words it's simply the widget registration, including few abstract methods that are that explained in the next section.
+	* Yes, in other words it's simply the widget registration, including few abstract methods that will be explained in the next section.
 * The class should extend `Widget_Nested_Base` class, there are few important methods to note:
 	* `get_default_children_elements` - The inner children/elements that will be created when the widget created.
 	* `get_default_repeater_title_setting_key` - The setting key that will be used by `$e.run( 'document/elements/settings' )` in the frontend for the children title.
@@ -263,7 +263,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
       }
   }
   ```
-  > ### At this point, the widget is ready to be used and those the minimum requirements, the next examples are extras.
+  > ### At this point, the widget is ready to be used and those are the minimum requirements, the next examples are extras.
 * More advance example of register the widget and manipulate the views.
     ```javascript
     import View from './views/view';            // Custom view for handling the clicks.
@@ -409,7 +409,8 @@ AddSectionArea.propTypes = {
 ```
 ## `assets/js/editor/views/empty.js` - Custom empty-view for the widget.
 * **Link to the actual file** - [empty.js](../../../modules/tabs-v2/assets/js/editor/views/empty.js)
-* ![img](./_images/1.png)
+
+![img](./_images/1.png)
 * The view should be `React` component, it will be the empty view for the widget children, in this case, the tabs.
     ```javascript
     import { useState } from 'react';
@@ -436,7 +437,8 @@ AddSectionArea.propTypes = {
     - This component determines which component to print `SelectPreset` or `AddSectionArea`.
 ## `assets/js/editor/views/select-preset.js` - Custom react component to print the presets available for children containers.
 * **Link to the actual file** - [select-preset.js](../../../modules/tabs-v2/assets/js/editor/views/select-preset.js)
-* ![img](./_images/2.jpg)
+
+![img](./_images/2.jpg)
 ```javascript
 export default function SelectPreset( props ) {
 	const containerHelper = elementor.helpers.container,
