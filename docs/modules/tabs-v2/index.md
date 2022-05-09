@@ -29,7 +29,7 @@
 - --------------------------------------------------------------------------------------------------------------------------------
 
 # How NestedElements, TabsV2 (Nested tabs) works?
-* The module [__TabsV2__](./modules/tabs-v2/) will be used as live example of the guide.
+* The module [__TabsV2__](../../../modules/tabs-v2/) will be used as live example of the guide.
 * What are the difference between __TabsV2__ and __Nested Elements__ modules? 
   > __Nested Elements__ is a base module for all nested elements, it includes the infrastructure for creating nested elements.
 
@@ -97,46 +97,46 @@ How to register a module?
       return [ 'TabsV2' ]; // Located at widgets/tabs-v2.php (the file will be loaded automatically).
   }
   ```
-  * The complete module
-	```php
-	<?php
-	namespace Elementor\Modules\TabsV2;
+* The complete module
+  ```php
+  <?php
+  namespace Elementor\Modules\TabsV2;
 	
-	use Elementor\Core\Experiments\Manager as Experiments_Manager;
-	use Elementor\Modules\NestedElements\Module as NestedElementsModule;
+  use Elementor\Core\Experiments\Manager as Experiments_Manager;
+  use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 	
-	class Module extends \Elementor\Core\Base\Module {
+  class Module extends \Elementor\Core\Base\Module {
 	
-		public static function get_experimental_data() {
-			return [
-				'name' => 'tabs-v2',
-				'title' => esc_html__( 'Nested Tab', 'elementor' ),
-				'description' => esc_html__( 'Nested Tabs', 'elementor' ),
-				'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-				'default' => Experiments_Manager::STATE_INACTIVE,
-				'dependencies' => [ NestedElementsModule::class ],
-			];
-		}
+      public static function get_experimental_data() {
+          return [
+              'name' => 'tabs-v2',
+              'title' => esc_html__( 'Nested Tab', 'elementor' ),
+              'description' => esc_html__( 'Nested Tabs', 'elementor' ),
+              'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+              'default' => Experiments_Manager::STATE_INACTIVE,
+              'dependencies' => [ NestedElementsModule::class ],
+          ];
+      }
 	
-		public function get_name() {
-			return 'tabs-v2';
-		}
+      public function get_name() {
+          return 'tabs-v2';
+      }
 	
-		protected function get_widgets() {
-			return [ 'TabsV2' ];
-		}
+      protected function get_widgets() {
+          return [ 'TabsV2' ];
+      }
 	
-		public function __construct() {
-			parent::__construct();
+      public function __construct() {
+          parent::__construct();
 	
-			add_action( 'elementor/editor/before_enqueue_scripts', function () {
-				wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
-					'nested-elements',
-				], ELEMENTOR_VERSION, true );
-			} );
-		}
-	}
-	```
+          add_action( 'elementor/editor/before_enqueue_scripts', function () {
+              wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
+                  'nested-elements',
+              ], ELEMENTOR_VERSION, true );
+          } );
+      }
+  }
+  ```
 ## `widgets/tabs-v2.php` - How to register a widget.
 * **Link to the actual file** - [tabs-v2.php](../../../modules/tabs-v2/widgets/tabs-v2.php)
 * **Description** - The `widgets/tabs-v2.php` is main backend configuration file for widget with nested captabilties.
