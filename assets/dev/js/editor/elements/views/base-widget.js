@@ -35,6 +35,17 @@ class BaseWidgetView extends BaseElementView {
 		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	}
 
+	normalizeWidgetAttributes() {
+		const editModel = this.getEditModel(),
+			skinType = editModel.getSetting( '_skin' ) || 'default';
+
+		this.$el
+			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
+			.removeClass( 'elementor-widget-empty' )
+			.children( '.elementor-widget-empty-icon' )
+			.remove();
+	}
+
 	getTemplate() {
 		const editModel = this.getEditModel();
 
