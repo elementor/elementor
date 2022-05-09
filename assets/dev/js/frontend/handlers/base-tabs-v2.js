@@ -1,4 +1,6 @@
-export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base {
+import Base from './base';
+
+export default class BaseTabsV2 extends Base {
 	/**
 	 * @param {string|number} tabIndex
 	 *

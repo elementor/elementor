@@ -7,7 +7,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
-use Elementor\Modules\NestedElements\Controls\Nested_Repeater;
+use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
 
@@ -86,7 +86,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->add_control( 'tabs', [
 			'label' => esc_html__( 'Tabs Items', 'elementor' ),
-			'type' => Nested_Repeater::CONTROL_TYPE,
+			'type' => Control_Nested_Repeater::CONTROL_TYPE,
 			'fields' => $repeater->get_controls(),
 			'default' => [
 				[
