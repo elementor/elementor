@@ -7,7 +7,7 @@ const config = {
   reporter: 'line',
   testDir: '../',
   use: {
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true,
     video: 'on',
   },

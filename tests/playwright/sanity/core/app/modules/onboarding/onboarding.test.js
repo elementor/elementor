@@ -56,8 +56,8 @@ test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
 	const PageTitle = await page.waitForSelector( '.e-onboarding__page-content-section-title' ),
 		pageTitleText = await PageTitle.innerText();
 
-	// Check that the screen changed to the Hello page.
-	await expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
+	// Check that the screen changed to the Hello page or
+	await expect( pageTitleText ).toBe( "You're here! Let's set things up." );
 } );
 
 /**
