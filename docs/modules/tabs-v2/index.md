@@ -12,9 +12,9 @@
 				- 📄 [module.js](#assetsjseditormodulejs---the-module-register-the-widget) - `Load the widget and register it to editor elementsManager., wait for NestedElements module to be loaded first!.`
 				- 📄 [tabs\-v2.js](#assetsjseditortabs-v2js---register-the-widget) - `Register the widget in the editor.`
 				- 📂 __views__
-					- 📄 add\-section\-area.js - `React component that renders the add section area, rendered via empty.js`
+					- 📄 [add\-section\-area.js](#assetsjseditorviewsadd-section-areajs---custom-addsectionarea-for-nested-tabs) - `React component that renders the add section area, rendered via empty.js`
 					- 📄 [empty.js](#assetsjseditorviewsemptyjs---custom-empty-view-for-the-widget) - `React component, that will be rendered when the widget is empty, prints select-preset or add-section-area.`
-					- 📄 select\-preset.js `React component that Render  the preset for children container.`
+					- 📄 [select\-preset.js](#assetsjseditorviewsselect-presetjs---custom-react-component-to-print-the-presets-avilable-for-children-containers) `React component that Render  the preset for children container.`
 					- 📄 [view.js](#assetsjseditorviewsviewjs---custom-view-for-the-widget) - `The widget view, actually used to manipulate clicks on the widget (view), register the model, view. emptyView for the widget.`
 			- 📂 __frontend__
 				- 📂 __handlers__
@@ -25,7 +25,6 @@
 	- 📂 __widgets__
 		- 📄 [tabs\-v2.php](#widgetstabs-v2php---how-to-register-a-widget) - `Backend, The widget that will be nested, insert new widget into the system.`
 
-> Minimum requirement are `module.php` `tabs-v2.js` and `tabs-v2.php`
 - --------------------------------------------------------------------------------------------------------------------------------
 
 # How NestedElements, TabsV2 (Nested tabs) works?
@@ -139,6 +138,17 @@ How to register a module?
       }
   }
   ```
+## `assets/js/frontend/handlers/tabs-v2.js` - Custom frontend handler.
+* **Link to the actual file** - [tabs-v2.js](../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js)
+* Requirement:
+```javascript
+import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
+
+export default class YourCustomHandler extends elementorModules.frontend.handlers.TabsV2 {
+	// Create your custom handler.
+}
+```
+
 ## `widgets/tabs-v2.php` - How to register a widget.
 * **Link to the actual file** - [tabs-v2.php](../../../modules/tabs-v2/widgets/tabs-v2.php)
 * **Description** - The `widgets/tabs-v2.php` is main backend configuration file for widget with nested captabilties.
@@ -242,6 +252,7 @@ How to register a module?
       }
   }
   ```
+  > ### At this point, the widget is ready to be used and those the minimum requirements, the next examples are extras.
 * More advance example of register the widget and manipulate the views.
     ```javascript
     import View from './views/view';            // Custom view for handling the clicks.
@@ -454,20 +465,8 @@ SelectPreset.propTypes = {
 ```
 
 # TBD
--- Show minimal requirement for createing new widget, separate the extra from the main.
--- then go into the detials.
-
-- !! Add select-preset and add-section-area.
-
-- !! Register frontend handler.
-
 - !! Data binding.
 
--- GO Step by step to ensure you successfully create a new widget.
-
--- Ensure https://gist.github.com/iNewLegend/c50e629f10de1db16a099509a325e324 - looks good on github.
-
->  For more information about __Nested Elements__, please see [Nested Elements Module](#.)
 
 
 
