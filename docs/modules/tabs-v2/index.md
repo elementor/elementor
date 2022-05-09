@@ -28,29 +28,29 @@
 - --------------------------------------------------------------------------------------------------------------------------------
 
 # How NestedElements, TabsV2 (Nested tabs) works?
-* The module [__TabsV2__](../../../modules/tabs-v2/) will be used as live example of the guide.
-* What are the difference between __TabsV2__ and __Nested Elements__ modules? 
+* The module [__TabsV2__](../../../modules/tabs-v2/) will be used as a live example of the guide.
+* What are the difference between __TabsV2__ and __Nested Elements__ modules?
   > __Nested Elements__ is a base module for all nested elements, it includes the infrastructure for creating nested elements.
 
   > __TabsV2__ is a module that allows you to created nested tabs.
 
-  * __TabsV2__ module includes:
-    * Editor scripts:
-        * Widget: __TabsV2__ 
-        * Custom Views: 
-            * __View__ `modules/tabs-v2/assets/js/editor/views/view.js` - The actual view of the widget.
-        * Custom Empty widget views:
-            * __Empty View__ `modules/tabs-v2/assets/js/editor/views/empty.js` - The view that will be rendered when the widget is empty.
-            * __Select Preset View__ `modules/tabs-v2/assets/js/editor/views/select-preset.js` - will be rendered when select preset is selected.
-            * __Add Section Area View__ `modules/tabs-v2/assets/js/editor/views/add-section-area.js` - The default that will be renderd on the __Empty View__.
-    * Frontend scripts:
-        * __TabsV2__ Handler `modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js`
-    * Frontend styles:
-        * __TabsV2__ Styles `modules/tabs-v2/assets/scss/frontend.scss`
-    * Backend Widget:
-        * __TabsV2__ Widget registration `modules/tabs-v2/widgets/tabs-v2.php`
+	* __TabsV2__ module includes:
+		* Editor scripts:
+			* Widget: __TabsV2__
+			* Custom Views:
+				* __View__ `modules/tabs-v2/assets/js/editor/views/view.js` - The actual view of the widget.
+			* Custom Empty widget views:
+				* __Empty View__ `modules/tabs-v2/assets/js/editor/views/empty.js` - The view that will be rendered when the widget is empty.
+				* __Select Preset View__ `modules/tabs-v2/assets/js/editor/views/select-preset.js` - will be rendered when select preset selected.
+				* __Add Section Area View__ `modules/tabs-v2/assets/js/editor/views/add-section-area.js` - The default that will be rendered on the __Empty View__.
+		* Frontend scripts:
+			* __TabsV2__ Handler `modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js`
+		* Frontend styles:
+			* __TabsV2__ Styles `modules/tabs-v2/assets/scss/frontend.scss`
+		* Backend Widget:
+			* __TabsV2__ Widget registration `modules/tabs-v2/widgets/tabs-v2.php`
 
-	> The views are extra, and they are not required.
+	  > The views are extra, and they are not required.
 
 The flow:
 * Editor:
@@ -75,8 +75,8 @@ Let start by registering the module:
 * **Extends** - `\Elementor\Core\Base\Module`
 
 How to register a module?
-* Since __TabsV2__ (nested tabs) depends on `NestedElements` module, 
-   - use `get_experimental_data` method is used to notify the module dependency upon `NestedElementsModule`. Please see `'dependencies'` key.
+* Since __TabsV2__ (nested tabs) depends on `NestedElements` module,
+	- use `get_experimental_data` method used to notify the module dependency upon `NestedElementsModule`. Please see `'dependencies'` key.
     ```php
     use Elementor\Modules\NestedElements\Module as NestedElementsModule;
   
@@ -102,8 +102,8 @@ How to register a module?
         } );
   }
     ```
-  * Does it is a requirement for creating nested widgets?
-    * Yes, it is, since nested elements are required different `Model` to allow child to be another widget. 
+	* Does it is a requirement for creating nested widgets?
+		* Yes, it is, since nested elements required different `Model` to allow child to be another widget.
 
 * To register the widget, extend the `get_widgets` method in the `Module` and return the widget name, eg:
   ```php
@@ -162,18 +162,18 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 
 ## `widgets/tabs-v2.php` - How to register a widget.
 * **Link to the actual file** - [tabs-v2.php](../../../modules/tabs-v2/widgets/tabs-v2.php)
-* **Description** - The `widgets/tabs-v2.php` is main backend configuration file for widget with nested captabilties.
+* **Description** - The `widgets/tabs-v2.php` is the main backend configuration file for widget with nested capabilities.
 * **Extends** - [`\Elementor\Modules\NestedElements\Base\Widget_Nested_Base`](#)
 
 * Requirements:
 	* Before creating a __Widget__ you have to be familiar with the [simple widget creation process](https://developers.elementor.com/docs/widgets/).
-* Is it requirement? 
-    * Yes, in other words its simply the widget registration, including few abstract methods that are that explained in the next section.
+* Is it requirement?
+	* Yes, in other words it's simply the widget registration, including few abstract methods that are that explained in the next section.
 * The class should extend `Widget_Nested_Base` class, there are few important methods to note:
-  * `get_default_children_elements` - The inner children/elements that will be created when the widget is created.
-  * `get_default_repeater_title_setting_key` - The setting key that will be used by `$e.run( 'document/elements/settings' )` in the frontend for the children title.
-  * `get_defaults_children_title` - The tab title including `%d` for the index.
-  * `get_default_children_placeholder_selector` - Custom selector to place the children, in __TabsV2__ is used inside the tabs content. return `null` if the element should be added in the end of the element.
+	* `get_default_children_elements` - The inner children/elements that will be created when the widget created.
+	* `get_default_repeater_title_setting_key` - The setting key that will be used by `$e.run( 'document/elements/settings' )` in the frontend for the children title.
+	* `get_defaults_children_title` - The tab title including `%d` for the index.
+	* `get_default_children_placeholder_selector` - Custom selector to place the children, in __TabsV2__ is used inside the tabs content. Return `null` if the element should be added in the end of the element.
 
   ```php
   <?php
@@ -339,8 +339,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 	
 	export default View;
 	```
-     - The view logic is handles the clicks on the widget, thats what it used in this senario, if there is no custom logic, the default nested view can be used:
-       - `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`.
+- The view logic is handles the clicks on the widget, that's what it used in this scenario, if there is no custom logic, the default nested view can be used:       - `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`.
 
 ## `assets/js/editor/views/add-section-area.js` - Custom `AddSectionArea` for nested tabs.
 * **Link to the actual file** - [add-section-area.js](../../../modules/tabs-v2/assets/js/editor/views/add-section-area.js)
@@ -478,12 +477,12 @@ SelectPreset.propTypes = {
 ```
 
 ## Another useful feature that used in nested tabs is partial data render
-* Since the default render mechanism is render all the children each render,
-  * There is issue with the nested-tabs, when you modify the 'tab-title' or 'tab-content' for example, and the whole nested-tabs children hierarchy is affected, it gets re-render which create huge performance impact 
-  * The new nested infrastructure is allowing to avoid it, using new feature called partial render:
-    * The feature will avoid the full re-render and select this exact node/markup and modify only it.
-    * You will be able to achieve that using the following markup in the element:
-      - for repeater items, example:
+* Since the default render mechanism render all the children each render,
+	* There is issue with the nested-tabs, when you modify the `tab-title` or `tab-content` for example, and the whole nested-tabs children hierarchy affected, it gets re-render which create huge performance impact
+	* The new nested infrastructure is allowing to avoid it, if you know the markup in advance using new feature called __partial render__:
+		* The feature will avoid the full re-render and select this exact node/markup and modify only it.
+		* You will be able to achieve that using the following markup in the element:
+			- For repeater items, example:
       ```html
         <element 
             'data-binding-type': 'repeater-item',  // Type of binding (to know how to behave).
@@ -493,7 +492,7 @@ SelectPreset.propTypes = {
         >
         </element>
       ```
-        - for simple settings items, example:
+        - For simple settings items, example:
 	  ```html
 		 <element
 		 	'data-binding-type': 'content', 		 // Type of binding (to know how to behave).
