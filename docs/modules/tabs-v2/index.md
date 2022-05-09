@@ -53,15 +53,18 @@
 	  > The views are extra, and they are not required.
 
 The flow:
-* Editor:
-    - `module.php` -> register the widget -> `widgets/tabs-v2.php`
-    - ... -> load editor script `assets/js/editor/index.js`
-    - ... -> import module `assets/js/editor/module.js`
-    - ... -> register the widget `assets/js/editor/widgets/tabs-v2.js`
-    - ... -> register the widget with custom views: `assets/js/editor/views/view.js`, `assets/js/editor/views/empty.js`, `assets/js/editor/views/select-preset.js`, `assets/js/editor/views/add-section-area.js`
-    
+3 main flows, editor, frontend and backend.
+
+* Backend:
+    -  `modules/tabs-v2/module.php` -> Register the widget in the backend -> `widgets/tabs-v2.php`
+    -  `modules/tabs-v2/widgets/tabs-v2.php` -> Register the widget in the backend according to the file code.
+    -  `modules/tabs-v2/module.php` -> Tells the editor to enqueue the scripts and styles.
+* Editor
+    -  `assets/js/editor/index.js` -> Load editor module -> `assets/js/editor/module.js`.
+    -  `assets/js/editor/module.js` -> Load widget and register it into `elementor.elementsManager.registerElementType`.
+    -  `assets/js/editor/module.js` -> Register the widget `assets/js/editor/widgets/tabs-v2.js`
+    -  `assets/js/editor/widgets/tabs-v2.js` -> Register the widget with custom views: `assets/js/editor/views/view.js`, `assets/js/editor/views/empty.js`, `assets/js/editor/views/select-preset.js`, `assets/js/editor/views/add-section-area.js`
 * Frontend:
-  - `module.php` -> register the widget -> `widgets/tabs-v2.php`
   - Load the handler `assets/js/frontend/handlers/tabs-v2.js`
   - Load the styles `assets/scss/frontend.scss`
 
