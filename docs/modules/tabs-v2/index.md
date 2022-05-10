@@ -14,7 +14,7 @@
 				- 📂 __views__
 					- 📄 [add\-section\-area.js](#assetsjseditorviewsadd-section-areajs---custom-addsectionarea-for-nested-tabs) - `React component that renders the add section area, rendered via empty.js`
 					- 📄 [empty.js](#assetsjseditorviewsemptyjs---custom-empty-view-for-the-widget) - `React component, that will be rendered when the widget is empty, prints select-preset or add-section-area.`
-					- 📄 [select\-preset.js](#assetsjseditorviewsselect-presetjs---custom-react-component-to-print-the-presets-avilable-for-children-containers) `React component that Render  the preset for children container.`
+					- 📄 [select\-preset.js](#assetsjseditorviewsselect-presetjs---custom-react-component-to-print-the-presets-available-for-children-containers) `React component that Render  the preset for children container.`
 					- 📄 [view.js](#assetsjseditorviewsviewjs---custom-view-for-the-widget) - `The widget view, actually used to manipulate clicks on the widget (view), register the model, view. emptyView for the widget.`
 			- 📂 __frontend__
 				- 📂 __handlers__
