@@ -10,8 +10,6 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Act.
 	await editor.addWidget( 'image-carousel' );
 	
-//await page.locator('#elementor-controls >> text=Image Carousel').click();
-
  // Click [aria-label="Add Images"]
   await page.locator('[aria-label="Add Images"]').click();
 
@@ -29,7 +27,7 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
   await page.locator('text=Insert gallery').click();
     // Click #elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)
     await page.click('#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)');
-    // Select no
+    // Disable AutoPlay
     await page.selectOption('select', 'no');
   expect(await editor.getPreviewFrame().locator('div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized').screenshot()).toMatchSnapshot('carousel.png');
 } );
