@@ -35,7 +35,7 @@ export default function ExportComplete() {
 		},
 		getDownloadLink = () => (
 			<InlineLink onClick={ downloadFile } italic>
-				{ __( 'Click Here', 'elementor' ) }
+				{ __( 'Click here', 'elementor' ) }
 			</InlineLink>
 		);
 
