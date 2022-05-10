@@ -51,7 +51,7 @@
 Simple explanation about the files and their purpose:
 - --------------------------------------------------------------------------------------------------------------------------------
 
-## `assets/js/component.js.`
+## `assets/js/editor/component.js.`
 ### `nested-elements` component.
 * **Link to the actual file** - [component.js](../../../modules/nested-elements/assets/js/editor/component.js)
 * **Description** - The component does two things:
@@ -73,7 +73,7 @@ Simple explanation about the files and their purpose:
 * **Description** - Register `nested-elements` component.
 
 ## `assets/js/nested-repeater/component.js`
-### Component that includes all the functionality that crossing nested repeater logic.
+### `nested-elements/nested-repeater` - Component that includes all the functionality that crossing nested repeater logic.
 * **Link to the actual file** - [component.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/component.js)
 * **Description** - 
   - The component exports the `NestedModelBase` and `NestedViewBase` classes.
