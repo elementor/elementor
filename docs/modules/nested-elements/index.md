@@ -7,9 +7,9 @@
     - 📂 __assets__
         - 📂 __js__
             - 📂 __editor__
-                - 📄 [component.js](assets/js/editor/component.js)
-                - 📄 [index.js](assets/js/editor/index.js)
-                - 📄 [module.js](assets/js/editor/module.js)
+                - 📄 [component.js](#assetsjscomponentjs)
+                - 📄 [index.js](#assetsjseditorindexjs)
+                - 📄 [module.js](#assetsjseditormodulejs)
                 - 📂 __nested\-repeater__
                     - 📄 [component.js](assets/js/editor/nested-repeater/component.js)
                     - 📂 __controls__
@@ -73,7 +73,7 @@ Simple explanation about the files and their purpose:
 * **Link to the actual file** - [module.js](../../../modules/nested-elements/assets/js/editor/module.js)
 * **Description** - Register `nested-elements` component.
 
-## `assets/js/nested-repeater/component.js` - `nested-elements/nested-repeater`
+## `assets/js/nested-repeater/component.js`
 ### Component that includes all the functionality that crossing nested repeater logic.
 * **Link to the actual file** - [component.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/component.js)
 * **Description** - 
@@ -131,9 +131,39 @@ Simple explanation about the files and their purpose:
     
 	![img](_images/1.jpeg)
 
-## `nested-repeater-focus-edited-container.js` 
+## `nested-repeater-focus-current-edited-container.js` 
 ### Focus the edited container hierarchy.
-* Video demo:
-  - https://user-images.githubusercontent.com/10234691/166414693-5687c27e-0ef4-48fa-8253-bc09f2db2cf9.mov
-* **Link to the actual file** - [nested-repeater-focus-edited-container.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/ui/panel/nested-repeater-focus-edited-container.js)
+https://user-images.githubusercontent.com/10234691/166414693-5687c27e-0ef4-48fa-8253-bc09f2db2cf9.mov
+* **Link to the actual file** - [nested-repeater-focus-current-edited-container.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/ui/panel/editor/open/nested-repeater-focus-current-edited-container.js)
 * **Description** - The hook called you request to open a container, it will run over the containers hierarchy from the root to the requested container, and select the container in the path(needed to be visible the selected container).
+
+## `assets/js/editor/nested-repeater/models/nested-model-base.js` 
+### Base model for nested elements.
+* **Link to the actual file** - [nested-model-base.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/models/nested-model-base.js)
+* **Description** - Responsible for the base model of nested elements.
+  - Handling the default children elements creation, according to defaults being sent from the backend(`widget-nested-base.php`).
+  - Extending `isValidChild` method to allow nested elements to be created inside the widget.
+
+## `assets/js/editor/nested-repeater/views/nested-view-base.js`  
+### Base view for nested elements.
+* **Link to the actual file** - [nested-view-base.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/views/nested-view-base.js)
+* **Description** - Responsible for the base view of nested elements.
+    - Allow child to be `container`.
+    - Change the default children view container according to selector in backend(`widget-nested-base.php`) defaults.
+
+## `base/widget-nested-base.php`
+### Base widget for nested elements.
+* **Link to the actual file** - [widget-nested-base.php](../../../modules/nested-elements/base/widget-nested-base.php)
+* **Description** - Responsible for the base of widgets that are nested elements.
+    - Allow passing the nested behavior config defaults from the backend to the widget in the editor.
+    - Have `print_children( index )` method to print the children elements.
+    - Allow widgets to be nested in the backend.
+
+## `- module.php`
+### The module it self
+* **Link to the actual file** - [module.php](../../../modules/nested-elements/module.php)
+* **Description** - Is responsible for:
+  - Registering the module in the backend.
+  - Make it dependent upon the `container` module.
+  - Enqueueing the editor assets.
+  - Registering custom repeater control.
