@@ -7,7 +7,7 @@
     - 📂 __assets__
         - 📂 __js__
             - 📂 __editor__
-                - 📄 [component.js](#assetsjscomponentjs) - `Component - nested-elements`.
+                - 📄 [component.js](#assetsjseditorcomponentjs) - `Component - nested-elements`.
                 - 📄 [index.js](#assetsjseditorindexjs)
                 - 📄 [module.js](#assetsjseditormodulejs)
                 - 📂 __nested\-repeater__
