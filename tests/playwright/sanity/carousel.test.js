@@ -5,7 +5,8 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
-
+  //close Navigator
+  await page.click('#elementor-navigator__close');
 	// Act.
 	await editor.addWidget( 'image-carousel' );
 	
@@ -30,5 +31,5 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
     await page.click('#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)');
     // Select no
     await page.selectOption('select', 'no');
-  expect(await page.screenshot()).toMatchSnapshot('carousel.png');
+  expect(await editor.getPreviewFrame().locator('div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized').screenshot()).toMatchSnapshot('carousel.png');
 } );
