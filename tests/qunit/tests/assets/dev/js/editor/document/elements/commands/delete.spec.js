@@ -6,8 +6,8 @@ export const Delete = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton1 = ElementsHelper.createButton( eColumn ),
-					eButton2 = ElementsHelper.createButton( eColumn );
+					eButton1 = ElementsHelper.createWidgetButton( eColumn ),
+					eButton2 = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.delete( eButton1 );
 
@@ -27,7 +27,7 @@ export const Delete = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidget = ElementsHelper.createAutoButton();
+				const eWidget = ElementsHelper.createWrappedButton();
 
 				ElementsHelper.delete( eWidget );
 
@@ -52,8 +52,8 @@ export const Delete = () => {
 
 		QUnit.test( 'Multiple Selection', ( assert ) => {
 			const eColumn = ElementsHelper.createSection( 1, true ),
-				eButton1 = ElementsHelper.createButton( eColumn ),
-				eButton2 = ElementsHelper.createButton( eColumn );
+				eButton1 = ElementsHelper.createWidgetButton( eColumn ),
+				eButton2 = ElementsHelper.createWidgetButton( eColumn );
 
 			ElementsHelper.multiDelete( [ eButton1, eButton2 ] );
 

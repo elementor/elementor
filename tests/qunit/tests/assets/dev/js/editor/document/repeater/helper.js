@@ -31,6 +31,13 @@ export default class RepeaterHelper {
 		} );
 	}
 
+	static select( eContainer, index ) {
+		return $e.run( 'document/repeater/select', {
+			container: eContainer,
+			index,
+		} );
+	}
+
 	static settings( eContainer, name, index, settings, options ) {
 		const container = eContainer.repeaters[ name ].children[ index ];
 
