@@ -105,7 +105,7 @@ Simple explanation about the files and their purpose:
 		return $e.components.get( 'nested-elements' ).isWidgetSupportNesting( args.container.model.get( 'widgetType' ) );
 	}
 	```
-  1. The container type sould be `widget`
+  1. The container type should be `widget`
   2. The widget should support nesting.
   
 	> The next files will be about the __data__ hooks they will use this [__base.js__](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/data/base.js).
@@ -133,5 +133,7 @@ Simple explanation about the files and their purpose:
 
 ## `nested-repeater-focus-edited-container.js` 
 ### Focus the edited container hierarchy.
-https://user-images.githubusercontent.com/10234691/166414693-5687c27e-0ef4-48fa-8253-bc09f2db2cf9.mov
+* Video demo:
+  - https://user-images.githubusercontent.com/10234691/166414693-5687c27e-0ef4-48fa-8253-bc09f2db2cf9.mov
 * **Link to the actual file** - [nested-repeater-focus-edited-container.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/ui/panel/nested-repeater-focus-edited-container.js)
+* **Description** - The hook called you request to open a container, it will run over the containers hierarchy from the root to the requested container, and select the container in the path(needed to be visible the selected container).
