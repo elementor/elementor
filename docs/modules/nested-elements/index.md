@@ -38,7 +38,7 @@
     - 📂 __base__
         - 📄 [widget\-nested\-base.php](#basewidget-nested-basephp)
     - 📂 __controls__
-        - 📄 [control\-nested\-repeater.php](basewidget-nested-basephp) - `Nested repeater control, for management of nested repeater, to able run $e.run( 'document/repeater/select )  - for each selected tab in panel`
+        - 📄 [control\-nested\-repeater.php](#controlscontrol-nested-repeaterphp) - `Nested repeater control, for management of nested repeater, to able run $e.run( 'document/repeater/select )  - for each selected tab in panel`
     - 📄 [module.php](module.php)
 - --------------------------------------------------------------------------------------------------------------------------------
 
@@ -56,12 +56,12 @@ Simple explanation about the files and their purpose:
 * **Link to the actual file** - [component.js](../../../modules/nested-elements/assets/js/editor/component.js)
 * **Description** - The component does two things:
     - Registers `nested-elements/nested-repeater` component.
-    - Have the method 'isWidgetSupportNesting' that returns true if the widget supports nesting.
+    - Have the method `isWidgetSupportNesting` that returns true if the widget supports nesting.
 
 ## `assets/js/editor/index.js`
 ### The first file that loaded for the editor javascript.
 * **Link to the actual file** - [index.js](../../../modules/nested-elements/assets/js/editor/index.js)
-* **Description** - Loads the editor module, and tells when its loaded, since the other dependant modules are depends on __Nested Elements__ module.
+* **Description** - Loads the editor module, and tells when its loaded, since the dependant modules are that depends on __Nested Elements__ module, need to know when its loaded and avilable.
     - Import the editor(`editor.js`) module.
     - Save the import promise in the global variable(`elementor.modules.nestedElements`).
     - After loading replace the promise with the actual loaded file.
