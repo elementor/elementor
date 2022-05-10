@@ -30,7 +30,7 @@
 # How NestedElements, TabsV2 (Nested tabs) works?
 * The module [__TabsV2__](../../../modules/tabs-v2/) will be used as a live example of the guide.
 * What are the difference between __TabsV2__ and __Nested Elements__ modules?
-  > __Nested Elements__ is a base module for all nested elements, it includes the infrastructure for creating nested elements.
+  > [__Nested Elements__](../../modules/nested-elements/index.md) is a base module for all nested elements, it includes the infrastructure for creating nested elements.
 
   > __TabsV2__ is a module that allows you to create nested tabs.
 
@@ -484,7 +484,7 @@ SelectPreset.propTypes = {
 
 ## Another useful feature that used in nested tabs is partial data render
 * Since the default render mechanism render all the children each render,
-	* There is issue with the nested-tabs, when you modify the `tab-title` or `tab-content` for example, and the whole nested-tabs children hierarchy affected, it gets re-render which create huge performance impact
+	* There is issue with the nested-tabs, when you modify the `tab-title` for example, and the whole nested-tabs children hierarchy affected, it gets re-render which create huge performance impact
 	* The new nested infrastructure is allowing to avoid it, if you know the markup in advance using new feature called __partial render__:
 		* The feature will avoid the full re-render and select this exact node/markup and modify only it.
 		* You will be able to achieve that using the following markup in the element:
