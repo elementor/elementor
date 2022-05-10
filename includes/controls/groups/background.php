@@ -620,7 +620,7 @@ class Group_Control_Background extends Group_Control_Base {
 		// will not run properly. This added control allows users to align all their videos to one host (either
 		// youtube.com or youtube-nocookie.com, depending on whether the user wants privacy mode on or not).
 		$fields['privacy_mode'] = [
-			'label' => esc_html__( 'Privacy mode', 'elementor' ),
+			'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'description' => esc_html__( 'Only works for YouTube videos.', 'elementor' ),
 			'condition' => [
