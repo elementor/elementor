@@ -26,6 +26,6 @@ export default class NestedViewBase extends elementor.modules.elements.views.Bas
 	onRender() {
 		super.onRender();
 
-		this.normalizeWidgetAttributes();
+		this.normalizeSkinAttributes();
 	}
 }

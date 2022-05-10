@@ -123,7 +123,7 @@ const WidgetView = BaseWidget.extend( {
 
 		BaseWidget.prototype.onRender.apply( self, arguments );
 
-		this.normalizeWidgetAttributes();
+		this.normalizeSkinAttributes();
 
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {

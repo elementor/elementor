@@ -35,7 +35,7 @@ class BaseWidgetView extends BaseElementView {
 		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	}
 
-	normalizeWidgetAttributes() {
+	normalizeSkinAttributes() {
 		const editModel = this.getEditModel(),
 			skinType = editModel.getSetting( '_skin' ) || 'default';
 
