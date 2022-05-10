@@ -18,7 +18,7 @@ export default function ConnectDialog( props ) {
 	return (
 		<Dialog
 			title={ __( 'Connect to Template Library', 'elementor' ) }
-			text={ __( 'Access this template and our entire library by creating an account', 'elementor' ) }
+			text={ __( 'Access this template and our entire library by creating a free personal account', 'elementor' ) }
 			approveButtonText={ __( 'Get Started', 'elementor' ) }
 			approveButtonUrl={ settings.library_connect_url }
 			approveButtonOnClick={ () => props.onClose() }
