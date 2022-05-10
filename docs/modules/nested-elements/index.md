@@ -11,35 +11,34 @@
                 - 📄 [index.js](#assetsjseditorindexjs)
                 - 📄 [module.js](#assetsjseditormodulejs)
                 - 📂 __nested\-repeater__
-                    - 📄 [component.js](assets/js/editor/nested-repeater/component.js)
+                    - 📄 [component.js](#assetsjscomponentjs)
                     - 📂 __controls__
-                        - 📄 [repeater.js](assets/js/editor/nested-repeater/controls/repeater.js)
+                        - 📄 [repeater.js](#assetsjsnested-repeatercontrolsrepeaterjs)
                     - 📂 __hooks__
                         - 📂 __data__
-                            - 📄 [base.js](assets/js/editor/nested-repeater/hooks/data/base.js)
+                            - 📄 [base.js](#assetsjsnested-repeaterhooksbasejs)
                             - 📂 __document__
                                 - 📂 __elements__
                                     - 📂 __create__
-                                        - 📄 [nested\-repeater\-adjust\-container\-titles.js](assets/js/editor/nested-repeater/hooks/data/document/elements/create/nested-repeater-adjust-container-titles.js)
+                                        - 📄 [nested\-repeater\-adjust\-container\-titles.js](#nested-repeater-adjust-container-titlesjs)
                                 - 📂 __repeater__
                                     - 📂 __insert__
-                                        - 📄 [nested\-repeater\-create\-container.js](assets/js/editor/nested-repeater/hooks/data/document/repeater/insert/nested-repeater-create-container.js)
+                                        - 📄 [nested\-repeater\-create\-container.js](#nested-repeater-create-containerjs)
                                     - 📂 __remove__
-                                        - 📄 [nested\-repeater\-remove\-container.js](assets/js/editor/nested-repeater/hooks/data/document/repeater/remove/nested-repeater-remove-container.js)
-                        - 📄 [index.js](assets/js/editor/nested-repeater/hooks/index.js)
+                                        - 📄 [nested\-repeater\-remove\-container.js](#nested-repeater-remove-containerjs)
                         - 📂 __ui__
                             - 📂 __panel__
                                 - 📂 __editor__
                                     - 📂 __open__
-                                        - 📄 [nested\-repeater\-focus\-current\-edited\-container.js](assets/js/editor/nested-repeater/hooks/ui/panel/editor/open/nested-repeater-focus-current-edited-container.js)
+                                        - 📄 [nested\-repeater\-focus\-current\-edited\-container.js](#nested-repeater-focus-current-edited-containerjs)
                     - 📂 __models__
-                        - 📄 [nested\-model\-base.js](assets/js/editor/nested-repeater/models/nested-model-base.js)
+                        - 📄 [nested\-model\-base.js](#assetsjseditornested-repeatermodelsnested-model-basejs)
                     - 📂 __views__
-                        - 📄 [nested\-view\-base.js](assets/js/editor/nested-repeater/views/nested-view-base.js)
+                        - 📄 [nested\-view\-base.js](#assetsjseditornested-repeaterviewsnested-view-basejs)
     - 📂 __base__
-        - 📄 [widget\-nested\-base.php](base/widget-nested-base.php)
+        - 📄 [widget\-nested\-base.php](#basewidget-nested-basephp)
     - 📂 __controls__
-        - 📄 [control\-nested\-repeater.php](controls/control-nested-repeater.php) - `Nested repeater control, for management of nested repeater, to able run $e.run( 'document/repeater/select )  - for each selected tab in panel`
+        - 📄 [control\-nested\-repeater.php](basewidget-nested-basephp) - `Nested repeater control, for management of nested repeater, to able run $e.run( 'document/repeater/select )  - for each selected tab in panel`
     - 📄 [module.php](module.php)
 - --------------------------------------------------------------------------------------------------------------------------------
 
@@ -53,7 +52,7 @@ Simple explanation about the files and their purpose:
 - --------------------------------------------------------------------------------------------------------------------------------
 
 ## `assets/js/component.js.`
-###`nested-elements` component.
+### `nested-elements` component.
 * **Link to the actual file** - [component.js](../../../modules/nested-elements/assets/js/editor/component.js)
 * **Description** - The component does two things:
     - Registers `nested-elements/nested-repeater` component.
@@ -108,8 +107,8 @@ Simple explanation about the files and their purpose:
   1. The container type should be `widget`
   2. The widget should support nesting.
   
-	> The next files will be about the __data__ hooks they will use this [__base.js__](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/data/base.js).
 
+> The next files will be about the __data__ hooks they will use this [__base.js__](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/data/base.js).
 ## `nested-repeater-adjust-container-titles.js` 
 ### Adjust the nested children titles.
 * **Link to the actual file** - [nested-repeater-adjust-container-titles.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/data/document/elements/create/nested-repeater-adjust-container-titles.js)
@@ -158,6 +157,12 @@ https://user-images.githubusercontent.com/10234691/166414693-5687c27e-0ef4-48fa-
     - Allow passing the nested behavior config defaults from the backend to the widget in the editor.
     - Have `print_children( index )` method to print the children elements.
     - Allow widgets to be nested in the backend.
+
+## `controls/control-nested-repeater.php`
+### Control for nested elements.
+* **Link to the actual file** - [control-nested-repeater.php](../../../modules/nested-elements/controls/control-nested-repeater.php)
+* **Description** - Responsible for the control of nested elements.
+	- Allow to customize the repeater control.
 
 ## `- module.php`
 ### The module it self
