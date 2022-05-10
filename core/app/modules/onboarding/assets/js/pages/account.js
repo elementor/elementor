@@ -65,7 +65,7 @@ export default function Account() {
 	};
 
 	if ( state.isLibraryConnected ) {
-		actionButton.text = __( 'Let\'s do it', 'elementor' );
+		actionButton.text = __( 'Let’s do it', 'elementor' );
 
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
