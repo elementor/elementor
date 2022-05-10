@@ -435,7 +435,7 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		$schedules[ $this->identifier . '_cron_interval' ] = array(
 			'interval' => MINUTE_IN_SECONDS * $interval,
 			/* translators: %d: Interval in minutes. */
-			'display'  => sprintf( esc_html__( 'Every %d Minutes', 'elementor' ), $interval ),
+			'display'  => sprintf( esc_html__( 'Every %d minutes', 'elementor' ), $interval ),
 		);
 
 		return $schedules;
