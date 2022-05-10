@@ -7,36 +7,36 @@
     - 📂 __assets__
         - 📂 __js__
             - 📂 __editor__
-                - 📄 [component.js](#assetsjscomponentjs)
+                - 📄 [component.js](#assetsjscomponentjs) - `Component - nested-elements`.
                 - 📄 [index.js](#assetsjseditorindexjs)
                 - 📄 [module.js](#assetsjseditormodulejs)
                 - 📂 __nested\-repeater__
-                    - 📄 [component.js](#assetsjscomponentjs)
+                    - 📄 [component.js](#assetsjscomponentjs) - `Component - nested-elements/nested-repeater`.
                     - 📂 __controls__
-                        - 📄 [repeater.js](#assetsjsnested-repeatercontrolsrepeaterjs)
+                        - 📄 [repeater.js](#assetsjsnested-repeatercontrolsrepeaterjs) - `Control - To enable customization.`
                     - 📂 __hooks__
                         - 📂 __data__
-                            - 📄 [base.js](#assetsjsnested-repeaterhooksbasejs)
+                            - 📄 [base.js](#assetsjsnested-repeaterhooksbasejs) - `Base hook - For all widgets that support nested elements.`
                             - 📂 __document__
                                 - 📂 __elements__
                                     - 📂 __create__
-                                        - 📄 [nested\-repeater\-adjust\-container\-titles.js](#nested-repeater-adjust-container-titlesjs)
+                                        - 📄 [nested\-repeater\-adjust\-container\-titles.js](#nested-repeater-adjust-container-titlesjs) `Data Hook - Adjust Container Titles`.
                                 - 📂 __repeater__
                                     - 📂 __insert__
-                                        - 📄 [nested\-repeater\-create\-container.js](#nested-repeater-create-containerjs)
+                                        - 📄 [nested\-repeater\-create\-container.js](#nested-repeater-create-containerjs) - `Data Hook - For each repeater item create the corresponding container child`.
                                     - 📂 __remove__
-                                        - 📄 [nested\-repeater\-remove\-container.js](#nested-repeater-remove-containerjs)
+                                        - 📄 [nested\-repeater\-remove\-container.js](#nested-repeater-remove-containerjs) - `Data Hook - For each repeater item remove the corresponding container child`.
                         - 📂 __ui__
                             - 📂 __panel__
                                 - 📂 __editor__
                                     - 📂 __open__
-                                        - 📄 [nested\-repeater\-focus\-current\-edited\-container.js](#nested-repeater-focus-current-edited-containerjs)
+                                        - 📄 [nested\-repeater\-focus\-current\-edited\-container.js](#nested-repeater-focus-current-edited-containerjs) - `UI Hook - Add option to reach the current edited tab via navigator`.
                     - 📂 __models__
-                        - 📄 [nested\-model\-base.js](#assetsjseditornested-repeatermodelsnested-model-basejs)
+                        - 📄 [nested\-model\-base.js](#assetsjseditornested-repeatermodelsnested-model-basejs) - `Base model for nested repeater - Enable to set children elements, create the default children elements`.
                     - 📂 __views__
-                        - 📄 [nested\-view\-base.js](#assetsjseditornested-repeaterviewsnested-view-basejs)
+                        - 📄 [nested\-view\-base.js](#assetsjseditornested-repeaterviewsnested-view-basejs) - `Base view for the nested repeater - Change the default placeholder of the children elements`.
     - 📂 __base__
-        - 📄 [widget\-nested\-base.php](#basewidget-nested-basephp)
+        - 📄 [widget\-nested\-base.php](#basewidget-nested-basephp) `Base class for nested elements - Enable to change the default behavior of the nested elements`.
     - 📂 __controls__
         - 📄 [control\-nested\-repeater.php](#controlscontrol-nested-repeaterphp) - `Nested repeater control, for management of nested repeater, to able run $e.run( 'document/repeater/select )  - for each selected tab in panel`
     - 📄 [module.php](module.php)
