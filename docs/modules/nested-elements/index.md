@@ -7,7 +7,7 @@
     - 📂 __assets__
         - 📂 __js__
             - 📂 __editor__
-                - 📄 [component.js](#assetsjscomponentjs) - `Component - nested-elements`.
+                - 📄 [component.js](#assetsjseditorcomponentjs) - `Component - nested-elements`.
                 - 📄 [index.js](#assetsjseditorindexjs)
                 - 📄 [module.js](#assetsjseditormodulejs)
                 - 📂 __nested\-repeater__
@@ -51,7 +51,7 @@
 Simple explanation about the files and their purpose:
 - --------------------------------------------------------------------------------------------------------------------------------
 
-## `assets/js/component.js.`
+## `assets/js/editor/component.js.`
 ### `nested-elements` component.
 * **Link to the actual file** - [component.js](../../../modules/nested-elements/assets/js/editor/component.js)
 * **Description** - The component does two things:
@@ -73,7 +73,7 @@ Simple explanation about the files and their purpose:
 * **Description** - Register `nested-elements` component.
 
 ## `assets/js/nested-repeater/component.js`
-### Component that includes all the functionality that crossing nested repeater logic.
+### `nested-elements/nested-repeater` - Component that includes all the functionality that crossing nested repeater logic.
 * **Link to the actual file** - [component.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/component.js)
 * **Description** - 
   - The component exports the `NestedModelBase` and `NestedViewBase` classes.
@@ -134,7 +134,7 @@ Simple explanation about the files and their purpose:
 ### Focus the edited container hierarchy.
 https://user-images.githubusercontent.com/10234691/166414693-5687c27e-0ef4-48fa-8253-bc09f2db2cf9.mov
 * **Link to the actual file** - [nested-repeater-focus-current-edited-container.js](../../../modules/nested-elements/assets/js/editor/nested-repeater/hooks/ui/panel/editor/open/nested-repeater-focus-current-edited-container.js)
-* **Description** - The hook called you request to open a container, it will run over the containers hierarchy from the root to the requested container, and select the container in the path(needed to be visible the selected container).
+* **Description** - The hook called when you click on the container to open it, hook will run over the containers hierarchy from the root to the requested container, and select the container in the path(needed to be visible the selected container).
 
 ## `assets/js/editor/nested-repeater/models/nested-model-base.js` 
 ### Base model for nested elements.
