@@ -10,7 +10,7 @@ class ArticleReader extends \Elementor\Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Artciel Reader', 'elementor-addon' );
+		return esc_html__( 'Artciel Reader' );
 	}
 
 	public function get_icon() {
