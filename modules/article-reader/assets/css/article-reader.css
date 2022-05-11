@@ -1,0 +1,9 @@
+.article-reader-widget {
+	background: rgb(89, 89, 89);
+	color: white;
+	border: none;
+	font-size: 16px;
+	padding: 7px;
+	border-radius: 5px;
+	cursor: pointer;
+}
