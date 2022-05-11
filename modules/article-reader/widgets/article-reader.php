@@ -18,7 +18,7 @@ class ArticleReader extends \Elementor\Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'pro-elements' ];
 	}
 
 	public function get_keywords() {
