@@ -1,4 +1,4 @@
-import ElementorLoading from '../../components/elementor-loading';
+import ElementorLoading from 'elementor-app/molecules/elementor-loading';
 import ItemHeader from '../../components/item-header';
 import Layout from '../../components/layout';
 import PageLoader from '../../components/page-loader';

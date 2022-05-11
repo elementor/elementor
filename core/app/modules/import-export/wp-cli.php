@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\App\Modules\ImportExport;
 
+use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 
@@ -149,6 +151,15 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			$import = new Import( $import_settings );
 
+			$manifest_data = $this->get_manifest_data( $import_settings['session'] );
+			$manifest_data = $import->adapt_manifest_structure( $manifest_data );
+
+			if ( isset( $manifest_data['plugins'] ) ) {
+				$successfully_imported_plugins = $this->import_plugins( $manifest_data['plugins'] );
+
+				\WP_CLI::line( 'Ready to use plugins: ' . $successfully_imported_plugins );
+			}
+
 			Plugin::$instance->app->get_component( 'import-export' )->import = $import;
 
 			$import->run();
@@ -215,5 +226,72 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		return Plugin::$instance->uploads_manager->create_temp_file( $response['body'], 'kit.zip' );
+	}
+
+	/**
+	 * Helper to get the manifest data from the 'manifest.json' file.
+	 *
+	 * @param string $extraction_directory
+	 * @return array
+	 */
+	private function get_manifest_data( $extraction_directory ) {
+		$manifest_file_content = file_get_contents( $extraction_directory . 'manifest.json', true );
+
+		if ( ! $manifest_file_content ) {
+			\WP_CLI::error( 'Manifest not found' );
+		}
+
+		$manifest_data = json_decode( $manifest_file_content, true );
+
+		// In case that the manifest content is not a valid JSON or empty.
+		if ( ! $manifest_data ) {
+			\WP_CLI::error( 'Manifest content is not valid json' );
+		}
+
+		return $manifest_data;
+	}
+
+	/**
+	 * Handle the import process of plugins.
+	 *
+	 * Returns a string contains the successfully installed and activated plugins.
+	 *
+	 * @param array $plugins
+	 * @return string
+	 */
+	private function import_plugins( $plugins ) {
+		$plugins_collection = ( new Collection( $plugins ) )
+			->map( function ( $item ) {
+				if ( ! $this->ends_with( $item['plugin'], '.php' ) ) {
+					$item['plugin'] .= '.php';
+				}
+				return $item;
+			} );
+
+		$slugs = $plugins_collection
+			->map( function ( $item ) {
+				return $item['plugin'];
+			} )
+			->all();
+
+		$plugins_manager = new Plugins_Manager();
+
+		$install = $plugins_manager->install( $slugs );
+		$activate = $plugins_manager->activate( $install['succeeded'] );
+
+		$names = $plugins_collection
+			->filter( function ( $item ) use ( $activate ) {
+				return in_array( $item['plugin'], $activate['succeeded'], true );
+			} )
+			->map( function ( $item ) {
+				return $item['name'];
+			} )
+			->implode( ', ' );
+
+		return $names;
+	}
+
+	private function ends_with( $haystack, $needle ) {
+		return substr( $haystack, -strlen( $needle ) ) === $needle;
 	}
 }

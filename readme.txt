@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 3.6.1
+Stable tag: 3.6.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -240,6 +240,35 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.6.5 - 2022-04-27 =
+* Fix: PHP Error is thrown in System Info report for experiments that don't have a title
+* Fix: Optimized template file uploads for better security enforcement
+
+= 3.6.4 - 2022-04-13 =
+* Fix: Optimized controls sanitization to enforce better security policies in Onboarding wizard
+
+= 3.6.3 - 2022-04-12 =
+* Tweak: Verify if SVG file exists before updating `_elementor_inline_svg` (props [@filipecsweb](https://github.com/filipecsweb), [#18155](https://github.com/elementor/elementor/issues/18155))
+* Tweak: Added "Uploading" screen to the Pro upload process in Onboarding wizard
+* Tweak: Added a notice for when Elementor Pro is installed successfully in Onboarding wizard
+* Fix: JS error is thrown after installing Elementor Pro in the Onboarding wizard
+* Fix: Wrong return type in `Skin Base get_instance_value()` method's PHPDoc
+* Fix: "Create my account" should lead to "Sign Up" instead of "Login" in Onboarding wizard
+* Fix: Allow file uploads based on the user capability to enforce better security policies in Onboarding wizard
+
+= 3.6.2 - 2022-04-04 =
+* Tweak: Added plugins support to the CLI Kit import process
+* Tweak: Updated strings for several screens in Onboarding wizard
+* Tweak: Added structure preset to include both row and column directions in Container element
+* Fix: Alignment control doesn’t affect additional custom breakpoints in Icon List widget ([#16291](https://github.com/elementor/elementor/issues/16291))
+* Fix: Carousel widgets do not being displayed correctly when placed in a Container element ([#18298](https://github.com/elementor/elementor/issues/16291))
+* Fix: Import flow fails when trying to import unregistered taxonomies
+* Fix: Compatibility issues for several widgets in iOS 14 and macOS 13 devices
+* Fix: Inner Container element gets duplicated when dragging it from the handle
+* Fix: Trying to D&D widgets into a Container will make the dragged element position in an incorrect location when using column direction
+* Fix: When copying and pasting a Container, it's being pasted in a Section
+* Fix: When converting a section with `z-index` the value is active but can't be edited using the interface
 
 = 3.6.1 - 2022-03-23 =
 * Fix: Editor fails to load due to 3rd party deprecation conflicts ([#18235](https://github.com/elementor/elementor/issues/18235))
