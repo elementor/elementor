@@ -40,6 +40,12 @@ describe( `$e.run( 'preview/drop' )`, () => {
 			documents: {
 				getCurrent: () => new class Document {},
 			},
+
+			devTools: {
+				deprecation: {
+					deprecated: jest.fn(),
+				},
+			},
 		};
 	} );
 
