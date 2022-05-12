@@ -54,7 +54,7 @@ class TabsV2 extends Widget_Nested_Base {
 		return 'tab_title';
 	}
 
-	protected function get_defaults_children_title() {
+	protected function get_default_children_title() {
 		return esc_html__( 'Tab #%d', 'elementor' );
 	}
 

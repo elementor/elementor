@@ -32,7 +32,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 	 *
 	 * @return string
 	 */
-	protected function get_defaults_children_title() {
+	protected function get_default_children_title() {
 		return esc_html__( 'Item #%d', 'elementor' );
 	}
 
@@ -63,7 +63,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 		return array_merge( parent::get_initial_config(), [
 			'defaults' => [
 				'elements' => $this->get_default_children_elements(),
-				'elements_title' => $this->get_defaults_children_title(),
+				'elements_title' => $this->get_default_children_title(),
 				'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
 				'repeater_title_setting' => $this->get_default_repeater_title_setting_key(),
 			],
