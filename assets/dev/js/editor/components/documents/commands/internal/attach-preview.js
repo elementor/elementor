@@ -1,6 +1,4 @@
 export class AttachPreview extends $e.modules.CommandInternalBase {
-
-export class AttachPreview extends CommandInternalBaseBase {
 	validateArgs( args = {} ) {
 		if ( args.selector ) {
 			this.requireArgumentConstructor( 'selector', jQuery );
