@@ -175,7 +175,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 * The class should extend `Widget_Nested_Base` class, there are few important methods to note:
 	* `get_default_children_elements` - The inner children/elements that will be created when the widget created.
 	* `get_default_repeater_title_setting_key` - The setting key that will be used by `$e.run( 'document/elements/settings' )` in the frontend for the children title.
-	* `get_defaults_children_title` - The tab title including `%d` for the index.
+	* `get_default_children_title` - The tab title including `%d` for the index.
 	* `get_default_children_placeholder_selector` - Custom selector to place the children, in __TabsV2__ is used inside the tabs content. Return `null` if the element should be added in the end of the element.
 
   ```php
