@@ -879,7 +879,6 @@
 					"examples": [
 						{
 							"kit": {
-								"system_colors": 4,
 								"custom_colors": 7,
 								"system_typography": 4,
 								"custom_typography": 4,
