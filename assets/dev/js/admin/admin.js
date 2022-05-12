@@ -199,6 +199,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 				event.preventDefault();
 				const $updateButton = $( this );
 				$updateButton.addClass( 'loading' );
+
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'confirm_fa_migration_admin_modal',
 					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
@@ -210,15 +211,28 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 					defaultOption: 'confirm',
 					onConfirm: () => {
 						$updateButton.removeClass( 'error' ).addClass( 'loading' );
-						$.post( ajaxurl, $updateButton.data() )
+
+						const {
+							_nonce,
+							action,
+							redirectUrl,
+						} = $updateButton.data();
+
+						$.post( ajaxurl, { action, _nonce } )
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
-								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
-								const redirectTo = ( location.search.split( 'redirect_to=' )[ 1 ] || '' ).split( '&' )[ 0 ];
-								if ( redirectTo ) {
-									location.href = decodeURIComponent( redirectTo );
+
+								const messageElement = document.createElement( 'p' );
+								messageElement.appendChild( document.createTextNode( response.data.message ) );
+
+								$( '#elementor_upgrade_fa_button' ).parent().append( messageElement );
+
+								if ( redirectUrl ) {
+									location.href = decodeURIComponent( redirectUrl );
+
 									return;
 								}
+
 								history.go( -1 );
 							} )
 							.fail( function() {
