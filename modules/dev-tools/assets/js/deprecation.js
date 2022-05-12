@@ -1,6 +1,5 @@
 import * as utils from './deprecation/utils';
 
-// This class desice which methods will be exported.
 // This class represent the methods that will be exported.
 export default class Deprecation {
 	deprecated( name, version, replacement ) {
