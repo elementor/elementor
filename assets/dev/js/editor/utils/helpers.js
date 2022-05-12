@@ -76,7 +76,7 @@ module.exports = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementor.devTools.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
@@ -322,7 +322,7 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		elementorCommon.helpers.softDeprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+		elementor.devTools.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
 
 		return elementorCommon.helpers.getUniqueId();
 	},
@@ -470,7 +470,7 @@ module.exports = {
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementor.devTools.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},

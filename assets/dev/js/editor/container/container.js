@@ -343,7 +343,7 @@ export default class Container extends ArgsObject {
 
 				Object.defineProperty( this, 'children', {
 					get() {
-						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						elementor.devTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
 						return this.repeaters[ repeaters[ 0 ].name ].children;
 					},
 				} );
@@ -437,7 +437,7 @@ export default class Container extends ArgsObject {
 	}
 
 	findChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementor.devTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.findRecursive( callback )'
@@ -447,7 +447,7 @@ export default class Container extends ArgsObject {
 	}
 
 	forEachChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementor.devTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.forEachRecursive( callback )'
