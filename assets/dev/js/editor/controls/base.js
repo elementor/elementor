@@ -77,6 +77,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 							settings: settingsModel,
 							label,
 							view: false,
+							parent: false,
 							renderer: false,
 							controls: settingsModel.options.controls,
 						} );

@@ -20,7 +20,7 @@ export default class BackwardsCompatibility {
 	static isValidChild( childModel, parentModel ) {
 		elementor.devTools.deprecation.deprecated( 'isValidChild', '3.4.0', "$e.components.get( 'document/elements' ).utils.isValidChild( childModel, parentModel )" );
 
-		return $e.components.get( 'document/elements' ).utils.isValidChild( childModel, parentModel );
+		return parentModel.isValidChild( childModel );
 	}
 
 	static isValidGrandChild( childModel, targetContainer ) {
