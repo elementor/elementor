@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Tests\Phpunit\Schemas;
 
+use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
@@ -38,6 +40,7 @@ class Test_Usage extends Base_Schema {
 	}
 
 	// The aim of the test is to fill all the possible tracking 'usage' data.
+	// TODO: When the method reach incomprehensible size, part it.
 	public function test__ensure_tracking_data_with_usage_full_mock() {
 		$this->generate_plugins_mock();
 
@@ -51,8 +54,8 @@ class Test_Usage extends Base_Schema {
 		$this->factory()->documents->publish_and_get();
 
 		// Elements with dynamic
-		Plugin::$instance->dynamic_tags->register_tag( new Title() );
-		Plugin::$instance->dynamic_tags->register_tag( new Link() );
+		Plugin::$instance->dynamic_tags->register( new Title() );
+		Plugin::$instance->dynamic_tags->register( new Link() );
 
 		$this->factory()->documents->publish_and_get( [
 			'meta_input' => [
@@ -67,6 +70,13 @@ class Test_Usage extends Base_Schema {
 		);
 		Plugin::$instance->maintenance_mode->register_settings_fields( Plugin::$instance->tools );
 
+		// Add fake connect data.
+		update_option( Base_App::OPTION_CONNECT_SITE_KEY, 'test' );
+		update_user_option( get_current_user_id(), Common_App::OPTION_CONNECT_COMMON_DATA_KEY, [
+			'user' => (object) [
+				'email' => 'user@localhost',
+			],
+		] );
 
 		// Act.
 		$tracking_data = Tracker::get_tracking_data();

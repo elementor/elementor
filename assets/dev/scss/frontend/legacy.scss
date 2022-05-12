@@ -59,7 +59,7 @@
 
 	> .elementor-column {
 
-		> .elementor-element-populated {
+		> .elementor-element-populated > .elementor-widget-wrap {
 
 			.elementor-column-gap-narrow  > & {
 				padding: 5px;
@@ -95,8 +95,23 @@
 	}
 }
 
+@mixin legacy-reverse-columns-initial($device) {
+
+	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: initial;
+			}
+		}
+	}
+}
+
 @media (min-width:$screen-widescreen-min) {
 	@include legacy-reverse-columns(-widescreen);
+}
+
+@media (min-width:$screen-tablet-next) and (max-width: $screen-laptop-max) {
+	@include legacy-reverse-columns(-laptop);
 }
 
 @media (min-width:$screen-tablet-extra-next) and (max-width: $screen-laptop-max) {
@@ -104,7 +119,12 @@
 }
 
 @media (min-width:$screen-tablet-next) and (max-width: $screen-tablet-extra-max) {
+	@include legacy-reverse-columns-initial(-laptop);
 	@include legacy-reverse-columns(-tablet_extra);
+}
+
+@media (min-width:$screen-mobile-next) and (max-width: $screen-tablet-max) {
+	@include legacy-reverse-columns(-tablet);
 }
 
 @media (min-width:$screen-mobile-extra-next) and (max-width: $screen-tablet-max) {
@@ -112,6 +132,7 @@
 }
 
 @media (min-width:$screen-mobile-next) and (max-width: $screen-mobile-extra-max) {
+	@include legacy-reverse-columns-initial(-tablet);
 	@include legacy-reverse-columns(-mobile_extra);
 }
 

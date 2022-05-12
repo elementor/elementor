@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Switch extends CommandBase {
+export class Switch extends $e.modules.CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
@@ -14,7 +12,10 @@ export class Switch extends CommandBase {
 			onClose,
 		} )
 		.then( () => {
-			return $e.run( 'editor/documents/open', { id, selector } );
+			return $e.run( 'editor/documents/open', { id } );
+		} )
+		.then( () => {
+			elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
 		} );
 	}
 }

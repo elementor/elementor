@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Move extends CommandHistory {
+export class Move extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -34,12 +32,6 @@ export class Move extends CommandHistory {
 					options.at += count;
 				}
 			}
-
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			options.trigger = {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update',
-			};
 
 			$e.run( 'document/elements/create', {
 				container: target,

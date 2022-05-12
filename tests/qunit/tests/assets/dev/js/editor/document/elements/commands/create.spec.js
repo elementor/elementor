@@ -29,7 +29,7 @@ export const Create = () => {
 
 			QUnit.test( 'Widget', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					isButtonCreated = !! elementor.getPreviewContainer().children[ 0 ].children[ 0 ].children.find(
 						( widget ) => widget.id === eButton.id
 					);
@@ -50,7 +50,7 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widget: Custom Position', ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton();
+				const eButton = ElementsHelper.createWrappedButton();
 
 				ElementsHelper.settings( eButton, {
 					_position: 'absolute',
@@ -108,7 +108,7 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widget', ( assert ) => {
-					const eWidget = ElementsHelper.createAutoButton(),
+					const eWidget = ElementsHelper.createWrappedButton(),
 						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
@@ -189,7 +189,7 @@ export const Create = () => {
 			QUnit.test( 'Widgets', ( assert ) => {
 				const eColumn1 = ElementsHelper.createSection( 1, true ),
 					eColumn2 = ElementsHelper.createSection( 1, true ),
-					eButtons = ElementsHelper.multiCreateButton( [ eColumn1, eColumn2 ] ),
+					eButtons = ElementsHelper.multiCreateWidgetButton( [ eColumn1, eColumn2 ] ),
 					isButton1Created = !! eColumn1.children.find( ( widget ) => eButtons[ 0 ].id === widget.id ),
 					isButton2Created = !! eColumn2.children.find( ( widget ) => eButtons[ 1 ].id === widget.id );
 
@@ -222,7 +222,7 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widgets', ( assert ) => {
-					const eWidgets = ElementsHelper.multiCreateAutoButton(),
+					const eWidgets = ElementsHelper.multiCreateWrappedButton(),
 						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
@@ -296,6 +296,49 @@ export const Create = () => {
 					assert.deepEqual( innerSectionAfterRedoColumnsIds, innerSectionColumnsIds,
 						'Inner section columns have the same ids as before.' );
 				} );
+			} );
+		} );
+
+		QUnit.module( 'Drag and Drop', () => {
+			// This module is about simulating the creation of elements by the dnd mechanism, which uses the `create`
+			// command indirectly. This is done by the `createElementFromModel` method.
+			QUnit.test( 'Widget: Inner Section into Column', ( assert ) => {
+				const eSection = ElementsHelper.createSection( 1 ),
+					eColumn = eSection.children[ 0 ],
+					eInnerSection = ( () => {
+						try {
+							return eColumn.view.createElementFromModel( {
+								elType: 'section',
+								isInner: true,
+							} );
+						} catch ( e ) {
+							return false;
+						}
+					} )();
+
+				const isInnerSectionCreated = !! eColumn.children.find( ( widget ) => eInnerSection.id === widget.id );
+
+				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
+				assert.equal( eInnerSection.children?.length, DEFAULT_INNER_SECTION_COLUMNS,
+					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
+			} );
+
+			QUnit.test( 'Widget: Inner Section into Preview', ( assert ) => {
+				elementorCommonConfig.experimentalFeatures.container = false;
+
+				const eInnerSection = elementor.getPreviewContainer().view.createElementFromModel( {
+						elType: 'section',
+						isInner: true,
+					} ),
+					ePreviewChildren = elementor.getPreviewContainer().children,
+					isInnerSectionCreated = !! ePreviewChildren[ ePreviewChildren.length - 1 ].children[ 0 ].children
+						.find( ( widget ) => eInnerSection.id === widget.id );
+
+				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
+				assert.equal( eInnerSection.children.length, DEFAULT_INNER_SECTION_COLUMNS,
+					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
+
+				elementorCommonConfig.experimentalFeatures.container = true;
 			} );
 		} );
 	} );

@@ -17,29 +17,7 @@ export default class Component extends ComponentBase {
 
 	defaultUtils() {
 		return {
-			isValidChild: ( childModel, parentModel ) => {
-				const parentElType = parentModel.get( 'elType' ),
-					draggedElType = childModel.get( 'elType' ),
-					parentIsInner = parentModel.get( 'isInner' ),
-					draggedIsInner = childModel.get( 'isInner' );
-
-				// Block's inner-section at inner-section column.
-				if ( draggedIsInner && 'section' === draggedElType && parentIsInner && 'column' === parentElType ) {
-					return false;
-				}
-
-				if ( draggedElType === parentElType ) {
-					return false;
-				}
-
-				if ( 'section' === draggedElType && ! draggedIsInner && 'column' === parentElType ) {
-					return false;
-				}
-
-				const childTypes = elementor.helpers.getElementChildType( parentElType );
-
-				return childTypes && -1 !== childTypes.indexOf( childModel.get( 'elType' ) );
-			},
+			isValidChild: ( childModel, parentModel ) => parentModel.isValidChild( childModel ),
 			isValidGrandChild: ( childModel, targetContainer ) => {
 				let result;
 
@@ -77,7 +55,7 @@ export default class Component extends ComponentBase {
 			getPasteOptions: ( sourceModel, targetContainer ) => {
 				const result = {};
 
-				result.isValidChild = this.utils.isValidChild( sourceModel, targetContainer.model );
+				result.isValidChild = targetContainer.model.isValidChild( sourceModel );
 				result.isSameElement = this.utils.isSameElement( sourceModel, targetContainer );
 				result.isValidGrandChild = this.utils.isValidGrandChild( sourceModel, targetContainer );
 

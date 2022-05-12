@@ -49,6 +49,19 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<# } #>
 </script>
 
+<script type="text/template" id="tmpl-elementor-exit-dialog">
+	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
+	<div>
+		<!-- translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. -->
+		<?php echo sprintf(
+			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
+			'<a id="user-preferences">',
+			'</a>'
+		); ?>
+	</div>
+	<select id="exit-to-preferences"></select> <!--  Adding options by JS  -->
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-header">
 	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
@@ -62,27 +75,20 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<#
-	const keys = {
-			navigator: $e.components.get('navigator').getShortcuts().toggle.formatted,
-			history: $e.components.get( 'panel/history' ).getShortcuts().actions.formatted,
-			responsiveMode: $e.components.get( 'panel' ).getShortcuts()['change-device-mode'].formatted,
-	};
-	#>
 	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip-unsafe-html="true" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?><br />{{ keys.navigator }}">
+	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip-unsafe-html="true" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?><br />{{ keys.history }}">
+	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
 		<i class="eicon-history" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip-unsafe-html="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?><br />{{ keys.responsiveMode }}"></i>
+		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only">
 			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
 		</span>

@@ -1,4 +1,4 @@
-import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
+export class AttachPreview extends $e.modules.CommandInternalBase {
 
 export class AttachPreview extends CommandInternalBaseBase {
 	validateArgs( args = {} ) {

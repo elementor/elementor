@@ -1,0 +1,34 @@
+.e-onboarding {
+
+	&__page-content {
+		margin-bottom: 70px;
+
+		&-start {
+			max-width: 675px;
+			text-align: start;
+			flex-basis: 555px;
+			align-self: start;
+		}
+
+		&-end {
+			min-width: 440px;
+			max-width: 540px;
+
+			img {
+				width: 100%;
+			}
+		}
+
+		&-section-title {
+			font-family: 'DM Serif Display', serif;
+			font-size: 36px;
+			font-weight: 700;
+			color: $platform-darkest-gray;
+		}
+
+		&-section-text {
+			font-size: 18px;
+			color: #3A3F45;
+		}
+	}
+}

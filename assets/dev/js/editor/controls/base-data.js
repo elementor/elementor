@@ -79,6 +79,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 			this.setPlaceholderFromParent();
 		}
 
+		if ( undefined === this.model.get( 'inherit_placeholders' ) ) {
+			this.model.set( 'inherit_placeholders', true );
+		}
+
 		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
@@ -181,7 +185,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	getControlPlaceholder() {
 		let placeholder = this.model.get( 'placeholder' );
 
-		if ( this.model.get( 'responsive' ) ) {
+		if ( this.model.get( 'responsive' ) && this.model.get( 'inherit_placeholders' ) ) {
 			placeholder = placeholder || this.container.placeholders[ this.model.get( 'name' ) ];
 		}
 
@@ -417,9 +421,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 			}
 		}
 
-		this.updateElementModel( value, input );
+		// When input is '-' (for negative values) don't reject/replace it.
+		if ( value || event.originalEvent.data !== '-' ) {
+			this.updateElementModel( value, input );
 
-		this.triggerMethod( 'input:change', event );
+			this.triggerMethod( 'input:change', event );
+		}
 	},
 
 	onResponsiveSwitchersClick: function( event ) {

@@ -13,17 +13,20 @@ export default class HistoryManager {
 	active = true;
 
 	translations = {
+		// Alphabetical order.
 		add: __( 'Added', 'elementor' ),
 		change: __( 'Edited', 'elementor' ),
 		disable: __( 'Disabled', 'elementor' ),
 		duplicate: __( 'Duplicate', 'elementor' ),
 		enable: __( 'Enabled', 'elementor' ),
+		import: __( 'Imported', 'elementor' ),
 		move: __( 'Moved', 'elementor' ),
 		paste: __( 'Pasted', 'elementor' ),
 		paste_style: __( 'Style Pasted', 'elementor' ),
 		remove: __( 'Removed', 'elementor' ),
-		reset_style: __( 'Style Reset', 'elementor' ),
 		reset_settings: __( 'Settings Reset', 'elementor' ),
+		reset_style: __( 'Style Reset', 'elementor' ),
+		selected: __( 'Selected', 'elementor' ),
 	};
 
 	constructor( document ) {
@@ -61,7 +64,7 @@ export default class HistoryManager {
 		this.active = value;
 	}
 
-	getActive( value ) {
+	getActive() {
 		return this.active;
 	}
 

@@ -1,5 +1,8 @@
 var BaseSettingsModel;
 
+/**
+ * @name BaseSettingsModel
+ */
 BaseSettingsModel = Backbone.Model.extend( {
 	options: {},
 
@@ -210,7 +213,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		attributes = this.parseGlobalSettings( attributes, controls );
 
 		jQuery.each( controls, ( controlKey, control ) => {
-			if ( elementor.helpers.isActiveControl( control, attributes ) ) {
+			if ( elementor.helpers.isActiveControl( control, attributes, controls ) ) {
 				activeControls[ controlKey ] = control;
 			}
 		} );
@@ -408,4 +411,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 } );
 
+/**
+ * @name BaseSettingsModel
+ */
 module.exports = BaseSettingsModel;

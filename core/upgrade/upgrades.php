@@ -10,6 +10,7 @@ use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
+use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -643,6 +644,10 @@ class Upgrades {
 	 * @return bool
 	 */
 	public static function recalc_usage_data( $updater ) {
+		if ( ! Tracker::is_allow_track() ) {
+			return false;
+		}
+
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
 
@@ -929,6 +934,15 @@ class Upgrades {
 		};
 
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	public static function _v_3_4_8_fix_font_awesome_default_value_from_1_to_yes() {
+		// if `Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY` value is '1', then set it to `yes`.
+		$load_fa4_shim_option = get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY );
+
+		if ( '1' === $load_fa4_shim_option ) {
+			update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
+		}
 	}
 
 	public static function _v_3_5_0_remove_old_elementor_scheme() {

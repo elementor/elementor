@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
 
-const KIT_STATUS_MAP = {
-	INITIAL: 'initial',
-	UPLOADED: 'uploaded',
-	IMPORTED: 'imported',
-	ERROR: 'error',
-};
+const KIT_STATUS_MAP = Object.freeze( {
+		INITIAL: 'initial',
+		UPLOADED: 'uploaded',
+		IMPORTED: 'imported',
+		EXPORTED: 'exported',
+		ERROR: 'error',
+	} ),
+	IMPORT_KIT_KEY = 'elementor_import_kit',
+	EXPORT_KIT_KEY = 'elementor_export_kit';
 
 export default function useKit() {
 	const { ajaxState, setAjax, ajaxActions } = useAjax(),
@@ -16,40 +19,55 @@ export default function useKit() {
 			data: null,
 		},
 		[ kitState, setKitState ] = useState( kitStateInitialState ),
-		getAjaxConfig = () => {
-			return {
+		uploadKit = ( { file, kitLibraryNonce } ) => {
+			setAjax( {
 				data: {
-					action: 'elementor_import_kit',
+					action: IMPORT_KIT_KEY,
+					e_import_file: file,
+					data: JSON.stringify( {
+						stage: 1,
+					} ),
+					...( kitLibraryNonce ? { e_kit_library_nonce: kitLibraryNonce } : {} ),
 				},
-			};
-		},
-		uploadKit = ( { file } ) => {
-			const ajaxConfig = getAjaxConfig();
-
-			ajaxConfig.data.e_import_file = file;
-			ajaxConfig.data.data = JSON.stringify( {
-				stage: 1,
 			} );
-
-			setAjax( ajaxConfig );
 		},
-		importKit = ( { session, include, overrideConditions, referrer } ) => {
-			const ajaxConfig = getAjaxConfig();
-
-			ajaxConfig.data.data = {
-				stage: 2,
-				session,
-				include,
-				overrideConditions,
+		importKit = ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+			const ajaxConfig = {
+				data: {
+					action: IMPORT_KIT_KEY,
+					data: {
+						stage: 2,
+						session,
+						include,
+						overrideConditions,
+					},
+				},
 			};
 
 			if ( referrer ) {
 				ajaxConfig.data.data.referrer = referrer;
 			}
 
+			if ( selectedCustomPostTypes ) {
+				ajaxConfig.data.data.selectedCustomPostTypes = selectedCustomPostTypes;
+			}
+
 			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
 
 			setAjax( ajaxConfig );
+		},
+		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
+			setAjax( {
+				data: {
+					action: EXPORT_KIT_KEY,
+					data: JSON.stringify( {
+						include,
+						kitInfo,
+						plugins,
+						selectedCustomPostTypes,
+					} ),
+				},
+			} );
 		},
 		reset = () => ajaxActions.reset();
 
@@ -58,13 +76,17 @@ export default function useKit() {
 			const newState = {};
 
 			if ( 'success' === ajaxState.status ) {
-				// When importing only the site-settings the response is empty.
-				newState.data = ajaxState.response || {};
-
-				newState.status = ajaxState.response?.manifest ? KIT_STATUS_MAP.UPLOADED : KIT_STATUS_MAP.IMPORTED;
+				if ( ajaxState.response?.file ) {
+					newState.status = KIT_STATUS_MAP.EXPORTED;
+				} else {
+					newState.status = ajaxState.response?.manifest ? KIT_STATUS_MAP.UPLOADED : KIT_STATUS_MAP.IMPORTED;
+				}
 			} else if ( 'error' === ajaxState.status ) {
 				newState.status = KIT_STATUS_MAP.ERROR;
 			}
+
+			// The response is required even if an error occurred, in order to detect the error type.
+			newState.data = ajaxState.response || {};
 
 			setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
 		}
@@ -76,6 +98,7 @@ export default function useKit() {
 		kitActions: {
 			upload: uploadKit,
 			import: importKit,
+			export: exportKit,
 			reset,
 		},
 	};

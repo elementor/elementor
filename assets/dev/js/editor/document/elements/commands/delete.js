@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Delete extends CommandHistory {
+export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );
@@ -50,14 +48,7 @@ export class Delete extends CommandHistory {
 				} );
 			}
 
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:before:remove', container.model );
-
 			container.model.destroy();
-
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:after:remove', container.model );
-
 			container.panel.refresh();
 		} );
 
@@ -66,10 +57,6 @@ export class Delete extends CommandHistory {
 		}
 
 		return containers;
-	}
-
-	isDataChanged() {
-		return true;
 	}
 }
 

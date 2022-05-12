@@ -7,7 +7,7 @@ export const Move = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn );
+					eTabs = ElementsHelper.createWidgetTabs( eColumn );
 
 				RepeaterHelper.move( eTabs, 'tabs', 1, 0 );
 
@@ -17,7 +17,7 @@ export const Move = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn ),
+					eTabs = ElementsHelper.createWidgetTabs( eColumn ),
 					sourceIndex = 1,
 					targetIndex = 0,
 					eTabModel = eTabs.settings.get( 'tabs' ).at( sourceIndex );
@@ -48,8 +48,8 @@ export const Move = () => {
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn );
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn );
 
 				RepeaterHelper.multiMove( [ eTabs1, eTabs2 ], 'tabs', 1, 0 );
 
@@ -60,8 +60,8 @@ export const Move = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn ),
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					sourceIndex = 1,
 					targetIndex = 0,

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -26,6 +28,7 @@ class Utils {
 		'a',
 		'article',
 		'aside',
+		'button',
 		'div',
 		'footer',
 		'h1',
@@ -86,24 +89,6 @@ class Utils {
 			],
 		],
 	];
-
-	/**
-	 * Is ajax.
-	 *
-	 * Whether the current request is a WordPress ajax request.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.6.0 Use `wp_doing_ajax()` instead.
-	 * @access public
-	 * @static
-	 *
-	 * @return bool True if it's a WordPress ajax request, false otherwise.
-	 */
-	public static function is_ajax() {
-		 _deprecated_function( __METHOD__, '2.6.0', 'wp_doing_ajax()' );
-
-		return wp_doing_ajax();
-	}
 
 	/**
 	 * Is WP CLI.
@@ -771,5 +756,27 @@ class Utils {
 		}
 
 		echo wp_kses( $string, $allowed_html );
+	}
+
+	public static function is_elementor_path( $path ) {
+		$path = wp_normalize_path( $path );
+
+		/**
+		 * Elementor related paths.
+		 *
+		 * Filters Elementor related paths.
+		 *
+		 * @param string[] $available_paths
+		 */
+		$available_paths = apply_filters( 'elementor/utils/elementor_related_paths', [ ELEMENTOR_PATH ] );
+
+		return (bool) ( new Collection( $available_paths ) )
+			->map( function ( $p ) {
+				// `untrailingslashit` in order to include other plugins prefixed with elementor.
+				return untrailingslashit( wp_normalize_path( $p ) );
+			} )
+			->find(function ( $p ) use ( $path ) {
+				return false !== strpos( $path, $p );
+			} );
 	}
 }

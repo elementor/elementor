@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Create extends CommandHistory {
+export class Create extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' ),
@@ -45,14 +43,6 @@ export class Create extends CommandHistory {
 
 		let result = [];
 
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		if ( ! options.trigger ) {
-			options.trigger = {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add',
-			};
-		}
-
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
@@ -83,10 +73,6 @@ export class Create extends CommandHistory {
 		}
 
 		return result;
-	}
-
-	isDataChanged() {
-		return true;
 	}
 }
 

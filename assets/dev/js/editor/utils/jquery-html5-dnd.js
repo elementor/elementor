@@ -89,9 +89,11 @@
 			elementsCache = {},
 			currentElement,
 			currentSide,
+			isDroppingAllowedState = false,
 			defaultSettings = {
 				element: '',
 				items: '>',
+				horizontalThreshold: 0,
 				horizontalSensitivity: '10%',
 				axis: [ 'vertical', 'horizontal' ],
 				placeholder: true,
@@ -124,7 +126,7 @@
 			return -1 !== settings.axis.indexOf( 'vertical' );
 		};
 
-		var checkHorizontal = function( offsetX, elementWidth ) {
+		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
 			var isPercentValue,
 				sensitivity;
 
@@ -133,6 +135,19 @@
 			}
 
 			if ( ! hasVerticalDetection() ) {
+				const threshold = settings.horizontalThreshold,
+					{ left, right } = currentElement.getBoundingClientRect();
+
+				// For cases when the event is actually dispatched on the parent element, but
+				// `currentElement` is the actual element that the offset should be calculated by.
+				if ( clientX - threshold <= left ) {
+					return 'left';
+				}
+
+				if ( clientX + threshold >= right ) {
+					return 'right';
+				}
+
 				return offsetX > elementWidth / 2 ? 'right' : 'left';
 			}
 
@@ -166,7 +181,7 @@
 
 			event = event.originalEvent;
 
-			currentSide = checkHorizontal( event.offsetX, elementWidth );
+			currentSide = checkHorizontal( event.offsetX, event.clientX, elementWidth );
 
 			if ( currentSide ) {
 				return;
@@ -188,8 +203,19 @@
 				return;
 			}
 
-			var insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			// Fix placeholder placement for Container with `flex-direction: row`.
+			const $currentElement = $( currentElement ),
+				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
+			if ( isRowContainer && ! isFirstInsert ) {
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+				$currentElement[ insertMethod ]( elementsCache.$placeholder );
+
+				return;
+			}
+
+			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
@@ -250,7 +276,17 @@
 
 			currentElement = this;
 
-			elementsCache.$element.parents().each( function() {
+			// Get both parents and children and do a drag-leave on them in order to prevent UI glitches
+			// of the placeholder that happen when the user drags from parent to child and vice versa.
+			const $parents = elementsCache.$element.parents(),
+				$children = elementsCache.$element.children();
+
+			// Remove all current element classes to take in account nested Droppable instances.
+			// TODO #1: Move to `doDragLeave()`?
+			// TODO #2: Find a better solution.
+			$children.find( '.' + settings.currentElementClass ).removeClass( settings.currentElementClass );
+
+			$parents.add( $children ).each( function() {
 				var droppableInstance = $( this ).data( 'html5Droppable' );
 
 				if ( ! droppableInstance ) {
@@ -262,19 +298,25 @@
 
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
-				return;
-			}
+			$e.internal( 'editor/browser-import/validate', {
+				input: event.originalEvent.dataTransfer.items,
+			} ).then( ( importAllowed ) => {
+				isDroppingAllowedState = isDroppingAllowed( event ) || importAllowed;
 
-			insertPlaceholder();
+				if ( ! isDroppingAllowedState ) {
+					return;
+				}
 
-			elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
+				insertPlaceholder();
 
-			$( currentElement ).addClass( settings.currentElementClass );
+				elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
 
-			if ( 'function' === typeof settings.onDragEnter ) {
-				settings.onDragEnter.call( currentElement, currentSide, event, self );
-			}
+				$( currentElement ).addClass( settings.currentElementClass );
+
+				if ( 'function' === typeof settings.onDragEnter ) {
+					settings.onDragEnter.call( currentElement, currentSide, event, self );
+				}
+			} );
 		};
 
 		var onDragOver = function( event ) {
@@ -288,7 +330,7 @@
 
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
+			if ( ! isDroppingAllowedState ) {
 				return;
 			}
 
@@ -318,19 +360,22 @@
 			$( currentElement ).removeClass( settings.currentElementClass );
 
 			self.doDragLeave();
+
+			isDroppingAllowedState = false;
 		};
 
 		var onDrop = function( event ) {
+			event.preventDefault();
+
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
+			if ( ! isDroppingAllowedState ) {
 				return;
 			}
 
-			event.preventDefault();
-
-			if ( 'function' === typeof settings.onDropping ) {
-				settings.onDropping.call( this, currentSide, event, self );
+			// Trigger a Droppable-specific `onDropping` callback.
+			if ( settings.onDropping ) {
+				settings.onDropping( currentSide, event );
 			}
 		};
 

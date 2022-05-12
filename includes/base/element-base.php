@@ -129,10 +129,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public function enqueue_scripts() {
 		$deprecated_scripts = [
-			'jquery-slick' => [
-				'version' => '2.7.0',
-				'replacement' => 'Swiper',
-			],
+			//Insert here when you have a deprecated script
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
@@ -574,6 +571,32 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function is_type_instance() {
 		return $this->is_type_instance;
+	}
+
+	/**
+	 * On Import Replace Dynamic Content.
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 *
+	 * @return array Element data.
+	 */
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		$tags_manager = Plugin::$instance->dynamic_tags;
+
+		if ( isset( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
+			foreach ( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+				$tag_config = $tags_manager->tag_text_to_tag_data( $dynamic_value );
+				$tag_instance = $tags_manager->create_tag( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+
+				if ( $tag_instance ) {
+					$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $map_old_new_post_ids );
+					$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+				}
+			}
+		}
+
+		return $config;
 	}
 
 	/**

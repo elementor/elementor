@@ -239,17 +239,22 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_run_endpoint() {
-		$controller = new ControllerSimple(); // controller with endpoint.
-		$controller = $this->manager->register_controller_instance( $controller );
-
+		// Arrange.
+		$controller = new V2\Base\Mock\Template\Controller();
+		$this->manager->register_controller_instance( $controller );
 		$this->manager->run_server();
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
 
-		$endpoint = $this->manager->command_to_endpoint( $controller->get_name() . '/' . $endpoint_instance->get_name(), false, [] );
+		// Bypass endpoint permission.
+		$controller->bypass_original_permission( true );
+		$controller->bypass_set_value( true );
 
+		$endpoint = $this->manager->command_to_endpoint( $controller->get_name() , false, [] );
+
+		// Act.
 		$data = $this->manager->run_endpoint( $endpoint );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
+		// Assert.
 		$this->assertEquals( $controller->get_name(), $data_controller_name );
 	}
 

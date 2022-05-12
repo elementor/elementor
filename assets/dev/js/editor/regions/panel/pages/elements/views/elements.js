@@ -18,11 +18,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return true;
 		}
 
-		// Remove widgets from search results by 'widgets categories'.
-		const showInSearchResult = Object.keys( elementor.documents.getCurrent().config.panel.elements_categories )
-			.some( ( categoryName ) => childModel.get( 'categories' ).includes( categoryName ) );
-
-		if ( ! showInSearchResult ) {
+		// Prevent from wordpress widgets to show in search result.
+		if ( childModel.get( 'hideOnSearch' ) ) {
 			return false;
 		}
 

@@ -62,16 +62,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	initElementsCollection: function() {
-		var elementsCollection = new PanelElementsElementsCollection(),
-			sectionConfig = elementor.config.elements.section;
-
-		elementsCollection.add( {
-			title: __( 'Inner Section', 'elementor' ),
-			elType: 'section',
-			categories: [ 'basic' ],
-			keywords: [ 'row', 'columns', 'nested' ],
-			icon: sectionConfig.icon,
-		} );
+		const elementsCollection = new PanelElementsElementsCollection(),
+			isContainerActive = elementorCommon.config.experimentalFeatures.container;
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
@@ -80,6 +72,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			}
 
 			if ( ! widget.show_in_panel ) {
+				return;
+			}
+
+			// Don't register the `Inner Section` if the Container experiment is enabled.
+			if ( 'inner-section' === widget.name && isContainerActive ) {
 				return;
 			}
 
@@ -92,6 +89,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				widgetType: widget.widget_type,
 				custom: widget.custom,
 				editable: widget.editable,
+				hideOnSearch: widget.hide_on_search,
 			} );
 		} );
 
@@ -124,10 +122,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
 		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
-			if ( ! categories[ categoryName ] ) {
-				return;
-			}
-
 			// Set defaults.
 			if ( 'undefined' === typeof categoryConfig.active ) {
 				categoryConfig.active = true;
@@ -142,6 +136,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
 				defaultActive: categoryConfig.active,
+				sort: categoryConfig.sort,
+				hideIfEmpty: undefined !== categoryConfig.hideIfEmpty ?
+					categoryConfig.hideIfEmpty :
+					true,
 				items: categories[ categoryName ],
 			} );
 		} );

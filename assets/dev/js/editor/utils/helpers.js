@@ -1,5 +1,6 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -21,6 +22,7 @@ const allowedHTMLWrapperTags = [
 ];
 
 module.exports = {
+	container: ContainerHelper,
 	document: DocumentHelper,
 
 	_enqueuedFonts: {
@@ -36,7 +38,15 @@ module.exports = {
 				column: {
 					widget: null,
 					section: null,
+					container: {
+						widget: null,
+						container: null,
+					},
 				},
+			},
+			container: {
+				widget: null,
+				container: null,
 			},
 		},
 	},
@@ -362,13 +372,13 @@ module.exports = {
 		} );
 	},
 
-	maybeDisableWidget() {
+	maybeDisableWidget( givenWidgetType = null ) {
 		if ( ! elementor.config[ 'icons_update_needed' ] ) {
 			return false;
 		}
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
-			widgetType = elementView.model.get( 'widgetType' ),
+			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
 			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
@@ -391,7 +401,10 @@ module.exports = {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
+						'#tab-fontawesome4_migration';
 				};
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
@@ -417,7 +430,7 @@ module.exports = {
 		} );
 	},
 
-	isActiveControl: function( controlModel, values ) {
+	isActiveControl: function( controlModel, values, controls ) {
 		const condition = controlModel.condition || controlModel.get?.( 'condition' );
 		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
 
@@ -456,7 +469,7 @@ module.exports = {
 			};
 		}
 
-		return ! ( conditions && ! elementor.conditions.check( conditions, values ) );
+		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
 	cloneObject( object ) {

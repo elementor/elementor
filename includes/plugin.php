@@ -4,7 +4,6 @@ namespace Elementor;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
@@ -455,6 +454,15 @@ class Plugin {
 	public $upgrade;
 
 	/**
+	 * Tasks manager.
+	 *
+	 * Holds the plugin tasks manager.
+	 *
+	 * @var Core\Upgrade\Custom_Tasks_Manager
+	 */
+	public $custom_tasks;
+
+	/**
 	 * Kits manager.
 	 *
 	 * Holds the plugin kits manager.
@@ -722,6 +730,7 @@ class Plugin {
 		Tracker::init();
 
 		$this->upgrade = new Core\Upgrade\Manager();
+		$this->custom_tasks = new Core\Upgrade\Custom_Tasks_Manager();
 
 		$this->app = new Core\App\App();
 
@@ -855,7 +864,7 @@ class Plugin {
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
-		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
+		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ], 9 );
 	}
 
 	final public static function get_title() {
