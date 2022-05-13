@@ -35,7 +35,8 @@ export default class Component extends ComponentBase {
 					return false;
 				}
 
-				if ( draggedElType === parentElType ) {
+				// Allow only nested containers.
+				if ( draggedElType === parentElType && 'container' !== draggedElType ) {
 					return false;
 				}
 

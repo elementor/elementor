@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { Context } from '../../../../../context/context-provider';
+import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 
 import ConflictCheckbox from './components/conflict-checkbox/conflict-checkbox';
 import Heading from 'elementor-app/ui/atoms/heading';
@@ -9,8 +9,8 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function Conflict( props ) {
-	const context = useContext( Context ),
-		manifest = context.data.uploadedData?.manifest,
+	const importContext = useContext( ImportContext ),
+		manifest = importContext.data.uploadedData?.manifest,
 		getConflictTitle = ( id ) => {
 			const templateType = manifest.templates[ id ].doc_type,
 				summaryTitle = elementorAppConfig[ 'import-export' ].summaryTitles.templates?.[ templateType ];
@@ -27,7 +27,7 @@ export default function Conflict( props ) {
 				hideText
 			/>
 		),
-		isImportedAssetSelected = ( importedAssetId ) => context.data.overrideConditions.includes( importedAssetId ),
+		isImportedAssetSelected = ( importedAssetId ) => importContext.data.overrideConditions.includes( importedAssetId ),
 		getAssetClassName = ( isActive ) => {
 			const classes = [ 'e-app-import-resolver-conflicts__asset' ];
 

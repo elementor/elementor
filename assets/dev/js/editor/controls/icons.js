@@ -135,7 +135,10 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				event.stopPropagation();
 
 				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
+						'#tab-fontawesome4_migration';
 				};
 				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
@@ -261,6 +264,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		const controlValue = this.getControlValue(),
 			skin = this.model.get( 'skin' ),
 			iconContainer = 'inline' === skin ? this.ui.inlineDisplayedIcon : this.ui.previewPlaceholder,
+			disableActiveState = this.model.get( 'disable_initial_active_state' ),
 			defaultIcon = this.model.get( 'default' );
 
 		let iconValue = controlValue.value,
@@ -273,7 +277,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 		if ( 'media' === skin ) {
 			this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
-		} else {
+		}
+
+		if ( ( 'inline' === skin && ! disableActiveState ) || iconType ) {
 			this.markChecked( iconType );
 		}
 
@@ -311,7 +317,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			// If (1) the control does NOT have a default icon,
 			// OR (2) the control DOES have a default icon BUT the default icon is an SVG,
 			// set the default icon-library label's icon to a simple circle
-			iconContainer.html( '<i class="eicon-circle"></i>' );
+			const skinOptions = this.model.get( 'skin_settings' );
+			iconContainer.html( '<i class="' + skinOptions.inline.icon.icon + '"></i>' );
 		}
 	}
 

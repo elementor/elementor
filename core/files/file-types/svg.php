@@ -290,7 +290,7 @@ class Svg extends Base {
 
 		$attachment_file = get_attached_file( $attachment_id );
 
-		if ( ! $attachment_file ) {
+		if ( ! file_exists( $attachment_file ) ) {
 			return '';
 		}
 

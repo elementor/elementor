@@ -17,29 +17,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon-close" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 		</div>
-		<div class="elementor-add-new-section">
-			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_html__( 'Add New Section', 'elementor' ); ?>">
+		<div class="e-view elementor-add-new-section">
+			<?php
+				$experiments_manager = Plugin::$instance->experiments;
+				$add_container_title = esc_html__( 'Add New Container', 'elementor' );
+				$add_section_title = esc_html__( 'Add New Section', 'elementor' );
+
+				$button_title = ( $experiments_manager->is_feature_active( 'container' ) ) ? $add_container_title : $add_section_title;
+			?>
+			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_attr( $button_title ); ?>">
 				<i class="eicon-plus"></i>
 			</div>
-			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_html__( 'Add Template', 'elementor' ); ?>">
+			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
 				<i class="eicon-folder"></i>
 			</div>
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
-		<div class="elementor-select-preset">
+		<div class="e-view elementor-select-preset">
 			<div class="elementor-select-preset-title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
-					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];
+					const structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 34, 60 ];
 
-					_.each( structures, function( structure ) {
-					var preset = elementor.presetsFactory.getPresetByStructure( structure ); #>
+					structures.forEach( ( structure ) => {
+						const preset = elementor.presetsFactory.getPresetByStructure( structure ); #>
 
-					<li class="elementor-preset elementor-column elementor-col-16" data-structure="{{ structure }}">
-						{{{ elementor.presetsFactory.getPresetSVG( preset.preset ).outerHTML }}}
-					</li>
+						<li class="elementor-preset elementor-column elementor-col-16" data-structure="{{ structure }}">
+							{{{ elementor.presetsFactory.getPresetSVG( preset.preset ).outerHTML }}}
+						</li>
 					<# } ); #>
 			</ul>
+		</div>
+		<div class="e-view e-container-select-preset">
+			<div class="e-container-select-preset__title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
+			<div class="e-container-select-preset__list">
+				<#
+					elementor.presetsFactory.getContainerPresets().forEach( ( preset ) => {
+					#>
+					<div class="e-container-preset" data-preset="{{ preset }}">
+						{{{ elementor.presetsFactory.generateContainerPreset( preset ) }}}
+					</div>
+					<#
+				} );
+				#>
+			</div>
 		</div>
 	</div>
 </script>

@@ -415,6 +415,9 @@ class Element_Column extends Element_Base {
 					'color-dodge' => esc_html__( 'Color Dodge', 'elementor' ),
 					'saturation' => esc_html__( 'Saturation', 'elementor' ),
 					'color' => esc_html__( 'Color', 'elementor' ),
+					'difference' => esc_html__( 'Difference', 'elementor' ),
+					'exclusion' => esc_html__( 'Exclusion', 'elementor' ),
+					'hue' => esc_html__( 'Hue', 'elementor' ),
 					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
 				],
 				'selectors' => [
@@ -1027,6 +1030,10 @@ class Element_Column extends Element_Base {
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'section' );
+		}
+
+		if ( 'container' === $element_data['elType'] ) {
+			return Plugin::$instance->elements_manager->get_element_types( 'container' );
 		}
 
 		// If the element doesn't exists (disabled element, experiment, etc.), return false to prevent errors.

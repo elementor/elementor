@@ -2,6 +2,7 @@ import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 import environment from '../../../../core/common/assets/js/utils/environment';
 import Events from 'elementor-utils/events';
+import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -19,7 +20,10 @@ import Events from 'elementor-utils/events';
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
+				$importNowButton: $( '#e-import-template-action' ),
 				$importArea: $( '#elementor-import-template-area' ),
+				$importForm: $( '#elementor-import-template-form' ),
+				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
@@ -195,6 +199,7 @@ import Events from 'elementor-utils/events';
 				event.preventDefault();
 				const $updateButton = $( this );
 				$updateButton.addClass( 'loading' );
+
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'confirm_fa_migration_admin_modal',
 					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
@@ -206,15 +211,28 @@ import Events from 'elementor-utils/events';
 					defaultOption: 'confirm',
 					onConfirm: () => {
 						$updateButton.removeClass( 'error' ).addClass( 'loading' );
-						$.post( ajaxurl, $updateButton.data() )
+
+						const {
+							_nonce,
+							action,
+							redirectUrl,
+						} = $updateButton.data();
+
+						$.post( ajaxurl, { action, _nonce } )
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
-								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
-								const redirectTo = ( location.search.split( 'redirect_to=' )[ 1 ] || '' ).split( '&' )[ 0 ];
-								if ( redirectTo ) {
-									location.href = decodeURIComponent( redirectTo );
+
+								const messageElement = document.createElement( 'p' );
+								messageElement.appendChild( document.createTextNode( response.data.message ) );
+
+								$( '#elementor_upgrade_fa_button' ).parent().append( messageElement );
+
+								if ( redirectUrl ) {
+									location.href = decodeURIComponent( redirectUrl );
+
 									return;
 								}
+
 								history.go( -1 );
 							} )
 							.fail( function() {
@@ -344,9 +362,10 @@ import Events from 'elementor-utils/events';
 				return;
 			}
 
-			var self = this,
+			const self = this,
 				$importButton = self.elements.$importButton,
-				$importArea = self.elements.$importArea;
+				$importArea = self.elements.$importArea,
+				$importNowButton = self.elements.$importNowButton;
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
@@ -356,6 +375,18 @@ import Events from 'elementor-utils/events';
 
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
+			} );
+
+			$importNowButton.on( 'click', ( event ) => {
+				if ( self.elements.$importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+					event.preventDefault();
+
+					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						self.elements.$importForm.trigger( 'submit' );
+					} );
+
+					enableUnfilteredFilesModal.show();
+				}
 			} );
 		},
 

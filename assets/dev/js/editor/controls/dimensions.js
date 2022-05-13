@@ -17,6 +17,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		} );
 	},
 
+	// Default value must be 0, because the CSS generator (in dimensions) expects the 4 dimensions to be filled together (or all are empty).
 	defaultDimensionValue: 0,
 
 	initialize: function() {
