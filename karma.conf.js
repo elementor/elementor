@@ -13,7 +13,7 @@ if ( process.argv[ process.argv.length - 1 ] ) {
 }
 
 // Read package.json
-const pkg = require( './package.json' );
+const packageJson = require( './package.json' );
 
 module.exports = function( config ) {
 	const karmaConfig = {
@@ -119,7 +119,7 @@ module.exports = function( config ) {
 		client: {
 			clearContext: true,
 			qunit: {
-				elementorVersion: pkg.version,
+				elementorVersion: packageJson.version,
 				isDebug,
 				showUI: false,
 				validateContainersAlive: true, // Validate all containers are alive recursively after each test done.
