@@ -49,7 +49,7 @@ describe( 'modules/dev-tools/assets/js/deprecation/utils.js', () => {
 	} );
 
 	test( 'deprecatedMessage() -- Sanity', () => {
-		// Arrange.
+		// Act.
 		deprecatedMessage( 'hard', 'test', '3.0.0', 'anything' );
 
 		// Assert.
