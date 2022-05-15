@@ -13,6 +13,7 @@ export default class HistoryManager {
 	active = true;
 
 	translations = {
+		// Alphabetical order.
 		add: __( 'Added', 'elementor' ),
 		change: __( 'Edited', 'elementor' ),
 		disable: __( 'Disabled', 'elementor' ),
@@ -23,8 +24,9 @@ export default class HistoryManager {
 		paste: __( 'Pasted', 'elementor' ),
 		paste_style: __( 'Style Pasted', 'elementor' ),
 		remove: __( 'Removed', 'elementor' ),
-		reset_style: __( 'Style Reset', 'elementor' ),
 		reset_settings: __( 'Settings Reset', 'elementor' ),
+		reset_style: __( 'Style Reset', 'elementor' ),
+		selected: __( 'Selected', 'elementor' ),
 	};
 
 	constructor( document ) {

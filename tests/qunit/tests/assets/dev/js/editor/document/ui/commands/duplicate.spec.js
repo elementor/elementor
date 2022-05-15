@@ -3,7 +3,7 @@ import ElementsHelper from '../../elements/helper';
 
 export const Duplicate = () => {
 	QUnit.test( 'Duplicate', ( assert ) => {
-		const eButton = ElementsHelper.createAutoButton();
+		const eButton = ElementsHelper.createWrappedButton();
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', eButton.view );
 

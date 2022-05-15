@@ -1,9 +1,7 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
 /**
  * Apply & Save the selected color on click.
  */
-export class Apply extends CommandBase {
+export class Apply extends $e.modules.CommandBase {
 	/**
 	 * Validate the command arguments.
 	 *

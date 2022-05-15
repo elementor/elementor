@@ -50,9 +50,7 @@ HashCommands API, provides a simple and convenient way to run command, routes fr
     * Currently, all routes are safe, and commands which include `isSafe() => true`  at their `getInfo` function.
 * ##### How to mark a command to be safe?
     ```javascript
-    import CommandBase from 'elementor-api/modules/command-base';
-    
-    export class SafeCommand extends CommandBase {
+    export class SafeCommand extends $e.modules.CommandBase {
         static getInfo() {
             return {
                 isSafe: true,
