@@ -19,7 +19,7 @@ class Test_Image extends Elementor_Test_Base {
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
 
 		$image_meta['sizes']['test'] = [
-			'file' => 'base-test-image',
+			'file' => 'base-test-image.png',
 			'width' => 300,
 			'height' => 300,
 			'mime-type' => 'image/png',
@@ -66,11 +66,11 @@ class Test_Image extends Elementor_Test_Base {
 
 		// base image that doesn't suppose to be deleted.
 		$base_full_path = $base_dir . 'base-test-image.png';
-		file_put_contents( $base_full_path, '' );
+		static::touch( $base_full_path );
 
 		// custom image that do suppose to be deleted.
 		$custom_full_path = $base_dir . 'mock-image.png';
-		file_put_contents( $custom_full_path, '' );
+		static::touch( $custom_full_path);
 
 		$attachment_id = $this->create_image();
 		$image_manager = new Images_Manager();
@@ -84,6 +84,6 @@ class Test_Image extends Elementor_Test_Base {
 		$this->assertFalse( file_exists( $custom_full_path ) );
 
 		// Cleanup
-		unlink( $base_full_path );
+		 unlink( $base_full_path );
 	}
 }
