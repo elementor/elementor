@@ -110,5 +110,5 @@ export const isSoftDeprecated = ( version ) => {
 export const isHardDeprecated = ( version ) => {
 	const total = compareVersion( version, elementorDevToolsConfig.deprecation.current_version );
 
-	return total >= elementorDevToolsConfig.deprecation.hard_version_count;
+	return total < 0 || total >= elementorDevToolsConfig.deprecation.hard_version_count;
 };
