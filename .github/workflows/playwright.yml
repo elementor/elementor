@@ -81,7 +81,7 @@ jobs:
         run: |
           npx playwright install-deps
           npx playwright install-deps chromium
-          npm install -D @playwright/test
+          npm install @playwright/test@1.21.1
       - name: Run Playwright tests
         run: |
           npm run test:playwright
