@@ -4,7 +4,7 @@ export class Switch extends $e.modules.CommandBase {
 	}
 
 	apply( args ) {
-		const { id, mode, onClose, selector } = args;
+		const { id, mode, onClose } = args;
 
 		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),

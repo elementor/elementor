@@ -1,7 +1,11 @@
 export class AttachPreview extends $e.modules.CommandInternalBase {
 	validateArgs( args = {} ) {
 		if ( args.selector ) {
-			this.requireArgumentConstructor( 'selector', jQuery );
+			this.requireArgumentType( 'selector', 'string' );
+
+			if ( 0 === elementor.$previewContents.find( args.selector ).length ) {
+				throw new Error( 'Invalid argument. The `selector` argument must be valid selector.' );
+			}
 		}
 	}
 
@@ -42,7 +46,11 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				return resolve();
 			}
 
-			document.$element = selector || elementor.$previewContents.find( '.elementor-' + document.id );
+			if ( selector?.length ) {
+				document.$element = elementor.$previewContents.find( selector );
+			} else {
+				document.$element = elementor.$previewContents.find( '.elementor-' + document.id );
+			}
 
 			if ( ! document.$element.length ) {
 				elementor.onPreviewElNotFound();

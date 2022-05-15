@@ -12,7 +12,7 @@ test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom sel
 	await editor.page.evaluate( () => {
 		// `Attach-preview` is a `tab_content` of the widget tabs.
 		$e.internal( 'editor/documents/attach-preview', {
-			selector: jQuery( elementor.getPreviewContainer().view.$el.find( '.elementor-tab-content' )[ 0 ] ),
+			selector: '.elementor-tab-content',
 		} );
 	} );
 
