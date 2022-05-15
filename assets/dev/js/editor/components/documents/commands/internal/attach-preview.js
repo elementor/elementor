@@ -34,7 +34,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 	}
 
 	attachDocumentToPreview( document, args ) {
-		const { selector } = args;
+		const { selector = '.elementor-' + document.id } = args;
 
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
@@ -46,11 +46,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				return resolve();
 			}
 
-			if ( selector?.length ) {
-				document.$element = elementor.$previewContents.find( selector );
-			} else {
-				document.$element = elementor.$previewContents.find( '.elementor-' + document.id );
-			}
+			document.$element = elementor.$previewContents.find( selector );
 
 			if ( ! document.$element.length ) {
 				elementor.onPreviewElNotFound();
