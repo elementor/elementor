@@ -27,7 +27,7 @@ On the frontend from the other hand (pun intended), things get more complicated.
 
 We can generally divide that into 2 parts:
 
-1. **Migrator** - Handles the actual migration logic (duh...) using a simple API.
+1. **Migrator** - Handles the actual migration logic using a simple API.
 2. **Maps** - Objects that represents how element settings should be migrated (e.g. renaming, responsive controls, etc.).
 
 The usage is fairly easy. First, create a mapping function under the `assets/js/editor/maps` directory. It receives an element model and returns a mapping object:

@@ -126,8 +126,9 @@ This variables reset method is required in order to avoid style leakage as state
 - Name the CSS variable after the corresponding CSS property.
 - Try to always use `{{WRAPPER}}` as the selector, and consume the variable under the proper selector in the SCSS file
   instead of putting a long selector in the PHP file. 
-- Make sure the default value you set for the property is the real default according to 
-  [MDN](https://developer.mozilla.org) (Sometimes `--var-name: revert;` will be your best bet, but don't overuse it).
+- If the control should have a default value, reset the variable value to this value. Otherwise, make sure that the
+  default value you set for the property is the real default according to [MDN](https://developer.mozilla.org)
+  (Sometimes `--var-name: revert;` will be your best bet, but don't overuse it).
 
 ### Extending the Container - WIP:
 
