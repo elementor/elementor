@@ -79,9 +79,9 @@ jobs:
           npx wp-env run tests-cli "wp --info"
       - name: Install playwright/test
         run: |
+          npm install @playwright/test@1.21.1
           npx playwright install-deps
           npx playwright install-deps chromium
-          npm install @playwright/test@1.21.1
       - name: Run Playwright tests
         run: |
           npm run test:playwright
