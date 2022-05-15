@@ -59,7 +59,7 @@ export default class extends elementorModules.Module {
 			.setMessage( options.message )
 			.setSettings( 'position', {
 				of: options.element,
-				at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ' top' + options.top,
+				at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ( options.inlineStart || '' ) + ' top' + options.top,
 			} );
 
 		return this.dialog.show();
