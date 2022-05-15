@@ -319,6 +319,16 @@ abstract class Document extends Controls_Stack {
 				$attributes['data-elementor-settings'] = wp_json_encode( $elementor_settings );
 			}
 		}
+		
+		/**
+		 * Filters document container attributes, allowing to add, remove or alter them.
+		 * 
+		 * Be aware that altering core attributes (data-elementor-*) may have severe side effects that may break functionality.
+		 *
+		 * @param array                         $attributes The container attributes.
+		 * @param \Elementor\Core\Base\Document $this       The document instance.
+		 */
+		$attributes = apply_filters( 'elementor/document/container_attributes', $attributes, $this );
 
 		return $attributes;
 	}
