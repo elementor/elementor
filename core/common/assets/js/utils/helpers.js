@@ -5,7 +5,7 @@ export default class Helpers {
 		softDeprecated( name, version, replacement );
 
 		// This is is self is deprecated.
-		softDeprecated(
+		elementor.devTools.deprecation.deprecated(
 			'elementorCommon.helpers.softDeprecated',
 			'3.7.0',
 			'elementor.devTools.deprecation.deprecated'
@@ -16,7 +16,7 @@ export default class Helpers {
 		deprecatedMessage( 'hard', name, version, replacement );
 
 		// This is is self is deprecated.
-		softDeprecated(
+		elementor.devTools.deprecation.deprecated(
 			'elementorCommon.helpers.hardDeprecated',
 			'3.7.0',
 			'elementor.devTools.deprecation.deprecated'
@@ -27,7 +27,7 @@ export default class Helpers {
 		deprecatedMessage( type, name, version, replacement );
 
 		// This is is self is deprecated.
-		deprecatedMessage(
+		elementor.devTools.deprecation.deprecated(
 			'elementorCommon.helpers.deprecatedMessage',
 			'3.7.0',
 			'elementor.devTools.deprecation.deprecated'
@@ -38,7 +38,7 @@ export default class Helpers {
 		elementor.devTools.consoleWarn( ...args );
 
 		// This is is self is deprecated.
-		softDeprecated(
+		elementor.devTools.deprecation.deprecated(
 			'elementorCommon.helpers.consoleWarn',
 			'3.7.0',
 			'elementor.devTools.consoleWarn'
@@ -50,7 +50,7 @@ export default class Helpers {
 		console.error( message );
 
 		// This is is self is deprecated.
-		softDeprecated(
+		elementor.devTools.deprecation.deprecated(
 			'elementorCommon.helpers.consoleError',
 			'3.7.0',
 			'console.error'
