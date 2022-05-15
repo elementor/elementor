@@ -29,7 +29,7 @@ foreach ( $icons_groups as $icon_group ) {
 			$icon_has_changed = false;
 
 			foreach ( $icon['changes'] as $version ) {
-				if( version_compare( $old_version , $version, '<' ) ) {
+				if ( version_compare( $old_version, $version, '<' ) ) {
 					$icon_has_changed = true;
 					break;
 				}
@@ -52,7 +52,7 @@ foreach ( $icons_groups as $icon_group ) {
 			$icon['unicode'],
 			$match_svg_path[0],
 		];
-		
+
 		// Add $updated_group to $group_array
 		if ( ! in_array( (string) $icon_name, $group_array['icons'], true ) ) {
 			$group_array['icons'][] = (string) $icon_name;
