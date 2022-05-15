@@ -37,7 +37,6 @@ module.exports = function( config ) {
 
 			// Dev tools.
 			'tests/qunit/setup/dev-tools.js',
-			'assets/js/dev-tools.js',
 
 			// Elementor Common.
 			'tests/qunit/setup/elementor-common.js',
