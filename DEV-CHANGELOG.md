@@ -1,5 +1,10 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev8 - 2022-05-15
+* Tweak: Tools - Change font awesome migration process [ED-6935] (#18491)
+* Fix: Repeater default value was counted as a value (#18622)
+* Tweak: Controls - Added option to Number Scrubbing in numeric fields [ED-6910] (#18429)
+
 #### 3.7.0-dev7 - 2022-05-08
 * New: Modules/Usage - Add page settings to tracking data [ED-1229] (#13408)
 * Tweak: Custom size in image widget can no longer accept non-numeric characters [ED-7101] (#18570)
@@ -418,6 +423,3 @@
 #### 3.5.0-dev28 - 2021-09-19
 * Tweak: Adding a URL parameter to the import-export that skips the kit-content selection [ED-4750] (#16275)
 * Tweak: Internal - Allow external extending of Element Editing Handles Buttons [ED-4480] (#16232)
-
-#### 3.5.0-dev26 - 2021-09-15
-* Tweak: Updated featured video in readme.txt (#16332)
