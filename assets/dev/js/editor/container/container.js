@@ -364,8 +364,6 @@ export default class Container extends ArgsObject {
 			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
 			if ( 1 === repeaters.length ) {
-				this.isChildrenBC = true;
-
 				Object.defineProperty( this, 'children', {
 					get() {
 						elementor.devTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
