@@ -649,7 +649,7 @@ class Editor {
 			'font-awesome',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
-			'4.7.0'
+			'6.1.1'
 		);
 
 		wp_register_style(
