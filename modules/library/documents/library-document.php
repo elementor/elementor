@@ -74,4 +74,8 @@ abstract class Library_Document extends Document {
 
 		return $config;
 	}
+
+	public function get_content( $with_css = false ) {
+		return do_shortcode( parent::get_content( $with_css ) );
+	}
 }
