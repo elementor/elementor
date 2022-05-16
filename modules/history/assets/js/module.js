@@ -22,12 +22,12 @@ export default class Manager {
 	}
 
 	get history() {
-		elementor.devTools.deprecation.deprecated( 'elementor.history.history', '2.9.0', 'elementor.documents.getCurrent().history' );
+		elementorDevToolsModule.deprecation.deprecated( 'elementor.history.history', '2.9.0', 'elementor.documents.getCurrent().history' );
 		return elementor.documents.getCurrent().history;
 	}
 
 	get revisions() {
-		elementor.devTools.deprecation.deprecated( 'elementor.history.revisions', '2.9.0', 'elementor.documents.getCurrent().revisions' );
+		elementorDevToolsModule.deprecation.deprecated( 'elementor.history.revisions', '2.9.0', 'elementor.documents.getCurrent().revisions' );
 		return elementor.documents.getCurrent().revisions;
 	}
 }

@@ -51,7 +51,7 @@ export default class ComponentBase extends Module {
 	}
 
 	getRootContainer() {
-		elementor.devTools.deprecation.deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'getRootContainer()',
 			'3.7.0',
 			'getServiceName()',

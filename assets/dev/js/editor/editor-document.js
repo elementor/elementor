@@ -2,7 +2,6 @@ import CommandContainerBase from './command-bases/command-container-base';
 import CommandContainerInternalBase from './command-bases/command-container-internal-base';
 import CommandHistoryBase from 'elementor-document/command-bases/command-history-base';
 import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
-import { deprecated } from 'elementor/modules/dev-tools/assets/js/deprecation/utils';
 
 $e.modules.editor = {
 	CommandContainerBase,
@@ -17,7 +16,7 @@ $e.modules.editor = {
 // TODO: Remove, BC.
 $e.modules.document = {
 	get CommandHistory() {
-		deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'$e.modules.document.CommandHistory',
 			'3.7.0',
 			'$e.modules.editor.document.CommandHistoryBase'
@@ -27,7 +26,7 @@ $e.modules.document = {
 	},
 
 	get CommandHistoryDebounce() {
-		deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'$e.modules.CommandHistoryDebounce',
 			'3.7.0',
 			'$e.modules.editor.document.CommandHistoryDebounceBase'

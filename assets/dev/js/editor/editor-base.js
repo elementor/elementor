@@ -26,7 +26,6 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
-import { default as DevToolsModule } from 'elementor/modules/dev-tools/assets/js/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -64,7 +63,7 @@ export default class EditorBase extends Marionette.Application {
 	};
 
 	get debug() {
-		elementor.devTools.deprecation.deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'elementor.debug',
 			'3.0.0',
 			'elementorCommon.debug'
@@ -118,7 +117,7 @@ export default class EditorBase extends Marionette.Application {
 	modules = {
 		// TODO: Deprecated alias since 2.3.0
 		get Module() {
-			elementor.devTools.deprecation.deprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
+			elementorDevToolsModule.deprecation.deprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
 
 			return elementorModules.Module;
 		},
@@ -127,7 +126,7 @@ export default class EditorBase extends Marionette.Application {
 				views: {
 					// TODO: Deprecated alias since 2.4.0
 					get BaseModalLayout() {
-						elementor.devTools.deprecation.deprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
+						elementorDevToolsModule.deprecation.deprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
 
 						return elementorModules.common.views.modal.Layout;
 					},
@@ -141,7 +140,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		saver: {
 			get footerBehavior() {
-				elementor.devTools.deprecation.deprecated( 'elementor.modules.saver.footerBehavior.',
+				elementorDevToolsModule.deprecation.deprecated( 'elementor.modules.saver.footerBehavior.',
 					'2.9.0',
 					'elementor.modules.components.saver.behaviors.FooterSaver' );
 
@@ -194,7 +193,7 @@ export default class EditorBase extends Marionette.Application {
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
-					elementor.devTools.deprecation.deprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
+					elementorDevToolsModule.deprecation.deprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
 					return elementorModules.editor.elements.models.BaseSettings;
 				},
@@ -224,7 +223,7 @@ export default class EditorBase extends Marionette.Application {
 		views: {
 			// TODO: Deprecated alias since 2.4.0
 			get ControlsStack() {
-				elementor.devTools.deprecation.deprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
+				elementorDevToolsModule.deprecation.deprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
 				return elementorModules.editor.views.ControlsStack;
 			},
@@ -376,8 +375,6 @@ export default class EditorBase extends Marionette.Application {
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
-
-		this.devTools = new DevToolsModule();
 
 		this.browserImport = new BrowserImport();
 
@@ -1528,12 +1525,12 @@ export default class EditorBase extends Marionette.Application {
 			Object.defineProperty( this.config, key, {
 				get() {
 					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
-					elementor.devTools.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', replacement );
+					elementorDevToolsModule.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', replacement );
 					// return from current document.
 					return data.value();
 				},
 				set() {
-					elementor.devTools.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					elementorDevToolsModule.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
 					throw Error( 'Deprecated' );
 				},
 			} );
@@ -1541,21 +1538,21 @@ export default class EditorBase extends Marionette.Application {
 
 		Object.defineProperty( this.config.settings, 'page', {
 			get() {
-				elementor.devTools.deprecation.deprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
+				elementorDevToolsModule.deprecation.deprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
 				return elementor.config.document.settings;
 			},
 		} );
 
 		Object.defineProperty( this.config, 'widgets', {
 			get() {
-				elementor.devTools.deprecation.deprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
+				elementorDevToolsModule.deprecation.deprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
 				return elementor.widgetsCache;
 			},
 		} );
 
 		Object.defineProperty( this, '$previewElementorEl', {
 			get() {
-				elementor.devTools.deprecation.deprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
+				elementorDevToolsModule.deprecation.deprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
 
 				return elementor.documents.getCurrent().$element;
 			},

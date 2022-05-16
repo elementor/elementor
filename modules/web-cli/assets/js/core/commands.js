@@ -23,7 +23,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		Object.defineProperty( this, 'classes', {
 			get() {
-				elementor.devTools.deprecation.deprecated(
+				elementorDevToolsModule.deprecation.deprecated(
 					'$e.commands.classes',
 					'3.7.0',
 					'$e.commands.getCommandClass(), $e.commandsInternal.getCommandClass(), $e.data.getCommandClass(), $e.routes.getCommandClass() according to the requested command infra-structure,'

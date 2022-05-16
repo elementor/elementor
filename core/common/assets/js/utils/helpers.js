@@ -1,47 +1,45 @@
-import { softDeprecated, deprecatedMessage } from 'elementor/modules/dev-tools/assets/js/deprecation/utils';
-
 export default class Helpers {
 	softDeprecated( name, version, replacement ) {
-		softDeprecated( name, version, replacement );
+		elementorDevToolsModule.deprecation.deprecated( name, version, replacement );
 
 		// This is is self is deprecated.
-		elementor.devTools.deprecation.deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'elementorCommon.helpers.softDeprecated',
 			'3.7.0',
-			'elementor.devTools.deprecation.deprecated'
+			'elementorDevToolsModule.deprecation.deprecated'
 		);
 	}
 
 	hardDeprecated( name, version, replacement ) {
-		deprecatedMessage( 'hard', name, version, replacement );
+		elementorDevToolsModule.deprecation.deprecated( name, version, replacement );
 
 		// This is is self is deprecated.
-		elementor.devTools.deprecation.deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'elementorCommon.helpers.hardDeprecated',
 			'3.7.0',
-			'elementor.devTools.deprecation.deprecated'
+			'elementorDevToolsModule.deprecation.deprecated'
 		);
 	}
 
 	deprecatedMessage( type, name, version, replacement ) {
-		deprecatedMessage( type, name, version, replacement );
+		elementorDevToolsModule.deprecation.deprecated( name, version, replacement );
 
 		// This is is self is deprecated.
-		elementor.devTools.deprecation.deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'elementorCommon.helpers.deprecatedMessage',
 			'3.7.0',
-			'elementor.devTools.deprecation.deprecated'
+			'elementorDevToolsModule.deprecation.deprecated'
 		);
 	}
 
 	consoleWarn( ...args ) {
-		elementor.devTools.consoleWarn( ...args );
+		elementorDevToolsModule.consoleWarn( ...args );
 
 		// This is is self is deprecated.
-		elementor.devTools.deprecation.deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'elementorCommon.helpers.consoleWarn',
 			'3.7.0',
-			'elementor.devTools.consoleWarn'
+			'elementorDevToolsModule.consoleWarn'
 		);
 	}
 
@@ -50,7 +48,7 @@ export default class Helpers {
 		console.error( message );
 
 		// This is is self is deprecated.
-		elementor.devTools.deprecation.deprecated(
+		elementorDevToolsModule.deprecation.deprecated(
 			'elementorCommon.helpers.consoleError',
 			'3.7.0',
 			'console.error'
@@ -58,10 +56,10 @@ export default class Helpers {
 	}
 
 	deprecatedMethod( methodName, version, replacement ) {
-		deprecatedMessage( 'hard', methodName, version, replacement );
+		elementorDevToolsModule.deprecation.deprecated( methodName, version, replacement );
 
 		// This itself is deprecated.
-		elementor.devTools.deprecation.deprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementor.devTools.deprecation.deprecated' );
+		elementorDevToolsModule.deprecation.deprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementorDevToolsModule.deprecation.deprecated' );
 	}
 
 	cloneObject( object ) {

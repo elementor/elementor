@@ -45,7 +45,7 @@ export default class CommandInfra extends ArgsObject {
 
 	// TODO - Remove backwards compatibility.
 	get currentCommand() {
-		elementor.devTools.deprecation.deprecated( 'this.currentCommand', '3.7.0', 'this.command' );
+		elementorDevToolsModule.deprecation.deprecated( 'this.currentCommand', '3.7.0', 'this.command' );
 
 		return this.command;
 	}

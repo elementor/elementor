@@ -91,7 +91,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		// Use `defineProperty` because `get elementSettingsModel()` fails during the `Marionette.CompositeView.extend`.
 		Object.defineProperty( this, 'elementSettingsModel', {
 			get() {
-				elementor.devTools.deprecation.deprecated( 'elementSettingsModel', '2.8.0', 'container.settings' );
+				elementorDevToolsModule.deprecation.deprecated( 'elementSettingsModel', '2.8.0', 'container.settings' );
 
 				return options.container ? options.container.settings : options.elementSettingsModel;
 			},

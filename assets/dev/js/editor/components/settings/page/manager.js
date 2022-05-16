@@ -70,7 +70,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	getContainerId() {
-		elementor.devTools.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+		elementorDevToolsModule.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
 
 		return this.getContainerType();
 	},

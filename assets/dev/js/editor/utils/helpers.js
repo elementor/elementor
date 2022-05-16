@@ -76,7 +76,7 @@ module.exports = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementor.devTools.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorDevToolsModule.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
@@ -322,7 +322,7 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		elementor.devTools.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+		elementorDevToolsModule.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
 
 		return elementorCommon.helpers.getUniqueId();
 	},
@@ -473,7 +473,7 @@ module.exports = {
 	},
 
 	cloneObject( object ) {
-		elementor.devTools.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorDevToolsModule.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -508,7 +508,7 @@ module.exports = {
 	},
 
 	wpColorPicker( $element ) {
-		elementor.devTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementorDevToolsModule.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},
