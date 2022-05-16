@@ -1,12 +1,21 @@
 <?php
 // How to update a version for Font Awesome:
+// FYI: "js" and "json" folders belongs to elementor and not fontawesome.
+
 // 1. Download the new version of Font Awesome.
-// 2. Replace fontawesome folder excluding this file.
+// 2. Replace the fontawesome folder excluding this file and migration folder.
 // 3. run this script.
-// 4. Files should be updated with the new icons.
+// 4. Files in js and json folders should be updated with the new icons.
+// 5. Delete redundant files in order to keep Elementor plugin size small.
+
+$metadata_path = 'metadata/icons.json';
+
+if ( ! file_exists( $metadata_path ) ) {
+	die( 'metadata/icons.json file not exist.' );
+}
 
 // Load all Font Awesome icons metadata.
-$metadata = file_get_contents( 'metadata/icons.json' );
+$metadata = file_get_contents( $metadata_path );
 $metadata_array = json_decode( $metadata, true );
 
 // SVG pattern to extract svg path.
