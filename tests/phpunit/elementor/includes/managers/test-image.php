@@ -39,6 +39,7 @@ class Test_Image extends Elementor_Test_Base {
 
 		// Assert
 		$new_metadata = wp_get_attachment_metadata( $attachment_id );
+		var_dump(' -----------  metadata: ' . $new_metadata['sizes']);
 
 		$this->assertTrue(is_array($new_metadata['sizes']));
 		$this->assertCount(2, $new_metadata['sizes']);
