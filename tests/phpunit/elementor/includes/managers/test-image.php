@@ -39,24 +39,20 @@ class Test_Image extends Elementor_Test_Base {
 
 		// Assert
 		$new_metadata = wp_get_attachment_metadata( $attachment_id );
-		var_dump(' -----------  metadata: ' , $new_metadata['sizes']);
 
-		$this->assertTrue(is_array($new_metadata['sizes']));
-		$this->assertCount(2, $new_metadata['sizes']);
-		$this->assertEqualSets([
-			'test' => [
+		$this->assertTrue( is_array( $new_metadata['sizes'] ) );
+		$this->assertEquals( [
 				'file' => 'base-test-image.png',
-				'width' => 300,
-				'height' => 300,
+				'width' => '300',
+				'height' => '300',
 				'mime-type' => 'image/png',
-			],
-			'elementor_custom_100x100' => [
+		], $new_metadata['sizes']['test'] );
+		$this->assertEquals( [
 				'file' => 'elementor/thumbs/mock-image.png',
-				'width' => 100,
-				'height' => 100,
+				'width' => '100',
+				'height' => '100',
 				'mime-type' => 'image/png',
-			],
-		], $new_metadata['sizes']);
+		], $new_metadata['sizes']['elementor_custom_100x100'] );
 	}
 
 	public function test_delete_custom_images() {
@@ -65,18 +61,16 @@ class Test_Image extends Elementor_Test_Base {
 
 		$base_dir = wp_get_upload_dir()['basedir'] . '/elementor/thumbs/';
 
-		// base image that doesn't suppose to be deleted.
+		// Create base image that doesn't suppose to be deleted.
 		$base_full_path = $base_dir . 'base-test-image.png';
 		static::touch( $base_full_path );
 
-		// custom image that do suppose to be deleted.
+		// Create custom image that do suppose to be deleted.
 		$custom_full_path = $base_dir . 'mock-image.png';
-		static::touch( $custom_full_path);
+		static::touch( $custom_full_path );
 
 		$attachment_id = $this->create_image();
-
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
-
 		$image_meta['sizes']['elementor_custom_100x100'] = [
 			'file' => '/elementor/thumbs/mock-image.png',
 			'width' => 100,
