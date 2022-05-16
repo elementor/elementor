@@ -233,7 +233,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
           // The module should be loaded only when `nestedElements` is available.
           await elementor.modules.nestedElements;
 	
-          // Create the TabsV2 moodule.
+          // Create the TabsV2 module.
           new ( await import( '../editor/module' ) ).default();
       } );
       ```
