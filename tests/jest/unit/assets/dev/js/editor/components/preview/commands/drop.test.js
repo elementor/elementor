@@ -47,12 +47,6 @@ describe( `$e.run( 'preview/drop' )`, () => {
 				},
 			},
 		};
-
-		global.elementorDevToolsModule = {
-			deprecation: {
-				deprecated: jest.fn(),
-			},
-		};
 	} );
 
 	afterAll( async () => {

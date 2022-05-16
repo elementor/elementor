@@ -56,6 +56,12 @@ export const setupMock = async () => {
 
 	global.$e = new ( await import( 'elementor-api/api' ) ).default;
 
+	global.elementorDevToolsModule = {
+		deprecation: {
+			deprecated: jest.fn(),
+		},
+	};
+
 	return $e;
 };
 
@@ -70,4 +76,5 @@ export const freeMock = () => {
 	delete global.window;
 	delete global._;
 	delete global.$e;
+	delete global.elementorDevToolsModule;
 };
