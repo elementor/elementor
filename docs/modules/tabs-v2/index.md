@@ -1,9 +1,9 @@
 # Elementor TabsV2 Module
-## Introduction
 
 * **Experiment:** `true`
 * **Module Description** - Module that allows you to create nested tabs widget.
 * **Depends** - on `\Elementor\Modules\NestedElements\Module`
+* ### Technical description:
 - 📂 __tabs\-v2__
 	- 📂 __assets__
 		- 📂 __js__
@@ -25,6 +25,42 @@
 	- 📂 __widgets__
 		- 📄 [tabs\-v2.php](#widgetstabs-v2php---how-to-register-a-widget) - `Backend, The widget that will be nested, insert new widget into the system.`
 
+- --------------------------------------------------------------------------------------------------------------------------------
+## Product knowledge base
+* [Elementor Tabs](https://developers.elementor.com/docs/editor/elementor-tabs/)
+
+## Attention needed / Known issues
+* [Working only with containers](../../core/container-element.md)
+* [Abnormal behavior for handling mobile](#assetsjsfrontendhandlerstabs-v2js---custom-frontend-handler)
+	```javascript
+	onInit( ...args ) {
+		// TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
+		if ( elementorFrontend.isEditMode() ) {
+			const $widget = this.$element,
+				$removed = this.findElement( '.elementor-tab-mobile-title' ).remove();
+
+			let index = 1;
+
+			this.findElement( '.e-container' ).each( function() {
+				const $current = jQuery( this ),
+					$desktopTabTitle = $widget.find( `.elementor-tabs-wrapper > *:nth-child(${ index })` ),
+					mobileTitleHTML = `<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
+
+					$current.before( mobileTitleHTML );
+
+				++index;
+			} );
+
+			// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
+			if ( $removed.length ) {
+				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
+			}
+		}
+
+		super.onInit( ...args );
+	}
+	```
+     > Since TabsV2 should looks like old Tabs widget, there is manual handling of the situation for mobile devices.
 - --------------------------------------------------------------------------------------------------------------------------------
 
 # How NestedElements, TabsV2 (Nested tabs) works?
@@ -158,7 +194,7 @@ How to register a module?
 * **Link to the actual file** - [tabs-v2.js](../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js)
 * Since NestedElements, and TabV2, are modules, it will be required to create such custom handler.
 ```javascript
-export default class YourCustomHandler extends elementorModules.frontend.handlers.TabsV2 {
+export default class YourCustomHandler extends elementorModules.frontend.handlers.BaseTabsV2 {
 	// Create your custom handler.
 }
 ```
@@ -413,7 +449,7 @@ AddSectionArea.propTypes = {
 ## `assets/js/editor/views/empty.js` - Custom empty-view for the widget.
 * **Link to the actual file** - [empty.js](../../../modules/tabs-v2/assets/js/editor/views/empty.js)
 
-![img](./_images/1.png)
+![img](./_images/1.jpg)
 * The view should be `React` component, it will be the empty view for the widget children, in this case, the tabs.
     ```javascript
     import { useState } from 'react';

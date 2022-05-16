@@ -1,15 +1,6 @@
 import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
 
 export default class TabsV2 extends BaseTabsV2 {
-	getDefaultSettings() {
-		const defaultSettings = { ... super.getDefaultSettings() };
-
-		defaultSettings.toggleSelf = false;
-		defaultSettings.selectors.tabContent = '.e-container';
-
-		return defaultSettings;
-	}
-
 	getTabContentFilterSelector( tabIndex ) {
 		// Double by 2, since each `e-container` should have 'elementor-tab-mobile-title'.
 		return `*:nth-child(${ tabIndex * 2 })`;

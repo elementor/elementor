@@ -33,14 +33,14 @@ export default class BaseTabsV2 extends Base {
 			selectors: {
 				tablist: '[role="tablist"]',
 				tabTitle: '.elementor-tab-title',
-				tabContent: '.elementor-tab-content',
+				tabContent: '.e-container',
 			},
 			classes: {
 				active: 'elementor-active',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
-			toggleSelf: true,
+			toggleSelf: false,
 			hidePrevious: true,
 			autoExpand: true,
 			keyDirection: {
