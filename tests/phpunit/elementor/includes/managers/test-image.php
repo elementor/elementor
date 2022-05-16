@@ -76,7 +76,7 @@ class Test_Image extends Elementor_Test_Base {
 
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
 
-		$image_meta['sizes'][ 'elementor_custom_100x100' ] = [
+		$image_meta['sizes']['elementor_custom_100x100'] = [
 			'file' => '/elementor/thumbs/mock-image.png',
 			'width' => 100,
 			'height' => 100,
