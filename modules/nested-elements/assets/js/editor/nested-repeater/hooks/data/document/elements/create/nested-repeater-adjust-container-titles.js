@@ -1,10 +1,8 @@
 import Base from '../../../base';
 
 /**
- * On each nested widget creation.
- *
- * For each nested repeater container, set the container title,
- * according to the nested repeater title, e.g: the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
+ * On each container that created in nested widget, adjust the title
+ * according backend configuration, e.g: the _title will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
  * '_title' is used by the navigator.
  */
 export class NestedRepeaterAdjustContainerTitles extends Base {

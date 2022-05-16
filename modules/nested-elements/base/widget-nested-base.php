@@ -30,6 +30,15 @@ abstract class Widget_Nested_Base extends Widget_Base {
 	/**
 	 * Get default children title using `%d` as index in the format.
 	 *
+	 * @note The title in this method is used to set the default title for each created child in nested element.
+	 * for handling the children title for new created widget(s), use `get_default_children_elements()` method,
+	 * eg:
+	 * [
+	 *      'elType' => 'container',
+	 *      'settings' => [
+	 *          '_title' => __( 'Tab #1', 'elementor' ),
+	 *      ],
+	 * ],
 	 * @return string
 	 */
 	protected function get_default_children_title() {
