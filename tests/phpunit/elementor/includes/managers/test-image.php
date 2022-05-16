@@ -73,8 +73,21 @@ class Test_Image extends Elementor_Test_Base {
 		static::touch( $custom_full_path);
 
 		$attachment_id = $this->create_image();
-		$image_manager = new Images_Manager();
-		$image_manager->get_details( $attachment_id, 'custom_100x100', false );
+
+		$image_meta = wp_get_attachment_metadata( $attachment_id );
+
+		$image_meta['sizes'][ 'elementor_custom_100x100' ] = [
+			'file' => '/elementor/thumbs/mock-image.png',
+			'width' => 100,
+			'height' => 100,
+			'mime-type' => 'image/png',
+		];
+
+		// Attach custom image to original.
+		wp_update_attachment_metadata( $attachment_id, $image_meta );
+
+		// Register
+		$images_manager = new Images_Manager();
 
 		// Act
 		do_action( 'delete_attachment', $attachment_id );
@@ -84,6 +97,6 @@ class Test_Image extends Elementor_Test_Base {
 		$this->assertFalse( file_exists( $custom_full_path ) );
 
 		// Cleanup
-		 unlink( $base_full_path );
+		unlink( $base_full_path );
 	}
 }
