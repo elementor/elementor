@@ -8,6 +8,8 @@ import HandlesPosition from './handlers/section/handles-position';
 import StretchedSection from './handlers/section/stretched-section';
 import Shapes from './handlers/section/shapes';
 
+/* global elementorFrontendConfig */
+
 module.exports = function( $ ) {
 	const handlersInstances = {};
 
@@ -24,7 +26,7 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	if ( elementorCommon.config.experimentalFeatures[ 'tabs-v2' ] ) {
+	if ( elementorFrontendConfig.experimentalFeatures[ 'tabs-v2' ] ) {
 		this.elementsHandlers[ 'tabs-v2.default' ] = () => import( /* webpackChunkName: 'tabs-v2' */ '../../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2' );
 	}
 
