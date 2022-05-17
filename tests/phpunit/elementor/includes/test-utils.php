@@ -173,4 +173,26 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
 			"[ 'key' => '0' ] is empty" );
 	}
+
+	public function test_file_get_contents() {
+		// Arrange
+		$file_name = __DIR__ . '/mock/mock-file.txt';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertEquals( "test.\n", $content );
+	}
+
+	public function test_file_get_contents__non_file() {
+		// Arrange
+		$file_name = 'non-file';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertFalse( $content );
+	}
 }
