@@ -4,7 +4,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 			this.requireArgumentType( 'selector', 'string' );
 
 			if ( 0 === elementor.$previewContents.find( args.selector ).length ) {
-				throw new Error( 'Invalid argument. The `selector` argument must be existen selector.' );
+				throw new Error( 'Invalid argument. The `selector` argument must be existed selector.' );
 			}
 		}
 	}
