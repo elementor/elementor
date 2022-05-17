@@ -3,7 +3,8 @@
 * **Experiment:** `true`
 * **Module Description** - Module that allows you to create nested tabs widget.
 * **Depends** - on `\Elementor\Modules\NestedElements\Module`
-* ### Technical description:
+---
+* ## Technical description:
 - 📂 __tabs\-v2__
 	- 📂 __assets__
 		- 📂 __js__
@@ -30,36 +31,39 @@
 * [Elementor Tabs](https://developers.elementor.com/docs/editor/elementor-tabs/)
 
 ## Attention needed / Known issues
-* [Working only with containers](../../core/container-element.md)
-* [Abnormal behavior for handling mobile](#assetsjsfrontendhandlerstabs-v2js---custom-frontend-handler)
-	```javascript
-	onInit( ...args ) {
-		// TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
-		if ( elementorFrontend.isEditMode() ) {
-			const $widget = this.$element,
-				$removed = this.findElement( '.elementor-tab-mobile-title' ).remove();
+* The widget works only with [containers](../../core/container-element.md)
+* Abnormal behavior for handling mobile [tabs-v2.js](../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js)
+    - The reason for the issue is that __TabsV2__ should looks like old tab.
+    - Since the content of the widget and its children was hardcoded, it was possible have any structure inside the widget markup,
+  	   now, the Nested Elements mechanism is creating the children as Container for specific selector, so its required to have the same markup.
+    ```javascript
+    onInit( ...args ) {
+        // TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
+        if ( elementorFrontend.isEditMode() ) {
+            const $widget = this.$element,
+                $removed = this.findElement( '.elementor-tab-mobile-title' ).remove();
 
-			let index = 1;
+            let index = 1;
 
-			this.findElement( '.e-container' ).each( function() {
-				const $current = jQuery( this ),
-					$desktopTabTitle = $widget.find( `.elementor-tabs-wrapper > *:nth-child(${ index })` ),
-					mobileTitleHTML = `<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
+            this.findElement( '.e-container' ).each( function() {
+                const $current = jQuery( this ),
+                    $desktopTabTitle = $widget.find( `.elementor-tabs-wrapper > *:nth-child(${ index })` ),
+                    mobileTitleHTML = `<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
 
-					$current.before( mobileTitleHTML );
+                    $current.before( mobileTitleHTML );
 
-				++index;
-			} );
+                ++index;
+            } );
 
-			// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
-			if ( $removed.length ) {
-				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
-			}
-		}
+            // On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
+            if ( $removed.length ) {
+                return elementorModules.ViewModule.prototype.onInit.apply( this, args );
+            }
+        }
 
-		super.onInit( ...args );
-	}
-	```
+        super.onInit( ...args );
+    }
+    ```
      > Since TabsV2 should looks like old Tabs widget, there is manual handling of the situation for mobile devices.
 - --------------------------------------------------------------------------------------------------------------------------------
 

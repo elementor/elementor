@@ -2,7 +2,8 @@
 
 * **Experiment:** `true`
 * **Module Description** - is a module that allows you to created nested widgets, widgets inside widgets.
-* ### Technical description:
+---
+## Technical description:
 - 📂 __nested\-elements__
     - 📂 __assets__
         - 📂 __js__
@@ -43,10 +44,8 @@
 - --------------------------------------------------------------------------------------------------------------------------------
     
 ## Product knowledge base
-* [Elementor Widgets](#https://developers.elementor.com/docs/widgets/)
+* [Elementor Widgets](https://developers.elementor.com/docs/widgets/)
 
-## Attention needed / Known issues
-* __NestedElements__ working only with [containers](../../core/container-element.md)
 - --------------------------------------------------------------------------------------------------------------------------------
 
 ## How to consume the module?
