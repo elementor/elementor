@@ -143,7 +143,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'prefix_class' => 'elementor-tabs-alignment-',
 			'condition' => [
-				'type' => 'horizontal',
+				'position' => 'horizontal',
 			],
 		] );
 
@@ -170,7 +170,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'prefix_class' => 'elementor-tabs-alignment-',
 			'condition' => [
-				'type' => 'vertical',
+				'position' => 'vertical',
 			],
 		] );
 
