@@ -429,6 +429,6 @@ class Test_Collection extends Elementor_Test_Base {
 			);
 
 		// Act
-		$collection->each( [$mock, 'each_callback'] );
+		$collection->each( [ $mock, 'each_callback' ] );
 	}
 }

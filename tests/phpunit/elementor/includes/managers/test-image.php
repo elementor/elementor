@@ -18,8 +18,8 @@ class Test_Image extends Elementor_Test_Base {
 
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
 
-		$image_meta['sizes']['test'] = [
-			'file' => 'base-test-image.png',
+		$image_meta['sizes']['test_size'] = [
+			'file' => 'test-image.png',
 			'width' => 300,
 			'height' => 300,
 			'mime-type' => 'image/png',
@@ -41,12 +41,14 @@ class Test_Image extends Elementor_Test_Base {
 		$new_metadata = wp_get_attachment_metadata( $attachment_id );
 
 		$this->assertTrue( is_array( $new_metadata['sizes'] ) );
+
 		$this->assertEquals( [
-				'file' => 'base-test-image.png',
+				'file' => 'test-image.png',
 				'width' => '300',
 				'height' => '300',
 				'mime-type' => 'image/png',
-		], $new_metadata['sizes']['test'] );
+		], $new_metadata['sizes']['test_size'] );
+
 		$this->assertEquals( [
 				'file' => 'elementor/thumbs/mock-image.png',
 				'width' => '100',
@@ -78,7 +80,6 @@ class Test_Image extends Elementor_Test_Base {
 			'mime-type' => 'image/png',
 		];
 
-		// Attach custom image to original.
 		wp_update_attachment_metadata( $attachment_id, $image_meta );
 
 		// Register
@@ -88,8 +89,8 @@ class Test_Image extends Elementor_Test_Base {
 		do_action( 'delete_attachment', $attachment_id );
 
 		// Assert.
-		$this->assertTrue( file_exists( $base_full_path ) );
-		$this->assertFalse( file_exists( $custom_full_path ) );
+		$this->assertFileExists( $base_full_path );
+		$this->assertFileDoesNotExist( $custom_full_path );
 
 		// Cleanup
 		unlink( $base_full_path );

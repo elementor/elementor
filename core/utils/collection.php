@@ -118,6 +118,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return new static( array_combine( $keys, $items ) );
 	}
 
+	/**
+	 * Run a callback over each of the items.
+	 *
+	 * @param callable $callback
+	 * @return void
+	 */
 	public function each( callable $callback ) {
 		foreach ( $this->items as $key => $value ) {
 			$callback( $value, $key );

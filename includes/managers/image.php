@@ -90,6 +90,7 @@ class Images_Manager {
 
 				$image_meta = wp_get_attachment_metadata( $id );
 
+				// Attach custom image to original.
 				$image_meta['sizes'][ 'elementor_' . $size ] = [
 					'file' => $thumbs_path,
 					'width' => $matches[1],
@@ -97,7 +98,6 @@ class Images_Manager {
 					'mime-type' => get_post_mime_type( $id ),
 				];
 
-				// Attach custom image to original.
 				wp_update_attachment_metadata( $id, $image_meta );
 
 				$urls[ $size ] = $url;
