@@ -20,6 +20,6 @@ test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom sel
 	const tabs = await editor.getPreviewFrame().$$( '.elementor-tab-title' );
 
 	// It will be duplicated since, the same widget tabs gonna be inside the first tab content.
-	expect( tabs.length ).toBe( 4 );
+	expect( tabs.length ).toBe( 8 ); // 8 Since there is hidden titles for the mobile version.
 } );
 
