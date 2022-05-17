@@ -16,12 +16,15 @@ export default function getUserTimestamp() {
 	UTCTimestamp = UTCTimestamp.slice( 0, -1 );
 
 	// Create the offset string in the format `+HH:00` (or minus (-) prefix for negative offset instead of plus)
-	const timezoneOffsetInHours = timezoneOffset / 60,
+	const DecimalTimezoneOffset = timezoneOffset / 60,
 		// Negative offsets include a '-' sign in the getTimezoneOffset value, positive values need a '+' prefix (ISO8601).
-		sign = 0 <= timezoneOffsetInHours ? '+' : '',
-		addedZero = 10 < ( timezoneOffsetInHours ) ? '0' : '';
+		sign = 0 <= DecimalTimezoneOffset ? '+' : '-',
+		hours = Math.abs( Math.floor( DecimalTimezoneOffset ) ),
+		minutes = Math.abs( DecimalTimezoneOffset % 1 ) * 60,
+		addZeroToHour = 10 > ( hours ) ? '0' : '',
+		addZeroToMinutes = 10 > ( minutes ) ? '0' : '';
 
-	const formattedTimezoneOffset = sign + addedZero + timezoneOffsetInHours + ':00';
+	const formattedTimezoneOffset = sign + addZeroToHour + hours + ':' + addZeroToMinutes + minutes + ':00';
 
 	return UTCTimestamp + formattedTimezoneOffset;
 }
