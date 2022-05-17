@@ -305,6 +305,26 @@
 					}
 				}
 			}
+
+			&center.elementor-tabs-view-vertical {
+				> .elementor-widget-container {
+					> .elementor-tabs {
+						> .elementor-tabs-wrapper {
+							--tabs-v2-wrapper-justify-content: center;
+						}
+					}
+				}
+			}
+
+			&end.elementor-tabs-view-vertical {
+				> .elementor-widget-container {
+					> .elementor-tabs {
+						> .elementor-tabs-wrapper {
+							--tabs-v2-wrapper-justify-content: end;
+						}
+					}
+				}
+			}
 		}
 	}
 
