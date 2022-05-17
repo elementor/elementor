@@ -5,6 +5,7 @@ use Elementor\Core\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\Core\App\Modules\ImportExport\Directories\Root;
+use Elementor\Core\Utils\ImportExport\Url;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,10 +37,11 @@ class Import extends Iterator {
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
 		$map_old_new_post_ids = $this->map_old_new_post_ids( $imported_posts );
+		$original_site = isset( $manifest_data['site'] ) ? $manifest_data['site'] : null;
 
 		$this->save_elements_of_imported_posts( $map_old_new_post_ids );
 
-		$this->update_object_id_of_imported_menu_items( $map_old_new_post_ids );
+		$this->update_object_id_of_imported_menu_items( $map_old_new_post_ids, $original_site );
 
 		return $imported_posts;
 	}
@@ -93,23 +95,31 @@ class Import extends Iterator {
 		}
 	}
 
-	private function update_object_id_of_imported_menu_items( $map_old_new_post_ids ) {
+	private function update_object_id_of_imported_menu_items( $map_old_new_post_ids, $original_site ) {
 		foreach ( $map_old_new_post_ids as $new_post_id ) {
 			if ( 'nav_menu_item' !== get_post_type( $new_post_id ) ) {
 				continue;
 			}
 
 			$post_meta = get_post_meta( $new_post_id );
+			$menu_item_object_id = (int) $post_meta['_menu_item_object_id'][0];
 
-			// Skip items that not related to posts.
-			if ( 'post_type' !== $post_meta['_menu_item_type'][0] ) {
-				continue;
-			}
+			switch ( $post_meta['_menu_item_type'][0] ) {
+				case 'post_type':
+					$update_meta = update_post_meta( $new_post_id, '_menu_item_object_id', $map_old_new_post_ids[ $menu_item_object_id ] );
 
-			$update_meta = update_post_meta( $new_post_id, '_menu_item_object_id', $map_old_new_post_ids[ $post_meta['_menu_item_object_id'][0] ] );
+					if ( ! $update_meta ) {
+						wp_delete_post( $new_post_id );
+					}
+					break;
+				case 'custom':
+					$url = $post_meta['_menu_item_url'][0];
 
-			if ( ! $update_meta ) {
-				wp_delete_post( $new_post_id );
+					$url = Url::migrate( $url, $original_site );
+
+					update_post_meta( $new_post_id, '_menu_item_url', $url );
+					break;
+
 			}
 		}
 	}
