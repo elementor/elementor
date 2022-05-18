@@ -89,8 +89,8 @@ class Test_Image extends Elementor_Test_Base {
 		do_action( 'delete_attachment', $attachment_id );
 
 		// Assert.
-		$this->assertFileExists( $base_full_path );
-		$this->assertFileDoesNotExist( $custom_full_path );
+		$this->assertTrue( file_exists( $base_full_path ) );
+		$this->assertFalse( file_exists( $custom_full_path ) );
 
 		// Cleanup
 		unlink( $base_full_path );
