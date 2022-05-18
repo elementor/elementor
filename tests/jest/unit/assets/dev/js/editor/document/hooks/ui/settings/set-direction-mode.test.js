@@ -170,7 +170,8 @@ describe( 'set-direction-mode--document/elements/settings', () => {
  *
  * @return {object}
  */
-function createContainer( { type,
+function createContainer( {
+	type,
 	widgetType,
 	id,
 	settings = {},
