@@ -17,7 +17,9 @@ PanelMenu.createGroupItems = ( groupName ) => {
 			name: tabId,
 			icon: tabConfig.icon,
 			title: tabConfig.title,
-			callback: () => $e.route( 'panel/global/' + tabId ),
+			callback: () => $e.route( 'panel/global/' + tabId, {
+				source: 'panel',
+			} ),
 		};
 	} );
 };
