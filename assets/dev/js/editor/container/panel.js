@@ -27,7 +27,9 @@ export default class Panel {
 	 * Route to `panel/elements/categories`
 	 */
 	closeEditor() {
-		$e.route( 'panel/elements/categories' );
+		$e.route( 'panel/elements/categories', {}, {
+			source: 'panel',
+		} );
 	}
 
 	getControlView( name ) {

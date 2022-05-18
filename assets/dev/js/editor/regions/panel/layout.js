@@ -21,11 +21,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	childEvents: {
 		'click:add': function() {
-			$e.route( 'panel/elements/categories' );
+			$e.route( 'panel/elements/categories', {}, { source: 'panel' } );
 		},
 		'editor:destroy': function() {
 			$e.route( 'panel/elements/categories', {
 				autoFocusSearch: false,
+			}, {
+				source: 'panel',
 			} );
 		},
 	},

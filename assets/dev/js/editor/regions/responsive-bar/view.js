@@ -155,7 +155,7 @@ export default class View extends Marionette.ItemView {
 			id: elementor.config.kit_id,
 			mode: 'autosave',
 		} )
-			.then( () => $e.route( 'panel/global/settings-layout' ) )
+			.then( () => $e.route( 'panel/global/settings-layout', {}, { source: 'responsive-bar' } ) )
 			// TODO: Replace with a standard routing solution once one is available
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}

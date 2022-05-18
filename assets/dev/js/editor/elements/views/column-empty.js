@@ -35,6 +35,8 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickAdd: function() {
-		$e.route( 'panel/elements/categories' );
+		$e.route( 'panel/elements/categories', {}, {
+			source: 'preview',
+		} );
 	},
 } );

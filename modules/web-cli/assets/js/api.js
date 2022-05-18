@@ -69,11 +69,12 @@ export default class API {
 	 *
 	 * @param {string} command
 	 * @param [args={}]
+	 * @param [meta={}]
 	 *
 	 * @returns {*}
 	 */
-	run( command, args = {} ) {
-		return $e.commands.run( command, args );
+	run( command, args = {}, meta = {} ) {
+		return $e.commands.run( command, args, meta );
 	}
 
 	/**
@@ -97,9 +98,10 @@ export default class API {
 	 *
 	 * @param {string} route
 	 * @param [args={}]
+	 * @param [meta={}]
 	 */
-	route( route, args = {} ) {
-		return $e.routes.to( route, args );
+	route( route, args = {}, meta = {} ) {
+		return $e.routes.to( route, args, meta );
 	}
 
 	// TODO: shortcut();

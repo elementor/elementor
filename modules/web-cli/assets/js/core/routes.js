@@ -101,8 +101,8 @@ export default class Routes extends Commands {
 		this.attachCurrent( container, route, args );
 	}
 
-	to( route, args ) {
-		this.run( route, args );
+	to( route, args, meta ) {
+		this.run( route, args, meta );
 
 		const namespaceRoot = this.getComponent( route ).getServiceName();
 

@@ -24,7 +24,7 @@ export class ReloadPreview extends After {
 
 				// TODO: Fix the route change.
 				elementor.once( 'preview:loaded', () => {
-					$e.route( 'panel/page-settings/settings' );
+					$e.route( 'panel/page-settings/settings', {}, { source: 'hook' } );
 				} );
 			} );
 	}

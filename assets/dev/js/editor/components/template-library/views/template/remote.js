@@ -17,7 +17,9 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onPreviewButtonClick: function() {
-		$e.route( 'library/preview', { model: this.model } );
+		$e.route( 'library/preview', { model: this.model }, {
+			source: 'template-library',
+		} );
 	},
 
 	onFavoriteCheckboxChange: function() {

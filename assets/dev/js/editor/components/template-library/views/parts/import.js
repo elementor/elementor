@@ -49,7 +49,9 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			success: ( successData ) => {
 				elementor.templates.getTemplatesCollection().add( successData );
 
-				$e.route( 'library/templates/my-templates' );
+				$e.route( 'library/templates/my-templates', {}, {
+					source: 'templates-library',
+				} );
 			},
 			error: ( errorData ) => {
 				elementor.templates.showErrorDialog( errorData );

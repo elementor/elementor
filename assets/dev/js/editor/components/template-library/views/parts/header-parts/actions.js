@@ -16,7 +16,9 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onImportClick: function() {
-		$e.route( 'library/import' );
+		$e.route( 'library/import', {}, {
+			source: 'template-library',
+		} );
 	},
 
 	onSyncClick: function() {
@@ -36,6 +38,8 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveClick: function() {
-		$e.route( 'library/save-template' );
+		$e.route( 'library/save-template', {}, {
+			source: 'template-library',
+		} );
 	},
 } );

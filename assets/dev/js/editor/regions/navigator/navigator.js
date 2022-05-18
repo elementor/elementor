@@ -289,7 +289,9 @@ export default class extends BaseRegion {
 			this.initLayout();
 
 			if ( false !== this.storage.visible ) {
-				$e.route( 'navigator' );
+				$e.route( 'navigator', {}, {
+					source: 'navigator',
+				} );
 			}
 		}
 	}

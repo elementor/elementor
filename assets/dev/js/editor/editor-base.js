@@ -864,7 +864,7 @@ export default class EditorBase extends Marionette.Application {
 					{
 						name: 'view_revisions',
 						text: __( 'View All Revisions', 'elementor' ),
-						callback: () => $e.route( 'panel/history/revisions' ),
+						callback: () => $e.route( 'panel/history/revisions', {}, { source: 'toast' } ),
 					},
 				],
 			} );

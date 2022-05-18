@@ -163,6 +163,8 @@ export default class Widgets extends FavoriteType {
 			onAfter: () => {
 				psElement.scrollTop = psScrollTop + ( psElement.scrollHeight - psHeight );
 			},
+		}, {
+			source: 'panel',
 		} );
 	}
 

@@ -34,6 +34,8 @@ TemplateLibraryManager = function() {
 								}
 							}
 						},
+					}, {
+						source: 'template-library',
 					} );
 				},
 				error: function( errorData ) {

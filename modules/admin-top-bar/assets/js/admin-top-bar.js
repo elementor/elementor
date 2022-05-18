@@ -26,7 +26,7 @@ export default function AdminTopBar() {
 	}, [] );
 
 	const finderAction = () => {
-		$e.route( 'finder' );
+		$e.route( 'finder', {}, { source: 'admin-top-bar' } );
 	};
 
 	const controlSign = environment.mac ? '⌘' : '^';

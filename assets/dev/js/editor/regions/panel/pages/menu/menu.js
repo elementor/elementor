@@ -62,7 +62,7 @@ PanelMenu.addAdminMenu = () => {
 				icon: 'eicon-user-preferences',
 				title: __( 'User Preferences', 'elementor' ),
 				type: 'page',
-				callback: () => $e.route( 'panel/editor-preferences' ),
+				callback: () => $e.route( 'panel/editor-preferences', {}, { source: 'panel' } ),
 			},
 		],
 	}, { at: 0 } );
@@ -87,7 +87,7 @@ PanelMenu.addAdminMenu = () => {
 		name: 'finder',
 		icon: 'eicon-search',
 		title: __( 'Finder', 'elementor' ),
-		callback: () => $e.route( 'finder' ),
+		callback: () => $e.route( 'finder', {}, { source: 'panel' } ),
 	}, 'navigate_from_page', 'view-page' );
 };
 
@@ -183,7 +183,7 @@ PanelMenu.createExitIntroductionDialog = () => {
 		introduction.setViewed();
 		elementor.config.user.introduction.exit_to = true;
 		introduction.getDialog().hide();
-		$e.route( 'panel/editor-preferences' );
+		$e.route( 'panel/editor-preferences', {}, { source: 'panel' } );
 
 		// Force the exit button to rerender by creating new exit button.
 		PanelMenu.addExitItem();

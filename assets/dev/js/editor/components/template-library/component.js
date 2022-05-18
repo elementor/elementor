@@ -134,7 +134,9 @@ export default class Component extends ComponentModalBase {
 		this.manager.modalConfig = args;
 
 		if ( args.toDefault || ! $e.routes.restoreState( 'library' ) ) {
-			$e.route( this.getDefaultRoute() );
+			$e.route( this.getDefaultRoute(), {}, {
+				source: 'template-library',
+			} );
 		}
 	}
 

@@ -5,7 +5,9 @@ export class Open extends $e.modules.CommandBase {
 
 			args.model.trigger( 'request:edit' );
 		} else {
-			$e.route( this.component.getDefaultRoute(), args );
+			$e.route( this.component.getDefaultRoute(), args, {
+				source: 'panel',
+			} );
 		}
 
 		// BC: Run hooks after the route render's the view

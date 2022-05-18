@@ -782,8 +782,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save() {
+		// The method should be deprecated.
 		$e.route( 'library/save-template', {
 			model: this.model,
+		}, {
+			source: 'preview',
 		} );
 	},
 
