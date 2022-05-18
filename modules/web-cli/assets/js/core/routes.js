@@ -85,7 +85,7 @@ export default class Routes extends Commands {
 	/**
 	 * @override
 	 */
-	beforeRun( route, args ) {
+	beforeRun( route, args, meta = {} ) {
 		const component = this.getComponent( route ),
 			container = component.getServiceName(),
 			oldRoute = this.current[ container ];
@@ -101,7 +101,7 @@ export default class Routes extends Commands {
 		this.attachCurrent( container, route, args );
 	}
 
-	to( route, args, meta ) {
+	to( route, args, meta = {} ) {
 		this.run( route, args, meta );
 
 		const namespaceRoot = this.getComponent( route ).getServiceName();

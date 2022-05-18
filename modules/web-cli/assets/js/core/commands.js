@@ -16,6 +16,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		this.current = {};
 		this.currentArgs = {};
+		this.currentMeta = {};
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
@@ -265,10 +266,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} command
 	 * @param {{}} args
-	 * @param {{}} meta
 	 * @param {boolean} [addTrace=true]
 	 */
-	beforeRun( command, args = {}, meta = {}, addTrace = true ) {
+	beforeRun( command, args, addTrace = true ) {
 		const component = this.getComponent( command ),
 			container = component.getServiceName();
 
@@ -280,7 +280,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.trigger( 'run:before', component, command, args, meta );
+		this.trigger( 'run:before', component, command, args );
 	}
 
 	/**
@@ -316,6 +316,10 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			return false;
 		}
 
+		if ( Object.keys( meta ).length ) {
+			this.currentMeta[ command ] = meta;
+		}
+
 		this.beforeRun( command, args, meta );
 
 		// Get command class or callback.
@@ -332,7 +336,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		if ( ! ( context instanceof CommandBase ) ) {
 			const results = context.apply( currentComponent, [ args ] );
 
-			this.afterRun( command, args, meta, results );
+			this.afterRun( command, args, results );
 
 			return results;
 		}
@@ -485,18 +489,21 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} command
 	 * @param {{}} args
-	 * @param {{}} meta
 	 * @param {*} results
 	 * @param {boolean} [removeTrace=true]
 	 */
-	afterRun( command, args, meta, results = undefined, removeTrace = true ) {
+	afterRun( command, args, results = undefined, removeTrace = true ) {
 		const component = this.getComponent( command );
 
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args, results ] );
 		}
 
-		this.trigger( 'run:after', component, command, args, meta, results );
+		this.trigger( 'run:after', component, command, args, results );
+
+		if ( this.currentMeta[ command ] ) {
+			delete this.currentMeta[ command ];
+		}
 
 		if ( removeTrace ) {
 			this.removeCurrentTrace( component );
