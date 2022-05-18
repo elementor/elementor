@@ -36,6 +36,7 @@
 
 			&:hover {
 				color: darken($editor-accent, 15%);
+				background: $editor-background-light;
 			}
 		}
 	}
