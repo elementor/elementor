@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../../../../utils/files-upload-handler';
+
 var TemplateLibraryImportView;
 
 TemplateLibraryImportView = Marionette.ItemView.extend( {
@@ -39,7 +41,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	importTemplate: function( fileName, fileData ) {
 		const layout = elementor.templates.layout;
 
-		const options = {
+		this.options = {
 			data: {
 				fileName: fileName,
 				fileData: fileData,
@@ -59,9 +61,19 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			},
 		};
 
-		elementorCommon.ajax.addRequest( 'import_template', options );
+		if ( ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+			const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => this.sendImportRequest() );
 
-		layout.showLoadingView();
+			enableUnfilteredFilesModal.show();
+		} else {
+			this.sendImportRequest();
+		}
+	},
+
+	sendImportRequest: function() {
+		elementorCommon.ajax.addRequest( 'import_template', this.options );
+
+		elementor.templates.layout.showLoadingView();
 	},
 
 	onRender: function() {

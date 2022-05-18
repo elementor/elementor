@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-finder">
 	<div id="elementor-finder__search">
 		<i class="eicon-search"></i>
-		<input id="elementor-finder__search__input" placeholder="<?php echo __( 'Type to find anything in Elementor', 'elementor' ); ?>">
+		<input id="elementor-finder__search__input" placeholder="<?php echo esc_html__( 'Type to find anything in Elementor', 'elementor' ); ?>" autocomplete="off">
 	</div>
 	<div id="elementor-finder__content"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-finder-results-container">
-	<div id="elementor-finder__no-results"><?php echo __( 'No Results Found', 'elementor' ); ?></div>
+	<div id="elementor-finder__no-results"><?php echo esc_html__( 'No Results Found', 'elementor' ); ?></div>
 	<div id="elementor-finder__results"></div>
 </script>
 

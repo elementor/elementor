@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\App;
 
+use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
@@ -36,8 +37,8 @@ class App extends BaseApp {
 	public function register_admin_menu() {
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
-			__( 'Theme Builder', 'elementor' ),
-			__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID
 		);
@@ -87,11 +88,16 @@ class App extends BaseApp {
 	}
 
 	protected function get_init_settings() {
+		$referer = wp_get_referer();
+
 		return [
 			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
-			'return_url' => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : admin_url(),
+			'return_url' => $referer ? $referer : admin_url(),
 			'hasPro' => Utils::has_pro(),
+			'admin_url' => admin_url(),
+			'login_url' => wp_login_url(),
+			'base_url' => $this->get_base_url(),
 		];
 	}
 
@@ -133,6 +139,11 @@ class App extends BaseApp {
 
 	private function enqueue_assets() {
 		Plugin::$instance->init_common();
+
+		/** @var WebCLIModule $web_cli */
+		$web_cli = Plugin::$instance->modules_manager->get_modules( 'web-cli' );
+		$web_cli->register_scripts();
+
 		Plugin::$instance->common->register_scripts();
 
 		wp_register_style(
@@ -146,7 +157,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.11.0'
+			'5.15.0'
 		);
 
 		wp_register_style(
@@ -200,6 +211,7 @@ class App extends BaseApp {
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
 			[
+				'wp-url',
 				'wp-i18n',
 				'react',
 				'react-dom',
@@ -209,7 +221,9 @@ class App extends BaseApp {
 			true
 		);
 
-		$this->enqueue_dark_theme_detection_script();
+		if ( ! $this->get_settings( 'disable_dark_theme' ) ) {
+			$this->enqueue_dark_theme_detection_script();
+		}
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
@@ -234,9 +248,14 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
 
-		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) ) {
+		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
+
+			// Kit library is depended on import-export
+			$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
 		}
+
+		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 21 /* after Elementor page */ );
 

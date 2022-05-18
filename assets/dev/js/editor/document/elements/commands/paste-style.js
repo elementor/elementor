@@ -41,6 +41,10 @@ export class PasteStyle extends CommandHistory {
 		const { containers = [ args.container ], storageKey = 'clipboard' } = args,
 			storageData = elementorCommon.storage.get( storageKey );
 
+		this.applyPasteStyleData( containers, storageData );
+	}
+
+	applyPasteStyleData( containers, data ) {
 		containers.forEach( ( targetContainer ) => {
 			const targetSettings = targetContainer.settings,
 				targetSettingsAttributes = targetSettings.attributes,
@@ -58,7 +62,7 @@ export class PasteStyle extends CommandHistory {
 					}
 				};
 
-			storageData.forEach( ( sourceModel ) => {
+			data.forEach( ( sourceModel ) => {
 				const sourceSettings = sourceModel.settings;
 
 				addExtraControls( sourceSettings, '__globals__' );
@@ -106,9 +110,6 @@ export class PasteStyle extends CommandHistory {
 	 * @param {{}} settings
 	 */
 	pasteStyle( targetContainer, settings ) {
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		elementor.channels.data.trigger( 'element:before:paste:style', targetContainer.model );
-
 		const globals = settings.__globals__;
 
 		if ( globals ) {
@@ -136,9 +137,6 @@ export class PasteStyle extends CommandHistory {
 
 			targetContainer.panel.refresh();
 		}
-
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		elementor.channels.data.trigger( 'element:after:paste:style', targetContainer.model );
 
 		targetContainer.render();
 	}

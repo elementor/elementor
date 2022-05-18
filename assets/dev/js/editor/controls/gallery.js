@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../utils/files-upload-handler';
+
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlMediaItemView;
 
@@ -38,7 +40,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		$galleryThumbnails.empty();
 
-		this.ui.status.text( hasImages ? sprintf( '%s Images Selected', imagesCount ) : __( 'No Images Selected', 'elementor' ) );
+		/* translators: %s: Selected images count. */
+		this.ui.status.text( hasImages ? sprintf( __( '%s Images Selected', 'elementor' ), imagesCount ) : __( 'No Images Selected', 'elementor' ) );
 
 		if ( ! hasImages ) {
 			return;
@@ -61,6 +64,11 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.initFrame( action );
 
 		this.frame.open();
+
+		// Set params to trigger sanitizer
+		if ( FilesUploadHandler.isUploadEnabled( 'svg' ) ) {
+			FilesUploadHandler.setUploadTypeCaller( this.frame );
+		}
 	},
 
 	initFrame: function( action ) {
@@ -85,12 +93,31 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.frame = wp.media( options );
 
+		this.addSvgMimeType();
+
 		// When a file is selected, run a callback.
 		this.frame.on( {
 			update: this.select,
 			'menu:render:default': this.menuRender,
 			'content:render:browse': this.gallerySettings,
 		}, this );
+	},
+
+	addSvgMimeType() {
+		if ( ! FilesUploadHandler.isUploadEnabled( 'svg' ) ) {
+			return;
+		}
+
+		// Add the SVG to the currently allowed extensions
+		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+		this.frame.on( 'ready', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions + ',svg';
+		} );
+
+		// restore allowed upload extensions
+		this.frame.on( 'close', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+		} );
 	},
 
 	menuRender: function( view ) {

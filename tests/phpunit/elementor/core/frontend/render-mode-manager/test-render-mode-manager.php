@@ -1,11 +1,10 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Frontend\RenderModeManager;
 
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Normal;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

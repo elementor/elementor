@@ -1,10 +1,9 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -15,13 +14,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function tearDown() {
 		parent::tearDown();
 
-		$experiments = $this->elementor()->experiments;
-
-		$features = $experiments->get_features();
-
-		foreach ( $features as $feature_name => $feature ) {
-			$experiments->remove_feature( $feature_name );
-		}
+		$this->elementor()->experiments->remove_feature( 'test_feature' );
 	}
 
 	public function test_add_feature() {
@@ -66,7 +59,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$test_feature = $experiments->get_features( 'test_feature' );
 
-		$this->assertArrayHaveKeys( [ 'test_feature' ], $features );
+		$this->assert_array_have_keys( [ 'test_feature' ], $features );
 
 		$this->assertNotEmpty( $test_feature );
 	}
@@ -87,24 +80,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$active_features = $this->elementor()->experiments->get_active_features();
 
-		$expected_features = [
-			'default_activated_test_feature' => [
-				'description' => '',
-				'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-				'default' => Experiments_Manager::STATE_ACTIVE,
-				'on_state_change' => null,
-				'name' => 'default_activated_test_feature',
-				'state' => Experiments_Manager::STATE_DEFAULT,
-				'new_site' => [
-					'default_active' => false,
-					'always_active' => false,
-					'minimum_installation_version' => null,
-				],
-				'mutable' => true,
-			],
-		];
-
-		$this->assertEquals( $expected_features, $active_features );
+		$this->assertArrayHasKey( 'default_activated_test_feature', $active_features );
 	}
 
 	public function test_is_feature_active() {

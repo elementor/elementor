@@ -41,7 +41,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Basic Gallery', 'elementor' );
+		return esc_html__( 'Basic Gallery', 'elementor' );
 	}
 
 	/**
@@ -84,14 +84,14 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->start_controls_section(
 			'section_gallery',
 			[
-				'label' => __( 'Image Gallery', 'elementor' ),
+				'label' => esc_html__( 'Image Gallery', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'wp_gallery',
 			[
-				'label' => __( 'Add Images', 'elementor' ),
+				'label' => esc_html__( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
 				'show_label' => false,
 				'dynamic' => [
@@ -115,7 +115,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_columns',
 			[
-				'label' => __( 'Columns', 'elementor' ),
+				'label' => esc_html__( 'Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 4,
 				'options' => $gallery_columns,
@@ -125,13 +125,13 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_link',
 			[
-				'label' => __( 'Link', 'elementor' ),
+				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'file',
 				'options' => [
-					'file' => __( 'Media File', 'elementor' ),
-					'attachment' => __( 'Attachment Page', 'elementor' ),
-					'none' => __( 'None', 'elementor' ),
+					'file' => esc_html__( 'Media File', 'elementor' ),
+					'attachment' => esc_html__( 'Attachment Page', 'elementor' ),
+					'none' => esc_html__( 'None', 'elementor' ),
 				],
 			]
 		);
@@ -139,13 +139,13 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'open_lightbox',
 			[
-				'label' => __( 'Lightbox', 'elementor' ),
+				'label' => esc_html__( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'yes' => esc_html__( 'Yes', 'elementor' ),
+					'no' => esc_html__( 'No', 'elementor' ),
 				],
 				'condition' => [
 					'gallery_link' => 'file',
@@ -156,11 +156,11 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_rand',
 			[
-				'label' => __( 'Order By', 'elementor' ),
+				'label' => esc_html__( 'Order By', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'rand' => __( 'Random', 'elementor' ),
+					'' => esc_html__( 'Default', 'elementor' ),
+					'rand' => esc_html__( 'Random', 'elementor' ),
 				],
 				'default' => '',
 			]
@@ -169,7 +169,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'view',
 			[
-				'label' => __( 'View', 'elementor' ),
+				'label' => esc_html__( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
 			]
@@ -180,7 +180,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->start_controls_section(
 			'section_gallery_images',
 			[
-				'label' => __( 'Images', 'elementor' ),
+				'label' => esc_html__( 'Images', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -188,11 +188,11 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'image_spacing',
 			[
-				'label' => __( 'Spacing', 'elementor' ),
+				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
+					'' => esc_html__( 'Default', 'elementor' ),
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'prefix_class' => 'gallery-spacing-',
 				'default' => '',
@@ -205,7 +205,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'image_spacing_custom',
 			[
-				'label' => __( 'Image Spacing', 'elementor' ),
+				'label' => esc_html__( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'show_label' => false,
 				'range' => [
@@ -238,7 +238,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'image_border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -252,7 +252,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->start_controls_section(
 			'section_caption',
 			[
-				'label' => __( 'Caption', 'elementor' ),
+				'label' => esc_html__( 'Caption', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -260,12 +260,12 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_display_caption',
 			[
-				'label' => __( 'Display', 'elementor' ),
+				'label' => esc_html__( 'Display', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Show', 'elementor' ),
-					'none' => __( 'Hide', 'elementor' ),
+					'' => esc_html__( 'Show', 'elementor' ),
+					'none' => esc_html__( 'Hide', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'display: {{VALUE}};',
@@ -276,23 +276,23 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'align',
 			[
-				'label' => __( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor' ),
+						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor' ),
+						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
+						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
@@ -309,7 +309,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'text_color',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [

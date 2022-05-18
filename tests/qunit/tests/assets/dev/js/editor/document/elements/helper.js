@@ -10,10 +10,20 @@ export default class ElementsHelper {
 		} );
 
 		if ( returnFirstColumn ) {
-			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
+			return eSection.children[ 0 ];
 		}
 
 		return eSection;
+	}
+
+	static createContainer( options = {} ) {
+		return $e.run( 'document/elements/create', {
+			model: {
+				elType: 'container',
+			},
+			container: elementor.getPreviewContainer(),
+			options,
+		} );
 	}
 
 	static createSectionStructure( columns = 1, structure, returnFirstColumn = false, options = {} ) {
@@ -28,7 +38,7 @@ export default class ElementsHelper {
 		} );
 
 		if ( returnFirstColumn ) {
-			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
+			return eSection.children[ 0 ];
 		}
 
 		return eSection;
@@ -81,6 +91,28 @@ export default class ElementsHelper {
 			model: {
 				elType: 'widget',
 				widgetType: 'button',
+				settings,
+			},
+		} );
+	}
+
+	static createHeading( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'heading',
+				settings,
+			},
+		} );
+	}
+
+	static createVideo( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'video',
 				settings,
 			},
 		} );

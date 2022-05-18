@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
-use Elementor\Core\Base\Document;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
@@ -161,15 +160,6 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
-		// TODO: a temporary solution to a scenario that the elementor-icons.css file was de-registered and the e-icons font fonts should not be loaded.
-		add_action( 'wp_enqueue_scripts', function() {
-			if ( ! wp_style_is( 'elementor-icons', 'registered' ) ) {
-				$elementor_icons_css_reset = '[class^="eicon"], [class*=" eicon-"] { font-family: "initial"; } [class^="eicon"]:before, [class*=" eicon-"]:before { content: ""; }';
-
-				wp_add_inline_style( 'elementor-frontend', $elementor_icons_css_reset );
-			}
-		}, 30 );
-
 		$this->add_content_filter();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
@@ -263,11 +253,11 @@ class Frontend extends App {
 	 */
 	public function add_theme_color_meta_tag() {
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$mobile_theme_color = $kit->get_settings( 'mobile_theme_color' );
+		$mobile_theme_color = $kit->get_settings( 'mobile_browser_background' );
 
 		if ( ! empty( $mobile_theme_color ) ) {
 			?>
-			<meta name="theme-color" content="<?php echo $mobile_theme_color; ?>">
+			<meta name="theme-color" content="<?php echo esc_html( $mobile_theme_color ); ?>">
 			<?php
 		}
 	}
@@ -296,6 +286,16 @@ class Frontend extends App {
 
 		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
 			$classes[] = 'elementor-page elementor-page-' . $id;
+		}
+
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+
+			$show_hidden_elements = $editor_preferences->get_model()->get_settings( 'show_hidden_elements' );
+
+			if ( 'yes' === $show_hidden_elements ) {
+				$classes[] = 'e-preview--show-hidden-elements';
+			}
 		}
 
 		return $classes;
@@ -405,26 +405,13 @@ class Frontend extends App {
 			true
 		);
 
-		/**
-		 * @deprecated since 2.7.0 Use Swiper instead
-		 */
-		wp_register_script(
-			'jquery-slick',
-			$this->get_js_assets_url( 'slick', 'assets/lib/slick/' ),
-			[
-				'jquery',
-			],
-			'1.8.1',
-			true
-		);
-
 		wp_register_script(
 			'elementor-dialog',
 			$this->get_js_assets_url( 'dialog', 'assets/lib/dialog/' ),
 			[
 				'jquery-ui-position',
 			],
-			'4.8.1',
+			'4.9.0',
 			true
 		);
 
@@ -497,14 +484,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.11.0'
-		);
-
-		wp_register_style(
-			'elementor-animations',
-			$this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
-			[],
-			ELEMENTOR_VERSION
+			'5.15.0'
 		);
 
 		wp_register_style(
@@ -525,31 +505,19 @@ class Frontend extends App {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
+		$frontend_base_file_name = $this->is_optimized_css_mode() ? 'frontend-lite' : 'frontend';
 
-		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( $has_custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
-
-			$time = $frontend_file->get_meta( 'time' );
-
-			if ( ! $time ) {
-				$frontend_file->update();
-			}
-
-			$frontend_file_url = $frontend_file->get_url();
-		} else {
-			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
-		}
+		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
 		$frontend_dependencies = [];
+
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
 			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
-				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
+				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css', $has_custom_breakpoints ),
 				[],
 				ELEMENTOR_VERSION
 			);
@@ -559,9 +527,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-frontend',
-			$frontend_file_url,
+			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
 			$frontend_dependencies,
-			$has_custom_file ? null : ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		/**
@@ -608,6 +576,8 @@ class Frontend extends App {
 
 		$this->print_config();
 
+		$this->enqueue_conditional_assets();
+
 		/**
 		 * After frontend enqueue scripts.
 		 *
@@ -643,13 +613,11 @@ class Frontend extends App {
 			 */
 			do_action( 'elementor/frontend/before_enqueue_styles' );
 
-			$this->add_elementor_icons_inline_css();
-
 			// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
-			if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
+			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) || Plugin::$instance->preview->is_preview_mode() ) {
 				wp_enqueue_style( 'elementor-icons' );
 			}
-			wp_enqueue_style( 'elementor-animations' );
+
 			wp_enqueue_style( 'elementor-frontend' );
 
 			/**
@@ -672,6 +640,111 @@ class Frontend extends App {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get Frontend File URL
+	 *
+	 * Returns the URL for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
+	 *
+	 * @since 3.4.5
+	 *
+	 * @access public
+	 *
+	 * @param string $frontend_file_name
+	 * @param boolean $custom_file
+	 *
+	 * @return string frontend file URL
+	 */
+	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+		if ( $custom_file ) {
+			$frontend_file = $this->get_frontend_file( $frontend_file_name );
+
+			$frontend_file_url = $frontend_file->get_url();
+		} else {
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+		}
+
+		return $frontend_file_url;
+	}
+
+	/**
+	 * Get Frontend File Path
+	 *
+	 * Returns the path for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the path for the default CSS file is returned.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $frontend_file_name
+	 * @param boolean $custom_file
+	 *
+	 * @return string frontend file path
+	 */
+	public function get_frontend_file_path( $frontend_file_name, $custom_file ) {
+		if ( $custom_file ) {
+			$frontend_file = $this->get_frontend_file( $frontend_file_name );
+
+			$frontend_file_path = $frontend_file->get_path();
+		} else {
+			$frontend_file_path = ELEMENTOR_ASSETS_PATH . 'css/' . $frontend_file_name;
+		}
+
+		return $frontend_file_path;
+	}
+
+	/**
+	 * Get Frontend File
+	 *
+	 * Returns a frontend file instance.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $frontend_file_name
+	 * @param string $file_prefix
+	 * @param string $template_file_path
+	 *
+	 * @return FrontendFile
+	 */
+	public function get_frontend_file( $frontend_file_name, $file_prefix = 'custom-', $template_file_path = '' ) {
+		static $cached_frontend_files = [];
+
+		$file_name = $file_prefix . $frontend_file_name;
+
+		if ( isset( $cached_frontend_files[ $file_name ] ) ) {
+			return $cached_frontend_files[ $file_name ];
+		}
+
+		if ( ! $template_file_path ) {
+			$template_file_path = Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name;
+		}
+
+		$frontend_file = new FrontendFile( $file_name, $template_file_path );
+
+		$time = $frontend_file->get_meta( 'time' );
+
+		if ( ! $time ) {
+			$frontend_file->update();
+		}
+
+		$cached_frontend_files[ $file_name ] = $frontend_file;
+
+		return $frontend_file;
+	}
+
+	/**
+	 * Enqueue assets conditionally.
+	 *
+	 * Enqueue all assets that were pre-enabled.
+	 *
+	 * @since 3.3.0
+	 * @access private
+	 */
+	private function enqueue_conditional_assets() {
+		Plugin::$instance->assets_loader->enqueue_assets();
 	}
 
 	/**
@@ -840,6 +913,15 @@ class Frontend extends App {
 				'lt_LT' => 'latin-ext',
 			];
 
+			/**
+			 * Google font subsets.
+			 *
+			 * Filters the list of Google font subsets from which locale will be enqueued in frontend.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param array $subsets A list of font subsets.
+			 */
 			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
 
 			$locale = get_locale();
@@ -1063,7 +1145,7 @@ class Frontend extends App {
 		if ( get_the_ID() === (int) $post_id ) {
 			$content = '';
 			if ( $editor->is_edit_mode() ) {
-				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
+				$content = '<div class="elementor-alert elementor-alert-danger">' . esc_html__( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
 			}
 
 			return $content;
@@ -1192,6 +1274,19 @@ class Frontend extends App {
 
 		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
 
+		$assets_url = ELEMENTOR_ASSETS_URL;
+
+		/**
+		 * Frontend assets URL
+		 *
+		 * Filters Elementor frontend assets URL.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param string $assets_url The frontend assets URL. Default is ELEMENTOR_ASSETS_URL.
+		 */
+		$assets_url = apply_filters( 'elementor/frontend/assets_url', $assets_url );
+
 		$settings = [
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
@@ -1199,31 +1294,31 @@ class Frontend extends App {
 				'isScriptDebug' => Utils::is_script_debug(),
 			],
 			'i18n' => [
-				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
-				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
-				'pinIt' => __( 'Pin it', 'elementor' ),
-				'download' => __( 'Download', 'elementor' ),
-				'downloadImage' => __( 'Download image', 'elementor' ),
-				'fullscreen' => __( 'Fullscreen', 'elementor' ),
-				'zoom' => __( 'Zoom', 'elementor' ),
-				'share' => __( 'Share', 'elementor' ),
-				'playVideo' => __( 'Play Video', 'elementor' ),
-				'previous' => __( 'Previous', 'elementor' ),
-				'next' => __( 'Next', 'elementor' ),
-				'close' => __( 'Close', 'elementor' ),
+				'shareOnFacebook' => esc_html__( 'Share on Facebook', 'elementor' ),
+				'shareOnTwitter' => esc_html__( 'Share on Twitter', 'elementor' ),
+				'pinIt' => esc_html__( 'Pin it', 'elementor' ),
+				'download' => esc_html__( 'Download', 'elementor' ),
+				'downloadImage' => esc_html__( 'Download image', 'elementor' ),
+				'fullscreen' => esc_html__( 'Fullscreen', 'elementor' ),
+				'zoom' => esc_html__( 'Zoom', 'elementor' ),
+				'share' => esc_html__( 'Share', 'elementor' ),
+				'playVideo' => esc_html__( 'Play Video', 'elementor' ),
+				'previous' => esc_html__( 'Previous', 'elementor' ),
+				'next' => esc_html__( 'Next', 'elementor' ),
+				'close' => esc_html__( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			// 'breakpoints' object is kept for BC.
 			'breakpoints' => Responsive::get_breakpoints(),
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
 			'responsive' => [
-				'breakpoints' => $this->get_breakpoints_config(),
+				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
 			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
-				'assets' => apply_filters( 'elementor/frontend/assets_url', ELEMENTOR_ASSETS_URL ),
+				'assets' => $assets_url,
 			],
 		];
 
@@ -1284,32 +1379,15 @@ class Frontend extends App {
 		return $settings;
 	}
 
-	private function get_breakpoints_config() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-
-		$config = [];
-
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			$config[ $breakpoint_name ] = [
-				'label' => $breakpoint->get_label(),
-				'value' => $breakpoint->get_value(),
-				'direction' => $breakpoint->get_direction(),
-				'is_enabled' => $breakpoint->is_enabled(),
-			];
-		}
-
-		return $config;
-	}
-
 	/**
 	 * Restore content filters.
 	 *
 	 * Restore removed WordPress filters that conflicted with Elementor.
 	 *
 	 * @since 1.5.0
-	 * @access private
+	 * @access public
 	 */
-	private function restore_content_filters() {
+	public function restore_content_filters() {
 		foreach ( $this->content_removed_filters as $filter ) {
 			add_filter( 'the_content', $filter );
 		}
@@ -1342,13 +1420,13 @@ class Frontend extends App {
 		}
 
 		if ( empty( $parts['more_text'] ) ) {
-			$parts['more_text'] = __( '(more&hellip;)', 'elementor' );
+			$parts['more_text'] = esc_html__( '(more&hellip;)', 'elementor' );
 		}
 
 		$more_link_text = sprintf(
 			'<span aria-label="%1$s">%2$s</span>',
 			sprintf(
-				/* translators: %s: Name of current post */
+				/* translators: %s: Current post name. */
 				__( 'Continue reading %s', 'elementor' ),
 				the_title_attribute( [
 					'echo' => false,
@@ -1357,7 +1435,22 @@ class Frontend extends App {
 			$parts['more_text']
 		);
 
-		$more_link = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
+		$more_link = sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text );
+
+		/**
+		 * The content "more" link.
+		 *
+		 * Filters the "more" link displayed after the content.
+		 *
+		 * This hook can be used either to change the link syntax or to change the
+		 * text inside the link.
+		 *
+		 * @since 2.0.4
+		 *
+		 * @param string $more_link      The more link.
+		 * @param string $more_link_text The text inside the more link.
+		 */
+		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
 	}
@@ -1390,17 +1483,9 @@ class Frontend extends App {
 		return $dependencies;
 	}
 
-	private function add_elementor_icons_inline_css() {
-		$elementor_icons_library_version = '5.10.0';
+	private function is_optimized_css_mode() {
+		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
 
-		/**
-		 * The e-icons font-face must be printed inline due to custom breakpoints.
-		 * When using custom breakpoints, the frontend CSS is loaded from the custom-frontend CSS file.
-		 * The custom frontend file is located in a different path ('uploads' folder).
-		 * Therefore, it cannot be called from a CSS file that its relative path can vary.
-		 */
-		$elementor_icons_inline_css = sprintf( '@font-face{font-family:eicons;src:url(%1$slib/eicons/fonts/eicons.eot?%2$s);src:url(%1$slib/eicons/fonts/eicons.eot?%2$s#iefix) format("embedded-opentype"),url(%1$slib/eicons/fonts/eicons.woff2?%2$s) format("woff2"),url(%1$slib/eicons/fonts/eicons.woff?%2$s) format("woff"),url(%1$slib/eicons/fonts/eicons.ttf?%2$s) format("truetype"),url(%1$slib/eicons/fonts/eicons.svg?%2$s#eicon) format("svg");font-weight:400;font-style:normal}', ELEMENTOR_ASSETS_URL, $elementor_icons_library_version );
-
-		wp_add_inline_style( 'elementor-frontend', $elementor_icons_inline_css );
+		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
 	}
 }

@@ -1,3 +1,5 @@
+import { isScrollSnapActive } from './utils';
+
 module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
@@ -5,7 +7,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			selectors: {
 				links: 'a[href*="#"]',
 				targets: '.elementor-element, .elementor-menu-anchor',
-				scrollable: 'html, body',
+				scrollable: isScrollSnapActive() ? 'body' : 'html, body',
 			},
 		};
 	},
@@ -65,14 +67,22 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
+		// on scroll animation start: remove scroll-snap.
+		if ( isScrollSnapActive() ) {
+			elementorFrontend.elements.$body.css( 'scroll-snap-type', 'none' );
+		}
+
 		this.elements.$scrollable.animate( {
 			scrollTop: scrollTop,
-		}, this.getSettings( 'scrollDuration' ), 'linear' );
+		}, this.getSettings( 'scrollDuration' ), 'linear', () => {
+			// on scroll animation complete: add scroll-snap back.
+			if ( isScrollSnapActive() ) {
+					elementorFrontend.elements.$body.css( 'scroll-snap-type', '' );
+			}
+		} );
 	},
 
 	onInit: function() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
-
-		this.bindEvents();
 	},
 } );

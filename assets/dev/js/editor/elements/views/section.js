@@ -83,32 +83,25 @@ const SectionView = BaseElementView.extend( {
 
 		if ( ! this.isInner() ) {
 			editTools.add = {
-				/* translators: %s: Element Name. */
+				/* translators: %s: Element name. */
 				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
 			};
 		}
 
 		editTools.edit = {
-			/* translators: %s: Element Name. */
+			/* translators: %s: Element name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'handle',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element Name. */
+				/* translators: %s: Element name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 		}
-
-		editTools.remove = {
-			/* translators: %s: Element Name. */
-			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-			icon: 'close',
-		};
-
 		return editTools;
 	},
 
@@ -122,6 +115,7 @@ const SectionView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
+					isEnabled: () => ! elementor.selection.isMultiple(),
 					callback: this.save.bind( this ),
 				},
 			],

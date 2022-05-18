@@ -1,13 +1,5 @@
 export const tests = () => {
-	require( './core/common/assets/js/api/modules/command-base.spec.js' );
-	require( './core/common/assets/js/api/modules/command-data.spec.js' );
-
-	require( './core/common/assets/js/api/core/components.spec.js' );
-	require( './core/common/assets/js/api/core/data.spec.js' );
-
-	require( './core/common/assets/js/api/core/hooks/base.spec.js' );
-
-	require( './core/common/assets/js/api/extras/hash-commands.spec' );
+	require( './modules/web-cli/assets/js/index' );
 
 	require( './assets/dev/js/editor/container/container.spec' );
 
@@ -15,15 +7,14 @@ export const tests = () => {
 	require( './assets/dev/js/editor/document/dynamic/commands/base/disable-enable.spec' );
 	require( './assets/dev/js/editor/document/globals/commands/base/disable-enable.spec' );
 
-	require( './assets/dev/js/editor/document/manager.spec' );
 	require( './assets/dev/js/editor/document/component.spec' );
+
+	require( './assets/dev/js/editor/utils/helpers.spec' );
 
 	require( './assets/dev/js/editor/data/globals/component.spec' );
 
 	require( './core/kits/assets/js/manager.spec' );
 	require( './core/kits/assets/js/component.spec' );
-
-	require( './assets/dev/js/editor/data/globals/component.spec' );
 
 	require( './modules/dev-tools/assets/js/editor/dev-tools.spec' );
 };

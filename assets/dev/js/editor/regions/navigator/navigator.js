@@ -37,7 +37,7 @@ export default class extends BaseRegion {
 
 	getDefaultStorage() {
 		return {
-			visible: false,
+			visible: true,
 			size: {
 				width: '',
 				height: '',
@@ -271,7 +271,13 @@ export default class extends BaseRegion {
 	}
 
 	onEditModeSwitched( activeMode ) {
-		if ( 'edit' === activeMode && this.storage.visible ) {
+		// Determine when the navigator should be visible.
+		const visibleModes = [
+			'edit',
+			'picker',
+		];
+
+		if ( visibleModes.includes( activeMode ) && this.storage.visible ) {
 			this.open();
 		} else {
 			this.close( true );
@@ -282,7 +288,7 @@ export default class extends BaseRegion {
 		if ( document.config.panel.has_elements ) {
 			this.initLayout();
 
-			if ( this.storage.visible ) {
+			if ( false !== this.storage.visible ) {
 				$e.route( 'navigator' );
 			}
 		}

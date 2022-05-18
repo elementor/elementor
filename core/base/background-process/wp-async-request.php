@@ -137,6 +137,7 @@ abstract class WP_Async_Request {
 			'blocking'  => false,
 			'body'      => $this->data,
 			'cookies'   => $_COOKIE,
+			/** This filter is documented in wp-includes/class-wp-http-streams.php */
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 	}

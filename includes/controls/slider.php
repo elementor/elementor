@@ -90,10 +90,9 @@ class Control_Slider extends Control_Base_Units {
 	 * @access public
 	 */
 	public function content_template() {
-		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<?php $this->print_units_template(); ?>
 			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper elementor-clearfix elementor-control-tag-area">
 				<# if ( isMultiple && ( data.labels.length || data.scales ) ) { #>
@@ -116,7 +115,7 @@ class Control_Slider extends Control_Base_Units {
 				<div class="elementor-slider"></div>
 				<# if ( ! isMultiple ) { #>
 					<div class="elementor-slider-input">
-						<input id="<?php echo $control_uid; ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
+						<input id="<?php $this->print_control_uid(); ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" placeholder="{{ view.getControlPlaceholder()?.size }}" data-setting="size" />
 					</div>
 				<# } #>
 			</div>

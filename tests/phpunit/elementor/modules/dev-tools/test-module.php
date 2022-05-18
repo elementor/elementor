@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\DevTools;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\DevTools\Module;
 
 class Elementor_Test_Module extends Elementor_Test_Base {

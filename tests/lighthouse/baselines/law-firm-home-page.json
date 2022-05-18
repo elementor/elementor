@@ -3,14 +3,15 @@
   "heading-order": [ "error", { "minScore": 0 } ],
   "link-name": [ "error", { "minScore": 0 } ],
   "meta-description": [ "error", { "minScore": 0 } ],
-  "unused-css-rules": [ "error", { "maxLength": 2 } ],
+  "unused-css-rules": [ "error", { "maxLength": 3 } ],
   "unused-javascript": [ "error", { "maxLength": 1 } ],
   "uses-rel-preconnect": [ "error", { "maxLength": 1 } ],
   "first-contentful-paint": [ "error", { "minScore": 0.8 } ],
   "first-meaningful-paint": [ "error", { "minScore": 0.60 } ],
   "largest-contentful-paint": [ "error", { "minScore": 0.70 } ],
-  "legacy-javascript": [ "error", { "maxLength": 1 } ],
-  "render-blocking-resources": [ "error", { "maxLength": 8 } ],
+  "legacy-javascript": [ "error", { "maxLength": 2 } ],
+  "render-blocking-resources": [ "error", { "maxLength": 9 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 30 } ],
-  "uses-webp-images": [ "warn", { "maxLength": 4 }]
+  "modern-image-formats": [ "warn", { "maxLength": 4 }],
+  "csp-xss": [ "warn", { "minScore": 0 }]
 }

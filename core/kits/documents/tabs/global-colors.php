@@ -21,7 +21,7 @@ class Global_Colors extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Global Colors', 'elementor' );
+		return esc_html__( 'Global Colors', 'elementor' );
 	}
 
 	public function get_group() {
@@ -40,7 +40,7 @@ class Global_Colors extends Tab_Base {
 		$this->start_controls_section(
 			'section_global_colors',
 			[
-				'label' => __( 'Global Colors', 'elementor' ),
+				'label' => esc_html__( 'Global Colors', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
@@ -75,25 +75,33 @@ class Global_Colors extends Tab_Base {
 		$default_colors = [
 			[
 				'_id' => 'primary',
-				'title' => __( 'Primary', 'elementor' ),
+				'title' => esc_html__( 'Primary', 'elementor' ),
 				'color' => '#6EC1E4',
 			],
 			[
 				'_id' => 'secondary',
-				'title' => __( 'Secondary', 'elementor' ),
+				'title' => esc_html__( 'Secondary', 'elementor' ),
 				'color' => '#54595F',
 			],
 			[
 				'_id' => 'text',
-				'title' => __( 'Text', 'elementor' ),
+				'title' => esc_html__( 'Text', 'elementor' ),
 				'color' => '#7A7A7A',
 			],
 			[
 				'_id' => 'accent',
-				'title' => __( 'Accent', 'elementor' ),
+				'title' => esc_html__( 'Accent', 'elementor' ),
 				'color' => '#61CE70',
 			],
 		];
+
+		$this->add_control(
+			'heading_system_colors',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'System Colors', 'elementor' ),
+			]
+		);
 
 		$this->add_control(
 			'system_colors',
@@ -105,6 +113,15 @@ class Global_Colors extends Tab_Base {
 					'add' => false,
 					'remove' => false,
 				],
+				'separator' => 'after',
+			]
+		);
+
+		$this->add_control(
+			'heading_custom_colors',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Custom Colors', 'elementor' ),
 			]
 		);
 

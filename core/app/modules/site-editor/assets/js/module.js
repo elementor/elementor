@@ -104,7 +104,7 @@ export default class SiteEditor {
 			{
 				type: 'search-results',
 				icon: 'eicon-search-results',
-				title: __( 'Search Results', 'elementor' ),
+				title: __( 'search results page', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/search-results.svg',
 				},
@@ -149,7 +149,7 @@ export default class SiteEditor {
 			{
 				type: 'error-404',
 				icon: 'eicon-error-404',
-				title: __( 'Error 404', 'elementor' ),
+				title: __( '404 page', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/error-404.svg',
 				},

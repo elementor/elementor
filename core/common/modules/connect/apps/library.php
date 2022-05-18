@@ -10,8 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Library extends Common_App {
+
 	public function get_title() {
-		return __( 'Library', 'elementor' );
+		return esc_html__( 'Library', 'elementor' );
 	}
 
 	/**
@@ -24,7 +25,7 @@ class Library extends Common_App {
 
 	public function get_template_content( $id ) {
 		if ( ! $this->is_connected() ) {
-			return new \WP_Error( '401', __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
+			return new \WP_Error( '401', esc_html__( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
 		}
 
 		$body_args = [
@@ -49,6 +50,11 @@ class Library extends Common_App {
 
 		$template_content = $this->request( 'get_template_content', $body_args, true );
 
+		if ( is_wp_error( $template_content ) && 401 === $template_content->get_error_code() ) {
+			// Normalize 401 message
+			return new \WP_Error( 401, __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
+		}
+
 		return $template_content;
 	}
 
@@ -61,7 +67,7 @@ class Library extends Common_App {
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
 				'is_connected' => $is_connected,
-				'subscription_plans' => $connect->get_subscription_plans( 'panel-library' ),
+				'subscription_plans' => $connect->get_subscription_plans( 'template-library' ),
 				'base_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			],
@@ -89,7 +95,7 @@ class Library extends Common_App {
 			],
 			'connect_site_key' => [
 				'label' => 'Site Key',
-				'value' => get_option( 'elementor_connect_site_key' ),
+				'value' => get_option( self::OPTION_CONNECT_SITE_KEY ),
 			],
 			'remote_info_library' => [
 				'label' => 'Remote Library Info',
@@ -98,8 +104,15 @@ class Library extends Common_App {
 		];
 	}
 
+	protected function get_popup_success_event_data() {
+		return [
+			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
+		];
+	}
+
 	protected function init() {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+		add_filter( 'elementor/common/localize_settings', [ $this, 'localize_settings' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }

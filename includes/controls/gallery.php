@@ -85,7 +85,7 @@ class Control_Gallery extends Base_Data_Control {
 					<div class="elementor-control-gallery-content">
 						<div class="elementor-control-gallery-thumbnails"></div>
 						<div class="elementor-control-gallery-edit"><span><i class="eicon-pencil" aria-hidden="true"></i></span></div>
-						<button class="elementor-button elementor-control-gallery-add" aria-label="<?php echo __( 'Add Images', 'elementor' ); ?>"><i class="eicon-plus-circle" aria-hidden="true"></i></button>
+						<button class="elementor-button elementor-control-gallery-add" aria-label="<?php echo esc_html__( 'Add Images', 'elementor' ); ?>"><i class="eicon-plus-circle" aria-hidden="true"></i></button>
 					</div>
 				</div>
 			</div>

@@ -1,5 +1,6 @@
 import ColorPicker from './color-picker';
-import DocumentHelper from 'elementor-editor/document/helper';
+import DocumentHelper from 'elementor-editor/document/helper-bc';
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -21,6 +22,7 @@ const allowedHTMLWrapperTags = [
 ];
 
 module.exports = {
+	container: ContainerHelper,
 	document: DocumentHelper,
 
 	_enqueuedFonts: {
@@ -36,7 +38,15 @@ module.exports = {
 				column: {
 					widget: null,
 					section: null,
+					container: {
+						widget: null,
+						container: null,
+					},
 				},
+			},
+			container: {
+				widget: null,
+				container: null,
 			},
 		},
 	},
@@ -362,13 +372,13 @@ module.exports = {
 		} );
 	},
 
-	maybeDisableWidget() {
+	maybeDisableWidget( givenWidgetType = null ) {
 		if ( ! elementor.config[ 'icons_update_needed' ] ) {
 			return false;
 		}
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
-			widgetType = elementView.model.get( 'widgetType' ),
+			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
 			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
@@ -396,7 +406,7 @@ module.exports = {
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
 					__( 'Elementor\'s New Icon Library', 'elementor' ),
-					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Upgrade".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
+					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
 					__( 'Update', 'elementor' ),
 					onConfirm
 				).show();
@@ -417,64 +427,46 @@ module.exports = {
 		} );
 	},
 
-	isActiveControl: function( controlModel, values ) {
-		let condition,
-			conditions;
+	isActiveControl: function( controlModel, values, controls ) {
+		const condition = controlModel.condition || controlModel.get?.( 'condition' );
+		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
 
-		// TODO: Better way to get this?
-		if ( _.isFunction( controlModel.get ) ) {
-			condition = controlModel.get( 'condition' );
-			conditions = controlModel.get( 'conditions' );
-		} else {
-			condition = controlModel.condition;
-			conditions = controlModel.conditions;
+		// If there is a 'condition' format, convert it to a 'conditions' format.
+		if ( condition ) {
+			const terms = [];
+
+			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
+				// Here we want to convert the 'condition' format to a 'conditions' format. The first step is to
+				// isolate the term from the negative operator if exists. For example, a condition format can look
+				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
+				const conditionNameParts = conditionName.match( /([\w-]+(?:\[[\w-]+])?)?(!?)$/i ),
+					conditionRealName = conditionNameParts[ 1 ],
+					isNegativeCondition = !! conditionNameParts[ 2 ],
+					controlValue = values[ conditionRealName ];
+				let operator;
+
+				if ( Array.isArray( conditionValue ) && conditionValue.length ) {
+					operator = isNegativeCondition ? '!in' : 'in';
+				} else if ( Array.isArray( controlValue ) && controlValue.length ) {
+					operator = isNegativeCondition ? '!contains' : 'contains';
+				} else if ( isNegativeCondition ) {
+					operator = '!==';
+				}
+
+				terms.push( {
+					name: conditionRealName,
+					operator: operator,
+					value: conditionValue,
+				} );
+			} );
+
+			conditions = {
+				relation: 'and',
+				terms: conditions ? terms.concat( conditions ) : terms,
+			};
 		}
 
-		// Multiple conditions with relations.
-		if ( conditions && ! elementor.conditions.check( conditions, values ) ) {
-			return false;
-		}
-
-		if ( _.isEmpty( condition ) ) {
-			return true;
-		}
-
-		var hasFields = _.filter( condition, function( conditionValue, conditionName ) {
-			var conditionNameParts = conditionName.match( /([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i ),
-				conditionRealName = conditionNameParts[ 1 ],
-				conditionSubKey = conditionNameParts[ 2 ],
-				isNegativeCondition = !! conditionNameParts[ 3 ],
-				controlValue = values[ conditionRealName ];
-
-			if ( values.__dynamic__ && values.__dynamic__[ conditionRealName ] ) {
-				controlValue = values.__dynamic__[ conditionRealName ];
-			}
-
-			if ( undefined === controlValue ) {
-				return true;
-			}
-
-			if ( conditionSubKey && 'object' === typeof controlValue ) {
-				controlValue = controlValue[ conditionSubKey ];
-			}
-
-			// If it's a non empty array - check if the conditionValue contains the controlValue,
-			// If the controlValue is a non empty array - check if the controlValue contains the conditionValue
-			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
-			var isContains;
-
-			if ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) {
-				isContains = _.contains( conditionValue, controlValue );
-			} else if ( _.isArray( controlValue ) && ! _.isEmpty( controlValue ) ) {
-				isContains = _.contains( controlValue, conditionValue );
-			} else {
-				isContains = _.isEqual( conditionValue, controlValue );
-			}
-
-			return isNegativeCondition ? isContains : ! isContains;
-		} );
-
-		return _.isEmpty( hasFields );
+		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
 	cloneObject( object ) {

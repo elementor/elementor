@@ -1,6 +1,8 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 import environment from '../../../../core/common/assets/js/utils/environment';
+import Events from 'elementor-utils/events';
+import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -18,7 +20,10 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
+				$importNowButton: $( '#e-import-template-action' ),
 				$importArea: $( '#elementor-import-template-area' ),
+				$importForm: $( '#elementor-import-template-form' ),
+				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
@@ -136,6 +141,29 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				} )
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} );
+			} );
+
+			$( '#elementor-recreate-kit-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success error' ).addClass( 'loading' )
+					.next( '.e-recreate-kit-error-message' ).remove();
+
+				$.post( ajaxurl, {
+					action: 'elementor_recreate_kit',
+					_nonce: $thisButton.data( 'nonce' ),
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} )
+					.fail( function( { responseJSON } ) {
+						$thisButton.removeClass( 'loading' ).addClass( 'error' );
+
+						if ( responseJSON.data?.message ) {
+							$thisButton.after( `<div class="e-recreate-kit-error-message">${ responseJSON.data.message }</div>` );
+						}
 					} );
 			} );
 
@@ -320,11 +348,12 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				return;
 			}
 
-			var self = this,
+			const self = this,
 				$importButton = self.elements.$importButton,
-				$importArea = self.elements.$importArea;
+				$importArea = self.elements.$importArea,
+				$importNowButton = self.elements.$importNowButton;
 
-			self.elements.$formAnchor = $( 'h1' );
+			self.elements.$formAnchor = $( '.wp-header-end' );
 
 			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 
@@ -332,6 +361,18 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
+			} );
+
+			$importNowButton.on( 'click', ( event ) => {
+				if ( self.elements.$importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+					event.preventDefault();
+
+					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						self.elements.$importForm.trigger( 'submit' );
+					} );
+
+					enableUnfilteredFilesModal.show();
+				}
 			} );
 		},
 
@@ -458,6 +499,6 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 	$( function() {
 		window.elementorAdmin = new ElementorAdmin();
 
-		elementorCommon.elements.$window.trigger( 'elementor/admin/init' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/admin/init' );
 	} );
 }( jQuery ) );

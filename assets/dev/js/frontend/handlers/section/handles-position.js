@@ -27,15 +27,21 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
+		const insideHandleClass = 'elementor-section--handles-inside',
+			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
+
+		if ( elementor.settings.page.model.attributes.scroll_snap ) {
+			this.$element.addClass( insideHandleClass );
+			return;
+		}
+
 		const isOverflowHidden = this.isOverflowHidden();
 
 		if ( ! isOverflowHidden && ! this.isFirstSection() ) {
 			return;
 		}
 
-		const offset = isOverflowHidden ? 0 : this.getOffset(),
-			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
-			insideHandleClass = 'elementor-section--handles-inside';
+		const offset = isOverflowHidden ? 0 : this.getOffset();
 
 		if ( offset < 25 ) {
 			this.$element.addClass( insideHandleClass );

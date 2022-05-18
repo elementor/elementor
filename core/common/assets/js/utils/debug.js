@@ -42,9 +42,9 @@ var Debug = function() {
 		self.addError( {
 			type: error.name,
 			message: error.message,
-			url: originalEvent.filename,
-			line: originalEvent.lineno,
-			column: originalEvent.colno,
+			url: event.originalEvent.filename,
+			line: event.originalEvent.lineno,
+			column: event.originalEvent.colno,
 		} );
 	};
 

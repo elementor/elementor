@@ -50,14 +50,7 @@ export class Delete extends CommandHistory {
 				} );
 			}
 
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:before:remove', container.model );
-
 			container.model.destroy();
-
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:after:remove', container.model );
-
 			container.panel.refresh();
 		} );
 

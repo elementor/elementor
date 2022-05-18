@@ -1,11 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits\Documents;
 
-use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Kit extends Elementor_Test_Base {
 
@@ -15,6 +14,8 @@ class Test_Kit extends Elementor_Test_Base {
 	private $kit;
 
 	public function setUp() {
+		parent::setUp();
+
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();

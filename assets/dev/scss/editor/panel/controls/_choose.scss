@@ -42,6 +42,12 @@
 	input {
 		display: none;
 
+		&.e-choose-placeholder + .elementor-choices-label {
+			color: $white;
+			background-color: $editor-lighter;
+			border-color: $editor-lighter;
+		}
+
 		&:checked + .elementor-choices-label {
 			color: #fff;
 			background-color: $editor-light;
@@ -59,23 +65,26 @@
 
 .rtl {
 
-	.elementor-control-text_align,
-	.elementor-control-align,
-	.elementor-control-position {
+	.elementor-control-type-choose {
 
-		.elementor-choices {
-			flex-direction: row-reverse; // Force ltr also in RTL languages
+		&[class*="elementor-control-text_align"],
+		&[class*="elementor-control-align"],
+		&[class*="elementor-control-position"] {
 
-			.elementor-choices-label {
+			.elementor-choices {
+				flex-direction: row-reverse; // Force ltr also in RTL languages
 
-				&:nth-child(2) {
-					@include border-end(1px solid $editor-lightest);
-					border-radius: 3px 0 0 3px;
-				}
+				.elementor-choices-label {
 
-				&:last-child {
-					@include border-end(none);
-					border-radius: 0 3px 3px 0;
+					&:nth-child(2) {
+						@include border-end(1px solid $editor-lightest);
+						border-radius: 3px 0 0 3px;
+					}
+
+					&:last-child {
+						@include border-end(none);
+						border-radius: 0 3px 3px 0;
+					}
 				}
 			}
 		}

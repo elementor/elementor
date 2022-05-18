@@ -91,8 +91,7 @@ export class Settings extends CommandHistoryDebounce {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args,
-			{ external, render = true } = options;
+		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args;
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
@@ -116,15 +115,11 @@ export class Settings extends CommandHistoryDebounce {
 				this.addToHistory( container, newSettings, container.oldValues );
 			}
 
-			if ( external ) {
-				container.settings.setExternalChange( newSettings );
-			} else {
-				container.settings.set( newSettings );
-			}
-
-			if ( render ) {
-				container.render();
-			}
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				options,
+				settings: newSettings,
+			} );
 		} );
 	}
 

@@ -36,7 +36,9 @@
 						var( --transition ) fill;
 
 			&:hover {
-				--text-color: var( --text-color-hover );
+				--color: var( --text-color-hover, var( --text-color ) );
+				--fill: var( --color );
+				color: var( --color );
 			}
 		}
 	}

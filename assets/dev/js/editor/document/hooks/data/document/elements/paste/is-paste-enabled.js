@@ -1,5 +1,4 @@
 import Dependency from 'elementor-api/modules/hooks/data/dependency';
-import DocumentHelper from 'elementor-document/helper';
 
 export class IsPasteEnabled extends Dependency {
 	getCommand() {
@@ -18,7 +17,7 @@ export class IsPasteEnabled extends Dependency {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( container ) =>
-			DocumentHelper.isPasteEnabled( container )
+			$e.components.get( 'document/elements' ).utils.isPasteEnabled( container )
 		);
 	}
 }

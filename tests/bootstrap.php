@@ -1,11 +1,21 @@
 <?php
 
+$composer_autoloader_file = __DIR__ . '/../vendor/autoload.php';
+
+if ( ! file_exists( $composer_autoloader_file ) ) {
+	die( 'Installing composer are required for running the tests.' );
+}
+
+require $composer_autoloader_file;
+
+
 use Elementor\Autoloader;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
-if ( ! $_tests_dir ) {
-	$_tests_dir = '/tmp/wordpress-tests-lib';
+
+if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
+	$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
 }
 
 define( 'ELEMENTOR_TESTS', true );
@@ -20,8 +30,8 @@ define( 'PLUGIN_PATH', PLUGIN_FOLDER . '/' . PLUGIN_FILE );
 // Activates this plugin in WordPress so it can be tested.
 $GLOBALS['wp_tests_options'] = [
 	'active_plugins' => [ PLUGIN_PATH ],
-	'template' => 'twentynineteen',
-	'stylesheet' => 'twentynineteen',
+	'template' => 'twentytwentyone',
+	'stylesheet' => 'twentytwentyone',
 ];
 
 require_once $_tests_dir . '/includes/functions.php';
@@ -36,18 +46,11 @@ tests_add_filter( 'muplugins_loaded', function () {
 tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 
 require $_tests_dir . '/includes/bootstrap.php';
-require __DIR__ . '/phpunit/traits/base-elementor.php';
-require __DIR__ . '/phpunit/traits/extra-assertions.php';
-require __DIR__ . '/phpunit/traits/auth-helpers.php';
-require __DIR__ . '/phpunit/traits/elementor-library-trait.php';
-require __DIR__ . '/phpunit/traits/breakpoints-trait.php';
-require __DIR__ . '/phpunit/base-class.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
-require __DIR__ . '/phpunit/ajax-class.php';
-require __DIR__ . '/phpunit/factories/factory.php';
-require __DIR__ . '/phpunit/factories/documents.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
+
+require __DIR__ . '/phpunit/elementor/schemas/bootstrap.php';
 
 Autoloader::run();
 

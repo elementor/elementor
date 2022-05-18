@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Files\CSS\Global_CSS;
 
 class Test_Settings extends Elementor_Test_Base {

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\DevTools;
 
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\DevTools\Module;
 
 class Test_Deprecation extends Elementor_Test_Base {

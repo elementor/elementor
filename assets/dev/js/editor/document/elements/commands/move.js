@@ -35,12 +35,6 @@ export class Move extends CommandHistory {
 				}
 			}
 
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			options.trigger = {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update',
-			};
-
 			$e.run( 'document/elements/create', {
 				container: target,
 				model,

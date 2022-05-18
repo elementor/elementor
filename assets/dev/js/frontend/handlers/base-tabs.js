@@ -79,11 +79,11 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 				break;
 			case 'Home':
 				event.preventDefault();
-				$tabs.first().focus();
+				$tabs.first().trigger( 'focus' );
 				return;
 			case 'End':
 				event.preventDefault();
-				$tabs.last().focus();
+				$tabs.last().trigger( 'focus' );
 				return;
 			default:
 				return;
@@ -96,9 +96,9 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		if ( nextTab ) {
 			nextTab.focus();
 		} else if ( -1 === tabIndex + direction ) {
-			$tabs.last().focus();
+			$tabs.last().trigger( 'focus' );
 		} else {
-			$tabs.first().focus();
+			$tabs.first().trigger( 'focus' );
 		}
 	}
 
@@ -134,7 +134,11 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 			'aria-expanded': 'true',
 		} );
 
-		$requestedContent[ settings.showTabFn ]( animationDuration, () => elementorFrontend.elements.$window.trigger( 'resize' ) );
+		$requestedContent[ settings.showTabFn ](
+			animationDuration,
+			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' )
+		);
+
 		$requestedContent.removeAttr( 'hidden' );
 	}
 

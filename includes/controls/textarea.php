@@ -63,12 +63,11 @@ class Control_Textarea extends Base_Data_Control {
 	 * @access public
 	 */
 	public function content_template() {
-		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper">
-				<textarea id="<?php echo $control_uid; ?>" class="elementor-control-tag-area" rows="{{ data.rows }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}"></textarea>
+				<textarea id="<?php $this->print_control_uid(); ?>" class="elementor-control-tag-area" rows="{{ data.rows }}" data-setting="{{ data.name }}" placeholder="{{ view.getControlPlaceholder() }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

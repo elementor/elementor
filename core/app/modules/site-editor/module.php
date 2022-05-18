@@ -28,8 +28,8 @@ class Module extends BaseModule {
 	public function add_menu_in_admin_bar( $admin_bar_config ) {
 		$admin_bar_config['elementor_edit_page']['children'][] = [
 			'id' => 'elementor_app_site_editor',
-			'title' => __( 'Theme Builder', 'elementor' ),
-			'sub_title' => __( 'Site', 'elementor' ),
+			'title' => esc_html__( 'Theme Builder', 'elementor' ),
+			'sub_title' => esc_html__( 'Site', 'elementor' ),
 			'href' => Plugin::$instance->app->get_settings( 'menu_url' ),
 			'class' => 'elementor-app-link',
 			'parent_class' => 'elementor-second-section',

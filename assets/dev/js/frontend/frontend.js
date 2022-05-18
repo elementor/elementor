@@ -5,12 +5,16 @@ import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
+import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper-bc';
+import Swiper from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
+import Breakpoints from 'elementor-utils/breakpoints';
+import Events from 'elementor-utils/events';
 
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
@@ -49,9 +53,6 @@ export default class Frontend extends elementorModules.ViewModule {
 			selectors: {
 				elementor: '.elementor',
 				adminBar: '#wpadminbar',
-			},
-			classes: {
-				ie: 'elementor-msie',
 			},
 		};
 	}
@@ -108,7 +109,12 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	getDeviceSetting( deviceMode, settings, settingKey ) {
-		const devices = [ 'desktop', 'tablet', 'mobile' ];
+		// Add specific handling for widescreen since it is larger than desktop.
+		if ( 'widescreen' === deviceMode ) {
+			return this.getWidescreenSetting( settings, settingKey );
+		}
+
+		const devices = elementorFrontend.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } );
 
 		let deviceIndex = devices.indexOf( deviceMode );
 
@@ -117,7 +123,8 @@ export default class Frontend extends elementorModules.ViewModule {
 				fullSettingKey = settingKey + '_' + currentDevice,
 				deviceValue = settings[ fullSettingKey ];
 
-			if ( deviceValue ) {
+			// Accept 0 as value.
+			if ( deviceValue || 0 === deviceValue ) {
 				return deviceValue;
 			}
 
@@ -125,6 +132,23 @@ export default class Frontend extends elementorModules.ViewModule {
 		}
 
 		return settings[ settingKey ];
+	}
+
+	getWidescreenSetting( settings, settingKey ) {
+		const deviceMode = 'widescreen',
+			widescreenSettingKey = settingKey + '_' + deviceMode;
+
+		let settingToReturn;
+
+		// If the device mode is 'widescreen', and the setting exists - return it.
+		if ( settings[ widescreenSettingKey ] ) {
+			settingToReturn = settings[ widescreenSettingKey ];
+		} else {
+			// Otherwise, return the desktop setting
+			settingToReturn = settings[ settingKey ];
+		}
+
+		return settingToReturn;
 	}
 
 	getCurrentDeviceSetting( settings, settingKey ) {
@@ -155,6 +179,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.utils = {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
+			baseVideoLoader: new BaseVideoLoader(),
 			anchors: new AnchorsModule(),
 			get lightbox() {
 				return LightboxManager.getLightbox();
@@ -163,6 +188,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			swiper: Swiper,
 			environment: environment,
 			assetsLoader: new AssetsLoader(),
+			escapeHTML,
 		};
 
 		// TODO: BC since 2.4.0
@@ -190,21 +216,6 @@ export default class Frontend extends elementorModules.ViewModule {
 				this.elements.$body.addClass( 'e--ua-' + key );
 			}
 		}
-	}
-
-	addIeCompatibility() {
-		const el = document.createElement( 'div' ),
-			supportsGrid = 'string' === typeof el.style.grid;
-
-		if ( ! environment.ie && supportsGrid ) {
-			return;
-		}
-
-		this.elements.$body.addClass( this.getSettings( 'classes.ie' ) );
-
-		const msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + this.config.urls.assets + 'css/frontend-msie.min.css?' + this.config.version + '" type="text/css" />';
-
-		this.elements.$body.append( msieCss );
 	}
 
 	setDeviceModeData() {
@@ -306,11 +317,15 @@ export default class Frontend extends elementorModules.ViewModule {
 	 * Initialize the modules' widgets handlers.
 	 */
 	initModules() {
-		let handlers = {
+		const handlers = {
 			shapes: Shapes,
 		};
 
+		// TODO: BC - Deprecated since 3.5.0
 		elementorFrontend.trigger( 'elementor/modules/init:before' );
+
+		// TODO: Use this instead.
+		elementorFrontend.trigger( 'elementor/modules/init/before' );
 
 		Object.entries( handlers ).forEach( ( [ moduleName, ModuleClass ] ) => {
 			this.modulesHandlers[ moduleName ] = new ModuleClass();
@@ -330,6 +345,8 @@ export default class Frontend extends elementorModules.ViewModule {
 	init() {
 		this.hooks = new EventManager();
 
+		this.breakpoints = new Breakpoints( this.config.responsive );
+
 		this.storage = new Storage();
 
 		this.elementsHandler = new ElementsHandler( jQuery );
@@ -337,8 +354,6 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.modulesHandlers = {};
 
 		this.addUserAgentClasses();
-
-		this.addIeCompatibility();
 
 		this.setDeviceModeData();
 
@@ -349,7 +364,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		}
 
 		// Keep this line before `initOnReadyComponents` call
-		this.elements.$window.trigger( 'elementor/frontend/init' );
+		Events.dispatch( this.elements.$window, 'elementor/frontend/init' );
 
 		this.initModules();
 

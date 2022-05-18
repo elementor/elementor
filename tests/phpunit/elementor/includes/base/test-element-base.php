@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Plugin;
 use Elementor\Frontend;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Element_Base extends Elementor_Test_Base {
 

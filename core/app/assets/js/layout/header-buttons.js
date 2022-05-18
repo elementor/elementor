@@ -1,6 +1,18 @@
+import useAction from 'elementor-app/hooks/use-action';
+
 import Button from './header-button';
 
 export default function HeaderButtons( props ) {
+	const action = useAction();
+
+	const actionOnClose = () => {
+		if ( props.onClose ) {
+			props.onClose();
+		} else {
+			action.backToDashboard();
+		}
+	};
+
 	let tools = '';
 
 	if ( props.buttons.length ) {
@@ -21,15 +33,7 @@ export default function HeaderButtons( props ) {
 				text={ __( 'Close', 'elementor' ) }
 				icon="eicon-close"
 				className="eps-app__close-button"
-				onClick={ () => {
-					if ( window.top === window ) {
-						// Directly.
-						window.top.location = elementorAppConfig.return_url;
-					} else {
-						// Iframe.
-						window.top.$e.run( 'app/close' );
-					}
-				} }
+				onClick={ actionOnClose }
 			/>
 			{ tools }
 		</div>
@@ -38,4 +42,9 @@ export default function HeaderButtons( props ) {
 
 HeaderButtons.propTypes = {
 	buttons: PropTypes.arrayOf( PropTypes.object ),
+	onClose: PropTypes.func,
+};
+
+HeaderButtons.defaultProps = {
+	buttons: [],
 };

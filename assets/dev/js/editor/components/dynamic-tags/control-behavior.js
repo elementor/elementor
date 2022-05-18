@@ -50,7 +50,13 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
 
-		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
+		const $eyedropper = $colorPickerToolsContainer.find( '.elementor-control-element-color-picker' );
+
+		if ( $eyedropper.length ) {
+			this.ui.dynamicSwitcher.insertBefore( $eyedropper );
+		} else {
+			$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
+		}
 	},
 
 	toggleDynamicClass: function() {
@@ -94,7 +100,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		// Create and inject pro dynamic teaser template if Pro is not installed
 		if ( ! elementor.helpers.hasPro() && Object.keys( tags ).length ) {
-			const proTeaser = Marionette.Renderer.render( '#tmpl-elementor-dynamic-tags-promo' );
+			const proTeaser = Marionette.Renderer.render( '#tmpl-elementor-dynamic-tags-promo', {
+				promotionUrl: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
+			} );
 
 			$tagsListInner.append( proTeaser );
 		}
@@ -189,14 +197,14 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion: function() {
-		let message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
+		const message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
 
 		elementor.promotion.showDialog( {
 			headerMessage: __( 'Dynamic Content', 'elementor' ),
 			message: message,
 			top: '-10',
 			element: this.ui.dynamicSwitcher,
-			actionURL: elementor.config.dynamicPromotionURL,
+			actionURL: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
 		} );
 	},
 

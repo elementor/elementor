@@ -83,7 +83,16 @@ module.exports = elementorModules.Module.extend( {
 			toast.getElements( 'widget' ).addClass( options.classes );
 		}
 
-		toast.show();
+		if ( options.sticky ) {
+			toast.setSettings( {
+				hide: {
+					auto: false,
+					onClick: false,
+				},
+			} );
+		}
+
+		return toast.show();
 	},
 
 	onInit: function() {

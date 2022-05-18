@@ -16,4 +16,13 @@ export default class VimeoLoader extends BaseLoader {
 	getApiObject() {
 		return Vimeo;
 	}
+
+	getAutoplayURL( videoURL ) {
+		videoURL = super.getAutoplayURL( videoURL );
+
+		// Vimeo requires the '#t=' param to be last in the URL.
+		const timeMatch = videoURL.match( /#t=[^&]*/ );
+
+		return videoURL.replace( timeMatch[ 0 ], '' ) + timeMatch;
+	}
 }

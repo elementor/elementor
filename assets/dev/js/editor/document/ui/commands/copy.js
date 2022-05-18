@@ -2,11 +2,11 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Copy extends CommandBase {
 	apply() {
-		const selectedElement = elementor.getCurrentElement();
+		const selectedElements = elementor.selection.getElements();
 
-		if ( selectedElement ) {
+		if ( selectedElements.length ) {
 			return $e.run( 'document/elements/copy', {
-				container: selectedElement.getContainer(),
+				containers: selectedElements,
 			} );
 		}
 

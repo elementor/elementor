@@ -25,6 +25,11 @@
 			display: inline-block;
 			width: 1.5em;
 
+			svg {
+				width: 1em;
+				height: 1em;
+			}
+
 			&.elementor-accordion-icon- {
 
 				&right {
@@ -66,7 +71,7 @@
 }
 
 // Responsive mode
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-accordion {
 

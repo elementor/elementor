@@ -15,6 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Base_Data_Control extends Base_Control {
 
+	public function __construct() {
+		parent::__construct();
+
+		$default_value = $this->get_default_value();
+
+		if ( '' !== $default_value ) {
+			$this->set_settings( 'default_value', $default_value );
+		}
+	}
+
 	/**
 	 * Get data control default value.
 	 *
@@ -120,5 +130,19 @@ abstract class Base_Data_Control extends Base_Control {
 	 */
 	protected function get_control_uid( $input_type = 'default' ) {
 		return 'elementor-control-' . $input_type . '-{{{ data._cid }}}';
+	}
+
+	/**
+	 * Safe Print data control unique ID.
+	 *
+	 * Retrieve the unique ID of the control. Used to set a unique CSS ID for the
+	 * element.
+	 *
+	 * @access protected
+	 *
+	 * @param string $input_type Input type. Default is 'default'.
+	 */
+	protected function print_control_uid( $input_type = 'default' ) {
+		echo esc_attr( $this->get_control_uid( $input_type ) );
 	}
 }

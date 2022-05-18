@@ -20,11 +20,16 @@ export default class extends elementorModules.Module {
 			},
 		} );
 
+		// We also need to check if the 'connect' URL exist for not breaking older pro versions that does not contain this link.
+		const isProExistNotConnected = ! ! ( elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect );
+
 		this.dialog.addButton( {
 			name: 'action',
-			text: __( 'See it in Action', 'elementor' ),
+			text: isProExistNotConnected ? __( 'Connect & Activate', 'elementor' ) : __( 'See it in Action', 'elementor' ),
 			callback: () => {
-				open( this.actionURL, '_blank' );
+				const url = isProExistNotConnected ? elementorProEditorConfig.urls.connect : this.actionURL;
+
+				open( url, '_blank' );
 			},
 		} );
 
