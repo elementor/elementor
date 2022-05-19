@@ -1442,10 +1442,20 @@ abstract class Document extends Controls_Stack {
 			if ( isset( $controls[ $setting_name ] ) ) {
 				$control = $controls[ $setting_name ];
 				$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
+				$control_default = $controls[ $setting_name ]['default'];
 
-				if ( ! $this->is_control_default_value( $is_repeater, $controls[ $setting_name ]['default'], $setting_value ) ) {
+				if ( ! $this->is_control_default_value( $is_repeater, $control_default, $setting_value ) ) {
 					if ( $is_repeater ) {
-						$usage[ $setting_name ] = count( $setting_value );
+						$is_multi_dimensional = count( $setting_value ) !== count( $setting_value, COUNT_RECURSIVE );
+
+						if ( $is_multi_dimensional ) {
+							$multi_diff = array_udiff( $setting_value, $control_default, function ( $a, $b ) {
+								return count( array_diff( $a, $b ) );
+							} );
+							$usage[ $setting_name ] = count( $multi_diff );
+						} else {
+							$usage[ $setting_name ] = count( $setting_value );
+						}
 					} else {
 						$usage[ $setting_name ] = 1;
 					}
