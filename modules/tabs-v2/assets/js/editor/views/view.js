@@ -11,8 +11,8 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 			let model = this.options.model,
 				view = this;
 
-			// For clicks on container.
-			if ( 'container' === closest?.dataset.element_type ) { // eslint-disable-line camelcase
+			// For clicks on container/widget.
+			if ( [ 'container', 'widget' ].includes( closest?.dataset.element_type ) ) { // eslint-disable-line camelcase
 				// In case the container empty, click should be handled by the EmptyView.
 				const container = elementor.getContainer( closest.dataset.id );
 
