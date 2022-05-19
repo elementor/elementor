@@ -61,7 +61,9 @@ add_action( 'elementor/documents/register', function( Documents_Manager $documen
 } );
 ```
 
-On registering, the URL to create new Article document is available at:
+Once it's registered, it will appear in the templates list: WP Admin > Templates > Add New.
+
+Then the URL to create a new Article document is available at:
 ```php
 $create_url = Article::get_create_url();
 ```
@@ -111,4 +113,3 @@ class Article extends \Elementor\Modules\Library\Documents\Library_Document {
 }
 ```
 
-Once it's registered, it will appear in the templates list: WP Admin > Templates > Add New.
