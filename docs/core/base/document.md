@@ -1,10 +1,10 @@
 # Document
 
-The term "Document" is used in the only in the code. It refers a single piece of content that created by Elementor, such as a post, page, or a saved template.
+The term "Document" refers to a single piece of content that created by Elementor, such as a post, page, or a saved template. It's used only in the code.
 
 Each document has its own type and features.
 
-A document is saved as a `post` in the WordPress `wp_posts` table. His elements and settings are saved as metadata in the `wp_postmeta` table.
+A document is saved as a `post` in WordPress' `wp_posts` table, while its elements and settings are saved as metadata in the `wp_postmeta` table.
 
 In PHP, the document is represented by the `Elementor\Base\Document` class.
 
@@ -12,9 +12,9 @@ This class is like a DB Model that knows how to save and load its data.
 
 ### Why "Document"?
 
-WordPress' content are called `posts` it's an historical term that came from the days of WordPress as a blogging system.
+In WordPress, contents are called `posts`. It's an historical term that was introduced in the days when WordPress was just a blogging system instead of the CMS it became to be today.
 
-In Elementor, it can be many document types for one `post_type` like the saved templates Page and Section that are both a `elementor_library` post type.
+In Elementor, on the other hand, many document types can share the same `post_type`. For example, "Page" and "Section" templates both have an `elementor_library` post type even though those are different document types.
 
 The term `document` is used instead, as the browser called his DOM content as a "document".
 
@@ -31,10 +31,11 @@ The term `document` is used instead, as the browser called his DOM content as a 
 
 A new type of document can be used in order to create special functionality for it.
 
-For example, an `Header` in Elementor Pro is a new type of document that knows to appear in the header of the site.
+For example, a `Header` in Elementor Pro is a new type of document that knows to appear in the header of the site.
 
-A new document type should be created by extending the `Elementor\Base\Document` class, and define his type and the post type it will be used in.
+A new document type should be created by extending the `Elementor\Base\Document` class, and defining its type and the post type it will be used in.
 
+#### Example:
 ```php
 class Article extends \Elementor\Core\Base\Document {
 	public static function get_type() {
@@ -52,10 +53,10 @@ class Article extends \Elementor\Core\Base\Document {
 }
 ```
 
-And then it should be registered the new document type:
+And then, register the new document type:
 
 ```php
-add_action( 'elementor/documents/register', function( $documents_manager ) {
+add_action( 'elementor/documents/register', function( Documents_Manager $documents_manager ) {
 	$documents_manager->register_document_type( Article::get_type(), Article::get_class_full_name() );
 } );
 ```
@@ -66,7 +67,7 @@ $create_url = Article::get_create_url();
 ```
 ### A Template Document
 
-In order to create a document type as a template (For internal use) it should extend the `\Elementor\Modules\Library\Documents\Library_Document` class without set the `cpt`, it will use the templates cpt.
+In order to create a document type as a template (For internal use) it should extend the `\Elementor\Modules\Library\Documents\Library_Document` class without setting a `cpt` since it will use the template's one.
 
 ```php
 class Article extends \Elementor\Modules\Library\Documents\Library_Document {
@@ -75,7 +76,7 @@ class Article extends \Elementor\Modules\Library\Documents\Library_Document {
 	}
 	
 	public static function get_title() {
-		return __( 'Article', 'plugin-textdomain' );
+		return esc_html__( 'Article', 'plugin-textdomain' );
 	}
 }
 ```
@@ -95,7 +96,7 @@ class Article extends \Elementor\Modules\Library\Documents\Library_Document {
 		return __( 'Article', 'plugin-textdomain' );
 	}
 	
-	// Assume that the there are widgets that belongs to a new category called `article-elements`
+	// Assume that there are widgets that belong to a new category called `article-elements`.
 	protected static function get_editor_panel_categories() {
 		$categories = [
 			'article-elements' => [
@@ -104,6 +105,7 @@ class Article extends \Elementor\Modules\Library\Documents\Library_Document {
 			],
 		];
 
+		// Put the `article-elements` category first.
 		return $categories + parent::get_editor_panel_categories();
 	}
 }
