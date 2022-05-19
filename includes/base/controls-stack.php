@@ -1462,7 +1462,9 @@ abstract class Controls_Stack extends Base_Object {
 				);
 			}
 
-			$is_default = $clear_repeater_settings === $control_default || 0 === count( array_diff( $control_default, $clear_repeater_settings ) );
+			// Used `json_encode()` since they array are multidimensional.
+			$is_default = $clear_repeater_settings === $control_default ||
+					wp_json_encode( $control_default ) === wp_json_encode( $clear_repeater_settings );
 		}
 
 		return $is_default;

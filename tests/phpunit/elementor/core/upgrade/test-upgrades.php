@@ -567,7 +567,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertEquals( 'yes', get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY ) );
 	}
 
-	public function test_v_3_6_0_remove_old_elements_usage() {
+	public function test_v_3_7_0_remove_old_elements_usage() {
 		// Arrange.
 		$old_usage_option_name = 'elementor_controls_usage';
 		$old_usage_meta_key = '_elementor_controls_usage';
