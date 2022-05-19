@@ -42,6 +42,7 @@ class Module extends App {
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
 			'nonce' => wp_create_nonce( 'wp_rest' ),
+			'version' => ELEMENTOR_VERSION,
 		];
 	}
 }

@@ -1,4 +1,5 @@
 import CommandInfra from './command-infra';
+import Deprecation from '../utils/deprecation';
 
 /**
  * @name $e.modules.CommandBase
@@ -50,7 +51,7 @@ export default class CommandBase extends CommandInfra {
 	 * @throws {Error}
 	 */
 	requireContainer( args = this.args ) {
-		elementorDevToolsModule.deprecation.deprecated( 'requireContainer', '3.7.0', 'Extend `$e.modules.editor.CommandContainerBase` or `$e.modules.editor.CommandContainerInternalBase`' );
+		Deprecation.deprecated( 'requireContainer', '3.7.0', 'Extend `$e.modules.editor.CommandContainerBase` or `$e.modules.editor.CommandContainerInternalBase`' );
 
 		if ( ! args.container && ! args.containers ) {
 			throw Error( 'container or containers are required.' );

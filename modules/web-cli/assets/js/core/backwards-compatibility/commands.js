@@ -1,4 +1,5 @@
 import Module from 'elementor-assets-js/modules/imports/module.js';
+import Deprecation from '../../utils/deprecation';
 
 export default class CommandsBackwardsCompatibility extends Module {
 	__construct() {
@@ -12,7 +13,7 @@ export default class CommandsBackwardsCompatibility extends Module {
 			// Regex takes the first letter and convert it to lower case.
 			componentName = componentName.replace( /^./, ( val ) => val.toLowerCase() );
 
-			elementorDevToolsModule.deprecation.deprecated(
+			Deprecation.deprecated(
 				`$e.${ componentName }.on( 'run', ... )`,
 				'3.0.0',
 				`$e.${ componentName }.on( 'run:before', ... )`

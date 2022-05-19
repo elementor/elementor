@@ -3,6 +3,7 @@ import CommandCallbackBase from 'elementor-api/modules/command-callback-base';
 import { createSlice } from '@reduxjs/toolkit';
 import Module from 'elementor-assets-js/modules/imports/module.js';
 import ForceMethodImplementation from '../utils/force-method-implementation';
+import Deprecation from '../utils/deprecation';
 
 export default class ComponentBase extends Module {
 	__construct( args = {} ) {
@@ -51,7 +52,7 @@ export default class ComponentBase extends Module {
 	}
 
 	getRootContainer() {
-		elementorDevToolsModule.deprecation.deprecated(
+		Deprecation.deprecated(
 			'getRootContainer()',
 			'3.7.0',
 			'getServiceName()',

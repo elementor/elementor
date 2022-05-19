@@ -4,6 +4,11 @@ import Deprecation from './deprecation';
 
 export default class Module {
 	constructor() {
+		// TODO: Replace `elementorDevToolsModule` to `elementorDevTools` after fixing devTools plugin.
+		if ( ! window.elementorDevToolsModule ) {
+			window.elementorDevToolsModule = this;
+		}
+
 		this.deprecation = new Deprecation();
 
 		this.notifyBackendDeprecations();
@@ -27,7 +32,4 @@ export default class Module {
 	}
 }
 
-// TODO: Replace `elementorDevToolsModule` to `elementorDevTools` after fixing devTools plugin.
-if ( ! window.elementorDevToolsModule ) {
-	window.elementorDevToolsModule = new Module();
-}
+new Module();
