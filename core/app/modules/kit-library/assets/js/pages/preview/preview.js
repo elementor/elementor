@@ -73,13 +73,15 @@ function usePreviewUrl( data ) {
 			return null;
 		}
 
-		const documentId = new URLSearchParams( location.pathname.split( '?' )?.[1] ).get( 'document_id' );
+		const documentId = new URLSearchParams( location.pathname.split( '?' )?.[1] ).get( 'document_id' ),
+			utm = '?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=preview',
+			previewUrl = data.previewUrl + utm;
 
 		if ( ! documentId ) {
-			return data.previewUrl;
+			return previewUrl;
 		}
 
-		return data.documents.find( ( item ) => item.id === parseInt( documentId ) )?.previewUrl || data.previewUrl;
+		return data.documents.find( ( item ) => item.id === parseInt( documentId ) )?.previewUrl + utm || previewUrl;
 	}, [ location, data ] );
 }
 
