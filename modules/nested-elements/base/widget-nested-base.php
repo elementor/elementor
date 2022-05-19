@@ -28,7 +28,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 	abstract protected function get_default_repeater_title_setting_key();
 
 	/**
-	 * Get default children title using `%d` as index in the format.
+	 * Get default children title for the navigator, using `%d` as index in the format.
 	 *
 	 * @note The title in this method is used to set the default title for each created child in nested element.
 	 * for handling the children title for new created widget(s), use `get_default_children_elements()` method,
