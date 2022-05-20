@@ -282,7 +282,10 @@ class Icons_Manager {
 		 * If in edit mode inline the full svg, otherwise use the symbol.
 		 * Will be displayed only after page update or widget "blur".
 		 */
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
+		if (
+			Plugin::$instance->editor->is_edit_mode()
+			|| ( isset( $_REQUEST['action'] ) && 'elementor_menu_cart_fragments_editor' === $_REQUEST['action'] )
+		) {
 			return '<svg xmlns="http://www.w3.org/2000/svg" ' . Utils::render_html_attributes( $attributes ) . '
 				viewBox="0 0 ' . esc_attr( $icon_data['width'] ) . ' ' . esc_attr( $icon_data['height'] ) . '">
 				<path d="' . esc_attr( $icon_data['path'] ) . '"></path>
