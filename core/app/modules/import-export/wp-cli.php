@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -235,7 +236,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return array
 	 */
 	private function get_manifest_data( $extraction_directory ) {
-		$manifest_file_content = file_get_contents( $extraction_directory . 'manifest.json', true );
+		$manifest_file_content = Utils::file_get_contents( $extraction_directory . 'manifest.json', true );
 
 		if ( ! $manifest_file_content ) {
 			\WP_CLI::error( 'Manifest not found' );
