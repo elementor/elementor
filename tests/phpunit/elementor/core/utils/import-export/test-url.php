@@ -40,7 +40,7 @@ class Test_Url extends Elementor_Test_Base {
 		// Arrange
 		$this->wp_rewrite->set_permalink_structure( static::PERMALINK_STRUCTURE_PLAIN );
 
-		$base_url = 'www.base.url';
+		$base_url = 'https://test.local';
 		$url = $base_url . '/' . $this->page->post_name;
 
 		// Act
@@ -54,10 +54,11 @@ class Test_Url extends Elementor_Test_Base {
 		// Arrange
 		$this->wp_rewrite->set_permalink_structure( static::PERMALINK_STRUCTURE_PLAIN );
 
-		$base_url = 'www.base.url';
+		$base_url = 'https://test.local';
 		$query_args= 'a=aa&b=bb';
+		$query_args_that_should_be_removed = '&p=12&page_id=13';
 
-		$url = $base_url . '/' . $this->page->post_name .'?' . $query_args . '#anchor';
+		$url = $base_url . '/' . $this->page->post_name .'?' . $query_args . $query_args_that_should_be_removed . '#anchor';
 
 		// Act
 		$modified_url = Url::migrate( $url, $base_url );
@@ -74,7 +75,7 @@ class Test_Url extends Elementor_Test_Base {
 		// Arrange
 		$this->wp_rewrite->set_permalink_structure( static::PERMALINK_STRUCTURE_POST_NAME );
 
-		$base_url = 'www.base.url';
+		$base_url = 'https://test.local';
 		$url = $base_url . '/' . $this->page->post_name;
 
 		// Act
@@ -88,7 +89,7 @@ class Test_Url extends Elementor_Test_Base {
 		// Arrange
 		$this->wp_rewrite->set_permalink_structure( static::PERMALINK_STRUCTURE_POST_NAME );
 
-		$base_url = 'www.base.url';
+		$base_url = 'https://test.local';
 		$query_args= 'a=aa&b=bb';
 
 		$url = $base_url . '/' . $this->page->post_name .'?' . $query_args . '#anchor';
@@ -106,10 +107,10 @@ class Test_Url extends Elementor_Test_Base {
 
 	public function test_migrate__plain_permalink_will_do_noting() {
 		// Arrange
-		$base_url = 'www.base.url/';
+		$base_url = 'https://test.local';
 		$query_args = '&a=aa&b=bb';
 
-		$url = $base_url . '?p=' . $this->page->ID . $query_args;
+		$url = $base_url . '/?p=' . $this->page->ID . $query_args;
 
 		// Act
 		$modified_url = Url::migrate( $url, $base_url );
@@ -120,7 +121,7 @@ class Test_Url extends Elementor_Test_Base {
 
 	public function test_migrate__full_dynamic_url() {
 		// Arrange
-		$url = 'https://www.elementor.com';
+		$url = 'https://www.test.local';
 
 		// Act
 		$modified_url = Url::migrate( $url );
@@ -131,7 +132,7 @@ class Test_Url extends Elementor_Test_Base {
 
 	public function test_migrate__dynamic_url() {
 		// Arrange
-		$url = 'elementor.com';
+		$url = 'test.local';
 
 		// Act
 		$modified_url = Url::migrate( $url );
@@ -142,15 +143,14 @@ class Test_Url extends Elementor_Test_Base {
 
 	public function test_migrate__url_without_actual_reference() {
 		// Arrange
-		$url = 'https://www.elementor.com/not-refer-to-any-post/';
-		$base_url = 'https://www.elementor.com';
+		$url = 'https://www.test.local/not-refer-to-any-post/';
+		$base_url = 'https://www.test.local';
 
 		// Act
 		$modified_url = Url::migrate( $url, $base_url );
 
 		// Assert
 		$this->assertEquals( $url, $modified_url );
-
 	}
 
 	public function test_migrate__relative_url_without_actual_reference() {
@@ -162,6 +162,5 @@ class Test_Url extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( $url, $modified_url );
-
 	}
 }

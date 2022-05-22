@@ -37,7 +37,7 @@ class Import extends Iterator {
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
 		$map_old_new_post_ids = $this->map_old_new_post_ids( $imported_posts );
-		$original_site = isset( $manifest_data['site'] ) ? $manifest_data['site'] : null;
+		$original_site = ! empty( $manifest_data['site'] ) ? $manifest_data['site'] : null;
 
 		$this->save_elements_of_imported_posts( $map_old_new_post_ids );
 
@@ -95,6 +95,13 @@ class Import extends Iterator {
 		}
 	}
 
+	/**
+	 * Update the imported manu items
+	 *
+	 * @param $map_old_new_post_ids Array of the old post's IDs vs the new post's IDs
+	 * @param $original_site The base URL of the site that the kit was exported from.
+	 * @return void
+	 */
 	private function update_object_id_of_imported_menu_items( $map_old_new_post_ids, $original_site ) {
 		foreach ( $map_old_new_post_ids as $new_post_id ) {
 			if ( 'nav_menu_item' !== get_post_type( $new_post_id ) ) {
@@ -112,6 +119,7 @@ class Import extends Iterator {
 						wp_delete_post( $new_post_id );
 					}
 					break;
+
 				case 'custom':
 					$url = $post_meta['_menu_item_url'][0];
 
@@ -119,7 +127,6 @@ class Import extends Iterator {
 
 					update_post_meta( $new_post_id, '_menu_item_url', $url );
 					break;
-
 			}
 		}
 	}
