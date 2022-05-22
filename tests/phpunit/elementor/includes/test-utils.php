@@ -187,7 +187,8 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_file_get_contents__non_file() {
 		// Arrange
-		$file_name = 'non-file';
+		// Elementor Logo
+		$file_name = 'https://avatars.githubusercontent.com/u/47606894';
 
 		// Act
 		$content = Utils::file_get_contents( $file_name );
