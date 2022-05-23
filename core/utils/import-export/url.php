@@ -13,18 +13,23 @@ class Url {
 	 * The function will also check and change absolute url to relative one by the base url.
 	 * This is currently supports only "Post Name" permalink structure to any permalink structure.
 	 *
-	 * @param $url The url that should be migrated.
-	 * @param $base_url The base url that should be clean from the url.
-	 * @return mixed|string
+	 * @param string $url The url that should be migrated.
+	 * @param string|Null $base_url The base url that should be clean from the url.
+	 * @return string The migrated url || the $url if it couldn't find a match in the current permalink structure.
 	 */
 	public static function migrate( $url, $base_url = '' ) {
 		$full_url = $url;
 
 		if ( ! empty( $base_url ) ) {
-			$url = str_replace( $base_url, '', $url );
+			$base_url = preg_quote( $base_url, '/' );
+			$url = preg_replace( "/^{$base_url}/", '', $url );
 		}
 
 		$parsed_url = wp_parse_url( $url );
+
+		if ( $url === $full_url && ! empty( $parsed_url['host'] ) ) {
+			return $full_url;
+		}
 
 		if ( ! empty( $parsed_url['path'] ) ) {
 			$page = get_page_by_path( $parsed_url['path'] );
@@ -32,6 +37,7 @@ class Url {
 			if ( ! $page ) {
 				return $full_url;
 			}
+
 			$permalink = get_permalink( $page->ID );
 		}
 

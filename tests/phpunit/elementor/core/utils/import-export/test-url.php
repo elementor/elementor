@@ -85,6 +85,20 @@ class Test_Url extends Elementor_Test_Base {
 		$this->assertEquals( '/' . $this->page->post_name . '/', $modified_url );
 	}
 
+	public function test_migrate__post_name_to_post_name_permalink_with_different_base_url() {
+		// Arrange
+		$this->wp_rewrite->set_permalink_structure( static::PERMALINK_STRUCTURE_POST_NAME );
+
+		$base_url = 'https://test.local';
+		$url = 'test.local/' . $this->page->post_name;
+
+		// Act
+		$modified_url = Url::migrate( $url, $base_url );
+
+		// Assert
+		$this->assertEquals( $url, $modified_url );
+	}
+
 	public function test_migrate__post_name_permalink_with_query_args_and_anchor() {
 		// Arrange
 		$this->wp_rewrite->set_permalink_structure( static::PERMALINK_STRUCTURE_POST_NAME );
@@ -133,6 +147,18 @@ class Test_Url extends Elementor_Test_Base {
 	public function test_migrate__dynamic_url() {
 		// Arrange
 		$url = 'test.local';
+
+		// Act
+		$modified_url = Url::migrate( $url );
+
+		// Assert
+		$this->assertEquals( $url, $modified_url );
+	}
+
+	public function test_migrate__dynamic_url_with_path() {
+		// Arrange
+		$base_url = 'https://test.local/';
+		$url = $base_url .$this->page->post_name;
 
 		// Act
 		$modified_url = Url::migrate( $url );

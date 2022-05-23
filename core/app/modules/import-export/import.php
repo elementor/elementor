@@ -123,9 +123,11 @@ class Import extends Iterator {
 				case 'custom':
 					$url = $post_meta['_menu_item_url'][0];
 
-					$url = Url::migrate( $url, $original_site );
+					$migrated_url = Url::migrate( $url, $original_site );
 
-					update_post_meta( $new_post_id, '_menu_item_url', $url );
+					if ( $migrated_url !== $url ) {
+						update_post_meta( $new_post_id, '_menu_item_url', $migrated_url );
+					}
 					break;
 			}
 		}
