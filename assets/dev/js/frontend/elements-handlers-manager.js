@@ -27,7 +27,7 @@ module.exports = function( $ ) {
 	};
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'tabs-v2' ] ) {
-		this.elementsHandlers[ 'tabs-v2.default' ] = () => import( /* webpackChunkName: 'tabs-v2' */ '../../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2' );
+		this.elementsHandlers[ 'tabs-v2.default' ] = () => import( /* webpackChunkName: 'tabs-v2' */ 'elementor/modules/tabs-v2/assets/js/frontend/handlers/tabs-v2' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );

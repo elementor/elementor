@@ -35,7 +35,7 @@
 * Abnormal behavior for handling mobile [tabs-v2.js](../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js)
     - The reason for the issue is that __TabsV2__ should looks like old tab.
     - Since the content of the widget and its children was hardcoded, it was possible have any structure inside the widget markup,
-  	   now, the Nested Elements mechanism is creating the children as Container for specific selector, so its required to have the same markup.
+         now, the Nested Elements mechanism is creating the children as Container for specific selector, so its required to have the same markup.
     ```javascript
     onInit( ...args ) {
         // TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
@@ -64,7 +64,17 @@
         super.onInit( ...args );
     }
     ```
-     > Since TabsV2 should looks like old Tabs widget, there is manual handling of the situation for mobile devices.
+     > Since TabsV2 should look like old Tabs widget, there is manual handling of the situation for mobile devices.
+* Default global values should be set in widget CSS.
+    - Since nested-elements should use CSS variables and the editor/backend mechanism does not support it, it should be added manually:
+  ```css
+	--tabs-v2-title-color: var(--e-global-color-primary);
+	--tabs-v2-title-active-color: var(--e-global-color-accent);
+
+	--tabs-v2-title-typography-font-family: var(--e-global-typography-primary-font-family);
+	--tabs-v2-title-typography-font-size: initial;
+	--tabs-v2-title-typography-font-weight: var(--e-global-typography-primary-font-weight);
+   ```
 - --------------------------------------------------------------------------------------------------------------------------------
 
 # How NestedElements, TabsV2 (Nested tabs) works?
