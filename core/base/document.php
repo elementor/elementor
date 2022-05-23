@@ -311,7 +311,10 @@ abstract class Document extends Controls_Stack {
 			$attributes['class'] .= ' elementor-bc-flex-widget';
 		}
 
-		if ( Plugin::$instance->preview->is_preview() ) {
+		if (
+			Plugin::$instance->preview->is_preview() || // When rendering on the preview
+			Plugin::$instance->editor->is_edit_mode() // When remote render is active
+		) {
 			$attributes['data-elementor-title'] = static::get_title();
 		} else {
 			$elementor_settings = $this->get_frontend_settings();

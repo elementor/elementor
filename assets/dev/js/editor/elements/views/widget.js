@@ -145,6 +145,10 @@ const WidgetView = BaseWidget.extend( {
 			}, 200 );
 			// Is element empty?
 		} );
+
+		if ( 'remote' === self.getTemplateType() ) {
+			elementor.trigger( 'document/widget/remote-render', self );
+		}
 	},
 
 	onClickEdit: function( event ) {

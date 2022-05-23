@@ -9,6 +9,11 @@ export default class extends elementorModules.ViewModule {
 		this.initDocumentClasses();
 
 		this.attachDocumentsClasses();
+
+		// Runs only on the editor
+		elementor?.on( 'document/widget/remote-render', ( view ) => {
+			this.attachDocumentsClasses( view.$el );
+		} );
 	}
 
 	getDefaultSettings() {
@@ -39,19 +44,43 @@ export default class extends elementorModules.ViewModule {
 		this.documentClasses[ documentType ] = documentClass;
 	}
 
-	attachDocumentsClasses() {
-		this.elements.$documents.each( ( index, document ) => this.attachDocumentClass( jQuery( document ) ) );
+	attachDocumentsClasses( $parentEl = jQuery( 'body' ) ) {
+		let documentElements = $parentEl.find( this.getSettings( 'selectors' ).document )
+			.toArray()
+			.reduce( ( carry, element ) => {
+				// Removes duplicate documents, only the first one remains.
+				const { elementorId: documentId } = element.dataset;
+
+				if ( ! carry.hasOwnProperty( documentId ) ) {
+					carry[ documentId ] = element;
+				}
+
+				return carry;
+			}, {} );
+
+		documentElements = Object.values( documentElements );
+
+		if ( 0 === documentElements.length ) {
+			return;
+		}
+
+		const documentInstances = documentElements.map( ( element ) => this.attachDocumentClass( jQuery( element ) ) );
+
+		elementor?.trigger( 'elementor/frontend/documents-manager/attach-document-classes', documentInstances );
 	}
 
 	attachDocumentClass( $document ) {
 		const documentData = $document.data(),
 			documentID = documentData.elementorId,
 			documentType = documentData.elementorType,
-			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses.base;
+			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses.base,
+			documentInstance = new DocumentClass( {
+				$element: $document,
+				id: documentID,
+			} );
 
-		this.documents[ documentID ] = new DocumentClass( {
-			$element: $document,
-			id: documentID,
-		} );
+		this.documents[ documentID ] = documentInstance;
+
+		return documentInstance;
 	}
 }
