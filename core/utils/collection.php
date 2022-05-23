@@ -126,8 +126,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 */
 	public function each( callable $callback ) {
 		foreach ( $this->items as $key => $value ) {
-			$callback( $value, $key );
+			if ( false === $callback( $value, $key ) ) {
+				break;
+			}
 		}
+
+		return $this;
 	}
 
 	/**

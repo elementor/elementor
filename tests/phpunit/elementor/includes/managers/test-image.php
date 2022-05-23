@@ -12,7 +12,7 @@ class Test_Image extends Elementor_Test_Base {
 
 	public function create_image() {
 		$attachment_id = $this->_make_attachment( [
-			'file' => __DIR__ . '/mock/mock-image.png',
+			'file' => __DIR__ . '/../../../resources/mock-image.png',
 			'url' => 'https://test.local/image.png',
 		] );
 

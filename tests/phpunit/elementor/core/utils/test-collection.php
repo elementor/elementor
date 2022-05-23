@@ -431,4 +431,21 @@ class Test_Collection extends Elementor_Test_Base {
 		// Act
 		$collection->each( [ $mock, 'each_callback' ] );
 	}
+
+	public function test_each__breaks_on_false() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 1, 'b' => 2, 'c' => 3 ] );
+
+		$mock = $this->getMockBuilder( \stdClass::class )
+			->setMethods( [ 'each_callback' ] )
+			->getMock();
+
+		// Expect
+		$mock->expects( $this->exactly( 1 ) )
+			->method( 'each_callback' )
+			->willReturn( false );
+
+		// Act
+		$collection->each( [ $mock, 'each_callback' ] );
+	}
 }
