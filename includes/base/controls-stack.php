@@ -1446,7 +1446,7 @@ abstract class Controls_Stack extends Base_Object {
 		$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
 
 		// Since breakpoints defaults are not set in the control.
-		if ( 0 === strpos( $control_name, Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX ) ) {
+		if ( $setting_value && 0 === strpos( $control_name, Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX ) ) {
 			$breakpoints_config = array_merge(
 				Breakpoints_Manager::get_default_config(),
 				Breakpoints_Manager::get_backwards_compatability_config()
