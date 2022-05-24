@@ -2,20 +2,25 @@
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import EmptyView from 'elementor-elements/views/container/empty-view';
 
-const BaseElementView = require( 'elementor-elements/views/base' ),
-	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
-
+const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ColumnEmptyView,
+	emptyView: EmptyView,
 
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',
 
 	className: function() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
+	},
+
+	childViewOptions: function() {
+		return {
+			emptyViewOwner: this,
+		};
 	},
 
 	tagName: function() {

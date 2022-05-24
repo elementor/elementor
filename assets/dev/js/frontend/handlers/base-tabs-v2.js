@@ -1,17 +1,46 @@
-export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base {
+import Base from './base';
+
+export default class BaseTabsV2 extends Base {
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @returns {string}
+	 */
+	getTabTitleFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @returns {string}
+	 */
+	getTabContentFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {HTMLElement} tabTitleElement
+
+	 * @returns {string}
+	 */
+	getTabIndex( tabTitleElement ) {
+		return tabTitleElement.getAttribute( 'data-tab' );
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
 				tablist: '[role="tablist"]',
 				tabTitle: '.elementor-tab-title',
-				tabContent: '.elementor-tab-content',
+				tabContent: '.e-container',
 			},
 			classes: {
 				active: 'elementor-active',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
-			toggleSelf: true,
+			toggleSelf: false,
 			hidePrevious: true,
 			autoExpand: true,
 			keyDirection: {
@@ -105,9 +134,10 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
-			$activeContent = this.elements.$tabContents.filter( activeFilter );
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
 		$activeTitle.add( $activeContent ).removeClass( activeClass );
 		$activeTitle.attr( {
@@ -123,8 +153,8 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
-			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' ),
+			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
 			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
@@ -138,7 +168,6 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 			animationDuration,
 			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' )
 		);
-
 		$requestedContent.removeAttr( 'hidden' );
 	}
 
@@ -160,7 +189,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 				}
 			},
 			keyup: ( event ) => {
-				switch ( event.key ) {
+				switch ( event.code ) {
 					case 'ArrowLeft':
 					case 'ArrowRight':
 						this.handleKeyboardNavigation( event );
@@ -187,7 +216,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 
 	onEditSettingsChange( propertyName, value ) {
 		if ( 'activeItemIndex' === propertyName ) {
-			this.changeActiveTab( value );
+			this.changeActiveTab( value, false );
 		}
 	}
 
