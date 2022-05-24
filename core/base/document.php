@@ -1444,7 +1444,7 @@ abstract class Document extends Controls_Stack {
 				$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
 				$control_default = $controls[ $setting_name ]['default'];
 
-				if ( ! $this->is_control_default_value( $is_repeater, $control_default, $setting_value ) ) {
+				if ( ! $this->is_control_default_value( $control, $setting_value ) ) {
 					if ( $is_repeater ) {
 						$is_multi_dimensional = count( $setting_value ) !== count( $setting_value, COUNT_RECURSIVE );
 

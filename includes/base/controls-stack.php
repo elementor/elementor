@@ -2,9 +2,10 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\DynamicTags\Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\DynamicTags\Manager;
+use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1434,18 +1435,37 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * In situations where the validation is for repeater the `$control_default` and `$setting_value` are arrays.
 	 *
-	 * @param boolean $is_repeater
-	 * @param string|array $control_default
+	 * @param array $control
 	 * @param string|array $setting_value
 	 *
 	 * @return bool
 	 */
-	public function is_control_default_value( $is_repeater, $control_default, $setting_value ) {
+	public function is_control_default_value( array $control, $setting_value ) {
+		$control_name  = $control['name'];
+		$control_default = $control['default'];
+		$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
+
+		// Since breakpoints defaults are not set in the control.
+		if ( 0 === strpos( $control_name, Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX ) ) {
+			$breakpoints_config = array_merge(
+				Breakpoints_Manager::get_default_config(),
+				Breakpoints_Manager::get_backwards_compatability_config()
+			);
+
+			foreach ( $breakpoints_config as $key => $config ) {
+				if ( Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $key === $control_name ) {
+					$control_default = $config['default_value'];
+					break;
+				}
+			}
+		}
+
+		// Determine default for simple values.
 		$is_default = $control_default === $setting_value;
 
 		// If the control is a repeater control, check if the `$setting_value` is the default value of the `$control_default`.
 		// For example, 'system_colors'.
-		if ( $is_repeater && ! $is_default && ! empty( $control_default ) ) {
+		if ( ! $is_default && $is_repeater && ! empty( $control_default ) ) {
 			$clear_repeater_settings = [];
 
 			/*
