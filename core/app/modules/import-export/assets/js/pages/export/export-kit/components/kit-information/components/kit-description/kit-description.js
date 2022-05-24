@@ -10,7 +10,8 @@ export default function KitDescription() {
 	return (
 		<TextField
 			variant="outlined"
-			placeholder={ __( 'Say something about the style and content of these files…', 'elementor' ) }
+			// eslint-disable-next-line @wordpress/i18n-ellipsis
+			placeholder={ __( 'Say something about the style and content of these files...', 'elementor' ) }
 			multiline
 			rows={ 5 }
 			onChange={ ( event ) => {

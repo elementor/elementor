@@ -188,7 +188,8 @@ export default function Index( props ) {
 				<Grid container className="e-kit-library__index-layout-top-area">
 					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
-							placeholder={ __( 'Search all Template Kits…', 'elementor' ) }
+							// eslint-disable-next-line @wordpress/i18n-ellipsis
+							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>

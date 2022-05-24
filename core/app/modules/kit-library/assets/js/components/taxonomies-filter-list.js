@@ -35,7 +35,8 @@ const TaxonomiesFilterList = ( props ) => {
 					<SearchInput
 						size="sm"
 						className="e-kit-library__tags-filter-list-search"
-						placeholder={ sprintf( __( 'Search %s…', 'elementor' ), props.taxonomiesByType.label ) }
+						// eslint-disable-next-line @wordpress/i18n-ellipsis
+						placeholder={ sprintf( __( 'Search %s...', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
 					/>

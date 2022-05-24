@@ -97,7 +97,8 @@ export default function Preview( props ) {
 	usePageTitle( {
 		title: data
 			? `${ __( 'Kit Library', 'elementor' ) } | ${ data.title }`
-			: __( 'Loading…', 'elementor' ),
+			// eslint-disable-next-line @wordpress/i18n-ellipsis
+			: __( 'Loading...', 'elementor' ),
 	} );
 
 	if ( isError ) {

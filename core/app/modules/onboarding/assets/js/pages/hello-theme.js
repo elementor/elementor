@@ -1,3 +1,4 @@
+/* eslint-disable @wordpress/i18n-ellipsis */
 import { useContext, useEffect, useState, useCallback } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
@@ -203,7 +204,7 @@ export default function HelloTheme() {
 			setActionButtonText( (
 				<>
 					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
-					<span className="e-onboarding__action-button-text">{ __( 'Hold on, this can take a minute…', 'elementor' ) }</span>
+					<span className="e-onboarding__action-button-text">{ __( 'Hold on, this can take a minute...', 'elementor' ) }</span>
 				</>
 			) );
 		}, 4000 );
@@ -218,7 +219,7 @@ export default function HelloTheme() {
 			setActionButtonText( (
 				<>
 					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
-					<span className="e-onboarding__action-button-text">{ __( 'Okay, now we\'re really close…', 'elementor' ) }</span>
+					<span className="e-onboarding__action-button-text">{ __( 'Okay, now we\'re really close...', 'elementor' ) }</span>
 				</>
 			) );
 		}, 30000 );

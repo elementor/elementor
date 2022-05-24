@@ -41,7 +41,8 @@ export default function CptSelectBox() {
 				/>
 				: <TextField
 						variant="outlined"
-						placeholder={ __( 'No custom post types in your site…', 'elementor' ) }
+						// eslint-disable-next-line @wordpress/i18n-ellipsis
+						placeholder={ __( 'No custom post types in your site...', 'elementor' ) }
 						className="e-app-export-kit-content__disabled"
 				/>
 			}

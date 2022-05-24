@@ -34,7 +34,8 @@ export class Media extends CommandData {
 
 		if ( args.options?.progress ) {
 			this.toast = elementor.notifications.showToast( {
-				message: __( 'Uploading…' ),
+				// eslint-disable-next-line @wordpress/i18n-ellipsis
+				message: __( 'Uploading...' ),
 				sticky: true,
 			} );
 		}

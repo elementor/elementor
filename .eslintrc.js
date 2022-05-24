@@ -7,6 +7,7 @@ module.exports = {
 	plugins: [
 		'babel',
 		'react',
+		'@elementor/editor',
 		'no-jquery',
 	],
 	parser: '@babel/eslint-parser',
