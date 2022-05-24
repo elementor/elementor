@@ -31,6 +31,8 @@ import DataGlobalsComponent from './data/globals/component';
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
 
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
 
@@ -864,7 +866,7 @@ export default class EditorBase extends Marionette.Application {
 					{
 						name: 'view_revisions',
 						text: __( 'View All Revisions', 'elementor' ),
-						callback: () => $e.route( 'panel/history/revisions', {}, { source: 'toast' } ),
+						callback: () => $e.route( 'panel/history/revisions', {}, { source: SOURCES.TOAST } ),
 					},
 				],
 			} );

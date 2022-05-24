@@ -1,4 +1,5 @@
 import FilesUploadHandler from '../../../../utils/files-upload-handler';
+import { SOURCES } from 'elementor-editor/editor-constants';
 
 var TemplateLibraryImportView;
 
@@ -50,7 +51,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				elementor.templates.getTemplatesCollection().add( successData );
 
 				$e.route( 'library/templates/my-templates', {}, {
-					source: 'templates-library',
+					source: SOURCES.TEMPLATE_LIBRARY,
 				} );
 			},
 			error: ( errorData ) => {

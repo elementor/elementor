@@ -3,6 +3,8 @@ import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 const BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
 
@@ -178,7 +180,7 @@ const ContainerView = BaseElementView.extend( {
 		$e.route( 'library/save-template', {
 			model: this.model,
 		}, {
-			source: 'context-menu',
+			source: SOURCES.CONTEXT_MENU,
 		} );
 	},
 

@@ -1,4 +1,5 @@
-import AddSectionBase	from 'elementor-views/add-section/base';
+import AddSectionBase from 'elementor-views/add-section/base';
+import { SOURCES } from 'elementor-editor/editor-constants';
 
 var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 
@@ -50,7 +51,7 @@ module.exports = Marionette.Behavior.extend( {
 							reOpen: true,
 							model: this.view.model,
 						}, {
-							source: 'context-menu',
+							source: SOURCES.CONTEXT_MENU,
 						} ),
 					},
 				],

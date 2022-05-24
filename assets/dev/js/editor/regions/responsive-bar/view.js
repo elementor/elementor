@@ -1,3 +1,5 @@
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 export default class View extends Marionette.ItemView {
 	getTemplate() {
 		return '#tmpl-elementor-templates-responsive-bar';
@@ -155,7 +157,7 @@ export default class View extends Marionette.ItemView {
 			id: elementor.config.kit_id,
 			mode: 'autosave',
 		} )
-			.then( () => $e.route( 'panel/global/settings-layout', {}, { source: 'responsive-bar' } ) )
+			.then( () => $e.route( 'panel/global/settings-layout', {}, { source: SOURCES.RESPONSIVE_BAR } ) )
 			// TODO: Replace with a standard routing solution once one is available
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}

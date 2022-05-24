@@ -1,3 +1,5 @@
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
 
@@ -88,7 +90,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showSettingsPage: function() {
-		$e.route( 'panel/page-settings/settings', {}, { source: 'panel' } );
+		$e.route( 'panel/page-settings/settings', {}, { source: SOURCES.PANEL } );
 	},
 
 	onMenuButtonsClick: function( event ) {
@@ -109,7 +111,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		$e.route( 'panel/page-settings/settings', {}, { source: 'panel' } );
+		$e.route( 'panel/page-settings/settings', {}, { source: SOURCES.PANEL } );
 	},
 
 	onDeviceModeIconClick: function() {
@@ -130,14 +132,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveTemplateClick: function() {
-		$e.route( 'library/save-template', {}, { source: 'panel' } );
+		$e.route( 'library/save-template', {}, { source: SOURCES.PANEL } );
 	},
 
 	onHistoryClick: function() {
-		$e.route( 'panel/history/actions', {}, { source: 'panel' } );
+		$e.route( 'panel/history/actions', {}, { source: SOURCES.PANEL } );
 	},
 
 	onNavigatorClick: function() {
-		$e.run( 'navigator/toggle', {}, { source: 'panel' } );
+		$e.run( 'navigator/toggle', {}, { source: SOURCES.PANEL } );
 	},
 } );

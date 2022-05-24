@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { SOURCES } from 'elementor-editor/editor-constants';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -786,7 +787,7 @@ BaseElementView = BaseContainer.extend( {
 		$e.route( 'library/save-template', {
 			model: this.model,
 		}, {
-			source: 'preview',
+			source: SOURCES.PREVIEW,
 		} );
 	},
 

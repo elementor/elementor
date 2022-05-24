@@ -1,3 +1,5 @@
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 export class Open extends $e.modules.CommandBase {
 	apply( args ) {
 		if ( ! this.component.setDefaultTab( args ) ) {
@@ -6,7 +8,7 @@ export class Open extends $e.modules.CommandBase {
 			args.model.trigger( 'request:edit' );
 		} else {
 			$e.route( this.component.getDefaultRoute(), args, {
-				source: 'panel',
+				source: SOURCES.PANEL, // TODO should it be `SOURCES.COMMAND`?
 			} );
 		}
 

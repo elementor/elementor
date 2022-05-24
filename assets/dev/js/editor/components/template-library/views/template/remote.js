@@ -1,3 +1,5 @@
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' ),
 	TemplateLibraryTemplateRemoteView;
 
@@ -18,7 +20,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 
 	onPreviewButtonClick: function() {
 		$e.route( 'library/preview', { model: this.model }, {
-			source: 'template-library',
+			source: SOURCES.TEMPLATE_LIBRARY,
 		} );
 	},
 

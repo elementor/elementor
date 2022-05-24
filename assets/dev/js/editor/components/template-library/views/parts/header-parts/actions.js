@@ -1,3 +1,5 @@
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-actions',
 
@@ -17,7 +19,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	onImportClick: function() {
 		$e.route( 'library/import', {}, {
-			source: 'template-library',
+			source: SOURCES.TEMPLATE_LIBRARY,
 		} );
 	},
 
@@ -39,7 +41,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	onSaveClick: function() {
 		$e.route( 'library/save-template', {}, {
-			source: 'template-library',
+			source: SOURCES.TEMPLATE_LIBRARY,
 		} );
 	},
 } );

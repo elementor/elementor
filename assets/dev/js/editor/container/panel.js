@@ -1,3 +1,5 @@
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 export default class Panel {
 	/**
 	 * Function constructor().
@@ -28,7 +30,7 @@ export default class Panel {
 	 */
 	closeEditor() {
 		$e.route( 'panel/elements/categories', {}, {
-			source: 'panel',
+			source: SOURCES.PANEL,
 		} );
 	}
 

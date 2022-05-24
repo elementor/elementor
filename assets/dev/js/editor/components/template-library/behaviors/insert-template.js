@@ -1,3 +1,5 @@
+import { SOURCES } from 'elementor-editor/editor-constants';
+
 var InsertTemplateHandler;
 
 InsertTemplateHandler = Marionette.Behavior.extend( {
@@ -14,7 +16,7 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 				model: this.view.model,
 			},
 			meta = {
-				source: 'template-library',
+				source: SOURCES.TEMPLATE_LIBRARY,
 			};
 
 		if ( 'remote' === args.model.get( 'source' ) && ! elementor.config.library_connect.is_connected ) {
