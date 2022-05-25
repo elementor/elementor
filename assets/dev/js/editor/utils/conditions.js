@@ -52,13 +52,42 @@ Conditions = function() {
 					conditionRealName = parsedName[ 1 ],
 					conditionSubKey = parsedName[ 2 ];
 
-				let value = comparisonObject[ conditionRealName ];
+				let dynamicValue = comparisonObject.__dynamic__?.[ conditionRealName ],
+					value;
+
+				if ( dynamicValue ) {
+					value = dynamicValue;
+				} else {
+					value = comparisonObject[ conditionRealName ];
+
+					if ( 'object' === typeof value && conditionSubKey ) {
+						value = value[ conditionSubKey ];
+					}
+				}
 
 				if ( ! value ) {
+					// 1. Go to parent
+					// 2. Check for dynamic value first.
+					// 3. If there is no dynamic value, check for regular control value.
+					// 4. If there is no regular value, Go back to step 1.
 					let parent = controls[ conditionRealName ]?.parent;
 
 					while ( parent ) {
-						value = comparisonObject[ parent ];
+						if ( comparisonObject.__dynamic__ ) {
+							dynamicValue = comparisonObject.__dynamic__[ parent ];
+
+							if ( dynamicValue ) {
+								value = dynamicValue;
+
+								break;
+							}
+						}
+
+						if ( 'object' === typeof comparisonObject[ parent ] && conditionSubKey ) {
+							value = comparisonObject[ parent ][ conditionSubKey ];
+						} else {
+							value = comparisonObject[ parent ];
+						}
 
 						if ( value ) {
 							break;
@@ -66,14 +95,6 @@ Conditions = function() {
 
 						parent = controls[ parent ]?.parent;
 					}
-				}
-
-				if ( comparisonObject.__dynamic__ && comparisonObject.__dynamic__[ conditionRealName ] ) {
-					value = comparisonObject.__dynamic__[ conditionRealName ];
-				}
-
-				if ( 'object' === typeof value && conditionSubKey ) {
-					value = value[ conditionSubKey ];
 				}
 
 				comparisonResult = ( undefined !== value ) &&
