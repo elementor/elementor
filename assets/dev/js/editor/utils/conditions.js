@@ -67,20 +67,18 @@ Conditions = function() {
 
 				if ( ! value ) {
 					// 1. Go to parent
-					// 2. Check for dynamic value first.
-					// 3. If there is no dynamic value, check for regular control value.
+					// 2. Check for dynamic value first, because dynamic takes precedence.
+					// 3. If there is no dynamic value, check for a regular control value.
 					// 4. If there is no regular value, Go back to step 1.
 					let parent = controls[ conditionRealName ]?.parent;
 
 					while ( parent ) {
-						if ( comparisonObject.__dynamic__ ) {
-							dynamicValue = comparisonObject.__dynamic__[ parent ];
+						dynamicValue = comparisonObject.__dynamic__?.[ parent ];
 
-							if ( dynamicValue ) {
-								value = dynamicValue;
+						if ( dynamicValue ) {
+							value = dynamicValue;
 
-								break;
-							}
+							break;
 						}
 
 						if ( 'object' === typeof comparisonObject[ parent ] && conditionSubKey ) {
