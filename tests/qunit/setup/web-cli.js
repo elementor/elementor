@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const elementorWebCliConfig = {
 	urls: {
 		rest: 'http://localtest/wp-json/',

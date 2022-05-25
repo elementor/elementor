@@ -35,6 +35,7 @@ class Module extends App {
 		wp_register_script(
 			'elementor-dev-tools',
 			$this->get_js_assets_url( 'dev-tools' ),
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);

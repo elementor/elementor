@@ -1,5 +1,5 @@
 import CommandInfra from './command-infra';
-import Deprecation from '../utils/deprecation';
+import Deprecation from 'elementor-api/utils/deprecation';
 
 /**
  * @name $e.modules.CommandBase

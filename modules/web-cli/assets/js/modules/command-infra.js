@@ -1,5 +1,5 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
-import Deprecation from '../utils/deprecation';
+import Deprecation from 'elementor-api/utils/deprecation';
 
 export default class CommandInfra extends ArgsObject {
 	/**

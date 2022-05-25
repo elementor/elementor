@@ -1,5 +1,5 @@
 import Module from 'elementor-assets-js/modules/imports/module.js';
-import Deprecation from '../../utils/deprecation';
+import Deprecation from 'elementor-api/utils/deprecation';
 
 export default class CommandsBackwardsCompatibility extends Module {
 	__construct() {

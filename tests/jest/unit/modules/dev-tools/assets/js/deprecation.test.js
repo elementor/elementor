@@ -25,8 +25,6 @@ describe( 'modules/dev-tools/assets/js/deprecation.js', () => {
 	afterAll( () => {
 		delete global.elementorDevToolsConfig;
 		delete global.elementorDevToolsModule;
-
-		jest.restoreAllMocks();
 	} );
 
 	test( 'deprecated() -- Should print soft deprecation', () => {
@@ -34,10 +32,7 @@ describe( 'modules/dev-tools/assets/js/deprecation.js', () => {
 		deprecation.deprecated( 'test', '3.0.0', 'anything' );
 
 		// Assert.
-		expect( elementorDevToolsModule.consoleWarn ).toBeCalledWith( expect.stringContaining( 'test' ) );
-		expect( elementorDevToolsModule.consoleWarn ).toBeCalledWith( expect.stringContaining( 'soft' ) );
-		expect( elementorDevToolsModule.consoleWarn ).toBeCalledWith( expect.stringContaining( '3.0.0' ) );
-		expect( elementorDevToolsModule.consoleWarn ).toBeCalledWith( expect.stringContaining( 'anything' ) );
+		expect( elementorDevToolsModule.consoleWarn ).toBeCalledWith( '`test` is soft deprecated since 3.0.0 - Use `anything` instead' );
 	} );
 
 	test( 'deprecated() -- Should print hard deprecation', () => {
@@ -49,7 +44,7 @@ describe( 'modules/dev-tools/assets/js/deprecation.js', () => {
 	test( 'parseVersion() -- Sanity', () => {
 		expect( deprecation.compareVersion( '1.1.3.beta', '1.2.3.beta' ) ).toBe( -1 );
 		expect( deprecation.compareVersion( '1.2.3.beta', '1.2.3.beta' ) ).toBe( 0 );
-		expect( deprecation.compareVersion( '1.1.3.beta', '1.2.3.beta' ) ).toBe( -1 );
+		expect( deprecation.compareVersion( '1.2.3.beta', '1.1.3.beta' ) ).toBe( 1 );
 	} );
 
 	test( 'getTotalMajor() -- Sanity', () => {

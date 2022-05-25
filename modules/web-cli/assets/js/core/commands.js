@@ -1,7 +1,7 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
 import CommandBase from '../modules/command-base';
-import Console from '../utils/console';
-import Deprecation from '../utils/deprecation';
+import Console from 'elementor-api/utils/console';
+import Deprecation from 'elementor-api/utils/deprecation';
 
 export default class Commands extends CommandsBackwardsCompatibility {
 	static trace = [];

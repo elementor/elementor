@@ -1,4 +1,4 @@
-import Console from '../utils/console';
+import Console from 'elementor-api/utils/console';
 
 // Copied from `modules/dev-tools/assets/js/deprecation.js`
 
