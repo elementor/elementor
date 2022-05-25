@@ -35,7 +35,7 @@ test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 
 	await popup.waitForLoadState( 'domcontentloaded' );
 
-	const createAccount = await popup.locator( 'text=Create an account' );
+	const createAccount = await popup.locator( 'text=Sign up for Elementor' );
 
 	// Check that the popup opens the Elementor Connect screen.
 	await expect( createAccount ).toBeVisible();
