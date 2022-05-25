@@ -7,7 +7,6 @@ use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Usage;
-use Elementor\Includes\Elements\Container;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
@@ -17,7 +16,6 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
-use ElementorPro\Modules\Library\Widgets\Template;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -1450,16 +1448,10 @@ abstract class Document extends Controls_Stack {
 
 				if ( ! $this->is_control_default_value( $control, $setting_value ) ) {
 					if ( $is_repeater ) {
-						$is_multi_dimensional = count( $setting_value ) !== count( $setting_value, COUNT_RECURSIVE );
-
-						if ( $is_multi_dimensional ) {
-							$multi_diff = array_udiff( $setting_value, $control_default, function ( $a, $b ) {
-								return count( array_diff( $a, $b ) );
-							} );
-							$usage[ $setting_name ] = count( $multi_diff );
-						} else {
-							$usage[ $setting_name ] = count( $setting_value );
-						}
+						$multi_diff = array_udiff( $setting_value, $control_default, function ( $a, $b ) {
+							return count( array_diff( $a, $b ) );
+						} );
+						$usage[ $setting_name ] = count( $multi_diff );
 					} else {
 						$usage[ $setting_name ] = 1;
 					}
