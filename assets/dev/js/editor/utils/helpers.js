@@ -446,9 +446,9 @@ module.exports = {
 	 *
 	 * @param conditionName
 	 * @param conditionValue
-	 * @param controlModel
-	 * @param values
-	 * @param controls
+	 * @param controlModel - The control being tested.
+	 * @param values - The containing widget's array of control values.
+	 * @param controls - The containing widget's array of control models.
 	 * @returns {{name, value: ({length}|*), operator: (string)}}
 	 */
 	convertConditionToConditions: function( conditionName, conditionValue, controlModel, values, controls ) {
