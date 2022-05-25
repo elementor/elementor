@@ -1,5 +1,5 @@
 import MenuPageView from 'elementor-panel/pages/menu/base';
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 export default class PanelMenu extends MenuPageView {
 	initialize() {
@@ -63,7 +63,7 @@ PanelMenu.addAdminMenu = () => {
 				icon: 'eicon-user-preferences',
 				title: __( 'User Preferences', 'elementor' ),
 				type: 'page',
-				callback: () => $e.route( 'panel/editor-preferences', {}, { source: SOURCES.PANEL } ),
+				callback: () => $e.route( 'panel/editor-preferences', {}, { source: Sources.PANEL } ),
 			},
 		],
 	}, { at: 0 } );
@@ -88,7 +88,7 @@ PanelMenu.addAdminMenu = () => {
 		name: 'finder',
 		icon: 'eicon-search',
 		title: __( 'Finder', 'elementor' ),
-		callback: () => $e.route( 'finder', {}, { source: SOURCES.PANEL } ),
+		callback: () => $e.route( 'finder', {}, { source: Sources.PANEL } ),
 	}, 'navigate_from_page', 'view-page' );
 };
 
@@ -184,7 +184,7 @@ PanelMenu.createExitIntroductionDialog = () => {
 		introduction.setViewed();
 		elementor.config.user.introduction.exit_to = true;
 		introduction.getDialog().hide();
-		$e.route( 'panel/editor-preferences', {}, { source: SOURCES.PANEL } );
+		$e.route( 'panel/editor-preferences', {}, { source: Sources.PANEL } );
 
 		// Force the exit button to rerender by creating new exit button.
 		PanelMenu.addExitItem();

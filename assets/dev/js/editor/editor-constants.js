@@ -1,4 +1,4 @@
-export const SOURCES = Object.freeze( {
+export const Sources = Object.freeze( {
 	ADMIN_TOP_BAR: 'admin-top-bar',
 	APP: 'app',
 	CONTEXT_MENU: 'context-menu',

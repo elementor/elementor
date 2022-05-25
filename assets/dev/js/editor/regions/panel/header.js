@@ -1,4 +1,4 @@
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 var PanelHeaderItemView;
 
@@ -28,14 +28,14 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickAdd: function() {
-		$e.route( 'panel/elements/categories', {}, { source: SOURCES.PANEL } );
+		$e.route( 'panel/elements/categories', {}, { source: Sources.PANEL } );
 	},
 
 	onClickMenu: function() {
 		if ( $e.routes.is( 'panel/menu' ) ) {
-			$e.route( 'panel/elements/categories', {}, { source: SOURCES.PANEL } );
+			$e.route( 'panel/elements/categories', {}, { source: Sources.PANEL } );
 		} else {
-			$e.route( 'panel/menu', {}, { source: SOURCES.PANEL } );
+			$e.route( 'panel/menu', {}, { source: Sources.PANEL } );
 		}
 	},
 } );

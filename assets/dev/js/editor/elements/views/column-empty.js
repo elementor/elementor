@@ -1,4 +1,4 @@
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-empty-preview',
@@ -38,7 +38,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	onClickAdd: function() {
 		$e.route( 'panel/elements/categories', {}, {
-			source: SOURCES.PREVIEW,
+			source: Sources.PREVIEW,
 		} );
 	},
 } );

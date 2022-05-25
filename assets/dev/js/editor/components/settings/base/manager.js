@@ -1,5 +1,5 @@
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
-const { SOURCES } = require( 'elementor-editor/editor-constants' );
+import { Sources } from 'elementor-editor/editor-constants';
 
 module.exports = elementorModules.ViewModule.extend( {
 	model: null,
@@ -196,7 +196,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			type: 'page',
 			pageName: this.getSettings( 'name' ) + '_settings',
 			callback: () => $e.route( `${ namespace }/settings`, {}, {
-				source: SOURCES.PANEL,
+				source: Sources.PANEL,
 			} ),
 		};
 

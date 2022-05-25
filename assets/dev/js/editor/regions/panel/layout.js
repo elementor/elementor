@@ -5,7 +5,7 @@ import PanelComponent from './component';
 import ElementsComponent from './pages/elements/component';
 import EditorComponent from './pages/editor/component';
 
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
@@ -23,13 +23,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	childEvents: {
 		'click:add': function() {
-			$e.route( 'panel/elements/categories', {}, { source: SOURCES.PANEL } );
+			$e.route( 'panel/elements/categories', {}, { source: Sources.PANEL } );
 		},
 		'editor:destroy': function() {
 			$e.route( 'panel/elements/categories', {
 				autoFocusSearch: false,
 			}, {
-				source: SOURCES.PANEL,
+				source: Sources.PANEL,
 			} );
 		},
 	},

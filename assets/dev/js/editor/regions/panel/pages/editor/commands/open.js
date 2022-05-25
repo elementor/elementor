@@ -1,4 +1,4 @@
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 export class Open extends $e.modules.CommandBase {
 	apply( args ) {
@@ -8,7 +8,7 @@ export class Open extends $e.modules.CommandBase {
 			args.model.trigger( 'request:edit' );
 		} else {
 			$e.route( this.component.getDefaultRoute(), args, {
-				source: SOURCES.PANEL, // TODO should it be `SOURCES.COMMAND`?
+				source: Sources.PANEL, // TODO should it be `SOURCES.COMMAND`?
 			} );
 		}
 

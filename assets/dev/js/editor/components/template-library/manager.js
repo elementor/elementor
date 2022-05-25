@@ -1,5 +1,5 @@
 import Component from './component';
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 	var TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
@@ -36,7 +36,7 @@ TemplateLibraryManager = function() {
 							}
 						},
 					}, {
-						source: SOURCES.TEMPLATE_LIBRARY,
+						source: Sources.TEMPLATE_LIBRARY,
 					} );
 				},
 				error: function( errorData ) {

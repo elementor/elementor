@@ -1,5 +1,5 @@
 import ItemModel from './item-model';
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 /**
  * TODO: consider refactor this class.
@@ -176,7 +176,7 @@ export default class HistoryManager {
 		if ( $e.routes.isPartOf( 'panel/editor' ) && editedElementView ) {
 			if ( editedElementView.isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				$e.route( 'panel/history/actions', {}, { source: SOURCES.INTERNAL } );
+				$e.route( 'panel/history/actions', {}, { source: Sources.INTERNAL } );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = editedElementView;

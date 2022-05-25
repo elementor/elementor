@@ -1,7 +1,7 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
 import * as commandsData from './commands-data/';
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -136,7 +136,7 @@ export default class Component extends ComponentModalBase {
 
 		if ( args.toDefault || ! $e.routes.restoreState( 'library' ) ) {
 			$e.route( this.getDefaultRoute(), {}, {
-				source: SOURCES.TEMPLATE_LIBRARY,
+				source: Sources.TEMPLATE_LIBRARY,
 			} );
 		}
 	}

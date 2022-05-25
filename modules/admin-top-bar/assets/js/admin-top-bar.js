@@ -3,7 +3,7 @@ import BarHeading from './components/bar-heading/bar-heading';
 import ConnectionButton from './components/connection-button/connection-button';
 import { useEffect, useRef } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
-import { SOURCES } from 'elementor-editor/editor-constants';
+import { Sources } from 'elementor-editor/editor-constants';
 import environment from 'elementor-common/utils/environment';
 
 export default function AdminTopBar() {
@@ -27,7 +27,7 @@ export default function AdminTopBar() {
 	}, [] );
 
 	const finderAction = () => {
-		$e.route( 'finder', {}, { source: SOURCES.ADMIN_TOP_BAR } );
+		$e.route( 'finder', {}, { source: Sources.ADMIN_TOP_BAR } );
 	};
 
 	const controlSign = environment.mac ? '⌘' : '^';
