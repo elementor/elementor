@@ -1432,6 +1432,10 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	public function get_usage() {
+		static $blacklist = [
+			'post_title',
+		];
+
 		$usage  = [];
 
 		// Ensure not from cache.
@@ -1439,7 +1443,7 @@ abstract class Document extends Controls_Stack {
 		$controls = $document->get_controls();
 
 		foreach ( $document->get_settings() as $setting_name => $setting_value ) {
-			if ( isset( $controls[ $setting_name ] ) ) {
+			if ( isset( $controls[ $setting_name ] ) && ! in_array( $setting_name, $blacklist, true ) ) {
 				$control = $controls[ $setting_name ];
 				$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
 				$control_default = $controls[ $setting_name ]['default'];

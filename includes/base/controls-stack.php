@@ -2,10 +2,9 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1441,24 +1440,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return bool
 	 */
 	public function is_control_default_value( array $control, $setting_value ) {
-		$control_name  = $control['name'];
 		$control_default = $control['default'];
 		$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
-
-		// Since breakpoints defaults are not set in the control.
-		if ( $setting_value && 0 === strpos( $control_name, Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX ) ) {
-			$breakpoints_config = array_merge(
-				Breakpoints_Manager::get_default_config(),
-				Breakpoints_Manager::get_backwards_compatability_config()
-			);
-
-			foreach ( $breakpoints_config as $key => $config ) {
-				if ( Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $key === $control_name ) {
-					$control_default = $config['default_value'];
-					break;
-				}
-			}
-		}
 
 		// Determine default for simple values.
 		$is_default = $control_default === $setting_value;
