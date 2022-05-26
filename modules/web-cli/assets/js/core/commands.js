@@ -1,7 +1,5 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
 import CommandBase from '../modules/command-base';
-import Console from 'elementor-api/utils/console';
-import Deprecation from 'elementor-api/utils/deprecation';
 
 export default class Commands extends CommandsBackwardsCompatibility {
 	static trace = [];
@@ -24,7 +22,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		Object.defineProperty( this, 'classes', {
 			get() {
-				Deprecation.deprecated(
+				elementorCommon.helpers.softDeprecated(
 					'$e.commands.classes',
 					'3.7.0',
 					'$e.commands.getCommandClass(), $e.commandsInternal.getCommandClass(), $e.data.getCommandClass(), $e.routes.getCommandClass() according to the requested command infra-structure,'
@@ -509,7 +507,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	catchApply( e, instance ) {
 		instance.onCatchApply( e );
 
-		Console.error( e );
+		// TODO: Should be part of $e.API.
+		elementorCommon.helpers.consoleError( e );
 	}
 
 	/**

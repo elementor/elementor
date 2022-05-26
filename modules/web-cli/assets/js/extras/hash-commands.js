@@ -1,11 +1,10 @@
-import Console from 'elementor-api/utils/console';
-
 /**
  * @typedef HashCommand
  * @property {string} method,
  * @property {string} command
  * @property {object} args
  */
+import Helpers from 'elementor-api/utils/helpers';
 
 export default class HashCommands {
 	/**
@@ -135,7 +134,7 @@ export default class HashCommands {
 				decodeURI( rawArgs || '{}' ),
 			);
 		} catch ( e ) {
-			Console.warn( 'Hash commands JSON args cannot be parsed. \n\n', e );
+			Helpers.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
 
 			return {};
 		}
