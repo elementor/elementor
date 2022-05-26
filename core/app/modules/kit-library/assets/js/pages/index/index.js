@@ -205,10 +205,27 @@ export default function Index( props ) {
 					>
 						<SortSelect
 							options={ [
-								{ label: __( 'Featured', 'elementor' ), value: 'featuredIndex' },
-								{ label: __( 'New', 'elementor' ), value: 'createdAt' },
-								{ label: __( 'Popular', 'elementor' ), value: 'popularityIndex' },
-								{ label: __( 'Trending', 'elementor' ), value: 'trendIndex' },
+								{
+									label: __( 'Featured', 'elementor' ),
+									value: 'featuredIndex',
+									defaultOrder: 'asc',
+									orderDisabled: true,
+								},
+								{
+									label: __( 'New', 'elementor' ),
+									value: 'createdAt',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Popular', 'elementor' ),
+									value: 'popularityIndex',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Trending', 'elementor' ),
+									value: 'trendIndex',
+									defaultOrder: 'desc',
+								},
 							] }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
