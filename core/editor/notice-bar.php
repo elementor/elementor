@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Notice_Bar extends Base_Object {
 
 	protected function get_init_settings() {
-		if ( Plugin::$instance->get_install_time() > strtotime( '-30 days' ) ) {
+		if ( Plugin::$instance->get_install_time() > strtotime( '-7 days' ) ) {
 			return [];
 		}
 
 		return [
-			'muted_period' => 90,
+			'muted_period' => 30,
 			'option_key' => '_elementor_editor_upgrade_notice_dismissed',
 			'message' => sprintf(
 				/* translators: 1: Link open tag, 2: Link close tag. */
@@ -26,8 +26,8 @@ class Notice_Bar extends Base_Object {
 				'<a href="%s">',
 				'</a>'
 			),
-			'action_title' => esc_html__( 'Go Pro', 'elementor' ),
-			'action_url' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=editor-notice-bar&utm_campaign=gopro&utm_medium=wp-dash' ),
+			'action_title' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'action_url' => 'https://go.elementor.com/go-pro-editor-notice-bar/',
 		];
 	}
 

@@ -1,7 +1,17 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlDimensionsItemView;
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
+
+	behaviors: {
+		Scrubbing: {
+			behaviorClass: Scrubbing,
+			scrubSettings: { intentTime: 800 },
+		},
+	},
+
 	ui: function() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 
@@ -17,6 +27,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		} );
 	},
 
+	// Default value must be 0, because the CSS generator (in dimensions) expects the 4 dimensions to be filled together (or all are empty).
 	defaultDimensionValue: 0,
 
 	initialize: function() {

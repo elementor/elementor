@@ -130,7 +130,7 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandlers = function( handlerName ) {
-		elementorCommon.helpers.softDeprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
+		elementorDevTools.deprecation.deprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
 
 		if ( handlerName ) {
 			return this.getHandler( handlerName );
