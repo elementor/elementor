@@ -1388,7 +1388,7 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => $this->get_shapes(),
 				'default' => 'circle',
-				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . $this->get_shape_url( '{{VALUE}}' ) . ' );' ),
 				'condition' => [
 					'_mask_switch!' => '',
 				],
