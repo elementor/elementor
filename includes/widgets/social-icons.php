@@ -288,9 +288,6 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		$start = is_rtl() ? 'end' : 'start';
-		$end = is_rtl() ? 'start' : 'end';
-
 		$this->add_responsive_control(
 			'align',
 			[
