@@ -348,8 +348,8 @@ class Manager extends Module {
 				'default_value' => 768,
 			],
 			'lg' => [
-				'default_value' => 1025
-			]
+				'default_value' => 1025,
+			],
 		];
 	}
 
