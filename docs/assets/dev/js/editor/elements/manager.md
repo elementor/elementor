@@ -48,7 +48,7 @@ elementor.elementsManager.registerElementType( new class extends elementor.eleme
  
 					super.onModelRemoteRender();
 				}
- 	        };
+ 	        	};
 		}
 	
 		getEmptyView() {
