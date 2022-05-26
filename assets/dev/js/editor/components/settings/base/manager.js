@@ -41,7 +41,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getContainerId() {
-		elementorDevTools.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+		elementorCommon.helpers.softDeprecated( 'getContainerId', '3.7.0', 'getContainerType' );
 
 		return this.getContainerType();
 	},

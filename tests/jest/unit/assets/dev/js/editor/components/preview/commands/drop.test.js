@@ -8,6 +8,12 @@ describe( `$e.run( 'preview/drop' )`, () => {
 
 		MockContainerClass = ( ( await import( 'elementor/assets/dev/js/editor/container/container' ) ).default );
 
+		global.elementorCommon = {
+			helpers: {
+				softDeprecated: jest.fn(),
+			},
+		};
+
 		global.elementorModules = {
 			editor: {
 				Container: MockContainerClass,

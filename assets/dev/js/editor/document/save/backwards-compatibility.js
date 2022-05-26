@@ -6,13 +6,13 @@ export default class BackwardsCompatibility extends ComponentBase {
 
 		Object.defineProperty( this, 'autoSaveTimer', {
 			get() {
-				elementorDevTools.deprecation.deprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
+				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
 					"$e.components.get( 'editor/documents' ).autoSaveTimers" );
 				return $e.components.get( 'editor/documents' ).autoSaveTimers;
 			},
 
 			set( value ) {
-				elementorDevTools.deprecation.deprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
+				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
 					"$e.components.get( 'editor/documents' ).autoSaveTimers[ documentId ]" );
 
 				const documentId = elementor.documents.getCurrent();
@@ -24,7 +24,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 		const onOrig = this.on;
 
 		this.on = ( eventName, callback, context ) => {
-			elementorDevTools.deprecation.deprecated( 'elementor.saver.on', '2.9.0',
+			elementorCommon.helpers.softDeprecated( 'elementor.saver.on', '2.9.0',
 				'$e.hooks' );
 
 			onOrig( eventName, callback, context );
@@ -32,38 +32,38 @@ export default class BackwardsCompatibility extends ComponentBase {
 
 		elementor.on( 'document:loaded', () => {
 			if ( elementor.channels.editor._events && elementor.channels.editor._events.saved ) {
-				elementorDevTools.deprecation.deprecated( "elementor.channels.editor.on( 'saved', ... )", '2.9.0',
+				elementorCommon.helpers.softDeprecated( "elementor.channels.editor.on( 'saved', ... )", '2.9.0',
 					'$e.hooks' );
 			}
 		} );
 	}
 
 	defaultSave() {
-		elementorDevTools.deprecation.deprecated( 'defaultSave', '2.9.0', "$e.run( 'document/save/default' )" );
+		elementorCommon.helpers.softDeprecated( 'defaultSave', '2.9.0', "$e.run( 'document/save/default' )" );
 
 		return $e.run( 'document/save/default' );
 	}
 
 	discard() {
-		elementorDevTools.deprecation.deprecated( 'discard', '2.9.0', "$e.run( 'document/save/discard' )" );
+		elementorCommon.helpers.softDeprecated( 'discard', '2.9.0', "$e.run( 'document/save/discard' )" );
 
 		return $e.run( 'document/save/discard' );
 	}
 
 	doAutoSave() {
-		elementorDevTools.deprecation.deprecated( 'doAutoSave', '2.9.0', "$e.run( 'document/save/auto' )" );
+		elementorCommon.helpers.softDeprecated( 'doAutoSave', '2.9.0', "$e.run( 'document/save/auto' )" );
 
 		return $e.run( 'document/save/auto' );
 	}
 
 	publish( options ) {
-		elementorDevTools.deprecation.deprecated( 'publish', '2.9.0', "$e.run( 'document/save/publish' )" );
+		elementorCommon.helpers.softDeprecated( 'publish', '2.9.0', "$e.run( 'document/save/publish' )" );
 
 		return $e.run( 'document/save/auto', { options } );
 	}
 
 	saveAutoSave( options ) {
-		elementorDevTools.deprecation.deprecated( 'saveAutoSave', '2.9.0', "$e.run( 'document/save/auto', { force: true } )" );
+		elementorCommon.helpers.softDeprecated( 'saveAutoSave', '2.9.0', "$e.run( 'document/save/auto', { force: true } )" );
 
 		options.force = true;
 
@@ -71,39 +71,39 @@ export default class BackwardsCompatibility extends ComponentBase {
 	}
 
 	saveDraft() {
-		elementorDevTools.deprecation.deprecated( 'saveDraft', '2.9.0', "$e.run( 'document/save/draft' )" );
+		elementorCommon.helpers.softDeprecated( 'saveDraft', '2.9.0', "$e.run( 'document/save/draft' )" );
 
 		return $e.run( 'document/save/draft' );
 	}
 
 	savePending() {
-		elementorDevTools.deprecation.deprecated( 'savePending', '2.9.0', "$e.run( 'document/save/pending' )" );
+		elementorCommon.helpers.softDeprecated( 'savePending', '2.9.0', "$e.run( 'document/save/pending' )" );
 
 		return $e.run( 'document/save/pending' );
 	}
 
 	update( options ) {
-		elementorDevTools.deprecation.deprecated( 'update', '2.9.0', "$e.run( 'document/save/update' )" );
+		elementorCommon.helpers.softDeprecated( 'update', '2.9.0', "$e.run( 'document/save/update' )" );
 
 		return $e.run( 'document/save/update', options );
 	}
 
 	startTimer() {
-		elementorDevTools.deprecation.deprecated( 'startTimer', '2.9.0',
+		elementorCommon.helpers.softDeprecated( 'startTimer', '2.9.0',
 			"$e.components.get( 'document/save' ).startAutoSave" );
 
 		throw Error( 'Deprecated' );
 	}
 
 	saveEditor( options ) {
-		elementorDevTools.deprecation.deprecated( 'saveEditor', '2.9.0',
+		elementorCommon.helpers.softDeprecated( 'saveEditor', '2.9.0',
 			"$e.internal( 'document/save/save' )" );
 
 		$e.internal( 'document/save/save', options );
 	}
 
 	setFlagEditorChange( status ) {
-		elementorDevTools.deprecation.deprecated( 'setFlagEditorChange', '2.9.0',
+		elementorCommon.helpers.softDeprecated( 'setFlagEditorChange', '2.9.0',
 			"$e.internal( 'document/save/set-is-modified' )" );
 
 		$e.internal( 'document/save/set-is-modified', { status } );

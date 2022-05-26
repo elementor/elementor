@@ -1,5 +1,4 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
-import Deprecation from 'elementor-api/utils/deprecation';
 
 export default class CommandInfra extends ArgsObject {
 	/**
@@ -46,7 +45,7 @@ export default class CommandInfra extends ArgsObject {
 
 	// TODO - Remove backwards compatibility.
 	get currentCommand() {
-		Deprecation.deprecated( 'this.currentCommand', '3.7.0', 'this.command' );
+		elementorCommon.helpers.softDeprecated( 'this.currentCommand', '3.7.0', 'this.command' );
 
 		return this.command;
 	}

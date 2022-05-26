@@ -12,9 +12,6 @@ if ( process.argv[ process.argv.length - 1 ] ) {
 	}
 }
 
-// Read package.json
-const packageJson = require( './package.json' );
-
 module.exports = function( config ) {
 	const karmaConfig = {
 		basePath: './',
@@ -34,10 +31,6 @@ module.exports = function( config ) {
 			'tests/qunit/vendor/wp-includes/i18n.min.js',
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
-
-			// Dev tools.
-			'tests/qunit/setup/dev-tools.js',
-			'assets/js/dev-tools.js',
 
 			// Elementor Common.
 			'tests/qunit/setup/elementor-common.js',
@@ -119,7 +112,6 @@ module.exports = function( config ) {
 		client: {
 			clearContext: true,
 			qunit: {
-				elementorVersion: packageJson.version,
 				isDebug,
 				showUI: false,
 				validateContainersAlive: true, // Validate all containers are alive recursively after each test done.

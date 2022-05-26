@@ -42,7 +42,7 @@ export default class Component extends ComponentModalBase {
 
 		return {
 			'navigate/down': () => {
-				elementorDevTools.deprecation.deprecated(
+				elementorCommon.helpers.softDeprecated(
 					"$e.run( 'finder/navigate/down' )",
 					'3.0.0',
 					"$e.run( 'finder/navigate-down' )"
@@ -51,7 +51,7 @@ export default class Component extends ComponentModalBase {
 				$e.run( 'finder/navigate-down' );
 			},
 			'navigate/up': () => {
-				elementorDevTools.deprecation.deprecated(
+				elementorCommon.helpers.softDeprecated(
 					"$e.run( 'finder/navigate/up' )",
 					'3.0.0',
 					"$e.run( 'finder/navigate-up' )"
@@ -60,7 +60,7 @@ export default class Component extends ComponentModalBase {
 				$e.run( 'finder/navigate-up' );
 			},
 			'navigate/select': ( event ) => {
-				elementorDevTools.deprecation.deprecated(
+				elementorCommon.helpers.softDeprecated(
 					"$e.run( 'finder/navigate/select', event )",
 					'3.0.0',
 					"$e.run( 'finder/navigate-select', event )"

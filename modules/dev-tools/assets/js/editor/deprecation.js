@@ -6,41 +6,13 @@
  * @property {string} build
  */
 
-const softDeprecated = ( name, version, replacement ) => {
-	if ( elementorDevToolsConfig.isDebug ) {
-		deprecatedMessage( 'soft', name, version, replacement );
-	}
-};
-
-const hardDeprecated = ( name, version, replacement ) => {
-	deprecatedMessage( 'hard', name, version, replacement );
-};
-
-const deprecatedMessage = ( type, name, version, replacement ) => {
-	let message = `\`${ name }\` is ${ type } deprecated since ${ version }`;
-
-	if ( replacement ) {
-		message += ` - Use \`${ replacement }\` instead`;
-	}
-
-	elementorDevTools.consoleWarn( message );
-};
-
 export default class Deprecation {
-	deprecated( name, version, replacement ) {
-		if ( this.isHardDeprecated( version ) ) {
-			hardDeprecated( name, version, replacement );
-		} else {
-			softDeprecated( name, version, replacement );
-		}
-	}
-
 	/**
 	 * @param {string} version
 	 *
 	 * @return {Version}
 	 */
-	parseVersion( version ) {
+	static parseVersion( version ) {
 		const versionParts = version.split( '.' );
 
 		if ( versionParts.length < 3 || versionParts.length > 4 ) {
@@ -67,7 +39,7 @@ export default class Deprecation {
 	 *
 	 * @return {number}
 	 */
-	getTotalMajor( versionObj ) {
+	static getTotalMajor( versionObj ) {
 		let total = parseInt( `${ versionObj.major1 }${ versionObj.major2 }0` );
 
 		total = Number( ( total / 10 ).toFixed( 0 ) );
@@ -85,7 +57,7 @@ export default class Deprecation {
 	 *
 	 * @return {number}
 	 */
-	compareVersion( version1, version2 ) {
+	static compareVersion( version1, version2 ) {
 		return [ this.parseVersion( version1 ), this.parseVersion( version2 ) ]
 			.map( ( versionObj ) => this.getTotalMajor( versionObj ) )
 			.reduce( ( acc, major ) => acc - major );
@@ -96,20 +68,19 @@ export default class Deprecation {
 	 *
 	 * @return {boolean}
 	 */
-	isSoftDeprecated( version ) {
-		const total = this.compareVersion( version, elementorDevToolsConfig.deprecation.current_version );
+	static isSoftDeprecated( version ) {
+		const total = this.compareVersion( version, elementor.config.dev_tools.deprecation.current_version );
 
-		return total <= elementorDevToolsConfig.deprecation.soft_version_count;
+		return total <= elementor.config.dev_tools.deprecation.soft_version_count;
 	}
 
 	/**
 	 * @param {string} version
 	 * @return {boolean}
 	 */
-	isHardDeprecated( version ) {
-		const total = this.compareVersion( version, elementorDevToolsConfig.deprecation.current_version );
+	static isHardDeprecated( version ) {
+		const total = this.compareVersion( version, elementor.config.dev_tools.deprecation.current_version );
 
-		return total < 0 || total >= elementorDevToolsConfig.deprecation.hard_version_count;
+		return total >= elementor.config.dev_tools.deprecation.hard_version_count;
 	}
 }
-
