@@ -238,7 +238,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	setHTMLContent: function( html ) {
 		if ( window.elementorCommon ) {
-			elementorDevToolsModule.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
 		}
 
 		this.getModal().setMessage( html );

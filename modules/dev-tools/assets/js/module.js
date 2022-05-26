@@ -25,8 +25,8 @@ export default class Module {
 	}
 }
 
-// TODO: Replace `elementorDevToolsModule` to `elementorDevTools` after fixing devTools plugin.
-if ( ! window.elementorDevToolsModule ) {
-	window.elementorDevToolsModule = new Module();
-	window.elementorDevToolsModule.deprecation = new Deprecation();
+// TODO: Replace `elementorDevTools` to `elementorDevTools` after fixing devTools plugin.
+if ( ! window.elementorDevTools ) {
+	window.elementorDevTools = new Module();
+	window.elementorDevTools.deprecation = new Deprecation();
 }

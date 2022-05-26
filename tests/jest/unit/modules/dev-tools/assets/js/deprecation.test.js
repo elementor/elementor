@@ -17,14 +17,14 @@ describe( 'modules/dev-tools/assets/js/deprecation.js', () => {
 			},
 		};
 
-		global.elementorDevToolsModule = {
+		global.elementorDevTools = {
 			consoleWarn: jest.fn(),
 		};
 	} );
 
 	afterAll( () => {
 		delete global.elementorDevToolsConfig;
-		delete global.elementorDevToolsModule;
+		delete global.elementorDevTools;
 	} );
 
 	test( 'deprecated() -- Should print soft deprecation', () => {
@@ -32,13 +32,13 @@ describe( 'modules/dev-tools/assets/js/deprecation.js', () => {
 		deprecation.deprecated( 'test', '3.0.0', 'anything' );
 
 		// Assert.
-		expect( elementorDevToolsModule.consoleWarn ).toBeCalledWith( '`test` is soft deprecated since 3.0.0 - Use `anything` instead' );
+		expect( elementorDevTools.consoleWarn ).toBeCalledWith( '`test` is soft deprecated since 3.0.0 - Use `anything` instead' );
 	} );
 
 	test( 'deprecated() -- Should print hard deprecation', () => {
 		deprecation.deprecated( 'test', '0.0.0', 'anything' );
 
-		expect( elementorDevToolsModule.consoleWarn ).toBeCalledWith( expect.stringContaining( 'hard' ) );
+		expect( elementorDevTools.consoleWarn ).toBeCalledWith( expect.stringContaining( 'hard' ) );
 	} );
 
 	test( 'parseVersion() -- Sanity', () => {

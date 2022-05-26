@@ -366,7 +366,7 @@ export default class Container extends ArgsObject {
 			if ( 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
-						elementorDevToolsModule.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						elementorDevTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
 						return this.repeaters[ repeaters[ 0 ].name ].children;
 					},
 				} );
@@ -460,7 +460,7 @@ export default class Container extends ArgsObject {
 	}
 
 	findChildrenRecursive( callback ) {
-		elementorDevToolsModule.deprecation.deprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.findRecursive( callback )'
@@ -470,7 +470,7 @@ export default class Container extends ArgsObject {
 	}
 
 	forEachChildrenRecursive( callback ) {
-		elementorDevToolsModule.deprecation.deprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.forEachRecursive( callback )'

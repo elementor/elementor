@@ -23,7 +23,7 @@ const deprecatedMessage = ( type, name, version, replacement ) => {
 		message += ` - Use \`${ replacement }\` instead`;
 	}
 
-	elementorDevToolsModule.consoleWarn( message );
+	elementorDevTools.consoleWarn( message );
 };
 
 export default class Deprecation {
