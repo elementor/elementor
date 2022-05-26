@@ -176,6 +176,6 @@ export default class SiteEditor {
 					// video_url: 'https://www.youtube.com/embed/KKkIU_L5sDo',
 				},
 			},
-			];
+		];
 	}
 }
