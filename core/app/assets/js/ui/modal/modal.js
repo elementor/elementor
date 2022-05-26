@@ -72,6 +72,13 @@ ModalProvider.Section = ModalSection;
 ModalProvider.Tip = ModalTip;
 
 export const Modal = ( props ) => {
+
+	const videoSrc = props.children.props.children[1].props.children[1].props.children.props.src;
+
+	if ( ! videoSrc ) {
+		props.children.props.columns = 1;
+	}
+
 	const modalRef = useRef( null ),
 		closeRef = useRef( null ),
 		closeModal = ( e ) => {
