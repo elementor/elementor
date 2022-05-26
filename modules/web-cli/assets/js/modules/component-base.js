@@ -370,10 +370,11 @@ export default class ComponentBase extends Module {
 		this.currentTab = tab;
 		this.renderTab( tab, args );
 
+		// This logic should not be here.
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )
 			.on( 'click', ( event ) => {
-				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ), args );
+				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ), args ); // TODO: @matipojo
 			} )
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tab + '"]' )

@@ -96,7 +96,7 @@ export default class Routes extends Commands {
 
 		Commands.trace.push( route );
 
-		super.beforeRun( route, args, false );
+		super.beforeRun( route, args, meta, false );
 
 		this.attachCurrent( container, route, args );
 	}
@@ -137,12 +137,12 @@ export default class Routes extends Commands {
 	}
 
 	// Don't clear current route.
-	afterRun( route, args, results = undefined ) {
+	afterRun( route, args, results = undefined, meta ) {
 		const component = this.getComponent( route );
 
 		component.onRoute( route, args );
 
-		super.afterRun( route, args, results, false );
+		super.afterRun( route, args, results, meta, false );
 
 		Commands.trace.pop();
 	}
