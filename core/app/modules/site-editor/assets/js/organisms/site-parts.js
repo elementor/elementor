@@ -6,15 +6,17 @@ import SitePart from '../molecules/site-part';
 import { Context as TemplateTypesContext } from '../context/template-types';
 
 const InfoButton = ( props ) => {
-	const toggleButtonProps = {
-		text: __( 'Info', 'elementor' ),
-		hideText: true,
-		icon: 'eicon-info-circle e-site-part__info-toggle',
-	};
+	const showVideoSection = ( props.type === 'Loop' ) ? false : true,
+		numberOfColumns = ( props.type === 'Loop' ) ? 1 : 2,
+		toggleButtonProps = {
+			text: __( 'Info', 'elementor' ),
+			hideText: true,
+			icon: 'eicon-info-circle e-site-part__info-toggle',
+		};
 
 	return (
 		<ModalProvider toggleButtonProps={ toggleButtonProps } title={ props.title }>
-			<CssGrid columns={2} spacing={60}>
+			<CssGrid columns={ numberOfColumns } spacing={60}>
 				<section>
 					<h3>{ props.type }</h3>
 					<p>
@@ -26,12 +28,17 @@ const InfoButton = ( props ) => {
 						<p>{ props.tip }</p>
 					</div>
 				</section>
-				<section>
-					<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
-					<div className="video-wrapper">
-						<iframe id="ytplayer" src={ props.video_url } frameBorder="0"/>
-					</div>
-				</section>
+
+				{
+					showVideoSection &&
+					<section>
+						<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
+						<div className="video-wrapper">
+							<iframe id="ytplayer" src={ props.video_url } frameBorder="0"/>
+						</div>
+					</section>
+				}
+
 			</CssGrid>
 		</ModalProvider>
 	);
