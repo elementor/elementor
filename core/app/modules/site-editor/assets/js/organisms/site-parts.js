@@ -30,6 +30,8 @@ const InfoButton = ( props ) => {
 				</section>
 
 				{
+					/* This if-statement is temporary, we can remove it once we have video about the Loop Builder */
+					
 					showVideoSection &&
 					<section>
 						<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
