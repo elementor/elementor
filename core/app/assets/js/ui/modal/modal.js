@@ -72,7 +72,6 @@ ModalProvider.Section = ModalSection;
 ModalProvider.Tip = ModalTip;
 
 export const Modal = ( props ) => {
-
 	const modalRef = useRef( null ),
 		closeRef = useRef( null ),
 		closeModal = ( e ) => {
