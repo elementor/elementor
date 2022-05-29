@@ -187,16 +187,21 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		$data = $element->get_data_for_save();
 
 		// Assert.
-		// Empty `elements` & `isInner` were removed.
 		$this->assertEquals( [
 			'id' => '5a1e8e5',
 			'elType' => 'widget',
 			'settings' => [ 'text' => 'Click here', ],
 			'widgetType' => 'button',
+			'elements' => [],
 		], $data );
 	}
 
 	public function test_get_data_for_save__with_on_save_filtering() {
+		// PHP < 7.0 doesn't support anonymous classes.
+		if ( version_compare( '7.0', phpversion(), '>' ) ) {
+			return;
+		}
+
 		// Arrange.
 		// Make the button class available.
 		Plugin::$instance->widgets_manager->get_widget_types( 'button' );

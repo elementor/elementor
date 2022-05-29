@@ -552,19 +552,12 @@ abstract class Element_Base extends Controls_Stack {
 			$elements[] = $child->get_data_for_save();
 		}
 
-		if ( empty( $elements ) ) {
-			unset( $data['elements'] );
-		} else {
+		if ( ! empty( $elements ) ) {
 			$data['elements'] = $elements;
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
 			$data['settings'] = $this->on_save( $data['settings'] );
-		}
-
-		// Don't save the `isInner` property if not needed.
-		if ( empty( $data['isInner'] ) ) {
-			unset( $data['isInner'] );
 		}
 
 		return $data;
