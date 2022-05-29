@@ -1430,7 +1430,7 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	public function get_usage() {
-		static $blacklist = [
+		static $ignore_list = [
 			'post_title',
 		];
 
@@ -1441,7 +1441,7 @@ abstract class Document extends Controls_Stack {
 		$controls = $document->get_controls();
 
 		foreach ( $document->get_settings() as $setting_name => $setting_value ) {
-			if ( isset( $controls[ $setting_name ] ) && ! in_array( $setting_name, $blacklist, true ) ) {
+			if ( isset( $controls[ $setting_name ] ) && ! in_array( $setting_name, $ignore_list, true ) ) {
 				$control = $controls[ $setting_name ];
 				$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
 				$control_default = $controls[ $setting_name ]['default'];
