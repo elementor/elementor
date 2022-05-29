@@ -17,7 +17,7 @@ export default function Account() {
 		nextStep = state.isHelloThemeActivated ? 'siteName' : 'hello',
 		actionButtonRef = useRef(),
 		alreadyHaveAccountLinkRef = useRef(),
-		contributorCheckboxEnabled = false;
+		dataSharingCheckboxEnabled = false;
 
 	let skipButton;
 
@@ -244,7 +244,7 @@ export default function Account() {
 					} ) }
 				</ul>
 				{
-					! state.isUsageDataShared && contributorCheckboxEnabled &&
+					! state.isUsageDataShared && dataSharingCheckboxEnabled &&
 					<CheckBoxWithLabel
 						checked={ dataSharingCheckboxState }
 						onChangeCallback={ ( event ) => {
