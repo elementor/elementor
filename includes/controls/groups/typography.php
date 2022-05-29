@@ -103,14 +103,14 @@ class Group_Control_Typography extends Group_Control_Base {
 		}
 
 		$fields['font_family'] = [
-			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
 			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
 		];
 
 		$fields['font_size'] = [
-			'label' => _x( 'Size', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Size', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'size_units' => [ 'px', 'em', 'rem', 'vw' ],
 			'range' => [
@@ -129,7 +129,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['font_weight'] = [
-			'label' => _x( 'Weight', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Weight', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
@@ -149,15 +149,15 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['text_transform'] = [
-			'label' => _x( 'Transform', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Transform', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'uppercase' => _x( 'Uppercase', 'Typography Control', 'elementor' ),
-				'lowercase' => _x( 'Lowercase', 'Typography Control', 'elementor' ),
-				'capitalize' => _x( 'Capitalize', 'Typography Control', 'elementor' ),
-				'none' => _x( 'Normal', 'Typography Control', 'elementor' ),
+				'uppercase' => esc_html_x( 'Uppercase', 'Typography Control', 'elementor' ),
+				'lowercase' => esc_html_x( 'Lowercase', 'Typography Control', 'elementor' ),
+				'capitalize' => esc_html_x( 'Capitalize', 'Typography Control', 'elementor' ),
+				'none' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
 			],
 		];
 
@@ -167,27 +167,27 @@ class Group_Control_Typography extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'normal' => _x( 'Normal', 'Typography Control', 'elementor' ),
-				'italic' => _x( 'Italic', 'Typography Control', 'elementor' ),
-				'oblique' => _x( 'Oblique', 'Typography Control', 'elementor' ),
+				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
+				'italic' => esc_html_x( 'Italic', 'Typography Control', 'elementor' ),
+				'oblique' => esc_html_x( 'Oblique', 'Typography Control', 'elementor' ),
 			],
 		];
 
 		$fields['text_decoration'] = [
-			'label' => _x( 'Decoration', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Decoration', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'underline' => _x( 'Underline', 'Typography Control', 'elementor' ),
-				'overline' => _x( 'Overline', 'Typography Control', 'elementor' ),
-				'line-through' => _x( 'Line Through', 'Typography Control', 'elementor' ),
-				'none' => _x( 'None', 'Typography Control', 'elementor' ),
+				'underline' => esc_html_x( 'Underline', 'Typography Control', 'elementor' ),
+				'overline' => esc_html_x( 'Overline', 'Typography Control', 'elementor' ),
+				'line-through' => esc_html_x( 'Line Through', 'Typography Control', 'elementor' ),
+				'none' => esc_html_x( 'None', 'Typography Control', 'elementor' ),
 			],
 		];
 
 		$fields['line_height'] = [
-			'label' => _x( 'Line-Height', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Line-Height', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'desktop_default' => [
 				'unit' => 'em',
@@ -209,7 +209,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['letter_spacing'] = [
-			'label' => _x( 'Letter Spacing', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Letter Spacing', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
@@ -223,7 +223,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['word_spacing'] = [
-			'label' => _x( 'Word Spacing', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Word Spacing', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'desktop_default' => [
 				'unit' => 'em',
@@ -328,7 +328,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		return [
 			'popover' => [
 				'starter_name' => 'typography',
-				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
+				'starter_title' => esc_html_x( 'Typography', 'Typography Control', 'elementor' ),
 				'settings' => [
 					'render_type' => 'ui',
 					'groupType' => 'typography',

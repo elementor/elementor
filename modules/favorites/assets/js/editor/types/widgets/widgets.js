@@ -120,7 +120,7 @@ export default class Widgets extends FavoriteType {
 	 * @returns {[]}
 	 */
 	addContextMenuGroups( groups, context ) {
-		const widget = context.options.model.get( 'widgetType' );
+		const widget = context.options.model.get( 'widgetType' ) || context.options.model.get( 'elType' );
 
 		return groups.concat( [
 			{

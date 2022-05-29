@@ -20,6 +20,12 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, importedPlugins: payload };
 		case 'SET_IS_PRO_INSTALLED_DURING_PROCESS':
 			return { ...state, isProInstalledDuringProcess: payload };
+		case 'SET_ACTION_TYPE':
+			return { ...state, actionType: payload };
+		case 'SET_IS_RESOLVED':
+			return { ...state, isResolvedData: payload };
+		case 'SET_PLUGINS_STATE':
+			return { ...state, pluginsState: payload };
 		default:
 			return state;
 	}

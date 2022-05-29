@@ -19,9 +19,12 @@ export default function SiteName() {
 			text: __( 'Next', 'elementor' ),
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'next',
-					step: state.currentStep,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+					},
 				} );
 
 				// Only run the site name update AJAX if the new name is different than the existing one and it isn't empty.
@@ -75,11 +78,14 @@ export default function SiteName() {
 				navigate( 'onboarding/' + nextStep );
 			} else if ( 'error' === ajaxState.status ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					step: state.currentStep,
-					action_state: 'failure',
-					action: 'site name update',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						action_state: 'failure',
+						action: 'site name update',
+					},
 				} );
 
 				setNoticeState( {

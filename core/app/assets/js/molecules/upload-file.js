@@ -67,9 +67,9 @@ export default function UploadFile( props ) {
 								},
 							} );
 
-							frame.on( 'select', ( currentFrame ) => {
+							frame.on( 'select', () => {
 								if ( props.onWpMediaSelect ) {
-									props.onWpMediaSelect( currentFrame );
+									props.onWpMediaSelect( frame );
 								}
 							} );
 

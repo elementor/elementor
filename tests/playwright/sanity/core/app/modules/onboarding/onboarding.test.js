@@ -35,7 +35,7 @@ test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 
 	await popup.waitForLoadState( 'domcontentloaded' );
 
-	const createAccount = await popup.locator( 'text=Create an account' );
+	const createAccount = await popup.locator( 'text=Sign up for Elementor' );
 
 	// Check that the popup opens the Elementor Connect screen.
 	await expect( createAccount ).toBeVisible();
@@ -57,7 +57,7 @@ test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
 		pageTitleText = await PageTitle.innerText();
 
 	// Check that the screen changed to the Hello page.
-	await expect( pageTitleText ).toBe( 'We always start with Hello.' );
+	await expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
 } );
 
 /**

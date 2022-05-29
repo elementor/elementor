@@ -77,6 +77,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 							settings: settingsModel,
 							label,
 							view: false,
+							parent: false,
 							renderer: false,
 							controls: settingsModel.options.controls,
 						} );
@@ -87,12 +88,22 @@ ControlBaseView = Marionette.CompositeView.extend( {
 			},
 		} );
 
+		// Use `defineProperty` because `get elementSettingsModel()` fails during the `Marionette.CompositeView.extend`.
+		Object.defineProperty( this, 'elementSettingsModel', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementSettingsModel', '2.8.0', 'container.settings' );
+
+				return options.container ? options.container.settings : options.elementSettingsModel;
+			},
+		} );
+
 		var controlType = this.model.get( 'type' ),
 			controlSettings = jQuery.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
-		const settings = this.container.settings;
+		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
 		this.listenTo( settings, 'change', this.onAfterChange );
 
@@ -110,9 +121,10 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	},
 
 	toggleControlVisibility: function() {
-		const settings = this.container.settings;
+		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
-		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes );
+		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes, settings.controls );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 

@@ -49,6 +49,7 @@ $info-text:		#31708f;
 $info-bg:		#d9edf7;
 $info-border:	darken($info-bg, 7%);
 $info-wc-bg:	#F6F9FB;
+$info-wc-primary-text: #3f84b9;
 
 // Success Alert
 $success:		#5cb85c;
@@ -167,6 +168,10 @@ $editor-warning: #b01b1b;
 $editor-success: #39b54a;
 $editor-info: #71d7f7;
 
+// Container element primary color.
+// TODO: Need a final color from the Design.
+$editor-container-primary: #0098c7;
+
 $editor-kit-accent: #4ab7f4;
 
 // Panel Alert
@@ -180,7 +185,7 @@ $editor-alert-warning-bg: #fcfcfc;
 $editor-alert-info-bg: #f3fcff;
 $editor-alert-success-bg: #fcfffc;
 
-// Wordpress colors
+// WordPress colors
 $wp-warning: #ffb900;
 $wp-warning-text: #f56e28;
 

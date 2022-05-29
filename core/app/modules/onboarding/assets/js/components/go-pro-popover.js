@@ -19,9 +19,12 @@ export default function GoProPopover( props ) {
 			event.preventDefault();
 
 			elementorCommon.events.dispatchEvent( {
-				placement: elementorAppConfig.onboarding.eventPlacement,
 				event: 'already have pro',
-				step: state.currentStep,
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: state.currentStep,
+				},
 			} );
 
 			// Open the Pro Upload screen in a popup.
@@ -32,9 +35,16 @@ export default function GoProPopover( props ) {
 			);
 
 			// Run the callback for when the upload succeeds.
-			elementorCommon.elements.$window
-				.on( 'elementor/upload-and-install-pro/success/', () => {
-					updateState( { hasPro: true } );
+			elementorCommon.elements.$body
+				.on( 'elementor/upload-and-install-pro/success', () => {
+					updateState( {
+						hasPro: true,
+						proNotice: {
+							type: 'success',
+							icon: 'eicon-check-circle-o',
+							message: __( 'Elementor Pro has been successfully installed.', 'elementor' ),
+						},
+					} );
 				} );
 		} );
 	}, [] );
@@ -49,9 +59,12 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'get elementor pro',
-					step: state.currentStep,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+					},
 				} );
 			},
 		};

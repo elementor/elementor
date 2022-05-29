@@ -11,6 +11,7 @@ import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dial
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
+import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -19,10 +20,12 @@ export default function ImportProcess() {
 		[ errorType, setErrorType ] = useState( '' ),
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
+		[ plugins, setPlugins ] = useState( [] ),
+		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
-		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
+		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
 		uploadKit = () => {
@@ -30,7 +33,7 @@ export default function ImportProcess() {
 
 			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-			kitActions.upload( { file: decodedFileURL } );
+			kitActions.upload( { file: decodedFileURL, kitLibraryNonce: nonce } );
 		},
 		importKit = () => {
 			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {
@@ -38,6 +41,17 @@ export default function ImportProcess() {
 			} else {
 				setShowUnfilteredFilesDialog( true );
 			}
+		},
+		applyAllSetCpt = () => {
+		const cpt = kitState.data?.manifest[ 'custom-post-type-title' ] || importContext.data?.uploadedData?.manifest[ 'custom-post-type-title' ];
+			if ( cpt ) {
+				const cptArray = Object.keys( cpt );
+				sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: cptArray } );
+			}
+		},
+		applyAllImportPlugins = () => {
+			const allPlugins = ( kitState.data?.manifest?.plugins || importContext.data.uploadedData.manifest.plugins );
+			setPlugins( allPlugins );
 		},
 		onCancelProcess = () => {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
@@ -50,6 +64,10 @@ export default function ImportProcess() {
 		// Saving the referrer value globally.
 		if ( referrer ) {
 			sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
+		}
+
+		if ( actionType ) {
+			importContext.dispatch( { type: 'SET_ACTION_TYPE', payload: actionType } );
 		}
 
 		if ( fileURL && ! file ) {
@@ -95,27 +113,45 @@ export default function ImportProcess() {
 
 	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
-		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( isResolvedData && 'apply-all' === importContext.data.actionType ) ) {
 			if ( importedData ) { // After kit upload.
 				navigate( '/import/complete' );
-			} else if ( 'apply-all' === actionType ) { // Forcing apply-all kit content.
-				if ( uploadedData.conflicts ) {
+			} else if ( 'apply-all' === importContext.data.actionType ) { // Forcing apply-all kit content.
+				if ( kitState.data?.manifest?.plugins || importContext.data.uploadedData?.manifest.plugins ) {
+					importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'have' } );
+				}
+				if ( uploadedData.conflicts && ! isResolvedData ) {
 					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
 
-					importKit();
+					if ( 'have' === importContext.data.pluginsState ) {
+						applyAllImportPlugins();
+					}
+
+					if ( '' === importContext.data.pluginsState || 'success' === importContext.data.pluginsState ) {
+						applyAllSetCpt();
+						importKit();
+					}
 				}
 			} else {
 				navigate( '/import/plugins' );
 			}
 		}
-	}, [ uploadedData, importedData ] );
+	}, [ uploadedData, importedData, importContext.data.pluginsState ] );
+
+	useEffect( () => {
+		if ( missing?.length > 0 ) {
+			importContext.dispatch( { type: 'SET_PLUGINS', payload: missing } );
+			navigate( 'import/plugins-activation' );
+		}
+	}, [ missing ] );
 
 	return (
 		<Layout type="import">
 			<section>
+
 				<FileProcess
 					info={ uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
 					errorType={ errorType }
