@@ -250,7 +250,10 @@ class Source_Local extends Source_Base {
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor', 'custom-fields' ],
+			// REST API options
+			'show_in_rest' => true,
+			'rest_base' => 'elementor-templates',
 		];
 
 		/**
@@ -265,6 +268,22 @@ class Source_Local extends Source_Base {
 		$args = apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args );
 
 		$this->post_type_object = register_post_type( self::CPT, $args );
+
+		register_post_meta( static::CPT, Document::BUILT_WITH_ELEMENTOR_META_KEY, [
+			'type' => 'string',
+			'description' => __( 'Built with elementor', 'elementor' ),
+			'single' => true,
+			'show_in_rest' => true,
+			'auth_callback' => '__return_true',
+		] );
+
+		register_post_meta( static::CPT, Document::TYPE_META_KEY, [
+			'type' => 'string',
+			'description' => __( 'Elementor document type', 'elementor' ),
+			'single' => true,
+			'show_in_rest' => true,
+			'auth_callback' => '__return_true',
+		] );
 
 		$args = [
 			'hierarchical' => false,
