@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 import './sort-select.scss';
 
 export default function SortSelect( props ) {
-	const findSelectedOption = ( value ) => {
+	const getSelectedOptionDetails = ( value ) => {
 		return props.options.find( ( option ) => option.value === value );
 	};
 
-	const [ selectedOption, selectOption ] = useState( findSelectedOption( props.value.by ) );
+	const [ selectedSortBy, setSelectedSortBy ] = useState( getSelectedOptionDetails( props.value.by ) );
 
 	useEffect( () => {
-		props.onChange( { by: selectedOption.value, direction: selectedOption.defaultOrder ?? props.value.direction } );
-	}, [ selectedOption ] );
+		props.onChange( { by: selectedSortBy.value, direction: selectedSortBy.defaultOrder ?? props.value.direction } );
+	}, [ selectedSortBy ] );
 
 	return (
 		<div className="eps-sort-select">
@@ -22,13 +22,13 @@ export default function SortSelect( props ) {
 					value={ props.value.by }
 					onChange={ ( e ) => {
 						const value = e.target.value;
-						selectOption( findSelectedOption( value ) );
+						setSelectedSortBy( getSelectedOptionDetails( value ) );
 					} }
 					className="eps-sort-select__select"
 				/>
 			</div>
 			{
-				! selectedOption.orderDisabled &&
+				! selectedSortBy.orderDisabled &&
 					<Button
 						text={ 'asc' === props.value.direction ? __( 'Sort Descending', 'elementor' ) : __( 'Sort Ascending', 'elementor' ) }
 						hideText={ true }
