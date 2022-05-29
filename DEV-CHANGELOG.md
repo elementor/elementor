@@ -1,5 +1,15 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev9 - 2022-05-29
+*  Internal: Docs - Container [ED-7047] (#18614)
+* Fix: Shortcode doesn't work in popups or templates [ED-7126] (#18654)
+* New: Notes - Promotion [ED-5523] (#18377)
+*  Tweak: Notes - Promotion to Core users [ED-5523]  (#18664)
+* Fix: Images - Thumbnail files not deleted upon deleting its main image/attachment [ED-6973] (#18560)
+* Fix: Onboarding - Playwright "Create Account" popup test fails [ED-7270] (#18712)
+* Tweak: Tag viewed Kit based on UTM [ED-7139] (#18688)
+* Revert "Internal: DevTools - JS Deprecation Utility [ED-7003] (#18421)" (#18753)
+
 #### 3.7.0-dev8 - 2022-05-15
 * Tweak: Tools - Change font awesome migration process [ED-6935] (#18491)
 * Fix: Repeater default value was counted as a value (#18622)
