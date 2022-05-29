@@ -105,8 +105,9 @@ export default class Container extends elementor.elements.types.Base {
 	getModel() {
 		return Model;
 	}
+}
 ```
-#### Register
+#### Registration
 ```javascript
 if ( containerExperimentActive ) {
 	const ContainerClass = await import( './types/container' );
