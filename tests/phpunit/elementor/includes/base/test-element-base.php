@@ -197,20 +197,11 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 	}
 
 	public function test_get_data_for_save__with_on_save_filtering() {
-		// PHP < 7.0 doesn't support anonymous classes.
-		if ( version_compare( '7.0', phpversion(), '>' ) ) {
-			return;
-		}
-
 		// Arrange.
 		// Make the button class available.
 		Plugin::$instance->widgets_manager->get_widget_types( 'button' );
-
-		$button = new class( static::$element_mock, [] ) extends \Elementor\Widget_Button {
-			protected function on_save( array $settings ) {
-				return [ 'text' => 'On Save' ];
-			}
-		};
+		require_once __DIR__ . '/mock/mock-button--on-save.php';
+		$button = new \Elementor\Tests\Phpunit\Includes\Base\Mock\Mock_Button__On_Save( static::$element_mock, [] );
 
 		// Act.
 		$data = $button->get_data_for_save();
