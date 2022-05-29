@@ -178,4 +178,39 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 
 		$this->assertTrue( in_array( 'elementor-invisible', $element->get_render_attributes( '_wrapper', 'class' ) ) );
 	}
+
+	public function test_get_data_for_save() {
+		// Arrange.
+		$element = Plugin::$instance->elements_manager->create_element_instance( static::$element_mock );
+
+		// Act.
+		$data = $element->get_data_for_save();
+
+		// Assert.
+		// Empty `elements` & `isInner` were removed.
+		$this->assertEquals( [
+			'id' => '5a1e8e5',
+			'elType' => 'widget',
+			'settings' => [ 'text' => 'Click here', ],
+			'widgetType' => 'button',
+		], $data );
+	}
+
+	public function test_get_data_for_save__with_on_save_filtering() {
+		// Arrange.
+		// Make the button class available.
+		Plugin::$instance->widgets_manager->get_widget_types( 'button' );
+
+		$button = new class( static::$element_mock, [] ) extends \Elementor\Widget_Button {
+			protected function on_save( array $settings ) {
+				return [ 'text' => 'On Save' ];
+			}
+		};
+
+		// Act.
+		$data = $button->get_data_for_save();
+
+		// Assert.
+		$this->assertEquals( 'On Save', $data['settings']['text'] );
+	}
 }
