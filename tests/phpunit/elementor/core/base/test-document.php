@@ -24,11 +24,13 @@ class Test_Document extends Elementor_Test_Base {
 			[
 				'id' => 'd50d8c5',
 				'elType' => 'section',
+				'isInner' => false,
 				'settings' => [],
 				'elements' => [
 					[
 						'id' => 'a2e9b68',
 						'elType' => 'column',
+						'isInner' => false,
 						'settings' => [ '_column_size' => 100 ],
 						'elements' => [
 							[
@@ -38,6 +40,7 @@ class Test_Document extends Elementor_Test_Base {
 									'style' => 'dots_tribal',
 									'text' => 'Divider',
 								],
+								'elements' => [],
 								'widgetType' => 'divider',
 							],
 						],
