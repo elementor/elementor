@@ -245,52 +245,13 @@ class Compatibility {
 				$elementor_preferences = get_user_meta( $current_user->ID, 'elementor_preferences' );
 				$user_interface = isset( $elementor_preferences[0]['user_interface'] ) ? $elementor_preferences[0]['user_interface'] : null;
 
-				// Temporary fix until WPML will support the filter 'elementor/compatibility/set_editor_language'.
-				if ( 'user_language' === $user_interface ) {
-					self::wpml_set_editor_language( $user_interface );
-				} else {
-					if ( ! self::wpml_set_editor_language( $user_interface ) ) {
-						$current_user->locale = get_locale();
-					}
+				if ( 'user_language' !== $user_interface ) {
+					$current_user->locale = get_locale();
 				}
 
-				// Use this code instead when WPML will support the filter 'elementor/compatibility/set_editor_language'.
-				// if ( 'user_language' !== $user_interface ) {
-				// 	$current_user->locale = get_locale();
-				// }
-
-				apply_filters( 'elementor/compatibility/set_editor_language', $user_interface );
+				$current_user->locale = apply_filters( 'elementor/compatibility/set_editor_language', $current_user->locale, $user_interface );
 			} );
 		}
-	}
-
-	/**
-	 * Set editor language.
-	 *
-	 * @since 3.7.0
-	 * @access public
-	 * @static
-	 */
-	public static function wpml_set_editor_language( $user_interface ) {
-		global $sitepress, $current_user;
-
-		if ( $sitepress ) {
-			$language = 'user_language' === $user_interface ? $sitepress->get_language_code_from_locale( $current_user->locale ) : $sitepress->get_default_language();
-
-			$_REQUEST['lang'] = $language;
-			$current_user->locale = 'user_language' === $user_interface ? $current_user->locale : $sitepress->get_locale_from_language_code( $language );
-			$sitepress->switch_lang( $language );
-
-			// Disable String Translation plugin for the editor - It overwrites the $l10n global variable and messed up the editor translations for some cases.
-			// Temporary Fix: We need to contact WPML to get a fix from their side.
-			add_action( 'plugins_loaded', function() {
-				remove_action( 'wpml_before_init', 'load_wpml_st_basics' );
-			} );
-
-			return $language;
-		}
-
-		return false;
 	}
 
 	/**
