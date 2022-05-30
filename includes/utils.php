@@ -821,8 +821,19 @@ class Utils {
 	 */
 	public static function get_wpml_post_locale() {
 		$post_id = filter_input( INPUT_POST, 'editor_post_id' );
+		$wpml_post_language_details =  null;
 
-		return apply_filters( 'wpml_post_language_details', null, $post_id )['locale'];
+		/**
+		 * Post language details for WPML plugin.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param array|null $wpml_post_language_details
+		 * @param int        $post_id
+		 */
+		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', $wpml_post_language_details, $post_id );
+
+		return $wpml_post_language_details['locale'];
 	}
 
 	/**
