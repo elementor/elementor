@@ -10,6 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class REST_API {
+	/**
+	 * Register actions
+	 *
+	 * @return void
+	 */
 	public function register() {
 		$post_type = Source_Local::CPT;
 
@@ -22,6 +27,13 @@ class REST_API {
 		}, 10, 2 );
 	}
 
+	/**
+	 * Extend the schema by adding template library related stuff.
+	 *
+	 * @param $schema
+	 *
+	 * @return array
+	 */
 	protected function extend_rest_schema( $schema ) {
 		$document_types = Plugin::$instance->documents->get_document_types( [
 			'show_in_library' => true,
@@ -37,6 +49,14 @@ class REST_API {
 		return $schema;
 	}
 
+	/**
+	 * Update post by adding elementor related stuff.
+	 *
+	 * @param \WP_Post         $post
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return void
+	 */
 	protected function after_insert_post( \WP_Post $post, \WP_REST_Request $request ) {
 		$document = Plugin::$instance->documents->get( $post->ID );
 
