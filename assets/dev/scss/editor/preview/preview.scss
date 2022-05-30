@@ -998,7 +998,7 @@ html.elementor-html {
 	}
 
 	&.e-container {
-		// Containers inherit "display: block" from `elementor-section-wrap`, this line overrides it to preserve the flex layout.
+		// Containers inherit "display: block" from `elementor-hidden-{device}`'s `display: inherit` above.
 		display: flex;
 	}
 
