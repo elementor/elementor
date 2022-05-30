@@ -18,7 +18,7 @@ test( 'Column width: Desktop value should not affect mobile in post-content-widg
     await editor.getFrame().locator( '.elementor-column:nth-child(2) ul:has-text("Edit Column")' ).click();
     await page.click( 'input[type="number"]' );
     await page.fill( 'input[type="number"]', '50' );
-    await page.click( 'button:has-text("Publish")' );
+    await page.click( 'text=Update' );
 
     // Create single page template
     await page.goto( '/wp-admin/edit.php?post_type=elementor_library&tabs_group=library' );
@@ -31,7 +31,7 @@ test( 'Column width: Desktop value should not affect mobile in post-content-widg
 
     // Add widget post-content
     await editor.addWidget( 'theme-post-content' );
-    await page.click( 'button:has-text("Publish")' );
+    await page.click( 'text=Update' );
     await page.click( 'text=Add Condition' );
     await page.click( 'text=Save & Close' );
 
