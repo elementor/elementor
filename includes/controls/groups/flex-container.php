@@ -138,7 +138,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		];
 
 		$fields['gap'] = [
-			'label' => esc_html_x( 'Gap 123', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Gap', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
