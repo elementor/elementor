@@ -43,7 +43,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 						await editor.openNavigator();
 
 						// Act - Add tabs-v2 widget.
-						await editor.addWidget( 'tabs-v2' );
+						await editor.addWidget( 'tabs-v2', await editor.addElement( { elType: 'container' }, 'document' ) );
 
 						// Click #elementor-navigator__toggle-all
 						await editor.page.click( '#elementor-navigator__toggle-all' );
