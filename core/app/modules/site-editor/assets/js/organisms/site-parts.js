@@ -6,8 +6,8 @@ import SitePart from '../molecules/site-part';
 import { Context as TemplateTypesContext } from '../context/template-types';
 
 const InfoButton = ( props ) => {
-	const showVideoSection = ( props.type !== 'Loop' ),
-		numberOfColumns = ( props.type === 'Loop' ) ? 1 : 2,
+	const showVideoSection = ( 'Loop' !== props.type ),
+		numberOfColumns = ( 'Loop' === props.type ) ? 1 : 2,
 		toggleButtonProps = {
 			text: __( 'Info', 'elementor' ),
 			hideText: true,
