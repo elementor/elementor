@@ -210,7 +210,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		attributes = this.parseGlobalSettings( attributes, controls );
 
 		jQuery.each( controls, ( controlKey, control ) => {
-			if ( elementor.helpers.isActiveControl( control, attributes ) ) {
+			if ( elementor.helpers.isActiveControl( control, attributes, controls ) ) {
 				activeControls[ controlKey ] = control;
 			}
 		} );

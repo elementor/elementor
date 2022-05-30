@@ -31,6 +31,9 @@ class Module extends BaseModule {
 
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
+	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
+
+
 	/**
 	 * @var Export
 	 */
@@ -152,9 +155,17 @@ class Module extends BaseModule {
 	private function import_stage_1() {
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$file_url = $_POST['e_import_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if (
+				! isset( $_POST['e_kit_library_nonce'] ) ||
+				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
+			) {
+				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
+			}
+
+			$file_url = $_POST['e_import_file'];
+
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( __( 'Invalid URL', 'elementor' ) );
+				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
 			}
 
 			$remote_zip_request = wp_remote_get( $file_url );
@@ -181,7 +192,7 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_file_content = file_get_contents( $session_dir . 'manifest.json', true );
+		$manifest_file_content = Utils::file_get_contents( $session_dir . 'manifest.json', true );
 
 		if ( ! $manifest_file_content ) {
 			throw new \Error( self::MANIFEST_ERROR_KEY );
@@ -192,6 +203,10 @@ class Module extends BaseModule {
 		// In case that the manifest content is not a valid JSON or empty.
 		if ( ! $manifest_data ) {
 			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
+
+		if ( isset( $manifest_data['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
+			throw new \Error( static::PERMISSIONS_ERROR_KEY );
 		}
 
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
@@ -258,7 +273,7 @@ class Module extends BaseModule {
 
 			$file_name = $export_result['file_name'];
 
-			$file = file_get_contents( $file_name, true );
+			$file = Utils::file_get_contents( $file_name );
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
@@ -308,7 +323,11 @@ class Module extends BaseModule {
 			],
 		];
 
-		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>' . esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' );
+		$home_page_editor_url = $this->get_elementor_editor_home_page_url();
+		$editor_page_link = $home_page_editor_url ? $home_page_editor_url : $this->get_recently_edited_elementor_editor_page_url();
+
+		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>';
+		$info_text .= sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $editor_page_link . '#e:run:panel/global/open&e:route:panel/history/revisions', esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' ) );
 		?>
 
 		<div class="tab-import-export-kit__content">
@@ -334,7 +353,17 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	private function get_edit_elementor_home_page_url() {
+	private function get_elementor_editor_home_page_url() {
+		if ( 'page' !== get_option( 'show_on_front' ) ) {
+			return '';
+		}
+
+		$frontpage_id = get_option( 'page_on_front' );
+
+		return $this->get_elementor_editor_page_url( $frontpage_id );
+	}
+
+	private function get_elementor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
 			return '';
 		}
@@ -354,7 +383,27 @@ class Module extends BaseModule {
 		return $this->get_elementor_page_url( $query->post->ID );
 	}
 
+	private function get_recently_edited_elementor_editor_page_url() {
+		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+
+		if ( ! isset( $query->post ) ) {
+			return '';
+		}
+
+		return $this->get_elementor_editor_page_url( $query->post->ID );
+	}
+
 	private function get_elementor_page_url( $page_id ) {
+		$document = Plugin::$instance->documents->get( $page_id );
+
+		if ( ! $document->is_built_with_elementor() ) {
+			return '';
+		}
+
+		return $document->get_preview_url();
+	}
+
+	private function get_elementor_editor_page_url( $page_id ) {
 		$document = Plugin::$instance->documents->get( $page_id );
 
 		if ( ! $document->is_built_with_elementor() ) {
@@ -373,7 +422,7 @@ class Module extends BaseModule {
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'editElementorHomePageUrl' => $this->get_edit_elementor_home_page_url(),
+			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
 		];
 	}

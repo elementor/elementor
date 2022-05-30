@@ -12,9 +12,12 @@ export default function Header( props ) {
 
 	const onClose = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'close modal',
-			step: state.currentStep,
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+			},
 		} );
 
 		window.top.location = elementorAppConfig.admin_url;

@@ -324,6 +324,8 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widget: Inner Section into Preview', ( assert ) => {
+				elementorCommonConfig.experimentalFeatures.container = false;
+
 				const eInnerSection = elementor.getPreviewContainer().view.createElementFromModel( {
 						elType: 'section',
 						isInner: true,
@@ -335,6 +337,8 @@ export const Create = () => {
 				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
 				assert.equal( eInnerSection.children.length, DEFAULT_INNER_SECTION_COLUMNS,
 					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
+
+				elementorCommonConfig.experimentalFeatures.container = true;
 			} );
 		} );
 	} );

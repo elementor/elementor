@@ -6,6 +6,7 @@ use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Ac
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Includes\Elements\Container;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
@@ -554,8 +555,17 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
+			$container_config = [];
+			$experiments_manager = Plugin::$instance->experiments;
+
+			if ( $experiments_manager->is_feature_active( 'container' ) ) {
+				$container_config = [
+					'container' => Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config(),
+				];
+			}
+
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
+			$config['widgets'] = $container_config + Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
 		$additional_config = [];
@@ -1572,7 +1582,6 @@ abstract class Document extends Controls_Stack {
 				'type' => Controls_Manager::TEXT,
 				'default' => $this->post->post_title,
 				'label_block' => true,
-				'separator' => 'none',
 			]
 		);
 

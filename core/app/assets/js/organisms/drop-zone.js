@@ -44,7 +44,7 @@ export default function DropZone( props ) {
 						type={ props.type }
 						onButtonClick={ props.onButtonClick }
 						onFileSelect={ props.onFileSelect }
-						onWpMediaSelect={ props.onWpMediaSelect }
+						onWpMediaSelect={ ( frame ) => props.onWpMediaSelect( frame ) }
 						onError={ ( error ) => props.onError( error ) }
 						text={ props.buttonText }
 						filetypes={ props.filetypes }

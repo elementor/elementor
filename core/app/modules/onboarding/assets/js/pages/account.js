@@ -24,6 +24,15 @@ export default function Account() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 		};
+
+		// If the user skips the "Connect" step, but did check the Data Sharing checkbox - handle data sharing.
+		if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
+			skipButton.action = () => {
+				setDataSharingAjaxState( {
+					data: { action: 'elementor_update_data_sharing' },
+				} );
+			};
+		}
 	}
 
 	let pageTexts = {};
@@ -60,9 +69,12 @@ export default function Account() {
 
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
-				placement: elementorAppConfig.onboarding.eventPlacement,
 				event: 'next',
-				step: state.currentStep,
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: state.currentStep,
+				},
 			} );
 
 			// If connected to Elementor, handle the data sharing permission when the user clicks the Next button.
@@ -80,14 +92,17 @@ export default function Account() {
 		};
 	} else {
 		actionButton.text = __( 'Create my account', 'elementor' );
-		actionButton.href = elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCta;
+		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
-				placement: elementorAppConfig.onboarding.eventPlacement,
 				event: 'create account',
-				contributor: state.isUsageDataShared,
-				source: 'cta',
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					contributor: dataSharingCheckboxState,
+					source: 'cta',
+				},
 			} );
 		};
 	}
@@ -109,11 +124,14 @@ export default function Account() {
 		updateState( stateToUpdate );
 
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'success',
-			action: 'connect account',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'success',
+				action: 'connect account',
+			},
 		} );
 
 		setNoticeState( {
@@ -132,11 +150,14 @@ export default function Account() {
 
 	const connectFailureCallback = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'failure',
-			action: 'connect account',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'failure',
+				action: 'connect account',
+			},
 		} );
 
 		setNoticeState( {
@@ -160,14 +181,29 @@ export default function Account() {
 		if ( 'initial' !== dataSharingAjaxState.status ) {
 			if ( 'success' === dataSharingAjaxState.status && dataSharingAjaxState.response?.usageDataShared ) {
 				elementorCommon.config[ 'event-tracker' ].isUserDataShared = true;
-				updateState( { isUsageDataShared: true } );
+
+				// If connect was successful
+				if ( state.isLibraryConnected ) {
+					updateState( { isUsageDataShared: true } );
+				} else {
+					const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'skipped' );
+
+					stateToUpdate.isUsageDataShared = true;
+
+					updateState( stateToUpdate );
+
+					navigate( 'onboarding/' + state.nextStep );
+				}
 			} else if ( 'error' === dataSharingAjaxState.status ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					step: state.currentStep,
-					action_state: 'failure',
-					action: 'connect data',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						action_state: 'failure',
+						action: 'connect data',
+					},
 				} );
 
 				setNoticeState( {
@@ -212,9 +248,12 @@ export default function Account() {
 						checked={ dataSharingCheckboxState }
 						onChangeCallback={ ( event ) => {
 							elementorCommon.events.dispatchEvent( {
-								placement: elementorAppConfig.onboarding.eventPlacement,
-								event: 'contributor checkbox',
-								state: event.target.checked,
+								event: 'contributor checkbox click',
+								version: '',
+								details: {
+									placement: elementorAppConfig.onboarding.eventPlacement,
+									state: event.target.checked,
+								},
 							} );
 
 							setDataSharingCheckboxState( event.target.checked );
@@ -225,7 +264,7 @@ export default function Account() {
 			</PageContentLayout>
 			{
 				! state.isLibraryConnected && (
-					<div className="e-onboarding__already-have-account-text">
+					<div className="e-onboarding__footnote">
 						<p>
 							{ __( 'Already have one?', 'elementor' ) + ' ' }
 							<a
@@ -233,9 +272,12 @@ export default function Account() {
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
 									elementorCommon.events.dispatchEvent( {
-										placement: elementorAppConfig.onboarding.eventPlacement,
 										event: 'connect account',
-										contributor: state.isUsageDataShared,
+										version: '',
+										details: {
+											placement: elementorAppConfig.onboarding.eventPlacement,
+											contributor: dataSharingCheckboxState,
+										},
 									} );
 								} }
 							>

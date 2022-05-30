@@ -287,6 +287,17 @@
 			> .elementor-control-input-wrapper {
 				width: 100%;
 				margin-top: 10px;
+
+				// TODO: Hack to make choices full width when label is block.
+				> .elementor-choices {
+					label {
+						width: auto;
+						flex: 1 1 27px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+					}
+				}
 			}
 		}
 	}
