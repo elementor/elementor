@@ -1,8 +1,8 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../pages/wp-admin-page.js' );
 
-test( 'Column width: Desktop value should not affect mobile in post-content-widget - Experiment Breakpoints:On', async ( { page } ) => {
-    const wpAdmin = new WpAdminPage( page );
+test( 'Column width: Desktop value should not affect mobile in post-content-widget - Experiment Breakpoints:On', async ( { page }, testInfo ) => {
+    const wpAdmin = new WpAdminPage( page, testInfo );
 
     await wpAdmin.setExperiments( {
         additional_custom_breakpoints: true,
