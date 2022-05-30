@@ -23,7 +23,7 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Reload the editor page.
+	 * Reload the editor page..
 	 *
 	 * @returns {Promise<void>}
 	 */
