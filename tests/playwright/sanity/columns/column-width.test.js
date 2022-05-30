@@ -10,9 +10,9 @@ test( 'Column width: Desktop value should not affect mobile in post-content-widg
 
     const editor = await wpAdmin.useElementorCleanPost();
 
-    await editor.addTwoColumns();
-
     // Set column width to 50%
+    await editor.getFrame().click( '.elementor-add-section-button' );
+    await editor.getFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
     const secondColumn = await editor.getFrame().locator( '.elementor-column:nth-child(2)' ).first();
     await secondColumn.hover();
     await editor.getFrame().locator( '.elementor-column:nth-child(2) ul:has-text("Edit Column")' ).click();
