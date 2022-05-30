@@ -271,7 +271,7 @@ class Source_Local extends Source_Base {
 
 		register_post_meta( static::CPT, Document::BUILT_WITH_ELEMENTOR_META_KEY, [
 			'type' => 'string',
-			'description' => __( 'Built with elementor', 'elementor' ),
+			'description' => esc_html__( 'Built with elementor', 'elementor' ),
 			'single' => true,
 			'show_in_rest' => true,
 			'auth_callback' => '__return_true',
@@ -279,7 +279,7 @@ class Source_Local extends Source_Base {
 
 		register_post_meta( static::CPT, Document::TYPE_META_KEY, [
 			'type' => 'string',
-			'description' => __( 'Elementor document type', 'elementor' ),
+			'description' => esc_html__( 'Elementor document type', 'elementor' ),
 			'single' => true,
 			'show_in_rest' => true,
 			'auth_callback' => '__return_true',
