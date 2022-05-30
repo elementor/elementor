@@ -1,5 +1,4 @@
 import CommandData from 'elementor-api/modules/command-data';
-import FilesUploadHandler from 'elementor-editor/utils/files-upload-handler';
 
 export class ElementorTemplates extends CommandData {
 	static getEndpointFormat() {
