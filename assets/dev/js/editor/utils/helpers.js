@@ -439,7 +439,7 @@ module.exports = {
 	 * "Conditions" is the advanced system for conditioning controls, which allows combining AND and/or OR conditions,
 	 * performing checks for larger/smaller than, checking if keys/values contain other keys/values, and more.
 	 *
-	 * This method a simple condition and converts it into the advanced condition format.
+	 * This method receives a simple Condition (name and value) and converts it into the advanced Conditions format.
 	 * format.
 	 *
 	 * @since 3.7.0
