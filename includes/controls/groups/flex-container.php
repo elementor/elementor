@@ -113,7 +113,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'responsive' => true,
 		];
-		
+
 		$fields['align_items'] = [
 			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
