@@ -10,7 +10,7 @@ import CheckBoxWithLabel from '../components/checkbox-with-label';
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
-		[ dataSharingCheckboxState, setDataSharingCheckboxState ] = useState( true ),
+		[ dataSharingCheckboxState, setDataSharingCheckboxState ] = useState( false ),
 		{ ajaxState: dataSharingAjaxState, setAjax: setDataSharingAjaxState } = useAjax(),
 		navigate = useNavigate(),
 		pageId = 'account',
@@ -244,7 +244,8 @@ export default function Account() {
 					} ) }
 				</ul>
 				{
-					! state.isUsageDataShared && isDataSharingCheckboxEnabled &&
+					// ! state.isUsageDataShared && isDataSharingCheckboxEnabled &&
+					1 === 1 &&
 					<CheckBoxWithLabel
 						checked={ dataSharingCheckboxState }
 						onChangeCallback={ ( event ) => {
