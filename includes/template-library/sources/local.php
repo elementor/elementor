@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\File_Types\Zip;
 use Elementor\DB;
+use Elementor\Includes\TemplateLibrary\REST_API;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Modules\Library\Documents\Library_Document;
@@ -268,22 +269,6 @@ class Source_Local extends Source_Base {
 		$args = apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args );
 
 		$this->post_type_object = register_post_type( self::CPT, $args );
-
-		register_post_meta( static::CPT, Document::BUILT_WITH_ELEMENTOR_META_KEY, [
-			'type' => 'string',
-			'description' => esc_html__( 'Built with elementor', 'elementor' ),
-			'single' => true,
-			'show_in_rest' => true,
-			'auth_callback' => '__return_true',
-		] );
-
-		register_post_meta( static::CPT, Document::TYPE_META_KEY, [
-			'type' => 'string',
-			'description' => esc_html__( 'Elementor document type', 'elementor' ),
-			'single' => true,
-			'show_in_rest' => true,
-			'auth_callback' => '__return_true',
-		] );
 
 		$args = [
 			'hierarchical' => false,
@@ -1590,6 +1575,9 @@ class Source_Local extends Source_Base {
 			// Show blank state.
 			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
+
+		// REST API Actions
+		( new REST_API() )->register();
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 

@@ -2,7 +2,6 @@ import CommandData from 'elementor-api/modules/command-data';
 
 export class ElementorTemplates extends CommandData {
 	static getEndpointFormat() {
-		// 'wp/media' to 'media' since `requestData.namespace` is 'wp'.
 		return 'elementor-templates';
 	}
 
@@ -26,12 +25,8 @@ export class ElementorTemplates extends CommandData {
 			...args,
 			data: {
 				status: 'publish',
-				...( data ),
-				meta: {
-					...( data?.meta || {} ),
-					_elementor_edit_mode: 'builder',
-					_elementor_template_type: type,
-				},
+				document_type: type,
+				...data,
 			},
 		} );
 	}
