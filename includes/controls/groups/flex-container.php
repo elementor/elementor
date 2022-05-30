@@ -77,34 +77,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 		];
 
-		$fields['align_items'] = [
-			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'default' => '',
-			'options' => [
-				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
-				],
-				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
-				],
-				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
-				],
-				'stretch' => [
-					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
-				],
-			],
-			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
-			],
-			'responsive' => true,
-		];
-
 		$fields['justify_content'] = [
 			'label' => esc_html_x( 'Justify Content', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
@@ -138,6 +110,34 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--justify-content: {{VALUE}};',
+			],
+			'responsive' => true,
+		];
+		
+		$fields['align_items'] = [
+			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'default' => '',
+			'options' => [
+				'flex-start' => [
+					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-start-v',
+				],
+				'center' => [
+					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-center-v',
+				],
+				'flex-end' => [
+					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-end-v',
+				],
+				'stretch' => [
+					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-stretch-v',
+				],
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
