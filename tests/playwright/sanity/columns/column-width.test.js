@@ -2,11 +2,13 @@ const { test, expect } = require( '@playwright/test' );
 const { EditorPage } = require( '../../pages/editor-page' );
 
 test( 'Column width: Desktop value should not affect mobile in post-content-widget - Experiment Breakpoints:On', async ( { page } ) => {
-	const editor = new EditorPage( page );
+    const wpAdmin = new WpAdminPage( page );
 
-    await editor.init( {
+    await wpAdmin.setExperiments( {
         additional_custom_breakpoints: true,
     } );
+
+    const editor = await wpAdmin.useElementorCleanPost();
 
     await editor.addTwoColumns();
 
