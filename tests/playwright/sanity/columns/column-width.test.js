@@ -1,5 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
-const { EditorPage } = require( '../../pages/editor-page' );
+const WpAdminPage = require( '../../pages/wp-admin-page.js' );
 
 test( 'Column width: Desktop value should not affect mobile in post-content-widget - Experiment Breakpoints:On', async ( { page } ) => {
     const wpAdmin = new WpAdminPage( page );
