@@ -999,7 +999,8 @@ html.elementor-html {
 
 	&.e-container {
 		// Containers inherit "display: block" from `elementor-hidden-{device}`'s `display: inherit` above.
-		display: flex;
+		// This line makes sure containers maintain their intended display mode.
+		display: var( --display );
 	}
 
 	&.elementor-inner-section {
