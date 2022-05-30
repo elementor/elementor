@@ -19,6 +19,11 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields = [];
 
+		$fields['items'] = [
+			'type' => Controls_Manager::HEADING,
+			'label' => esc_html__( 'Items', 'elementor' ),
+		];
+
 		$fields['direction'] = [
 			'label' => esc_html_x( 'Direction', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
