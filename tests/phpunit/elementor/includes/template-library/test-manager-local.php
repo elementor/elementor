@@ -3,6 +3,7 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
+use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Base {
@@ -23,11 +24,13 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_registered_sources() {
-		$this->assertEquals( self::$manager->get_registered_sources()['local'], new \Elementor\TemplateLibrary\Source_Local() );
+		$this->assertTrue( ! empty( self::$manager->get_registered_sources()['local'] ) );
+		$this->assertInstanceOf( Source_Local::class, self::$manager->get_registered_sources()['local'] );
 	}
 
 	public function test_should_return_source() {
-		$this->assertEquals( self::$manager->get_source( 'local' ), new \Elementor\TemplateLibrary\Source_Local() );
+		$this->assertTrue( ! empty( self::$manager->get_registered_sources()['local'] ) );
+		$this->assertInstanceOf( Source_Local::class, self::$manager->get_source( 'local' ) );
 	}
 
 	public function test_should_return_wp_error_save_error_from_save_template() {
