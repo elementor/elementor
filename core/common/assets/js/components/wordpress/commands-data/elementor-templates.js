@@ -25,6 +25,7 @@ export class ElementorTemplates extends CommandData {
 		return super.applyBeforeCreate( {
 			...args,
 			data: {
+				status: 'publish',
 				...( data ),
 				meta: {
 					...( data?.meta || {} ),
