@@ -244,8 +244,7 @@ export default function Account() {
 					} ) }
 				</ul>
 				{
-					// ! state.isUsageDataShared && isDataSharingCheckboxEnabled &&
-					1 === 1 &&
+					! state.isUsageDataShared && isDataSharingCheckboxEnabled &&
 					<CheckBoxWithLabel
 						checked={ dataSharingCheckboxState }
 						onChangeCallback={ ( event ) => {
