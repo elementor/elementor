@@ -27,6 +27,11 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 
 				elementor.trigger( 'document:loaded', document );
 
+				$e.internal( 'document/elements/populate', {
+					documentId: document.id,
+					elements: document.config.elements,
+				} );
+
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );

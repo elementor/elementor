@@ -1,3 +1,5 @@
+import { removeElementFromDocumentState } from 'elementor-document/elements/utils';
+
 export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
@@ -33,6 +35,14 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.delete( {
+					documentId: elementor.documents.getCurrentId(),
+					elementId: container.id,
+					parentId: container.parent.id,
+				} ),
+			);
+
 			container = container.lookup();
 
 			if ( this.isHistoryActive() ) {
@@ -57,6 +67,15 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		return containers;
+	}
+	static reducer( state, { payload } ) {
+		const { elementId, parentId, documentId } = payload;
+
+		if ( ! state[ documentId ] ) {
+			return state;
+		}
+
+		removeElementFromDocumentState( elementId, parentId, state[ documentId ] );
 	}
 }
 
