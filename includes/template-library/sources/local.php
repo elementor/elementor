@@ -251,10 +251,10 @@ class Source_Local extends Source_Base {
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'thumbnail', 'author', 'elementor', 'custom-fields' ],
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
 			// REST API options
 			'show_in_rest' => true,
-			'rest_base' => 'elementor-templates',
+			'rest_base' => 'elementor-library',
 		];
 
 		/**

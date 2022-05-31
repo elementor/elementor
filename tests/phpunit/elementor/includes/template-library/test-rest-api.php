@@ -14,7 +14,7 @@ class Test_REST_API extends Elementor_Test_Base {
 	public function test_create_new_template() {
 		$this->act_as_admin();
 
-		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor-templates' );
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor-library' );
 		$request->set_body_params( [
 			'title' => 'My custom template',
 			'document_type' => 'page'
@@ -35,7 +35,7 @@ class Test_REST_API extends Elementor_Test_Base {
 	public function test_create_new_template__unauthorized_creating_template() {
 		$this->act_as_subscriber();
 
-		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor-templates' );
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor-library' );
 		$request->set_body_params( [
 			'title' => 'My custom template',
 			'document_type' => 'page'
@@ -47,9 +47,9 @@ class Test_REST_API extends Elementor_Test_Base {
 	}
 
 	public function test_create_new_template__document_type_is_required() {
-		$this->act_as_subscriber();
+		$this->act_as_admin();
 
-		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor-templates' );
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor-library' );
 		$request->set_body_params( [
 			'title' => 'My custom template',
 		] );

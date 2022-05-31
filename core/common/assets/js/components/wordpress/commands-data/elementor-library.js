@@ -1,8 +1,8 @@
 import CommandData from 'elementor-api/modules/command-data';
 
-export class ElementorTemplates extends CommandData {
+export class ElementorLibrary extends CommandData {
 	static getEndpointFormat() {
-		return 'elementor-templates';
+		return 'elementor-library';
 	}
 
 	getRequestData() {

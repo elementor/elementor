@@ -1,2 +1,2 @@
 export { Media } from './media';
-export { ElementorTemplates } from './elementor-templates';
+export { ElementorLibrary } from './elementor-library';
