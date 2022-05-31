@@ -36,9 +36,9 @@ module.exports = function( config ) {
 			'tests/qunit/setup/elementor-common.js',
 			'tests/qunit/setup/web-cli.js',
 			'assets/lib/dialog/dialog.js',
-			'assets/js/common-modules.js',
-			'assets/js/web-cli.js',
-			'assets/js/common.js',
+			'assets/js/common-modules.min.js',
+			'assets/js/web-cli.min.js',
+			'assets/js/common.min.js',
 
 			// Editor Fixtures.
 			'tests/qunit/index.html',
