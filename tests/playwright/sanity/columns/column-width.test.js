@@ -23,7 +23,7 @@ test( 'Column width: Desktop value should not affect mobile in post-content-widg
     // Create single page template
     await page.goto( '/wp-admin/edit.php?post_type=elementor_library&tabs_group=library' );
     await page.click( '.page-title-action >> text=Add New' );
-    await page.click( 'select[name="template_type"]' );
+    await page.waitForTimeout( 1500 );
     await page.selectOption( 'select[name="template_type"]', 'single-page' );
     await page.click( '[placeholder="Enter template name (optional)"]' );
     await page.fill( '[placeholder="Enter template name (optional)"]', 'single page' );
