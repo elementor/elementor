@@ -31,11 +31,13 @@ export function addElementToDocumentState( element, documentState, parentId = 'd
 
 	documentState[ parentId ].elements.splice( index ?? parent.elements.length, 0, element.id );
 
-	element.elements.forEach( ( child ) => addElementToDocumentState(
-		child,
-		documentState,
-		element.id,
-	) );
+	if ( element.elements ) {
+		element.elements.forEach( ( child ) => addElementToDocumentState(
+			child,
+			documentState,
+			element.id,
+		) );
+	}
 }
 
 /**
