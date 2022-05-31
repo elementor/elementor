@@ -1609,10 +1609,10 @@ class Widget_Common extends Widget_Base {
 				'label' => esc_html__( 'Repeat', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'no-repeat' => esc_html__( 'No-Repeat', 'elementor' ),
+					'no-repeat' => esc_html__( 'No-repeat', 'elementor' ),
 					'repeat' => esc_html__( 'Repeat', 'elementor' ),
-					'repeat-x' => esc_html__( 'Repeat-X', 'elementor' ),
-					'repeat-Y' => esc_html__( 'Repeat-Y', 'elementor' ),
+					'repeat-x' => esc_html__( 'Repeat-x', 'elementor' ),
+					'repeat-Y' => esc_html__( 'Repeat-y', 'elementor' ),
 					'round' => esc_html__( 'Round', 'elementor' ),
 					'space' => esc_html__( 'Space', 'elementor' ),
 				],
