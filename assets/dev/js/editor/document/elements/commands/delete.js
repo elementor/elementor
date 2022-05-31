@@ -35,6 +35,8 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			$e.store.dispatch(
 				$e.store.get( 'document/elements' ).actions.delete( {
 					documentId: elementor.documents.getCurrentId(),
@@ -42,8 +44,6 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 					parentId: container.parent.id,
 				} ),
 			);
-
-			container = container.lookup();
 
 			if ( this.isHistoryActive() ) {
 				$e.internal( 'document/history/log-sub-item', {
