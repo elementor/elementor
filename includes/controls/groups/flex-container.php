@@ -22,6 +22,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		$fields['items'] = [
 			'type' => Controls_Manager::HEADING,
 			'label' => esc_html__( 'Items', 'elementor' ),
+			'separator' => 'before',
 		];
 
 		$fields['direction'] = [

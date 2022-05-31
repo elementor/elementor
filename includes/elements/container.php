@@ -458,7 +458,6 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Overflow', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'separator' => 'before',
 				'default' => '',
 				'options' => [
 					'' => esc_html__( 'Default', 'elementor' ),
