@@ -61,11 +61,11 @@ module.exports = function( config ) {
 			'assets/lib/jquery-hover-intent/jquery-hover-intent.min.js',
 
 			// Editor.
-			'assets/js/editor-modules.js',
-			'assets/js/editor-document.js',
+			'assets/js/editor-modules.min.js',
+			'assets/js/editor-document.min.js',
 
 			// Tests.
-			'assets/js/qunit-tests.js',
+			'assets/js/qunit-tests.min.js',
 		],
 		preprocessors: {
 			'tests/qunit/index.html': [ 'html2js' ],
