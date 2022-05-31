@@ -5,6 +5,12 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_REST_API extends Elementor_Test_Base {
+	public function setUp(  ) {
+		parent::setUp();
+
+		do_action( 'rest_api_init' );
+	}
+
 	public function test_create_new_template() {
 		$this->act_as_admin();
 
