@@ -24,7 +24,28 @@ export class SetSettings extends $e.modules.editor.CommandContainerInternalBase 
 			} else if ( render ) {
 				container.render();
 			}
+
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.settings( {
+					documentId: elementor.documents.getCurrentId(),
+					elementId: container.id,
+					settings,
+				} )
+			);
 		} );
+	}
+
+	static reducer( state, { payload } ) {
+		const { documentId, elementId, settings } = payload;
+
+		if ( ! state[ documentId ]?.[ elementId ] ) {
+			return state;
+		}
+
+		state[ documentId ][ elementId ].settings = {
+			...state[ documentId ][ elementId ].settings,
+			...settings,
+		};
 	}
 }
 
