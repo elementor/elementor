@@ -11,61 +11,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class REST_API {
 	/**
-	 * Register actions
+	 * Register actions.
 	 *
 	 * @return void
 	 */
 	public function register() {
-		$post_type = Source_Local::CPT;
-
-		add_filter( "rest_{$post_type}_item_schema", function ( $schema ) {
-			return $this->extend_rest_schema( $schema );
+		add_action( 'rest_api_init', function () {
+			$this->add_document_type_rest_field();
 		} );
-
-		add_action( "rest_after_insert_{$post_type}", function ( \WP_Post $post, \WP_REST_Request $request ) {
-			$this->after_insert_post( $post, $request );
-		}, 10, 2 );
 	}
 
 	/**
-	 * Extend the schema by adding template library related stuff.
+	 * Add the document type field to elementor-templates rest endpoints.
 	 *
-	 * @param $schema
-	 *
-	 * @return array
+	 * @return void
 	 */
-	protected function extend_rest_schema( $schema ) {
+	private function add_document_type_rest_field() {
 		$document_types = Plugin::$instance->documents->get_document_types( [
 			'show_in_library' => true,
 		] );
 
-		$schema['properties']['document_type'] = [
-			'description' => __( 'Elementor document type.', 'elementor' ),
-			'type' => 'string',
-			'required' => true,
-			'enum' => array_keys( $document_types ),
-		];
+		register_rest_field(
+			Source_Local::CPT,
+			'document_type',
+			[
+				'get_callback' => function ( array $object ) {
+					return get_post_meta( $object['id'], Document::TYPE_META_KEY, true );
+				},
+				'update_callback' => function ( $value, \WP_Post $object ) {
+					$document = Plugin::$instance->documents->get( $object->ID );
 
-		return $schema;
-	}
+					if ( ! $document ) {
+						return;
+					}
 
-	/**
-	 * Update post by adding elementor related stuff.
-	 *
-	 * @param \WP_Post         $post
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return void
-	 */
-	protected function after_insert_post( \WP_Post $post, \WP_REST_Request $request ) {
-		$document = Plugin::$instance->documents->get( $post->ID );
-
-		if ( ! $document ) {
-			return;
-		}
-
-		$document
-			->set_is_built_with_elementor( true )
-			->update_meta( Document::TYPE_META_KEY, $request->get_param( 'document_type' ) );
+					$document
+						->set_is_built_with_elementor( true )
+						->update_meta( Document::TYPE_META_KEY, $value );
+				},
+				'schema' => [
+					'description' => __( 'Elementor document type.', 'elementor' ),
+					'type' => 'string',
+					'required' => true,
+					'enum' => array_keys( $document_types ),
+				],
+			]
+		);
 	}
 }
