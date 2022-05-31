@@ -665,31 +665,31 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	private function register_transform_section() {
-		$this->start_controls_section(
+	public function register_transform_section( $common_controls ) {
+		$common_controls->start_controls_section(
 			'_section_transform',
 			[
 				'label' => esc_html__( 'Transform', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
-
-		$this->start_controls_tabs( '_tabs_positioning' );
-
+	
+		$common_controls->start_controls_tabs( '_tabs_positioning' );
+	
 		$transform_prefix_class = 'e-';
 		$transform_return_value = 'transform';
-
+	
 		foreach ( [ '', '_hover' ] as $tab ) {
 			$state = '_hover' === $tab ? ':hover' : '';
-
-			$this->start_controls_tab(
+	
+			$common_controls->start_controls_tab(
 				"_tab_positioning{$tab}",
 				[
 					'label' => '' === $tab ? esc_html__( 'Normal', 'elementor' ) : esc_html__( 'Hover', 'elementor' ),
 				]
 			);
-
-			$this->add_control(
+	
+			$common_controls->add_control(
 				"_transform_rotate_popover{$tab}",
 				[
 					'label' => esc_html__( 'Rotate', 'elementor' ),
@@ -698,10 +698,10 @@ class Widget_Common extends Widget_Base {
 					'return_value' => $transform_return_value,
 				]
 			);
-
-			$this->start_popover();
-
-			$this->add_responsive_control(
+	
+			$common_controls->start_popover();
+	
+			$common_controls->add_responsive_control(
 				"_transform_rotateZ_effect{$tab}",
 				[
 					'label' => esc_html__( 'Rotate', 'elementor' ),
@@ -714,6 +714,7 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-rotateZ: {{SIZE}}deg',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
@@ -721,8 +722,8 @@ class Widget_Common extends Widget_Base {
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_control(
+	
+			$common_controls->add_control(
 				"_transform_rotate_3d{$tab}",
 				[
 					'label' => esc_html__( '3D Rotate', 'elementor' ),
@@ -731,14 +732,15 @@ class Widget_Common extends Widget_Base {
 					'label_off' => esc_html__( 'Off', 'elementor' ),
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: 1deg;  --e-transform-perspective: 20px;',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-rotateX: 1deg;  --e-transform-perspective: 20px;',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_rotateX_effect{$tab}",
 				[
 					'label' => esc_html__( 'Rotate X', 'elementor' ),
@@ -755,12 +757,13 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}deg;',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-rotateX: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_rotateY_effect{$tab}",
 				[
 					'label' => esc_html__( 'Rotate Y', 'elementor' ),
@@ -777,12 +780,13 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}deg;',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-rotateY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_perspective_effect{$tab}",
 				[
 					'label' => esc_html__( 'Perspective', 'elementor' ),
@@ -799,14 +803,15 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-perspective: {{SIZE}}px',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-perspective: {{SIZE}}px',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->end_popover();
-
-			$this->add_control(
+	
+			$common_controls->end_popover();
+	
+			$common_controls->add_control(
 				"_transform_translate_popover{$tab}",
 				[
 					'label' => esc_html__( 'Offset', 'elementor' ),
@@ -815,10 +820,10 @@ class Widget_Common extends Widget_Base {
 					'return_value' => $transform_return_value,
 				]
 			);
-
-			$this->start_popover();
-
-			$this->add_responsive_control(
+	
+			$common_controls->start_popover();
+	
+			$common_controls->add_responsive_control(
 				"_transform_translateX_effect{$tab}",
 				[
 					'label' => esc_html__( 'Offset X', 'elementor' ),
@@ -839,12 +844,13 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateX: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-translateX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_translateY_effect{$tab}",
 				[
 					'label' => esc_html__( 'Offset Y', 'elementor' ),
@@ -865,14 +871,15 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-translateY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->end_popover();
-
-			$this->add_control(
+	
+			$common_controls->end_popover();
+	
+			$common_controls->add_control(
 				"_transform_scale_popover{$tab}",
 				[
 					'label' => esc_html__( 'Scale', 'elementor' ),
@@ -881,10 +888,10 @@ class Widget_Common extends Widget_Base {
 					'return_value' => $transform_return_value,
 				]
 			);
-
-			$this->start_popover();
-
-			$this->add_control(
+	
+			$common_controls->start_popover();
+	
+			$common_controls->add_control(
 				"_transform_keep_proportions{$tab}",
 				[
 					'label' => esc_html__( 'Keep Proportions', 'elementor' ),
@@ -894,8 +901,8 @@ class Widget_Common extends Widget_Base {
 					'default' => 'yes',
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_scale_effect{$tab}",
 				[
 					'label' => esc_html__( 'Scale', 'elementor' ),
@@ -913,12 +920,13 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scale: {{SIZE}};',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-scale: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_scaleX_effect{$tab}",
 				[
 					'label' => esc_html__( 'Scale X', 'elementor' ),
@@ -936,12 +944,13 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleX: {{SIZE}};',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-scaleX: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_scaleY_effect{$tab}",
 				[
 					'label' => esc_html__( 'Scale Y', 'elementor' ),
@@ -959,14 +968,15 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleY: {{SIZE}};',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-scaleY: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->end_popover();
-
-			$this->add_control(
+	
+			$common_controls->end_popover();
+	
+			$common_controls->add_control(
 				"_transform_skew_popover{$tab}",
 				[
 					'label' => esc_html__( 'Skew', 'elementor' ),
@@ -975,10 +985,10 @@ class Widget_Common extends Widget_Base {
 					'return_value' => $transform_return_value,
 				]
 			);
-
-			$this->start_popover();
-
-			$this->add_responsive_control(
+	
+			$common_controls->start_popover();
+	
+			$common_controls->add_responsive_control(
 				"_transform_skewX_effect{$tab}",
 				[
 					'label' => esc_html__( 'Skew X', 'elementor' ),
@@ -994,12 +1004,13 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}deg;',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-skewX: {{SIZE}}deg;'
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_responsive_control(
+	
+			$common_controls->add_responsive_control(
 				"_transform_skewY_effect{$tab}",
 				[
 					'label' => esc_html__( 'Skew Y', 'elementor' ),
@@ -1015,14 +1026,15 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}deg;',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-skewY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->end_popover();
-
-			$this->add_control(
+	
+			$common_controls->end_popover();
+	
+			$common_controls->add_control(
 				"_transform_flipX_effect{$tab}",
 				[
 					'label' => esc_html__( 'Flip Horizontal', 'elementor' ),
@@ -1036,12 +1048,13 @@ class Widget_Common extends Widget_Base {
 					'prefix_class' => $transform_prefix_class,
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-flipX: -1',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-flipX: -1',
 					],
 					'frontend_available' => true,
 				]
 			);
-
-			$this->add_control(
+	
+			$common_controls->add_control(
 				"_transform_flipY_effect{$tab}",
 				[
 					'label' => esc_html__( 'Flip Vertical', 'elementor' ),
@@ -1055,13 +1068,14 @@ class Widget_Common extends Widget_Base {
 					'prefix_class' => $transform_prefix_class,
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-flipY: -1',
+						"{{WRAPPER}}.e-container{$state}" => '--e-container-transform-flipY: -1',
 					],
 					'frontend_available' => true,
 				]
 			);
-
+	
 			if ( '_hover' === $tab ) {
-				$this->add_control(
+				$common_controls->add_control(
 					'_transform_transition_hover',
 					[
 						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
@@ -1074,11 +1088,12 @@ class Widget_Common extends Widget_Base {
 						],
 						'selectors' => [
 							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
+							'{{WRAPPER}}.e-container' => '--e-container-transform-transition-duration: {{SIZE}}ms',
 						],
 					]
 				);
 			}
-
+	
 			${"transform_origin_conditions{$tab}"} = [
 				[
 					'name' => "_transform_scale_popover{$tab}",
@@ -1101,19 +1116,19 @@ class Widget_Common extends Widget_Base {
 					'value' => '',
 				],
 			];
-
-			$this->end_controls_tab();
+	
+			$common_controls->end_controls_tab();
 		}
-
-		$this->end_controls_tabs();
-
+	
+		$common_controls->end_controls_tabs();
+	
 		$transform_origin_conditions = [
 			'relation' => 'or',
 			'terms' => array_merge( $transform_origin_conditions, $transform_origin_conditions_hover ),
 		];
-
+	
 		// Will override motion effect transform-origin
-		$this->add_responsive_control(
+		$common_controls->add_responsive_control(
 			'motion_fx_transform_x_anchor_point',
 			[
 				'label' => esc_html__( 'X Anchor Point', 'elementor' ),
@@ -1136,12 +1151,13 @@ class Widget_Common extends Widget_Base {
 				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-transform-origin-x: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-container-transform-origin-x: {{VALUE}}',
 				],
 			]
 		);
-
+	
 		// Will override motion effect transform-origin
-		$this->add_responsive_control(
+		$common_controls->add_responsive_control(
 			'motion_fx_transform_y_anchor_point',
 			[
 				'label' => esc_html__( 'Y Anchor Point', 'elementor' ),
@@ -1163,11 +1179,12 @@ class Widget_Common extends Widget_Base {
 				'conditions' => $transform_origin_conditions,
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-transform-origin-y: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-container-transform-origin-y: {{VALUE}}',
 				],
 			]
 		);
-
-		$this->end_controls_section();
+	
+		$common_controls->end_controls_section();
 	}
 
 	/**
@@ -1653,7 +1670,7 @@ class Widget_Common extends Widget_Base {
 
 		$this->register_effects_section();
 
-		$this->register_transform_section();
+		$this->register_transform_section( $this );
 
 		$this->register_background_section();
 

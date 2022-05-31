@@ -1583,6 +1583,8 @@ class Container extends Element_Base {
 
 		$this->register_motion_effects_controls();
 
+		Plugin::$instance->widgets_manager->get_widget_types( 'common' )->register_transform_section( $this );
+
 		$this->register_responsive_controls();
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
