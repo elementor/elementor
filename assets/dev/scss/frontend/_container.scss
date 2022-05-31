@@ -183,6 +183,10 @@
 		}
 	}
 
+	.elementor-shape {
+		z-index: 2;
+	}
+
 	// Inner Container handle.
 	// TODO: Find a better solution.
 	& > &, .elementor-widget & {

@@ -1104,7 +1104,7 @@ class Container extends Element_Base {
 					'label' => esc_html__( 'Bring to Front', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
+						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 3; pointer-events: none',
 					],
 					'condition' => [
 						"shape_divider_$side!" => '',
