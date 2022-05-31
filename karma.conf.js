@@ -66,6 +66,7 @@ module.exports = function( config ) {
 
 			// Tests.
 			'assets/js/qunit-tests.min.js',
+
 		],
 		preprocessors: {
 			'tests/qunit/index.html': [ 'html2js' ],
