@@ -19,7 +19,7 @@ class Test_Menu_Anchor extends Elementor_Test_Base {
 		$mock['settings']['anchor'] = 'invalid<data> onclick="alert()"';
 		$element = Plugin::$instance->elements_manager->create_element_instance( $mock );
 
-		// Act.
+		// Act. (trigger the `on_save`)
 		$data = $element->get_data_for_save();
 
 		// Assert.
