@@ -1,4 +1,4 @@
-import { createContainer, mockElementsComponent } from '../mock/component';
+import { mockElementsComponent } from '../mock/component';
 
 describe( "$e.internal( 'document/elements/populate' )", () => {
 	beforeEach( async () => {

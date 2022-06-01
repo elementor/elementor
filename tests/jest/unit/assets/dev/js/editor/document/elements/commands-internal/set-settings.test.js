@@ -56,7 +56,7 @@ describe( "$e.internal( 'document/elements/set-settings' )", () => {
 		} );
 	} );
 
-	it( 'Should not change the settings if the element does no in the elements state', () => {
+	it( 'Should not change the settings if the element does not exist in the elements state', () => {
 		// Arrange.
 		const container = createContainer( { id: 'non-existing-element' } );
 

@@ -59,7 +59,7 @@ describe( "$e.run( 'document/elements/create' )", () => {
 		} );
 	} );
 
-	it( 'Should add the element in a specific index in elements state', () => {
+	it( 'Should add the element in a specific index to the elements state', () => {
 		// Arrange.
 		const container = createContainer( {
 			id: 'document',
@@ -110,7 +110,7 @@ describe( "$e.run( 'document/elements/create' )", () => {
 		} );
 	} );
 
-	it( 'Should not break the existing elements state', () => {
+	it( 'Should not affect existing documents/elements in the elements state', () => {
 		// Arrange.
 		const container = createContainer( {
 			id: 'document',
