@@ -96,8 +96,8 @@ test.describe.serial( 'NestedElementsModule', () => {
 						}, [ widgetId ] );
 
 						// Assert.
-						await expect( editor.previewFrame.locator( 'text=Tab #2' ).count() ).toBe( 4 ); // 4 including the mobile.
-						await expect( editor.previewFrame.locator( 'text=Add Your Heading Text Here' ).count() ).toBe( 2 ); // Content.
+						await expect( await editor.previewFrame.locator( 'text=Tab #2' ).count() ).toBe( 4 ); // 4 including the mobile.
+						await expect( await editor.previewFrame.locator( 'text=Add Your Heading Text Here' ).count() ).toBe( 2 ); // Content.
 					} );
 
 					test( 'Hook `nested-repeater-remove-container`', async () => {
