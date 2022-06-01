@@ -23,6 +23,6 @@ export class NestedRepeaterProtectedBuildingBlockContainers extends $e.modules.h
 	}
 
 	apply() {
-		return false;
+		return false; // throws `$e.modules.HookBreak`.
 	}
 }
