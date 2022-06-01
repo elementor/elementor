@@ -170,9 +170,9 @@ export default class SiteEditor {
 				},
 				tooltip_data: {
 					title: __( 'What is a loop?', 'elementor' ),
-					content: __( 'A Loop Grid is a layout where you can display recurring dynamic content (like listings, portfolios, products, etc.) in a customizable template. How do I create one? 1. You need to start with a master item - this is the template. All of the other instances in the grid will match it. 2. When your master item is ready, connect it to the source of your content. You can do this from the editor panel.', 'elementor' ),
-					tip: __( 'You can customize the message if there are no results for the search term.', 'elementor' ),
-					docs: 'https://www.elementor.com/',
+					content: __( 'A Loop is a layout you can customize to display recurring dynamic content - like listings, posts, portfolios, products, , etc.', 'elementor' ),
+					tip: __( 'Start by creating a master item. All the other instances in the grid will match this design. Then go back to the widget in the editor panel and assign both a template and a source of content. Your grid should populate automatically.', 'elementor' ),
+					docs: 'https://www.elementor.com/', // TODO
 					video_url: '', // TODO
 				},
 			},
