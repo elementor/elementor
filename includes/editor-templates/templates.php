@@ -278,7 +278,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message">
 		{{{ message }}}
 	</div>
-	<?php $url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize' ); ?>
+		<?php
+		$url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
+			'utm_source' => 'template-library',
+			'utm_medium' => 'wp-dash',
+			'utm_campaign' => 'library-connect',
+			'utm_content' => '%%template_type%%', // will be replaced in the frontend
+		] );
+		?>
 	<a id="elementor-template-library-connect__button" class="elementor-button elementor-button-success" href="<?php echo esc_attr( $url ); ?>">
 		{{{ button }}}
 	</a>

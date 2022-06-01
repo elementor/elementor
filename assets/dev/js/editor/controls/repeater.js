@@ -126,15 +126,19 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
+	getSortableParams: () => {
+		return {
+			axis: 'y',
+			handle: '.elementor-repeater-row-tools',
+			items: ' > :not(.elementor-repeater-row--disable-sort)',
+		};
+	},
+
 	onRender: function() {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		if ( this.model.get( 'item_actions' ).sort ) {
-			this.ui.fieldContainer.sortable( {
-				axis: 'y',
-				handle: '.elementor-repeater-row-tools',
-				items: ' > :not(.elementor-repeater-row--disable-sort)',
-			} );
+			this.ui.fieldContainer.sortable( this.getSortableParams() );
 		}
 
 		this.toggleMinRowsClass();

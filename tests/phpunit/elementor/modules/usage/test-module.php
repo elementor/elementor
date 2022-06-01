@@ -354,8 +354,8 @@ class Test_Module extends Elementor_Test_Base {
 
 	private function ensure_dynamic_tags() {
 		if ( ! $this->isDynamicTags ) {
-			Plugin::$instance->dynamic_tags->register_tag( new Title() );
-			Plugin::$instance->dynamic_tags->register_tag( new Link() );
+			Plugin::$instance->dynamic_tags->register( new Title() );
+			Plugin::$instance->dynamic_tags->register( new Link() );
 
 			$this->isDynamicTags = true;
 		}

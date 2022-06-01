@@ -13,14 +13,18 @@ on:
 
 jobs:
   merge-release-branch-to-develop:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
-    runs-on: ubuntu-16.04
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
       - name: Get release branch
         env:
           INPUT_VERSION: ${{ github.event.inputs.version }}
@@ -40,7 +44,7 @@ jobs:
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
   bump-version:
     needs: merge-release-branch-to-develop
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
@@ -49,6 +53,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
       - name: Bump version
         id: bump_version_step
         run: |
@@ -79,13 +87,17 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
   publish:
     needs: bump-version
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
       - name: Merge develop -> master
         uses: devmasx/merge-branch@a1752b9ba42bb417ec19be7dc974e2faf77d3ef2 # v1.3.1
         with:

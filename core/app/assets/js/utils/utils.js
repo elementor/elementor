@@ -37,3 +37,11 @@ export const rgbToHex = ( r, g, b ) => '#' + [ r, g, b ].map( ( x ) => {
 export const isOneOf = ( filetype, filetypeOptions ) => {
 	return filetypeOptions.some( ( type ) => filetype.includes( type ) );
 };
+
+export const arrayToObjectByKey = ( array, key ) => {
+	const finalObject = {};
+
+	array.forEach( ( item ) => finalObject[ item[ key ] ] = item );
+
+	return finalObject;
+};

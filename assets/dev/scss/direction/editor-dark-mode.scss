@@ -134,6 +134,13 @@ body {
 		.elementor-button-wrapper {
 			border-top-color: $theme-dark-gray-darkest;
 		}
+
+		.elementor-repeater-fields {
+
+			&.ui-sortable-helper {
+				background-color: $theme-dark-gray-dark;
+			}
+		}
 	}
 }
 
@@ -547,8 +554,10 @@ a.elementor-responsive-switcher {
 
 .elementor-control-type-media {
 
-	.elementor-control-media__preview {
-		background-color: $theme-dark-gray-darkest;
+	.elementor-control-media-area {
+		.elementor-control-media__preview {
+			background-color: $theme-dark-gray-darkest;
+		}
 	}
 }
 

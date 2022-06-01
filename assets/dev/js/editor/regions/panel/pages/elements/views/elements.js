@@ -18,6 +18,11 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return true;
 		}
 
+		// Prevent from wordpress widgets to show in search result.
+		if ( childModel.get( 'hideOnSearch' ) ) {
+			return false;
+		}
+
 		if ( -1 !== childModel.get( 'title' ).toLowerCase().indexOf( filterValue.toLowerCase() ) ) {
 			return true;
 		}

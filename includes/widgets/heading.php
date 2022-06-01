@@ -245,6 +245,14 @@ class Widget_Heading extends Widget_Base {
 		);
 
 		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'text_stroke',
+				'selector' => '{{WRAPPER}} .elementor-heading-title',
+			]
+		);
+
+		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'text_shadow',

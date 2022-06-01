@@ -1,31 +1,32 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
+import ProcessFailedDialog from '../../../shared/process-failed-dialog/process-failed-dialog';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 
-import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ isImportFailed, setIsImportFailed ] = useState( false ),
-		[ isLoading, setIsLoading ] = useState( false ),
-		context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		{ referrer } = useQueryParams().getAll(),
+		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		[ errorType, setErrorType ] = useState( '' ),
+		[ isLoading, setIsLoading ] = useState( false ),
+		{ referrer } = sharedContext.data,
 		resetImportProcess = () => {
-			context.dispatch( { type: 'SET_FILE', payload: null } );
-			setIsImportFailed( false );
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+			setErrorType( null );
 			setIsLoading( false );
 			kitActions.reset();
 		},
@@ -35,29 +36,35 @@ export default function ImportKit() {
 			</InlineLink>
 		);
 
+	// On load.
 	useEffect( () => {
-		if ( context.data.file ) {
-			kitActions.upload( { file: context.data.file } );
-		}
-	}, [ context.data.file ] );
+		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+	}, [] );
 
+	// Uploading the kit after file is selected.
+	useEffect( () => {
+		if ( importContext.data.file ) {
+			kitActions.upload( { file: importContext.data.file } );
+		}
+	}, [ importContext.data.file ] );
+
+	// Listening to kit upload state.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
-			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 		} else if ( 'error' === kitState.status ) {
-			setIsImportFailed( true );
+			setErrorType( kitState.data );
 		}
 	}, [ kitState.status ] );
 
+	// After kit was uploaded.
 	useEffect( () => {
-		if ( context.data.uploadedData && context.data.file ) {
-			navigate( '/import/content' );
-		}
-	}, [ context.data.uploadedData ] );
+		if ( importContext.data.uploadedData && importContext.data.file ) {
+			const url = importContext.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
 
-	useEffect( () => {
-		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
-	}, [] );
+			navigate( url );
+		}
+	}, [ importContext.data.uploadedData ] );
 
 	return (
 		<Layout type="import">
@@ -68,7 +75,7 @@ export default function ImportKit() {
 						className="e-app-import__back-to-library"
 						icon="eicon-chevron-left"
 						text={ __( 'Back to Kit Library', 'elementor' ) }
-						onClick={ () => navigate( '/kit-library' ) }
+						url="/kit-library"
 					/>
 				}
 
@@ -80,7 +87,7 @@ export default function ImportKit() {
 					] }
 				/>
 
-				<Notice label={ __( 'Important', 'elementor' ) } color="warning" className="e-app-import__notice">
+				<Notice label={ __( 'Important:', 'elementor' ) } color="warning" className="e-app-import__notice">
 					{ __( 'We recommend that you backup your site before importing a kit file.', 'elementor' ) }
 				</Notice>
 
@@ -92,20 +99,14 @@ export default function ImportKit() {
 					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {
 						setIsLoading( true );
-						context.dispatch( { type: 'SET_FILE', payload: file } );
+						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
-					onError={ () => setIsImportFailed( true ) }
+					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 				/>
 
-				{ isImportFailed &&
-					<ImportFailedDialog
-						onApprove={ () => window.open( 'https://elementor.com/help/import-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
-						onDismiss={ resetImportProcess }
-					/>
-				}
+				{ errorType && <ProcessFailedDialog errorType={ errorType } onApprove={ resetImportProcess } />	}
 			</section>
 		</Layout>
 	);
 }
-

@@ -78,6 +78,7 @@ export default class View extends Marionette.ItemView {
 	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
+		this.listenTo( elementor.channels.responsivePreview, 'open', this.onPreviewOpen );
 		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
 	}
 
@@ -153,8 +154,10 @@ export default class View extends Marionette.ItemView {
 		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
 			$currentDeviceSwitcherInput = this.ui.switcherInput.filter( '[value=' + currentDeviceMode + ']' );
 
-		this.ui.switcherLabel.attr( 'aria-selected', false ).removeClass( 'active' );
-		$currentDeviceSwitcherInput.closest( 'label' ).attr( 'aria-selected', true ).addClass( 'active' );
+		this.setWidthHeightInputsEditableState();
+
+		this.ui.switcherLabel.attr( 'aria-selected', false );
+		$currentDeviceSwitcherInput.closest( 'label' ).attr( 'aria-selected', true );
 
 		if ( ! $currentDeviceSwitcherInput.prop( 'checked' ) ) {
 			$currentDeviceSwitcherInput.prop( 'checked', true );
@@ -203,6 +206,28 @@ export default class View extends Marionette.ItemView {
 
 		this.ui.sizeInputWidth.val( Math.round( size.width ) );
 		this.ui.sizeInputHeight.val( Math.round( size.height ) );
+	}
+
+	onPreviewOpen() {
+		this.setWidthHeightInputsEditableState();
+	}
+
+	setWidthHeightInputsEditableState() {
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+		//TODO: disable inputs
+		if ( 'desktop' === currentDeviceMode ) {
+			this.ui.sizeInputWidth.attr( 'disabled', 'disabled' );
+			this.ui.sizeInputHeight.attr( 'disabled', 'disabled' );
+		} else {
+			this.ui.sizeInputWidth.removeAttr( 'disabled' );
+			this.ui.sizeInputHeight.removeAttr( 'disabled' );
+		}
+	}
+
+	onCloseButtonClick() {
+		elementor.changeDeviceMode( 'desktop' );
+		// Force exit if device mode is already desktop
+		elementor.exitDeviceMode();
 	}
 
 	onSizeInputChange() {

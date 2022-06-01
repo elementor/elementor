@@ -20,9 +20,31 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 		this.ui.units.removeClass( 'e-units-placeholder' );
 
-		if ( placeholder ) {
+		if ( placeholder !== this.getControlValue( 'unit' ) ) {
 			this.ui.units.filter( `[value="${ placeholder }"]` )
 				.addClass( 'e-units-placeholder' );
+		}
+	},
+
+	recursiveUnitChange( includingSelf = true ) {
+		const parent = this.getResponsiveParentView();
+
+		if ( parent && includingSelf ) {
+			const unit = parent.getControlValue( 'unit' ),
+				values = Object.keys( this.getCleanControlValue() || {} );
+
+			// Remove `unit` from values, so only control values are indicated.
+			values.splice( values.indexOf( 'unit' ), 1 );
+
+			// Only set the unit when no control values are already specified.
+			if ( unit && ! values.length ) {
+				this.setValue( 'unit', unit );
+				this.render();
+			}
+		}
+
+		for ( const child of this.getResponsiveChildrenViews() ) {
+			child.recursiveUnitChange();
 		}
 	},
 
@@ -33,6 +55,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 	},
 
 	onUnitChange: function() {
+		this.recursiveUnitChange( false );
 		this.updatePlaceholder();
 	},
 

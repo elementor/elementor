@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\EventTracker\DB as Events_DB_Manager;
+use Elementor\Core\Experiments\Experiments_Reporter;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -61,12 +63,16 @@ class Tracker {
 	public static function check_for_settings_optin( $new_value ) {
 		$old_value = get_option( 'elementor_allow_tracking', 'no' );
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
-			self::send_tracking_data( true );
+			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [
+				'opt_in_recalculate_usage',
+				'opt_in_send_tracking_data',
+			] );
 		}
 
 		if ( empty( $new_value ) ) {
 			$new_value = 'no';
 		}
+
 		return $new_value;
 	}
 
@@ -134,6 +140,10 @@ class Tracker {
 
 		$params = self::get_tracking_data( empty( $last_send ) );
 
+		// Tracking data is used for System Info reports, and events should not be included in System Info reports,
+		// so it is added here
+		$params['analytics_events'] = self::get_events();
+
 		add_filter( 'https_ssl_verify', '__return_false' );
 
 		wp_safe_remote_post(
@@ -147,6 +157,9 @@ class Tracker {
 				],
 			]
 		);
+
+		// After sending the event tracking data, we reset the events table.
+		Events_DB_Manager::reset_table();
 	}
 
 	/**
@@ -227,10 +240,15 @@ class Tracker {
 	private static function get_system_reports_data() {
 		$reports = Plugin::$instance->system_info->load_reports( System_Info_Module::get_allowed_reports() );
 
+		// The log report should not be sent with the usage data - it is not used and causes bloat.
+		if ( isset( $reports['log'] ) ) {
+			unset( $reports['log'] );
+		}
+
 		$system_reports = [];
 		foreach ( $reports as $report_key => $report_details ) {
 			$system_reports[ $report_key ] = [];
-			foreach ( $report_details['report'] as $sub_report_key => $sub_report_details ) {
+			foreach ( $report_details['report']->get_report() as $sub_report_key => $sub_report_details ) {
 				$system_reports[ $report_key ][ $sub_report_key ] = $sub_report_details['value'];
 			}
 		}
@@ -396,28 +414,16 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_settings_experiments_usage() {
-		$result = [];
+		$system_info = Plugin::$instance->system_info;
 
-		$experiments_manager = Plugin::$instance->experiments;
+		/**
+		 * @var $experiments_report Experiments_Reporter
+		 */
+		$experiments_report = $system_info->create_reporter( [
+			'class_name' => Experiments_Reporter::class,
+		] );
 
-		// TODO: Those keys should be at `$experiments_manager`.
-		$tracking_keys = [
-			'default',
-			'state',
-		];
-
-		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
-			$data_to_collect = [];
-
-			// Extract only tracking keys.
-			foreach ( $tracking_keys as $tracking_key ) {
-				$data_to_collect[ $tracking_key ] = $feature_data[ $tracking_key ];
-			}
-
-			$result[ $feature_name ] = $data_to_collect;
-		}
-
-		return $result;
+		return $experiments_report->get_experiments()['value'];
 	}
 
 	/**
@@ -487,7 +493,24 @@ class Tracker {
 		}
 
 		return $usage;
+	}
 
+	public static function get_events() {
+		global $wpdb;
+		$table_name = $wpdb->prefix . Events_DB_Manager::TABLE_NAME;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$results = $wpdb->get_results( "SELECT event_data FROM {$table_name}" );
+
+		$events_data = [];
+
+		foreach ( $results as $event ) {
+			// Results are stored in the database as a JSON string. Since all tracking data is encoded right before
+			// being sent, it is now decoded.
+			$events_data[] = json_decode( $event->event_data, true );
+		}
+
+		return $events_data;
 	}
 
 	/**

@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Paste extends CommandHistory {
+export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -51,6 +49,7 @@ export class Paste extends CommandHistory {
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
+					case 'container':
 					case 'section': {
 						// If is inner create section for `inner-section`.
 						if ( model.isInner ) {
@@ -92,7 +91,7 @@ export class Paste extends CommandHistory {
 							},
 							columns: 0, // section with no columns.
 							options: {
-								at: index,
+								at: ++index,
 								edit: false,
 							},
 						} );
@@ -117,7 +116,7 @@ export class Paste extends CommandHistory {
 								},
 								columns: 1,
 								options: {
-									at: index,
+									at: ++index,
 								},
 							} );
 

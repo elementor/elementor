@@ -11,14 +11,14 @@ export default function ConnectDialog( props ) {
 		jQuery( approveButtonRef.current ).elementorConnect( {
 			success: ( e, data ) => props.onSuccess( data ),
 			error: () => props.onError( __( 'Unable to connect', 'elementor' ) ),
-			UTM: () => '&utm_source=kit-library&utm_medium=wp-dash&utm_campaign=',
+			parseUrl: ( url ) => url.replace( '%%page%%', props.pageId ),
 		} );
 	}, [] );
 
 	return (
 		<Dialog
 			title={ __( 'Connect to Template Library', 'elementor' ) }
-			text={ __( 'Access this template and our entire library by creating an account', 'elementor' ) }
+			text={ __( 'Access this template and our entire library by creating a free personal account', 'elementor' ) }
 			approveButtonText={ __( 'Get Started', 'elementor' ) }
 			approveButtonUrl={ settings.library_connect_url }
 			approveButtonOnClick={ () => props.onClose() }
@@ -35,4 +35,5 @@ ConnectDialog.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	onError: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired,
+	pageId: PropTypes.string,
 };

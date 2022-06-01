@@ -42,7 +42,7 @@ export default function Layout( props ) {
 		moduleAdminTab = '#tab-import-export-kit';
 
 	// Targeting the return_url value to the import-export dedicated admin tab (only when there is no specific referrer).
-	if ( ! referrer && -1 === elementorAppConfig.return_url.indexOf( moduleAdminTab ) ) {
+	if ( ! referrer && -1 === elementorAppConfig.return_url.indexOf( moduleAdminTab ) && elementorAppConfig.return_url.includes( 'page=elementor-tools' ) ) {
 		elementorAppConfig.return_url += moduleAdminTab;
 	}
 

@@ -1,4 +1,4 @@
-import AdminMenuHandler from 'elementor-admin/admin-menu';
+import AdminMenuHandler from 'elementor-admin/menu-handler';
 
 export default class LandingPagesHandler extends AdminMenuHandler {
 	getDefaultSettings() {

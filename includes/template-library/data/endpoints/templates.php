@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Includes\TemplateLibrary\Data\Endpoints;
 
-use Elementor\Data\Base\Endpoint;
+use Elementor\Data\V2\Base\Endpoint;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Templates extends Endpoint {
 	public function get_name() {
 		return 'templates';
+	}
+
+	public function get_format() {
+		return 'template-library/templates';
 	}
 
 	public function get_items( $request ) {

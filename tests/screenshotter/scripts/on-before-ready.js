@@ -36,10 +36,6 @@ module.exports = async function( page ) {
 			// eslint-disable-next-line no-console
 			console.log( chalk.red( message ) );
 		} )
-		.on( 'response', async ( response ) => {
-			// eslint-disable-next-line no-console
-			console.log( chalk.green( `${ response.status() } ${ response.url() }` ) );
-		} )
 		.on( 'requestfailed', ( request ) => {
 			// eslint-disable-next-line no-console
 			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) );

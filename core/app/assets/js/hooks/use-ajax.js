@@ -23,7 +23,7 @@ export default function useAjax() {
 				}
 
 				if ( ! ajax.data.nonce ) {
-					formData.append( 'nonce', elementorCommon.config.ajax.nonce );
+					formData.append( '_nonce', elementorCommon.config.ajax.nonce );
 				}
 			}
 

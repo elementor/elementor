@@ -1,9 +1,13 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport;
 
+use Elementor\Core\App\Modules\ImportExport\Directories\WP_Content;
+use Elementor\Core\App\Modules\ImportExport\Directories\WP_Post_Type;
+use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
@@ -24,6 +28,11 @@ class Module extends BaseModule {
 	const EXPORT_TRIGGER_KEY = 'elementor_export_kit';
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
+
+	const MANIFEST_ERROR_KEY = 'manifest-error';
+
+	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
+
 
 	/**
 	 * @var Export
@@ -51,14 +60,7 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		$export_nonce = wp_create_nonce( 'elementor_export' );
-
-		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
-
-		return [
-			'exportURL' => $export_url,
-			'summaryTitles' => $this->get_summary_titles(),
-		];
+		return $this->get_config_data();
 	}
 
 	public function get_summary_titles() {
@@ -74,6 +76,7 @@ class Module extends BaseModule {
 		}
 
 		$post_types = get_post_types_by_support( 'elementor' );
+		$post_types[] = 'nav_menu_item';
 
 		foreach ( $post_types as $post_type ) {
 			if ( Source_Local::CPT === $post_type ) {
@@ -88,6 +91,26 @@ class Module extends BaseModule {
 			];
 		}
 
+		$custom_post_types = $this->get_registered_cpt_names();
+		if ( ! empty( $custom_post_types ) ) {
+			foreach ( $custom_post_types as $custom_post_type ) {
+
+				$custom_post_types_object = get_post_type_object( $custom_post_type );
+				//cpt data appears in two arrays:
+				//1. content object: in order to show the export summary when completed in getLabel function
+				$summary_titles['content'][ $custom_post_type ] = [
+					'single' => $custom_post_types_object->labels->singular_name,
+					'plural' => $custom_post_types_object->label,
+				];
+
+				//2. customPostTypes object: in order to actually export the data
+				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
+					'single' => $custom_post_types_object->labels->singular_name,
+					'plural' => $custom_post_types_object->label,
+				];
+			}
+		}
+
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		foreach ( $active_kit->get_tabs() as $key => $tab ) {
@@ -97,12 +120,52 @@ class Module extends BaseModule {
 		return $summary_titles;
 	}
 
+	/**
+	 * Retrieve custom post type names.
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 *
+	 * @return array custom post type names.
+	 */
+	public function get_registered_cpt_names() {
+
+		$post_types = get_post_types( [
+			'public' => true,
+			'can_export' => true,
+		] );
+
+		unset(
+			$post_types['attachment'],
+			$post_types['page'],
+			$post_types['post'],
+			$post_types[ Landing_Pages_Module::CPT ],
+			$post_types[ Source_Local::CPT ]
+		);
+
+		$custom_post_types = [];
+
+		foreach ( $post_types as $post_type ) {
+			array_push( $custom_post_types, $post_type );
+		}
+
+		return $custom_post_types;
+	}
+
 	private function import_stage_1() {
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$file_url = $_POST['e_import_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( __( 'Invalid URL', 'elementor' ) );
+			if (
+				! isset( $_POST['e_kit_library_nonce'] ) ||
+				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
+			) {
+				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
+			}
+
+			$file_url = $_POST['e_import_file'];
+
+			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
+				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
 			}
 
 			$remote_zip_request = wp_remote_get( $file_url );
@@ -129,12 +192,27 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ), true );
+		$manifest_file_content = Utils::file_get_contents( $session_dir . 'manifest.json', true );
+
+		if ( ! $manifest_file_content ) {
+			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
+
+		$manifest_data = json_decode( $manifest_file_content, true );
+
+		// In case that the manifest content is not a valid JSON or empty.
+		if ( ! $manifest_data ) {
+			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
+
+		if ( isset( $manifest_data['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
+			throw new \Error( static::PERMISSIONS_ERROR_KEY );
+		}
 
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
 
 		$result = [
-			'session' => basename( $session_dir ),
+			'session' => $session_dir,
 			'manifest' => $manifest_data,
 		];
 
@@ -154,21 +232,25 @@ class Module extends BaseModule {
 	}
 
 	private function on_admin_init() {
-		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
+		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
 
 		$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
-		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
-
-		$this->import = new Import( $import_settings );
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
 		try {
+			$this->import = new Import( $import_settings );
+
 			if ( 1 === $import_settings['stage'] ) {
 				$result = $this->import_stage_1();
 			} elseif ( 2 === $import_settings['stage'] ) {
-				$result = $this->import_stage_2( $import_settings['directory'] );
+				$result = $this->import_stage_2( $import_settings['session'] );
+
+				// Adding the most updated data of the summaryTitles, in case that the data was changed during the process by new installed plugins.
+				$result['configData'] = $this->get_config_data();
 			}
 
 			wp_send_json_success( $result );
@@ -178,20 +260,20 @@ class Module extends BaseModule {
 	}
 
 	private function on_init() {
-		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
+		if ( ! isset( $_POST['action'] ) || self::EXPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
 
-		$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
+		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
 		try {
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo' ] ) );
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins', 'selectedCustomPostTypes' ] ) );
 
 			$export_result = $this->export->run();
 
 			$file_name = $export_result['file_name'];
 
-			$file = file_get_contents( $file_name, true );
+			$file = Utils::file_get_contents( $file_name );
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
@@ -200,7 +282,7 @@ class Module extends BaseModule {
 				'file' => base64_encode( $file ),
 			] );
 		} catch ( \Error $error ) {
-			wp_die( esc_html( $error->getMessage() ) );
+			wp_send_json_error( $error->getMessage() );
 		}
 	}
 
@@ -208,7 +290,7 @@ class Module extends BaseModule {
 		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
-			/* translators: %1$s: New line break, %2$s: Learn More link. */
+		/* translators: 1: New line break, 2: Learn More link. */
 			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
 			'<br>',
 			$intro_text_link
@@ -241,30 +323,110 @@ class Module extends BaseModule {
 			],
 		];
 
-		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>' . esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' );
+		$home_page_editor_url = $this->get_elementor_editor_home_page_url();
+		$editor_page_link = $home_page_editor_url ? $home_page_editor_url : $this->get_recently_edited_elementor_editor_page_url();
+
+		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>';
+		$info_text .= sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $editor_page_link . '#e:run:panel/global/open&e:route:panel/history/revisions', esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' ) );
 		?>
 
 		<div class="tab-import-export-kit__content">
 			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $intro_text ); ?></p>
 
 			<div class="tab-import-export-kit__wrapper">
-			<?php foreach ( $content_data as $data ) { ?>
-				<div class="tab-import-export-kit__container">
-					<div class="tab-import-export-kit__box">
-						<h2><?php Utils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-						<a href="<?php Utils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
-							<?php Utils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-						</a>
+				<?php foreach ( $content_data as $data ) { ?>
+					<div class="tab-import-export-kit__container">
+						<div class="tab-import-export-kit__box">
+							<h2><?php Utils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+							<a href="<?php Utils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+								<?php Utils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+							</a>
+						</div>
+						<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
+						<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
 					</div>
-					<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
-					<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-				</div>
-			<?php } ?>
+				<?php } ?>
 			</div>
 
 			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $info_text ); ?></p>
 		</div>
 		<?php
+	}
+
+	private function get_elementor_editor_home_page_url() {
+		if ( 'page' !== get_option( 'show_on_front' ) ) {
+			return '';
+		}
+
+		$frontpage_id = get_option( 'page_on_front' );
+
+		return $this->get_elementor_editor_page_url( $frontpage_id );
+	}
+
+	private function get_elementor_home_page_url() {
+		if ( 'page' !== get_option( 'show_on_front' ) ) {
+			return '';
+		}
+
+		$frontpage_id = get_option( 'page_on_front' );
+
+		return $this->get_elementor_page_url( $frontpage_id );
+	}
+
+	private function get_recently_edited_elementor_page_url() {
+		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+
+		if ( ! isset( $query->post ) ) {
+			return '';
+		}
+
+		return $this->get_elementor_page_url( $query->post->ID );
+	}
+
+	private function get_recently_edited_elementor_editor_page_url() {
+		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+
+		if ( ! isset( $query->post ) ) {
+			return '';
+		}
+
+		return $this->get_elementor_editor_page_url( $query->post->ID );
+	}
+
+	private function get_elementor_document( $page_id ) {
+		$document = Plugin::$instance->documents->get( $page_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return false;
+		}
+
+		return $document;
+	}
+
+	private function get_elementor_page_url( $page_id ) {
+		$document = $this->get_elementor_document( $page_id );
+
+		return $document ? $document->get_preview_url() : '';
+	}
+
+	private function get_elementor_editor_page_url( $page_id ) {
+		$document = $this->get_elementor_document( $page_id );
+
+		return $document ? $document->get_edit_url() : '';
+	}
+
+	private function get_config_data() {
+		$export_nonce = wp_create_nonce( 'elementor_export' );
+
+		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+
+		return [
+			'exportURL' => $export_url,
+			'summaryTitles' => $this->get_summary_titles(),
+			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
+			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+		];
 	}
 
 	public function register_settings_tab( Tools $tools ) {

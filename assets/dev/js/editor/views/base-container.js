@@ -1,3 +1,7 @@
+/**
+ * @name BaseContainer
+ * @extends {Marionette.CompositeView}
+ */
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
@@ -82,24 +86,114 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( options.edit && elementor.documents.getCurrent().history.getActive() ) {
 			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
 			newView.getContainer();
-			newModel.trigger( 'request:edit' );
+			newModel.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
 		}
 
 		return newView;
 	},
 
-	addChildElement: function( data, options ) {
-		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
+	createElementFromContainer( container, options = {} ) {
+		return this.createElementFromModel( container.model, options );
+	},
 
-		if ( Object !== data.constructor ) {
-			data = jQuery.extend( {}, data );
+	createElementFromModel( model, options = {} ) {
+		let container = this.getContainer();
+
+		if ( model instanceof Backbone.Model ) {
+			model = model.toJSON();
 		}
 
-		$e.run( 'document/elements/create', {
-			container: this.getContainer(),
-			model: data,
+		if ( elementor.helpers.maybeDisableWidget( model.widgetType ) ) {
+			return;
+		}
+
+		model = Object.assign( model, model.custom );
+
+		// Check whether the container cannot contain a section, in which case we should use an inner-section.
+		if ( 'section' === model.elType ) {
+			model.isInner = true;
+		}
+
+		const historyId = $e.internal( 'document/history/start-log', {
+			type: this.getHistoryType( options.event ),
+			title: elementor.helpers.getModelLabel( model ),
+		} );
+
+		if ( options.shouldWrap ) {
+			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
+
+			container = $e.run( 'document/elements/create', {
+				model: {
+					elType: containerExperiment ? 'container' : 'section',
+				},
+				container,
+				columns: Number( ! containerExperiment ),
+				options: {
+					at: options.at,
+				},
+			} );
+
+			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+			if ( ! containerExperiment ) {
+				container = container.view.children.findByIndex( 0 )
+					.getContainer();
+			}
+		}
+
+		// Create the element in column.
+		const widget = $e.run( 'document/elements/create', {
+			container,
+			model,
 			options,
 		} );
+
+		$e.internal( 'document/history/end-log', { id: historyId } );
+
+		return widget;
+	},
+
+	onDrop( event, options ) {
+		const input = event.originalEvent.dataTransfer.files;
+
+		if ( input.length ) {
+			$e.run( 'editor/browser-import/import', {
+				input,
+				target: this.getContainer(),
+				options: { event, target: { at: options.at } },
+			} );
+
+			return;
+		}
+
+		const args = {};
+
+		args.model = Object.fromEntries(
+			Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+				// The `custom` property is responsible for storing global-widgets related data.
+				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
+		);
+
+		args.container = this.getContainer();
+		args.options = options;
+
+		$e.run( 'preview/drop', args );
+	},
+
+	getHistoryType( event ) {
+		if ( event ) {
+			if ( event.originalEvent ) {
+				event = event.originalEvent;
+			}
+
+			switch ( event.constructor.name ) {
+				case 'DragEvent':
+					return 'import';
+				case 'ClipboardEvent':
+					return 'paste';
+			}
+		}
+
+		return 'add';
 	},
 
 	cloneItem: function( item ) {
@@ -138,3 +232,25 @@ module.exports = Marionette.CompositeView.extend( {
 		return false;
 	},
 } );
+
+/**
+ * @inheritDoc
+ * @source https://marionettejs.com/docs/v2.4.5/marionette.collectionview.html#collectionviews-buildchildview
+ *
+ * Since Elementor created custom container(bridge) between view, model, settings, children, parent and so on,
+ * the container requires the parent view for proper work, but in 'marionettejs', the parent view is not available
+ * during the `buildChildView` method, but actually exist, Elementor modified the `buildChildView` method to
+ * set the parent view as a property `_parent` of the child view.
+ * Anyways later, the `_parent` property is set by: 'marionettejs' to same view.
+ */
+Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewClass, childViewOptions ) {
+	const options = _.extend( { model: child }, childViewOptions ),
+		childView = new ChildViewClass( options );
+
+	// `ELEMENTOR EDITING`: Fix `_parent` not available on render.
+	childView._parent = this;
+
+	Marionette.MonitorDOMRefresh( childView );
+
+	return childView;
+};

@@ -56,5 +56,10 @@
 
 	&-items {
 		padding: 0 10px;
+
+		&-empty {
+			grid-column-start: 1;
+			grid-column-end: 3;
+		}
 	}
 }

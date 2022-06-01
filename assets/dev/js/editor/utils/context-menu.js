@@ -2,6 +2,7 @@ module.exports = elementorModules.Module.extend( {
 
 	getDefaultSettings: function() {
 		return {
+			context: 'preview',
 			actions: {},
 			classes: {
 				list: 'elementor-context-menu-list',
@@ -82,6 +83,20 @@ module.exports = elementorModules.Module.extend( {
 		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
 	},
 
+	/**
+	 * Update the action title.
+	 *
+	 * Sometimes the action title should dynamically change. This can be done by passing a function as the `title`
+	 * property when initializing the context-menu, and here it actually invoked and assigned as the title.
+	 *
+	 * @param action
+	 */
+	updateActionTitle: function( action ) {
+		if ( 'function' === typeof action.title ) {
+			action.$item.find( '.' + this.getSettings( 'classes' ).itemTitle ).text( action.title() );
+		}
+	},
+
 	isActionEnabled: function( action ) {
 		if ( ! action.callback && ! action.groups ) {
 			return false;
@@ -108,7 +123,7 @@ module.exports = elementorModules.Module.extend( {
 				modal = elementorCommon.dialogsManager.createWidget( 'simple', {
 					className: 'elementor-context-menu',
 					message: this.buildActionsList(),
-					iframe: elementor.$preview,
+					iframe: 'preview' === this.getSettings( 'context' ) ? elementor.$preview : null,
 					effects: {
 						hide: 'hide',
 						show: 'show',
@@ -145,6 +160,8 @@ module.exports = elementorModules.Module.extend( {
 					var isActionVisible = false !== action.isVisible;
 
 					self.toggleActionVisibility( action, isActionVisible );
+
+					self.updateActionTitle( action );
 
 					if ( isActionVisible ) {
 						self.toggleActionUsability( action, self.isActionEnabled( action ) );

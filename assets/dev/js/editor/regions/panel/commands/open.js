@@ -1,9 +1,5 @@
-import CommandBase from 'elementor-api/modules/command-base';
-// import Panel from '../panel';
-export class Open extends CommandBase {
+export class Open extends $e.modules.CommandBase {
 	apply() {
-		// const panel = new Panel();
-		// panel.open();
 		elementor.changeEditMode( 'edit' );
 	}
 }

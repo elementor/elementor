@@ -2,7 +2,7 @@
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
 use Elementor\Plugin;
-use Elementor\Data\Base\Controller;
+use Elementor\Data\V2\Base\Controller;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Library\User_Favorites;
 

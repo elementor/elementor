@@ -100,7 +100,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		// Create and inject pro dynamic teaser template if Pro is not installed
 		if ( ! elementor.helpers.hasPro() && Object.keys( tags ).length ) {
-			const proTeaser = Marionette.Renderer.render( '#tmpl-elementor-dynamic-tags-promo' );
+			const proTeaser = Marionette.Renderer.render( '#tmpl-elementor-dynamic-tags-promo', {
+				promotionUrl: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
+			} );
 
 			$tagsListInner.append( proTeaser );
 		}
@@ -202,7 +204,7 @@ module.exports = Marionette.Behavior.extend( {
 			message: message,
 			top: '-10',
 			element: this.ui.dynamicSwitcher,
-			actionURL: elementor.config.dynamicPromotionURL,
+			actionURL: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
 		} );
 	},
 

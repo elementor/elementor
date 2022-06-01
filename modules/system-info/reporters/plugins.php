@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Plugins extends Base {
+class Plugins extends Base_Plugin {
 
 	/**
 	 * Active plugins.

@@ -73,14 +73,21 @@ class Settings_Layout extends Tab_Base {
 				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
+					'.e-container' => '--container-max-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
 
+		$is_container_active = Plugin::instance()->experiments->is_feature_active( 'container' );
+
+		$widgets_space_label = $is_container_active
+			? esc_html__( 'Elements Gap', 'elementor' )
+			: esc_html__( 'Widgets Space', 'elementor' );
+
 		$this->add_control(
 			'space_between_widgets',
 			[
-				'label' => esc_html__( 'Widgets Space', 'elementor' ) . ' (px)',
+				'label' => $widgets_space_label . ' (px)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 20,
@@ -91,10 +98,13 @@ class Settings_Layout extends Tab_Base {
 						'max' => 40,
 					],
 				],
-				'placeholder' => '20',
+				'placeholder' => [
+					'size' => '20',
+				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 				'selectors' => [
 					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);

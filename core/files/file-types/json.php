@@ -19,4 +19,17 @@ class Json extends Base {
 	public function get_file_extension() {
 		return 'json';
 	}
+
+	/**
+	 * Get Mime Type
+	 *
+	 * Returns the file type's mime type
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return string mime type
+	 */
+	public function get_mime_type() {
+		return 'application/json';
+	}
 }

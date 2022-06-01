@@ -70,6 +70,14 @@ const Preview = BaseSectionsContainerView.extend( {
 		];
 	},
 
+	createElementFromModel: function( model, options = {} ) {
+		return BaseSectionsContainerView.prototype.createElementFromModel.call(
+			this,
+			model,
+			{ ...options, shouldWrap: 'container' !== model.elType },
+		);
+	},
+
 	onRender: function() {
 		let $contentContainer;
 

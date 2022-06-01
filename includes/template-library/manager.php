@@ -55,7 +55,7 @@ class Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		Plugin::$instance->data_manager->register_controller( Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		$this->register_default_sources();
 
@@ -450,17 +450,45 @@ class Manager {
 	 * @return mixed Whether the export succeeded or failed.
 	 */
 	public function import_template( array $data ) {
+		// If the template is a JSON file, allow uploading it.
+		add_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		add_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
+
 		// Imported templates can be either JSON files, or Zip files containing multiple JSON files
 		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, [ 'zip', 'json' ] );
 
+		remove_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		remove_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
+
 		if ( is_wp_error( $upload_result ) ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+
 			return $upload_result;
 		}
 
 		/** @var Source_Local $source_local */
 		$source_local = $this->get_source( 'local' );
 
-		return $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+		$import_result = $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+
+		// Remove the temporary directory generated for the stream-uploaded file.
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+
+		return $import_result;
+	}
+
+	/**
+	 * Enable JSON Template Upload
+	 *
+	 * Runs on the 'elementor/files/allow-file-type/json' Uploads Manager filter.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * return bool
+	 */
+	public function enable_json_template_upload() {
+		return true;
 	}
 
 	/**
@@ -648,7 +676,7 @@ class Manager {
 	 * @return \WP_Error|true True on success, 'WP_Error' otherwise.
 	 */
 	private function ensure_args( array $required_args, array $specified_args ) {
-		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
+		$not_specified_args = array_diff( $required_args, array_keys( $specified_args ) );
 
 		if ( $not_specified_args ) {
 			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) "%s" not specified.', implode( ', ', $not_specified_args ) ) );

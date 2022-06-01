@@ -1,9 +1,8 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits\Endpoints;
 
-use Elementor\Data\Base\Endpoint;
+use Elementor\Data\V2\Base\Endpoint;
 use Elementor\Core\App\Modules\KitLibrary\Data\Kits\Controller;
-use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,33 +16,19 @@ class Download_Link extends Endpoint {
 		return 'download-link';
 	}
 
+	public function get_format() {
+		return 'kits/download-link/{id}';
+	}
+
 	protected function register() {
-		$this->register_route(
-			'/(?P<id>[\w-]+)/',
-			\WP_REST_Server::READABLE,
-			function ( $request ) {
-				return $this->base_callback( \WP_REST_Server::READABLE, $request, false );
-			},
-			[
-				'id' => [
-					'description' => 'Unique identifier for the object.',
-					'type' => 'string',
-					'required' => true,
-				],
-			]
-		);
+		$this->register_item_route( \WP_REST_Server::READABLE, [
+			'id_arg_type_regex' => '[\w]+',
+		] );
 	}
 
 	public function get_item( $id, $request ) {
 		$repository = $this->controller->get_repository();
-
-		try {
-			$data = $repository->get_download_link( $id );
-		} catch ( Wp_Error_Exception $exception ) {
-			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
-		} catch ( \Exception $exception ) {
-			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
-		}
+		$data = $repository->get_download_link( $id );
 
 		return [
 			'data' => $data,

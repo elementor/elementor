@@ -1,13 +1,15 @@
 import Header from '../../components/layout/header';
 import { ModalProvider, Heading, Text, Button } from '@elementor/app-ui';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { useNavigate } from '@reach/router';
+import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 
 import './index-header.scss';
 
 export default function IndexHeader( props ) {
 	const navigate = useNavigate();
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
+	const importRef = useRef();
 
 	const buttons = useMemo( () => [
 		{
@@ -29,6 +31,7 @@ export default function IndexHeader( props ) {
 			text: __( 'Import', 'elementor-pro' ),
 			hideText: true,
 			icon: 'eicon-upload-circle-o',
+			elRef: importRef,
 			onClick: () => navigate( '/import?referrer=kit-library' ),
 		},
 	], [ props.isFetching, props.refetch ] );
@@ -36,6 +39,12 @@ export default function IndexHeader( props ) {
 	return (
 		<>
 			<Header buttons={ buttons }/>
+			<PopoverDialog
+				targetRef={ importRef }
+				wrapperClass="e-kit-library__tooltip"
+			>
+				{ __( 'Import Kit', 'elementor' ) }
+			</PopoverDialog>
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) } show={ isInfoModalOpen } setShow={ setIsInfoModalOpen }>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s a kit?', 'elementor' ) }</Heading>

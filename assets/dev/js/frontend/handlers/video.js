@@ -5,6 +5,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
 				video: '.elementor-video',
 				videoIframe: '.elementor-video-iframe',
+				playIcon: '.elementor-custom-embed-play',
 			},
 		};
 	}
@@ -16,6 +17,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
 			$video: this.$element.find( selectors.video ),
 			$videoIframe: this.$element.find( selectors.videoIframe ),
+			$playIcon: this.$element.find( selectors.playIcon ),
 		};
 	}
 
@@ -119,6 +121,16 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 	bindEvents() {
 		this.elements.$imageOverlay.on( 'click', this.handleVideo.bind( this ) );
+		this.elements.$playIcon.on( 'keydown', ( event ) => {
+			const playKeys = [
+				13, // Enter key.
+				32, // Space bar key.
+			];
+
+			if ( playKeys.includes( event.keyCode ) ) {
+				this.handleVideo();
+			}
+		} );
 	}
 
 	onInit() {

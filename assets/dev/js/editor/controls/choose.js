@@ -64,7 +64,7 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	onBaseInputChange: function( event ) {
+	onBaseInputChange: function() {
 		ControlBaseDataView.prototype.onBaseInputChange.apply( this, arguments );
 
 		this.updatePlaceholder();

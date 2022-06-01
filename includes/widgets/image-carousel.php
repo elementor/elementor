@@ -198,6 +198,9 @@ class Widget_Image_Carousel extends Widget_Base {
 					'link_to' => 'custom',
 				],
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -248,6 +251,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			'section_additional_options',
 			[
 				'label' => esc_html__( 'Additional Options', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'lazyload',
+			[
+				'label' => esc_html__( 'Lazyload', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 			]
 		);
 
@@ -439,6 +451,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev, {{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev svg, {{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next svg' => 'fill: {{VALUE}};',
 				],
 				'condition' => [
 					'navigation' => [ 'arrows', 'both' ],
@@ -449,7 +462,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'heading_style_dots',
 			[
-				'label' => esc_html__( 'Dots', 'elementor' ),
+				'label' => esc_html__( 'Pagination', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 				'condition' => [
@@ -496,9 +509,24 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'dots_color',
+			'dots_inactive_color',
 			[
 				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					// The opacity property will override the default inactive dot color which is opacity 0.2.
+					'{{WRAPPER}} .swiper-pagination-bullet:not(.swiper-pagination-bullet-active)' => 'background: {{VALUE}}; opacity: 1',
+				],
+				'condition' => [
+					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'dots_color',
+			[
+				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}};',
@@ -696,6 +724,8 @@ class Widget_Image_Carousel extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$lazyload = 'yes' === $settings['lazyload'];
+
 		if ( empty( $settings['carousel'] ) ) {
 			return;
 		}
@@ -709,7 +739,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_url = $attachment['url'];
 			}
 
-			$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			if ( $lazyload ) {
+				$image_html = '<img class="swiper-slide-image swiper-lazy" data-src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			} else {
+				$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			}
 
 			$link_tag = '';
 
@@ -734,6 +768,10 @@ class Widget_Image_Carousel extends Widget_Base {
 			$image_caption = $this->get_image_caption( $attachment );
 
 			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
+
+			if ( $lazyload ) {
+				$slide_html .= '<div class="swiper-lazy-preloader"></div>';
+			}
 
 			if ( ! empty( $image_caption ) ) {
 				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
@@ -786,11 +824,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				<?php endif; ?>
 				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev">
-						<i class="eicon-chevron-left" aria-hidden="true"></i>
+						<?php $this->render_swiper_button( 'previous' ); ?>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous', 'elementor' ); ?></span>
 					</div>
 					<div class="elementor-swiper-button elementor-swiper-button-next">
-						<i class="eicon-chevron-right" aria-hidden="true"></i>
+						<?php $this->render_swiper_button( 'next' ); ?>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Next', 'elementor' ); ?></span>
 					</div>
 				<?php endif; ?>
@@ -856,5 +894,16 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		return $attachment_post->post_content;
+	}
+
+	private function render_swiper_button( $type ) {
+		$direction = 'next' === $type ? 'right' : 'left';
+
+		$icon_value = 'eicon-chevron-' . $direction;
+
+		Icons_Manager::render_icon( [
+			'library' => 'eicons',
+			'value' => $icon_value,
+		], [ 'aria-hidden' => 'true' ] );
 	}
 }

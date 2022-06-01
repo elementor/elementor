@@ -39,6 +39,7 @@ const getBuildFiles = [
 	'!README.md',
 	'!phpcs.xml',
 	'!tests/**',
+	'!tmp/**',
 	'!vendor/**',
 	'!yarn.lock',
 	'!*~',

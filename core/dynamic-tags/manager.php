@@ -250,15 +250,12 @@ class Manager {
 			 *
 			 * @param Manager $this Dynamic tags manager.
 			 */
-			// TODO: Uncomment when Pro uses the new hook.
-			//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
-			//	'elementor/dynamic_tags/register_tags',
-			//	[ $this ],
-			//	'3.5.0',
-			//	'elementor/dynamic_tags/register'
-			//);
-
-			do_action( 'elementor/dynamic_tags/register_tags', $this );
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+				'elementor/dynamic_tags/register_tags',
+				[ $this ],
+				'3.5.0',
+				'elementor/dynamic_tags/register'
+			);
 		}
 
 		if ( ! did_action( 'elementor/dynamic_tags/register' ) ) {
@@ -285,12 +282,11 @@ class Manager {
 	 * @param string $class
 	 */
 	public function register_tag( $class ) {
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-		//	__METHOD__,
-		//	'3.5.0',
-		//	'register'
-		//);
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
 
 		/** @var Base_Tag $tag */
 		$instance = new $class();
@@ -323,12 +319,11 @@ class Manager {
 	 * @param string $tag_name
 	 */
 	public function unregister_tag( $tag_name ) {
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-		//	__METHOD__,
-		//	'3.5.0',
-		//	'unregister'
-		//);
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'unregister'
+		);
 
 		$this->unregister( $tag_name );
 	}

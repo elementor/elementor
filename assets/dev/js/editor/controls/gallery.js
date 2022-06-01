@@ -40,7 +40,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		$galleryThumbnails.empty();
 
-		this.ui.status.text( hasImages ? sprintf( '%s Images Selected', imagesCount ) : __( 'No Images Selected', 'elementor' ) );
+		/* translators: %s: Selected images count. */
+		this.ui.status.text( hasImages ? sprintf( __( '%s Images Selected', 'elementor' ), imagesCount ) : __( 'No Images Selected', 'elementor' ) );
 
 		if ( ! hasImages ) {
 			return;

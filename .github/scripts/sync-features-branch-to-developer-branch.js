@@ -32,6 +32,9 @@ const { owner, repo } = repoToOwnerAndOwner(REPOSITORY);
 			try {
 				await mergeBranch(TOKEN, owner, repo, TARGET_BRANCH, branchName, `Auto merge feature branch: ${branchName}`);
 			} catch (err) {
+				if (err.status === 401) {
+					throw err;
+				}
 				failedBranches.push(branchName);
 			}
 		}

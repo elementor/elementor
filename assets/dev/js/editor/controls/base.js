@@ -77,6 +77,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 							settings: settingsModel,
 							label,
 							view: false,
+							parent: false,
 							renderer: false,
 							controls: settingsModel.options.controls,
 						} );
@@ -105,6 +106,14 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
 		this.listenTo( settings, 'change', this.onAfterChange );
+
+		if ( this.model.attributes.responsive ) {
+			elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+		}
+	},
+
+	onDeviceModeChange: function() {
+		this.toggleControlVisibility();
 	},
 
 	onAfterChange: function() {
@@ -115,7 +124,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
-		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes );
+		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes, settings.controls );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 

@@ -30,15 +30,39 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	onInit() {
 		this.elements = this.getDefaultElements();
 
-		// Generate unique IDs using the wrapper's `data-id`.
-		this.pathId = `e-path-${ this.elements.widgetWrapper.dataset.id }`;
-		this.textPathId = `e-text-path-${ this.elements.widgetWrapper.dataset.id }`;
+		this.fetchSVG().then( () => {
+			// Generate unique IDs using the wrapper's `data-id`.
+			this.pathId = `e-path-${ this.elements.widgetWrapper.dataset.id }`;
+			this.textPathId = `e-text-path-${ this.elements.widgetWrapper.dataset.id }`;
 
-		if ( ! this.elements.svg ) {
-			return;
+			if ( ! this.elements.svg ) {
+				return;
+			}
+
+			this.initTextPath();
+		} );
+	}
+
+	/**
+	 * Fetch & Inject the SVG markup.
+	 *
+	 * @return {Promise}
+	 */
+	fetchSVG() {
+		const { url } = this.elements.pathContainer.dataset;
+
+		if ( ! url || ! url.endsWith( '.svg' ) ) {
+			return Promise.reject( url );
 		}
 
-		this.initTextPath();
+		return fetch( url )
+			.then( ( res ) => res.text() )
+			.then( ( svg ) => {
+				this.elements.pathContainer.innerHTML = svg;
+
+				// Re-initialize the elements, so the SVG tag will be added.
+				this.elements = this.getDefaultElements();
+			} );
 	}
 
 	/**

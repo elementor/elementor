@@ -2,10 +2,10 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
-use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Exception;
 
 class Test_Endpoint extends Elementor_Test_Base {

@@ -1,4 +1,3 @@
-import Kit from '../models/kit';
 import { useCallback } from 'react';
 import { KEY as kitsKey } from '../hooks/use-kits';
 import { KEY as kitKey } from '../hooks/use-kit';

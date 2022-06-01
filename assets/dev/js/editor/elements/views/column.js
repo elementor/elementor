@@ -55,20 +55,20 @@ ColumnView = BaseElementView.extend( {
 			editTools = {};
 
 		editTools.edit = {
-			/* translators: %s: Element Name. */
+			/* translators: %s: Element name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'column',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element Name. */
+				/* translators: %s: Element name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 
 			editTools.add = {
-				/* translators: %s: Element Name. */
+				/* translators: %s: Element name. */
 				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
 			};
@@ -104,7 +104,7 @@ ColumnView = BaseElementView.extend( {
                     icon: 'eicon-plus',
 					title: __( 'Add New Column', 'elementor' ),
 					callback: this.addNewColumn.bind( this ),
-					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS,
+					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS && ! elementor.selection.isMultiple(),
 				},
 			],
 		} );
@@ -125,6 +125,10 @@ ColumnView = BaseElementView.extend( {
 		}
 
 		var elType = elementView.model.get( 'elType' );
+
+		if ( 'container' === elType ) {
+			return true;
+		}
 
 		if ( 'section' === elType ) {
 			return ! this.isInner();
@@ -193,7 +197,19 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-		const isDomOptimizationActive = elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ];
+		const isDomOptimizationActive = elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ],
+			getDropIndex = ( side, event ) => {
+				let newIndex = jQuery( event.currentTarget ).index();
+
+				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
+				if ( 'bottom' === side && ! isDomOptimizationActive ) {
+					newIndex++;
+				} else if ( 'top' === side && isDomOptimizationActive ) {
+					newIndex--;
+				}
+
+				return newIndex;
+			};
 
 		let itemsClasses = '';
 
@@ -218,21 +234,13 @@ ColumnView = BaseElementView.extend( {
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: ( side, event ) => {
-				event.stopPropagation();
-
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				let newIndex = jQuery( event.currentTarget ).index();
-
-				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
-				if ( 'bottom' === side && ! isDomOptimizationActive ) {
-					newIndex++;
-				} else if ( 'top' === side && isDomOptimizationActive ) {
-					newIndex--;
-				}
-
-				this.addElementFromPanel( { at: newIndex } );
+				this.onDrop(
+					event,
+					{ side, at: getDropIndex( side, event ) }
+				);
 			},
 		} );
 	},

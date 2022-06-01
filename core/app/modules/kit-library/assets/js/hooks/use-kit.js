@@ -45,7 +45,7 @@ function usePlaceholderDataCallback( id ) {
  * @param id
  * @returns {Promise<Kit>}
  */
-function fetchKitItem( { queryKey: [ key, id ] } ) {
+function fetchKitItem( { queryKey: [ , id ] } ) {
 	return $e.data.get( 'kits/index', { id }, { refresh: true } )
 		.then( ( response ) => response.data )
 		.then( ( { data } ) => Kit.createFromResponse( data ) );

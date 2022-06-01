@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
+use Elementor\Plugin;
 use Elementor\Settings_Page;
 use Elementor\Settings;
 use Elementor\Utils;
@@ -242,7 +243,10 @@ class Role_Manager extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
+		}
+
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
 	}
 }

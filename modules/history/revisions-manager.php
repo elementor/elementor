@@ -175,7 +175,7 @@ class Revisions_Manager {
 				'author' => self::$authors[ $revision->post_author ]['display_name'],
 				'timestamp' => strtotime( $revision->post_modified ),
 				'date' => sprintf(
-					/* translators: 1: Human readable time difference, 2: Date */
+					/* translators: 1: Human readable time difference, 2: Date. */
 					__( '%1$s ago (%2$s)', 'elementor' ),
 					$human_time,
 					$date

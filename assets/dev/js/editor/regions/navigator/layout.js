@@ -51,6 +51,13 @@ export default class extends Marionette.LayoutView {
 		this.elements.currentView.recursiveChildInvoke( 'deactivateMouseInteraction' );
 	}
 
+	/**
+	 * Recursively update elements selection in the navigator.
+	 */
+	updateSelection() {
+		this.elements.currentView.recursiveChildInvoke( 'updateSelection' );
+	}
+
 	onShow() {
 		this.elements.show( new ElementView( {
 			model: elementor.elementsModel,

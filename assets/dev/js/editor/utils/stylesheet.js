@@ -54,7 +54,22 @@
 				var aQuery = hashToQuery( a ),
 					bQuery = hashToQuery( b );
 
-				return bQuery.max - aQuery.max;
+				// Calculation should be either `max - max` or `min - min`.
+				// Caused when the `min_affected_device` is equal to the current responsive control.
+				// (e.g. `min_affected_device = tablet`, and the user is changing a tablet control).
+				if ( aQuery.max && bQuery.max ) {
+					return bQuery.max - aQuery.max;
+				}
+
+				if ( aQuery.min && bQuery.min ) {
+					return bQuery.min - aQuery.min;
+				}
+
+				// If one of the queries has only `min` and the other has only `max`.
+				const aQueryValue = aQuery.max ?? aQuery.min;
+				const bQueryValue = bQuery.max ?? bQuery.min;
+
+				return bQueryValue - aQueryValue;
 			} );
 
 			var sortedRules = {};

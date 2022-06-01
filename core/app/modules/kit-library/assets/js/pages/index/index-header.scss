@@ -7,3 +7,14 @@
 .e-kit-library-header-info-modal-container {
 	margin-bottom: spacing( 44 );
 }
+
+.e-kit-library__tooltip {
+	padding: 5px 12px;
+	color: $white;
+	background-color: $color-gray-anthracite;
+	font-size: 10px;
+
+	&:before {
+		border-bottom-color: $color-gray-anthracite;
+	}
+}

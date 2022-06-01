@@ -291,4 +291,19 @@ class User {
 
 		return $user_introduction_meta;
 	}
+
+	/**
+	 * Get a user option with default value as fallback.
+	 *
+	 * @param string $option  - Option key.
+	 * @param int    $user_id - User ID
+	 * @param mixed  $default - Default fallback value.
+	 *
+	 * @return mixed
+	 */
+	public static function get_user_option_with_default( $option, $user_id, $default ) {
+		$value = get_user_option( $option, $user_id );
+
+		return ( false === $value ) ? $default : $value;
+	}
 }

@@ -5,6 +5,7 @@ var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 module.exports = Marionette.Behavior.extend( {
 
 	defaults: {
+		context: 'preview',
 		groups: [],
 		eventTargets: [ 'el' ],
 	},
@@ -38,22 +39,25 @@ module.exports = Marionette.Behavior.extend( {
 			afterGroupIndex = contextMenuGroups.length;
 		}
 
-		contextMenuGroups.splice( afterGroupIndex, 0, {
-			name: 'tools',
-			actions: [
-				{
-					name: 'navigator',
-					title: __( 'Navigator', 'elementor' ),
-					callback: () => $e.route( 'navigator', {
-						reOpen: true,
-						model: this.view.model,
-					} ),
-				},
-			],
-		} );
+		if ( 'preview' === this.getOption( 'context' ) ) {
+			contextMenuGroups.splice( afterGroupIndex, 0, {
+				name: 'tools',
+				actions: [
+					{
+						name: 'navigator',
+						title: __( 'Navigator', 'elementor' ),
+						callback: () => $e.route( 'navigator', {
+							reOpen: true,
+							model: this.view.model,
+						} ),
+					},
+				],
+			} );
+		}
 
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups,
+			context: this.getOption( 'context' ),
 		} );
 
 		this.contextMenu.getModal().on( 'hide', () => this.onContextMenuHide() );
@@ -64,6 +68,10 @@ module.exports = Marionette.Behavior.extend( {
 			this.initContextMenu();
 		}
 
+		if ( 'preview' === this.getOption( 'context' ) && ! elementor.selection.has( this.view.getContainer?.() ) ) {
+			$e.run( 'document/elements/deselect-all' );
+		}
+
 		return this.contextMenu;
 	},
 
@@ -72,9 +80,11 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		const isAddSectionView = this.view instanceof AddSectionBase;
-		if ( ! isAddSectionView && ( ! this.view.container || ! this.view.container.isDesignable() ) ) {
+		if ( 'preview' === this.getOption( 'context' ) ) {
+			const isAddSectionView = this.view instanceof AddSectionBase;
+			if ( ! isAddSectionView && ( ! this.view.container || ! this.view.container.isDesignable() ) ) {
 				return;
+			}
 		}
 
 		event.preventDefault();
@@ -83,7 +93,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		// Disable sortable when context menu opened
 		// TODO: Should be in UI hook when the context menu will move to command
-		this.view._parent.triggerMethod( 'toggleSortMode', false );
+		if ( this.view._parent ) {
+			this.view._parent.triggerMethod( 'toggleSortMode', false );
+		}
 
 		this.getContextMenu().show( event );
 
@@ -109,7 +121,9 @@ module.exports = Marionette.Behavior.extend( {
 	onContextMenuHide: function() {
 		// enable sortable when context menu closed
 		// TODO: Should be in UI hook when the context menu will move to command
-		this.view._parent.triggerMethod( 'toggleSortMode', true );
+		if ( this.view._parent ) {
+			this.view._parent.triggerMethod( 'toggleSortMode', true );
+		}
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', null );
 	},

@@ -1,6 +1,6 @@
 import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
-import ImportFailedDialog from '../import-failed-dialog/import-failed-dialog';
+import ProcessFailedDialog from '../process-failed-dialog/process-failed-dialog';
 import WizardStep from '../../ui/wizard-step/wizard-step';
 
 export default function FileProcess( props ) {
@@ -16,12 +16,14 @@ export default function FileProcess( props ) {
 					{ __( "Don't close this window until the process is finished.", 'elementor' ) }
 				</>
 			}
+			info={ props.info }
 		>
-			{ props.isError &&
-			<ImportFailedDialog
-				onApprove={ props.onDialogApprove }
-				onDismiss={ props.onDialogDismiss }
-			/>
+			{ ! ! props.errorType &&
+				<ProcessFailedDialog
+					onApprove={ props.onDialogApprove }
+					onDismiss={ props.onDialogDismiss }
+					errorType={ props.errorType }
+				/>
 			}
 		</WizardStep>
 	);
@@ -29,12 +31,12 @@ export default function FileProcess( props ) {
 
 FileProcess.propTypes = {
 	className: PropTypes.string,
-	onDialogApprove: PropTypes.func.isRequired,
-	onDialogDismiss: PropTypes.func.isRequired,
-	isError: PropTypes.bool,
+	onDialogApprove: PropTypes.func,
+	onDialogDismiss: PropTypes.func,
+	errorType: PropTypes.string,
+	info: PropTypes.string,
 };
 
 FileProcess.defaultProps = {
 	className: '',
-	isError: false,
 };

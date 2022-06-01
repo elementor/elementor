@@ -38,7 +38,7 @@ export default class extends BaseRegion {
 
 	// getDefaultStorage() {
 	// 	return {
-	// 		visible: false,
+	// 		visible: true,
 	// 		size: {
 	// 			width: '',
 	// 			height: '',
@@ -294,7 +294,7 @@ export default class extends BaseRegion {
 			this.show( new NavigatorLayout() );
 			this.initBehavior();
 
-			if ( this.storage.visible ) {
+			if ( false !== this.storage.visible ) {
 				$e.route( 'navigator' );
 			}
 		}

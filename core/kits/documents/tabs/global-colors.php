@@ -96,6 +96,14 @@ class Global_Colors extends Tab_Base {
 		];
 
 		$this->add_control(
+			'heading_system_colors',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'System Colors', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'system_colors',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
@@ -105,6 +113,15 @@ class Global_Colors extends Tab_Base {
 					'add' => false,
 					'remove' => false,
 				],
+				'separator' => 'after',
+			]
+		);
+
+		$this->add_control(
+			'heading_custom_colors',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Custom Colors', 'elementor' ),
 			]
 		);
 

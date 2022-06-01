@@ -1,6 +1,8 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 import environment from '../../../../core/common/assets/js/utils/environment';
+import Events from 'elementor-utils/events';
+import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -18,10 +20,14 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
+				$importNowButton: $( '#e-import-template-action' ),
 				$importArea: $( '#elementor-import-template-area' ),
+				$importForm: $( '#elementor-import-template-form' ),
+				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
+				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 
@@ -194,6 +200,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				event.preventDefault();
 				const $updateButton = $( this );
 				$updateButton.addClass( 'loading' );
+
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'confirm_fa_migration_admin_modal',
 					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
@@ -205,15 +212,28 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 					defaultOption: 'confirm',
 					onConfirm: () => {
 						$updateButton.removeClass( 'error' ).addClass( 'loading' );
-						$.post( ajaxurl, $updateButton.data() )
+
+						const {
+							_nonce,
+							action,
+							redirectUrl,
+						} = $updateButton.data();
+
+						$.post( ajaxurl, { action, _nonce } )
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
-								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
-								const redirectTo = ( location.search.split( 'redirect_to=' )[ 1 ] || '' ).split( '&' )[ 0 ];
-								if ( redirectTo ) {
-									location.href = decodeURIComponent( redirectTo );
+
+								const messageElement = document.createElement( 'p' );
+								messageElement.appendChild( document.createTextNode( response.data.message ) );
+
+								$( '#elementor_upgrade_fa_button' ).parent().append( messageElement );
+
+								if ( redirectUrl ) {
+									location.href = decodeURIComponent( redirectUrl );
+
 									return;
 								}
+
 								history.go( -1 );
 							} )
 							.fail( function() {
@@ -310,7 +330,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 
 			this.goToSettingsTabFromHash();
 
-			this.openGetHelpInNewTab();
+			this.openLinksInNewTab();
 
 			this.addUserAgentClasses();
 
@@ -334,8 +354,26 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			} );
 		},
 
-		openGetHelpInNewTab: function() {
-			this.elements.$menuGetHelpLink.attr( 'target', '_blank' );
+		/**
+		 * Open Links in New Tab
+		 *
+		 * Adds a `target="_blank"` attribute to the Admin Dashboard menu items specified in the `elements` array,
+		 * if the elements are found in the DOM. The items in the `elements` array should be jQuery instances.
+		 *
+		 * @since 3.6.0
+		 */
+		openLinksInNewTab: function() {
+			const elements = [
+				this.elements.$menuGetHelpLink,
+				this.elements.$menuGoProLink,
+			];
+
+			elements.forEach( ( $element ) => {
+				// Only add the attribute if the element is found.
+				if ( $element.length ) {
+					$element.attr( 'target', '_blank' );
+				}
+			} );
 		},
 
 		initTemplatesImport: function() {
@@ -343,9 +381,10 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				return;
 			}
 
-			var self = this,
+			const self = this,
 				$importButton = self.elements.$importButton,
-				$importArea = self.elements.$importArea;
+				$importArea = self.elements.$importArea,
+				$importNowButton = self.elements.$importNowButton;
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
@@ -355,6 +394,18 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
+			} );
+
+			$importNowButton.on( 'click', ( event ) => {
+				if ( self.elements.$importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+					event.preventDefault();
+
+					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						self.elements.$importForm.trigger( 'submit' );
+					} );
+
+					enableUnfilteredFilesModal.show();
+				}
 			} );
 		},
 
@@ -481,6 +532,6 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 	$( function() {
 		window.elementorAdmin = new ElementorAdmin();
 
-		elementorCommon.elements.$window.trigger( 'elementor/admin/init' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/admin/init' );
 	} );
 }( jQuery ) );
