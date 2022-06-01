@@ -5,7 +5,7 @@ namespace Elementor\Tests\Phpunit\Includes\Widgets;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Elementor_Test_Element_Base extends Elementor_Test_Base {
+class Test_Menu_Anchor extends Elementor_Test_Base {
 	const MOCK = [
 		'id' => 'e8e55a1',
 		'elType' => 'widget',
