@@ -19,7 +19,7 @@ export class NestedRepeaterProtectedBuildingBlockContainers extends $e.modules.h
 			);
 		}
 
-		return super.getConditions( args, result );
+		return false;
 	}
 
 	apply() {
