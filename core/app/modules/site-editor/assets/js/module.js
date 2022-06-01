@@ -172,7 +172,7 @@ export default class SiteEditor {
 					title: __( 'What is a loop?', 'elementor' ),
 					content: __( 'A Loop is a layout you can customize to display recurring dynamic content - like listings, posts, portfolios, products, , etc.', 'elementor' ),
 					tip: __( 'Start by creating a master item. All the other instances in the grid will match this design. Then go back to the widget in the editor panel and assign both a template and a source of content. Your grid should populate automatically.', 'elementor' ),
-					docs: 'https://www.elementor.com/', // TODO
+					docs: 'https://go.elementor.com/app-theme-builder-loop',
 					video_url: '', // TODO
 				},
 			},
