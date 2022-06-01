@@ -435,7 +435,6 @@ class Container extends Element_Base {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	/**
