@@ -68,6 +68,7 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 
 		return containers;
 	}
+
 	static reducer( state, { payload } ) {
 		const { elementId, parentId, documentId } = payload;
 
