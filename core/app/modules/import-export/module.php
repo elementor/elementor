@@ -323,7 +323,11 @@ class Module extends BaseModule {
 			],
 		];
 
-		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>' . esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' );
+		$home_page_editor_url = $this->get_elementor_editor_home_page_url();
+		$editor_page_link = $home_page_editor_url ? $home_page_editor_url : $this->get_recently_edited_elementor_editor_page_url();
+
+		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>';
+		$info_text .= sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $editor_page_link . '#e:run:panel/global/open&e:route:panel/history/revisions', esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' ) );
 		?>
 
 		<div class="tab-import-export-kit__content">
@@ -379,14 +383,36 @@ class Module extends BaseModule {
 		return $this->get_elementor_page_url( $query->post->ID );
 	}
 
-	private function get_elementor_page_url( $page_id ) {
-		$document = Plugin::$instance->documents->get( $page_id );
+	private function get_recently_edited_elementor_editor_page_url() {
+		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
 
-		if ( ! $document->is_built_with_elementor() ) {
+		if ( ! isset( $query->post ) ) {
 			return '';
 		}
 
-		return $document->get_preview_url();
+		return $this->get_elementor_editor_page_url( $query->post->ID );
+	}
+
+	private function get_elementor_document( $page_id ) {
+		$document = Plugin::$instance->documents->get( $page_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return false;
+		}
+
+		return $document;
+	}
+
+	private function get_elementor_page_url( $page_id ) {
+		$document = $this->get_elementor_document( $page_id );
+
+		return $document ? $document->get_preview_url() : '';
+	}
+
+	private function get_elementor_editor_page_url( $page_id ) {
+		$document = $this->get_elementor_document( $page_id );
+
+		return $document ? $document->get_edit_url() : '';
 	}
 
 	private function get_config_data() {
