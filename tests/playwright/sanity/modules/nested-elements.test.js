@@ -77,6 +77,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 					} );
 
 					test( 'Hook `nested-repeater-create-container` -- Ensure item content get duplicated', async () => {
+						// Arrange.
 						const widgetId = await editor.addWidget( 'tabs-v2' ),
 							containerId = await editor.page.evaluate( ( [ id ] ) => {
 								const container = elementor.getContainer( id );
