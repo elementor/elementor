@@ -1,6 +1,6 @@
 export class NestedRepeaterProtectedBuildingBlockContainers extends $e.modules.hookData.Dependency {
 	getId() {
-		return 'new-nested-repeater-protected-building-block-containers';
+		return 'nested-repeater-protected-building-block-containers';
 	}
 
 	getCommand() {
