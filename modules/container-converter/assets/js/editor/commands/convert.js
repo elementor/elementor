@@ -44,8 +44,10 @@ export class Convert extends $e.modules.document.CommandHistory {
 					settings: container.settings.toJSON( { remove: 'default' } ),
 				},
 				container: rootContainer,
-				options: { at },
-				edit: false,
+				options: {
+					at,
+					edit: false,
+				},
 			} );
 
 			return;
@@ -62,8 +64,10 @@ export class Convert extends $e.modules.document.CommandHistory {
 		const newContainer = $e.run( 'document/elements/create', {
 			model: { elType: 'container', settings },
 			container: rootContainer,
-			options: { at },
-			edit: false,
+			options: {
+				at,
+				edit: false,
+			},
 		} );
 
 		// Recursively convert children to Containers.

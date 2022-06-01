@@ -549,6 +549,7 @@ class Editor {
 			'wp_editor' => $this->get_wp_editor_config(),
 			'settings_page_link' => Settings::get_url(),
 			'tools_page_link' => Tools::get_url(),
+			'tools_page_nonce' => wp_create_nonce( 'tools-page-from-editor' ),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',

@@ -22,8 +22,8 @@ export default function ImportComplete() {
 		{ importedPlugins, uploadedData, importedData, isProInstalledDuringProcess } = importContext.data || {},
 		{ getTemplates, getContent, getWPContent, getPlugins } = useImportedKitData(),
 		{ activePlugins, failedPlugins } = getPlugins( importedPlugins ),
-		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importedData?.configData || {},
-		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
+		{ elementorHomePageUrl, recentlyEditedElementorPageUrl } = importedData?.configData || {},
+		seeItLiveUrl = elementorHomePageUrl || recentlyEditedElementorPageUrl || null,
 		getKitData = () => {
 			if ( ! uploadedData || ! importedData ) {
 				return {};
@@ -57,7 +57,7 @@ export default function ImportComplete() {
 				notice={ (
 					<>
 						<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
-							{ __( 'Click Here', 'elementor' ) }
+							{ __( 'Click here', 'elementor' ) }
 						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
 					</>
 				) }

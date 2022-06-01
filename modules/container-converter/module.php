@@ -49,6 +49,20 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	/**
+	 * Enqueue the module styles.
+	 *
+	 * @return void
+	 */
+	public function enqueue_styles() {
+		wp_enqueue_style(
+			'container-converter',
+			$this->get_css_assets_url( 'modules/container-converter/editor' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
+	/**
 	 * Add a convert button to sections.
 	 *
 	 * @param \Elementor\Controls_Stack $controls_stack
@@ -120,6 +134,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public function __construct() {
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 
 		add_action( 'elementor/element/section/section_layout/after_section_end', function ( Controls_Stack $controls_stack ) {
 			$this->add_section_convert_button( $controls_stack );

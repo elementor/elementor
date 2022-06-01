@@ -199,12 +199,11 @@ class Container extends Element_Base {
 		}
 		?>
 		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php
-		// PHPCS - the variable $negative is getting a setting value with a strict structure.
-		echo var_export( $negative ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::print_unescaped_internal_string( $negative ? 'true' : 'false' );
 		?>">
 			<?php
 			// PHPCS - The file content is being read from a strict file path structure.
-			echo file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo Utils::file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			?>
 		</div>
 		<?php
@@ -350,7 +349,6 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
 			'separator' => 'none',
 		];
@@ -383,8 +381,12 @@ class Container extends Element_Base {
 				'default' => [
 					'unit' => 'px',
 				],
-				// Use the default width from the kit as a placeholder.
-				'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+				'device_args' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						// Use the default width from the kit as a placeholder.
+						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+					],
+				],
 			] )
 		);
 
@@ -448,7 +450,7 @@ class Container extends Element_Base {
 			'' => esc_html__( 'Default', 'elementor' ),
 		] + $possible_tags;
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'html_tag',
 			[
 				'label' => esc_html__( 'HTML Tag', 'elementor' ),
@@ -501,9 +503,6 @@ class Container extends Element_Base {
 						'label' => esc_html_x( 'Elements Gap', 'Flex Container Control', 'elementor' ),
 						// Use the default "elements gap" from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-					],
-					'direction' => [
-						'default' => 'column',
 					],
 				],
 				'condition' => [
@@ -1155,15 +1154,8 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
-				'allowed_dimensions' => 'vertical',
-				'placeholder' => [
-					'top' => '',
-					'right' => 'auto',
-					'bottom' => '',
-					'left' => 'auto',
-				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--margin-top: {{TOP}}{{UNIT}}; --margin-right: {{RIGHT}}{{UNIT}}; --margin-bottom: {{BOTTOM}}{{UNIT}}; --margin-left:{{LEFT}}{{UNIT}};',
 				],
 			]
 		);

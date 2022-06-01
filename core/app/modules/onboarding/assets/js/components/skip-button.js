@@ -18,22 +18,25 @@ export default function SkipButton( props ) {
 			if ( state.nextStep ) {
 				navigate( 'onboarding/' + state.nextStep );
 			}
-		};
+		},
+		action = button.action || skipStep;
+
+	// Make sure the 'action' prop doesn't get printed on the button markup which causes an error.
+	delete button.action;
 
 	// If the button is a link, no onClick functionality should be added.
 	button.onClick = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'skip',
-			step: state.currentStep,
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+			},
 		} );
 
 		if ( ! button.href ) {
-			if ( props.action ) {
-				props.action();
-			} else {
-				skipStep();
-			}
+			action();
 		}
 	};
 
@@ -43,5 +46,4 @@ export default function SkipButton( props ) {
 SkipButton.propTypes = {
 	button: PropTypes.object.isRequired,
 	className: PropTypes.string,
-	action: PropTypes.func,
 };

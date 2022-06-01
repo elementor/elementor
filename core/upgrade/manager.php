@@ -59,7 +59,11 @@ class Manager extends DB_Upgrades_Manager {
 	public static function install_compare( $version, $operator ) {
 		$installs_history = self::get_installs_history();
 
-		return version_compare( key( $installs_history ), $version, $operator );
+		return version_compare(
+			key( $installs_history ),
+			$version ? $version : '0.0.0', // when no version assigned
+			$operator
+		);
 	}
 
 	protected function update_db_version() {

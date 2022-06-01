@@ -1,7 +1,7 @@
 // Most of the code has been copied from `section.js`.
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
-import { DIRECTION_COLUMN, DIRECTION_COLUMN_REVERSE, DIRECTION_ROW, DIRECTION_ROW_REVERSE } from 'elementor-document/ui-states/direction-mode';
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
@@ -35,7 +35,7 @@ const ContainerView = BaseElementView.extend( {
 		const currentDirection = this.container.settings.get( 'flex_direction' );
 
 		return {
-			directionMode: currentDirection || DIRECTION_ROW,
+			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
 	},
 
@@ -96,14 +96,24 @@ const ContainerView = BaseElementView.extend( {
 		return parent.view.getNestingLevel() + 1;
 	},
 
-	getDroppableOptions: function() {
-		// Determine the axis based on the flex direction.
-		const axis = this.getContainer().settings.get( 'flex_direction' ).includes( 'column' ) ?
-			[ 'vertical' ] :
-			[ 'horizontal' ];
+	getDroppableAxis: function() {
+		const isColumnDefault = ( ContainerHelper.DIRECTION_DEFAULT === ContainerHelper.DIRECTION_COLUMN ),
+			currentDirection = this.getContainer().settings.get( 'flex_direction' );
 
+		const axisMap = {
+			[ ContainerHelper.DIRECTION_COLUMN ]: 'vertical',
+			[ ContainerHelper.DIRECTION_COLUMN_REVERSED ]: 'vertical',
+			[ ContainerHelper.DIRECTION_ROW ]: 'horizontal',
+			[ ContainerHelper.DIRECTION_ROW_REVERSED ]: 'horizontal',
+			'': isColumnDefault ? 'vertical' : 'horizontal',
+		};
+
+		return axisMap[ currentDirection ];
+	},
+
+	getDroppableOptions: function() {
 		return {
-			axis,
+			axis: this.getDroppableAxis(),
 			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
@@ -297,6 +307,16 @@ const ContainerView = BaseElementView.extend( {
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		} );
+	},
+
+	renderOnChange: function( settings ) {
+		BaseElementView.prototype.renderOnChange.apply( this, arguments );
+
+		// Re-initialize the droppable in order to make sure the axis works properly.
+		if ( !! settings.changed.flex_direction ) {
+			this.$el.html5Droppable( 'destroy' );
+			this.$el.html5Droppable( this.getDroppableOptions() );
+		}
 	},
 
 	onDragStart: function() {

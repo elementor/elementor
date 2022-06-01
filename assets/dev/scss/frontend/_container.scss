@@ -2,21 +2,28 @@
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--display: flex;
+	--flex-direction: column;
 	--flex-basis: auto;
 	--flex-grow: 0;
 	--flex-shrink: 1;
-	--content-width: var( --container-max-width, 1140px ); // Use the width from `Site Settings` or default to 1140px.;
+	// Use the width from `Site Settings` or default to 1140px.
+	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
+	// isn't working properly.
+	--content-width: Min( 100%, var( --container-max-width, 1140px ) );
 	--width: 100%;
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
-	--margin: 0;
+	--margin-top: 0;
+	--margin-right: 0;
+	--margin-bottom: 0;
+	--margin-left: 0;
 	--padding-top: var( --container-default-padding, 0px );
 	--padding-right: var( --container-default-padding, 0px );
 	--padding-bottom: var( --container-default-padding, 0px );
 	--padding-left: var( --container-default-padding, 0px );
 	--position: relative;
-	--z-index: 0;
+	--z-index: revert;
 	--overflow: visible;
 	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
@@ -28,6 +35,7 @@
 	position: var( --position );
 	display: var( --display );
 	text-align: var( --text-align );
+	flex-direction: var( --flex-direction );
 	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
@@ -40,7 +48,7 @@
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
-	margin: var( --margin );
+	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
 	// Custom content-width hack.
 	padding-left: calc( ( 100% - var( --content-width ) ) / 2 + var( --padding-left ) );
 	padding-right: calc( ( 100% - var( --content-width ) ) / 2 + var( --padding-right ) );
@@ -50,10 +58,10 @@
 	overflow: var( --overflow );
 	transition: var( --transition );
 
-	// Force center only top-level containers.
-	:is( .elementor-section-wrap,/* To support legacy markup */ [data-elementor-id] ) > & {
-		margin-right: auto;
-		margin-left: auto;
+	// Default top-level containers to be centered.
+	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+		--margin-right: auto;
+		--margin-left: auto;
 	}
 
 	.elementor-empty-view {
@@ -155,11 +163,22 @@
 		border-radius: var( --border-radius );
 	}
 
-	// Fix iframe-based widgets (ED-5338).
-	// TODO: Find a better solution.
 	.elementor-widget {
+		// Fix swiper-based widgets (ED-6716).
+		// Since the default is `min-width: auto` for flex items.
+		min-width: 0;
+
+		// Fix iframe-based widgets (ED-5338).
+		// TODO: Find a better solution.
 		&-video,
 		&-google_maps {
+			flex-basis: 100%;
+		}
+
+		// Fix swiper-based widgets broken (ED-6849).
+		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		&.e-widget-swiper {
+			max-width: 100%;
 			flex-basis: 100%;
 		}
 	}

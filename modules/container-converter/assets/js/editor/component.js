@@ -13,13 +13,28 @@ export default class extends $e.modules.ComponentBase {
 	 * @return {void}
 	 */
 	bindEvents() {
-		elementor.channels.editor.on( 'elementorContainerConverter:convert', ( { container } ) => {
-			if ( 'document' === container.type ) {
-				$e.run( 'container-converter/convert-all' );
-				return;
-			}
+		elementor.channels.editor.on( 'elementorContainerConverter:convert', ( { container, el } ) => {
+			const button = el.querySelector( '.elementor-button' );
+			const loadingClass = 'e-loading';
 
-			$e.run( 'container-converter/convert', { container } );
+			button.classList.add( loadingClass );
+
+			// Defer the conversion process in order to force a re-render of the button, since the conversion is
+			// synchronous and blocks the main thread from re-rendering.
+			setTimeout( () => {
+				if ( 'document' === container.type ) {
+					$e.run( 'container-converter/convert-all' );
+				} else {
+					$e.run( 'container-converter/convert', { container } );
+				}
+
+				button.classList.remove( loadingClass );
+				button.setAttribute( 'disabled', true );
+
+				elementor.notifications.showToast( {
+					message: __( 'Your changes have been updated.', 'elementor' ),
+				} );
+			} );
 		} );
 	}
 
