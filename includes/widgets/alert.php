@@ -149,7 +149,7 @@ class Widget_Alert extends Widget_Base {
 		);
 
 		$this->add_control(
-			'selected_icon',
+			'dismiss_icon',
 			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
@@ -487,8 +487,8 @@ class Widget_Alert extends Widget_Base {
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
 				<button type="button" class="elementor-alert-dismiss">
 					<?php
-					if ( ! empty( $settings['selected_icon']['value'] ) ) {
-						Icons_Manager::render_icon( $settings['selected_icon'], [
+					if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
+						Icons_Manager::render_icon( $settings['dismiss_icon'], [
 							'aria-hidden' => 'true',
 						] );
 					} else { ?>
@@ -520,8 +520,8 @@ class Widget_Alert extends Widget_Base {
 			view.addInlineEditingAttributes( 'alert_title', 'none' );
 			view.addInlineEditingAttributes( 'alert_description' );
 
-			var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
+			var iconHTML = elementor.helpers.renderIcon( view, settings.dismiss_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+				migrated = elementor.helpers.isIconMigrated( settings, 'dismiss_icon' );
 			#>
 			<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
 				<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>

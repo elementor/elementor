@@ -175,7 +175,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'navigation_left_icon',
+			'navigation_previous_icon',
 			[
 				'label' => esc_html__( 'Previous Arrow Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
@@ -230,7 +230,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'navigation_right_icon',
+			'navigation_next_icon',
 			[
 				'label' => esc_html__( 'Next Arrow Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
@@ -1008,19 +1008,15 @@ class Widget_Image_Carousel extends Widget_Base {
 
 	private function render_swiper_button( $type ) {
 		$direction = 'next' === $type ? 'right' : 'left';
-		$icon_settings = $this->get_settings_for_display('navigation_' . $direction . '_icon');
+		$icon_settings = $this->get_settings_for_display( 'navigation_' . $type . '_icon' );
 
-		if ( ! empty( $icon_settings['value'] ) ) {
-			Icons_Manager::render_icon( $icon_settings, [
-					'aria-hidden' => 'true',
-			] );
-		} else {
-			$icon_value = 'eicon-chevron-' . $direction;
-
-			Icons_Manager::render_icon( [
-					'library' => 'eicons',
-					'value' => $icon_value,
-			], [ 'aria-hidden' => 'true' ] );
+		if ( empty( $icon_settings['value'] ) ) {
+			$icon_settings = [
+				'library' => 'eicons',
+				'value' => 'eicon-chevron-' . $direction,
+			];
 		}
+
+		Icons_Manager::render_icon( $icon_settings, [ 'aria-hidden' => 'true' ] );
 	}
 }

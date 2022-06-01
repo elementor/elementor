@@ -600,7 +600,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'selected_icon',
+			'play_icon',
 			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
@@ -752,7 +752,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
-					'selected_icon[library]!' => 'svg',
+					'play_icon[library]!' => 'svg',
 				],
 			]
 		);
@@ -990,16 +990,14 @@ class Widget_Video extends Widget_Base {
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play" role="button" aria-label="<?php $this->print_a11y_text( $settings['image_overlay'] ); ?>" tabindex="0">
 							<?php
-							if ( ! empty( $settings['selected_icon']['value'] ) ) {
-								Icons_Manager::render_icon( $settings['selected_icon'], [
-									'aria-hidden' => 'true',
-								] );
-							} else {
-								Icons_Manager::render_icon( [
+							if ( empty( $settings['play_icon']['value'] ) ) {
+								$settings['play_icon'] = [
 									'library' => 'eicons',
 									'value' => 'eicon-play',
-								], [ 'aria-hidden' => 'true' ] );
-							} ?>
+								];
+							}
+							Icons_Manager::render_icon( $settings['play_icon'], [ 'aria-hidden' => 'true' ] );
+							?>
 							<span class="elementor-screen-only"><?php $this->print_a11y_text( $settings['image_overlay'] ); ?></span>
 						</div>
 					<?php endif; ?>
