@@ -9,7 +9,7 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 				elementor.getPreviewView().addChildModel( data );
 
 				$e.store.dispatch(
-					this.component.store.actions.populate( {
+					$e.store.get( 'document/elements' ).actions.populate( {
 						documentId: elementor.documents.getCurrentId(),
 						elements: structuredClone( data ),
 					} )
