@@ -126,9 +126,15 @@ class Modules_Manager {
 	 * @param        $class_name
 	 * @param string $module_name
 	 */
-	public function register_module( $class_name, $module_name ) {
+	public function register_module( $class_name, $module_name = '' ) {
 		if ( $class_name::is_active() ) {
-			$this->modules[ $module_name ] = $class_name::instance();
+			$instance = $class_name::instance();
+
+			if ( empty( $module_name ) ) {
+				$module_name = $instance->get_name();
+			}
+
+			$this->modules[ $module_name ] = $instance;
 		}
 	}
 

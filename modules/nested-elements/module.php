@@ -43,8 +43,7 @@ class Module extends \Elementor\Core\Base\Module {
 		add_action( 'elementor/init', function () {
 			// Register TabsV2 Module.
 			Plugin::$instance->modules_manager->register_module(
-				\Elementor\Modules\TabsV2\Module::class,
-				'tabs-v2'
+				\Elementor\Modules\TabsV2\Module::class
 			);
 		} );
 	}
