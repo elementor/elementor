@@ -30,7 +30,7 @@ class Module extends \Elementor\Core\Base\Module {
 		parent::__construct();
 
 		add_action( 'elementor/controls/controls_registered', function ( $controls_manager ) {
-			$controls_manager->register_control( Controls\Control_Nested_Repeater::CONTROL_TYPE, new Controls\Control_Nested_Repeater() );
+			$controls_manager->register( new Controls\Control_Nested_Repeater() );
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
