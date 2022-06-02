@@ -6,13 +6,14 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Wp_Cli extends \WP_CLI_Command {
+
+	const AVAILABLE_SETTINGS = [ 'include', 'overrideConditions', 'selectedCustomPostTypes', 'plugins' ];
 
 	/**
 	 * Export a Kit
@@ -39,15 +40,13 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		\WP_CLI::line( 'Kit export started.' );
 
-		$export_settings = [
-			'include' => [ 'content', 'templates', 'settings' ],
-		];
-
+		$export_settings = [];
 		foreach ( $assoc_args as $key => $value ) {
-			$import_settings[ $key ] = explode( ',', $value );
+			if ( ! in_array( $key, static::AVAILABLE_SETTINGS, true ) ) {
+				continue;
+			}
+			$export_settings[ $key ] = explode( ',', $value );
 		}
-
-		$export_settings = array_merge( $export_settings, $assoc_args );
 
 		try {
 			$exporter = new Export( $export_settings );
@@ -104,19 +103,26 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		\WP_CLI::line( 'Kit import started' );
 
-		\WP_CLI::line( 'Extracting zip archive...' );
-
 		$assoc_args = wp_parse_args( $assoc_args, [
 			'sourceType' => 'local',
 		] );
 
 		$url = null;
 		$file_path = $args[0];
+		$import_settings = [];
 
 		if ( 'library' === $assoc_args['sourceType'] ) {
-			$url = $this->get_url_from_library( $args[0] );
+			$url = $this->get_url_from_library( $file_path );
+			$zip_path = $this->create_temp_file_from_url( $url );
+			$import_settings['referrer'] = 'kit-library';
 		} elseif ( 'remote' === $assoc_args['sourceType'] ) {
-			$url = $args[0];
+			$url = $file_path;
+			$zip_path = $this->create_temp_file_from_url( $url );
+			$import_settings['referrer'] = 'local';
+		} elseif ( 'local' === $assoc_args['sourceType'] ) {
+			$zip_path = $file_path;
+		} else {
+			\WP_CLI::error( 'Unknown source type.' );
 		}
 
 		if ( 'enable' === $assoc_args['unfilteredFilesUpload'] ) {
@@ -124,59 +130,32 @@ class Wp_Cli extends \WP_CLI_Command {
 			Plugin::$instance->uploads_manager->enable_unfiltered_files_upload();
 		}
 
-		if ( $url ) {
-			$file_path = $this->create_temp_file_from_url( $url );
-		}
-
-		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $file_path, [ 'json', 'xml' ] );
-
-		if ( is_wp_error( $extraction_result ) ) {
-			\WP_CLI::error( $extraction_result->get_error_message() );
-		}
-
-		$import_settings = [
-			'include' => [ 'templates', 'content', 'settings' ],
-			'session' => $extraction_result['extraction_directory'],
-		];
-
 		foreach ( $assoc_args as $key => $value ) {
+			if ( ! in_array( $key, static::AVAILABLE_SETTINGS, true ) ) {
+				continue;
+			}
 			$import_settings[ $key ] = explode( ',', $value );
 		}
-
-		// Remove irrelevant settings from the $import_settings array
-		$remove_irrelevant = [ 'sourceType', 'unfilteredFilesUpload' ];
-		$import_settings = array_diff_key( $import_settings, array_flip( $remove_irrelevant ) );
 
 		try {
 			\WP_CLI::line( 'Importing data...' );
 
-			$import = new Import( $import_settings );
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
 
-			$manifest_data = $this->get_manifest_data( $import_settings['session'] );
-			$manifest_data = $import->adapt_manifest_structure( $manifest_data );
-
-			if ( isset( $manifest_data['plugins'] ) ) {
-				$successfully_imported_plugins = $this->import_plugins( $manifest_data['plugins'] );
-
-				\WP_CLI::line( 'Ready to use plugins: ' . $successfully_imported_plugins );
-			}
-
-			Plugin::$instance->app->get_component( 'import-export' )->import = $import;
-
-			$import->run();
+			$import = $import_export_module->import_kit( $zip_path, $import_settings );
 
 			\WP_CLI::line( 'Removing temp files...' );
 
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['session'] );
-
-			// The file was created from remote or library request and it should be removed.
+			// The file was created from remote or library request, it also should be removed.
 			if ( $url ) {
-				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_path ) );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $zip_path ) );
 			}
 
 			\WP_CLI::success( 'Kit imported successfully' );
 		} catch ( \Error $error ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['session'] );
+			if ( $url ) {
+				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $zip_path ) );
+			}
 
 			\WP_CLI::error( $error->getMessage() );
 		}
@@ -216,6 +195,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return string
 	 */
 	private function create_temp_file_from_url( $url ) {
+		\WP_CLI::line( 'Extracting zip archive...' );
 		$response = wp_remote_get( $url );
 
 		if ( is_wp_error( $response ) ) {
@@ -227,29 +207,6 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		return Plugin::$instance->uploads_manager->create_temp_file( $response['body'], 'kit.zip' );
-	}
-
-	/**
-	 * Helper to get the manifest data from the 'manifest.json' file.
-	 *
-	 * @param string $extraction_directory
-	 * @return array
-	 */
-	private function get_manifest_data( $extraction_directory ) {
-		$manifest_file_content = Utils::file_get_contents( $extraction_directory . 'manifest.json', true );
-
-		if ( ! $manifest_file_content ) {
-			\WP_CLI::error( 'Manifest not found' );
-		}
-
-		$manifest_data = json_decode( $manifest_file_content, true );
-
-		// In case that the manifest content is not a valid JSON or empty.
-		if ( ! $manifest_data ) {
-			\WP_CLI::error( 'Manifest content is not valid json' );
-		}
-
-		return $manifest_data;
 	}
 
 	/**

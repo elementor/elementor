@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\App\Modules\ImportExport\Compatibility;
 
+use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,33 +10,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Envato extends Base_Adapter {
-	public static function is_compatibility_needed( array $manifest_data, array $import_settings ) {
+	public static function is_compatibility_needed( array $manifest_data, array $meta ) {
 		return ! empty( $manifest_data['manifest_version'] );
 	}
 
-	public function get_manifest_data( array $manifest_data ) {
+	public function adapt_manifest( array $manifest_data ) {
 		$templates = $manifest_data['templates'];
 
 		$manifest_data['templates'] = [];
 
 		foreach ( $templates as $template ) {
 			// Envato store their global kit styles as a 'global.json' template file, this needs to be converted to 'site-settings.json' file
-			if ( ! empty( $template['metadata']['template_type'] ) && 'global-styles' === $template['metadata']['template_type'] ) {
-				$global_file_data = $this->importer->read_json_file( str_replace( '.json', '', $template['source'] ) );
-
-				$site_settings = [ 'settings' => $global_file_data['page_settings'] ];
-
-				$site_settings_file_destination = $this->importer->get_archive_file_full_path( 'site-settings.json' );
-
-				file_put_contents( $site_settings_file_destination, wp_json_encode( $site_settings ) );
+			$is_global = ! empty( $template['metadata']['template_type'] ) && 'global-styles' === $template['metadata']['template_type'];
+			if ( $is_global ) {
+				// Adding the path of the template that Envato using for storing the site settings.
+				$manifest_data['envato-template-site-settings'] = $template['source'];
 
 				// Getting the site-settings because Envato stores them in one of the posts.
 				$kit = Plugin::$instance->kits_manager->get_active_kit();
-
 				$kit_tabs = $kit->get_tabs();
-
 				unset( $kit_tabs['settings-site-identity'] );
-
 				$manifest_data['site-settings'] = array_keys( $kit_tabs );
 
 				continue;
@@ -57,7 +51,17 @@ class Envato extends Base_Adapter {
 		return $manifest_data;
 	}
 
-	public function get_template_data( array $template_data, array $template_settings ) {
+	public function adapt_site_settings( array $site_settings, array $manifest_data, $path ) {
+		if ( empty( $manifest_data['envato-template-site-settings'] ) ) {
+			return $site_settings;
+		}
+
+		$global_file_data = ImportExportUtils::read_json_file( $path . str_replace( '.json', '', $manifest_data['envato-template-site-settings'] ) );
+
+		return [ 'settings' => $global_file_data['page_settings'] ];
+	}
+
+	public function adapt_template( array $template_data, array $template_settings ) {
 		if ( ! empty( $template_data['metadata']['elementor_pro_conditions'] ) ) {
 			foreach ( $template_data['metadata']['elementor_pro_conditions'] as $condition ) {
 				list ( $type, $name, $sub_name, $sub_id ) = array_pad( explode( '/', $condition ), 4, '' );

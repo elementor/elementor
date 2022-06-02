@@ -20,6 +20,8 @@ export default function FailedPluginsNotice( { failedPlugins } ) {
 			{
 				__( "There are few plugins that we couldn't install:", 'elementor' ) + ' ' +
 				failedPlugins.map( ( { name } ) => name ).join( ' | ' )
+
+				// TODO fix broken link
 			}
 		</Notice>
 	);

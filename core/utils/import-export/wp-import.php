@@ -64,12 +64,11 @@ class WP_Import extends \WP_Importer {
 	private $authors = [];
 	private $posts = [];
 	private $terms = [];
-	private $categories = [];
-	private $tags = [];
 	private $base_url = '';
 	private $page_on_front;
 
 	// Mappings from old information to new.
+	private $processed_taxonomies;
 	private $processed_terms = [];
 	private $processed_posts = [];
 	private $processed_authors = [];
@@ -200,8 +199,6 @@ class WP_Import extends \WP_Importer {
 
 		wp_suspend_cache_invalidation( true );
 		$imported_summary = [
-			'categories' => $this->process_categories(),
-			'tags' => $this->process_tags(),
 			'terms' => $this->process_terms(),
 			'posts' => $this->process_posts(),
 		];
@@ -385,140 +382,17 @@ class WP_Import extends \WP_Importer {
 	}
 
 	/**
-	 * Create new categories based on import information
-	 *
-	 * Doesn't create a new category if its slug already exists
-	 *
-	 * @return int number of imported categories.
-	 */
-	private function process_categories() {
-		$result = 0;
-
-		$this->categories = apply_filters( 'wp_import_categories', $this->categories );
-
-		if ( empty( $this->categories ) ) {
-			return $result;
-		}
-
-		foreach ( $this->categories as $cat ) {
-			// if the category already exists leave it alone
-			$term_id = term_exists( $cat['category_nicename'], 'category' );
-			if ( $term_id ) {
-				if ( is_array( $term_id ) ) {
-					$term_id = $term_id['term_id'];
-				}
-				if ( isset( $cat['term_id'] ) ) {
-					$this->processed_terms[ intval( $cat['term_id'] ) ] = (int) $term_id;
-				}
-				continue;
-			}
-
-			$parent = empty( $cat['category_parent'] ) ? 0 : category_exists( $cat['category_parent'] );
-			$description = isset( $cat['category_description'] ) ? $cat['category_description'] : '';
-
-			$data = [
-				'category_nicename' => $cat['category_nicename'],
-				'category_parent' => $parent,
-				'cat_name' => wp_slash( $cat['cat_name'] ),
-				'category_description' => wp_slash( $description ),
-			];
-
-			$id = wp_insert_category( $data );
-			if ( ! is_wp_error( $id ) && $id > 0 ) {
-				if ( isset( $cat['term_id'] ) ) {
-					$this->processed_terms[ intval( $cat['term_id'] ) ] = $id;
-				}
-				$result++;
-			} else {
-				/* translators: %s: Category name. */
-				$error = sprintf( esc_html__( 'Failed to import category %s', 'elementor' ), $cat['category_nicename'] );
-
-				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-					$error .= PHP_EOL . $id->get_error_message();
-				}
-
-				$this->output['errors'][] = $error;
-				continue;
-			}
-
-			$this->process_termmeta( $cat, $id );
-		}
-
-		unset( $this->categories );
-
-		return $result;
-	}
-
-	/**
-	 * Create new post tags based on import information
-	 *
-	 * Doesn't create a tag if its slug already exists
-	 *
-	 * @return int number of imported tags.
-	 */
-	private function process_tags() {
-		$result = 0;
-
-		$this->tags = apply_filters( 'wp_import_tags', $this->tags );
-
-		if ( empty( $this->tags ) ) {
-			return $result;
-		}
-
-		foreach ( $this->tags as $tag ) {
-			// if the tag already exists leave it alone
-			$term_id = term_exists( $tag['tag_slug'], 'post_tag' );
-			if ( $term_id ) {
-				if ( is_array( $term_id ) ) {
-					$term_id = $term_id['term_id'];
-				}
-				if ( isset( $tag['term_id'] ) ) {
-					$this->processed_terms[ intval( $tag['term_id'] ) ] = (int) $term_id;
-				}
-				continue;
-			}
-
-			$description = isset( $tag['tag_description'] ) ? $tag['tag_description'] : '';
-			$args = [
-				'slug' => $tag['tag_slug'],
-				'description' => wp_slash( $description ),
-			];
-
-			$id = wp_insert_term( wp_slash( $tag['tag_name'] ), 'post_tag', $args );
-			if ( ! is_wp_error( $id ) ) {
-				if ( isset( $tag['term_id'] ) ) {
-					$this->processed_terms[ intval( $tag['term_id'] ) ] = $id['term_id'];
-				}
-				$result++;
-			} else {
-				/* translators: %s: Tag name. */
-				$error = sprintf( esc_html__( 'Failed to import post tag %s', 'elementor' ), $tag['tag_name'] );
-
-				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-					$error .= PHP_EOL . $id->get_error_message();
-				}
-
-				$this->output['errors'][] = $error;
-				continue;
-			}
-
-			$this->process_termmeta( $tag, $id['term_id'] );
-		}
-
-		unset( $this->tags );
-
-		return $result;
-	}
-
-	/**
 	 * Create new terms based on import information
 	 *
 	 * Doesn't create a term its slug already exists
 	 *
-	 * @return int number of imported terms.
+	 * @return array|array[] the ids of succeed/failed imported terms.
 	 */
 	private function process_terms() {
-		$result = 0;
+		$result = [
+			'succeed' => [],
+			'failed' => [],
+		];
 
 		$this->terms = apply_filters( 'wp_import_terms', $this->terms );
 
@@ -537,9 +411,22 @@ class WP_Import extends \WP_Importer {
 
 				if ( isset( $term['term_id'] ) ) {
 					if ( 'nav_menu' === $term['term_taxonomy'] ) {
-						$term = $this->handle_duplicated_nav_menu_term( $term );
+						// For BC
+						if ( ! empty( $this->processed_taxonomies[ $term['term_taxonomy'] ] ) ) {
+							foreach ( $this->processed_taxonomies[ $term['term_taxonomy'] ] as $processed_term ) {
+								$old_slug   = key( $processed_term['slug'] );
+								$new_slug = reset( $processed_term['slug'] );
+
+								$this->mapped_terms_slug[ $old_slug ] = $new_slug;
+								$result['succeed'][ $old_slug ] = $new_slug;
+							}
+							continue;
+						} else {
+							$term = $this->handle_duplicated_nav_menu_term( $term );
+						}
 					} else {
 						$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
+						$result['succeed'][ intval( $term['term_id'] ) ] = (int) $term_id;
 						continue;
 					}
 				}
@@ -565,9 +452,8 @@ class WP_Import extends \WP_Importer {
 			if ( ! is_wp_error( $id ) ) {
 				if ( isset( $term['term_id'] ) ) {
 					$this->processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
+					$result['succeed'][ intval( $term['term_id'] ) ] = $id['term_id'];
 				}
-				$result++;
-
 			} else {
 				/* translators: 1: Term taxonomy, 2: Term name. */
 				$error = sprintf( esc_html__( 'Failed to import %1$s %2$s', 'elementor' ), $term['term_taxonomy'], $term['term_name'] );
@@ -576,6 +462,7 @@ class WP_Import extends \WP_Importer {
 					$error .= PHP_EOL . $id->get_error_message();
 				}
 
+				$result['failed'][] = $id;
 				$this->output['errors'][] = $error;
 				continue;
 			}
@@ -982,7 +869,12 @@ class WP_Import extends \WP_Importer {
 		}
 
 		// Skip menu items 'taxonomy' type, when the taxonomy is not exits.
-		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && ! get_taxonomy( $post_meta_key_value['_menu_item_object'] ) ) {
+		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && ! taxonomy_exists( $post_meta_key_value['_menu_item_object'] ) ) {
+			return $result;
+		}
+
+		// Skip menu items 'post_type' type, when the post type is not exits.
+		if ( 'post_type' === $post_meta_key_value['_menu_item_type'] && ! post_type_exists( $post_meta_key_value['_menu_item_object'] ) ) {
 			return $result;
 		}
 
@@ -991,6 +883,8 @@ class WP_Import extends \WP_Importer {
 			$_menu_item_object_id = $this->processed_terms[ intval( $_menu_item_object_id ) ];
 		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
 			$_menu_item_object_id = $this->processed_posts[ intval( $_menu_item_object_id ) ];
+		} elseif ( 'custom' !== $post_meta_key_value['_menu_item_type'] ) {
+			return $result;
 		}
 
 		$_menu_item_menu_item_parent = $post_meta_key_value['_menu_item_menu_item_parent'];
@@ -1377,6 +1271,18 @@ class WP_Import extends \WP_Importer {
 
 		if ( ! empty( $this->args['fetch_attachments'] ) ) {
 			$this->fetch_attachments = true;
+		}
+
+		if ( isset( $this->args['posts'] ) && is_array( $this->args['posts'] ) ) {
+			$this->processed_posts = $this->args['posts'];
+		}
+
+		if ( isset( $this->args['terms'] ) && is_array( $this->args['terms'] ) ) {
+			$this->processed_terms = $this->args['terms'];
+		}
+
+		if ( isset( $this->args['taxonomies'] ) && is_array( $this->args['taxonomies'] ) ) {
+			$this->processed_taxonomies = $this->args['taxonomies'];
 		}
 	}
 }

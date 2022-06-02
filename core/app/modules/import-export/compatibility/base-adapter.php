@@ -11,21 +11,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Base_Adapter extends Base_Object {
 
-	protected $importer;
-
-	public static function is_compatibility_needed( array $manifest_data, array $import_settings ) {
+	/**
+	 * @param array $manifest_data
+	 * @param array $meta
+	 * @return false
+	 */
+	public static function is_compatibility_needed( array $manifest_data, array $meta ) {
 		return false;
 	}
 
-	public function get_manifest_data( array $manifest_data ) {
+	public function adapt_manifest( array $manifest_data ) {
 		return $manifest_data;
 	}
 
-	public function get_template_data( array $template_data, array $template_settings ) {
-		return $template_data;
+	public function adapt_site_settings( array $site_settings, array $manifest_data, $path ) {
+		return $site_settings;
 	}
 
-	public function __construct( Import $importer ) {
-		$this->importer = $importer;
+	public function adapt_template( array $template_data, array $template_settings ) {
+		return $template_data;
 	}
 }

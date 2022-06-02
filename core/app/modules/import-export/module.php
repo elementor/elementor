@@ -1,17 +1,14 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport;
 
-use Elementor\Core\App\Modules\ImportExport\Directories\WP_Content;
-use Elementor\Core\App\Modules\ImportExport\Directories\WP_Post_Type;
-use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
-use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
-use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
-use Elementor\Utils;
+use Elementor\Utils as ElementorUtils;
+use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -23,9 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Responsible for initializing Elementor App functionality
  */
 class Module extends BaseModule {
-	const FORMAT_VERSION = '1.0';
+	const FORMAT_VERSION = '2.0';
 
 	const EXPORT_TRIGGER_KEY = 'elementor_export_kit';
+
+	const UPLOAD_TRIGGER_KEY = 'elementor_upload_kit';
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
 
@@ -53,6 +52,27 @@ class Module extends BaseModule {
 	 */
 	public function get_name() {
 		return 'import-export';
+	}
+
+	public function __construct() {
+		add_action( 'admin_init', function() {
+			if ( wp_doing_ajax() &&
+				isset( $_POST['action'] ) &&
+				isset( $_POST['_nonce'] ) &&
+				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				current_user_can( 'manage_options' )
+			) {
+				$this->maybe_handle_ajax();
+			}
+		} );
+
+		$page_id = Tools::PAGE_ID;
+
+		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+
+		if ( ElementorUtils::is_wp_cli() ) {
+			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
+		}
 	}
 
 	public function get_init_settings() {
@@ -91,7 +111,7 @@ class Module extends BaseModule {
 			];
 		}
 
-		$custom_post_types = $this->get_registered_cpt_names();
+		$custom_post_types = ImportExportUtils::get_registered_cpt_names();
 		if ( ! empty( $custom_post_types ) ) {
 			foreach ( $custom_post_types as $custom_post_type ) {
 
@@ -120,39 +140,27 @@ class Module extends BaseModule {
 		return $summary_titles;
 	}
 
-	/**
-	 * Retrieve custom post type names.
-	 *
-	 * @since 3.6.0
-	 * @access public
-	 *
-	 * @return array custom post type names.
-	 */
-	public function get_registered_cpt_names() {
+	private function maybe_handle_ajax() {
+		$result = [];
 
-		$post_types = get_post_types( [
-			'public' => true,
-			'can_export' => true,
-		] );
-
-		unset(
-			$post_types['attachment'],
-			$post_types['page'],
-			$post_types['post'],
-			$post_types[ Landing_Pages_Module::CPT ],
-			$post_types[ Source_Local::CPT ]
-		);
-
-		$custom_post_types = [];
-
-		foreach ( $post_types as $post_type ) {
-			array_push( $custom_post_types, $post_type );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		switch ( $_POST['action'] ) {
+			case static::EXPORT_TRIGGER_KEY:
+				$this->handle_export_kit();
+				break;
+			case static::UPLOAD_TRIGGER_KEY:
+				$this->handle_upload_kit();
+				break;
+			case static::IMPORT_TRIGGER_KEY:
+				$this->handle_import_kit();
+				break;
 		}
-
-		return $custom_post_types;
 	}
 
-	private function import_stage_1() {
+	private function handle_upload_kit() {
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			if (
@@ -179,111 +187,88 @@ class Module extends BaseModule {
 			}
 
 			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
+			$referrer = 'kit-library';
 		} else {
 			// PHPCS - Already validated in caller function.
 			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$referrer = 'local';
 		}
 
-		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $file_name, [ 'json', 'xml' ] );
+		$upload_kit = $this->upload_kit( $file_name, $referrer );
+		$session_dir = $upload_kit['session'];
+		$manifest = $upload_kit['manifest'];
+		$conflicts = $upload_kit['conflicts'];
 
 		if ( ! empty( $file_url ) ) {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 		}
 
-		$session_dir = $extraction_result['extraction_directory'];
-
-		$manifest_file_content = Utils::file_get_contents( $session_dir . 'manifest.json', true );
-
-		if ( ! $manifest_file_content ) {
-			throw new \Error( self::MANIFEST_ERROR_KEY );
-		}
-
-		$manifest_data = json_decode( $manifest_file_content, true );
-
-		// In case that the manifest content is not a valid JSON or empty.
-		if ( ! $manifest_data ) {
-			throw new \Error( self::MANIFEST_ERROR_KEY );
-		}
-
-		if ( isset( $manifest_data['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
+		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
 			throw new \Error( static::PERMISSIONS_ERROR_KEY );
 		}
 
-		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
-
 		$result = [
 			'session' => $session_dir,
-			'manifest' => $manifest_data,
+			'manifest' => $manifest,
 		];
 
+		if ( ! empty( $conflicts ) ) {
+			$result['conflicts'] = $conflicts;
+		}
+
+		// For BC with our PRO plugin.
 		$result = apply_filters( 'elementor/import/stage_1/result', $result );
 
-		return $result;
+		wp_send_json_success( $result );
 	}
 
-	private function import_stage_2( $settings_directory ) {
-		set_time_limit( 0 );
+	public function upload_kit( $file_name, $referrer ) {
+		$this->import = new Import( $file_name, [ 'referrer' => $referrer ] );
 
-		$result = $this->import->run();
-
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $settings_directory );
-
-		return $result;
+		return [
+			'session' => $this->import->get_session(),
+			'manifest' => $this->import->get_manifest(),
+			'conflicts' => $this->import->get_settings_selected_override_conditions(),
+		];
 	}
 
-	private function on_admin_init() {
-		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
-			return;
-		}
+	private function handle_import_kit() {
+		// PHPCS - Already validated in caller function
+		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$tmp_folder_id = $settings['session'];
 
-		$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
+		$import = $this->import_kit( $tmp_folder_id, $settings );
 
-		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
-		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
-
-		try {
-			$this->import = new Import( $import_settings );
-
-			if ( 1 === $import_settings['stage'] ) {
-				$result = $this->import_stage_1();
-			} elseif ( 2 === $import_settings['stage'] ) {
-				$result = $this->import_stage_2( $import_settings['session'] );
-
-				// Adding the most updated data of the summaryTitles, in case that the data was changed during the process by new installed plugins.
-				$result['configData'] = $this->get_config_data();
-			}
-
-			wp_send_json_success( $result );
-		} catch ( \Error $error ) {
-			wp_send_json_error( $error->getMessage() );
-		}
+		wp_send_json_success( $import );
 	}
 
-	private function on_init() {
-		if ( ! isset( $_POST['action'] ) || self::EXPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
-			return;
-		}
+	public function import_kit( $tmp_folder_id, $settings ) {
+		$this->import = new Import( $tmp_folder_id, $settings );
+		$this->import->register_default_runners();
+		return $this->import->run();
+	}
 
-		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
+	private function handle_export_kit() {
+		// PHPCS - Already validated in caller function
+		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$export = $this->export_kit( $settings );
 
-		try {
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins', 'selectedCustomPostTypes' ] ) );
+		$file_name = $export['file_name'];
+		$file = ElementorUtils::file_get_contents( $file_name );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
-			$export_result = $this->export->run();
+		$result = [
+			'manifest' => $export['manifest'],
+			'file' => base64_encode( $file ),
+		];
 
-			$file_name = $export_result['file_name'];
+		wp_send_json_success( $result );
+	}
 
-			$file = Utils::file_get_contents( $file_name );
-
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
-
-			wp_send_json_success( [
-				'manifest' => $export_result['manifest'],
-				'file' => base64_encode( $file ),
-			] );
-		} catch ( \Error $error ) {
-			wp_send_json_error( $error->getMessage() );
-		}
+	public function export_kit( $settings ) {
+		$this->export = new Export( $settings );
+		$this->export->register_default_runners();
+		return $this->export->run();
 	}
 
 	private function render_import_export_tab_content() {
@@ -331,27 +316,59 @@ class Module extends BaseModule {
 		?>
 
 		<div class="tab-import-export-kit__content">
-			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $intro_text ); ?></p>
+			<p class="tab-import-export-kit__info"><?php ElementorUtils::print_unescaped_internal_string( $intro_text ); ?></p>
 
 			<div class="tab-import-export-kit__wrapper">
 				<?php foreach ( $content_data as $data ) { ?>
 					<div class="tab-import-export-kit__container">
 						<div class="tab-import-export-kit__box">
-							<h2><?php Utils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-							<a href="<?php Utils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
-								<?php Utils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+							<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+								<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 							</a>
 						</div>
-						<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
-						<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+						<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
 					</div>
 				<?php } ?>
 			</div>
 
-			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $info_text ); ?></p>
+			<p class="tab-import-export-kit__info"><?php ElementorUtils::print_unescaped_internal_string( $info_text ); ?></p>
 		</div>
 		<?php
 	}
+
+	private function get_config_data() {
+		$export_nonce = wp_create_nonce( 'elementor_export' );
+		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+
+		return [
+			'exportURL' => $export_url,
+			'summaryTitles' => $this->get_summary_titles(),
+			'nativeWpPostTypes' => [ 'post', 'page', 'nav_menu_item' ], // TODO better solution
+			'nativeElementorPostTypes' => [ 'post', 'page', 'e-landing-page' ],
+			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
+			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+		];
+	}
+
+	public function register_settings_tab( Tools $tools ) {
+		$tools->add_tab( 'import-export-kit', [
+			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
+			'sections' => [
+				'intro' => [
+					'label' => esc_html__( 'Template Kits', 'elementor' ),
+					'callback' => function() {
+						$this->render_import_export_tab_content();
+					},
+					'fields' => [],
+				],
+			],
+		] );
+	}
+
+	// TODO remove the url functions?
 
 	private function get_elementor_editor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
@@ -374,7 +391,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_recently_edited_elementor_page_url() {
-		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+		$query = ElementorUtils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
 
 		if ( ! isset( $query->post ) ) {
 			return '';
@@ -384,7 +401,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_recently_edited_elementor_editor_page_url() {
-		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+		$query = ElementorUtils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
 
 		if ( ! isset( $query->post ) ) {
 			return '';
@@ -413,52 +430,5 @@ class Module extends BaseModule {
 		$document = $this->get_elementor_document( $page_id );
 
 		return $document ? $document->get_edit_url() : '';
-	}
-
-	private function get_config_data() {
-		$export_nonce = wp_create_nonce( 'elementor_export' );
-
-		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
-
-		return [
-			'exportURL' => $export_url,
-			'summaryTitles' => $this->get_summary_titles(),
-			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
-			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
-		];
-	}
-
-	public function register_settings_tab( Tools $tools ) {
-		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
-			'sections' => [
-				'intro' => [
-					'label' => esc_html__( 'Template Kits', 'elementor' ),
-					'callback' => function() {
-						$this->render_import_export_tab_content();
-					},
-					'fields' => [],
-				],
-			],
-		] );
-	}
-
-	public function __construct() {
-		add_action( 'init', function() {
-			$this->on_init();
-		} );
-
-		add_action( 'admin_init', function() {
-			$this->on_admin_init();
-		} );
-
-		$page_id = Tools::PAGE_ID;
-
-		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
-
-		if ( Utils::is_wp_cli() ) {
-			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
-		}
 	}
 }
