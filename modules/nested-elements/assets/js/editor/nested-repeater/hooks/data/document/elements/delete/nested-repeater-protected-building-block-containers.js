@@ -13,7 +13,7 @@ export class NestedRepeaterProtectedBuildingBlockContainers extends $e.modules.h
 
 	getConditions( args = {} ) {
 		if ( ! args.container ) {
-			return args.containers.every(
+			return args.containers.some(
 				( container ) => $e.components.get( 'nested-elements' )
 					.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) )
 			);
