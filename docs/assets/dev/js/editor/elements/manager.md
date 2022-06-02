@@ -43,7 +43,7 @@ elementor.elementsManager.registerElementType( new MyElement() );
 | `ElementBase.getEmptyView()`     | `{React.Component}` *class*          | The empty view will be used to render the element when it's empty.
 | `ElementBase.getModel()`         | `{BaseElementModel}` *class*         | The model will be used to interact with the element data.
 
-#### Externals:
+#### Global access:
 ```javascript
 elementor.elements.types.Base // Element base.
 ```
