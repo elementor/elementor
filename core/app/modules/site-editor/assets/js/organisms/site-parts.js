@@ -6,8 +6,8 @@ import SitePart from '../molecules/site-part';
 import { Context as TemplateTypesContext } from '../context/template-types';
 
 const InfoButton = ( props ) => {
-	const showVideoSection = ( 'Loop' !== props.type ),
-		numberOfColumns = ( 'Loop' === props.type ) ? 1 : 2,
+	const showVideoSection = ( '' !== props.video_url ),
+		numberOfColumns = showVideoSection ? 2 : 1,
 		toggleButtonProps = {
 			text: __( 'Info', 'elementor' ),
 			hideText: true,
@@ -30,7 +30,6 @@ const InfoButton = ( props ) => {
 				</section>
 
 				{
-					/* This if-statement is temporary, we can remove it once we have video about the Loop Builder */
 					showVideoSection &&
 					<section>
 						<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
