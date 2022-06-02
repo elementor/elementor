@@ -75,7 +75,7 @@ class Module extends BaseModule {
 			'onboardingVersion' => self::VERSION,
 			'isLibraryConnected' => $library->is_connected(),
 			// Used to check if the Hello Elementor theme is installed but not activated.
-			'helloInstalled' => empty( $hello_theme_errors['theme_not_found'] ),
+			'helloInstalled' => empty( $hello_theme_errors[ 'theme_not_found' ] ),
 			'helloActivated' => 'hello-elementor' === get_option( 'template' ),
 			// The "Use Hello theme on my site" checkbox should be checked by default only if this condition is met.
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
@@ -134,26 +134,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Set Opt In
-	 *
-	 * This method opts the user into sharing non-sensitive usage data with Elementor.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function set_usage_data_opt_in() {
-		Tracker::set_opt_in( true );
-
-		return [
-			'status' => 'success',
-			'payload' => [
-				'usageDataShared' => true,
-			],
-		];
-	}
-
-	/**
 	 * Maybe Update Site Logo
 	 *
 	 * If a new name is provided, it will be updated as the Site Name.
@@ -171,14 +151,14 @@ class Module extends BaseModule {
 		];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_POST['data'] ) ) {
+		if ( empty( $_POST[ 'data' ] ) ) {
 			return $problem_error;
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( stripslashes( $_POST[ 'data' ] ), true );
 
-		if ( ! isset( $data['siteName'] ) ) {
+		if ( ! isset( $data[ 'siteName' ] ) ) {
 			return $problem_error;
 		}
 
@@ -193,7 +173,7 @@ class Module extends BaseModule {
 		 *
 		 * @param string Escaped new site name
 		 */
-		$new_site_name = apply_filters( 'elementor/onboarding/site-name', $data['siteName'] );
+		$new_site_name = apply_filters( 'elementor/onboarding/site-name', $data[ 'siteName' ] );
 
 		// The site name is sanitized in `update_options()`
 		update_option( 'blogname', $new_site_name );
@@ -228,25 +208,25 @@ class Module extends BaseModule {
 		];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_POST['data'] ) ) {
+		if ( empty( $_POST[ 'data' ] ) ) {
 			return $data_error;
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( stripslashes( $_POST[ 'data' ] ), true );
 
 		// If there is no attachment ID passed or it is not a valid ID, exit here.
-		if ( empty( $data['attachmentId'] ) ) {
+		if ( empty( $data[ 'attachmentId' ] ) ) {
 			return $data_error;
 		}
 
-		$absint_attachment_id = absint( $data['attachmentId'] );
+		$absint_attachment_id = absint( $data[ 'attachmentId' ] );
 
 		if ( 0 === $absint_attachment_id ) {
 			return $data_error;
 		}
 
-		$attachment_url = wp_get_attachment_url( $data['attachmentId'] );
+		$attachment_url = wp_get_attachment_url( $data[ 'attachmentId' ] );
 
 		// Check if the attachment exists. If it does not, exit here.
 		if ( ! $attachment_url ) {
@@ -276,7 +256,7 @@ class Module extends BaseModule {
 		$error_message = __( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+		if ( empty( $_FILES[ 'fileToUpload' ] ) || ! is_array( $_FILES[ 'fileToUpload' ] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
@@ -287,7 +267,7 @@ class Module extends BaseModule {
 
 		// If the user has allowed it, set the Request's state as an "Elementor Upload" request, in order to add
 		// support for non-standard file uploads.
-		if ( 'image/svg+xml' === $_FILES['fileToUpload']['type'] ) {
+		if ( 'image/svg+xml' === $_FILES[ 'fileToUpload' ][ 'type' ] ) {
 			if ( Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 				Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 			} else {
@@ -296,9 +276,9 @@ class Module extends BaseModule {
 		}
 
 		// If the image is an SVG file, sanitation is performed during the import (upload) process.
-		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $_FILES['fileToUpload'] );
+		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $_FILES[ 'fileToUpload' ] );
 
-		if ( 'image/svg+xml' === $_FILES['fileToUpload']['type'] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
+		if ( 'image/svg+xml' === $_FILES[ 'fileToUpload' ][ 'type' ] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 			// Reset Upload state.
 			Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 		}
@@ -359,7 +339,7 @@ class Module extends BaseModule {
 		$error_message = __( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+		if ( empty( $_FILES[ 'fileToUpload' ] ) || ! is_array( $_FILES[ 'fileToUpload' ] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
@@ -376,7 +356,7 @@ class Module extends BaseModule {
 
 		$skin = new Automatic_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
-		$upload_result = $upgrader->install( $_FILES['fileToUpload']['tmp_name'], [ 'overwrite_package' => false ] );
+		$upload_result = $upgrader->install( $_FILES[ 'fileToUpload' ][ 'tmp_name' ], [ 'overwrite_package' => false ] );
 
 		if ( ! $upload_result || is_wp_error( $upload_result ) ) {
 			$result = [
@@ -434,7 +414,7 @@ class Module extends BaseModule {
 		$result = [];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( $_POST['action'] ) {
+		switch ( $_POST[ 'action' ] ) {
 			case 'elementor_update_site_name':
 				// If no value is passed for any reason, no need ot update the site name.
 				$result = $this->maybe_update_site_name();
@@ -444,9 +424,6 @@ class Module extends BaseModule {
 				break;
 			case 'elementor_upload_site_logo':
 				$result = $this->maybe_upload_logo_image();
-				break;
-			case 'elementor_update_data_sharing':
-				$result = $this->set_usage_data_opt_in();
 				break;
 			case 'elementor_activate_hello_theme':
 				$result = $this->maybe_activate_hello_theme();
@@ -459,10 +436,10 @@ class Module extends BaseModule {
 		}
 
 		if ( ! empty( $result ) ) {
-			if ( 'success' === $result['status'] ) {
-				wp_send_json_success( $result['payload'] );
+			if ( 'success' === $result[ 'status' ] ) {
+				wp_send_json_success( $result[ 'payload' ] );
 			} else {
-				wp_send_json_error( $result['payload'] );
+				wp_send_json_error( $result[ 'payload' ] );
 			}
 		}
 	}
@@ -489,9 +466,9 @@ class Module extends BaseModule {
 
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
-				isset( $_POST['action'] ) &&
-				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				isset( $_POST[ 'action' ] ) &&
+				isset( $_POST[ '_nonce' ] ) &&
+				wp_verify_nonce( $_POST[ '_nonce' ], Ajax::NONCE_KEY ) &&
 				current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();
