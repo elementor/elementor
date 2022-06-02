@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\NestedElements;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -44,8 +45,8 @@ class Module extends \Elementor\Core\Base\Module {
 			// Register TabsV2 Module.
 			Plugin::$instance->modules_manager->register_module(
 				\Elementor\Modules\TabsV2\Module::class,
-				'tabs-v2',
-		);
+				'tabs-v2'
+			);
 		} );
 	}
 }
