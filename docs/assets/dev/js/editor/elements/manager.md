@@ -2,7 +2,6 @@
 The new Elements Manager (since 3.7.0), provides a simple and convenient way to register elements with custom views and models.
 
 The full list of registered elements, (including custom & 3rd party elements) are available via: `elementor.elementsManager.elementTypes`
-> Note: `elementor.elementsManager` is managing the elements only in the editor JS.
 
 For registering a new __Element__/__Widget__, in the backend you can visit [here](https://developers.elementor.com/docs/widgets/)
 * **Description**: The Elements Manager is a global object that handles all the elements in the editor.
