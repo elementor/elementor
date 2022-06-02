@@ -65,7 +65,7 @@ export default function Account() {
 	};
 
 	if ( state.isLibraryConnected ) {
-		actionButton.text = __( 'Let\'s do it', 'elementor' );
+		actionButton.text = __( 'Let’s do it', 'elementor' );
 
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
@@ -92,7 +92,7 @@ export default function Account() {
 		};
 	} else {
 		actionButton.text = __( 'Create my account', 'elementor' );
-		actionButton.href = elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCta;
+		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {

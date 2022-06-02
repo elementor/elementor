@@ -9,17 +9,22 @@ export default class CommandHistoryBase extends CommandContainerBase {
 	}
 
 	initialize( args = {} ) {
-		/**
-		 * Get History from child command.
-		 *
-		 * @type {{}|boolean}
-		 */
-		this.history = this.getHistory( args );
+		const { options = {} } = args,
+			{ useHistory = true } = options;
 
-		/**
-		 * @type {number|boolean}
-		 */
-		this.historyId = false;
+		if ( useHistory ) {
+			/**
+			 * Get History from child command.
+			 *
+			 * @type {{}|boolean}
+			 */
+			this.history = this.getHistory( args );
+
+			/**
+			 * @type {number|boolean}
+			 */
+			this.historyId = false;
+		}
 	}
 
 	/**

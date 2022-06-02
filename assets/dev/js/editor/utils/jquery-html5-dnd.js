@@ -298,7 +298,7 @@
 
 			setSide( event );
 
-			$e.run( 'editor/browser-import/validate', {
+			$e.internal( 'editor/browser-import/validate', {
 				input: event.originalEvent.dataTransfer.items,
 			} ).then( ( importAllowed ) => {
 				isDroppingAllowedState = isDroppingAllowed( event ) || importAllowed;

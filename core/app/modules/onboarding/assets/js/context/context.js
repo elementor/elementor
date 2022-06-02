@@ -15,6 +15,7 @@ export function ContextProvider( props ) {
 			trackerCheckboxChecked: onboardingConfig.isUserDataShared,
 			siteName: onboardingConfig.siteName,
 			siteLogo: onboardingConfig.siteLogo,
+			proNotice: '',
 			currentStep: '',
 			nextStep: '',
 			steps: {

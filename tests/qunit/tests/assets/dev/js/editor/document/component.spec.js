@@ -23,7 +23,7 @@ QUnit.module( 'Component: document', () => {
 		elementor.documents.setCurrent( documentMaster );
 
 		// Create button and save it under master document.
-		const eButton = ElementsHelper.createAutoButton();
+		const eButton = ElementsHelper.createWrappedButton();
 
 		// Validate the button was saved to history of master document.
 		assert.equal( elementor.documents.getCurrent().history.getItems().length, 3,

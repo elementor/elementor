@@ -94,6 +94,8 @@ export default class Routes extends Commands {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
 		}
 
+		Commands.trace.push( route );
+
 		super.beforeRun( route, args, false );
 
 		this.attachCurrent( container, route, args );
@@ -141,6 +143,8 @@ export default class Routes extends Commands {
 		component.onRoute( route, args );
 
 		super.afterRun( route, args, results, false );
+
+		Commands.trace.pop();
 	}
 
 	is( route, args = {} ) {
