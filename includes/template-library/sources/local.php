@@ -5,7 +5,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\File_Types\Zip;
 use Elementor\DB;
-use Elementor\Includes\TemplateLibrary\REST_API;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Modules\Library\Documents\Library_Document;
@@ -252,9 +251,6 @@ class Source_Local extends Source_Base {
 			'capability_type' => 'post',
 			'hierarchical' => false,
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
-			// REST API options
-			'show_in_rest' => true,
-			'rest_base' => 'elementor-library',
 		];
 
 		/**
@@ -1575,11 +1571,6 @@ class Source_Local extends Source_Base {
 			// Show blank state.
 			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
-
-		// REST API Actions
-		add_action( 'rest_api_init', function () {
-			( new REST_API() )->on_rest_api_init();
-		} );
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 
