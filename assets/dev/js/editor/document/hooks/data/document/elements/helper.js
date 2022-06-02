@@ -17,7 +17,7 @@ export default class Helper {
 				const createdContainer = container.view.addElement( model, { edit: false } ).getContainer();
 
 				$e.store.dispatch(
-					$e.store.get( 'document/elements' ).actions.create( {
+					this.component.store.actions.create( {
 						documentId: elementor.documents.getCurrentId(),
 						parentId: container.id,
 						elements: [ createdContainer.model.toJSON() ],

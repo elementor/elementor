@@ -26,7 +26,7 @@ export class SetSettings extends $e.modules.editor.CommandContainerInternalBase 
 			}
 
 			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.settings( {
+				this.component.store.actions.settings( {
 					documentId: elementor.documents.getCurrentId(),
 					elementId: container.id,
 					settings,
@@ -38,14 +38,12 @@ export class SetSettings extends $e.modules.editor.CommandContainerInternalBase 
 	static reducer( state, { payload } ) {
 		const { documentId, elementId, settings } = payload;
 
-		if ( ! state[ documentId ]?.[ elementId ] ) {
-			return state;
+		if ( state[ documentId ]?.[ elementId ] ) {
+			state[ documentId ][ elementId ].settings = {
+				...state[ documentId ][ elementId ].settings,
+				...settings,
+			};
 		}
-
-		state[ documentId ][ elementId ].settings = {
-			...state[ documentId ][ elementId ].settings,
-			...settings,
-		};
 	}
 }
 

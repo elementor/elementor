@@ -8,9 +8,8 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 			if ( data ) {
 				elementor.getPreviewView().addChildModel( data );
 
-				// TODO: Find a better solution - Try to remove the `addChildModel()` call, and use some command.
 				$e.store.dispatch(
-					$e.store.get( 'document/elements' ).actions.populate( {
+					this.component.store.actions.populate( {
 						documentId: elementor.documents.getCurrentId(),
 						elements: structuredClone( data ),
 					} )
@@ -40,7 +39,7 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 			elementor.getPreviewContainer().panel.closeEditor();
 
 			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.empty( {
+				this.component.store.actions.empty( {
 					documentId: elementor.documents.getCurrentId(),
 				} )
 			);
@@ -58,16 +57,14 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 	static reducer( state, { payload } ) {
 		const { documentId } = payload;
 
-		if ( ! state[ documentId ] ) {
-			return state;
+		if ( state[ documentId ] ) {
+			state[ documentId ] = {
+				document: {
+					id: 'document',
+					elements: [],
+				},
+			};
 		}
-
-		state[ documentId ] = {
-			document: {
-				id: 'document',
-				elements: [],
-			},
-		};
 	}
 }
 
