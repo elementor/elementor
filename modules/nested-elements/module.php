@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\NestedElements;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
