@@ -10,7 +10,6 @@ export function ContextProvider( props ) {
 			isLibraryConnected: onboardingConfig.isLibraryConnected,
 			isHelloThemeInstalled: onboardingConfig.helloInstalled,
 			isHelloThemeActivated: onboardingConfig.helloActivated,
-			helloOptInChecked: onboardingConfig.helloOptOut,
 			siteName: onboardingConfig.siteName,
 			siteLogo: onboardingConfig.siteLogo,
 			proNotice: '',
