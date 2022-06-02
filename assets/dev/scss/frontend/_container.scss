@@ -163,6 +163,11 @@
 		border-radius: var( --border-radius );
 	}
 
+	.elementor-background-video-container,
+	.elementor-background-slideshow {
+		z-index: $under-layer;
+	}
+
 	.elementor-widget {
 		// Fix swiper-based widgets (ED-6716).
 		// Since the default is `min-width: auto` for flex items.
