@@ -60,9 +60,7 @@ class Modules_Manager {
 				}
 			}
 
-			if ( $class_name::is_active() ) {
-				$this->modules[ $module_name ] = $class_name::instance();
-			}
+			$this->register_module( $class_name, $module_name );
 		}
 	}
 
@@ -95,8 +93,6 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'nested-elements',
-			// Depends on Nested Elements module
-			'tabs-v2',
 			'container-converter',
 			'web-cli',
 		];
@@ -124,6 +120,16 @@ class Modules_Manager {
 		}
 
 		return $this->modules;
+	}
+
+	/**
+	 * @param        $class_name
+	 * @param string $module_name
+	 */
+	public function register_module( $class_name, $module_name ) {
+		if ( $class_name::is_active() ) {
+			$this->modules[ $module_name ] = $class_name::instance();
+		}
 	}
 
 	/**
