@@ -14,7 +14,7 @@ For registering a new __Element__/__Widget__, in the backend you can visit [here
    | `elementor.elementsManager.getElementTypeClass()` | `{String}` *type*                                               | `{ElementBase}` or `undefined`     | Return instance of element type.
    | `elementor.elementsManager.registerElementType()` | `{ElementBase}` *element*                                       |                                    | Register instance of element type.
    | `elementor.elementsManager.registerElements()`    |                                                                 |                                    | Register core elements.
-  > `elementor.elements.types.Base` is external of `ElementBase` class.
+  > `elementor.elements.types.Base` is the global expose of `ElementBase` class.
 
 ---
 
