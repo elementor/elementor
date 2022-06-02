@@ -11,7 +11,7 @@ export class NestedRepeaterProtectedBuildingBlockContainers extends $e.modules.h
 		return 'container';
 	}
 
-	getConditions( args = {}, result ) {
+	getConditions( args = {} ) {
 		if ( ! args.container ) {
 			return args.containers.every(
 				( container ) => $e.components.get( 'nested-elements' )
