@@ -51,7 +51,7 @@ elementor.elements.types.Base // Element base.
 elementor.elements.types.Widget // Widget base.
 ```
 
-#### Registration
+#### Advanced Example
 ```javascript
 elementor.elementsManager.registerElementType( new class extends elementor.elements.types.Widget {
 	getType() {
