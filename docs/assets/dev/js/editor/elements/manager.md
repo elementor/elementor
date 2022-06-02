@@ -34,7 +34,7 @@ class MyElement extends elementor.elements.types.Base {
 ```javascript
 elementor.elementsManager.registerElementType( new MyElement() );
 ```
-#### The capabilities
+#### Public Methods
 
 | Method                           | Returns                              | Description                   
 |----------------------------------|--------------------------------------|-------------------------------------|
