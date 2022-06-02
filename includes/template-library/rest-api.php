@@ -11,22 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class REST_API {
 	/**
-	 * Register actions.
-	 *
-	 * @return void
-	 */
-	public function register() {
-		add_action( 'rest_api_init', function () {
-			$this->add_document_type_rest_field();
-		} );
-	}
-
-	/**
 	 * Add the document type field to elementor-templates rest endpoints.
 	 *
 	 * @return void
 	 */
-	private function add_document_type_rest_field() {
+	public function on_rest_api_init() {
 		register_rest_field(
 			Source_Local::CPT,
 			'document_type',

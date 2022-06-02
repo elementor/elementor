@@ -1577,7 +1577,9 @@ class Source_Local extends Source_Base {
 		}
 
 		// REST API Actions
-		( new REST_API() )->register();
+		add_action( 'rest_api_init', function () {
+			( new REST_API() )->on_rest_api_init();
+		} );
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 
