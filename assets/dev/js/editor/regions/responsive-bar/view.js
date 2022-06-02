@@ -11,13 +11,13 @@ export default class View extends Marionette.ItemView {
 		const prefix = '#' + this.id();
 
 		return {
+			viewPage: '#elementor-panel-footer-sub-menu-item-view-page',
 			wpDashboard: '#elementor-panel-footer-sub-menu-item-wp-dashboard',
 			themeBuilder: '#elementor-panel-footer-sub-menu-item-theme-builder',
 			addWidgets: '#elementor-panel-footer-add-widgets',
 			pageSettings: '#elementor-panel-footer-sub-menu-item-page-settings',
 			siteSettings: '#elementor-panel-footer-sub-menu-item-site-settings',
-			preferences: '#elementor-panel-footer-sub-menu-item-preferences',
-			keyboardShortcuts: '#elementor-panel-footer-sub-menu-item-keyboard-shortcuts',
+			moreItems: '.e-more-item',
 			menuButtons: '.elementor-panel-footer-tool',
 			switcherInput: '.e-responsive-bar-switcher__option input',
 			switcherLabel: '.e-responsive-bar-switcher__option',
@@ -40,13 +40,13 @@ export default class View extends Marionette.ItemView {
 
 	events() {
 		return {
+			'click @ui.viewPage': 'onViewPageClick',
 			'click @ui.themeBuilder': 'onThemeBuilderClick',
 			'click @ui.wpDashboard': 'onWpDashboardClick',
 			'click @ui.addWidgets': 'onAddWidgetsClick',
 			'click @ui.pageSettings': 'onPageSettingsClick',
 			'click @ui.siteSettings': 'onSiteSettingsClick',
-			'click @ui.preferences': 'onPreferencesClick',
-			'click @ui.keyboardShortcuts': 'onKeyboardShortcutsClick',
+			'click @ui.moreItems': 'onMoreItemClick',
 			'click @ui.menuButtons': 'onMenuButtonsClick',
 			'change @ui.switcherInput': 'onBreakpointSelected',
 			'input @ui.sizeInputWidth': 'onSizeInputChange',
@@ -148,6 +148,7 @@ export default class View extends Marionette.ItemView {
 	onRender() {
 		// this.addTipsyToIconButtons();
 		this.setScalePercentage();
+		this.addMoreItems();
 	}
 
 	onDeviceModeChange() {
@@ -322,6 +323,10 @@ export default class View extends Marionette.ItemView {
 		$e.route( 'finder' );
 	}
 
+	onViewPageClick() {
+		window.open( elementor.documents.getCurrent().config.urls.permalink, '_blank' );
+	}
+
 	onThemeBuilderClick() {
 		$e.run( 'app/open' );
 	}
@@ -346,11 +351,29 @@ export default class View extends Marionette.ItemView {
 		} );
 	}
 
-	onPreferencesClick() {
-		$e.route( 'panel/editor-preferences' );
+	getMoreItems() {
+		return elementor.modules.layouts.panel.pages.menu.Menu.getGroups().toJSON().find( ( g ) => 'navigate_from_page' === g.name ).items;
 	}
 
-	onKeyboardShortcutsClick() {
-		$e.route( 'shortcuts' );
+	addMoreItems() {
+		const items = this.getMoreItems();
+		const parent = this.$el.find( '#elementor-panel-footer-more .elementor-panel-footer-sub-menu' );
+
+		items.forEach( ( item ) => {
+			parent.append(
+				`<div class="elementor-panel-footer-sub-menu-item e-more-item" data-item-id="${ item.name }">
+					${ item.svg ?? `<i class="eicon ${ item.icon }"></i>` }
+					<span class="elementor-title">${ item.title }</span>
+				</div>
+			` );
+		} );
+	}
+
+	onMoreItemClick( e ) {
+		const { itemId } = e.currentTarget.dataset;
+
+		const { callback = () => {} } = this.getMoreItems().find( ( item ) => item.name === itemId ) || {};
+
+		callback( e.currentTarget );
 	}
 }

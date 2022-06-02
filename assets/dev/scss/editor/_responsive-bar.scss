@@ -1,6 +1,6 @@
 :root {
 	--e-is-device-mode: 0;
-	--responsive-bar-height: 43px;
+	--responsive-bar-height: 60px;
 }
 
 .e-is-device-mode {
@@ -14,7 +14,6 @@
 	left: 0; // Fix position:sticky for RTL [ _devices.scss -> #elementor-preview ] ( browser bug )
 	top: 0;
 	z-index: 100;
-	box-shadow: 0 0 10px 2px rgba(0,0,0,.33), 0 0 2px 1px rgba(0,0,0,.25), 0 0 6px -3px rgba(255,255,255,.5);
 
 	&:before {
 		content: "";
@@ -42,6 +41,23 @@
 			margin-inline-end: 6px;
 		}
 
+		&::before {
+			content: '';
+			display: block;
+			height: 4px;
+			width: 100%;
+			background: #FFF;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			margin-top: 8px;
+			opacity: 0;
+			transition: .3s all;
+		}
+
+		&[aria-selected="true"]::before {
+			opacity: 1;
+		}
 	}
 
 	&__button {
@@ -49,15 +65,14 @@
 		background: none;
 		border: 0 none;
 		cursor: pointer;
-		color: inherit;
+		color: #6D7882;
 
 		&:focus:not(:focus-visible) {
 			outline: none;
 		}
 
 		&:hover {
-			color: $editor-lighter;
-			background-color: rgba(255, 255, 255, 0.1);
+			background-color: #EDEFF0;
 		}
 	}
 
@@ -96,22 +111,22 @@
 			align-content: center;
 			justify-content: center;
 			grid-gap: 2px;
-			background: #000;
-			width: 32px;
-			height: 32px;
+			background: #FFF;
+			width: 34px;
+			height: 34px;
 			border-radius: 50%;
 		}
-	
+
 		&-logo-fragment {
-			background: #fff;
-			
+			background: #495157;
+
 			&--vertical {
 				grid-row: 1/4;
 			}
-	
+
 		}
-		
-		&:hover &-logo-fragment {
+
+		.elementor-panel-footer-tool:where( :hover, .elementor-open ) & &-logo-fragment {
 			grid-column: 1 / 3;
 
 			&--vertical {
@@ -120,7 +135,7 @@
 		}
 	}
 
-	
+
 
 }
 
@@ -133,9 +148,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	color: $editor-light;
-	background-color: #F4F4F4;
-	color: #666;
+	background-color: #495157;
+	color: #FFF;
 
 	&__start, &__center, &__end, &-scale, &-switcher {
 		display: flex;
@@ -148,19 +162,28 @@
 	&__start {
 
 		.elementor-panel-footer-sub-menu {
-			#{$start}: 0;
+			inset-inline-start: 0;
 		}
 	}
 
 	// @media ( min-width:1400px ) {
 	&__center {
-		color: #666;
+		color: #FFF;
 	}
 	// }
 
 	&__end {
+		background: #EDEFF0;
+		height: 100%;
+		padding: 0;
+		padding-inline-start: 8px;
+
+		.elementor-panel-footer-tool:not( #elementor-panel-footer-saver-publish ):hover {
+			background: rgba( 0,0,0,.1);
+		}
+
 		.elementor-panel-footer-sub-menu {
-			#{$end}: 0;
+			inset-inline-end: 16px;
 		}
 	}
 
@@ -202,13 +225,13 @@
 				display: block;
 				width: 13px;
 				height: 2px;
-				background: #a4afb7;
+				background: #FFF;
 				border-radius: 3px;
 			}
 		}
 
 		&__reset {
-			margin: 0px 8px;
+			margin: 0 8px;
 		}
 
 	}
@@ -218,46 +241,68 @@
 .elementor-panel-footer {
 
 	&-tool {
-		padding: 3px;
-		margin: 0 10px;
+		padding: 7px;
+		margin: 0 8px;
 		cursor: pointer;
 		position: relative;
+		transition: .3s all;
 
-		&.active, &:hover {
-			background: #D4D4D4;
-			color: #000;
+		&:not(#elementor-panel-footer-saver-publish) {
+			border-radius: 8px;
+		}
+
+		:where( &.active, &:hover, &.elementor-open ):not( .e-logo ) {
+			background: #6D7882;
+		}
+
+		.elementor-panel-footer-sub-menu {
+			transform: translate3d( 0, 0, 0 );
+			transition: .3s all;
+		}
+
+		&.e-logo .elementor-panel-footer-sub-menu {
+			margin-top: 2px;
+			inset-inline-start: 8px !important;
 		}
 
 		&:not(.elementor-open) {
 
 			.elementor-panel-footer-sub-menu {
-				display: none;
+				opacity: 0;
+				transform: translate3d( 0, -3px, 0 );
+				pointer-events: none;
 			}
 		}
 	}
 
 	&-sub-menu {
 		position: absolute;
-		top: 115%;
-		background-color: #F4F4F4;
-		// #{$end}: 0;
-		box-shadow: 0px 4px 4px 0px #00000040;
-		color: #666;
+		top: 100%;
+		background-color: #FFF;
+		color: #6D7882;
+		border-radius: 6px;
+		margin-top: 8px;
+		overflow: hidden;
+		box-shadow: 0px 3px 16px rgba(35, 38, 42, 0.2);
 
 		&-item {
 			display: flex;
-			gap: 5px;
+			gap: 8px;
+			align-items: center;
 			white-space: nowrap;
-			border: 1px solid #D4D4D4;
-			padding: 7px 10px;
+			border-bottom: 1px solid #D5D8DC;
+			padding: 11px 16px;
+			font-size: 12px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: .3s all;
 
-			&:not(:last-child) {
+			&:last-child {
 				border-bottom: none;
 			}
 
-			&:hover:not(.elementor-disabled) {
-				background: #D4D4D4;
-				color: #0173A9;
+			&:not(.elementor-disabled):not(.elementor-last-edited-wrapper):hover {
+				background: #EDEFF0;
 			}
 
 			&.elementor-disabled {
@@ -272,35 +317,77 @@
 }
 
 #elementor-panel-footer-saver-publish {
-	width: 80px;
 	padding: 0;
-	@include margin-end(0);
+	margin: 0;
+	height: 100%;
+
+	& > button.elementor-button {
+		padding: 0;
+		padding-inline-start: 16px;
+		padding-inline-end: 16px;
+		border-inline-end: 1px solid #259035 !important;
+
+		&.elementor-disabled {
+			border-inline-end-color: #CCCFD3 !important;
+		}
+	}
 
 	.elementor-button-state {
 
-		i {
-			@include margin-end(0);
+		.elementor-state-icon {
+			position: absolute;
+			left: 50%;
+			transform: translateX( -50% );
+
+			i {
+				margin: 0;
+			}
 		}
 
 		#elementor-panel-saver-button-publish-label {
-			display: none;
+			visibility: hidden;
 		}
 	}
 }
 
 #elementor-panel-footer-saver-options {
 	padding: 0;
-	@include margin-start(0);
-
+	margin: 0;
 	// i {
 	// 	margin-inline-end: 5px;
 	// }
 
+	.e-dropdown-arrow {
+		width: 20px;
+
+		&::before {
+			content: '';
+			display: block;
+			height: 12px;
+			width: 12px;
+			border: 2px solid currentColor;
+			border-top-color: transparent;
+			border-left-color: transparent;
+			margin-left: 50%;
+			transform: translateY(-25%) translateX( -50% ) rotate(45deg);
+		}
+	}
+
+	> button {
+		padding: 0;
+		padding-inline: 12px;
+	}
+
+	.elementor-panel-footer-sub-menu {
+		margin-top: -4px;
+	}
+
 	.elementor-last-edited-wrapper {
 		font-size: 11px;
 		font-style: italic;
-		color: $editor-light;
-		padding: 5px 0 15px;
+		font-weight: 300;
+		color: #6D7882;
+		line-height: 12px;
 
 		&:not(.elementor-state-active) {
 
@@ -321,6 +408,38 @@
 	}
 }
 
+#elementor-panel-footer-saver-publish,
+#elementor-panel-footer-saver-options {
+	height: 100%;
+	cursor: default;
+
+	> button {
+		height: 100%;
+		border: none !important;
+		box-shadow: none !important;
+		transition: .3s all;
+		color: #FFF;
+		font-size: 18px;
+		font-weight: 700;
+		opacity: 1;
+
+		&.elementor-disabled {
+			background: #D5D8DC !important;
+			color: #9DA5AE !important;
+			cursor: default;
+		}
+
+		&:not( .elementor-disabled ) {
+			background: #33A343;
+
+			&:hover {
+				background: #259135;
+			}
+		}
+
+	}
+}
+
 #elementor-panel-saver- {
 
 	&button- {
@@ -332,31 +451,18 @@
 
 		&publish,
 		&save-options {
-			font-size: 12px;
 			text-transform: capitalize;
-			height: 30px;
-			font-weight: 400;
 			border-radius: 0;
-			border: 1px solid #666666;
-
-			&.elementor-disabled {
-				background-color: #D4D4D4;
-				color: #000;
-				border-radius: 0;
-			}
 		}
 
 		&publish {
 			width: 100%;
-			// border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		}
 
 		&save-options {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			width: 25px;
-			@include border-start(none);
 		}
 	}
 }

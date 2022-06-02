@@ -211,14 +211,18 @@
 .elementor-control,
 .elementor-panel-scheme-item {
 
+	.elementor-panel-heading-toggle {
+		color: #AEADC2;
+	}
+
 	&.elementor-open {
 
 		.elementor-panel-heading-toggle {
-
 			.eicon {
+				transform: rotate(90deg);
 
 				&:before {
-					content: '\e92a';
+					content: '\e87d';
 				}
 			}
 		}
@@ -231,7 +235,7 @@
 			.eicon {
 
 				&:before {
-					content: getValueByDirection('\e90a', '\e909');
+					content: getValueByDirection('\e87d', '\e87e');
 				}
 			}
 		}

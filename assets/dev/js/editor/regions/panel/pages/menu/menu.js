@@ -30,26 +30,17 @@ PanelMenu.initGroups = () => {
 		items: [],
 	} );
 
-	// PanelMenu.groups.add( {
-	// 	name: 'navigate_from_page',
-	// 	title: __( 'Navigate From Page', 'elementor' ),
-	// 	items: [
-	// 		// Todo: internal command.
-	// 		{
-	// 			name: 'view-page',
-	// 			icon: 'eicon-preview-thin',
-	// 			title: __( 'View Page', 'elementor' ),
-	// 			type: 'link',
-	// 			link: elementor.config.document.urls.permalink,
-	// 		},
-	// 	],
-	// } );
+	PanelMenu.groups.add( {
+		name: 'navigate_from_page',
+		title: __( 'Navigate From Page', 'elementor' ),
+		items: [
+
+		],
+	} );
 
 	if ( elementor.config.user.is_administrator ) {
 		PanelMenu.addAdminMenu();
 	}
-
-	PanelMenu.addExitItem();
 };
 
 PanelMenu.addAdminMenu = () => {
@@ -67,22 +58,58 @@ PanelMenu.addAdminMenu = () => {
 	// 	],
 	// }, { at: 0 } );
 
-	// PanelMenu.addItem( {
-	// 	name: 'notes',
-	// 	icon: 'eicon-commenting-o',
-	// 	title: __( 'Notes', 'elementor' ),
-	// 	callback: function() {
-	// 		elementor.promotion.showDialog( {
-	// 			headerMessage: __( 'Notes', 'elementor' ),
-	// 			message: __( 'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.', 'elementor' ),
-	// 			top: '-3',
-	// 			inlineStart: '+10',
-	// 			element: this.$el,
-	// 			actionURL: 'https://go.elementor.com/go-pro-notes/',
-	// 		} );
-	// 	},
-	// }, 'navigate_from_page', 'view-page' );
-	//
+	PanelMenu.addItem( {
+		name: 'user_preferences',
+		svg: `
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<rect width="16" height="16" fill="url(#pattern13)"></rect>
+				<defs>
+					<pattern id="pattern13" patternContentUnits="objectBoundingBox" width="1" height="1">
+						<use xlink:href="#image13" transform="scale(0.0416667)"></use>
+					</pattern>
+					<image id="image13" width="24" height="24" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAdUlEQVRIieWUQQqAMAwEp+L/P6W+q148yQqbVGnAufTSNmQzBP7CAXRgiz5s5r2eeAPA+vBJtKiiASzBT8N8HpHbwX6d4SGXxlI3lOcNay4jmlpFy2iqsCIa6aCuuunNqVDZpdeCwtU0o/A8TV+NSHVQV78pnBhuGEafnjPxAAAAAElFTkSuQmCC"></image>
+				</defs>
+			</svg>`,
+		title: __( 'User Preferences', 'elementor' ),
+		callback: function() {
+			$e.route( 'panel/editor-preferences' );
+		},
+	}, 'navigate_from_page' );
+
+	PanelMenu.addItem( {
+		name: 'notes',
+		icon: 'eicon-commenting-o',
+		title: __( 'Notes', 'elementor' ),
+		callback: function() {
+			elementor.promotion.showDialog( {
+				headerMessage: __( 'Notes', 'elementor' ),
+				message: __( 'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.', 'elementor' ),
+				top: '-3',
+				inlineStart: '+10',
+				element: this.$el,
+				actionURL: 'https://go.elementor.com/go-pro-notes/',
+			} );
+		},
+	}, 'navigate_from_page' );
+
+	PanelMenu.addItem( {
+		name: 'keyboard_shortcuts',
+		svg:
+			`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<rect width="16" height="16" fill="url(#pattern14)"/>
+				<defs>
+					<pattern id="pattern14" patternContentUnits="objectBoundingBox" width="1" height="1">
+						<use xlink:href="#image14" transform="scale(0.0416667)"/>
+					</pattern>
+					<image id="image14" width="24" height="24" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAeElEQVRIie2UYQqAIAxGn9Hhku5/AfUe9aMUiRYGn0Hgg+HQsY9NHQwGKlYgAZvIIuBrgShMni3UAnlTRck3CZPeYgnUFb31mwTkdLuD+SEAwDUI1zHueti9RVYFzvAtzJjPnmk6V9UvhmM6FDzacRGARdCAwR/YAYJDZvmoGcvHAAAAAElFTkSuQmCC"/>
+				</defs>
+			</svg>`,
+		title: __( 'Keyboard Shortcuts', 'elementor' ),
+		callback: function() {
+			$e.route( 'shortcuts' );
+		},
+	}, 'navigate_from_page' );
+
 	// PanelMenu.addItem( {
 	// 	name: 'finder',
 	// 	icon: 'eicon-search',

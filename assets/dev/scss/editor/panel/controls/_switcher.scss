@@ -9,6 +9,7 @@
 		display: inline-block;
 		vertical-align: top;
 		height: 20px;
+		width: 32px;
 		background-color: white;
 		border-radius: 18px;
 		cursor: pointer;
@@ -24,52 +25,10 @@
 		height: inherit;
 		font-size: 7px;
 		text-transform: uppercase;
-		background: #eceeef;
+		background: #6D7882;
 		border-radius: inherit;
-		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
 		transition: 0.15s ease-out;
 		transition-property: opacity, background;
-	}
-
-	.elementor-switch-label {
-
-		&:before,
-		&:after {
-			position: absolute;
-			top: 0;
-			width: 50%;
-			text-align: center;
-			line-height: 20px;
-			transition: inherit;
-		}
-
-		&:before {
-			content: attr(data-off);
-			right: 3px;
-			color: $editor-light;
-			text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-		}
-
-		&:after {
-			content: attr(data-on);
-			left: 3px;
-			color: white;
-			text-shadow: 0 1px rgba(0, 0, 0, 0.2);
-			opacity: 0;
-		}
-	}
-
-	.elementor-switch-input:checked ~ .elementor-switch-label {
-		background: $editor-info;
-		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
-
-		&:before {
-			opacity: 0;
-		}
-
-		&:after {
-			opacity: 1;
-		}
 	}
 
 	.elementor-switch-handle {
@@ -80,12 +39,10 @@
 		height: 18px;
 		background: white;
 		border-radius: 10px;
-		transition: left 0.15s ease-out;
+		transition: .3s all;
 	}
 
 	.elementor-switch-input:checked ~ .elementor-switch-handle {
-		left: initial;
-		right: 1px;
-		box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
+		transform: translateX( 12px );
 	}
 }

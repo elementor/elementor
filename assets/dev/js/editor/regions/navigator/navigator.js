@@ -10,8 +10,8 @@ export default class extends BaseRegion {
 
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
-		// this.isDocked = false;
-		// this.setSize();
+		this.dock( this.getDockingSide() );
+		elementorCommon.elements.$body.css( '--e-editor-' + this.getStorageKey() + '-width', '0' );
 
 		this.indicators = {
 			customPosition: {
@@ -35,20 +35,6 @@ export default class extends BaseRegion {
 	getStorageKey() {
 		return 'navigator';
 	}
-
-	// getDefaultStorage() {
-	// 	return {
-	// 		visible: true,
-	// 		size: {
-	// 			width: '',
-	// 			height: '',
-	// 			top: '',
-	// 			bottom: '',
-	// 			right: '',
-	// 			left: '',
-	// 		},
-	// 	};
-	// }
 
 	// Why do we need this?
 	getLayout() {
@@ -304,5 +290,9 @@ export default class extends BaseRegion {
 		if ( this.component.isOpen ) {
 			this.component.close( true );
 		}
+	}
+
+	getDockingSide() {
+		return elementorCommon.config.isRTL ? 'right' : 'left';
 	}
 }

@@ -28,6 +28,7 @@ module.exports = BaseRegion.extend( {
 
 		// this.setSize();
 
+		elementor.changeEditMode( '' );
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		// TODO: Move to hook on 'editor/documents/load'.
@@ -108,10 +109,10 @@ module.exports = BaseRegion.extend( {
 
 			// if ( this.storage.visible ) {
 				// $e.route( 'navigator' );
-				this.open();
+				// this.open();
 				// elementor.changeEditMode( 'edit' );
 			// }
-			this.dock( 'left' );
+			// this.dock( 'left' );
 		}
 	},
 } );

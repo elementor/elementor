@@ -87,6 +87,10 @@ module.exports = Marionette.Region.extend( {
 		};
 	},
 
+	getDockingSide: function() {
+		return elementorCommon.config.isRTL ? 'left' : 'right';
+	},
+
 	onDrag: function( event, ui ) {
 		if ( this.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
@@ -105,7 +109,7 @@ module.exports = Marionette.Region.extend( {
 		}
 
 		const isOutOfLeft = 0 > ui.position.left,
-			isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth,
+			isOutOfRight = ui.position.left + this.el.offsetWidth > window.innerWidth,
 			isOut = isOutOfLeft || isOutOfRight;
 
 		if ( isOutOfRight ) {
@@ -116,17 +120,11 @@ module.exports = Marionette.Region.extend( {
 			elementorCommon.elements.$body.css( '--dock-hint-right', '' );
 		}
 
-		// if ( elementorCommon.config.isRTL ) {
-		// 	if ( isOutOfRight ) {
-		// 		ui.position.left = innerWidth - this.el.offsetWidth;
-		// 	}
-		// } else if ( isOutOfLeft ) {
-		// 	ui.position.left = 0;
-		// }
-
 		elementorCommon.elements.$body.removeClass( 'elementor-' + this.getStorageKey() + '--float' );
 		elementorCommon.elements.$body.toggleClass( 'elementor-' + this.getStorageKey() + '--dock-hint', isOut );
-		// elementorCommon.elements.$body.toggleClass( 'elementor-' + this.getStorageKey() + '--dock-hint', elementorCommon.config.isRTL ? isOutOfLeft : isOutOfRight );
+		elementorCommon.elements.$body.toggleClass( 'elementor-' + this.getStorageKey() + '--dock-hint', 'left' === this.getDockingSide() ? isOutOfLeft : isOutOfRight );
+
+		this.$el.toggleClass( 'e-panel-faded', 'left' === this.getDockingSide() ? isOutOfLeft : isOutOfRight );
 	},
 
 	onDragStop: function( event, ui ) {
@@ -138,13 +136,14 @@ module.exports = Marionette.Region.extend( {
 
 		const elementRight = ui.position.left + this.el.offsetWidth;
 
-		if ( 0 > ui.position.left ) {
+		if ( 'left' === this.getDockingSide() && 0 > ui.position.left ) {
 			this.dock( 'left' );
-		} else if ( elementRight > innerWidth ) {
+		} else if ( 'right' === this.getDockingSide() && elementRight >= innerWidth ) {
 			this.dock( 'right' );
 		}
 
 		elementorCommon.elements.$body.removeClass( 'elementor-' + this.getStorageKey() + '--dock-hint' );
+		this.$el.removeClass( 'e-panel-faded' );
 	},
 
 	dock: function( position ) { //TODO: fix panel dock position after refresh

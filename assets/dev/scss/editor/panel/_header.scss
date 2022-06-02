@@ -12,7 +12,7 @@
 	body:not(.elementor-panel-docked) & {
 		border-radius: 5px 5px 0 0;
 	}
-	
+
 	> * {
 		display: table-cell;
 		vertical-align: middle;
@@ -42,8 +42,13 @@
 }
 
 #elementor-panel-header-title {
-	font-size: 15px;
+	font-size: 12px;
 	cursor: move;
+	text-transform: uppercase;
+	font-weight: 700;
+	background: #FFF;
+	padding: 8px 12px;
+	border-bottom: 1px solid #F1F3F5;
 
 	img {
 		width: 90px;

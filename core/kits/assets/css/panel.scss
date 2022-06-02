@@ -1,6 +1,13 @@
 .elementor-panel {
 
+	transition: opacity .3s;
+
+	&.e-panel-faded {
+		opacity: .4;
+	}
+
 	#elementor-panel__header {
+		position: relative;
 
 		#elementor-panel-header-kit-close,
 		#elementor-panel-header-kit-back {
@@ -8,22 +15,31 @@
 		}
 
 		&-buttons {
+			cursor: move;
 			position: absolute;
-			right: 10px;
-			top: 12px;
+			display: flex;
+			font-size: 15px;
+			inset-inline: 0;
+			top: 50%;
+			transform: translateY( -50% );
 		}
 
 		&-float, &-close {
 			cursor: pointer;
+			padding: 16px;
 		}
 
 		body:not(.elementor-panel-docked) &-float {
 			display: none;
 		}
 
-		// &-close {
+		 &-float {
+			 margin-inline-end: auto;
+		 }
 
-		// }
+		&-close {
+			margin-inline-start: auto;
+		}
 	}
 }
 
