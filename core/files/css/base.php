@@ -220,6 +220,21 @@ abstract class Base extends Base_File {
 			$meta = $this->get_meta();
 		}
 
+		$name = $this->get_name();
+
+		/**
+		 * Pre-Enqueue CSS file.
+		 *
+		 * Fires before CSS file is enqueued on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( "elementor/css-file/{$name}/pre-enqueue", $this );
+
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
@@ -248,8 +263,6 @@ abstract class Base extends Base_File {
 				Plugin::$instance->frontend->enqueue_font( $icon_font );
 			}
 		}
-
-		$name = $this->get_name();
 
 		/**
 		 * Enqueue CSS file.
