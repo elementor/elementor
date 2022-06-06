@@ -24,7 +24,7 @@ export default function getUserTimestamp() {
 		addZeroToHour = 10 > ( hours ) ? '0' : '',
 		addZeroToMinutes = 10 > ( minutes ) ? '0' : '';
 
-	const formattedTimezoneOffset = sign + addZeroToHour + hours + ':' + addZeroToMinutes + minutes + ':00';
+	const formattedTimezoneOffset = sign + addZeroToHour + hours + ':' + addZeroToMinutes + minutes;
 
 	return UTCTimestamp + formattedTimezoneOffset;
 }
