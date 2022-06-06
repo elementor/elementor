@@ -460,6 +460,18 @@ class Container extends Element_Base {
 		);
 
 		$this->add_control(
+			'link_note',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'raw' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
+				'condition' => [
+					'html_tag' => 'a',
+				],
+			]
+		);
+
+		$this->add_control(
 			'link',
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
@@ -471,7 +483,6 @@ class Container extends Element_Base {
 				'condition' => [
 					'html_tag' => 'a',
 				],
-				'description' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
 			]
 		);
 
