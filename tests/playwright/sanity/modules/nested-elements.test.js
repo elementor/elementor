@@ -94,7 +94,6 @@ test.describe.serial( 'NestedElementsModule', () => {
 						}, [ widgetId ] );
 
 						// Assert.
-						await expect( await editor.previewFrame.locator( 'text=Tab #2' ).count() ).toBe( 4 ); // 4 including the mobile.
 						await expect( await editor.previewFrame.locator( 'text=Add Your Heading Text Here' ).count() ).toBe( 2 ); // Content.
 					} );
 
