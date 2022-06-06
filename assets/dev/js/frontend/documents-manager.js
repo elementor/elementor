@@ -40,28 +40,34 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	attachDocumentsClasses() {
-		const documentElements = Object.values(
-			jQuery( this.getSettings( 'selectors' ).document ).toArray()
-		);
-
-		if ( 0 === documentElements.length ) {
-			return;
-		}
+		const documentElements = jQuery( this.getSettings( 'selectors' ).document ).toArray();
 
 		this.removeDocumentsBasedOnCurrentElements( documentElements );
 
-		const documentInstances = documentElements.map( ( element ) => this.attachDocumentClass( jQuery( element ) ) );
+		documentElements.forEach( ( element ) => this.attachDocumentClass( jQuery( element ) ) );
 
 		this.trigger( 'attach-documents' );
 	}
 
 	removeDocumentsBasedOnCurrentElements( elements = [] ) {
-		const documentIds = elements.map( ( element ) => element.dataset?.elementorId || null );
-
 		Object.keys( this.documents ).forEach( ( documentId ) => {
-			if ( ! documentIds.includes( documentId ) ) {
+			const newElements = this.documents[ documentId ]
+				.getSettings( 'elements' )
+				.reduce( ( carry, element ) => {
+					if ( elements.includes( element ) ) {
+						carry.push( element );
+					}
+
+					return carry;
+				}, [] );
+
+			if ( 0 === newElements.length ) {
 				delete this.documents[ documentId ];
+
+				return;
 			}
+
+			this.documents[ documentId ].setSettings( 'elements', newElements );
 		} );
 	}
 
