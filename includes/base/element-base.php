@@ -771,7 +771,7 @@ abstract class Element_Base extends Controls_Stack {
 						],
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateZ: {{SIZE}}deg',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateZ: {{SIZE}}deg',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
@@ -788,7 +788,7 @@ abstract class Element_Base extends Controls_Stack {
 					'label_on' => esc_html__( 'On', 'elementor' ),
 					'label_off' => esc_html__( 'Off', 'elementor' ),
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: 1deg;  --e-' . $transform_css_modifier . 'transform-perspective: 20px;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: 1deg;  --e-' . $transform_css_modifier . 'transform-perspective: 20px;',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
@@ -812,7 +812,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -834,7 +834,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateY: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -856,7 +856,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_rotate_3d{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-perspective: {{SIZE}}px',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-perspective: {{SIZE}}px',
 					],
 					'frontend_available' => true,
 				]
@@ -896,7 +896,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_translate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-translateX: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-translateX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -922,7 +922,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_translate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-translateY: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-translateY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -970,7 +970,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_keep_proportions{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-scale: {{SIZE}};',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scale: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -993,7 +993,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_keep_proportions{$tab}" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleX: {{SIZE}};',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleX: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1016,7 +1016,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_keep_proportions{$tab}" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleY: {{SIZE}};',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleY: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1051,7 +1051,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-skewX: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewX: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1072,7 +1072,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-skewY: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1093,7 +1093,7 @@ abstract class Element_Base extends Controls_Stack {
 					],
 					'prefix_class' => $transform_prefix_class,
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-flipX: -1',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-flipX: -1',
 					],
 					'frontend_available' => true,
 				]
@@ -1112,7 +1112,7 @@ abstract class Element_Base extends Controls_Stack {
 					],
 					'prefix_class' => $transform_prefix_class,
 					'selectors' => [
-						"{{WRAPPER}}" . $transform_selector_class . "{$state}" => '--e-' . $transform_css_modifier . 'transform-flipY: -1',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-flipY: -1',
 					],
 					'frontend_available' => true,
 				]
