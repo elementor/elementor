@@ -5,7 +5,7 @@ export const Copy = () => {
 	QUnit.test( 'Copy', ( assert ) => {
 		elementorCommon.storage.set( 'clipboard', '' );
 
-		const eButton = ElementsHelper.createAutoButton();
+		const eButton = ElementsHelper.createWrappedButton();
 
 		CommonHelper.runShortcut( 67 /* c */, true );
 

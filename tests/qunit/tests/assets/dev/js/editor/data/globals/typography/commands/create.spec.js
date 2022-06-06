@@ -27,7 +27,7 @@ export const Create = () => {
 
 		QUnit.test( 'Simple', async ( assert ) => {
 			// Create widget.
-			const eButton = ElementsHelper.createAutoButton(),
+			const eButton = ElementsHelper.createWrappedButton(),
 				id = elementorCommon.helpers.getUniqueId(),
 				title = 'title_' + id;
 

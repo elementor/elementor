@@ -296,6 +296,29 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		// Cleanup - Back to en_US
 		Utils::change_language_of_textdomains( 'en_US', __DIR__ . '/../languages/' );
 	}
+
+	public function test_file_get_contents() {
+		// Arrange
+		$file_name = __DIR__ . '/mock/mock-file.txt';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertEquals( "test.\n", $content );
+	}
+
+	public function test_file_get_contents__non_file() {
+		// Arrange
+		// Elementor Logo
+		$file_name = 'https://avatars.githubusercontent.com/u/47606894';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertFalse( $content );
+	}
 }
 
 // Mock Polylang language.

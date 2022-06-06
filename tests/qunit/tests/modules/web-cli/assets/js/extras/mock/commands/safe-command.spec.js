@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class SafeCommand extends CommandBase {
+export class SafeCommand extends $e.modules.CommandBase {
 	static getInfo() {
 		return {
 			isSafe: true,

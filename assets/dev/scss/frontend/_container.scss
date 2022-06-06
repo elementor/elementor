@@ -152,7 +152,7 @@
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;
-		z-index: 0;
+		z-index: $ground-layer;
 		width: 100%;
 		height: 100%;
 		left: 0;
@@ -161,6 +161,11 @@
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition );
 		border-radius: var( --border-radius );
+	}
+
+	.elementor-background-video-container,
+	.elementor-background-slideshow {
+		z-index: $under-layer;
 	}
 
 	.elementor-widget {
@@ -175,10 +180,11 @@
 			flex-basis: 100%;
 		}
 
-		// Fix media carousel widget broken (ED-6796).
-		// TODO: Find a better solution.
-		&-media-carousel {
+		// Fix swiper-based widgets broken (ED-6849).
+		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		&.e-widget-swiper {
 			max-width: 100%;
+			flex-basis: 100%;
 		}
 	}
 

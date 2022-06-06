@@ -10,11 +10,9 @@ export function ContextProvider( props ) {
 			isLibraryConnected: onboardingConfig.isLibraryConnected,
 			isHelloThemeInstalled: onboardingConfig.helloInstalled,
 			isHelloThemeActivated: onboardingConfig.helloActivated,
-			isUsageDataShared: elementorCommon.config[ 'event-tracker' ].isUserDataShared,
-			helloOptInChecked: onboardingConfig.helloOptOut,
-			trackerCheckboxChecked: onboardingConfig.isUserDataShared,
 			siteName: onboardingConfig.siteName,
 			siteLogo: onboardingConfig.siteLogo,
+			proNotice: '',
 			currentStep: '',
 			nextStep: '',
 			steps: {

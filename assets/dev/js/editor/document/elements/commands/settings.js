@@ -1,6 +1,4 @@
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
-
-export class Settings extends CommandHistoryDebounce {
+export class Settings extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -121,10 +119,6 @@ export class Settings extends CommandHistoryDebounce {
 				settings: newSettings,
 			} );
 		} );
-	}
-
-	isDataChanged() {
-		return true;
 	}
 }
 
