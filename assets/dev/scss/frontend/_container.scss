@@ -65,7 +65,7 @@
 		translateX( var( --e-container-transform-translateX, 0 ) )
 		translateY( var( --e-container-transform-translateY, 0 ) )
 		scaleX( calc( var( --e-container-transform-flipX, 1 ) * var( --e-container-transform-scaleX, var( --e-container-transform-scale, 1 ) ) ) )
-		scaleY( calc( var( --e-container-transform-flipY, 1 ) * var( --e-container-transform-scaleY, var(--e-container-transform-scale, 1) ) ) )
+		scaleY( calc( var( --e-container-transform-flipY, 1 ) * var( --e-container-transform-scaleY, var(--e-container-transform-scale, 1 ) ) ) )
 		skewX( var( --e-container-transform-skewX, 0 ) )
 		skewY( var( --e-container-transform-skewY, 0 ) );
 	transform-origin: var( --e-container-transform-origin-y )  var( --e-container-transform-origin-x );
