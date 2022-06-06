@@ -2,7 +2,6 @@
 namespace Elementor\Modules\NestedElements;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -40,9 +39,9 @@ class Module extends \Elementor\Core\Base\Module {
 			], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'elementor/init', function () {
+		add_action( 'elementor/modules_registered', function ( $modules_manager ) {
 			// Register TabsV2 Module.
-			Plugin::$instance->modules_manager->register_module(
+			$modules_manager->register_module(
 				\Elementor\Modules\TabsV2\Module::class
 			);
 		} );
