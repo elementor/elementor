@@ -464,7 +464,7 @@ class Container extends Element_Base {
 			[
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				'raw' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
+				'raw' => esc_html__( 'Don\’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
 				'condition' => [
 					'html_tag' => 'a',
 				],
