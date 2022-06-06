@@ -1582,7 +1582,7 @@ class Container extends Element_Base {
 
 		$this->register_motion_effects_controls();
 
-		$this->register_transform_section( true );
+		$this->register_transform_section( 'container' );
 
 		$this->register_responsive_controls();
 

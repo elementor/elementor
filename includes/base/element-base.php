@@ -716,7 +716,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 * @return void
 	 */
-	protected function register_transform_section( $container = false ) {
+	protected function register_transform_section( $element_selector = '' ) {
 		$this->start_controls_section(
 			'_section_transform',
 			[
@@ -732,9 +732,9 @@ abstract class Element_Base extends Controls_Stack {
 		$transform_selector_class = ' > .elementor-widget-container';
 		$transform_css_modifier = '';
 
-		if ( $container ) {
-			$transform_selector_class = '.e-container';
-			$transform_css_modifier = 'container-';
+		if ( 'container' === $element_selector ) {
+			$transform_selector_class = '.e-' . $element_selector;
+			$transform_css_modifier = $element_selector . '-';
 		}
 
 		foreach ( [ '', '_hover' ] as $tab ) {
