@@ -2,6 +2,7 @@
 namespace Elementor\Modules\NestedElements;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -34,14 +35,12 @@ class Module extends \Elementor\Core\Base\Module {
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
-			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
-				'elementor-common',
-			], ELEMENTOR_VERSION, true );
+			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'elementor/modules_registered', function ( $modules_manager ) {
+		add_action( 'elementor/init', function () {
 			// Register TabsV2 Module.
-			$modules_manager->register_module(
+			Plugin::$instance->modules_manager->register_module(
 				\Elementor\Modules\TabsV2\Module::class
 			);
 		} );
