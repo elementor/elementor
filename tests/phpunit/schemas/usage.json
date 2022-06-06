@@ -1226,6 +1226,41 @@
 			"$id": "#/install_time",
 			"type": "number",
 			"title": "Install timestamp"
+		},
+		"analytics_events": {
+			"$id": "#/analytics_events",
+			"type": "array",
+			"title": "Analytics Events",
+			"description": "Analytics events documenting actions of users who agreed to share usage data.",
+			"items": {
+				"$id": "#/analytics_events/$event",
+				"type": "object",
+				"title": "Analytics event",
+				"properties": {
+					"event": {
+						"$id": "#/analytics_events/$event/event",
+						"type": "string",
+						"title": "The event name"
+					},
+					"version": {
+						"$id": "#/analytics_events/$event/version",
+						"type": "string",
+						"title": "Schema name, version"
+					},
+					"ts": {
+						"$id": "#/analytics_events/$event/ts",
+						"type": "string",
+						"title": "The user roles"
+					},
+					"details": {
+						"$id": "#/analytics_events/$event/properties",
+						"type":"string",
+						"title": "A JSON string containing custom event fields"
+					}
+				},
+				"additionalProperties": false
+			},
+			"additionalProperties": false
 		}
 	},
 	"additionalProperties": false

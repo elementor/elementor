@@ -199,12 +199,11 @@ class Container extends Element_Base {
 		}
 		?>
 		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php
-		// PHPCS - the variable $negative is getting a setting value with a strict structure.
-		echo var_export( $negative ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::print_unescaped_internal_string( $negative ? 'true' : 'false' );
 		?>">
 			<?php
 			// PHPCS - The file content is being read from a strict file path structure.
-			echo file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo Utils::file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			?>
 		</div>
 		<?php
@@ -461,6 +460,18 @@ class Container extends Element_Base {
 		);
 
 		$this->add_control(
+			'link_note',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'raw' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
+				'condition' => [
+					'html_tag' => 'a',
+				],
+			]
+		);
+
+		$this->add_control(
 			'link',
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
@@ -472,7 +483,6 @@ class Container extends Element_Base {
 				'condition' => [
 					'html_tag' => 'a',
 				],
-				'description' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
 			]
 		);
 
@@ -1156,7 +1166,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--margin-top: {{TOP}}{{UNIT}}; --margin-right: {{RIGHT}}{{UNIT}}; --margin-bottom: {{BOTTOM}}{{UNIT}}; --margin-left:{{LEFT}}{{UNIT}};',
 				],
 			]
 		);

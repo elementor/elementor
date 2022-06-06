@@ -122,6 +122,10 @@ class Manager {
 
 		$kit = Plugin::$instance->documents->create( 'kit', $kit_data, $kit_meta_data );
 
+		if ( isset( $kit_data['settings'] ) ) {
+			$kit->save( [ 'settings' => $kit_data['settings'] ] );
+		}
+
 		return $kit->get_id();
 	}
 

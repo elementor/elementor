@@ -6,11 +6,6 @@
 
 	a {
 		display: inline-block; //For alignment image with link - Changed to 'inline-block' instead of 'block' to handle with this issue https://github.com/elementor/elementor/issues/5897
-		width: var(--img-width);
-
-		img {
-			width: 100%;
-		}
 
 		img[src$=".svg"] {
 			width: 48px; //Fix SVG image src, issue: https://github.com/elementor/elementor/issues/5987
@@ -20,6 +15,5 @@
 	img {
 		vertical-align: middle;
 		display: inline-block;
-		width: var(--img-width);
 	}
 }

@@ -1,9 +1,12 @@
 export default function Card( { image, imageAlt, text, link, name, clickAction } ) {
 	const onClick = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'starting canvas click',
-			selection: name,
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				selection: name,
+			},
 		} );
 
 		if ( clickAction ) {
