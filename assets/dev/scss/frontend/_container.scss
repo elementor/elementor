@@ -56,8 +56,8 @@
 	padding-bottom: var( --padding-bottom );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
-	transition: var( --transition, 400ms );
-	transform: perspective( var( --e-container-transform-perspective, 0 ) )
+	transition: var( --transition );
+	transform: perspective( var( --e-container-transform-perspective, 1 ) )
 		rotateZ( var( --e-container-transform-rotateZ, 0 ) )
 		rotateX( var( --e-container-transform-rotateX, 0 ) )
 		rotateY( var( --e-container-transform-rotateY, 0 ) )
@@ -65,10 +65,10 @@
 		translateX( var( --e-container-transform-translateX, 0 ) )
 		translateY( var( --e-container-transform-translateY, 0 ) )
 		scaleX( calc( var( --e-container-transform-flipX, 1 ) * var( --e-container-transform-scaleX, var( --e-container-transform-scale, 1 ) ) ) )
-		scaleY( calc( var( --e-container-transform-flipY, 1 ) * var( --e-container-transform-scaleY, var(--e-container-transform-scale, 1 ) ) ) )
+		scaleY( calc( var( --e-container-transform-flipY, 1 ) * var( --e-container-transform-scaleY, var( --e-container-transform-scale, 1 ) ) ) )
 		skewX( var( --e-container-transform-skewX, 0 ) )
 		skewY( var( --e-container-transform-skewY, 0 ) );
-	transform-origin: var( --e-container-transform-origin-y )  var( --e-container-transform-origin-x );
+	transform-origin: var( --e-container-transform-origin-y ) var( --e-container-transform-origin-x );
 
 	// Default top-level containers to be centered.
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
