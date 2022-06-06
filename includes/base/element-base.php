@@ -708,7 +708,7 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Register the Transform controls in the advanced tab of the widgets.
+	 * Register the Transform controls in the advanced tab of the element.
 	 *
 	 * Previously registered under the Widget_Common class, but registered a more fundamental level now to enable access from other widgets.
 	 *
