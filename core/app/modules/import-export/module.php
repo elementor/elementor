@@ -223,7 +223,7 @@ class Module extends BaseModule {
 		return $result;
 	}
 
-	private function handle_homepage_conflict( $result ){
+	private function handle_homepage_conflict( $result ) {
 		$pages = empty( $result['manifest']['content']['page'] ) ? [] : $result['manifest']['content']['page'];
 
 		foreach ( $pages as $page_id => $page ) {
@@ -237,7 +237,7 @@ class Module extends BaseModule {
 			return $result;
 		}
 
-		$homepage_id = get_option('page_on_front');
+		$homepage_id = get_option( 'page_on_front' );
 
 		if ( $homepage_id ) {
 			$homepage = Plugin::$instance->documents->get( $homepage_id );
@@ -255,7 +255,7 @@ class Module extends BaseModule {
 		// Posts page is set as homepage.
 		$result['conflicts']['homepage'] = [
 			'id' => 0,
-			'title' => esc_html__( 'Posts page', 'elementor-pro' ),
+			'title' => esc_html__( 'Posts page', 'elementor' ),
 			'imported_id' => $imported_page_id,
 		];
 
