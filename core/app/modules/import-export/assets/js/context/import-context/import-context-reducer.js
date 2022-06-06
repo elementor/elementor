@@ -8,6 +8,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return ReducerUtils.updateArray( state, 'overrideConditions', payload, 'add' );
 		case 'REMOVE_OVERRIDE_CONDITION':
 			return ReducerUtils.updateArray( state, 'overrideConditions', payload, 'remove' );
+		case 'SET_OVERRIDE_HOMEPAGE':
+			return { ...state, overrideHomepage: payload };
 		case 'SET_UPLOADED_DATA':
 			return { ...state, uploadedData: payload };
 		case 'SET_IMPORTED_DATA':

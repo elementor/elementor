@@ -31,7 +31,7 @@ export default function useKit() {
 				},
 			} );
 		},
-		importKit = ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+		importKit = ( { session, include, overrideConditions, overrideHomepage, referrer, selectedCustomPostTypes } ) => {
 			const ajaxConfig = {
 				data: {
 					action: IMPORT_KIT_KEY,
@@ -40,6 +40,7 @@ export default function useKit() {
 						session,
 						include,
 						overrideConditions,
+						overrideHomepage,
 					},
 				},
 			};

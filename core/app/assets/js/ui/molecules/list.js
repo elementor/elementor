@@ -33,10 +33,7 @@ List.propTypes = {
 	divided: PropTypes.any,
 	separated: PropTypes.any,
 	padding: PropTypes.string,
-	children: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 List.defaultProps = {

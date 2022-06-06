@@ -25,7 +25,7 @@ export default function ImportProcess() {
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
-		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
+		{ file, uploadedData, importedData, overrideConditions, isResolvedData, overrideHomepage } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
 		uploadKit = () => {
@@ -88,6 +88,7 @@ export default function ImportProcess() {
 				session: uploadedData.session,
 				include: includes,
 				overrideConditions: overrideConditions,
+				overrideHomepage: overrideHomepage,
 				referrer,
 				selectedCustomPostTypes,
 			} );

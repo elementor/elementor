@@ -216,7 +216,48 @@ class Module extends BaseModule {
 			'manifest' => $manifest_data,
 		];
 
+		$result = $this->handle_homepage_conflict( $result );
+
 		$result = apply_filters( 'elementor/import/stage_1/result', $result );
+
+		return $result;
+	}
+
+	private function handle_homepage_conflict( $result ){
+		$pages = empty( $result['manifest']['content']['page'] ) ? [] : $result['manifest']['content']['page'];
+
+		foreach ( $pages as $page_id => $page ) {
+			if ( $page['show_on_front'] ) {
+				$imported_page_id = $page_id;
+				break;
+			}
+		}
+
+		if ( ! isset( $imported_page_id ) ) {
+			return $result;
+		}
+
+		$homepage_id = get_option('page_on_front');
+
+		if ( $homepage_id ) {
+			$homepage = Plugin::$instance->documents->get( $homepage_id );
+
+			$result['conflicts']['homepage'] = [
+				'id' => $homepage_id,
+				'edit_url' => $homepage->get_edit_url(),
+				'title' => $homepage->get_post()->post_title,
+				'imported_id' => $imported_page_id,
+			];
+
+			return $result;
+		}
+
+		// Posts page is set as homepage.
+		$result['conflicts']['homepage'] = [
+			'id' => 0,
+			'title' => esc_html__( 'Posts page', 'elementor-pro' ),
+			'imported_id' => $imported_page_id,
+		];
 
 		return $result;
 	}

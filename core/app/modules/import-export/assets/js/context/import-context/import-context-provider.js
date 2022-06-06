@@ -13,6 +13,7 @@ export default function ImportContextProvider( props ) {
 		requiredPlugins: [],
 		importedPlugins: [],
 		overrideConditions: [],
+		overrideHomepage: null,
 		isProInstalledDuringProcess: false,
 		actionType: null,
 		isResolvedData: false,
