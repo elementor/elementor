@@ -147,7 +147,7 @@ const WidgetView = BaseWidget.extend( {
 		} );
 
 		if ( self.model.get( 'hasTemplate' ) && 'remote' === self.getTemplateType() ) {
-			elementorFrontend?.documentsManager?.attachDocumentsClasses();
+			elementorFrontend.documentsManager.attachDocumentsClasses();
 		}
 	},
 
