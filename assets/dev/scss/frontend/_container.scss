@@ -57,7 +57,7 @@
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: var( --transition );
-	transform: perspective( var( --e-container-transform-perspective, 1 ) )
+	transform: perspective( var( --e-container-transform-perspective, none ) )
 		rotateZ( var( --e-container-transform-rotateZ, 0 ) )
 		rotateX( var( --e-container-transform-rotateX, 0 ) )
 		rotateY( var( --e-container-transform-rotateY, 0 ) )
