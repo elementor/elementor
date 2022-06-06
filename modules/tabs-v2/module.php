@@ -19,7 +19,9 @@ class Module extends \Elementor\Core\Base\Module {
 		parent::__construct();
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
-
+			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
+				'nested-elements',
+			], ELEMENTOR_VERSION, true );
 		} );
 	}
 }
