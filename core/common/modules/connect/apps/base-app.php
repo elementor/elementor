@@ -540,6 +540,8 @@ abstract class Base_App {
 			'utm_campaign',
 			'utm_term',
 			'utm_content',
+			'source',
+			'screen_hint',
 		];
 
 		$query_params = ( new Collection( $_GET ) ) // phpcs:ignore

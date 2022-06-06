@@ -1055,14 +1055,16 @@ html.elementor-html {
 				height: auto;
 			}
 
-			path,
+			path {
+				fill: $white;
+			}
+
 			rect {
 				fill: $editor-lightest;
 				transition: .3s all;
 			}
 
 			&:hover {
-				path,
 				rect {
 					fill: $editor-dark;
 				}
