@@ -152,7 +152,7 @@ class Theme_Style_Buttons extends Tab_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					$button_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
