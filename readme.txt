@@ -249,7 +249,6 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: Critical error appeared in external apps when no page is selected as homepage in WordPress Reading Settings
 * Fix: Font awesome 5 migration process is not optimal in Elementor tools screen
 
-
 = 3.6.5 - 2022-04-27 =
 * Fix: PHP Error is thrown in System Info report for experiments that don't have a title
 * Fix: Optimized template file uploads for better security enforcement
