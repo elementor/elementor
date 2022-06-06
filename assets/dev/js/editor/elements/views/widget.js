@@ -146,8 +146,8 @@ const WidgetView = BaseWidget.extend( {
 			// Is element empty?
 		} );
 
-		if ( 'remote' === self.getTemplateType() ) {
-			elementor.trigger( 'document/widget/remote-render', self );
+		if ( self.model.get( 'hasTemplate' ) && 'remote' === self.getTemplateType() ) {
+			elementorFrontend?.documentsManager?.attachDocumentsClasses();
 		}
 	},
 

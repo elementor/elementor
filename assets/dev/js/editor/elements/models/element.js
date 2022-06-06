@@ -11,6 +11,7 @@ ElementModel = BaseElementModel.extend( {
 		id: '',
 		elType: '',
 		isInner: false,
+		hasTemplate: false,
 		settings: {},
 		defaultEditSettings: {
 			defaultEditRoute: 'content',

@@ -9,11 +9,6 @@ export default class extends elementorModules.ViewModule {
 		this.initDocumentClasses();
 
 		this.attachDocumentsClasses();
-
-		// Runs only on the editor
-		elementor?.on( 'document/widget/remote-render', ( view ) => {
-			this.attachDocumentsClasses( view.$el );
-		} );
 	}
 
 	getDefaultSettings() {
@@ -44,43 +39,60 @@ export default class extends elementorModules.ViewModule {
 		this.documentClasses[ documentType ] = documentClass;
 	}
 
-	attachDocumentsClasses( $parentEl = jQuery( 'body' ) ) {
-		let documentElements = $parentEl.find( this.getSettings( 'selectors' ).document )
-			.toArray()
-			.reduce( ( carry, element ) => {
-				// Removes duplicate documents, only the first one remains.
-				const { elementorId: documentId } = element.dataset;
-
-				if ( ! carry.hasOwnProperty( documentId ) ) {
-					carry[ documentId ] = element;
-				}
-
-				return carry;
-			}, {} );
-
-		documentElements = Object.values( documentElements );
+	attachDocumentsClasses() {
+		const documentElements = Object.values(
+			jQuery( this.getSettings( 'selectors' ).document ).toArray()
+		);
 
 		if ( 0 === documentElements.length ) {
 			return;
 		}
 
+		this.removeDocumentsBasedOnCurrentElements( documentElements );
+
 		const documentInstances = documentElements.map( ( element ) => this.attachDocumentClass( jQuery( element ) ) );
 
-		elementor?.trigger( 'elementor/frontend/documents-manager/attach-document-classes', documentInstances );
+		this.trigger( 'attach-documents' );
+	}
+
+	removeDocumentsBasedOnCurrentElements( elements = [] ) {
+		const documentIds = elements.map( ( element ) => element.dataset?.elementorId || null );
+
+		Object.keys( this.documents ).forEach( ( documentId ) => {
+			if ( ! documentIds.includes( documentId ) ) {
+				delete this.documents[ documentId ];
+			}
+		} );
 	}
 
 	attachDocumentClass( $document ) {
 		const documentData = $document.data(),
-			documentID = documentData.elementorId,
-			documentType = documentData.elementorType,
-			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses.base,
-			documentInstance = new DocumentClass( {
-				$element: $document,
-				id: documentID,
-			} );
+			documentID = documentData.elementorId;
 
-		this.documents[ documentID ] = documentInstance;
+		if ( ! this.documents[ documentID ] ) {
+			const documentType = documentData.elementorType,
+				DocumentClass = this.documentClasses[ documentType ] || this.documentClasses.base,
+				documentInstance = new DocumentClass( {
+					$element: $document, // Main element, remains for BC.
+					elements: [],
+					id: documentID,
+				} );
 
-		return documentInstance;
+			this.documents[ documentID ] = documentInstance;
+		}
+
+		const elements = this.documents[ documentID ].getSettings( 'elements' ) || [];
+
+		if ( ! elements.includes( $document.get( 0 ) ) ) {
+			this.documents[ documentID ].setSettings(
+				'elements',
+				[
+					...elements,
+					$document.get( 0 ),
+				]
+			);
+		}
+
+		return this.documents[ documentID ];
 	}
 }
