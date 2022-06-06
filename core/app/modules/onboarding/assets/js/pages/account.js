@@ -1,17 +1,13 @@
-import { useRef, useContext, useState, useEffect } from 'react';
+import { useRef, useContext, useState } from 'react';
 import { useNavigate } from '@reach/router';
-import useAjax from 'elementor-app/hooks/use-ajax';
 import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
-import CheckBoxWithLabel from '../components/checkbox-with-label';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
-		[ dataSharingCheckboxState, setDataSharingCheckboxState ] = useState( true ),
-		{ ajaxState: dataSharingAjaxState, setAjax: setDataSharingAjaxState } = useAjax(),
 		navigate = useNavigate(),
 		pageId = 'account',
 		nextStep = state.isHelloThemeActivated ? 'siteName' : 'hello',
@@ -24,15 +20,6 @@ export default function Account() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 		};
-
-		// If the user skips the "Connect" step, but did check the Data Sharing checkbox - handle data sharing.
-		if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
-			skipButton.action = () => {
-				setDataSharingAjaxState( {
-					data: { action: 'elementor_update_data_sharing' },
-				} );
-			};
-		}
 	}
 
 	let pageTexts = {};
@@ -77,22 +64,13 @@ export default function Account() {
 				},
 			} );
 
-			// If connected to Elementor, handle the data sharing permission when the user clicks the Next button.
-			if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
-				setDataSharingAjaxState( {
-					data: { action: 'elementor_update_data_sharing' },
-				} );
-			}
-
-			const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
-
-			updateState( stateToUpdate );
+			updateState( getStateObjectToUpdate( state, 'steps', pageId, 'completed' ) );
 
 			navigate( 'onboarding/' + nextStep );
 		};
 	} else {
 		actionButton.text = __( 'Create my account', 'elementor' );
-		actionButton.href = elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCta;
+		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
@@ -100,18 +78,11 @@ export default function Account() {
 				version: '',
 				details: {
 					placement: elementorAppConfig.onboarding.eventPlacement,
-					contributor: dataSharingCheckboxState,
 					source: 'cta',
 				},
 			} );
 		};
 	}
-
-	const sendDataSharingRequest = () => {
-		setDataSharingAjaxState( {
-			data: { action: 'elementor_update_data_sharing' },
-		} );
-	};
 
 	const connectSuccessCallback = ( data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
@@ -140,12 +111,7 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
-		// If not connected at onboarding load, handle the data sharing permission after the connect is handled.
-		if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
-			sendDataSharingRequest();
-		} else {
-			navigate( 'onboarding/' + nextStep );
-		}
+		navigate( 'onboarding/' + nextStep );
 	};
 
 	const connectFailureCallback = () => {
@@ -166,58 +132,8 @@ export default function Account() {
 			message: __( 'Oops, the connection failed. Try again.', 'elementor' ),
 		} );
 
-		// If not connected at onboarding load, handle the data sharing permission after the connect is handled.
-		if ( ! state.isUsageDataShared && dataSharingCheckboxState ) {
-			sendDataSharingRequest();
-		} else {
-			navigate( 'onboarding/' + nextStep );
-		}
+		navigate( 'onboarding/' + nextStep );
 	};
-
-	/**
-	 * AJAX State Sampling and reaction.
-	 */
-	useEffect( () => {
-		if ( 'initial' !== dataSharingAjaxState.status ) {
-			if ( 'success' === dataSharingAjaxState.status && dataSharingAjaxState.response?.usageDataShared ) {
-				elementorCommon.config[ 'event-tracker' ].isUserDataShared = true;
-
-				// If connect was successful
-				if ( state.isLibraryConnected ) {
-					updateState( { isUsageDataShared: true } );
-				} else {
-					const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'skipped' );
-
-					stateToUpdate.isUsageDataShared = true;
-
-					updateState( stateToUpdate );
-
-					navigate( 'onboarding/' + state.nextStep );
-				}
-			} else if ( 'error' === dataSharingAjaxState.status ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'indication prompt',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						action_state: 'failure',
-						action: 'connect data',
-					},
-				} );
-
-				setNoticeState( {
-					type: 'error',
-					icon: 'eicon-warning',
-					message: __( 'We couldn\'t set up data sharing. You can also do this later in the Elementor Settings page in the admin dashboard.', 'elementor' ),
-				} );
-			}
-
-			// Since the data sharing Ajax request is done after the Connect sequence, moving to the next step is done
-			// once the Ajax request is processed.
-			navigate( 'onboarding/' + nextStep );
-		}
-	}, [ dataSharingAjaxState.status ] );
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
@@ -242,25 +158,6 @@ export default function Account() {
 						return <li key={ 'listItem' + index }>{ listItem }</li>;
 					} ) }
 				</ul>
-				{
-					! state.isUsageDataShared &&
-					<CheckBoxWithLabel
-						checked={ dataSharingCheckboxState }
-						onChangeCallback={ ( event ) => {
-							elementorCommon.events.dispatchEvent( {
-								event: 'contributor checkbox click',
-								version: '',
-								details: {
-									placement: elementorAppConfig.onboarding.eventPlacement,
-									state: event.target.checked,
-								},
-							} );
-
-							setDataSharingCheckboxState( event.target.checked );
-						} }
-						labelText={ __( 'Become a super contributor by sharing non-sensitive data.', 'elementor' ) }
-					/>
-				}
 			</PageContentLayout>
 			{
 				! state.isLibraryConnected && (
@@ -276,7 +173,6 @@ export default function Account() {
 										version: '',
 										details: {
 											placement: elementorAppConfig.onboarding.eventPlacement,
-											contributor: dataSharingCheckboxState,
 										},
 									} );
 								} }

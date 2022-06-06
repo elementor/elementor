@@ -7,6 +7,7 @@ export class ContainerHelper {
 	static DIRECTION_COLUMN = 'column';
 	static DIRECTION_ROW_REVERSED = 'row-reverse';
 	static DIRECTION_COLUMN_REVERSED = 'column-reverse';
+	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
 
 	/**
 	 * Create multiple container elements.
@@ -151,9 +152,16 @@ export class ContainerHelper {
 
 		try {
 			switch ( preset ) {
-				// Single Container without sub Containers.
-				case '100':
+				// Single column Container without sub Containers.
+				case 'c100':
 					newContainer = ContainerHelper.createContainer( {}, target, options );
+					break;
+
+				// Single row Container without sub Containers.
+				case 'r100':
+					newContainer = ContainerHelper.createContainer( {
+						flex_direction: ContainerHelper.DIRECTION_ROW,
+					}, target, options );
 					break;
 
 				// Exceptional preset.

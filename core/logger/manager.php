@@ -71,11 +71,17 @@ class Manager extends BaseModule {
 			return false;
 		}
 
+		$is_an_error = in_array( // It can be notice or warning
+			$error_number,
+			[ E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR ],
+			true
+		);
+
 		$error_data = $error->get_error_data();
 
 		// TODO: This part should be modular, temporary hard-coded.
 		// Notify $e.data.
-		if ( ! headers_sent() ) {
+		if ( $is_an_error && ! headers_sent() ) {
 			header( 'Content-Type: application/json; charset=UTF-8' );
 
 			http_response_code( 500 );
@@ -89,7 +95,7 @@ class Manager extends BaseModule {
 			}
 		}
 
-		$this->shutdown( $error_data, true );
+		$this->shutdown( $error_data, $is_an_error );
 	}
 
 	public function register_error_handler() {
