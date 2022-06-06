@@ -488,8 +488,6 @@ class Editor {
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
-				'react',
-				'react-dom',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -519,6 +517,16 @@ class Editor {
 		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
 		$config = [
+			'editing_mode' => Plugin::$instance->role_manager->user_can( 'design' ) ? 'full' : 'content',
+			'editor_title' => get_the_title( $this->post_id ),
+			'is_rtl' => is_rtl(),
+			'lang' => get_bloginfo( 'language' ),
+			'notice' => $this->notice_bar->get_notice(),
+			'platform' => [
+				'name' => 'wp',
+				'version' => $GLOBALS['wp_version'],
+			],
+
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
