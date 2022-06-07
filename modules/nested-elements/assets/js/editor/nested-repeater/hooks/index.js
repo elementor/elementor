@@ -1,5 +1,5 @@
 export { NestedRepeaterAdjustContainerTitles } from './data/document/elements/create/nested-repeater-adjust-container-titles';
-export { NestedRepeaterProtectedBuildingBlockContainers } from './data/document/elements/delete/nested-repeater-protected-building-block-containers';
+export { NestedRepeaterPreventDeletingBuildingBlockContainers } from './data/document/elements/delete/nested-repeater-prevent-deleting-building-block-containers';
 export { NestedRepeaterPreventMovingBuildingBlockContainers } from './data/document/elements/move/nested-repeater-prevent-moving-building-block-containers';
 export { NestedRepeaterCreateContainer } from './data/document/repeater/insert/nested-repeater-create-container';
 export { NestedRepeaterRemoveContainer } from './data/document/repeater/remove/nested-repeater-remove-container';
