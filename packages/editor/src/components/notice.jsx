@@ -7,7 +7,6 @@ const Notice = () => {
 		return null;
 	}
 
-	console.log(notice);
 	return (
 		<div id="e-notice-bar">
 			<i className="eicon-elementor-square"></i>
