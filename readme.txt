@@ -245,7 +245,6 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Tweak: Added "Skip & Deactivate" button in plugin deactivation survey
 * Tweak: Removed data sharing checkbox in onboarding flow
 * Tweak: Added a promotion to Notes feature in the Editor panel
-* Tweak: Applied optimized file handling in various modules
 * Fix: Critical error appeared in external apps when no page is selected as homepage in WordPress Reading Settings
 * Fix: Font Awesome 5 migration process is not optimal in Elementor tools screen
 

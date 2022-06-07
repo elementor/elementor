@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Core\Page_Assets\Data_Managers;
 
-use Elementor\Utils;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -208,7 +206,7 @@ abstract class Base {
 		$asset_path = $this->get_file_path();
 
 		if ( 'content' === $data_type ) {
-			$data = Utils::file_get_contents( $asset_path );
+			$data = file_get_contents( $asset_path );
 
 			if ( ! $data ) {
 				$data = '';
