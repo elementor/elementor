@@ -13,7 +13,6 @@ class Module extends \Elementor\Core\Base\Module {
 		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
-
 	public function get_name() {
 		return 'tabs-v2';
 	}
