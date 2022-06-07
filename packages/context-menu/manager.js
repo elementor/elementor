@@ -2,44 +2,81 @@
 export class ContextMenuManager {
 	groups = [];
 
-	getConfig( dimensions ) {
-		return {
-			dimensions,
-			groupsTree: this.createGroupsTree(),
-		};
+	allowedProperties = {
+		group: [ 'id', 'title', 'disabled', 'parentItemId' ],
+		item: [ 'id', 'label', 'icon', 'shortcut', 'badge', 'action', 'mouseEnter', 'mouseLeave' ],
+	};
+
+	groupDefault = {
+		id: '',
+		title: '',
+		disabled: false,
+		parentItemId: '',
+		items: [],
+	};
+
+	itemDefault = {
+		id: '',
+		label: '',
+		icon: false,
+		shortcut: '',
+		badge: null,
+		action: null,
+		mouseEnter: null,
+		mouseLeave: null,
+		groups: [],
+	};
+
+	getConfig() {
+		return this.createGroupsTree();
 	}
 
 	createGroupsTree( parentItemId = '' ) {
 		const rootGroups = this.groups.filter( ( group ) => group.parentItemId === parentItemId );
-		return rootGroups.map( ( rGroup ) => {
-			rGroup.items = rGroup.items.map( ( item ) => {
+		return rootGroups.map( ( rootGroup ) => {
+			rootGroup.items = rootGroup.items.map( ( item ) => {
 				item.groups = this.createGroupsTree( item.id );
 				return item;
 			} );
-			return rGroup;
+			return rootGroup;
 		} );
 	}
 
-	createGroup( groupData ) {
-		if ( this.groups.find( ( group ) => group.id === groupData.id ) ) {
+	validateProperties( allowed, newObject ) {
+		const result = {};
+
+		Object.entries( newObject ).forEach( ( [ key ] ) => {
+			if ( allowed.includes( key ) ) {
+				result[ key ] = newObject[ key ];
+			}
+		} );
+
+		return result;
+	}
+
+	createGroup( newGroup ) {
+		if ( ! newGroup.id || this.groups.find( ( group ) => group.id === newGroup.id ) ) {
 			return;
 		}
 
-		groupData.items = [];
-		if ( ! groupData.parentItemId ) {
-			groupData.parentItemId = '';
-		}
+		newGroup = this.validateProperties( this.allowedProperties.group, newGroup );
 
-		this.groups.push( groupData );
+		this.groups.push( { ...structuredClone( this.groupDefault ), ...newGroup } );
 	}
 
 	updateGroup( groupId, groupData ) {
-		this.groups = this.groups.map( ( group ) => {
-			if ( group.id === groupId ) {
-				return { ...group, ...groupData };
-			}
-			return group;
-		} );
+		groupData = this.validateProperties( this.allowedProperties.group, groupData );
+		this.updateGroupData( groupId, groupData );
+	}
+
+	updateGroupData( groupId, groupData ) {
+		const groupIndex = this.groups.findIndex( ( group ) => group.id === groupId );
+
+		if ( ! this.groups[ groupIndex ] ) {
+			return;
+		}
+
+		this.groups[ groupIndex ] = { ...this.groups[ groupIndex ], ...groupData };
 	}
 
 	deleteGroup( groupId ) {
@@ -48,33 +85,42 @@ export class ContextMenuManager {
 
 	addItem( groupId, newItem ) {
 		const groupIndex = this.groups.findIndex( ( group ) => group.id === groupId );
-		if ( ! this.groups[ groupIndex ] || this.groups[ groupIndex ].items.find( ( item ) => item.id === newItem.id ) ) {
+		if ( ! newItem.id || ! this.groups[ groupIndex ] || this.groups[ groupIndex ].items.find( ( item ) => item.id === newItem.id ) ) {
 			return;
 		}
 
-		this.groups[ groupIndex ].items.push( newItem );
+		newItem = this.validateProperties( this.allowedProperties.item, newItem );
+
+		this.groups[ groupIndex ].items.push( { ...structuredClone( this.itemDefault ), ...newItem } );
 	}
 
 	updateItem( groupId, itemId, itemData ) {
-		this.groups = this.groups.map( ( group ) => {
-			if ( group.id === groupId ) {
-				group.items = group.items.map( ( item ) => {
-					if ( item.id === itemId ) {
-						return { ...item, ...itemData };
-					}
-					return item;
-				} );
-			}
-			return group;
-		} );
+		const currentGroup = this.groups.find( ( group ) => group.id === groupId );
+
+		if ( ! currentGroup ) {
+			return;
+		}
+
+		const itemIndex = currentGroup.items.findIndex( ( item ) => item.id === itemId );
+
+		if ( ! currentGroup.items[ itemIndex ] ) {
+			return;
+		}
+
+		itemData = this.validateProperties( this.allowedProperties.item, itemData );
+		currentGroup.items[ itemIndex ] = { ...currentGroup.items[ itemIndex ], ...itemData };
+		this.updateGroupData( groupId, currentGroup );
 	}
 
 	deleteItem( groupId, itemId ) {
-		this.groups = this.groups.map( ( group ) => {
-			if ( group.id === groupId ) {
-				group.items = group.items.filter( ( item ) => item.id !== itemId );
-			}
-			return group;
-		} );
+		const currentGroup = this.groups.find( ( group ) => group.id === groupId );
+
+		if ( ! currentGroup ) {
+			return;
+		}
+
+		currentGroup.items = currentGroup.items.filter( ( item ) => item.id !== itemId );
+		this.updateGroupData( groupId, currentGroup );
 	}
 }
+
