@@ -11,12 +11,13 @@ function ConflictList() {
     const importContext = useContext( ImportContext ),
         conflicts = importContext.data?.uploadedData?.conflicts,
         homepageConflict = conflicts?.homepage;
-        // templateConflicts = conflicts?.templates || {};
 
     // This code prevent the dependency of Elementor-Pro.
-    // Delete this code and use the code above when Elementor-Pro will be dependent on Elementor V3.8.
-    delete conflicts.homepage;
+    // Before, we refer to conflicts only as template conflicts,
+    // But now we need to support homepage conflicts and in the future, we need to support other conflicts.
+    // When Elementor Pro will be dependent on Elementor-Core 3.8, we will no longer need to do this check.
     const templatesConflicts = conflicts?.templates || conflicts || {};
+    delete templatesConflicts.homepage;
 
     return (
         <Box className="e-app-import-resolver-conflicts__container">
