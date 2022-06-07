@@ -192,7 +192,7 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_file_content = Utils::file_get_contents( $session_dir . 'manifest.json', true );
+		$manifest_file_content = file_get_contents( $session_dir . 'manifest.json', true );
 
 		if ( ! $manifest_file_content ) {
 			throw new \Error( self::MANIFEST_ERROR_KEY );
@@ -273,7 +273,7 @@ class Module extends BaseModule {
 
 			$file_name = $export_result['file_name'];
 
-			$file = Utils::file_get_contents( $file_name );
+			$file = file_get_contents( $file_name, true );
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
