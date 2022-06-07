@@ -241,7 +241,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
-= 3.6.6 - 2022-06-06 =
+= 3.6.6 - 2022-06-07 =
 * Tweak: Added "Skip & Deactivate" button in plugin deactivation survey
 * Tweak: Removed data sharing checkbox in onboarding flow
 * Tweak: Added a promotion to Notes feature in the Editor panel
