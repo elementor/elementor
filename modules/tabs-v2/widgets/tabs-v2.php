@@ -422,7 +422,6 @@ class TabsV2 extends Widget_Nested_Base {
 			$this->add_render_attribute( 'icon-selected', 'class', 'elementor-icon-selected' );
 			$this->add_render_attribute( 'icon-active', 'class', 'elementor-icon-active' );
 
-
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
 			$tab_icon_attributes = $this->get_render_attribute_string( 'icon-selected' );
