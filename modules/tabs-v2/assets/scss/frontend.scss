@@ -1,21 +1,6 @@
 //
 // Tabs v2
 //
-.elementor-tab-title .elementor-icon-active{
-  display: none;
-}
-
-.elementor-active .elementor-icon-active {
-  display: unset;
-}
-
-.elementor-active .elementor-icon-selected {
-  display: none;
-}
-.elementor-icon-selected>i, .elementor-icon-active>i{
-  width: 16px;
-}
-
 
 .elementor-widget-tabs-v2 {
 	--tabs-v2-wrapper-display: flex;
@@ -55,8 +40,6 @@
 					width: var(--tabs-v2-vertical-navigation-width);
 					flex-shrink: 0;
 
-
-
 					> .elementor-tab-desktop-title {
 						&.elementor-active {
 							background-color: var(--tabs-v2-background-color);
@@ -81,45 +64,8 @@
 							}
 						}
 					}
-				  > .elementor-tab-desktop-title {
-
-					&.elementor-active {
-					  background-color: var(--tabs-v2-background-color);
-
-					  @include border-end-property(style, none);
-
-					  &:before,
-					  &:after {
-						height: 999em;
-						width: 0;
-						@include end(0);
-						@include border-end-property(style, solid);
-					  }
-
-					  &:before {
-						top: 0;
-						transform: translateY(-100%);
-					  }
-
-					  &:after {
-						top: 100%;
-					  }
-					}
-				  }
 				}
-			  > .elementor-tab-desktop-title {
-				> .elementor-align-icon- {
-				  &right {
-					margin-left: 5px;
-					order: getValueByDirection( 15, 5 );
-				  }
 
-				  &left {
-					margin-right: 5px;
-					order: getValueByDirection( 5, 15 );
-				  }
-				}
-			  }
 				.elementor-tabs-content-wrapper {
 					.e-container {
 						width: 100%;
