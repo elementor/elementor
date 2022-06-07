@@ -6,16 +6,15 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
 
-  //close Navigator
+  // Close Navigator
   await page.click( '#elementor-navigator__close' );
 
 	// Act.
 	await editor.addWidget( 'image-carousel' );
 
- // Click [aria-label="Add Images"]
   await page.locator( '[aria-label="Add Images"]' ).click();
 
-  // Click text=Media Library
+  // Open Media Library
   await page.click( 'text=Media Library' );
 
   // Upload the images to WP media library
@@ -25,13 +24,13 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
   await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
   await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
 
- // Click text=Create a new gallery
+  // Create a new gallery
   await page.locator( 'text=Create a new gallery' ).click();
 
-  // Click text=Insert gallery
+  // Insert gallery
   await page.locator( 'text=Insert gallery' ).click();
 
-  // Open Additional options
+  // Open The Additional options Section
   await page.click( '#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)' );
 
   // Disable AutoPlay
