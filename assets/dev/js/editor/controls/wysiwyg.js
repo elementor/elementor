@@ -153,7 +153,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	onReady: function() {
 		const $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', '' ) );
 
-		$editor.find( `.wp-editor-area` ).text( this.getControlValue() );
+		$editor.find( '.wp-editor-area' ).text( this.getControlValue() );
 
 		$editor.find( `.wp-editor-tabs` ).addClass( 'elementor-control-dynamic-switcher-wrapper' );
 
