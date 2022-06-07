@@ -241,6 +241,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.6.6 - 2022-06-06 =
+* Tweak: Added "Skip & Deactivate" button in plugin deactivation survey
+* Tweak: Removed data sharing checkbox in onboarding flow
+* Tweak: Added a promotion to Notes feature in the Editor panel
+* Tweak: Applied optimized file handling in various modules
+* Fix: Critical error appeared in external apps when no page is selected as homepage in WordPress Reading Settings
+* Fix: Font awesome 5 migration process is not optimal in Elementor tools screen
+
 = 3.6.5 - 2022-04-27 =
 * Fix: PHP Error is thrown in System Info report for experiments that don't have a title
 * Fix: Optimized template file uploads for better security enforcement
