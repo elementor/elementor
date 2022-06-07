@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Utils\ImportExport\Parsers;
 
-use Elementor\Utils;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -172,7 +171,7 @@ class WXR_Parser_XML {
 
 		xml_set_element_handler( $xml, $tag_open_callback, $tag_close_callback );
 
-		if ( ! xml_parse( $xml, Utils::file_get_contents( $file ), true ) ) {
+		if ( ! xml_parse( $xml, file_get_contents( $file ), true ) ) {
 			$current_line = xml_get_current_line_number( $xml );
 			$current_column = xml_get_current_column_number( $xml );
 			$error_code = xml_get_error_code( $xml );
