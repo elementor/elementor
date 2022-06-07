@@ -4,6 +4,7 @@ describe( 'Context menu manager', () => {
 	beforeAll( () => {
 		global.structuredClone = ( object ) => JSON.parse( JSON.stringify( object ) );
 	} );
+
 	test( 'Check main flow', () => {
 		const manager = new ContextMenuManager();
 
