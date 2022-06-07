@@ -14,7 +14,6 @@ test.describe.serial( 'NestedElementsModule', () => {
 		await wpAdmin.setExperiments( {
 			container: true,
 			'nested-elements': true,
-			'tabs-v2': true,
 		} );
 	} );
 
@@ -30,7 +29,6 @@ test.describe.serial( 'NestedElementsModule', () => {
 		await wpAdmin.setExperiments( {
 			container: false,
 			'nested-elements': false,
-			'tabs-v2': false,
 		} );
 	} );
 
