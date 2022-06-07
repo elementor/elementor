@@ -1,8 +1,7 @@
 <?php
 namespace Elementor\Modules\TabsV2;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\NestedElements\Module as NestedElementsModule;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -10,16 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	public static function get_experimental_data() {
-		return [
-			'name' => 'tabs-v2',
-			'title' => esc_html__( 'Nested Tab', 'elementor' ),
-			'description' => esc_html__( 'Nested Tabs', 'elementor' ), // TODO: Add description
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'dependencies' => [ NestedElementsModule::class ],
-		];
+	public static function is_active() {
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
+
 
 	public function get_name() {
 		return 'tabs-v2';

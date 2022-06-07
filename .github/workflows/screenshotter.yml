@@ -40,7 +40,7 @@ jobs:
         run: | # Enable the container experiment & enable import SVG
           cd /tmp/wordpress
           wp elementor experiments activate container
-          wp elementor experiments activate tabs-v2
+          wp elementor experiments activate nested-elements
           wp option update elementor_unfiltered_files_upload 1
       - name: Import Templates
         run: |
