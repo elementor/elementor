@@ -101,6 +101,10 @@ export default class extends BaseRegion {
 		this.ensurePosition();
 
 		elementorCommon.elements.$window.on( 'resize', this.ensurePosition );
+
+		if ( this.isDocked && elementor.panel.$el.is( ':visible' ) ) {
+			elementor.panel.close();
+		}
 	}
 
 	close( silent ) {

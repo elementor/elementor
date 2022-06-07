@@ -178,14 +178,19 @@
 		background: #EDEFF0;
 		height: 100%;
 		padding: 0;
-		padding-inline-start: 8px;
 
 		.elementor-panel-footer-tool:not( #elementor-panel-footer-saver-publish ):hover {
 			background: rgba( 0,0,0,.1);
 		}
 
+		.e-top-icon {
+			border-radius: 0 !important;
+			padding: 14px 16px;
+			margin: 0 !important;
+		}
+
 		.e-top-icon:hover {
-			background: transparent !important;
+			background: rgba(109, 120, 130, 0.1) !important;
 		}
 
 		.elementor-panel-footer-sub-menu {
