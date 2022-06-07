@@ -2,7 +2,6 @@
 namespace Elementor\Core\Files\File_Types;
 
 use Elementor\Core\Utils\Exceptions;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -60,7 +59,7 @@ class Svg extends Base {
 	 * @return bool
 	 */
 	public function sanitize_svg( $filename ) {
-		$original_content = Utils::file_get_contents( $filename );
+		$original_content = file_get_contents( $filename );
 		$is_encoded = $this->is_encoded( $original_content );
 
 		if ( $is_encoded ) {
@@ -295,7 +294,7 @@ class Svg extends Base {
 			return '';
 		}
 
-		$svg = Utils::file_get_contents( $attachment_file );
+		$svg = file_get_contents( $attachment_file );
 
 		if ( ! empty( $svg ) ) {
 			update_post_meta( $attachment_id, self::META_KEY, $svg );
