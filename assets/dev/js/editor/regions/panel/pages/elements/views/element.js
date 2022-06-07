@@ -51,8 +51,17 @@ module.exports = Marionette.ItemView.extend( {
 			return;
 		}
 
+		const helper = this.ui.element.clone()[ 0 ];
+		helper.classList.add( 'elementor-sortable-helper' );
+
 		this.ui.element.html5Draggable( {
-			onDragStart: () => {
+			onDragStart: ( e ) => {
+				elementor.$previewContents[ 0 ].body.appendChild( helper );
+
+				e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
+
+				elementor.getPanelView()._parent.close();
+
 				// Reset the sort cache.
 				elementor.channels.editor.reply( 'element:dragged', null );
 
@@ -63,6 +72,8 @@ module.exports = Marionette.ItemView.extend( {
 
 			onDragEnd: () => {
 				elementor.channels.panelElements.trigger( 'element:drag:end' );
+
+				helper.remove();
 			},
 
 			groups: [ 'elementor-element' ],

@@ -36,7 +36,7 @@ export default class Component extends ComponentBase {
 			/* translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		elementor.getPanelView().setPage( 'editor', title, {
+		this.manager.setPage( 'editor', title, {
 			tab,
 			model: model,
 			controls: elementor.getElementControls( model ),

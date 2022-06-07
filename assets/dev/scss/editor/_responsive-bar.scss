@@ -13,7 +13,7 @@
 	transition: height .2s ease-in-out, opacity .1s ;
 	left: 0; // Fix position:sticky for RTL [ _devices.scss -> #elementor-preview ] ( browser bug )
 	top: 0;
-	z-index: 100;
+	z-index: 130;
 
 	&:before {
 		content: "";
@@ -105,6 +105,7 @@
 	&__menu {
 
 		&-logo {
+			direction: ltr;
 			display: grid;
 			grid-template-columns: 3px 8px;
 			grid-template-rows: 3px 3px 3px;
@@ -150,6 +151,7 @@
 	justify-content: space-between;
 	background-color: #495157;
 	color: #FFF;
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
 
 	&__start, &__center, &__end, &-scale, &-switcher {
 		display: flex;
@@ -180,6 +182,10 @@
 
 		.elementor-panel-footer-tool:not( #elementor-panel-footer-saver-publish ):hover {
 			background: rgba( 0,0,0,.1);
+		}
+
+		.e-top-icon:hover {
+			background: transparent !important;
 		}
 
 		.elementor-panel-footer-sub-menu {
@@ -260,6 +266,10 @@
 			transition: .3s all;
 		}
 
+		#elementor-panel-footer-sub-menu-item-wp-dashboard {
+			color: #0173A9;
+		}
+
 		&.e-logo .elementor-panel-footer-sub-menu {
 			margin-top: 2px;
 			inset-inline-start: 8px !important;
@@ -323,8 +333,7 @@
 
 	& > button.elementor-button {
 		padding: 0;
-		padding-inline-start: 16px;
-		padding-inline-end: 16px;
+		padding-inline: 16px;
 		border-inline-end: 1px solid #259035 !important;
 
 		&.elementor-disabled {

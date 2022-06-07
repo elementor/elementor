@@ -79,10 +79,10 @@ body {
 		}
 	}
 
-	&.elementor-navigator--dock-hint, &.elementor-panel--dock-hint {
+	&.elementor-navigator--dock-hint, &.elementor-panel--dock-hint, &.elementor-inspector--dock-hint {
 
 		&:after {
-			width: 30px;
+			width: 20px;
 		}
 	}
 }

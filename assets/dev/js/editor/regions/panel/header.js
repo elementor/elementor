@@ -34,12 +34,30 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickClose: function() {
-		$e.run( 'panel/close' );
+		this.getParent().close();
+	},
+
+	onRender: function( ...args ) {
+		if ( this.getParent().canFloat() ) {
+			this.$el.addClass( 'e-panel-floatable' );
+		} else {
+			this.ui.floatButton.remove();
+		}
+	},
+
+	getParent: function() {
+		return this._parent._parent._parent._parent;
 	},
 
 	onClickFloat: function() {
-		elementorCommon.elements.$body.addClass( 'elementor-panel--float' );
-		elementorCommon.elements.$body.removeClass( 'elementor-panel-docked elementor-panel-docked--left elementor-panel-docked--right' );
+		const parentPanel = this.getParent();
+		const { isDocked } = parentPanel;
+
+		if ( isDocked ) {
+			parentPanel.undock();
+		} else {
+			parentPanel.dock( parentPanel.getDockingSide() );
+		}
 	},
 
 	// onClickMenu: function() {

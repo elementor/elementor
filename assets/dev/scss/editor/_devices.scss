@@ -45,24 +45,24 @@ body {
 	}
 
 	.elementor-navigator-docked--left & {
-		margin-left: var(--e-editor-navigator-width);
+		margin-left: var( --e-editor-navigator-width--docked );
 	}
 
 	.elementor-navigator-docked--right & {
-		margin-right: var(--e-editor-navigator-width);
+		margin-right: var( --e-editor-navigator-width--docked );
 	}
 
-	.elementor-panel-docked--left & {
-		margin-left: var(--e-editor-panel-width);
+	.elementor-inspector-docked--left & {
+		margin-left: var( --e-editor-inspector-width--docked );
 	}
 
-	.elementor-panel-docked--right & {
-		margin-right: var(--e-editor-panel-width);
+	.elementor-inspector-docked--right & {
+		margin-right: var( --e-editor-inspector-width--docked );
 	}
 
 	.elementor-editor-preview & {
 		margin: 0;
-	}	
+	}
 }
 
 #elementor-preview-responsive-wrapper {
@@ -159,7 +159,7 @@ body {
 	.ui-resizable-e {
 		right: 0;
 	}
-	
+
 	.ui-resizable-w {
 		left: 0;
 	}

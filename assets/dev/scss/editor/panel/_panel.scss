@@ -4,6 +4,9 @@
 
 :root {
 	--e-is-preview-mode: 0;
+	--e-editor-inspector-width--docked: 329px;
+	--e-editor-navigator-width--docked: 308px;
+	--e-editor-panel-width--docked: 308px;
 
 	@media (max-width: $editor-screen-lg-max) {
 		--e-editor-panel-width: #{$panel-width};
@@ -29,6 +32,30 @@
 
 	&.e-panel--open {
 		display: block;
+	}
+
+	#elementor-navigator__toggle-all {
+		display: none;
+	}
+
+	&#elementor-navigator {
+		#elementor-navigator__toggle-all {
+			display: block;
+		}
+	}
+
+	&.e-panel-docked {
+		&#elementor-panel {
+			width: var( --e-editor-panel-width--docked );
+		}
+
+		&#elementor-inspector {
+			width: var( --e-editor-inspector-width--docked );
+		}
+
+		&#elementor-navigator {
+			width: var( --e-editor-navigator-width--docked );
+		}
 	}
 
 	body:not(.elementor-panel-docked) & {

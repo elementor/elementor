@@ -14,6 +14,7 @@ body {
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
 	display: none;
+	z-index: 9;
 
 	&.e-navigator--open {
 		display: block;
@@ -66,15 +67,15 @@ body {
 		background-color: $editor-background;
 	}
 
-	&__header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 12px 10px;
-		background-color: #fff;
-		border-bottom: 1px solid $editor-background;
-		cursor: move;
-	}
+	//&__header {
+	//	display: flex;
+	//	align-items: center;
+	//	justify-content: space-between;
+	//	padding: 12px 10px;
+	//	background-color: #fff;
+	//	border-bottom: 1px solid $editor-background;
+	//	cursor: move;
+	//}
 
 	&__float,
 	&__close,
@@ -83,7 +84,7 @@ body {
 		cursor: pointer;
 
 		&:not(:hover) {
-			color: $editor-light;
+			color: #515962;
 		}
 	}
 

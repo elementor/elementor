@@ -73,12 +73,15 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Widgets Panel', 'elementor' ); ?></span>
 	</div> -->
 	<div id="elementor-panel__header-buttons">
-		<span id="elementor-panel__header-float">
-			<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M12.4084 0.590539C12.5305 0.713853 12.5305 0.915707 12.4084 1.03902L7.84225 5.6481L6.70071 6.80038L2.13458 11.4095C2.01499 11.5302 1.82305 11.5302 1.70346 11.4095C1.5813 11.2861 1.5813 11.0843 1.70346 10.961L6.26959 6.35189L7.41112 5.19962L11.9773 0.590539C12.0968 0.469823 12.2888 0.469823 12.4084 0.590539Z" fill="#515962" stroke="#515962"/>
-				<path d="M7.79883 12L0.9999 12L0.999901 6.14216" stroke="#515962" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		</span>
+		<div class="e-panel-left-buttons">
+			<span id="elementor-panel__header-float">
+				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12.4084 0.590539C12.5305 0.713853 12.5305 0.915707 12.4084 1.03902L7.84225 5.6481L6.70071 6.80038L2.13458 11.4095C2.01499 11.5302 1.82305 11.5302 1.70346 11.4095C1.5813 11.2861 1.5813 11.0843 1.70346 10.961L6.26959 6.35189L7.41112 5.19962L11.9773 0.590539C12.0968 0.469823 12.2888 0.469823 12.4084 0.590539Z" fill="#515962" stroke="#515962"/>
+					<path d="M7.79883 12L0.9999 12L0.999901 6.14216" stroke="#515962" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</span>
+			<i id="elementor-navigator__toggle-all" class="eicon-expand" data-elementor-action="expand"></i>
+		</div>
 		<i id="elementor-panel__header-close" class="eicon-close"></i>
 	</div>
 </script>

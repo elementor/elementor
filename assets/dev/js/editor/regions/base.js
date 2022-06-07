@@ -16,18 +16,51 @@ module.exports = Marionette.Region.extend( {
 		this.isDocked = false;
 
 		this.setSize();
+
+		this.setDefaultPosition();
+
+		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+
+		this.$el.toggleClass( `e-panel-dockable e-panel-dockable-${ this.getDockingSide() }`, this.canFloat() );
+	},
+
+	onDocumentLoaded: function( document ) {
+		if ( document.config.panel.has_elements ) {
+			this.initBehavior();
+		}
+	},
+
+	getVisibleModes: function() {
+		return [
+			'settings',
+			'edit',
+			'picker',
+			'preview',
+		];
+	},
+
+	onEditModeSwitched: function( activeMode ) {
+		if ( this.getVisibleModes().includes( activeMode ) && this.storage.visible ) {
+			this.open();
+		} else {
+			this.close( true );
+		}
 	},
 
 	getDefaultStorage: function() {
+		const position = this.getDefaultPosition();
+
 		return {
 			visible: false,
 			size: {
 				width: '',
 				height: '',
-				top: '',
+				top: position.block,
 				bottom: '',
 				right: '',
 				left: '',
+				[ this.getDockingSide() ]: position.inline,
 			},
 		};
 	},
@@ -46,15 +79,28 @@ module.exports = Marionette.Region.extend( {
 		this.saveStorage( 'size', size );
 	},
 
+	canFloat: function() {
+		return true;
+	},
+
+	canResize: function() {
+		return true;
+	},
+
 	initBehavior: function() {
-		this.$el.draggable( this.getDraggableOptions() );
-		this.$el.resizable( this.getResizableOptions() );
+		if ( this.canFloat() ) {
+			this.$el.draggable( this.getDraggableOptions() );
+		}
+
+		if ( this.canResize() ) {
+			this.$el.resizable( this.getResizableOptions() );
+		}
 	},
 
 	getDraggableOptions: function() {
 		return {
 			iframeFix: true,
-			handle: '#elementor-' + this.getStorageKey() + '__header', //TODO: Fix __header for panel
+			handle: '.e-panel-floatable',
 			drag: this.onDrag.bind( this ),
 			stop: this.onDragStop.bind( this ),
 		};
@@ -92,6 +138,11 @@ module.exports = Marionette.Region.extend( {
 	},
 
 	onDrag: function( event, ui ) {
+		this.$el.css( {
+			right: 'unset',
+			left: 'unset',
+		} );
+
 		if ( this.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
 				if ( ui.position.top !== ui.originalPosition.top ) {
@@ -146,14 +197,43 @@ module.exports = Marionette.Region.extend( {
 		this.$el.removeClass( 'e-panel-faded' );
 	},
 
-	dock: function( position ) { //TODO: fix panel dock position after refresh
+	isPushingContent: function() {
+		return true;
+	},
+
+	open: function() {
+		this.saveStorage( 'visible', true );
+		this.$el.addClass( 'e-panel--open' );
+
+		if ( this.isDocked ) {
+			this.dock( this.getDockingSide() );
+		}
+	},
+
+	close: function() {
+		this.saveStorage( 'visible', false );
+		this.$el.removeClass( 'e-panel--open' );
+
+		const dockedClass = 'elementor-' + this.getStorageKey() + '-docked',
+			dockedPositionClass = dockedClass + '--' + this.getDockingSide();
+
+		elementorCommon.elements.$body.removeClass( dockedClass + ' ' + dockedPositionClass );
+	},
+
+	dock: function( position ) {
 		const dockedClass = 'elementor-' + this.getStorageKey() + '-docked',
 			dockedPositionClass = dockedClass + '--' + position;
 
-		elementorCommon.elements.$body.addClass( dockedClass + ' ' + dockedPositionClass );//TODO: Use CSS
+		this.$el.addClass( 'e-panel-docked' );
+
+		if ( this.isPushingContent() ) {
+			elementorCommon.elements.$body.addClass( dockedClass + ' ' + dockedPositionClass );
+		}
+
 		this.setSize();
 
 		const resizableOptions = this.getResizableOptions();
+		resizableOptions.handles = 'e, w';
 
 		this.$el.css( {
 			height: '',
@@ -161,7 +241,10 @@ module.exports = Marionette.Region.extend( {
 			bottom: '',
 			left: '',
 			right: '',
+			[ this.getDockingSide() ]: '0',
 		} );
+
+		// this.setDefaultPosition();
 
 		if ( this.$el.resizable( 'instance' ) ) {
 			this.$el.resizable( 'destroy' );
@@ -169,9 +252,6 @@ module.exports = Marionette.Region.extend( {
 
 		// TODO: if dock left use 'e' , if dock right use 'w'
 		// resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
-		resizableOptions.handles = 'e, w';
-
-		this.$el.resizable( resizableOptions );
 
 		this.isDocked = true;
 
@@ -182,6 +262,8 @@ module.exports = Marionette.Region.extend( {
 		const dockedClass = 'elementor-' + this.getStorageKey() + '-docked',
 			dockedPositionClass = dockedClass + '--left' + ' ' + dockedClass + '--right';
 
+		this.$el.removeClass( 'e-panel-docked' );
+
 		elementorCommon.elements.$body.removeClass( dockedClass + ' ' + dockedPositionClass );
 
 		this.setSize();
@@ -190,15 +272,33 @@ module.exports = Marionette.Region.extend( {
 
 		if ( this.$el.resizable( 'instance' ) ) {
 			this.$el.resizable( 'destroy' );
-
-			this.$el.resizable( this.getResizableOptions() );
 		}
+
+		this.setDefaultPosition();
 
 		this.isDocked = false;
 
 		if ( ! silent ) {
 			this.saveStorage( 'dockedPosition', false );
 		}
+
+		if ( this.canResize() ) {
+			this.$el.resizable( this.getResizableOptions() );
+		}
+	},
+
+	getDefaultPosition() {
+		return {
+			inline: '48px',
+			block: 'calc( 48px + 60px )' /* top bar height */,
+		};
+	},
+
+	setDefaultPosition() {
+		const position = this.getDefaultPosition();
+
+		this.$el.css( 'top', position.block );
+		this.$el.css( this.getDockingSide(), position.inline );
 	},
 
 	/**

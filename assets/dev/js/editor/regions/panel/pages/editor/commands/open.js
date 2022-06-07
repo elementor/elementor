@@ -5,6 +5,7 @@ export class Open extends $e.modules.CommandBase {
 
 			args.model.trigger( 'request:edit' );
 		} else {
+			elementor.getRegion( 'inspector' ).open();
 			$e.route( this.component.getDefaultRoute(), args );
 		}
 

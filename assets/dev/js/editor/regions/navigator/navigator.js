@@ -10,9 +10,6 @@ export default class extends BaseRegion {
 
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
-		this.dock( this.getDockingSide() );
-		elementorCommon.elements.$body.css( '--e-editor-' + this.getStorageKey() + '-width', '0' );
-
 		this.indicators = {
 			customPosition: {
 				title: __( 'Custom Positioning', 'elementor' ),
@@ -24,12 +21,14 @@ export default class extends BaseRegion {
 
 		this.ensurePosition = this.ensurePosition.bind( this );
 
-		// When this callback activated?
-		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+		this.$el.addClass( 'elementor-panel' );
 
 		// TODO: Move to hook on 'editor/documents/load'.
-		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
 		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
+	}
+
+	canResize() {
+		return ! this.isDocked;
 	}
 
 	getStorageKey() {
@@ -261,24 +260,12 @@ export default class extends BaseRegion {
 	// }
 
 	// When this method activated?
-	onEditModeSwitched( activeMode ) {
-		// Determine when the navigator should be visible.
-		const visibleModes = [
-			'edit',
-			'picker',
-		];
-
-		if ( visibleModes.includes( activeMode ) && this.storage.visible ) {
-			this.open();
-		} else {
-			this.close( true );
-		}
-	}
 
 	onDocumentLoaded( document ) {
+		super.onDocumentLoaded( document );
+
 		if ( document.config.panel.has_elements ) {
 			this.show( new NavigatorLayout() );
-			this.initBehavior();
 
 			if ( false !== this.storage.visible ) {
 				$e.route( 'navigator' );

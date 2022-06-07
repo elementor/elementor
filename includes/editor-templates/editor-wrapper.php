@@ -37,6 +37,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 <div id="elementor-editor-wrapper">
 	<div id="elementor-responsive-bar"></div>
 	<div id="elementor-panel" class="elementor-panel"></div>
+	<div id="elementor-inspector" class="elementor-panel"></div>
 	<div id="elementor-preview">
 		<div id="elementor-loading">
 			<div class="elementor-loader-wrapper">

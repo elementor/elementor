@@ -9,11 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
 		<i id="elementor-navigator__toggle-all" class="eicon-expand" data-elementor-action="expand"></i>
-		<div id="elementor-navigator__header__title"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></div>
-		<div>
-			<i id="elementor-navigator__float" class="demo-icon eicon-editor-external-link"></i>
-			<i id="elementor-navigator__close" class="eicon-close"></i>
-		</div>
+<!--		<div id="elementor-navigator__header__title">--><?php //echo esc_html__( 'Navigator', 'elementor' ); ?><!--</div>-->
+<!--		<div>-->
+<!--			<i id="elementor-navigator__float" class="demo-icon eicon-editor-external-link"></i>-->
+<!--			<i id="elementor-navigator__close" class="eicon-close"></i>-->
+<!--		</div>-->
 	</div>
 	<div id="elementor-navigator__elements"></div>
 	<div id="elementor-navigator__footer">

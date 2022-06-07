@@ -15,6 +15,7 @@ export default class View extends Marionette.ItemView {
 			wpDashboard: '#elementor-panel-footer-sub-menu-item-wp-dashboard',
 			themeBuilder: '#elementor-panel-footer-sub-menu-item-theme-builder',
 			addWidgets: '#elementor-panel-footer-add-widgets',
+			globalStyles: '#elementor-panel-footer-global-styles',
 			pageSettings: '#elementor-panel-footer-sub-menu-item-page-settings',
 			siteSettings: '#elementor-panel-footer-sub-menu-item-site-settings',
 			moreItems: '.e-more-item',
@@ -65,6 +66,31 @@ export default class View extends Marionette.ItemView {
 		};
 	}
 
+	onClickAny() {
+		const activeHandlers = [
+			{
+				element: this.ui.addWidgets,
+				isActive: () => 'elements' === elementor.panel.currentView.getCurrentPageName() && elementor.panel.$el.is( ':visible' ),
+			},
+			{
+				element: this.ui.navigator,
+				isActive: () => elementor.navigator.isOpen(),
+			},
+			{
+				element: this.ui.history,
+				isActive: () => 'historyPage' === elementor.panel.currentView.getCurrentPageName() && elementor.panel.$el.is( ':visible' ),
+			},
+			{
+				element: this.ui.globalStyles,
+				isActive: () => [ 'kit_menu', 'page_settings' ].includes( elementor.panel.currentView.getCurrentPageName() ) && elementor.panel.$el.is( ':visible' ),
+			},
+		];
+
+		activeHandlers.forEach( ( handler ) => {
+			handler.element.toggleClass( 'active', handler.isActive() );
+		} );
+	}
+
 	behaviors() {
 		var behaviors = {
 			saver: {
@@ -80,6 +106,8 @@ export default class View extends Marionette.ItemView {
 		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
 		this.listenTo( elementor.channels.responsivePreview, 'open', this.onPreviewOpen );
 		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
+
+		document.addEventListener( 'click', this.onClickAny.bind( this ) );
 	}
 
 	// addTipsyToIconButtons() {
@@ -312,6 +340,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onHistoryClick() {
+		$e.run( 'panel/open' );
 		$e.route( 'panel/history/actions' );
 	}
 
@@ -342,10 +371,13 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onPageSettingsClick() {
+		$e.run( 'panel/open' );
 		$e.route( 'panel/page-settings/settings' );
 	}
 
 	onSiteSettingsClick() {
+		$e.run( 'panel/open' );
+
 		$e.run( 'panel/global/open', {
 			route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
 		} );

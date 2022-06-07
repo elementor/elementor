@@ -1,14 +1,13 @@
 var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 	PanelLayoutView;
 
-import PanelComponent from './component';
-import ElementsComponent from './pages/elements/component';
-import EditorComponent from './pages/editor/component';
+import EditorComponent from 'elementor-panel/pages/editor/component';
 
 PanelLayoutView = Marionette.LayoutView.extend( {
+
 	template: '#tmpl-elementor-panel',
 
-	id: 'elementor-panel-inner',
+	id: 'elementor-inspector-inner',
 
 	regions: {
 		content: '#elementor-panel-content-wrapper',
@@ -37,31 +36,15 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		$e.components.register( new PanelComponent( { manager: this } ) );
-
-		$e.internal( 'panel/state-loading' );
-
-		$e.components.register( new ElementsComponent( { manager: this } ) );
+		$e.components.register( new EditorComponent( { manager: this } ) );
 
 		this.initPages();
 	},
 
 	buildPages: function() {
 		var pages = {
-			elements: {
-				view: require( 'elementor-panel/pages/elements/elements' ),
-				// title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
-				title: __( 'Add Widgets', 'elementor' ),
-			},
-			menu: {
-				view: elementor.modules.layouts.panel.pages.menu.Menu,
-				title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
-			},
-			colorScheme: {
-				view: require( 'elementor-panel/pages/schemes/colors' ),
-			},
-			typographyScheme: {
-				view: require( 'elementor-panel/pages/schemes/typography' ),
+			editor: {
+				view: require( 'elementor-panel/pages/editor' ),
 			},
 		};
 

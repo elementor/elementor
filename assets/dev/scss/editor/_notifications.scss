@@ -6,6 +6,9 @@
 	color: $editor-lightest;
 	background-color: rgba(0, 0, 0, .8);
 	z-index: $super-layer;
+	inset: unset !important;
+	inset-inline-start: 24px !important;
+	bottom: 24px !important;
 
 	.dialog-message {
 		font-size: 13px;

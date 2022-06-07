@@ -24,15 +24,11 @@ module.exports = BaseRegion.extend( {
 
 		// this.isDocked = false;
 
-		this.resizable();
+		// this.resizable();
 
 		// this.setSize();
 
-		elementor.changeEditMode( '' );
-		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-
-		// TODO: Move to hook on 'editor/documents/load'.
-		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+		// elementor.changeEditMode( 'edit' );
 	},
 
 	// setSize: function() {
@@ -70,49 +66,28 @@ module.exports = BaseRegion.extend( {
 		} );
 	},
 
-	onEditModeSwitched: function( activeMode ) {
-		// if ( 'edit' !== activeMode ) {
-		// 	return;
-		// }
-
-		// this.setSize();
-
-		const visibleModes = [
-			'edit',
-			// 'picker',
-		];
-
-		if ( visibleModes.includes( activeMode ) /* && this.storage.visible */ ) {
-			this.open();
-		} else {
-			this.close( true );
-		}
+	getDockingSide: function() {
+		return elementorCommon.config.isRTL ? 'right' : 'left';
 	},
 
-	open: function() {
-		this.saveStorage( 'visible', true );
-		this.$el.addClass( 'e-panel--open' );
+	isPushingContent() {
+		return false;
 	},
 
-	close: function() {
-		this.saveStorage( 'visible', false );
-		this.$el.removeClass( 'e-panel--open' );
+	canResize() {
+		return false;
+	},
+
+	canFloat() {
+		return false;
+	},
+
+	open() {
+		BaseRegion.prototype.open.apply( this, arguments );
+		this.dock( this.getDockingSide() );
 	},
 
 	// initBehavior: function() {
 	// 	console.log( 'initBehavior' ); //Here
 	// },
-
-	onDocumentLoaded: function( document ) {
-		if ( document.config.panel.has_elements ) {
-			this.initBehavior();
-
-			// if ( this.storage.visible ) {
-				// $e.route( 'navigator' );
-				// this.open();
-				// elementor.changeEditMode( 'edit' );
-			// }
-			// this.dock( 'left' );
-		}
-	},
 } );

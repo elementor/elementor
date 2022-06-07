@@ -561,6 +561,10 @@ export default class EditorBase extends Marionette.Application {
 		this.trigger( 'panel:init' );
 	}
 
+	initInspector() {
+		this.addRegions( { inspector: require( 'elementor-regions/inspector/panel' ) } );
+	}
+
 	initResponsiveBar() {
 		this.addRegions( {
 			responsiveBar: {
@@ -1182,6 +1186,8 @@ export default class EditorBase extends Marionette.Application {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
+
+		this.initInspector();
 
 		this.initResponsiveBar();
 

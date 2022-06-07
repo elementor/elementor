@@ -1,4 +1,5 @@
 import ElementView from './element';
+import PanelHeaderItemView from 'elementor-panel/header';
 
 export default class extends Marionette.LayoutView {
 	getTemplate() {
@@ -27,6 +28,7 @@ export default class extends Marionette.LayoutView {
 
 	regions() {
 		return {
+			header: '#elementor-navigator__header',
 			elements: '#elementor-navigator__elements',
 		};
 	}
@@ -62,6 +64,10 @@ export default class extends Marionette.LayoutView {
 		this.elements.show( new ElementView( {
 			model: elementor.elementsModel,
 		} ) );
+
+		this.header.show( new PanelHeaderItemView() );
+
+		this.getChildView( 'header' ).setTitle( __( 'Navigator', 'elementor' ) );
 	}
 
 	onCloseClick() {

@@ -33,42 +33,27 @@ $breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device wi
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-footer-sub-menu-item-view-page" class="elementor-panel-footer-sub-menu-item">
 					<!-- <i class="elementor-icon eicon-save" aria-hidden="true"></i> -->
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-						<rect width="16" height="16" fill="url(#pattern11)"/>
-						<defs>
-							<pattern id="pattern11" patternContentUnits="objectBoundingBox" width="1" height="1">
-								<use xlink:href="#image11" transform="scale(0.0416667)"/>
-							</pattern>
-							<image id="image11" width="24" height="24" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAkUlEQVRIie2VQQqAIBAAx+hV0QOM/v+B7B91KCF01dTCQw1IQtvujobCTyYzsAJb4TDAFCtgKpLbscQK2KABGIX5llgBL6YLBHaAEubZuB+mOszOGzJ4jD7VQSbeCjQzsEh7ooR3QePmBsW/p6W5QWwPbtHcINbtLZPXDdwC5nyWHtXXHCKa4zyvuQt0geiX2QFcwk8UY6n2dAAAAABJRU5ErkJggg=="/>
-						</defs>
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00008 7.33341C7.63189 7.33341 7.33341 7.63189 7.33341 8.00008C7.33341 8.36827 7.63189 8.66675 8.00008 8.66675C8.36827 8.66675 8.66675 8.36827 8.66675 8.00008C8.66675 7.63189 8.36827 7.33341 8.00008 7.33341ZM6.00008 8.00008C6.00008 6.89551 6.89551 6.00008 8.00008 6.00008C9.10465 6.00008 10.0001 6.89551 10.0001 8.00008C10.0001 9.10465 9.10465 10.0001 8.00008 10.0001C6.89551 10.0001 6.00008 9.10465 6.00008 8.00008Z" fill="#6D7882"/>
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M2.10665 8.00008C3.77194 10.7538 5.74194 12.0001 8.00008 12.0001C10.2582 12.0001 12.2282 10.7538 13.8935 8.00008C12.2282 5.2464 10.2582 4.00008 8.00008 4.00008C5.74194 4.00008 3.77194 5.2464 2.10665 8.00008ZM0.754594 7.66931C2.60488 4.43148 5.01341 2.66675 8.00008 2.66675C10.9868 2.66675 13.3953 4.43148 15.2456 7.66931C15.3627 7.87427 15.3627 8.12589 15.2456 8.33085C13.3953 11.5687 10.9868 13.3334 8.00008 13.3334C5.01341 13.3334 2.60488 11.5687 0.754594 8.33085C0.637466 8.12589 0.637466 7.87427 0.754594 7.66931Z" fill="#6D7882"/>
 					</svg>
 					<span class="elementor-title"><?php echo esc_html__( 'View Page', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-footer-sub-menu-item-theme-builder" class="elementor-panel-footer-sub-menu-item">
 					<!-- <i class="elementor-icon eicon-save" aria-hidden="true"></i> -->
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-						<rect width="16" height="16" fill="url(#pattern11)"/>
-						<defs>
-						<pattern id="pattern11" patternContentUnits="objectBoundingBox" width="1" height="1">
-						<use xlink:href="#image11" transform="scale(0.0416667)"/>
-						</pattern>
-						<image id="image11" width="24" height="24" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAkUlEQVRIie2VQQqAIBAAx+hV0QOM/v+B7B91KCF01dTCQw1IQtvujobCTyYzsAJb4TDAFCtgKpLbscQK2KABGIX5llgBL6YLBHaAEubZuB+mOszOGzJ4jD7VQSbeCjQzsEh7ooR3QePmBsW/p6W5QWwPbtHcINbtLZPXDdwC5nyWHtXXHCKa4zyvuQt0geiX2QFcwk8UY6n2dAAAAABJRU5ErkJggg=="/>
-						</defs>
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33325 4.00008C1.33325 3.2637 1.93021 2.66675 2.66659 2.66675H13.3333C14.0696 2.66675 14.6666 3.2637 14.6666 4.00008V12.0001C14.6666 12.7365 14.0696 13.3334 13.3333 13.3334H2.66659C1.93021 13.3334 1.33325 12.7365 1.33325 12.0001V4.00008ZM13.3333 4.00008H2.66659V12.0001H13.3333V4.00008Z" fill="#6D7882"/>
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33325 6.00008C1.33325 5.63189 1.63173 5.33341 1.99992 5.33341H13.9999C14.3681 5.33341 14.6666 5.63189 14.6666 6.00008C14.6666 6.36827 14.3681 6.66675 13.9999 6.66675H1.99992C1.63173 6.66675 1.33325 6.36827 1.33325 6.00008Z" fill="#6D7882"/>
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M4.66659 2.66675C5.03478 2.66675 5.33325 2.96522 5.33325 3.33341V6.00008C5.33325 6.36827 5.03478 6.66675 4.66659 6.66675C4.2984 6.66675 3.99992 6.36827 3.99992 6.00008V3.33341C3.99992 2.96522 4.2984 2.66675 4.66659 2.66675Z" fill="#6D7882"/>
 					</svg>
 					<span class="elementor-title"><?php echo esc_html__( 'Theme Builder', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-footer-sub-menu-item-wp-dashboard" class="elementor-panel-footer-sub-menu-item">
 					<!-- <i class="elementor-icon eicon-folder" aria-hidden="true"></i> -->
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-						<rect width="16" height="16" fill="url(#pattern12)"/>
-						<defs>
-						<pattern id="pattern12" patternContentUnits="objectBoundingBox" width="1" height="1">
-						<use xlink:href="#image12" transform="scale(0.0416667)"/>
-						</pattern>
-						<image id="image12" width="24" height="24" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACUElEQVRIid3US4jIXxQH8I/HjLeFhJHXCiPFUuQxFsqG8WiksJDHhpQNZaEkzFCipMjKnwULCwvlVVhSHmUwRh7Ff6nGI/JcnPPjMsZr6Vu3373f373nnvM95x7+ddSiCcdxFy9z3E2uKff8FRbiAc5iFcahX47xWI1zaMeCPzHcHS24hxmYgL24jucZwW3sx0TMRBua8+wv0YJLGJaGP+JTF+MDDqAOl/OSn2Jhej4EF35iuByb0ReDcB+NpcFuxbwWrViJGixCB5amBDcwML3uwBKMRh+8TRsNOCRkffe9900ioWVVHMEb/I9tBX8YrzOCOQU/BuexuCLKpDTiBDahV3IPcz4MG9JbokyreQt65nxN2vhGpgr3RCneFvLIdan3kuSH433Bz0V/UWnj04FOEdThGUZiRXHprWJPpfUzUQQVemOykOhpOtAJHRggtH2LwclvSS870lAlzbIighHYI97JgNzbCZVEd/LQuuTH5vpYergx+X54ISTthsdConpdSHRNvNyLuV6e3zbcxEmRg4p/hVM4jakYJWSbgas/iqBJ9JZJotY/ZUSwPuW5nvzE5OdgGvblmfq85EuZlqgVjWsmDqah7fmvh28ralfB14ik78bsjLjmRxcQXbFNVMFFPPJVxq3FBU8KfhbO5Jl2zOvKeIVm0biGi0Y2Pfkq+dVoSH4KhuIKdvzKuPSsWTSuBiFdnaiM1yK5raJMCVnasdNvtusKjXnJedEC6sVr7S+a2VqR0DbM/xPDJWpERfwnJHqRoxVH81+XCf038BlI26d0hhBMKQAAAABJRU5ErkJggg=="/>
-						</defs>
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00028 1.34375C4.32962 1.34375 1.34375 4.32936 1.34375 7.99972C1.34375 11.6702 4.32962 14.6562 8.00028 14.6562C11.6704 14.6562 14.6562 11.6702 14.6562 7.99972C14.6562 4.32977 11.6704 1.34375 8.00028 1.34375ZM2.10771 7.99973C2.10771 7.14562 2.29112 6.33447 2.61802 5.60207L5.42874 13.3026C3.46322 12.3477 2.10771 10.3323 2.10771 7.99973ZM8.00028 13.8925C7.4218 13.8925 6.86357 13.8071 6.33549 13.6523L8.10328 8.51539L9.91499 13.4769C9.92655 13.506 9.94101 13.5328 9.95685 13.5581C9.3445 13.7738 8.68616 13.8925 8.00028 13.8925ZM8.81201 5.23731C9.16673 5.21858 9.48619 5.18099 9.48619 5.18099C9.80386 5.14354 9.76668 4.67717 9.44887 4.6959C9.44887 4.6959 8.49434 4.77066 7.87841 4.77066C7.29966 4.77066 6.32626 4.6959 6.32626 4.6959C6.00887 4.67717 5.97196 5.16268 6.28908 5.18099C6.28908 5.18099 6.58968 5.21844 6.9068 5.23731L7.82485 7.75242L6.53557 11.6198L4.39007 5.23758C4.7452 5.21886 5.06452 5.1814 5.06452 5.1814C5.38165 5.14395 5.3446 4.67731 5.02666 4.69631C5.02666 4.69631 4.07254 4.77094 3.4562 4.77094C3.34521 4.77094 3.21536 4.76805 3.07711 4.76378C4.13023 3.16392 5.94153 2.10781 8.00028 2.10781C9.53452 2.10781 10.9309 2.69438 11.9792 3.65438C11.9535 3.65314 11.9291 3.64984 11.9027 3.64984C11.3241 3.64984 10.913 4.15393 10.913 4.69562C10.913 5.18099 11.1927 5.59201 11.4918 6.07724C11.7161 6.47008 11.9774 6.97418 11.9774 7.70244C11.9774 8.20681 11.7838 8.79215 11.5291 9.60715L10.9414 11.5711L8.81201 5.23731ZM10.9623 13.0926L12.7621 7.88916C13.0987 7.04868 13.2101 6.37646 13.2101 5.77859C13.2101 5.562 13.1958 5.36028 13.1705 5.17274C13.6311 6.01198 13.8927 6.97529 13.8924 7.99987C13.8924 10.1735 12.7139 12.0712 10.9623 13.0926Z" fill="#0173A9"/>
 					</svg>
-					<span class="elementor-title"><?php echo esc_html__( 'Exit to WordPress', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php echo esc_html__( 'WP Dashboard', 'elementor' ); ?></span>
 				</div>
 			</div>
 		</div>
@@ -187,13 +172,13 @@ $breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device wi
 		</div>
 	</div>
 	<div id="e-responsive-bar__end">
-		<div id="elementor-panel-footer-finder" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Finder', 'elementor' ); ?>">
-			<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path fill-rule="evenodd" clip-rule="evenodd" d="M11.1653 0.902214C11.5046 1.04952 11.7062 1.40291 11.6603 1.76999L10.9441 7.49997H17.5001C17.8234 7.49997 18.1176 7.68702 18.2547 7.97984C18.3919 8.27266 18.3473 8.61838 18.1403 8.86679L9.80694 18.8668C9.57011 19.151 9.17428 19.245 8.83493 19.0977C8.49558 18.9504 8.29397 18.597 8.33986 18.2299L9.05611 12.5H2.50009C2.17674 12.5 1.88258 12.3129 1.74543 12.0201C1.60828 11.7273 1.6529 11.3815 1.85991 11.1331L10.1932 1.13314C10.4301 0.84895 10.8259 0.754907 11.1653 0.902214ZM4.27929 10.8333H10.0001C10.2391 10.8333 10.4666 10.9359 10.6248 11.1151C10.783 11.2943 10.8566 11.5328 10.827 11.77L10.3462 15.6162L15.7209 9.16663H10.0001C9.76107 9.16663 9.53355 9.06399 9.37536 8.8848C9.21717 8.70561 9.14355 8.46712 9.17319 8.22994L9.65398 4.38368L4.27929 10.8333Z" fill="#495157"/>
+		<div id="elementor-panel-footer-finder" class="elementor-panel-footer-tool tooltip-target e-top-icon" data-tooltip="<?php esc_attr_e( 'Finder', 'elementor' ); ?>">
+			<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M17.1653 6.90225C17.5046 7.04956 17.7062 7.40295 17.6603 7.77003L16.9441 13.5H23.5001C23.8234 13.5 24.1176 13.6871 24.2547 13.9799C24.3919 14.2727 24.3473 14.6184 24.1403 14.8668L15.8069 24.8668C15.5701 25.151 15.1743 25.2451 14.8349 25.0978C14.4956 24.9504 14.294 24.5971 14.3399 24.23L15.0561 18.5H8.50009C8.17674 18.5 7.88258 18.313 7.74543 18.0201C7.60828 17.7273 7.6529 17.3816 7.85991 17.1332L16.1932 7.13318C16.4301 6.84899 16.8259 6.75494 17.1653 6.90225ZM10.2793 16.8333H16.0001C16.2391 16.8333 16.4666 16.936 16.6248 17.1152C16.783 17.2944 16.8566 17.5329 16.827 17.77L16.3462 21.6163L21.7209 15.1667H16.0001C15.7611 15.1667 15.5335 15.064 15.3754 14.8848C15.2172 14.7056 15.1435 14.4672 15.1732 14.23L15.654 10.3837L10.2793 16.8333Z" fill="#495157"/>
 			</svg>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Finder', 'elementor' ); ?></span>
 		</div>
-		<a href="/wp-admin/admin.php?page=go_knowledge_base_site" target="_blank" id="elementor-panel-footer-help" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Help', 'elementor' ); ?>">
+		<a href="/wp-admin/admin.php?page=go_knowledge_base_site" target="_blank" id="elementor-panel-footer-help" class="elementor-panel-footer-tool tooltip-target e-top-icon" data-tooltip="<?php esc_attr_e( 'Help', 'elementor' ); ?>">
 			<!-- <a href="/wp-admin/admin.php?page=go_knowledge_base_site" target="_blank"> -->
 			<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path fill-rule="evenodd" clip-rule="evenodd" d="M16 8.8C12.0235 8.8 8.8 12.0235 8.8 16C8.8 19.9764 12.0235 23.2 16 23.2C19.9764 23.2 23.2 19.9764 23.2 16C23.2 12.0235 19.9764 8.8 16 8.8ZM7 16C7 11.0294 11.0294 7 16 7C20.9706 7 25 11.0294 25 16C25 20.9706 20.9706 25 16 25C11.0294 25 7 20.9706 7 16Z" fill="#495157"/>
@@ -203,11 +188,11 @@ $breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device wi
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Help', 'elementor' ); ?></span>
 			<!-- </a> -->
 		</a>
-		<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
+		<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target e-top-icon" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
 			<span id="elementor-panel-footer-saver-preview-label">
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path fill-rule="evenodd" clip-rule="evenodd" d="M12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9ZM11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12Z" fill="#495157"/>
-					<path fill-rule="evenodd" clip-rule="evenodd" d="M12 4C7.51999 4 3.9072 6.64709 1.13177 11.5038C0.956077 11.8113 0.956077 12.1887 1.13177 12.4962C3.9072 17.3529 7.51999 20 12 20C16.48 20 20.0928 17.3529 22.8682 12.4962C23.0439 12.1887 23.0439 11.8113 22.8682 11.5038C20.0928 6.64709 16.48 4 12 4ZM12 18C8.61278 18 5.65779 16.1305 3.15986 12C5.65779 7.86948 8.61278 6 12 6C15.3872 6 18.3422 7.86948 20.8401 12C18.3422 16.1305 15.3872 18 12 18Z" fill="#495157"/>
+				<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M16 13C14.3431 13 13 14.3431 13 16C13 17.6569 14.3431 19 16 19C17.6569 19 19 17.6569 19 16C19 14.3431 17.6569 13 16 13ZM15 16C15 15.4477 15.4477 15 16 15C16.5523 15 17 15.4477 17 16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16Z" fill="#495157"/>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M16 8C11.52 8 7.9072 10.6471 5.13177 15.5038C4.95608 15.8113 4.95608 16.1887 5.13177 16.4962C7.9072 21.3529 11.52 24 16 24C20.48 24 24.0928 21.3529 26.8682 16.4962C27.0439 16.1887 27.0439 15.8113 26.8682 15.5038C24.0928 10.6471 20.48 8 16 8ZM16 22C12.6128 22 9.65779 20.1305 7.15986 16C9.65779 11.8695 12.6128 10 16 10C19.3872 10 22.3422 11.8695 24.8401 16C22.3422 20.1305 19.3872 22 16 22Z" fill="#495157"/>
 				</svg>
 				<span class="elementor-screen-only"><?php echo esc_html__( 'Preview Changes', 'elementor' ); ?></span>
 			</span>
