@@ -76,6 +76,30 @@ test.describe.serial( 'NestedElementsModule', () => {
 						await expect( editor.previewFrame.locator( 'text=Tab #3' ).first() ).toBeVisible();
 					} );
 
+					test( 'Hook `nested-repeater-create-container` -- Ensure item content get duplicated', async () => {
+						// Arrange.
+						const widgetId = await editor.addWidget( 'tabs-v2' ),
+							containerId = await editor.page.evaluate( ( [ id ] ) => {
+								const container = elementor.getContainer( id );
+								return container.children[ 1 ].id;
+							}, [ widgetId ] );
+
+						await editor.addWidget( 'heading', containerId );
+
+						// Act.
+						await editor.page.evaluate( ( [ id ] ) => {
+							return $e.run( 'document/repeater/duplicate', {
+								container: elementor.getContainer( id ),
+								index: 1,
+								name: 'tabs',
+							} );
+						}, [ widgetId ] );
+
+						// Assert.
+						await expect( await editor.previewFrame.locator( 'text=Tab #2' ).count() ).toBe( 4 ); // 4 including the mobile.
+						await expect( await editor.previewFrame.locator( 'text=Add Your Heading Text Here' ).count() ).toBe( 2 ); // Content.
+					} );
+
 					test( 'Hook `nested-repeater-remove-container`', async () => {
 						// Arrange.
 						const widgetId = await editor.addWidget( 'tabs-v2' );
