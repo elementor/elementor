@@ -225,6 +225,3 @@ describe( 'Context menu manager', () => {
 		] );
 	} );
 } );
-
-// npm run test:jest
-// npm run test:jest -- -o
