@@ -18,7 +18,6 @@ export class NestedRepeaterUpdatePathHashTag extends $e.modules.hookUI.After {
 	}
 
 	apply( args ) {
-		// Update location path according to navigation path.
 		location.hash = `e:run:panel/editor/open?{ "id": "${ args.view.container.id }" }`;
 	}
 }
