@@ -310,7 +310,7 @@ class Uploads_Manager extends Base_Object {
 			 *
 			 * @since 3.7.0
 			 *
-			 * @param string file name
+			 * @param string temporary directory
 			 */
 			$this->temp_dir = apply_filters( 'elementor/files/temp-dir', $temp_dir );
 
