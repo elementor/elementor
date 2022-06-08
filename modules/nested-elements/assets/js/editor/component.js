@@ -9,6 +9,8 @@ export default class Component extends $e.modules.ComponentBase {
 		$e.components.register( new NestedRepeaterComponent() );
 
 		super.registerAPI();
+
+		elementor.hooks.addFilter( 'elements/container/contextMenuGroups', this.removeDeleteFromContextMenu.bind( this ) );
 	}
 
 	isWidgetSupportNesting( widgetType ) {
@@ -46,5 +48,23 @@ export default class Component extends $e.modules.ComponentBase {
 			parent = findParentRecursive( elementor.elements.toJSON(), model.get( 'id' ) );
 
 		return this.isWidgetSupportNesting( parent?.widgetType );
+	}
+
+	removeDeleteFromContextMenu( groups, view ) {
+		// Disabling 'delete' from context menu of building blocks containers.
+		const model = view.options.model;
+
+		if ( 'container' === model.get( 'elType' ) &&
+			this.isModelParentSupportNesting( model ) ) {
+			// Remove the 'delete' item from the container context menu.
+			const newValues = [ ... groups ],
+				deleteItemIndex = newValues.findIndex( ( item ) => 'delete' === item?.name );
+
+			delete newValues[ deleteItemIndex ];
+
+			groups = newValues;
+		}
+
+		return groups;
 	}
 }
