@@ -303,6 +303,15 @@ class Uploads_Manager extends Base_Object {
 
 			$temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], 'elementor', 'tmp' ] ) . DIRECTORY_SEPARATOR;
 
+			/**
+			 * Temp File Path
+			 *
+			 * Allows modifying the full path of the temporary file.
+			 *
+			 * @since 3.7.0
+			 *
+			 * @param string file name
+			 */
 			$this->temp_dir = apply_filters( 'elementor/files/temp-dir', $temp_dir );
 
 			if ( ! is_dir( $this->temp_dir ) ) {
