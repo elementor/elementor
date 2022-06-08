@@ -278,7 +278,7 @@ class Uploads_Manager extends Base_Object {
 		 *
 		 * @since 3.7.0
 		 *
-		 * @param string file name
+		 * @param string full path to file
 		 */
 		$temp_filename = apply_filters( 'elementor/files/temp-file-path', $this->create_unique_dir() . $file_name );
 
