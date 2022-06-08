@@ -10,7 +10,7 @@ import ElementorLoading from 'elementor-app/molecules/elementor-loading';
 export default function UploadAndInstallPro() {
 	usePageTitle( { title: __( 'Upload and Install Elementor Pro', 'elementor' ) } );
 
-	const { state, updateState } = useContext( OnboardingContext ),
+	const { state } = useContext( OnboardingContext ),
 		{ ajaxState: installProZipAjaxState, setAjax: setInstallProZipAjaxState } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ isLoading, setIsLoading ] = useState( false ),

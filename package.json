@@ -1,7 +1,7 @@
 {
     "name": "elementor",
     "slug": "elementor",
-    "version": "3.6.5",
+    "version": "3.6.6",
     "last_beta_version": "3.6.0-beta5",
     "prev_stable_version": "3.1.4",
     "author": "Elementor Team",
@@ -42,7 +42,7 @@
         "eslint-plugin-no-jquery": "^2.7.0",
         "eslint-plugin-react": "^7.29.4",
         "extract-text-webpack-plugin": "^3.0.2",
-        "grunt": "^1.0.4",
+        "grunt": "^1.5.3",
         "grunt-banner": "~0.6.0",
         "grunt-bumpup": "~0.6.3",
         "grunt-checktextdomain": "~1.0.1",

@@ -6,7 +6,6 @@ use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Files\Base;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -37,7 +36,7 @@ class Frontend extends Base {
 
 		$breakpoints_keys = array_keys( $breakpoints );
 
-		$file_content = Utils::file_get_contents( $this->template_file );
+		$file_content = file_get_contents( $this->template_file );
 
 		// The regex pattern parses placeholders located in the frontend _templates.scss file.
 		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z_]+)(?:_(MIN|MAX|NEXT))/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {

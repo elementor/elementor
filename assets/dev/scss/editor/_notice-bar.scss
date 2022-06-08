@@ -1,4 +1,4 @@
-#elementor-notice-bar {
+#e-notice-bar {
 	position: absolute;
 	width: 100%;
 	bottom: 0;
@@ -6,49 +6,62 @@
 	align-items: center;
 	height: 40px;
 	color: #fff;
-	background-color: $editor-dark;
-	padding: 0 50px;
+	background-color: $editor-accent;
+	padding: 0 25px;
 
 	&__message {
 		@include padding-start(15px);
-		flex-grow: 1;
 
 		a {
 			text-decoration: underline;
+			color: #fff;
+
+			&:hover {
+				color: $editor-lightest;
+			}
 		}
 	}
 
 	&__action {
+		@include padding-start(25px);
+		flex-grow: 1;
 		text-transform: uppercase;
+
+		a {
+			background: white;
+			border-radius: 3px;
+			color: $editor-accent;
+			padding: 4px 10px;
+			font-size: 11px;
+
+			&:hover {
+				color: darken($editor-accent, 15%);
+				background: $editor-background-light;
+			}
+		}
 	}
 
 	&__close {
-		margin: 0 20px;
 		cursor: pointer;
 	}
 
 	i {
 		font-size: 16px;
 		opacity: .9;
-	}
 
-	a {
-		color: #fff;
+		&:hover {
+			color: $editor-lightest;
+		}
 	}
 
 	a,
 	i {
 		transition: $transition-hover;
-
-		&:hover {
-			color: $gray-light;
-		}
 	}
 }
 
 body:not(.elementor-device-desktop) {
-
-	#elementor-notice-bar {
+	#e-notice-bar {
 		display: none;
 	}
 }

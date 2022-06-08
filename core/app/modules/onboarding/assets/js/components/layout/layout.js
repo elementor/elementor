@@ -45,7 +45,6 @@ export default function Layout( props ) {
 						placement: elementorAppConfig.onboarding.eventPlacement,
 						step: state.currentStep,
 						source: 'header',
-						contributor: state.isUsageDataShared,
 					},
 				} );
 			},
@@ -67,7 +66,6 @@ export default function Layout( props ) {
 						placement: elementorAppConfig.onboarding.eventPlacement,
 						step: state.currentStep,
 						source: 'header',
-						contributor: state.isUsageDataShared,
 					},
 				} );
 			},
@@ -92,7 +90,6 @@ export default function Layout( props ) {
 					details: {
 						placement: elementorAppConfig.onboarding.eventPlacement,
 						step: state.currentStep,
-						contributor: state.isUsageDataShared,
 					},
 				} );
 			},
