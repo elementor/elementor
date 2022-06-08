@@ -185,16 +185,16 @@ const ContainerView = BaseElementView.extend( {
 	 *
 	 * @returns {void}
 	 */
-		 addNewContainer() {
-			const containerSelector = ( false === this.getContainer().parent.parent ) ? this.getContainer() : this.getContainer().parent;
+	addNewContainer() {
+		const containerSelector = ( false === this.getContainer().parent.parent ) ? this.getContainer() : this.getContainer().parent;
 
-			$e.run( 'document/elements/create', {
-				model: {
-					elType: 'container',
-				},
-				container: containerSelector,
-			} );
-		},
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'container',
+			},
+			container: containerSelector,
+		} );
+	},
 
 	/**
 	 * Add a `Save as Template` and `Add New Container` buttons to the context menu.
