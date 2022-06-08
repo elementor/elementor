@@ -397,6 +397,7 @@ class TabsV2 extends Widget_Nested_Base {
 			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
 			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
 			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
+			$tab_id = $item['_element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => 'elementor-tab-title-' . $id_int . $tab_count,
@@ -407,6 +408,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
 				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
+				'id' => $tab_id,
 			] );
 
 			$this->add_render_attribute( $tab_title_mobile_setting_key, [
@@ -417,6 +419,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
 				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
+				'id' => $tab_id,
 			] );
 
 			$this->add_render_attribute( 'icon-selected', 'class', 'elementor-icon-selected' );
@@ -472,9 +475,13 @@ class TabsV2 extends Widget_Nested_Base {
 				if ( '' !== item.active_icon.value ){
 					iconActive = elementor.helpers.renderIcon( view, item.active_icon, { 'aria-hidden': true }, 'i' , 'object' );
 				}
+				tabId= 'elementor-tab-title-' + tabUid;
+				if ( '' !== item._element_id ){
+					tabId = item._element_id;
+				}
 
 				view.addRenderAttribute( tabTitleKey, {
-				'id': 'elementor-tab-title-' + tabUid,
+				'id': tabId,
 				'class': [ 'elementor-tab-title','elementor-tab-desktop-title' ],
 				'data-tab': tabCount,
 				'role': 'tab',
