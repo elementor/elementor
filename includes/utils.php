@@ -821,7 +821,7 @@ class Utils {
 	 */
 	public static function get_wpml_post_locale() {
 		$post_id = filter_input( INPUT_POST, 'editor_post_id' );
-		$wpml_post_language_details =  null;
+		$wpml_post_language_details = null;
 
 		/**
 		 * Post language details for WPML plugin.
@@ -910,7 +910,7 @@ class Utils {
 
 		return $changed_textdomains;
 	}
-	
+
 	/**
 	 * @param $file
 	 * @param mixed ...$args
