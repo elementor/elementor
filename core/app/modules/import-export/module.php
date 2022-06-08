@@ -216,18 +216,16 @@ class Module extends BaseModule {
 			'manifest' => $manifest_data,
 		];
 
-		$result = $this->handle_homepage_conflict( $result );
-
 		$result = apply_filters( 'elementor/import/stage_1/result', $result );
 
 		return $result;
 	}
 
-	private function handle_homepage_conflict( $result ) {
+	public function handle_homepage_conflict( $result ) {
 		$pages = empty( $result['manifest']['content']['page'] ) ? [] : $result['manifest']['content']['page'];
 
 		foreach ( $pages as $page_id => $page ) {
-			if ( $page['show_on_front'] ) {
+			if ( ! empty( $page['show_on_front'] ) && $page['show_on_front'] ) {
 				$imported_page_id = $page_id;
 				break;
 			}
@@ -497,6 +495,8 @@ class Module extends BaseModule {
 		$page_id = Tools::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+
+		add_filter( 'elementor/import/stage_1/result', [ $this, 'handle_homepage_conflict' ] );
 
 		if ( Utils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
