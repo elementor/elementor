@@ -349,12 +349,24 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onHistoryClick() {
-		$e.run( 'panel/open' );
-		$e.route( 'panel/history/actions' );
+		if ( elementor.panel.$el.is( ':visible' ) ) {
+			elementor.panel.close();
+		} else {
+			$e.run( 'panel/open' );
+			$e.route( 'panel/history/actions' );
+		}
 	}
 
 	onNavigatorClick() {
-		$e.run( 'navigator/open' );
+		if ( elementor.navigator.isOpen() ) {
+			if ( elementor.navigator.isDocked && elementor.panel.$el.is( ':visible' ) ) {
+				elementor.panel.close();
+			} else {
+				elementor.navigator.close();
+			}
+		} else {
+			$e.run( 'navigator/open' );
+		}
 	}
 
 	onFinderClick() {
@@ -374,9 +386,12 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onAddWidgetsClick() {
-		// elementor.changeEditMode( 'edit' );
-		$e.run( 'panel/open' );
-		$e.route( 'panel/elements/categories' );
+		if ( elementor.panel.$el.is( ':visible' ) ) {
+			elementor.panel.close();
+		} else {
+			$e.run( 'panel/open' );
+			$e.route( 'panel/elements/categories' );
+		}
 	}
 
 	onPageSettingsClick() {

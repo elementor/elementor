@@ -56,13 +56,13 @@ class Model extends BaseModel {
 			'ui_theme',
 			[
 				'label' => esc_html__( 'UI Theme', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::HIDDEN,
 				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.', 'elementor' ),
-				'default' => 'auto',
+				'default' => 'light',
 				'options' => [
-					'auto' => esc_html__( 'Auto Detect', 'elementor' ),
+//					'auto' => esc_html__( 'Auto Detect', 'elementor' ),
 					'light' => esc_html__( 'Light', 'elementor' ),
-					'dark' => esc_html__( 'Dark', 'elementor' ),
+//					'dark' => esc_html__( 'Dark', 'elementor' ),
 				],
 			]
 		);

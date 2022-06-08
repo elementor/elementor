@@ -5,7 +5,7 @@
 :root {
 	--e-is-preview-mode: 0;
 	--e-editor-inspector-width--docked: 327px;
-	--e-editor-navigator-width--docked: 308px;
+	--e-editor-navigator-width--docked: 240px;
 	--e-editor-panel-width--docked: 308px;
 
 	@media (max-width: $editor-screen-lg-max) {
@@ -29,6 +29,7 @@
 	font-size: 13px;
 	// @include start(0);
 	display: none;
+	box-shadow: 0px 2px 6px rgba(35, 38, 42, 0.15);
 
 	&.e-panel--open {
 		display: block;
@@ -42,6 +43,10 @@
 		#elementor-navigator__toggle-all {
 			display: block;
 		}
+	}
+
+	&#elementor-inspector {
+		width: var( --e-editor-inspector-width, var( --e-editor-inspector-width--docked, 240px ) );
 	}
 
 	&.e-panel-docked {

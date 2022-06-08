@@ -59,7 +59,8 @@ $breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device wi
 		</div>
 		<div id="elementor-panel-footer-add-widgets" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Add Widgets', 'elementor' ); ?>">
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path fill-rule="evenodd" clip-rule="evenodd" d="M9.1 18.3332C9.1 18.7014 9.39848 18.9999 9.76667 18.9999H10.2333C10.6015 18.9999 10.9 18.7014 10.9 18.3332V10.9H18.3333C18.7015 10.9 19 10.6015 19 10.2333V9.76667C19 9.39848 18.7015 9.1 18.3333 9.1H10.9V1.66656C10.9 1.29837 10.6015 0.999889 10.2333 0.999889L9.76667 0.999889C9.39848 0.999889 9.1 1.29837 9.1 1.66656V9.1H1.66667C1.29848 9.1 1 9.39848 1 9.76667V10.2333C1 10.6015 1.29848 10.9 1.66667 10.9H9.1V18.3332Z" fill="white"/>
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M9.1 18.3333C9.1 18.7015 9.39848 19 9.76667 19H10.2333C10.6015 19 10.9 18.7015 10.9 18.3333V10.9001H18.3333C18.7015 10.9001 19 10.6016 19 10.2334V9.76678C19 9.39859 18.7015 9.10011 18.3333 9.10011H10.9V1.66667C10.9 1.29848 10.6015 1 10.2333 1L9.76667 1C9.39848 1 9.1 1.29848 9.1 1.66667V9.10011H1.66667C1.29848 9.10011 1 9.39859 1 9.76678V10.2334C1 10.6016 1.29848 10.9001 1.66667 10.9001H9.1V18.3333Z" fill="white"/>
+				<path d="M10.9 10.9001V10.6501H10.65V10.9001H10.9ZM10.9 9.10011H10.65V9.35011H10.9V9.10011ZM10.2333 1V0.75V1ZM9.76667 1V1.25V1ZM9.1 9.10011V9.35011H9.35V9.10011H9.1ZM9.1 10.9001H9.35V10.6501H9.1V10.9001ZM9.76667 18.75C9.53655 18.75 9.35 18.5635 9.35 18.3333H8.85C8.85 18.8396 9.26041 19.25 9.76667 19.25V18.75ZM10.2333 18.75H9.76667V19.25H10.2333V18.75ZM10.65 18.3333C10.65 18.5635 10.4635 18.75 10.2333 18.75V19.25C10.7396 19.25 11.15 18.8396 11.15 18.3333H10.65ZM10.65 10.9001V18.3333H11.15V10.9001H10.65ZM18.3333 10.6501H10.9V11.1501H18.3333V10.6501ZM18.75 10.2334C18.75 10.4636 18.5635 10.6501 18.3333 10.6501V11.1501C18.8396 11.1501 19.25 10.7397 19.25 10.2334H18.75ZM18.75 9.76678V10.2334H19.25V9.76678H18.75ZM18.3333 9.35011C18.5635 9.35011 18.75 9.53666 18.75 9.76678H19.25C19.25 9.26052 18.8396 8.85011 18.3333 8.85011V9.35011ZM10.9 9.35011H18.3333V8.85011H10.9V9.35011ZM10.65 1.66667V9.10011H11.15V1.66667H10.65ZM10.2333 1.25C10.4635 1.25 10.65 1.43655 10.65 1.66667H11.15C11.15 1.16041 10.7396 0.75 10.2333 0.75V1.25ZM9.76667 1.25L10.2333 1.25V0.75L9.76667 0.75V1.25ZM9.35 1.66667C9.35 1.43655 9.53655 1.25 9.76667 1.25V0.75C9.26041 0.75 8.85 1.1604 8.85 1.66667H9.35ZM9.35 9.10011V1.66667H8.85V9.10011H9.35ZM1.66667 9.35011H9.1V8.85011H1.66667V9.35011ZM1.25 9.76678C1.25 9.53666 1.43655 9.35011 1.66667 9.35011V8.85011C1.16041 8.85011 0.75 9.26052 0.75 9.76678H1.25ZM1.25 10.2334V9.76678H0.75V10.2334H1.25ZM1.66667 10.6501C1.43655 10.6501 1.25 10.4636 1.25 10.2334H0.75C0.75 10.7397 1.1604 11.1501 1.66667 11.1501V10.6501ZM9.1 10.6501H1.66667V11.1501H9.1V10.6501ZM9.35 18.3333V10.9001H8.85V18.3333H9.35Z" fill="white"/>
 			</svg>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Add Widgets', 'elementor' ); ?></span>
 		</div>
@@ -115,9 +116,12 @@ $breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device wi
 		<div id="elementor-panel-footer-more" class="elementor-panel-footer-tool elementor-toggle-state">
 			<div class="tooltip-target" data-tooltip="<?php esc_attr_e( 'More', 'elementor' ); ?>">
 				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="8" y="2" width="4" height="3.69231" fill="white"/>
-					<rect x="8" y="8.15401" width="4" height="3.69231" fill="white"/>
-					<rect x="8" y="14.3081" width="4" height="3.69231" fill="white"/>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M8 10C8 8.89543 8.89543 8 10 8C11.1046 8 12 8.89543 12 10C12 11.1046 11.1046 12 10 12C8.89543 12 8 11.1046 8 10Z" fill="white"/>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M8 17C8 15.8954 8.89543 15 10 15C11.1046 15 12 15.8954 12 17C12 18.1046 11.1046 19 10 19C8.89543 19 8 18.1046 8 17Z" fill="white"/>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M8 3C8 1.89543 8.89543 1 10 1C11.1046 1 12 1.89543 12 3C12 4.10457 11.1046 5 10 5C8.89543 5 8 4.10457 8 3Z" fill="white"/>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M8 10C8 8.89543 8.89543 8 10 8C11.1046 8 12 8.89543 12 10C12 11.1046 11.1046 12 10 12C8.89543 12 8 11.1046 8 10Z" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M8 17C8 15.8954 8.89543 15 10 15C11.1046 15 12 15.8954 12 17C12 18.1046 11.1046 19 10 19C8.89543 19 8 18.1046 8 17Z" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M8 3C8 1.89543 8.89543 1 10 1C11.1046 1 12 1.89543 12 3C12 4.10457 11.1046 5 10 5C8.89543 5 8 4.10457 8 3Z" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
 				</svg>
 			</div>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'More', 'elementor' ); ?></span>

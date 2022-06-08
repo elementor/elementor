@@ -289,6 +289,12 @@ export default class extends BaseRegion {
 		return elementorCommon.config.isRTL ? 'right' : 'left';
 	}
 
+	dock( position ) {
+		super.dock( position );
+
+		elementor.panel.close();
+	}
+
 	getVisibleModes() {
 		return [
 			'settings',

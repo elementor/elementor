@@ -47,6 +47,7 @@ body {
 		width: 0;
 		background-color: $editor-info;
 		transition: width .5s;
+		z-index: 129;
 	}
 
 	a {
