@@ -1,4 +1,24 @@
 export class Open extends $e.modules.CommandBase {
+	static getInfo() {
+		return {
+			isSafe: true,
+			isSafeWithArgs: true,
+		};
+	}
+
+	validateArgs( args = {} ) {
+		// Mostly used by `$e.extras.hashCommands`.
+		if ( args.id ) {
+			this.requireArgumentType( 'id', 'string' );
+
+			args.container = elementor.getContainer( args.id );
+			args.model = args.container.model;
+			args.view = args.container.view;
+
+			this.requireContainer();
+		}
+	}
+
 	apply( args ) {
 		if ( ! this.component.setDefaultTab( args ) ) {
 			elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
