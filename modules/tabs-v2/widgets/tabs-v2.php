@@ -512,7 +512,7 @@ class TabsV2 extends Widget_Nested_Base {
 	 * @param $item
 	 * @return bool
 	 */
-	protected function is_active_icon_exist( $item ) {
+	private function is_active_icon_exist( $item ) {
 		return array_key_exists( 'active_icon', $item ) && ! empty( $item['active_icon'] ) && ! empty( $item['active_icon']['value'] );
 	}
 }

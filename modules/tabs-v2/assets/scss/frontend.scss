@@ -1,22 +1,6 @@
 //
 // Tabs v2
 //
-.elementor-tab-title .elementor-icon-active{
-  display: none;
-}
-
-.elementor-active .elementor-icon-active {
-  display: unset;
-}
-
-.elementor-active .elementor-icon-selected {
-  display: none;
-}
-.elementor-icon-selected>i, .elementor-icon-active>i{
-  width: 16px;
-}
-
-
 .elementor-widget-tabs-v2 {
 	--tabs-v2-wrapper-display: flex;
 	--tabs-v2-wrapper-justify-content: start;
@@ -257,6 +241,29 @@
 	.elementor-tabs-content-wrapper {
 		border-width: var(--tabs-v2-border-width)
 	}
+}
+.elementor-tab-title {
+  .elementor-icon-active {
+	display: none;
+  }
+}
+.elementor-active {
+  .elementor-icon-active {
+	display: unset;
+  }
+  .elementor-icon-selected {
+	display: none;
+  }
+}
+.elementor-icon-selected {
+  >i {
+	width: 16px;
+  }
+}
+.elementor-icon-active {
+  >i {
+	width: 16px;
+  }
 }
 
 // Responsive mode
