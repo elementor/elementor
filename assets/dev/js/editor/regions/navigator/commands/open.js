@@ -1,6 +1,7 @@
 export class Open extends $e.modules.CommandBase {
-	apply() {
+	apply( args ) {
 		$e.route( this.component.getNamespace() );
+		this.component.open( args );
 	}
 }
 

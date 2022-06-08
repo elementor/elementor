@@ -60,14 +60,16 @@ module.exports = Marionette.ItemView.extend( {
 
 				e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
 
-				elementor.getPanelView()._parent.close();
-
 				// Reset the sort cache.
 				elementor.channels.editor.reply( 'element:dragged', null );
 
 				elementor.channels.panelElements
 					.reply( 'element:selected', this )
 					.trigger( 'element:drag:start' );
+
+				setTimeout( () => {
+					elementor.getPanelView()._parent.close();
+				}, 400 );
 			},
 
 			onDragEnd: () => {

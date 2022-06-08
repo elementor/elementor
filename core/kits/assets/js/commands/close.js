@@ -25,7 +25,10 @@ export class Close extends $e.modules.CommandBase {
 				// The kit shouldn't be cached for next open. (it may be changed via create colors/typography).
 				elementor.documents.invalidateCache( elementor.config.kit_id );
 			},
-		} ).finally( () => $e.internal( 'panel/state-ready' ) );
+		} ).finally( () => {
+			$e.internal( 'panel/state-ready' );
+			elementor.panel.close();
+		} );
 	}
 }
 

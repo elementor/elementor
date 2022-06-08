@@ -25,7 +25,7 @@
 		height: inherit;
 		font-size: 7px;
 		text-transform: uppercase;
-		background: #6D7882;
+		background: #D5D8DC;
 		border-radius: inherit;
 		transition: 0.15s ease-out;
 		transition-property: opacity, background;
@@ -44,5 +44,9 @@
 
 	.elementor-switch-input:checked ~ .elementor-switch-handle {
 		transform: translateX( 12px );
+	}
+
+	.elementor-switch-input:checked ~ .elementor-switch-label {
+		background: #33A343;
 	}
 }

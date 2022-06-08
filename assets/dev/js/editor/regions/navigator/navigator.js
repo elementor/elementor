@@ -124,6 +124,8 @@ export default class extends BaseRegion {
 			this.$el.resizable( 'destroy' );
 		}
 
+		$e.run( 'navigator/close' );
+
 		elementorCommon.elements.$window.off( 'resize', this.ensurePosition );
 	}
 
@@ -285,5 +287,13 @@ export default class extends BaseRegion {
 
 	getDockingSide() {
 		return elementorCommon.config.isRTL ? 'right' : 'left';
+	}
+
+	getVisibleModes() {
+		return [
+			'settings',
+			'edit',
+			'picker',
+		];
 	}
 }

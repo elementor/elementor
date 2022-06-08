@@ -146,7 +146,8 @@
 	#elementor-panel-footer-global-styles .elementor-panel-footer-sub-menu-item:not( #elementor-panel-footer-sub-menu-item-site-settings ),
 	#elementor-panel-footer-sub-menu-item-save-template,
 	#elementor-panel-footer-navigator {
-		display: none;
+		opacity: .4;
+		pointer-events: none;
 	}
 }
 

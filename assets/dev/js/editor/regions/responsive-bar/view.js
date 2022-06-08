@@ -108,6 +108,7 @@ export default class View extends Marionette.ItemView {
 		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
 
 		document.addEventListener( 'click', this.onClickAny.bind( this ) );
+		document.addEventListener( 'mousemove', this.onClickAny.bind( this ) );
 	}
 
 	// addTipsyToIconButtons() {
@@ -345,7 +346,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onNavigatorClick() {
-		$e.run( 'navigator/toggle' );
+		$e.run( 'navigator/open' );
 	}
 
 	onFinderClick() {
