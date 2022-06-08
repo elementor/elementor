@@ -36,12 +36,14 @@ export default class View extends Marionette.ItemView {
 			history: '#elementor-panel-footer-history',
 			navigator: '#elementor-panel-footer-navigator',
 			finder: '#elementor-panel-footer-finder',
+			subItems: '.elementor-toggle-state .elementor-panel-footer-sub-menu-item',
 		};
 	}
 
 	events() {
 		return {
 			'click @ui.viewPage': 'onViewPageClick',
+			'click @ui.subItems': 'onSubItemClick',
 			'click @ui.themeBuilder': 'onThemeBuilderClick',
 			'click @ui.wpDashboard': 'onWpDashboardClick',
 			'click @ui.addWidgets': 'onAddWidgetsClick',
@@ -66,7 +68,7 @@ export default class View extends Marionette.ItemView {
 		};
 	}
 
-	onClickAny() {
+	syncState() {
 		const activeHandlers = [
 			{
 				element: this.ui.addWidgets,
@@ -107,8 +109,8 @@ export default class View extends Marionette.ItemView {
 		this.listenTo( elementor.channels.responsivePreview, 'open', this.onPreviewOpen );
 		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
 
-		document.addEventListener( 'click', this.onClickAny.bind( this ) );
-		document.addEventListener( 'mousemove', this.onClickAny.bind( this ) );
+		document.addEventListener( 'click', this.syncState.bind( this ) );
+		document.addEventListener( 'mousemove', this.syncState.bind( this ) );
 	}
 
 	// addTipsyToIconButtons() {
@@ -326,6 +328,12 @@ export default class View extends Marionette.ItemView {
 		if ( ! isOpen ) {
 			$tool.addClass( 'elementor-open' );
 		}
+	}
+
+	onSubItemClick( event ) {
+		const $tool = jQuery( event.currentTarget );
+
+		$tool.parents( '.elementor-toggle-state' ).removeClass( 'elementor-open' );
 	}
 
 	onClickButtonPreview() {
