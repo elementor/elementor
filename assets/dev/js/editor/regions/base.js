@@ -290,7 +290,7 @@ module.exports = Marionette.Region.extend( {
 	getDefaultPosition() {
 		return {
 			inline: '48px',
-			block: 'calc( 48px + 60px )' /* top bar height */,
+			block: 'calc( 48px + var( --responsive-bar-height ) )',
 		};
 	},
 
