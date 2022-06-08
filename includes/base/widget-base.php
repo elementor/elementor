@@ -351,10 +351,10 @@ abstract class Widget_Base extends Element_Base {
 	 * the control, element name, type, icon and more. This method also adds
 	 * widget type, keywords and categories.
 	 *
-	 * @since 2.9.0
-	 * @access protected
-	 *
 	 * @return array The initial widget config.
+	 * @throws \Exception
+	 * @since  2.9.0
+	 * @access protected
 	 */
 	protected function get_initial_config() {
 		$config = [
@@ -365,6 +365,12 @@ abstract class Widget_Base extends Element_Base {
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
 		];
+
+		$deprecation_config = $this->get_deprecation_config();
+
+		if ( $deprecation_config ) {
+			$config['deprecation'] = $deprecation_config;
+		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
@@ -997,6 +1003,32 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get Deprecation Config.
+	 *
+	 * Retrieve the current element deprecation config.
+	 *
+	 * @return array|null
+	 * @throws \Exception
+	 */
+	protected function get_deprecation_config() {
+		static $required_properties = [ 'version', 'message', 'replacement' ];
+
+		$deprecation_config = $this->mark_as_deprecated();
+
+		if ( empty( $deprecation_config ) ) {
+			return null;
+		}
+
+		foreach ( $required_properties as $required_property ) {
+			if ( ! isset( $deprecation_config[ $required_property ] ) ) {
+				throw new \Exception( sprintf( '%s: `%s` property is required for deprecation config.', __METHOD__, $required_property ) );
+			}
+		}
+
+		return $deprecation_config;
+	}
+
+	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -1023,7 +1055,32 @@ abstract class Widget_Base extends Element_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
+	/**
+	 * @throws \Exception
+	 */
+	protected function deprecation_message() {
+		// Validate if the replacement is active.
+		$config = $this->get_deprecation_config();
+
+		$replacement_widget = Plugin::$instance->widgets_manager->get_widget_types( $config['replacement'] );
+
+		if ( $replacement_widget ) {
+			$this->add_control(
+				'deprecation_message',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => $config['message'],
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+					'separator' => 'after',
+				]
+			);
+		}
+	}
+
+	protected function mark_as_deprecated() {
+		return [];
 	}
 
 	public function register_runtime_widget( $widget_name ) {

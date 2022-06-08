@@ -74,6 +74,17 @@ class Widget_Tabs extends Widget_Base {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
+	protected function mark_as_deprecated() {
+		return [
+			'version' => '3.8.0',
+			'replacement' => 'tabs-v2',
+			'message' => esc_html__(
+				'You are currently editing a Tabs Widget in its old version. Any new tabs widget dragged into the canvas will be the new Tab widget, with the improved Nested capabilities.',
+				'elementor'
+			),
+		];
+	}
+
 	/**
 	 * Register tabs widget controls.
 	 *
@@ -116,6 +127,8 @@ class Widget_Tabs extends Widget_Base {
 				'show_label' => false,
 			]
 		);
+
+		$this->deprecation_message();
 
 		$this->add_control(
 			'tabs',
