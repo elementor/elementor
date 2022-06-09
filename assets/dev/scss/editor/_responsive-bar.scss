@@ -30,15 +30,12 @@
 .e-responsive-bar {
 
 	&-switcher__option {
-		margin: 0 10px;
+		margin: 0;
+		padding: 8px;
 		font-size: 20px;
 
 		input {
 			display: none;
-		}
-
-		&:not(:last-child) {
-			margin-inline-end: 6px;
 		}
 
 		&::before {
@@ -50,7 +47,7 @@
 			position: absolute;
 			top: 100%;
 			left: 0;
-			margin-top: 8px;
+			margin-top: 4px;
 			opacity: 0;
 			transition: .3s all;
 		}
@@ -111,10 +108,10 @@
 			grid-template-rows: 3px 3px 3px;
 			align-content: center;
 			justify-content: center;
-			grid-gap: 2px;
+			grid-gap: 2.5px;
 			background: #FFF;
-			width: 34px;
-			height: 34px;
+			width: 30px;
+			height: 30px;
 			border-radius: 50%;
 		}
 
@@ -185,7 +182,7 @@
 
 		.e-top-icon {
 			border-radius: 0 !important;
-			padding: 14px 16px;
+			padding: 10px 8px;
 			margin: 0 !important;
 		}
 
@@ -338,7 +335,7 @@
 
 	& > button.elementor-button {
 		padding: 0;
-		padding-inline: 36px;
+		padding-inline: 31px;
 		border-inline-end: 1px solid #259035 !important;
 
 		&.elementor-disabled {
@@ -389,7 +386,7 @@
 
 	> button {
 		padding: 0;
-		padding-inline: 12px;
+		padding-inline: 14px;
 	}
 
 	.elementor-panel-footer-sub-menu {
