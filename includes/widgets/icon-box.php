@@ -701,9 +701,9 @@ class Widget_Icon_Box extends Widget_Base {
 					</<?php Utils::print_validated_html_tag( $icon_tag ); ?>>
 				</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
 				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
-					<p <?php $this->print_render_attribute_string( 'description_text' ); ?>>
+					<div <?php $this->print_render_attribute_string( 'description_text' ); ?>>
 						<?php $this->print_unescaped_setting( 'description_text' ); ?>
-					</p>
+					</div>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -750,7 +750,7 @@ class Widget_Icon_Box extends Widget_Base {
 					<{{{ iconTag + ' ' + link }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
 				</{{{ titleSizeTag }}}>
 				<# if ( settings.description_text ) { #>
-				<p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</p>
+				<div {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</div>
 				<# } #>
 			</div>
 		</div>
