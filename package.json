@@ -80,7 +80,7 @@
     "dependencies": {
         "@babel/plugin-transform-modules-commonjs": "^7.2.0",
         "@babel/plugin-transform-runtime": "^7.3.4",
-        "@reduxjs/toolkit": "^1.6.2",
+        "@reduxjs/toolkit": "^1.8.1",
         "@testing-library/jest-dom": "^5.15.0",
         "@wordpress/babel-plugin-import-jsx-pragma": "^2.2.0",
         "@wordpress/babel-preset-default": "^2.1.0",
