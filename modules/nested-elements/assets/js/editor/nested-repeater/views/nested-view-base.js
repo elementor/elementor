@@ -3,6 +3,17 @@
  * @extends {BaseWidgetView}
  */
 export default class NestedViewBase extends elementor.modules.elements.views.BaseWidget {
+	behaviors() {
+		const behaviors = super.behaviors();
+
+		behaviors.Sortable = {
+			behaviorClass: require( '../behaviors/sortable' ).default,
+			elChildType: 'container',
+		};
+
+		return behaviors;
+	}
+
 	/**
 	 * @inheritDoc
 	 *
@@ -21,6 +32,18 @@ export default class NestedViewBase extends elementor.modules.elements.views.Bas
 
 	getChildType() {
 		return [ 'container' ];
+	}
+
+	/**
+	 * TODO: Remove. It's a temporary solution for the Navigator sortable.
+	 * Copied from `elementor-elements/views/container.js`.
+	 *
+	 * @return {{}}
+	 */
+	getSortableOptions() {
+		return {
+			preventInit: true,
+		};
 	}
 
 	onRender() {

@@ -12,7 +12,8 @@ export class NestedRepeaterPreventMovingBuildingBlockContainers extends $e.modul
 
 		return containers.some(
 			( container ) => $e.components.get( 'nested-elements' )
-				.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) )
+				.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) ) &&
+				container.parent.id !== args.target.id
 		);
 	}
 

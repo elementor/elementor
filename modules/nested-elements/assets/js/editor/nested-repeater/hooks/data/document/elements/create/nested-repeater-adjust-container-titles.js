@@ -14,6 +14,10 @@ export class NestedRepeaterAdjustContainerTitles extends Base {
 		return 'document/elements/create';
 	}
 
+	getConditions( args ) {
+		return $e.commands.isCurrentFirstTrace( this.getCommand() ) && super.getConditions( args );
+	}
+
 	/**
 	 * @inheritDoc
 	 *
