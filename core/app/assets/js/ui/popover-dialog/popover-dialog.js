@@ -5,7 +5,8 @@ export default function PopoverDialog( props ) {
 		popoverRef = useCallback( ( popoverEl ) => {
 			const target = targetRef?.current;
 
-			if ( ! target ) {
+			// If the target or the popover element does not exist on the page anymore after a re-render, do nothing.
+			if ( ! target || ! popoverEl ) {
 				return;
 			}
 

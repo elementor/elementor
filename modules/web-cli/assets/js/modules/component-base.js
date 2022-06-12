@@ -397,7 +397,7 @@ export default class ComponentBase extends Module {
 	}
 
 	/**
-	 * @param {Object.<string, CommandBase>} commandsFromImport
+	 * @param {Object.<CommandBase>} commandsFromImport
 	 * @returns {{}} imported commands
 	 */
 	importCommands( commandsFromImport ) {

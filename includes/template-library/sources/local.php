@@ -830,7 +830,7 @@ class Source_Local extends Source_Base {
 
 		// If the import file is a Zip file with potentially multiple JSON files
 		if ( 'zip' === pathinfo( $name, PATHINFO_EXTENSION ) ) {
-			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path );
+			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path, [ 'json' ] );
 
 			if ( is_wp_error( $extracted_files ) ) {
 				// Delete the temporary extraction directory, since it's now not necessary.
@@ -843,6 +843,9 @@ class Source_Local extends Source_Base {
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
+					// Delete the temporary extraction directory, since it's now not necessary.
+					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+
 					return $import_result;
 				}
 
