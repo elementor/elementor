@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'Image Carousel', async ( { page }, testInfo ) => {
+test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
@@ -10,7 +10,7 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
   await page.click( '#elementor-navigator__close' );
 
 	// Act.
-	await editor.addWidget( 'image-carousel' );
+	await editor.addWidget( 'image-gallery' );
 
   await page.locator( '[aria-label="Add Images"]' ).click();
 
@@ -30,10 +30,5 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
   // Insert gallery
   await page.locator( 'text=Insert gallery' ).click();
 
-  // Open The Additional options Section
-  await page.click( '#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)' );
-
-  // Disable AutoPlay
-  await page.selectOption( 'select', 'no' );
-  expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+  expect( await editor.getPreviewFrame().locator( 'div#gallery-1' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'gallery.jpeg' );
 } );
