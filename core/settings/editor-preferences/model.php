@@ -105,13 +105,14 @@ class Model extends BaseModel {
 		$this->add_control(
 			'user_interface',
 			[
-				'label' => esc_html__( 'User Interface', 'elementor' ),
+				'label' => esc_html__( 'Language', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'site_language',
 				'options' => [
 					'site_language' => esc_html__( 'Site language (WP)', 'elementor' ),
 					'user_language' => esc_html__( 'User language', 'elementor' ),
 				],
+				'description' => esc_html__( 'Select a language for using the Elementor Editor. This also affects any placeholder content on your site.', 'elementor' ),
 			]
 		);
 
