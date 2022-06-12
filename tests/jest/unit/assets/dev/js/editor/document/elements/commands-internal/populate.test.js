@@ -1,14 +1,64 @@
 import { mockElementsComponent } from '../mock/component';
 
+let Document;
+
 describe( "$e.internal( 'document/elements/populate' )", () => {
 	beforeEach( async () => {
 		await mockElementsComponent();
+
+		Document = ( await import( 'elementor-editor/components/documents/document' ) ).default;
+
+		global.elementor.initElements = jest.fn();
+		global.elementor.initPreviewView = jest.fn();
+		global.elementor.getPreviewView = jest.fn( () => 'new-view' );
+		global.elementor.elements = 'new-elements';
+	} );
+
+	it( 'Should fail with an invalid Document', () => {
+		// Act & Assert.
+		expect( () => {
+			$e.internal( 'document/elements/populate', {
+				document: {},
+				elements: [],
+			} );
+		} ).toThrow( 'document invalid instance' );
+	} );
+
+	it( 'Should initialize Marionette views', () => {
+		// Arrange.
+		const document = new Document( 1 );
+
+		// Act.
+		$e.internal( 'document/elements/populate', {
+			document,
+			elements: [],
+		} );
+
+		// Assert.
+		expect( elementor.initElements ).toHaveBeenCalledTimes( 1 );
+		expect( elementor.initPreviewView ).toHaveBeenCalledTimes( 1 );
+		expect( elementor.initPreviewView ).toHaveBeenCalledWith( document );
+	} );
+
+	it( 'Should populate Elementor document', () => {
+		// Arrange.
+		const document = new Document( 1 );
+
+		// Act.
+		$e.internal( 'document/elements/populate', {
+			document,
+			elements: [],
+		} );
+
+		// Assert.
+		expect( document.container.view ).toBe( 'new-view' );
+		expect( document.container.model.attributes.elements ).toBe( 'new-elements' );
 	} );
 
 	it( 'Should populate a non-existing document in the elements state', () => {
 		// Act.
 		$e.internal( 'document/elements/populate', {
-			documentId: 1,
+			document: new Document( { id: 1 } ),
 			elements: [
 				{
 					id: 'element1',
@@ -90,7 +140,7 @@ describe( "$e.internal( 'document/elements/populate' )", () => {
 
 		// Act.
 		$e.internal( 'document/elements/populate', {
-			documentId: 1,
+			document: new Document( { id: 1 } ),
 			elements: [ {
 				id: 'element1',
 				elements: [],
@@ -136,7 +186,7 @@ describe( "$e.internal( 'document/elements/populate' )", () => {
 
 		// Act.
 		$e.internal( 'document/elements/populate', {
-			documentId: 3,
+			document: new Document( { id: 3 } ),
 			elements: [ {
 				id: 'element1',
 				elements: [],

@@ -27,11 +27,6 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 
 				elementor.trigger( 'document:loaded', document );
 
-				$e.internal( 'document/elements/populate', {
-					documentId: document.id,
-					elements: document.config.elements,
-				} );
-
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
@@ -66,12 +61,10 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 
-			elementor.initElements();
-
-			elementor.initPreviewView( document );
-
-			document.container.view = elementor.getPreviewView();
-			document.container.model.attributes.elements = elementor.elements;
+			$e.internal( 'document/elements/populate', {
+				document,
+				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
+			} );
 
 			elementor.helpers.scrollToView( document.$element );
 

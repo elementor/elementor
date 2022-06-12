@@ -3,6 +3,23 @@ import { setupMock } from 'elementor/tests/jest/unit/modules/web-cli/assets/js/c
 export async function mockElementsComponent() {
 	await setupMock();
 
+	jest.mock( 'elementor-editor/components/documents/document', () => (
+		class Document {
+			constructor( config ) {
+				this.id = config.id;
+
+				this.container = {
+					view: 'old-view',
+					model: {
+						attributes: {
+							elements: 'old-elements',
+						},
+					},
+				};
+			}
+		}
+	) );
+
 	global.elementor = {
 		helpers: {
 			getModelLabel: () => '',
