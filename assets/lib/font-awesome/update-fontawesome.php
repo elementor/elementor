@@ -8,7 +8,7 @@
 // 4. Files in js and json folders should be updated with the new icons.
 // 5. Delete redundant files in order to keep Elementor plugin size small.
 
-$metadata_path = 'metadata/icons.json';
+$metadata_path = __DIR__ . '/metadata/icons.json';
 
 if ( ! file_exists( $metadata_path ) ) {
 	die( 'metadata/icons.json file not exist.' );
