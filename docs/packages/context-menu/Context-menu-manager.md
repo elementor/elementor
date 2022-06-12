@@ -1,22 +1,22 @@
 # Context Menu Manager (API)
 
 ### Table of content
-* [Introduction](#Introduction)
-    * [Context menu UI behavior](#Context menu UI behavior)
-    * [Context-Menu config structure](#Context Menu config structure)
-    * [Structure tree](#Structure tree)
-* [API methods]()
-  * [Create a group](#Create a group)
-  * [Update a group](#Update a group)
-  * [Delete a group](#Delete a group)
-  * [Add item](#Add item)
-  * [Update item](#Update item)
-  * [Delete item](#Delete item)
-  * [Get config](#Get config)
-* [Understanding the usage flow]()
-  * [Registration of new items](#Registration of new items)
-  * [Triggering the context menu flow](#Triggering the context menu flow)
-* [Example of usage]()
+- [Introduction](#Introduction)
+    - [Context menu UI behavior](#Context menu UI behavior)
+    - [Context-Menu config structure](#Context Menu config structure)
+    - [Structure tree](#Structure tree)
+- [API methods]()
+  - [Create a group](#Create a group)
+  - [Update a group](#Update a group)
+  - [Delete a group](#Delete a group)
+  - [Add item](#Add item)
+  - [Update item](#Update item)
+  - [Delete item](#Delete item)
+  - [Get config](#Get config)
+- [Understanding the usage flow]()
+  - [Registration of new items](#Registration of new items)
+  - [Triggering the context menu flow](#Triggering the context menu flow)
+- [Example of usage]()
 
 ## Introduction
 The context menu manager provides a convenient way for managing the context menu structure.
@@ -292,8 +292,7 @@ export const onContextMenu = () => {
 		{ id: 'another-item-id', label: 'Do another magic' }
 	);
 
-
-	// Allow adding groups from 3P:
+	// Allow adding groups from Third party:
 	window.dispatchEvent( new CustomEvent( 'elementor/element/contextMenu', { detail: {
 			manager, 						// Send the manager instance
 			elType: 'widget',				// Send data about the triggerer
@@ -317,7 +316,7 @@ export const onContextMenu = () => {
 // Third party registers its own groups:
 window.addEventListener( 'elementor/element/contextMenu', ( e ) => {
     
-    // 3rd party deside on whitch element to display its groups:
+    // Third party deside on whitch element to display its groups:
 	if ( 'container' !== e.detail.elType ) {
 		return;
 	}
