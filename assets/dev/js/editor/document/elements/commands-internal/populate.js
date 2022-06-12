@@ -2,7 +2,7 @@ import { addElementToDocumentState } from 'elementor-document/elements/utils';
 import Document from 'elementor-editor/components/documents/document';
 
 export class Populate extends $e.modules.editor.CommandContainerInternalBase {
-	validateArgs( args = {} ) {
+	validateArgs() {
 		this.requireArgumentInstance( 'document', Document );
 	}
 
