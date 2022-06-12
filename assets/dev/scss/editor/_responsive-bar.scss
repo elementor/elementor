@@ -1,6 +1,6 @@
 :root {
 	--e-is-device-mode: 0;
-	--responsive-bar-height: 54px;
+	--responsive-bar-height: 52px;
 }
 
 .e-is-device-mode {
@@ -108,7 +108,7 @@
 			grid-template-rows: 3px 3px 3px;
 			align-content: center;
 			justify-content: center;
-			grid-gap: 2.5px;
+			grid-gap: 2px;
 			background: #FFF;
 			width: 30px;
 			height: 30px;
@@ -182,7 +182,7 @@
 
 		.e-top-icon {
 			border-radius: 0 !important;
-			padding: 10px 8px;
+			padding: 9px 8px;
 			margin: 0 !important;
 		}
 
@@ -334,8 +334,8 @@
 	height: 100%;
 
 	& > button.elementor-button {
-		padding: 0;
-		padding-inline: 31px;
+		width: 120px !important;
+		padding: 0 !important;
 		border-inline-end: 1px solid #259035 !important;
 
 		&.elementor-disabled {

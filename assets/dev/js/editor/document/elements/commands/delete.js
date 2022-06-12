@@ -48,7 +48,10 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 				} );
 			}
 
-			if ( container.id === elementor.getRegion( 'inspector' ).currentView.getCurrentPageView().model.id ) {
+			const openId = elementor.getRegion( 'inspector' ).currentView.getCurrentPageView().model.id,
+				children = container.children.findRecursive( ( container ) => container.id === openId );
+
+			if ( container.id === openId || children ) {
 				elementor.getRegion( 'inspector' ).close();
 			}
 

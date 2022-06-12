@@ -5,7 +5,7 @@
 :root {
 	--e-is-preview-mode: 0;
 	--e-editor-inspector-width--docked: 312px;
-	--e-editor-navigator-width--docked: 240px;
+	--e-editor-navigator-width--docked: 200px;
 	--e-editor-panel-width--docked: 308px;
 
 	@media (max-width: $editor-screen-lg-max) {
@@ -29,7 +29,7 @@
 	font-size: 13px;
 	// @include start(0);
 	display: none;
-	box-shadow: 0px 2px 6px rgba(35, 38, 42, 0.15);
+	box-shadow: 0px 2px 6px rgba(35, 38, 42, 0.15) !important;
 
 	&.e-panel--open {
 		display: block;
@@ -66,7 +66,7 @@
 	body:not(.elementor-panel-docked) & {
 		border-radius: 5px;
 		z-index: 100; // Above the Responsive Bar
-		height: 50vh;
+		height: 70vh;
 	}
 
 	.elementor-panel-docked--left & {

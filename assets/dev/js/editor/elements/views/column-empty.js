@@ -35,6 +35,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickAdd: function() {
+		elementor.panel.open();
 		$e.route( 'panel/elements/categories' );
 	},
 } );

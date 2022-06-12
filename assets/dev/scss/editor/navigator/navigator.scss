@@ -1,5 +1,5 @@
 body {
-	--e-editor-navigator-width: 240px;
+	--e-editor-navigator-width: var( --e-editor-navigator-width--docked );
 }
 
 #elementor-navigator {
