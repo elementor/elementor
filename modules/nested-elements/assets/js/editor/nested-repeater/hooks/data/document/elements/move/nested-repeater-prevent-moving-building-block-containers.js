@@ -13,7 +13,7 @@ export class NestedRepeaterPreventMovingBuildingBlockContainers extends $e.modul
 		return containers.some(
 			( container ) => $e.components.get( 'nested-elements' )
 				.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) ) &&
-				container.parent.id !== args.target.id
+				container.parent.id !== args.target.id // Alow swap containers via sortable.
 		);
 	}
 
