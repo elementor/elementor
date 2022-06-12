@@ -35,7 +35,7 @@ export class ContextMenuManager {
 	}
 
 	getItem( groupId, itemId ) {
-		const currentGroup = this.groups.find( ( group ) => group.id === groupId );
+		const currentGroup = this.getGroup( groupId );
 		return currentGroup.items.find( ( item ) => item.id === itemId );
 	}
 
@@ -98,8 +98,12 @@ export class ContextMenuManager {
 	}
 
 	addItem( groupId, newItem ) {
+		if ( ! newItem.id ) {
+			return;
+		}
+
 		const groupIndex = this.groups.findIndex( ( group ) => group.id === groupId );
-		if ( ! newItem.id || ! this.groups[ groupIndex ] || this.itemExists( groupId, newItem.id ) ) {
+		if ( ! this.groups[ groupIndex ] || this.itemExists( groupId, newItem.id ) ) {
 			return;
 		}
 

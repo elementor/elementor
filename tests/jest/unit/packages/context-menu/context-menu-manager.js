@@ -1,4 +1,4 @@
-import { ContextMenuManager } from 'elementor/packages/context-menu/ContextMenuManager';
+import { ContextMenuManager } from 'elementor/packages/context-menu/context-menu-manager';
 
 describe( 'ContextMenuManager', () => {
 	beforeAll( () => {
@@ -6,7 +6,7 @@ describe( 'ContextMenuManager', () => {
 		global.structuredClone = ( object ) => JSON.parse( JSON.stringify( object ) );
 	} );
 
-	test( 'Check main flow', () => {
+	test( 'Should check the main flow', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -207,7 +207,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Validation of not authorized properties', () => {
+	test( 'Should test validation of not authorized properties', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -245,7 +245,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Validation of not existing', () => {
+	test( 'Should test validation of not existing', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -273,7 +273,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Preventing duplicating groups and items', () => {
+	test( 'Should test preventing duplicating groups and items', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -320,7 +320,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Not displaying groups that their parentItemId points to non-existing items', () => {
+	test( 'Should  not displaying groups that their parentItemId points to non-existing items', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -345,7 +345,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Not displaying groups that their parentItemId points to self descendant items', () => {
+	test( 'Should not displaying groups that their parentItemId points to self descendant items', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
