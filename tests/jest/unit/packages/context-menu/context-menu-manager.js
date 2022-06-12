@@ -6,7 +6,7 @@ describe( 'ContextMenuManager', () => {
 		global.structuredClone = ( object ) => JSON.parse( JSON.stringify( object ) );
 	} );
 
-	test( 'Should check the main flow', () => {
+	it( 'Should check the main flow', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -72,7 +72,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'updateGroup', () => {
+	test( 'Should update a group', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -95,7 +95,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'updateItem', () => {
+	test( 'Should update an item', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -135,7 +135,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'deleteGroup', () => {
+	test( 'Should delete a group', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -162,7 +162,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'deleteItem', () => {
+	test( 'Should delete an item', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -207,7 +207,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Should test validation of not authorized properties', () => {
+	test( 'Should test validation of unauthorized properties', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -245,7 +245,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Should test validation of not existing', () => {
+	test( 'Should test validation of not existing groups', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -320,7 +320,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Should  not displaying groups that their parentItemId points to non-existing items', () => {
+	test( 'Should not display groups that their parentItemId points to non-existing items', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
@@ -345,7 +345,7 @@ describe( 'ContextMenuManager', () => {
 		] );
 	} );
 
-	test( 'Should not displaying groups that their parentItemId points to self descendant items', () => {
+	test( 'Should not display groups that their parentItemId points to self descendant items', () => {
 		// Arrange
 		const manager = new ContextMenuManager();
 
