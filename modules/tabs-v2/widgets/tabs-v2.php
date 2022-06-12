@@ -105,7 +105,7 @@ class TabsV2 extends Widget_Nested_Base {
 		$repeater->add_control(
 			'active_icon',
 			[
-				'label' => esc_html__( 'Active Icon', 'elementor' ),
+				'label' => esc_html__( 'Icon Active', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
@@ -435,11 +435,12 @@ class TabsV2 extends Widget_Nested_Base {
 			if ( $this->is_active_icon_exist( $item ) ) {
 				$icon_active_html = Icons_Manager::try_get_icon_html( $item['active_icon'], [ 'aria-hidden' => 'true' ] );
 			}
-			$tabs_title_html .= "<div $title_render_attributes>
-<span $tab_icon_attributes> $icon_html</span>
-<span $tab_icon_active_attributes> $icon_active_html</span>
-<span>$tab_title</span>
-</div>";
+
+			$tabs_title_html .= "<div $title_render_attributes>";
+			$tabs_title_html .= "	<span $tab_icon_attributes> $icon_html</span>";
+			$tabs_title_html .= "	<span $tab_icon_active_attributes> $icon_active_html</span>";
+			$tabs_title_html .= "	<span>$tab_title</span>";
+			$tabs_title_html .= '</div>';
 
 			// Tabs content.
 			ob_start();
