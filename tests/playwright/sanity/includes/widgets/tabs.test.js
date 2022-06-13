@@ -8,7 +8,6 @@ test( 'Ensure the old tabs widget is telling deprecation warning message', async
 	await wpAdmin.setExperiments( {
 		container: true,
 		'nested-elements': true,
-		'tabs-v2': true,
 	} );
 
 	const editor = await wpAdmin.useElementorCleanPost();
