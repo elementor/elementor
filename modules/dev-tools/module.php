@@ -25,6 +25,7 @@ class Module extends App {
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
 		add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'elementor/common/after_register_scripts', [ $this, 'register_scripts' ] );
 	}
 
 	public function get_name() {
