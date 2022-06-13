@@ -1083,7 +1083,7 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Mark widget as deprecated.
 	 *
-	 * The return should have 3 elements:
+	 * The return should have thw following config:
 	 * - version: string, the version of Elementor that deprecated the widget.
 	 * - replacement: string, the widget that should be used instead.
 	 * - message: string, a message regarding the deprecation.
