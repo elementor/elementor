@@ -144,7 +144,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
-		// When using input with type="number" and the user start typing `-`, the accual value (event.target.value) is
+		// When using input with type="number" and the user start typing `-`, the actual value (event.target.value) is
 		// empty string, so to prevent updating the input again with empty string and the user has intention to write
 		// negative value the methods below will not be triggered.
 		const hasIntentionForNegativeNumber = '-' === event?.originalEvent?.data && ! event.target.value;
