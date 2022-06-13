@@ -1003,32 +1003,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Get Deprecation Config.
-	 *
-	 * Retrieve the current element deprecation config.
-	 *
-	 * @return array|null
-	 * @throws \Exception
-	 */
-	protected function get_deprecation_config() {
-		static $required_properties = [ 'version', 'message', 'replacement' ];
-
-		$deprecation_config = $this->mark_as_deprecated();
-
-		if ( empty( $deprecation_config ) ) {
-			return null;
-		}
-
-		foreach ( $required_properties as $required_property ) {
-			if ( ! isset( $deprecation_config[ $required_property ] ) ) {
-				throw new \Exception( sprintf( '%s: `%s` property is required for deprecation config.', __METHOD__, $required_property ) );
-			}
-		}
-
-		return $deprecation_config;
-	}
-
-	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -1055,32 +1029,6 @@ abstract class Widget_Base extends Element_Base {
 		);
 
 		$this->end_controls_section();
-	}
-
-	/**
-	 * @throws \Exception
-	 */
-	protected function deprecation_message() {
-		// Validate if the replacement is active.
-		$config = $this->get_deprecation_config();
-
-		$replacement_widget = Plugin::$instance->widgets_manager->get_widget_types( $config['replacement'] );
-
-		if ( $replacement_widget ) {
-			$this->add_control(
-				'deprecation_message',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => $config['message'],
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
-					'separator' => 'after',
-				]
-			);
-		}
-	}
-
-	protected function mark_as_deprecated() {
-		return [];
 	}
 
 	public function register_runtime_widget( $widget_name ) {
@@ -1133,6 +1081,44 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Mark widget as deprecated.
+	 *
+	 * The return should have 3 elements:
+	 * - version: string, the version of Elementor that deprecated the widget.
+	 * - replacement: string, the widget that should be used instead.
+	 * - message: string, a message regarding the deprecation.
+	 *
+	 * Use `deprecation_message()` method to print the message control at specific location in register_controls().
+	 *
+	 * @return array
+	 */
+	protected function mark_as_deprecated() {
+		return [];
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	protected function deprecation_message() {
+		// Validate if the replacement is active.
+		$config = $this->get_deprecation_config();
+
+		$replacement_widget = Plugin::$instance->widgets_manager->get_widget_types( $config['replacement'] );
+
+		if ( $replacement_widget ) {
+			$this->add_control(
+				'deprecation_message',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => $config['message'],
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+					'separator' => 'after',
+				]
+			);
+		}
+	}
+
+	/**
 	 * Get Responsive Widgets Data Manager.
 	 *
 	 * Retrieve the data manager that handles widgets that are using media queries for custom-breakpoints values.
@@ -1176,6 +1162,32 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return $has_custom_breakpoints;
+	}
+
+	/**
+	 * Get Deprecation Config.
+	 *
+	 * Retrieve the current element deprecation config.
+	 *
+	 * @return array|null
+	 * @throws \Exception
+	 */
+	private function get_deprecation_config() {
+		static $required_properties = [ 'version', 'message', 'replacement' ];
+
+		$deprecation_config = $this->mark_as_deprecated();
+
+		if ( empty( $deprecation_config ) ) {
+			return null;
+		}
+
+		foreach ( $required_properties as $required_property ) {
+			if ( ! isset( $deprecation_config[ $required_property ] ) ) {
+				throw new \Exception( sprintf( '%s: `%s` property is required for deprecation config.', __METHOD__, $required_property ) );
+			}
+		}
+
+		return $deprecation_config;
 	}
 
 	private function get_widget_css() {
