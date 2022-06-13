@@ -369,7 +369,7 @@ class Icons_Manager {
 	}
 
 	/**
-	 * Font Awesome 4 to font Awesome 5 Value Migration
+	 * Font Awesome 4 to font Awesome 6 Value Migration
 	 *
 	 * used to convert string value of Icon control to array value of Icons control
 	 * ex: 'fa fa-star' => [ 'value' => 'fas fa-star', 'library' => 'fa-solid' ]
@@ -378,7 +378,7 @@ class Icons_Manager {
 	 *
 	 * @return array
 	 */
-	public static function fa4_to_fa5_value_migration( $value ) {
+	public static function fa4_to_fa6_value_migration( $value ) {
 		static $migration_dictionary = false;
 		if ( '' === $value ) {
 			return [
@@ -422,7 +422,7 @@ class Icons_Manager {
 
 		// Case when old value needs migration
 		if ( ! empty( $element['settings'][ $old_control ] ) && ! self::is_migration_allowed() ) {
-			$new_value = self::fa4_to_fa5_value_migration( $element['settings'][ $old_control ] );
+			$new_value = self::fa4_to_fa6_value_migration( $element['settings'][ $old_control ] );
 		}
 
 		$element['settings'][ $new_control ] = $new_value;
@@ -476,7 +476,7 @@ class Icons_Manager {
 						'' => esc_html__( 'No', 'elementor' ),
 						'yes' => esc_html__( 'Yes', 'elementor' ),
 					],
-					'desc' => esc_html__( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
+					'desc' => esc_html__( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 6 library.', 'elementor' ),
 				],
 			]
 		);
@@ -489,8 +489,8 @@ class Icons_Manager {
 			'callback' => function() {
 				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' . // PHPCS - Plain Text
-				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				esc_html__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				esc_html__( 'Access 1,500+ amazing Font Awesome 6 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				esc_html__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 6 icon.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'</p><p><strong>' .
 				esc_html__( 'Please note that the upgrade process may cause some of the previously used Font Awesome 4 icons to look a bit different due to minor design changes made by Font Awesome.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'</strong></p><p>' .
@@ -509,7 +509,7 @@ class Icons_Manager {
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
 							esc_url( $this->get_upgrade_redirect_url() ),
-							esc_html__( 'Upgrade To Font Awesome 5', 'elementor' )
+							esc_html__( 'Upgrade To Font Awesome 6', 'elementor' )
 						),
 					],
 				],
@@ -543,14 +543,14 @@ class Icons_Manager {
 	}
 
 	/**
-	 * Ajax Upgrade to FontAwesome 5
+	 * Ajax Upgrade to FontAwesome 6
 	 */
 	public function ajax_upgrade_to_fa5() {
 		check_ajax_referer( self::NEEDS_UPDATE_OPTION, '_nonce' );
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ] );
+		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 6 was completed successfully.', 'elementor' ) ] );
 	}
 
 	/**

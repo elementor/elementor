@@ -554,14 +554,14 @@ class Upgrades {
 				continue;
 			}
 
-			$element['settings'][ $new_name ] = Icons_Manager::fa4_to_fa5_value_migration( $element['settings'][ $old_name ] );
+			$element['settings'][ $new_name ] = Icons_Manager::fa4_to_fa6_value_migration( $element['settings'][ $old_name ] );
 			$args['do_update'] = true;
 		}
 		return $element;
 	}
 
 	/**
-	 * Set FontAwesome 5 value Migration on for button widget
+	 * Set FontAwesome 6 value Migration on for button widget
 	 *
 	 * @param Updater $updater
 	 */

@@ -203,8 +203,8 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'confirm_fa_migration_admin_modal',
-					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
-					headerMessage: __( 'Font Awesome 5 Migration', 'elementor' ),
+					message: __( 'I understand that by upgrading to Font Awesome 6,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
+					headerMessage: __( 'Font Awesome 6 Migration', 'elementor' ),
 					strings: {
 						confirm: __( 'Continue', 'elementor' ),
 						cancel: __( 'Cancel', 'elementor' ),
