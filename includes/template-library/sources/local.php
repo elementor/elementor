@@ -1361,7 +1361,7 @@ class Source_Local extends Source_Base {
 	 *                             `WP_Error`.
 	 */
 	private function import_single_template( $file_path ) {
-		$data = json_decode( file_get_contents( $file_path ), true );
+		$data = json_decode( Utils::file_get_contents( $file_path ), true );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
