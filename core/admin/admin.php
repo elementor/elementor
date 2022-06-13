@@ -501,8 +501,8 @@ class Admin extends App {
 
 		$additions_actions = [
 			'go-pro' => [
-				'title' => esc_html__( 'Go Pro', 'elementor' ),
-				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
+				'title' => esc_html__( 'Upgrade', 'elementor' ),
+				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget',
 			],
 		];
 
