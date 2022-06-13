@@ -57,7 +57,7 @@ interface Group {
 interface Item {
 	id: string;				// Must be unique.
 	label: string;				// Describes the action.
-	icon: Function | string;		// Can be a callback for checkbox effect.
+	icon: string;				// An icon string.
 	shortcut: string;			// Shortcut symbols. 
 	badge: Badge;				// Creates a visual badge for special indications.
 	disabled: Function | boolean;		// If true, displayed but disabled.
@@ -274,9 +274,9 @@ export const onContextMenu = () => {
 	const manager = new ContextMenuManager();
 
 	// Add groups that will be displayed first:
-	manager.createGroup({
+	manager.createGroup( {
 		id: 'groupId-1'
-	});
+	} );
 
 	manager.addItem(
 		'groupId-1', {
@@ -285,9 +285,9 @@ export const onContextMenu = () => {
 		}
 	);
 
-	manager.createGroup({
+	manager.createGroup( {
 		id: 'groupId-2'
-	});
+	} );
 
 	manager.addItem(
 		'groupId-1', {
@@ -297,18 +297,18 @@ export const onContextMenu = () => {
 	);
 
 	// Allow adding groups from Third party:
-	window.dispatchEvent(new CustomEvent('elementor/element/contextMenu', {
+	window.dispatchEvent( new CustomEvent( 'elementor/element/contextMenu', {
 		detail: {
 			manager, // Send the manager instance
 			elType: 'widget', // Send data about the triggerer
 			widgetType: 'awesome-widget3', // Send data about the triggerer
 		}
-	}));
+	} ) );
 
 	// Add groups that will be displayed last:
-	manager.createGroup({
+	manager.createGroup( {
 		id: 'groupId-last'
-	});
+	} );
 
 	manager.addItem(
 		'groupId-last', {
@@ -322,16 +322,16 @@ export const onContextMenu = () => {
 };
 
 // Third party registers its own groups:
-window.addEventListener('elementor/element/contextMenu', (e) => {
+window.addEventListener('elementor/element/contextMenu', ( e ) => {
 
 	// Third party deside on whitch element to display its groups:
-	if ('container' !== e.detail.elType) {
+	if ( 'container' !== e.detail.elType ) {
 		return;
 	}
 
-	e.detail.manager.createGroup({
+	e.detail.manager.createGroup( {
 		id: 'someCustomGroup'
-	});
+	} );
 
 	e.detail.manager.addItem(
 		'someCustomGroup', {
@@ -341,10 +341,10 @@ window.addEventListener('elementor/element/contextMenu', (e) => {
 	);
 
 	// Registering a nested group, will be nested inside the 'custom-item-id' item:
-	e.detail.manager.createGroup({
+	e.detail.manager.createGroup( {
 		id: 'someNestedGroup',
 		parentItemId: 'custom-item-id'
-	});
+	} );
 
 	e.detail.manager.addItem(
 		'someNestedGroup', {
@@ -352,7 +352,7 @@ window.addEventListener('elementor/element/contextMenu', (e) => {
 			label: 'Do the custom miracle'
 		}
 	);
-});
+} );
 
 ```
 
