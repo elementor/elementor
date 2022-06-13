@@ -23,6 +23,5 @@ test( 'Ensure the old tabs widget is telling deprecation warning message', async
 	await wpAdmin.setExperiments( {
 		container: false,
 		'nested-elements': false,
-		'tabs-v2': false,
 	} );
 } );
