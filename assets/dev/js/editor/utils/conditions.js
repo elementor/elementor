@@ -34,6 +34,36 @@ Conditions = function() {
 		}
 	};
 
+	/**
+	 * Get Condition Value
+	 *
+	 * Retrieves a passed condition's value. Dynamic values take precedence. If there is no dynamic value, this method
+	 * checks for a regular control value.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param comparisonObject The widget's settings object (setting keys and values)
+	 * @param conditionName The conditioning control's name
+	 * @param subConditionName If the conditioning control's value is an object, and the condition checks for a
+	 * 						   specific property, this is the property name.
+	 * @returns {*}
+	 */
+	this.getConditionValue = function( comparisonObject, conditionName, subConditionName ) {
+		let value;
+
+		const dynamicValue = comparisonObject.__dynamic__?.[ conditionName ];
+
+		if ( dynamicValue ) {
+			value = dynamicValue;
+		} else if ( 'object' === typeof comparisonObject[ conditionName ] && subConditionName ) {
+			value = comparisonObject[ conditionName ][ subConditionName ];
+		} else {
+			value = comparisonObject[ conditionName ];
+		}
+
+		return value;
+	};
+
 	this.check = function( conditions, comparisonObject, controls ) {
 		const isOrCondition = 'or' === conditions.relation;
 		let conditionSucceed = ! isOrCondition;
@@ -52,40 +82,13 @@ Conditions = function() {
 					conditionRealName = parsedName[ 1 ],
 					conditionSubKey = parsedName[ 2 ];
 
-				let dynamicValue = comparisonObject.__dynamic__?.[ conditionRealName ],
-					value;
-
-				if ( dynamicValue ) {
-					value = dynamicValue;
-				} else {
-					value = comparisonObject[ conditionRealName ];
-
-					if ( 'object' === typeof value && conditionSubKey ) {
-						value = value[ conditionSubKey ];
-					}
-				}
+				let value = self.getConditionValue( comparisonObject, conditionRealName, conditionSubKey );
 
 				if ( ! value ) {
-					// 1. Go to parent
-					// 2. Check for dynamic value first, because dynamic takes precedence.
-					// 3. If there is no dynamic value, check for a regular control value.
-					// 4. If there is no regular value, Go back to step 1.
 					let parent = controls[ conditionRealName ]?.parent;
 
 					while ( parent ) {
-						dynamicValue = comparisonObject.__dynamic__?.[ parent ];
-
-						if ( dynamicValue ) {
-							value = dynamicValue;
-
-							break;
-						}
-
-						if ( 'object' === typeof comparisonObject[ parent ] && conditionSubKey ) {
-							value = comparisonObject[ parent ][ conditionSubKey ];
-						} else {
-							value = comparisonObject[ parent ];
-						}
+						value = self.getConditionValue( comparisonObject, parent, conditionSubKey );
 
 						if ( value ) {
 							break;
