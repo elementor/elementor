@@ -33,8 +33,7 @@ class Compatibility {
 
 		self::set_editor_language();
 
-		// Copy elementor data while polylang creates a translation copy
-		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
+		self::polylang_compatibility();
 
 		if ( is_admin() || defined( 'WP_LOAD_IMPORTERS' ) ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
@@ -228,6 +227,20 @@ class Compatibility {
 		unset( $post_types[ Source_Local::CPT ] );
 
 		return $post_types;
+	}
+
+	/**
+	 * Polylang compatibility.
+	 *
+	 * Fix Polylang compatibility with Elementor.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 * @static
+	 */
+	private static function polylang_compatibility() {
+		// Copy elementor data while polylang creates a translation copy
+		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
 	}
 
 	/**
