@@ -271,6 +271,8 @@ class Uploads_Manager extends Base_Object {
 	 * @return string|\WP_Error
 	 */
 	public function create_temp_file( $file_content, $file_name ) {
+		$temp_filename = $this->create_unique_dir() . $file_name;
+
 		/**
 		 * Temp File Path
 		 *
@@ -280,7 +282,7 @@ class Uploads_Manager extends Base_Object {
 		 *
 		 * @param string full path to file
 		 */
-		$temp_filename = apply_filters( 'elementor/files/temp-file-path', $this->create_unique_dir() . $file_name );
+		$temp_filename = apply_filters( 'elementor/files/temp-file-path', $temp_filename );
 
 		file_put_contents( $temp_filename, $file_content ); // phpcs:ignore
 
