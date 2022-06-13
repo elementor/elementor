@@ -14,3 +14,27 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	// Assert.
 	expect( await button.innerText() ).toBe( 'Click here' );
 } );
+
+test( 'Button controls should return to default', async ( { page }, testInfo ) => {
+	// Arrange.
+	const wpAdmin = new WpAdminPage( page, testInfo ),
+		editor = await wpAdmin.useElementorCleanPost();
+
+	editor.addWidget( 'button' );
+
+	await editor.getPreviewFrame().waitForSelector( 'a[role="button"]:has-text("Click here")' );
+
+	const widgetElement = editor.getPreviewFrame().waitForSelector( 'div[data-element_type="widget"]' );
+
+	// Act
+	await editor.page.click( 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]' );
+
+	// Assert
+	await expect( editor.getPreviewFrame().locator( 'div[data-element_type="widget"]' ) ).toHaveClass( /elementor-align-center/ );
+
+	// Act
+	await editor.page.click( 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]' );
+
+	// Assert
+	await expect( editor.getPreviewFrame().locator( 'div[data-element_type="widget"]' ) ).not.toHaveClass( /elementor-align-center/ );
+} );
