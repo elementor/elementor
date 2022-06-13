@@ -243,9 +243,9 @@ class Compatibility {
 				global $current_user;
 
 				$elementor_preferences = get_user_meta( $current_user->ID, 'elementor_preferences' );
-				$user_interface = isset( $elementor_preferences[0]['user_interface'] ) ? $elementor_preferences[0]['user_interface'] : null;
+				$user_interface = isset( $elementor_preferences[0]['language'] ) ? $elementor_preferences[0]['language'] : null;
 
-				if ( 'user_language' !== $user_interface ) {
+				if ( 'user' !== $user_interface ) {
 					$current_user->locale = get_locale();
 				}
 
