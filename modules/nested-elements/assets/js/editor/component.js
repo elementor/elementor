@@ -20,32 +20,7 @@ export default class Component extends $e.modules.ComponentBase {
 
 	isModelParentSupportNesting( model ) {
 		// Find parent of specific children by given id.
-		const findParentRecursive = ( elements, id ) => {
-				for ( const element of elements ) {
-					const recursive = ( subElement ) => {
-						for ( const current of subElement.elements ) {
-							if ( current.id === id ) {
-								return subElement;
-							}
-
-							if ( current.elements ) {
-								const result = recursive( current );
-
-								if ( result ) {
-									return result;
-								}
-							}
-						}
-					};
-
-					const result = recursive( element );
-
-					if ( result ) {
-						return result;
-					}
-				}
-			},
-			parent = findParentRecursive( elementor.elements.toJSON(), model.get( 'id' ) );
+		const parent = elementor.elements.findParentRecursive( model.get( 'id' ) );
 
 		return this.isWidgetSupportNesting( parent?.widgetType );
 	}

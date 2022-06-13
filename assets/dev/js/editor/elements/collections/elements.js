@@ -36,6 +36,34 @@ var ElementsCollection = Backbone.Collection.extend( {
 
 		return newCollection;
 	},
+
+	findParentRecursive: function( parentId ) {
+		const recursive = ( subElement ) => {
+			for ( const current of subElement.elements ) {
+				if ( current.id === parentId ) {
+					return subElement;
+				}
+
+				if ( current.elements ) {
+					const result = recursive( current );
+
+					if ( result ) {
+						return result;
+					}
+				}
+			}
+		};
+
+		for ( const element of this.toJSON() ) {
+			const result = recursive( element );
+
+			if ( result ) {
+				return result;
+			}
+		}
+
+		return false;
+	},
 } );
 
 ElementsCollection.prototype.sync = ElementsCollection.prototype.fetch = ElementsCollection.prototype.save = _.noop;
