@@ -103,7 +103,7 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
-			'user_interface',
+			'language',
 			[
 				'label' => esc_html__( 'Language', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
