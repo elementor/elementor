@@ -107,10 +107,10 @@ class Model extends BaseModel {
 			[
 				'label' => esc_html__( 'Language', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'site_language',
+				'default' => 'site',
 				'options' => [
-					'site_language' => esc_html__( 'Site language (WP)', 'elementor' ),
-					'user_language' => esc_html__( 'User language', 'elementor' ),
+					'site' => esc_html__( 'Site language (WP)', 'elementor' ),
+					'user' => esc_html__( 'User language', 'elementor' ),
 				],
 				'description' => esc_html__( 'Select a language for using the Elementor Editor. This also affects any placeholder content on your site.', 'elementor' ),
 			]
