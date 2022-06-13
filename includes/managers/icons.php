@@ -53,7 +53,7 @@ class Icons_Manager {
 			return '';
 		}
 
-		return self::get_icon_html( $icon, $attributes, $tag );
+		return static::get_icon_html( $icon, $attributes, $tag );
 	}
 
 	/**
@@ -384,7 +384,7 @@ class Icons_Manager {
 			return false;
 		}
 
-		$output = self::get_icon_html( $icon, $attributes, $tag );
+		$output = static::get_icon_html( $icon, $attributes, $tag );
 
 		Utils::print_unescaped_internal_string( $output );
 

@@ -192,26 +192,29 @@
 		justify-content: var(--tabs-v2-wrapper-justify-content);
 
 		.elementor-tab-title {
-			.elementor-icon-active {
+			.elementor-tab-icon-active {
 				display: none;
+		  	}
+		  	.elementor-tab-icon {
+				display: unset;
 		  	}
 		}
 		.elementor-active {
-			.elementor-icon-active {
-				display: unset;
-			}
-			.elementor-icon-selected {
+			.elementor-tab-icon {
 		  		display: none;
 			}
+		  .elementor-tab-icon-active {
+			display: unset;
+		  }
 	  	}
-		.elementor-icon-selected {
+		.elementor-tab-icon {
 			>i {
-		  		width: 16px;
+		  		width: 20px;
 			}
 	  	}
-		.elementor-icon-active {
+		.elementor-tab-icon-active {
 			>i {
-				width: 16px;
+				width: 20px;
 			}
 		}
 	}
