@@ -112,7 +112,7 @@ class Model extends BaseModel {
 					'site' => esc_html__( 'Site language (WP)', 'elementor' ),
 					'user' => esc_html__( 'User language', 'elementor' ),
 				],
-				'description' => esc_html__( 'Select a language for using the Elementor Editor. This also affects any placeholder content on your site.', 'elementor' ),
+				'description' => esc_html__( 'Select a language for using the Elementor Editor and reload your page. This also affects any placeholder content on your site.', 'elementor' ),
 			]
 		);
 
