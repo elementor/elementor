@@ -21,7 +21,7 @@ export class NestedRepeaterFocusCurrentEditedContainer extends $e.modules.hookUI
 
 	getConditions( args ) {
 		// Do not select for element creation.
-		if ( $e.commands.isCurrentFirstTrace( 'document/elements/create' ) ) {
+		if ( ! args.view || $e.commands.isCurrentFirstTrace( 'document/elements/create' ) ) {
 			return false;
 		}
 

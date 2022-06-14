@@ -7,19 +7,41 @@ export class Open extends $e.modules.CommandBase {
 	}
 
 	validateArgs( args = {} ) {
-		// Mostly used by `$e.extras.hashCommands`.
-		if ( args.id ) {
-			this.requireArgumentType( 'id', 'string' );
+		if ( args.ids ) {
+			// Mostly used by `$e.extras.hashCommands`.
+			this.requireArgumentType( 'ids', 'string' );
 
-			args.container = elementor.getContainer( args.id );
-			args.model = args.container.model;
-			args.view = args.container.view;
+			args.containers = [];
 
-			this.requireContainer();
+			args.ids.split( ',' ).forEach( ( id ) => {
+				const container = elementor.getContainer( id );
+
+				if ( container ) {
+					args.containers.push( container );
+				}
+			} );
 		}
 	}
 
 	apply( args ) {
+		if ( args.ids ) {
+			const { containers = [ args.container ] } = args;
+
+			containers.forEach( ( container ) => {
+				const newArgs = {
+					container,
+					model: container.model,
+					view: container.view,
+				};
+
+				setTimeout( () => $e.run( 'panel/editor/open', newArgs ) );
+			} );
+		} else {
+			this.open( args );
+		}
+	}
+
+	open( args ) {
 		if ( ! this.component.setDefaultTab( args ) ) {
 			elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
 
