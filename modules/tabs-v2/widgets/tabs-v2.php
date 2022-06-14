@@ -328,6 +328,7 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'label' => esc_html_x( 'HTML Tag', 'Nested Tabs Control', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
 				'default' => 'div',
 				'options' => $possible_tags,
 			]
