@@ -428,10 +428,10 @@ class TabsV2 extends Widget_Nested_Base {
 				$icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
 			}
 
-			$tabs_title_html .= "<div $title_render_attributes>";
-			$tabs_title_html .= "\t<span $tab_icon_attributes> $icon_html</span>";
-			$tabs_title_html .= "\t<span $tab_icon_active_attributes> $icon_active_html</span>";
-			$tabs_title_html .= "\t<span>$tab_title</span>";
+			$tabs_title_html .= "<div {$title_render_attributes}>";
+			$tabs_title_html .= "\t<span {$tab_icon_attributes}> {$icon_html}</span>";
+			$tabs_title_html .= "\t<span {$tab_icon_active_attributes}> {$icon_active_html}</span>";
+			$tabs_title_html .= "\t<span>{$tab_title}</span>";
 			$tabs_title_html .= '</div>';
 
 			// Tabs content.
@@ -460,7 +460,7 @@ class TabsV2 extends Widget_Nested_Base {
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 			<div class="elementor-tabs-wrapper" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
-				var tabCount = index + 1
+				var tabCount = index + 1,
 				tabUid = elementUid + tabCount,
 				tabTitleKey = 'tab-title-' + tabUid;
 				tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
