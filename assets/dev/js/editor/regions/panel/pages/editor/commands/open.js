@@ -1,7 +1,7 @@
 export class Open extends $e.modules.CommandBase {
 	apply( args ) {
 		if ( ! this.component.setDefaultTab( args ) ) {
-			elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
+			elementorDevTools.deprecation.deprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
 
 			args.model.trigger( 'request:edit' );
 		} else {
