@@ -3,13 +3,23 @@
 //
 
 .elementor-widget-tabs-v2 {
-	--tabs-v2-wrapper-display: flex;
-	--tabs-v2-wrapper-justify-content: start;
-	--tabs-v2-wrapper-title-size: auto;
+	--tabs-v2-display: flex;
+	--tabs-v2-direction: column;
+
+	--tabs-v2-tabs-wrapper-display: flex;
+	--tabs-v2-tabs-wrapper-direction: row;
+	--tabs-v2-tabs-wrapper-grow: initial;
+	--tabs-v2-tabs-wrapper-justify-content: initial;
+	--tabs-v2-tabs-wrapper-width: initial;
+
+	--tabs-v2-content-height: initial;
+
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
 	--tabs-v2-background-color: transparent;
-	--tabs-v2-vertical-navigation-width: 25%;
+
+	--tabs-v2-title-alignment: center;
+	--tabs-v2-title-grow: 1;
 
 	/* TODO Find better solution for all global defaults. */
 	--tabs-v2-title-color: var(--e-global-color-primary);
@@ -29,100 +39,34 @@
 
 	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
 
-	.elementor-tabs-content-wrapper {
-		background-color: var(--tabs-v2-background-color);
-	}
-
-	&.elementor-tabs-view-vertical {
-		> .elementor-widget-container {
-			> .elementor-tabs {
-				> .elementor-tabs-wrapper {
-					width: var(--tabs-v2-vertical-navigation-width);
-					flex-shrink: 0;
-
-					> .elementor-tab-desktop-title {
-						&.elementor-active {
-							background-color: var(--tabs-v2-background-color);
-
-							@include border-end-property(style, none);
-
-							&:before,
-							&:after {
-								height: 999em;
-								width: 0;
-								@include end(0);
-								@include border-end-property(style, solid);
-							}
-
-							&:before {
-								top: 0;
-								transform: translateY(-100%);
-							}
-
-							&:after {
-								top: 100%;
-							}
-						}
-					}
-				}
-
-				.elementor-tabs-content-wrapper {
-					.e-container {
-						width: 100%;
-					}
-				}
-			}
-		}
-	}
-
-	&.elementor-tabs-view-horizontal {
-		> .elementor-widget-container {
-			> .elementor-tabs {
-				> .elementor-tabs-wrapper {
-					> .elementor-tab-desktop-title {
-						display: table-cell;
-
-						&.elementor-active {
-							border-bottom-style: none;
-
-							&:before,
-							&:after {
-								bottom: 0;
-								height: 0;
-								width: 999em;
-								border-bottom-style: solid;
-							}
-
-							&:before {
-								right: 100%;
-							}
-
-							&:after {
-								left: 100%;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	.elementor-tab-title,
-	.elementor-tab-title:before,
-	.elementor-tab-title:after,
-	.e-container,
-	.elementor-tabs-content-wrapper {
-		border: 1px none var(--tabs-v2-border-color);
-	}
-
 	.elementor-tabs {
+		display: var(--tabs-v2-display);
+		flex-direction: var(--tabs-v2-direction);
 		text-align: $start;
 
-		& .elementor-tab-title {
+		&-wrapper {
+			display: var(--tabs-v2-tabs-wrapper-display);
+			flex-basis: var(--tabs-v2-tabs-wrapper-width);
+			flex-direction: var(--tabs-v2-tabs-wrapper-direction);
+			justify-content: var(--tabs-v2-tabs-wrapper-justify-content);
+			overflow: hidden;
+		}
+	
+		&-content-wrapper {
+			background-color: var(--tabs-v2-background-color);
+			flex-grow: 1;
+			height: var( --tabs-v2-content-height );
+			overflow-y: auto;
+		}	
+	}
+
+	.elementor-tab {
+
+		&-title {
 			color: var(--tabs-v2-title-color);
 			cursor: pointer;
 			outline: var(--focus-outline, none);
-
+	
 			font-family: var(--tabs-v2-title-typography-font-family);
 			font-size: var(--tabs-v2-title-typography-font-size);
 			font-weight: var(--tabs-v2-title-typography-font-weight);
@@ -132,8 +76,9 @@
 			line-height: var(--tabs-v2-title-typography-line-height);
 			letter-spacing: var(--tabs-v2-title-typography-letter-spacing);
 			word-spacing: var(--tabs-v2-title-typography-word-spacing);
-
 			text-shadow: var(--tabs-v2-title-shadow);
+			text-align: var(--tabs-v2-title-alignment);
+			flex-grow: var(--tabs-v2-title-grow);
 
 			& a {
 				color: var(--tabs-v2-title-color);
@@ -149,11 +94,13 @@
 		}
 	}
 
-	.elementor-tabs-wrapper {
-		overflow: hidden;
-
-		display: var(--tabs-v2-wrapper-display);
-		justify-content: var(--tabs-v2-wrapper-justify-content);
+	.elementor-tab-title,
+	.elementor-tab-title:before,
+	.elementor-tab-title:after,
+	.e-container,
+	.elementor-tabs-content-wrapper {
+		border: 1px none var(--tabs-v2-border-color);
+		border-width: var(--tabs-v2-border-width);
 	}
 
 	.elementor-tab-desktop-title {
@@ -177,6 +124,51 @@
 		&:focus-visible	 {
 			border: 1px solid $black;
 		}
+
+		&.elementor-active {
+			background-color: var(--tabs-v2-background-color);
+
+			/* TODO check in initial design task */
+			// code commented out for now
+			// will be implemented in initial design styling
+
+			// @include border-end-property(style, none);
+
+			// &:before,
+			// &:after {
+			// 	height: 999em;
+			// 	width: 0;
+			// 	@include end(0);
+			// 	@include border-end-property(style, solid);
+			// }
+
+			// &:before {
+			// 	top: 0;
+			// 	transform: translateY(-100%);
+			// }
+
+			// &:after {
+			// 	top: 100%;
+			// }
+
+			// border-bottom-style: none;
+
+			// &:before,
+			// &:after {
+			// 	bottom: 0;
+			// 	height: 0;
+			// 	width: 999em;
+			// 	border-bottom-style: solid;
+			// }
+
+			// &:before {
+			// 	right: 100%;
+			// }
+
+			// &:after {
+			// 	left: 100%;
+			// }
+		}
 	}
 
 	.elementor-tab-mobile-title {
@@ -195,17 +187,11 @@
 	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
 		display: none;
 	}
-
-	.elementor-tab-title,
-	.elementor-tab-title:before,
-	.elementor-tab-title:after,
-	.e-container,
-	.elementor-tabs-content-wrapper {
-		border-width: var(--tabs-v2-border-width)
-	}
 }
 
 // Responsive mode
+// This code needs to update in the Responsive Tabs section
+
 @media (max-width: $screen-mobile-max) {
 	.elementor-tabs {
 		.elementor-tab-title,
@@ -230,108 +216,20 @@
 
 @media (min-width: $screen-mobile-next) {
 	.elementor-widget-tabs-v2 {
-		&.elementor-tabs-view-vertical {
-			> .elementor-widget-container {
-				> .elementor-tabs {
-					display: flex;
 
-					> .elementor-tabs-wrapper {
-						flex-direction: column;
-					}
+		/* TODO check in initial design task */
+		// commented out for now
 
-					> .elementor-tabs-content-wrapper {
-						flex-grow: 1;
-						border-style: solid;
-						@include border-start-property(style, none);
-					}
-				}
+		// 			> .elementor-tabs-content-wrapper {
+		// 				flex-grow: 1;
+		// 				border-style: solid;
+		// 				@include border-start-property(style, none);
+		// 			}
+
+		.elementor-tabs {
+			.elementor-tab-mobile-title {
+				display: none;
 			}
 		}
 	}
-
-	.elementor-widget-tabs-v2 {
-		&.elementor-tabs-view-horizontal {
-			> .elementor-widget-container {
-				> .elementor-tabs {
-					> .elementor-tabs-wrapper {
-						> .elementor-tab-title {
-							width: var(--tabs-v2-wrapper-title-size);
-						}
-					}
-
-					> .elementor-tabs-content-wrapper {
-						> .e-container {
-							border-style: solid;
-							border-top-style: none;
-						}
-					}
-				}
-			}
-		}
-
-		&.elementor-tabs-view-vertical {
-			> .elementor-widget-container {
-				> .elementor-tabs {
-					> .elementor-tabs-wrapper {
-						> .elementor-tab-title {
-							height: var(--tabs-v2-wrapper-title-size);
-						}
-					}
-				}
-			}
-		}
-
-		&.elementor-tabs-alignment- {
-			&stretch.elementor-tabs-view-horizontal {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							> .elementor-tab-title {
-								--tabs-v2-wrapper-title-size: 100%;
-							}
-						}
-					}
-				}
-			}
-
-			&stretch.elementor-tabs-view-vertical {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							> .elementor-tab-title {
-								--tabs-v2-wrapper-title-size: 100%;
-							}
-						}
-					}
-				}
-			}
-
-			&center.elementor-tabs-view-vertical {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							--tabs-v2-wrapper-justify-content: center;
-						}
-					}
-				}
-			}
-
-			&end.elementor-tabs-view-vertical {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							--tabs-v2-wrapper-justify-content: end;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	.elementor-tabs {
-		.elementor-tab-mobile-title {
-			display: none;
-		}
-	}
-
 }
