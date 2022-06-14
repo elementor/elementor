@@ -779,4 +779,17 @@ class Utils {
 				return false !== strpos( $path, $p );
 			} );
 	}
+
+	/**
+	 * @param $file
+	 * @param mixed ...$args
+	 * @return false|string
+	 */
+	public static function file_get_contents( $file, ...$args ) {
+		if ( ! is_file( $file ) || ! is_readable( $file ) ) {
+			return false;
+		}
+
+		return file_get_contents( $file, ...$args );
+	}
 }
