@@ -63,7 +63,7 @@
 							}
 						}
 					}
-				  > .elementor-tab-desktop-title {
+				  > .elementor-tab-title {
 
 					&.elementor-active {
 					  background-color: var(--tabs-v2-background-color);
@@ -89,19 +89,6 @@
 					}
 				  }
 				}
-			  > .elementor-tab-desktop-title {
-				> .elementor-align-icon- {
-				  &right {
-					margin-left: 5px;
-					order: getValueByDirection( 15, 5 );
-				  }
-
-				  &left {
-					margin-right: 5px;
-					order: getValueByDirection( 5, 15 );
-				  }
-				}
-			  }
 				.elementor-tabs-content-wrapper {
 					.e-container {
 						width: 100%;
