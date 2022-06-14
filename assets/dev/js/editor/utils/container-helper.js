@@ -154,7 +154,9 @@ export class ContainerHelper {
 			switch ( preset ) {
 				// Single column Container without sub Containers.
 				case 'c100':
-					newContainer = ContainerHelper.createContainer( {}, target, options );
+					newContainer = ContainerHelper.createContainer( {
+						flex_direction: ContainerHelper.DIRECTION_COLUMN,
+					}, target, options );
 					break;
 
 				// Single row Container without sub Containers.

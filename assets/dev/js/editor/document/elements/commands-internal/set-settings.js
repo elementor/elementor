@@ -1,6 +1,4 @@
-import CommandInternal from 'elementor-api/modules/command-internal-base';
-
-export class SetSettings extends CommandInternal {
+export class SetSettings extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 		this.requireArgumentType( 'settings', 'object', args );
