@@ -24,8 +24,6 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 
 	await editor.getPreviewFrame().waitForSelector( 'a[role="button"]:has-text("Click here")' );
 
-	const widgetElement = editor.getPreviewFrame().waitForSelector( 'div[data-element_type="widget"]' );
-
 	// Act
 	await editor.page.click( 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]' );
 
