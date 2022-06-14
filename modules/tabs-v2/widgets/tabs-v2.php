@@ -218,15 +218,20 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_responsive_control( 'tabs_width', [
 			'label' => esc_html_x( 'Tabs Width', 'Nested Tabs Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'default' => [
-				'unit' => '%',
-			],
 			'range' => [
 				'%' => [
 					'min' => 10,
 					'max' => 50,
 				],
+				'px' => [
+					'min' => 20,
+					'max' => 600,
+				],
 			],
+			'default' => [
+				'unit' => '%',
+			],
+			'size_units' => [ '%', 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-tabs-wrapper-width: {{SIZE}}{{UNIT}}',
 			],
@@ -304,9 +309,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html_x( 'Active Item', 'Nested Tabs Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'description' => 'You can decide which tab will active as default.',
-			'dynamic' => [
-				'active' => true,
-			],
 		] );
 
 		$possible_tags = [
