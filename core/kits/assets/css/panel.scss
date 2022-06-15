@@ -101,8 +101,7 @@
 
 			@at-root body:not(.e-routes-has-history) #elementor-panel-header-kit-back {
 				pointer-events: none;
-				opacity: 0.4;
-				display: none !important;
+				opacity: 0 !important;
 
 				&:hover {
 					.elementor-icon {

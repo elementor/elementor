@@ -266,6 +266,26 @@ select {
 }
 
 //Panel
+.elementor-panel-footer-sub-menu {
+	background: #575E67 !important;
+}
+
+.elementor-panel-footer-sub-menu-item:not(.elementor-disabled):not(.elementor-last-edited-wrapper) {
+	color: #FFF !important;
+
+	path {
+		fill: #FFF;
+	}
+
+	&:hover {
+		background: #3A3F45 !important;
+	}
+}
+
+.elementor-panel-footer-sub-menu-item {
+	border-color: #41464D !important;
+}
+
 .elementor-panel {
 	background-color: $theme-dark-gray-darkest;
 
@@ -274,9 +294,30 @@ select {
 	}
 
 	//Header
-	#elementor-panel__header {
-		background-color: $theme-dark-dark;
+	#elementor-panel-header-wrapper {
+		border-color: #495157 !important;
 	}
+
+	#elementor-panel__header {
+		background-color: #23262B !important;
+		color: #D6D1D1 !important;
+
+		#elementor-panel-header-title,
+		#elementor-panel-header-kit-close,
+		#elementor-panel-header-kit-back, {
+			background: #23262B !important;
+			border-color: #495157 !important;
+		}
+
+		&-float, &-close, #elementor-navigator__toggle-all {
+			color: #D6D1D1;
+		}
+
+		path {
+			stroke: #D6D1D1;
+		}
+	}
+
 
 	.elementor-panel-navigation {
 		background-color: $theme-dark-gray-dark;
@@ -482,6 +523,18 @@ a.elementor-responsive-switcher {
 
 	&:hover {
 		color: $theme-dark-accent;
+	}
+}
+
+#e-responsive-bar__end {
+	background: #3E454A !important;
+
+	path {
+		fill: #FFF !important;
+	}
+
+	.elementor-panel-footer-tool:not( #elementor-panel-footer-saver-publish ):hover {
+		background: #343B40 !important;
 	}
 }
 
