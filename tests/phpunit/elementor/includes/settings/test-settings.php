@@ -7,10 +7,6 @@ use Elementor\Core\Files\CSS\Global_CSS;
 class Test_Settings extends Elementor_Test_Base {
 
 	public function test_clear_css_cache_on_update_css_settings() {
-		add_action( 'doing_it_wrong_run', function () {
-			var_dump( 'doing_it_wrong_run', func_get_args() );
-		} );
-
 		$css_settings = [
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
@@ -23,7 +19,7 @@ class Test_Settings extends Elementor_Test_Base {
 
 			$meta = $global_css->get_meta();
 
-			$this->assertEquals( Global_CSS::CSS_STATUS_EMPTY, $meta['status'] );
+			$this->assertEquals( Global_CSS::CSS_STATUS_EMPTY, $meta['status'], $option_name );
 
 			// Assert add_option.
 			add_option ( $option_name, 'test_value' );
