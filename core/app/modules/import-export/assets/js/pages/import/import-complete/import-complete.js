@@ -57,7 +57,7 @@ export default function ImportComplete() {
 				notice={ (
 					<>
 						<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
-							{ __( 'Click Here', 'elementor' ) }
+							{ __( 'Click here', 'elementor' ) }
 						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
 					</>
 				) }

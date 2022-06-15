@@ -111,7 +111,7 @@
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		z-index: 0;
+		z-index: $ground-layer;
 		top: 0;
 		@include start(0);
 
@@ -166,7 +166,7 @@
 
 	&.elementor-absolute,
 	&.elementor-fixed {
-		z-index: 1;
+		z-index: $first-layer;
 	}
 
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.

@@ -60,6 +60,7 @@ module.exports = BaseSettings.extend( {
 			getContainer: () => container,
 			getEditModel: () => editModel,
 			model: editModel,
+			container,
 		};
 
 		return this.editedView;
@@ -70,7 +71,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	getContainerId() {
-		elementorCommon.helpers.softDeprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+		elementorDevTools.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
 
 		return this.getContainerType();
 	},
