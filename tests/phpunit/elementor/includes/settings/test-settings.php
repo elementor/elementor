@@ -19,7 +19,7 @@ class Test_Settings extends Elementor_Test_Base {
 
 			$meta = $global_css->get_meta();
 
-			$this->assertEquals( Global_CSS::CSS_STATUS_EMPTY, $meta['status'] );
+			$this->assertEquals( Global_CSS::CSS_STATUS_EMPTY, $meta['status'], $option_name );
 
 			// Assert add_option.
 			add_option ( $option_name, 'test_value' );

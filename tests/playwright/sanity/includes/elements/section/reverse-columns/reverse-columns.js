@@ -30,6 +30,7 @@ module.exports = class {
 
 		await this.wpAdminPage.setExperiments( {
 			additional_custom_breakpoints: isExperimentBreakpoints,
+			container: false,
 		} );
 
 		this.editor = await this.wpAdminPage.useElementorCleanPost();
