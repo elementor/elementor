@@ -34,6 +34,11 @@ module.exports = {
 		ecmaFeatures: {
 			jsx: true,
 		},
+		babelOptions: {
+			parserOpts: {
+				plugins: [ 'jsx' ],
+			},
+		},
 	},
 	rules: {
 		// custom canceled rules
