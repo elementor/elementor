@@ -351,10 +351,10 @@ abstract class Widget_Base extends Element_Base {
 	 * the control, element name, type, icon and more. This method also adds
 	 * widget type, keywords and categories.
 	 *
-	 * @return array The initial widget config.
-	 * @throws \Exception
-	 * @since  2.9.0
+	 * @since 2.9.0
 	 * @access protected
+	 *
+	 * @return array The initial widget config.
 	 */
 	protected function get_initial_config() {
 		$config = [
