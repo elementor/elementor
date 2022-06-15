@@ -976,7 +976,8 @@ html.elementor-html {
 	background: repeating-linear-gradient(125deg,rgba(0, 0, 0, 0.05),rgba(0, 0, 0, 0.05) 1px,transparent 2px,transparent 9px);
 	border: 1px solid rgba(0, 0, 0, 0.02);
 
-	&.elementor-section {
+	&.elementor-section,
+	&.e-container {
 
 		> .elementor-element-overlay {
 			background-color: $editor-lightest;
@@ -994,6 +995,12 @@ html.elementor-html {
 			background-color: rgba(255, 255, 255, 0.6);
 			z-index: 9997;
 		}
+	}
+
+	&.e-container {
+		// Containers inherit "display: block" from `elementor-hidden-{device}`'s `display: inherit` above.
+		// This line makes sure containers maintain their intended display mode.
+		display: var( --display );
 	}
 
 	&.elementor-inner-section {

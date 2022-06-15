@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class ResetStyle extends CommandHistory {
+export class ResetStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}

@@ -164,7 +164,7 @@ class Icons_Manager {
 		 */
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', $additional_tabs );
 
-		return array_merge( self::$tabs, $additional_tabs );
+		return array_replace( self::$tabs, $additional_tabs );
 	}
 
 	public static function enqueue_shim() {
@@ -387,7 +387,7 @@ class Icons_Manager {
 			];
 		}
 		if ( false === $migration_dictionary ) {
-			$migration_dictionary = json_decode( file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
+			$migration_dictionary = json_decode( Utils::file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
 		}
 		if ( isset( $migration_dictionary[ $value ] ) ) {
 			return $migration_dictionary[ $value ];
