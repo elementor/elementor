@@ -1,7 +1,6 @@
 //
 // Tabs v2
 //
-
 .elementor-widget-tabs-v2 {
 	--tabs-v2-wrapper-display: flex;
 	--tabs-v2-wrapper-justify-content: start;
@@ -64,8 +63,32 @@
 							}
 						}
 					}
-				}
+				  > .elementor-tab-title {
 
+					&.elementor-active {
+					  background-color: var(--tabs-v2-background-color);
+
+					  @include border-end-property(style, none);
+
+					  &:before,
+					  &:after {
+						height: 999em;
+						width: 0;
+						@include end(0);
+						@include border-end-property(style, solid);
+					  }
+
+					  &:before {
+						top: 0;
+						transform: translateY(-100%);
+					  }
+
+					  &:after {
+						top: 100%;
+					  }
+					}
+				  }
+				}
 				.elementor-tabs-content-wrapper {
 					.e-container {
 						width: 100%;
@@ -154,6 +177,33 @@
 
 		display: var(--tabs-v2-wrapper-display);
 		justify-content: var(--tabs-v2-wrapper-justify-content);
+
+		.elementor-tab-title {
+			.elementor-tab-icon-active {
+				display: none;
+			}
+			.elementor-tab-icon {
+				display: unset;
+			}
+		}
+		.elementor-active {
+			.elementor-tab-icon {
+		  		display: none;
+			}
+			.elementor-tab-icon-active {
+				display: unset;
+			}
+	  	}
+		.elementor-tab-icon {
+			>i {
+				width: 20px;
+			}
+		}
+		.elementor-tab-icon-active {
+			>i {
+				width: 20px;
+			}
+		}
 	}
 
 	.elementor-tab-desktop-title {
@@ -333,5 +383,4 @@
 			display: none;
 		}
 	}
-
 }
