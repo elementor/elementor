@@ -1084,7 +1084,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param $replacement string	The widget that should be used instead.
 	 */
 	protected function add_deprecation_message( $version, $message, $replacement ) {
-		// Expose the config for handling in JS
+		// Expose the config for handling in JS.
 		$this->set_config( 'deprecation', [
 			'version' => $version,
 			'message' => $message,
