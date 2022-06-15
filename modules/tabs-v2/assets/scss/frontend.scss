@@ -181,24 +181,24 @@
 		.elementor-tab-title {
 			.elementor-tab-icon-active {
 				display: none;
-		  	}
-		  	.elementor-tab-icon {
+			}
+			.elementor-tab-icon {
 				display: unset;
-		  	}
+			}
 		}
 		.elementor-active {
 			.elementor-tab-icon {
 		  		display: none;
 			}
-		  .elementor-tab-icon-active {
-			display: unset;
-		  }
+			.elementor-tab-icon-active {
+				display: unset;
+			}
 	  	}
 		.elementor-tab-icon {
 			>i {
-		  		width: 20px;
+				width: 20px;
 			}
-	  	}
+		}
 		.elementor-tab-icon-active {
 			>i {
 				width: 20px;

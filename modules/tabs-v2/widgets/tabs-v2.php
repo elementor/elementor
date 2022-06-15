@@ -414,7 +414,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
 				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
-				'id' => $tab_id,
+				'id' => $tab_id . '-container',
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
@@ -464,12 +464,12 @@ class TabsV2 extends Widget_Nested_Base {
 				tabUid = elementUid + tabCount,
 				tabTitleKey = 'tab-title-' + tabUid;
 				tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
-				
+
 				let tabActiveIcon = tabIcon;
 				if ( '' !== item.tab_icon_active.value ) {
 					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
 				}
-				
+
 				let tabId = 'elementor-tab-title-' + tabUid;
 				if ( '' !== item.element_id ) {
 					tabId = item.element_id;
