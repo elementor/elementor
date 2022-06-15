@@ -366,12 +366,6 @@ abstract class Widget_Base extends Element_Base {
 			'hide_on_search' => $this->hide_on_search(),
 		];
 
-		$deprecation_config = $this->get_deprecation_config();
-
-		if ( $deprecation_config ) {
-			$config['deprecation'] = $deprecation_config;
-		}
-
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( $stack ) {
@@ -1083,34 +1077,29 @@ abstract class Widget_Base extends Element_Base {
 	/**
 	 * Mark widget as deprecated.
 	 *
-	 * The return should have thw following config:
-	 * - version: string, the version of Elementor that deprecated the widget.
-	 * - replacement: string, the widget that should be used instead.
-	 * - message: string, a message regarding the deprecation.
+	 * Use `get_deprecation_message()` method to print the message control at specific location in register_controls().
 	 *
-	 * Use `deprecation_message()` method to print the message control at specific location in register_controls().
-	 *
-	 * @return array
+	 * @param $version string		The version of Elementor that deprecated the widget.
+	 * @param $message string 		A message regarding the deprecation.
+	 * @param $replacement string	The widget that should be used instead.
 	 */
-	protected function mark_as_deprecated() {
-		return [];
-	}
+	protected function add_deprecation_message( $version, $message, $replacement ) {
+		// Expose the config for handling in JS
+		$this->set_config( 'deprecation', [
+			'version' => $version,
+			'message' => $message,
+			'replacement' => $replacement,
+		] );
 
-	/**
-	 * @throws \Exception
-	 */
-	protected function deprecation_message() {
 		// Validate if the replacement is active.
-		$config = $this->get_deprecation_config();
-
-		$replacement_widget = Plugin::$instance->widgets_manager->get_widget_types( $config['replacement'] );
+		$replacement_widget = Plugin::$instance->widgets_manager->get_widget_types( $replacement );
 
 		if ( $replacement_widget ) {
 			$this->add_control(
 				'deprecation_message',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => $config['message'],
+					'raw' => $message,
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 					'separator' => 'after',
 				]
@@ -1162,32 +1151,6 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return $has_custom_breakpoints;
-	}
-
-	/**
-	 * Get Deprecation Config.
-	 *
-	 * Retrieve the current element deprecation config.
-	 *
-	 * @return array|null
-	 * @throws \Exception
-	 */
-	private function get_deprecation_config() {
-		static $required_properties = [ 'version', 'message', 'replacement' ];
-
-		$deprecation_config = $this->mark_as_deprecated();
-
-		if ( empty( $deprecation_config ) ) {
-			return null;
-		}
-
-		foreach ( $required_properties as $required_property ) {
-			if ( ! isset( $deprecation_config[ $required_property ] ) ) {
-				throw new \Exception( sprintf( '%s: `%s` property is required for deprecation config.', __METHOD__, $required_property ) );
-			}
-		}
-
-		return $deprecation_config;
 	}
 
 	private function get_widget_css() {
