@@ -1,5 +1,27 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.7.0-dev10 - 2022-06-15
+* Add more thousands separators (#18026)
+* Fix: Responsive state is not working correctly in Container (#18551) [ED-7314] (#18789)
+* Tweak: Merged similar translation strings (i18n) [ED-7154] (#18618)
+* Fix: Critical error appeared in external apps when no page is selected as "Homepage" in Reading Settings [ED-7349] (#18801)
+* Fix: Element is attached to the right instead of its original position when dragging it into a container [ED-7302] (#18802)
+* Fix: Anchor Widget - Enforced better security policies [ED-7250] (#18806)
+* Tweak: Added custom icons to various core widgets and features [OBXT-493] (#18231)
+* Tweak: Added "em" unit for some widgets for border radius [ED-6775] (#17904)
+* Tweak: Information sharing checkbox in onboarding flow was removed [ED-7316] (#18782)
+* Fix: "Exit to" is not working after prompting the user to exit [ED-6927] (#18399)
+* Tweak: Add "Skip and Deactivate" text button to deactivation survey (#18779)
+* Fix: Overlay background is not visible [...] in Container (#18433, #18391) [ED-7315] (#18804)
+* Tweak: Updated HTML A tag note in Container [ED-7368] (#18850)
+* Fix: Columns control not pre-selected when choosing "Column" from the pre-designed container structures (#18390) [ED-7355]
+* Tweak: Rearrange the Container panel for better discoverabilty [ED-7151] (#18788)
+* Revert "Internal: Better handling file reading [ED-7104]" [ED-7396] (#18872)
+* Fix: Site Settings - Gradient background doesn't work in the Editor using global colors [ED-6994] (#18419)
+* Tweak: Uploads Manager - Added filters to allow modifying upload temp paths (#18565) [ED-7410] (#18566)
+* Fix: Inline SVG Icons experiment does not behave correctly due to `file_get_contents()` optimization [ED-7395] (#18924)
+* Fix: Control WYSIWYG - Enforced better security policies [ED-7249] (#18856)
+
 #### 3.7.0-dev9 - 2022-05-29
 *  Internal: Docs - Container [ED-7047] (#18614)
 * Fix: Shortcode doesn't work in popups or templates [ED-7126] (#18654)
@@ -429,7 +451,3 @@
 * Fix: GitHub - Update servers to ubuntu 20.04 (#16413)
 * Fix: GitHub - Update servers to ubuntu 20.04 (#16416)
 * Fix: Admin top bar breaks admin dashboard [ED-5044] (#16424)
-
-#### 3.5.0-dev28 - 2021-09-19
-* Tweak: Adding a URL parameter to the import-export that skips the kit-content selection [ED-4750] (#16275)
-* Tweak: Internal - Allow external extending of Element Editing Handles Buttons [ED-4480] (#16232)
