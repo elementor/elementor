@@ -414,7 +414,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
 				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
-				'id' => $tab_id . '-container',
+				'id' => $tab_id . '-accordion',
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
