@@ -81,7 +81,7 @@ module.exports = class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try make visible the element - Since some of the experiments are may be hidden for the user,
+			// Try to make the element visible - Since some of the experiments are may be hidden for the user,
 			// but actually exist and need to be tested.
 			await this.page.evaluate( ( el ) => {
 				const element = document.querySelector( el );
