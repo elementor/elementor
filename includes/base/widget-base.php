@@ -135,6 +135,8 @@ abstract class Widget_Base extends Element_Base {
 			throw new \Exception( '`$args` argument is required when initializing a full widget instance.' );
 		}
 
+		$this->call_site_translations_function();
+
 		if ( $is_type_instance ) {
 			if ( $this->has_own_method( '_register_skins', self::class ) ) {
 				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_skins', '3.1.0', __CLASS__ . '::register_skins()' );
@@ -159,6 +161,45 @@ abstract class Widget_Base extends Element_Base {
 			 */
 			do_action( "elementor/widget/{$widget_name}/skins_init", $this );
 		}
+	}
+
+	/**
+	 * call_site_translations_function.
+	 *
+	 *  __() All translations functions inside the method "set_site_translations()" will retrieve the "site" translations.
+	 *
+	 * @since 3.7.0
+	 * @access private
+	 *
+	 * @return void
+	 */
+	private function call_site_translations_function() {
+		if ( ! method_exists( $this, 'set_site_translations' ) ) {
+			return;
+		}
+
+		global $current_user;
+
+		$elementor_preferences = get_user_meta( $current_user->ID, 'elementor_preferences' );
+		$user_interface = isset( $elementor_preferences[0]['language'] ) ? $elementor_preferences[0]['language'] : null;
+
+		$is_textdomain_should_changed = isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) && get_locale() !== $current_user->locale && 'user' === $user_interface;
+
+		if ( $is_textdomain_should_changed ) {
+			$current_language = $current_user->locale;
+			Utils::change_language_of_textdomain( get_locale(), WP_CONTENT_DIR . '/languages/plugins/', $this->get_textdomain() );
+		}
+
+		// Call child method.
+		$this->set_site_translations();
+
+		if ( $is_textdomain_should_changed ) {
+			Utils::change_language_of_textdomain( $current_language, WP_CONTENT_DIR . '/languages/plugins/', $this->get_textdomain() );
+		}
+	}
+
+	private function get_textdomain() {
+		return 'ElementorPro\\' === substr( get_class( $this ), 0, 13 ) ? 'elementor-pro' : 'elementor';
 	}
 
 	/**

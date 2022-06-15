@@ -877,6 +877,7 @@ class Utils {
 			// There is no MO file for en_US.
 			$current_user->locale = 'en_US';
 		} else {
+			$current_user->locale = $textdomain_data['locale'];
 			$textdomain_loaded = load_textdomain( $textdomain_data['textdomain'], $textdomain_data['path'] . $textdomain_data['textdomain'] . '-' . $textdomain_data['locale'] . '.mo' );
 
 			if ( ! $textdomain_loaded ) {
