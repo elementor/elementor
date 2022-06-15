@@ -8,6 +8,8 @@ import Video from './handlers/video';
 import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
 
+import TabsV2 from 'elementor/modules/tabs-v2/assets/js/frontend/handlers/tabs-v2';
+
 import LightboxModule from 'elementor-frontend/utils/lightbox/lightbox';
 
 elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
@@ -17,6 +19,7 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'counter.default': Counter,
 		'progress.default': Progress,
 		'tabs.default': Tabs,
+		'tabs-v2.default': TabsV2,
 		'toggle.default': Toggle,
 		'video.default': Video,
 		'image-carousel.default': ImageCarousel,

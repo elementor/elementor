@@ -36,7 +36,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container model.
 	 *
-	 * @type {Backbone.Model}
+	 * @type {(Backbone.Model|BaseElementModel)}
 	 */
 	model;
 
@@ -183,6 +183,11 @@ export default class Container extends ArgsObject {
 
 		this.requireArgumentInstance( 'settings', Backbone.Model, args );
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
+
+		// Require it, unless it's forced to be `false`.
+		if ( false !== args.parent ) {
+			this.requireArgumentInstance( 'parent', elementorModules.editor.Container, args );
+		}
 	}
 
 	/**
@@ -268,6 +273,26 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * Function getParentAncestry().
+	 *
+	 * Recursively run over all parents from current container till the top, and return them as flat array.
+	 *
+	 * @return {Array.<Container>}
+	 */
+	getParentAncestry() {
+		const result = [];
+
+		let parent = this;
+
+		while ( parent ) {
+			result.push( parent );
+			parent = parent.parent;
+		}
+
+		return result;
+	}
+
 	handleChildrenRecursive() {
 		if ( this.view.children?.length ) {
 			Object.values( this.view.children._views ).forEach( ( view ) => {
@@ -338,7 +363,7 @@ export default class Container extends ArgsObject {
 		if ( [ 'widget', 'document' ].includes( this.type ) ) {
 			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
-			if ( 1 === repeaters.length ) {
+			if ( ! this.model.get( 'supportRepeaterChildren' ) && 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
 						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );

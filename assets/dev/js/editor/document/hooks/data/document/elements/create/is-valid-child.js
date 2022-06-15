@@ -13,9 +13,9 @@ export class IsValidChild extends Dependency {
 		const { containers = [ args.container ], model = {} } = args,
 			modelToCreate = new Backbone.Model( model );
 
-		return containers.some( ( /* Container */ container ) => (
-			$e.components.get( 'document/elements' ).utils.isValidChild( modelToCreate, container.model )
-		) );
+		return containers.some( ( /* Container */ container ) =>
+			container.model.isValidChild( modelToCreate )
+		);
 	}
 }
 

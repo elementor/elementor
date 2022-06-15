@@ -421,9 +421,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 			}
 		}
 
-		this.updateElementModel( value, input );
+		// When input is '-' (for negative values) don't reject/replace it.
+		if ( value || event.originalEvent.data !== '-' ) {
+			this.updateElementModel( value, input );
 
-		this.triggerMethod( 'input:change', event );
+			this.triggerMethod( 'input:change', event );
+		}
 	},
 
 	onResponsiveSwitchersClick: function( event ) {

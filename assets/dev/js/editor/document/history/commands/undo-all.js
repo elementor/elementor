@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class UndoAll extends CommandBase {
+export class UndoAll extends $e.modules.CommandBase {
 	apply( args ) {
 		const { document } = args;
 

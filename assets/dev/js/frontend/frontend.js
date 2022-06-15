@@ -12,8 +12,8 @@ import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
-
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
@@ -189,6 +189,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			environment: environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
+			events: Events,
 		};
 
 		// TODO: BC since 2.4.0
