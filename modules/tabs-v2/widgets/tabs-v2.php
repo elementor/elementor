@@ -128,7 +128,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--tabs-v2-direction: column; --tabs-v2-tabs-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
+				'top' => '--tabs-v2-direction: column; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
 				'bottom' => '--tabs-v2-direction: column-reverse; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
 				'end' => '--tabs-v2-direction: row-reverse; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial;',
 				'start' => '--tabs-v2-direction: row; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial;',
