@@ -6,6 +6,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
+use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
@@ -89,6 +90,46 @@ class TabsV2 extends Widget_Nested_Base {
 				'active' => true,
 			],
 		] );
+
+		$repeater->add_control(
+			'tab_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+			]
+		);
+
+		$repeater->add_control(
+			'tab_icon_active',
+			[
+				'label' => esc_html__( 'Icon Active', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'condition' => [
+					'tab_icon[value]!' => '',
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'element_id',
+			[
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'dynamic' => [
+					'active' => true,
+				],
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'style_transfer' => false,
+				'classes' => 'elementor-control-direction-ltr',
+			]
+		);
 
 		$this->add_control( 'tabs', [
 			'label' => esc_html_x( 'Tabs Items', 'Nested Tabs Control', 'elementor' ),
@@ -525,6 +566,8 @@ class TabsV2 extends Widget_Nested_Base {
 		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
+		$this->add_render_attribute( 'tab-icon', 'class', 'elementor-tab-icon' );
+		$this->add_render_attribute( 'tab-icon-active', 'class', 'elementor-tab-icon-active' );
 
 		$tabs_title_html = '';
 		$tabs_content_html = '';
@@ -536,8 +579,10 @@ class TabsV2 extends Widget_Nested_Base {
 			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
 			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 
+			$tab_id = empty( $item['element_id'] ) ? 'elementor-tab-title-' . $id_int . $tab_count : $item['element_id'];
+
 			$this->add_render_attribute( $tab_title_setting_key, [
-				'id' => 'elementor-tab-title-' . $id_int . $tab_count,
+				'id' => $tab_id,
 				'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
@@ -555,12 +600,25 @@ class TabsV2 extends Widget_Nested_Base {
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
 				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
+				'id' => $tab_id . '-accordion',
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
+			$tab_icon_attributes = $this->get_render_attribute_string( 'tab-icon' );
+			$tab_icon_active_attributes = $this->get_render_attribute_string( 'tab-icon-active' );
 
-			$tabs_title_html .= "<div $title_render_attributes>$tab_title</div>";
+			$icon_html = Icons_Manager::try_get_icon_html( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
+			$icon_active_html = $icon_html;
+			if ( $this->is_active_icon_exist( $item ) ) {
+				$icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
+			}
+
+			$tabs_title_html .= "<div {$title_render_attributes}>";
+			$tabs_title_html .= "\t<span {$tab_icon_attributes}> {$icon_html}</span>";
+			$tabs_title_html .= "\t<span {$tab_icon_active_attributes}> {$icon_active_html}</span>";
+			$tabs_title_html .= "\t<span>{$tab_title}</span>";
+			$tabs_title_html .= '</div>';
 
 			// Tabs content.
 			ob_start();
@@ -591,9 +649,20 @@ class TabsV2 extends Widget_Nested_Base {
 				var tabCount = index + 1,
 				tabUid = elementUid + tabCount,
 				tabTitleKey = 'tab-title-' + tabUid;
+				tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
+
+				let tabActiveIcon = tabIcon;
+				if ( '' !== item.tab_icon_active.value ) {
+					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
+				}
+
+				let tabId = 'elementor-tab-title-' + tabUid;
+				if ( '' !== item.element_id ) {
+					tabId = item.element_id;
+				}
 
 				view.addRenderAttribute( tabTitleKey, {
-				'id': 'elementor-tab-title-' + tabUid,
+				'id': tabId,
 				'class': [ 'elementor-tab-title','elementor-tab-desktop-title' ],
 				'data-tab': tabCount,
 				'role': 'tab',
@@ -606,7 +675,11 @@ class TabsV2 extends Widget_Nested_Base {
 				'data-binding-index': tabCount,
 				} );
 				#>
-				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</div>
+				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
+					<span class="elementor-tab-icon">{{{ tabIcon.value }}}</span>
+					<span class="elementor-tab-icon-active">{{{ tabActiveIcon.value }}}</span>
+					<span>{{{ item.tab_title }}}</span>
+				</div>
 				<# } ); #>
 			</div>
 			<div class="elementor-tabs-content-wrapper">
@@ -614,5 +687,13 @@ class TabsV2 extends Widget_Nested_Base {
 			<# } #>
 		</div>
 		<?php
+	}
+
+	/**
+	 * @param $item
+	 * @return bool
+	 */
+	private function is_active_icon_exist( $item ) {
+		return array_key_exists( 'tab_icon_active', $item ) && ! empty( $item['tab_icon_active'] ) && ! empty( $item['tab_icon_active']['value'] );
 	}
 }

@@ -1,7 +1,6 @@
 //
 // Tabs v2
 //
-
 .elementor-widget-tabs-v2 {
 	--tabs-v2-display: flex;
 	--tabs-v2-direction: column;
@@ -38,8 +37,8 @@
 	--tabs-v2-title-shadow: none;
 
 	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
-
-	.elementor-tabs {
+  
+  .elementor-tabs {
 		display: var(--tabs-v2-display);
 		flex-direction: var(--tabs-v2-direction);
 		text-align: $start;
@@ -94,6 +93,7 @@
 		}
 	}
 
+
 	.elementor-tab-title,
 	.elementor-tab-title:before,
 	.elementor-tab-title:after,
@@ -101,6 +101,40 @@
 	.elementor-tabs-content-wrapper {
 		border: 1px none var(--tabs-v2-border-color);
 		border-width: var(--tabs-v2-border-width);
+  }
+  
+	.elementor-tabs-wrapper {
+		overflow: hidden;
+
+		display: var(--tabs-v2-wrapper-display);
+		justify-content: var(--tabs-v2-wrapper-justify-content);
+
+		.elementor-tab-title {
+			.elementor-tab-icon-active {
+				display: none;
+			}
+			.elementor-tab-icon {
+				display: unset;
+			}
+		}
+		.elementor-active {
+			.elementor-tab-icon {
+		  		display: none;
+			}
+			.elementor-tab-icon-active {
+				display: unset;
+			}
+	  	}
+		.elementor-tab-icon {
+			>i {
+				width: 20px;
+			}
+		}
+		.elementor-tab-icon-active {
+			>i {
+				width: 20px;
+			}
+		}
 	}
 
 	.elementor-tab-desktop-title {
