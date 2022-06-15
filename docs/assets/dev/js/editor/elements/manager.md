@@ -18,7 +18,7 @@ For registering a new __Element__/__Widget__, in the backend you can visit [here
 
 ---
 
-### How to register a new element? and what are the capabilities it brings?
+### How to register a new element type?
 * To register a new element type, you need to create a new class that extends the `elementor.elements.types.Base` class, eg:
 ```javascript
 class MyElement extends elementor.elements.types.Base {
