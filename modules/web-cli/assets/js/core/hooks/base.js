@@ -1,4 +1,4 @@
-import Helpers from 'elementor-api/utils/helpers';
+import Console from 'elementor-api/utils/console';
 import Module from 'elementor-assets-js/modules/imports/module.js';
 import forceMethodImplementation from '../../utils/force-method-implementation';
 
@@ -371,7 +371,7 @@ export default class HooksBase extends Module {
 						throw e;
 					}
 
-					Helpers.consoleError( e );
+					Console.error( e );
 				}
 			}
 
