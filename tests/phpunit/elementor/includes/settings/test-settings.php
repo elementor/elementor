@@ -7,6 +7,10 @@ use Elementor\Core\Files\CSS\Global_CSS;
 class Test_Settings extends Elementor_Test_Base {
 
 	public function test_clear_css_cache_on_update_css_settings() {
+		add_action( 'doing_it_wrong_run', function () {
+			var_dump( 'doing_it_wrong_run', func_get_args() );
+		} );
+
 		$css_settings = [
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
