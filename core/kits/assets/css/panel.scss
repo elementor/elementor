@@ -52,15 +52,16 @@
 			position: absolute;
 			display: flex;
 			align-items: center;
-			font-size: 15px;
-			inset-inline: 0;
+			font-size: 16px;
+			inset-inline: 4px;
 			top: 50%;
 			transform: translateY( -50% );
 		}
 
-		&-float, &-close {
+		&-float, &-close, #elementor-navigator__toggle-all {
 			cursor: pointer;
-			padding: 16px;
+			padding: 8px;
+			color: #545c64;
 		}
 
 		.e-panel-left-buttons {
@@ -69,7 +70,9 @@
 			margin-inline-end: auto;
 		}
 
-		&-close {
+		.e-panel-right-buttons {
+			display: flex;
+			align-items: center;
 			margin-inline-start: auto;
 		}
 	}
