@@ -1079,9 +1079,9 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Use `get_deprecation_message()` method to print the message control at specific location in register_controls().
 	 *
-	 * @param $version string		The version of Elementor that deprecated the widget.
-	 * @param $message string 		A message regarding the deprecation.
-	 * @param $replacement string	The widget that should be used instead.
+	 * @param $version string           The version of Elementor that deprecated the widget.
+	 * @param $message string         A message regarding the deprecation.
+	 * @param $replacement string   The widget that should be used instead.
 	 */
 	protected function add_deprecation_message( $version, $message, $replacement ) {
 		// Expose the config for handling in JS.
