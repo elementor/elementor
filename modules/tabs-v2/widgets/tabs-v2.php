@@ -464,11 +464,13 @@ class TabsV2 extends Widget_Nested_Base {
 				tabUid = elementUid + tabCount,
 				tabTitleKey = 'tab-title-' + tabUid;
 				tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
-				tabActiveIcon = tabIcon;
+				
+				let tabActiveIcon = tabIcon;
 				if ( '' !== item.tab_icon_active.value ) {
 					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
 				}
-				tabId = 'elementor-tab-title-' + tabUid;
+				
+				let tabId = 'elementor-tab-title-' + tabUid;
 				if ( '' !== item.element_id ) {
 					tabId = item.element_id;
 				}
