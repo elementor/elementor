@@ -8,8 +8,10 @@ export default class EditorTest extends EditorBase {
 		super( options );
 
 		QUnit.testStart( ( { module, name } ) => {
-			if ( this.$previewElementorEl ) {
-				this.$previewElementorEl.empty();
+			const $element = elementor.documents.getCurrent().$element;
+
+			if ( $element ) {
+				$element.empty();
 			}
 
 			if ( QUnit.config.showUI ) {

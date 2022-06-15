@@ -26,7 +26,7 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	if ( elementorFrontendConfig.experimentalFeatures[ 'tabs-v2' ] ) {
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'tabs-v2.default' ] = () => import( /* webpackChunkName: 'tabs-v2' */ 'elementor/modules/tabs-v2/assets/js/frontend/handlers/tabs-v2' );
 	}
 
@@ -136,7 +136,7 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandlers = function( handlerName ) {
-		elementorCommon.helpers.softDeprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
+		elementorDevTools.deprecation.deprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
 
 		if ( handlerName ) {
 			return this.getHandler( handlerName );

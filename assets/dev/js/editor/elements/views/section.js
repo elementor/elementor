@@ -24,7 +24,7 @@ const SectionView = BaseElementView.extend( {
 	_checkIsFull: function() {
 		this.toggleSectionIsFull();
 
-		elementorCommon.helpers.softDeprecated( '_checkIsFull', '2.9.0',
+		elementorDevTools.deprecation.deprecated( '_checkIsFull', '2.9.0',
 			'toggleSectionIsFull()' );
 	},
 
