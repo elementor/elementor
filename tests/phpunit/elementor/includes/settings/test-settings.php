@@ -7,6 +7,9 @@ use Elementor\Core\Files\CSS\Global_CSS;
 class Test_Settings extends Elementor_Test_Base {
 
 	public function test_clear_css_cache_on_update_css_settings() {
+		// Temp
+		\PHPUnit_Framework_Error_Notice::$enabled = false;
+
 		$css_settings = [
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
@@ -14,6 +17,8 @@ class Test_Settings extends Elementor_Test_Base {
 		];
 
 		foreach ( $css_settings as $option_name ) {
+			var_dump( $option_name );
+
 			$global_css = Global_CSS::create( 'global.css' );
 			$global_css->update();
 
@@ -33,5 +38,8 @@ class Test_Settings extends Elementor_Test_Base {
 
 			delete_option ( $option_name );
 		}
+
+		// Temp
+		\PHPUnit_Framework_Error_Notice::$enabled = true;
 	}
 }
