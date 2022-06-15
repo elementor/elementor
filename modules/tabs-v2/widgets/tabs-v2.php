@@ -393,7 +393,7 @@ class TabsV2 extends Widget_Nested_Base {
 			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
 			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 
-			$tab_id = '' === $item['element_id'] ? 'elementor-tab-title-' . $id_int . $tab_count : $item['element_id'];
+			$tab_id = empty( $item['element_id'] ) ? 'elementor-tab-title-' . $id_int . $tab_count : $item['element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => $tab_id,
