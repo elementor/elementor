@@ -28,7 +28,7 @@ class Settings_Page_Transitions extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/page-transitions';
+		return 'https://go.elementor.com/page-transitions/';
 	}
 
 	protected function register_tab_controls() {
