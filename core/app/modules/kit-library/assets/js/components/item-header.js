@@ -118,7 +118,7 @@ export default function ItemHeader( props ) {
 						text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
 						approveButtonText={ __( 'Learn More', 'elementor' ) }
 						approveButtonColor="link"
-						approveButtonUrl="http://go.elementor.com/app-kit-library-error"
+						approveButtonUrl="http://go.elementor.com/app-kit-library-error/"
 						approveButtonOnClick={ () => setError( false ) }
 						dismissButtonText={ __( 'Got it', 'elementor' ) }
 						dismissButtonOnClick={ () => setError( false ) }
