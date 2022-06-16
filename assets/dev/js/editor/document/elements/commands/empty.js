@@ -35,9 +35,6 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 
 	apply( args ) {
 		if ( args.force && elementor.elements ) {
-			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.reset()
-			);
 			elementor.elements.reset();
 			elementor.getPreviewContainer().panel.closeEditor();
 

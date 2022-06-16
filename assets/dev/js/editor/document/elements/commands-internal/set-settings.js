@@ -33,13 +33,6 @@ export class SetSettings extends $e.modules.editor.CommandContainerInternalBase 
 				} )
 			);
 		} );
-
-		$e.store.dispatch(
-			$e.store.get( 'document/elements' ).actions.settings( {
-				containerIds: containers.map( ( container ) => container.id ),
-				settings: { ...settings },
-			} )
-		);
 	}
 
 	static reducer( state, { payload } ) {

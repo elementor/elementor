@@ -35,13 +35,6 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.remove( {
-					containerId: container.id,
-					parentId: container.parent.id,
-				} )
-			);
-
 			container = container.lookup();
 
 			$e.store.dispatch(
