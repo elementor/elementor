@@ -68,6 +68,22 @@ PanelMenu.addAdminMenu = () => {
 	}, { at: 0 } );
 
 	PanelMenu.addItem( {
+		name: 'notes',
+		icon: 'eicon-commenting-o',
+		title: __( 'Notes', 'elementor' ),
+		callback: function() {
+			elementor.promotion.showDialog( {
+				headerMessage: __( 'Notes', 'elementor' ),
+				message: __( 'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.', 'elementor' ),
+				top: '-3',
+				inlineStart: '+10',
+				element: this.$el,
+				actionURL: 'https://go.elementor.com/go-pro-notes/',
+			} );
+		},
+	}, 'navigate_from_page', 'view-page' );
+
+	PanelMenu.addItem( {
 		name: 'finder',
 		icon: 'eicon-search',
 		title: __( 'Finder', 'elementor' ),
@@ -79,10 +95,10 @@ PanelMenu.addExitItem = () => {
 	let itemArgs;
 
 	if ( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
-		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
+		PanelMenu.exitShouldRedirect = false;
 
 		itemArgs = {
-			callback: () => exitIntroduction.show(),
+			callback: () => PanelMenu.clickExitItem(),
 		};
 	} else {
 		itemArgs = {
@@ -97,6 +113,17 @@ PanelMenu.addExitItem = () => {
 		title: __( 'Exit', 'elementor' ),
 		...itemArgs,
 	}, 'navigate_from_page' );
+};
+
+// Callback being used to determine when to open the modal or redirect the user.
+PanelMenu.clickExitItem = () => {
+	if ( PanelMenu.exitShouldRedirect ) {
+		window.location.href = PanelMenu.getExitUrl();
+	} else {
+		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
+
+		exitIntroduction.show();
+	}
 };
 
 PanelMenu.createExitIntroductionDialog = () => {
@@ -123,9 +150,12 @@ PanelMenu.createExitIntroductionDialog = () => {
 				show: 'fadeIn',
 				hide: 'fadeOut',
 			},
-			onConfirm: () => {
+			onShow: () => {
 				introduction.setViewed();
-
+				elementor.config.user.introduction.exit_to = true;
+				PanelMenu.exitShouldRedirect = true;
+			},
+			onConfirm: () => {
 				$e.run( 'document/elements/settings', {
 					container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 					settings: {
@@ -141,8 +171,6 @@ PanelMenu.createExitIntroductionDialog = () => {
 				} );
 			},
 			onCancel: () => {
-				introduction.setViewed();
-
 				window.location.href = PanelMenu.getExitUrl();
 			},
 		},
@@ -164,8 +192,6 @@ PanelMenu.createExitIntroductionDialog = () => {
 	link.addEventListener( 'click', ( e ) => {
 		e.preventDefault();
 
-		introduction.setViewed();
-		elementor.config.user.introduction.exit_to = true;
 		introduction.getDialog().hide();
 		$e.route( 'panel/editor-preferences' );
 

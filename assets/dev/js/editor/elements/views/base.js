@@ -237,12 +237,12 @@ BaseElementView = BaseContainer.extend( {
 		const editModel = this.getEditModel();
 
 		if ( this.collection && this.onCollectionChanged ) {
-			elementorCommon.helpers.hardDeprecated( 'onCollectionChanged', '2.8.0', '$e.hooks' );
+			elementorDevTools.deprecation.deprecated( 'onCollectionChanged', '2.8.0', '$e.hooks' );
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
 		if ( this.onSettingsChanged ) {
-			elementorCommon.helpers.hardDeprecated( 'onSettingsChanged', '2.8.0', '$e.hooks' );
+			elementorDevTools.deprecation.deprecated( 'onSettingsChanged', '2.8.0', '$e.hooks' );
 			this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged );
 		}
 

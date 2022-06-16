@@ -18,6 +18,9 @@ export const tests = () => {
 	require( './assets/dev/js/editor/document/dynamic/commands/base/disable-enable.spec' );
 	require( './assets/dev/js/editor/document/globals/commands/base/disable-enable.spec' );
 
+	// WEB CLI editor preview component & commands.
+	require( './assets/dev/js/editor/components/preview/component.spec' );
+
 	// WEB CLI editor document components & commands.
 	require( './assets/dev/js/editor/document/component.spec' );
 
@@ -29,9 +32,6 @@ export const tests = () => {
 
 	// WEB CLI kits components & commands.
 	require( './core/kits/assets/js/component.spec' );
-
-	// Modules.
-	require( './modules/dev-tools/assets/js/editor/dev-tools.spec' );
 };
 
 // Export for external build.
