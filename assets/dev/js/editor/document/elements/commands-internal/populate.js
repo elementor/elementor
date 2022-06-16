@@ -18,10 +18,6 @@ export class Populate extends $e.modules.editor.CommandContainerInternalBase {
 
 		// TODO: BC for initializing Marionette views.
 		elementor.initElements();
-		elementor.initPreviewView( document );
-
-		document.container.view = elementor.getPreviewView();
-		document.container.model.attributes.elements = elementor.elements;
 	}
 
 	static reducer( state, { payload } ) {

@@ -9,9 +9,6 @@ describe( "$e.internal( 'document/elements/populate' )", () => {
 		Document = ( await import( 'elementor-editor/components/documents/document' ) ).default;
 
 		global.elementor.initElements = jest.fn();
-		global.elementor.initPreviewView = jest.fn();
-		global.elementor.getPreviewView = jest.fn( () => 'new-view' );
-		global.elementor.elements = 'new-elements';
 	} );
 
 	it( 'Should fail with an invalid Document', () => {
@@ -36,23 +33,6 @@ describe( "$e.internal( 'document/elements/populate' )", () => {
 
 		// Assert.
 		expect( elementor.initElements ).toHaveBeenCalledTimes( 1 );
-		expect( elementor.initPreviewView ).toHaveBeenCalledTimes( 1 );
-		expect( elementor.initPreviewView ).toHaveBeenCalledWith( document );
-	} );
-
-	it( 'Should populate Elementor document', () => {
-		// Arrange.
-		const document = new Document( 1 );
-
-		// Act.
-		$e.internal( 'document/elements/populate', {
-			document,
-			elements: [],
-		} );
-
-		// Assert.
-		expect( document.container.view ).toBe( 'new-view' );
-		expect( document.container.model.attributes.elements ).toBe( 'new-elements' );
 	} );
 
 	it( 'Should populate a non-existing document in the elements state', () => {

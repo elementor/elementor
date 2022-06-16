@@ -66,6 +66,11 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
 			} );
 
+			elementor.initPreviewView( document );
+
+			document.container.view = elementor.getPreviewView();
+			document.container.model.attributes.elements = elementor.elements;
+
 			elementor.helpers.scrollToView( document.$element );
 
 			document.$element
