@@ -512,7 +512,7 @@ module.exports = {
 	},
 
 	scrollToView( $element, timeout, $parent ) {
-		elementorCommon.helpers.softDeprecated( 'elementor.helpers.scrollToView()', '3.7.0', `$e.internal( 'document/elements/scroll-to-view' );` );
+		elementorCommon.helpers.softDeprecated( 'elementor.helpers.scrollToView()', '3.8.0', `$e.internal( 'document/elements/scroll-to-view' );` );
 
 		$e.internal( 'document/elements/scroll-to-view', {
 			$element,
