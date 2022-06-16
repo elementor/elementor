@@ -1091,11 +1091,7 @@ abstract class Widget_Base extends Element_Base {
 			'replacement' => $replacement,
 		] );
 
-		// Validate if the replacement is active.
-		$replacement_widget = Plugin::$instance->widgets_manager->get_widget_types( $replacement );
-
-		if ( $replacement_widget ) {
-			$this->add_control(
+		$this->add_control(
 				'deprecation_message',
 				[
 					'type' => Controls_Manager::RAW_HTML,
@@ -1103,8 +1099,7 @@ abstract class Widget_Base extends Element_Base {
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 					'separator' => 'after',
 				]
-			);
-		}
+		);
 	}
 
 	/**
