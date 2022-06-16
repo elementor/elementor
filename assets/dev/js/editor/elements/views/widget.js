@@ -46,51 +46,6 @@ const WidgetView = BaseWidget.extend( {
 		return false;
 	},
 
-	getEditButtons: function() {
-		const elementData = elementor.getElementData( this.model ),
-			editTools = {};
-
-		editTools.edit = {
-			/* translators: %s: Element name. */
-			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
-			icon: 'edit',
-		};
-
-		if ( elementor.getPreferences( 'edit_buttons' ) ) {
-			editTools.duplicate = {
-				/* translators: %s: Element name. */
-				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
-				icon: 'clone',
-			};
-		}
-
-		return editTools;
-	},
-
-	initialize: function() {
-		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		var editModel = this.getEditModel();
-
-		editModel.on( {
-			'before:remote:render': this.onModelBeforeRemoteRender.bind( this ),
-			'remote:render': this.onModelRemoteRender.bind( this ),
-			'settings:loaded': () => setTimeout( this.render.bind( this ) ),
-		} );
-
-		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
-			editModel.renderRemoteServer();
-		}
-
-		var onRenderMethod = this.onRender;
-
-		this.render = _.throttle( this.render, 300 );
-
-		this.onRender = function() {
-			_.defer( onRenderMethod.bind( this ) );
-		};
-	},
-
 	getContextMenuGroups: function() {
 		var groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
