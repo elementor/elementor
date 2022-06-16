@@ -27,6 +27,8 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
+import Conditions from './utils/conditions';
+import ControlConditions from './utils/control-conditions';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -50,7 +52,8 @@ export default class EditorBase extends Marionette.Application {
 
 	// TODO = BC Since 2.3.0
 	ajax = elementorCommon.ajax;
-	conditions = require( 'elementor-editor-utils/conditions' );
+	conditions = new Conditions();
+	controlConditions = new ControlConditions();
 	history = require( 'elementor/modules/history/assets/js/module' );
 
 	channels = {

@@ -430,97 +430,6 @@ module.exports = {
 		} );
 	},
 
-	/**
-	 * Get Operator
-	 *
-	 * Returns the condition's comparison operator according to the structure of the condition and control values.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @param conditionValue
-	 * @param isNegativeCondition
-	 * @param controlValue
-	 * @returns {string}
-	 */
-	getOperator( conditionValue, isNegativeCondition, controlValue ) {
-		let operator;
-
-		if ( Array.isArray( conditionValue ) && conditionValue.length ) {
-			operator = isNegativeCondition ? '!in' : 'in';
-		} else if ( Array.isArray( controlValue ) && controlValue.length ) {
-			operator = isNegativeCondition ? '!contains' : 'contains';
-		} else if ( isNegativeCondition ) {
-			operator = '!==';
-		}
-
-		return operator;
-	},
-
-	/**
-	 * Convert Condition to Conditions
-	 *
-	 * "Condition" is the simple form of Elementor's control conditioning system, which allows to create one or more
-	 * conditions with an "AND" relationship between them.
-	 *
-	 * "Conditions" is the advanced system for conditioning controls, which allows combining AND and/or OR conditions,
-	 * performing checks for larger/smaller than, checking if keys/values contain other keys/values, and more.
-	 *
-	 * This method receives a simple Condition (name and value) and converts it into the advanced Conditions format.
-	 * format.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @param conditionName
-	 * @param conditionValue
-	 * @param controlModel - The control being tested.
-	 * @param values - The containing widget's array of control values.
-	 * @param controls - The containing widget's array of control models.
-	 * @returns {{name, value: ({length}|*), operator: (string)}}
-	 */
-	convertConditionToConditions: function( conditionName, conditionValue, controlModel, values, controls ) {
-		// The first step is to isolate the term from the negative operator if exists. For example, a condition format
-		// can look like 'selected_icon[value]!', so we examine this term with a negative connotation.
-		const conditionNameParts = conditionName.match( /([\w-]+(?:\[[\w-]+])?)?(!?)$/i ),
-			conditionRealName = conditionNameParts[ 1 ],
-			isNegativeCondition = !! conditionNameParts[ 2 ];
-
-		const parsedControlName = conditionRealName.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
-			// conditionNameWithoutSubKey example: the condition key 'image[url]' will give the value of 'image'.
-			conditionNameWithoutSubKey = parsedControlName[ 1 ],
-			// conditionSubKey example: the condition key 'image[url]' will give the value of 'url'.
-			conditionSubKey = parsedControlName[ 2 ],
-			// In some cases the control's attributes will be under the 'attributes' property, and in some
-			// cases they will be directly on the model object.
-			controlResponsiveProp = controlModel.attributes?.responsive || controlModel.responsive;
-
-		let conditionNameToCheck = conditionRealName,
-			controlValue;
-
-		// If the conditioning control is responsive, get the appropriate device's value.
-		if ( !! controlResponsiveProp && controls[ conditionNameWithoutSubKey ]?.responsive ) {
-			const queryDevice = controlResponsiveProp.max || controlResponsiveProp.min;
-
-			const deviceSuffix = 'desktop' === queryDevice ? '' : '_' + queryDevice;
-
-			conditionNameToCheck = conditionNameWithoutSubKey + deviceSuffix;
-
-			if ( conditionSubKey ) {
-				conditionNameToCheck += `[${ conditionSubKey }]`;
-			}
-
-			// If the control is not desktop, take the value of the conditioning control of the corresponding device.
-			controlValue = values[ conditionNameWithoutSubKey + deviceSuffix ];
-		} else {
-			controlValue = values[ conditionRealName ];
-		}
-
-		return {
-			name: conditionNameToCheck,
-			operator: this.getOperator( conditionValue, isNegativeCondition, controlValue ),
-			value: conditionValue,
-		};
-	},
-
 	isActiveControl: function( controlModel, values, controls ) {
 		const condition = controlModel.condition || controlModel.get?.( 'condition' );
 		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
@@ -530,7 +439,7 @@ module.exports = {
 			const terms = [];
 
 			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
-				const convertedCondition = this.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
+				const convertedCondition = elementor.controlConditions.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
 
 				terms.push( convertedCondition );
 			} );
@@ -541,7 +450,7 @@ module.exports = {
 			};
 		}
 
-		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
+		return ! ( conditions && ! elementor.controlConditions.check( conditions, values, controls ) );
 	},
 
 	cloneObject( object ) {

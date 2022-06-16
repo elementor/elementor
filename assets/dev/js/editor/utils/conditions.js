@@ -1,9 +1,5 @@
-var Conditions;
-
-Conditions = function() {
-	const self = this;
-
-	this.compare = function( leftValue, rightValue, operator ) {
+export default class Conditions {
+	compare( leftValue, rightValue, operator ) {
 		switch ( operator ) {
 			/* eslint-disable eqeqeq */
 			case '==':
@@ -32,7 +28,7 @@ Conditions = function() {
 			default:
 				return leftValue === rightValue;
 		}
-	};
+	}
 
 	/**
 	 * Get Condition Value
@@ -42,13 +38,13 @@ Conditions = function() {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param comparisonObject The widget's settings object (setting keys and values)
+	 * @param comparisonObject A settings object (e.g. element settings - keys and values)
 	 * @param conditionName The conditioning control's name
 	 * @param subConditionName If the conditioning control's value is an object, and the condition checks for a
-	 * 						   specific property, this is the property name.
+	 * specific property, this is the property name.
 	 * @returns {*}
 	 */
-	this.getConditionValue = function( comparisonObject, conditionName, subConditionName ) {
+	getConditionValue( comparisonObject, conditionName, subConditionName ) {
 		let value;
 
 		const dynamicValue = comparisonObject.__dynamic__?.[ conditionName ];
@@ -62,44 +58,43 @@ Conditions = function() {
 		}
 
 		return value;
-	};
+	}
 
-	this.check = function( conditions, comparisonObject, controls ) {
+	check( conditions, comparisonObject ) {
 		const isOrCondition = 'or' === conditions.relation;
 		let conditionSucceed = ! isOrCondition;
 
-		jQuery.each( conditions.terms, function() {
-			const term = this;
+		conditions.terms.forEach( ( term ) => {
 			let comparisonResult;
 
 			if ( term.terms ) {
-				comparisonResult = self.check( term, comparisonObject, controls );
+				comparisonResult = this.check( term, comparisonObject );
 			} else {
 				// A term consists of a control name to be examined, and a sub key if needed. For example, a term
 				// can look like 'image_overlay[url]' (the 'url' is the sub key). Here we want to isolate the
 				// condition name and the sub key, so later it can be retrieved and examined.
 				const parsedName = term.name.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
 					conditionRealName = parsedName[ 1 ],
-					conditionSubKey = parsedName[ 2 ];
+					conditionSubKey = parsedName[ 2 ],
+					// We use null-safe operator since we're trying to get the current element, which is not always
+					// exists, since it's only created when the specific element appears in the panel.
+					placeholder = elementor.selection.getElements()[ 0 ]
+						?.placeholders[ conditionRealName ];
 
-				let value = self.getConditionValue( comparisonObject, conditionRealName, conditionSubKey );
+				// If a placeholder exists for the examined control, we check against it. In any other case, we
+				// use the 'comparisonObject', which includes all values of the selected widget.
+				let value = placeholder || comparisonObject[ conditionRealName ];
 
-				if ( ! value ) {
-					let parent = controls[ conditionRealName ]?.parent;
+				if ( comparisonObject?.__dynamic__[ conditionRealName ] ) {
+					value = comparisonObject.__dynamic__[ conditionRealName ];
+				}
 
-					while ( parent ) {
-						value = self.getConditionValue( comparisonObject, parent, conditionSubKey );
-
-						if ( value ) {
-							break;
-						}
-
-						parent = controls[ parent ]?.parent;
-					}
+				if ( 'object' === typeof value && conditionSubKey ) {
+					value = value[ conditionSubKey ];
 				}
 
 				comparisonResult = ( undefined !== value ) &&
-					self.compare( value, term.value, term.operator );
+					this.compare( value, term.value, term.operator );
 			}
 
 			if ( isOrCondition ) {
@@ -116,7 +111,5 @@ Conditions = function() {
 		} );
 
 		return conditionSucceed;
-	};
-};
-
-module.exports = new Conditions();
+	}
+}
