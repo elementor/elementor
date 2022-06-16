@@ -144,6 +144,15 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
+		// When using input with type="number" and the user starts typing `-`, the actual value (`event.target.value`) is
+		// an empty string. Since the user probably has the intention to insert a negative value, the methods below will
+		// not be triggered. This will prevent updating the input again with an empty string.
+		const hasIntentionForNegativeNumber = '-' === event?.originalEvent?.data && ! event.target.value;
+
+		if ( hasIntentionForNegativeNumber ) {
+			return;
+		}
+
 		if ( this.isLinkedDimensions() ) {
 			var $thisControl = this.$( event.target );
 
