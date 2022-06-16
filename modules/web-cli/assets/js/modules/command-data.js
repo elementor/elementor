@@ -1,6 +1,5 @@
 import CommandBase from './command-base';
 import * as errors from '../core/data/errors/';
-import Helpers from 'elementor-api/utils/helpers';
 
 /**
  * @name $e.modules.CommandData
@@ -93,7 +92,7 @@ export default class CommandData extends CommandBase {
 			timestamp: new Date().getTime(),
 			component: this.component,
 			command: this.command,
-			endpoint: $e.data.commandToEndpoint( this.command, Helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
+			endpoint: $e.data.commandToEndpoint( this.command, JSON.parse( JSON.stringify( this.args ) ), this.constructor.getEndpointFormat() ),
 		};
 	}
 
