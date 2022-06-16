@@ -174,6 +174,7 @@ module.exports = Marionette.CompositeView.extend( {
 		);
 
 		args.container = this.getContainer();
+		args.options = options;
 
 		$e.run( 'preview/drop', args );
 	},
