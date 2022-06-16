@@ -5,6 +5,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				swiperContainer: 'elementor-background-slideshow swiper-container',
 				swiperWrapper: 'swiper-wrapper',
 				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
+				swiperPreloader: 'swiper-lazy-preloader',
 				slideBackground: 'elementor-background-slideshow__slide__image',
 				kenBurns: 'elementor-ken-burns',
 				kenBurnsActive: 'elementor-ken-burns--active',
@@ -15,9 +16,8 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	}
 
 	getSwiperOptions() {
-		const elementSettings = this.getElementSettings();
-
-		const swiperOptions = {
+		const elementSettings = this.getElementSettings(),
+			swiperOptions = {
 			grabCursor: false,
 			slidesPerView: 1,
 			slidesPerGroup: 1,
@@ -55,6 +55,13 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				break;
 		}
 
+		if ( 'yes' === elementSettings.background_slideshow_lazyload ) {
+			swiperOptions.lazy = {
+				loadPrevNext: true,
+				loadPrevNextAmount: 1,
+			};
+		}
+
 		return swiperOptions;
 	}
 
@@ -64,7 +71,8 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			direction = 'slide_left' === elementSettings.background_slideshow_slide_transition ? 'ltr' : 'rtl',
 			$container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
 			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } ),
-			kenBurnsActive = elementSettings.background_slideshow_ken_burns;
+			kenBurnsActive = elementSettings.background_slideshow_ken_burns,
+			lazyload = 'yes' === elementSettings.background_slideshow_lazyload;
 
 		let slideInnerClass = classes.slideBackground;
 
@@ -76,14 +84,32 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			slideInnerClass += ' ' + classes[ kenBurnsDirection ];
 		}
 
+		if ( lazyload ) {
+			slideInnerClass += ' swiper-lazy';
+		}
+
 		this.elements.$slides = jQuery();
 
 		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
-			const $slide = jQuery( '<div>', { class: classes.swiperSlide } ),
+			const $slide = jQuery( '<div>', { class: classes.swiperSlide } );
+
+			let $slidebg;
+
+			if ( lazyload ) {
+				const $slideloader = jQuery( '<div>', { class: classes.swiperPreloader } );
+
+				$slidebg = jQuery( '<div>', {
+					class: slideInnerClass,
+					'data-background': slide.url,
+				} );
+
+				$slidebg.append( $slideloader );
+			} else {
 				$slidebg = jQuery( '<div>', {
 					class: slideInnerClass,
 					style: 'background-image: url("' + slide.url + '");',
 				} );
+			}
 
 			$slide.append( $slidebg );
 			$wrapper.append( $slide );

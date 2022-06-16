@@ -1,7 +1,9 @@
 import React, { useEffect, useContext } from 'react';
 
 import { ExportContext } from '../../../context/export-context/export-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 
+import { cptObjectToOptionsArray } from '../../../shared/cpt-select-box/cpt-object-to-options-array';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import KitContent from '../../../shared/kit-content/kit-content';
@@ -16,6 +18,7 @@ import './export-kit.scss';
 
 export default function ExportKit() {
 	const exportContext = useContext( ExportContext ),
+	sharedContext = useContext( SharedContext ),
 		getFooter = () => (
 			<ActionsFooter>
 				<Button
@@ -34,6 +37,7 @@ export default function ExportKit() {
 
 	useEffect( () => {
 		exportContext.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+		sharedContext.dispatch( { type: 'SET_CPT', payload: cptObjectToOptionsArray( elementorAppConfig[ 'import-export' ].summaryTitles.content?.customPostTypes, 'plural' ) } );
 	}, [] );
 
 	return (

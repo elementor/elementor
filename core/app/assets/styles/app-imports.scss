@@ -28,6 +28,7 @@
 @import "../js/ui/atoms/drag-drop.scss";
 // Should be after buttons.scss to prevent dialog button style overwrite.
 @import "../js/ui/dialog/dialog.scss";
+@import "../js/ui/popover-dialog/popover-dialog.scss";
 @import "../js/ui/molecules/inline-link.scss";
 @import "../js/ui/atoms/text-field.scss";
 @import "../../modules/import-export/assets/js/shared/content-layout/content-layout.scss";
@@ -71,3 +72,19 @@
 @import "../../modules/import-export/assets/js/ui/message-banner/message-banner.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-complete/components/connect-pro-notice/connect-pro-notice.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-complete/components/failed-plugins-notice/failed-plugins-notice.scss";
+
+// Onboarding
+@import "../../modules/onboarding/assets/scss/onboarding";
+@import "../../modules/onboarding/assets/js/components/layout/layout";
+@import "../../modules/onboarding/assets/js/components/layout/header";
+@import "../../modules/onboarding/assets/js/components/progress-bar/progress-bar";
+@import "../../modules/onboarding/assets/js/components/button";
+@import "../../modules/onboarding/assets/js/components/card";
+@import "../../modules/onboarding/assets/js/components/checklist";
+@import "../../modules/onboarding/assets/js/components/notice";
+@import "../../modules/onboarding/assets/js/pages/account";
+@import "../../modules/onboarding/assets/js/pages/hello-theme";
+@import "../../modules/onboarding/assets/js/pages/site-name";
+@import "../../modules/onboarding/assets/js/pages/site-logo";
+@import "../../modules/onboarding/assets/js/pages/good-to-go";
+@import "../../modules/onboarding/assets/js/pages/upload-and-install-pro";

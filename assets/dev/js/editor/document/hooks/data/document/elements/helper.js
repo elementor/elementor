@@ -14,14 +14,15 @@ export default class Helper {
 				/**
 				 * TODO: Creating large amount of columns will reduce performance, try optimizing `document/elements/create`.
 				 */
-				const createdContainer = container.view.addElement( model ).getContainer();
+				const createdContainer = container.view.addElement( model, { edit: false } ).getContainer();
 
 				$e.store.dispatch(
-					$e.store.get( 'document/elements' ).actions.add( {
-						containerId: container.id,
-						model: createdContainer.model.toJSON(),
+					$e.store.get( 'document/elements' ).actions.create( {
+						documentId: elementor.documents.getCurrentId(),
+						parentId: container.id,
+						elements: [ createdContainer.model.toJSON() ],
 						index: options.at,
-					} )
+					} ),
 				);
 
 				/**

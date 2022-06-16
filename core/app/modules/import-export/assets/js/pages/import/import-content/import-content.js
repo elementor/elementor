@@ -47,7 +47,6 @@ export default function ImportContent() {
 						__( "All items are already selected by default. Uncheck the ones you don't want.", 'elementor' ),
 					] }
 				/>
-
 				<ImportContentDisplay
 					manifest={ uploadedData?.manifest }
 					hasPro={ isProInstalledDuringProcess }

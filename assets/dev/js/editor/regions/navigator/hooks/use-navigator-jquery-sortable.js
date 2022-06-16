@@ -8,6 +8,7 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 		handleRef = useRef( null ),
 		listRef = useRef( null ),
 		autoExpandTimerRef = useRef( null );
+	let autoExpand = false;
 
 	useEffect( () => {
 		// For disabling sortable in testing environments.
@@ -20,20 +21,20 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: `.${ BASE_ITEM_CLASS }-${ container.model.get( 'elType' ) } .elementor-navigator__elements`,
+			connectWith: `.${ BASE_ITEM_CLASS }-${ container.model.get( 'elType' ) } > .elementor-navigator__elements`,
 			cancel: '[contenteditable="true"]',
 			start: ( e, ui ) => {
 				container.model.trigger( 'request:sort:start', e, ui );
 				jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
 				// Turn on sorting state of the navigator.
-				document.getElementById( 'elementor-navigator' ).dataset.over = 'true';
+				elementor.navigator.region.el.dataset.over = 'true';
 			},
-			stop: ( e, ui ) => {
+			stop: () => {
 				jQuery( listRef.current ).sortable( 'cancel' );
 				// Turn off sorting state of the navigator.
-				document.getElementById( 'elementor-navigator' ).dataset.over = 'false';
+				elementor.navigator.region.el.dataset.over = 'false';
 			},
-			over: ( e, ui ) => {
+			over: ( e ) => {
 				e.stopPropagation();
 				jQuery( listRef.current ).closest( `.${ BASE_ITEM_CLASS }` ).addClass( 'elementor-dragging-on-child' );
 			},
@@ -55,6 +56,10 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 				const draggedItemIndex = ui.item.index();
 
 				setTimeout( () => {
+					if ( autoExpand ) {
+						setElementFolding( true );
+					}
+
 					container.model.trigger( 'request:sort:update', ui, draggedItemIndex );
 				} );
 			},
@@ -66,26 +71,27 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 	}, [ container ] );
 
 	useEffect( () => {
-		const onItemMouseEnter = ( e ) => {
+		const onItemMouseEnter = () => {
 				// Check whether sorting state of the navigator is active. Currently the sorting state is kept using
 				// dataset.
-				if ( 'true' !== document.getElementById( 'elementor-navigator' ).dataset.over ) {
+				if ( 'true' !== elementor.navigator.region.el.dataset.over ) {
 					return;
 				}
 
 				autoExpandTimerRef.current = setTimeout( () => {
-					setElementFolding( true );
-					jQuery( listRef.current ).sortable( 'refreshPositions' );
+					// Using `slideDown` instead of `setElementFolding` because changing element's state re-renders the
+					// component, and a new sortable-instance is generated, and dragging elements to an auto-expanded
+					// list is not working as expected.
+					jQuery( listRef.current ).slideDown( () => {
+						jQuery( listRef.current ).sortable( 'refreshPositions' );
+						autoExpand = true;
+					} );
 				}, 500 );
-
-				e.target.classList.add( 'elementor-dragging-on-child' );
 			},
-			onItemMouseLeave = ( e ) => {
+			onItemMouseLeave = () => {
 				if ( autoExpandTimerRef.current ) {
 					clearTimeout( autoExpandTimerRef.current );
 				}
-
-				e.target.classList.remove( 'elementor-dragging-on-child' );
 			},
 			onHandleMouseDown = () => {
 				document.activeElement.blur();
@@ -96,9 +102,13 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 		handleRef.current.addEventListener( 'mousedown', onHandleMouseDown );
 
 		return () => {
-			itemRef.current.removeEventListener( 'mouseenter', onItemMouseEnter );
-			itemRef.current.removeEventListener( 'mouseleave', onItemMouseLeave );
-			handleRef.current.removeEventListener( 'mousedown', onHandleMouseDown );
+			if ( itemRef.current ) {
+				itemRef.current.removeEventListener( 'mouseenter', onItemMouseEnter );
+				itemRef.current.removeEventListener( 'mouseleave', onItemMouseLeave );
+			}
+			if ( handleRef.current ) {
+				handleRef.current.removeEventListener( 'mousedown', onHandleMouseDown );
+			}
 		};
 	}, [ container ] );
 

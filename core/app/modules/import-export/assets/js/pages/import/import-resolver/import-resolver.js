@@ -36,7 +36,7 @@ export default function ImportResolver() {
 					color="primary"
 					onClick={ () => {
 						const url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
-
+						importContext.dispatch( { type: 'SET_IS_RESOLVED', payload: true } );
 						navigate( url );
 					} }
 				/>

@@ -12,7 +12,14 @@ export function Header( { onClose } ) {
 	 * @type boolean
 	 */
 	const isAllOpen = useMemo(
-		() => Object.values( elementsFolding ).every( ( state ) => state ),
+		() => {
+			const elements = Object.values( elementsFolding );
+
+			// If there are no elements (page initialization), consider it `false`.
+			return elements.length ?
+				elements.every( ( state ) => state ) :
+				false;
+		},
 		[ elementsFolding ]
 	);
 

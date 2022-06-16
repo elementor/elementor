@@ -1,5 +1,6 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -21,6 +22,7 @@ const allowedHTMLWrapperTags = [
 ];
 
 module.exports = {
+	container: ContainerHelper,
 	document: DocumentHelper,
 
 	_enqueuedFonts: {
@@ -36,7 +38,15 @@ module.exports = {
 				column: {
 					widget: null,
 					section: null,
+					container: {
+						widget: null,
+						container: null,
+					},
 				},
+			},
+			container: {
+				widget: null,
+				container: null,
 			},
 		},
 	},
@@ -66,7 +76,7 @@ module.exports = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
@@ -312,7 +322,7 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		elementorCommon.helpers.softDeprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
 
 		return elementorCommon.helpers.getUniqueId();
 	},
@@ -391,7 +401,10 @@ module.exports = {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
+						'#tab-fontawesome4_migration';
 				};
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
@@ -417,7 +430,7 @@ module.exports = {
 		} );
 	},
 
-	isActiveControl: function( controlModel, values ) {
+	isActiveControl: function( controlModel, values, controls ) {
 		const condition = controlModel.condition || controlModel.get?.( 'condition' );
 		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
 
@@ -456,11 +469,11 @@ module.exports = {
 			};
 		}
 
-		return ! ( conditions && ! elementor.conditions.check( conditions, values ) );
+		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -495,7 +508,7 @@ module.exports = {
 	},
 
 	wpColorPicker( $element ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},

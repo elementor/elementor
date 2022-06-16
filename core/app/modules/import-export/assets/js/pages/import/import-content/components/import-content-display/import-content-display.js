@@ -1,7 +1,10 @@
+import React, { useContext, useEffect } from 'react';
 import KitContent from '../../../../../shared/kit-content/kit-content';
+import { SharedContext } from '../../../../../context/shared-context/shared-context-provider';
 import kitContentData from '../../../../../shared/kit-content-data/kit-content-data';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import { cptObjectToOptionsArray } from '../../../../../shared/cpt-select-box/cpt-object-to-options-array';
 
 export default function ImportContentDisplay( {
 	manifest,
@@ -10,6 +13,7 @@ export default function ImportContentDisplay( {
 	isAllRequiredPluginsSelected,
 	onResetProcess,
 } ) {
+	const sharedContext = useContext( SharedContext );
 	// Getting the kit data from the manifest.
 	const kitData = kitContentData.filter( ( { type } ) => {
 		const contentType = 'settings' === type ? 'site-settings' : type,
@@ -17,6 +21,10 @@ export default function ImportContentDisplay( {
 
 		return ! ! ( Array.isArray( data ) ? data.length : data );
 	} );
+
+	useEffect( () => {
+		sharedContext.dispatch( { type: 'SET_CPT', payload: cptObjectToOptionsArray( manifest?.[ 'custom-post-type-title' ], 'label' ) } );
+	}, [] );
 
 	if ( ! kitData.length && hasPlugins ) {
 		return (
@@ -43,7 +51,7 @@ export default function ImportContentDisplay( {
 				</Notice>
 			}
 
-			<KitContent contentData={ kitData } hasPro={ hasPro } />;
+			<KitContent contentData={ kitData } hasPro={ hasPro } />
 		</>
 	);
 }

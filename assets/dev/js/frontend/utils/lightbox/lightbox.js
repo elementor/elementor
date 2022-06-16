@@ -179,6 +179,7 @@ module.exports = elementorModules.ViewModule.extend( {
 					index: 0,
 					title: options.title,
 					description: options.description,
+					hash: options.hash,
 				} ];
 
 				options.slideshow = {
@@ -219,6 +220,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				type: 'image',
 				id: slideshowID,
 				url: element.href,
+				hash: element.getAttribute( 'e-action-hash' ),
 				title: element.dataset.elementorLightboxTitle,
 				description: element.dataset.elementorLightboxDescription,
 				modalOptions: {
@@ -236,7 +238,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	setHTMLContent: function( html ) {
 		if ( window.elementorCommon ) {
-			elementorCommon.helpers.hardDeprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
 		}
 
 		this.getModal().setMessage( html );
@@ -323,7 +325,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		$.each( socialNetworks, ( key, data ) => {
 			const networkLabel = data.label,
-				$link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel ),
+				$link = $( '<a>', { href: this.createShareLink( key, itemUrl, $activeSlide.attr( 'e-action-hash' ) ), target: '_blank' } ).text( networkLabel ),
 				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
 
 			$link.prepend( $socialNetworkIconElement );
@@ -343,18 +345,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		return $linkList;
 	},
 
-	createShareLink: function( networkName, itemUrl ) {
+	createShareLink: function( networkName, itemUrl, hash = null ) {
 		const options = {};
 
 		if ( 'pinterest' === networkName ) {
 			options.image = encodeURIComponent( itemUrl );
 		} else {
-			const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
-				id: this.id,
-				url: itemUrl,
-			} );
-
-			options.url = encodeURIComponent( location.href.replace( /#.*/, '' ) ) + hash;
+			options.url = encodeURIComponent( location.href.replace( /#.*/, '' ) + hash );
 		}
 
 		return ShareLink.getNetworkLink( networkName, options );
@@ -674,6 +671,10 @@ module.exports = elementorModules.ViewModule.extend( {
 
 				$zoomContainer.append( [ $slideImage, $slidePlaceholder ] );
 				$slide.append( $zoomContainer );
+			}
+
+			if ( slide.hash ) {
+				$slide.attr( 'e-action-hash', slide.hash );
 			}
 
 			$slidesWrapper.append( $slide );
@@ -1022,6 +1023,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				index: slideIndex,
 				title: this.dataset.elementorLightboxTitle,
 				description: this.dataset.elementorLightboxDescription,
+				hash: this.getAttribute( 'e-action-hash' ),
 			};
 
 			if ( slideVideo ) {

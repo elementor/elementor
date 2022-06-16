@@ -224,7 +224,7 @@ export default function Index( props ) {
 								description={ __( 'Nothing to worry about, use 🔄 on the top right to try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
 								button={ {
 									text: __( 'Learn More', 'elementor' ),
-									url: 'http://go.elementor.com/app-kit-library-error',
+									url: 'http://go.elementor.com/app-kit-library-error/',
 									target: '_blank',
 								} }
 							/>

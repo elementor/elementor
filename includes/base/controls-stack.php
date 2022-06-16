@@ -818,7 +818,10 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [
+			'reverse' => true,
+			'desktop_first' => true,
+		] );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -876,7 +879,12 @@ abstract class Controls_Stack extends Base_Object {
 			$control_args = $args;
 
 			// Set parent using the name from previous iteration.
-			$control_args['parent'] = isset( $control_name ) ? $control_name : null;
+			if ( isset( $control_name ) ) {
+				// If $control_name end with _widescreen use desktop name instead
+				$control_args['parent'] = '_widescreen' === substr( $control_name, -strlen( '_widescreen' ) ) ? $id : $control_name;
+			} else {
+				$control_args['parent'] = null;
+			}
 
 			if ( isset( $control_args['device_args'] ) ) {
 				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {
@@ -1377,6 +1385,20 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$instance_value = $values[ $pure_condition_key ];
+
+			if ( ! $instance_value ) {
+				$controls = $this->get_controls();
+				$parent = isset( $controls[ $pure_condition_key ]['parent'] ) ? $controls[ $pure_condition_key ]['parent'] : false;
+
+				while ( $parent ) {
+					$instance_value = $values[ $parent ];
+
+					if ( $instance_value ) {
+						break;
+					}
+					$parent = isset( $controls[ $parent ]['parent'] ) ? $controls[ $parent ]['parent'] : false;
+				}
+			}
 
 			if ( $condition_sub_key && is_array( $instance_value ) ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
@@ -1957,6 +1979,15 @@ abstract class Controls_Stack extends Base_Object {
 			<?php $this->print_template_content( $template_content ); ?>
 		</script>
 		<?php
+	}
+
+	/**
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 */
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		return $config;
 	}
 
 	/**

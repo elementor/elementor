@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { selectElementContents } from 'elementor/assets/dev/js/editor/utils/select-element-contents';
 
 export function ItemTitle( { title, onTitleEdit } ) {
 	const [ editMode, setEditMode ] = useState( false );
@@ -16,7 +17,12 @@ export function ItemTitle( { title, onTitleEdit } ) {
 		}
 
 		setEditMode( true );
-		setTimeout( () => e.target.focus() );
+
+		// Since edit-mode only applied after component re-render, `setTimeout` is necessary.
+		setTimeout( () => {
+			e.target.focus();
+			selectElementContents( e.target );
+		} );
 	};
 
 	/**

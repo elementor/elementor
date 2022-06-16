@@ -151,7 +151,7 @@ body {
 
 		&.elementor-dragging-on-child {
 
-			> div > .elementor-navigator__elements {
+			> .elementor-navigator__elements {
 
 				> .elementor-empty-view {
 					border-top: 2px solid $editor-info;
@@ -304,8 +304,9 @@ body {
 			}
 		}
 
-		&-section {
-			background-color: #fff;
+		&-section,
+		&-container, {
+			background-color: $white;
 		}
 	}
 }

@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Copy extends CommandBase {
+export class Copy extends $e.modules.CommandBase {
 	apply() {
 		const selectedElements = elementor.selection.getElements();
 

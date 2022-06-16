@@ -1,6 +1,6 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
+import { addElementToDocumentState } from 'elementor-document/elements/utils';
 
-export class Create extends CommandHistory {
+export class Create extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' ),
@@ -70,9 +70,10 @@ export class Create extends CommandHistory {
 			}
 
 			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.add( {
-					containerId: container.id,
-					model: createdContainer.model.toJSON(),
+				this.component.store.actions.create( {
+					documentId: elementor.documents.getCurrentId(),
+					parentId: container.id,
+					elements: [ createdContainer.model.toJSON() ],
 					index: options.at,
 				} )
 			);
@@ -85,8 +86,24 @@ export class Create extends CommandHistory {
 		return result;
 	}
 
-	isDataChanged() {
-		return true;
+	static reducer( state, { payload } ) {
+		const { parentId, documentId, elements, index } = payload;
+
+		if ( ! state[ documentId ] ) {
+			state[ documentId ] = {
+				document: {
+					id: 'document',
+					elements: [],
+				},
+			};
+		}
+
+		addElementToDocumentState(
+			elements,
+			state[ documentId ],
+			parentId,
+			index,
+		);
 	}
 }
 

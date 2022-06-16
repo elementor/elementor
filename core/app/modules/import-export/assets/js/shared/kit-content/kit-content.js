@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
+import CptOptionsSelectBox from '../cpt-select-box/cpt-select-box';
 import GoProButton from 'elementor-app/molecules/go-pro-button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
@@ -42,26 +43,25 @@ export default function KitContent( { contentData, hasPro } ) {
 				{
 					contentData.map( ( { type, data }, index ) => {
 						const isLockedFeaturesNoPro = data.features?.locked && ! isProExist;
-
 						return (
 							<List.Item padding="20" key={ type } className="e-app-export-kit-content__item">
 								<div
 									onMouseEnter={ () => isLockedFeaturesNoPro && setContainerHoverState( index, true ) }
 									onMouseLeave={ () => isLockedFeaturesNoPro && setContainerHoverState( index, false ) }
 								>
-									<Grid container noWrap>
+									<Grid container noWrap >
 										<KitContentCheckbox type={ type } className="e-app-export-kit-content__checkbox" />
 
-										<Grid item>
+										<Grid item container>
 											<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
 												{ data.title }
 											</Heading>
 
-											<Grid item container>
-												<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
+											<Grid item container direction="column">
+												<Text variant="sm" tag="p" className="e-app-export-kit-content__description">
 													{ data.description || getTemplateFeatures( data.features, index ) }
 												</Text>
-
+												{ 'content' === type && <CptOptionsSelectBox /> }
 												{
 													isLockedFeaturesNoPro &&
 													<GoProButton

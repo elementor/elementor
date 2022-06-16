@@ -12,6 +12,9 @@ if ( process.argv[ process.argv.length - 1 ] ) {
 	}
 }
 
+// Read package.json
+const packageJson = require( './package.json' );
+
 module.exports = function( config ) {
 	const karmaConfig = {
 		basePath: './',
@@ -32,11 +35,17 @@ module.exports = function( config ) {
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
 
+			// Dev tools.
+			'tests/qunit/setup/dev-tools.js',
+			'assets/js/dev-tools.js',
+
 			// Elementor Common.
 			'tests/qunit/setup/elementor-common.js',
+			'tests/qunit/setup/web-cli.js',
 			'assets/lib/dialog/dialog.js',
-			'assets/js/common-modules.js',
-			'assets/js/common.js',
+			'assets/js/common-modules.min.js',
+			'assets/js/web-cli.min.js',
+			'assets/js/common.min.js',
 
 			// Editor Fixtures.
 			'tests/qunit/index.html',
@@ -59,11 +68,11 @@ module.exports = function( config ) {
 			'assets/lib/jquery-hover-intent/jquery-hover-intent.min.js',
 
 			// Editor.
-			'assets/js/editor-modules.js',
-			'assets/js/editor-document.js',
+			'assets/js/editor-modules.min.js',
+			'assets/js/editor-document.min.js',
 
 			// Tests.
-			'assets/js/qunit-tests.js',
+			'assets/js/qunit-tests.min.js',
 		],
 		preprocessors: {
 			'tests/qunit/index.html': [ 'html2js' ],
@@ -93,8 +102,14 @@ module.exports = function( config ) {
 		port: 9876,
 		colors: true,
 		logLevel: config.LOG_INFO,
-		browsers: [ 'ChromeHeadless' ],
-		browserDisconnectTimeout: 4000,
+		browsers: [ 'ChromeHeadlessCustom', 'ChromeHeadless' ],
+		customLaunchers: {
+			ChromeHeadlessCustom: {
+				base: 'ChromeHeadless',
+					flags: [ '--no-sandbox', '--single-process' ],
+			},
+		},
+		browserDisconnectTimeout: 6000,
 		pingTimeout: 10000,
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
@@ -104,6 +119,7 @@ module.exports = function( config ) {
 		client: {
 			clearContext: true,
 			qunit: {
+				elementorVersion: packageJson.version,
 				isDebug,
 				showUI: false,
 				validateContainersAlive: true, // Validate all containers are alive recursively after each test done.

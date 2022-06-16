@@ -30,6 +30,7 @@ export default function ImportPluginsActivation() {
 	useEffect( () => {
 		if ( isDone ) {
 			importContext.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: ready } );
+			importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'success' } );
 		}
 	}, [ isDone ] );
 

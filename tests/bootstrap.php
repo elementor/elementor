@@ -14,6 +14,10 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
+if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
+	$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
+}
+
 define( 'ELEMENTOR_TESTS', true );
 
 /**

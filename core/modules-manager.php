@@ -94,6 +94,8 @@ class Modules_Manager {
 			'shapes',
 			'favorites',
 			'admin-top-bar',
+			'container-converter',
+			'web-cli',
 		];
 	}
 

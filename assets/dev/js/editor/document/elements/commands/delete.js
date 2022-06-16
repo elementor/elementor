@@ -1,6 +1,6 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
+import { removeElementFromDocumentState } from 'elementor-document/elements/utils';
 
-export class Delete extends CommandHistory {
+export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );
@@ -35,14 +35,15 @@ export class Delete extends CommandHistory {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.remove( {
-					containerId: container.id,
-					parentId: container.parent.id,
-				} )
-			);
-
 			container = container.lookup();
+
+			$e.store.dispatch(
+				this.component.store.actions.delete( {
+					documentId: elementor.documents.getCurrentId(),
+					elementId: container.id,
+					parentId: container.parent.id,
+				} ),
+			);
 
 			if ( this.isHistoryActive() ) {
 				$e.internal( 'document/history/log-sub-item', {
@@ -68,8 +69,12 @@ export class Delete extends CommandHistory {
 		return containers;
 	}
 
-	isDataChanged() {
-		return true;
+	static reducer( state, { payload } ) {
+		const { elementId, parentId, documentId } = payload;
+
+		if ( state[ documentId ] ) {
+			removeElementFromDocumentState( elementId, parentId, state[ documentId ] );
+		}
 	}
 }
 

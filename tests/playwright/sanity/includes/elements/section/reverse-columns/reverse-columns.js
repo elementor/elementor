@@ -10,7 +10,7 @@ module.exports = class {
 
 	async open() {
 		await this.page.waitForTimeout( 1000 );
-		await this.editor.getPreviewFrame().click( '.elementor-add-section-button' );
+		await this.editor.getPreviewFrame().click( '.elementor-add-section-button', { delay: 500, clickCount: 2 } );
 		await this.editor.getPreviewFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
 		await this.page.click( '#elementor-panel-footer-responsive' );
 		await this.page.click( 'text=Advanced' );
@@ -30,6 +30,7 @@ module.exports = class {
 
 		await this.wpAdminPage.setExperiments( {
 			additional_custom_breakpoints: isExperimentBreakpoints,
+			container: false,
 		} );
 
 		this.editor = await this.wpAdminPage.useElementorCleanPost();

@@ -52,15 +52,13 @@
 								callback: self.sendFeedback.bind( self ),
 							} );
 
-							if ( ! elementorAdmin.config.feedback.is_tracker_opted_in ) {
-								this.addButton( {
-									name: 'skip',
-									text: __( 'Skip & Deactivate', 'elementor' ),
-									callback: function() {
-										self.deactivate();
-									},
-								} );
-							}
+							this.addButton( {
+								name: 'skip',
+								text: __( 'Skip & Deactivate', 'elementor' ),
+								callback: function() {
+									self.deactivate();
+								},
+							} );
 						},
 
 						onShow: function() {
