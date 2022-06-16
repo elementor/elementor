@@ -31,9 +31,6 @@ module.exports = {
 		ecmaVersion: 2017,
 		requireConfigFile: false,
 		sourceType: 'module',
-		ecmaFeatures: {
-			jsx: true,
-		},
 		babelOptions: {
 			parserOpts: {
 				plugins: [ 'jsx' ],
