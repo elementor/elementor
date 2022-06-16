@@ -26,7 +26,7 @@ module.exports = Marionette.ItemView.extend( {
 				} else {
 					$e.run( 'library/close' );
 					elementor.notifications.showToast( {
-						message: __( 'Connected successfully', 'elementor' ),
+						message: __( 'Connected successfully.', 'elementor' ),
 					} );
 				}
 			},

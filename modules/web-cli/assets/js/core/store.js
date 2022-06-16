@@ -176,16 +176,14 @@ export default class Store {
 	/**
 	 * Proxy to Redux's `getState()` function, with the ability to get a specific slice.
 	 *
+	 * @param {string|null} sliceId
+	 *
 	 * @return {*}
 	 */
-	getState( sliceId ) {
-		let state = this.reduxStore.getState();
+	getState( sliceId = null ) {
+		const state = this.reduxStore.getState();
 
-		if ( sliceId ) {
-			state = state[ sliceId ];
-		}
-
-		return state;
+		return sliceId ? state[ sliceId ] : state;
 	}
 
 	/**

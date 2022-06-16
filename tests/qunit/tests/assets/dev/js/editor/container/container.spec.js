@@ -13,6 +13,7 @@ jQuery( () => {
 					settings: new Backbone.Model(),
 					model: new Backbone.Model(),
 					label: 'Fake Label',
+					parent: false,
 				},
 				container = new elementorModules.editor.Container( fakeArgs );
 
@@ -96,6 +97,17 @@ jQuery( () => {
 
 			// Assert.
 			assert.equal( controls.text.dynamic.utilized, true );
+		} );
+
+		QUnit.test( 'getParentAncestry(): simple', ( assert ) => {
+			// Arrange.
+			const eButton = ElementsHelper.createAuto( 'widget', 'button' );
+
+			// Act.
+			const ancestry = eButton.getParentAncestry();
+
+			// Assert.
+			assert.equal( ancestry.length, 4 /* document>section>column>widget */ );
 		} );
 	} );
 } );

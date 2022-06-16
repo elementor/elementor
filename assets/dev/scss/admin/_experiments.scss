@@ -42,4 +42,22 @@
 	&__button.button {
 		@include margin(18px, 14px, 22px, 0);
 	}
+
+	&__dependency {
+
+		&__title {
+			color: $editor-darkest;
+
+		}
+
+		&__item {
+			margin: 0 1px;
+			border: 1px solid;
+			padding: 2px;
+			font-size: 13px;
+			color: $editor-dark;
+			font-weight: bold;
+			background: $editor-background-light;
+		}
+	}
 }

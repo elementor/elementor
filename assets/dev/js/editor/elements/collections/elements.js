@@ -1,4 +1,4 @@
-var ElementModel = require( 'elementor-elements/models/element' );
+import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
 
 var ElementsCollection = Backbone.Collection.extend( {
 	add: function( models, options, isCorrectSet ) {
@@ -13,7 +13,14 @@ var ElementsCollection = Backbone.Collection.extend( {
 		var ModelClass = Backbone.Model;
 
 		if ( attrs.elType ) {
-			ModelClass = elementor.hooks.applyFilters( 'element/model', ElementModel, attrs );
+			const elementType = attrs.widgetType || attrs.elType,
+				elementTypeClass = elementor.elementsManager.getElementTypeClass( elementType );
+
+			if ( ! elementTypeClass ) {
+				throw new ElementTypeNotFound( elementType );
+			}
+
+			ModelClass = elementor.hooks.applyFilters( 'element/model', elementTypeClass.getModel(), attrs );
 		}
 
 		return new ModelClass( attrs, options );

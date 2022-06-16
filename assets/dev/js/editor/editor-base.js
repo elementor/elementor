@@ -4,11 +4,13 @@ import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocumentsComponent from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
+import ElementsManager from './elements/manager';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
 import BrowserImport from './components/browser-import/manager';
+import PreviewComponent from './components/preview/component';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -19,7 +21,6 @@ import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import Selection from './components/selection/manager';
-import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
@@ -27,6 +28,9 @@ import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ElementModel from 'elementor-elements/models/element';
+
+import * as elementTypes from './elements/types';
+import ElementBase from './elements/types/base/element-base';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -61,7 +65,7 @@ export default class EditorBase extends Marionette.Application {
 	};
 
 	get debug() {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'elementor.debug',
 			'3.0.0',
 			'elementorCommon.debug'
@@ -115,7 +119,7 @@ export default class EditorBase extends Marionette.Application {
 	modules = {
 		// TODO: Deprecated alias since 2.3.0
 		get Module() {
-			elementorCommon.helpers.hardDeprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
+			elementorDevTools.deprecation.deprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
 
 			return elementorModules.Module;
 		},
@@ -124,7 +128,7 @@ export default class EditorBase extends Marionette.Application {
 				views: {
 					// TODO: Deprecated alias since 2.4.0
 					get BaseModalLayout() {
-						elementorCommon.helpers.hardDeprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
+						elementorDevTools.deprecation.deprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
 
 						return elementorModules.common.views.modal.Layout;
 					},
@@ -138,7 +142,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		saver: {
 			get footerBehavior() {
-				elementorCommon.helpers.softDeprecated( 'elementor.modules.saver.footerBehavior.',
+				elementorDevTools.deprecation.deprecated( 'elementor.modules.saver.footerBehavior.',
 					'2.9.0',
 					'elementor.modules.components.saver.behaviors.FooterSaver' );
 
@@ -184,16 +188,22 @@ export default class EditorBase extends Marionette.Application {
 			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
 		},
 		elements: {
+			types: {
+				Base: ElementBase,
+				... elementTypes,
+			},
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
-					elementorCommon.helpers.hardDeprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
+					elementorDevTools.deprecation.deprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
 					return elementorModules.editor.elements.models.BaseSettings;
 				},
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
+				BaseElement: require( 'elementor-elements/views/base' ),
+				BaseWidget: require( 'elementor-elements/views/base-widget' ),
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 		},
@@ -215,7 +225,7 @@ export default class EditorBase extends Marionette.Application {
 		views: {
 			// TODO: Deprecated alias since 2.4.0
 			get ControlsStack() {
-				elementorCommon.helpers.hardDeprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
+				elementorDevTools.deprecation.deprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
 				return elementorModules.editor.views.ControlsStack;
 			},
@@ -347,6 +357,8 @@ export default class EditorBase extends Marionette.Application {
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
+		this.elementsManager = new ElementsManager();
+
 		this.hooks = new EventManager();
 
 		this.selection = new Selection();
@@ -375,8 +387,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
-		this.devTools = new DevTools();
-
 		this.browserImport = new BrowserImport();
 
 		this.documents = $e.components.register( new EditorDocumentsComponent() );
@@ -394,6 +404,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.components.register( new DataGlobalsComponent() );
 
 		$e.components.register( new DocumentComponent() );
+
+		$e.components.register( new PreviewComponent() );
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
@@ -1527,12 +1539,12 @@ export default class EditorBase extends Marionette.Application {
 			Object.defineProperty( this.config, key, {
 				get() {
 					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', replacement );
+					elementorDevTools.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', replacement );
 					// return from current document.
 					return data.value();
 				},
 				set() {
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					elementorDevTools.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
 					throw Error( 'Deprecated' );
 				},
 			} );
@@ -1540,21 +1552,21 @@ export default class EditorBase extends Marionette.Application {
 
 		Object.defineProperty( this.config.settings, 'page', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
+				elementorDevTools.deprecation.deprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
 				return elementor.config.document.settings;
 			},
 		} );
 
 		Object.defineProperty( this.config, 'widgets', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
+				elementorDevTools.deprecation.deprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
 				return elementor.widgetsCache;
 			},
 		} );
 
 		Object.defineProperty( this, '$previewElementorEl', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
+				elementorDevTools.deprecation.deprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
 
 				return elementor.documents.getCurrent().$element;
 			},

@@ -119,6 +119,18 @@ export default function SiteLogo() {
 		}
 	};
 
+	const onImageRemoveClick = () => {
+		elementorCommon.events.dispatchEvent( {
+			event: 'remove selected logo',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+			},
+		} );
+
+		setFile( null );
+	};
+
 	/**
 	 * Ajax Callbacks
 	 */
@@ -131,7 +143,6 @@ export default function SiteLogo() {
 					version: '',
 					details: {
 						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
 						source: fileSource,
 					},
 				} );
@@ -176,6 +187,7 @@ export default function SiteLogo() {
 					version: '',
 					details: {
 						placement: elementorAppConfig.onboarding.eventPlacement,
+						source: fileSource,
 					},
 				} );
 
@@ -233,7 +245,7 @@ export default function SiteLogo() {
 				{ ( file && ! showUnfilteredFilesDialog ) ?
 					(
 						<div className={ 'e-onboarding__logo-container' + ( isUploading ? ' e-onboarding__is-uploading' : '' ) }>
-							<div className="e-onboarding__logo-remove" onClick={ () => setFile( null ) }>
+							<div className="e-onboarding__logo-remove" onClick={ () => onImageRemoveClick() }>
 								<i className="eicon-trash-o"/>
 							</div>
 							<img src={ file.url } alt={ __( 'Potential Site Logo', 'elementor' ) }/>
@@ -266,6 +278,7 @@ export default function SiteLogo() {
 									version: '',
 									details: {
 										placement: elementorAppConfig.onboarding.eventPlacement,
+										step: state.currentStep,
 									},
 								} );
 							} }

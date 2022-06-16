@@ -36,7 +36,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container model.
 	 *
-	 * @type {Backbone.Model}
+	 * @type {(Backbone.Model|BaseElementModel)}
 	 */
 	model;
 
@@ -192,6 +192,11 @@ export default class Container extends ArgsObject {
 
 		this.requireArgumentInstance( 'settings', Backbone.Model, args );
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
+
+		// Require it, unless it's forced to be `false`.
+		if ( false !== args.parent ) {
+			this.requireArgumentInstance( 'parent', elementorModules.editor.Container, args );
+		}
 	}
 
 	/**
@@ -277,6 +282,26 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * Function getParentAncestry().
+	 *
+	 * Recursively run over all parents from current container till the top, and return them as flat array.
+	 *
+	 * @return {Array.<Container>}
+	 */
+	getParentAncestry() {
+		const result = [];
+
+		let parent = this;
+
+		while ( parent ) {
+			result.push( parent );
+			parent = parent.parent;
+		}
+
+		return result;
+	}
+
 	handleChildrenRecursive() {
 		if ( this.view.children?.length ) {
 			Object.values( this.view.children._views ).forEach( ( view ) => {
@@ -350,7 +375,7 @@ export default class Container extends ArgsObject {
 			if ( 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
-						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						elementorDevTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
 						return this.repeaters[ repeaters[ 0 ].name ].children;
 					},
 				} );
@@ -444,7 +469,7 @@ export default class Container extends ArgsObject {
 	}
 
 	findChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.findRecursive( callback )'
@@ -454,7 +479,7 @@ export default class Container extends ArgsObject {
 	}
 
 	forEachChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.forEachRecursive( callback )'
