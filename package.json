@@ -12,7 +12,6 @@
         "test:qunit": "grunt qunit",
         "test:playwright": "playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "test:playwright:debug": "npm run test:playwright -- --debug",
-        "test:playwright:local": "playwright test \"--config=tests/playwright/config/local.config.js\"",
         "dev:start": "npm install && composer install",
         "test:jest": "jest --config='./tests/jest/jest.config.js'",
         "scripts": "grunt scripts",
