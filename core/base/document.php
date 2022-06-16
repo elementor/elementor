@@ -384,6 +384,60 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get All Post Type URL
+	 *
+	 * Get url of the page which display all the posts of the current active document's post type.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	public function get_all_post_type_url() {
+		$post_type = get_post_type( $this->get_main_id() );
+
+		$url = get_admin_url() . 'edit.php';
+
+		if ( 'post' !== $post_type ) {
+			$url .= '?post_type=' . $post_type;
+		}
+
+		/**
+		 * Document "display all post type" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/all_post_type', $url, $this );
+
+		return $url;
+	}
+
+	/**
+	 * Get Main WP dashboard URL.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	protected function get_main_dashboard_url() {
+		$url = get_dashboard_url();
+
+		/**
+		 * Document "Main Dashboard" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/main_dashboard', $url, $this );
+
+		return $url;
+	}
+
+	/**
 	 * Get auto-saved post revision.
 	 *
 	 * Retrieve the auto-saved post revision that is newer than current post.
@@ -544,11 +598,13 @@ abstract class Document extends Controls_Stack {
 				'locked' => $locked_user,
 			],
 			'urls' => [
-				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
+				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(), // WP post type edit page
+				'all_post_type' => $this->get_all_post_type_url(),
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),
 				'have_a_look' => $this->get_have_a_look_url(),
+				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
 
@@ -887,7 +943,13 @@ abstract class Document extends Controls_Stack {
 				continue;
 			}
 
-			$editor_data[] = $element->get_raw_data( $with_html_content );
+			if ( $this->is_saving ) {
+				$element_data = $element->get_data_for_save();
+			} else {
+				$element_data = $element->get_raw_data( $with_html_content );
+			}
+
+			$editor_data[] = $element_data;
 		} // End foreach().
 
 		Plugin::$instance->documents->restore_document();
