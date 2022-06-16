@@ -4,11 +4,11 @@ const WpAdminPage = require( '../pages/wp-admin-page.js' );
 test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-	editor = await wpAdmin.useElementorCleanPost();
-	
+		editor = await wpAdmin.useElementorCleanPost();
+
 	// Close Navigator
 	await page.click( '#elementor-navigator__close' );
-	
+
 	// Act.
 	await editor.addWidget( 'image-gallery' );
 
@@ -16,7 +16,7 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 
 	// Open Media Library
 	await page.click( 'text=Media Library' );
-	
+
 	// Upload the images to WP media library
 	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
 	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
