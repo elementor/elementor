@@ -99,7 +99,7 @@ export default class Component extends ComponentBase {
 
 	dock() {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
-			'3.7.0',
+			'3.8.0',
 			"$e.run( 'navigator/dock' )"
 		);
 
@@ -108,7 +108,7 @@ export default class Component extends ComponentBase {
 
 	undock( silent ) {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
-			'3.7.0',
+			'3.8.0',
 			"$e.run( 'navigator/undock', { silent } )"
 		);
 
@@ -117,7 +117,7 @@ export default class Component extends ComponentBase {
 
 	setSize( size = null ) {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.setSize()',
-			'3.7.0',
+			'3.8.0',
 			"$e.internal( 'navigator/set-size', { size } )"
 		);
 
@@ -126,7 +126,7 @@ export default class Component extends ComponentBase {
 
 	getLayout() {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.getLayout()',
-			'3.7.0',
+			'3.8.0',
 			'elementor.navigator.region.getLayout()'
 		);
 
