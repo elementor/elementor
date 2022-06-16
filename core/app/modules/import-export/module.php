@@ -192,7 +192,7 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_file_content = file_get_contents( $session_dir . 'manifest.json', true );
+		$manifest_file_content = Utils::file_get_contents( $session_dir . 'manifest.json', true );
 
 		if ( ! $manifest_file_content ) {
 			throw new \Error( self::MANIFEST_ERROR_KEY );
@@ -273,7 +273,7 @@ class Module extends BaseModule {
 
 			$file_name = $export_result['file_name'];
 
-			$file = file_get_contents( $file_name, true );
+			$file = Utils::file_get_contents( $file_name );
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
@@ -393,24 +393,26 @@ class Module extends BaseModule {
 		return $this->get_elementor_editor_page_url( $query->post->ID );
 	}
 
-	private function get_elementor_page_url( $page_id ) {
+	private function get_elementor_document( $page_id ) {
 		$document = Plugin::$instance->documents->get( $page_id );
 
-		if ( ! $document->is_built_with_elementor() ) {
-			return '';
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return false;
 		}
 
-		return $document->get_preview_url();
+		return $document;
+	}
+
+	private function get_elementor_page_url( $page_id ) {
+		$document = $this->get_elementor_document( $page_id );
+
+		return $document ? $document->get_preview_url() : '';
 	}
 
 	private function get_elementor_editor_page_url( $page_id ) {
-		$document = Plugin::$instance->documents->get( $page_id );
+		$document = $this->get_elementor_document( $page_id );
 
-		if ( ! $document->is_built_with_elementor() ) {
-			return '';
-		}
-
-		return $document->get_edit_url();
+		return $document ? $document->get_edit_url() : '';
 	}
 
 	private function get_config_data() {
