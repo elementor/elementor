@@ -3,14 +3,14 @@ const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
 test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+const wpAdmin = new WpAdminPage( page, testInfo ),
+      editor = await wpAdmin.useElementorCleanPost();
 
   // Close Navigator
   await page.click( '#elementor-navigator__close' );
 
-	// Act.
-	await editor.addWidget( 'image-gallery' );
+  // Act.
+  await editor.addWidget( 'image-gallery' );
 
   await page.locator( '[aria-label="Add Images"]' ).click();
 
