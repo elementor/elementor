@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Paste extends CommandBase {
+export class Paste extends $e.modules.CommandBase {
 	initialize( args ) {
 		const { containers = [ args.container ] } = args;
 

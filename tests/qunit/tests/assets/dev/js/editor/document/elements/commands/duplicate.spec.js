@@ -6,7 +6,7 @@ export const Duplicate = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					eButtonDuplicateCount = 2;
 
 				for ( let i = 0; i < eButtonDuplicateCount; ++i ) {
@@ -23,7 +23,7 @@ export const Duplicate = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidget = ElementsHelper.createAutoButton(),
+				const eWidget = ElementsHelper.createWrappedButton(),
 					eWidgetDuped = ElementsHelper.duplicate( eWidget ),
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
@@ -48,7 +48,7 @@ export const Duplicate = () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn1 = ElementsHelper.createSection( 1, true ),
 					eColumn2 = ElementsHelper.createSection( 1, true ),
-					eButtons = ElementsHelper.multiCreateButton( [ eColumn1, eColumn2 ] );
+					eButtons = ElementsHelper.multiCreateWidgetButton( [ eColumn1, eColumn2 ] );
 
 				ElementsHelper.multiDuplicate( eButtons );
 
@@ -58,7 +58,7 @@ export const Duplicate = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgets = ElementsHelper.multiCreateAutoButton(),
+				const eWidgets = ElementsHelper.multiCreateWrappedButton(),
 					eWidgetsDuped = ElementsHelper.multiDuplicate( eWidgets ),
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
