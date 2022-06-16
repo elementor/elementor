@@ -214,7 +214,7 @@ class Manager extends Base_Object {
 			'name' => 'e_dom_optimization',
 			'title' => esc_html__( 'Optimized DOM Output', 'elementor' ),
 			'description' => esc_html__( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
@@ -263,7 +263,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Accessibility Improvements', 'elementor' ),
 			'description' => esc_html__( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
 				. '<br><strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
@@ -321,7 +321,7 @@ class Manager extends Base_Object {
 				This experiment replaces the current section/column structure, but you\'ll still keep your existing
 				Sections, Inner Sections and Columns and be able to edit them. %1$sLearn More%2$s',
 				'elementor'
-			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container">', '</a>' ),
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
