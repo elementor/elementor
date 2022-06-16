@@ -28,7 +28,7 @@ class Theme_Style_Typography extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-theme-style-typography';
+		return 'https://go.elementor.com/global-theme-style-typography/';
 	}
 
 	public function register_tab_controls() {

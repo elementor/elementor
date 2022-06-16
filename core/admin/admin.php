@@ -502,14 +502,14 @@ class Admin extends App {
 		$additions_actions = [
 			'go-pro' => [
 				'title' => esc_html__( 'Upgrade', 'elementor' ),
-				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget',
+				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 			],
 		];
 
 		// Visible to all core users when Elementor Pro is not installed.
 		$additions_actions['find_an_expert'] = [
 			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
 		];
 
 		/**
