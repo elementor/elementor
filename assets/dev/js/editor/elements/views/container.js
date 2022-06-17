@@ -186,13 +186,13 @@ const ContainerView = BaseElementView.extend( {
 	 * @returns {void}
 	 */
 	addNewContainer() {
-		const containerSelector = ( false === this.getContainer().parent.parent ) ? this.getContainer() : this.getContainer().parent;
+		const containerParentSelector = ( 2 >= this.getContainer().getParentAncestry().length ) ? this.getContainer() : this.getContainer().parent;
 
 		$e.run( 'document/elements/create', {
 			model: {
 				elType: 'container',
 			},
-			container: containerSelector,
+			container: containerParentSelector,
 		} );
 	},
 
