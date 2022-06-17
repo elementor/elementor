@@ -7,6 +7,7 @@
 
 	--tabs-v2-display: flex;
 	--tabs-v2-direction: column;
+	--tabs-v2-gap: 10px;
 
 	--tabs-v2-tabs-wrapper-display: flex;
 	--tabs-v2-tabs-wrapper-direction: row;
@@ -15,10 +16,17 @@
 	--tabs-v2-tabs-wrapper-width: initial;
 
 	--tabs-v2-content-height: initial;
+	--tabs-v2-content-overflow-x: hidden;
+	--tabs-v2-content-overflow-y: auto;
 
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
 	--tabs-v2-background-color: transparent;
+
+	--tabs-v2-title-color: var( --e-global-color-secondary, #54595F );
+	--tabs-v2-title-background-color: #{$editor-background-light};
+	--tabs-v2-title-active-color: #{$white};
+	--tabs-v2-title-active-background-color: var( --e-global-color-accent, #61CE70 );
 
 	--tabs-v2-title-alignment: center;
 	--tabs-v2-title-grow: 1;
@@ -28,13 +36,7 @@
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
 
-	/* TODO Find better solution for all global defaults. */
-	// --tabs-v2-title-color: var( --e-global-color-secondary, #54595F );
-	--tabs-v2-title-color: var( --e-global-color-secondary, #54595F );
-	--tabs-v2-title-active-color: #{$white};
-	--tabs-v2-title-background-color: #{$editor-background-light};
-
-	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, --e-global-typography-primary-font-family ), Sans-serif;
+	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
 	--tabs-v2-title-typography-font-size: initial;
 	--tabs-v2-title-typography-font-weight: var( --e-global-typography-primary-font-weight );
 	--tabs-v2-title-typography-text-transform: initial;
@@ -43,7 +45,6 @@
 	--tabs-v2-title-typography-line-height: initial;
 	--tabs-v2-title-typography-letter-spacing: initial;
 	--tabs-v2-title-typography-word-spacing: initial;
-
 	--tabs-v2-title-shadow: none;
 
 	--tabs-v2-icon-color: #{$white};
@@ -54,6 +55,7 @@
 	.elementor-tabs {
 		display: var( --tabs-v2-display );
 		flex-direction: var( --tabs-v2-direction );
+		gap: var( --tabs-v2-gap );
 		text-align: $start;
 
 		&-wrapper {
@@ -69,7 +71,8 @@
 			background-color: var( --tabs-v2-background-color );
 			flex-grow: 1;
 			height: var( --tabs-v2-content-height );
-			overflow-y: auto;
+			overflow-x: var( --tabs-v2-content-overflow-x );
+			overflow-y: var( --tabs-v2-content-overflow-y );
 		}	
 	}
 
@@ -99,7 +102,7 @@
 
 			&.elementor-active {
 				color: var( --tabs-v2-title-active-color );
-				background-color: var( --tabs-v2-title-active-background-color, var( --e-global-color-accent, #61CE70 ) );
+				background-color: var( --tabs-v2-title-active-background-color );
 			}
 		}
 	}
@@ -111,14 +114,6 @@
 	.elementor-tabs-content-wrapper {
 		border: 1px none var( --tabs-v2-border-color );
 		border-width: var( --tabs-v2-border-width );
-	}
-
-	.e-container {
-		padding: 20px;
-
-		.elementor-element-overlay::after {
-			outline-width: 1px;
-		}
 	}
 
 	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
@@ -133,10 +128,6 @@
 
 		.elementor-tabs-wrapper {
 			display: none;
-		}
-		
-		.e-container {
-			padding: 10px;
 		}
 	}
 }

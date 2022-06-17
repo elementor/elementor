@@ -101,6 +101,9 @@ class TabsV2 extends Widget_Nested_Base {
 				[
 					'tab_title' => esc_html_x( 'Tab #2', 'Nested Tabs Control', 'elementor' ),
 				],
+				[
+					'tab_title' => esc_html_x( 'Tab #3', 'Nested Tabs Control', 'elementor' ),
+				],
 			],
 			'title_field' => '{{{ tab_title }}}',
 		] );
@@ -384,9 +387,9 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_control( 'background_color', [
 			'label' => esc_html_x( 'Background Color', 'Nested Tabs Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
-			// 'selectors' => [
-			// 	'{{WRAPPER}}' => '--tabs-v2-background-color: {{VALUE}};',
-			// ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-background-color: {{VALUE}};',
+			],
 		] );
 
 		$this->add_control( 'heading_title', [
@@ -398,76 +401,67 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_control( 'tab_color', [
 			'label' => esc_html_x( 'Color', 'Nested Tabs Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
-			// 'selectors' => [
-			// 	'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}};',
-			// ],
-			'global' => [
-				'default' => Global_Colors::COLOR_PRIMARY,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}};',
 			],
 		] );
 
 		$this->add_control( 'tab_active_color', [
 			'label' => esc_html_x( 'Active Color', 'Nested Tabs Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
-			// 'selectors' => [
-			// 	'{{WRAPPER}}' => '--tabs-v2-title-active-color: {{VALUE}};',
-			// ],
-			'global' => [
-				'default' => Global_Colors::COLOR_ACCENT,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-title-active-color: {{VALUE}};',
 			],
 		] );
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'tab_typography',
-			'global' => [
-				'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-			],
 			'fields_options' => [
-				// 'font_family' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family: "{{VALUE}}";',
-				// 	],
-				// ],
-				// 'font_size' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size: {{SIZE}}{{UNIT}};',
-				// 	],
-				// ],
-				// 'font_weight' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight: {{VALUE}};',
-				// 	],
-				// ],
-				// 'text_transform' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform: {{VALUE}};',
-				// 	],
-				// ],
-				// 'font_style' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style: {{VALUE}};',
-				// 	],
-				// ],
-				// 'text_decoration' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration: {{VALUE}};',
-				// 	],
-				// ],
-				// 'line_height' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height: {{SIZE}}{{UNIT}};',
-				// 	],
-				// ],
-				// 'letter_spacing' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
-				// 	],
-				// ],
-				// 'word_spacing' => [
-				// 	'selectors' => [
-				// 		'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
-				// 	],
-				// ],
+				'font_family' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family: "{{VALUE}}";',
+					],
+				],
+				'font_size' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size: {{SIZE}}{{UNIT}};',
+					],
+				],
+				'font_weight' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight: {{VALUE}};',
+					],
+				],
+				'text_transform' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform: {{VALUE}};',
+					],
+				],
+				'font_style' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style: {{VALUE}};',
+					],
+				],
+				'text_decoration' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration: {{VALUE}};',
+					],
+				],
+				'line_height' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height: {{SIZE}}{{UNIT}};',
+					],
+				],
+				'letter_spacing' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
+					],
+				],
+				'word_spacing' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
+					],
+				],
 			],
 		] );
 
