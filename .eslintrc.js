@@ -134,6 +134,9 @@ module.exports = {
 		} ],
 		'react/react-in-jsx-scope': 'off',
 		'babel/semi': 1,
+		'spaced-comment': [ 'error', 'always', { markers: [ '!' ] } ],
+		'capitalized-comments': [ 'error', 'always', { ignoreConsecutiveComments: true } ],
+		yoda: [ 'error', 'never' ],
 		// 'react/display-name': 'off',
 		// 'react/jsx-curly-spacing': [ 'error', {
 		// 	when: 'always',
