@@ -543,6 +543,26 @@ abstract class Element_Base extends Controls_Stack {
 		];
 	}
 
+	public function get_data_for_save() {
+		$data = $this->get_raw_data();
+
+		$elements = [];
+
+		foreach ( $this->get_children() as $child ) {
+			$elements[] = $child->get_data_for_save();
+		}
+
+		if ( ! empty( $elements ) ) {
+			$data['elements'] = $elements;
+		}
+
+		if ( ! empty( $data['settings'] ) ) {
+			$data['settings'] = $this->on_save( $data['settings'] );
+		}
+
+		return $data;
+	}
+
 	/**
 	 * Get unique selector.
 	 *
@@ -801,6 +821,14 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * A Base method for sanitizing the settings before save.
+	 * This method is meant to be overridden by the element.
+	 */
+	protected function on_save( array $settings ) {
+		return $settings;
 	}
 
 	/**

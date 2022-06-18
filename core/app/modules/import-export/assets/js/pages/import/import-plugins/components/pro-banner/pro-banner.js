@@ -8,7 +8,7 @@ import './pro-banner.scss';
 
 export default function ProBanner( { onRefresh } ) {
 	const [ showInfoDialog, setShowInfoDialog ] = useState( false ),
-		openGoProExternalPage = () => window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' ),
+		openGoProExternalPage = () => window.open( 'https://go.elementor.com/go-pro-import-export/', '_blank' ),
 		onDialogDismiss = () => setShowInfoDialog( false ),
 		onDialogApprove = () => {
 			setShowInfoDialog( false );

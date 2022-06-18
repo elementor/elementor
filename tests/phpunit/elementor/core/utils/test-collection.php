@@ -145,6 +145,29 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '4', '5' ], 'c' => [ '6' ] ], $result->all() );
 	}
 
+	public function test_clear_empty_recursive() {
+		// Arrange.
+		$collection = new Collection( [ [ [] ], [ [ 0 ] ] ] );
+
+		// Act.
+		$actual = $collection->clear_empty_recursive();
+
+		// Assert.
+		$this->assertEquals( [], $actual );
+	}
+
+	public function test_clear_empty_recursive__ensure_value_not_removed() {
+		// Arrange.
+		$array = [ [ [ 1 ] ], [ [ 1 ] ] ];
+		$collection = new Collection( $array );
+
+		// Act.
+		$actual = $collection->clear_empty_recursive();
+
+		// Assert.
+		$this->assertEquals( $array, $actual );
+	}
+
 	public function test_implode() {
 		// Arrange
 		$collection = new Collection( [ '1', '2', '3' ] );
@@ -409,5 +432,43 @@ class Test_Collection extends Elementor_Test_Base {
 		// Assert
 		$this->assertEqualSets( [ 'a' => 1, 'b' => 1, 'c' => 1 ], $result_asc );
 		$this->assertEqualSets( [ 'c' => 1, 'b' => 1, 'a' => 1 ], $result_desc );
+	}
+
+	public function test_each() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 1, 'b' => 2, 'c' => 3 ] );
+
+		$mock = $this->getMockBuilder( \stdClass::class )
+			->setMethods( [ 'each_callback' ] )
+			->getMock();
+
+		// Expect
+		$mock->expects( $this->exactly( 3 ) )
+			->method( 'each_callback' )
+			->withConsecutive(
+				[ 1, 'a' ],
+				[ 2, 'b' ],
+				[ 3, 'c' ]
+			);
+
+		// Act
+		$collection->each( [ $mock, 'each_callback' ] );
+	}
+
+	public function test_each__breaks_on_false() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 1, 'b' => 2, 'c' => 3 ] );
+
+		$mock = $this->getMockBuilder( \stdClass::class )
+			->setMethods( [ 'each_callback' ] )
+			->getMock();
+
+		// Expect
+		$mock->expects( $this->exactly( 1 ) )
+			->method( 'each_callback' )
+			->willReturn( false );
+
+		// Act
+		$collection->each( [ $mock, 'each_callback' ] );
 	}
 }

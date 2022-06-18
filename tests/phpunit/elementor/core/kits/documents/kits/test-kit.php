@@ -45,13 +45,11 @@ class Test_Kit extends Elementor_Test_Base {
 		// Arrange.
 		$this->kit->save( [ 'settings' => $this->kit->get_settings() ] );
 
-		$excepted_count = count( Revisions_Manager::get_revisions( $this->kit->get_main_id() ) );
-
 		// Act.
 		$this->kit->save( [ 'settings' => $this->kit->get_settings() ] );
 
 		// Assert.
-		$this->assertCount( $excepted_count, Revisions_Manager::get_revisions( $this->kit->get_main_id() ) );
+		$this->assertCount( 3, Revisions_Manager::get_revisions( $this->kit->get_main_id() ) );
 	}
 
 	public function test_settings_layout_before_save() {

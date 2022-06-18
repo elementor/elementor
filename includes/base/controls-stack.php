@@ -1430,6 +1430,45 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Validate if the value is the default value of the control.
+	 *
+	 * In situations where the validation is for repeater the `$control_default` and `$setting_value` are arrays.
+	 *
+	 * @param boolean $is_repeater
+	 * @param string|array $control_default
+	 * @param string|array $setting_value
+	 *
+	 * @return bool
+	 */
+	public function is_control_default_value( $is_repeater, $control_default, $setting_value ) {
+		$is_default = $control_default === $setting_value;
+
+		// If the control is a repeater control, check if the `$setting_value` is the default value of the `$control_default`.
+		// For example, 'system_colors'.
+		if ( $is_repeater && ! $is_default && ! empty( $control_default ) ) {
+			$clear_repeater_settings = [];
+
+			/*
+			 * Using the control defaults, clean unused keys from $setting_value ( repeater values ).
+			 * This is needed because the repeater `$setting_value` includes globals that are effected by prefix like: `typography` can have values such as:
+			 * `typography_font_size`, `typography_font_family`, `typography_font_weight`, etc... which are not part of the default.
+			 * How it works? e.g. `$control_default` is `[ 'color' => '#fff' ]` and `$setting_value` is `[ 'color' => '#fff', 'color_hover' => '#000' ]`.
+			 * So only 'color' will be analyzed.
+			 */
+			foreach ( $control_default as $key => $control_repeater_item_default ) {
+				$clear_repeater_settings[ $key ] = array_intersect_key(
+					$setting_value[ $key ],
+					array_flip( /* allowed keys*/ array_keys( $control_repeater_item_default ) )
+				);
+			}
+
+			$is_default = $clear_repeater_settings === $control_default || 0 === count( array_diff( $control_default, $clear_repeater_settings ) );
+		}
+
+		return $is_default;
+	}
+
+	/**
 	 * Start controls section.
 	 *
 	 * Used to add a new section of controls. When you use this method, all the

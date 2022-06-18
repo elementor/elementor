@@ -1,11 +1,10 @@
-import CommandBase from 'elementor-api/modules/command-base';
 import { addNamespaceHandler } from '../utils';
 import { COLOR_PICKING_ON } from '../ui-states/color-picking';
 
 /**
  * Start the color picking process.
  */
-export class Start extends CommandBase {
+export class Start extends $e.modules.CommandBase {
 	apply( args ) {
 		// Activate the component since the default behavior will activate it only on route change,
 		// but this component doesn't have any routes.
