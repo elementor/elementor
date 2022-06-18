@@ -9,10 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	public static function is_active() {
-		return false;
-	}
-
 	public static function get_experimental_data() {
 		return [
 			'name' => 'nested-elements',
