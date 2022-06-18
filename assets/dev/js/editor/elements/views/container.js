@@ -186,7 +186,9 @@ const ContainerView = BaseElementView.extend( {
 	 * @returns {void}
 	 */
 	addNewContainer() {
-		const containerParentSelector = ( 2 >= this.getContainer().getParentAncestry().length ) ? this.getContainer() : this.getContainer().parent;
+		/* Check if the current container has a parent container */
+		const containerAncestry = this.getContainer().getParentAncestry(),
+			containerParentSelector = ( 'container' !== containerAncestry[1].type ) ? this.getContainer() : this.getContainer().parent;
 
 		$e.run( 'document/elements/create', {
 			model: {
