@@ -142,6 +142,9 @@ class TabsV2 extends Widget_Nested_Base {
 				[
 					'tab_title' => esc_html_x( 'Tab #2', 'Nested Tabs Control', 'elementor' ),
 				],
+				[
+					'tab_title' => esc_html_x( 'Tab #3', 'Nested Tabs Control', 'elementor' ),
+				],
 			],
 			'title_field' => '{{{ tab_title }}}',
 		] );
@@ -171,8 +174,8 @@ class TabsV2 extends Widget_Nested_Base {
 			'selectors_dictionary' => [
 				'top' => '--tabs-v2-direction: column; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
 				'bottom' => '--tabs-v2-direction: column-reverse; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
-				'end' => '--tabs-v2-direction: row-reverse; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial;',
-				'start' => '--tabs-v2-direction: row; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial;',
+				'end' => '--tabs-v2-direction: row-reverse; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial; --tabs-v2-tabs-wrapper-width: 240px;',
+				'start' => '--tabs-v2-direction: row; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial; --tabs-v2-tabs-wrapper-width: 240px;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -339,7 +342,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', 'vh' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-content-height: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--tabs-v2-height: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
 				'box_height' => 'height',
@@ -442,9 +445,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}};',
 			],
-			'global' => [
-				'default' => Global_Colors::COLOR_PRIMARY,
-			],
 		] );
 
 		$this->add_control( 'tab_active_color', [
@@ -453,16 +453,10 @@ class TabsV2 extends Widget_Nested_Base {
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-active-color: {{VALUE}};',
 			],
-			'global' => [
-				'default' => Global_Colors::COLOR_ACCENT,
-			],
 		] );
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'tab_typography',
-			'global' => [
-				'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-			],
 			'fields_options' => [
 				'font_family' => [
 					'selectors' => [

@@ -1,7 +1,6 @@
 //
 // Tabs v2
 //
-
 .elementor-widget-tabs-v2 {
 	--tabs-v2-default-padding: 15px;
 
@@ -15,9 +14,9 @@
 	--tabs-v2-tabs-wrapper-justify-content: initial;
 	--tabs-v2-tabs-wrapper-width: initial;
 
-	--tabs-v2-content-height: initial;
-	--tabs-v2-content-overflow-x: hidden;
-	--tabs-v2-content-overflow-y: auto;
+	--tabs-v2-height: initial;
+	--tabs-v2-overflow-x: hidden;
+	--tabs-v2-overflow-y: auto;
 
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
@@ -57,6 +56,9 @@
 		flex-direction: var( --tabs-v2-direction );
 		gap: var( --tabs-v2-gap );
 		text-align: $start;
+		height: var( --tabs-v2-height );
+		overflow-x: var( --tabs-v2-overflow-x );
+		overflow-y: var( --tabs-v2-overflow-y );
 
 		&-wrapper {
 			display: var( --tabs-v2-tabs-wrapper-display );
@@ -64,42 +66,11 @@
 			flex-direction: var( --tabs-v2-tabs-wrapper-direction );
 			justify-content: var( --tabs-v2-tabs-wrapper-justify-content );
 			gap: var( --tabs-v2-title-gap );
-			overflow: hidden;
-
-            .elementor-tab-title {
-                .elementor-tab-icon-active {
-                    display: none;
-                }
-                .elementor-tab-icon {
-                    display: unset;
-                }
-            }
-            .elementor-active {
-                .elementor-tab-icon {
-                      display: none;
-                }
-                .elementor-tab-icon-active {
-                    display: unset;
-                }
-              }
-            .elementor-tab-icon {
-                >i {
-                    width: 20px;
-                }
-            }
-            .elementor-tab-icon-active {
-                >i {
-                    width: 20px;
-                }
-            }
 		}
 	
 		&-content-wrapper {
 			background-color: var( --tabs-v2-background-color );
 			flex-grow: 1;
-			height: var( --tabs-v2-content-height );
-			overflow-x: var( --tabs-v2-content-overflow-x );
-			overflow-y: var( --tabs-v2-content-overflow-y );
 		}	
 	}
 
@@ -127,41 +98,35 @@
 			text-align: var( --tabs-v2-title-alignment );
 			flex-grow: var( --tabs-v2-title-grow );
 
+			.elementor-tab-icon {
+				display: unset;
+	
+				>i {
+					width: 20px;
+				}
+	
+				&-active {
+					display: none;
+	
+					>i {
+						width: 20px;
+					}
+				}
+			}
+
 			&.elementor-active {
 				color: var( --tabs-v2-title-active-color );
 				background-color: var( --tabs-v2-title-active-background-color );
+
+				.elementor-tab-icon {
+					display: none;
+	
+					&-active {
+						display: unset;
+					}
+				}
 			}
 		}
-
-        &-icon {
-            display: unset;
-
-            >i {
-				width: 20px;
-			}
-
-            &-active {
-				display: none;
-
-                >i {
-                    width: 20px;
-                }
-            }
-        }
-
-        &.elementor-active {
-
-			.elementor-tab {
-
-                &-icon {
-                    display: none;
-
-                    &-active {
-                        display: unset;
-                    }
-                }
-            }
-	  	}
 	}
 
 	.elementor-tab-title,
