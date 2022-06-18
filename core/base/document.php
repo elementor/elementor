@@ -6,6 +6,7 @@ use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Ac
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Core\Utils\Usage;
 use Elementor\Includes\Elements\Container;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
@@ -384,6 +385,60 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get All Post Type URL
+	 *
+	 * Get url of the page which display all the posts of the current active document's post type.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	public function get_all_post_type_url() {
+		$post_type = get_post_type( $this->get_main_id() );
+
+		$url = get_admin_url() . 'edit.php';
+
+		if ( 'post' !== $post_type ) {
+			$url .= '?post_type=' . $post_type;
+		}
+
+		/**
+		 * Document "display all post type" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/all_post_type', $url, $this );
+
+		return $url;
+	}
+
+	/**
+	 * Get Main WP dashboard URL.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	protected function get_main_dashboard_url() {
+		$url = get_dashboard_url();
+
+		/**
+		 * Document "Main Dashboard" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/main_dashboard', $url, $this );
+
+		return $url;
+	}
+
+	/**
 	 * Get auto-saved post revision.
 	 *
 	 * Retrieve the auto-saved post revision that is newer than current post.
@@ -544,11 +599,13 @@ abstract class Document extends Controls_Stack {
 				'locked' => $locked_user,
 			],
 			'urls' => [
-				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
+				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(), // WP post type edit page
+				'all_post_type' => $this->get_all_post_type_url(),
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),
 				'have_a_look' => $this->get_have_a_look_url(),
+				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
 
@@ -887,7 +944,13 @@ abstract class Document extends Controls_Stack {
 				continue;
 			}
 
-			$editor_data[] = $element->get_raw_data( $with_html_content );
+			if ( $this->is_saving ) {
+				$element_data = $element->get_data_for_save();
+			} else {
+				$element_data = $element->get_raw_data( $with_html_content );
+			}
+
+			$editor_data[] = $element_data;
 		} // End foreach().
 
 		Plugin::$instance->documents->restore_document();
@@ -1367,6 +1430,101 @@ abstract class Document extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
+	}
+
+	/**
+	 * Get document settings usage.
+	 *
+	 * @return array
+	 */
+	public function get_usage() {
+		$usage  = [];
+
+		// Ensure not from cache.
+		$document = Plugin::$instance->documents->get( $this->get_id(), false );
+		$controls = $document->get_controls();
+
+		foreach ( $document->get_settings() as $setting_name => $setting_value ) {
+			if ( isset( $controls[ $setting_name ] ) ) {
+				$control = $controls[ $setting_name ];
+				$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
+
+				if ( ! $this->is_control_default_value( $is_repeater, $controls[ $setting_name ]['default'], $setting_value ) ) {
+					if ( $is_repeater ) {
+						$usage[ $setting_name ] = count( $setting_value );
+					} else {
+						$usage[ $setting_name ] = 1;
+					}
+				}
+			}
+		}
+
+		return $usage;
+	}
+
+	/**
+	 * Get elements usage.
+	 *
+	 * Get the current elements usage by passed elements array parameter.
+	 *
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function get_elements_usage() {
+		$usage = [];
+
+		// Get data manually to avoid conflict with `\Elementor\Core\Base\Document::get_elements_data... convert_to_elementor`.
+		$data = $this->get_json_meta( '_elementor_data' );
+
+		if ( ! $data ) {
+			return $usage;
+		}
+
+		$elements = $this->get_elements_raw_data( $data );
+
+		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
+			if ( empty( $element['widgetType'] ) ) {
+				$type = $element['elType'];
+				$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
+			} else {
+				$type = $element['widgetType'];
+				$element_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
+			}
+
+			if ( ! isset( $usage[ $type ] ) ) {
+				$usage[ $type ] = [
+					'count' => 0,
+					'control_percent' => 0,
+					'controls' => [],
+				];
+			}
+
+			$usage[ $type ]['count']++;
+
+			if ( ! $element_instance ) {
+				return $element;
+			}
+
+			$element_controls = $element_instance->get_controls();
+
+			if ( isset( $element['settings'] ) ) {
+				$settings_controls = $element['settings'];
+				$element_ref = &$usage[ $type ];
+
+				// Add dynamic values.
+				$settings_controls = Usage::add_general_controls( $settings_controls, $element_ref );
+
+				$changed_controls_count = Usage::add_controls( $settings_controls, $element_controls, $element_ref );
+
+				$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
+
+				$usage[ $type ]['control_percent'] = (int) round( $percent );
+			}
+
+			return $element;
+		} );
+
+		return $usage;
 	}
 
 	/*

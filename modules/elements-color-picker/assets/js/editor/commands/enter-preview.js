@@ -1,9 +1,7 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
 /**
  * Show the user a UI preview of the currently hovered color.
  */
-export class EnterPreview extends CommandBase {
+export class EnterPreview extends $e.modules.CommandBase {
 	/**
 	 * Initialize the command.
 	 *

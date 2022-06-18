@@ -27,7 +27,7 @@ export const Create = () => {
 
 		QUnit.test( 'Simple', async ( assert ) => {
 			// Create widget.
-			const eButton = ElementsHelper.createAutoButton(),
+			const eButton = ElementsHelper.createWrappedButton(),
 				random = Math.random().toString(),
 				title = 'title_' + random;
 

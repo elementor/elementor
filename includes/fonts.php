@@ -112,7 +112,7 @@ class Fonts {
 			 */
 			$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', $additional_fonts );
 
-			self::$fonts = array_merge( self::get_native_fonts(), $additional_fonts );
+			self::$fonts = array_replace( self::get_native_fonts(), $additional_fonts );
 		}
 
 		return self::$fonts;

@@ -94,6 +94,31 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Clear empty array recursively.
+	 *
+	 * @param null|array $array
+	 *
+	 * @return array
+	 */
+	public function clear_empty_recursive( $array = null ) {
+		if ( null === $array ) {
+			$array = &$this->items;
+		}
+
+		foreach ( $array as $key => &$value ) {
+			if ( is_array( $value ) ) {
+				$value = $this->clear_empty_recursive( $value );
+			}
+
+			if ( empty( $value ) ) {
+				unset( $array[ $key ] );
+			}
+		}
+
+		return $array;
+	}
+
+	/**
 	 * Implode the items
 	 *
 	 * @param $glue
@@ -116,6 +141,22 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		$items = array_map( $callback, $this->items, $keys );
 
 		return new static( array_combine( $keys, $items ) );
+	}
+
+	/**
+	 * Run a callback over each of the items.
+	 *
+	 * @param callable $callback
+	 * @return void
+	 */
+	public function each( callable $callback ) {
+		foreach ( $this->items as $key => $value ) {
+			if ( false === $callback( $value, $key ) ) {
+				break;
+			}
+		}
+
+		return $this;
 	}
 
 	/**

@@ -13,7 +13,6 @@ test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		container = await editor.addElement( { elType: 'container' }, 'document' );
 
 	// Set row direction.
-	await page.click( '.elementor-control-section_layout_items' );
 	await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 	// Add widgets.

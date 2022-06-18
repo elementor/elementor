@@ -70,7 +70,7 @@ class Kit extends PageBase {
 		$config = parent::get_editor_panel_config();
 		$config['default_route'] = 'panel/global/menu';
 
-		$config['needHelpUrl'] = 'https://go.elementor.com/global-settings';
+		$config['needHelpUrl'] = 'https://go.elementor.com/global-settings/';
 
 		return $config;
 	}
@@ -168,6 +168,19 @@ class Kit extends PageBase {
 			'draft' => sprintf( '%s (%s)', esc_html__( 'Disabled', 'elementor' ), esc_html__( 'Draft', 'elementor' ) ),
 			'publish' => esc_html__( 'Published', 'elementor' ),
 		];
+	}
+
+	public function get_usage() {
+		$result = [];
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		// Do not count usage of non-active kits.
+		if ( $kit->get_id() === $this->get_id() ) {
+			$result = parent::get_usage();
+		}
+
+		return $result;
 	}
 
 	public function add_repeater_row( $control_id, $item ) {
