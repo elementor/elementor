@@ -50,6 +50,12 @@ class TabsV2 extends Widget_Nested_Base {
 					'_title' => __( 'Tab #2', 'elementor' ),
 				],
 			],
+			[
+				'elType' => 'container',
+				'settings' => [
+					'_title' => __( 'Tab #3', 'elementor' ),
+				],
+			],
 		];
 	}
 
