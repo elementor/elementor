@@ -52,6 +52,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 							'Nested Tabs',
 							'Tab #1',
 							'Tab #2',
+							'Tab #3',
 						] );
 					} );
 
@@ -64,14 +65,14 @@ test.describe.serial( 'NestedElementsModule', () => {
 							return $e.run( 'document/repeater/insert', {
 								container: elementor.getContainer( id ),
 								model: {
-									tab_title: 'Tab #3',
+									tab_title: 'Tab #4',
 								},
 								name: 'tabs',
 							} );
 						}, [ widgetId ] );
 
 						// Assert - Validate new inserted container title.
-						await expect( editor.previewFrame.locator( 'text=Tab #3' ).first() ).toBeVisible();
+						await expect( editor.previewFrame.locator( 'text=Tab #4' ).first() ).toBeVisible();
 					} );
 
 					test( 'Hook `nested-repeater-create-container` -- Ensure item content get duplicated', async () => {
@@ -94,7 +95,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 						}, [ widgetId ] );
 
 						// Assert.
-						await expect( await editor.previewFrame.locator( 'text=Tab #2' ).count() ).toBe( 4 ); // 4 including the mobile.
+						await expect( await editor.previewFrame.locator( 'text=Tab #3' ).count() ).toBe( 5 ); // 5 including the mobile.
 						await expect( await editor.previewFrame.locator( 'text=Add Your Heading Text Here' ).count() ).toBe( 2 ); // Content.
 					} );
 
@@ -112,7 +113,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 						}, [ widgetId ] );
 
 						// Assert.
-						await expect( await editor.previewFrame.locator( 'text=Tab #3' ) ).not.toBeVisible();
+						await expect( await editor.previewFrame.locator( 'text=Tab #4' ) ).not.toBeVisible();
 					} );
 				} );
 			} );
