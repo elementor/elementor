@@ -342,7 +342,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', 'vh' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-content-height: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--tabs-v2-height: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
 				'box_height' => 'height',
