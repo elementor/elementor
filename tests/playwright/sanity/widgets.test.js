@@ -1,10 +1,11 @@
-const {test, expect} = require('@playwright/test');
+const {test, expect} = require('@playwright/test')
+
 const {EditorPage} = require('../pages/editor-page');
 const {WpAdminPage} = require('../pages/wp-admin-page');
 
 test('All widgets sanity test', async ({page}) => {
-	const wpAdmin = new WpAdminPage(page);
-	await wpAdmin.createNewPage();
+	const wpAdmin = new WpAdminPage( page, testInfo ),
+		editor = await wpAdmin.useElementorCleanPost();
 
 	const widgets = [
 		'accordion',
@@ -84,8 +85,6 @@ test('All widgets sanity test', async ({page}) => {
 			}
 		}
 	};
-
-	const editor = new EditorPage(page);
 
 	await page.evaluate(() => {
 		document.getElementById('elementor-notice-bar').remove();
