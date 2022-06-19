@@ -100,7 +100,10 @@ test('All widgets sanity test', async ({page}) => {
 		const element = await editor.getFrame().waitForSelector(`.elementor-element-${widgetId}`);
 		await page.waitForTimeout(800);
 
-		await element.screenshot({path: `./tests/playwright/test-screenshots/${widgetsName}.png`});
+		await element.screenshot({
+			type: 'jpeg',
+			quality: 70
+		}).toMatchSnapshot(`test-screenshots/${widgetsName}.jpeg`)
 
 		for (const controlName in config.controls) {
 			const controlConfig = config.controls[controlName];
@@ -112,7 +115,10 @@ test('All widgets sanity test', async ({page}) => {
 				case 'textarea':
 					await page.fill(`[data-setting="${controlName}"]`, `${widgetsName} ${controlName} Test`);
 
-					await element.screenshot({path: `./tests/playwright/test-screenshots/${widgetsName}-${controlName}.png`});
+					await element.screenshot({
+						type: 'jpeg',
+						quality: 70
+					}).toMatchSnapshot(`test-screenshots/${widgetsName}-${controlName}.jpeg`);
 
 					// Reset.
 					await page.fill(`[data-setting="${controlName}"]`, `${widgetsName} Test`);
@@ -121,7 +127,7 @@ test('All widgets sanity test', async ({page}) => {
 				case 'select':
 					const options = await page.evaluate((controlName) => {
 						const select = document.querySelector(`[data-setting="${controlName}"]`);
-						console.log( controlName, select.classNames );
+						console.log(controlName, select.classNames);
 						const values = select.options.map(option => option.value);
 						console.log('values', values);
 						return values;
@@ -130,7 +136,11 @@ test('All widgets sanity test', async ({page}) => {
 					for (const optionValue of options) {
 						await page.selectOption(`[data-setting="${controlName}"]`, optionValue);
 
-						await element.screenshot({path: `./tests/playwright/test-screenshots/${widgetsName}-${controlName}-${optionValue}.png`});
+						await element.screenshot({
+							type: 'jpeg',
+							quality: 70
+						}).toMatchSnapshot(`test-screenshots/${widgetsName}-${controlName}-${optionValue}.jpeg`);
+
 
 						// Reset.
 						await page.selectOption(`[data-setting="${controlName}"]`, '');
