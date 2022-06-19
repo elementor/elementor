@@ -6,11 +6,8 @@ test( 'Accordion', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
 
-  // Close Navigator
-  await page.click( '#elementor-navigator__close' );
-
-	// Act.
-	await editor.addWidget( 'accordion' );
+// Act.
+await editor.addWidget( 'accordion' );
 
   expect( await editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion.jpeg' );
 } );
