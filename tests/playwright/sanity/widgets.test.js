@@ -1,9 +1,7 @@
-const {test, expect} = require('@playwright/test')
+const { test, expect } = require( '@playwright/test' );
+const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-const {EditorPage} = require('../pages/editor-page');
-const {WpAdminPage} = require('../pages/wp-admin-page');
-
-test('All widgets sanity test', async ({page}) => {
+test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
 
@@ -31,7 +29,7 @@ test('All widgets sanity test', async ({page}) => {
 	const iframeWidgets = [
 		'audio',
 		'google_maps',
-		'video'
+		'video',
 	];
 
 	const emptyWidgets = [
@@ -74,93 +72,87 @@ test('All widgets sanity test', async ({page}) => {
 	const widgetsConfig = {
 		heading: {
 			controls: {
-				"title": {"label": "Title", "type": "textarea", "default": "Add Your Heading Text Here"},
-				"link": {"label": "Link", "type": "url", "default":{"url":"","is_external":"","nofollow":"","custom_attributes":""}},
-				"size": {"label": "Size", "type": "select", "default":"default"},
-				"header_size": {"label": "HTML Tag", "type": "select", "default":"h2"},
-				"align": {"label": "Alignment", "type": "choose", "default":""},
-				"align_tablet": {"label": "Alignment", "type": "choose", "default":""},
-				"align_mobile": {"label": "Alignment", "type": "choose", "default":""},
-				"view": {"label": "View", "type": "hidden"},
-			}
-		}
+				title: { label: 'Title', type: 'textarea', default: 'Add Your Heading Text Here' },
+				link: { label: 'Link', type: 'url', default: { url: '', is_external: '', nofollow: '', custom_attributes: '' } },
+				size: { label: 'Size', type: 'select', default: 'default' },
+				header_size: { label: 'HTML Tag', type: 'select', default: 'h2' },
+				align: { label: 'Alignment', type: 'choose', default: '' },
+				align_tablet: { label: 'Alignment', type: 'choose', default: '' },
+				align_mobile: { label: 'Alignment', type: 'choose', default: '' },
+				view: { label: 'View', type: 'hidden' },
+			},
+		},
 	};
 
-	await page.evaluate(() => {
-		document.getElementById('elementor-notice-bar').remove();
-	});
+	for ( const widgetsName in widgetsConfig ) {
+		const config = widgetsConfig[ widgetsName ];
 
-	for (const widgetsName in widgetsConfig) {
-		const config = widgetsConfig[widgetsName];
+		const widgetId = await editor.addWidget( widgetsName );
+		console.log( widgetsName );
 
-		const widgetId = await editor.addWidget(widgetsName);
-		console.log(widgetsName);
+		const element = await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` );
+		await editor.page.waitForTimeout( 800 );
 
-		const element = await editor.getFrame().waitForSelector(`.elementor-element-${widgetId}`);
-		await page.waitForTimeout(800);
-
-		await element.screenshot({
+		expect( await element.screenshot( {
 			type: 'jpeg',
-			quality: 70
-		}).toMatchSnapshot(`test-screenshots/${widgetsName}.jpeg`)
+			quality: 70,
+		} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }.jpeg` );
 
-		for (const controlName in config.controls) {
-			const controlConfig = config.controls[controlName];
+		for ( const controlName in config.controls ) {
+			const controlConfig = config.controls[ controlName ];
 
-			console.log(controlName);
+			console.log( controlName );
 
 			// Focus on top frame.
-			await page.click(`#elementor-panel-header-title`);
+			await page.click( `#elementor-panel-header-title` );
 
-			switch (controlConfig.type) {
+			switch ( controlConfig.type ) {
 				case 'textarea':
-					await page.fill(`[data-setting="${controlName}"]`, `${widgetsName} ${controlName} Test`);
+					await page.fill( `[data-setting="${ controlName }"]`, `${ widgetsName } ${ controlName } Test` );
 
-					await element.screenshot({
+					expect( await element.screenshot( {
 						type: 'jpeg',
-						quality: 70
-					}).toMatchSnapshot(`test-screenshots/${widgetsName}-${controlName}.jpeg`);
+						quality: 70,
+					} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }-${ controlName }.jpeg` );
 
 					// Reset.
-					await page.fill(`[data-setting="${controlName}"]`, controlConfig.default);
+					await page.fill( `[data-setting="${ controlName }"]`, controlConfig.default );
 
 					break;
 				case 'select':
 					const options = await page.evaluate( ( args ) => {
-						const options = document.querySelector(`[data-setting="${args.controlName}"]`).options;
+						const options = document.querySelector( `[data-setting="${ args.controlName }"]` ).options;
 						const values = [];
-						for (let i = 0; i < options.length; i++) {
+						for ( let i = 0; i < options.length; i++ ) {
 							// Skip default value.
-							if ( options[i].value !== args.defaultValue ) {
-								values.push(options[i].value);
+							if ( options[ i ].value !== args.defaultValue ) {
+								values.push( options[ i ].value );
 							}
 						}
 						return values;
 					}, { controlName, defaultValue: controlConfig.default } );
 
+					console.log( controlConfig );
 
-					console.log(controlConfig);
-
-					for (const optionValue of options) {
-						await page.selectOption(`[data-setting="${controlName}"]`, optionValue);
+					for ( const optionValue of options ) {
+						await page.selectOption( `[data-setting="${ controlName }"]`, optionValue );
 
 						// delay for rendering
-						await page.waitForTimeout(800);
-						await element.screenshot({
+						await page.waitForTimeout( 800 );
+						expect( await element.screenshot( {
 							type: 'jpeg',
-							quality: 70
-						}).toMatchSnapshot(`test-screenshots/${widgetsName}-${controlName}-${optionValue}.jpeg`);
-
+							quality: 70,
+						} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }-${ controlName }-${ optionValue }.jpeg` );
 
 						// Reset.
-						await page.selectOption(`[data-setting="${controlName}"]`, '');
+						await page.selectOption( `[data-setting="${ controlName }"]`, '' );
 					}
 
 					// Reset.
-					await page.selectOption(`[data-setting="${controlName}"]`, controlConfig.default );
+					await page.selectOption( `[data-setting="${ controlName }"]`, controlConfig.default );
 
 					break;
 			}
 		}
 	}
-});
+} );
