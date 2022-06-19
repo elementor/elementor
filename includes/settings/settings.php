@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -311,8 +312,7 @@ class Settings extends Settings_Page {
 				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
 				<h2><?php echo esc_html__( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-				<?php // PHPCS - No need to escape a URL. The query arg is sanitized. ?>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-custom-fonts/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -333,8 +333,7 @@ class Settings extends Settings_Page {
 				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg' ); ?>" />
 				<h2><?php echo esc_html__( 'Add Your Custom Icons', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Don\'t rely solely on the FontAwesome icons everyone else is using! Differentiate your website and your style with custom icons you can upload from your favorite icons source.', 'elementor' ); ?></p>
-				<?php // PHPCS - No need to escape a URL. The query arg is sanitized. ?>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-icons&utm_campaign=gopro&utm_medium=wp-dash' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-custom-icons/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -355,8 +354,7 @@ class Settings extends Settings_Page {
 				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg' ); ?>" />
 				<h2><?php echo esc_html__( 'Get Popup Builder', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
-				<?php // PHPCS - No need to escape a URL. The query arg is sanitized. ?>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/popup-builder/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-popup-builder/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -375,9 +373,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 						<?php echo esc_html__( 'Learn More', 'elementor' ); ?>
 					</a>
 				</p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php
-				Utils::print_unescaped_internal_string( Utils::get_pro_link( 'https://go.elementor.com/go-pro-submissions' ) );
-				?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-submissions/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -488,30 +484,6 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 					],
 				],
 			],
-			self::TAB_STYLE => [
-				'label' => esc_html__( 'Style', 'elementor' ),
-				'sections' => [
-					'style' => [
-						'fields' => [
-							'notice' => [
-								'label' => esc_html__( 'Looking for the Style settings?', 'elementor' ),
-								'field_args' => [
-									'type' => 'raw_html',
-									'html' => sprintf(
-										/* translators: 1: Bold open tag, 2: Bold close tag */
-										esc_html__( 'The Style settings changed its location and can now be found within Elementor Editor\'s %1$sPanel > Hamburger Menu > Site Settings%2$s.', 'elementor' ),
-										'<strong>',
-										'</strong>'
-									) .
-									'<br>' .
-									esc_html__( 'You can use the Site Settings to make changes and see them live!', 'elementor' ) .
-									sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', esc_html__( 'Learn More', 'elementor' ) ),
-								],
-							],
-						],
-					],
-				],
-			],
 			self::TAB_INTEGRATIONS => [
 				'label' => esc_html__( 'Integrations', 'elementor' ),
 				'sections' => [
@@ -612,6 +584,10 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			return __( 'Settings', 'elementor' );
+		}
+
 		return __( 'Elementor', 'elementor' );
 	}
 
@@ -625,6 +601,8 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
+			'e-form-submissions',
+			'elementor_custom_custom_code',
 			'popup_templates',
 		];
 
@@ -645,7 +623,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>images/go-pro-wp-dashboard.svg" />
 				<h2><?php echo esc_html__( 'Add Your Custom Code', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Custom Code is a tool gives you one place where you can insert scripts, rather than dealing with dozens of different plugins and deal with code.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( Utils::get_pro_link( 'http://go.elementor.com/go-pro-custom-code' ) ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-custom-code/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -663,10 +641,16 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 		parent::__construct();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
-		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+			add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+			add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+			add_filter( 'custom_menu_order', '__return_true' );
+			add_filter( 'menu_order', [ $this, 'menu_order' ] );
+		}
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 
@@ -681,8 +665,5 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			add_action( "add_option_{$option_name}", $clear_cache_callback );
 			add_action( "update_option_{$option_name}", $clear_cache_callback );
 		}
-
-		add_filter( 'custom_menu_order', '__return_true' );
-		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 	}
 }

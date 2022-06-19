@@ -175,6 +175,116 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'navigation_previous_icon',
+			[
+				'label' => esc_html__( 'Previous Arrow Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
+							'label' => 'Default',
+							'icon' => 'eicon-chevron-left',
+						],
+						'icon' => [
+							'icon' => 'eicon-star',
+						],
+					],
+				],
+				'recommended' => [
+					'fa-regular' => [
+						'arrow-alt-circle-left',
+						'caret-square-left',
+					],
+					'fa-solid' => [
+						'angle-double-left',
+						'angle-left',
+						'arrow-alt-circle-left',
+						'arrow-circle-left',
+						'arrow-left',
+						'caret-left',
+						'caret-square-left',
+						'chevron-circle-left',
+						'chevron-left',
+						'long-arrow-alt-left',
+					],
+				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'both',
+						],
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'arrows',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'navigation_next_icon',
+			[
+				'label' => esc_html__( 'Next Arrow Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
+							'label' => 'Default',
+							'icon' => 'eicon-chevron-right',
+						],
+						'icon' => [
+							'icon' => 'eicon-star',
+						],
+					],
+				],
+				'recommended' => [
+					'fa-regular' => [
+						'arrow-alt-circle-right',
+						'caret-square-right',
+					],
+					'fa-solid' => [
+						'angle-double-right',
+						'angle-right',
+						'arrow-alt-circle-right',
+						'arrow-circle-right',
+						'arrow-right',
+						'caret-right',
+						'caret-square-right',
+						'chevron-circle-right',
+						'chevron-right',
+						'long-arrow-alt-right',
+					],
+				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'both',
+						],
+						[
+							'name' => 'navigation',
+							'operator' => '=',
+							'value' => 'arrows',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
 			'link_to',
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
@@ -198,6 +308,9 @@ class Widget_Image_Carousel extends Widget_Base {
 					'link_to' => 'custom',
 				],
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -248,6 +361,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			'section_additional_options',
 			[
 				'label' => esc_html__( 'Additional Options', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'lazyload',
+			[
+				'label' => esc_html__( 'Lazyload', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 			]
 		);
 
@@ -450,7 +572,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'heading_style_dots',
 			[
-				'label' => esc_html__( 'Dots', 'elementor' ),
+				'label' => esc_html__( 'Pagination', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 				'condition' => [
@@ -497,9 +619,24 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'dots_color',
+			'dots_inactive_color',
 			[
 				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					// The opacity property will override the default inactive dot color which is opacity 0.2.
+					'{{WRAPPER}} .swiper-pagination-bullet:not(.swiper-pagination-bullet-active)' => 'background: {{VALUE}}; opacity: 1',
+				],
+				'condition' => [
+					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'dots_color',
+			[
+				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}};',
@@ -601,7 +738,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .swiper-slide-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -697,6 +834,8 @@ class Widget_Image_Carousel extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$lazyload = 'yes' === $settings['lazyload'];
+
 		if ( empty( $settings['carousel'] ) ) {
 			return;
 		}
@@ -710,7 +849,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				$image_url = $attachment['url'];
 			}
 
-			$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			if ( $lazyload ) {
+				$image_html = '<img class="swiper-slide-image swiper-lazy" data-src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			} else {
+				$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			}
 
 			$link_tag = '';
 
@@ -735,6 +878,10 @@ class Widget_Image_Carousel extends Widget_Base {
 			$image_caption = $this->get_image_caption( $attachment );
 
 			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
+
+			if ( $lazyload ) {
+				$slide_html .= '<div class="swiper-lazy-preloader"></div>';
+			}
 
 			if ( ! empty( $image_caption ) ) {
 				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
@@ -861,12 +1008,15 @@ class Widget_Image_Carousel extends Widget_Base {
 
 	private function render_swiper_button( $type ) {
 		$direction = 'next' === $type ? 'right' : 'left';
+		$icon_settings = $this->get_settings_for_display( 'navigation_' . $type . '_icon' );
 
-		$icon_value = 'eicon-chevron-' . $direction;
+		if ( empty( $icon_settings['value'] ) ) {
+			$icon_settings = [
+				'library' => 'eicons',
+				'value' => 'eicon-chevron-' . $direction,
+			];
+		}
 
-		Icons_Manager::render_icon( [
-			'library' => 'eicons',
-			'value' => $icon_value,
-		], [ 'aria-hidden' => 'true' ] );
+		Icons_Manager::render_icon( $icon_settings, [ 'aria-hidden' => 'true' ] );
 	}
 }

@@ -4,6 +4,7 @@ namespace Elementor\Modules\System_Info;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -111,7 +112,10 @@ class Module extends BaseModule {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'admin_menu', [ $this, 'register_menu' ], 500 );
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'admin_menu', [ $this, 'register_menu' ], 500 );
+		}
+
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 

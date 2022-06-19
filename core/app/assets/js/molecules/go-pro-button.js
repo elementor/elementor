@@ -22,7 +22,7 @@ GoProButton.propTypes = {
 
 GoProButton.defaultProps = {
 	className: '',
-	variant: 'contained',
+	variant: 'outlined',
 	size: 'sm',
 	color: 'cta',
 	target: '_blank',

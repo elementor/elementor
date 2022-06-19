@@ -1,0 +1,16 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ❓ Support Question
+    about: Please create GitHub issues only for bugs and feature requests. GitHub issues ARE NOT FOR SUPPORT!
+  - name: Elementor Support
+    url: https://wordpress.org/support/plugin/elementor
+    about: If you have questions or need general support, please use this.
+  - name: Elementor Community Support
+    url: https://www.facebook.com/groups/Elementors/
+    about: For help and support from the Elementor community, see this.
+  - name: Elementor Documentation
+    url: https://docs.elementor.com
+    about: To read more about Elementor, check out our documentation.
+  - name: Elementor Developers
+    url: https://developers.elementor.com
+    about: Developers docs are located here.

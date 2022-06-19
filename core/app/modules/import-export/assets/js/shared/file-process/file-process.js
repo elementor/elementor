@@ -16,6 +16,7 @@ export default function FileProcess( props ) {
 					{ __( "Don't close this window until the process is finished.", 'elementor' ) }
 				</>
 			}
+			info={ props.info }
 		>
 			{ ! ! props.errorType &&
 				<ProcessFailedDialog
@@ -33,6 +34,7 @@ FileProcess.propTypes = {
 	onDialogApprove: PropTypes.func,
 	onDialogDismiss: PropTypes.func,
 	errorType: PropTypes.string,
+	info: PropTypes.string,
 };
 
 FileProcess.defaultProps = {

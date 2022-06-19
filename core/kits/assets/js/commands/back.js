@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Back extends CommandBase {
+export class Back extends $e.modules.CommandBase {
 	confirmDialog = null;
 
 	apply() {

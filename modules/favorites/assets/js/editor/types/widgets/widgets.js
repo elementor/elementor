@@ -103,7 +103,7 @@ export default class Widgets extends FavoriteType {
 		return 'favorites';
 	}
 
-	addCategoryBehavior( behaviors, context ) {
+	addCategoryBehavior( behaviors ) {
 		return Object.assign( {}, behaviors, {
 			favoriteWidgets: {
 				behaviorClass: PanelCategoryBehavior,
@@ -120,7 +120,7 @@ export default class Widgets extends FavoriteType {
 	 * @returns {[]}
 	 */
 	addContextMenuGroups( groups, context ) {
-		const widget = context.options.model.get( 'widgetType' );
+		const widget = context.options.model.get( 'widgetType' ) || context.options.model.get( 'elType' );
 
 		return groups.concat( [
 			{
@@ -134,7 +134,15 @@ export default class Widgets extends FavoriteType {
 						title: this.isFavorite( widget ) ?
 							__( 'Remove from Favorites', 'elementor' ) :
 							__( 'Add to Favorites', 'elementor' ),
-						callback: () => this.toggle( widget ),
+						callback: () => {
+							this.toggle( widget );
+
+							if ( this.isFavorite( widget ) ) {
+								elementor.notifications.showToast( {
+									message: __( 'Added', 'elementor' ),
+								} );
+							}
+						},
 					},
 				],
 			},

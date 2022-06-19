@@ -7,6 +7,7 @@ import './select2.scss';
  *
  * @returns {{placeholder: string, allowClear: boolean, dir: string}}
  */
+
 const getDefaultSettings = () => ( {
 	allowClear: true,
 	placeholder: '',
@@ -29,6 +30,7 @@ export default function Select2( props ) {
 			.select2( {
 				...getDefaultSettings(),
 				...props.settings,
+				placeholder: props.placeholder,
 			} )
 			.on( 'select2:select select2:unselect', props.onChange );
 
@@ -46,18 +48,27 @@ export default function Select2( props ) {
 		jQuery( ref.current ).val( props.value ).trigger( 'change' );
 	}, [ props.value ] );
 
-	return <Select multiple={ props.multiple } value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options }/>;
+	return <Select
+		multiple={ props.multiple }
+		value={ props.value }
+		onChange={ props.onChange }
+		elRef={ ref }
+		options={ props.options }
+		placeholder={props.placeholder}
+	/>;
 }
 Select2.propTypes = {
-	value: PropTypes.string,
+	value: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string ] ),
 	onChange: PropTypes.func,
 	onReady: PropTypes.func,
 	options: PropTypes.array,
 	settings: PropTypes.object,
 	multiple: PropTypes.bool,
+	placeholder: PropTypes.string,
 };
 Select2.defaultProps = {
 	settings: {},
 	options: [],
 	dependencies: [],
+	placeholder: '',
 };

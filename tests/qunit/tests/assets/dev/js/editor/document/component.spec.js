@@ -3,12 +3,12 @@ import ElementsHelper from './elements/helper';
 import * as hooksData from './hooks/data/document/elements/index.spec';
 import * as eData from 'elementor/tests/qunit/mock/e-data';
 
-QUnit.module( 'Component: document', ( rootHooks ) => {
+QUnit.module( 'Component: document', () => {
 	QUnit.test( 'History per document', ( assert ) => {
 		eData.attachCache();
 
 		// Save current document before go.
-		const documentBeforeTest = elementor.documents.getCurrent(),
+		const documentTemp = elementor.documents.getCurrent(),
 			documentConfigMaster = { id: 2 },
 			documentConfigSlave = { id: 3 };
 
@@ -16,14 +16,14 @@ QUnit.module( 'Component: document', ( rootHooks ) => {
 		const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster ),
 			documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave );
 
-		documentMaster.container = documentBeforeTest.container;
-		documentSlave.container = documentBeforeTest.container;
+		documentMaster.container = documentTemp.container;
+		documentSlave.container = documentTemp.container;
 
 		// Set current document to master.
 		elementor.documents.setCurrent( documentMaster );
 
 		// Create button and save it under master document.
-		const eButton = ElementsHelper.createAutoButton();
+		const eButton = ElementsHelper.createWrappedButton();
 
 		// Validate the button was saved to history of master document.
 		assert.equal( elementor.documents.getCurrent().history.getItems().length, 3,
@@ -59,9 +59,9 @@ QUnit.module( 'Component: document', ( rootHooks ) => {
 			assert.equal( elementor.documents.getCurrent().history.getItems().length, 3,
 				'Master document still have "3" items in history.' );
 
-			// Put back saved document, to current.
-			elementor.documents.setCurrent( documentBeforeTest );
-			eData.emptyFetch();
+			elementor.documents.setCurrent( documentTemp );
+
+			eData.restoreFetch();
 
 			done();
 		} );

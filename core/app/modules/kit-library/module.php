@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary;
 
+use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
@@ -25,10 +26,19 @@ class Module extends BaseModule {
 		return 'kit-library';
 	}
 
+	private function register_admin_menu( MainMenu $menu ) {
+		$menu->add_submenu( [
+			'page_title' => __( 'Kit Library', 'elementor' ),
+			'menu_title' => '<span id="e-admin-menu__kit-library">' . __( 'Kit Library', 'elementor' ) . '</span>',
+			'menu_slug' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+			'index' => 40,
+		] );
+	}
+
 	/**
-	 * Register the admin menu.
+	 * Register the admin menu the old way.
 	 */
-	private function register_admin_menu() {
+	private function register_admin_menu_legacy() {
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
 			__( 'Kit Library', 'elementor' ),
@@ -51,7 +61,7 @@ class Module extends BaseModule {
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
 			'has_access_to_module' => current_user_can( 'administrator' ),
-			'subscription_plans' => $connect->get_subscription_plans( 'wp-kit-library' ),
+			'subscription_plans' => $connect->get_subscription_plans( 'kit-library' ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
 			'library_connect_url'  => $kit_library->get_admin_url( 'authorize', [
@@ -71,9 +81,15 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 
-		add_action( 'admin_menu', function () {
-			$this->register_admin_menu();
-		}, 50 /* after Elementor page */ );
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
+				$this->register_admin_menu( $menu );
+			} );
+		} else {
+			add_action( 'admin_menu', function() {
+				$this->register_admin_menu_legacy();
+			}, 50 /* after Elementor page */ );
+		}
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );

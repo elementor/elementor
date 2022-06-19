@@ -34,7 +34,7 @@ Conditions = function() {
 		}
 	};
 
-	this.check = function( conditions, comparisonObject ) {
+	this.check = function( conditions, comparisonObject, controls ) {
 		const isOrCondition = 'or' === conditions.relation;
 		let conditionSucceed = ! isOrCondition;
 
@@ -43,22 +43,30 @@ Conditions = function() {
 			let comparisonResult;
 
 			if ( term.terms ) {
-				comparisonResult = self.check( term, comparisonObject );
+				comparisonResult = self.check( term, comparisonObject, controls );
 			} else {
 				// A term consists of a control name to be examined, and a sub key if needed. For example, a term
 				// can look like 'image_overlay[url]' (the 'url' is the sub key). Here we want to isolate the
 				// condition name and the sub key, so later it can be retrieved and examined.
 				const parsedName = term.name.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
 					conditionRealName = parsedName[ 1 ],
-					conditionSubKey = parsedName[ 2 ],
-					// We use null-safe operator since we're trying to get the current element, which is not always
-					// exists, since it's only created when the specific element appears in the panel.
-					placeholder = elementor.selection.getElements()[ 0 ]
-						?.placeholders[ conditionRealName ];
+					conditionSubKey = parsedName[ 2 ];
 
-				// If a placeholder exists for the examined control, we check against it. In any other case, we
-				// use the 'comparisonObject', which includes all values of the selected widget.
-				let value = placeholder || comparisonObject[ conditionRealName ];
+				let value = comparisonObject[ conditionRealName ];
+
+				if ( ! value ) {
+					let parent = controls[ conditionRealName ]?.parent;
+
+					while ( parent ) {
+						value = comparisonObject[ parent ];
+
+						if ( value ) {
+							break;
+						}
+
+						parent = controls[ parent ]?.parent;
+					}
+				}
 
 				if ( comparisonObject.__dynamic__ && comparisonObject.__dynamic__[ conditionRealName ] ) {
 					value = comparisonObject.__dynamic__[ conditionRealName ];

@@ -6,8 +6,8 @@ export const Empty = () => {
 		QUnit.test( 'Single Selection', ( assert ) => {
 			const eColumn = ElementsHelper.createSection( 1, true );
 
-			ElementsHelper.createButton( eColumn );
-			ElementsHelper.createButton( eColumn );
+			ElementsHelper.createWidgetButton( eColumn );
+			ElementsHelper.createWidgetButton( eColumn );
 
 			// Ensure editor saver.
 			$e.internal( 'document/save/set-is-modified', { status: false } );

@@ -24,6 +24,7 @@ export const defaultQueryParams = {
 		direction: 'desc',
 		by: 'featuredIndex',
 	},
+	referrer: null,
 };
 
 const kitsPipeFunctions = {

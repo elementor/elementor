@@ -54,8 +54,8 @@ class Test_Usage extends Base_Schema {
 		$this->factory()->documents->publish_and_get();
 
 		// Elements with dynamic
-		Plugin::$instance->dynamic_tags->register_tag( new Title() );
-		Plugin::$instance->dynamic_tags->register_tag( new Link() );
+		Plugin::$instance->dynamic_tags->register( new Title() );
+		Plugin::$instance->dynamic_tags->register( new Link() );
 
 		$this->factory()->documents->publish_and_get( [
 			'meta_input' => [

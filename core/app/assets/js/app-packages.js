@@ -9,7 +9,6 @@ import router from './router';
 // Alphabetical order.
 import { appUi, components, hooks } from './package';
 import siteEditor from '../../modules/site-editor/assets/js/package';
-import importExport from '../../modules/import-export/assets/js/package';
 
 window.elementorAppPackages = {
 	appUi,
@@ -17,5 +16,4 @@ window.elementorAppPackages = {
 	hooks,
 	router,
 	siteEditor,
-	importExport,
 };

@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class PasteStyle extends CommandHistory {
+export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -110,9 +108,6 @@ export class PasteStyle extends CommandHistory {
 	 * @param {{}} settings
 	 */
 	pasteStyle( targetContainer, settings ) {
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		elementor.channels.data.trigger( 'element:before:paste:style', targetContainer.model );
-
 		const globals = settings.__globals__;
 
 		if ( globals ) {
@@ -140,9 +135,6 @@ export class PasteStyle extends CommandHistory {
 
 			targetContainer.panel.refresh();
 		}
-
-		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-		elementor.channels.data.trigger( 'element:after:paste:style', targetContainer.model );
 
 		targetContainer.render();
 	}

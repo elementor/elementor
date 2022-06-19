@@ -47,3 +47,14 @@
 		font-size: 1em;
 	}
 }
+
+#e-enable-unfiltered-files-dialog-import-template {
+
+	.dialog-confirm-ok {
+		color: $editor-success;
+	}
+
+	.dialog-confirm-cancel {
+		color: $editor-warning;
+	}
+}

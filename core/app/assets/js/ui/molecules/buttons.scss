@@ -74,14 +74,14 @@
 	}
 
 	&--secondary {
-		--button-color: var(--buton-secondary-color);
+		--button-color: var(--button-secondary-color);
 		--button-background-color: var(--button-secondary-background-color);
 		--button-hover-background-color: var(--button-secondary-hover-background-color);
 		--button-active-background-color: var(--button-secondary-active-background-color);
 	}
 
 	&--danger {
-		--button-color: var(--buton-danger-color);
+		--button-color: var(--button-danger-color);
 		--button-background-color: var(--button-danger-background-color);
 		--button-hover-background-color: var(--button-danger-hover-background-color);
 		--button-active-background-color: var(--button-danger-active-background-color);

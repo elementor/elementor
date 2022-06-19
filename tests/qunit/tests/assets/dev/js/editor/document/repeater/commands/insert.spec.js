@@ -7,7 +7,7 @@ export const Insert = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn );
+					eTabs = ElementsHelper.createWidgetTabs( eColumn );
 
 				RepeaterHelper.insert( eTabs, 'tabs', {
 					tab_title: 'Test Tab Title',
@@ -20,7 +20,7 @@ export const Insert = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn ),
+					eTabs = ElementsHelper.createWidgetTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
 
 				RepeaterHelper.insert( eTabs, 'tabs', {
@@ -51,8 +51,8 @@ export const Insert = () => {
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn );
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn );
 
 				RepeaterHelper.multiInsert( [ eTabs1, eTabs2 ], 'tabs', {
 					tab_title: 'Test Tab Title',
@@ -66,8 +66,8 @@ export const Insert = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn ),
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 

@@ -1,31 +1,31 @@
 import { useContext, useEffect, useRef } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { ExportContext } from '../../../context/export-context/export-context-provider';
 
 import Layout from '../../../templates/layout';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import KitData from '../../../shared/kit-data/kit-data';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
 import './export-complete.scss';
 
 export default function ExportComplete() {
-	const context = useContext( Context ),
+	const exportContext = useContext( ExportContext ),
 		navigate = useNavigate(),
 		downloadLink = useRef( null ),
 		getFooter = () => (
-			<WizardFooter separator justify="end">
-				<DashboardButton />
-			</WizardFooter>
+			<ActionsFooter>
+				<DashboardButton text={ __( 'Close', 'elementor' ) } />
+			</ActionsFooter>
 		),
 		downloadFile = () => {
 			if ( ! downloadLink.current ) {
 				const link = document.createElement( 'a' );
 
-				link.href = 'data:text/plain;base64,' + context.data.exportedData.file;
+				link.href = 'data:text/plain;base64,' + exportContext.data.exportedData.file;
 				link.download = 'elementor-kit.zip';
 
 				downloadLink.current = link;
@@ -35,17 +35,17 @@ export default function ExportComplete() {
 		},
 		getDownloadLink = () => (
 			<InlineLink onClick={ downloadFile } italic>
-				{ __( 'Click Here', 'elementor' ) }
+				{ __( 'Click here', 'elementor' ) }
 			</InlineLink>
 		);
 
 	useEffect( () => {
-		if ( context.data.downloadUrl ) {
+		if ( exportContext.data.exportedData ) {
 			downloadFile();
 		} else {
 			navigate( '/export' );
 		}
-	}, [ context.data.downloadUrl ] );
+	}, [ exportContext.data.downloadUrl ] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -59,7 +59,7 @@ export default function ExportComplete() {
 					</>
 				) }
 			>
-				<KitData data={ context.data.exportedData?.manifest } />
+				<KitData data={ exportContext.data?.exportedData?.manifest } />
 			</WizardStep>
 		</Layout>
 	);

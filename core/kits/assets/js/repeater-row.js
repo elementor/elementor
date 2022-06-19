@@ -1,6 +1,14 @@
 import RepeaterRow from '../../../../assets/dev/js/editor/controls/repeater-row';
 
 export default class extends RepeaterRow {
+	ui() {
+		const ui = super.ui();
+
+		ui.sortButton = '.elementor-repeater-tool-sort';
+
+		return ui;
+	}
+
 	getTemplate() {
 		return '#tmpl-elementor-global-style-repeater-row';
 	}
@@ -33,7 +41,8 @@ export default class extends RepeaterRow {
 
 	onChildviewRender( childView ) {
 		const isColor = 'color' === childView.model.get( 'type' ),
-			isPopoverToggle = 'popover_toggle' === childView.model.get( 'type' );
+			isPopoverToggle = 'popover_toggle' === childView.model.get( 'type' ),
+			$controlInputWrapper = childView.$el.find( '.elementor-control-input-wrapper' );
 
 		let globalType = '',
 			globalTypeTranslated = '';
@@ -41,9 +50,9 @@ export default class extends RepeaterRow {
 		if ( isColor ) {
 			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value elementor-control-unit-3' } );
 
-			childView.$el
-				.find( '.elementor-control-input-wrapper' )
-				.prepend( this.getRemoveButton(), this.$colorValue );
+			$controlInputWrapper
+				.prepend( this.getRemoveButton(), this.$colorValue )
+				.prepend( this.ui.sortButton );
 
 			globalType = 'color';
 			globalTypeTranslated = __( 'Color', 'elementor' );
@@ -52,9 +61,9 @@ export default class extends RepeaterRow {
 		}
 
 		if ( isPopoverToggle ) {
-			childView.$el
-				.find( '.elementor-control-input-wrapper' )
-				.append( this.getRemoveButton() );
+			$controlInputWrapper
+				.append( this.getRemoveButton() )
+				.append( this.ui.sortButton );
 
 			globalType = 'font';
 			globalTypeTranslated = __( 'Font', 'elementor' );

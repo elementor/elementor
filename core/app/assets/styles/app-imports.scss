@@ -28,6 +28,7 @@
 @import "../js/ui/atoms/drag-drop.scss";
 // Should be after buttons.scss to prevent dialog button style overwrite.
 @import "../js/ui/dialog/dialog.scss";
+@import "../js/ui/popover-dialog/popover-dialog.scss";
 @import "../js/ui/molecules/inline-link.scss";
 @import "../js/ui/atoms/text-field.scss";
 @import "../../modules/import-export/assets/js/shared/content-layout/content-layout.scss";
@@ -35,7 +36,7 @@
 @import "../../modules/import-export/assets/js/shared/kit-content/kit-content.scss";
 @import "../../modules/import-export/assets/js/shared/kit-data/kit-data.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-resolver/import-resolver.scss";
-@import "../../modules/import-export/assets/js/ui/panel/panel.scss";
+@import "../js/ui/panel/panel.scss";
 @import "../../modules/import-export/assets/js/pages/export/export-kit/export-kit.scss";
 @import "../../modules/import-export/assets/js/shared/info-modal/info-modal.scss";
 
@@ -60,3 +61,30 @@
 @import "../../modules/kit-library/assets/js/pages/preview/preview-responsive-controls.scss";
 @import "../../modules/kit-library/assets/js/pages/preview/preview.scss";
 @import "../js/molecules/collapse.scss";
+@import "../../modules/import-export/assets/js/pages/import/import-plugins/import-plugins.scss";
+@import "../js/ui/table/table.scss";
+@import "../../modules/import-export/assets/js/pages/import/import-plugins/components/pro-banner/pro-banner.scss";
+@import "../../modules/import-export/assets/js/pages/export/export-plugins/export-plugins.scss";
+@import "../../modules/import-export/assets/js/pages/import/import-content/import-content.scss";
+@import "../../modules/import-export/assets/js/pages/import/import-plugins-activation/import-plugins-activation.scss";
+@import "../../modules/import-export/assets/js/shared/plugins-selection/components/plugins-table.scss";
+@import "../../modules/import-export/assets/js/ui/loader/loader.scss";
+@import "../../modules/import-export/assets/js/ui/message-banner/message-banner.scss";
+@import "../../modules/import-export/assets/js/pages/import/import-complete/components/connect-pro-notice/connect-pro-notice.scss";
+@import "../../modules/import-export/assets/js/pages/import/import-complete/components/failed-plugins-notice/failed-plugins-notice.scss";
+
+// Onboarding
+@import "../../modules/onboarding/assets/scss/onboarding";
+@import "../../modules/onboarding/assets/js/components/layout/layout";
+@import "../../modules/onboarding/assets/js/components/layout/header";
+@import "../../modules/onboarding/assets/js/components/progress-bar/progress-bar";
+@import "../../modules/onboarding/assets/js/components/button";
+@import "../../modules/onboarding/assets/js/components/card";
+@import "../../modules/onboarding/assets/js/components/checklist";
+@import "../../modules/onboarding/assets/js/components/notice";
+@import "../../modules/onboarding/assets/js/pages/account";
+@import "../../modules/onboarding/assets/js/pages/hello-theme";
+@import "../../modules/onboarding/assets/js/pages/site-name";
+@import "../../modules/onboarding/assets/js/pages/site-logo";
+@import "../../modules/onboarding/assets/js/pages/good-to-go";
+@import "../../modules/onboarding/assets/js/pages/upload-and-install-pro";

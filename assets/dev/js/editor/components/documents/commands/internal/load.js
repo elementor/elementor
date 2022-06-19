@@ -1,8 +1,7 @@
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import Document from '../../document';
 import Heartbeat from 'elementor-editor-utils/heartbeat';
 
-export class Load extends CommandInternalBase {
+export class Load extends $e.modules.CommandInternalBase {
 	validateArgs( args = {} ) {
 		this.requireArgument( 'config', args );
 	}

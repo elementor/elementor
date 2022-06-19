@@ -34,7 +34,7 @@ export default class Scroll {
 			threshold: buildThreshholds( obj.sensitivity ),
 		};
 
-		function handleIntersect( entries, observer ) {
+		function handleIntersect( entries ) {
 			const currentScrollY = entries[ 0 ].boundingClientRect.y,
 				isInViewport = entries[ 0 ].isIntersecting,
 				intersectionScrollDirection = ( currentScrollY < lastScrollY ) ? 'down' : 'up',

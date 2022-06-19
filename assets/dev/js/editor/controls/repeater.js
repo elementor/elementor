@@ -126,15 +126,19 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
+	getSortableParams: () => {
+		return {
+			axis: 'y',
+			handle: '.elementor-repeater-row-tools',
+			items: ' > :not(.elementor-repeater-row--disable-sort)',
+		};
+	},
+
 	onRender: function() {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		if ( this.model.get( 'item_actions' ).sort ) {
-			this.ui.fieldContainer.sortable( {
-				axis: 'y',
-				handle: '.elementor-repeater-row-tools',
-				items: ' > :not(.elementor-repeater-row--disable-sort)',
-			} );
+			this.ui.fieldContainer.sortable( this.getSortableParams() );
 		}
 
 		this.toggleMinRowsClass();
@@ -192,14 +196,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			} );
 
 		if ( ! isInChildren.length ) {
-			elementorCommon.helpers.softDeprecated( 'Don\'t add models directly to the repeater.', '3.0.0', '$e.run( \'document/repeater/insert\' )' );
+			elementorDevTools.deprecation.deprecated( 'Don\'t add models directly to the repeater.', '3.0.0', '$e.run( \'document/repeater/insert\' )' );
 			this.options.container.addRepeaterItem( this.model.get( 'name' ), model, model.collection.indexOf( model ) );
 		}
 	},
 
 	// BC since 3.0.0, ensure a container children are reset on collection reset.
 	resetContainer: function() {
-		elementorCommon.helpers.softDeprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
+		elementorDevTools.deprecation.deprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
 		this.options.container.repeaters[ this.model.get( 'name' ) ].children = [];
 	},
 

@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
 import environment from 'elementor-common/utils/environment';
 
-export default function AdminTopBar( props ) {
+export default function AdminTopBar() {
 	const actionButtonsRef = useRef();
 
 	// Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.

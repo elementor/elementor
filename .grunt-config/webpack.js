@@ -14,6 +14,8 @@ const webpack = require('webpack');
 // Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
 
+const WatchTimePlugin = require('./plugins/watch-time/index');
+
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
@@ -68,8 +70,8 @@ const frontendRulesPresets = [ [
 				'last 1 ChromeAndroid versions',
 				'last 2 Chrome versions',
 				'last 2 Firefox versions',
-				'last 2 Safari versions',
-				'last 2 iOS versions',
+				'Safari >= 14',
+				'iOS >= 14',
 				'last 2 Edge versions',
 				'last 2 Opera versions',
 			],
@@ -88,6 +90,7 @@ const entry = {
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
+	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/module.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
@@ -97,9 +100,12 @@ const entry = {
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
+	'admin-modules': path.resolve( __dirname, '../assets/dev/js/admin/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
+	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
+	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 };
 
 const frontendEntries = {
@@ -126,7 +132,8 @@ const plugins = [
 		PropTypes: 'prop-types',
 		__: ['@wordpress/i18n', '__'],
 		sprintf: ['@wordpress/i18n', 'sprintf'],
-	} )
+	} ),
+	new WatchTimePlugin(),
 ];
 
 const baseConfig = {

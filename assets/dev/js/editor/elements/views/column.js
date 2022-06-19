@@ -126,6 +126,10 @@ ColumnView = BaseElementView.extend( {
 
 		var elType = elementView.model.get( 'elType' );
 
+		if ( 'container' === elType ) {
+			return true;
+		}
+
 		if ( 'section' === elType ) {
 			return ! this.isInner();
 		}
@@ -229,15 +233,14 @@ ColumnView = BaseElementView.extend( {
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			getDropContainer: () => this.getContainer(),
-			getDropIndex,
 			onDropping: ( side, event ) => {
-				event.stopPropagation();
-
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				this.addElementFromPanel( { at: getDropIndex( side, event ) } );
+				this.onDrop(
+					event,
+					{ side, at: getDropIndex( side, event ) }
+				);
 			},
 		} );
 	},

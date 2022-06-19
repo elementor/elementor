@@ -32,13 +32,13 @@ class Elementor_Test_Widgets extends Elementor_Test_Base {
 		$widget_class = '\Elementor\Widget_Text_editor';
 		$widget_id = 'text-editor';
 
-		$this->assertTrue( $this->elementor()->widgets_manager->register_widget_type( new $widget_class() ) );
+		$this->assertTrue( $this->elementor()->widgets_manager->register( new $widget_class() ) );
 
 		$widget = $this->elementor()->widgets_manager->get_widget_types( $widget_id );
 		$this->assertInstanceOf( $widget_class, $widget );
 
-		$this->assertTrue( $this->elementor()->widgets_manager->unregister_widget_type( $widget_id ) );
-		$this->assertFalse( $this->elementor()->widgets_manager->unregister_widget_type( $widget_id ) );
+		$this->assertTrue( $this->elementor()->widgets_manager->unregister( $widget_id ) );
+		$this->assertFalse( $this->elementor()->widgets_manager->unregister( $widget_id ) );
 
 		$this->assertNull( $this->elementor()->widgets_manager->get_widget_types( $widget_id ) );
 	}

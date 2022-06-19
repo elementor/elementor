@@ -138,7 +138,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );
 
-		if ( elementor.config.filesUpload.unfilteredFiles ) {
+		if ( elementorCommon.config.filesUpload.unfilteredFiles ) {
 			this.setUploadMimeType( this.frame, mediaType );
 		}
 	},

@@ -543,6 +543,26 @@ abstract class Element_Base extends Controls_Stack {
 		];
 	}
 
+	public function get_data_for_save() {
+		$data = $this->get_raw_data();
+
+		$elements = [];
+
+		foreach ( $this->get_children() as $child ) {
+			$elements[] = $child->get_data_for_save();
+		}
+
+		if ( ! empty( $elements ) ) {
+			$data['elements'] = $elements;
+		}
+
+		if ( ! empty( $data['settings'] ) ) {
+			$data['settings'] = $this->on_save( $data['settings'] );
+		}
+
+		return $data;
+	}
+
 	/**
 	 * Get unique selector.
 	 *
@@ -571,6 +591,32 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function is_type_instance() {
 		return $this->is_type_instance;
+	}
+
+	/**
+	 * On Import Replace Dynamic Content.
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 *
+	 * @return array Element data.
+	 */
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		$tags_manager = Plugin::$instance->dynamic_tags;
+
+		if ( isset( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
+			foreach ( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+				$tag_config = $tags_manager->tag_text_to_tag_data( $dynamic_value );
+				$tag_instance = $tags_manager->create_tag( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+
+				if ( $tag_instance ) {
+					$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $map_old_new_post_ids );
+					$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+				}
+			}
+		}
+
+		return $config;
 	}
 
 	/**
@@ -775,6 +821,14 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * A Base method for sanitizing the settings before save.
+	 * This method is meant to be overridden by the element.
+	 */
+	protected function on_save( array $settings ) {
+		return $settings;
 	}
 
 	/**

@@ -1,77 +1,82 @@
 const { expect } = require( '@playwright/test' );
-const { EditorPage } = require( '../../../../../pages/editor-page' );
+const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 const Breakpoints = require( '../../../../../assets/breakpoints' );
 
 module.exports = class {
-	constructor( page ) {
+	constructor( page, testInfo ) {
 		this.page = page;
+		this.testInfo = testInfo;
 	}
 
-    async open() {
-        await this.editor.getFrame().click( '.elementor-add-section-button' );
-        await this.editor.getFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
-        await this.page.click( '#elementor-panel-footer-responsive' );
-        await this.page.click( 'text=Advanced' );
-        await this.page.click( 'text=Responsive' );
-    }
+	async open() {
+		await this.page.waitForTimeout( 1000 );
+		await this.editor.getPreviewFrame().click( '.elementor-add-section-button', { delay: 500, clickCount: 2 } );
+		await this.editor.getPreviewFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
+		await this.page.click( '#elementor-panel-footer-responsive' );
+		await this.page.click( 'text=Advanced' );
+		await this.page.click( 'text=Responsive' );
+	}
 
-    async setFirstColumn() {
-        this.firstColumn = await this.editor.getFrame().locator( '[data-element_type="column"][data-col="50"]:nth-child(1)' ).first();
-    }
+	async setFirstColumn() {
+		this.firstColumn = await this.editor.getPreviewFrame().locator( '[data-element_type="column"][data-col="50"]:nth-child(1)' ).first();
+	}
 
-    async toggle( device ) {
-        await this.page.click( `.elementor-control.elementor-control-reverse_order_${ device } .elementor-control-content .elementor-control-field .elementor-control-input-wrapper .elementor-switch .elementor-switch-label` );
-    }
+	async toggle( device ) {
+		await this.page.click( `.elementor-control.elementor-control-reverse_order_${ device } .elementor-control-content .elementor-control-field .elementor-control-input-wrapper .elementor-switch .elementor-switch-label` );
+	}
 
-    async init( isExperimentBreakpoints ) {
-        this.editor = new EditorPage( this.page );
+	async init( isExperimentBreakpoints ) {
+		this.wpAdminPage = new WpAdminPage( this.page, this.testInfo );
 
-        await this.editor.init( {
-            additional_custom_breakpoints: isExperimentBreakpoints,
-        } );
+		await this.wpAdminPage.setExperiments( {
+			additional_custom_breakpoints: isExperimentBreakpoints,
+			container: false,
+		} );
 
-        if ( isExperimentBreakpoints ) {
-            const breakpoints = new Breakpoints( this.page, this.editor );
-            await breakpoints.addAllBreakpoints();
-        }
+		this.editor = await this.wpAdminPage.useElementorCleanPost();
 
-        await this.open();
+		if ( isExperimentBreakpoints ) {
+			const breakpoints = new Breakpoints( this.page, this.testInfo );
+			await breakpoints.addAllBreakpoints();
+		}
 
-        await this.setFirstColumn();
-    }
+		await this.open();
 
-    async testReverseColumnsOneActivated( testDevice, isExperimentBreakpoints = false ) {
-        await this.init( isExperimentBreakpoints );
+		await this.setFirstColumn();
+	}
 
-        await this.page.click( `#e-responsive-bar-switcher__option-${ testDevice }` );
-        await expect( this.firstColumn ).toHaveCSS( 'order', '0' );
+	async testReverseColumnsOneActivated( testDevice, isExperimentBreakpoints = false ) {
+		await this.init( isExperimentBreakpoints );
 
-        await this.toggle( testDevice );
+		await this.page.click( `#e-responsive-bar-switcher__option-${ testDevice }` );
+		await expect( this.firstColumn ).toHaveCSS( 'order', '0' );
 
-        await expect( this.firstColumn ).toHaveCSS( 'order', '10' );
+		await this.toggle( testDevice );
 
-        const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic(),
-            filteredBreakpoints = breakpoints.filter( ( value ) => testDevice !== value );
+		await expect( this.firstColumn ).toHaveCSS( 'order', '10' );
 
-        for ( const breakpoint of filteredBreakpoints ) {
-            await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
-            await expect( this.firstColumn ).toHaveCSS( 'order', '0' );
-        }
-    }
+		const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic(),
+			filteredBreakpoints = breakpoints.filter( ( value ) => testDevice !== value );
 
-    async testReverseColumnsAllActivated( isExperimentBreakpoints = false ) {
-        await this.init( isExperimentBreakpoints );
+		for ( const breakpoint of filteredBreakpoints ) {
+			await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
+			await expect( this.firstColumn ).toHaveCSS( 'order', '0' );
+		}
+	}
 
-        const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic();
+	async testReverseColumnsAllActivated( isExperimentBreakpoints = false ) {
+		await this.init( isExperimentBreakpoints );
 
-        for ( const breakpoint of breakpoints ) {
-            await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
-            if ( 'desktop' === breakpoint ) {
-                await expect( this.firstColumn ).toHaveCSS( 'order', '0' );
-                continue;
-            }
-            await this.toggle( breakpoint );
-            await expect( this.firstColumn ).toHaveCSS( 'order', '10' );
-        }
-    }
+		const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic();
+
+		for ( const breakpoint of breakpoints ) {
+			await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
+			if ( 'desktop' === breakpoint ) {
+				await expect( this.firstColumn ).toHaveCSS( 'order', '0' );
+				continue;
+			}
+			await this.toggle( breakpoint );
+			await expect( this.firstColumn ).toHaveCSS( 'order', '10' );
+		}
+	}
 };
