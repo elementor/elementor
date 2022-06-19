@@ -1092,13 +1092,13 @@ abstract class Widget_Base extends Element_Base {
 		] );
 
 		$this->add_control(
-				'deprecation_message',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => $message,
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
-					'separator' => 'after',
-				]
+			'deprecation_message',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => $message,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'separator' => 'after',
+			]
 		);
 	}
 
