@@ -1434,18 +1434,21 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * In situations where the validation is for repeater the `$control_default` and `$setting_value` are arrays.
 	 *
-	 * @param boolean $is_repeater
-	 * @param string|array $control_default
+	 * @param array $control
 	 * @param string|array $setting_value
 	 *
 	 * @return bool
 	 */
-	public function is_control_default_value( $is_repeater, $control_default, $setting_value ) {
+	public function is_control_default_value( array $control, $setting_value ) {
+		$control_default = $control['default'];
+		$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
+
+		// Determine default for simple values.
 		$is_default = $control_default === $setting_value;
 
 		// If the control is a repeater control, check if the `$setting_value` is the default value of the `$control_default`.
 		// For example, 'system_colors'.
-		if ( $is_repeater && ! $is_default && ! empty( $control_default ) ) {
+		if ( ! $is_default && $is_repeater && ! empty( $control_default ) ) {
 			$clear_repeater_settings = [];
 
 			/*
@@ -1462,7 +1465,9 @@ abstract class Controls_Stack extends Base_Object {
 				);
 			}
 
-			$is_default = $clear_repeater_settings === $control_default || 0 === count( array_diff( $control_default, $clear_repeater_settings ) );
+			// Used `json_encode()` since they array are multidimensional.
+			$is_default = $clear_repeater_settings === $control_default ||
+					wp_json_encode( $control_default ) === wp_json_encode( $clear_repeater_settings );
 		}
 
 		return $is_default;

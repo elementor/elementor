@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits\Documents;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Kits\Documents\Tabs;
@@ -168,6 +169,37 @@ class Kit extends PageBase {
 			'draft' => sprintf( '%s (%s)', esc_html__( 'Disabled', 'elementor' ), esc_html__( 'Draft', 'elementor' ) ),
 			'publish' => esc_html__( 'Published', 'elementor' ),
 		];
+	}
+
+	public function is_control_default_value( array $control, $setting_value ) {
+		$control_name = $control['name'];
+
+		// Since breakpoints defaults are not set in the control.
+		if ( 0 === strpos( $control_name, Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX ) ) {
+			if ( empty( $setting_value ) ) {
+				return true;
+			}
+
+			$breakpoints_config = array_merge(
+				Breakpoints_Manager::get_default_config(),
+				Breakpoints_Manager::get_backwards_compatability_config()
+			);
+
+			$control_default = '';
+
+			foreach ( $breakpoints_config as $key => $config ) {
+				if ( Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $key === $control_name ) {
+					$control_default = $config['default_value'];
+					break;
+				}
+			}
+
+			if ( $control_default === $setting_value ) {
+				return true;
+			}
+		}
+
+		return parent::is_control_default_value( $control, $setting_value );
 	}
 
 	public function get_usage() {

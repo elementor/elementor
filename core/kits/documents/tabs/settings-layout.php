@@ -207,8 +207,9 @@ class Settings_Layout extends Tab_Base {
 		$this->add_breakpoints_controls();
 
 		// Include the old mobile and tablet breakpoint controls as hidden for backwards compatibility.
-		$this->add_control( 'viewport_md', [ 'type' => Controls_Manager::HIDDEN ] );
-		$this->add_control( 'viewport_lg', [ 'type' => Controls_Manager::HIDDEN ] );
+		foreach ( array_keys( Breakpoints_Manager::get_backwards_compatability_config() ) as $key ) {
+			$this->add_control( Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $key, [ 'type' => Controls_Manager::HIDDEN ] );
+		}
 
 		$this->end_controls_section();
 	}

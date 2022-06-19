@@ -342,6 +342,17 @@ class Manager extends Module {
 		];
 	}
 
+	public static function get_backwards_compatability_config() {
+		return [
+			'md' => [
+				'default_value' => 768,
+			],
+			'lg' => [
+				'default_value' => 1025,
+			],
+		];
+	}
+
 	/**
 	 * Get Breakpoints Config
 	 *

@@ -298,6 +298,7 @@ class Module extends BaseModule {
 		// if its in a batch the data should be deleted only on the first batch.
 		if ( 0 === $offset ) {
 			delete_option( self::ELEMENTS_OPTION_NAME );
+			delete_option( self::DOCUMENT_OPTION_NAME ); // Since recalc triggers save which increases the usage of documents.
 		}
 
 		$post_types = get_post_types( array( 'public' => true ) );
