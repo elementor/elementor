@@ -25,7 +25,7 @@ class TabsV2 extends Widget_Nested_Base {
 	}
 
 	public function get_title() {
-		return esc_html_x( 'Nested Tabs', 'Nested Tabs Control', 'elementor' );
+		return esc_html_x( 'Tabs', 'Nested Tabs Control', 'elementor' );
 	}
 
 	public function get_icon() {

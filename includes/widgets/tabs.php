@@ -117,6 +117,19 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
+		$is_tabs_v2_active = Plugin::$instance->widgets_manager->get_widget_types( 'tabs-v2' );
+
+		if ( $is_tabs_v2_active ) {
+			$this->add_deprecation_message(
+				'3.8.0',
+				esc_html__(
+					'You are currently editing a Tabs Widget in its old version. Any new tabs widget dragged into the canvas will be the new Tab widget, with the improved Nested capabilities.',
+					'elementor'
+				),
+				'tabs-v2'
+			);
+		}
+
 		$this->add_control(
 			'tabs',
 			[

@@ -65,6 +65,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		const elementsCollection = new PanelElementsElementsCollection(),
 			isContainerActive = elementorCommon.config.experimentalFeatures.container;
 
+		// Deprecated widget handling.
+		Object.entries( elementor.widgetsCache ).forEach( ( [ widgetName, widgetData ] ) => {
+			if ( widgetData.deprecation && elementor.widgetsCache[ widgetData.deprecation.replacement ] ) {
+				// Hide the old version.
+				elementor.widgetsCache[ widgetName ].show_in_panel = false;
+			}
+		} );
+
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {

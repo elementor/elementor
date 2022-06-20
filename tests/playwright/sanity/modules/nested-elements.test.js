@@ -49,7 +49,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 						// Assert - Ensure tabs-v2 widget has correct `_title`.
 						await expect( editor.page.locator( '.elementor-navigator__element__title__text' ) ).toHaveText( [
 							'Container',
-							'Nested Tabs',
+							'Tabs',
 							'Tab #1',
 							'Tab #2',
 							'Tab #3',
