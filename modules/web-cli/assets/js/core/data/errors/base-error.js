@@ -1,4 +1,4 @@
-import Helpers from 'elementor-api/utils/helpers';
+import Console from 'elementor-api/utils/console';
 import ForceMethodImplementation from '../../../utils/force-method-implementation';
 
 export default class BaseError extends Error {
@@ -53,6 +53,6 @@ export default class BaseError extends Error {
 	 * Notify a message when the error occurs.
 	 */
 	notify() {
-		Helpers.consoleError( { message: this.message, ...this } );
+		Console.error( { message: this.message, ...this } );
 	}
 }
