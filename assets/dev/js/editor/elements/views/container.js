@@ -182,6 +182,7 @@ const ContainerView = BaseElementView.extend( {
 
 	/**
 	 * Insert a new container inside an existing container.
+	 * @since 3.7.0
 	 *
 	 * @returns {void}
 	 */
