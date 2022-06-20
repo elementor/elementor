@@ -185,7 +185,7 @@ const ContainerView = BaseElementView.extend( {
 	 *
 	 * @returns {void}
 	 */
-	 addNewContainer() {
+	addNewContainer() {
 		/* Check if the current container has a parent container */
 		const containerAncestry = this.getContainer().getParentAncestry(),
 			targetContainer = ( 'container' !== containerAncestry[ 1 ].type ) ? this.getContainer() : this.getContainer().parent;
@@ -204,7 +204,7 @@ const ContainerView = BaseElementView.extend( {
 	 * @return {object}
 	 *
 	 */
-	 getContextMenuGroups: function() {
+	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) ),
 			transferGroupGeneralIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
