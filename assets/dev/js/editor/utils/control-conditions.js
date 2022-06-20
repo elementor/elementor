@@ -9,32 +9,6 @@ import Conditions from './conditions';
  */
 export default class ControlConditions extends Conditions {
 	/**
-	 * Get Operator
-	 *
-	 * Returns the condition's comparison operator according to the structure of the condition and control values.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @param conditionValue
-	 * @param isNegativeCondition
-	 * @param controlValue
-	 * @returns {string}
-	 */
-	getOperator( conditionValue, isNegativeCondition, controlValue ) {
-		let operator;
-
-		if ( Array.isArray( conditionValue ) && conditionValue.length ) {
-			operator = isNegativeCondition ? '!in' : 'in';
-		} else if ( Array.isArray( controlValue ) && controlValue.length ) {
-			operator = isNegativeCondition ? '!contains' : 'contains';
-		} else if ( isNegativeCondition ) {
-			operator = '!==';
-		}
-
-		return operator;
-	}
-
-	/**
 	 * Convert Condition to Conditions
 	 *
 	 * "Condition" is the simple form of Elementor's control conditioning system, which allows to create one or more

@@ -31,6 +31,32 @@ export default class Conditions {
 	}
 
 	/**
+	 * Get Operator
+	 *
+	 * Returns the condition's comparison operator according to the structure of the condition and control values.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param conditionValue
+	 * @param isNegativeCondition
+	 * @param currentValue
+	 * @returns {string}
+	 */
+	getOperator( conditionValue, isNegativeCondition, currentValue ) {
+		let operator;
+
+		if ( Array.isArray( conditionValue ) && conditionValue.length ) {
+			operator = isNegativeCondition ? '!in' : 'in';
+		} else if ( Array.isArray( currentValue ) && currentValue.length ) {
+			operator = isNegativeCondition ? '!contains' : 'contains';
+		} else if ( isNegativeCondition ) {
+			operator = '!==';
+		}
+
+		return operator;
+	}
+
+	/**
 	 * Get Condition Value
 	 *
 	 * Retrieves a passed condition's value. Dynamic values take precedence. If there is no dynamic value, this method
@@ -70,28 +96,14 @@ export default class Conditions {
 			if ( term.terms ) {
 				comparisonResult = this.check( term, comparisonObject );
 			} else {
-				// A term consists of a control name to be examined, and a sub key if needed. For example, a term
-				// can look like 'image_overlay[url]' (the 'url' is the sub key). Here we want to isolate the
-				// condition name and the sub key, so later it can be retrieved and examined.
+				// A term consists of a condition name (id) to be examined, and a sub key if the condition source is
+				// an object. For example, a term can look like 'image_overlay[url]' (the 'url' is the sub key). Here
+				// we want to isolate the condition name and the sub key, so later it can be retrieved and examined.
 				const parsedName = term.name.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
 					conditionRealName = parsedName[ 1 ],
-					conditionSubKey = parsedName[ 2 ],
-					// We use null-safe operator since we're trying to get the current element, which is not always
-					// exists, since it's only created when the specific element appears in the panel.
-					placeholder = elementor.selection.getElements()[ 0 ]
-						?.placeholders[ conditionRealName ];
+					conditionSubKey = parsedName[ 2 ];
 
-				// If a placeholder exists for the examined control, we check against it. In any other case, we
-				// use the 'comparisonObject', which includes all values of the selected widget.
-				let value = placeholder || comparisonObject[ conditionRealName ];
-
-				if ( comparisonObject?.__dynamic__[ conditionRealName ] ) {
-					value = comparisonObject.__dynamic__[ conditionRealName ];
-				}
-
-				if ( 'object' === typeof value && conditionSubKey ) {
-					value = value[ conditionSubKey ];
-				}
+				const value = this.getConditionValue( comparisonObject, conditionRealName, conditionSubKey );
 
 				comparisonResult = ( undefined !== value ) &&
 					this.compare( value, term.value, term.operator );
