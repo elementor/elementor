@@ -34,6 +34,7 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 			element.id = elementorCommon.helpers.getUniqueId();
 			element.settings = element.settings || {};
 			element.elements = element.elements || [];
+			element.isLocked = true;
 
 			result.push( element );
 		} );

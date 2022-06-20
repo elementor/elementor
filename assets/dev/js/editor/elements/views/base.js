@@ -959,6 +959,10 @@ BaseElementView = BaseContainer.extend( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
+				if ( this.container.isLocked() ) {
+					return;
+				}
+
 				// Need to stop this event when the element is absolute since it clashes with this one.
 				// See `behaviors/widget-draggable.js`.
 				if ( this.options.draggable?.isActive ) {

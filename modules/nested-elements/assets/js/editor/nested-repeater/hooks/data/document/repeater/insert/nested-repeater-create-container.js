@@ -54,6 +54,7 @@ export class NestedRepeaterCreateContainer extends Base {
 				model: {
 					... modelExtras,
 					elType: 'container',
+					isLocked: true,
 					_title: modelExtras._title || component.getChildrenTitle( container, index ),
 				},
 				options: {
