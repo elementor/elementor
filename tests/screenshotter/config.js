@@ -62,7 +62,6 @@ const config = {
 		'spacer',
 		'star-rating',
 		'tabs',
-		// 'tabs-v2',
 		'testimonials',
 		'text-editor',
 		'text-path',

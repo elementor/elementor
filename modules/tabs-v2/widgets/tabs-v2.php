@@ -532,7 +532,7 @@ class TabsV2 extends Widget_Nested_Base {
 	 * @return void
 	 */
 	private function print_html_tag() {
-		$html_tag = $this->get_settings( 'html_tag' );
+		$html_tag = $this->get_settings_for_display( 'html_tag' );
 
 		if ( empty( $html_tag ) ) {
 			$html_tag = 'div';
@@ -541,29 +541,18 @@ class TabsV2 extends Widget_Nested_Base {
 		Utils::print_validated_html_tag( $html_tag );
 	}
 
-	/**
-	 * Before rendering the container content. (Print the opening tag, etc.)
-	 *
-	 * @return void
-	 */
-	public function before_render() {
-		$settings = $this->get_settings_for_display();
-		$link = $settings['link'];
-
-		if ( ! empty( $link['url'] ) ) {
-			$this->add_link_attributes( '_wrapper', $link );
-		}
-
-		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
-	}
-
 	protected function render() {
 		// Copied from tabs.php
-		$tabs = $this->get_settings_for_display( 'tabs' );
+		$settings = $this->get_settings_for_display();
+		$tabs = $settings[ 'tabs' ];
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
 		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
+
+		if ( ! empty( $settings[ 'link' ] ) ) {
+			$this->add_link_attributes( 'elementor-tabs', $settings[ 'link' ] );
+		}
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'elementor-tab-icon' );
@@ -628,14 +617,14 @@ class TabsV2 extends Widget_Nested_Base {
 			$tabs_content_html .= "<div $mobile_title_attributes>$tab_title</div>$tab_content";
 		}
 		?>
-		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="elementor-tabs-wrapper" role="tablist">
 				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
 				<?php echo $tabs_content_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
-		</div>
+		<<?php $this->print_html_tag(); ?>>
 		<?php
 	}
 
