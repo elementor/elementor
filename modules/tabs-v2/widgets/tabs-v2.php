@@ -544,14 +544,14 @@ class TabsV2 extends Widget_Nested_Base {
 	protected function render() {
 		// Copied from tabs.php
 		$settings = $this->get_settings_for_display();
-		$tabs = $settings[ 'tabs' ];
+		$tabs = $settings['tabs'];
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
 		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
 
-		if ( ! empty( $settings[ 'link' ] ) ) {
-			$this->add_link_attributes( 'elementor-tabs', $settings[ 'link' ] );
+		if ( ! empty( $settings['link'] ) ) {
+			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
 		}
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
