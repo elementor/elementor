@@ -960,6 +960,7 @@ BaseElementView = BaseContainer.extend( {
 				e.stopPropagation();
 
 				if ( this.container.isLocked() ) {
+					e.originalEvent.preventDefault();
 					return;
 				}
 
