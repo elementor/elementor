@@ -34,10 +34,10 @@ export default function Promotion() {
 				<Grid container className="page-header">
 					<Grid item sm={7} justify="end">
 						<Heading variant="h1">
-							{ __( 'Create Full Site', 'elementor' ) }
+							{ __( 'Design Every Part of Your Website', 'elementor' ) }
 						</Heading>
 						<Text>
-							{ __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
+							{ __( 'Gain complete control and visually customize all the essential parts of your site, including its Header, Footer, Single Page, Single Post, Archive, WooCommerce pages, and more with Elementor Pro.', 'elementor' ) }
 						</Text>
 					</Grid>
 					<Grid item container justify="end" alignItems="start" sm={5}>
