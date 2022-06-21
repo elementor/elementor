@@ -12,14 +12,13 @@ test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom sel
 	await editor.page.evaluate( () => {
 		// `Attach-preview` is a `tab_content` of the widget tabs.
 		$e.internal( 'editor/documents/attach-preview', {
-			selector: '.elementor-tabs-content-wrapper',
+			selector: '.elementor-tab-content',
 		} );
 	} );
 
-	const tabs = [];
+	// Assert - Ensure the tabs are duplicated.
+	const tabs = await editor.getPreviewFrame().$$( '.elementor-tab-title' );
 
 	// It will be duplicated since, the same widget tabs gonna be inside the first tab content.
-		// expect( tabs.length ).toBe( 8 ); // 8 Since there is hidden titles for the mobile version.
-		expect( tabs.length ).toBeGreaterThan( -1 ); // temporarily changed this, to prevent PR reviews not to pass
+	expect( tabs.length ).toBe( 8 ); // 8 Since there is hidden titles for the mobile version.
 } );
-
