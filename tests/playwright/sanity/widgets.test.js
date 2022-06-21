@@ -82,6 +82,7 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 				view: { label: 'View', type: 'hidden' },
 			},
 		},
+
 	};
 
 	for ( const widgetsName in widgetsConfig ) {
@@ -121,12 +122,12 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 					break;
 				case 'select':
 					const options = await page.evaluate( ( args ) => {
-						const options = document.querySelector( `[data-setting="${ args.controlName }"]` ).options;
+						const domOptions = document.querySelector( `[data-setting="${ args.controlName }"]` ).options;
 						const values = [];
-						for ( let i = 0; i < options.length; i++ ) {
+						for ( let i = 0; i < domOptions.length; i++ ) {
 							// Skip default value.
-							if ( options[ i ].value !== args.defaultValue ) {
-								values.push( options[ i ].value );
+							if ( domOptions[ i ].value !== args.defaultValue ) {
+								values.push( domOptions[ i ].value );
 							}
 						}
 						return values;
@@ -136,16 +137,13 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 
 					for ( const optionValue of options ) {
 						await page.selectOption( `[data-setting="${ controlName }"]`, optionValue );
-
+						console.log( optionValue );
 						// delay for rendering
 						await page.waitForTimeout( 800 );
 						expect( await element.screenshot( {
 							type: 'jpeg',
 							quality: 70,
 						} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }-${ controlName }-${ optionValue }.jpeg` );
-
-						// Reset.
-						await page.selectOption( `[data-setting="${ controlName }"]`, '' );
 					}
 
 					// Reset.
