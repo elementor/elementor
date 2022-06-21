@@ -181,6 +181,25 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
+	 * Insert a new container inside an existing container.
+	 * @since 3.7.0
+	 *
+	 * @returns {void}
+	 */
+	addNewContainer() {
+		/* Check if the current container has a parent container */
+		const containerAncestry = this.getContainer().getParentAncestry(),
+			targetContainer = ( 'container' !== containerAncestry[ 1 ].type ) ? this.getContainer() : this.getContainer().parent;
+
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'container',
+			},
+			container: targetContainer,
+		} );
+	},
+
+	/**
 	 * Add a `Save as Template` button to the context menu.
 	 *
 	 * @return {object}
@@ -188,15 +207,28 @@ const ContainerView = BaseElementView.extend( {
 	 */
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) ),
+			transferGroupGeneralIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
 
-		groups.splice( transferGroupIndex + 1, 0, {
+		groups.splice( transferGroupClipboardIndex + 1, 0, {
 			name: 'save',
 			actions: [
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
 					callback: this.saveAsTemplate.bind( this ),
+				},
+			],
+		} );
+
+		groups.splice( transferGroupGeneralIndex + 1, 0, {
+			name: 'newContainerGroup',
+			actions: [
+				{
+					name: 'newContainer',
+					icon: 'eicon-plus',
+					title: __( 'Add New Container', 'elementor' ),
+					callback: this.addNewContainer.bind( this ),
 				},
 			],
 		} );
