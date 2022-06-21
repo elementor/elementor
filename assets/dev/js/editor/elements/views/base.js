@@ -156,7 +156,7 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						isEnabled: () => elementor.selection.isSameType(),
+						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
 						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
@@ -220,6 +220,7 @@ BaseElementView = BaseContainer.extend( {
 							__( 'Delete', 'elementor' ),
 					shortcut: '⌦',
 					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
 		} );
@@ -961,6 +962,7 @@ BaseElementView = BaseContainer.extend( {
 
 				if ( this.container.isLocked() ) {
 					e.originalEvent.preventDefault();
+
 					return;
 				}
 
