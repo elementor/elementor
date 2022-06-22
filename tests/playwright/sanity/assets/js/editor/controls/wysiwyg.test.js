@@ -28,5 +28,6 @@ test( 'WYSIWYG Control allows mixing HTML & entities', async ( { page }, testInf
 	const value = await editor.page.inputValue( '.elementor-wp-editor' );
 
 	// Assert.
-	expect( value ).toContain( '&lt;hr&gt;' ); // I have changed the toBe test to toContain, because the output it inconsistent. Sometimes the widget return a text with a <p> element and sometimes not
+	expect( value ).toContain( '&lt;hr&gt;' );
+	expect( value ).toContain( '<hr />' ); // It's seperated because of inconsistent output . Sometimes the widget return a text with a <p> element and sometimes not.
 } );
