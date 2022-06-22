@@ -8,5 +8,7 @@ test( 'Accordion', async ( { page }, testInfo ) => {
 
  // Act.
  await editor.addWidget( 'accordion' );
+
+// Assert
  expect( await editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion.jpeg' );
 } );
