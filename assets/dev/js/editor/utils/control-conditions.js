@@ -74,6 +74,34 @@ export default class ControlConditions extends Conditions {
 	}
 
 	/**
+	 * Get Condition Value
+	 *
+	 * Retrieves a passed condition's value. Dynamic values take precedence. If there is no dynamic value, this method
+	 * checks for a regular item value.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param comparisonObject A settings object (e.g. element settings - keys and values)
+	 * @param conditionName The conditioning item's name
+	 * @param subConditionName If the conditioning item's value is an object, and the condition checks for a
+	 * specific property, this is the property name.
+	 * @returns {*}
+	 */
+	getConditionValue( comparisonObject, conditionName, subConditionName ) {
+		let value;
+
+		const dynamicValue = comparisonObject.__dynamic__?.[ conditionName ];
+
+		if ( dynamicValue ) {
+			value = dynamicValue;
+		} else {
+			value = super.getConditionValue( comparisonObject, conditionName, subConditionName );
+		}
+
+		return value;
+	}
+
+	/**
 	 * Check
 	 *
 	 * Iterates over an control's array of conditions and checks if all of them are met.

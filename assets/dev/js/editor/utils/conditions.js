@@ -59,8 +59,7 @@ export default class Conditions {
 	/**
 	 * Get Condition Value
 	 *
-	 * Retrieves a passed condition's value. Dynamic values take precedence. If there is no dynamic value, this method
-	 * checks for a regular item value.
+	 * Retrieves a passed condition's value.
 	 *
 	 * @since 3.7.0
 	 *
@@ -73,11 +72,7 @@ export default class Conditions {
 	getConditionValue( comparisonObject, conditionName, subConditionName ) {
 		let value;
 
-		const dynamicValue = comparisonObject.__dynamic__?.[ conditionName ];
-
-		if ( dynamicValue ) {
-			value = dynamicValue;
-		} else if ( 'object' === typeof comparisonObject[ conditionName ] && subConditionName ) {
+		if ( 'object' === typeof comparisonObject[ conditionName ] && subConditionName ) {
 			value = comparisonObject[ conditionName ][ subConditionName ];
 		} else {
 			value = comparisonObject[ conditionName ];

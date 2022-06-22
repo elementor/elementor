@@ -26,31 +26,9 @@ describe( 'Control Conditions', () => {
 
 		const testControlModels = {
 			testControl: {
-				name: 'testControl',
-				label: 'Test Control',
-				description: '',
-				show_label: true,
-				label_block: false,
-				separator: 'default',
-				toggle: true,
-				type: 'text',
-				tab: 'content',
-				section: 'section_title',
-				default: '',
 				parent: null,
 			},
 			testCondition: {
-				name: 'testControl',
-				label: 'Test Control',
-				description: '',
-				show_label: true,
-				label_block: false,
-				separator: 'default',
-				toggle: true,
-				type: 'text',
-				tab: 'content',
-				section: 'section_title',
-				default: '',
 				parent: null,
 			},
 		};
