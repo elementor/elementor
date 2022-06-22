@@ -203,7 +203,7 @@ class Container extends Element_Base {
 		?>">
 			<?php
 			// PHPCS - The file content is being read from a strict file path structure.
-			echo file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo Utils::file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			?>
 		</div>
 		<?php
