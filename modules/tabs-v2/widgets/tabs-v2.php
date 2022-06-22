@@ -76,7 +76,6 @@ class TabsV2 extends Widget_Nested_Base {
 	}
 
 	protected function register_controls() {
-
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
 
