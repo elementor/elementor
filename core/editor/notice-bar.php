@@ -20,12 +20,7 @@ class Notice_Bar extends Base_Object {
 		return [
 			'muted_period' => 30,
 			'option_key' => '_elementor_editor_upgrade_notice_dismissed',
-			'message' => sprintf(
-				/* translators: 1: Link open tag, 2: Link close tag. */
-				esc_html__( 'Love using Elementor? %1$sLearn how you can build better sites with Elementor Pro.%2$s', 'elementor' ),
-				'<a href="%s">',
-				'</a>'
-			),
+			'message' => esc_html__( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ),
 			'action_title' => esc_html__( 'Upgrade Now', 'elementor' ),
 			'action_url' => 'https://go.elementor.com/go-pro-editor-notice-bar/',
 		];

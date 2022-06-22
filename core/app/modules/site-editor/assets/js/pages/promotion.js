@@ -10,14 +10,14 @@ import Text from 'elementor-app/ui/atoms/text';
 import './promotion.scss';
 
 export default function Promotion() {
-	const promotionUrl = 'https://go.elementor.com/go-pro-theme-builder',
+	const promotionUrl = 'https://go.elementor.com/go-pro-theme-builder/',
 		PromotionHoverElement = ( props ) => {
 			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
 			return (
 				<CardOverlay className="e-site-editor__promotion-overlay">
 					<a className="e-site-editor__promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
 						<i className="e-site-editor__promotion-overlay__icon eicon-lock" />
-						<Button size="sm" color="cta" variant="contained" text={__( 'Go Pro', 'elementor' )} />
+						<Button size="sm" color="cta" variant="contained" text={__( 'Upgrade', 'elementor' )} />
 					</a>
 				</CardOverlay>
 			);
@@ -34,10 +34,10 @@ export default function Promotion() {
 				<Grid container className="page-header">
 					<Grid item sm={7} justify="end">
 						<Heading variant="h1">
-							{ __( 'Create Full Site', 'elementor' ) }
+							{ __( 'Design Every Part of Your Website', 'elementor' ) }
 						</Heading>
 						<Text>
-							{ __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
+							{ __( 'Gain complete control and visually customize all the essential parts of your site, including its Header, Footer, Single Page, Single Post, Archive, WooCommerce pages, and more with Elementor Pro.', 'elementor' ) }
 						</Text>
 					</Grid>
 					<Grid item container justify="end" alignItems="start" sm={5}>
@@ -47,7 +47,7 @@ export default function Promotion() {
 							variant="contained"
 							url={ promotionUrl }
 							target="_blank"
-							text={ __( 'Go Pro', 'elementor' ) }
+							text={ __( 'Upgrade Now', 'elementor' ) }
 						/>
 					</Grid>
 				</Grid>
