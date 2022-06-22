@@ -33,7 +33,7 @@ export default class Conditions {
 	/**
 	 * Get Operator
 	 *
-	 * Returns the condition's comparison operator according to the structure of the condition and control values.
+	 * Returns the condition's comparison operator according to the structure of the condition and item values.
 	 *
 	 * @since 3.7.0
 	 *
@@ -60,13 +60,13 @@ export default class Conditions {
 	 * Get Condition Value
 	 *
 	 * Retrieves a passed condition's value. Dynamic values take precedence. If there is no dynamic value, this method
-	 * checks for a regular control value.
+	 * checks for a regular item value.
 	 *
 	 * @since 3.7.0
 	 *
 	 * @param comparisonObject A settings object (e.g. element settings - keys and values)
-	 * @param conditionName The conditioning control's name
-	 * @param subConditionName If the conditioning control's value is an object, and the condition checks for a
+	 * @param conditionName The conditioning item's name
+	 * @param subConditionName If the conditioning item's value is an object, and the condition checks for a
 	 * specific property, this is the property name.
 	 * @returns {*}
 	 */
