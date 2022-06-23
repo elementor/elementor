@@ -74,6 +74,13 @@ do_action( 'plugins_loaded' );
 
 \Elementor\Plugin::$instance->init_common();
 
+/**
+ * Copying language files is required to run before WordPress initializes.
+ *
+ * @param string $_tests_dir
+ *
+ * @return void
+ */
 function copy_language_files( $_tests_dir ) {
 	$tests_data_dir = $_tests_dir . '/data';
 	$tests_lang_dir = $tests_data_dir . '/languages';

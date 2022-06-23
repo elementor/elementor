@@ -16,12 +16,14 @@ class Test_Widgets extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
+		// Force controls cache to reset.
 		Plugin::$instance->controls_manager = new Controls_Manager();
 	}
 
 	public function teardown() {
 		parent::teardown();
 
+		// Cleanup.
 		switch_to_locale( 'en_US' );
 	}
 
