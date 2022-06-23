@@ -64,8 +64,4 @@ class Test_Widgets extends Elementor_Test_Base {
 		$this->assert_array_have_keys( [ 'button' ], $response );
 		$this->assert_array_not_have_keys( [ 'inner-section' ], $response );
 	}
-
-	private function set_user_locale( $locale ) {
-		update_user_meta( get_current_user_id(), 'user_lang', $locale );
-	}
 }

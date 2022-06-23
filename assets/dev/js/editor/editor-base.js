@@ -1070,7 +1070,7 @@ export default class EditorBase extends Marionette.Application {
 			success: ( data ) => {
 				this.addWidgetsCache( data );
 			},
-		} );
+		}, true );
 	}
 
 	getPreferences( key ) {
