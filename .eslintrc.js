@@ -3,6 +3,7 @@ module.exports = {
 		'plugin:react/recommended',
 		'plugin:no-jquery/deprecated',
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
+		'plugin:@elementor/editor/recommended',
 	],
 	plugins: [
 		'babel',
