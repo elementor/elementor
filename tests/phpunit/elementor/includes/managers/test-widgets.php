@@ -4,7 +4,6 @@ namespace Elementor\Testing\Includes\Managers;
 
 use Elementor\Controls_Manager;
 use Elementor\Plugin;
-use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +28,7 @@ class Test_Widgets extends Elementor_Test_Base {
 
 	public function test_ajax_get_widgets_default_value_translations__uses_specific_locale_if_passed() {
 		// Act.
-		$response = ( new Widgets_Manager() )->ajax_get_widgets_default_value_translations( [ 'locale' => 'he_IL' ] );
+		$response = Plugin::$instance->widgets_manager->ajax_get_widgets_default_value_translations( [ 'locale' => 'he_IL' ] );
 
 		// Assert.
 		$this->assertEquals( 'לחץ כאן', $response['button']['controls']['text']['default'] );
@@ -37,7 +36,7 @@ class Test_Widgets extends Elementor_Test_Base {
 
 	public function test_ajax_get_widgets_default_value_translations__returns_only_controls() {
 		// Act.
-		$response = ( new Widgets_Manager() )->ajax_get_widgets_default_value_translations();
+		$response = Plugin::$instance->widgets_manager->ajax_get_widgets_default_value_translations();
 
 		// Assert.
 		$this->assertCount( 1, $response['button'] );
@@ -46,7 +45,7 @@ class Test_Widgets extends Elementor_Test_Base {
 
 	public function test_ajax_get_widgets_default_value_translations__returns_only_defaults() {
 		// Act.
-		$response = ( new Widgets_Manager() )->ajax_get_widgets_default_value_translations();
+		$response = Plugin::$instance->widgets_manager->ajax_get_widgets_default_value_translations();
 
 		// Assert.
 		$control = $response['button']['controls']['text'];
@@ -57,7 +56,7 @@ class Test_Widgets extends Elementor_Test_Base {
 
 	public function test_ajax_get_widgets_default_value_translations__doesnt_return_empty_controls() {
 		// Act.
-		$response = ( new Widgets_Manager() )->ajax_get_widgets_default_value_translations();
+		$response = Plugin::$instance->widgets_manager->ajax_get_widgets_default_value_translations();
 
 		// Assert.
 		// Button has translated defaults while inner-section doesn't.

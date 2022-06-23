@@ -78,7 +78,7 @@ class Widgets_Manager {
 		$this->_widget_types = [];
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
-			require_once ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
+			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
 
 			$class_name = str_replace( '-', '_', $widget_filename );
 
@@ -190,7 +190,7 @@ class Widgets_Manager {
 	 * @access private
 	*/
 	private function require_files() {
-		require_once ELEMENTOR_PATH . 'includes/base/widget-base.php';
+		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
 
 	private function pluck_default_controls( $controls ) {
