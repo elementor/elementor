@@ -90,7 +90,6 @@ module.exports = {
 		'import/no-unresolved': [ 2, { ignore: [ 'elementor', 'modules', '@wordpress/i18n', 'e-utils', 'e-styles' ] } ],
 		'import/no-extraneous-dependencies': 'off',
 		'@wordpress/i18n-translator-comments': 'off',
-		'@wordpress/valid-sprintf': 'off',
 	},
     settings: {
         jsdoc: {
