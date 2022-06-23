@@ -65,10 +65,6 @@ describe( 'Conditions', () => {
 			testConditionObject: {
 				testSubCondition: 'testSubConditionValue',
 			},
-			testConditionDynamic: 'testConditionNonDynamicValue',
-			__dynamic__: {
-				testConditionDynamic: 'testConditionDynamicValue',
-			},
 		};
 
 		// Act - Test regular condition value.
@@ -82,12 +78,6 @@ describe( 'Conditions', () => {
 
 		// Assert.
 		expect( subConditionValue ).toBe( 'testSubConditionValue' );
-
-		// Act - Test sub-condition value.
-		const dynamicConditionValue = conditions.getConditionValue( values, 'testConditionDynamic' );
-
-		// Assert.
-		expect( dynamicConditionValue ).toBe( 'testConditionDynamicValue' );
 	} );
 
 	test( 'Check', () => {

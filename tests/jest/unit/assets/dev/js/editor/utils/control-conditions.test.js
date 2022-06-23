@@ -16,6 +16,29 @@ describe( 'Control Conditions', () => {
 		expect( comparisonResult ).toBe( true );
 	} );
 
+	test( 'Get Condition Value', () => {
+		// Arrange.
+		const conditions = new ControlConditions();
+
+		const values = {
+			testControl: 'testControlValue',
+			testCondition: 'testConditionValue',
+			testConditionObject: {
+				testSubCondition: 'testSubConditionValue',
+			},
+			testConditionDynamic: 'testConditionNonDynamicValue',
+			__dynamic__: {
+				testConditionDynamic: 'testConditionDynamicValue',
+			},
+		};
+
+		// Act - Test Dynamic sub-condition value.
+		const dynamicConditionValue = conditions.getConditionValue( values, 'testConditionDynamic' );
+
+		// Assert.
+		expect( dynamicConditionValue ).toBe( 'testConditionDynamicValue' );
+	} );
+
 	test( 'Check', () => {
 		// Arrange.
 		const conditions = new ControlConditions();
