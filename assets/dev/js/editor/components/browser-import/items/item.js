@@ -3,8 +3,6 @@ import Mime from 'mime';
 
 /**
  * @typedef {import('../files/file-parser-base')} FileParserBase
- */
-/**
  * @typedef {import('../files/file-reader-base')} FileReaderBase
  */
 
