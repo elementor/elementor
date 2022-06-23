@@ -14,10 +14,12 @@ import './item-header.scss';
 /**
  * Returns the right call to action button.
  *
- * @param model
- * @param onConnect
- * @param onApply
- * @returns {object}
+ * @param {Kit}      model
+ * @param {Object}   root0
+ * @param {Function} root0.apply
+ * @param {Function} root0.onConnect
+ * @param {boolean}  root0.isApplyLoading
+ * @return {Object} result
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
@@ -96,7 +98,7 @@ export default function ItemHeader( props ) {
 					message: __( 'Something went wrong.', 'elementor' ),
 				} );
 			},
-		}
+		},
 	);
 
 	const applyButton = useKitCallToActionButton( props.model, {
@@ -156,7 +158,7 @@ export default function ItemHeader( props ) {
 				/>
 			}
 			<Header
-				startColumn={ <HeaderBackButton/> }
+				startColumn={ <HeaderBackButton /> }
 				centerColumn={ props.centerColumn }
 				buttons={ buttons }
 			/>

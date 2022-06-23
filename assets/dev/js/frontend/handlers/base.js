@@ -11,7 +11,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	isEdit: null,
 
-	__construct: function( settings ) {
+	__construct( settings ) {
 		if ( ! this.isActive( settings ) ) {
 			return;
 		}
@@ -25,11 +25,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 	},
 
-	isActive: function() {
+	isActive() {
 		return true;
 	},
 
-	findElement: function( selector ) {
+	findElement( selector ) {
 		var $mainElement = this.$element;
 
 		return $mainElement.find( selector ).filter( function() {
@@ -37,7 +37,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getUniqueHandlerID: function( cid, $element ) {
+	getUniqueHandlerID( cid, $element ) {
 		if ( ! cid ) {
 			cid = this.getModelCID();
 		}
@@ -49,14 +49,14 @@ module.exports = elementorModules.ViewModule.extend( {
 		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
 	},
 
-	initEditorListeners: function() {
+	initEditorListeners() {
 		var self = this;
 
 		self.editorListeners = [
 			{
 				event: 'element:destroy',
 				to: elementor.channels.data,
-				callback: function( removedModel ) {
+				callback( removedModel ) {
 					if ( removedModel.cid !== self.getModelCID() ) {
 						return;
 					}
@@ -78,7 +78,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			self.editorListeners.push( {
 				event: eventName,
 				to: elementor.channels.editor,
-				callback: function( controlView, elementView ) {
+				callback( controlView, elementView ) {
 					var elementViewHandlerID = self.getUniqueHandlerID( elementView.model.cid, elementView.$el );
 
 					if ( elementViewHandlerID !== self.getUniqueHandlerID() ) {
@@ -94,7 +94,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			self.editorListeners.push( {
 				event: 'change:editSettings',
 				to: elementor.channels.editor,
-				callback: function( changedModel, view ) {
+				callback( changedModel, view ) {
 					if ( view.model.cid !== self.getModelCID() ) {
 						return;
 					}
@@ -111,7 +111,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.editorListeners.push( {
 					event: 'change',
 					to: elementor.settings[ settingsType ].model,
-					callback: function( model ) {
+					callback( model ) {
 						self[ listenerMethodName ]( model.changed );
 					},
 				} );
@@ -119,7 +119,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getEditorListeners: function() {
+	getEditorListeners() {
 		if ( ! this.editorListeners ) {
 			this.initEditorListeners();
 		}
@@ -127,7 +127,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		return this.editorListeners;
 	},
 
-	addEditorListeners: function() {
+	addEditorListeners() {
 		var uniqueHandlerID = this.getUniqueHandlerID();
 
 		this.getEditorListeners().forEach( function( listener ) {
@@ -135,7 +135,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	removeEditorListeners: function() {
+	removeEditorListeners() {
 		var uniqueHandlerID = this.getUniqueHandlerID();
 
 		this.getEditorListeners().forEach( function( listener ) {
@@ -143,11 +143,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getElementType: function() {
+	getElementType() {
 		return this.$element.data( 'element_type' );
 	},
 
-	getWidgetType: function() {
+	getWidgetType() {
 		const widgetType = this.$element.data( 'widget_type' );
 
 		if ( ! widgetType ) {
@@ -157,15 +157,15 @@ module.exports = elementorModules.ViewModule.extend( {
 		return widgetType.split( '.' )[ 0 ];
 	},
 
-	getID: function() {
+	getID() {
 		return this.$element.data( 'id' );
 	},
 
-	getModelCID: function() {
+	getModelCID() {
 		return this.$element.data( 'model-cid' );
 	},
 
-	getElementSettings: function( setting ) {
+	getElementSettings( setting ) {
 		let elementSettings = {};
 
 		const modelCID = this.getModelCID();
@@ -210,7 +210,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		return this.getItems( elementSettings, setting );
 	},
 
-	getEditSettings: function( setting ) {
+	getEditSettings( setting ) {
 		var attributes = {};
 
 		if ( this.isEdit ) {
@@ -220,17 +220,17 @@ module.exports = elementorModules.ViewModule.extend( {
 		return this.getItems( attributes, setting );
 	},
 
-	getCurrentDeviceSetting: function( settingKey ) {
+	getCurrentDeviceSetting( settingKey ) {
 		return elementorFrontend.getCurrentDeviceSetting( this.getElementSettings(), settingKey );
 	},
 
-	onInit: function() {
+	onInit() {
 		if ( this.isActive( this.getSettings() ) ) {
 			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 		}
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		if ( this.isEdit ) {
 			this.removeEditorListeners();
 		}

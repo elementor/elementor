@@ -2,15 +2,17 @@ import CommandHistory from './command-history';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
 export default class CommandDisableEnable extends CommandHistory {
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
-	 * @returns {string}
+	 * @return {string} enable command
 	 */
 	static getEnableCommand() {
 		elementorModules.ForceMethodImplementation();
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
-	 * @returns {string}
+	 * @return {string} disable command
 	 */
 	static getDisableCommand() {
 		elementorModules.ForceMethodImplementation();
@@ -45,8 +47,8 @@ export default class CommandDisableEnable extends CommandHistory {
 		 *
 		 * @type {string}
 		 */
-		this.type = this.currentCommand === this.constructor.getEnableCommand() ?
-			'enable' : 'disable';
+		this.type = this.currentCommand === this.constructor.getEnableCommand()
+			? 'enable' : 'disable';
 	}
 
 	getTitle() {

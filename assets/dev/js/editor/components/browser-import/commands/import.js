@@ -23,7 +23,7 @@ export class Import extends CommandBase {
 					if ( await session.validate() ) {
 						session.apply();
 					}
-				} )
+				} ),
 			);
 		} );
 

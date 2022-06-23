@@ -26,7 +26,7 @@ export default function Header( props ) {
 	return (
 		<Grid container alignItems="center" justify="space-between" className="eps-app__header e-onboarding__header">
 			<div className="eps-app__logo-title-wrapper e-onboarding__header-logo">
-				<i className="eps-app__logo eicon-elementor"/>
+				<i className="eps-app__logo eicon-elementor" />
 				<img
 					src={ elementorCommon.config.urls.assets + 'images/logo-platform.svg' }
 					alt={ __( 'Elementor Logo', 'elementor' ) }

@@ -38,8 +38,8 @@ export class Save extends CommandInternalBase {
 		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
 				data: {
 					status,
-					elements: elements,
-					settings: settings,
+					elements,
+					settings,
 				},
 				error: ( data ) => this.onSaveError( data, status, document ),
 			} ).then( ( data ) => this.onSaveSuccess( data, successArgs, onSuccess ) );
@@ -145,7 +145,7 @@ export class Save extends CommandInternalBase {
 		}
 
 		elementor.notifications.showToast( {
-			message: message,
+			message,
 		} );
 	}
 
