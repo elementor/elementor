@@ -68,7 +68,7 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		'wp-widget-tag_cloud',
 		'wp-widget-text',
 	];
-
+//elementor.widgetsCache
 	const widgetsConfig = {
 		heading: {
 			controls: {
@@ -77,8 +77,8 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 				size: { label: 'Size', type: 'select', default: 'default' },
 				header_size: { label: 'HTML Tag', type: 'select', default: 'h2' },
 				align: { label: 'Alignment', type: 'choose', default: '' },
-				align_tablet: { label: 'Alignment', type: 'choose', default: '' },
-				align_mobile: { label: 'Alignment', type: 'choose', default: '' },
+				//align_tablet: { label: 'Alignment', type: 'choose', default: 'center' },
+				//align_mobile: { label: 'Alignment', type: 'choose', default: 'center' },
 				view: { label: 'View', type: 'hidden' },
 			},
 		},
@@ -89,7 +89,7 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		const config = widgetsConfig[ widgetsName ];
 
 		const widgetId = await editor.addWidget( widgetsName );
-		console.log( widgetsName );
+		//console.log( widgetsName );
 
 		const element = await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` );
 		await editor.page.waitForTimeout( 800 );
@@ -102,7 +102,7 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		for ( const controlName in config.controls ) {
 			const controlConfig = config.controls[ controlName ];
 
-			console.log( controlName );
+			//console.log( controlName );
 
 			// Focus on top frame.
 			await page.click( `#elementor-panel-header-title` );
@@ -120,6 +120,7 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 					await page.fill( `[data-setting="${ controlName }"]`, controlConfig.default );
 
 					break;
+
 				case 'select':
 					const options = await page.evaluate( ( args ) => {
 						const domOptions = document.querySelector( `[data-setting="${ args.controlName }"]` ).options;
@@ -133,11 +134,11 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 						return values;
 					}, { controlName, defaultValue: controlConfig.default } );
 
-					console.log( controlConfig );
+					//console.log( controlConfig );
 
 					for ( const optionValue of options ) {
 						await page.selectOption( `[data-setting="${ controlName }"]`, optionValue );
-						console.log( optionValue );
+						//console.log( optionValue );
 						// delay for rendering
 						await page.waitForTimeout( 800 );
 						expect( await element.screenshot( {
@@ -150,6 +151,22 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 					await page.selectOption( `[data-setting="${ controlName }"]`, controlConfig.default );
 
 					break;
+
+					case 'choose':
+						const labels = page.locator( `.elementor-control-${ controlName } .elementor-choices > label` );
+						const count = await labels.count();
+						for ( let i = 0; i < count; i++ ) {
+								const label = await labels.nth( i );
+								await label.click();
+								const optionValue = await label.getAttribute( 'original-title' );
+								await page.waitForTimeout( 800 );
+								expect( await element.screenshot( {
+									type: 'jpeg',
+									quality: 70,
+								} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }-${ controlName }-${ optionValue }.jpeg` );
+						}
+
+						break;
 			}
 		}
 	}
