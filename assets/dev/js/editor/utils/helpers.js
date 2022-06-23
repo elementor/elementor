@@ -439,28 +439,9 @@ module.exports = {
 			const terms = [];
 
 			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
-				// Here we want to convert the 'condition' format to a 'conditions' format. The first step is to
-				// isolate the term from the negative operator if exists. For example, a condition format can look
-				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
-				const conditionNameParts = conditionName.match( /([\w-]+(?:\[[\w-]+])?)?(!?)$/i ),
-					conditionRealName = conditionNameParts[ 1 ],
-					isNegativeCondition = !! conditionNameParts[ 2 ],
-					controlValue = values[ conditionRealName ];
-				let operator;
+				const convertedCondition = elementor.conditions.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
 
-				if ( Array.isArray( conditionValue ) && conditionValue.length ) {
-					operator = isNegativeCondition ? '!in' : 'in';
-				} else if ( Array.isArray( controlValue ) && controlValue.length ) {
-					operator = isNegativeCondition ? '!contains' : 'contains';
-				} else if ( isNegativeCondition ) {
-					operator = '!==';
-				}
-
-				terms.push( {
-					name: conditionRealName,
-					operator: operator,
-					value: conditionValue,
-				} );
+				terms.push( convertedCondition );
 			} );
 
 			conditions = {
