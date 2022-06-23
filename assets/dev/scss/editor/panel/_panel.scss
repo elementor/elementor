@@ -52,6 +52,7 @@
 	&.e-panel-docked {
 		&#elementor-panel {
 			width: var( --e-editor-panel-width--docked );
+			z-index: 900;
 		}
 
 		&#elementor-inspector {

@@ -4,7 +4,7 @@
 	&__popover {
 		// Default panel width is 300px. 288px width positions it at the center of the panel by default.
 		width: 288px;
-		z-index: 1;
+		z-index: 999;
 		font-size: 12px;
 		@include padding-start(10px);
 

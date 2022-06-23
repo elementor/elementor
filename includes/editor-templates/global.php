@@ -31,7 +31,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
 				<i class="eicon-folder"></i>
 			</div>
-			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
 		<div class="e-view elementor-select-preset">
 			<div class="elementor-select-preset-title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
