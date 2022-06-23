@@ -187,18 +187,36 @@ Then, just add/remove methods and features. Relevant (or interesting) methods to
 - `onDragStart()`
 - `onDragEnd()`
 
-In order to inform the Editor about this new element, add a new `case` under the `getChildView()` method in `/views/base.js`, 
-that imports your newly created element:
+In order to inform the Editor about this new element, register your element:
+[`elmentor.elementsManager.registerElementType()`](../../assets/dev/js/editor/elements/manager.md)
+Example:
+```javascript
+// module.js
+if ( elementorCommon.config.experimentalFeatures.container ) {
+	const ContainerClass = await import( './types/container' );
 
-```JS
-switch ( elType ) {
-	// ...
-	// Other cases
-	// ...
+	this.registerElementType( new ContainerClass() );
+}
+```
+	
+```javascript
+// types/container.js
+export default class Container extends Base {
+	getType() {
+		return 'container';
+	}
 
-	case 'my-awesome-container':
-		ChildView = require( 'elementor-elements/views/my-awesome-container' );
-		break;
+	getView() {
+		return View;
+	}
+
+	getEmptyView() {
+		return EmptyComponent;
+	}
+
+	getModel() {
+		return Model;
+	}
 }
 ```
 
