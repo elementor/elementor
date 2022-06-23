@@ -1034,7 +1034,7 @@ class Controls_Manager {
 				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Page Transitions', 'elementor' ),
 					'messages' => $messages,
-					'link' => 'https://elementor.com/pro/?utm_source=panel-page-transitions&utm_campaign=gopro&utm_medium=wp-dash',
+					'link' => 'https://go.elementor.com/go-pro-page-transitions/',
 				] ),
 			]
 		);
