@@ -439,7 +439,7 @@ module.exports = {
 			const terms = [];
 
 			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
-				const convertedCondition = elementor.controlConditions.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
+				const convertedCondition = elementor.conditions.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
 
 				terms.push( convertedCondition );
 			} );
@@ -450,7 +450,7 @@ module.exports = {
 			};
 		}
 
-		return ! ( conditions && ! elementor.controlConditions.check( conditions, values, controls ) );
+		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
 	cloneObject( object ) {
