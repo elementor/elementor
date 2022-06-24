@@ -19,10 +19,10 @@ export default class BaseError extends Error {
 	/**
 	 * Static helper function to create the error.
 	 *
-	 * @param message
-	 * @param code
-	 * @param data
-	 * @returns {BaseError}
+	 * @param {string} message
+	 * @param {string} code
+	 * @param {*}      data
+	 * @return {BaseError} error
 	 */
 	static create( message, code = '', data = [] ) {
 		return new this( message, code, data );
@@ -38,9 +38,9 @@ export default class BaseError extends Error {
 	/**
 	 * Error constructor.
 	 *
-	 * @param code
-	 * @param message
-	 * @param data
+	 * @param {string} message
+	 * @param {string} code
+	 * @param {*}      data
 	 */
 	constructor( message = '', code = '', data = [] ) {
 		super( message );

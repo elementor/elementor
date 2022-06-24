@@ -76,7 +76,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 							{
 								at: index,
 								edit: false,
-							} )
+							} ),
 						);
 						index++;
 					}

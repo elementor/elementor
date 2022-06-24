@@ -37,8 +37,8 @@ export default function KitInformation() {
 				</Panel.Header>
 
 				<Panel.Body>
-					<Grid container spacing={20}>
-						<Grid item md={4}>
+					<Grid container spacing={ 20 }>
+						<Grid item md={ 4 }>
 							<Grid container direction="column">
 								<Grid className="e-app-export-kit-information__field-header" container alignItems="center">
 									<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
@@ -52,7 +52,7 @@ export default function KitInformation() {
 							</Grid>
 						</Grid>
 
-						<Grid item md={4}>
+						<Grid item md={ 4 }>
 							<Grid className="e-app-export-kit-information__field-header" container alignItems="center">
 								<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
 									{ __( 'Kit Description', 'elementor' ) }

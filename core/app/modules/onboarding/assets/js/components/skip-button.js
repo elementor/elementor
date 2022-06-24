@@ -40,7 +40,7 @@ export default function SkipButton( props ) {
 		}
 	};
 
-	return <Button buttonSettings={ button } className={ className } type="skip"/>;
+	return <Button buttonSettings={ button } className={ className } type="skip" />;
 }
 
 SkipButton.propTypes = {

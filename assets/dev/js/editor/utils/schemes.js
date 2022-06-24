@@ -38,7 +38,7 @@ Schemes = function() {
 			controlsStack,
 			( controlStyles ) => self.getSchemeValue( controlStyles.scheme.type, controlStyles.scheme.value, controlStyles.scheme.key ).value,
 			[ '{{WRAPPER}}' ],
-			[ settings.selectorWrapperPrefix + widgetType ]
+			[ settings.selectorWrapperPrefix + widgetType ],
 		);
 	};
 

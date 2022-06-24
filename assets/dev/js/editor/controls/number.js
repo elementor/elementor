@@ -12,7 +12,7 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 		},
 	},
 
-	registerValidators: function() {
+	registerValidators() {
 		ControlBaseDataView.prototype.registerValidators.apply( this, arguments );
 
 		var validationTerms = {},
@@ -28,7 +28,7 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 
 		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
 			this.addValidator( new this.validatorTypes.Number( {
-				validationTerms: validationTerms,
+				validationTerms,
 			} ) );
 		}
 	},

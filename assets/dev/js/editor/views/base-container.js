@@ -3,21 +3,21 @@
  * @extends {Marionette.CompositeView}
  */
 module.exports = Marionette.CompositeView.extend( {
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			view: this,
 		};
 	},
 
-	getBehavior: function( name ) {
+	getBehavior( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
-	initialize: function() {
+	initialize() {
 		this.collection = this.model.get( 'elements' );
 	},
 
-	addChildModel: function( model, options ) {
+	addChildModel( model, options ) {
 		return this.collection.add( model, options, true );
 	},
 
@@ -97,8 +97,6 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
-		let container = this.getContainer();
-
 		if ( model instanceof Backbone.Model ) {
 			model = model.toJSON();
 		}
@@ -119,6 +117,7 @@ module.exports = Marionette.CompositeView.extend( {
 			title: elementor.helpers.getModelLabel( model ),
 		} );
 
+		let container = this.getContainer();
 		if ( options.shouldWrap ) {
 			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
 
@@ -196,7 +195,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return 'add';
 	},
 
-	cloneItem: function( item ) {
+	cloneItem( item ) {
 		var self = this;
 
 		if ( item instanceof Backbone.Model ) {
@@ -214,7 +213,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return item;
 	},
 
-	lookup: function() {
+	lookup() {
 		let element = this;
 
 		if ( element.isDisconnected() ) {
@@ -224,11 +223,11 @@ module.exports = Marionette.CompositeView.extend( {
 		return element;
 	},
 
-	isDisconnected: function() {
+	isDisconnected() {
 		return this.isDestroyed || ! this.el.isConnected;
 	},
 
-	isCollectionFilled: function() {
+	isCollectionFilled() {
 		return false;
 	},
 } );

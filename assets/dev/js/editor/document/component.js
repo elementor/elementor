@@ -11,7 +11,7 @@ export default class Component extends ComponentBase {
 
 	registerAPI() {
 		Object.values( components ).forEach( ( ComponentClass ) =>
-			$e.components.register( new ComponentClass )
+			$e.components.register( new ComponentClass ),
 		);
 
 		super.registerAPI();
@@ -63,7 +63,7 @@ export default class Component extends ComponentBase {
 					elementor.getPreviewView().children,
 					'id',
 					id,
-					false
+					false,
 				);
 
 				return elements ? elements[ 0 ] : false;
