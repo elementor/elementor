@@ -38,7 +38,7 @@ module.exports = BaseSettings.extend( {
 				elements: elementor.elements,
 			} ),
 			container = new elementorModules.editor.Container( {
-				type: type,
+				type,
 				id: editModel.id,
 				model: editModel,
 				settings: editModel.get( 'settings' ),

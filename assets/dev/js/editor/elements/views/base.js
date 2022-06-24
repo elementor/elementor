@@ -9,12 +9,12 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 /**
  * @typedef {{}} DataBinding
  * @property {DOMStringMap} dataset
- * @property {HTMLElement} el
+ * @property {HTMLElement}  el
  */
 
 /**
  * @name BaseElementView
- * @extends {BaseContainer}
+ * @augments {BaseContainer}
  */
 BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
@@ -684,10 +684,10 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * Render linked data.
 	 *
-	 * @param {Object} settings
+	 * @param {Object}              settings
 	 * @param {Array.<DataBinding>} dataBindings
 	 *
-	 * @returns {boolean} - false on fail.
+	 * @return {boolean} - false on fail.
 	 */
 	renderDataBindings( settings, dataBindings ) {
 		if ( ! this.dataBindings?.length ) {

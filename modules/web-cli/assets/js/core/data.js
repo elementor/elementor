@@ -296,7 +296,7 @@ export default class Data extends Commands {
 			nonce = elementorWebCliConfig.nonce,
 			params = {
 				signal: requestData.args?.options?.signal,
-				credentials: 'include', // cookies is required for wp reset.
+				credentials: 'include', // Cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
 

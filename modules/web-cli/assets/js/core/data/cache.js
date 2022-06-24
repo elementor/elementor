@@ -150,7 +150,7 @@ export default class Cache {
 		let response = {};
 
 		// Simulate response from cache.
-		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /*string*/ endpointValue ] ) => {
+		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /* String*/ endpointValue ] ) => {
 			if ( endpointValue && endpoint.includes( endpointKey ) ) {
 				// Assuming it is a specific endpoint.
 				const oldData = endpointValue,

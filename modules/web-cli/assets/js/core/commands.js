@@ -37,7 +37,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 				Deprecation.deprecated(
 					'$e.commands.classes',
 					'3.7.0',
-					'$e.commands.getCommandClass(), $e.commandsInternal.getCommandClass(), $e.data.getCommandClass(), $e.routes.getCommandClass() according to the requested command infra-structure,'
+					'$e.commands.getCommandClass(), $e.commandsInternal.getCommandClass(), $e.data.getCommandClass(), $e.routes.getCommandClass() according to the requested command infra-structure,',
 				);
 
 				return {
@@ -276,8 +276,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Responsible to add current command to trace and trigger 'run:before' event.
 	 * Run before command.
 	 *
-	 * @param {string} command
-	 * @param {{}} args
+	 * @param {string}  command
+	 * @param {{}}      args
 	 * @param {boolean} [addTrace=true]
 	 */
 	beforeRun( command, args = {}, addTrace = true ) {
@@ -362,7 +362,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {CommandBase} instance
 	 *
-	 * @returns {boolean|Promise<*>}
+	 * @return {boolean|Promise<*>}
 	 */
 	runInstance( instance ) {
 		let results = null;
@@ -394,9 +394,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Called on run() after runInstance(), to manipulate results & apply 'after' hooks.
 	 *
 	 * @param {CommandBase} instance
-	 * @param {*} result
+	 * @param {*}           result
 	 *
-	 * @returns {Promise<*>|*}
+	 * @return {Promise<*>|*}
 	 */
 	applyRunAfter( instance, result ) {
 		// TODO: Temp code determine if it's a jQuery deferred object.
@@ -430,7 +430,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Called on applyRunAfterSync() after runInstance(), to handle results.
 	 *
 	 * @param {CommandBase} instance
-	 * @param {*} result
+	 * @param {*}           result
 	 */
 	applyRunAfterSync( instance, result ) {
 		// Run Data hooks.
@@ -449,7 +449,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Called on applyRunAfter() after runInstance().
 	 *
 	 * @param {CommandBase} instance
-	 * @param {*} result
+	 * @param {*}           result
 	 */
 	applyRunAfterAsync( instance, result ) {
 		// Override initial result ( promise ) to await onAfter promises, first!.
@@ -472,7 +472,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Awaits all the promises, before releasing the command.
 	 *
 	 * @param {CommandBase} instance
-	 * @param {*} result
+	 * @param {*}           result
 	 */
 	async applyRunAfterAsyncResult( instance, result ) {
 		// Run Data hooks.
@@ -496,9 +496,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Responsible to to clear command from trace, and run 'run:after' event.
 	 * Method fired after the command runs.
 	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} results
+	 * @param {string}  command
+	 * @param {{}}      args
+	 * @param {*}       results
 	 * @param {boolean} [removeTrace=true]
 	 */
 	afterRun( command, args, results = undefined, removeTrace = true ) {
@@ -516,7 +516,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-	 * @param {Error} e
+	 * @param {Error}       e
 	 * @param {CommandBase} instance
 	 */
 	catchApply( e, instance ) {

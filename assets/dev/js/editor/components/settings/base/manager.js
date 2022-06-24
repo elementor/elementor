@@ -58,7 +58,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 
 		const container = new elementorModules.editor.Container( {
-			type: type,
+			type,
 			id: type,
 			model: editModel,
 			settings: editModel.get( 'settings' ),

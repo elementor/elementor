@@ -29,7 +29,7 @@
 
 			case 'innerSection':
 				result = this.createInnerSection(
-					this.createSection( 1, true )
+					this.createSection( 1, true ),
 				);
 				break;
 		}
@@ -38,6 +38,8 @@
 	}
 
 	/**
+	 * @param  eContainer
+	 * @param  settings
 	 * @return {Container}
 	 */
 	static createWrappedButton( eContainer = null, settings = {} ) {

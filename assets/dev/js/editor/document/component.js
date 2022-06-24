@@ -19,7 +19,7 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return {
-			//example: ( args ) => ( new Commands.Example( args ).run() ),
+			// Example: ( args ) => ( new Commands.Example( args ).run() ),
 		};
 	}
 

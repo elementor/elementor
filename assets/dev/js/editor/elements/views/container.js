@@ -182,9 +182,10 @@ const ContainerView = BaseElementView.extend( {
 
 	/**
 	 * Insert a new container inside an existing container.
+	 *
 	 * @since 3.7.0
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	addNewContainer() {
 		/* Check if the current container has a parent container */

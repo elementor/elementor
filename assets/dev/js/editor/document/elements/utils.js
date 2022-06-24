@@ -1,10 +1,10 @@
 /**
  * Add element to Redux state BY REFERENCE using Immer.
  *
- * @param {object} element - Element model data as JSON.
- * @param {object} documentState - Document state from Redux reducer.
- * @param {string} parentId - Parent element ID.
- * @param {number} index - New index to insert at.
+ * @param {Object} element       - Element model data as JSON.
+ * @param {Object} documentState - Document state from Redux reducer.
+ * @param {string} parentId      - Parent element ID.
+ * @param {number} index         - New index to insert at.
  */
 export function addElementToDocumentState( element, documentState, parentId = 'document', index ) {
 	const parent = documentState[ parentId ];
@@ -43,9 +43,9 @@ export function addElementToDocumentState( element, documentState, parentId = 'd
 /**
  * Remove element from Redux state BY REFERENCE using Immer.
  *
- * @param {object} elementId - Element ID to remove.
- * @param {string} parentId - Parent element ID.
- * @param {object} documentState - Document state from Redux reducer.
+ * @param {Object} elementId     - Element ID to remove.
+ * @param {string} parentId      - Parent element ID.
+ * @param {Object} documentState - Document state from Redux reducer.
  */
 export function removeElementFromDocumentState( elementId, parentId, documentState ) {
 	const element = documentState[ elementId ],

@@ -1246,7 +1246,7 @@ export default class EditorBase extends Marionette.Application {
 
 		jQuery.get( debugUrl, () => {
 			this.showFatalErrorDialog( dialogOptions );
-		} ).fail( ( response ) => { //Iframe can't be loaded
+		} ).fail( ( response ) => { // Iframe can't be loaded
 			this.showFatalErrorDialog( {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
@@ -1531,7 +1531,7 @@ export default class EditorBase extends Marionette.Application {
 				get() {
 					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
 					elementorDevTools.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', replacement );
-					// return from current document.
+					// Return from current document.
 					return data.value();
 				},
 				set() {

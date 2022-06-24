@@ -176,7 +176,7 @@ PanelMenu.createExitIntroductionDialog = () => {
 		},
 	} );
 
-	//Edit the template inside the dialog
+	// Edit the template inside the dialog
 	const messageContainer = introduction.getDialog().getElements().message[ 0 ],
 		select = messageContainer.querySelector( '#exit-to-preferences' ),
 		link = messageContainer.querySelector( '#user-preferences' );

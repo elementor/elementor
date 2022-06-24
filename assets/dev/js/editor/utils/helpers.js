@@ -103,7 +103,7 @@ module.exports = {
 		const self = this;
 		this.fetchInlineSvg( value.url, ( data ) => {
 			if ( data ) {
-				self._inlineSvg[ value.id ] = data; //$( data ).find( 'svg' )[ 0 ].outerHTML;
+				self._inlineSvg[ value.id ] = data; // $( data ).find( 'svg' )[ 0 ].outerHTML;
 				if ( view ) {
 					view.render();
 				}
@@ -224,7 +224,7 @@ module.exports = {
 		if ( mapping[ fa4Value ] ) {
 			return mapping[ fa4Value ];
 		}
-		// every thing else is converted to solid
+		// Every thing else is converted to solid
 		return {
 			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
 			library: 'fa-solid',

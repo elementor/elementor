@@ -36,7 +36,7 @@ const WidgetView = BaseWidget.extend( {
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
@@ -118,7 +118,7 @@ const WidgetView = BaseWidget.extend( {
 		}
 	},
 
-	onRender: function() {
+	onRender() {
 		var self = this;
 
 		BaseWidget.prototype.onRender.apply( self, arguments );

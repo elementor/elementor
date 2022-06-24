@@ -114,7 +114,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions + ',svg';
 		} );
 
-		// restore allowed upload extensions
+		// Restore allowed upload extensions
 		this.frame.on( 'close', () => {
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
 		} );

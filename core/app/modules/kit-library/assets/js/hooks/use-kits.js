@@ -44,7 +44,7 @@ const kitsPipeFunctions = {
 	},
 
 	/**
-	 * filter by search term.
+	 * Filter by search term.
 	 *
 	 * @param {Array<*>} data
 	 * @param {*}        queryParams

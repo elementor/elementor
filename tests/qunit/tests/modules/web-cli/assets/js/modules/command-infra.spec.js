@@ -7,7 +7,7 @@ jQuery( () => {
 			QUnit.test( 'constructor(): Doing it wrong', ( assert ) => {
 				assert.throws(
 					() => new CommandInfra( {} ),
-					new RangeError( 'Doing it wrong: Each command type should have `registerConfig`.' )
+					new RangeError( 'Doing it wrong: Each command type should have `registerConfig`.' ),
 				);
 			} );
 
@@ -18,7 +18,7 @@ jQuery( () => {
 
 						instance.apply( {} );
 					},
-					new Error( 'CommandInfraMock.apply() should be implemented, please provide \'apply\' functionality.' )
+					new Error( 'CommandInfraMock.apply() should be implemented, please provide \'apply\' functionality.' ),
 				);
 			} );
 

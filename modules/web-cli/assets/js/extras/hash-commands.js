@@ -4,7 +4,7 @@ import Console from 'elementor-api/utils/console';
  * @typedef HashCommand
  * @property {string} method,
  * @property {string} command
- * @property {object} args
+ * @property {Object} args
  */
 
 export default class HashCommands {

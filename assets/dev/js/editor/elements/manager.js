@@ -19,7 +19,7 @@ export default class ElementsManager {
 	 *
 	 * @param {string} type
 	 *
-	 * @returns {ElementBase}
+	 * @return {ElementBase}
 	 */
 	getElementTypeClass( type ) {
 		let typeClass = this.elementTypes[ type ];

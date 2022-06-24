@@ -73,7 +73,7 @@ function usePreviewUrl( data ) {
 			return null;
 		}
 
-		const documentId = new URLSearchParams( location.pathname.split( '?' )?.[1] ).get( 'document_id' ),
+		const documentId = new URLSearchParams( location.pathname.split( '?' )?.[ 1 ] ).get( 'document_id' ),
 			utm = '?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=preview',
 			previewUrl = data.previewUrl ? data.previewUrl + utm : data.previewUrl;
 

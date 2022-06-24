@@ -13,7 +13,7 @@ export class Populate extends $e.modules.editor.CommandContainerInternalBase {
 			this.component.store.actions.populate( {
 				documentId: document.id,
 				elements,
-			} )
+			} ),
 		);
 
 		// TODO: BC for initializing Marionette views.
@@ -32,7 +32,7 @@ export class Populate extends $e.modules.editor.CommandContainerInternalBase {
 
 		addElementToDocumentState(
 			elements,
-			state[ documentId ]
+			state[ documentId ],
 		);
 	}
 }

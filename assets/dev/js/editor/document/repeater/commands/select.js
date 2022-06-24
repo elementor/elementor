@@ -48,7 +48,7 @@ export class Select extends $e.modules.editor.document.CommandHistoryBase {
 	 * @inheritDoc
 	 *
 	 * @param {Container} container
-	 * @param {number} index
+	 * @param {number}    index
 	 */
 	apply( { container, index } ) {
 		const editSettings = container.model.get( 'editSettings' );

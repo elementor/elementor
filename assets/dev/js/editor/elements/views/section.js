@@ -33,7 +33,7 @@ const SectionView = BaseElementView.extend( {
 	},
 
 	addChildModel( model ) {
-		/// TODO: maybe should be part of $e.hooks.
+		// TODO: maybe should be part of $e.hooks.
 		const isModelInstance = model instanceof Backbone.Model,
 			isInner = this.isInner();
 

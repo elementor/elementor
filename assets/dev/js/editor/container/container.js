@@ -575,7 +575,7 @@ export default class Container extends ArgsObject {
 
 		let value;
 
-		// it's a global settings with additional controls in group.
+		// It's a global settings with additional controls in group.
 		if ( control.groupType ) {
 			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
 			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();

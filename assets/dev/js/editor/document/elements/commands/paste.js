@@ -89,7 +89,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 							model: {
 								elType: 'section',
 							},
-							columns: 0, // section with no columns.
+							columns: 0, // Section with no columns.
 							options: {
 								at: ++index,
 								edit: false,

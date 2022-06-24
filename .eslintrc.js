@@ -39,7 +39,7 @@ module.exports = {
 		},
 	},
 	rules: {
-		// custom canceled rules
+		// Custom canceled rules
 		'no-var': 'off',
 		'wrap-iife': 'off',
 		'computed-property-spacing': [ 'error', 'always' ],
@@ -58,7 +58,7 @@ module.exports = {
 		'array-bracket-spacing': [ 'error', 'always' ],
 		'no-else-return': 'error',
 		'no-console': 'warn',
-		//end of custom canceled rules
+		// End of custom canceled rules
 		'arrow-parens': [ 'error', 'always' ],
 		'brace-style': [ 'error', '1tbs' ],
 		'jsx-quotes': 'error',

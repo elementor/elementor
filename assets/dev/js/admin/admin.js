@@ -362,7 +362,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 		 *
 		 * @since 3.6.0
 		 */
-		openLinksInNewTab: function() {
+		openLinksInNewTab() {
 			const elements = [
 				this.elements.$menuGetHelpLink,
 				this.elements.$menuGoProLink,

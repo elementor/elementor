@@ -125,7 +125,7 @@ export default class extends elementorModules.Module {
 			activeTab = icons[ 0 ].name;
 		}
 
-		// selected Library exists
+		// Selected Library exists
 		if ( ! Object.keys( icons ).some( ( library ) => library === activeTab ) ) {
 			activeTab = icons[ 0 ].name;
 		}

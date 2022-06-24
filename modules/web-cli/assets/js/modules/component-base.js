@@ -174,9 +174,9 @@ export default class ComponentBase extends Module {
 	}
 
 	/**
-	 * @param {string} command
+	 * @param {string}                           command
 	 * @param {(function()|typeof CommandInfra)} context
-	 * @param {'default'|'internal'|'data'} commandsType
+	 * @param {'default'|'internal'|'data'}      commandsType
 	 */
 	registerCommand( command, context, commandsType = 'default' ) {
 		let commandsManager;
@@ -413,7 +413,7 @@ export default class ComponentBase extends Module {
 
 	/**
 	 * @param {Object.<CommandBase>} commandsFromImport
-	 * @returns {{}} imported commands
+	 * @return {{}} imported commands
 	 */
 	importCommands( commandsFromImport ) {
 		const commands = {};

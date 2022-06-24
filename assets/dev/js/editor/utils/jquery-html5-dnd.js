@@ -246,7 +246,7 @@
 							if ( -1 !== draggableGroups.groups.indexOf( groupName ) ) {
 								isGroupMatch = true;
 
-								return false; // stops the forEach from extra loops
+								return false; // Stops the forEach from extra loops
 							}
 						} );
 					} catch ( e ) {

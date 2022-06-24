@@ -136,7 +136,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
-			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' )
+			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' ),
 		);
 
 		$requestedContent.removeAttr( 'hidden' );
@@ -192,7 +192,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 	}
 
 	/**
-	 * @param {string} tabIndex
+	 * @param {string}  tabIndex
 	 * @param {boolean} fromUser - Whether the call is caused by the user or internal.
 	 */
 	changeActiveTab( tabIndex, fromUser = false ) {

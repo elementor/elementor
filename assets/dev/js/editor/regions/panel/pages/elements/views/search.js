@@ -13,8 +13,8 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'keydown @ui.input': 'onInputChanged', // used to capture the ctrl+V
-		'input @ui.input': 'onInputChanged', // will capture the context menu paste
+		'keydown @ui.input': 'onInputChanged', // Used to capture the ctrl+V
+		'input @ui.input': 'onInputChanged', // Will capture the context menu paste
 	},
 
 	clearInput() {
