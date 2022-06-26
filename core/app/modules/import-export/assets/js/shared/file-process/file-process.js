@@ -8,6 +8,7 @@ export default function FileProcess( props ) {
 		<WizardStep
 			className={ arrayToClassName( [ 'e-app-import-export-file-process', props.className ] ) }
 			icon="eicon-loading eicon-animation-spin"
+			// eslint-disable-next-line @wordpress/i18n-ellipsis
 			heading={ __( 'Setting up your kit...', 'elementor' ) }
 			description={
 				<>

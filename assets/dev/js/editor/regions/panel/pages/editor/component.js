@@ -38,7 +38,7 @@ export default class Component extends ComponentBase {
 
 		elementor.getPanelView().setPage( 'editor', title, {
 			tab,
-			model: model,
+			model,
 			controls: elementor.getElementControls( model ),
 			editedElementView: view,
 		} );
