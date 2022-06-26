@@ -12,7 +12,7 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 					$e.store.get( 'document/elements' ).actions.populate( {
 						documentId: elementor.documents.getCurrentId(),
 						elements: structuredClone( data ),
-					} )
+					} ),
 				);
 			}
 
@@ -41,7 +41,7 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 			$e.store.dispatch(
 				this.component.store.actions.empty( {
 					documentId: elementor.documents.getCurrentId(),
-				} )
+				} ),
 			);
 
 			return;

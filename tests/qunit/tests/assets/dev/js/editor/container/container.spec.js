@@ -17,7 +17,7 @@ jQuery( () => {
 				},
 				container = new elementorModules.editor.Container( fakeArgs );
 
-			assert.equal( !! container, true, );
+			assert.equal( !! container, true );
 		} );
 
 		QUnit.test( 'constructor(): without args', ( assert ) => {
@@ -63,10 +63,12 @@ jQuery( () => {
 			$e.data.setCache( $e.components.get( 'globals' ), 'globals/colors', {}, {
 				[ id ]: {
 					id,
+					// eslint-disable-next-line camelcase
 					value: background_color,
 				},
 			} );
 
+			// eslint-disable-next-line camelcase
 			GlobalsHelper.enable( eButton, { background_color } );
 
 			// Act.

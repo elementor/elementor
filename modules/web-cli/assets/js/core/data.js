@@ -5,26 +5,32 @@ import Cache from './data/cache';
 /**
  * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
  */
-
 /**
- * @typedef {{}} RequestData
- * @property {ComponentBase} component
- * @property {string} command
- * @property {{}} args
- * @property {DataTypes} type
- * @property {number} timestamp
- * @property {string} endpoint
- *
- * @property {string} [baseEndpointURL]
- * @property {string} [namespace]
- * @property {string} [version]
- * @property {('hit'|'miss')} [cache]
+ * @typedef {import('../modules/component-base')} ComponentBase
+ */
+/**
+ * @typedef {{}} RequestInfo
  */
 
 /**
- * @typedef {object} ExtractedCommand
- * @property {string} command
- * @property {object} args
+ * @typedef {{}} RequestData
+ * @property {ComponentBase}  component         component
+ * @property {string}         command           command
+ * @property {{}}             args              arguments
+ * @property {DataTypes}      type              type
+ * @property {number}         timestamp         timestamp
+ * @property {string}         endpoint          endpoint
+ *
+ * @property {string}         [baseEndpointURL] baseEndpointURL
+ * @property {string}         [namespace]       namespace
+ * @property {string}         [version]         version
+ * @property {('hit'|'miss')} [cache]           cache
+ */
+
+/**
+ * @typedef {Object} ExtractedCommand
+ * @property {string} command command
+ * @property {Object} args    arguments
  */
 
 // TODO: Return it from the server. Original at WP_REST_Server.
@@ -56,7 +62,7 @@ export default class Data extends Commands {
 	 *
 	 * @param {DataTypes} type
 	 *
-	 * @returns {string|boolean}
+	 * @return {string|boolean} HTTP Method
 	 */
 	getHTTPMethod( type ) {
 		switch ( type ) {
@@ -86,7 +92,7 @@ export default class Data extends Commands {
 	 *
 	 * @param {DataTypes} type
 	 *
-	 * @returns {[string]|boolean}
+	 * @return {[string]|boolean} allowed HTTP methods
 	 */
 	getAllowedMethods( type ) {
 		switch ( type ) {
@@ -115,9 +121,9 @@ export default class Data extends Commands {
 	 * Get remote endpoint address.
 	 *
 	 * @param {RequestData} requestData
-	 * @param {string} [endpoint=requestData.endpoint]
+	 * @param {string}      [endpoint=requestData.endpoint]
 	 *
-	 * @returns {string}
+	 * @return {string} endpoint address
 	 */
 	getEndpointURL( requestData, endpoint = requestData.endpoint ) {
 		// Allow to request data override default namespace and args.
@@ -139,11 +145,11 @@ export default class Data extends Commands {
 	 *
 	 * TODO: Find a better solution.
 	 *
-	 * @param {string} command
-	 * @param {{}} args
+	 * @param {string}      command
+	 * @param {{}}          args
 	 * @param {string|null} [format]
 	 *
-	 * @returns {string} endpoint
+	 * @return {string} endpoint
 	 */
 	commandToEndpoint( command, args, format = null ) {
 		let endpoint = command;
@@ -189,7 +195,7 @@ export default class Data extends Commands {
 		if ( args.query && Object.values( args.query ).length ) {
 			// Sorting since the endpoint later will be used as key to store the cache.
 			const queryEntries = Object.entries( args.query ).sort(
-				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
+				( [ aKey ], [ bKey ] ) => aKey - bKey, // Sort by param name.
 			);
 
 			// `args.query` will become a part of GET params.
@@ -218,9 +224,9 @@ export default class Data extends Commands {
 	 * If the command have query convert it to args.
 	 *
 	 * @param {string} command
-	 * @param {object} args
+	 * @param {Object} args
 	 *
-	 * @returns {ExtractedCommand} command
+	 * @return {ExtractedCommand} command
 	 */
 	commandExtractArgs( command, args = {} ) {
 		if ( command?.includes( '?' ) ) {
@@ -250,7 +256,7 @@ export default class Data extends Commands {
 	 * Validate request data requirements.
 	 *
 	 * @param {RequestData} requestData
-	 * @param {boolean} [requireArgsData]
+	 * @param {boolean}     [requireArgsData]
 	 */
 	validateRequestData( requestData, requireArgsData = false ) {
 		// Do not validate if its already valid.
@@ -283,14 +289,14 @@ export default class Data extends Commands {
 	 *
 	 * @param {RequestData} requestData
 	 *
-	 * @returns {{}} params
+	 * @return {{}} params
 	 */
 	prepareHeaders( requestData ) {
 		const type = requestData.type,
 			nonce = elementorWebCliConfig.nonce,
 			params = {
 				signal: requestData.args?.options?.signal,
-				credentials: 'include', // cookies is required for wp reset.
+				credentials: 'include', // Cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
 
@@ -336,7 +342,7 @@ export default class Data extends Commands {
 	 *
 	 * @param {RequestData} requestData
 	 *
-	 * @returns {string} Endpoint URL
+	 * @return {string} Endpoint URL
 	 */
 	prepareEndpoint( requestData ) {
 		const splitEndpoint = requestData.endpoint.split( '?' ),
@@ -356,16 +362,15 @@ export default class Data extends Commands {
 	/**
 	 * Function fetch().
 	 *
-	 * @param {RequestData} requestData
-	 * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
+	 * @param {RequestData}                                  requestData
+	 * @param {function(RequestInfo,*) : Promise<Response> } [fetchAPI]
 	 *
-	 * @returns {Promise<Response>}
+	 * @return {Promise<Response>} response
 	 */
 	fetch( requestData, fetchAPI = window.fetch ) {
 		requestData.cache = 'miss';
 
-		const params = this.prepareHeaders( requestData ),
-			refresh = requestData.args.options?.refresh,
+		const refresh = requestData.args.options?.refresh,
 			getCache = 'get' === requestData.type && ! refresh,
 			saveCache = [ 'create', 'get' ].includes( requestData.type ) && ! refresh;
 
@@ -377,6 +382,7 @@ export default class Data extends Commands {
 			}
 		}
 
+		const params = this.prepareHeaders( requestData );
 		return new Promise( async ( resolve, reject ) => {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
@@ -413,10 +419,10 @@ export default class Data extends Commands {
 	 * Function getCache().
 	 *
 	 * @param {ComponentBase} component
-	 * @param {string} command
-	 * @param {{}} query
+	 * @param {string}        command
+	 * @param {{}}            query
 	 *
-	 * @returns {{}}
+	 * @return {{}} cache object
 	 */
 	getCache( component, command, query = {} ) {
 		const args = { query };
@@ -433,9 +439,9 @@ export default class Data extends Commands {
 	 * Function setCache().
 	 *
 	 * @param {ComponentBase} component
-	 * @param {string} command
-	 * @param {{}} query
-	 * @param {*} data
+	 * @param {string}        command
+	 * @param {{}}            query
+	 * @param {*}             data
 	 */
 	setCache( component, command, query, data ) {
 		const args = { query };
@@ -446,7 +452,7 @@ export default class Data extends Commands {
 				command,
 				args,
 			},
-			data
+			data,
 		);
 	}
 
@@ -457,9 +463,9 @@ export default class Data extends Commands {
 	 * and 'setCache' will create or update.
 	 *
 	 * @param {ComponentBase} component
-	 * @param {string} command
-	 * @param {{}} query
-	 * @param {*} data
+	 * @param {string}        command
+	 * @param {{}}            query
+	 * @param {*}             data
 	 */
 	updateCache( component, command, query, data ) {
 		const args = { query, data };
@@ -476,8 +482,8 @@ export default class Data extends Commands {
 	 * Function deleteCache().
 	 *
 	 * @param {ComponentBase} component
-	 * @param {string} command
-	 * @param {{}} query
+	 * @param {string}        command
+	 * @param {{}}            query
 	 */
 	deleteCache( component, command, query = {} ) {
 		const args = { query };
@@ -487,7 +493,7 @@ export default class Data extends Commands {
 				component,
 				command,
 				args,
-			}
+			},
 		);
 	}
 
@@ -509,11 +515,11 @@ export default class Data extends Commands {
 	 * Run a command, that will be translated as endpoint for creating new data.
 	 *
 	 * @param {string} command
-	 * @param {*} data
-	 * @param {{}} query
-	 * @param {{}} options
+	 * @param {*}      data
+	 * @param {{}}     query
+	 * @param {{}}     options
 	 *
-	 * @returns {*} result
+	 * @return {*} result
 	 */
 	create( command, data, query = {}, options = {} ) {
 		return this.run( 'create', command, { query, options, data } );
@@ -525,10 +531,10 @@ export default class Data extends Commands {
 	 * Run a command, that will be translated as endpoint for deleting data.
 	 *
 	 * @param {string} command
-	 * @param {{}} query
-	 * @param {{}} options
+	 * @param {{}}     query
+	 * @param {{}}     options
 	 *
-	 * @returns {*} result
+	 * @return {*} result
 	 */
 	delete( command, query = {}, options = {} ) {
 		return this.run( 'delete', command, { query, options } );
@@ -540,10 +546,10 @@ export default class Data extends Commands {
 	 * Run a command, that will be translated as endpoint for getting data.
 	 *
 	 * @param {string} command
-	 * @param {{}} query
-	 * @param {{}} options
+	 * @param {{}}     query
+	 * @param {{}}     options
 	 *
-	 * @returns {*} result
+	 * @return {*} result
 	 */
 	get( command, query = {}, options = {} ) {
 		return this.run( 'get', command, { query, options } );
@@ -555,11 +561,11 @@ export default class Data extends Commands {
 	 * Run a command, that will be translated as endpoint for updating data.
 	 *
 	 * @param {string} command
-	 * @param {*} data
-	 * @param {{}} query
-	 * @param {{}} options
+	 * @param {*}      data
+	 * @param {{}}     query
+	 * @param {{}}     options
 	 *
-	 * @returns {*} result
+	 * @return {*} result
 	 */
 	update( command, data, query = {}, options = {} ) {
 		return this.run( 'update', command, { query, options, data } );
@@ -571,10 +577,10 @@ export default class Data extends Commands {
 	 * Run a command, that will be translated as endpoint for requesting options/information about specific endpoint.
 	 *
 	 * @param {string} command
-	 * @param {{}} query
-	 * @param {{}} options
+	 * @param {{}}     query
+	 * @param {{}}     options
 	 *
-	 * @returns {*} result
+	 * @return {*} result
 	 */
 	options( command, query, options = {} ) {
 		return this.run( 'options', command, { query, options } );
@@ -595,13 +601,13 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * @override
-	 *
 	 * TODO: Add JSDOC typedef for args ( query and options ).
 	 *
 	 * @param {DataTypes} type
-	 * @param {string} command
-	 * @param {{}} args
+	 * @param {string}    command
+	 * @param {{}}        args
+	 *
+	 * @override
 	 */
 	run( type, command, args ) {
 		args.options.type = type;

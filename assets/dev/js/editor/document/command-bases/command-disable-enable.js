@@ -10,14 +10,14 @@ export default class CommandDisableEnable extends CommandHistoryBase {
 	}
 
 	/**
-	 * @returns {string}
+	 * @return {string}
 	 */
 	static getEnableCommand() {
 		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
-	 * @returns {string}
+	 * @return {string}
 	 */
 	static getDisableCommand() {
 		elementorModules.ForceMethodImplementation();
@@ -51,8 +51,8 @@ export default class CommandDisableEnable extends CommandHistoryBase {
 		 *
 		 * @type {string}
 		 */
-		this.type = this.command === this.constructor.getEnableCommand() ?
-			'enable' : 'disable';
+		this.type = this.command === this.constructor.getEnableCommand()
+			? 'enable' : 'disable';
 
 		// Override default logic, since getHistory() depends on `this.type`.
 		super.initialize( args );

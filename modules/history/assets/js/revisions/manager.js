@@ -43,7 +43,7 @@ export default class RevisionsManager {
 	getRevisionDataAsync( id, options ) {
 		_.extend( options, {
 			data: {
-				id: id,
+				id,
 			},
 		} );
 

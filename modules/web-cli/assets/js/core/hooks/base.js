@@ -2,7 +2,11 @@ import Console from 'elementor-api/utils/console';
 import Module from 'elementor-assets-js/modules/imports/module.js';
 import forceMethodImplementation from '../../utils/force-method-implementation';
 
-export default class HooksBase extends Module {
+/**
+ * @typedef {import('../../modules/hook-base')} HookBase
+ */
+
+ export default class HooksBase extends Module {
 	/**
 	 * Function constructor().
 	 *
@@ -62,12 +66,13 @@ export default class HooksBase extends Module {
 		} );
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function getType().
 	 *
 	 * Returns type eg: ( event, hook, etc ... ).
 	 *
-	 * @returns {string} type
+	 * @return {string} type
 	 */
 	getType() {
 		forceMethodImplementation();
@@ -84,7 +89,7 @@ export default class HooksBase extends Module {
 	 *
 	 * @param {boolean} flat
 	 *
-	 * @returns {{}}
+	 * @return {{}} all callbacks
 	 */
 	getAll( flat = false ) {
 		if ( flat ) {
@@ -114,7 +119,7 @@ export default class HooksBase extends Module {
 	 *
 	 * Return current command.
 	 *
-	 * @returns {string}
+	 * @return {string} current command
 	 */
 	getCurrent() {
 		return this.current;
@@ -125,7 +130,7 @@ export default class HooksBase extends Module {
 	 *
 	 * Returns the current used ids.
 	 *
-	 * @returns {Array}
+	 * @return {Array} used IDs
 	 */
 	getUsedIds() {
 		return this.usedIds;
@@ -138,8 +143,8 @@ export default class HooksBase extends Module {
 	 *
 	 * @param {string} event
 	 * @param {string} command
-	 *
-	 * @returns {(array|boolean)} callbacks
+	 * @param {*}      args
+	 * @return {(Array | boolean)} callbacks
 	 */
 	getCallbacks( event, command, args ) {
 		const { containers = [ args.container ] } = args,
@@ -208,11 +213,11 @@ export default class HooksBase extends Module {
 	 *
 	 * Determine if the event should run.
 	 *
-	 * @param {array} callbacks
+	 * @param {Array} callbacks
 	 *
-	 * @return {boolean}
+	 * @return {boolean} true if there are callbacks, otherwise false
 	 *
-	 * @throw {Error}
+	 * @throws {Error}
 	 */
 	shouldRun( callbacks ) {
 		return !! callbacks && callbacks.length;
@@ -223,10 +228,10 @@ export default class HooksBase extends Module {
 	 *
 	 * Register the callback instance.
 	 *
-	 * @param {string} event
+	 * @param {string}   event
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}} Created callback
+	 * @return {{}} Created callback
 	 */
 	register( event, instance ) {
 		const command = instance.getCommand(),
@@ -245,14 +250,14 @@ export default class HooksBase extends Module {
 	 *
 	 * Register callback.
 	 *
-	 * @param {string} id
-	 * @param {string} event
-	 * @param {string} command
+	 * @param {string}   id
+	 * @param {string}   event
+	 * @param {string}   command
 	 * @param {HookBase} instance
-	 * @param {string} containerType
+	 * @param {string}   containerType
 	 *
-	 * TODO: Consider replace with typedef.
-	 * @returns {{callback: *, id: *, isActive: boolean}}
+	 *                                 TODO: Consider replace with typedef.
+	 * @return {{callback: *, id: *, isActive: boolean}} callback
 	 */
 	registerCallback( id, event, command, instance, containerType ) {
 		if ( ! this.callbacks[ event ][ command ] ) {
@@ -272,10 +277,10 @@ export default class HooksBase extends Module {
 			callback: instance.run.bind( instance ),
 			isActive: true,
 
-			activate: function() {
+			activate() {
 				this.isActive = true;
 			},
-			deactivate: function() {
+			deactivate() {
 				this.isActive = false;
 			},
 		};
@@ -306,10 +311,10 @@ export default class HooksBase extends Module {
 	 *
 	 * @param {string} event
 	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param {{}}     args
+	 * @param {*}      result
 	 *
-	 * @returns {*}
+	 * @return {*} results
 	 */
 	run( event, command, args, result = undefined ) {
 		const callbacks = this.getCallbacks( event, command, args );
@@ -332,9 +337,9 @@ export default class HooksBase extends Module {
 	 *
 	 * @param {string} event
 	 * @param {string} command
-	 * @param {array} callbacks
-	 * @param {{}} args
-	 * @param {[]} result
+	 * @param {Array}  callbacks
+	 * @param {{}}     args
+	 * @param {[]}     result
 	 */
 	runCallbacks( event, command, callbacks, args, result ) {
 		const callbacksResult = [];
@@ -381,19 +386,20 @@ export default class HooksBase extends Module {
 		return callbacksResult;
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function runCallback().
 	 *
 	 * Run's the given callback.
 	 *
 	 * @param {string} event
-	 * @param {{}} callback
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param {{}}     callback
+	 * @param {{}}     args
+	 * @param {*}      result
 	 *
-	 * @returns {*}
+	 * @return {*} results
 	 *
-	 * @throw {Error}
+	 * @throws {Error}
 	 */
 	runCallback( event, callback, args, result ) { // eslint-disable-line no-unused-vars
 		forceMethodImplementation();
@@ -405,10 +411,10 @@ export default class HooksBase extends Module {
 	 * Called before run a set of callbacks.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
+	 * @param {{}}     args
 	 * @param {string} event
 	 *
-	 * @throw {Error}
+	 * @throws {Error}
 	 */
 	onRun( command, args, event ) { // eslint-disable-line no-unused-vars
 		forceMethodImplementation();
@@ -420,11 +426,11 @@ export default class HooksBase extends Module {
 	 * Called before a single callback.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
+	 * @param {{}}     args
 	 * @param {string} event
 	 * @param {string} id
 	 *
-	 * @throw {Error}
+	 * @throws {Error}
 	 */
 	onCallback( command, args, event, id ) { // eslint-disable-line no-unused-vars
 		forceMethodImplementation();

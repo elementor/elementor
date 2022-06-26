@@ -9,12 +9,12 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 /**
  * @typedef {{}} DataBinding
  * @property {DOMStringMap} dataset
- * @property {HTMLElement} el
+ * @property {HTMLElement}  el
  */
 
 /**
  * @name BaseElementView
- * @extends {BaseContainer}
+ * @augments {BaseContainer}
  */
 BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
@@ -62,7 +62,7 @@ BaseElementView = BaseContainer.extend( {
 		const behaviors = {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: groups,
+				groups,
 			},
 		};
 
@@ -200,8 +200,8 @@ BaseElementView = BaseContainer.extend( {
 		 *
 		 * This filter allows adding new context menu groups to elements.
 		 *
-		 * @param array customGroups - An array of group objects.
-		 * @param string elementType - The current element type.
+		 * @param  array  customGroups - An array of group objects.
+		 * @param  string elementType - The current element type.
 		 */
 		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
 
@@ -215,9 +215,9 @@ BaseElementView = BaseContainer.extend( {
 				{
 					name: 'delete',
 					icon: 'eicon-trash',
-					title: () => elementor.selection.isMultiple() ?
-							sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length ) :
-							__( 'Delete', 'elementor' ),
+					title: () => elementor.selection.isMultiple()
+							? sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length )
+							: __( 'Delete', 'elementor' ),
 					shortcut: '⌦',
 					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 				},
@@ -227,7 +227,7 @@ BaseElementView = BaseContainer.extend( {
 		return groups;
 	},
 
-	getEditButtons: function() {
+	getEditButtons() {
 		return {};
 	},
 
@@ -253,7 +253,7 @@ BaseElementView = BaseContainer.extend( {
 		this.initControlsCSSParser();
 	},
 
-	getHandlesOverlay: function() {
+	getHandlesOverlay() {
 		const elementType = this.getElementType(),
 			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
 			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
@@ -271,7 +271,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param array editButtons An array of buttons.
+			 * @param  array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons`, editButtons );
 
@@ -284,7 +284,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param array editButtons An array of buttons.
+			 * @param  array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons/${ elementType }`, editButtons );
 		}
@@ -315,7 +315,7 @@ BaseElementView = BaseContainer.extend( {
 		return $handlesOverlay;
 	},
 
-	attachElContent: function( html ) {
+	attachElContent( html ) {
 		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
@@ -441,7 +441,7 @@ BaseElementView = BaseContainer.extend( {
 		return attributes.join( ' ' );
 	},
 
-	isInner: function() {
+	isInner() {
 		return !! this.model.get( 'isInner' );
 	},
 
@@ -535,14 +535,14 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.attr( 'id', customElementID );
 	},
 
-	renderUI: function() {
+	renderUI() {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
 		this.enqueueFonts();
 	},
 
-	runReadyTrigger: function() {
+	runReadyTrigger() {
 		const self = this;
 
 		_.defer( function() {
@@ -567,7 +567,7 @@ BaseElementView = BaseContainer.extend( {
 		return 'elementor-element-' + this.getID();
 	},
 
-	renderHTML: function() {
+	renderHTML() {
 		const templateType = this.getTemplateType(),
 			editModel = this.getEditModel();
 
@@ -588,13 +588,12 @@ BaseElementView = BaseContainer.extend( {
 				isRenderRequired = ! hasChanged;
 
 			_.each( settings.changedAttributes(), ( settingValue, settingKey ) => {
-				const control = settings.getControl( settingKey );
-
 				if ( '_column_size' === settingKey ) {
 					isRenderRequired = true;
 					return;
 				}
 
+				const control = settings.getControl( settingKey );
 				if ( ! control ) {
 					isRenderRequired = true;
 					isContentChanged = true;
@@ -685,10 +684,10 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * Render linked data.
 	 *
-	 * @param {Object} settings
+	 * @param {Object}              settings
 	 * @param {Array.<DataBinding>} dataBindings
 	 *
-	 * @returns {boolean} - false on fail.
+	 * @return {boolean} - false on fail.
 	 */
 	renderDataBindings( settings, dataBindings ) {
 		if ( ! this.dataBindings?.length ) {
@@ -900,11 +899,10 @@ BaseElementView = BaseContainer.extend( {
 		elementor.channels.data.trigger( 'element:destroy', this.model );
 	},
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * On `$el` drag start event.
 	 * Used inside `Draggable` and can be overridden by the extending views.
-	 *
-	 * @return void
 	 */
 	onDragStart() {
 		// TODO: Override if needed.
@@ -913,8 +911,6 @@ BaseElementView = BaseContainer.extend( {
 	/**
 	 * On `$el` drag end event.
 	 * Used inside `Draggable` and can be overridden by the extending views.
-	 *
-	 * @return void
 	 */
 	onDragEnd() {
 		// TODO: Override if needed.
@@ -924,9 +920,9 @@ BaseElementView = BaseContainer.extend( {
 	 * Create a drag helper element.
 	 * Copied from `behaviors/sortable.js` with some refactor.
 	 *
-	 * @return {HTMLDivElement}
+	 * @return {HTMLDivElement} helper
 	 */
-	getDraggableHelper: function() {
+	getDraggableHelper() {
 		const model = this.getEditModel();
 
 		const helper = document.createElement( 'div' );
@@ -946,10 +942,8 @@ BaseElementView = BaseContainer.extend( {
 
 	/**
 	 * Initialize the Droppable instance.
-	 *
-	 * @return void
 	 */
-	initDraggable: function() {
+	initDraggable() {
 		// Init the draggable only for Containers and their children.
 		if ( ! this.$el.hasClass( '.e-container' ) && ! this.$el.parents( '.e-container' ).length ) {
 			return;

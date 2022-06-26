@@ -7,10 +7,10 @@ const DEFAULT_INNER_SECTION_COLUMNS = 2,
 	DEFAULT_MAX_COLUMNS = 10;
 
 const SectionView = BaseElementView.extend( {
-	childViewContainer: function() {
+	childViewContainer() {
 		let containerSelector = '> .elementor-container';
 
-		if ( ! elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+		if ( ! elementorCommon.config.experimentalFeatures.e_dom_optimization ) {
 			containerSelector += ' > .elementor-row';
 		}
 
@@ -21,19 +21,19 @@ const SectionView = BaseElementView.extend( {
 
 	addSectionView: null,
 
-	_checkIsFull: function() {
+	_checkIsFull() {
 		this.toggleSectionIsFull();
 
 		elementorDevTools.deprecation.deprecated( '_checkIsFull', '2.9.0',
 			'toggleSectionIsFull()' );
 	},
 
-	toggleSectionIsFull: function() {
+	toggleSectionIsFull() {
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
 	},
 
-	addChildModel: function( model ) {
-		/// TODO: maybe should be part of $e.hooks.
+	addChildModel( model ) {
+		// TODO: maybe should be part of $e.hooks.
 		const isModelInstance = model instanceof Backbone.Model,
 			isInner = this.isInner();
 
@@ -47,18 +47,18 @@ const SectionView = BaseElementView.extend( {
 		return BaseElementView.prototype.addChildModel.apply( this, arguments );
 	},
 
-	className: function() {
+	className() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
 		return classes + ' elementor-section elementor-' + type + '-section';
 	},
 
-	tagName: function() {
+	tagName() {
 		return this.model.getSetting( 'html_tag' ) || 'section';
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
@@ -71,13 +71,13 @@ const SectionView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
 
-	initialize: function() {
+	initialize() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 	},
 
-	getEditButtons: function() {
+	getEditButtons() {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
@@ -105,7 +105,7 @@ const SectionView = BaseElementView.extend( {
 		return editTools;
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
@@ -124,7 +124,7 @@ const SectionView = BaseElementView.extend( {
 		return groups;
 	},
 
-	getSortableOptions: function() {
+	getSortableOptions() {
 		var sectionConnectClass = this.isInner() ? '.elementor-inner-section' : '.elementor-top-section';
 
 		return {
@@ -136,29 +136,29 @@ const SectionView = BaseElementView.extend( {
 		};
 	},
 
-	getColumnPercentSize: function( element, size ) {
+	getColumnPercentSize( element, size ) {
 		return +( size / element.parent().width() * 100 ).toFixed( 3 );
 	},
 
-	getDefaultStructure: function() {
+	getDefaultStructure() {
 		return this.collection.length + '0';
 	},
 
-	getStructure: function() {
+	getStructure() {
 		return this.model.getSetting( 'structure' );
 	},
 
-	getColumnAt: function( index ) {
+	getColumnAt( index ) {
 		var model = this.collection.at( index );
 
 		return model ? this.children.findByModelCid( model.cid ) : null;
 	},
 
-	getNextColumn: function( columnView ) {
+	getNextColumn( columnView ) {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) + 1 );
 	},
 
-	getPreviousColumn: function( columnView ) {
+	getPreviousColumn( columnView ) {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
@@ -173,7 +173,7 @@ const SectionView = BaseElementView.extend( {
 		return nextView.getContainer();
 	},
 
-	setStructure: function( structure, shouldAdjustColumns = true ) {
+	setStructure( structure, shouldAdjustColumns = true ) {
 		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
 
 		if ( +parsedStructure.columnsCount !== this.collection.length ) {
@@ -191,7 +191,7 @@ const SectionView = BaseElementView.extend( {
 		}
 	},
 
-	adjustColumns: function() {
+	adjustColumns() {
 		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
 
 		this.children.each( ( columnView, index ) => {
@@ -207,11 +207,11 @@ const SectionView = BaseElementView.extend( {
 		} );
 	},
 
-	resetLayout: function( shouldAdjustColumns = true ) {
+	resetLayout( shouldAdjustColumns = true ) {
 		this.setStructure( this.getDefaultStructure(), shouldAdjustColumns );
 	},
 
-	resetColumnsCustomSize: function() {
+	resetColumnsCustomSize() {
 		this.children.each( ( columnView ) => {
 			$e.run( 'document/elements/settings', {
 				container: columnView.getContainer(),
@@ -225,11 +225,11 @@ const SectionView = BaseElementView.extend( {
 		} );
 	},
 
-	isCollectionFilled: function() {
+	isCollectionFilled() {
 		return ( DEFAULT_MAX_COLUMNS <= this.collection.length );
 	},
 
-	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
+	showChildrenPercentsTooltip( columnView, nextColumnView ) {
 		columnView.ui.percentsTooltip.show();
 
 		columnView.ui.percentsTooltip.attr( 'data-side', elementorCommon.config.isRTL ? 'right' : 'left' );
@@ -239,25 +239,25 @@ const SectionView = BaseElementView.extend( {
 		nextColumnView.ui.percentsTooltip.attr( 'data-side', elementorCommon.config.isRTL ? 'left' : 'right' );
 	},
 
-	hideChildrenPercentsTooltip: function( columnView, nextColumnView ) {
+	hideChildrenPercentsTooltip( columnView, nextColumnView ) {
 		columnView.ui.percentsTooltip.hide();
 
 		nextColumnView.ui.percentsTooltip.hide();
 	},
 
-	destroyAddSectionView: function() {
+	destroyAddSectionView() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.destroy();
 		}
 	},
 
-	onRender: function() {
+	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		this.toggleSectionIsFull();
 	},
 
-	onAddButtonClick: function() {
+	onAddButtonClick() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.fadeToDeath();
 
@@ -285,7 +285,7 @@ const SectionView = BaseElementView.extend( {
 		this.addSectionView = addSectionView;
 	},
 
-	onChildviewRequestResizeStart: function( columnView ) {
+	onChildviewRequestResizeStart( columnView ) {
 		var nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
@@ -299,7 +299,7 @@ const SectionView = BaseElementView.extend( {
 		elementor.helpers.disableElementEvents( $iframes );
 	},
 
-	onChildviewRequestResizeStop: function( columnView ) {
+	onChildviewRequestResizeStop( columnView ) {
 		var nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
@@ -313,7 +313,7 @@ const SectionView = BaseElementView.extend( {
 		elementor.helpers.enableElementEvents( $iframes );
 	},
 
-	onChildviewRequestResize: function( columnView, ui ) {
+	onChildviewRequestResize( columnView, ui ) {
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
@@ -327,7 +327,7 @@ const SectionView = BaseElementView.extend( {
 		} );
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		BaseElementView.prototype.onDestroy.apply( this, arguments );
 
 		this.destroyAddSectionView();

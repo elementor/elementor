@@ -1,7 +1,7 @@
 const BaseElementView = require( 'elementor-elements/views/base' );
 
 /**
- * @extends BaseElementView
+ * @augments BaseElementView
  */
 class BaseWidgetView extends BaseElementView {
 	initialize( options ) {

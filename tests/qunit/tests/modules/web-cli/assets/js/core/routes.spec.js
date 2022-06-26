@@ -9,7 +9,7 @@ jQuery( () => {
 				() => {
 					$e.routes.register( '', 'panel', () => {} );
 				},
-				new Error( "Routes: '' component is not exist." )
+				new Error( "Routes: '' component is not exist." ),
 			);
 		} );
 
@@ -18,7 +18,7 @@ jQuery( () => {
 				() => {
 					$e.route( 'not-existing-route' );
 				},
-				new Error( 'Routes: `not-existing-route` not found.' )
+				new Error( 'Routes: `not-existing-route` not found.' ),
 			);
 		} );
 
@@ -157,7 +157,7 @@ jQuery( () => {
 				'<div id="' + namespace + '">' +
 				'<div class="elementor-component-tab" data-tab="tabA"></div>' +
 				'<div class="elementor-component-tab" data-tab="tabB"></div>' +
-				'</div>'
+				'</div>',
 			);
 
 			jQuery( 'body' ).append( $fixture );
@@ -203,7 +203,7 @@ jQuery( () => {
 			component.addTab( 'tabB', {}, newTabIndex );
 
 			const $fixture = jQuery(
-				'<div id="' + namespace + '"></div>'
+				'<div id="' + namespace + '"></div>',
 			);
 
 			jQuery.each( component.getTabs(), ( tab ) => {
@@ -651,7 +651,7 @@ jQuery( () => {
 					() => {
 						instance.getModalLayout();
 					},
-					new Error( "Component.getModalLayout() should be implemented, please provide 'getModalLayout' functionality." )
+					new Error( "Component.getModalLayout() should be implemented, please provide 'getModalLayout' functionality." ),
 				);
 			} );
 
@@ -665,7 +665,7 @@ jQuery( () => {
 
 					getModalLayout() {
 						const layout = class extends elementorModules.common.views.modal.Layout {
-							initialize() { /* do not render */ }
+							initialize() { /* Do not render */ }
 						};
 
 						return layout;
@@ -690,7 +690,7 @@ jQuery( () => {
 
 					getModalLayout() {
 						const layout = class extends elementorModules.common.views.modal.Layout {
-							initialize() { /* do not render */ }
+							initialize() { /* Do not render */ }
 						};
 
 						return layout;

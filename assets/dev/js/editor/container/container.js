@@ -3,7 +3,23 @@ import Panel from './panel';
 import ChildrenArray from './model/children-array';
 
 /**
+ * @typedef {import('../../../../lib/backbone/backbone.marionette')} Backbone
+ */
+/**
+ * @typedef {import('../../../../lib/backbone/backbone.marionette')} Marionette
+ */
+/**
+ * @typedef {import('../elements/views/base')} BaseElementView
+ */
+/**
+ * @typedef {import('../elements/views/section')} SectionView
+ */
+/**
+ * @typedef {import('../views/base-container')} BaseContainer
+ */
+/**
  * TODO: ViewsOptions
+ *
  * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView|BaseContainer)} ViewsOptions
  */
 
@@ -200,7 +216,7 @@ export default class Container extends ArgsObject {
 	 *
 	 * @param {{}} settings
 	 *
-	 * @return {{}}
+	 * @return {{}} result
 	 */
 	getGroupRelatedControls( settings ) {
 		const result = {};
@@ -379,11 +395,11 @@ export default class Container extends ArgsObject {
 	 *
 	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
 	 *
-	 * @param {string} repeaterName
+	 * @param {string}         repeaterName
 	 * @param {Backbone.Model} rowSettingsModel
-	 * @param {number} index
+	 * @param {number}         index
 	 *
-	 * @returns {Container}
+	 * @return {Container} container
 	 */
 	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
 		let rowId = rowSettingsModel.get( '_id' );
@@ -418,7 +434,7 @@ export default class Container extends ArgsObject {
 	 *
 	 * TODO: Refactor.
 	 *
-	 * @returns {Container}
+	 * @return {Container} container
 	 */
 	lookup() {
 		let result = this;
@@ -463,7 +479,7 @@ export default class Container extends ArgsObject {
 		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
 			'3.5.0',
-			'container.children.findRecursive( callback )'
+			'container.children.findRecursive( callback )',
 		);
 
 		return this.children.findRecursive( callback );
@@ -473,7 +489,7 @@ export default class Container extends ArgsObject {
 		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
 			'3.5.0',
-			'container.children.forEachRecursive( callback )'
+			'container.children.forEachRecursive( callback )',
 		);
 
 		return this.children.forEachRecursive( callback );
@@ -559,7 +575,7 @@ export default class Container extends ArgsObject {
 
 		let value;
 
-		// it's a global settings with additional controls in group.
+		// It's a global settings with additional controls in group.
 		if ( control.groupType ) {
 			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
 			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();
@@ -589,7 +605,7 @@ export default class Container extends ArgsObject {
 	 * It actually checks if the local value is different than the global value.
 	 *
 	 * @param {string} controlName - Control name
-	 * @returns {boolean}
+	 * @return {boolean} true if a control's global value is applied
 	 */
 	isGlobalApplied( controlName ) {
 		return this.getSetting( controlName ) !== this.settings.get( controlName );

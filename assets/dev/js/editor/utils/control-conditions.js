@@ -22,12 +22,12 @@ export default class ControlConditions extends Conditions {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param conditionName
-	 * @param conditionValue
-	 * @param controlModel - The control being tested.
-	 * @param values - The containing widget's array of control values.
-	 * @param controls - The containing widget's array of control models.
-	 * @returns {{name, value: ({length}|*), operator: (string)}}
+	 * @param  conditionName
+	 * @param  conditionValue
+	 * @param  controlModel   - The control being tested.
+	 * @param  values         - The containing widget's array of control values.
+	 * @param  controls       - The containing widget's array of control models.
+	 * @return {{name, value: ({length}|*), operator: (string)}}
 	 */
 	convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls ) {
 		// The first step is to isolate the term from the negative operator if exists. For example, a condition format
@@ -37,9 +37,9 @@ export default class ControlConditions extends Conditions {
 			isNegativeCondition = !! conditionNameParts[ 2 ];
 
 		const parsedControlName = conditionRealName.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
-			// conditionNameWithoutSubKey example: the condition key 'image[url]' will give the value of 'image'.
+			// ConditionNameWithoutSubKey example: the condition key 'image[url]' will give the value of 'image'.
 			conditionNameWithoutSubKey = parsedControlName[ 1 ],
-			// conditionSubKey example: the condition key 'image[url]' will give the value of 'url'.
+			// ConditionSubKey example: the condition key 'image[url]' will give the value of 'url'.
 			conditionSubKey = parsedControlName[ 2 ],
 			// In some cases the control's attributes will be under the 'attributes' property, and in some
 			// cases they will be directly on the model object.
@@ -81,11 +81,11 @@ export default class ControlConditions extends Conditions {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param comparisonObject A settings object (e.g. element settings - keys and values)
-	 * @param conditionName The conditioning item's name
-	 * @param subConditionName If the conditioning item's value is an object, and the condition checks for a
-	 * specific property, this is the property name.
-	 * @returns {*}
+	 * @param  comparisonObject A settings object (e.g. element settings - keys and values)
+	 * @param  conditionName    The conditioning item's name
+	 * @param  subConditionName If the conditioning item's value is an object, and the condition checks for a
+	 *                          specific property, this is the property name.
+	 * @return {*}
 	 */
 	getConditionValue( comparisonObject, conditionName, subConditionName ) {
 		let value;
@@ -108,10 +108,10 @@ export default class ControlConditions extends Conditions {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param conditions A control's array of conditions to be tested
-	 * @param comparisonObject The widget's settings object (setting keys and values)
-	 * @param controls An object containing a widget's control models
-	 * @returns {*}
+	 * @param  conditions       A control's array of conditions to be tested
+	 * @param  comparisonObject The widget's settings object (setting keys and values)
+	 * @param  controls         An object containing a widget's control models
+	 * @return {*}
 	 */
 	check( conditions, comparisonObject, controls ) {
 		const isOrCondition = 'or' === conditions.relation;
