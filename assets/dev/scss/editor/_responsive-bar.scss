@@ -13,7 +13,7 @@
 	transition: height .2s ease-in-out, opacity .1s ;
 	left: 0; // Fix position:sticky for RTL [ _devices.scss -> #elementor-preview ] ( browser bug )
 	top: 0;
-	z-index: 130;
+	z-index: 901;
 
 	&:before {
 		content: "";
