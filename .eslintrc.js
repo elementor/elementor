@@ -90,7 +90,15 @@ module.exports = {
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 		'import/no-unresolved': [ 2, { ignore: [ 'elementor', 'modules', '@wordpress/i18n', 'e-utils', 'e-styles' ] } ],
 		'import/no-extraneous-dependencies': 'off',
-		'@wordpress/i18n-translator-comments': 'off',
+		'@wordpress/i18n-ellipsis': 'off', // We don't use the ellipsis char because everything is already translated with regular '...'
+		'capitalized-comments': [
+			'error',
+			'always',
+			{
+				ignorePattern: 'webpackChunkName|WebpackIgnore|jQuery',
+				ignoreConsecutiveComments: true,
+			},
+		],
 	},
     settings: {
         jsdoc: {

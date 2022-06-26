@@ -143,7 +143,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						/* translators: %s: Element Name. */
+						/* Translators: %s: Element Name. */
 						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
 						isEnabled: () => ! elementor.selection.isMultiple(),
 						callback: () => $e.run( 'panel/editor/open', {
@@ -292,7 +292,7 @@ BaseElementView = BaseContainer.extend( {
 		// Only sections always have the remove button, even if the Editing Handles preference is off.
 		if ( 'section' === elementType || editButtonsEnabled ) {
 			editButtons.remove = {
-				/* translators: %s: Element Name. */
+				/* Translators: %s: Element Name. */
 				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
 				icon: 'close',
 			};
