@@ -37,7 +37,7 @@ export default function Promotion() {
 							{ __( 'Customize every part of your site', 'elementor' ) }
 						</Heading>
 						<Text>
-							{ __( 'Get total control, consistency and a faster workflow by designing the recurring parts that make up a complete website like the Header & Footer, Archive, 404, WooCommerce pages and more. Only available with Elementor Pro.', 'elementor' ) }
+							{ __( 'Get total control, consistency and a faster workflow by designing the recurring parts that make up a complete website like the Header & Footer, Archive, 404, WooCommerce pages and more.', 'elementor' ) }
 						</Text>
 					</Grid>
 					<Grid item container justify="end" alignItems="start" sm={5}>
