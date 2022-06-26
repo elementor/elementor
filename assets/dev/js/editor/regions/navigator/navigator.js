@@ -268,8 +268,6 @@ export default class extends BaseRegion {
 	// When this method activated?
 
 	onDocumentLoaded( document ) {
-		super.onDocumentLoaded( document );
-
 		if ( document.config.panel.has_elements ) {
 			this.show( new NavigatorLayout() );
 
@@ -277,6 +275,8 @@ export default class extends BaseRegion {
 				$e.route( 'navigator' );
 			}
 		}
+
+		super.onDocumentLoaded( document );
 	}
 
 	onDocumentUnloaded() {
