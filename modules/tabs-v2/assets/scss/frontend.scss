@@ -107,13 +107,13 @@
 			border-width: var( --tabs-v2-title-border-width );
 			border-color: var( --tabs-v2-title-border-color );
 			border-radius: var( --tabs-v2-title-border-radius );
-			transition: all var( --tabs-v2-title-transition ) ease-in-out;
+			transition: all var( --tabs-v2-title-transition );
 
 			&:hover {
 				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
 				border-width: var( --tabs-v2-title-border-width-hover, var( --tabs-v2-title-border-width ) );
 				border-color: var( --tabs-v2-title-border-color-hover, var( --tabs-v2-title-border-color ) );
-				transition: all var( --tabs-v2-title-transition ) ease-in-out;
+				transition: all var( --tabs-v2-title-transition );
 			}
 
 			.elementor-tab-icon {
