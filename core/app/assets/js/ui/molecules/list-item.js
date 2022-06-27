@@ -6,7 +6,7 @@ export default function ListItem( props ) {
 
 	let style;
 
-	if ( props.hasOwnProperty( 'padding' ) ) {
+	if ( Object.prototype.hasOwnProperty.call( props, 'padding' ) ) {
 		style = {
 			'--eps-list-item-padding': pxToRem( props.padding ),
 		};

@@ -1175,7 +1175,7 @@ export default class EditorBase extends Marionette.Application {
 
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
-		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+		this.trigger( 'preview:loaded', ! this.loaded /* IsFirst */ );
 
 		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
 
