@@ -74,7 +74,7 @@
         "karma-qunit": "4.1.2",
         "karma-remap-coverage": "0.1.5",
         "load-grunt-tasks": "^4.0.0",
-        "mini-css-extract-plugin": "^1.6.2",
+        "mini-css-extract-plugin": "^2.6.1",
         "path": "^0.12.7",
         "prettier": "^2.6.2",
         "qunit": "2.15.0",
