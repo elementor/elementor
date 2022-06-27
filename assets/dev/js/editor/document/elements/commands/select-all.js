@@ -1,5 +1,5 @@
 export class SelectAll extends $e.modules.CommandBase {
-	apply( args ) {
+	apply() {
 		elementor.selection.add(
 			this.flattenContainersList(
 				// The selection mechanism keeps selected elements in a single-dimension object. Therefore, In order to
