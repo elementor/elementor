@@ -2,8 +2,14 @@ name: Qunit
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   file-diff:
+    permissions:
+      contents: read  # for actions/checkout to fetch code
+      pull-requests: read  # for technote-space/get-diff-action to get git reference
     runs-on: ubuntu-18.04
     name: Qunit - File Diff
     if: startsWith( github.repository, 'elementor/' )

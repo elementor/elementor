@@ -10,6 +10,8 @@ on:
 
 jobs:
   bump-version:
+    permissions:
+      contents: none
     if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-20.04
     outputs:

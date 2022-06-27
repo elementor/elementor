@@ -5,8 +5,13 @@ on:
   schedule:
     - cron: '0 */2 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   run:
+    permissions:
+      contents: none
     runs-on: ubuntu-20.04
     if: startsWith( github.repository, 'elementor/' )
     steps:

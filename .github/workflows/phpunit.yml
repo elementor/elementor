@@ -2,8 +2,14 @@ name: PHPUnit
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   file-diff:
+    permissions:
+      contents: read  # for actions/checkout to fetch code
+      pull-requests: read  # for technote-space/get-diff-action to get git reference
     runs-on: ubuntu-20.04
     name: File Diff
     if: startsWith( github.repository, 'elementor/' )
@@ -61,6 +67,8 @@ jobs:
           composer run test
 
   test-result:
+    permissions:
+      contents: none
     needs: test
     if: ${{ always() }} # Will be run even if 'test' matrix will be skipped
     runs-on: ubuntu-20.04
