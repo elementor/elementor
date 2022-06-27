@@ -8,8 +8,8 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 
 /**
  * @typedef {{}} DataBinding
- * @property {DOMStringMap} dataset
- * @property {HTMLElement}  el
+ * @property {DOMStringMap} dataset The dataset of the element.
+ * @property {HTMLElement}  el      The element.
  */
 
 /**
@@ -215,9 +215,13 @@ BaseElementView = BaseContainer.extend( {
 				{
 					name: 'delete',
 					icon: 'eicon-trash',
-					title: () => elementor.selection.isMultiple()
-							? sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length )
-							: __( 'Delete', 'elementor' ),
+					title: () => {
+						if ( elementor.selection.isMultiple() ) {
+							// Translators: %d: Elements count.
+							return sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length );
+						}
+						return __( 'Delete', 'elementor' );
+					},
 					shortcut: '⌦',
 					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 				},
@@ -666,7 +670,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		$dataBinding.filter( ( index, current ) => {
+		$dataBinding.forEach( ( index, current ) => {
 			// To support nested data-binding bypass nested data-binding that are not part of the current.
 			if ( jQuery( current ).closest( '.elementor-element' ).data( 'id' ) === id ) {
 				if ( current.dataset.bindingType ) {

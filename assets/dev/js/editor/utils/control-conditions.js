@@ -108,9 +108,9 @@ export default class ControlConditions extends Conditions {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param {Array<*>>} conditions       A control's array of conditions to be tested
-	 * @param {{}}        comparisonObject The widget's settings object (setting keys and values)
-	 * @param {{}}        controls         An object containing a widget's control models
+	 * @param {Array<*>} conditions       A control's array of conditions to be tested
+	 * @param {{}}       comparisonObject The widget's settings object (setting keys and values)
+	 * @param {{}}       controls         An object containing a widget's control models
 	 * @return {boolean} id all conditions passes./
 	 */
 	check( conditions, comparisonObject, controls ) {

@@ -1,4 +1,8 @@
 /**
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
+ */
+
+/**
  * Command used to select current working repeater item.
  */
 export class Select extends $e.modules.editor.document.CommandHistoryBase {
@@ -35,6 +39,7 @@ export class Select extends $e.modules.editor.document.CommandHistoryBase {
 		return {
 			container,
 			type: 'selected',
+			// Translators: %s is the current item index.
 			subTitle: wp.i18n.sprintf( __( 'Item #%d', 'elementor' ), index ),
 			restore: this.constructor.restore,
 			data: {
@@ -45,10 +50,9 @@ export class Select extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	/**
-	 * @inheritDoc
-	 *
-	 * @param {Container} container
-	 * @param {number}    index
+	 * @param {{}}        args
+	 * @param {Container} args.container
+	 * @param {number}    args.index
 	 */
 	apply( { container, index } ) {
 		const editSettings = container.model.get( 'editSettings' );

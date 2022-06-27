@@ -88,6 +88,7 @@ module.exports = {
 		'react/react-in-jsx-scope': 'off',
 		'babel/semi': 1,
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
+		'jsdoc/require-returns-description': 'off', // We prefer self-explanatory method names
 		'import/no-unresolved': [ 2, { ignore: [ 'elementor', 'modules', '@wordpress/i18n', 'e-utils', 'e-styles' ] } ],
 		'import/no-extraneous-dependencies': 'off',
 		'@wordpress/i18n-ellipsis': 'off', // We don't use the ellipsis char because everything is already translated with regular '...'

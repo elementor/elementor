@@ -100,11 +100,11 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 					}
 						break;
 
-					default:
+					default: {
 						// In case it widget:
 						let target;
 
-						// If you trying to paste widget on section, then paste should be at the first column.
+						// On trying to paste widget on section, the paste should be at the first column.
 						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
 						} else {
@@ -125,6 +125,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						}
 
 						result.push( this.pasteTo( target, [ model ] ) );
+					}
 				}
 			} );
 		} );
