@@ -1,5 +1,10 @@
 import { freeMock, setupMock } from 'elementor/tests/jest/unit/assets/dev/js/editor/elements/models/mock/model';
 
+jest.mock( 'elementor/modules/nested-elements/assets/js/editor/utils', () => ( {
+	...jest.requireActual( 'elementor/modules/nested-elements/assets/js/editor/utils' ),
+	isWidgetSupportNesting: ( name ) => 'tabs-v2' === name,
+} ) );
+
 describe( 'NestedModelBase', () => {
 	let childModel,
 		nestedModelBase;
@@ -13,16 +18,6 @@ describe( 'NestedModelBase', () => {
 					models: {
 						Element: class extends global.Backbone.Model {},
 					},
-				},
-			},
-		};
-
-		global.$e = {
-			components: {
-				get: () => {
-					return {
-						isWidgetSupportNesting: ( name ) => 'tabs-v2' === name,
-					};
 				},
 			},
 		};

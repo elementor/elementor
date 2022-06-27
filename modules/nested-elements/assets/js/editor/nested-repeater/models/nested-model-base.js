@@ -1,3 +1,5 @@
+import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+
 /**
  * @extends {ElementModel}
  */
@@ -23,7 +25,7 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 
 		return 'container' === childElType &&
 			'widget' === parentElType &&
-			$e.components.get( 'nested-elements' ).isWidgetSupportNesting( this.get( 'widgetType' ) );
+			isWidgetSupportNesting( this.get( 'widgetType' ) );
 	}
 
 	getDefaultChildren() {
