@@ -20,7 +20,7 @@
 	--tabs-v2-tabs-wrapper-justify-content: initial;
 	--tabs-v2-tabs-wrapper-width: initial;
 
-	--tabs-v2-border-width: 1px; 
+	--tabs-v2-border-width: initial;
 	--tabs-v2-border-color: initial; 
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
@@ -36,7 +36,7 @@
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
 	--tabs-v2-title-border-style: initial;
-	--tabs-v2-title-border-width: 1px;
+	--tabs-v2-title-border-width: initial;
 	--tabs-v2-title-border-color: initial;
 	--tabs-v2-title-border-radius: initial;
 	--tabs-v2-title-transition: 0.3s;
@@ -85,6 +85,7 @@
 			flex-grow: var( --tabs-v2-title-grow );
 			color: var( --tabs-v2-title-color );
 			background-color: var( --tabs-v2-title-background-color );
+			position: relative;
 			cursor: pointer;
 			outline: var( --focus-outline, none );
 			padding-top: var( --tabs-v2-title-padding-top );
@@ -106,12 +107,12 @@
 			border-width: var( --tabs-v2-title-border-width );
 			border-color: var( --tabs-v2-title-border-color );
 			border-radius: var( --tabs-v2-title-border-radius );
+			transition: all var( --tabs-v2-title-transition) ease-in-out;
 
 			&:hover {
 				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
 				border-width: var( --tabs-v2-title-border-width-hover, var( --tabs-v2-title-border-width ) );
 				border-color: var( --tabs-v2-title-border-color-hover, var( --tabs-v2-title-border-color ) );
-				transition: all var( --tabs-v2-title-transition) ease-in-out;
 			}
 
 			.elementor-tab-icon {

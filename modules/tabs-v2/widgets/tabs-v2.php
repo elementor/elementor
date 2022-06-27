@@ -422,11 +422,10 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'default' => [
 				'unit' => 'px',
-				'size' => 10,
 			],
 			'size_units' => [ 'px', '%' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--tabs-v2-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
@@ -445,11 +444,10 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'default' => [
 				'unit' => 'px',
-				'size' => 10,
 			],
 			'size_units' => [ 'px', '%' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--tabs-v2-title-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
@@ -585,7 +583,7 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_control(
 			'tabs_title_transition_duration',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-v2-title-transition: {{SIZE}}s',
@@ -655,7 +653,6 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'tabs_title_box_shadow_active',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
-				'separator' => 'after',
 				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
 			]
 		);
@@ -670,6 +667,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-v2-title-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
