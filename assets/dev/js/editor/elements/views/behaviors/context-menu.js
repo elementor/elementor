@@ -40,7 +40,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 
 		if ( 'preview' === this.getOption( 'context' ) ) {
-			// const isProExistNotConnected = ! ! ( elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect );
+			const isNotesEnabled = 'undefined' !== typeof window.top.$e.components.get( 'notes' );
 
 			contextMenuGroups.splice( afterGroupIndex, 0, {
 				name: 'tools',
@@ -48,8 +48,8 @@ module.exports = Marionette.Behavior.extend( {
 					{
 						name: 'notes',
 						title: __( 'Notes', 'elementor' ),
-						shortcut: elementor.helpers.hasPro() ? '⇧+C' : '<i class="eicon-pro-icon" />',
-						isEnabled: () => elementor.helpers.hasPro(),
+						shortcut: isNotesEnabled ? '⇧+C' : '<i class="eicon-pro-icon" />',
+						isEnabled: () => isNotesEnabled,
 						callback: () => $e.route( 'notes', {
 							reOpen: true,
 							model: this.view.model,
