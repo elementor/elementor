@@ -411,10 +411,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html__( 'Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
-				'%' => [
-					'min' => 0,
-					'max' => 50,
-				],
 				'px' => [
 					'min' => 0,
 					'max' => 400,
@@ -423,7 +419,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'size_units' => [ 'px', '%' ],
+			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -433,10 +429,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html__( 'Space Between', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
-				'%' => [
-					'min' => 0,
-					'max' => 50,
-				],
 				'px' => [
 					'min' => 0,
 					'max' => 400,
@@ -445,7 +437,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'size_units' => [ 'px', '%' ],
+			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-gap: {{SIZE}}{{UNIT}}',
 			],
