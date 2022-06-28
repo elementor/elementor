@@ -9,7 +9,7 @@ export const KEY = 'kits';
 /**
  * The default query params
  *
- * @type {object}
+ * @type {Object}
  */
 export const defaultQueryParams = {
 	favorite: false,
@@ -31,9 +31,9 @@ const kitsPipeFunctions = {
 	/**
 	 * Filter by favorite
 	 *
-	 * @param data
-	 * @param queryParams
-	 * @returns {array}
+	 * @param {Array<*>} data
+	 * @param {*}        queryParams
+	 * @return {Array} filtered data
 	 */
 	favoriteFilter: ( data, queryParams ) => {
 		if ( ! queryParams.favorite ) {
@@ -44,11 +44,11 @@ const kitsPipeFunctions = {
 	},
 
 	/**
-	 * filter by search term.
+	 * Filter by search term.
 	 *
-	 * @param data
-	 * @param queryParams
-	 * @returns {array}
+	 * @param {Array<*>} data
+	 * @param {*}        queryParams
+	 * @return {Array} filtered data
 	 */
 	searchFilter: ( data, queryParams ) => {
 		if ( ! queryParams.search ) {
@@ -67,27 +67,27 @@ const kitsPipeFunctions = {
 	 * Filter by taxonomies.
 	 * In each taxonomy type it use the OR operator and between types it uses the AND operator.
 	 *
-	 * @param data
-	 * @param queryParams
-	 * @returns {array}
+	 * @param {Array<*>} data
+	 * @param {*}        queryParams
+	 * @return {Array} filtered data
 	 */
 	taxonomiesFilter: ( data, queryParams ) => {
 		return Object.values( queryParams.taxonomies )
 			.filter( ( taxonomies ) => taxonomies.length )
 			.reduce( ( current, taxonomies ) => current.filter( ( item ) =>
 				taxonomies.some( ( taxonomy ) =>
-					item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy )
+					item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy ),
 				) ),
-				data
+				data,
 			);
 	},
 
 	/**
 	 * Sort all the data by the "order" query param
 	 *
-	 * @param data
-	 * @param queryParams
-	 * @returns {array}
+	 * @param {Array<*>} data
+	 * @param {*}        queryParams
+	 * @return {Array} sorted data
 	 */
 	sort: ( data, queryParams ) => {
 		const order = queryParams.order;
@@ -105,22 +105,22 @@ const kitsPipeFunctions = {
 /**
  * A util function to transform data throw transform functions
  *
- * @param functions
- * @returns {function(*=, ...[*]): *}
+ * @param {Array<Function>} functions
+ * @return {function(*=, ...[*]): *} function
  */
 function pipe( ...functions ) {
 	return ( value, ...args ) =>
 		functions.reduce(
 			( currentValue, currentFunction ) => currentFunction( currentValue, ...args ),
-			value
+			value,
 		);
 }
 
 /**
  * Fetch kits
  *
- * @param force
- * @returns {*}
+ * @param {boolean} force
+ * @return {*} kits
  */
 function fetchKits( force ) {
 	return $e.data.get( 'kits/index', {
@@ -133,8 +133,8 @@ function fetchKits( force ) {
 /**
  * Main function.
  *
- * @param initialQueryParams
- * @returns {object}
+ * @param {*} initialQueryParams
+ * @return {Object} query
  */
 export default function useKits( initialQueryParams = {} ) {
 	const [ force, setForce ] = useState( false );
@@ -148,23 +148,23 @@ export default function useKits( initialQueryParams = {} ) {
 
 	const clearQueryParams = useCallback(
 		() => setQueryParams( { ready: true, ...defaultQueryParams, ...initialQueryParams } ),
-		[ setQueryParams ]
+		[ setQueryParams ],
 	);
 
 	const query = useQuery( [ KEY ], () => fetchKits( force ) );
 
 	const data = useMemo(
-		() => ! query.data ?
-			[] :
-			pipe( ...Object.values( kitsPipeFunctions ) )( [ ...query.data ], queryParams ),
-		[ query.data, queryParams ]
+		() => ! query.data
+			? []
+			: pipe( ...Object.values( kitsPipeFunctions ) )( [ ...query.data ], queryParams ),
+		[ query.data, queryParams ],
 	);
 
 	const selectedTaxonomies = useSelectedTaxonomies( queryParams.taxonomies );
 
 	const isFilterActive = useMemo(
 		() => !! queryParams.search || !! selectedTaxonomies.length,
-		[ queryParams ]
+		[ queryParams ],
 	);
 
 	useEffect( () => {

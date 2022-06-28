@@ -1,4 +1,7 @@
-export default class ElementsHelper {
+/**
+ * @typedef {import('../../../../../../../../../assets/dev/js/editor/container/container')} Container
+ */
+ export default class ElementsHelper {
 	static createAuto( elType, widgetType = 'button' ) {
 		let result = null;
 
@@ -26,7 +29,7 @@ export default class ElementsHelper {
 
 			case 'innerSection':
 				result = this.createInnerSection(
-					this.createSection( 1, true )
+					this.createSection( 1, true ),
 				);
 				break;
 		}
@@ -35,6 +38,8 @@ export default class ElementsHelper {
 	}
 
 	/**
+	 * @param  eContainer
+	 * @param  settings
 	 * @return {Container}
 	 */
 	static createWrappedButton( eContainer = null, settings = {} ) {

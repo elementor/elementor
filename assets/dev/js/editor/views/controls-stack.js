@@ -11,31 +11,31 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	activeSection: null,
 
-	className: function() {
+	className() {
 		return 'elementor-controls-stack';
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			elementData: elementor.getElementData( this.model ),
 		};
 	},
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			// TODO: elementSettingsModel is deprecated since 2.8.0.
 			elementSettingsModel: this.model,
 		};
 	},
 
-	ui: function() {
+	ui() {
 		return {
 			tabs: '.elementor-panel-navigation-tab',
 			reloadButton: '.elementor-update-preview-button',
 		};
 	},
 
-	events: function() {
+	events() {
 		return {
 			'click @ui.reloadButton': 'onReloadButtonClick',
 		};
@@ -51,7 +51,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 		},
 	},
 
-	initialize: function( options ) {
+	initialize( options ) {
 		this.initCollection();
 
 		if ( options.tab ) {
@@ -62,11 +62,11 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	initCollection: function() {
+	initCollection() {
 		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( this.getOption( 'controls' ) ) ) );
 	},
 
-	filter: function( controlModel ) {
+	filter( controlModel ) {
 		if ( controlModel.get( 'tab' ) !== this.activeTab ) {
 			return false;
 		}
@@ -80,23 +80,23 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return ! section || section === this.activeSection;
 	},
 
-	getControlViewByModel: function( model ) {
+	getControlViewByModel( model ) {
 		return this.children.findByModelCid( model.cid );
 	},
 
-	getControlViewByName: function( name ) {
+	getControlViewByName( name ) {
 		return this.getControlViewByModel( this.getControlModel( name ) );
 	},
 
-	getControlModel: function( name ) {
-		return this.collection.findWhere( { name: name } );
+	getControlModel( name ) {
+		return this.collection.findWhere( { name } );
 	},
 
-	isVisibleSectionControl: function( sectionControlModel ) {
+	isVisibleSectionControl( sectionControlModel ) {
 		return this.activeTab === sectionControlModel.get( 'tab' );
 	},
 
-	activateTab: function( tab ) {
+	activateTab( tab ) {
 		this.activeTab = tab;
 
 		this.activateFirstSection();
@@ -106,13 +106,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return this;
 	},
 
-	activateSection: function( sectionName ) {
+	activateSection( sectionName ) {
 		this.activeSection = sectionName;
 
 		return this;
 	},
 
-	activateFirstSection: function() {
+	activateFirstSection() {
 		var self = this;
 
 		var sectionControls = self.collection.filter( function( controlModel ) {
@@ -142,17 +142,17 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return this;
 	},
 
-	getChildView: function( item ) {
+	getChildView( item ) {
 		var controlType = item.get( 'type' );
 
 		return elementor.getControlView( controlType );
 	},
 
-	getNamespaceArray: function() {
+	getNamespaceArray() {
 		return [ elementor.getPanelView().getCurrentPageName() ];
 	},
 
-	openActiveSection: function() {
+	openActiveSection() {
 		var activeSection = this.activeSection,
 			activeSectionView = this.children.filter( function( view ) {
 				return activeSection === view.model.get( 'name' );
@@ -169,27 +169,27 @@ ControlsStack = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onRenderCollection: function() {
+	onRenderCollection() {
 		this.openActiveSection();
 
 		ControlsStack.handlePopovers( this );
 	},
 
-	onModelDestroy: function() {
+	onModelDestroy() {
 		this.destroy();
 	},
 
-	onReloadButtonClick: function() {
+	onReloadButtonClick() {
 		elementor.reloadPreview();
 	},
 
-	onDeviceModeChange: function() {
+	onDeviceModeChange() {
 		if ( 'desktop' === elementor.channels.deviceMode.request( 'currentMode' ) ) {
 			this.$el.removeClass( 'elementor-responsive-switchers-open' );
 		}
 	},
 
-	onChildviewControlSectionClicked: function( childView ) {
+	onChildviewControlSectionClicked( childView ) {
 		var isSectionOpen = childView.$el.hasClass( 'elementor-open' );
 
 		this.activateSection( isSectionOpen ? null : childView.model.get( 'name' ) );
@@ -197,13 +197,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this._renderChildren();
 	},
 
-	onChildviewResponsiveSwitcherClick: function( childView, device ) {
+	onChildviewResponsiveSwitcherClick( childView, device ) {
 		if ( 'desktop' === device ) {
 			this.$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
 	},
 }, {
-	handlePopovers: function( view ) {
+	handlePopovers( view ) {
 		let popover;
 
 		view.popovers = [];
@@ -232,7 +232,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			}
 		} );
 	},
-	removePopovers: function( view ) {
+	removePopovers( view ) {
 		view.popovers.forEach( ( popover ) => popover.destroy() );
 	},
 } );

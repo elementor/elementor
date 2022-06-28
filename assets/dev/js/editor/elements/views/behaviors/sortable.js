@@ -1,6 +1,9 @@
 var SortableBehavior;
 
-SortableBehavior = Marionette.Behavior.extend( {
+/**
+ * @typedef {import('../../../container/container')} Container
+ */
+ SortableBehavior = Marionette.Behavior.extend( {
 	defaults: {
 		elChildType: 'widget',
 	},
@@ -13,18 +16,18 @@ SortableBehavior = Marionette.Behavior.extend( {
 		sortout: 'onSortOut',
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched )
 			.listenTo( this.view.options.model, 'request:sort:start', this.startSort )
 			.listenTo( this.view.options.model, 'request:sort:update', this.updateSort )
 			.listenTo( this.view.options.model, 'request:sort:receive', this.receiveSort );
 	},
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched( activeMode ) {
 		this.onToggleSortMode( 'edit' === activeMode );
 	},
 
-	onRender: function() {
+	onRender() {
 		var self = this;
 
 		_.defer( function() {
@@ -32,20 +35,20 @@ SortableBehavior = Marionette.Behavior.extend( {
 		} );
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		this.deactivate();
 	},
 
 	/**
 	 * Create an item placeholder in order to avoid UI jumps due to flex.
 	 *
-	 * @param {Object} $element - jQuery element instance to create placeholder for.
-	 * @param {string} className - Placeholder class.
-	 * @param {boolean} hide - Whether to hide the original element.
+	 * @param {Object}  $element  - jQuery element instance to create placeholder for.
+	 * @param {string}  className - Placeholder class.
+	 * @param {boolean} hide      - Whether to hide the original element.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
-	createPlaceholder: function( $element, className = '', hide = true ) {
+	createPlaceholder( $element, className = '', hide = true ) {
 		// Get the actual item size.
 		$element.css( 'display', '' );
 		const { clientWidth: width, clientHeight: height } = $element[ 0 ];
@@ -69,7 +72,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	/**
 	 * Return a settings object for jQuery UI sortable to make it swappable.
 	 *
-	 * @returns {{stop: stop, start: start}}
+	 * @return {{stop: Function, start: Function}} options
 	 */
 	getSwappableOptions() {
 		const $childViewContainer = this.getChildViewContainer(),
@@ -138,7 +141,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	/**
 	 * Enable sorting for this element, and generate sortable instance for it unless already generated.
 	 */
-	activate: function() {
+	activate() {
 		if ( ! this.getChildViewContainer().sortable( 'instance' ) ) {
 			// Generate sortable instance for this element. Since fresh instances of sortable already allowing sorting,
 			// we can return.
@@ -150,7 +153,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.getChildViewContainer().sortable( 'enable' );
 	},
 
-	_getSortableHelper: function( event, $item ) {
+	_getSortableHelper( event, $item ) {
 		var model = this.view.collection.get( {
 			cid: $item.data( 'model-cid' ),
 		} );
@@ -158,7 +161,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
 	},
 
-	getChildViewContainer: function() {
+	getChildViewContainer() {
 		return this.view.getChildViewContainer( this.view );
 	},
 
@@ -174,7 +177,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	 * Disable sorting of the element unless no sortable instance exists, in which case there is already no option to
 	 * sort.
 	 */
-	deactivate: function() {
+	deactivate() {
 		var childViewContainer = this.getChildViewContainer();
 
 		if ( childViewContainer.sortable( 'instance' ) ) {
@@ -185,13 +188,13 @@ SortableBehavior = Marionette.Behavior.extend( {
 	/**
 	 * Determine if the current instance of Sortable is swappable.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is swappable
 	 */
-	isSwappable: function() {
+	isSwappable() {
 		return ! ! this.view.getSortableOptions().swappable;
 	},
 
-	startSort: function( event, ui ) {
+	startSort( event, ui ) {
 		event.stopPropagation();
 
 		const container = elementor.getContainer( ui.item.attr( 'data-id' ) );
@@ -205,7 +208,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	// On sorting element
-	updateSort: function( ui, newIndex ) {
+	updateSort( ui, newIndex ) {
 		if ( undefined === newIndex ) {
 			newIndex = ui.item.index();
 		}
@@ -215,7 +218,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	// On receiving element from another container
-	receiveSort: function( event, ui, newIndex ) {
+	receiveSort( event, ui, newIndex ) {
 		event.stopPropagation();
 
 		if ( this.view.isCollectionFilled() ) {
@@ -244,7 +247,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.moveChild( child, newIndex );
 	},
 
-	onSortStart: function( event, ui ) {
+	onSortStart( event, ui ) {
 		if ( 'column' === this.options.elChildType ) {
 			var uiData = ui.item.data( 'sortableItem' ),
 				uiItems = uiData.items,
@@ -263,7 +266,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.startSort( event, ui );
 	},
 
-	onSortOver: function( event ) {
+	onSortOver( event ) {
 		event.stopPropagation();
 
 		var model = elementor.channels.data.request( 'dragging:model' );
@@ -278,7 +281,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.$el.addClass( 'elementor-dragging-on-child' );
 	},
 
-	onSortOut: function( event ) {
+	onSortOut( event ) {
 		event.stopPropagation();
 
 		jQuery( event.target )
@@ -288,11 +291,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.$el.removeClass( 'elementor-dragging-on-child' );
 	},
 
-	onSortReceive: function( event, ui ) {
+	onSortReceive( event, ui ) {
 		this.receiveSort( event, ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
-	onSortUpdate: function( event, ui ) {
+	onSortUpdate( event, ui ) {
 		event.stopPropagation();
 
 		if ( this.getChildViewContainer()[ 0 ] !== ui.item.parent()[ 0 ] ) {
@@ -302,19 +305,19 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.updateSort( ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
-	onAddChild: function( view ) {
+	onAddChild( view ) {
 		view.$el.attr( 'data-model-cid', view.model.cid );
 	},
 
 	/**
 	 * Move a child container to another position.
 	 *
-	 * @param {Container} child - The child container to move.
-	 * @param {int|string} index - New index.
+	 * @param {Container}     child - The child container to move.
+	 * @param {number|string} index - New index.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
-	moveChild: function( child, index ) {
+	moveChild( child, index ) {
 		$e.run( 'document/elements/move', {
 			container: child,
 			target: this.view.getContainer(),

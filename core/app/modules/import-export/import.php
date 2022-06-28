@@ -6,6 +6,7 @@ use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\Core\App\Modules\ImportExport\Directories\Root;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -57,7 +58,7 @@ class Import extends Iterator {
 	final public function read_json_file( $name ) {
 		$name = $this->get_archive_file_full_path( $name . '.json' );
 
-		return json_decode( file_get_contents( $name, true ), true );
+		return json_decode( Utils::file_get_contents( $name, true ), true );
 	}
 
 	final public function get_adapters() {

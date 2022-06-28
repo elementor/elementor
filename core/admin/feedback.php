@@ -79,7 +79,6 @@ class Feedback extends Module {
 		return [];
 	}
 
-
 	/**
 	 * Print deactivate feedback dialog.
 	 *
@@ -180,18 +179,6 @@ class Feedback extends Module {
 		Api::send_feedback( $reason_key, $reason_text );
 
 		wp_send_json_success();
-	}
-
-	/**
-	 * @since 2.3.0
-	 * @access protected
-	 */
-	protected function get_init_settings() {
-		if ( ! $this->is_plugins_screen() ) {
-			return [];
-		}
-
-		return [ 'is_tracker_opted_in' => Tracker::is_allow_track() ];
 	}
 
 	/**
