@@ -40,7 +40,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 
 		if ( 'preview' === this.getOption( 'context' ) ) {
-			const isNotesEnabled = 'undefined' !== typeof window.top.$e.components.get( 'notes' );
+			const isNotesEnabled = 'undefined' !== typeof $e.components.get( 'notes' );
 
 			contextMenuGroups.splice( afterGroupIndex, 0, {
 				name: 'tools',
