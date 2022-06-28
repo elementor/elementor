@@ -29,7 +29,9 @@
 	--tabs-v2-title-background-color-active: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 
 	--tabs-v2-title-alignment: center;
-	--tabs-v2-title-grow: 1;
+	--tabs-v2-title-align-items: initial;
+	--tabs-v2-title-width: 100%;
+	--tabs-v2-title-height: initial;
 	--tabs-v2-title-gap: 10px;
 	--tabs-v2-title-padding-top: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
@@ -82,7 +84,8 @@
 	.elementor-tab {
 
 		&-title {
-			flex-grow: var( --tabs-v2-title-grow );
+			display: flex;
+			align-items: var( --tabs-v2-title-align-items );
 			color: var( --tabs-v2-title-color );
 			background-color: var( --tabs-v2-title-background-color );
 			position: relative;
@@ -108,6 +111,12 @@
 			border-color: var( --tabs-v2-title-border-color );
 			border-radius: var( --tabs-v2-title-border-radius );
 			transition: all var( --tabs-v2-title-transition );
+			height: var( --tabs-v2-title-height );
+			width: var( --tabs-v2-title-width );
+
+			&-text {
+				width: 100%;
+			}
 
 			&:hover {
 				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
