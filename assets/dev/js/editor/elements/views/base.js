@@ -1,7 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
 import { elementsSelection } from 'elementor-document/elements/selectors';
-import { updateEnvironment } from 'elementor-document/elements/utils';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -261,6 +260,11 @@ BaseElementView = BaseContainer.extend( {
 		this.subscribeToSelection();
 	},
 
+	/**
+	 * Toggle select/deselect UI for the element, based on state change.
+	 *
+	 * @return {void}
+	 */
 	subscribeToSelection() {
 		let prevState = $e.store.getState( 'document/elements/selection' );
 
