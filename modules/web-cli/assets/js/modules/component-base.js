@@ -1,14 +1,13 @@
 import CommandCallbackBase from 'elementor-api/modules/command-callback-base';
 
 import { createSlice } from '@reduxjs/toolkit';
-import Module from 'elementor-assets-js/modules/imports/module.js';
+import Module from 'elementor/assets/dev/js/modules/imports/module.js';
 import ForceMethodImplementation from '../utils/force-method-implementation';
 import Deprecation from 'elementor-api/utils/deprecation';
 
 /**
+ * @typedef {import('./command-infra')} CommandInfra
  * @typedef {import('./hook-base')} HookBase
- */
-/**
  * @typedef {import('../core/states/ui-state-base')} UiStateBase
  */
 
