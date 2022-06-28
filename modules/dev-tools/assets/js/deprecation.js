@@ -1,4 +1,12 @@
 /**
+ * @typedef {Object} Version
+ * @property {number} major1 The first number
+ * @property {number} major2 The second number
+ * @property {number} minor  The third number
+ * @property {string} build  The fourth number
+ */
+
+/**
  * @param {string} name
  * @param {string} version
  * @param {string} replacement
