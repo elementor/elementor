@@ -280,7 +280,7 @@ export default class extends Marionette.CompositeView {
 	 * Update the selection of the current navigator element according to it's corresponding document element.
 	 */
 	updateSelection() {
-		if ( elementsSelection.getElementsIds().includes( this.model.get( 'id' ) ) ) {
+		if ( elementsSelection.has( this.model.get( 'id' ) ) ) {
 			this.select();
 		} else {
 			this.deselect();

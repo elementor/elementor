@@ -6,6 +6,7 @@ export class ToggleSelection extends $e.modules.editor.CommandContainerBase {
 	apply( args ) {
 		const { containers = [ args.container ], append = false } = args;
 
+		// TODO: Use select/deselect commands?
 		$e.store.dispatch(
 			this.component.store( 'selection' ).actions.toggleSelection( {
 				elementsIds: containers.map( ( container ) => container.id ),

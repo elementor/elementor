@@ -219,7 +219,7 @@ BaseElementView = BaseContainer.extend( {
 					title: () => {
 						if ( elementsSelection.isMultiple() ) {
 							// Translators: %d: Elements count.
-							return sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length );
+							return sprintf( __( 'Delete %d items', 'elementor' ), elementsSelection.getElementsIds().length );
 						}
 						return __( 'Delete', 'elementor' );
 					},
