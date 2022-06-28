@@ -2,128 +2,129 @@
 // Tabs v2
 //
 .elementor-widget-tabs-v2 {
-	--tabs-v2-wrapper-display: flex;
-	--tabs-v2-wrapper-justify-content: start;
-	--tabs-v2-wrapper-title-size: auto;
+	--tabs-v2-color-accent-fallback: #61CE70;
+	--tabs-v2-color-secondary-fallback: #54595F;
+	--tabs-v2-default-padding: 15px;
+
+	--tabs-v2-display: flex;
+	--tabs-v2-direction: column;
+	--tabs-v2-gap: 10px;
+
+	--tabs-v2-tabs-wrapper-display: flex;
+	--tabs-v2-tabs-wrapper-direction: row;
+	--tabs-v2-tabs-wrapper-grow: initial;
+	--tabs-v2-tabs-wrapper-justify-content: initial;
+	--tabs-v2-tabs-wrapper-width: initial;
+
+	--tabs-v2-height: initial;
+	--tabs-v2-overflow-x: hidden;
+	--tabs-v2-overflow-y: auto;
+
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
 	--tabs-v2-background-color: transparent;
-	--tabs-v2-vertical-navigation-width: 25%;
 
-	/* TODO Find better solution for all global defaults. */
-	--tabs-v2-title-color: var(--e-global-color-primary);
-	--tabs-v2-title-active-color: var(--e-global-color-accent);
+	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
+	--tabs-v2-title-background-color: #{$editor-background-light};
+	--tabs-v2-title-active-color: #{$white};
+	--tabs-v2-title-active-background-color: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 
-	--tabs-v2-title-typography-font-family: var(--e-global-typography-primary-font-family);
+	--tabs-v2-title-alignment: center;
+	--tabs-v2-title-grow: 1;
+	--tabs-v2-title-gap: 10px;
+	--tabs-v2-title-padding-top: var( --tabs-v2-default-padding );
+	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
+	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
+	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
+
+	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
 	--tabs-v2-title-typography-font-size: initial;
-	--tabs-v2-title-typography-font-weight: var(--e-global-typography-primary-font-weight);
+	--tabs-v2-title-typography-font-weight: var( --e-global-typography-primary-font-weight );
 	--tabs-v2-title-typography-text-transform: initial;
 	--tabs-v2-title-typography-font-style: initial;
 	--tabs-v2-title-typography-text-decoration: initial;
 	--tabs-v2-title-typography-line-height: initial;
 	--tabs-v2-title-typography-letter-spacing: initial;
 	--tabs-v2-title-typography-word-spacing: initial;
-
 	--tabs-v2-title-shadow: none;
+
+	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
+	--tabs-v2-icon-active-color: #{$white};
 
 	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
 
-	.elementor-tabs-content-wrapper {
-		background-color: var(--tabs-v2-background-color);
+	.elementor-tabs {
+		display: var( --tabs-v2-display );
+		flex-direction: var( --tabs-v2-direction );
+		gap: var( --tabs-v2-gap );
+		text-align: $start;
+		height: var( --tabs-v2-height );
+		overflow-x: var( --tabs-v2-overflow-x );
+		overflow-y: var( --tabs-v2-overflow-y );
+
+		&-wrapper {
+			display: var( --tabs-v2-tabs-wrapper-display );
+			flex-basis: var( --tabs-v2-tabs-wrapper-width );
+			flex-direction: var( --tabs-v2-tabs-wrapper-direction );
+			justify-content: var( --tabs-v2-tabs-wrapper-justify-content );
+			gap: var( --tabs-v2-title-gap );
+		}
+	
+		&-content-wrapper {
+			background-color: var( --tabs-v2-background-color );
+			flex-grow: 1;
+		}	
 	}
 
-	&.elementor-tabs-view-vertical {
-		> .elementor-widget-container {
-			> .elementor-tabs {
-				> .elementor-tabs-wrapper {
-					width: var(--tabs-v2-vertical-navigation-width);
-					flex-shrink: 0;
+	.elementor-tab {
 
-					> .elementor-tab-desktop-title {
-						&.elementor-active {
-							background-color: var(--tabs-v2-background-color);
+		&-title {
+			color: var( --tabs-v2-title-color );
+			background-color: var( --tabs-v2-title-background-color );
+			cursor: pointer;
+			outline: var( --focus-outline, none );
+			padding-top: var( --tabs-v2-title-padding-top );
+			padding-right: var( --tabs-v2-title-padding-right );
+			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
+			padding-left: var( --tabs-v2-title-padding-left );
+			font-family: var( --tabs-v2-title-typography-font-family );
+			font-size: var( --tabs-v2-title-typography-font-size );
+			font-weight: var( --tabs-v2-title-typography-font-weight );
+			text-transform: var( --tabs-v2-title-typography-text-transform );
+			font-style: var( --tabs-v2-title-typography-font-style );
+			text-decoration: var( --tabs-v2-title-typography-text-decoration );
+			line-height: var( --tabs-v2-title-typography-line-height );
+			letter-spacing: var( --tabs-v2-title-typography-letter-spacing );
+			word-spacing: var( --tabs-v2-title-typography-word-spacing );
+			text-shadow: var( --tabs-v2-title-shadow );
+			text-align: var( --tabs-v2-title-alignment );
+			flex-grow: var( --tabs-v2-title-grow );
 
-							@include border-end-property(style, none);
-
-							&:before,
-							&:after {
-								height: 999em;
-								width: 0;
-								@include end(0);
-								@include border-end-property(style, solid);
-							}
-
-							&:before {
-								top: 0;
-								transform: translateY(-100%);
-							}
-
-							&:after {
-								top: 100%;
-							}
-						}
-					}
-				  > .elementor-tab-title {
-
-					&.elementor-active {
-					  background-color: var(--tabs-v2-background-color);
-
-					  @include border-end-property(style, none);
-
-					  &:before,
-					  &:after {
-						height: 999em;
-						width: 0;
-						@include end(0);
-						@include border-end-property(style, solid);
-					  }
-
-					  &:before {
-						top: 0;
-						transform: translateY(-100%);
-					  }
-
-					  &:after {
-						top: 100%;
-					  }
-					}
-				  }
+			.elementor-tab-icon {
+				display: unset;
+	
+				>i {
+					width: 20px;
 				}
-				.elementor-tabs-content-wrapper {
-					.e-container {
-						width: 100%;
+	
+				&-active {
+					display: none;
+	
+					>i {
+						width: 20px;
 					}
 				}
 			}
-		}
-	}
 
-	&.elementor-tabs-view-horizontal {
-		> .elementor-widget-container {
-			> .elementor-tabs {
-				> .elementor-tabs-wrapper {
-					> .elementor-tab-desktop-title {
-						display: table-cell;
+			&.elementor-active {
+				color: var( --tabs-v2-title-active-color );
+				background-color: var( --tabs-v2-title-active-background-color );
 
-						&.elementor-active {
-							border-bottom-style: none;
-
-							&:before,
-							&:after {
-								bottom: 0;
-								height: 0;
-								width: 999em;
-								border-bottom-style: solid;
-							}
-
-							&:before {
-								right: 100%;
-							}
-
-							&:after {
-								left: 100%;
-							}
-						}
+				.elementor-tab-icon {
+					display: none;
+	
+					&-active {
+						display: unset;
 					}
 				}
 			}
@@ -135,252 +136,34 @@
 	.elementor-tab-title:after,
 	.e-container,
 	.elementor-tabs-content-wrapper {
-		border: 1px none var(--tabs-v2-border-color);
-	}
-
-	.elementor-tabs {
-		text-align: $start;
-
-		& .elementor-tab-title {
-			color: var(--tabs-v2-title-color);
-			cursor: pointer;
-			outline: var(--focus-outline, none);
-
-			font-family: var(--tabs-v2-title-typography-font-family);
-			font-size: var(--tabs-v2-title-typography-font-size);
-			font-weight: var(--tabs-v2-title-typography-font-weight);
-			text-transform: var(--tabs-v2-title-typography-text-transform);
-			font-style: var(--tabs-v2-title-typography-font-style);
-			text-decoration: var(--tabs-v2-title-typography-text-decoration);
-			line-height: var(--tabs-v2-title-typography-line-height);
-			letter-spacing: var(--tabs-v2-title-typography-letter-spacing);
-			word-spacing: var(--tabs-v2-title-typography-word-spacing);
-
-			text-shadow: var(--tabs-v2-title-shadow);
-
-			& a {
-				color: var(--tabs-v2-title-color);
-			}
-
-			&.elementor-active {
-				color: var(--tabs-v2-title-active-color);
-
-				& a {
-					color: var(--tabs-v2-title-active-color);
-				}
-			}
-		}
-	}
-
-	.elementor-tabs-wrapper {
-		overflow: hidden;
-
-		display: var(--tabs-v2-wrapper-display);
-		justify-content: var(--tabs-v2-wrapper-justify-content);
-
-		.elementor-tab-title {
-			.elementor-tab-icon-active {
-				display: none;
-			}
-			.elementor-tab-icon {
-				display: unset;
-			}
-		}
-		.elementor-active {
-			.elementor-tab-icon {
-		  		display: none;
-			}
-			.elementor-tab-icon-active {
-				display: unset;
-			}
-	  	}
-		.elementor-tab-icon {
-			>i {
-				width: 20px;
-			}
-		}
-		.elementor-tab-icon-active {
-			>i {
-				width: 20px;
-			}
-		}
-	}
-
-	.elementor-tab-desktop-title {
-		position: relative;
-		padding: 20px 25px;
-		font-weight: bold;
-		line-height: 1;
-		border: solid transparent;
-
-		&.elementor-active {
-			border-color: var(--tabs-v2-border-color);
-
-			&:before,
-			&:after {
-				display: block;
-				content: '';
-				position: absolute;
-			}
-		}
-
-		&:focus-visible	 {
-			border: 1px solid $black;
-		}
-	}
-
-	.elementor-tab-mobile-title {
-		padding: 10px 10px;
-		cursor: pointer;
-	}
-
-	.e-container {
-		padding: 20px;
-
-		.elementor-element-overlay::after {
-			outline-width: 1px;
-		}
+		border: 1px none var( --tabs-v2-border-color );
+		border-width: var( --tabs-v2-border-width );
 	}
 
 	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
 		display: none;
 	}
-
-	.elementor-tab-title,
-	.elementor-tab-title:before,
-	.elementor-tab-title:after,
-	.e-container,
-	.elementor-tabs-content-wrapper {
-		border-width: var(--tabs-v2-border-width)
-	}
 }
 
 // Responsive mode
+// This code needs to be updated in the Responsive Tabs section task
 @media (max-width: $screen-mobile-max) {
 	.elementor-tabs {
-		.elementor-tab-title,
-		.e-container {
-			border-style: solid;
-			border-bottom-style: none;
-		}
 
 		.elementor-tabs-wrapper {
 			display: none;
-		}
-
-		.elementor-tabs-content-wrapper {
-			border-bottom-style: solid;
-		}
-
-		.e-container {
-			padding: 10px;
 		}
 	}
 }
 
 @media (min-width: $screen-mobile-next) {
 	.elementor-widget-tabs-v2 {
-		&.elementor-tabs-view-vertical {
-			> .elementor-widget-container {
-				> .elementor-tabs {
-					display: flex;
 
-					> .elementor-tabs-wrapper {
-						flex-direction: column;
-					}
-
-					> .elementor-tabs-content-wrapper {
-						flex-grow: 1;
-						border-style: solid;
-						@include border-start-property(style, none);
-					}
-				}
+		.elementor-tabs {
+			
+			.elementor-tab-mobile-title {
+				display: none;
 			}
-		}
-	}
-
-	.elementor-widget-tabs-v2 {
-		&.elementor-tabs-view-horizontal {
-			> .elementor-widget-container {
-				> .elementor-tabs {
-					> .elementor-tabs-wrapper {
-						> .elementor-tab-title {
-							width: var(--tabs-v2-wrapper-title-size);
-						}
-					}
-
-					> .elementor-tabs-content-wrapper {
-						> .e-container {
-							border-style: solid;
-							border-top-style: none;
-						}
-					}
-				}
-			}
-		}
-
-		&.elementor-tabs-view-vertical {
-			> .elementor-widget-container {
-				> .elementor-tabs {
-					> .elementor-tabs-wrapper {
-						> .elementor-tab-title {
-							height: var(--tabs-v2-wrapper-title-size);
-						}
-					}
-				}
-			}
-		}
-
-		&.elementor-tabs-alignment- {
-			&stretch.elementor-tabs-view-horizontal {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							> .elementor-tab-title {
-								--tabs-v2-wrapper-title-size: 100%;
-							}
-						}
-					}
-				}
-			}
-
-			&stretch.elementor-tabs-view-vertical {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							> .elementor-tab-title {
-								--tabs-v2-wrapper-title-size: 100%;
-							}
-						}
-					}
-				}
-			}
-
-			&center.elementor-tabs-view-vertical {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							--tabs-v2-wrapper-justify-content: center;
-						}
-					}
-				}
-			}
-
-			&end.elementor-tabs-view-vertical {
-				> .elementor-widget-container {
-					> .elementor-tabs {
-						> .elementor-tabs-wrapper {
-							--tabs-v2-wrapper-justify-content: end;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	.elementor-tabs {
-		.elementor-tab-mobile-title {
-			display: none;
 		}
 	}
 }
