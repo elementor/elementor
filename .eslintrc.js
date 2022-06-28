@@ -95,7 +95,7 @@ module.exports = {
 			'error',
 			'always',
 			{
-				ignorePattern: 'webpackChunkName|WebpackIgnore|jQuery',
+				ignorePattern: 'webpackChunkName|webpackIgnore|jQuery',
 				ignoreConsecutiveComments: true,
 			},
 		],

@@ -1,7 +1,7 @@
 import { elementsSelection } from 'elementor-document/elements/selectors';
 
 export class DeselectAll extends $e.modules.CommandBase {
-	apply( args ) {
+	apply() {
 		$e.store.dispatch(
 			this.component.store( 'selection' ).actions.deselectAll(),
 		);

@@ -9,15 +9,17 @@ export default class CommandDisableEnable extends CommandHistoryBase {
 		elementorModules.ForceMethodImplementation();
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
-	 * @return {string}
+	 * @return {string} Full enable command.
 	 */
 	static getEnableCommand() {
 		elementorModules.ForceMethodImplementation();
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
-	 * @return {string}
+	 * @return {string} Full disable command.
 	 */
 	static getDisableCommand() {
 		elementorModules.ForceMethodImplementation();

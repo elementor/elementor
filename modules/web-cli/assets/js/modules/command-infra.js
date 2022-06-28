@@ -1,6 +1,10 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Deprecation from 'elementor-api/utils/deprecation';
 
+/**
+ * @typedef {import('../modules/component-base')} ComponentBase
+ */
+
 export default class CommandInfra extends ArgsObject {
 	/**
 	 * @type {Object}
@@ -14,27 +18,21 @@ export default class CommandInfra extends ArgsObject {
 	/**
 	 * Get info of command.
 	 *
-	 * Use to provide 'extra' information about the command.
-	 *
-	 * @return {Object}
+	 * @return {Object} Extra information about the command.
 	 */
 	static getInfo() {
 		return {};
 	}
 
 	/**
-	 * Self command name.
-	 *
-	 * @return {string}
+	 * @return {string} Self command name.
 	 */
 	static getCommand() {
 		return this.registerConfig.command;
 	}
 
 	/**
-	 * Self component.
-	 *
-	 * @return {ComponentBase}
+	 * @return {ComponentBase} Self component
 	 */
 	static getComponent() {
 		return this.registerConfig.component;
@@ -56,7 +54,7 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Create Commands Base.
 	 *
-	 * @param  [args={}]
+	 * @param {{}} args
 	 */
 	constructor( args = {} ) {
 		super( args );
@@ -86,7 +84,7 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Initialize command, called after construction.
 	 *
-	 * @param  [args={}]
+	 * @param {{}} args
 	 */
 	initialize( args = {} ) {} // eslint-disable-line no-unused-vars
 
@@ -95,18 +93,19 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Validate command arguments.
 	 *
-	 * @param  [args={}]
+	 * @param {{}} args
 	 */
 	validateArgs( args = {} ) {} // eslint-disable-line no-unused-vars
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function apply().
 	 *
 	 * Do the actual command.
 	 *
-	 * @param  [args={}]
+	 * @param {{}} args
 	 *
-	 * @return {*}
+	 * @return {*} Command results.
 	 */
 	apply( args = {} ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
@@ -117,7 +116,7 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Run command with history & hooks.
 	 *
-	 * @return {*}
+	 * @return {*} Command results.
 	 */
 	run() {
 		return this.apply( this.args );
@@ -128,7 +127,7 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Called before run().
 	 *
-	 * @param  [args={}]
+	 * @param {{}} args
 	 */
 	onBeforeRun( args = {} ) {} // eslint-disable-line no-unused-vars
 
@@ -137,8 +136,8 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Called after run().
 	 *
-	 * @param  [args={}]
-	 * @param  [result={*}]
+	 * @param {{}} args
+	 * @param {*}  result
 	 */
 	onAfterRun( args = {}, result ) {} // eslint-disable-line no-unused-vars
 
@@ -147,7 +146,7 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Called before apply().
 	 *
-	 * @param  [args={}]
+	 * @param {{}} args
 	 */
 	onBeforeApply( args = {} ) {} // eslint-disable-line no-unused-vars
 
@@ -156,8 +155,8 @@ export default class CommandInfra extends ArgsObject {
 	 *
 	 * Called after apply().
 	 *
-	 * @param  [args={}]
-	 * @param  [result={*}]
+	 * @param {{}} args
+	 * @param {*}  result
 	 */
 	onAfterApply( args = {}, result ) {} // eslint-disable-line no-unused-vars
 

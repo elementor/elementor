@@ -1,5 +1,9 @@
 import { freeMock, setupMock } from 'elementor/tests/jest/unit/modules/web-cli/assets/js/core/mock/api';
 
+/**
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
+ */
+
 describe( 'set-direction-mode--document/elements/settings', () => {
 	beforeEach( async () => {
 		await setupMock();
@@ -168,7 +172,16 @@ describe( 'set-direction-mode--document/elements/settings', () => {
  * Mock Container.
  * TODO: Move to testing utils.
  *
- * @return {object}
+ * @param {{}}      el
+ * @param {string}  el.type
+ * @param {string}  el.widgetType
+ * @param {string}  el.id
+ * @param {{}}      el.settings
+ * @param {{}}      el.children
+ * @param {{}}      el.parent
+ * @param {number}  el.index
+ * @param {boolean} el.isInner
+ * @return {Container} The new created container
  */
 function createContainer( {
 	type,

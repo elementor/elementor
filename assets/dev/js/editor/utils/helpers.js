@@ -178,7 +178,7 @@ module.exports = {
 			};
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
-		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
+		if ( iconSettings && ! Object.prototype.hasOwnProperty.call( iconSettings, 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
