@@ -1,6 +1,6 @@
 import ControlsStack from 'elementor-views/controls-stack';
 
-export default Marionette.CompositeView.extend( {
+module.exports = Marionette.CompositeView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
 
 	className: 'elementor-repeater-fields',
