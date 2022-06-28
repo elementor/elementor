@@ -10,7 +10,7 @@ export class Populate extends $e.modules.editor.CommandContainerInternalBase {
 		const { document, elements } = args;
 
 		$e.store.dispatch(
-			this.component.store.actions.populate( {
+			this.component.store().actions.populate( {
 				documentId: document.id,
 				elements,
 			} ),

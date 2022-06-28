@@ -1,4 +1,5 @@
 import { DEFAULT_MAX_COLUMNS } from 'elementor-elements/views/section';
+import { elementsSelection } from 'elementor-document/elements/selectors';
 
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' ),
@@ -104,7 +105,7 @@ ColumnView = BaseElementView.extend( {
                     icon: 'eicon-plus',
 					title: __( 'Add New Column', 'elementor' ),
 					callback: this.addNewColumn.bind( this ),
-					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS && ! elementor.selection.isMultiple(),
+					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS && ! elementsSelection.isMultiple(),
 				},
 			],
 		} );

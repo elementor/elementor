@@ -1,4 +1,5 @@
 import AddSectionView from '../../views/add-section/inline';
+import { elementsSelection } from 'elementor-document/elements/selectors';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 
@@ -115,7 +116,7 @@ const SectionView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
-					isEnabled: () => ! elementor.selection.isMultiple(),
+					isEnabled: () => ! elementsSelection.isMultiple(),
 					callback: this.save.bind( this ),
 				},
 			],

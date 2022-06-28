@@ -26,7 +26,7 @@ export class SetSettings extends $e.modules.editor.CommandContainerInternalBase 
 			}
 
 			$e.store.dispatch(
-				this.component.store.actions.settings( {
+				this.component.store().actions.settings( {
 					documentId: elementor.documents.getCurrentId(),
 					elementId: container.id,
 					settings,

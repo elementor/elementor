@@ -39,7 +39,7 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 			elementor.getPreviewContainer().panel.closeEditor();
 
 			$e.store.dispatch(
-				this.component.store.actions.empty( {
+				this.component.store().actions.empty( {
 					documentId: elementor.documents.getCurrentId(),
 				} ),
 			);

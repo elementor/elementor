@@ -73,8 +73,10 @@ export default class ComponentBase extends Module {
 		return this.getNamespace().split( '/' )[ 0 ];
 	}
 
-	get store() {
-		return $e.store.get( this.getNamespace() );
+	store( key = null ) {
+		const storeKey = [ this.getNamespace(), key ].filter( Boolean ).join( '/' );
+
+		return $e.store.get( storeKey );
 	}
 
 	defaultTabs() {

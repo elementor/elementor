@@ -1,3 +1,5 @@
+import { elementsSelection } from 'elementor-document/elements/selectors';
+
 export class Duplicate extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
@@ -17,7 +19,7 @@ export class Duplicate extends $e.modules.editor.document.CommandHistoryBase {
 			result = [];
 		let at = containers[ containers.length - 1 ].view._index;
 
-		if ( ! elementor.selection.isSameType() ) {
+		if ( ! elementsSelection.isSameType() ) {
 			elementor.notifications.showToast( {
 				message: __( 'That didn’t work. Try duplicating one kind of element at a time.', 'elementor' ),
 				buttons: [

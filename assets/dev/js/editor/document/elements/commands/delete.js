@@ -38,7 +38,7 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 			container = container.lookup();
 
 			$e.store.dispatch(
-				this.component.store.actions.delete( {
+				this.component.store().actions.delete( {
 					documentId: elementor.documents.getCurrentId(),
 					elementId: container.id,
 					parentId: container.parent.id,

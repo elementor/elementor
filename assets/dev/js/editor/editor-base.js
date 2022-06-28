@@ -19,7 +19,6 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
-import Selection from './components/selection/manager';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
@@ -353,8 +352,6 @@ export default class EditorBase extends Marionette.Application {
 		this.elementsManager = new ElementsManager();
 
 		this.hooks = new EventManager();
-
-		this.selection = new Selection();
 
 		this.settings = new Settings();
 

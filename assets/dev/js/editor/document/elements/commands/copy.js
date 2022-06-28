@@ -1,3 +1,5 @@
+import { elementsSelection } from 'elementor-document/elements/selectors';
+
 export class Copy extends $e.modules.editor.CommandContainerBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
@@ -6,7 +8,7 @@ export class Copy extends $e.modules.editor.CommandContainerBase {
 	apply( args ) {
 		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
-		if ( ! elementor.selection.isSameType() ) {
+		if ( ! elementsSelection.isSameType() ) {
 			elementor.notifications.showToast( {
 				message: __( 'That didn’t work. Try copying one kind of element at a time.', 'elementor' ),
 				buttons: [

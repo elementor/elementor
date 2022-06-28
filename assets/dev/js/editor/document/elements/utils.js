@@ -1,3 +1,5 @@
+import { elementsSelection } from 'elementor-document/elements/selectors';
+
 /**
  * Add element to Redux state BY REFERENCE using Immer.
  *
@@ -64,4 +66,55 @@ export function removeElementFromDocumentState( elementId, parentId, documentSta
 	delete documentState[ elementId ];
 
 	parent.elements = parent.elements.filter( ( childId ) => childId !== elementId );
+}
+
+export function updateEnvironment() {
+	updatePanelPage();
+	updateSortable();
+	updateNavigator();
+}
+
+/**
+ * Update sortable state.
+ *
+ * In case more than one element is selected, currently sorting supposed to be disabled, and vice-versa.
+ */
+function updateSortable() {
+	elementor.toggleSortableState( ! elementsSelection.isMultiple() );
+}
+
+/**
+ * Update the panel page.
+ *
+ * Selected elements affect the panel panel in a way that when element is selected - its settings page is displayed,
+ * and when the element is blurred (unfocused) - the the default page opened. When more than one element selected,
+ * the default page should appear.
+ */
+function updatePanelPage() {
+	const containers = elementsSelection.getContainers();
+
+	if ( 1 === containers.length ) {
+		$e.run( 'panel/editor/open', {
+			model: containers[ 0 ].model,
+			view: containers[ 0 ].view,
+		} );
+	} else {
+		$e.internal( 'panel/open-default', {
+			autoFocusSearch: false,
+		} );
+	}
+}
+
+/**
+ * Update navigator selections.
+ *
+ * Any change in the document selected elements should be reflected in the navigator, this method is responsible for
+ * updating the navigator.
+ */
+function updateNavigator() {
+	elementor.navigator
+		.getLayout()
+		.elements
+		.currentView
+		.recursiveChildInvoke( 'updateSelection' );
 }

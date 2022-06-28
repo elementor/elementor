@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { elementsSelection } from 'elementor-document/elements/selectors';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -144,8 +145,8 @@ BaseElementView = BaseContainer.extend( {
 						name: 'edit',
 						icon: 'eicon-edit',
 						/* Translators: %s: Element Name. */
-						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
-						isEnabled: () => ! elementor.selection.isMultiple(),
+						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementsSelection.isMultiple() ? '' : this.options.model.getTitle() ),
+						isEnabled: () => ! elementsSelection.isMultiple(),
 						callback: () => $e.run( 'panel/editor/open', {
 							model: this.options.model, // Todo: remove on merge router
 							view: this, // Todo: remove on merge router
@@ -156,8 +157,8 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						isEnabled: () => elementor.selection.isSameType(),
-						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						isEnabled: () => elementsSelection.isSameType(),
+						callback: () => $e.run( 'document/elements/duplicate', { containers: elementsSelection.getContainers( this.getContainer() ) } ),
 					},
 				],
 			}, {
@@ -167,14 +168,14 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
-						isEnabled: () => elementor.selection.isSameType(),
-						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						isEnabled: () => elementsSelection.isSameType(),
+						callback: () => $e.run( 'document/elements/copy', { containers: elementsSelection.getContainers( this.getContainer() ) } ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ) &&
-							elementor.selection.isSameType(),
+							elementsSelection.isSameType(),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),
@@ -183,11 +184,11 @@ BaseElementView = BaseContainer.extend( {
 						title: __( 'Paste Style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
-						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/paste-style', { containers: elementsSelection.getContainers( this.getContainer() ) } ),
 					}, {
 						name: 'resetStyle',
 						title: __( 'Reset Style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/reset-style', { containers: elementsSelection.getContainers( this.getContainer() ) } ),
 					},
 				],
 			},
@@ -215,11 +216,11 @@ BaseElementView = BaseContainer.extend( {
 				{
 					name: 'delete',
 					icon: 'eicon-trash',
-					title: () => elementor.selection.isMultiple()
-							? sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length )
+					title: () => elementsSelection.isMultiple()
+							? sprintf( __( 'Delete %d items', 'elementor' ), elementsSelection.getContainers().length )
 							: __( 'Delete', 'elementor' ),
 					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					callback: () => $e.run( 'document/elements/delete', { containers: elementsSelection.getContainers( this.getContainer() ) } ),
 				},
 			],
 		} );

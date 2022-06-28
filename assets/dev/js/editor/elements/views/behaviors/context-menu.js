@@ -1,4 +1,5 @@
 import AddSectionBase	from 'elementor-views/add-section/base';
+import { elementsSelection } from 'elementor-document/elements/selectors';
 
 var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 
@@ -68,7 +69,7 @@ module.exports = Marionette.Behavior.extend( {
 			this.initContextMenu();
 		}
 
-		if ( 'preview' === this.getOption( 'context' ) && ! elementor.selection.has( this.view.getContainer?.() ) ) {
+		if ( 'preview' === this.getOption( 'context' ) && ! elementsSelection.has( this.view.getContainer?.() ) ) {
 			$e.run( 'document/elements/deselect-all' );
 		}
 

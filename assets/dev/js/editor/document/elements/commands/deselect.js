@@ -6,9 +6,21 @@ export class Deselect extends $e.modules.editor.CommandContainerBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], all = false } = args;
+		const { containers = [ args.container ] } = args;
 
-		elementor.selection.remove( containers, all );
+		$e.store.dispatch(
+			this.component.store( 'selection' ).actions.deselect( {
+				elementsIds: containers.map( ( container ) => container.id ),
+			} ),
+		);
+
+		containers.forEach( ( container ) => container.view.deselect() );
+	}
+
+	static reducer( state, { payload } ) {
+		const { elementsIds = [ payload.elementId ] } = payload;
+
+		return state.filter( ( elementId ) => ! elementsIds.includes( elementId ) );
 	}
 }
 

@@ -1,6 +1,7 @@
 import WidgetDraggable from './behaviors/widget-draggable';
 import WidgetResizable from './behaviors/widget-resizeable';
 import BaseWidget from './base-widget';
+import { elementsSelection } from 'elementor-document/elements/selectors';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 
@@ -48,7 +49,7 @@ const WidgetView = BaseWidget.extend( {
 					title: __( 'Save as a Global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
 					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
-						! elementor.selection.isMultiple(),
+						! elementsSelection.isMultiple(),
 				},
 			],
 		} );

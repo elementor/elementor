@@ -1,5 +1,6 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
+import { elementsSelection } from 'elementor-document/elements/selectors';
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -279,10 +280,7 @@ export default class extends Marionette.CompositeView {
 	 * Update the selection of the current navigator element according to it's corresponding document element.
 	 */
 	updateSelection() {
-		if (
-			Object.keys( elementor.selection.elements )
-				.includes( this.model.get( 'id' ) )
-		) {
+		if ( elementsSelection.getElementsIds().includes( this.model.get( 'id' ) ) ) {
 			this.select();
 		} else {
 			this.deselect();

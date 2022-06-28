@@ -70,7 +70,7 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 			}
 
 			$e.store.dispatch(
-				this.component.store.actions.create( {
+				this.component.store().actions.create( {
 					documentId: elementor.documents.getCurrentId(),
 					parentId: container.id,
 					elements: [ createdContainer.model.toJSON() ],

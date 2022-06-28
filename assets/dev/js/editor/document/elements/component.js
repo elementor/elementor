@@ -1,8 +1,27 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import * as commandsInternal from './commands-internal/';
+import { updateEnvironment } from 'elementor-document/elements/utils';
 
 export default class Component extends ComponentBase {
+	__construct( args = {} ) {
+		super.__construct( args );
+
+		elementor.once( 'document:loaded', () => {
+			 let prevState;
+
+			 // TODO: Use selector.
+			$e.store.subscribe( () => {
+				const newState = $e.store.getState( 'document/elements/selection' );
+
+				if ( prevState !== newState ) {
+					prevState = newState;
+					updateEnvironment();
+				}
+			} );
+		} );
+	}
+
 	getNamespace() {
 		return 'document/elements';
 	}
@@ -25,6 +44,15 @@ export default class Component extends ComponentBase {
 					empty: this.commands.empty.reducer,
 					populate: this.commandsInternal.populate.reducer,
 					settings: this.commandsInternal[ 'set-settings' ].reducer,
+				},
+			},
+			selection: {
+				initialState: [],
+				reducers: {
+					select: this.commands.select.reducer,
+					deselect: this.commands.deselect.reducer,
+					toggleSelection: this.commands[ 'toggle-selection' ].reducer,
+					deselectAll: this.commands[ 'deselect-all' ].reducer,
 				},
 			},
 		};
