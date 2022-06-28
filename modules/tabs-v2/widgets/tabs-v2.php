@@ -212,10 +212,10 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial;',
-				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial;',
-				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial;',
-				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1;',
+				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1; --tabs-v2-title-width: 100%; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -251,10 +251,10 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial;',
-				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial;',
-				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial;',
-				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1;',
+				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1; --tabs-v2-title-width: initial; --tabs-v2-title-height: 100%; --tabs-v2-title-align-items: center;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -412,10 +412,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html__( 'Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
-				'%' => [
-					'min' => 0,
-					'max' => 50,
-				],
 				'px' => [
 					'min' => 0,
 					'max' => 400,
@@ -424,7 +420,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'size_units' => [ 'px', '%' ],
+			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -434,10 +430,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html__( 'Space Between', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
-				'%' => [
-					'min' => 0,
-					'max' => 50,
-				],
 				'px' => [
 					'min' => 0,
 					'max' => 400,
@@ -446,7 +438,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'size_units' => [ 'px', '%' ],
+			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -994,6 +986,7 @@ class TabsV2 extends Widget_Nested_Base {
 		}
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
+		$this->add_render_attribute( 'tab-title-text', 'class', 'elementor-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'elementor-tab-icon' );
 		$this->add_render_attribute( 'tab-icon-active', 'class', 'elementor-tab-icon-active' );
 
@@ -1033,6 +1026,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
+			$tab_title_text = $this->get_render_attribute_string( 'tab-title-text' );
 			$tab_icon_attributes = $this->get_render_attribute_string( 'tab-icon' );
 			$tab_icon_active_attributes = $this->get_render_attribute_string( 'tab-icon-active' );
 
@@ -1045,7 +1039,7 @@ class TabsV2 extends Widget_Nested_Base {
 			$tabs_title_html .= "<div {$title_render_attributes}>";
 			$tabs_title_html .= "\t<span {$tab_icon_attributes}> {$icon_html}</span>";
 			$tabs_title_html .= "\t<span {$tab_icon_active_attributes}> {$icon_active_html}</span>";
-			$tabs_title_html .= "\t<span>{$tab_title}</span>";
+			$tabs_title_html .= "\t<span {$tab_title_text}>{$tab_title}</span>";
 			$tabs_title_html .= '</div>';
 
 			// Tabs content.
@@ -1106,7 +1100,7 @@ class TabsV2 extends Widget_Nested_Base {
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 					<span class="elementor-tab-icon">{{{ tabIcon.value }}}</span>
 					<span class="elementor-tab-icon-active">{{{ tabActiveIcon.value }}}</span>
-					<span>{{{ item.tab_title }}}</span>
+					<span class="elementor-tab-title-text">{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
 			</div>
