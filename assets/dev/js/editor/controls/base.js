@@ -1,23 +1,23 @@
 var ControlBaseView;
 
 ControlBaseView = Marionette.CompositeView.extend( {
-	ui: function() {
+	ui() {
 		return {
 			controlTitle: '.elementor-control-title',
 		};
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = {};
 
 		return elementor.hooks.applyFilters( 'controls/base/behaviors', behaviors, this );
 	},
 
-	getBehavior: function( name ) {
+	getBehavior( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
-	className: function() {
+	className() {
 		// TODO: Any better classes for that?
 		var classes = 'elementor-control elementor-control-' + this.model.get( 'name' ) + ' elementor-control-type-' + this.model.get( 'type' ),
 			modelClasses = this.model.get( 'classes' ),
@@ -36,7 +36,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		return classes;
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		var controlData = {
 			_cid: this.model.cid,
 		};
@@ -47,11 +47,11 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	getTemplate: function() {
+	getTemplate() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-control-' + this.model.get( 'type' ) + '-content' );
 	},
 
-	initialize: function( options ) {
+	initialize( options ) {
 		const label = this.model.get( 'label' );
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
@@ -112,15 +112,15 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onDeviceModeChange: function() {
+	onDeviceModeChange() {
 		this.toggleControlVisibility();
 	},
 
-	onAfterChange: function() {
+	onAfterChange() {
 		this.toggleControlVisibility();
 	},
 
-	toggleControlVisibility: function() {
+	toggleControlVisibility() {
 		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
@@ -131,7 +131,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		elementor.getPanelView().updateScrollbar();
 	},
 
-	onRender: function() {
+	onRender() {
 		var layoutType = this.model.get( 'label_block' ) ? 'block' : 'inline',
 			showLabel = this.model.get( 'show_label' ),
 			elClasses = 'elementor-label-' + layoutType;

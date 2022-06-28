@@ -73,6 +73,7 @@ module.exports = {
 	},
 
 	/**
+	 * @param {string} url
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
@@ -102,7 +103,7 @@ module.exports = {
 		const self = this;
 		this.fetchInlineSvg( value.url, ( data ) => {
 			if ( data ) {
-				self._inlineSvg[ value.id ] = data; //$( data ).find( 'svg' )[ 0 ].outerHTML;
+				self._inlineSvg[ value.id ] = data; // $( data ).find( 'svg' )[ 0 ].outerHTML;
 				if ( view ) {
 					view.render();
 				}
@@ -112,7 +113,7 @@ module.exports = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config[ 'icons_update_needed' ] ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config.icons_update_needed ) {
 			return;
 		}
 
@@ -148,12 +149,12 @@ module.exports = {
 
 	/**
 	 *
-	 * @param view - view to refresh if needed
-	 * @param icon - icon control data
-	 * @param attributes - default {} - attributes to attach to rendered html tag
-	 * @param tag - default i - html tag to render
-	 * @param returnType - default value - retrun type
-	 * @returns {string|boolean|*}
+	 * @param {*}      view       - view to refresh if needed
+	 * @param {*}      icon       - icon control data
+	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
+	 * @param {string} tag        - default i - html tag to render
+	 * @param {*}      returnType - default value - retrun type
+	 * @return {string|boolean|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
 		if ( ! icon || ! icon.library ) {
@@ -177,7 +178,7 @@ module.exports = {
 			};
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
-		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
+		if ( iconSettings && ! Object.prototype.hasOwnProperty.call( iconSettings, 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
@@ -223,7 +224,7 @@ module.exports = {
 		if ( mapping[ fa4Value ] ) {
 			return mapping[ fa4Value ];
 		}
-		// every thing else is converted to solid
+		// Every thing else is converted to solid
 		return {
 			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
 			library: 'fa-solid',
@@ -357,9 +358,9 @@ module.exports = {
 
 	getSimpleDialog( id, title, message, confirmString, onConfirm ) {
 		return elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: id,
+			id,
 			headerMessage: title,
-			message: message,
+			message,
 			position: {
 				my: 'center center',
 				at: 'center center',
@@ -368,12 +369,12 @@ module.exports = {
 				confirm: confirmString,
 				cancel: __( 'Cancel', 'elementor' ),
 			},
-			onConfirm: onConfirm,
+			onConfirm,
 		} );
 	},
 
 	maybeDisableWidget( givenWidgetType = null ) {
-		if ( ! elementor.config[ 'icons_update_needed' ] ) {
+		if ( ! elementor.config.icons_update_needed ) {
 			return false;
 		}
 
@@ -411,7 +412,7 @@ module.exports = {
 					__( 'Elementor\'s New Icon Library', 'elementor' ),
 					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
 					__( 'Update', 'elementor' ),
-					onConfirm
+					onConfirm,
 				).show();
 				return true;
 			}
@@ -430,7 +431,7 @@ module.exports = {
 		} );
 	},
 
-	isActiveControl: function( controlModel, values, controls ) {
+	isActiveControl( controlModel, values, controls ) {
 		const condition = controlModel.condition || controlModel.get?.( 'condition' );
 		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
 
@@ -439,28 +440,9 @@ module.exports = {
 			const terms = [];
 
 			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
-				// Here we want to convert the 'condition' format to a 'conditions' format. The first step is to
-				// isolate the term from the negative operator if exists. For example, a condition format can look
-				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
-				const conditionNameParts = conditionName.match( /([\w-]+(?:\[[\w-]+])?)?(!?)$/i ),
-					conditionRealName = conditionNameParts[ 1 ],
-					isNegativeCondition = !! conditionNameParts[ 2 ],
-					controlValue = values[ conditionRealName ];
-				let operator;
+				const convertedCondition = elementor.conditions.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
 
-				if ( Array.isArray( conditionValue ) && conditionValue.length ) {
-					operator = isNegativeCondition ? '!in' : 'in';
-				} else if ( Array.isArray( controlValue ) && controlValue.length ) {
-					operator = isNegativeCondition ? '!contains' : 'contains';
-				} else if ( isNegativeCondition ) {
-					operator = '!==';
-				}
-
-				terms.push( {
-					name: conditionRealName,
-					operator: operator,
-					value: conditionValue,
-				} );
+				terms.push( convertedCondition );
 			} );
 
 			conditions = {
@@ -586,7 +568,7 @@ module.exports = {
 		$element.removeData( backupKey );
 	},
 
-	elementSizeToUnit: function( $element, size, unit ) {
+	elementSizeToUnit( $element, size, unit ) {
 		const window = elementorFrontend.elements.window;
 
 		switch ( unit ) {
@@ -603,7 +585,7 @@ module.exports = {
 		return Math.round( size * 1000 ) / 1000;
 	},
 
-	compareVersions: function( versionA, versionB, operator ) {
+	compareVersions( versionA, versionB, operator ) {
 		const prepareVersion = ( version ) => {
 			version = version + '';
 
@@ -664,7 +646,7 @@ module.exports = {
 	 *
 	 * @param {string} tag
 	 *
-	 * @returns {string}
+	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
 		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';

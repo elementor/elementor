@@ -13,7 +13,7 @@ export default class CommandCallbackBase extends CommandBase {
 	 *
 	 * Support pure callbacks ( Non command-base ).
 	 *
-	 * @returns {(function())}
+	 * @return {(function())}
 	 */
 	static getCallback() {
 		return this.registerConfig.callback;

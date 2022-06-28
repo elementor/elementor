@@ -38,7 +38,7 @@ export default function IndexHeader( props ) {
 
 	return (
 		<>
-			<Header buttons={ buttons }/>
+			<Header buttons={ buttons } />
 			<PopoverDialog
 				targetRef={ importRef }
 				wrapperClass="e-kit-library__tooltip"
@@ -54,7 +54,7 @@ export default function IndexHeader( props ) {
 					<Heading tag="h3" variant="h3">{ __( 'What\'s going on in the Kit Library?', 'elementor' ) }</Heading>
 					<Text>
 						{ __( 'Search & filter for kits by category and tags, or browse through individual kits to see what\'s inside.', 'elementor' ) }
-						<br/>
+						<br />
 						{ __( 'Once you\'ve picked a winner, apply it to your site!', 'elementor' ) }
 					</Text>
 				</div>

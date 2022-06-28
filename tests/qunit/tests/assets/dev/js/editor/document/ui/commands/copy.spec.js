@@ -7,7 +7,7 @@ export const Copy = () => {
 
 		const eButton = ElementsHelper.createWrappedButton();
 
-		CommonHelper.runShortcut( 67 /* c */, true );
+		CommonHelper.runShortcut( 67 /* C */, true );
 
 		const done = assert.async();
 

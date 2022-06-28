@@ -3,21 +3,12 @@ import * as commands from './commands/';
 import * as uiStates from './ui-states/';
 
 export default class Component extends ComponentBase {
-	/**
-	 * @typedef {object} currentPicker - The current triggering picker data
-	 *
-	 * @property {object|null} kit - Kit data if it's a kit.
-	 * @property {Container} container - Element container to set the settings to.
-	 * @property {string} control - Control name which triggered the picking.
-	 * @property {HTMLElement} trigger - The actual HTML element of the control which triggered the picking.
-	 * @property {string|null} initialColor - The initial value of the color control.
-	 */
 	currentPicker = this.getDefaultPicker();
 
 	/**
 	 * Get the default picker object.
 	 *
-	 * @returns {object}
+	 * @return {Object} picker
 	 */
 	getDefaultPicker() {
 		return {
@@ -32,7 +23,7 @@ export default class Component extends ComponentBase {
 	/**
 	 * Reset the current picker to its default.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	resetPicker() {
 		this.currentPicker = this.getDefaultPicker();
@@ -43,7 +34,7 @@ export default class Component extends ComponentBase {
 	 *
 	 * @param {string} value - The new color to set.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	renderUI( value ) {
 		const { container, control, kit } = this.currentPicker;
@@ -70,7 +61,7 @@ export default class Component extends ComponentBase {
 	/**
 	 * Retrieve the Eye-Dropper namespace.
 	 *
-	 * @returns {string}
+	 * @return {string} Eye-Dropper namespace
 	 */
 	getNamespace() {
 		return 'elements-color-picker';
@@ -79,7 +70,7 @@ export default class Component extends ComponentBase {
 	/**
 	 * Import the component commands.
 	 *
-	 * @returns {object}
+	 * @return {Object} commands
 	 */
 	defaultCommands() {
 		return this.importCommands( commands );
@@ -88,7 +79,7 @@ export default class Component extends ComponentBase {
 	/**
 	 * Import the component UI states.
 	 *
-	 * @returns {object}
+	 * @return {Object} UI States
 	 */
 	defaultUiStates() {
 		return this.importUiStates( uiStates );
@@ -97,7 +88,7 @@ export default class Component extends ComponentBase {
 	/**
 	 * Set the commands keyboard shortcuts.
 	 *
-	 * @returns {object}
+	 * @return {Object} shortcut
 	 */
 	defaultShortcuts() {
 		return {

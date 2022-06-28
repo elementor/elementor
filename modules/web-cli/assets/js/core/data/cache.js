@@ -1,6 +1,13 @@
 import LocalStorage from './storages/local-storage';
 
 /**
+ * @typedef {{}} RequestData
+ */
+/**
+ * @typedef {import('../data')} Data
+ */
+
+/**
  * TODO: Search common logic, create functions to reduce code size.
  */
 export default class Cache {
@@ -25,7 +32,7 @@ export default class Cache {
 	 *
 	 * @param {RequestData} requestData
 	 *
-	 * @return {(Promise|boolean)}
+	 * @return {(Promise|boolean)} request data
 	 */
 	getAsync( requestData ) {
 		const data = this.get( requestData );
@@ -52,7 +59,7 @@ export default class Cache {
 	 * when update() will only modify exist objects/values.
 	 *
 	 * @param {RequestData} requestData
-	 * @param {*} data
+	 * @param {*}           data
 	 */
 	set( requestData, data ) {
 		$e.data.validateRequestData( requestData );
@@ -96,7 +103,7 @@ export default class Cache {
 	 *
 	 * @param {RequestData} requestData
 	 *
-	 * @return {{}}
+	 * @return {{}} data
 	 */
 	get( requestData ) {
 		$e.data.validateRequestData( requestData );
@@ -113,6 +120,7 @@ export default class Cache {
 			// Analyze reaming endpoint (Using reduce over endpoint parts, build the right index).
 			const pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
 				pureEndpointParts = pureEndpoint.split( '/' ),
+				// eslint-disable-next-line array-callback-return
 				result = pureEndpointParts.reduce( ( accumulator, endpointPart ) => {
 					if ( accumulator && accumulator[ endpointPart ] ) {
 						return accumulator[ endpointPart ];
@@ -142,7 +150,7 @@ export default class Cache {
 		let response = {};
 
 		// Simulate response from cache.
-		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /*string*/ endpointValue ] ) => {
+		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /* String*/ endpointValue ] ) => {
 			if ( endpointValue && endpoint.includes( endpointKey ) ) {
 				// Assuming it is a specific endpoint.
 				const oldData = endpointValue,
@@ -155,7 +163,7 @@ export default class Cache {
 					response = jQuery.extend( true, oldData, requestData.args.data );
 				} else {
 					const oldSpecificData = pureEndpointParts.reduce(
-						( accumulator, pureEndpointPart ) => accumulator[ pureEndpointPart ], oldData
+						( accumulator, pureEndpointPart ) => accumulator[ pureEndpointPart ], oldData,
 					);
 
 					response = jQuery.extend( true, oldSpecificData, requestData.args.data );

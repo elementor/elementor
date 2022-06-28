@@ -19,7 +19,7 @@ const TaxonomiesFilterList = ( props ) => {
 		const lowerCaseSearch = search.toLowerCase();
 
 		return props.taxonomiesByType.data.filter(
-			( tag ) => tag.text.toLowerCase().includes( lowerCaseSearch )
+			( tag ) => tag.text.toLowerCase().includes( lowerCaseSearch ),
 		);
 	}, [ props.taxonomiesByType.data, search ] );
 
@@ -35,6 +35,7 @@ const TaxonomiesFilterList = ( props ) => {
 					<SearchInput
 						size="sm"
 						className="e-kit-library__tags-filter-list-search"
+						// eslint-disable-next-line @wordpress/i18n-ellipsis
 						placeholder={ sprintf( __( 'Search %s...', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
@@ -44,6 +45,7 @@ const TaxonomiesFilterList = ( props ) => {
 				{ 0 === taxonomies.length && <Text>{ __( 'No Results Found', 'elementor' ) }</Text> }
 				{
 					taxonomies.map( ( taxonomy ) => (
+						// eslint-disable-next-line jsx-a11y/label-has-for
 						<label key={ taxonomy.text } className="e-kit-library__tags-filter-list-item">
 							<Checkbox
 								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
@@ -51,11 +53,11 @@ const TaxonomiesFilterList = ( props ) => {
 									const checked = e.target.checked;
 
 									props.onSelect( taxonomy.type, ( prev ) => {
-										return checked ?
-											[ ...prev, taxonomy.text ] :
-											prev.filter( ( tagId ) => tagId !== taxonomy.text );
+										return checked
+											? [ ...prev, taxonomy.text ]
+											: prev.filter( ( tagId ) => tagId !== taxonomy.text );
 									} );
-								} }/>
+								} } />
 							{ taxonomy.text }
 						</label>
 					) )

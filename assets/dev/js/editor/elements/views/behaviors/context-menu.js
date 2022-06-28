@@ -10,7 +10,7 @@ module.exports = Marionette.Behavior.extend( {
 		eventTargets: [ 'el' ],
 	},
 
-	events: function() {
+	events() {
 		const events = {};
 
 		this.getOption( 'eventTargets' ).forEach( function( eventTarget ) {
@@ -26,11 +26,11 @@ module.exports = Marionette.Behavior.extend( {
 		return events;
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( this.view.options.model, 'request:contextmenu', this.onRequestContextMenu );
 	},
 
-	initContextMenu: function() {
+	initContextMenu() {
 		var contextMenuGroups = this.getOption( 'groups' ),
 			deleteGroup = _.findWhere( contextMenuGroups, { name: 'delete' } ),
 			afterGroupIndex = contextMenuGroups.indexOf( deleteGroup );
@@ -75,7 +75,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.contextMenu.getModal().on( 'hide', () => this.onContextMenuHide() );
 	},
 
-	getContextMenu: function() {
+	getContextMenu() {
 		if ( ! this.contextMenu ) {
 			this.initContextMenu();
 		}
@@ -87,7 +87,7 @@ module.exports = Marionette.Behavior.extend( {
 		return this.contextMenu;
 	},
 
-	onContextMenu: function( event ) {
+	onContextMenu( event ) {
 		if ( $e.shortcuts.isControlEvent( event ) ) {
 			return;
 		}
@@ -114,7 +114,7 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.channels.editor.reply( 'contextMenu:targetView', this.view );
 	},
 
-	onRequestContextMenu: function( event ) {
+	onRequestContextMenu( event ) {
 		var modal = this.getContextMenu().getModal(),
 			iframe = modal.getSettings( 'iframe' ),
 			toolsGroup = _.findWhere( this.contextMenu.getSettings( 'groups' ), { name: 'tools' } );
@@ -130,8 +130,8 @@ module.exports = Marionette.Behavior.extend( {
 		modal.setSettings( 'iframe', iframe );
 	},
 
-	onContextMenuHide: function() {
-		// enable sortable when context menu closed
+	onContextMenuHide() {
+		// Enable sortable when context menu closed
 		// TODO: Should be in UI hook when the context menu will move to command
 		if ( this.view._parent ) {
 			this.view._parent.triggerMethod( 'toggleSortMode', true );
@@ -140,7 +140,7 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.channels.editor.reply( 'contextMenu:targetView', null );
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		if ( this.contextMenu ) {
 			this.contextMenu.destroy();
 		}
