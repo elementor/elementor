@@ -50,9 +50,8 @@ export default class Heartbeat {
 	showLockMessage( lockedUser ) {
 		const modal = this.getModal();
 
-		modal
-			/* Translators: %s: Locked user name. */
-			.setMessage( sprintf( __( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ), lockedUser ) )
+		// Translators: %s is locked username.
+		modal.setMessage( sprintf( __( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ), lockedUser ) )
 			.show();
 	}
 
