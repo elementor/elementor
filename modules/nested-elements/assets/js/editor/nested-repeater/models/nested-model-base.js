@@ -25,7 +25,10 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 
 		return 'container' === childElType &&
 			'widget' === parentElType &&
-			isWidgetSupportNesting( this.get( 'widgetType' ) );
+			isWidgetSupportNesting( this.get( 'widgetType' ) ) &&
+			// When creating a container for the tabs widget specifcly from the repeater, the container should be locked,
+			// so only containers that are locked (created from the repeater) can be inside the tabs widget.
+			childModel.get( 'isLocked' );
 	}
 
 	getDefaultChildren() {
@@ -36,6 +39,7 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 			element.id = elementorCommon.helpers.getUniqueId();
 			element.settings = element.settings || {};
 			element.elements = element.elements || [];
+			element.isLocked = true;
 
 			result.push( element );
 		} );
