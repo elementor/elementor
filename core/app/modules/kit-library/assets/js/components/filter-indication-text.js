@@ -11,7 +11,9 @@ export default function FilterIndicationText( props ) {
 	return (
 		<Grid container className="e-kit-library__filter-indication">
 			<Text className="e-kit-library__filter-indication-text">
-				{ sprintf( _n( 'Showing %s result for', 'Showing %s results for', props.resultCount, 'elementor' ), ! props.resultCount ? __( 'no', 'elementor' ) : props.resultCount ) }
+				{
+					// Translators: %s is the number of kits in the results
+					sprintf( _n( 'Showing %s result for', 'Showing %s results for', props.resultCount, 'elementor' ), ! props.resultCount ? __( 'no', 'elementor' ) : props.resultCount ) }
 				{ ' ' }
 				{ props.queryParams.search && `"${ props.queryParams.search }"` }
 				{ ' ' }

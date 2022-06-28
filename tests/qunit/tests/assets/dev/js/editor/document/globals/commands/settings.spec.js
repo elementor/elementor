@@ -31,10 +31,12 @@ export const Settings = () => {
 					},
 				} );
 
+				// eslint-disable-next-line camelcase
 				GlobalsHelper.enable( eButton, { typography_typography } );
 
 				assert.equal( eButton.globals.attributes.typography_typography, typography_typography );
 
+				// eslint-disable-next-line camelcase
 				await GlobalsHelper.settings( eButton, { typography_typography: typography_typography_second } );
 
 				assert.equal( eButton.globals.attributes.typography_typography, typography_typography_second );
@@ -60,12 +62,14 @@ export const Settings = () => {
 					},
 				} );
 
+				// eslint-disable-next-line camelcase
 				GlobalsHelper.multiEnable( eButtons, { typography_typography } );
 
 				eButtons.forEach( ( eButton ) => {
 					assert.equal( eButton.globals.attributes.typography_typography, typography_typography );
 				} );
 
+				// eslint-disable-next-line camelcase
 				await GlobalsHelper.multiSettings( eButtons, { typography_typography: typography_typography_second } );
 
 				eButtons.forEach( ( eButton ) => {

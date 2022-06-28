@@ -1,10 +1,11 @@
+import Console from 'elementor-api/utils/console';
+
 /**
  * @typedef HashCommand
  * @property {string} method,
  * @property {string} command
- * @property {object} args
+ * @property {Object} args
  */
-import Helpers from 'elementor-api/utils/helpers';
 
 export default class HashCommands {
 	/**
@@ -25,6 +26,12 @@ export default class HashCommands {
 	};
 
 	/**
+	 * @typedef HashCommand
+	 * @property {string} method  method
+	 * @property {string} command command
+	 * @property {Object} args    arguments
+	 */
+	/**
 	 * List of current loaded hash commands.
 	 *
 	 * @type {Array.<HashCommand>}
@@ -42,7 +49,7 @@ export default class HashCommands {
 	 *
 	 * @param {string} hash
 	 *
-	 * @returns {Array.<HashCommand>}
+	 * @return {Array.<HashCommand>} API requests
 	 */
 	get( hash = location.hash ) {
 		const result = [];
@@ -52,6 +59,7 @@ export default class HashCommands {
 			const hashList = hash.substr( 1 ).split( '&' );
 
 			hashList.forEach( ( hashItem ) => {
+				// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 				const [ rawCommand, rawArgs ] = hashItem.split( '?' );
 
 				const hashParts = rawCommand.split( ':' );
@@ -106,7 +114,7 @@ export default class HashCommands {
 
 			await dispatcher.runner()(
 				hashCommand.command,
-				dispatcher.isSafeWithArgs( hashCommand.command ) ? hashCommand.args : undefined
+				dispatcher.isSafeWithArgs( hashCommand.command ) ? hashCommand.args : undefined,
 			);
 		}
 	}
@@ -126,7 +134,7 @@ export default class HashCommands {
 	 * Takes a args in form of JSON and parse it.
 	 *
 	 * @param {string} rawArgs
-	 * @returns {object}
+	 * @return {Object} args in as an object
 	 */
 	parseCommandArgs( rawArgs ) {
 		try {
@@ -134,7 +142,7 @@ export default class HashCommands {
 				decodeURI( rawArgs || '{}' ),
 			);
 		} catch ( e ) {
-			Helpers.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
+			Console.warn( 'Hash commands JSON args cannot be parsed. \n\n', e );
 
 			return {};
 		}
