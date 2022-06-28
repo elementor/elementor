@@ -13,8 +13,6 @@ export class Deselect extends $e.modules.editor.CommandContainerBase {
 				elementsIds: containers.map( ( container ) => container.id ),
 			} ),
 		);
-
-		containers.forEach( ( container ) => container.view.deselect() );
 	}
 
 	static reducer( state, { payload } ) {

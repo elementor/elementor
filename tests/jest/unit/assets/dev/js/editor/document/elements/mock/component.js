@@ -1,4 +1,5 @@
 import { setupMock } from 'elementor/tests/jest/unit/modules/web-cli/assets/js/core/mock/api';
+import { updateEnvironment } from 'elementor-document/elements/utils';
 
 export async function mockElementsComponent() {
 	await setupMock();
@@ -19,6 +20,11 @@ export async function mockElementsComponent() {
 			}
 		}
 	) );
+
+	jest.mock( 'elementor-document/elements/utils', () => ( {
+		...jest.requireActual( 'elementor-document/elements/utils' ),
+		updateEnvironment: jest.fn(),
+	} ) );
 
 	global.elementor = {
 		helpers: {
@@ -41,6 +47,7 @@ export async function mockElementsComponent() {
 				closeEditor: () => {},
 			},
 		} ),
+		once: ( event, callback ) => callback(),
 	};
 
 	global.elementorModules = {

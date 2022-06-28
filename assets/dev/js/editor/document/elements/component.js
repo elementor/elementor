@@ -10,7 +10,6 @@ export default class Component extends ComponentBase {
 		elementor.once( 'document:loaded', () => {
 			let prevState;
 
-			// TODO: Use selector.
 			$e.store.subscribe( () => {
 				const newState = $e.store.getState( 'document/elements/selection' );
 

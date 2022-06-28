@@ -12,8 +12,6 @@ export class Select extends $e.modules.editor.CommandContainerBase {
 				append,
 			} ),
 		);
-
-		containers.forEach( ( container ) => container.view.select() );
 	}
 
 	static reducer( state, { payload } ) {
