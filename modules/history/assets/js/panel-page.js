@@ -4,7 +4,7 @@ import TabRevisionsLoadingView from './revisions/panel/loading';
 import TabRevisionsView from './revisions/panel/tab';
 import TabRevisionsEmptyView from './revisions/panel/empty';
 
-module.exports = Marionette.LayoutView.extend( {
+export default Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
 
 	regions: {

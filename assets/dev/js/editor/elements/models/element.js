@@ -263,4 +263,4 @@ ElementModel = BaseElementModel.extend( {
 
 ElementModel.prototype.sync = ElementModel.prototype.fetch = ElementModel.prototype.save = _.noop;
 
-module.exports = ElementModel;
+export default ElementModel;

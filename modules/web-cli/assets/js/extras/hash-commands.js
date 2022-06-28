@@ -1,12 +1,5 @@
 import Console from 'elementor-api/utils/console';
 
-/**
- * @typedef HashCommand
- * @property {string} method,
- * @property {string} command
- * @property {Object} args
- */
-
 export default class HashCommands {
 	/**
 	 * Cannot be static since it uses callback(s) that are available only after '$e' is initialized.

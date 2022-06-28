@@ -237,4 +237,4 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 } );
 
-module.exports = ControlsStack;
+export default ControlsStack;

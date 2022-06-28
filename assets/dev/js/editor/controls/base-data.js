@@ -505,4 +505,4 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 } );
 
-module.exports = ControlBaseDataView;
+export default ControlBaseDataView;

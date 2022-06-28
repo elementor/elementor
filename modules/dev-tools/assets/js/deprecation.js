@@ -1,9 +1,7 @@
 /**
- * @typedef {Object} Version
- * @property {number} major1
- * @property {number} major2
- * @property {number} minor
- * @property {string} build
+ * @param {string} name
+ * @param {string} version
+ * @param {string} replacement
  */
 
 const softDeprecated = ( name, version, replacement ) => {
