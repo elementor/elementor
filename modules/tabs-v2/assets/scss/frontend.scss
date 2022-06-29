@@ -200,6 +200,12 @@
 		.elementor-tabs-wrapper {
 			display: none;
 		}
+
+		.elementor-tabs-content-wrapper,
+		.elementor-tab-title,
+		.elementor-tab-content {
+			border: none;
+		}
 	}
 }
 
