@@ -150,6 +150,9 @@ class Images_Manager {
 
 	private function delete_custom_images( $post_id ) {
 		$image_meta = wp_get_attachment_metadata( $post_id );
+		if ( empty( $image_meta ) ) {
+			return;
+		}
 
 		( new Collection( $image_meta['sizes'] ) )
 			->filter( function ( $value, $key ) {
