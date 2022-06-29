@@ -153,6 +153,7 @@ class Images_Manager {
 		if ( empty( $image_meta ) ) {
 			return;
 		}
+
 		( new Collection( $image_meta['sizes'] ) )
 			->filter( function ( $value, $key ) {
 				return ( 0 === strpos( $key, 'elementor_custom_' ) );
