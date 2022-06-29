@@ -157,7 +157,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'title_field' => '{{{ tab_title }}}',
 		] );
 
-		$this->add_responsive_control( 'tabs_title_position', [
+		$this->add_responsive_control( 'tabs_position', [
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
@@ -190,11 +190,8 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_title_location_horizontal', [
-			'label' => esc_html__( 'Tabs Location', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
+		$this->add_responsive_control( 'tabs_location_horizontal', [
 			'options' => [
-				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-start-h',
 				],
@@ -221,7 +218,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
 			'condition' => [
-				'tabs_title_position' => [
+				'tabs_position' => [
 					'',
 					'top',
 					'bottom',
@@ -229,7 +226,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_title_location_vertical', [
+		$this->add_responsive_control( 'tabs_location_vertical', [
 			'label' => esc_html__( 'Tabs Location', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
@@ -260,14 +257,14 @@ class TabsV2 extends Widget_Nested_Base {
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
 			'condition' => [
-				'tabs_title_position' => [
+				'tabs_position' => [
 					'start',
 					'end',
 				],
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_title_width', [
+		$this->add_responsive_control( 'tabs_width', [
 			'label' => esc_html__( 'Tabs Width', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
@@ -288,7 +285,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'{{WRAPPER}}' => '--tabs-v2-tabs-wrapper-width: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
-				'tabs_title_position' => [
+				'tabs_position' => [
 					'start',
 					'end',
 				],
@@ -332,7 +329,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_title_height', [
+		$this->add_responsive_control( 'tabs_height', [
 			'label' => esc_html__( 'Height', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
