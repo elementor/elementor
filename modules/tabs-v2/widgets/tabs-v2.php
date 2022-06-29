@@ -448,11 +448,11 @@ class TabsV2 extends Widget_Nested_Base {
 			'type' => Controls_Manager::SELECT,
 			'options' => [
 				'' => esc_html__( 'None', 'elementor' ),
-				'solid' => _x( 'Solid', 'Border Control', 'elementor' ),
-				'double' => _x( 'Double', 'Border Control', 'elementor' ),
-				'dotted' => _x( 'Dotted', 'Border Control', 'elementor' ),
-				'dashed' => _x( 'Dashed', 'Border Control', 'elementor' ),
-				'groove' => _x( 'Groove', 'Border Control', 'elementor' ),
+				'solid' => esc_html_x( 'Solid', 'Border Control', 'elementor' ),
+				'double' => esc_html_x( 'Double', 'Border Control', 'elementor' ),
+				'dotted' => esc_html_x( 'Dotted', 'Border Control', 'elementor' ),
+				'dashed' => esc_html_x( 'Dashed', 'Border Control', 'elementor' ),
+				'groove' => esc_html_x( 'Groove', 'Border Control', 'elementor' ),
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-border-style: {{VALUE}};',
@@ -484,7 +484,7 @@ class TabsV2 extends Widget_Nested_Base {
 		);
 
 		$this->add_responsive_control( 'tabs_title_border_width', [
-			'label' => _x( 'Border Width', 'Border Control', 'elementor' ),
+			'label' => esc_html_x( 'Border Width', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -495,7 +495,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_control( 'tabs_title_border_color', [
-			'label' => _x( 'Border Color', 'Border Control', 'elementor' ),
+			'label' => esc_html_x( 'Border Color', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
 			'selectors' => [
@@ -541,7 +541,7 @@ class TabsV2 extends Widget_Nested_Base {
 		);
 
 		$this->add_control( 'tabs_title_border_color_hover', [
-			'label' => _x( 'Border Color', 'Border Control', 'elementor' ),
+			'label' => esc_html_x( 'Border Color', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-border-color-hover: {{VALUE}};',
@@ -552,7 +552,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'tabs_title_border_width_hover', [
-			'label' => _x( 'Border Width', 'Border Control', 'elementor' ),
+			'label' => esc_html_x( 'Border Width', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-border-width-hover: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -575,7 +575,7 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_control(
 			'tabs_title_transition_duration',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
+				'label' => esc_html__( 'Transition Duration (s)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-v2-title-transition: {{SIZE}}s',
@@ -619,7 +619,7 @@ class TabsV2 extends Widget_Nested_Base {
 		);
 
 		$this->add_control( 'tabs_title_border_color_active', [
-			'label' => _x( 'Border Color', 'Border Control', 'elementor' ),
+			'label' => esc_html_x( 'Border Color', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-border-color-active: {{VALUE}};',
@@ -630,7 +630,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'tabs_title_border_width_active', [
-			'label' => _x( 'Border Width', 'Border Control', 'elementor' ),
+			'label' => esc_html_x( 'Border Width', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-border-width-active: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -779,7 +779,7 @@ class TabsV2 extends Widget_Nested_Base {
 		}
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
-		$this->add_render_attribute( 'tab-title-text', 'class', 'elementor-tab-title-text' );
+		$this->add_render_attribute( 'tab-title-text', 'class', 'e-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'elementor-tab-icon' );
 		$this->add_render_attribute( 'tab-icon-active', 'class', 'elementor-tab-icon-active' );
 
