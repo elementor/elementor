@@ -893,7 +893,7 @@ class TabsV2 extends Widget_Nested_Base {
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 					<span class="elementor-tab-icon">{{{ tabIcon.value }}}</span>
 					<span class="elementor-tab-icon-active">{{{ tabActiveIcon.value }}}</span>
-					<span class="elementor-tab-title-text">{{{ item.tab_title }}}</span>
+					<span class="e-tab-title-text">{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
 			</div>

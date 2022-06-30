@@ -161,6 +161,12 @@
 		}
 	}
 
+	.e-container,
+	.elementor-tabs-content-wrapper {
+		border: 1px none var( --tabs-v2-border-color );
+		border-width: var( --tabs-v2-border-width );
+	}
+
 	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
 		display: none;
 	}
