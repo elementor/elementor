@@ -1,14 +1,10 @@
-//
+	//
 // Tabs v2
 //
 .elementor-widget-tabs-v2 {
 	--tabs-v2-color-accent-fallback: #61CE70;
 	--tabs-v2-color-secondary-fallback: #54595F;
 	--tabs-v2-default-padding: 15px;
-	--tabs-v2-height: initial;
-	--tabs-v2-overflow-x: hidden;
-	--tabs-v2-overflow-y: auto;
-	--tabs-v2-background-color: transparent;
 
 	--tabs-v2-display: flex;
 	--tabs-v2-direction: column;
@@ -20,15 +16,18 @@
 	--tabs-v2-tabs-wrapper-justify-content: initial;
 	--tabs-v2-tabs-wrapper-width: initial;
 
-	--tabs-v2-border-width: initial;
-	--tabs-v2-border-color: initial; 
+	--tabs-v2-height: initial;
+	--tabs-v2-overflow-x: hidden;
+	--tabs-v2-overflow-y: auto;
 
-	
+	--tabs-v2-border-width: 1px;
+	--tabs-v2-border-color: #{$gray-light};
+	--tabs-v2-background-color: transparent;
+
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
-	--tabs-v2-title-color-hover: var( --tabs-v2-title-color );
 	--tabs-v2-title-background-color: #{$editor-background-light};
-	--tabs-v2-title-color-active: #{$white};
-	--tabs-v2-title-background-color-active: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
+	--tabs-v2-title-active-color: #{$white};
+	--tabs-v2-title-active-background-color: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 
 	--tabs-v2-title-alignment: center;
 	--tabs-v2-title-grow: 1;
@@ -37,11 +36,6 @@
 	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
-	--tabs-v2-title-border-style: initial;
-	--tabs-v2-title-border-width: initial;
-	--tabs-v2-title-border-color: initial;
-	--tabs-v2-title-border-radius: initial;
-	--tabs-v2-title-transition: 0.3s;
 
 	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
 	--tabs-v2-title-typography-font-size: initial;
@@ -70,9 +64,6 @@
 	--tabs-v2-title-typography-line-height-active: var( --tabs-v2-title-typography-line-height );
 	--tabs-v2-title-typography-letter-spacing-active: var( --tabs-v2-title-typography-letter-spacing );
 	--tabs-v2-title-typography-word-spacing-active: var( --tabs-v2-title-typography-word-spacing );
-
-	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
-	--tabs-v2-icon-color-active: #{$white};
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-icon-active-color: #{$white};
@@ -132,9 +123,6 @@
 			transition: all var( --tabs-v2-title-transition );
 
 			&:hover {
-				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
-				border-width: var( --tabs-v2-title-border-width-hover, var( --tabs-v2-title-border-width ) );
-				border-color: var( --tabs-v2-title-border-color-hover, var( --tabs-v2-title-border-color ) );
 				color: var( --tabs-v2-title-color-hover );
 				transition: all var( --tabs-v2-title-transition );
 				font-family: var( --tabs-v2-title-typography-font-family-hover );
@@ -167,8 +155,6 @@
 			&.elementor-active {
 				color: var( --tabs-v2-title-color-active );
 				background-color: var( --tabs-v2-title-background-color-active );
-				border-width: var( --tabs-v2-title-border-width-active, var( --tabs-v2-title-border-width ) );
-				border-color: var( --tabs-v2-title-border-color-active );
 				font-family: var( --tabs-v2-title-typography-font-family-active );
 				font-size: var( --tabs-v2-title-typography-font-size-active );
 				font-weight: var( --tabs-v2-title-typography-font-weight-active );
@@ -188,6 +174,15 @@
 				}
 			}
 		}
+	}
+
+	.elementor-tab-title,
+	.elementor-tab-title:before,
+	.elementor-tab-title:after,
+	.e-container,
+	.elementor-tabs-content-wrapper {
+		border: 1px none var( --tabs-v2-border-color );
+		border-width: var( --tabs-v2-border-width );
 	}
 
 	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
