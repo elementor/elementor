@@ -36,7 +36,6 @@
 	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
-	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-icon-active-color: #{$white};
@@ -77,7 +76,6 @@
 			padding-right: var( --tabs-v2-title-padding-right );
 			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
 			padding-left: var( --tabs-v2-title-padding-left );
-			font-family: var( --tabs-v2-title-typography-font-family );
 			text-align: var( --tabs-v2-title-alignment );
 			flex-grow: var( --tabs-v2-title-grow );
 			border-style: var( --tabs-v2-title-border-style );
