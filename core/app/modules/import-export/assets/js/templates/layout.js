@@ -11,6 +11,7 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 export default function Layout( props ) {
 	const [ showInfoModal, setShowInfoModal ] = useState( false ),
 		{ referrer } = useQueryParams().getAll(),
+
 		getContent = () => {
 			const infoModalProps = {
 				show: showInfoModal,
@@ -29,6 +30,9 @@ export default function Layout( props ) {
 			return {
 				...infoButtonProps,
 				onClick: () => {
+					if ( 'kit-library' === referrer ) {
+						$e.run( 'kit-library/seek-more-info' );
+					}
 					setShowInfoModal( true );
 				},
 			};
@@ -40,7 +44,7 @@ export default function Layout( props ) {
 			footer: props.footer,
 		},
 		moduleAdminTab = '#tab-import-export-kit';
-
+	console.log( 'referrer', referrer );
 	// Targeting the return_url value to the import-export dedicated admin tab (only when there is no specific referrer).
 	if ( ! referrer && -1 === elementorAppConfig.return_url.indexOf( moduleAdminTab ) && elementorAppConfig.return_url.includes( 'page=elementor-tools' ) ) {
 		elementorAppConfig.return_url += moduleAdminTab;

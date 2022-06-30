@@ -18,6 +18,7 @@ export default class Button extends React.Component {
 		target: PropTypes.string,
 		rel: PropTypes.string,
 		elRef: PropTypes.object,
+		eventtrack: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -96,6 +97,11 @@ export default class Button extends React.Component {
 
 		if ( this.props.onClick ) {
 			attributes.onClick = this.props.onClick;
+		}
+
+		if ( this.props.eventtrack ) {
+			console.log(' this.props.eventtrack: ', this.props.eventtrack)
+			this.props.eventtrack();
 		}
 
 		if ( this.props.rel ) {

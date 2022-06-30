@@ -1,6 +1,7 @@
 import KitsComponent from './data/kits/component';
 import router from '@elementor/router';
 import TaxonomiesComponent from './data/taxonomies/component';
+import KitLibraryComponent from './e-component';
 
 export default class KitLibrary {
 	constructor() {
@@ -10,6 +11,8 @@ export default class KitLibrary {
 
 		$e.components.register( new KitsComponent() );
 		$e.components.register( new TaxonomiesComponent() );
+		$e.components.register( new KitLibraryComponent() );
+
 
 		router.addRoute( {
 			path: '/kit-library/*',

@@ -17,14 +17,21 @@ export default function IndexHeader( props ) {
 			text: __( 'Info', 'elementor-pro' ),
 			hideText: true,
 			icon: 'eicon-info-circle-o',
-			onClick: () => setIsInfoModalOpen( true ),
+			onClick: () => {
+				$e.run( 'kit-library/seek-more-info' );
+				setIsInfoModalOpen( true );
+			},
 		},
 		{
 			id: 'refetch',
 			text: __( 'Refetch', 'elementor-pro' ),
 			hideText: true,
 			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
-			onClick: props.refetch,
+
+			onClick: () => {
+				$e.run( 'kit-library/refetch' );
+				props.refetch();
+			},
 		},
 		{
 			id: 'import',
@@ -32,12 +39,18 @@ export default function IndexHeader( props ) {
 			hideText: true,
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
-			onClick: () => navigate( '/import?referrer=kit-library' ),
+			onClick: () => {
+				$e.run( 'kit-library/kit-import', {
+					// TODO: Add params
+				} );
+				navigate( '/import?referrer=kit-library' );
+			},
 		},
 	], [ props.isFetching, props.refetch ] );
 
 	return (
 		<>
+			{ console.log( 'props: ', props ) }
 			<Header buttons={ buttons } />
 			<PopoverDialog
 				targetRef={ importRef }
@@ -45,7 +58,12 @@ export default function IndexHeader( props ) {
 			>
 				{ __( 'Import Kit', 'elementor' ) }
 			</PopoverDialog>
-			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) } show={ isInfoModalOpen } setShow={ setIsInfoModalOpen }>
+			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) }
+				show={ isInfoModalOpen }
+				setShow={ setIsInfoModalOpen }
+				onOpen={ () => $e.run( 'kit-library/modal-open' ) }
+				onClose={ () => $e.run( 'kit-library/modal-close' ) }
+			>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s a kit?', 'elementor' ) }</Heading>
 					<Text>{ __( 'A Template Kit is full, ready-made design that you can apply to your site. It includes all the pages, parts, settings and content that you\'d expect in a fully functional website.', 'elementor' ) }</Text>
@@ -67,6 +85,7 @@ export default function IndexHeader( props ) {
 							rel="noreferrer"
 							text={ __( 'Learn more', 'elementor' ) }
 							color="link"
+							eventtrack={ () => $e.run( 'kit-library/seek-more-info' ) }
 						/>{ ' ' }
 						{ __( 'about using templates', 'elementor' ) }
 					</Text>
