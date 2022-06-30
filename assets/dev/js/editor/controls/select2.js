@@ -4,12 +4,12 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 import Select2 from 'elementor-editor-utils/select2.js';
 
 ControlSelect2ItemView = ControlBaseDataView.extend( {
-	getSelect2Placeholder: function() {
+	getSelect2Placeholder() {
 		return this.ui.select.find( `[value="${ this.getControlPlaceholder() }"]` ).text() ||
 			this.ui.select.children( 'option:first[value=""]' ).text();
 	},
 
-	getSelect2DefaultOptions: function() {
+	getSelect2DefaultOptions() {
 		const defaultOptions = {
 			allowClear: true,
 			placeholder: this.getSelect2Placeholder(),
@@ -33,18 +33,18 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		return defaultOptions;
 	},
 
-	getSelect2Options: function() {
+	getSelect2Options() {
 		return jQuery.extend( this.getSelect2DefaultOptions(), this.model.get( 'select2options' ) );
 	},
 
-	updatePlaceholder: function() {
+	updatePlaceholder() {
 		if ( this.getControlPlaceholder() ) {
 			this.select2Instance.elements.$container.find( '.select2-selection__placeholder' )
 				.addClass( 'e-select2-placeholder' );
 		}
 	},
 
-	applySavedValue: function() {
+	applySavedValue() {
 		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
 
 		const elementSelect2Data = this.ui.select.data( 'select2' );
@@ -75,17 +75,17 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	onReady: function() {
+	onReady() {
 		elementorDevTools.deprecation.deprecated( 'onReady', '3.0.0' );
 	},
 
-	onBaseInputChange: function() {
+	onBaseInputChange() {
 		ControlBaseDataView.prototype.onBaseInputChange.apply( this, arguments );
 
 		this.updatePlaceholder();
 	},
 
-	onBeforeDestroy: function() {
+	onBeforeDestroy() {
 		// We always destroy the select2 instance because there are cases where the DOM element's data cache
 		// itself has been destroyed but the select2 instance on it still exists
 		this.select2Instance.destroy();

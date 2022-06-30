@@ -115,7 +115,7 @@ describe( "$e.internal( 'document/elements/populate' )", () => {
 					settings: {},
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.
@@ -151,7 +151,7 @@ describe( "$e.internal( 'document/elements/populate' )", () => {
 					id: 'initial1',
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		$e.store.dispatch(
@@ -161,7 +161,7 @@ describe( "$e.internal( 'document/elements/populate' )", () => {
 					id: 'initial2',
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.

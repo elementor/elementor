@@ -3,6 +3,7 @@ const EditorPage = require( './editor-page.js' );
 
 /**
  * This post is used for any tests that need a post, with empty elements.
+ *
  * @type {number}
  */
 const CLEAN_POST_ID = 1;
