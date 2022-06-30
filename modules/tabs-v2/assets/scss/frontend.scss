@@ -1,4 +1,4 @@
-	//
+//
 // Tabs v2
 //
 .elementor-widget-tabs-v2 {
@@ -26,7 +26,7 @@
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-title-background-color: #{$editor-background-light};
-	--tabs-v2-title-active-color: #{$white};
+	--tabs-v2-title-color-active: #{$white};
 	--tabs-v2-title-active-background-color: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 
 	--tabs-v2-title-alignment: center;
@@ -96,10 +96,8 @@
 	.elementor-tab {
 
 		&-title {
-			flex-grow: var( --tabs-v2-title-grow );
 			color: var( --tabs-v2-title-color );
 			background-color: var( --tabs-v2-title-background-color );
-			position: relative;
 			cursor: pointer;
 			outline: var( --focus-outline, none );
 			padding-top: var( --tabs-v2-title-padding-top );
@@ -116,6 +114,7 @@
 			letter-spacing: var( --tabs-v2-title-typography-letter-spacing );
 			word-spacing: var( --tabs-v2-title-typography-word-spacing );
 			text-align: var( --tabs-v2-title-alignment );
+			flex-grow: var( --tabs-v2-title-grow );
 			border-style: var( --tabs-v2-title-border-style );
 			border-width: var( --tabs-v2-title-border-width );
 			border-color: var( --tabs-v2-title-border-color );
@@ -154,7 +153,7 @@
 
 			&.elementor-active {
 				color: var( --tabs-v2-title-color-active );
-				background-color: var( --tabs-v2-title-background-color-active );
+				background-color: var( --tabs-v2-title-active-background-color );
 				font-family: var( --tabs-v2-title-typography-font-family-active );
 				font-size: var( --tabs-v2-title-typography-font-size-active );
 				font-weight: var( --tabs-v2-title-typography-font-weight-active );
