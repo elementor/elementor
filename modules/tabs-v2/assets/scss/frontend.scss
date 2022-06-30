@@ -9,19 +9,17 @@
 	--tabs-v2-overflow-x: hidden;
 	--tabs-v2-overflow-y: auto;
 	--tabs-v2-background-color: transparent;
-
 	--tabs-v2-display: flex;
 	--tabs-v2-direction: column;
 	--tabs-v2-gap: 10px;
+	--tabs-v2-border-width: initial;
+	--tabs-v2-border-color: initial;
 
 	--tabs-v2-tabs-wrapper-display: flex;
 	--tabs-v2-tabs-wrapper-direction: row;
 	--tabs-v2-tabs-wrapper-grow: initial;
 	--tabs-v2-tabs-wrapper-justify-content: initial;
-	--tabs-v2-tabs-wrapper-width: initial;
-
-	--tabs-v2-border-width: initial;
-	--tabs-v2-border-color: initial; 
+	--tabs-v2-tabs-wrapper-width: initial; 
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-title-background-color: #{$editor-background-light};
@@ -52,9 +50,6 @@
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-icon-color-active: #{$white};
-
-	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
-	--tabs-v2-icon-active-color: #{$white};
 
 	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
 
