@@ -19,7 +19,7 @@ export default function Header( props ) {
 	return (
 		<Grid container alignItems="center" justify="space-between" className="eps-app__header">
 			<TitleTag className="eps-app__logo-title-wrapper" { ...titleAttrs }>
-				<i className="eps-app__logo eicon-elementor"/>
+				<i className="eps-app__logo eicon-elementor" />
 				<h1 className="eps-app__title">{ props.title }</h1>
 			</TitleTag>
 			<HeaderButtons buttons={ props.buttons } />

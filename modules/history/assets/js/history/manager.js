@@ -88,7 +88,7 @@ export default class HistoryManager {
 
 	deleteItem( id ) {
 		const item = this.items.findWhere( {
-			id: id,
+			id,
 		} );
 
 		this.items.remove( item );
@@ -127,12 +127,12 @@ export default class HistoryManager {
 		const id = this.currentItemID ? this.currentItemID : new Date().getTime();
 
 		let currentItem = this.items.findWhere( {
-			id: id,
+			id,
 		} );
 
 		if ( ! currentItem ) {
 			currentItem = new ItemModel( {
-				id: id,
+				id,
 				title: itemData.title,
 				subTitle: itemData.subTitle,
 				action: this.getActionLabel( itemData ),
@@ -184,9 +184,9 @@ export default class HistoryManager {
 			const historyItem = item.get( 'items' ).first();
 
 			if ( historyItem.get( 'restore' ) ) {
-				let container = 'sub-add' === historyItem.get( 'type' ) ?
-					historyItem.get( 'data' ).containerToRestore :
-					historyItem.get( 'container' ) || historyItem.get( 'containers' );
+				let container = 'sub-add' === historyItem.get( 'type' )
+					? historyItem.get( 'data' ).containerToRestore
+					: historyItem.get( 'container' ) || historyItem.get( 'containers' );
 
 				if ( Array.isArray( container ) ) {
 					container = container[ 0 ];

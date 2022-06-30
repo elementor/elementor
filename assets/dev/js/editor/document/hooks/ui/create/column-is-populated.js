@@ -13,7 +13,7 @@ export class ColumnIsPopulated extends After {
 		const { containers = [ args.container ] } = args;
 
 		// If the created element, was created at column.
-		return containers.some( ( /**Container*/ container ) => (
+		return containers.some( ( /** Container*/ container ) => (
 			'column' === container.model.get( 'elType' )
 		) );
 	}
