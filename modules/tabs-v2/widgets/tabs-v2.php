@@ -459,11 +459,6 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'fields_options' => [
-					'background' => [
-						'frontend_available' => true,
-					],
-				],
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
 			]
 		);
@@ -501,11 +496,6 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_hover',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'fields_options' => [
-					'background' => [
-						'frontend_available' => true,
-					],
-				],
 				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
 			]
 		);
