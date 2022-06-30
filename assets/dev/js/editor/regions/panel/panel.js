@@ -3,11 +3,11 @@ var BaseRegion = require( 'elementor-regions/base' );
 module.exports = BaseRegion.extend( {
 	el: '#elementor-panel',
 
-	getStorageKey: function() {
+	getStorageKey() {
 		return 'panel';
 	},
 
-	// getDefaultStorage: function() {
+	// getDefaultStorage() {
 	// 	return {
 	// 		size: {
 	// 			width: '',
@@ -15,7 +15,7 @@ module.exports = BaseRegion.extend( {
 	// 	};
 	// },
 
-	constructor: function() {
+	constructor() {
 		BaseRegion.prototype.constructor.apply( this, arguments );
 
 		var PanelLayoutView = require( 'elementor-regions/panel/layout' );
@@ -31,30 +31,30 @@ module.exports = BaseRegion.extend( {
 		// elementor.changeEditMode( 'edit' );
 	},
 
-	// setSize: function() {
+	// setSize() {
 	// 	const savedWidth = this.storage.size.width;
 
 	// 	elementorCommon.elements.$body.css( '--e-editor-panel-width', savedWidth );
 	// },
 
-	resizable: function() {
+	resizable() {
 		var self = this;
 
 		self.$el.resizable( {
 			handles: elementorCommon.config.isRTL ? 'w' : 'e',
 			minWidth: 200,
 			maxWidth: 680,
-			start: function() {
+			start() {
 				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
 			},
-			stop: function( event, ui ) {
+			stop( event, ui ) {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
 				elementor.getPanelView().updateScrollbar();
 
 				self.saveSize( { width: ui.size.width + 'px' } );
 			},
-			resize: function( event, ui ) {
+			resize( event, ui ) {
 				elementorCommon.elements.$body.css( '--e-editor-panel-width', ui.size.width + 'px' );
 
 				self.$el.css( {

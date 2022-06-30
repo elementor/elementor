@@ -1,6 +1,9 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 
-class AddSectionBase extends Marionette.ItemView {
+/**
+ * @typedef {import('../../container/container')} Container
+ */
+ class AddSectionBase extends Marionette.ItemView {
 	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
 
 	// Views.
@@ -139,7 +142,7 @@ class AddSectionBase extends Marionette.ItemView {
 			onDropping: ( side, event ) => {
 				elementor.getPreviewView().onDrop(
 					event,
-					{ side, at: this.getOption( 'at' ) }
+					{ side, at: this.getOption( 'at' ) },
 				);
 			},
 		};
@@ -167,7 +170,7 @@ class AddSectionBase extends Marionette.ItemView {
 	 *
 	 * @param {MouseEvent} e - Click event.
 	 *
-	 * @return {Container}
+	 * @return {Container} container
 	 */
 	onContainerPresetSelected( e ) {
 		this.closeSelectPresets();
@@ -175,7 +178,7 @@ class AddSectionBase extends Marionette.ItemView {
 		return ContainerHelper.createContainerFromPreset(
 			e.currentTarget.dataset.preset,
 			elementor.getPreviewContainer(),
-			this.options
+			this.options,
 		);
 	}
 

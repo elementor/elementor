@@ -117,7 +117,7 @@ export const Move = () => {
 				QUnit.test( 'Column in same section', ( assert ) => {
 					const eSection = ElementsHelper.createSection();
 
-					/* eColumn1 = */ ElementsHelper.createColumn( eSection );
+					ElementsHelper.createColumn( eSection );
 
 					const eColumn2 = ElementsHelper.createColumn( eSection ),
 						originalPosition = eColumn2.view._index,

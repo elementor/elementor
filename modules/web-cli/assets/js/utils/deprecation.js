@@ -1,12 +1,43 @@
+import Console from 'elementor-api/utils/console';
+
+// Copied from `modules/dev-tools/assets/js/deprecation.js`
 /**
  * @typedef {Object} Version
- * @property {number} major1
- * @property {number} major2
- * @property {number} minor
- * @property {string} build
+ * @property {number} major1 The first number
+ * @property {number} major2 The second number
+ * @property {number} minor  The third number
+ * @property {string} build  The fourth number
  */
 
+const softDeprecated = ( name, version, replacement ) => {
+	if ( elementorWebCliConfig.isDebug ) {
+		deprecatedMessage( 'soft', name, version, replacement );
+	}
+};
+
+const hardDeprecated = ( name, version, replacement ) => {
+	deprecatedMessage( 'hard', name, version, replacement );
+};
+
+const deprecatedMessage = ( type, name, version, replacement ) => {
+	let message = `\`${ name }\` is ${ type } deprecated since ${ version }`;
+
+	if ( replacement ) {
+		message += ` - Use \`${ replacement }\` instead`;
+	}
+
+	Console.warn( message );
+};
+
 export default class Deprecation {
+	static deprecated( name, version, replacement ) {
+		if ( this.isHardDeprecated( version ) ) {
+			hardDeprecated( name, version, replacement );
+		} else {
+			softDeprecated( name, version, replacement );
+		}
+	}
+
 	/**
 	 * @param {string} version
 	 *
@@ -69,9 +100,9 @@ export default class Deprecation {
 	 * @return {boolean}
 	 */
 	static isSoftDeprecated( version ) {
-		const total = this.compareVersion( version, elementor.config.dev_tools.deprecation.current_version );
+		const total = this.compareVersion( version, elementorWebCliConfig.version );
 
-		return total <= elementor.config.dev_tools.deprecation.soft_version_count;
+		return total <= 4;
 	}
 
 	/**
@@ -79,8 +110,9 @@ export default class Deprecation {
 	 * @return {boolean}
 	 */
 	static isHardDeprecated( version ) {
-		const total = this.compareVersion( version, elementor.config.dev_tools.deprecation.current_version );
+		const total = this.compareVersion( version, elementorWebCliConfig.version );
 
-		return total >= elementor.config.dev_tools.deprecation.hard_version_count;
+		return total < 0 || total >= 8;
 	}
 }
+

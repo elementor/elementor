@@ -33,12 +33,12 @@ export default class Component extends ComponentBase {
 
 	renderTab( tab, args ) {
 		const { model, view } = args,
-			/* translators: %s: Element name. */
+			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
 		this.manager.setPage( 'editor', title, {
 			tab,
-			model: model,
+			model,
 			controls: elementor.getElementControls( model ),
 			editedElementView: view,
 		} );
