@@ -10,7 +10,7 @@ const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
  * Will run 'document/repeater/select', over nested elements tree.
  * Will select all repeater nested item(s) till it reach current repeater of selected element.
  */
-export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hookUI.After ) {
+export class NestedRepeaterFocusCurrentEditedContainer extends $e.modules.hookUI.After {
 	getCommand() {
 		return 'panel/editor/open';
 	}
@@ -21,7 +21,7 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 
 	getConditions( args ) {
 		// Do not select for element creation.
-		if ( $e.commands.isCurrentFirstTrace( 'document/elements/create' ) ) {
+		if ( ! args.view || $e.commands.isCurrentFirstTrace( 'document/elements/create' ) ) {
 			return false;
 		}
 
