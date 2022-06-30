@@ -47,7 +47,7 @@ export async function mockElementsComponent() {
 				closeEditor: () => {},
 			},
 		} ),
-		once: ( event, callback ) => callback(),
+		once: ( event, callback ) => callback( {} ),
 	};
 
 	global.elementorModules = {
@@ -107,6 +107,10 @@ export function createContainer( args = {} ) {
 		},
 		lookup: () => container,
 		model: {
+			destroy: () => {},
+			refresh: () => {},
+		},
+		panel: {
 			destroy: () => {},
 			refresh: () => {},
 		},
