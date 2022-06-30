@@ -3,7 +3,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 	ui() {
 		return {
-			// buttonPreview: '#elementor-panel-footer-saver-preview',
+			buttonPreview: '#elementor-panel-footer-saver-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
@@ -39,6 +39,15 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
 	}
 
+	onAttach() {
+		if ( elementor.panel ) {
+			const footerView = elementor.panel.currentView.footer.currentView,
+				behavior = footerView._behaviors[ Object.keys( footerView.behaviors() ).indexOf( 'saver' ) ];
+
+			// Behavior.ui.buttonPreview = this.$el.find( '#elementor-panel-footer-saver-preview' );
+		}
+	}
+
 	onRender() {
 		this.addTooltip();
 	}
@@ -50,7 +59,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			.html( lastEdited );
 	}
 
-	// onClickButtonPreview() {
+	// OnClickButtonPreview() {
 	// 	$e.run( 'editor/documents/preview', { id: elementor.documents.getCurrent().id } );
 	// }
 

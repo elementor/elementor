@@ -64,7 +64,6 @@ export default class View extends Marionette.ItemView {
 			'click @ui.history': 'onHistoryClick',
 			'click @ui.navigator': 'onNavigatorClick',
 			'click @ui.finder': 'onFinderClick',
-
 		};
 	}
 
@@ -337,7 +336,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onClickButtonPreview() {
-		$e.run( 'editor/documents/preview', { id: elementor.documents.getCurrent().id } );
+		$e.run( 'editor/documents/preview', { id: elementor.documents.getCurrent().id, force: true } );
 	}
 
 	onSettingsClick() {

@@ -13,7 +13,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	regions: {
 		content: '#elementor-panel-content-wrapper',
 		header: '#elementor-panel-header-wrapper',
-		// footer: '#elementor-panel-footer',
+		footer: '#elementor-panel-footer',
 		modeSwitcher: '#elementor-mode-switcher',
 	},
 
@@ -50,7 +50,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
-				// title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
+				// Title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
 				title: __( 'Add Widgets', 'elementor' ),
 			},
 			menu: {
@@ -103,9 +103,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.getChildView( 'header' );
 	},
 
-	// getFooterView() {
-	// 	return this.getChildView( 'footer' );
-	// },
+	GetFooterView() {
+		return this.getChildView( 'footer' );
+	},
 
 	getCurrentPageName() {
 		return this.currentPageName;
@@ -160,7 +160,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onBeforeShow() {
-		// var PanelFooterItemView = require( 'elementor-regions/panel/footer' ),
+		const PanelFooterItemView = require( 'elementor-regions/panel/footer' );
 		var PanelHeaderItemView = require( 'elementor-regions/panel/header' );
 
 		// Edit Mode
@@ -170,7 +170,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.showChildView( 'header', new PanelHeaderItemView() );
 
 		// Footer
-		// this.showChildView( 'footer', new PanelFooterItemView() );
+		this.showChildView( 'footer', new PanelFooterItemView() );
 
 		// Added Editor events
 		this.updateScrollbar = _.throttle( this.updateScrollbar, 100 );

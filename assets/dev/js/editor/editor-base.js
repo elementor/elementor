@@ -89,7 +89,7 @@ export default class EditorBase extends Marionette.Application {
 			element: '.elementor-tags-list',
 			ignore: '.elementor-control-dynamic-switcher',
 		},
-		panelFooterSubMenus: { //ResponsiveBarSubMenus
+		panelFooterSubMenus: { // ResponsiveBarSubMenus
 			element: '.elementor-panel-footer-tool.elementor-toggle-state',
 			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
 			callback: ( $elementsToHide ) => {

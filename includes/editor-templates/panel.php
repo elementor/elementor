@@ -14,9 +14,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	</div>
 	<header id="elementor-panel-header-wrapper"></header>
 	<main id="elementor-panel-content-wrapper"></main>
-	<!-- <footer id="elementor-panel-footer">
+	<footer id="elementor-panel-footer" style="display: none;">
 		<div class="elementor-panel-container"></div>
-	</footer> -->
+	</footer>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-menu">
@@ -89,7 +89,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	</div>
 </script>
 
-<!-- <script type="text/template" id="tmpl-elementor-panel-footer-content">
+<script type="text/template" id="tmpl-elementor-panel-footer-content">
 	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
