@@ -114,6 +114,7 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 				'starter_name' => 'text_stroke_type',
 				'starter_value' => 'yes',
 				'settings' => [
+					'groupType' => 'text-stroke',
 					'render_type' => 'ui',
 				],
 			],
