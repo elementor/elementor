@@ -1,11 +1,8 @@
 import { mockElementsComponent } from '../mock/component';
-import { mockElements } from '../mock/elements';
 
 describe( "$e.run( 'document/elements/deselect-all' )", () => {
 	beforeEach( async () => {
 		await mockElementsComponent();
-
-		mockElements();
 	} );
 
 	it( 'Should reset the selection', () => {

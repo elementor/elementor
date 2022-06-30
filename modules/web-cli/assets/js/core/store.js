@@ -177,4 +177,32 @@ export default class Store {
 	subscribe() {
 		return this.reduxStore.subscribe( ...arguments );
 	}
+
+	/**
+	 * Select and subscribe to a specific part of the store.
+	 *
+	 * @see https://github.com/reduxjs/redux/issues/303#issuecomment-125184409
+	 *
+	 * @param {Function} selector
+	 * @param {Function} onChange
+	 *
+	 * @return {*}
+	 */
+	subscribeToSlice( selector, onChange ) {
+		let prevState;
+
+		const handleChange = () => {
+			const newState = selector( this.getState() );
+
+			if ( newState !== prevState ) {
+				onChange( newState, prevState );
+
+				prevState = newState;
+			}
+		};
+
+		const unsubscribe = this.subscribe( handleChange );
+
+		return unsubscribe;
+	}
 }

@@ -69,18 +69,23 @@ export function removeElementFromDocumentState( elementId, parentId, documentSta
 }
 
 export function updateEnvironment() {
+	updateNavigator();
 	updatePanelPage();
 	updateSortable();
-	updateNavigator();
 }
 
 /**
- * Update sortable state.
+ * Update navigator selections.
  *
- * In case more than one element is selected, currently sorting supposed to be disabled, and vice-versa.
+ * Any change in the document selected elements should be reflected in the navigator, this method is responsible for
+ * updating the navigator.
  */
-function updateSortable() {
-	elementor.toggleSortableState( ! elementsSelection.isMultiple() );
+function updateNavigator() {
+	elementor.navigator
+		.getLayout()
+		.elements
+		.currentView
+		.recursiveChildInvoke( 'updateSelection' );
 }
 
 /**
@@ -106,15 +111,10 @@ function updatePanelPage() {
 }
 
 /**
- * Update navigator selections.
+ * Update sortable state.
  *
- * Any change in the document selected elements should be reflected in the navigator, this method is responsible for
- * updating the navigator.
+ * In case more than one element is selected, currently sorting supposed to be disabled, and vice-versa.
  */
-function updateNavigator() {
-	elementor.navigator
-		.getLayout()
-		.elements
-		.currentView
-		.recursiveChildInvoke( 'updateSelection' );
+function updateSortable() {
+	elementor.toggleSortableState( ! elementsSelection.isMultiple() );
 }

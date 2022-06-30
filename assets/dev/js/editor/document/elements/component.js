@@ -7,15 +7,15 @@ export default class Component extends ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		elementor.once( 'document:loaded', () => {
-			let prevState;
+		elementor.once( 'document:loaded', ( loadedDocument ) => {
+			const unsubscribe = $e.store.subscribeToSlice(
+				( state ) => state[ 'document/elements/selection' ],
+				() => updateEnvironment(),
+			);
 
-			$e.store.subscribe( () => {
-				const newState = $e.store.getState( 'document/elements/selection' );
-
-				if ( prevState !== newState ) {
-					prevState = newState;
-					updateEnvironment();
+			elementor.once( 'document:unloaded', ( unloadedDocument ) => {
+				if ( loadedDocument.id === unloadedDocument.id ) {
+					unsubscribe();
 				}
 			} );
 		} );

@@ -1,16 +1,14 @@
 export class SelectAll extends $e.modules.CommandBase {
 	apply() {
-		const containers = this.flattenContainersList(
-			// The selection mechanism keeps selected elements in a single-dimension object. Therefore, In order to
-			// select all document elements, we should convert them into a flatten, single-dimension array.
-			elementor.elementsModel.get( 'elements' ).map( ( element ) => {
-				return elementor.getContainer( element.id );
-			} ),
-		);
+		const currentDocumentId = elementor.documents.getCurrentId();
+
+		const elementsIds = Object
+			.keys( $e.store.getState( 'document/elements' )[ currentDocumentId ] || {} )
+			.filter( ( elementId ) => elementId !== 'document' );
 
 		$e.store.dispatch(
 			this.component.store( 'selection' ).actions.select( {
-				elementsIds: containers.map( ( container ) => container.id ),
+				elementsIds,
 			} ),
 		);
 	}

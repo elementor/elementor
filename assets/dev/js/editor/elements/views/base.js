@@ -266,24 +266,16 @@ BaseElementView = BaseContainer.extend( {
 	 * @return {void}
 	 */
 	subscribeToSelection() {
-		let prevState = $e.store.getState( 'document/elements/selection' );
+		this.unsubscribeFromSelection = $e.store.subscribeToSlice(
+			( state ) => state[ 'document/elements/selection' ],
+			( state ) => {
+				const isSelected = state.includes( this.model.get( 'id' ) );
 
-		this.unsubscribeFromSelection = $e.store.subscribe( () => {
-			const newState = $e.store.getState( 'document/elements/selection' );
-
-			if ( prevState === newState ) {
-				return;
-			}
-
-			prevState = newState;
-
-			const isSelected = newState.includes( this.model.get( 'id' ) );
-
-			if ( isSelected ) {
-				this.select();
-			} else {
-				this.deselect();
-			}
+				if ( isSelected ) {
+					this.select();
+				} else {
+					this.deselect();
+				}
 		} );
 	},
 
