@@ -5,6 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
@@ -443,22 +444,6 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_control( 'tabs_title_border_type', [
-			'label' => esc_html_x( 'Border Type', 'Border Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => [
-				'' => esc_html__( 'None', 'elementor' ),
-				'solid' => esc_html_x( 'Solid', 'Border Control', 'elementor' ),
-				'double' => esc_html_x( 'Double', 'Border Control', 'elementor' ),
-				'dotted' => esc_html_x( 'Dotted', 'Border Control', 'elementor' ),
-				'dashed' => esc_html_x( 'Dashed', 'Border Control', 'elementor' ),
-				'groove' => esc_html_x( 'Groove', 'Border Control', 'elementor' ),
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-border-style: {{VALUE}};',
-			],
-		] );
-
 		$this->start_controls_tabs( 'tabs_title_style' );
 
 		$this->start_controls_tab(
@@ -483,28 +468,13 @@ class TabsV2 extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'tabs_title_border_width', [
-			'label' => esc_html_x( 'Border Width', 'Border Control', 'elementor' ),
-			'type' => Controls_Manager::DIMENSIONS,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-			],
-			'condition' => [
-				'tabs_title_border_type!' => '',
-			],
-		] );
-
-		$this->add_control( 'tabs_title_border_color', [
-			'label' => esc_html_x( 'Border Color', 'Border Control', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'default' => '',
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-border-color: {{VALUE}};',
-			],
-			'condition' => [
-				'tabs_title_border_type!' => '',
-			],
-		] );
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'tabs_title_border',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
@@ -540,27 +510,13 @@ class TabsV2 extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_control( 'tabs_title_border_color_hover', [
-			'label' => esc_html_x( 'Border Color', 'Border Control', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-border-color-hover: {{VALUE}};',
-			],
-			'condition' => [
-				'tabs_title_border_type!' => '',
-			],
-		] );
-
-		$this->add_responsive_control( 'tabs_title_border_width_hover', [
-			'label' => esc_html_x( 'Border Width', 'Border Control', 'elementor' ),
-			'type' => Controls_Manager::DIMENSIONS,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-border-width-hover: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-			],
-			'condition' => [
-				'tabs_title_border_type!' => '',
-			],
-		] );
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'tabs_title_border_hover',
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
@@ -618,27 +574,13 @@ class TabsV2 extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_control( 'tabs_title_border_color_active', [
-			'label' => esc_html_x( 'Border Color', 'Border Control', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-border-color-active: {{VALUE}};',
-			],
-			'condition' => [
-				'tabs_title_border_type!' => '',
-			],
-		] );
-
-		$this->add_responsive_control( 'tabs_title_border_width_active', [
-			'label' => esc_html_x( 'Border Width', 'Border Control', 'elementor' ),
-			'type' => Controls_Manager::DIMENSIONS,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-border-width-active: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-			],
-			'condition' => [
-				'tabs_title_border_type!' => '',
-			],
-		] );
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'tabs_title_border_active',
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),

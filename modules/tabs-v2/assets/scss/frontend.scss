@@ -37,9 +37,6 @@
 	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
-	--tabs-v2-title-border-style: initial;
-	--tabs-v2-title-border-width: initial;
-	--tabs-v2-title-border-color: initial;
 	--tabs-v2-title-border-radius: initial;
 	--tabs-v2-title-transition: 0.3s;
 
@@ -109,9 +106,6 @@
 			word-spacing: var( --tabs-v2-title-typography-word-spacing );
 			text-shadow: var( --tabs-v2-title-shadow );
 			text-align: var( --tabs-v2-title-alignment );
-			border-style: var( --tabs-v2-title-border-style );
-			border-width: var( --tabs-v2-title-border-width );
-			border-color: var( --tabs-v2-title-border-color );
 			border-radius: var( --tabs-v2-title-border-radius );
 			transition: all var( --tabs-v2-title-transition );
 			height: var( --tabs-v2-title-height );
@@ -123,8 +117,6 @@
 
 			&:hover {
 				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
-				border-width: var( --tabs-v2-title-border-width-hover, var( --tabs-v2-title-border-width ) );
-				border-color: var( --tabs-v2-title-border-color-hover, var( --tabs-v2-title-border-color ) );
 				transition: all var( --tabs-v2-title-transition );
 			}
 
@@ -147,8 +139,6 @@
 			&.elementor-active {
 				color: var( --tabs-v2-title-color-active );
 				background-color: var( --tabs-v2-title-background-color-active );
-				border-width: var( --tabs-v2-title-border-width-active, var( --tabs-v2-title-border-width ) );
-				border-color: var( --tabs-v2-title-border-color-active );
 
 				.elementor-tab-icon {
 					display: none;
