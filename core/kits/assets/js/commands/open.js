@@ -6,6 +6,7 @@ export class Open extends $e.modules.CommandBase {
 	}
 
 	apply() {
+		elementor.panel.open();
 		const kit = elementor.documents.get( elementor.config.kit_id );
 
 		if ( kit && 'open' === kit.editor.status ) {

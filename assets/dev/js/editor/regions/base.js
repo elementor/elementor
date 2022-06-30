@@ -25,13 +25,13 @@ module.exports = Marionette.Region.extend( {
 		this.$el.toggleClass( `e-panel-dockable e-panel-dockable-${ this.getDockingSide() }`, this.canFloat() );
 	},
 
-	onDocumentLoaded: function( document ) {
+	onDocumentLoaded( document ) {
 		if ( document.config.panel.has_elements ) {
 			this.initBehavior();
 		}
 	},
 
-	getVisibleModes: function() {
+	getVisibleModes() {
 		return [
 			'settings',
 			'edit',
@@ -40,7 +40,7 @@ module.exports = Marionette.Region.extend( {
 		];
 	},
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched( activeMode ) {
 		if ( this.getVisibleModes().includes( activeMode ) && this.storage.visible ) {
 			this.open();
 		} else {
@@ -48,7 +48,7 @@ module.exports = Marionette.Region.extend( {
 		}
 	},
 
-	getDefaultStorage: function() {
+	getDefaultStorage() {
 		const position = this.getDefaultPosition();
 
 		return {
@@ -79,15 +79,15 @@ module.exports = Marionette.Region.extend( {
 		this.saveStorage( 'size', size );
 	},
 
-	canFloat: function() {
+	canFloat() {
 		return true;
 	},
 
-	canResize: function() {
+	canResize() {
 		return true;
 	},
 
-	initBehavior: function() {
+	initBehavior() {
 		if ( this.canFloat() ) {
 			this.$el.draggable( this.getDraggableOptions() );
 		}
@@ -97,16 +97,24 @@ module.exports = Marionette.Region.extend( {
 		}
 	},
 
-	getDraggableOptions: function() {
+	getDraggableOptions() {
+		const topBarHeight = parseInt( jQuery( 'body' ).css( '--responsive-bar-height' ) );
+
 		return {
 			iframeFix: true,
 			handle: '.e-panel-floatable',
 			drag: this.onDrag.bind( this ),
 			stop: this.onDragStop.bind( this ),
+			containment: [
+				-50,
+				topBarHeight,
+				jQuery( window ).width() + 50,
+				jQuery( window ).height(),
+			],
 		};
 	},
 
-	getResizableOptions: function() {
+	getResizableOptions() {
 		return {
 			handles: 'all',
 			containment: 'document',
@@ -133,11 +141,11 @@ module.exports = Marionette.Region.extend( {
 		};
 	},
 
-	getDockingSide: function() {
+	getDockingSide() {
 		return elementorCommon.config.isRTL ? 'left' : 'right';
 	},
 
-	onDrag: function( event, ui ) {
+	onDrag( event, ui ) {
 		this.$el.css( {
 			right: 'unset',
 			left: 'unset',
@@ -178,7 +186,7 @@ module.exports = Marionette.Region.extend( {
 		this.$el.toggleClass( 'e-panel-faded', 'left' === this.getDockingSide() ? isOutOfLeft : isOutOfRight );
 	},
 
-	onDragStop: function( event, ui ) {
+	onDragStop( event, ui ) {
 		if ( this.isDocked ) {
 			return;
 		}
@@ -197,11 +205,11 @@ module.exports = Marionette.Region.extend( {
 		this.$el.removeClass( 'e-panel-faded' );
 	},
 
-	isPushingContent: function() {
+	isPushingContent() {
 		return true;
 	},
 
-	open: function() {
+	open() {
 		this.saveStorage( 'visible', true );
 		this.$el.addClass( 'e-panel--open' );
 
@@ -210,7 +218,7 @@ module.exports = Marionette.Region.extend( {
 		}
 	},
 
-	close: function() {
+	close() {
 		this.saveStorage( 'visible', false );
 		this.$el.removeClass( 'e-panel--open' );
 
@@ -220,7 +228,7 @@ module.exports = Marionette.Region.extend( {
 		elementorCommon.elements.$body.removeClass( dockedClass + ' ' + dockedPositionClass );
 	},
 
-	dock: function( position ) {
+	dock( position ) {
 		const dockedClass = 'elementor-' + this.getStorageKey() + '-docked',
 			dockedPositionClass = dockedClass + '--' + position;
 
@@ -244,7 +252,7 @@ module.exports = Marionette.Region.extend( {
 			[ this.getDockingSide() ]: '0',
 		} );
 
-		// this.setDefaultPosition();
+		// This.setDefaultPosition();
 
 		if ( this.$el.resizable( 'instance' ) ) {
 			this.$el.resizable( 'destroy' );
@@ -258,7 +266,7 @@ module.exports = Marionette.Region.extend( {
 		this.saveStorage( 'dockedPosition', position );
 	},
 
-	undock: function( silent ) {
+	undock( silent ) {
 		const dockedClass = 'elementor-' + this.getStorageKey() + '-docked',
 			dockedPositionClass = dockedClass + '--left' + ' ' + dockedClass + '--right';
 
@@ -304,9 +312,9 @@ module.exports = Marionette.Region.extend( {
 	/**
 	 * Set the "base" size to a specific value or default to the storage-saved value.
 	 *
-	 * @param {String} size A specific new size.
+	 * @param {string} size A specific new size.
 	 */
-	setSize: function( size = null ) {
+	setSize( size = null ) {
 		if ( size ) {
 			this.storage.size.width = size;
 		} else {

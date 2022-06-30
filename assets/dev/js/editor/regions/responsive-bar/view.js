@@ -113,7 +113,7 @@ export default class View extends Marionette.ItemView {
 		document.addEventListener( 'mousemove', this.syncState.bind( this ) );
 	}
 
-	// addTipsyToIconButtons() {
+	// AddTipsyToIconButtons() {
 	// 	this.ui.switcherLabel.add( this.ui.breakpointSettingsButton ).tipsy(
 	// 		{
 	// 			html: true,
@@ -177,7 +177,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onRender() {
-		// this.addTipsyToIconButtons();
+		// This.addTipsyToIconButtons();
 		this.setScalePercentage();
 		this.addMoreItems();
 	}
@@ -349,7 +349,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onHistoryClick() {
-		if ( elementor.panel.$el.is( ':visible' ) ) {
+		if ( elementor.panel.$el.is( ':visible' ) && 'historyPage' === elementor.panel.currentView.getCurrentPageName() ) {
 			elementor.panel.close();
 		} else {
 			$e.run( 'panel/open' );
@@ -386,7 +386,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onAddWidgetsClick() {
-		if ( elementor.panel.$el.is( ':visible' ) ) {
+		if ( elementor.panel.$el.is( ':visible' ) && 'elements' === elementor.panel.currentView.getCurrentPageName() ) {
 			elementor.panel.close();
 		} else {
 			$e.run( 'panel/open' );

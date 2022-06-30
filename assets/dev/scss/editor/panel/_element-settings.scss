@@ -11,6 +11,7 @@
 
 	.elementor-panel-navigation-tab {
 		display: table-cell;
+		border-bottom: 3px solid transparent;
 
 		&.elementor-active {
 			border-bottom: 3px solid #495157;
