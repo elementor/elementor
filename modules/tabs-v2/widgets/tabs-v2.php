@@ -447,81 +447,11 @@ class TabsV2 extends Widget_Nested_Base {
 			'separator' => 'before',
 		] );
 
-		$this->add_control( 'tab_color', [
-			'label' => esc_html__( 'Color', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}};',
-			],
-		] );
-
 		$this->add_control( 'tab_active_color', [
 			'label' => esc_html__( 'Active Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-title-active-color: {{VALUE}};',
-			],
-		] );
-
-		$this->add_group_control( Group_Control_Typography::get_type(), [
-			'name' => 'tab_typography',
-			'fields_options' => [
-				'font_family' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family: "{{VALUE}}";',
-					],
-				],
-				'font_size' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'font_weight' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight: {{VALUE}};',
-					],
-				],
-				'text_transform' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform: {{VALUE}};',
-					],
-				],
-				'font_style' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style: {{VALUE}};',
-					],
-				],
-				'text_decoration' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration: {{VALUE}};',
-					],
-				],
-				'line_height' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'letter_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'word_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-			],
-		] );
-
-		$this->add_group_control( Group_Control_Text_Shadow::get_type(), [
-			'name' => 'title_shadow',
-			'fields_options' => [
-				'text_shadow' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
-					],
-				],
 			],
 		] );
 
@@ -546,53 +476,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'fields_options' => [
-				'font_family' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family: "{{VALUE}}";',
-					],
-				],
-				'font_size' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'font_weight' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight: {{VALUE}};',
-					],
-				],
-				'text_transform' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform: {{VALUE}};',
-					],
-				],
-				'font_style' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style: {{VALUE}};',
-					],
-				],
-				'text_decoration' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration: {{VALUE}};',
-					],
-				],
-				'line_height' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'letter_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'word_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-			],
+			'selector' => '{{WRAPPER}} .elementor-tab-title',
 		] );
 
 		$this->add_control(
@@ -633,53 +517,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography_hover',
-			'fields_options' => [
-				'font_family' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family-hover: "{{VALUE}}";',
-					],
-				],
-				'font_size' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size-hover: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'font_weight' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight-hover: {{VALUE}};',
-					],
-				],
-				'text_transform' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform-hover: {{VALUE}};',
-					],
-				],
-				'font_style' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style-hover: {{VALUE}};',
-					],
-				],
-				'text_decoration' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration-hover: {{VALUE}};',
-					],
-				],
-				'line_height' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height-hover: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'letter_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing-hover: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'word_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing-hover: {{SIZE}}{{UNIT}};',
-					],
-				],
-			],
+			'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
 		] );
 
 		$this->add_control(
@@ -720,53 +558,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography_active',
-			'fields_options' => [
-				'font_family' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family-active: "{{VALUE}}";',
-					],
-				],
-				'font_size' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size-active: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'font_weight' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight-active: {{VALUE}};',
-					],
-				],
-				'text_transform' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform-active: {{VALUE}};',
-					],
-				],
-				'font_style' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style-active: {{VALUE}};',
-					],
-				],
-				'text_decoration' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration-active: {{VALUE}};',
-					],
-				],
-				'line_height' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height-active: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'letter_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing-active: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'word_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing-active: {{SIZE}}{{UNIT}};',
-					],
-				],
-			],
+			'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
 		] );
 
 		$this->add_control(

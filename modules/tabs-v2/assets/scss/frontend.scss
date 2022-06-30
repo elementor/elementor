@@ -36,34 +36,7 @@
 	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
-
 	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
-	--tabs-v2-title-typography-font-size: initial;
-	--tabs-v2-title-typography-font-weight: initial;
-	--tabs-v2-title-typography-text-transform: initial;
-	--tabs-v2-title-typography-font-style: initial;
-	--tabs-v2-title-typography-text-decoration: initial;
-	--tabs-v2-title-typography-line-height: initial;
-	--tabs-v2-title-typography-letter-spacing: initial;
-	--tabs-v2-title-typography-word-spacing: initial;
-	--tabs-v2-title-typography-font-family-hover: var( --tabs-v2-title-typography-font-family ), Sans-serif;
-	--tabs-v2-title-typography-font-size-hover: var( --tabs-v2-title-typography-font-size );
-	--tabs-v2-title-typography-font-weight-hover: var( --tabs-v2-title-typography-font-weight );
-	--tabs-v2-title-typography-text-transform-hover: var( --tabs-v2-title-typography-text-transform );
-	--tabs-v2-title-typography-font-style-hover: var( --tabs-v2-title-typography-font-style );
-	--tabs-v2-title-typography-text-decoration-hover: var( --tabs-v2-title-typography-text-decoration );
-	--tabs-v2-title-typography-line-height-hover: var( --tabs-v2-title-typography-line-height );
-	--tabs-v2-title-typography-letter-spacing-hover: var( --tabs-v2-title-typography-letter-spacing );
-	--tabs-v2-title-typography-word-spacing-hover: var( --tabs-v2-title-typography-word-spacing );
-	--tabs-v2-title-typography-font-family-active: var( --tabs-v2-title-typography-font-family ), Sans-serif;
-	--tabs-v2-title-typography-font-size-active: var( --tabs-v2-title-typography-font-size );
-	--tabs-v2-title-typography-font-weight-active: var( --tabs-v2-title-typography-font-weight );
-	--tabs-v2-title-typography-text-transform-active: var( --tabs-v2-title-typography-text-transform );
-	--tabs-v2-title-typography-font-style-active: var( --tabs-v2-title-typography-font-style );
-	--tabs-v2-title-typography-text-decoration-active: var( --tabs-v2-title-typography-text-decoration );
-	--tabs-v2-title-typography-line-height-active: var( --tabs-v2-title-typography-line-height );
-	--tabs-v2-title-typography-letter-spacing-active: var( --tabs-v2-title-typography-letter-spacing );
-	--tabs-v2-title-typography-word-spacing-active: var( --tabs-v2-title-typography-word-spacing );
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-icon-active-color: #{$white};
@@ -105,14 +78,6 @@
 			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
 			padding-left: var( --tabs-v2-title-padding-left );
 			font-family: var( --tabs-v2-title-typography-font-family );
-			font-size: var( --tabs-v2-title-typography-font-size );
-			font-weight: var( --tabs-v2-title-typography-font-weight );
-			text-transform: var( --tabs-v2-title-typography-text-transform );
-			font-style: var( --tabs-v2-title-typography-font-style );
-			text-decoration: var( --tabs-v2-title-typography-text-decoration );
-			line-height: var( --tabs-v2-title-typography-line-height );
-			letter-spacing: var( --tabs-v2-title-typography-letter-spacing );
-			word-spacing: var( --tabs-v2-title-typography-word-spacing );
 			text-align: var( --tabs-v2-title-alignment );
 			flex-grow: var( --tabs-v2-title-grow );
 			border-style: var( --tabs-v2-title-border-style );
@@ -124,15 +89,6 @@
 			&:hover {
 				color: var( --tabs-v2-title-color-hover, var( --tabs-v2-title-color ) );
 				transition: all var( --tabs-v2-title-transition );
-				font-family: var( --tabs-v2-title-typography-font-family-hover );
-				font-size: var( --tabs-v2-title-typography-font-size-hover );
-				font-weight: var( --tabs-v2-title-typography-font-weight-hover );
-				text-transform: var( --tabs-v2-title-typography-text-transform-hover );
-				font-style: var( --tabs-v2-title-typography-font-style-hover );
-				text-decoration: var( --tabs-v2-title-typography-text-decoration-hover );
-				line-height: var( --tabs-v2-title-typography-line-height-hover );
-				letter-spacing: var( --tabs-v2-title-typography-letter-spacing-hover );
-				word-spacing: var( --tabs-v2-title-typography-word-spacing-hover );
 			}
 
 			.elementor-tab-icon {
@@ -154,15 +110,6 @@
 			&.elementor-active {
 				color: var( --tabs-v2-title-color-active );
 				background-color: var( --tabs-v2-title-active-background-color );
-				font-family: var( --tabs-v2-title-typography-font-family-active );
-				font-size: var( --tabs-v2-title-typography-font-size-active );
-				font-weight: var( --tabs-v2-title-typography-font-weight-active );
-				text-transform: var( --tabs-v2-title-typography-text-transform-active );
-				font-style: var( --tabs-v2-title-typography-font-style-active );
-				text-decoration: var( --tabs-v2-title-typography-text-decoration-active );
-				line-height: var( --tabs-v2-title-typography-line-height-active );
-				letter-spacing: var( --tabs-v2-title-typography-letter-spacing-active );
-				word-spacing: var( --tabs-v2-title-typography-word-spacing-active );
 
 				.elementor-tab-icon {
 					display: none;
