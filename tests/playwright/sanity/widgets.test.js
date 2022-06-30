@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'All widgets sanity test', async ( { page }, testInfo ) => {
+test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
 
@@ -68,41 +68,35 @@ test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		'wp-widget-tag_cloud',
 		'wp-widget-text',
 	];
-	//elementor.widgetsCache
+	//Elementor.widgetsCache
 	const widgetsConfig = {
 		heading: {
 			controls: {
-			title: { label: 'Title', type: 'textarea', default: 'Add Your Heading Text Here', tab: 'content' },
-			link: { label: 'Link', type: 'url', default: { url: '', is_external: '', nofollow: '', custom_attributes: '' }, tab: 'content' },
-			size: { label: 'Size', type: 'select', default: 'default', tab: 'content' },
-			header_size: { label: 'HTML Tag', type: 'select', default: 'h2', tab: 'content' },
-			align: { label: 'Alignment', type: 'choose', default: '', tab: 'content' },
-			view: { label: 'View', type: 'hidden', tab: 'content' },
-			color: { type: 'color', tab: 'style', section: 'section_title_style', label: 'Text Color', global: { default: 'globals/colors?id=primary' }, name: 'title_color', default: '' },
-			typography_typography: { type: 'popover_toggle', tab: 'style', section: 'section_title_style', label: 'Typography', return_value: 'custom', default: '', groupType: 'typography' },
-},
+			//Title: { label: 'Title', type: 'textarea', default: 'Add Your Heading Text Here', tab: 'content' },
+			//link: { label: 'Link', type: 'url', default: { url: '', is_external: '', nofollow: '', custom_attributes: '' }, tab: 'content' },
+			//size: { label: 'Size', type: 'select', default: 'default', tab: 'content' },
+			//header_size: { label: 'HTML Tag', type: 'select', default: 'h2', tab: 'content' },
+			//align: { label: 'Alignment', type: 'choose', default: '', tab: 'content' },
+			//view: { label: 'View', type: 'hidden', tab: 'content' },
+			//color: { type: 'color', tab: 'style', section: 'section_title_style', label: 'Text Color', global: { default: 'globals/colors?id=primary' }, name: 'title_color', default: '' },
+			//typography_typography: { type: 'popover_toggle', tab: 'style', section: 'section_title_style', label: 'Typography', return_value: 'custom', default: '', groupType: 'typography', popoverType: 'typography' },
+			text_stroke_text_stroke_type: { type: 'popover_toggle', tab: 'style', section: 'section_title_style', label: 'Typography', return_value: 'custom', default: '', popoverType: 'text_stroke_type' },
 		},
- divider: {
-	controls: {
-		align: { label: 'Alignment', type: 'choose', default: '', tab: 'content' },
-		style: { type: 'select', label: 'Style', default: 'solid', tab: 'content' },
-		view: { label: 'View', type: 'hidden', tab: 'content' },
-	},
-},
+		},
 	};
 
 for ( const widgetsName in widgetsConfig ) {
 	const config = widgetsConfig[ widgetsName ];
 
 	const widgetId = await editor.addWidget( widgetsName );
-	//console.log( widgetsName );
+	//Console.log( widgetsName );
 
 	const element = await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` );
 	await editor.page.waitForTimeout( 800 );
-	expect( await element.screenshot( {
+/*	Expect( await element.screenshot( {
 		type: 'jpeg',
 		quality: 70,
-	} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }.jpeg` );
+	} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }.jpeg` );*/
 	for ( const controlName in config.controls ) {
 		const controlConfig = config.controls[ controlName ];
 		console.log( controlName );
@@ -140,11 +134,11 @@ for ( const widgetsName in widgetsConfig ) {
 					return values;
 				}, { controlName, defaultValue: controlConfig.default } );
 
-				//console.log( controlConfig );
+				//Console.log( controlConfig );
 
 				for ( const optionValue of options ) {
 					await page.selectOption( `[data-setting="${ controlName }"]`, optionValue );
-					//console.log( optionValue );
+					//Console.log( optionValue );
 					// delay for rendering
 					await page.waitForTimeout( 1200 );
 					expect( await element.screenshot( {
@@ -192,7 +186,24 @@ for ( const widgetsName in widgetsConfig ) {
 				break;
 
 				case 'popover_toggle':
-					switch ( controlConfig.groupType ) {
+					switch ( controlConfig.popoverType ) {
+					case 'text_stroke_type':
+						await page.locator( 'label:has-text("Edit")' ).nth( 1 ).click();
+						await page.locator( '.elementor-group-control-stroke_color [aria-label="toggle color picker dialog"]' ).click();
+						await page.locator( '.elementor-group-control-stroke_color input[type="text"]' ).nth( 2 ).fill( '#FF0071' );
+						expect( await element.screenshot( {
+							type: 'jpeg',
+							quality: 70,
+				} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }-${ controlName }.jpeg` );
+				// Click .eicon-globe >> nth=0
+				await page.locator( '.eicon-globe' ).first().click();
+				// Click text=Accent#61CE70
+				await page.locator( 'text=Accent#61CE70' ).click();
+				expect( await element.screenshot( {
+					type: 'jpeg',
+					quality: 70,
+				} ) ).toMatchSnapshot( `test-screenshots/${ widgetsName }-${ controlName }-'global-color-accent'.jpeg` );
+						break;
 					case 'typography':
 					await page.locator( 'text=Typography Edit >> i' ).nth( 2 ).click();
 					// Font Famely

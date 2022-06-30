@@ -564,6 +564,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$control_params = [
 			'type' => Controls_Manager::POPOVER_TOGGLE,
 			'label' => $label,
+			'popoverType' => $popover_options['starter_name'],
 			'return_value' => $popover_options['starter_value'],
 		];
 
