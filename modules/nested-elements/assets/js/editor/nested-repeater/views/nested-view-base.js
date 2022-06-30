@@ -1,7 +1,3 @@
-/**
- * @name NestedViewBase
- * @extends {BaseWidgetView}
- */
 export default class NestedViewBase extends elementor.modules.elements.views.BaseWidget {
 	/**
 	 * @inheritDoc

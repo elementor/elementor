@@ -11,7 +11,7 @@ export default function Empty( props ) {
 		setIsRenderPresets,
 	};
 
-	return isRenderPresets ? <SelectPreset {...props} /> : <AddSectionArea {...props} />;
+	return isRenderPresets ? <SelectPreset { ...props } /> : <AddSectionArea { ...props } />;
 }
 
 Empty.propTypes = {
