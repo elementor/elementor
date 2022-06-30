@@ -6,15 +6,20 @@ export function extractNestedItemTitle( container, index ) {
 }
 
 export function isWidgetSupportNesting( widgetType ) {
-	// eslint-disable-next-line camelcase
-	return elementor.widgetsCache[ widgetType ]?.support_nesting;
+	const widgetConfig = elementor.widgetsCache[ widgetType ];
+
+	if ( ! widgetConfig ) {
+		return false;
+	}
+
+	return widgetConfig.support_nesting;
 }
 
-export function findChildContainerOrFaild( container, index ) {
+export function findChildContainerOrFail( container, index ) {
 	const childView = container.view.children.findByIndex( index );
 
 	if ( ! childView ) {
-		throw new Error( 'Child container was not founded for the current repeater item.' );
+		throw new Error( 'Child container was not found for the current repeater item.' );
 	}
 
 	return childView.getContainer();

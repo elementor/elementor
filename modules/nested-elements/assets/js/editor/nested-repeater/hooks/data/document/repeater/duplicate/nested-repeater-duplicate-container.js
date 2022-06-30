@@ -1,9 +1,9 @@
 import Base from '../../../base';
-import { findChildContainerOrFaild } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterDuplicateContainer extends Base {
 	getId() {
-		return 'nested-repeater-duplicate-container';
+		return 'document/repeater/duplicate--nested-repeater-duplicate-container';
 	}
 
 	getCommand() {
@@ -12,7 +12,7 @@ export class NestedRepeaterDuplicateContainer extends Base {
 
 	apply( { container, index } ) {
 		$e.run( 'document/elements/duplicate', {
-			container: findChildContainerOrFaild( container, index ),
+			container: findChildContainerOrFail( container, index ),
 			options: {
 				edit: false, // Not losing focus.
 			},
