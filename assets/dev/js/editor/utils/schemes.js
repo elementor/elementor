@@ -154,6 +154,7 @@ Schemes = function() {
 	this.removeSchemeItem = function( schemeName, itemKey ) {
 		const items = schemes[ schemeName ].items;
 
+		// eslint-disable-next-line no-constant-condition
 		while ( true ) {
 			itemKey++;
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Component from './mock/component.spec';
 
 QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks ) => {
