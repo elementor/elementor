@@ -122,7 +122,7 @@
 			transition: all var( --tabs-v2-title-transition );
 
 			&:hover {
-				color: var( --tabs-v2-title-color-hover );
+				color: var( --tabs-v2-title-color-hover, var( --tabs-v2-title-color ) );
 				transition: all var( --tabs-v2-title-transition );
 				font-family: var( --tabs-v2-title-typography-font-family-hover );
 				font-size: var( --tabs-v2-title-typography-font-size-hover );
