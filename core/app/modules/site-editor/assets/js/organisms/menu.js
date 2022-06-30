@@ -11,7 +11,7 @@ export default function Menu( props ) {
 			const className = 'eps-menu-item__action-button';
 
 			if ( props.promotion ) {
-				return <Button text={ __( 'Go Pro', 'elementor' ) } hideText icon="eicon-lock" className={className} />;
+				return <Button text={ __( 'Go Pro', 'elementor' ) } hideText icon="eicon-lock" className={ className } />;
 			}
 
 			const goToCreate = () => {
@@ -19,18 +19,18 @@ export default function Menu( props ) {
 			};
 
 			return (
-				<span className={className}>
-					<AddNewButton hideText={true} size="sm" onClick={ () => goToCreate() }/>
+				<span className={ className }>
+					<AddNewButton hideText={ true } size="sm" onClick={ () => goToCreate() } />
 				</span>
 			);
 		};
 
 	return (
 		<UiMenu menuItems={ templateTypes } actionButton={ actionButton } promotion={ props.promotion }>
-				{ props.allPartsButton }
-				<div className="eps-menu__title">
-					{ __( 'Site Parts', 'elementor' ) }
-				</div>
+			{ props.allPartsButton }
+			<div className="eps-menu__title">
+				{ __( 'Site Parts', 'elementor' ) }
+			</div>
 		</UiMenu>
 	);
 }

@@ -7,7 +7,7 @@ export default function CardHeader( props ) {
 		classes = [ classNameBase, props.className ],
 		style = {};
 
-	if ( props.hasOwnProperty( 'padding' ) ) {
+	if ( Object.prototype.hasOwnProperty.call( props, 'padding' ) ) {
 		style[ '--eps-card-header-padding' ] = pxToRem( props.padding );
 
 		classes.push( classNameBase + '--padding' );

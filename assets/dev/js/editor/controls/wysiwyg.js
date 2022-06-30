@@ -4,7 +4,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 ControlWysiwygItemView = ControlBaseDataView.extend( {
 	editor: null,
 
-	ui: function() {
+	ui() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		jQuery.extend( ui, {
@@ -14,7 +14,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	events: function() {
+	events() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'keyup textarea.elementor-wp-editor': 'onBaseInputChange',
 		} );
@@ -37,7 +37,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		removeFromAdvanced: [],
 	},
 
-	initialize: function() {
+	initialize() {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		var self = this;
@@ -72,7 +72,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		var editorConfig = {
 			id: self.editorID,
 			selector: '#' + self.editorID,
-			setup: function( editor ) {
+			setup( editor ) {
 				self.editor = editor;
 			},
 		};
@@ -84,7 +84,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	applySavedValue: function() {
+	applySavedValue() {
 		if ( ! this.editor ) {
 			return;
 		}
@@ -97,11 +97,11 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
-	saveEditor: function() {
+	saveEditor() {
 		this.setValue( this.editor.getContent() );
 	},
 
-	moveButtons: function( buttonsToMove, from, to ) {
+	moveButtons( buttonsToMove, from, to ) {
 		if ( ! to ) {
 			to = from;
 
@@ -129,7 +129,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	rearrangeButtons: function() {
+	rearrangeButtons() {
 		var editorProps = tinyMCEPreInit.mceInit[ this.editorID ],
 			editorBasicToolbarButtons = editorProps.toolbar1.split( ',' ),
 			editorAdvancedToolbarButtons = editorProps.toolbar2.split( ',' );
@@ -150,7 +150,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
-	onReady: function() {
+	onReady() {
 		const $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', '' ) );
 
 		$editor.find( '.wp-editor-area' ).text( this.getControlValue() );
@@ -166,7 +166,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		}, 100 );
 	},
 
-	onBeforeDestroy: function() {
+	onBeforeDestroy() {
 		// Remove TinyMCE and QuickTags instances
 		delete QTags.instances[ this.editorID ];
 

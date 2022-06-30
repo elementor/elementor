@@ -11,15 +11,15 @@ export default function useKit( id ) {
 
 	return useQuery( [ KEY, id ], fetchKitItem, {
 			placeholderData: placeholderDataCallback,
-		}
+		},
 	);
 }
 
 /**
  * Return placeholder function for kit query.
  *
- * @param id
- * @returns {function(): (undefined|*)}
+ * @param {*} id
+ * @return {function(): (undefined|*)} placeholder
  */
 function usePlaceholderDataCallback( id ) {
 	const queryClient = useQueryClient();
@@ -41,11 +41,14 @@ function usePlaceholderDataCallback( id ) {
 /**
  * Fetch kit
  *
- * @param key
- * @param id
- * @returns {Promise<Kit>}
+ * @param {Object} root0
+ * @param {Object} root0.queryKey
+ * @param {*}      root0.queryKey.0
+ * @param {string} root0.queryKey.1
+ * @return {Promise<Kit>} kit
  */
-function fetchKitItem( { queryKey: [ , id ] } ) {
+// eslint-disable-next-line no-unused-vars
+function fetchKitItem( { queryKey: [ _, id ] } ) {
 	return $e.data.get( 'kits/index', { id }, { refresh: true } )
 		.then( ( response ) => response.data )
 		.then( ( { data } ) => Kit.createFromResponse( data ) );

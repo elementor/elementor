@@ -6,13 +6,13 @@ import SwiperBase from './handlers/base-swiper';
 import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
 
 elementorModules.frontend = {
-	Document: Document,
+	Document,
 	tools: {
-		StretchElement: StretchElement,
+		StretchElement,
 	},
 	handlers: {
 		Base: BaseHandler,
-		SwiperBase: SwiperBase,
+		SwiperBase,
 		BaseTabsV2,
 	},
 };

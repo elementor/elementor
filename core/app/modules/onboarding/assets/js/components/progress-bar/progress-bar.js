@@ -59,7 +59,7 @@ export default function ProgressBar() {
 			};
 		}
 
-		return <ProgressBarItem key={ itemConfig.id } { ...itemConfig }/>;
+		return <ProgressBarItem key={ itemConfig.id } { ...itemConfig } />;
 	} );
 
 	return (

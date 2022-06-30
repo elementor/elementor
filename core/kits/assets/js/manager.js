@@ -219,11 +219,11 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			globalControls.forEach( ( control ) => {
 				cssParser.addControlStyleRules(
 					control,
-					widget.controls, // values
-					widget.controls, // controls
+					widget.controls, // Values
+					widget.controls, // Controls
 					[ '{{WRAPPER}}' ],
 					[ '.elementor-widget-' + widget.widget_type ],
-					globalValues
+					globalValues,
 				);
 			} );
 		} );

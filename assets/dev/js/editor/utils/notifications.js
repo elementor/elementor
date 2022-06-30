@@ -1,5 +1,5 @@
 module.exports = elementorModules.Module.extend( {
-	initToast: function() {
+	initToast() {
 		var toast = elementorCommon.dialogsManager.createWidget( 'buttons', {
 			id: 'elementor-toast',
 			position: {
@@ -14,7 +14,7 @@ module.exports = elementorModules.Module.extend( {
 				autoDelay: 10000,
 			},
 			effects: {
-				show: function() {
+				show() {
 					var $widget = toast.getElements( 'widget' );
 
 					$widget.show();
@@ -32,13 +32,13 @@ module.exports = elementorModules.Module.extend( {
 						height: 'show',
 						paddingBottom: 'show',
 						paddingTop: 'show',
-						top: top,
+						top,
 					}, {
 						easing: 'linear',
 						duration: 300,
 					} );
 				},
-				hide: function() {
+				hide() {
 					var $widget = toast.getElements( 'widget' ),
 						top = parseInt( $widget.css( 'top' ), 10 );
 
@@ -64,7 +64,7 @@ module.exports = elementorModules.Module.extend( {
 		};
 	},
 
-	showToast: function( options ) {
+	showToast( options ) {
 		var toast = this.getToast();
 
 		toast.setMessage( options.message );
@@ -95,7 +95,7 @@ module.exports = elementorModules.Module.extend( {
 		return toast.show();
 	},
 
-	onInit: function() {
+	onInit() {
 		this.initToast();
 	},
 } );
