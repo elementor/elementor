@@ -23,7 +23,10 @@
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
 
-	--tabs-v2-content-wrapper-padding: initial;
+	--tabs-v2-content-wrapper-padding-top: initial;
+	--tabs-v2-content-wrapper-padding-right: initial;
+	--tabs-v2-content-wrapper-padding-bottom: initial;
+	--tabs-v2-content-wrapper-padding-left: initial;
 	--tabs-v2-content-wrapper-border-radius: initial;
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
@@ -74,10 +77,7 @@
 	
 		&-content-wrapper {
 			flex-grow: 1;
-			padding-top: var( --tabs-v2-content-wrapper-padding-top );
-			padding-right: var( --tabs-v2-content-wrapper-padding-right );
-			padding-bottom: var( --tabs-v2-content-wrapper-padding-bottom );
-			padding-left: var( --tabs-v2-content-wrapper-padding-left );
+			padding: var( --tabs-v2-content-wrapper-padding );
 			border-radius: var( --tabs-v2-content-wrapper-border-radius );
 		}	
 	}
@@ -140,8 +140,7 @@
 	.elementor-tab-title,
 	.elementor-tab-title:before,
 	.elementor-tab-title:after,
-	.e-container,
-	.elementor-tabs-content-wrapper {
+	.e-container {
 		border: 1px none var( --tabs-v2-border-color );
 		border-width: var( --tabs-v2-border-width );
 	}

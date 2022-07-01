@@ -563,13 +563,13 @@ class TabsV2 extends Widget_Nested_Base {
 		);
 
 		$this->add_responsive_control(
-			'padding',
+			'box_padding',
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-padding-top: {{TOP}}{{UNIT}}; --tabs-v2-content-wrapper-padding-right: {{RIGHT}}{{UNIT}}; --tabs-v2-content-wrapper-padding-bottom: {{BOTTOM}}{{UNIT}}; --tabs-v2-content-wrapper-padding-left: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-padding:  {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
