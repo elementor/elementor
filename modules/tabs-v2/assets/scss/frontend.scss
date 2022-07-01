@@ -23,10 +23,7 @@
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
 
-	--tabs-v2-content-wrapper-padding-top: initial;
-	--tabs-v2-content-wrapper-padding-right: initial;
-	--tabs-v2-content-wrapper-padding-bottom: initial;
-	--tabs-v2-content-wrapper-padding-left: initial;
+	--tabs-v2-content-wrapper-padding: initial;
 	--tabs-v2-content-wrapper-border-radius: initial;
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
