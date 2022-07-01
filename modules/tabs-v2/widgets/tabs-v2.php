@@ -4,6 +4,9 @@ namespace Elementor\Modules\TabsV2\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
@@ -521,6 +524,55 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 		] );
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'section_box_style', [
+			'label' => esc_html__( 'Box', 'elementor' ),
+			'tab' => Controls_Manager::TAB_STYLE,
+		] );
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'box_background_color',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'box_border',
+				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+			]
+		);
+
+		$this->add_responsive_control(
+			'box_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-padding-top: {{TOP}}{{UNIT}}; --tabs-v2-content-wrapper-padding-right: {{RIGHT}}{{UNIT}}; --tabs-v2-content-wrapper-padding-bottom: {{BOTTOM}}{{UNIT}}; --tabs-v2-content-wrapper-padding-left: {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 	}

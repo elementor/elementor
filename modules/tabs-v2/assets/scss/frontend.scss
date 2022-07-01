@@ -22,7 +22,9 @@
 
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
-	--tabs-v2-background-color: transparent;
+
+	--tabs-v2-content-wrapper-padding: initial;
+	--tabs-v2-content-wrapper-border-radius: initial;
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-title-background-color: #{$editor-background-light};
@@ -71,8 +73,12 @@
 		}
 	
 		&-content-wrapper {
-			background-color: var( --tabs-v2-background-color );
 			flex-grow: 1;
+			padding-top: var( --tabs-v2-content-wrapper-padding-top );
+			padding-right: var( --tabs-v2-content-wrapper-padding-right );
+			padding-bottom: var( --tabs-v2-content-wrapper-padding-bottom );
+			padding-left: var( --tabs-v2-content-wrapper-padding-left );
+			border-radius: var( --tabs-v2-content-wrapper-border-radius );
 		}	
 	}
 
