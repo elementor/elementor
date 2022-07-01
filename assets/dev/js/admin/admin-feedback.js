@@ -1,10 +1,9 @@
-/* global jQuery */
 ( function( $ ) {
 	'use strict';
 
 	var ElementorAdminDialogApp = {
 
-		cacheElements: function() {
+		cacheElements() {
 			this.cache = {
 				$deactivateLink: $( '#the-list' ).find( '[data-slug="elementor"] span.deactivate a' ),
 				$dialogHeader: $( '#elementor-deactivate-feedback-dialog-header' ),
@@ -12,7 +11,7 @@
 			};
 		},
 
-		bindEvents: function() {
+		bindEvents() {
 			var self = this;
 
 			self.cache.$deactivateLink.on( 'click', function( event ) {
@@ -22,11 +21,11 @@
 			} );
 		},
 
-		deactivate: function() {
+		deactivate() {
 			location.href = this.cache.$deactivateLink.attr( 'href' );
 		},
 
-		initModal: function() {
+		initModal() {
 			var self = this,
 				modal;
 
@@ -43,7 +42,7 @@
 							my: 'center',
 							at: 'center',
 						},
-						onReady: function() {
+						onReady() {
 							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
 
 							this.addButton( {
@@ -55,13 +54,13 @@
 							this.addButton( {
 								name: 'skip',
 								text: __( 'Skip & Deactivate', 'elementor' ),
-								callback: function() {
+								callback() {
 									self.deactivate();
 								},
 							} );
 						},
 
-						onShow: function() {
+						onShow() {
 							var $dialogModal = $( '#elementor-deactivate-feedback-modal' ),
 								radioSelector = '.elementor-deactivate-feedback-dialog-input';
 
@@ -78,7 +77,7 @@
 			};
 		},
 
-		sendFeedback: function() {
+		sendFeedback() {
 			var self = this,
 				formData = self.cache.$dialogForm.serialize();
 
@@ -87,7 +86,7 @@
 			$.post( ajaxurl, formData, this.deactivate.bind( this ) );
 		},
 
-		init: function() {
+		init() {
 			this.initModal();
 			this.cacheElements();
 			this.bindEvents();

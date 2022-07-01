@@ -13,7 +13,7 @@ export class CreateSectionIsFull extends After {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( /* Container */ container ) =>
-			'section' === container.model.get( 'elType' )
+			'section' === container.model.get( 'elType' ),
 		);
 	}
 

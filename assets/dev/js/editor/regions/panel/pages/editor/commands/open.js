@@ -20,7 +20,7 @@ export class Open extends $e.modules.CommandBase {
 		elementor.hooks.doAction( `panel/open_editor/${ elementType }/${ widgetType }`,
 			this.component.manager,
 			args.model,
-			args.view
+			args.view,
 		);
 	}
 }

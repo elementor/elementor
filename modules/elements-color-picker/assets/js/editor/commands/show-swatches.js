@@ -1,15 +1,18 @@
 import { rgbToHex } from 'elementor/core/app/assets/js/utils/utils';
 
 /**
+ * @typedef {import('../../../../../../assets/dev/js/editor/container/container')} Container
+ */
+/**
  * Show a palette of color swatches on click.
  */
 export class ShowSwatches extends $e.modules.CommandBase {
 	/**
 	 * Initialize the command.
 	 *
-	 * @param {object} args
+	 * @param {Object} args
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	constructor( args ) {
 		super( args );
@@ -37,7 +40,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	 *
 	 * @param {Object} args
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	validateArgs( args ) {
 		this.requireArgument( 'event', args );
@@ -48,7 +51,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	 *
 	 * @param {Object} args
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	apply( args ) {
 		const { event: e } = args;
@@ -98,17 +101,20 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	 *
 	 * @param {Container} container - A container to extract colors from its settings.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	extractColorsFromSettings( container = this.container ) {
 		// Iterate over the widget controls.
+		// eslint-disable-next-line array-callback-return
 		Object.keys( container.settings.attributes ).map( ( control ) => {
 			// Limit colors count.
 			if ( this.reachedColorsLimit() ) {
+				// eslint-disable-next-line array-callback-return
 				return;
 			}
 
 			if ( ! ( control in container.controls ) ) {
+				// eslint-disable-next-line array-callback-return
 				return;
 			}
 
@@ -122,17 +128,20 @@ export class ShowSwatches extends $e.modules.CommandBase {
 
 			// Throw non-color and non-background-image controls.
 			if ( ! isColor && ! isBgImage ) {
+				// eslint-disable-next-line array-callback-return
 				return;
 			}
 
 			// Throw non-active controls.
 			if ( ! isActive() ) {
+				// eslint-disable-next-line array-callback-return
 				return;
 			}
 
 			// Handle background images.
 			if ( isBgImage ) {
 				this.addTempBackgroundImage( container.getSetting( control ) );
+				// eslint-disable-next-line array-callback-return
 				return;
 			}
 
@@ -163,7 +172,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	/**
 	 * Extract colors from repeater controls.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	extractColorsFromRepeaters() {
 		// Iterate over repeaters.
@@ -179,10 +188,10 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	 * Create a temporary image element in order to extract colors from it using ColorThief.
 	 * Used with background images from background controls.
 	 *
-	 * @param {Object} setting - A settings object from URL control.
+	 * @param {Object} setting     - A settings object from URL control.
 	 * @param {string} setting.url
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	addTempBackgroundImage( { url } ) {
 		if ( ! url ) {
@@ -200,10 +209,10 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	/**
 	 * Extract colors from image and push it ot the colors array.
 	 *
-	 * @param {Object} image - The image element to extract colors from
-	 * @param {String} suffix - An optional suffix for the key in the colors array.
+	 * @param {Object} image  - The image element to extract colors from
+	 * @param {string} suffix - An optional suffix for the key in the colors array.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	extractColorsFromImage( image, suffix = '' ) {
 		const colorThief = new ColorThief();
@@ -217,13 +226,12 @@ export class ShowSwatches extends $e.modules.CommandBase {
 
 		// Add the palette to the colors array.
 		palette.forEach( ( color, index ) => {
-			const hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
-
 			// Limit colors count.
 			if ( this.reachedColorsLimit() ) {
 				return;
 			}
 
+			const hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
 			if ( ! Object.values( this.colors ).includes( hex ) ) {
 				this.colors[ `palette-${ suffix }-${ index }` ] = hex;
 			}
@@ -233,7 +241,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	/**
 	 * Iterate over all images in the current selected element and extract colors from them.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	extractColorsFromImages() {
 		// Iterate over all images in the widget.
@@ -251,10 +259,10 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	 *
 	 * @param {HTMLElement} picker - Picker HTML element to append the swatches to.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	addColorSwatches( picker ) {
-		Object.entries( this.colors ).map( ( [ , value ] ) => {
+		Object.entries( this.colors ).forEach( ( [ , value ] ) => {
 			const swatch = document.createElement( 'div' );
 			swatch.classList.add( this.classes.swatch );
 			swatch.style = `--color: ${ value }`;
@@ -289,7 +297,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	 *
 	 * @param {HTMLElement} picker - Picker HTML element to add the tooltip to.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	addTooltip( picker ) {
 		jQuery( picker ).tipsy( {
@@ -315,7 +323,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	 *
 	 * @param {HTMLElement} picker - Picker HTML element to remove the tooltip from.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	removeTooltip( picker ) {
 		jQuery( picker ).tipsy( 'hide' );
@@ -324,10 +332,10 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	/**
 	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
 	 *
-	 * @param {int} x
-	 * @param {int} y
+	 * @param {number} x
+	 * @param {number} y
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	initSwatch( x = 0, y = 0 ) {
 		const count = Object.entries( this.colors ).length;
@@ -385,7 +393,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	/**
 	 * Check if the palette reached its colors limit.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} true if limit has been reached
 	 */
 	reachedColorsLimit() {
 		const COLORS_LIMIT = 5;

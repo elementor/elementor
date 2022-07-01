@@ -43,9 +43,9 @@ module.exports = function( config ) {
 			'tests/qunit/setup/elementor-common.js',
 			'tests/qunit/setup/web-cli.js',
 			'assets/lib/dialog/dialog.js',
-			'assets/js/common-modules.js',
-			'assets/js/web-cli.js',
-			'assets/js/common.js',
+			'assets/js/common-modules.min.js',
+			'assets/js/web-cli.min.js',
+			'assets/js/common.min.js',
 
 			// Editor Fixtures.
 			'tests/qunit/index.html',
@@ -68,11 +68,11 @@ module.exports = function( config ) {
 			'assets/lib/jquery-hover-intent/jquery-hover-intent.min.js',
 
 			// Editor.
-			'assets/js/editor-modules.js',
-			'assets/js/editor-document.js',
+			'assets/js/editor-modules.min.js',
+			'assets/js/editor-document.min.js',
 
 			// Tests.
-			'assets/js/qunit-tests.js',
+			'assets/js/qunit-tests.min.js',
 		],
 		preprocessors: {
 			'tests/qunit/index.html': [ 'html2js' ],
@@ -85,10 +85,10 @@ module.exports = function( config ) {
 		coverageIstanbulReporter: {
 			reports: [ 'text' ],
 			fixWebpackSourcePaths: true,
-			// enforce percentage thresholds
+			// Enforce percentage thresholds
 			// anything under these percentages will cause karma to fail with an exit code of 1 if not running in watch mode
 			thresholds: {
-				emitWarning: false, // set to `true` to not fail the test command when thresholds are not met
+				emitWarning: false, // Set to `true` to not fail the test command when thresholds are not met
 				// thresholds for all files
 				global: {
 					statements: 50, /* TEMP: initial value */
@@ -98,7 +98,7 @@ module.exports = function( config ) {
 				},
 			},
 		},
-		// web server port
+		// Web server port
 		port: 9876,
 		colors: true,
 		logLevel: config.LOG_INFO,
@@ -115,7 +115,7 @@ module.exports = function( config ) {
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true,
 
-		// client configuration
+		// Client configuration
 		client: {
 			clearContext: true,
 			qunit: {

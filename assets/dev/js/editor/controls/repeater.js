@@ -8,7 +8,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		fieldContainer: '.elementor-repeater-fields-wrapper',
 	},
 
-	events: function() {
+	events() {
 		return {
 			'click @ui.btnAddRow': 'onButtonAddRowClick',
 			'sortstart @ui.fieldContainer': 'onSortStart',
@@ -21,14 +21,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	childViewContainer: '.elementor-repeater-fields-wrapper',
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			itemActions: this.model.get( 'item_actions' ),
 			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } ),
 		};
 	},
 
-	childViewOptions: function( rowModel, index ) {
+	childViewOptions( rowModel, index ) {
 		const elementContainer = this.getOption( 'container' );
 
 		return {
@@ -39,13 +39,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	createItemModel: function( attrs, options, controlView ) {
+	createItemModel( attrs, options, controlView ) {
 		options.controls = controlView.model.get( 'fields' );
 
 		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
-	fillCollection: function() {
+	fillCollection() {
 		// TODO: elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
@@ -65,7 +65,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	initialize: function() {
+	initialize() {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		this.fillCollection();
@@ -75,7 +75,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.listenTo( this.collection, 'add', this.updateContainer.bind( this ) );
 	},
 
-	editRow: function( rowView ) {
+	editRow( rowView ) {
 		if ( this.currentEditableChild ) {
 			var currentEditable = this.currentEditableChild.getChildViewContainer( this.currentEditableChild );
 			currentEditable.removeClass( 'editable' );
@@ -98,7 +98,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	toggleMinRowsClass: function() {
+	toggleMinRowsClass() {
 		if ( ! this.model.get( 'prevent_empty' ) ) {
 			return;
 		}
@@ -106,7 +106,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.$el.toggleClass( 'elementor-repeater-has-minimum-rows', 1 >= this.collection.length );
 	},
 
-	updateActiveRow: function() {
+	updateActiveRow() {
 		var activeItemIndex = 1;
 
 		if ( this.currentEditableChild ) {
@@ -116,7 +116,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.setEditSetting( 'activeItemIndex', activeItemIndex );
 	},
 
-	updateChildIndexes: function() {
+	updateChildIndexes() {
 		var collection = this.collection;
 
 		this.children.each( function( view ) {
@@ -134,7 +134,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	onRender: function() {
+	onRender() {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		if ( this.model.get( 'item_actions' ).sort ) {
@@ -144,11 +144,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.toggleMinRowsClass();
 	},
 
-	onSortStart: function( event, ui ) {
+	onSortStart( event, ui ) {
 		ui.item.data( 'oldIndex', ui.item.index() );
 	},
 
-	onSortStop: function( event, ui ) {
+	onSortStop( event, ui ) {
 		// Reload TinyMCE editors (if exist), it's a bug that TinyMCE content is missing after stop dragging
 		var self = this,
 			sortedIndex = ui.item.index();
@@ -171,7 +171,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	onSortUpdate: function( event, ui ) {
+	onSortUpdate( event, ui ) {
 		const oldIndex = ui.item.data( 'oldIndex' ),
 			newIndex = ui.item.index();
 
@@ -183,7 +183,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	onAddChild: function() {
+	onAddChild() {
 		this.updateChildIndexes();
 		this.updateActiveRow();
 	},
@@ -202,12 +202,12 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	// BC since 3.0.0, ensure a container children are reset on collection reset.
-	resetContainer: function() {
+	resetContainer() {
 		elementorDevTools.deprecation.deprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
 		this.options.container.repeaters[ this.model.get( 'name' ) ].children = [];
 	},
 
-	getDefaults: function() {
+	getDefaults() {
 		const defaults = {};
 
 		// Get default fields.
@@ -218,7 +218,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		return defaults;
 	},
 
-	onButtonAddRowClick: function() {
+	onButtonAddRowClick() {
 		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
@@ -232,7 +232,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.toggleMinRowsClass();
 	},
 
-	onChildviewClickRemove: function( childView ) {
+	onChildviewClickRemove( childView ) {
 		if ( childView === this.currentEditableChild ) {
 			delete this.currentEditableChild;
 		}
@@ -249,7 +249,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.toggleMinRowsClass();
 	},
 
-	onChildviewClickDuplicate: function( childView ) {
+	onChildviewClickDuplicate( childView ) {
 		$e.run( 'document/repeater/duplicate', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
@@ -259,11 +259,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.toggleMinRowsClass();
 	},
 
-	onChildviewClickEdit: function( childView ) {
+	onChildviewClickEdit( childView ) {
 		this.editRow( childView );
 	},
 
-	onAfterExternalChange: function() {
+	onAfterExternalChange() {
 		// Update the collection with current value
 		this.fillCollection();
 

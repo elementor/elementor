@@ -24,7 +24,7 @@ test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 	// Move the button to be last.
 	await editor.previewFrame.dragAndDrop(
 		getElementSelector( button ),
-		getElementSelector( image )
+		getElementSelector( image ),
 	);
 
 	// Wait for the button to re-render.
