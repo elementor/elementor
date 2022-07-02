@@ -330,6 +330,13 @@ class TabsV2 extends Widget_Nested_Base {
 				'fit' => esc_html__( 'Fit to content', 'elementor' ),
 				'height' => esc_html__( 'Height', 'elementor' ),
 			],
+			'selectors_dictionary' => [
+				'fit' => '--tabs-v2-overflow-x: initial; --tabs-v2-overflow-y: initial;',
+				'height' => '--tabs-v2-overflow-x: hidden; --tabs-v2-overflow-y: auto;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
 		] );
 
 		$this->add_responsive_control( 'tabs_height', [
@@ -558,6 +565,17 @@ class TabsV2 extends Widget_Nested_Base {
 				'size_units' => [ 'px', 'em', 'rem' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'condition' => [
+					'box_height!' => 'height',
 				],
 			]
 		);
