@@ -1,14 +1,13 @@
 import CommandCallbackBase from 'elementor-api/modules/command-callback-base';
 
 import { createSlice } from '@reduxjs/toolkit';
-import Module from 'elementor-assets-js/modules/imports/module.js';
+import Module from 'elementor/assets/dev/js/modules/imports/module.js';
 import ForceMethodImplementation from '../utils/force-method-implementation';
 import Deprecation from 'elementor-api/utils/deprecation';
 
 /**
+ * @typedef {import('./command-infra')} CommandInfra
  * @typedef {import('./hook-base')} HookBase
- */
-/**
  * @typedef {import('../core/states/ui-state-base')} UiStateBase
  */
 
@@ -174,9 +173,9 @@ export default class ComponentBase extends Module {
 	}
 
 	/**
-	 * @param {string}                           command
-	 * @param {(function()|typeof CommandInfra)} context
-	 * @param {'default'|'internal'|'data'}      commandsType
+	 * @param {string}                      command
+	 * @param {(()=>{}|CommandInfra)}       context
+	 * @param {'default'|'internal'|'data'} commandsType
 	 */
 	registerCommand( command, context, commandsType = 'default' ) {
 		let commandsManager;
@@ -412,7 +411,7 @@ export default class ComponentBase extends Module {
 	}
 
 	/**
-	 * @param {Object.<CommandBase>} commandsFromImport
+	 * @param {{}} commandsFromImport
 	 * @return {{}} imported commands
 	 */
 	importCommands( commandsFromImport ) {

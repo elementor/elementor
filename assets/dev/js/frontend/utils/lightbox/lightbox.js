@@ -173,24 +173,25 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.setVideoContent( options );
 
 				break;
-			case 'image':
-				const slides = [ {
-					image: options.url,
-					index: 0,
-					title: options.title,
-					description: options.description,
-					hash: options.hash,
-				} ];
+			case 'image': {
+					const slides = [ {
+						image: options.url,
+						index: 0,
+						title: options.title,
+						description: options.description,
+						hash: options.hash,
+					} ];
 
-				options.slideshow = {
-					slides,
-					swiper: {
-						loop: false,
-						pagination: false,
-					},
-				};
-				self.setSlideshowContent( options.slideshow );
-				break;
+					options.slideshow = {
+						slides,
+						swiper: {
+							loop: false,
+							pagination: false,
+						},
+					};
+					self.setSlideshowContent( options.slideshow );
+					break;
+				}
 			case 'slideshow':
 				self.setSlideshowContent( options.slideshow );
 				break;

@@ -249,8 +249,8 @@
 								return false; // Stops the forEach from extra loops
 							}
 						} );
-					} catch ( e ) {
-					}
+						// eslint-disable-next-line no-empty
+					} catch ( e ) {}
 				} );
 
 				if ( ! isGroupMatch ) {

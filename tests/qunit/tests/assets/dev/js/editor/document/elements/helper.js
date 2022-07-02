@@ -38,9 +38,9 @@
 	}
 
 	/**
-	 * @param  eContainer
-	 * @param  settings
-	 * @return {Container}
+	 * @param {Container} eContainer
+	 * @param {{}}        settings
+	 * @return {Container} new button wrapped in a container.
 	 */
 	static createWrappedButton( eContainer = null, settings = {} ) {
 		if ( ! eContainer ) {
