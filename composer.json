@@ -25,6 +25,11 @@
 	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
 	  "coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml"
 	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
 	"authors": [
 		{
 			"name": "Elementor team"
