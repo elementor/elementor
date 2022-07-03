@@ -40,20 +40,15 @@ module.exports = Marionette.Behavior.extend( {
 		}
 
 		if ( 'preview' === this.getOption( 'context' ) ) {
-			const isNotesEnabled = 'undefined' !== typeof $e.components.get( 'notes' );
-
 			contextMenuGroups.splice( afterGroupIndex, 0, {
 				name: 'tools',
 				actions: [
 					{
 						name: 'notes',
 						title: __( 'Notes', 'elementor' ),
-						shortcut: isNotesEnabled ? '⇧+C' : '<i class="eicon-pro-icon" />',
-						isEnabled: () => isNotesEnabled,
-						callback: () => $e.route( 'notes', {
-							reOpen: true,
-							model: this.view.model,
-						} ),
+						shortcut: '<i class="eicon-pro-icon" />',
+						isEnabled: () => false,
+						callback: () => {},
 					},
 					{
 						name: 'navigator',
@@ -66,6 +61,8 @@ module.exports = Marionette.Behavior.extend( {
 				],
 			} );
 		}
+
+		contextMenuGroups = elementor.hooks.applyFilters( 'elements/widget/onInitContextMenuGroups', contextMenuGroups, this );
 
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups,
