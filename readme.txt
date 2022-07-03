@@ -241,6 +241,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.6.7 - 2022-07-04 =
+* Tweak: Optimized file handling for better security policies
+* Fix: Modified controls sanitization to enforce better security policies in Text Editor widget
+* Fix: Modified controls sanitization to enforce better security policies in Anchor widget
+
 = 3.6.6 - 2022-06-08 =
 * Tweak: Added "Skip & Deactivate" button in plugin deactivation survey
 * Tweak: Removed data sharing checkbox in onboarding flow
