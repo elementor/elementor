@@ -166,9 +166,8 @@ PanelMenu.createExitIntroductionDialog = () => {
 					},
 				} );
 
-				elementor.settings.editorPreferences.save( () => {
-					window.location.href = PanelMenu.getExitUrl();
-				} );
+				elementor.settings.editorPreferences.save();
+				window.location.href = PanelMenu.getExitUrl();
 			},
 			onCancel: () => {
 				window.location.href = PanelMenu.getExitUrl();
