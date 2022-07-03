@@ -1,6 +1,6 @@
 import ViewModule from '../view-module';
 
-module.exports = ViewModule.extend( {
+export default ViewModule.extend( {
 
 	getDefaultSettings() {
 		return {

@@ -99,7 +99,7 @@ describe( 'set-direction-mode--document/elements/settings', () => {
 			},
 		} );
 
-		const parent = createContainer( {
+		createContainer( {
 			renderer: {
 				view: {
 					getCurrentUiStates: () => ( {

@@ -670,7 +670,11 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
+<<<<<<< HEAD
 		$dataBinding.forEach( ( index, current ) => {
+=======
+		$dataBinding.each( ( index, current ) => {
+>>>>>>> 3.7.0
 			// To support nested data-binding bypass nested data-binding that are not part of the current.
 			if ( jQuery( current ).closest( '.elementor-element' ).data( 'id' ) === id ) {
 				if ( current.dataset.bindingType ) {

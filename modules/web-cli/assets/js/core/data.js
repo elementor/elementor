@@ -383,6 +383,7 @@ export default class Data extends Commands {
 		}
 
 		const params = this.prepareHeaders( requestData );
+		// eslint-disable-next-line no-async-promise-executor
 		return new Promise( async ( resolve, reject ) => {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
