@@ -5,9 +5,9 @@ export class Events {
 	 * Will dispatch both native event & jQuery event (as BC).
 	 * By default, `bcEvent` is `null`.
 	 *
-	 * @param {Object} context - The context that will dispatch the event.
-	 * @param {string} event - Event to dispatch.
-	 * @param {*} data - Data to pass to the event, default to `null`.
+	 * @param {Object}      context - The context that will dispatch the event.
+	 * @param {string}      event   - Event to dispatch.
+	 * @param {*}           data    - Data to pass to the event, default to `null`.
 	 * @param {string|null} bcEvent - BC event to dispatch, default to `null`.
 	 *
 	 * @return {void}

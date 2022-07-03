@@ -56,7 +56,7 @@ export default class extends elementorModules.Module {
 						unique_id: options.data.unique_id + objectId,
 						data: jQuery.extend( { id: objectId }, options.data ),
 					} )
-					.done( ( data ) => dataCollection = jQuery.extend( dataCollection, data ) )
+					.done( ( data ) => dataCollection = jQuery.extend( dataCollection, data ) ),
 			);
 		} );
 
@@ -101,8 +101,8 @@ export default class extends elementorModules.Module {
 		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error ).always( options.complete );
 
 		const request = {
-			action: action,
-			options: options,
+			action,
+			options,
 		};
 
 		if ( immediately ) {

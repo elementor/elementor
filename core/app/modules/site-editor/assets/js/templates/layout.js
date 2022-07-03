@@ -9,7 +9,7 @@ export default function Layout( props ) {
 		title: __( 'Theme Builder', 'elementor' ),
 		titleRedirectRoute: '/site-editor',
 		headerButtons: props.headerButtons,
-		sidebar: <Menu allPartsButton={ props.allPartsButton } promotion={props.promotion} />,
+		sidebar: <Menu allPartsButton={ props.allPartsButton } promotion={ props.promotion } />,
 		content: props.children,
 	};
 

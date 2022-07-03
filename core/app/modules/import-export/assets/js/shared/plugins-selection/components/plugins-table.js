@@ -18,9 +18,9 @@ function PluginsTable( {
 		initialDisabled,
 	} ) {
 	const CellText = ( cellTextProps ) => (
-			<Text className="e-app-import-export-plugins-table__cell-content">
-				{ cellTextProps.text }
-			</Text>
+		<Text className="e-app-import-export-plugins-table__cell-content">
+			{ cellTextProps.text }
+		</Text>
 		),
 		CellLink = ( cellLinkProps ) => (
 			<InlineLink url={ cellLinkProps.url } underline="none">

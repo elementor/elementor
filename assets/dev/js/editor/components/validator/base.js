@@ -1,7 +1,7 @@
 module.exports = elementorModules.Module.extend( {
 	errors: [],
 
-	__construct: function( settings ) {
+	__construct( settings ) {
 		var customValidationMethod = settings.customValidationMethod;
 
 		if ( customValidationMethod ) {
@@ -9,13 +9,13 @@ module.exports = elementorModules.Module.extend( {
 		}
 	},
 
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			validationTerms: {},
 		};
 	},
 
-	isValid: function() {
+	isValid() {
 		var validationErrors = this.validationMethod.apply( this, arguments );
 
 		if ( validationErrors.length ) {
@@ -27,7 +27,7 @@ module.exports = elementorModules.Module.extend( {
 		return true;
 	},
 
-	validationMethod: function( newValue ) {
+	validationMethod( newValue ) {
 		var validationTerms = this.getSettings( 'validationTerms' ),
 			errors = [];
 

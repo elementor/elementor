@@ -128,27 +128,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => __( 'you are not allowed to perform this action', 'elementor' ),
-			],
-		];
-	}
-
-	/**
-	 * Set Opt In
-	 *
-	 * This method opts the user into sharing non-sensitive usage data with Elementor.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function set_usage_data_opt_in() {
-		Tracker::set_opt_in( true );
-
-		return [
-			'status' => 'success',
-			'payload' => [
-				'usageDataShared' => true,
+				'error_message' => esc_html__( 'you are not allowed to perform this action', 'elementor' ),
 			],
 		];
 	}
@@ -166,7 +146,7 @@ class Module extends BaseModule {
 		$problem_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => 'There was a problem setting your site name',
+				'error_message' => esc_html__( 'There was a problem setting your site name', 'elementor' ),
 			],
 		];
 
@@ -273,7 +253,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_upload_logo_image() {
-		$error_message = __( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
@@ -356,7 +336,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$error_message = __( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
@@ -444,9 +424,6 @@ class Module extends BaseModule {
 				break;
 			case 'elementor_upload_site_logo':
 				$result = $this->maybe_upload_logo_image();
-				break;
-			case 'elementor_update_data_sharing':
-				$result = $this->set_usage_data_opt_in();
 				break;
 			case 'elementor_activate_hello_theme':
 				$result = $this->maybe_activate_hello_theme();

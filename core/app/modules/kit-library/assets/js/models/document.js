@@ -10,7 +10,7 @@ export default class Document extends BaseModel {
 	/**
 	 * Create a tag from server response
 	 *
-	 * @param document
+	 * @param {Document} document
 	 */
 	static createFromResponse( document ) {
 		return new Document().init( {
