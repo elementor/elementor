@@ -7,7 +7,7 @@ module.exports = async function( page ) {
 	if ( ! fs.existsSync( pathname ) ) {
 		const __dirname = path.resolve();
 		// Remove leading directory markers, and remove ending /file-name.extension if exists
-		pathname.replace( /^\.*\/|\/?[^\/]+\.[a-z]+|\/$/g, '' );
+		pathname.replace( /^\.*\/|\/?[^/]+\.[a-z]+|\/$/g, '' );
 		fs.mkdir( path.resolve( __dirname, pathname ), { recursive: true }, ( e ) => {
 			if ( e ) {
 				// eslint-disable-next-line no-console
