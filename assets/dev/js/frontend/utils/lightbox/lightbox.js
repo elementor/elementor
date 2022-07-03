@@ -270,11 +270,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		const classes = this.getSettings( 'classes' ),
-			$videoContainer = $( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } );
-		$videoContainer.append( $videoWrapper );
+			$videoContainer = $( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
+			$videoWrapper = $( '<div>', { class: classes.videoWrapper } );
 
-		const $videoWrapper = $( '<div>', { class: classes.videoWrapper } );
 		$videoWrapper.append( $videoElement );
+		$videoContainer.append( $videoWrapper );
 
 		const modal = this.getModal();
 		modal.setMessage( $videoContainer );
