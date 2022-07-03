@@ -11,7 +11,7 @@ export default function FailedPluginsNotice( { failedPlugins } ) {
 			color="secondary"
 			size="sm"
 			target="_blank"
-			url="https://go.elementor.com/app-import-plugin-installation-failed"
+			url="https://go.elementor.com/app-import-plugin-installation-failed/"
 		/>
 	);
 
