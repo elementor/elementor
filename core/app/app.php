@@ -16,7 +16,6 @@ class App extends BaseApp {
 
 	const PAGE_ID = 'elementor-app';
 
-
 	/**
 	 * Get module name.
 	 *
