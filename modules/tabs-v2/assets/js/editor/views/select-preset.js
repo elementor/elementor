@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 export default function SelectPreset( props ) {
 	const containerHelper = elementor.helpers.container,
 		onPresetSelected = ( preset, container ) => {
@@ -27,6 +28,7 @@ export default function SelectPreset( props ) {
 								data-preset={ preset }
 								dangerouslySetInnerHTML={ { __html: elementor.presetsFactory.generateContainerPreset( preset ) } }
 								role="button"
+								tabIndex="0"
 							/>
 						) )
 					}

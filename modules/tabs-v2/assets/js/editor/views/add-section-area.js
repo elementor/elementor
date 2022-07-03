@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useRef } from 'react';
 
 export default function AddSectionArea( props ) {
@@ -38,7 +39,7 @@ export default function AddSectionArea( props ) {
 			onClick={ () => containerHelper.openEditMode( props.container ) }
 			ref={ addAreaElementRef }
 			role="button"
-
+			tabIndex="0"
 		>
 			<div className="elementor-add-section-inner">
 				<div className="e-view elementor-add-new-section">
@@ -47,6 +48,7 @@ export default function AddSectionArea( props ) {
 						onClick={ () => props.setIsRenderPresets( true ) }
 						title={ __( 'Add new container', 'elementor' ) }
 						role="button"
+						tabIndex="0"
 					>
 						<i className="eicon-plus" />
 					</div>
@@ -55,6 +57,7 @@ export default function AddSectionArea( props ) {
 						onClick={ () => $e.run( 'library/open', args ) }
 						title={ __( 'Add Template', 'elementor' ) }
 						role="button"
+						tabIndex="0"
 					>
 						<i className="eicon-folder" />
 					</div>
