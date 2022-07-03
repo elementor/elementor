@@ -164,7 +164,7 @@ class Icons_Manager {
 		 */
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', $additional_tabs );
 
-		return array_merge( self::$tabs, $additional_tabs );
+		return array_replace( self::$tabs, $additional_tabs );
 	}
 
 	public static function enqueue_shim() {
@@ -387,7 +387,7 @@ class Icons_Manager {
 			];
 		}
 		if ( false === $migration_dictionary ) {
-			$migration_dictionary = json_decode( file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
+			$migration_dictionary = json_decode( Utils::file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
 		}
 		if ( isset( $migration_dictionary[ $value ] ) ) {
 			return $migration_dictionary[ $value ];
@@ -502,18 +502,44 @@ class Icons_Manager {
 			},
 			'fields' => [
 				[
-					'label'      => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
+					'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
-						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
+						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" data-redirect-url="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
+							esc_url( $this->get_upgrade_redirect_url() ),
 							esc_html__( 'Upgrade To Font Awesome 5', 'elementor' )
 						),
 					],
 				],
 			],
 		] );
+	}
+
+	/**
+	 * Get redirect URL when upgrading font awesome.
+	 *
+	 * @return string
+	 */
+	public function get_upgrade_redirect_url() {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'tools-page-from-editor' ) ) {
+			return '';
+		}
+
+		$document_id = ! empty( $_GET['redirect_to_document'] ) ? absint( $_GET['redirect_to_document'] ) : null;
+
+		if ( ! $document_id ) {
+			return '';
+		}
+
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		if ( ! $document ) {
+			return '';
+		}
+
+		return $document->get_edit_url();
 	}
 
 	/**
@@ -524,7 +550,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => '<p>' . esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
+		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ] );
 	}
 
 	/**
@@ -559,22 +585,6 @@ class Icons_Manager {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
 		return [];
-	}
-
-	/**
-	 * @since 3.0.0
-	 * @deprecated 3.0.0
-	 */
-	public function register_ajax_actions() {
-		_deprecated_function( __METHOD__, '3.0.0' );
-	}
-
-	/**
-	 * @since 3.0.0.
-	 * @deprecated 3.0.0
-	 */
-	public function ajax_enable_svg_uploads() {
-		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
 	/**

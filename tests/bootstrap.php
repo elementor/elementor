@@ -14,6 +14,10 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
+if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
+	$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
+}
+
 define( 'ELEMENTOR_TESTS', true );
 
 /**
@@ -26,8 +30,8 @@ define( 'PLUGIN_PATH', PLUGIN_FOLDER . '/' . PLUGIN_FILE );
 // Activates this plugin in WordPress so it can be tested.
 $GLOBALS['wp_tests_options'] = [
 	'active_plugins' => [ PLUGIN_PATH ],
-	'template' => 'twentynineteen',
-	'stylesheet' => 'twentynineteen',
+	'template' => 'twentytwentyone',
+	'stylesheet' => 'twentytwentyone',
 ];
 
 require_once $_tests_dir . '/includes/functions.php';

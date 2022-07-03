@@ -6,7 +6,7 @@ export default function Tooltip( props ) {
 		classes = [ baseClassName, props.className ],
 		childRef = useRef( null ),
 		isAborted = useRef( false ),
-		isManualControl = props.hasOwnProperty( 'show' ),
+		isManualControl = Object.prototype.hasOwnProperty.call( props, 'show' ),
 		[ isLibraryLoaded, setIsLibraryLoaded ] = useState( false ),
 		[ showTooltip, setShowTooltip ] = useState( false ),
 		directionsMap = {
@@ -60,7 +60,8 @@ export default function Tooltip( props ) {
 				isAborted.current = true;
 
 				// Cleanup of existing tipsy element in case of re-render.
-				jQuery( '.tipsy:last' ).remove();
+				const nodes = document.querySelectorAll( '.tipsy' );
+				nodes[ nodes.length - 1 ].remove();
 			}
 		};
 	}, [ props.disabled ] );

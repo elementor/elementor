@@ -10,7 +10,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
 	public function test_should_return_elementor_pro_link() {
-		$this->assertSame( self::BASE_LINK . '&utm_term=twentynineteen', Utils::get_pro_link( self::BASE_LINK ) );
+		$this->assertSame( self::BASE_LINK . '&utm_term=twentytwenty-one', Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
 	public function test_should_return_source_of_placeholder_image() {
@@ -172,5 +172,28 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
 			"[ 'key' => '0' ] is empty" );
+	}
+
+	public function test_file_get_contents() {
+		// Arrange
+		$file_name = __DIR__ . '/mock/mock-file.txt';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertEquals( "test.\n", $content );
+	}
+
+	public function test_file_get_contents__non_file() {
+		// Arrange
+		// Elementor Logo
+		$file_name = 'https://avatars.githubusercontent.com/u/47606894';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertFalse( $content );
 	}
 }

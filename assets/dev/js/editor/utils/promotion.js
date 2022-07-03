@@ -25,7 +25,7 @@ export default class extends elementorModules.Module {
 
 		this.dialog.addButton( {
 			name: 'action',
-			text: isProExistNotConnected ? __( 'Connect & Activate', 'elementor' ) : __( 'See it in Action', 'elementor' ),
+			text: isProExistNotConnected ? __( 'Connect & Activate', 'elementor' ) : __( 'See it in action', 'elementor' ),
 			callback: () => {
 				const url = isProExistNotConnected ? elementorProEditorConfig.urls.connect : this.actionURL;
 
@@ -59,7 +59,7 @@ export default class extends elementorModules.Module {
 			.setMessage( options.message )
 			.setSettings( 'position', {
 				of: options.element,
-				at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ' top' + options.top,
+				at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ( options.inlineStart || '' ) + ' top' + options.top,
 			} );
 
 		return this.dialog.show();

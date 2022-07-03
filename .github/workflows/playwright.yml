@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build
         run: npx grunt build
       - name: Save build to cache
@@ -79,13 +79,13 @@ jobs:
           npx wp-env run tests-cli "wp --info"
       - name: Install playwright/test
         run: |
-          npx playwright install-deps
-          npx playwright install-deps chromium
-          npm install -D @playwright/test
+          npm ci
+          npx playwright@1.21.1 install-deps chromium
       - name: Run Playwright tests
         run: |
           npm run test:playwright
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: playwright-test-results
           path: test-results/

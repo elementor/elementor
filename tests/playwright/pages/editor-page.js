@@ -1,25 +1,41 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const BasePage = require( './base-page.js' );
 
-exports.EditorPage = class EditorPage {
+module.exports = class EditorPage extends BasePage {
 	isPanelLoaded = false;
 
-	/**
-	 * @param {import('@playwright/test').Page} page
-	 */
-	constructor( page ) {
-		this.page = page;
-		this.previewFrame = page.frame( { name: 'elementor-preview-iframe' } );
+	constructor( page, testInfo, cleanPostId = null ) {
+		super( page, testInfo );
+
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		this.postId = cleanPostId;
+	}
+
+	async openNavigator() {
+		const isOpen = await this.previewFrame.evaluate( () =>
+			elementor.navigator.isOpen(),
+		);
+
+		if ( ! isOpen ) {
+			await this.page.click( '#elementor-panel-footer-navigator' );
+		}
 	}
 
 	/**
 	 * Reload the editor page.
 	 *
-	 * @returns {Promise<void>}
+	 * @return {Promise<void>}
 	 */
 	async reload() {
 		await this.page.reload();
+
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
+
+    getFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
+    }
 
 	/**
 	 * Make sure that the elements panel is loaded.
@@ -33,7 +49,6 @@ exports.EditorPage = class EditorPage {
 
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
 		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-		await this.page.waitForTimeout( 5000 );
 
 		this.isPanelLoaded = true;
 	}
@@ -41,34 +56,40 @@ exports.EditorPage = class EditorPage {
 	/**
 	 * Add element to the page using a model.
 	 *
-	 * @param {Object} model - Model definition.
+	 * @param {Object} model     - Model definition.
 	 * @param {string} container - Optional Container to create the element in.
 	 *
-	 * @return {Promise<*>}
+	 * @return {Promise<*>} Element ID
 	 */
 	async addElement( model, container = null ) {
-		await this.ensurePanelLoaded();
-
 		return await this.page.evaluate( addElement, { model, container } );
 	}
 
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @shortcut `this.addElement()`
+	 * @param {string} widgetType
+	 * @param {string} container  - Optional Container to create the element in.
 	 */
 	async addWidget( widgetType, container = null ) {
 		return await this.addElement( { widgetType, elType: 'widget' }, container );
 	}
 
 	/**
+	 * @typedef {import('@playwright/test').ElementHandle} ElementHandle
+	 */
+	/**
 	 * Get element handle from the preview frame using its Container ID.
 	 *
 	 * @param {string} id - Container ID.
 	 *
-	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>}
+	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>} element handle
 	 */
 	async getElementHandle( id ) {
-		return this.previewFrame.$( getElementSelector( id ) );
+		return this.getPreviewFrame().$( getElementSelector( id ) );
+	}
+
+	getPreviewFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 };

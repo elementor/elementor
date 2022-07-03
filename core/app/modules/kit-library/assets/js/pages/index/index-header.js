@@ -1,13 +1,15 @@
 import Header from '../../components/layout/header';
 import { ModalProvider, Heading, Text, Button } from '@elementor/app-ui';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { useNavigate } from '@reach/router';
+import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 
 import './index-header.scss';
 
 export default function IndexHeader( props ) {
 	const navigate = useNavigate();
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
+	const importRef = useRef();
 
 	const buttons = useMemo( () => [
 		{
@@ -29,13 +31,20 @@ export default function IndexHeader( props ) {
 			text: __( 'Import', 'elementor-pro' ),
 			hideText: true,
 			icon: 'eicon-upload-circle-o',
+			elRef: importRef,
 			onClick: () => navigate( '/import?referrer=kit-library' ),
 		},
 	], [ props.isFetching, props.refetch ] );
 
 	return (
 		<>
-			<Header buttons={ buttons }/>
+			<Header buttons={ buttons } />
+			<PopoverDialog
+				targetRef={ importRef }
+				wrapperClass="e-kit-library__tooltip"
+			>
+				{ __( 'Import Kit', 'elementor' ) }
+			</PopoverDialog>
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) } show={ isInfoModalOpen } setShow={ setIsInfoModalOpen }>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s a kit?', 'elementor' ) }</Heading>
@@ -45,7 +54,7 @@ export default function IndexHeader( props ) {
 					<Heading tag="h3" variant="h3">{ __( 'What\'s going on in the Kit Library?', 'elementor' ) }</Heading>
 					<Text>
 						{ __( 'Search & filter for kits by category and tags, or browse through individual kits to see what\'s inside.', 'elementor' ) }
-						<br/>
+						<br />
 						{ __( 'Once you\'ve picked a winner, apply it to your site!', 'elementor' ) }
 					</Text>
 				</div>
@@ -53,7 +62,7 @@ export default function IndexHeader( props ) {
 					<Heading tag="h3" variant="h3">{ __( 'Happy browsing!', 'elementor' ) }</Heading>
 					<Text>
 						<Button
-							url="https://go.elementor.com/app-kit-library-how-to-use-kits"
+							url="https://go.elementor.com/app-kit-library-how-to-use-kits/"
 							target="_blank"
 							rel="noreferrer"
 							text={ __( 'Learn more', 'elementor' ) }

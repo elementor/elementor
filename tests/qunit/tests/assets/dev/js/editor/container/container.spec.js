@@ -13,10 +13,11 @@ jQuery( () => {
 					settings: new Backbone.Model(),
 					model: new Backbone.Model(),
 					label: 'Fake Label',
+					parent: false,
 				},
 				container = new elementorModules.editor.Container( fakeArgs );
 
-			assert.equal( !! container, true, );
+			assert.equal( !! container, true );
 		} );
 
 		QUnit.test( 'constructor(): without args', ( assert ) => {
@@ -34,15 +35,18 @@ jQuery( () => {
 					typography_typography: '',
 					button_text_color: '',
 				},
-				eButton = ElementsHelper.createAutoButton(),
+				eButton = ElementsHelper.createWrappedButton(),
 				controls = eButton.getGroupRelatedControls( settings );
 
 			assert.deepEqual( Object.keys( controls ), excepted );
 		} );
 
 		QUnit.test( 'getAffectingControls(): Simple', ( assert ) => {
-			const eButtonSimple = ElementsHelper.createAutoButton(),
-				eButtonStyled = ElementsHelper.createAutoButtonStyled();
+			const eButtonSimple = ElementsHelper.createWrappedButton(),
+				eButtonStyled = ElementsHelper.createWrappedButton( null, {
+					text: 'createAutoButtonStyled',
+					background_color: '#000000',
+				} );
 
 			assert.deepEqual( eButtonSimple.getAffectingControls(), {} );
 			assert.deepEqual( Object.keys( eButtonStyled.getAffectingControls() ), [ 'text', 'background_color' ] );
@@ -50,7 +54,7 @@ jQuery( () => {
 
 		QUnit.test( 'getAffectingControls(): Ensure global control', ( assert ) => {
 			// Arrange.
-			const eButton = ElementsHelper.createAutoButton(),
+			const eButton = ElementsHelper.createWrappedButton(),
 				id = elementorCommon.helpers.getUniqueId(),
 				background_color = `globals/colors?id=${ id }`; // eslint-disable-line camelcase
 
@@ -59,10 +63,12 @@ jQuery( () => {
 			$e.data.setCache( $e.components.get( 'globals' ), 'globals/colors', {}, {
 				[ id ]: {
 					id,
+					// eslint-disable-next-line camelcase
 					value: background_color,
 				},
 			} );
 
+			// eslint-disable-next-line camelcase
 			GlobalsHelper.enable( eButton, { background_color } );
 
 			// Act.
@@ -74,7 +80,7 @@ jQuery( () => {
 
 		QUnit.test( 'getAffectingControls(): Ensure dynamic control', ( assert ) => {
 			// Arrange.
-			const eButton = ElementsHelper.createAutoButton(),
+			const eButton = ElementsHelper.createWrappedButton(),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 				dynamicValue = '{ dynamic text }',
 				{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
@@ -93,6 +99,17 @@ jQuery( () => {
 
 			// Assert.
 			assert.equal( controls.text.dynamic.utilized, true );
+		} );
+
+		QUnit.test( 'getParentAncestry(): simple', ( assert ) => {
+			// Arrange.
+			const eButton = ElementsHelper.createAuto( 'widget', 'button' );
+
+			// Act.
+			const ancestry = eButton.getParentAncestry();
+
+			// Assert.
+			assert.equal( ancestry.length, 4 /* Document>section>column>widget */ );
 		} );
 	} );
 } );

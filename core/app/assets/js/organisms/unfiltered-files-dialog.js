@@ -5,7 +5,7 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function UnfilteredFilesDialog( props ) {
-	const { show, setShow, onReady, onCancel } = props,
+	const { show, setShow, onReady, onCancel, onDismiss } = props,
 		{ ajaxState, setAjax } = useAjax(),
 		[ enableUnfilteredFiles, setEnableUnfilteredFiles ] = useState( false ),
 		[ isEnableError, setIsEnableError ] = useState( false );
@@ -48,26 +48,26 @@ export default function UnfilteredFilesDialog( props ) {
 	return (
 		<>
 			{
-				isEnableError ?
-				<Dialog
-					title={ __( 'Sorry, something went wrong.', 'elementor' ) }
-					text={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
-					approveButtonColor="link"
-					approveButtonText={ __( 'Continue', 'elementor' ) }
-					approveButtonOnClick={ onReady }
-					dismissButtonText={ __( 'Go back', 'elementor' ) }
-					dismissButtonOnClick={ onCancel }
-					onClose={ onCancel }
-				/> :
-				<Dialog
-					title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
-					text={ __( 'This allows Elementor to scan your SVGs for malicious content. Otherwise, you can skip any SVGs in this import.', 'elementor' ) }
-					approveButtonColor="link"
-					approveButtonText={ __( 'Enable', 'elementor' ) }
-					approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
-					dismissButtonText={ __( 'Skip', 'elementor' ) }
-					dismissButtonOnClick={ onReady }
-					onClose={ onReady }
+				isEnableError
+				? <Dialog
+						title={ __( 'Something went wrong.', 'elementor' ) }
+						text={ props.errorModalText }
+						approveButtonColor="link"
+						approveButtonText={ __( 'Continue', 'elementor' ) }
+						approveButtonOnClick={ onReady }
+						dismissButtonText={ __( 'Go Back', 'elementor' ) }
+						dismissButtonOnClick={ onCancel }
+						onClose={ onCancel }
+				/>
+				: <Dialog
+						title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
+						text={ props.confirmModalText }
+						approveButtonColor="link"
+						approveButtonText={ __( 'Enable', 'elementor' ) }
+						approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
+						dismissButtonText={ __( 'Skip', 'elementor' ) }
+						dismissButtonOnClick={ onDismiss || onReady }
+						onClose={ onDismiss || onReady }
 				/>
 			}
 		</>
@@ -79,6 +79,9 @@ UnfilteredFilesDialog.propTypes = {
 	setShow: PropTypes.func.isRequired,
 	onReady: PropTypes.func.isRequired,
 	onCancel: PropTypes.func.isRequired,
+	onDismiss: PropTypes.func,
+	confirmModalText: PropTypes.string.isRequired,
+	errorModalText: PropTypes.string.isRequired,
 };
 
 UnfilteredFilesDialog.defaultProps = {

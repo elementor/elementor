@@ -14,10 +14,12 @@ import './item-header.scss';
 /**
  * Returns the right call to action button.
  *
- * @param model
- * @param onConnect
- * @param onApply
- * @returns {object}
+ * @param {Kit}      model
+ * @param {Object}   root0
+ * @param {Function} root0.apply
+ * @param {Function} root0.onConnect
+ * @param {boolean}  root0.isApplyLoading
+ * @return {Object} result
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
@@ -39,6 +41,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
 			return {
 				id: 'promotion',
+				// Translators: %s is the subscription plan name.
 				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
 				hideText: false,
 				variant: 'contained',
@@ -78,6 +81,9 @@ export default function ItemHeader( props ) {
 			onSuccess: ( { data } ) => setDownloadLinkData( data ),
 			onError: ( errorResponse ) => {
 				if ( 401 === errorResponse.code ) {
+					elementorCommon.config.library_connect.is_connected = false;
+					elementorCommon.config.library_connect.current_access_level = 0;
+
 					updateSettings( {
 						is_library_connected: false,
 						access_level: 0,
@@ -93,7 +99,7 @@ export default function ItemHeader( props ) {
 					message: __( 'Something went wrong.', 'elementor' ),
 				} );
 			},
-		}
+		},
 	);
 
 	const applyButton = useKitCallToActionButton( props.model, {
@@ -113,7 +119,7 @@ export default function ItemHeader( props ) {
 						text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
 						approveButtonText={ __( 'Learn More', 'elementor' ) }
 						approveButtonColor="link"
-						approveButtonUrl="http://go.elementor.com/app-kit-library-error"
+						approveButtonUrl="http://go.elementor.com/app-kit-library-error/"
 						approveButtonOnClick={ () => setError( false ) }
 						dismissButtonText={ __( 'Got it', 'elementor' ) }
 						dismissButtonOnClick={ () => setError( false ) }
@@ -133,9 +139,14 @@ export default function ItemHeader( props ) {
 					pageId={ props.pageId }
 					onClose={ () => setIsConnectDialogOpen( false ) }
 					onSuccess={ ( data ) => {
+						const accessLevel = data.kits_access_level || data.access_level || 0;
+
+						elementorCommon.config.library_connect.is_connected = true;
+						elementorCommon.config.library_connect.current_access_level = accessLevel;
+
 						updateSettings( {
 							is_library_connected: true,
-							access_level: data.kits_access_level || data.access_level || 0, // BC: Check for 'access_level' prop
+							access_level: accessLevel, // BC: Check for 'access_level' prop
 						} );
 
 						if ( data.access_level < props.model.accessLevel ) {
@@ -148,7 +159,7 @@ export default function ItemHeader( props ) {
 				/>
 			}
 			<Header
-				startColumn={ <HeaderBackButton/> }
+				startColumn={ <HeaderBackButton /> }
 				centerColumn={ props.centerColumn }
 				buttons={ buttons }
 			/>

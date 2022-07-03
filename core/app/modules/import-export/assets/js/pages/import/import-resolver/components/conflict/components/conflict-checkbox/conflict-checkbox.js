@@ -1,22 +1,22 @@
 import { useContext, useEffect } from 'react';
 
-import { Context } from '../../../../../../../context/context-provider';
+import { ImportContext } from '../../../../../../../context/import-context/import-context-provider';
 
 import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function ConflictCheckbox( props ) {
-	const context = useContext( Context ),
-		isSelected = () => context.data.overrideConditions.includes( props.id ),
+	const importContext = useContext( ImportContext ),
+		isSelected = () => importContext.data.overrideConditions.includes( props.id ),
 		updateOverrideCondition = ( event ) => {
 			const isChecked = event.target.checked,
 				actionType = isChecked ? 'ADD_OVERRIDE_CONDITION' : 'REMOVE_OVERRIDE_CONDITION';
 
-			context.dispatch( { type: actionType, payload: props.id } );
+			importContext.dispatch( { type: actionType, payload: props.id } );
 		};
 
 	useEffect( () => {
-		if ( ! context.data.overrideConditions.length ) {
-			context.dispatch( { type: 'ADD_OVERRIDE_CONDITION', payload: props.id } );
+		if ( ! importContext.data.overrideConditions.length ) {
+			importContext.dispatch( { type: 'ADD_OVERRIDE_CONDITION', payload: props.id } );
 		}
 	}, [] );
 

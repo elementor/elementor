@@ -3,7 +3,7 @@ import ContextMenu from 'elementor-behaviors/context-menu';
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
 
-	className: function() {
+	className() {
 		let className = 'elementor-element-wrapper';
 
 		if ( ! this.isEditable() ) {
@@ -13,7 +13,7 @@ module.exports = Marionette.ItemView.extend( {
 		return className;
 	},
 
-	events: function() {
+	events() {
 		const events = {};
 
 		if ( ! this.isEditable() ) {
@@ -27,7 +27,7 @@ module.exports = Marionette.ItemView.extend( {
 		element: '.elementor-element',
 	},
 
-	behaviors: function() {
+	behaviors() {
 		const groups = elementor.hooks.applyFilters( 'panel/element/contextMenuGroups', [], this ),
 			behaviors = {};
 
@@ -42,17 +42,20 @@ module.exports = Marionette.ItemView.extend( {
 		return elementor.hooks.applyFilters( 'panel/element/behaviors', behaviors, this );
 	},
 
-	isEditable: function() {
+	isEditable() {
 		return false !== this.model.get( 'editable' );
 	},
 
-	onRender: function() {
+	onRender() {
 		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
 		}
 
 		this.ui.element.html5Draggable( {
 			onDragStart: () => {
+				// Reset the sort cache.
+				elementor.channels.editor.reply( 'element:dragged', null );
+
 				elementor.channels.panelElements
 					.reply( 'element:selected', this )
 					.trigger( 'element:drag:start' );
@@ -66,13 +69,13 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onMouseDown: function() {
+	onMouseDown() {
 		const title = this.model.get( 'title' );
 
 		elementor.promotion.showDialog( {
-			/* translators: %s: Widget title. */
+			/* Translators: %s: Widget title. */
 			headerMessage: sprintf( __( '%s Widget', 'elementor' ), title ),
-			/* translators: %s: Widget title. */
+			/* Translators: %s: Widget title. */
 			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), title ),
 			top: '-7',
 			element: this.el,

@@ -2,7 +2,7 @@ var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' );
 import ColorPicker from 'elementor-editor/utils/color-picker';
 
 module.exports = PanelSchemeItemView.extend( {
-	getUIType: function() {
+	getUIType() {
 		return 'color';
 	},
 
@@ -10,11 +10,11 @@ module.exports = PanelSchemeItemView.extend( {
 		pickerPlaceholder: '.elementor-panel-scheme-color-picker-placeholder',
 	},
 
-	changeUIValue: function( newValue ) {
+	changeUIValue( newValue ) {
 		this.colorPicker.picker.setColor( newValue );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.colorPicker = new ColorPicker( {
 			picker: {
 				el: this.ui.pickerPlaceholder[ 0 ],
@@ -29,7 +29,7 @@ module.exports = PanelSchemeItemView.extend( {
 		} );
 	},
 
-	onBeforeDestroy: function() {
+	onBeforeDestroy() {
 		this.colorPicker.destroy();
 	},
 } );

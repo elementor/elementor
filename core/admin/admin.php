@@ -4,7 +4,10 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Core\Admin\Notices\Update_Php_Notice;
+use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -51,15 +54,23 @@ class Admin extends App {
 			return;
 		}
 
-		global $wpdb;
+		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
 
-		$has_elementor_page = ! ! $wpdb->get_var( "SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_elementor_edit_mode' LIMIT 1;" );
+		// Get the latest installation from Elementor's Install log in the DB.
+		$latest_install = key( Upgrade_Manager::get_installs_history() );
 
-		if ( $has_elementor_page ) {
+		if ( ! empty( $latest_install ) ) {
+			$is_new_install = version_compare( $latest_install, '3.6.0-beta', '>=' );
+		} else {
+			// If `$latest_install` is not set, Elementor was never installed on this site.
+			$is_new_install = true;
+		}
+
+		if ( $already_had_onboarding || ! $is_new_install ) {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-app#onboarding' ) );
 
 		exit;
 	}
@@ -76,10 +87,19 @@ class Admin extends App {
 	 */
 	public function enqueue_scripts() {
 		wp_register_script(
+			'elementor-admin-modules',
+			$this->get_js_assets_url( 'admin-modules' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
 			[
 				'elementor-common',
+				'elementor-admin-modules',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -481,15 +501,15 @@ class Admin extends App {
 
 		$additions_actions = [
 			'go-pro' => [
-				'title' => esc_html__( 'Go Pro', 'elementor' ),
-				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
+				'title' => esc_html__( 'Upgrade', 'elementor' ),
+				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 			],
 		];
 
 		// Visible to all core users when Elementor Pro is not installed.
 		$additions_actions['find_an_expert'] = [
 			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
 		];
 
 		/**
@@ -715,6 +735,12 @@ class Admin extends App {
 
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
+		} );
+
+		add_filter( 'elementor/core/admin/notices', function( $notices ) {
+			$notices[] = new Update_Php_Notice();
+
+			return $notices;
 		} );
 	}
 

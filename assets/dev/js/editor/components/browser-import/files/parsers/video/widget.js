@@ -62,7 +62,7 @@ export class Widget extends MediaParser {
 	/**
 	 * @inheritDoc
 	 */
-	static async validate( reader ) {
+	static async validate() {
 		return true;
 	}
 }

@@ -7,7 +7,7 @@ export default function Box( props ) {
 		classes = [ baseClassName, props.className ],
 		style = {};
 
-	if ( props.hasOwnProperty( 'padding' ) ) {
+	if ( Object.prototype.hasOwnProperty.call( props, 'padding' ) ) {
 		style[ '--eps-box-padding' ] = pxToRem( props.padding );
 
 		classes.push( baseClassName + '--padding' );

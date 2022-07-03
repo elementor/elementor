@@ -5,11 +5,19 @@ import Button from './header-button';
 export default function HeaderButtons( props ) {
 	const action = useAction();
 
+	const actionOnClose = () => {
+		if ( props.onClose ) {
+			props.onClose();
+		} else {
+			action.backToDashboard();
+		}
+	};
+
 	let tools = '';
 
 	if ( props.buttons.length ) {
 		const buttons = props.buttons.map( ( button ) => {
-			return <Button key={ button.id } {...button } />;
+			return <Button key={ button.id } { ...button } />;
 		} );
 
 		tools = (
@@ -25,7 +33,7 @@ export default function HeaderButtons( props ) {
 				text={ __( 'Close', 'elementor' ) }
 				icon="eicon-close"
 				className="eps-app__close-button"
-				onClick={ action.backToDashboard }
+				onClick={ actionOnClose }
 			/>
 			{ tools }
 		</div>
@@ -34,6 +42,7 @@ export default function HeaderButtons( props ) {
 
 HeaderButtons.propTypes = {
 	buttons: PropTypes.arrayOf( PropTypes.object ),
+	onClose: PropTypes.func,
 };
 
 HeaderButtons.defaultProps = {

@@ -1,21 +1,25 @@
-import ElementModel from 'elementor-elements/models/element';
 
+/**
+ * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
+ * @name BaseContainer
+ * @augments {Marionette.CompositeView}
+ */
 module.exports = Marionette.CompositeView.extend( {
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			view: this,
 		};
 	},
 
-	getBehavior: function( name ) {
+	getBehavior( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
-	initialize: function() {
+	initialize() {
 		this.collection = this.model.get( 'elements' );
 	},
 
-	addChildModel: function( model, options ) {
+	addChildModel( model, options ) {
 		return this.collection.add( model, options, true );
 	},
 
@@ -95,8 +99,6 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
-		let container = this.getContainer();
-
 		if ( model instanceof Backbone.Model ) {
 			model = model.toJSON();
 		}
@@ -117,6 +119,7 @@ module.exports = Marionette.CompositeView.extend( {
 			title: elementor.helpers.getModelLabel( model ),
 		} );
 
+		let container = this.getContainer();
 		if ( options.shouldWrap ) {
 			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
 
@@ -127,12 +130,7 @@ module.exports = Marionette.CompositeView.extend( {
 				container,
 				columns: Number( ! containerExperiment ),
 				options: {
-					at: this.getOption( 'at' ),
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
+					at: options.at,
 				},
 			} );
 
@@ -155,6 +153,33 @@ module.exports = Marionette.CompositeView.extend( {
 		return widget;
 	},
 
+	onDrop( event, options ) {
+		const input = event.originalEvent.dataTransfer.files;
+
+		if ( input.length ) {
+			$e.run( 'editor/browser-import/import', {
+				input,
+				target: this.getContainer(),
+				options: { event, target: { at: options.at } },
+			} );
+
+			return;
+		}
+
+		const args = {};
+
+		args.model = Object.fromEntries(
+			Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+				// The `custom` property is responsible for storing global-widgets related data.
+				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) ),
+		);
+
+		args.container = this.getContainer();
+		args.options = options;
+
+		$e.run( 'preview/drop', args );
+	},
+
 	getHistoryType( event ) {
 		if ( event ) {
 			if ( event.originalEvent ) {
@@ -172,21 +197,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return 'add';
 	},
 
-	addChildElement: function( data, options ) {
-		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
-
-		if ( Object !== data.constructor ) {
-			data = jQuery.extend( {}, data );
-		}
-
-		$e.run( 'document/elements/create', {
-			container: this.getContainer(),
-			model: data,
-			options,
-		} );
-	},
-
-	cloneItem: function( item ) {
+	cloneItem( item ) {
 		var self = this;
 
 		if ( item instanceof Backbone.Model ) {
@@ -204,7 +215,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return item;
 	},
 
-	lookup: function() {
+	lookup() {
 		let element = this;
 
 		if ( element.isDisconnected() ) {
@@ -214,11 +225,36 @@ module.exports = Marionette.CompositeView.extend( {
 		return element;
 	},
 
-	isDisconnected: function() {
+	isDisconnected() {
 		return this.isDestroyed || ! this.el.isConnected;
 	},
 
-	isCollectionFilled: function() {
+	isCollectionFilled() {
 		return false;
 	},
 } );
+
+/**
+ * Source: https://marionettejs.com/docs/v2.4.5/marionette.collectionview.html#collectionviews-buildchildview
+ *
+ * Since Elementor created custom container(bridge) between view, model, settings, children, parent and so on,
+ * the container requires the parent view for proper work, but in 'marionettejs', the parent view is not available
+ * during the `buildChildView` method, but actually exist, Elementor modified the `buildChildView` method to
+ * set the parent view as a property `_parent` of the child view.
+ * Anyways later, the `_parent` property is set by: 'marionettejs' to same view.
+ */
+
+/**
+ * @inheritDoc
+ */
+Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewClass, childViewOptions ) {
+	const options = _.extend( { model: child }, childViewOptions ),
+		childView = new ChildViewClass( options );
+
+	// `ELEMENTOR EDITING`: Fix `_parent` not available on render.
+	childView._parent = this;
+
+	Marionette.MonitorDOMRefresh( childView );
+
+	return childView;
+};

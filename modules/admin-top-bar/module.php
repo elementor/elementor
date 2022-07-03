@@ -84,6 +84,7 @@ class Module extends BaseApp {
 					'utm_medium' => 'wp-dash',
 					'utm_campaign' => 'connect-account',
 					'utm_content' => $current_screen->id,
+					'source' => 'generic',
 				] ),
 			] );
 		}

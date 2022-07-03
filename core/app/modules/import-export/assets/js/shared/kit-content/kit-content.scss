@@ -26,6 +26,11 @@ $root: e-app-export-kit-content;
 	&__notice {
 		margin-top: spacing(16);
 	}
+
+  	&__small-notice {
+	  font-style: italic;
+	  color: var(--e-app-export-kit-content-description-color);
+	}
 }
 
 .eps-theme-dark {
