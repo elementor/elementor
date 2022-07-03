@@ -20,8 +20,17 @@ export default function KitContentCheckbox( props ) {
 		}
 	}, [] );
 
+	// console.log( 'referrer: ', props )
+
 	return useMemo( () => (
-		<Checkbox checked={ isSelected() } onChange={ setIncludes } className={ props.className } />
+		<Checkbox
+			checked={ isSelected() }
+			onChange={ setIncludes }
+			className={ props.className }
+			onCheck={ props.onCheck }
+			onUncheck={ props.onUncheck }
+			referrer={ props.referrer }
+		/>
 	), [ sharedContext.data.includes ] );
 }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useContext, useState} from 'react';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
@@ -11,9 +11,12 @@ import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 
 import './kit-content.scss';
+import { SharedContext } from './../../context/shared-context/shared-context-provider.js';
 
 export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
+		sharedContext = useContext( SharedContext ),
+		{ referrer } = sharedContext.data,
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
@@ -50,7 +53,13 @@ export default function KitContent( { contentData, hasPro } ) {
 									onMouseLeave={ () => isLockedFeaturesNoPro && setContainerHoverState( index, false ) }
 								>
 									<Grid container noWrap >
-										<KitContentCheckbox type={ type } className="e-app-export-kit-content__checkbox" />
+										<KitContentCheckbox
+											type={ type }
+											className="e-app-export-kit-content__checkbox"
+											referrer={ referrer }
+											onCheck={ () => $e.run( 'kit-library/check' ) }
+											onUncheck={ () => $e.run( 'kit-library/uncheck' ) }
+										/>
 
 										<Grid item container>
 											<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">

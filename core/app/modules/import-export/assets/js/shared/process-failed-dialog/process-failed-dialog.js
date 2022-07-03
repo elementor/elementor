@@ -42,12 +42,17 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			} else {
 				window.open( 'https://elementor.com/help/how-to-fix-common-errors-with-import-export/', '_blank' );
 			}
+
+			if ( 'kit-library' === referrer ) {
+				$e.run( 'kit-library/seek-more-info' );
+			}
 		},
 		handleOnDismiss = () => {
 			if ( 'general' === error && onDismiss ) {
 				onDismiss();
 			} else if ( 'kit-library' === referrer ) {
 				navigate( '/kit-library' );
+				$e.run( 'kit-library/modal-close' )
 			} else {
 				action.backToDashboard();
 			}

@@ -94,14 +94,13 @@ export const Modal = ( props ) => {
 		};
 
 	useEffect( () => {
-		if ( props.onOpen ) {
-			props.onOpen();
-		}
-	}, [] );
-
-	useEffect( () => {
 		if ( props.show ) {
 			document.addEventListener( 'mousedown', closeModal, false );
+		}
+
+		// Kit library event tracking
+		if ( props.onOpen && props.show ) {
+			props.onOpen();
 		}
 
 		return () => document.removeEventListener( 'mousedown', closeModal, false );

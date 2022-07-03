@@ -10,7 +10,10 @@ export default function ImportInfoModal( props ) {
 					<>
 						{ __( 'A Template Kit is a .zip file that contains all the parts of a complete site. It’s an easy way to get a site up and running quickly.', 'elementor' ) }
 						<br /><br />
-						<InlineLink url="https://go.elementor.com/app-what-are-kits">{ __( ' Learn more about Template Kits', 'elementor' ) }</InlineLink>
+						<InlineLink
+							url="https://go.elementor.com/app-what-are-kits"
+							eventTrack={ () => $e.run( 'kit-library/seek-more-info' ) }
+						>{ __( ' Learn more about Template Kits', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
 			</InfoModal.Section>

@@ -18,6 +18,7 @@ export default function IndexHeader( props ) {
 			hideText: true,
 			icon: 'eicon-info-circle-o',
 			onClick: () => {
+				// TODO: shoots twice
 				$e.run( 'kit-library/seek-more-info' );
 				setIsInfoModalOpen( true );
 			},
@@ -50,7 +51,6 @@ export default function IndexHeader( props ) {
 
 	return (
 		<>
-			{ console.log( 'props: ', props ) }
 			<Header buttons={ buttons } />
 			<PopoverDialog
 				targetRef={ importRef }
@@ -85,7 +85,8 @@ export default function IndexHeader( props ) {
 							rel="noreferrer"
 							text={ __( 'Learn more', 'elementor' ) }
 							color="link"
-							eventtrack={ () => $e.run( 'kit-library/seek-more-info' ) }
+							eventTrack={ () => $e.run( 'kit-library/seek-more-info' ) }
+							a="a test link"
 						/>{ ' ' }
 						{ __( 'about using templates', 'elementor' ) }
 					</Text>

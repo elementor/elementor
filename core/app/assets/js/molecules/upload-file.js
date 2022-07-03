@@ -46,6 +46,10 @@ export default function UploadFile( props ) {
 				hideText={ props.isLoading }
 				icon={ props.isLoading ? 'eicon-loading eicon-animation-spin' : '' }
 				onClick={ () => {
+					if ( 'kit-library' === props.referrer ) {
+						eventTrack: $e.run( 'kit-library/choose-file' );
+					}
+
 					if ( ! props.isLoading ) {
 						if ( props.onButtonClick ) {
 							props.onButtonClick();
@@ -94,6 +98,7 @@ UploadFile.propTypes = {
 	variant: PropTypes.string,
 	color: PropTypes.string,
 	onButtonClick: PropTypes.func,
+	eventTrack: PropTypes.func,
 };
 
 UploadFile.defaultProps = {

@@ -31,7 +31,12 @@ export default function ImportKit() {
 			kitActions.reset();
 		},
 		getLearnMoreLink = () => (
-			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>
+			<InlineLink
+				url="https://go.elementor.com/app-what-are-kits"
+				key="learn-more-link"
+				italic
+				eventTrack={ () => $e.run( 'kit-library/seek-more-info' ) }
+			>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		);
@@ -103,6 +108,7 @@ export default function ImportKit() {
 					} }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
+					referrer={ referrer }
 				/>
 
 				{ errorType && <ProcessFailedDialog errorType={ errorType } onApprove={ resetImportProcess } />	}

@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import './checkbox.scss';
 
-export default function Checkbox( { className, checked, rounded, indeterminate, error, disabled, onChange } ) {
+export default function Checkbox( { className, checked, rounded, indeterminate, error, disabled, onChange, onCheck, onUncheck, referrer } ) {
 	const baseClassName = 'eps-checkbox',
 		classes = [ baseClassName, className ];
 
@@ -16,6 +16,15 @@ export default function Checkbox( { className, checked, rounded, indeterminate, 
 
 	if ( error ) {
 		classes.push( baseClassName + '--error' );
+	}
+
+	// console.log( 'checked, referrer: ', checked, referrer )
+	if ( 'kit-library' === referrer ) {
+		if ( ! checked ) {
+			onUncheck();
+		} else {
+			onCheck();
+		}
 	}
 
 	return (

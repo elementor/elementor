@@ -12,6 +12,10 @@ export default class EComponent extends $e.modules.ComponentBase {
 	 */
 	defaultCommands() {
 		const trackingCommands = [
+			'check',
+			'uncheck',
+			'choose-file',
+			'choose-site-parts-to-import',
 			'kit-import',
 			'logo',
 			'modal-close',
@@ -21,7 +25,7 @@ export default class EComponent extends $e.modules.ComponentBase {
 		].reduce( ( allCommands, command ) => ( {
 			...allCommands,
 			[ command ]: () => {
-            console.log( command ) // Delete when task is done
+            console.log( command ) // TODO: Delete when task is done
 			},
 		} ), {} );
 

@@ -19,6 +19,8 @@ export default function InfoModal( props ) {
 	const attrs = {
 			className: 'e-app-import-export-info-modal',
 			setShow: props.setShow,
+			onOpen: props.onOpen,
+			onClose: props.onClose,
 		};
 
 	if ( Object.prototype.hasOwnProperty.call( props, 'show' ) ) {

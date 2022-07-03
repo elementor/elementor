@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
 
@@ -39,7 +40,7 @@ export default function InlineLink( props ) {
 			</a>
 		),
 		getActionLink = () => (
-			<button className={ className } onClick={ props.onClick }>
+			<button className={ className } onClick={ props.onClick } >
 				{ props.children }
 			</button>
 		);
@@ -61,6 +62,7 @@ InlineLink.propTypes = {
 	color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
 	underline: PropTypes.oneOf( [ 'none', 'hover', 'always' ] ),
 	italic: PropTypes.bool,
+	eventTrack: PropTypes.func,
 };
 
 InlineLink.defaultProps = {
