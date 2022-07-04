@@ -133,8 +133,9 @@
 				svg {
 					fill: var( --tabs-v2-icon-color );
 				}
-	
-				&, &-active {
+
+				&,
+				&-active {
 
 					> i {
 						font-size: var( --tabs-v2-icon-size );
@@ -145,7 +146,7 @@
 						height: var( --tabs-v2-icon-size );
 					}
 				}
-	
+
 				&-active {
 					display: none;
 
@@ -165,7 +166,7 @@
 
 				.elementor-tab-icon {
 					display: none;
-	
+
 					&-active {
 						display: unset;
 					}
