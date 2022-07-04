@@ -44,13 +44,6 @@ module.exports = Marionette.Behavior.extend( {
 				name: 'tools',
 				actions: [
 					{
-						name: 'notes',
-						title: __( 'Notes', 'elementor' ),
-						shortcut: '<i class="eicon-pro-icon" />',
-						isEnabled: () => false,
-						callback: () => {},
-					},
-					{
 						name: 'navigator',
 						title: __( 'Navigator', 'elementor' ),
 						callback: () => $e.route( 'navigator', {
@@ -61,8 +54,6 @@ module.exports = Marionette.Behavior.extend( {
 				],
 			} );
 		}
-
-		contextMenuGroups = elementor.hooks.applyFilters( 'elements/widget/onInitContextMenuGroups', contextMenuGroups, this );
 
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups,
