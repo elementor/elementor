@@ -29,7 +29,9 @@
 	--tabs-v2-title-active-color: #{$white};
 	--tabs-v2-title-active-background-color: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 
-	--tabs-v2-title-alignment: center;
+	--tabs-v2-title-justify-content: center;
+	--tabs-v2-title-align-items: center;
+	--tabs-v2-title-direction: row;
 	--tabs-v2-title-grow: 1;
 	--tabs-v2-title-gap: 10px;
 	--tabs-v2-title-padding-top: var( --tabs-v2-default-padding );
@@ -49,7 +51,10 @@
 	--tabs-v2-title-shadow: none;
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
-	--tabs-v2-icon-active-color: #{$white};
+	--tabs-v2-icon-color-hover: var( --tabs-v2-title-color-hover );
+	--tabs-v2-icon-color-active: #{$white};
+	--tabs-v2-icon-size: initial;
+	--tabs-v2-icon-gap: 5px;
 
 	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
 
@@ -79,6 +84,11 @@
 	.elementor-tab {
 
 		&-title {
+			display: flex;
+			align-items: var( --tabs-v2-title-align-items );
+			flex-direction: var( --tabs-v2-title-direction );
+			justify-content: var( --tabs-v2-title-justify-content );
+			gap: var( --tabs-v2-icon-gap );
 			color: var( --tabs-v2-title-color );
 			background-color: var( --tabs-v2-title-background-color );
 			cursor: pointer;
@@ -100,18 +110,51 @@
 			text-align: var( --tabs-v2-title-alignment );
 			flex-grow: var( --tabs-v2-title-grow );
 
+			&:hover {
+
+				.elementor-tab-icon {
+
+					> i {
+						color: var( --tabs-v2-icon-color-hover );
+					}
+
+					svg {
+						fill: var( --tabs-v2-icon-color-hover );
+					}
+				}
+			}
+
 			.elementor-tab-icon {
-				display: unset;
+
+				> i {
+					color: var( --tabs-v2-icon-color );
+				}
+
+				svg {
+					fill: var( --tabs-v2-icon-color );
+				}
 	
-				>i {
-					width: 20px;
+				&, &-active {
+
+					> i {
+						font-size: var( --tabs-v2-icon-size );
+					}
+
+					svg {
+						width: var( --tabs-v2-icon-size );
+						height: var( --tabs-v2-icon-size );
+					}
 				}
 	
 				&-active {
 					display: none;
-	
-					>i {
-						width: 20px;
+
+					> i {
+						color: var( --tabs-v2-icon-color-active );
+					}
+
+					svg {
+						fill: var( --tabs-v2-icon-color-active );
 					}
 				}
 			}

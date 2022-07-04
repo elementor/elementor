@@ -4,7 +4,10 @@ namespace Elementor\Modules\TabsV2\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Text_Stroke;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
@@ -523,6 +526,151 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->end_controls_section();
+
+		$this->start_controls_section( 'icon_section_style', [
+			'label' => esc_html__( 'Icon', 'elementor' ),
+			'tab' => Controls_Manager::TAB_STYLE,
+		] );
+
+		$this->add_responsive_control( 'icon_position', [
+			'label' => esc_html__( 'Icon Position', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'top' => [
+					'title' => esc_html__( 'Top', 'elementor' ),
+					'icon' => 'eicon-v-align-top',
+				],
+				'end' => [
+					'title' => esc_html__( 'Right', 'elementor' ),
+					'icon' => 'eicon-h-align-' . $end,
+				],
+				'bottom' => [
+					'title' => esc_html__( 'Bottom', 'elementor' ),
+					'icon' => 'eicon-v-align-bottom',
+				],
+				'start' => [
+					'title' => esc_html__( 'Left', 'elementor' ),
+					'icon' => 'eicon-h-align-' . $start,
+				],
+			],
+			'selectors_dictionary' => [
+				'top' => '--tabs-v2-title-direction: column;',
+				'end' => '--tabs-v2-title-direction: row-reverse;',
+				'bottom' => '--tabs-v2-title-direction: column-reverse;',
+				'start' => '--tabs-v2-title-direction: row;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+		] );
+
+		$this->add_responsive_control( 'icon_size', [
+			'label' => esc_html__( 'Icon Size', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 100,
+				],
+				'em' => [
+					'min' => 0,
+					'max' => 10,
+					'step' => 0.1,
+				],
+				'rem' => [
+					'min' => 0,
+					'max' => 10,
+					'step' => 0.1,
+				],
+			],
+			'default' => [
+				'unit' => 'px',
+			],
+			'size_units' => [ 'px', 'em', 'rem' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-size: {{SIZE}}{{UNIT}}',
+			],
+		] );
+
+		$this->add_responsive_control( 'icon_spacing', [
+			'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 400,
+				],
+				'vw' => [
+					'min' => 0,
+					'max' => 50,
+					'step' => 0.1,
+				],
+			],
+			'default' => [
+				'unit' => 'px',
+			],
+			'size_units' => [ 'px', 'vw' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-gap: {{SIZE}}{{UNIT}}',
+			],
+		] );
+
+		$this->start_controls_tabs( 'icon_style_states' );
+
+		$this->start_controls_tab(
+			'icon_section_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control( 'icon_color', [
+			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-color: {{VALUE}};',
+			],
+		] );
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_section_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control( 'icon_color_hover', [
+			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-color-hover: {{VALUE}};',
+			],
+		] );
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_section_active',
+			[
+				'label' => esc_html__( 'Active', 'elementor' ),
+			]
+		);
+
+		$this->add_control( 'icon_color_active', [
+			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-color-active: {{VALUE}};',
+			],
+		] );
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
 	}
 
 	/**
@@ -554,6 +702,7 @@ class TabsV2 extends Widget_Nested_Base {
 		}
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
+		$this->add_render_attribute( 'tab-title-text', 'class', 'elementor-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'elementor-tab-icon' );
 		$this->add_render_attribute( 'tab-icon-active', 'class', 'elementor-tab-icon-active' );
 
@@ -593,6 +742,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
+			$tab_title_text = $this->get_render_attribute_string( 'tab-title-text' );
 			$tab_icon_attributes = $this->get_render_attribute_string( 'tab-icon' );
 			$tab_icon_active_attributes = $this->get_render_attribute_string( 'tab-icon-active' );
 
@@ -605,7 +755,7 @@ class TabsV2 extends Widget_Nested_Base {
 			$tabs_title_html .= "<div {$title_render_attributes}>";
 			$tabs_title_html .= "\t<span {$tab_icon_attributes}> {$icon_html}</span>";
 			$tabs_title_html .= "\t<span {$tab_icon_active_attributes}> {$icon_active_html}</span>";
-			$tabs_title_html .= "\t<span>{$tab_title}</span>";
+			$tabs_title_html .= "\t<span {$tab_title_text}>{$tab_title}</span>";
 			$tabs_title_html .= '</div>';
 
 			// Tabs content.
@@ -666,7 +816,7 @@ class TabsV2 extends Widget_Nested_Base {
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 					<span class="elementor-tab-icon">{{{ tabIcon.value }}}</span>
 					<span class="elementor-tab-icon-active">{{{ tabActiveIcon.value }}}</span>
-					<span>{{{ item.tab_title }}}</span>
+					<span class="elementor-tab-title-text">{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
 			</div>
