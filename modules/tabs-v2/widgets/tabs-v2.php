@@ -81,6 +81,8 @@ class TabsV2 extends Widget_Nested_Base {
 	protected function register_controls() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
+		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
+		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -170,11 +172,11 @@ class TabsV2 extends Widget_Nested_Base {
 					'icon' => 'eicon-v-align-bottom',
 				],
 				'end' => [
-					'title' => esc_html__( 'Right', 'elementor' ),
+					'title' => $tooltip_end,
 					'icon' => 'eicon-h-align-' . $end,
 				],
 				'start' => [
-					'title' => esc_html__( 'Left', 'elementor' ),
+					'title' => $tooltip_start,
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
@@ -541,7 +543,7 @@ class TabsV2 extends Widget_Nested_Base {
 					'icon' => 'eicon-v-align-top',
 				],
 				'end' => [
-					'title' => esc_html__( 'Right', 'elementor' ),
+					'title' => $tooltip_end,
 					'icon' => 'eicon-h-align-' . $end,
 				],
 				'bottom' => [
@@ -549,7 +551,7 @@ class TabsV2 extends Widget_Nested_Base {
 					'icon' => 'eicon-v-align-bottom',
 				],
 				'start' => [
-					'title' => esc_html__( 'Left', 'elementor' ),
+					'title' => $tooltip_start,
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
