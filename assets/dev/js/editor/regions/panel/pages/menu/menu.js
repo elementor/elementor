@@ -71,7 +71,7 @@ PanelMenu.addAdminMenu = () => {
 		name: 'notes',
 		icon: 'eicon-commenting-o',
 		title: __( 'Notes', 'elementor' ),
-		callback: function() {
+		callback() {
 			elementor.promotion.showDialog( {
 				headerMessage: __( 'Notes', 'elementor' ),
 				message: __( 'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.', 'elementor' ),
@@ -155,7 +155,7 @@ PanelMenu.createExitIntroductionDialog = () => {
 				elementor.config.user.introduction.exit_to = true;
 				PanelMenu.exitShouldRedirect = true;
 			},
-			onConfirm: () => {
+			onConfirm: async () => {
 				$e.run( 'document/elements/settings', {
 					container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 					settings: {
@@ -166,9 +166,8 @@ PanelMenu.createExitIntroductionDialog = () => {
 					},
 				} );
 
-				elementor.settings.editorPreferences.save( () => {
-					window.location.href = PanelMenu.getExitUrl();
-				} );
+				await elementor.settings.editorPreferences.save();
+				window.location.href = PanelMenu.getExitUrl();
 			},
 			onCancel: () => {
 				window.location.href = PanelMenu.getExitUrl();
@@ -176,7 +175,7 @@ PanelMenu.createExitIntroductionDialog = () => {
 		},
 	} );
 
-	//Edit the template inside the dialog
+	// Edit the template inside the dialog
 	const messageContainer = introduction.getDialog().getElements().message[ 0 ],
 		select = messageContainer.querySelector( '#exit-to-preferences' ),
 		link = messageContainer.querySelector( '#user-preferences' );

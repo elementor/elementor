@@ -51,8 +51,6 @@ export const PasteStyle = () => {
 					} ),
 					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' );
 
-				//widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
-
 				ElementsHelper.copy( eWidgetStyled );
 				ElementsHelper.pasteStyle( eWidgetSimple );
 
@@ -70,7 +68,7 @@ export const PasteStyle = () => {
 				// Redo.
 				HistoryHelper.redoValidate( assert, historyItem );
 
-				/*assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
+				/* Assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
 					'Settings restored.' ); // TODO: in tests its not back to default color.*/
 			} );
 

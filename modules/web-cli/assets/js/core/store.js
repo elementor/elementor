@@ -1,5 +1,18 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
+/**
+ * @typedef {import('@reduxjs/toolkit').Slice} Slice
+ */
+/**
+ * @typedef {import('@reduxjs/toolkit').EnhancedStore} EnhancedStore
+ */
+/**
+ * @typedef {import('@reduxjs/toolkit').AnyAction} AnyAction
+ */
+/**
+ * @typedef {import('@reduxjs/toolkit').ThunkMiddlewareFor} ThunkMiddlewareFor
+ */
+
 export default class Store {
 	/**
 	 * @type {Object}
@@ -24,7 +37,7 @@ export default class Store {
 	/**
 	 * Create a Redux Store object.
 	 *
-	 * @return {EnhancedStore<{}, AnyAction, [ThunkMiddlewareFor<{}>]>}
+	 * @return {EnhancedStore<{}, AnyAction, [ThunkMiddlewareFor<{}>]>} store
 	 */
 	createStore() {
 		return configureStore( {
@@ -39,8 +52,8 @@ export default class Store {
 	 *
 	 * See: https://redux.js.org/usage/code-splitting#defining-an-injectreducer-function
 	 *
-	 * @param {string} id - Reducer unique ID.
-	 * @param {function} newReducer - New reducer to inject.
+	 * @param {string}   id         - Reducer unique ID.
+	 * @param {Function} newReducer - New reducer to inject.
 	 *
 	 * @return {void}
 	 */
@@ -51,15 +64,15 @@ export default class Store {
 			combineReducers( {
 				...prevReducers,
 				[ id ]: newReducer,
-			} )
+			} ),
 		);
 	}
 
 	/**
 	 * Register a Redux Store slice.
 	 *
-	 * @param {string} sliceId - Slice unique ID.
-	 * @param {Slice} instance - Slice object to add.
+	 * @param {string} sliceId  - Slice unique ID.
+	 * @param {Slice}  instance - Slice object to add.
 	 *
 	 * @return {void}
 	 */
@@ -78,7 +91,7 @@ export default class Store {
 	 *
 	 * @param {string|null} sliceId - Slice ID to get.
 	 *
-	 * @return {Slice}
+	 * @return {Slice} slice
 	 */
 	get( sliceId ) {
 		return this.slices[ sliceId ];
@@ -87,7 +100,7 @@ export default class Store {
 	/**
 	 * Get all slices.
 	 *
-	 * @return {Object}
+	 * @return {Object} slices
 	 */
 	getAllSlices() {
 		return this.slices;
@@ -96,7 +109,7 @@ export default class Store {
 	/**
 	 * Get All slices.
 	 *
-	 * @return {Object}
+	 * @return {Object} slices
 	 */
 	getAll() {
 		return Object.keys( this.slices ).sort();
@@ -105,7 +118,7 @@ export default class Store {
 	/**
 	 * Return the current reducers.
 	 *
-	 * @return {Object}
+	 * @return {Object} reducers
 	 */
 	getReducers() {
 		return Object.entries( this.slices )
@@ -118,7 +131,7 @@ export default class Store {
 	/**
 	 * Get the actual Redux store object.
 	 *
-	 * @return {Object}
+	 * @return {Object} redux store object
 	 */
 	getReduxStore() {
 		return this.reduxStore;
@@ -127,7 +140,7 @@ export default class Store {
 	/**
 	 * Proxy to Redux's `dispatch()` function.
 	 *
-	 * @return {*}
+	 * @return {*} the dispatched action
 	 */
 	dispatch() {
 		return this.reduxStore.dispatch( ...arguments );
@@ -138,7 +151,7 @@ export default class Store {
 	 *
 	 * @param {string|null} sliceId
 	 *
-	 * @return {*}
+	 * @return {*} The current state tree of the application
 	 */
 	getState( sliceId = null ) {
 		const state = this.reduxStore.getState();
@@ -150,7 +163,7 @@ export default class Store {
 	 * Proxy to Redux's `replaceReducer()` function.
 	 * TODO: Do we want that?
 	 *
-	 * @return {*}
+	 * @return {*} undefined
 	 */
 	replaceReducer() {
 		return this.reduxStore.replaceReducer( ...arguments );
@@ -159,7 +172,7 @@ export default class Store {
 	/**
 	 * Proxy to Redux's `subscribe()` function.
 	 *
-	 * @return {*}
+	 * @return {*} A function that unsubscribes the change listener
 	 */
 	subscribe() {
 		return this.reduxStore.subscribe( ...arguments );

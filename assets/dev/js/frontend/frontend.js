@@ -59,7 +59,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	getDefaultElements() {
 		const defaultElements = {
-			window: window,
+			window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
@@ -76,6 +76,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * @param {string} elementName
 	 * @deprecated 2.4.0 Use just `this.elements` instead
 	 */
 	getElements( elementName ) {
@@ -83,6 +84,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * @param {string} settingName
 	 * @deprecated 2.4.0 This method was never in use
 	 */
 	getPageSettings( settingName ) {
@@ -186,7 +188,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			},
 			urlActions: new URLActions(),
 			swiper: Swiper,
-			environment: environment,
+			environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
 			events: Events,

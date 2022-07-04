@@ -2,7 +2,7 @@ var NewTemplateLayout = require( 'elementor-admin/new-template/layout' );
 
 var NewTemplateModule = elementorModules.ViewModule.extend( {
 
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				addButton: '.page-title-action:first, #elementor-template-library-add-new',
@@ -10,7 +10,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
@@ -18,13 +18,13 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	bindEvents: function() {
+	bindEvents() {
 		this.elements.$addButton.on( 'click', this.onAddButtonClick );
 
 		elementorCommon.elements.$window.on( 'hashchange', this.showModalByHash.bind( this ) );
 	},
 
-	showModalByHash: function() {
+	showModalByHash() {
 		if ( '#add_new' === location.hash ) {
 			this.layout.showModal();
 
@@ -32,7 +32,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 		}
 	},
 
-	onInit: function() {
+	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.layout = new NewTemplateLayout();
@@ -40,7 +40,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 		this.showModalByHash();
 	},
 
-	onAddButtonClick: function( event ) {
+	onAddButtonClick( event ) {
 		event.preventDefault();
 
 		this.layout.showModal();

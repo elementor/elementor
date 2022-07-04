@@ -14,7 +14,7 @@ describe( "$e.run( 'document/elements/empty' )", () => {
 					id: 'element',
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		$e.store.dispatch(
@@ -24,7 +24,7 @@ describe( "$e.run( 'document/elements/empty' )", () => {
 					id: 'element',
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.

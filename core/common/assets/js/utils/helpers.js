@@ -6,7 +6,7 @@ export default class Helpers {
 		elementorDevTools.deprecation.deprecated(
 			'elementorCommon.helpers.softDeprecated',
 			'3.7.0',
-			'elementorDevTools.deprecation.deprecated'
+			'elementorDevTools.deprecation.deprecated',
 		);
 	}
 
@@ -17,7 +17,7 @@ export default class Helpers {
 		elementorDevTools.deprecation.deprecated(
 			'elementorCommon.helpers.hardDeprecated',
 			'3.7.0',
-			'elementorDevTools.deprecation.deprecated'
+			'elementorDevTools.deprecation.deprecated',
 		);
 	}
 
@@ -28,7 +28,7 @@ export default class Helpers {
 		elementorDevTools.deprecation.deprecated(
 			'elementorCommon.helpers.deprecatedMessage',
 			'3.7.0',
-			'elementorDevTools.deprecation.deprecated'
+			'elementorDevTools.deprecation.deprecated',
 		);
 	}
 
@@ -39,7 +39,7 @@ export default class Helpers {
 		elementorDevTools.deprecation.deprecated(
 			'elementorCommon.helpers.consoleWarn',
 			'3.7.0',
-			'elementorDevTools.consoleWarn'
+			'elementorDevTools.consoleWarn',
 		);
 	}
 
@@ -51,7 +51,7 @@ export default class Helpers {
 		elementorDevTools.deprecation.deprecated(
 			'elementorCommon.helpers.consoleError',
 			'3.7.0',
-			'console.error'
+			'console.error',
 		);
 	}
 

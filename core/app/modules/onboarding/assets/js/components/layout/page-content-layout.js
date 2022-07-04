@@ -10,8 +10,8 @@ export default function PageContentLayout( props ) {
 	const printNotices = () => {
 		return (
 			<>
-				{ props.noticeState && <Notice noticeState={ props.noticeState }/> }
-				{ state.proNotice && <Notice noticeState={ state.proNotice }/> }
+				{ props.noticeState && <Notice noticeState={ props.noticeState } /> }
+				{ state.proNotice && <Notice noticeState={ state.proNotice } /> }
 			</>
 		);
 	};
@@ -28,15 +28,15 @@ export default function PageContentLayout( props ) {
 					</div>
 				</div>
 				<div className="e-onboarding__page-content-end">
-					<img src={ props.image } alt="Information"/>
+					<img src={ props.image } alt="Information" />
 				</div>
 			</Grid>
 			<div className="e-onboarding__notice-container">
-				{ props.noticeState || state.proNotice ?
-					printNotices() :
-					<div className="e-onboarding__notice-empty-spacer"/> }
+				{ props.noticeState || state.proNotice
+					? printNotices()
+					: <div className="e-onboarding__notice-empty-spacer" /> }
 			</div>
-			<FooterButtons actionButton={ props.actionButton } skipButton={ props.skipButton }/>
+			<FooterButtons actionButton={ props.actionButton } skipButton={ props.skipButton } />
 		</>
 	);
 }
