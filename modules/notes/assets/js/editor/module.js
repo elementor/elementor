@@ -23,7 +23,7 @@ class Module extends elementorModules.editor.utils.Module {
 			name: 'notes',
 			actions: [
 				{
-					name: 'notes',
+					name: 'open_notes',
 					title: __( 'Notes', 'elementor' ),
 					shortcut: '<i class="eicon-pro-icon" />',
 					isEnabled: () => false,
