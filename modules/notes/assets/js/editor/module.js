@@ -11,6 +11,14 @@ class Module extends elementorModules.editor.utils.Module {
 		} );
 	}
 
+	/**
+	 * Append the 'Notes' context menu group
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param {Array} groups
+	 * @return {Array} The updated groups.
+	 */
 	contextMenuAddGroup( groups ) {
 		const deleteGroup = _.findWhere( groups, { name: 'delete' } );
 		let afterGroupIndex = groups.indexOf( deleteGroup );
