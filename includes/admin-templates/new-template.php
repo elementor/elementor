@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+require_once __DIR__ . '/new-template-form.php';
+require_once __DIR__ . '/new-template-renderer-factory.php';
+
+use Elementor\Admin_Templates\New_template_Form;
 use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,14 +51,6 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 			);
 			?></div>
 		<div id="elementor-new-template__description__content"><?php echo esc_html__( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
-		<?php
-		/*
-		<div id="elementor-new-template__take_a_tour">
-			<i class="eicon-play-o"></i>
-			<a href="#"><?php echo esc_html__( 'Take The Video Tour', 'elementor\' ); ?></a>
-		</div>
-		*/
-		?>
 	</div>
 	<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 		<input type="hidden" name="post_type" value="elementor_library">
@@ -76,6 +72,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 			</div>
 		</div>
 		<?php
+		$new_template_control_form = new New_template_Form( new New_Template_Renderer_Factory(), [ 'id' => 'form' ] );
 		/**
 		 * Template library dialog fields.
 		 *
@@ -83,7 +80,13 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		 *
 		 * @since 2.0.0
 		 */
-		do_action( 'elementor/template-library/create_new_dialog_fields' );
+		do_action( 'elementor/template-library/create_new_dialog_fields', $new_template_control_form );
+
+		$additional_controls = $new_template_control_form->get_controls();
+		if ( $additional_controls ) {
+			wp_add_inline_script( 'elementor-admin', 'var elementor_new_template_form_controls = ' . wp_json_encode( $additional_controls ) . ';' );
+			$new_template_control_form->render_controls();
+		}
 		?>
 
 		<div id="elementor-new-template__form__post-title__wrapper" class="elementor-form-field">
@@ -96,4 +99,42 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		</div>
 		<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
 	</form>
+	<script>
+		const setDynamicFieldsVisibility = function() {
+			//alert(document.getElementById('elementor-new-template__form__template-type').value);
+			let controls = Object.entries(elementor_new_template_form_controls);
+			for (const [control_id, control_settings] of controls) {
+				setVisibilityForControl(control_settings, control_id);
+			}
+
+			function setVisibilityForControl(control_settings, control_id) {
+				let conditions = Object.entries(control_settings.conditions ?? {});
+				conditions.forEach(condition => {
+					changeVisibilityBasedOnCondition(condition, control_id);
+				})
+			}
+
+			function changeVisibilityBasedOnCondition(condition, control_id) {
+				const [condition_key, condition_value] = condition;
+				const target_control_wrapper = document.getElementById('elementor-new-template__form__' + control_id + '__wrapper');
+				if (target_control_wrapper) {
+					target_control_wrapper.classList.add('elementor-hidden');
+				}
+				let lookup_control = document.getElementById('elementor-new-template__form__' + condition_key);
+				if (!lookup_control) {
+					return;
+				}
+				if (!(lookup_control.value === condition_value)) {
+					return;
+				}
+				if (target_control_wrapper) {
+					target_control_wrapper.classList.remove('elementor-hidden');
+				}
+			}
+		}
+		setDynamicFieldsVisibility();
+		document.getElementById('elementor-new-template__form__template-type').addEventListener('change',setDynamicFieldsVisibility )
+	</script>
 </script>
+
+
