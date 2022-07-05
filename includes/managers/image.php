@@ -152,7 +152,6 @@ class Images_Manager {
 		$image_meta = wp_get_attachment_metadata( $post_id );
 		if ( ! empty( $image_meta ) && ! empty( $image_meta['sizes'] ) ) {
 				$custom_images = $image_meta['sizes'];
-			foreach ( $custom_images as $size => $custom_image ) {
 				( new Collection( $image_meta['sizes'] ) )
 				->filter( function ( $value, $key ) {
 					return ( 0 === strpos( $key, 'elementor_custom_' ) );
@@ -162,7 +161,6 @@ class Images_Manager {
 					$base_dir = wp_get_upload_dir()['basedir'];
 					wp_delete_file( $base_dir . '/' . $path );
 				} );
-			}
 		}
 	}
 
