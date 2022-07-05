@@ -134,7 +134,8 @@
 	.elementor-tab-title,
 	.elementor-tab-title:before,
 	.elementor-tab-title:after,
-	.e-container {
+	.e-container,
+	.elementor-tabs-content-wrapper {
 		border: 1px none var( --tabs-v2-border-color );
 		border-width: var( --tabs-v2-border-width );
 	}
