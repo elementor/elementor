@@ -136,6 +136,7 @@
 
 				&,
 				&-active {
+					display: flex;
 
 					> i {
 						font-size: var( --tabs-v2-icon-size );
