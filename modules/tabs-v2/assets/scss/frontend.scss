@@ -12,7 +12,7 @@
 	--tabs-v2-display: flex;
 	--tabs-v2-direction: column;
 	--tabs-v2-gap: 10px;
-	--tabs-v2-border-width: initial;
+	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: initial;
 
 	--tabs-v2-tabs-wrapper-display: flex;
@@ -83,6 +83,7 @@
 			align-items: var( --tabs-v2-title-align-items );
 			color: var( --tabs-v2-title-color );
 			background-color: var( --tabs-v2-title-background-color );
+			border-width: var( --tabs-v2-border-width );
 			position: relative;
 			cursor: pointer;
 			outline: var( --focus-outline, none );
