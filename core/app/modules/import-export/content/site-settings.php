@@ -6,35 +6,22 @@ use Elementor\Core\Settings\Page\Manager as PageManager;
 
 class Site_Settings extends Runner_Base {
 
-	public function should_import( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'settings', $data['include'], true ) ) {
-			return false;
-		}
-
-		if ( ! is_array( $data['site_settings']['settings'] ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_import( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'settings', $data['include'], true )
+			&& is_array( $data['site_settings']['settings'] )
+		);
 	}
 
-	public function should_export( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'settings', $data['include'], true ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_export( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'settings', $data['include'], true )
+		);
 	}
 
-	public function import( $data, $imported_data ) {
+	public function import( array $data, array $imported_data ) {
 		$site_settings = $data['site_settings']['settings'];
 		$title = isset( $data['manifest']['title'] ) ? $data['manifest']['title'] : 'Imported Kit';
 
@@ -62,7 +49,7 @@ class Site_Settings extends Runner_Base {
 		return $result;
 	}
 
-	public function export( $data ) {
+	public function export( array $data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_data = $kit->get_export_data();
 		$kit_tabs = $kit->get_tabs();

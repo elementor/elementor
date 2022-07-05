@@ -345,8 +345,8 @@ class Module extends BaseModule {
 		return [
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
-			'nativeWpPostTypes' => [ 'post', 'page', 'nav_menu_item' ], // TODO better solution
-			'nativeElementorPostTypes' => [ 'post', 'page', 'e-landing-page' ],
+			'builtinWpPostTypes' => [ 'post', 'page', 'nav_menu_item' ], // TODO better solution
+			'elementorPostTypes' => [ 'post', 'page', 'e-landing-page' ],
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),

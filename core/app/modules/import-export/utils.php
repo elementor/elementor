@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\App\Modules\ImportExport;
 
+use Elementor\Core\Utils\Str;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
@@ -9,7 +10,12 @@ use Elementor\Utils as ElementorUtils;
 class Utils {
 
 	public static function read_json_file( $path ) {
-		$file_content = ElementorUtils::file_get_contents( $path . '.json', true );
+
+		if ( ! Str::ends_with( $path, '.json' ) ) {
+			$path .= '.json';
+		}
+
+		$file_content = ElementorUtils::file_get_contents( $path, true );
 
 		return $file_content ? json_decode( $file_content, true ) : [];
 	}
@@ -54,7 +60,7 @@ class Utils {
 		return $map_old_new_terms_ids;
 	}
 
-	public static function get_native_wp_post_types() {
+	public static function get_builtin_wp_post_types() {
 		return [ 'post', 'page', 'nav_menu_item' ];
 	}
 

@@ -9,42 +9,24 @@ use Elementor\TemplateLibrary\Source_Local;
 
 class Templates extends Runner_Base {
 
-	// TODO maybe move it to the pro plugin?
-
-	public function should_import( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'templates', $data['include'], true ) ) {
-			return false;
-		}
-
-		if ( empty( $data['extracted_directory_path'] ) ) {
-			return false;
-		}
-
-		if ( ! is_array( $data['manifest']['templates'] ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_import( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'templates', $data['include'], true )
+			&& ! empty( $data['extracted_directory_path'] )
+			&& ! empty( $data['manifest']['templates'] )
+		);
 	}
 
-	public function should_export( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'templates', $data['include'], true ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_export( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'templates', $data['include'], true )
+		);
 	}
 
 
-	public function import( $data, $imported_data ) {
+	public function import( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . 'templates/';
 		$templates = $data['manifest']['templates'];
 
@@ -73,7 +55,7 @@ class Templates extends Runner_Base {
 		return $result;
 	}
 
-	private function import_template( $id, array $template_settings, $template_data ) {
+	private function import_template( $id, array $template_settings, array $template_data ) {
 		$doc_type = $template_settings['doc_type'];
 
 		$new_document = Plugin::$instance->documents->create(
@@ -97,7 +79,7 @@ class Templates extends Runner_Base {
 		return $new_document->get_main_id();
 	}
 
-	public function export( $data ) {
+	public function export( array $data ) {
 		$template_types = array_values( Source_Local::get_template_types() );
 
 		$query_args = [

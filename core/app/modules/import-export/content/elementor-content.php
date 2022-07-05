@@ -6,6 +6,7 @@ use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Plugin;
 
 class Elementor_Content extends Runner_Base {
+	const ELEMENTOR_POST_TYPES = [ 'post', 'page', 'e_landing_page' ];
 
 	private $show_page_on_front;
 
@@ -15,42 +16,26 @@ class Elementor_Content extends Runner_Base {
 		$this->init_page_on_front_data();
 	}
 
-	public function should_import( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'content', $data['include'], true ) ) {
-			return false;
-		}
-
-		if ( ! is_array( $data['manifest']['content'] ) ) {
-			return false;
-		}
-
-		if ( empty( $data['extracted_directory_path'] ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_import( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'content', $data['include'], true )
+			&& is_array( $data['manifest']['content'] )
+			&& ! empty( $data['extracted_directory_path'] )
+		);
 	}
 
-	public function should_export( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'content', $data['include'], true ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_export( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'content', $data['include'], true )
+		);
 	}
 
-	public function import( $data, $imported_data ) {
+	public function import( array $data, array $imported_data ) {
 		$result['content'] = [];
 
-		$elementor_post_types = [ 'post', 'page', 'e_landing_page' ];
+		$elementor_post_types = static::ELEMENTOR_POST_TYPES;
 
 		foreach ( $elementor_post_types as $post_type ) {
 			if ( empty( $data['manifest']['content'][ $post_type ] ) ) {
@@ -65,11 +50,34 @@ class Elementor_Content extends Runner_Base {
 
 			$result['content'][ $post_type ] = $this->import_elementor_post_type( $posts_settings, $path, $post_type, $imported_terms );
 		}
+
 		return $result;
 	}
 
+	public function export( array $data ) {
+		$elementor_post_types = static::ELEMENTOR_POST_TYPES;
 
-	private function import_elementor_post_type( $posts_settings, $path, $post_type, $imported_terms ) {
+		$files = [];
+		$manifest = [];
+
+		foreach ( $elementor_post_types as $post_type ) {
+			$export = $this->export_elementor_post_type( $post_type );
+			$files = array_merge( $files, $export['files'] );
+
+			$manifest[ $post_type ] = $export['manifest_data'];
+		}
+
+		$manifest_data['content'] = $manifest;
+
+		return [
+			'files' => $files,
+			'manifest' => [
+				$manifest_data,
+			],
+		];
+	}
+
+	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms ) {
 		$result = [
 			'succeed' => [],
 			'failed' => [],
@@ -94,8 +102,7 @@ class Elementor_Content extends Runner_Base {
 		return $result;
 	}
 
-
-	public function import_post( array $post_settings, $post_data, $post_type, $imported_terms ) {
+	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms ) {
 		$post_attributes = [
 			'post_title' => $post_settings['title'],
 			'post_type' => $post_type,
@@ -119,48 +126,17 @@ class Elementor_Content extends Runner_Base {
 
 		$new_document->import( $post_data );
 
-		$new_id = $new_document->get_main_id();
+		$new_post_id = $new_document->get_main_id();
 
 		if ( ! empty( $post_settings['terms'] ) ) {
-			foreach ( $post_settings['terms'] as $term ) {
-				if ( ! isset( $imported_terms[ $term['term_id'] ] ) ) {
-					continue;
-				}
-				wp_set_post_terms( $new_id, array( (int) $imported_terms[ $term['term_id'] ] ), $term['taxonomy'], false );
-			}
+			$this->set_post_terms( $new_post_id, $post_settings['terms'], $imported_terms );
 		}
 
 		if ( ! empty( $post_settings['show_on_front'] ) ) {
-			update_option( 'page_on_front', $new_id );
-
-			if ( ! $this->show_page_on_front ) {
-				update_option( 'show_on_front', 'page' );
-			}
+			$this->set_page_on_front( $new_post_id );
 		}
 
-		return $new_id;
-	}
-
-	public function export( $data ) {
-		$elementor_post_types = [ 'post', 'page', 'e-landing-page' ];
-
-		$files = [];
-		$manifest = [];
-
-		foreach ( $elementor_post_types as $post_type ) {
-			$export = $this->export_elementor_post_type( $post_type );
-			$files = array_merge( $files, $export['files'] );
-			$manifest[ $post_type ] = $export['manifest_data'];
-		}
-
-		$manifest_data['content'] = $manifest;
-
-		return [
-			'files' => $files,
-			'manifest' => [
-				$manifest_data,
-			],
-		];
+		return $new_post_id;
 	}
 
 	private function export_elementor_post_type( $post_type ) {
@@ -198,11 +174,7 @@ class Elementor_Content extends Runner_Base {
 		foreach ( $query->posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
 
-			if ( ! empty( $post_type_taxonomies ) ) {
-				$terms = $this->get_post_terms( $post->ID, $post_type_taxonomies );
-			} else {
-				$terms = [];
-			}
+			$terms = ! empty( $post_type_taxonomies ) ? $this->get_post_terms( $post->ID, $post_type_taxonomies ) : [];
 
 			$post_manifest_data = [
 				'title' => $post->post_title,
@@ -231,26 +203,22 @@ class Elementor_Content extends Runner_Base {
 		];
 	}
 
-	/**
-	 *  Helpers
-	 */
-
 	private function get_post_type_taxonomies( $post_type ) {
-		$taxonomies = get_object_taxonomies( $post_type );
-
-		if ( empty( $taxonomies ) ) {
-			return [];
-		}
-
-		return $taxonomies;
+		return get_object_taxonomies( $post_type );
 	}
 
-	private function get_post_terms( $post_id, $taxonomies ) {
-		$terms = wp_get_object_terms( $post_id, $taxonomies );
+	private function set_post_terms( $post_id, array $terms, array $imported_terms ) {
+		foreach ( $terms as $term ) {
+			if ( ! isset( $imported_terms[ $term['term_id'] ] ) ) {
+				continue;
+			}
 
-		if ( empty( $terms ) ) {
-			return [];
+			wp_set_post_terms( $post_id, [ $imported_terms[ $term['term_id'] ] ], $term['taxonomy'], false );
 		}
+	}
+
+	private function get_post_terms( $post_id, array $taxonomies ) {
+		$terms = wp_get_object_terms( $post_id, $taxonomies );
 
 		$result = [];
 
@@ -270,6 +238,14 @@ class Elementor_Content extends Runner_Base {
 
 		if ( $this->show_page_on_front ) {
 			$this->page_on_front_id = (int) get_option( 'page_on_front' );
+		}
+	}
+
+	private function set_page_on_front( $page_id ) {
+		update_option( 'page_on_front', $page_id );
+
+		if ( ! $this->show_page_on_front ) {
+			update_option( 'show_on_front', 'page' );
 		}
 	}
 }

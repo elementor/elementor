@@ -4,6 +4,7 @@ namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Core\App\Modules\ImportExport\Content\Elementor_Content;
 use Elementor\Core\App\Modules\ImportExport\Content\Plugins;
+use Elementor\Core\App\Modules\ImportExport\Content\Runner_Base;
 use Elementor\Core\App\Modules\ImportExport\Content\Site_Settings;
 use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
 use Elementor\Core\App\Modules\ImportExport\Content\Templates;
@@ -22,15 +23,18 @@ class Export {
 
 	private $manifest_data;
 
-	private $runners;
-
 	private $zip;
+
+	/**
+	 * @var Runner_Base[]
+	 */
+	private $runners;
 
 	public function __construct( $settings = [] ) {
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
-		$this->settings_selected_plugins = ! empty( $settings['plugins'] ) ? $settings['plugins'] : null;
-		$this->settings_selected_custom_post_types = ! empty( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
+		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
+		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
 	}
 
 	public function run() {
@@ -76,7 +80,7 @@ class Export {
 		$this->register( new Wp_Content() );
 	}
 
-	public function register( $runner_instance ) {
+	public function register( Runner_Base $runner_instance ) {
 		$this->runners[ get_class( $runner_instance ) ] = $runner_instance;
 	}
 
@@ -89,11 +93,11 @@ class Export {
 			$this->settings_kit_info( $this->get_default_settings_kit_info() );
 		}
 
-		if ( in_array( 'content', $this->settings_include, true ) && ! is_array( $this->get_settings_selected_custom_post_types() ) ) {
+		if ( ! is_array( $this->get_settings_selected_custom_post_types() ) && in_array( 'content', $this->settings_include, true ) ) {
 			$this->settings_selected_custom_post_types( $this->get_default_settings_custom_post_types() );
 		}
 
-		if ( in_array( 'plugins', $this->settings_include, true ) && ! is_array( $this->get_settings_selected_plugins() ) ) {
+		if ( ! is_array( $this->get_settings_selected_plugins() ) && in_array( 'plugins', $this->settings_include, true ) ) {
 			$this->settings_selected_plugins( $this->get_default_settings_selected_plugins() );
 		}
 	}
@@ -144,6 +148,10 @@ class Export {
 	private function get_default_settings_selected_plugins() {
 		$plugins = [];
 		$installed_plugins = Plugin::$instance->wp->get_plugins();
+
+		$installed_plugins->map( function ( $item, $key ) {
+			return $item * 2;
+		} );
 
 		foreach ( $installed_plugins as $key => $value ) {
 			$plugins[] = [

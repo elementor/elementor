@@ -5,80 +5,88 @@ use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Taxonomies extends Runner_Base {
 
-	public function should_import( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'content', $data['include'], true ) ) {
-			return false;
-		}
-
-		if ( empty( $data['extracted_directory_path'] ) ) {
-			return false;
-		}
-
-		if ( empty( $data['manifest']['taxonomies'] ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_import( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'content', $data['include'], true )
+			&& ! empty( $data['extracted_directory_path'] )
+			&& ! empty( $data['manifest']['taxonomies'] )
+		);
 	}
 
-	public function should_export( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'content', $data['include'], true ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_export( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'content', $data['include'], true )
+		);
 	}
 
-	public function import( $data, $imported_data ) {
+	public function import( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . 'taxonomies/';
 
-		$wp_native_post_types = [ 'post', 'page', 'nav_menu_item' ];
+		$wp_builtin_post_types = [ 'post', 'page', 'nav_menu_item' ];
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
-		$post_types = array_merge( $wp_native_post_types, $selected_custom_post_types );
+		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
-		$result['taxonomies'] = [];
-
-		$already_imported_taxonomies = [];
+		$result = [];
 
 		foreach ( $post_types as $post_type ) {
 			if ( empty( $data['manifest']['taxonomies'][ $post_type ] ) ) {
 				continue;
 			}
 
-			foreach ( $data['manifest']['taxonomies'][ $post_type ] as $taxonomy ) {
-				if ( array_key_exists( $taxonomy, $already_imported_taxonomies ) ) {
-					$result['taxonomies'][ $post_type ][ $taxonomy ] = $already_imported_taxonomies[ $taxonomy ];
-					continue;
-				}
-
-				if ( ! taxonomy_exists( $taxonomy ) ) {
-					continue;
-				}
-
-				$taxonomy_data = ImportExportUtils::read_json_file( $path . $taxonomy );
-				$import = $this->import_taxonomy( $taxonomy_data );
-				$result['taxonomies'][ $post_type ][ $taxonomy ] = $import;
-				$already_imported_taxonomies[ $taxonomy ] = $import;
-			}
+			$result['taxonomies'][] = $this->import_taxonomies( $data['manifest']['taxonomies'][ $post_type ], $post_type, $path );
 		}
 
 		return $result;
 	}
 
-	private function import_taxonomy( $taxonomy_data ) {
-		$terms = [];
+	public function export( array $data ) {
+		$wp_builtin_post_types = [ 'post', 'page', 'nav_menu_item' ];
+		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
+		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
-		if ( empty( $taxonomy_data ) ) {
-			return $terms;
+		$export = $this->export_taxonomies( $post_types );
+
+		$manifest_data['taxonomies'] = $export['manifest'];
+
+		return [
+			'files' => $export['files'],
+			'manifest' => [
+				$manifest_data,
+			],
+		];
+	}
+
+	private function import_taxonomies( array $taxonomies, $post_type, $path ) {
+		$result = [];
+		$already_imported_taxonomies = [];
+
+		foreach ( $taxonomies as $taxonomy ) {
+			if ( ! taxonomy_exists( $taxonomy ) ) {
+				continue;
+			}
+
+			if ( ! empty( $already_imported_taxonomies[ $taxonomy ] ) ) {
+				$result[ $post_type ][ $taxonomy ] = $already_imported_taxonomies[ $taxonomy ];
+				continue;
+			}
+
+			$taxonomy_data = ImportExportUtils::read_json_file( $path . $taxonomy );
+			if ( empty( $taxonomy_data ) ) {
+				continue;
+			}
+
+			$import = $this->import_taxonomy( $taxonomy_data );
+			$result[ $post_type ][ $taxonomy ] = $import;
+			$already_imported_taxonomies[ $taxonomy ] = $import;
 		}
+
+		return $result;
+	}
+
+	private function import_taxonomy( array $taxonomy_data ) {
+		$terms = [];
 
 		foreach ( $taxonomy_data as $term ) {
 			$old_slug = $term['slug'];
@@ -87,32 +95,16 @@ class Taxonomies extends Runner_Base {
 				if ( 'nav_menu' === $term['taxonomy'] ) {
 					$term = $this->handle_duplicated_nav_menu_term( $term );
 				} else {
-					$terms[] = [
-						'id' => [
-							$term['term_id'] => intval( $existed_term['term_id'] ),
-						],
-						// Since we are not creating new term for duplicated once, the slug will be the same
-						'slug' => [
-							$old_slug => $term['slug'],
-						],
+					$terms[ $term['term_id'] ] = [
+						'new_id' => (int) $existed_term['term_id'],
+						'old_slug' => $old_slug,
+						'new_slug' => $term['slug'],
 					];
 					continue;
 				}
 			}
 
-			// If a term has a parent we already imported it since the terms are ordered with no child before parent.
-			$parent = $term['parent'];
-			if ( 0 !== $parent && ! empty( $terms[ $parent ] ) ) {
-				$parent_term = term_exists( $term[ $terms[ $parent ] ], $term['taxonomy'] );
-
-				if ( isset( $parent_term['term_id'] ) ) {
-					$parent = $parent_term['term_id'];
-				} else {
-					$parent = 0;
-				}
-			} else {
-				$parent = 0;
-			}
+			$parent = $this->get_term_parent( $term, $terms );
 
 			$args = [
 				'slug' => $term['slug'],
@@ -120,16 +112,12 @@ class Taxonomies extends Runner_Base {
 				'parent' => (int) $parent,
 			];
 
-			$id = wp_insert_term( wp_slash( $term['name'] ), $term['taxonomy'], $args );
-			if ( ! is_wp_error( $id ) ) {
-				$terms[] = [
-					'id' => [
-						$term['term_id'] => $id['term_id'],
-					],
-					// Since we are not creating new term for duplicated once, the slug will be the same
-					'slug' => [
-						$old_slug => $term['slug'],
-					],
+			$new_term = wp_insert_term( wp_slash( $term['name'] ), $term['taxonomy'], $args );
+			if ( ! is_wp_error( $new_term ) ) {
+				$terms[ $term['term_id'] ] = [
+					'new_id' => (int) $new_term['term_id'],
+					'old_slug' => $old_slug,
+					'new_slug' => $term['slug'],
 				];
 			}
 		}
@@ -152,24 +140,20 @@ class Taxonomies extends Runner_Base {
 		return $term;
 	}
 
-	public function export( $data ) {
-		$wp_native_post_types = [ 'post', 'page', 'nav_menu_item' ];
-		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
-		$post_types = array_merge( $wp_native_post_types, $selected_custom_post_types );
+	private function get_term_parent( $term, array $imported_terms ) {
+		$parent = $term['parent'];
+		if ( 0 !== $parent && ! empty( $imported_terms[ $parent ] ) ) {
+			$parent_term = term_exists( $term[ $imported_terms[ $parent ]['new_id'] ], $term['taxonomy'] );
 
-		$export = $this->export_taxonomies( $post_types );
+			if ( isset( $parent_term['term_id'] ) ) {
+				return $parent_term['term_id'];
+			}
+		}
 
-		$manifest_data['taxonomies'] = $export['manifest'];
-
-		return [
-			'files' => $export['files'],
-			'manifest' => [
-				$manifest_data,
-			],
-		];
+		return 0;
 	}
 
-	private function export_taxonomies( $post_types ) {
+	private function export_taxonomies( array $post_types ) {
 		$files = [];
 		$manifest = [];
 
@@ -212,22 +196,14 @@ class Taxonomies extends Runner_Base {
 			'get' => 'all',
 		] );
 
-		$ordered_terms = [];
-
-		// Put terms in order with no child going before its parent.
-		while ( $t = array_shift( $terms ) ) {
-			if ( 0 == $t->parent || isset( $ordered_terms[ $t->parent ] ) ) {
-				$ordered_terms[ $t->term_id ] = $t;
-			} else {
-				$terms[] = $t;
-			}
-		}
+		$ordered_terms = $this->order_terms( $terms );
 
 		if ( empty( $ordered_terms ) ) {
 			return [];
 		}
 
 		$data = [];
+
 		foreach ( $ordered_terms as $term ) {
 			$data[] = [
 				'term_id' => $term->term_id,
@@ -240,5 +216,20 @@ class Taxonomies extends Runner_Base {
 		}
 
 		return $data;
+	}
+
+	// Put terms in order with no child going before its parent.
+	private function order_terms( array $terms ) {
+		$ordered_terms = [];
+
+		while ( $t = array_shift( $terms ) ) {
+			if ( 0 === $t->parent || isset( $ordered_terms[ $t->parent ] ) ) {
+				$ordered_terms[ $t->term_id ] = $t;
+			} else {
+				$terms[] = $t;
+			}
+		}
+
+		return $ordered_terms;
 	}
 }

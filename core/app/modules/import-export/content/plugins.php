@@ -4,6 +4,7 @@ namespace Elementor\Core\App\Modules\ImportExport\Content;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Plugins_Manager;
+use Elementor\Core\Utils\Str;
 
 class Plugins extends Runner_Base {
 
@@ -20,44 +21,28 @@ class Plugins extends Runner_Base {
 		}
 	}
 
-	public function should_import( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'plugins', $data['include'], true ) ) {
-			return false;
-		}
-
-		if ( ! is_array( $data['selected_plugins'] ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_import( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'plugins', $data['include'], true )
+			&& is_array( $data['selected_plugins'] )
+		);
 	}
 
-	public function should_export( $data ) {
-		if ( ! isset( $data['include'] ) ) {
-			return false;
-		}
-
-		if ( ! in_array( 'plugins', $data['include'], true ) ) {
-			return false;
-		}
-
-		if ( ! is_array( $data['selected_plugins'] ) ) {
-			return false;
-		}
-
-		return true;
+	public function should_export( array $data ) {
+		return (
+			isset( $data['include'] )
+			&& in_array( 'plugins', $data['include'], true )
+			&& is_array( $data['selected_plugins'] )
+		);
 	}
 
-	public function import( $data, $imported_data ) {
+	public function import( array $data, array $imported_data ) {
 		$plugins = $data['selected_plugins'];
 
 		$plugins_collection = ( new Collection( $plugins ) )
 			->map( function ( $item ) {
-				if ( ! $this->ends_with( $item['plugin'], '.php' ) ) {
+				if ( ! Str::ends_with( $item['plugin'], '.php' ) ) {
 					$item['plugin'] .= '.php';
 				}
 				return $item;
@@ -69,12 +54,12 @@ class Plugins extends Runner_Base {
 			} )
 			->all();
 
-		$install = $this->plugins_manager->install( $slugs );
-		$activate = $this->plugins_manager->activate( $install['succeeded'] );
+		$installed = $this->plugins_manager->install( $slugs );
+		$activated = $this->plugins_manager->activate( $installed['succeeded'] );
 
 		$ordered_activated_plugins = $plugins_collection
-			->filter( function ( $item ) use ( $activate ) {
-				return in_array( $item['plugin'], $activate['succeeded'], true );
+			->filter( function ( $item ) use ( $activated ) {
+				return in_array( $item['plugin'], $activated['succeeded'], true );
 			} )
 			->map( function ( $item ) {
 				return $item['name'];
@@ -82,10 +67,11 @@ class Plugins extends Runner_Base {
 			->all();
 
 		$result['plugins'] = $ordered_activated_plugins;
+
 		return $result;
 	}
 
-	public function export( $data ) {
+	public function export( array $data ) {
 		$manifest_data['plugins'] = $data['selected_plugins'];
 
 		return [
@@ -93,13 +79,5 @@ class Plugins extends Runner_Base {
 				$manifest_data,
 			],
 		];
-	}
-
-	/**
-	 * Helpers
-	 */
-
-	private function ends_with( $haystack, $needle ) {
-		return substr( $haystack, -strlen( $needle ) ) === $needle;
 	}
 }

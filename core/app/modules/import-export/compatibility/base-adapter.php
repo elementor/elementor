@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base_Adapter extends Base_Object {
+abstract class Base_Adapter {
 
 	/**
 	 * @param array $manifest_data

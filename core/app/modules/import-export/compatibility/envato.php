@@ -20,11 +20,12 @@ class Envato extends Base_Adapter {
 		$manifest_data['templates'] = [];
 
 		foreach ( $templates as $template ) {
-			// Envato store their global kit styles as a 'global.json' template file, this needs to be converted to 'site-settings.json' file
+			// Envato store their global kit styles as a 'global.json' template file.
+			// We need to be able to know the path to this specifc 'global.json' since it functions as the site-settings.json
 			$is_global = ! empty( $template['metadata']['template_type'] ) && 'global-styles' === $template['metadata']['template_type'];
 			if ( $is_global ) {
-				// Adding the path of the template that Envato using for storing the site settings.
-				$manifest_data['envato-template-site-settings'] = $template['source'];
+				// Adding the path of the 'global.json' template to the manifest which will be used in the future.
+				$manifest_data['path-to-envto-site-settings'] = $template['source'];
 
 				// Getting the site-settings because Envato stores them in one of the posts.
 				$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -40,6 +41,7 @@ class Envato extends Base_Adapter {
 
 			// Evanto uses for "name" instead of "title"
 			$template['title'] = $template['name'];
+
 			// Envato specifying an exact path to the template rather than using its "ID" as an index.
 			// This extracts the "file name" part out of our exact source list and we treat that as an ID.
 			$file_name_without_extension = str_replace( '.json', '', basename( $template['source'] ) );
@@ -52,13 +54,15 @@ class Envato extends Base_Adapter {
 	}
 
 	public function adapt_site_settings( array $site_settings, array $manifest_data, $path ) {
-		if ( empty( $manifest_data['envato-template-site-settings'] ) ) {
+		if ( empty( $manifest_data['path-to-envto-site-settings'] ) ) {
 			return $site_settings;
 		}
 
-		$global_file_data = ImportExportUtils::read_json_file( $path . str_replace( '.json', '', $manifest_data['envato-template-site-settings'] ) );
+		$global_file_data = ImportExportUtils::read_json_file( $path );
 
-		return [ 'settings' => $global_file_data['page_settings'] ];
+		return [
+			'settings' => $global_file_data['page_settings'],
+		];
 	}
 
 	public function adapt_template( array $template_data, array $template_settings ) {

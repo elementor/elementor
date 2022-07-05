@@ -13,7 +13,7 @@ use Elementor\Core\App\Modules\ImportExport\Content\Templates;
 use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
 use Elementor\Plugin;
 class Import {
-	const NATIVE_WP_POST_TYPES = [ 'post', 'page', 'nav_menu_item' ];
+	const BUILTIN_WP_POST_TYPES = [ 'post', 'page', 'nav_menu_item' ];
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 	const MISSING_TMP_FOLDER_ERROR_KEY = 'missing-tmp-folder-error';
 
@@ -279,7 +279,7 @@ class Import {
 			return [];
 		}
 		$manifest_post_types = array_keys( $this->manifest['wp-content'] );
-		$custom_post_types = array_diff( $manifest_post_types, self::NATIVE_WP_POST_TYPES );
+		$custom_post_types = array_diff( $manifest_post_types, self::BUILTIN_WP_POST_TYPES );
 
 		foreach ( $custom_post_types as $post_type ) {
 			if ( empty( $this->manifest['wp-content'][ $post_type ]['label_plural'] ) ) {
