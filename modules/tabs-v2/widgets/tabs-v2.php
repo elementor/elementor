@@ -8,6 +8,7 @@ use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Text_Stroke;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
@@ -454,14 +455,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'separator' => 'before',
 		] );
 
-		$this->add_control( 'tab_color', [
-			'label' => esc_html__( 'Color', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}};',
-			],
-		] );
-
 		$this->add_control( 'tab_active_color', [
 			'label' => esc_html__( 'Active Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
@@ -470,67 +463,142 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_group_control( Group_Control_Typography::get_type(), [
-			'name' => 'tab_typography',
-			'fields_options' => [
-				'font_family' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family: "{{VALUE}}";',
-					],
-				],
-				'font_size' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'font_weight' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight: {{VALUE}};',
-					],
-				],
-				'text_transform' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform: {{VALUE}};',
-					],
-				],
-				'font_style' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style: {{VALUE}};',
-					],
-				],
-				'text_decoration' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration: {{VALUE}};',
-					],
-				],
-				'line_height' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'letter_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'word_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-			],
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'section_title_style', [
+			'label' => esc_html__( 'Titles', 'elementor' ),
+			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
-		$this->add_group_control( Group_Control_Text_Shadow::get_type(), [
-			'name' => 'title_shadow',
-			'fields_options' => [
-				'text_shadow' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
-					],
-				],
+		$this->start_controls_tabs( 'title_style' );
+
+		$this->start_controls_tab(
+			'title_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control( Group_Control_Typography::get_type(), [
+			'name' => 'title_typography',
+			'global' => [
+				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
+			'selector' => '{{WRAPPER}} .elementor-tab-title',
 		] );
+
+		$this->add_control(
+			'title_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_text_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'title_text_stroke',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'title_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control( Group_Control_Typography::get_type(), [
+			'name' => 'title_typography_hover',
+			'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+		] );
+
+		$this->add_control(
+			'title_text_color_hover',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-color-hover: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_text_shadow_hover',
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'title_text_stroke_hover',
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'title_active',
+			[
+				'label' => esc_html__( 'Active', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control( Group_Control_Typography::get_type(), [
+			'name' => 'title_typography_active',
+			'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+		] );
+
+		$this->add_control(
+			'title_text_color_active',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-color-active: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_text_shadow_active',
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'title_text_stroke_active',
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 

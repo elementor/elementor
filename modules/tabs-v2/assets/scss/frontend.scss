@@ -25,7 +25,7 @@
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-title-background-color: #{$editor-background-light};
-	--tabs-v2-title-active-color: #{$white};
+	--tabs-v2-title-color-active: #{$white};
 	--tabs-v2-title-active-background-color: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 
 	--tabs-v2-title-alignment: center;
@@ -35,17 +35,6 @@
 	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
-
-	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
-	--tabs-v2-title-typography-font-size: initial;
-	--tabs-v2-title-typography-font-weight: var( --e-global-typography-primary-font-weight );
-	--tabs-v2-title-typography-text-transform: initial;
-	--tabs-v2-title-typography-font-style: initial;
-	--tabs-v2-title-typography-text-decoration: initial;
-	--tabs-v2-title-typography-line-height: initial;
-	--tabs-v2-title-typography-letter-spacing: initial;
-	--tabs-v2-title-typography-word-spacing: initial;
-	--tabs-v2-title-shadow: none;
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-icon-active-color: #{$white};
@@ -87,18 +76,15 @@
 			padding-right: var( --tabs-v2-title-padding-right );
 			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
 			padding-left: var( --tabs-v2-title-padding-left );
-			font-family: var( --tabs-v2-title-typography-font-family );
-			font-size: var( --tabs-v2-title-typography-font-size );
-			font-weight: var( --tabs-v2-title-typography-font-weight );
-			text-transform: var( --tabs-v2-title-typography-text-transform );
-			font-style: var( --tabs-v2-title-typography-font-style );
-			text-decoration: var( --tabs-v2-title-typography-text-decoration );
-			line-height: var( --tabs-v2-title-typography-line-height );
-			letter-spacing: var( --tabs-v2-title-typography-letter-spacing );
-			word-spacing: var( --tabs-v2-title-typography-word-spacing );
-			text-shadow: var( --tabs-v2-title-shadow );
 			text-align: var( --tabs-v2-title-alignment );
 			flex-grow: var( --tabs-v2-title-grow );
+			border-radius: var( --tabs-v2-title-border-radius );
+			transition: all var( --tabs-v2-title-transition );
+
+			&:hover {
+				color: var( --tabs-v2-title-color-hover, var( --tabs-v2-title-color ) );
+				transition: all var( --tabs-v2-title-transition );
+			}
 
 			.elementor-tab-icon {
 				display: unset;
@@ -117,7 +103,7 @@
 			}
 
 			&.elementor-active {
-				color: var( --tabs-v2-title-active-color );
+				color: var( --tabs-v2-title-color-active );
 				background-color: var( --tabs-v2-title-active-background-color );
 
 				.elementor-tab-icon {
