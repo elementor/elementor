@@ -25,6 +25,7 @@
 	--tabs-v2-title-background-color: #{$editor-background-light};
 	--tabs-v2-title-color-active: #{$white};
 	--tabs-v2-title-background-color-active: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
+	--tabs-v2-title-width: 100%;
 
 	--tabs-v2-title-justify-content: center;
 	--tabs-v2-title-align-items: center;
@@ -37,16 +38,6 @@
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
 	--tabs-v2-title-border-radius: initial;
 	--tabs-v2-title-transition: 0.3s;
-
-	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
-	--tabs-v2-title-typography-font-size: initial;
-	--tabs-v2-title-typography-font-weight: var( --e-global-typography-primary-font-weight );
-	--tabs-v2-title-typography-text-transform: initial;
-	--tabs-v2-title-typography-font-style: initial;
-	--tabs-v2-title-typography-text-decoration: initial;
-	--tabs-v2-title-typography-line-height: initial;
-	--tabs-v2-title-typography-letter-spacing: initial;
-	--tabs-v2-title-typography-word-spacing: initial;
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-icon-color-hover: var( --tabs-v2-title-color-hover );
@@ -92,7 +83,7 @@
 			border-width: var( --tabs-v2-border-width );
 			position: relative;
 			cursor: pointer;
-			outline: var( --focus-outline, none );
+			outline: none;
 			padding-top: var( --tabs-v2-title-padding-top );
 			padding-right: var( --tabs-v2-title-padding-right );
 			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
@@ -127,6 +118,7 @@
 			}
 
 			.elementor-tab-icon {
+				display: flex;
 
 				> i {
 					color: var( --tabs-v2-icon-color );
@@ -138,7 +130,6 @@
 
 				&,
 				&-active {
-					display: flex;
 
 					> i {
 						font-size: var( --tabs-v2-icon-size );
@@ -171,7 +162,7 @@
 					display: none;
 
 					&-active {
-						display: unset;
+						display: flex;
 					}
 				}
 			}

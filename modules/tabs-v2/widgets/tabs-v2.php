@@ -663,7 +663,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'selector' => '{{WRAPPER}} .elementor-tab-title',
+			'selector' => '{{WRAPPER}} .e-tab-title-text',
 		] );
 
 		$this->add_control(
@@ -704,7 +704,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography_hover',
-			'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			'selector' => '{{WRAPPER}}  .e-tab-title-text:hover',
 		] );
 
 		$this->add_control(
@@ -745,7 +745,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography_active',
-			'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			'selector' => '{{WRAPPER}} .elementor-active .e-tab-title-text',
 		] );
 
 		$this->add_control(
