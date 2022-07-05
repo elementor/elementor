@@ -100,6 +100,7 @@ module.exports = {
 				ignoreConsecutiveComments: true,
 			},
 		],
+		'spaced-comment': [ 'error', 'always', { markers: [ '!' ] } ],
 	},
     settings: {
         jsdoc: {
