@@ -1,4 +1,4 @@
-class Module extends elementorModules.editor.utils.Module {
+export default class NotesModule extends elementorModules.editor.utils.Module {
 	onInit() {
 		this.contextMenuNotesGroup();
 	}
@@ -43,5 +43,3 @@ class Module extends elementorModules.editor.utils.Module {
 		return groups;
 	}
 }
-
-new Module();
