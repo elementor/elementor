@@ -30,7 +30,7 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 		// If some of the parents are supporting nested elements, then return true.
 		const allParents = args.view.container.getParentAncestry(),
 			result = allParents.some( ( parent ) =>
-				isWidgetSupportNesting( parent.model.get( 'widgetType' ) )
+				isWidgetSupportNesting( parent.model.get( 'widgetType' ) ),
 			);
 
 		if ( result ) {
