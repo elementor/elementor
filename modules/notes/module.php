@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Notes;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -29,7 +30,14 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Initialize the Container-Converter module.
+	 * @return bool
+	 */
+	public static function is_active() {
+		return ! Utils::has_pro();
+	}
+
+	/**
+	 * Initialize the Notes module.
 	 *
 	 * @return void
 	 */

@@ -21,19 +21,19 @@ class Module extends elementorModules.editor.utils.Module {
 	 */
 	contextMenuAddGroup( groups ) {
 		const deleteGroup = _.findWhere( groups, { name: 'delete' } );
-		let afterGroupIndex = groups.indexOf( deleteGroup );
+		let deleteGroupIndex = groups.indexOf( deleteGroup );
 
-		if ( -1 === afterGroupIndex ) {
-			afterGroupIndex = groups.length;
+		if ( -1 === deleteGroupIndex ) {
+			deleteGroupIndex = groups.length;
 		}
 
-		groups.splice( afterGroupIndex, 0, {
+		groups.splice( deleteGroupIndex, 0, {
 			name: 'notes',
 			actions: [
 				{
 					name: 'open_notes',
 					title: __( 'Notes', 'elementor' ),
-					shortcut: '<i class="eicon-pro-icon" />',
+					shortcut: '<i class="eicon-pro-icon"></i>',
 					isEnabled: () => false,
 					callback: () => {},
 				},
