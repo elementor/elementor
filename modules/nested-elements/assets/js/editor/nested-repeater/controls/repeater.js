@@ -1,6 +1,3 @@
-/**
- * @extends ControlRepeaterItemView
- */
 export default class Repeater extends elementor.modules.controls.Repeater {
 	className() {
 		// Repeater Panel CSS, depends on 'elementor-control-type-repeater` control.
@@ -9,8 +6,9 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 	}
 
 	/**
-	 * @inheritDoc
 	 * Override to avoid the default behavior to adjust the title of the row.
+	 *
+	 * @return {Object}
 	 */
 	getDefaults() {
 		const component = $e.components.get( 'nested-elements/nested-repeater' ),

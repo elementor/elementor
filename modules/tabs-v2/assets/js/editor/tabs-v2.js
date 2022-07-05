@@ -1,9 +1,6 @@
 import View from './views/view';
 import EmptyView from './views/empty';
 
-/**
- * @extends {WidgetBase}
- */
 export class TabsV2 extends elementor.modules.elements.types.Base {
 	getType() {
 		return 'tabs-v2';

@@ -41,7 +41,7 @@ export class NestedRepeaterCreateContainer extends Base {
 
 				// Remove id from elements recursively.
 				modelExtras.elements = duplicatedContainer.model.toJSON().elements.map(
-					( element ) => removeIdCallback( element )
+					( element ) => removeIdCallback( element ),
 				);
 
 				modelExtras._title = duplicatedContainer.model.getSetting( '_title' );

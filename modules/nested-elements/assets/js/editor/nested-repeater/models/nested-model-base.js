@@ -1,6 +1,3 @@
-/**
- * @extends {ElementModel}
- */
 export default class NestedModelBase extends elementor.modules.elements.models.Element {
 	initialize( options ) {
 		this.config = elementor.widgetsCache[ options.widgetType ];
