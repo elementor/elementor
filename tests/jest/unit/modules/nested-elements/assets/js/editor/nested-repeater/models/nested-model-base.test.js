@@ -35,6 +35,7 @@ describe( 'NestedModelBase', () => {
 	test( 'isValidChild() -- Sanity', () => {
 		// Arrange.
 		childModel.set( 'elType', 'container' );
+		childModel.set( 'isLocked', true );
 
 		nestedModelBase.set( 'elType', 'widget' );
 		nestedModelBase.set( 'widgetType', 'tabs-v2' );
