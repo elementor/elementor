@@ -35,7 +35,7 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 
 		if ( result ) {
 			this.navigationMap = this.getNavigationMapForContainers( allParents.filter(
-				( container ) => 'container' === container.type && 'widget' === container.parent.type
+				( container ) => 'container' === container.type && 'widget' === container.parent.type,
 			) ).filter( ( map ) => {
 				// Filter out paths that are the same as current.
 				return map.index !== map.current;

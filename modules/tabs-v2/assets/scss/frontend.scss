@@ -5,37 +5,38 @@
 	--tabs-v2-color-accent-fallback: #61CE70;
 	--tabs-v2-color-secondary-fallback: #54595F;
 	--tabs-v2-default-padding: 15px;
-
+	--tabs-v2-height: initial;
+	--tabs-v2-overflow-x: hidden;
+	--tabs-v2-overflow-y: auto;
+	--tabs-v2-background-color: transparent;
 	--tabs-v2-display: flex;
 	--tabs-v2-direction: column;
 	--tabs-v2-gap: 10px;
+	--tabs-v2-border-width: 1px;
+	--tabs-v2-border-color: initial;
 
 	--tabs-v2-tabs-wrapper-display: flex;
 	--tabs-v2-tabs-wrapper-direction: row;
 	--tabs-v2-tabs-wrapper-grow: initial;
 	--tabs-v2-tabs-wrapper-justify-content: initial;
-	--tabs-v2-tabs-wrapper-width: initial;
-
-	--tabs-v2-height: initial;
-	--tabs-v2-overflow-x: hidden;
-	--tabs-v2-overflow-y: auto;
-
-	--tabs-v2-border-width: 1px;
-	--tabs-v2-border-color: #{$gray-light};
-	--tabs-v2-background-color: transparent;
+	--tabs-v2-tabs-wrapper-width: initial; 
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-title-background-color: #{$editor-background-light};
-	--tabs-v2-title-active-color: #{$white};
-	--tabs-v2-title-active-background-color: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
+	--tabs-v2-title-color-active: #{$white};
+	--tabs-v2-title-background-color-active: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 
 	--tabs-v2-title-alignment: center;
-	--tabs-v2-title-grow: 1;
+	--tabs-v2-title-align-items: initial;
+	--tabs-v2-title-width: 100%;
+	--tabs-v2-title-height: initial;
 	--tabs-v2-title-gap: 10px;
 	--tabs-v2-title-padding-top: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
 	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
+	--tabs-v2-title-border-radius: initial;
+	--tabs-v2-title-transition: 0.3s;
 
 	--tabs-v2-title-typography-font-family: var( --e-global-typography-accent-font-family, var( --e-global-typography-primary-font-family ) ), Sans-serif;
 	--tabs-v2-title-typography-font-size: initial;
@@ -46,10 +47,9 @@
 	--tabs-v2-title-typography-line-height: initial;
 	--tabs-v2-title-typography-letter-spacing: initial;
 	--tabs-v2-title-typography-word-spacing: initial;
-	--tabs-v2-title-shadow: none;
 
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
-	--tabs-v2-icon-active-color: #{$white};
+	--tabs-v2-icon-color-active: #{$white};
 
 	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
 
@@ -79,26 +79,32 @@
 	.elementor-tab {
 
 		&-title {
+			display: flex;
+			align-items: var( --tabs-v2-title-align-items );
 			color: var( --tabs-v2-title-color );
 			background-color: var( --tabs-v2-title-background-color );
+			border-width: var( --tabs-v2-border-width );
+			position: relative;
 			cursor: pointer;
 			outline: var( --focus-outline, none );
 			padding-top: var( --tabs-v2-title-padding-top );
 			padding-right: var( --tabs-v2-title-padding-right );
 			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
 			padding-left: var( --tabs-v2-title-padding-left );
-			font-family: var( --tabs-v2-title-typography-font-family );
-			font-size: var( --tabs-v2-title-typography-font-size );
-			font-weight: var( --tabs-v2-title-typography-font-weight );
-			text-transform: var( --tabs-v2-title-typography-text-transform );
-			font-style: var( --tabs-v2-title-typography-font-style );
-			text-decoration: var( --tabs-v2-title-typography-text-decoration );
-			line-height: var( --tabs-v2-title-typography-line-height );
-			letter-spacing: var( --tabs-v2-title-typography-letter-spacing );
-			word-spacing: var( --tabs-v2-title-typography-word-spacing );
-			text-shadow: var( --tabs-v2-title-shadow );
 			text-align: var( --tabs-v2-title-alignment );
-			flex-grow: var( --tabs-v2-title-grow );
+			border-radius: var( --tabs-v2-title-border-radius );
+			transition: all var( --tabs-v2-title-transition );
+			height: var( --tabs-v2-title-height );
+			width: var( --tabs-v2-title-width );
+
+			&-text {
+				width: 100%;
+			}
+
+			&:hover {
+				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
+				transition: all var( --tabs-v2-title-transition );
+			}
 
 			.elementor-tab-icon {
 				display: unset;
@@ -117,8 +123,8 @@
 			}
 
 			&.elementor-active {
-				color: var( --tabs-v2-title-active-color );
-				background-color: var( --tabs-v2-title-active-background-color );
+				color: var( --tabs-v2-title-color-active );
+				background-color: var( --tabs-v2-title-background-color-active );
 
 				.elementor-tab-icon {
 					display: none;
@@ -131,9 +137,6 @@
 		}
 	}
 
-	.elementor-tab-title,
-	.elementor-tab-title:before,
-	.elementor-tab-title:after,
 	.e-container,
 	.elementor-tabs-content-wrapper {
 		border: 1px none var( --tabs-v2-border-color );
