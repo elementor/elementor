@@ -418,9 +418,6 @@ class TabsV2 extends Widget_Nested_Base {
 					'max' => 400,
 				],
 			],
-			'default' => [
-				'unit' => 'px',
-			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-gap: {{SIZE}}{{UNIT}}',
@@ -435,9 +432,6 @@ class TabsV2 extends Widget_Nested_Base {
 					'min' => 0,
 					'max' => 400,
 				],
-			],
-			'default' => [
-				'unit' => 'px',
 			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
