@@ -15,7 +15,7 @@ export const PasteStyle = () => {
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', eSimpleButton.view );
 
-		CommonHelper.runShortcut( 86 /* v */, true, true );
+		CommonHelper.runShortcut( 86 /* V */, true, true );
 
 		const done = assert.async();
 

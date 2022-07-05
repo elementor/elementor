@@ -16,7 +16,7 @@ export default class CommandsBackwardsCompatibility extends Module {
 			Deprecation.deprecated(
 				`$e.${ componentName }.on( 'run', ... )`,
 				'3.0.0',
-				`$e.${ componentName }.on( 'run:before', ... )`
+				`$e.${ componentName }.on( 'run:before', ... )`,
 			);
 
 			this.onOrig( 'run:before', callback );

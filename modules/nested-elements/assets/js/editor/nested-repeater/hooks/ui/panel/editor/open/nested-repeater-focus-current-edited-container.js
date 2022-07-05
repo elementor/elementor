@@ -30,12 +30,12 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 		// If some of the parents are supporting nested elements, then return true.
 		const allParents = args.view.container.getParentAncestry(),
 			result = allParents.some( ( parent ) =>
-				isWidgetSupportNesting( parent.model.get( 'widgetType' ) )
+				isWidgetSupportNesting( parent.model.get( 'widgetType' ) ),
 			);
 
 		if ( result ) {
 			this.navigationMap = this.getNavigationMapForContainers( allParents.filter(
-				( container ) => 'container' === container.type && 'widget' === container.parent.type
+				( container ) => 'container' === container.type && 'widget' === container.parent.type,
 			) ).filter( ( map ) => {
 				// Filter out paths that are the same as current.
 				return map.index !== map.current;

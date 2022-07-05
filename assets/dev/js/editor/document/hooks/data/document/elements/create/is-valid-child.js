@@ -14,7 +14,7 @@ export class IsValidChild extends Dependency {
 			modelToCreate = new Backbone.Model( model );
 
 		return containers.some( ( /* Container */ container ) =>
-			container.model.isValidChild( modelToCreate )
+			container.model.isValidChild( modelToCreate ),
 		);
 	}
 }

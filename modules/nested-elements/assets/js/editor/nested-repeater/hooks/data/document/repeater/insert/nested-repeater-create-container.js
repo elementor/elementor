@@ -10,7 +10,7 @@ import { extractNestedItemTitle } from 'elementor/modules/nested-elements/assets
  */
 export class NestedRepeaterCreateContainer extends Base {
 	getId() {
-		return 'nested-repeater-create-container';
+		return 'document/repeater/insert--nested-repeater-create-container';
 	}
 
 	getCommand() {
@@ -19,7 +19,7 @@ export class NestedRepeaterCreateContainer extends Base {
 
 	getConditions( args ) {
 		// Will only handle when command called directly and not through another command like `duplicate` or `move`.
-		const isCommandCalledDirectly = $e.commands.isCurrentFirstTrace( 'document/repeater/insert' );
+		const isCommandCalledDirectly = $e.commands.isCurrentFirstTrace( this.getCommand() );
 
 		return super.getConditions( args ) && isCommandCalledDirectly;
 	}

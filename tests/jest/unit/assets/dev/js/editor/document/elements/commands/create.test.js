@@ -73,7 +73,7 @@ describe( "$e.run( 'document/elements/create' )", () => {
 					settings: {},
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.
@@ -125,7 +125,7 @@ describe( "$e.run( 'document/elements/create' )", () => {
 					settings: {},
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Populate another document.
@@ -137,7 +137,7 @@ describe( "$e.run( 'document/elements/create' )", () => {
 					settings: {},
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.

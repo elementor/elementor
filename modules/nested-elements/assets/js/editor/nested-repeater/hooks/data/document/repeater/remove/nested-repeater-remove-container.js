@@ -1,12 +1,12 @@
 import Base from '../../../base';
-import { findChildContainerOrFaild } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 /**
  * Hook responsible for removing container element for the removed repeater item.
  */
 export class NestedRepeaterRemoveContainer extends Base {
 	getId() {
-		return 'nested-elements-remove-container';
+		return 'document/repeater/remove--nested-elements-remove-container';
 	}
 
 	getCommand() {
@@ -15,14 +15,14 @@ export class NestedRepeaterRemoveContainer extends Base {
 
 	getConditions( args ) {
 		// Will only handle when command called directly and not through another command like `duplicate` or `move`.
-		const isCommandCalledDirectly = $e.commands.isCurrentFirstTrace( 'document/repeater/remove' );
+		const isCommandCalledDirectly = $e.commands.isCurrentFirstTrace( this.getCommand() );
 
 		return super.getConditions( args ) && isCommandCalledDirectly;
 	}
 
 	apply( { container, index } ) {
 		$e.run( 'document/elements/delete', {
-			container: findChildContainerOrFaild( container, index ),
+			container: findChildContainerOrFail( container, index ),
 			force: true,
 		} );
 	}

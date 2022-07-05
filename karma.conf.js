@@ -85,10 +85,10 @@ module.exports = function( config ) {
 		coverageIstanbulReporter: {
 			reports: [ 'text' ],
 			fixWebpackSourcePaths: true,
-			// enforce percentage thresholds
+			// Enforce percentage thresholds
 			// anything under these percentages will cause karma to fail with an exit code of 1 if not running in watch mode
 			thresholds: {
-				emitWarning: false, // set to `true` to not fail the test command when thresholds are not met
+				emitWarning: false, // Set to `true` to not fail the test command when thresholds are not met
 				// thresholds for all files
 				global: {
 					statements: 50, /* TEMP: initial value */
@@ -98,7 +98,7 @@ module.exports = function( config ) {
 				},
 			},
 		},
-		// web server port
+		// Web server port
 		port: 9876,
 		colors: true,
 		logLevel: config.LOG_INFO,
@@ -115,7 +115,7 @@ module.exports = function( config ) {
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true,
 
-		// client configuration
+		// Client configuration
 		client: {
 			clearContext: true,
 			qunit: {

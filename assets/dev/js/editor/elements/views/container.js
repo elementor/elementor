@@ -13,22 +13,22 @@ const ContainerView = BaseElementView.extend( {
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',
 
-	className: function() {
+	className() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
 	},
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			emptyViewOwner: this,
 		};
 	},
 
-	tagName: function() {
+	tagName() {
 		return this.model.getSetting( 'html_tag' ) || 'div';
 	},
 
 	// TODO: Copied from `views/column.js`.
-	ui: function() {
+	ui() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
@@ -44,7 +44,7 @@ const ContainerView = BaseElementView.extend( {
 		};
 	},
 
-	behaviors: function() {
+	behaviors() {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
@@ -61,7 +61,7 @@ const ContainerView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/container/behaviors', behaviors, this );
 	},
 
-	initialize: function() {
+	initialize() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
@@ -70,9 +70,9 @@ const ContainerView = BaseElementView.extend( {
 	/**
 	 * TODO: Remove. It's a temporary solution for the Navigator sortable.
 	 *
-	 * @return {{}}
+	 * @return {{}} options
 	 */
-	getSortableOptions: function() {
+	getSortableOptions() {
 		// TODO: Temporary hack.
 		return {
 			preventInit: true,
@@ -83,9 +83,9 @@ const ContainerView = BaseElementView.extend( {
 	 * Get the Container nesting level recursively.
 	 * The farthest parent Container is level 0.
 	 *
-	 * @return {number}
+	 * @return {number} nesting level
 	 */
-	getNestingLevel: function() {
+	getNestingLevel() {
 		// Use the memoized value if present, to prevent too many calculations.
 		if ( this.nestingLevel ) {
 			return this.nestingLevel;
@@ -101,7 +101,7 @@ const ContainerView = BaseElementView.extend( {
 		return parent.view.getNestingLevel() + 1;
 	},
 
-	getDroppableAxis: function() {
+	getDroppableAxis() {
 		const isColumnDefault = ( ContainerHelper.DIRECTION_DEFAULT === ContainerHelper.DIRECTION_COLUMN ),
 			currentDirection = this.getContainer().settings.get( 'flex_direction' );
 
@@ -116,7 +116,7 @@ const ContainerView = BaseElementView.extend( {
 		return axisMap[ currentDirection ];
 	},
 
-	getDroppableOptions: function() {
+	getDroppableOptions() {
 		return {
 			axis: this.getDroppableAxis(),
 			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
@@ -177,7 +177,7 @@ const ContainerView = BaseElementView.extend( {
 	/**
 	 * Save container as a template.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	saveAsTemplate() {
 		$e.route( 'library/save-template', {
@@ -187,9 +187,10 @@ const ContainerView = BaseElementView.extend( {
 
 	/**
 	 * Insert a new container inside an existing container.
+	 *
 	 * @since 3.7.0
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	addNewContainer() {
 		/* Check if the current container has a parent container */
@@ -207,10 +208,10 @@ const ContainerView = BaseElementView.extend( {
 	/**
 	 * Add a `Save as Template` button to the context menu.
 	 *
-	 * @return {object}
+	 * @return {Object} groups
 	 *
 	 */
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) ),
 			transferGroupGeneralIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
@@ -241,7 +242,7 @@ const ContainerView = BaseElementView.extend( {
 		return groups;
 	},
 
-	isDroppingAllowed: function() {
+	isDroppingAllowed() {
 		// Don't allow dragging items to document which is not editable.
 		if ( ! this.getContainer().isEditable() ) {
 			return false;
@@ -261,38 +262,38 @@ const ContainerView = BaseElementView.extend( {
 	/**
 	 * Determine if the current container is a nested container.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is a nested container
 	 */
-	isNested: function() {
+	isNested() {
 		return 'document' !== this.getContainer().parent.model.get( 'elType' );
 	},
 
-	getEditButtons: function() {
+	getEditButtons() {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
 		editTools.add = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 			icon: 'plus',
 		};
 
 		editTools.edit = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'handle',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element Name. */
+				/* Translators: %s: Element Name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 		}
 
 		editTools.remove = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
 			icon: 'close',
 		};
@@ -303,10 +304,10 @@ const ContainerView = BaseElementView.extend( {
 	/**
 	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 *
 	 */
-	onAddButtonClick: function() {
+	onAddButtonClick() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.fadeToDeath();
 
@@ -334,7 +335,7 @@ const ContainerView = BaseElementView.extend( {
 		this.addSectionView = addSectionView;
 	},
 
-	onRender: function() {
+	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		// Defer to wait for everything to render.
@@ -346,26 +347,26 @@ const ContainerView = BaseElementView.extend( {
 		} );
 	},
 
-	renderOnChange: function( settings ) {
+	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		// Re-initialize the droppable in order to make sure the axis works properly.
-		if ( !! settings.changed.flex_direction ) {
+		if ( settings.changed.flex_direction ) {
 			this.$el.html5Droppable( 'destroy' );
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		}
 	},
 
-	onDragStart: function() {
+	onDragStart() {
 		this.$el.html5Droppable( 'destroy' );
 	},
 
-	onDragEnd: function() {
+	onDragEnd() {
 		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 
 	// TODO: Copied from `views/column.js`.
-	attachElContent: function() {
+	attachElContent() {
 		BaseElementView.prototype.attachElContent.apply( this, arguments );
 
 		const $tooltip = jQuery( '<div>', {
@@ -377,7 +378,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	// TODO: Copied from `views/column.js`.
-	getPercentSize: function( size ) {
+	getPercentSize( size ) {
 		if ( ! size ) {
 			size = this.el.getBoundingClientRect().width;
 		}
@@ -386,26 +387,26 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	// TODO: Copied from `views/column.js`.
-	getPercentsForDisplay: function() {
+	getPercentsForDisplay() {
 		const width = +this.model.getSetting( 'width' ) || this.getPercentSize();
 
 		return width.toFixed( 1 ) + '%';
 	},
 
-	onResizeStart: function() {
+	onResizeStart() {
 		if ( this.ui.percentsTooltip ) {
 			this.ui.percentsTooltip.show();
 		}
 	},
 
-	onResize: function() {
+	onResize() {
 		// TODO: Copied from `views/column.js`.
 		if ( this.ui.percentsTooltip ) {
 			this.ui.percentsTooltip.text( this.getPercentsForDisplay() );
 		}
 	},
 
-	onResizeStop: function() {
+	onResizeStop() {
 		if ( this.ui.percentsTooltip ) {
 			this.ui.percentsTooltip.hide();
 		}

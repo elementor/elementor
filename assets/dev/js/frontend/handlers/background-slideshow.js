@@ -50,6 +50,8 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				break;
 			case 'slide_down':
 				swiperOptions.autoplay.reverseDirection = true;
+				swiperOptions.direction = 'vertical';
+				break;
 			case 'slide_up':
 				swiperOptions.direction = 'vertical';
 				break;

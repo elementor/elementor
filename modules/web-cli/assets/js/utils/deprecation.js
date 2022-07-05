@@ -1,6 +1,13 @@
 import Console from 'elementor-api/utils/console';
 
 // Copied from `modules/dev-tools/assets/js/deprecation.js`
+/**
+ * @typedef {Object} Version
+ * @property {number} major1 The first number
+ * @property {number} major2 The second number
+ * @property {number} minor  The third number
+ * @property {string} build  The fourth number
+ */
 
 const softDeprecated = ( name, version, replacement ) => {
 	if ( elementorWebCliConfig.isDebug ) {

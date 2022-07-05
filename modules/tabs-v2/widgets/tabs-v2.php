@@ -4,13 +4,19 @@ namespace Elementor\Modules\TabsV2\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Text_Stroke;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -48,6 +54,12 @@ class TabsV2 extends Widget_Nested_Base {
 					'_title' => __( 'Tab #2', 'elementor' ),
 				],
 			],
+			[
+				'elType' => 'container',
+				'settings' => [
+					'_title' => __( 'Tab #3', 'elementor' ),
+				],
+			],
 		];
 	}
 
@@ -68,6 +80,9 @@ class TabsV2 extends Widget_Nested_Base {
 	}
 
 	protected function register_controls() {
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
 		] );
@@ -136,29 +151,53 @@ class TabsV2 extends Widget_Nested_Base {
 				[
 					'tab_title' => esc_html__( 'Tab #2', 'elementor' ),
 				],
+				[
+					'tab_title' => esc_html__( 'Tab #3', 'elementor' ),
+				],
 			],
 			'title_field' => '{{{ tab_title }}}',
 		] );
 
-		$this->add_control( 'position', [
+		$this->add_responsive_control( 'tabs_position', [
 			'label' => esc_html__( 'Position', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'default' => 'horizontal',
-			'options' => [
-				'horizontal' => esc_html__( 'Horizontal', 'elementor' ),
-				'vertical' => esc_html__( 'Vertical', 'elementor' ),
-			],
-			'prefix_class' => 'elementor-tabs-view-',
-			'separator' => 'before',
-		] );
-
-		$this->add_control( 'tabs_align_horizontal', [
-			'label' => esc_html__( 'Alignment', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'' => [
+				'top' => [
+					'title' => esc_html__( 'Top', 'elementor' ),
+					'icon' => 'eicon-v-align-top',
+				],
+				'bottom' => [
+					'title' => esc_html__( 'Bottom', 'elementor' ),
+					'icon' => 'eicon-v-align-bottom',
+				],
+				'end' => [
+					'title' => esc_html__( 'Right', 'elementor' ),
+					'icon' => 'eicon-h-align-' . $end,
+				],
+				'start' => [
+					'title' => esc_html__( 'Left', 'elementor' ),
+					'icon' => 'eicon-h-align-' . $start,
+				],
+			],
+			'separator' => 'before',
+			'selectors_dictionary' => [
+				'top' => '--tabs-v2-direction: column; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
+				'bottom' => '--tabs-v2-direction: column-reverse; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
+				'end' => '--tabs-v2-direction: row-reverse; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial; --tabs-v2-tabs-wrapper-width: 240px;',
+				'start' => '--tabs-v2-direction: row; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial; --tabs-v2-tabs-wrapper-width: 240px;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+		] );
+
+		$this->add_responsive_control( 'tabs_location_horizontal', [
+			'label' => esc_html__( 'Tabs Location', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => 'eicon-h-align-left',
+					'icon' => 'eicon-flex eicon-align-start-h',
 				],
 				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
@@ -166,7 +205,7 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => 'eicon-h-align-right',
+					'icon' => 'eicon-flex eicon-align-end-h',
 				],
 				'stretch' => [
 					'title' => esc_html__( 'Justified', 'elementor' ),
@@ -174,27 +213,30 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'' => '',
-				'center' => '--tabs-v2-wrapper-display: flex; --tabs-v2-wrapper-justify-content: center',
-				'end' => '--tabs-v2-wrapper-display: flex; --tabs-v2-wrapper-justify-content: flex-end',
-				'stretch' => '--tabs-v2-wrapper-display: flex; --tabs-v2-wrapper-justify-content: stretch; --tabs-v2-wrapper-title-size: 100%;',
+				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1; --tabs-v2-title-width: 100%; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
-			'prefix_class' => 'elementor-tabs-alignment-',
 			'condition' => [
-				'position' => 'horizontal',
+				'tabs_position' => [
+					'',
+					'top',
+					'bottom',
+				],
 			],
 		] );
 
-		$this->add_control( 'tabs_align_vertical', [
-			'label' => esc_html__( 'Alignment', 'elementor' ),
+		$this->add_responsive_control( 'tabs_location_vertical', [
+			'label' => esc_html__( 'Tabs Location', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'' => [
+				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => 'eicon-v-align-top',
+					'icon' => 'eicon-flex eicon-align-start-v',
 				],
 				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
@@ -202,18 +244,163 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => 'eicon-v-align-bottom',
+					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
 					'title' => esc_html__( 'Justified', 'elementor' ),
 					'icon' => 'eicon-v-align-stretch',
 				],
 			],
-			'prefix_class' => 'elementor-tabs-alignment-',
+			'selectors_dictionary' => [
+				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1; --tabs-v2-title-width: initial; --tabs-v2-title-height: 100%; --tabs-v2-title-align-items: center;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
 			'condition' => [
-				'position' => 'vertical',
+				'tabs_position' => [
+					'start',
+					'end',
+				],
 			],
 		] );
+
+		$this->add_responsive_control( 'tabs_width', [
+			'label' => esc_html__( 'Tabs Width', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'%' => [
+					'min' => 10,
+					'max' => 50,
+				],
+				'px' => [
+					'min' => 20,
+					'max' => 600,
+				],
+			],
+			'default' => [
+				'unit' => '%',
+			],
+			'size_units' => [ '%', 'px' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-tabs-wrapper-width: {{SIZE}}{{UNIT}}',
+			],
+			'condition' => [
+				'tabs_position' => [
+					'start',
+					'end',
+				],
+			],
+		] );
+
+		$this->add_responsive_control( 'title_alignment', [
+			'label' => esc_html__( 'Title Alignment', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'start' => [
+					'title' => esc_html__( 'Left', 'elementor' ),
+					'icon' => 'eicon-text-align-left',
+				],
+				'center' => [
+					'title' => esc_html__( 'Center', 'elementor' ),
+					'icon' => 'eicon-text-align-center',
+				],
+				'end' => [
+					'title' => esc_html__( 'Right', 'elementor' ),
+					'icon' => 'eicon-text-align-right',
+				],
+			],
+			'selectors_dictionary' => [
+				'start' => '--tabs-v2-title-alignment: ' . $start . ';',
+				'center' => '--tabs-v2-title-alignment: center;',
+				'end' => '--tabs-v2-title-alignment: ' . $end . ';',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+		] );
+
+		$this->add_control( 'box_height', [
+			'label' => esc_html__( 'Box Height', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'fit',
+			'options' => [
+				'fit' => esc_html__( 'Fit to content', 'elementor' ),
+				'height' => esc_html__( 'Height', 'elementor' ),
+			],
+		] );
+
+		$this->add_responsive_control( 'tabs_height', [
+			'label' => esc_html__( 'Height', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 1000,
+				],
+				'vh' => [
+					'min' => 0,
+					'max' => 100,
+				],
+			],
+			'default' => [
+				'unit' => 'px',
+			],
+			'size_units' => [ 'px', 'vh' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-height: {{SIZE}}{{UNIT}}',
+			],
+			'condition' => [
+				'box_height' => 'height',
+			],
+		] );
+
+		$this->add_control( 'active_item', [
+			'label' => esc_html__( 'Active Item', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'description' => 'You can decide which tab will active as default.',
+		] );
+
+		$possible_tags = [
+			'div' => 'div',
+			'header' => 'header',
+			'footer' => 'footer',
+			'main' => 'main',
+			'article' => 'article',
+			'section' => 'section',
+			'aside' => 'aside',
+			'nav' => 'nav',
+			'a' => 'a',
+		];
+
+		$this->add_control(
+			'html_tag',
+			[
+				'label' => esc_html__( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
+				'default' => 'div',
+				'options' => $possible_tags,
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
+				'condition' => [
+					'html_tag' => 'a',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 
@@ -222,164 +409,407 @@ class TabsV2 extends Widget_Nested_Base {
 			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
-		$this->add_control( 'navigation_width', [
-			'label' => esc_html__( 'Navigation Width', 'elementor' ),
+		$this->add_responsive_control( 'tabs_title_spacing', [
+			'label' => esc_html__( 'Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'default' => [
-				'unit' => '%',
-			],
-			'range' => [
-				'%' => [
-					'min' => 10,
-					'max' => 50,
-				],
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-vertical-navigation-width: {{SIZE}}{{UNIT}}',
-			],
-			'condition' => [
-				'type' => 'vertical',
-			],
-		] );
-
-		$this->add_control( 'border_width', [
-			'label' => esc_html__( 'Border Width', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'default' => [
-				'size' => 1,
-			],
 			'range' => [
 				'px' => [
 					'min' => 0,
-					'max' => 10,
+					'max' => 400,
 				],
 			],
+			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-border-width: {{SIZE}}{{UNIT}};',
+				'{{WRAPPER}}' => '--tabs-v2-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
-		$this->add_control( 'border_color', [
-			'label' => esc_html__( 'Border Color', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
+		$this->add_responsive_control( 'tabs_title_space_between', [
+			'label' => esc_html__( 'Space Between', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 400,
+				],
+			],
+			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-border-color: {{VALUE}};',
+				'{{WRAPPER}}' => '--tabs-v2-title-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
-		$this->add_control( 'background_color', [
-			'label' => esc_html__( 'Background Color', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-background-color: {{VALUE}};',
-			],
+		$this->start_controls_tabs( 'tabs_title_style' );
+
+		$this->start_controls_tab(
+			'tabs_title_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'tabs_title_background_color',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'tabs_title_border',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'elementor' ),
+					],
+					'width' => [
+						'label' => esc_html__( 'Border Width', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'tabs_title_box_shadow',
+				'label' => esc_html__( 'Shadow', 'elementor' ),
+				'separator' => 'after',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tabs_title_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'tabs_title_background_color_hover',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'tabs_title_border_hover',
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'elementor' ),
+					],
+					'width' => [
+						'label' => esc_html__( 'Border Width', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'tabs_title_box_shadow_hover',
+				'label' => esc_html__( 'Shadow', 'elementor' ),
+				'separator' => 'after',
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			]
+		);
+
+		$this->add_control(
+			'tabs_title_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration (s)', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-transition: {{SIZE}}s',
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tabs_title_active',
+			[
+				'label' => esc_html__( 'Active', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'tabs_title_background_color_active',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
+					'color' => [
+						'global' => [
+							'default' => Global_Colors::COLOR_ACCENT,
+						],
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'tabs_title_border_active',
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'elementor' ),
+					],
+					'width' => [
+						'label' => esc_html__( 'Border Width', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'tabs_title_box_shadow_active',
+				'label' => esc_html__( 'Shadow', 'elementor' ),
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'tabs_title_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-padding-top: {{TOP}}{{UNIT}}; --tabs-v2-title-padding-right: {{RIGHT}}{{UNIT}}; --tabs-v2-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --tabs-v2-title-padding-left: {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'section_title_style', [
+			'label' => esc_html__( 'Titles', 'elementor' ),
+			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
-		$this->add_control( 'heading_title', [
-			'label' => esc_html__( 'Title', 'elementor' ),
-			'type' => Controls_Manager::HEADING,
-			'separator' => 'before',
-		] );
+		$this->start_controls_tabs( 'title_style' );
 
-		$this->add_control( 'tab_color', [
-			'label' => esc_html__( 'Color', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}};',
-			],
-			'global' => [
-				'default' => Global_Colors::COLOR_PRIMARY,
-			],
-		] );
-
-		$this->add_control( 'tab_active_color', [
-			'label' => esc_html__( 'Active Color', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-active-color: {{VALUE}};',
-			],
-			'global' => [
-				'default' => Global_Colors::COLOR_ACCENT,
-			],
-		] );
+		$this->start_controls_tab(
+			'title_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
-			'name' => 'tab_typography',
+			'name' => 'title_typography',
 			'global' => [
-				'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'fields_options' => [
-				'font_family' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family: "{{VALUE}}";',
-					],
-				],
-				'font_size' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'font_weight' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight: {{VALUE}};',
-					],
-				],
-				'text_transform' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform: {{VALUE}};',
-					],
-				],
-				'font_style' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style: {{VALUE}};',
-					],
-				],
-				'text_decoration' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration: {{VALUE}};',
-					],
-				],
-				'line_height' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'letter_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-				'word_spacing' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
-					],
-				],
-			],
+			'selector' => '{{WRAPPER}} .elementor-tab-title',
 		] );
 
-		$this->add_group_control( Group_Control_Text_Shadow::get_type(), [
-			'name' => 'title_shadow',
-			'fields_options' => [
-				'text_shadow' => [
-					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-v2-title-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
-					],
+		$this->add_control(
+			'title_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}}',
 				],
-			],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_text_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'title_text_stroke',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'title_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control( Group_Control_Typography::get_type(), [
+			'name' => 'title_typography_hover',
+			'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
 		] );
+
+		$this->add_control(
+			'title_text_color_hover',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-color-hover: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_text_shadow_hover',
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'title_text_stroke_hover',
+				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'title_active',
+			[
+				'label' => esc_html__( 'Active', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control( Group_Control_Typography::get_type(), [
+			'name' => 'title_typography_active',
+			'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+		] );
+
+		$this->add_control(
+			'title_text_color_active',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-title-color-active: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_text_shadow_active',
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'title_text_stroke_active',
+				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Print safe HTML tag for the element based on the element settings.
+	 *
+	 * @return void
+	 */
+	private function print_html_tag() {
+		$html_tag = $this->get_settings_for_display( 'html_tag' );
+
+		if ( empty( $html_tag ) ) {
+			$html_tag = 'div';
+		}
+
+		Utils::print_validated_html_tag( $html_tag );
+	}
+
 	protected function render() {
 		// Copied from tabs.php
-		$tabs = $this->get_settings_for_display( 'tabs' );
+		$settings = $this->get_settings_for_display();
+		$tabs = $settings['tabs'];
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
 		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
 
+		if ( ! empty( $settings['link'] ) ) {
+			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
+		}
+
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
+		$this->add_render_attribute( 'tab-title-text', 'class', 'e-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'elementor-tab-icon' );
 		$this->add_render_attribute( 'tab-icon-active', 'class', 'elementor-tab-icon-active' );
 
@@ -419,6 +849,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
+			$tab_title_text = $this->get_render_attribute_string( 'tab-title-text' );
 			$tab_icon_attributes = $this->get_render_attribute_string( 'tab-icon' );
 			$tab_icon_active_attributes = $this->get_render_attribute_string( 'tab-icon-active' );
 
@@ -431,7 +862,7 @@ class TabsV2 extends Widget_Nested_Base {
 			$tabs_title_html .= "<div {$title_render_attributes}>";
 			$tabs_title_html .= "\t<span {$tab_icon_attributes}> {$icon_html}</span>";
 			$tabs_title_html .= "\t<span {$tab_icon_active_attributes}> {$icon_active_html}</span>";
-			$tabs_title_html .= "\t<span>{$tab_title}</span>";
+			$tabs_title_html .= "\t<span {$tab_title_text}>{$tab_title}</span>";
 			$tabs_title_html .= '</div>';
 
 			// Tabs content.
@@ -442,14 +873,14 @@ class TabsV2 extends Widget_Nested_Base {
 			$tabs_content_html .= "<div $mobile_title_attributes>$tab_title</div>$tab_content";
 		}
 		?>
-		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="elementor-tabs-wrapper" role="tablist">
 				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
 				<?php echo $tabs_content_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
-		</div>
+		<<?php $this->print_html_tag(); ?>>
 		<?php
 	}
 
@@ -492,7 +923,7 @@ class TabsV2 extends Widget_Nested_Base {
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 					<span class="elementor-tab-icon">{{{ tabIcon.value }}}</span>
 					<span class="elementor-tab-icon-active">{{{ tabActiveIcon.value }}}</span>
-					<span>{{{ item.tab_title }}}</span>
+					<span class="e-tab-title-text">{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
 			</div>
