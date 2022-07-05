@@ -60,6 +60,8 @@ class Widget_Common extends Widget_Base {
 	 * @return array responsive device args
 	 */
 	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.7.0' );
+
 		$device_args = [];
 		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
@@ -256,11 +258,6 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [ '_element_width' => 'initial' ],
-				'device_args' => $this->get_responsive_device_args( [
-					'condition' => [
-						'_element_width_{{DEVICE}}' => [ 'initial' ],
-					],
-				] ),
 			]
 		);
 
