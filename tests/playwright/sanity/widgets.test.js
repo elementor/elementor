@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
+test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
 
