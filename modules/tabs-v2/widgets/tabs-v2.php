@@ -546,6 +546,11 @@ class TabsV2 extends Widget_Nested_Base {
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
 				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -554,6 +559,14 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'box_border',
 				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'elementor' ),
+					],
+					'width' => [
+						'label' => esc_html__( 'Border Width', 'elementor' ),
+					],
+				],
 			]
 		);
 
