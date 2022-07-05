@@ -5,7 +5,7 @@ namespace Elementor\Admin_Templates;
 use Elementor\Controls_Stack;
 use Elementor\New_template_Renderer_factory_Interface;
 
-class New_template_Form extends Controls_Stack {
+class New_Template_Form extends Controls_Stack {
 
 	/**
 	 * @var New_Template_Renderer_Factory_Interface

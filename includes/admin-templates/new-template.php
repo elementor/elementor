@@ -4,7 +4,7 @@ namespace Elementor;
 require_once __DIR__ . '/new-template-form.php';
 require_once __DIR__ . '/new-template-renderer-factory.php';
 
-use Elementor\Admin_Templates\New_template_Form;
+use Elementor\Admin_Templates\New_Template_Form;
 use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,7 +72,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 			</div>
 		</div>
 		<?php
-		$new_template_control_form = new New_template_Form( new New_Template_Renderer_Factory(), [ 'id' => 'form' ] );
+		$new_template_control_form = new New_Template_Form( new New_Template_Renderer_Factory(), [ 'id' => 'form' ] );
 		/**
 		 * Template library dialog fields.
 		 *
