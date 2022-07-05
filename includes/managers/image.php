@@ -150,20 +150,22 @@ class Images_Manager {
 
 	private function delete_custom_images( $post_id ) {
 		$image_meta = wp_get_attachment_metadata( $post_id );
-		if ( empty( $image_meta ) ) {
-			return;
+		if ( ! empty( $image_meta ) ) {
+			if ( ! empty( $image_meta['sizes'] ) ) {
+				$custom_images = $image_meta['sizes'];
+				foreach ( $custom_images as $size => $custom_image ) {
+					( new Collection( $image_meta['sizes'] ) )
+					->filter( function ( $value, $key ) {
+						return ( 0 === strpos( $key, 'elementor_custom_' ) );
+					} )
+					->pluck( 'file' )
+					->each( function ( $path ) {
+						$base_dir = wp_get_upload_dir()['basedir'];
+						wp_delete_file( $base_dir . '/' . $path );
+					} );
+				}
+			}
 		}
-
-		( new Collection( $image_meta['sizes'] ) )
-			->filter( function ( $value, $key ) {
-				return ( 0 === strpos( $key, 'elementor_custom_' ) );
-			} )
-			->pluck( 'file' )
-			->each( function ( $path ) {
-				$base_dir = wp_get_upload_dir()['basedir'];
-
-				wp_delete_file( $base_dir . '/' . $path );
-			} );
 	}
 
 	/**
