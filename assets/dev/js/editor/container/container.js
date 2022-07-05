@@ -522,7 +522,7 @@ export default class Container extends ArgsObject {
 	}
 
 	/**
-	 * @returns {boolean}
+	 * @return {boolean}
 	 */
 	isLocked() {
 		return this.model.get( 'isLocked' );
