@@ -394,7 +394,6 @@ class Test_Import extends Elementor_Test_Base {
 			$this->assertFalse( $page['thumbnail'] );
 		}
 
-
 		foreach ( $manifest['templates'] as $template ) {
 			$this->assertFalse( $template['thumbnail'] );
 		}
@@ -406,8 +405,8 @@ class Test_Import extends Elementor_Test_Base {
 		foreach ( $result['taxonomies'] as $post_type_taxonomies ) {
 			foreach ( $post_type_taxonomies as $taxonomy_key => $imported_terms ) {
 				foreach ( $imported_terms as $imported_term ) {
-					$imported_term_id = reset( $imported_term['id'] );
-					$imported_term_slug = reset( $imported_term['slug'] );
+					$imported_term_id = $imported_term['new_id'];
+					$imported_term_slug = $imported_term['new_slug'];
 
 					$term = get_term( $imported_term_id );
 					$this->assertTrue( $term->taxonomy === $taxonomy_key );
@@ -444,10 +443,13 @@ class Test_Import extends Elementor_Test_Base {
 				$this->assertEquals($expected_post_content, $post_content);
 			}
 		}
+
+		// Cleanup
+		Plugin::instance()->uploads_manager->remove_file_or_dir( $import_process_tmp_dir );
 	}
 
 	// Assertions for imported taxonomies and imported Elementor content by testing the terms of every Elementor post.
-	private function assert_valid_terms_with_elementor_content( $result, $manifest) {
+	private function assert_valid_terms_with_elementor_content( $result, $manifest ) {
 		foreach ( $manifest['content'] as $elementor_post_type => $elementor_posts ) {
 			foreach ( $elementor_posts as $post_id => $post_settings ) {
 				$expected_post_terms = $manifest['content'][ $elementor_post_type ][ $post_id ]['terms'];
@@ -465,10 +467,6 @@ class Test_Import extends Elementor_Test_Base {
 	private function assert_valid_terms_with_wp_content( $result ) {
 		foreach ( $result['wp-content'] as $wp_post_type => $wp_posts ) {
 			foreach ( $wp_posts['succeed'] as $new_post_id ) {
-				if ( empty( $result['taxonomies'][ $wp_post_type ] ) ) {
-					continue;
-				}
-
 				foreach ( $result['taxonomies'][ $wp_post_type ] as $taxonomy => $terms ) {
 					$post_terms = get_the_terms( $new_post_id, $taxonomy );
 					$this->assertNotEmpty( $post_terms );

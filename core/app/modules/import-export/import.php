@@ -7,44 +7,84 @@ use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\Core\App\Modules\ImportExport\Content\Elementor_Content;
 use Elementor\Core\App\Modules\ImportExport\Content\Plugins;
+use Elementor\Core\App\Modules\ImportExport\Content\Runner_Base;
 use Elementor\Core\App\Modules\ImportExport\Content\Site_Settings;
 use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
 use Elementor\Core\App\Modules\ImportExport\Content\Templates;
 use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
 use Elementor\Plugin;
 class Import {
-	const BUILTIN_WP_POST_TYPES = [ 'post', 'page', 'nav_menu_item' ];
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 	const MISSING_TMP_FOLDER_ERROR_KEY = 'missing-tmp-folder-error';
 
+	/**
+	 * @var Runner_Base[]
+	 */
 	private $runners;
 
+	/**
+	 * @var string
+	 */
 	private $extracted_directory_path;
 
+	/**
+	 * @var Base_Adapter[]
+	 */
 	private $adapters;
 
+	/**
+	 * @var array
+	 */
 	private $manifest;
 
+	/**
+	 * @var array
+	 */
 	private $documents_elements = [];
 
+	/**
+	 * @var array
+	 */
 	private $site_settings;
 
+	/**
+	 * @var array
+	 */
 	private $settings_include;
 
+	/**
+	 * @var string
+	 */
 	private $settings_referrer;
 
+	/**
+	 * @var array
+	 */
 	private $settings_selected_override_conditions;
 
+	/**
+	 * @var array
+	 */
 	private $settings_selected_custom_post_types;
 
+	/**
+	 * @var array
+	 */
 	private $settings_selected_plugins;
 
+	/**
+	 * @var array
+	 */
 	private $imported_data = [];
 
-	private $session;
+	/**
+	 * @var string
+	 */
+	private $session_id;
 
 	public function __construct( $path, $settings = [] ) {
 		$file_extension = pathinfo( $path, PATHINFO_EXTENSION );
+
 		if ( 'zip' === $file_extension || 'tmp' === $file_extension ) {
 			$this->extracted_directory_path = $this->extract_zip( $path );
 		} else {
@@ -52,12 +92,13 @@ class Import {
 			$path = $elementor_tmp_directory . basename( $path );
 
 			if ( ! is_dir( $path ) ) {
-				throw new \Exception( self::MISSING_TMP_FOLDER_ERROR_KEY );
+				throw new \Exception( static::MISSING_TMP_FOLDER_ERROR_KEY );
 			}
+
 			$this->extracted_directory_path = $path . '/';
 		}
 
-		$this->session = basename( $this->extracted_directory_path );
+		$this->session_id = basename( $this->extracted_directory_path );
 		$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
 
 		// Using isset and not empty is important since empty array is a valid option for those arrays.
@@ -142,8 +183,8 @@ class Import {
 		return $this->extracted_directory_path;
 	}
 
-	public function get_session() {
-		return $this->session;
+	public function get_session_id() {
+		return $this->session_id;
 	}
 
 	public function get_adapters() {
@@ -232,6 +273,7 @@ class Import {
 
 	private function extract_zip( $zip_path ) {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
+
 		return $extraction_result['extraction_directory'];
 	}
 
@@ -239,7 +281,7 @@ class Import {
 		$manifest = Utils::read_json_file( $this->extracted_directory_path . 'manifest' );
 
 		if ( ! $manifest ) {
-			throw new \Error( self::MANIFEST_ERROR_KEY );
+			throw new \Error( static::MANIFEST_ERROR_KEY );
 		}
 
 		$this->init_adapters( $manifest );
@@ -278,30 +320,18 @@ class Import {
 		if ( empty( $this->manifest['wp-content'] ) ) {
 			return [];
 		}
+
 		$manifest_post_types = array_keys( $this->manifest['wp-content'] );
-		$custom_post_types = array_diff( $manifest_post_types, self::BUILTIN_WP_POST_TYPES );
 
-		foreach ( $custom_post_types as $post_type ) {
-			if ( empty( $this->manifest['wp-content'][ $post_type ]['label_plural'] ) ) {
-				unset( $custom_post_types[ $post_type ] );
-			}
-		}
-
-		return $custom_post_types;
+		return array_diff( $manifest_post_types, Utils::get_builtin_wp_post_types() );
 	}
 
 	private function get_default_settings_override_conditions() {
-		$conflicts = [];
-		$conflicts = apply_filters( 'elementor/import/get_default_settings_override_conditions', $conflicts, $this->manifest );
-		return $conflicts;
+		return apply_filters( 'elementor/import/get_default_settings_override_conditions', [], $this->manifest );
 	}
 
 	private function get_default_settings_plugins() {
-		if ( empty( $this->manifest['plugins'] ) ) {
-			return [];
-		}
-
-		return $this->manifest['plugins'];
+		return ! empty( $this->manifest['plugins'] ) ? $this->manifest['plugins'] : [];
 	}
 
 	private function get_default_settings_include() {

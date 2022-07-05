@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport\Content;
 
+use Elementor\Core\App\Modules\ImportExport\Utils;
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Taxonomies extends Runner_Base {
@@ -24,7 +25,7 @@ class Taxonomies extends Runner_Base {
 	public function import( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . 'taxonomies/';
 
-		$wp_builtin_post_types = [ 'post', 'page', 'nav_menu_item' ];
+		$wp_builtin_post_types = Utils::get_builtin_wp_post_types();
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
@@ -35,14 +36,14 @@ class Taxonomies extends Runner_Base {
 				continue;
 			}
 
-			$result['taxonomies'][] = $this->import_taxonomies( $data['manifest']['taxonomies'][ $post_type ], $post_type, $path );
+			$result['taxonomies'][ $post_type ] = $this->import_taxonomies( $data['manifest']['taxonomies'][ $post_type ], $path );
 		}
 
 		return $result;
 	}
 
 	public function export( array $data ) {
-		$wp_builtin_post_types = [ 'post', 'page', 'nav_menu_item' ];
+		$wp_builtin_post_types = Utils::get_builtin_wp_post_types();
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
@@ -58,7 +59,7 @@ class Taxonomies extends Runner_Base {
 		];
 	}
 
-	private function import_taxonomies( array $taxonomies, $post_type, $path ) {
+	private function import_taxonomies( array $taxonomies, $path ) {
 		$result = [];
 		$already_imported_taxonomies = [];
 
@@ -68,7 +69,7 @@ class Taxonomies extends Runner_Base {
 			}
 
 			if ( ! empty( $already_imported_taxonomies[ $taxonomy ] ) ) {
-				$result[ $post_type ][ $taxonomy ] = $already_imported_taxonomies[ $taxonomy ];
+				$result[ $taxonomy ] = $already_imported_taxonomies[ $taxonomy ];
 				continue;
 			}
 
@@ -78,7 +79,7 @@ class Taxonomies extends Runner_Base {
 			}
 
 			$import = $this->import_taxonomy( $taxonomy_data );
-			$result[ $post_type ][ $taxonomy ] = $import;
+			$result[ $taxonomy ] = $import;
 			$already_imported_taxonomies[ $taxonomy ] = $import;
 		}
 
@@ -95,7 +96,8 @@ class Taxonomies extends Runner_Base {
 				if ( 'nav_menu' === $term['taxonomy'] ) {
 					$term = $this->handle_duplicated_nav_menu_term( $term );
 				} else {
-					$terms[ $term['term_id'] ] = [
+					$terms[] = [
+						'old_id' => $term['term_id'],
 						'new_id' => (int) $existed_term['term_id'],
 						'old_slug' => $old_slug,
 						'new_slug' => $term['slug'],
@@ -114,7 +116,8 @@ class Taxonomies extends Runner_Base {
 
 			$new_term = wp_insert_term( wp_slash( $term['name'] ), $term['taxonomy'], $args );
 			if ( ! is_wp_error( $new_term ) ) {
-				$terms[ $term['term_id'] ] = [
+				$terms[] = [
+					'old_id' => $term['term_id'],
 					'new_id' => (int) $new_term['term_id'],
 					'old_slug' => $old_slug,
 					'new_slug' => $term['slug'],

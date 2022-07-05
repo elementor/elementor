@@ -30,13 +30,12 @@ class Wp_Content extends Runner_Base {
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 		$post_types = $this->array_force_last_element( $post_types, 'nav_menu_item' );
 
-		$taxonomies = ! empty( $imported_data['taxonomies'] ) ? $imported_data['taxonomies'] : [];
-		$imported_terms = ImportExportUtils::map_old_new_terms_ids( $taxonomies );
+		$imported_terms = ImportExportUtils::map_old_new_terms_ids( $imported_data );
 
 		$result['wp-content'] = [];
 
 		foreach ( $post_types as $post_type ) {
-			$import = $this->import_wp_post_type( $path, $post_type, $imported_data, $taxonomies, $imported_terms );
+			$import = $this->import_wp_post_type( $path, $post_type, $imported_data, $imported_data['taxonomies'], $imported_terms );
 			$result['wp-content'][ $post_type ] = $import;
 			$imported_data = array_merge( $imported_data, $result );
 		}

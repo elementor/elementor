@@ -12,6 +12,7 @@ use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
 use Elementor\Plugin;
 
 class Export {
+	const ZIP_ARCHIVE_MODULE_NOT_INSTALLED_KEY = 'zip-archive-module-not-installed';
 
 	private $settings_include;
 
@@ -170,6 +171,10 @@ class Export {
 	}
 
 	private function init_zip_archive() {
+		if ( ! class_exists( '\ZipArchive' ) ) {
+			throw new \Error( static::ZIP_ARCHIVE_MODULE_NOT_INSTALLED_KEY );
+		}
+
 		$zip = new \ZipArchive();
 
 		$temp_dir = Plugin::$instance->uploads_manager->create_unique_dir();
@@ -200,31 +205,26 @@ class Export {
 	}
 
 	private function handle_export_result( $export_result ) {
-		if ( ! empty( $export_result['manifest'] ) ) {
-			foreach ( $export_result['manifest'] as $data ) {
-				$this->manifest_data = $this->manifest_data + $data;
-			}
+		foreach ( $export_result['manifest'] as $data ) {
+			$this->manifest_data = $this->manifest_data + $data;
 		}
 
-		if ( ! empty( $export_result['files'] ) ) {
+		if ( isset( $export_result['files']['path'] ) ) {
+			$export_result['files'] = [ $export_result['files'] ];
+		}
 
-			if ( isset( $export_result['files']['path'] ) ) {
-				$export_result['files'] = [ $export_result['files'] ];
-			}
-
-			foreach ( $export_result['files'] as $file ) {
-				$file_extension = pathinfo( $file['path'], PATHINFO_EXTENSION );
-				if ( empty( $file_extension ) ) {
-					$this->add_json_file(
-						$file['path'],
-						$file['data']
-					);
-				} else {
-					$this->add_file(
-						$file['path'],
-						$file['data']
-					);
-				}
+		foreach ( $export_result['files'] as $file ) {
+			$file_extension = pathinfo( $file['path'], PATHINFO_EXTENSION );
+			if ( empty( $file_extension ) ) {
+				$this->add_json_file(
+					$file['path'],
+					$file['data']
+				);
+			} else {
+				$this->add_file(
+					$file['path'],
+					$file['data']
+				);
 			}
 		}
 	}

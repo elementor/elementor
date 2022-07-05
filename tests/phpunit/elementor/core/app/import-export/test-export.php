@@ -46,7 +46,7 @@ class Test_Export extends Elementor_Test_Base {
 		unregister_post_type( 'tests' );
 	}
 
-	public function test_run__fail_when_not_registered_runners() {
+	public function test_run__fails_when_no_runners_are_registered() {
 		// Expect
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'specify-runners' );
@@ -69,7 +69,7 @@ class Test_Export extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 2, $result['manifest']['plugins'] );
 
-		foreach ( $result['manifest']['plugins'] as $plugin) {
+		foreach ( $result['manifest']['plugins'] as $plugin ) {
 			$this->assert_array_have_keys( ['name', 'plugin', 'pluginUri', 'version'], $plugin );
 		}
 	}

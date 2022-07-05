@@ -414,8 +414,8 @@ class WP_Import extends \WP_Importer {
 						// For BC
 						if ( ! empty( $this->processed_taxonomies[ $term['term_taxonomy'] ] ) ) {
 							foreach ( $this->processed_taxonomies[ $term['term_taxonomy'] ] as $processed_term ) {
-								$old_slug   = key( $processed_term['slug'] );
-								$new_slug = reset( $processed_term['slug'] );
+								$old_slug   = $processed_term['old_slug'];
+								$new_slug = $processed_term['new_slug'];
 
 								$this->mapped_terms_slug[ $old_slug ] = $new_slug;
 								$result['succeed'][ $old_slug ] = $new_slug;

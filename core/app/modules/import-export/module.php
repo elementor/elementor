@@ -28,17 +28,23 @@ class Module extends BaseModule {
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
 
-	const MANIFEST_ERROR_KEY = 'manifest-error';
+	const KIT_LIBRARY_REFERRER_KEY = 'kit-library';
+
+	const LOCAL_REFERRER_KEY = 'local';
 
 	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
 
 
 	/**
+	 * Assigning the export process to a property, so we can use the process from outside the class.
+	 *
 	 * @var Export
 	 */
 	public $export;
 
 	/**
+	 * Assigning the import process to a property, so we can use the process from outside the class.
+	 *
 	 * @var Import
 	 */
 	public $import;
@@ -55,20 +61,7 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		add_action( 'admin_init', function() {
-			if ( wp_doing_ajax() &&
-				isset( $_POST['action'] ) &&
-				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
-				current_user_can( 'manage_options' )
-			) {
-				$this->maybe_handle_ajax();
-			}
-		} );
-
-		$page_id = Tools::PAGE_ID;
-
-		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+		$this->register_actions();
 
 		if ( ElementorUtils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
@@ -140,135 +133,19 @@ class Module extends BaseModule {
 		return $summary_titles;
 	}
 
-	private function maybe_handle_ajax() {
-		$result = [];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( $_POST['action'] ) {
-			case static::EXPORT_TRIGGER_KEY:
-				$this->handle_export_kit();
-				break;
-			case static::UPLOAD_TRIGGER_KEY:
-				$this->handle_upload_kit();
-				break;
-			case static::IMPORT_TRIGGER_KEY:
-				$this->handle_import_kit();
-				break;
-		}
-	}
-
-	private function handle_upload_kit() {
-		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
-		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
-
-		// PHPCS - Already validated in caller function.
-		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if (
-				! isset( $_POST['e_kit_library_nonce'] ) ||
-				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
-			) {
-				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
-			}
-
-			$file_url = $_POST['e_import_file'];
-
-			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
-			}
-
-			$remote_zip_request = wp_remote_get( $file_url );
-
-			if ( is_wp_error( $remote_zip_request ) ) {
-				throw new \Error( $remote_zip_request->get_error_message() );
-			}
-
-			if ( 200 !== $remote_zip_request['response']['code'] ) {
-				throw new \Error( $remote_zip_request['response']['message'] );
-			}
-
-			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
-			$referrer = 'kit-library';
-		} else {
-			// PHPCS - Already validated in caller function.
-			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$referrer = 'local';
-		}
-
-		$upload_kit = $this->upload_kit( $file_name, $referrer );
-		$session_dir = $upload_kit['session'];
-		$manifest = $upload_kit['manifest'];
-		$conflicts = $upload_kit['conflicts'];
-
-		if ( ! empty( $file_url ) ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
-		}
-
-		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
-			throw new \Error( static::PERMISSIONS_ERROR_KEY );
-		}
-
-		$result = [
-			'session' => $session_dir,
-			'manifest' => $manifest,
-		];
-
-		if ( ! empty( $conflicts ) ) {
-			$result['conflicts'] = $conflicts;
-		}
-
-		// For BC with our PRO plugin.
-		$result = apply_filters( 'elementor/import/stage_1/result', $result );
-
-		wp_send_json_success( $result );
-	}
-
-	public function upload_kit( $file_name, $referrer ) {
-		$this->import = new Import( $file_name, [ 'referrer' => $referrer ] );
-
-		return [
-			'session' => $this->import->get_session(),
-			'manifest' => $this->import->get_manifest(),
-			'conflicts' => $this->import->get_settings_selected_override_conditions(),
-		];
-	}
-
-	private function handle_import_kit() {
-		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$tmp_folder_id = $settings['session'];
-
-		$import = $this->import_kit( $tmp_folder_id, $settings );
-
-		wp_send_json_success( $import );
-	}
-
-	public function import_kit( $tmp_folder_id, $settings ) {
-		$this->import = new Import( $tmp_folder_id, $settings );
-		$this->import->register_default_runners();
-		return $this->import->run();
-	}
-
-	private function handle_export_kit() {
-		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$export = $this->export_kit( $settings );
-
-		$file_name = $export['file_name'];
-		$file = ElementorUtils::file_get_contents( $file_name );
-		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
-
-		$result = [
-			'manifest' => $export['manifest'],
-			'file' => base64_encode( $file ),
-		];
-
-		wp_send_json_success( $result );
-	}
-
-	public function export_kit( $settings ) {
-		$this->export = new Export( $settings );
-		$this->export->register_default_runners();
-		return $this->export->run();
+	public function register_settings_tab( Tools $tools ) {
+		$tools->add_tab( 'import-export-kit', [
+			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
+			'sections' => [
+				'intro' => [
+					'label' => esc_html__( 'Template Kits', 'elementor' ),
+					'callback' => function() {
+						$this->render_import_export_tab_content();
+					},
+					'fields' => [],
+				],
+			],
+		] );
 	}
 
 	private function render_import_export_tab_content() {
@@ -338,6 +215,163 @@ class Module extends BaseModule {
 		<?php
 	}
 
+	public function upload_kit( $file_name, $referrer ) {
+		$this->import = new Import( $file_name, [ 'referrer' => $referrer ] );
+
+		return [
+			'session' => $this->import->get_session_id(),
+			'manifest' => $this->import->get_manifest(),
+			'conflicts' => $this->import->get_settings_selected_override_conditions(),
+		];
+	}
+
+	public function import_kit( $tmp_folder_id, $settings ) {
+		$this->import = new Import( $tmp_folder_id, $settings );
+		$this->import->register_default_runners();
+
+		return $this->import->run();
+	}
+
+	public function export_kit( $settings ) {
+		$this->export = new Export( $settings );
+		$this->export->register_default_runners();
+
+		return $this->export->run();
+	}
+
+	private function register_actions() {
+		add_action( 'admin_init', function() {
+			if ( wp_doing_ajax() &&
+				isset( $_POST['action'] ) &&
+				isset( $_POST['_nonce'] ) &&
+				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				current_user_can( 'manage_options' )
+			) {
+				$this->maybe_handle_ajax();
+			}
+		} );
+
+		$page_id = Tools::PAGE_ID;
+
+		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+	}
+
+	private function maybe_handle_ajax() {
+		$result = [];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		switch ( $_POST['action'] ) {
+			case static::EXPORT_TRIGGER_KEY:
+				$this->handle_export_kit();
+				break;
+			case static::UPLOAD_TRIGGER_KEY:
+				$this->handle_upload_kit();
+				break;
+			case static::IMPORT_TRIGGER_KEY:
+				$this->handle_import_kit();
+				break;
+			default:
+				throw new \Error( esc_html__( 'Invalid action', 'elementor' ) );
+		}
+	}
+
+	private function handle_upload_kit() {
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
+		// PHPCS - Already validated in caller function.
+		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if (
+				! isset( $_POST['e_kit_library_nonce'] ) ||
+				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
+			) {
+				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
+			}
+
+			$file_url = $_POST['e_import_file'];
+
+			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
+				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
+			}
+
+			$remote_zip_request = wp_remote_get( $file_url );
+
+			if ( is_wp_error( $remote_zip_request ) ) {
+				throw new \Error( $remote_zip_request->get_error_message() );
+			}
+
+			if ( 200 !== $remote_zip_request['response']['code'] ) {
+				throw new \Error( $remote_zip_request['response']['message'] );
+			}
+
+			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
+			$referrer = static::KIT_LIBRARY_REFERRER_KEY;
+		} else {
+			// PHPCS - Already validated in caller function.
+			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$referrer = static::LOCAL_REFERRER_KEY;
+		}
+
+		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
+		$session_dir = $uploaded_kit['session'];
+		$manifest = $uploaded_kit['manifest'];
+		$conflicts = $uploaded_kit['conflicts'];
+
+		if ( ! empty( $file_url ) ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+		}
+
+		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
+			throw new \Error( static::PERMISSIONS_ERROR_KEY );
+		}
+
+		$result = [
+			'session' => $session_dir,
+			'manifest' => $manifest,
+		];
+
+		if ( ! empty( $conflicts ) ) {
+			$result['conflicts'] = $conflicts;
+		}
+
+		// For BC with our PRO plugin.
+		$result = apply_filters( 'elementor/import/stage_1/result', $result );
+
+		wp_send_json_success( $result );
+	}
+
+	private function handle_import_kit() {
+		// PHPCS - Already validated in caller function
+		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$tmp_folder_id = $settings['session'];
+
+		$import = $this->import_kit( $tmp_folder_id, $settings );
+
+		wp_send_json_success( $import );
+	}
+
+	private function handle_export_kit() {
+		// PHPCS - Already validated in caller function
+		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$export = $this->export_kit( $settings );
+
+		$file_name = $export['file_name'];
+		$file = ElementorUtils::file_get_contents( $file_name );
+
+		if ( ! $file ) {
+			throw new \Error( esc_html__( 'Could not read the exported file', 'elementor' ) );
+		}
+
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+
+		$result = [
+			'manifest' => $export['manifest'],
+			'file' => base64_encode( $file ),
+		];
+
+		wp_send_json_success( $result );
+	}
+
 	private function get_config_data() {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
@@ -345,27 +379,12 @@ class Module extends BaseModule {
 		return [
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
-			'builtinWpPostTypes' => [ 'post', 'page', 'nav_menu_item' ], // TODO better solution
-			'elementorPostTypes' => [ 'post', 'page', 'e-landing-page' ],
+			'builtinWpPostTypes' => ImportExportUtils::get_builtin_wp_post_types(),
+			'elementorPostTypes' => ImportExportUtils::get_elementor_post_types(),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
 		];
-	}
-
-	public function register_settings_tab( Tools $tools ) {
-		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
-			'sections' => [
-				'intro' => [
-					'label' => esc_html__( 'Template Kits', 'elementor' ),
-					'callback' => function() {
-						$this->render_import_export_tab_content();
-					},
-					'fields' => [],
-				],
-			],
-		] );
 	}
 
 	// TODO remove the url functions?

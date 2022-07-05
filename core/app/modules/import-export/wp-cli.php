@@ -45,6 +45,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			if ( ! in_array( $key, static::AVAILABLE_SETTINGS, true ) ) {
 				continue;
 			}
+
 			$export_settings[ $key ] = explode( ',', $value );
 		}
 
@@ -110,19 +111,23 @@ class Wp_Cli extends \WP_CLI_Command {
 		$url = null;
 		$file_path = $args[0];
 		$import_settings = [];
+		$import_settings['referrer'] = 'local';
 
-		if ( 'library' === $assoc_args['sourceType'] ) {
-			$url = $this->get_url_from_library( $file_path );
-			$zip_path = $this->create_temp_file_from_url( $url );
-			$import_settings['referrer'] = 'kit-library';
-		} elseif ( 'remote' === $assoc_args['sourceType'] ) {
-			$url = $file_path;
-			$zip_path = $this->create_temp_file_from_url( $url );
-			$import_settings['referrer'] = 'local';
-		} elseif ( 'local' === $assoc_args['sourceType'] ) {
-			$zip_path = $file_path;
-		} else {
-			\WP_CLI::error( 'Unknown source type.' );
+		switch ( $assoc_args['sourceType'] ) {
+			case 'library':
+				$url = $this->get_url_from_library( $file_path );
+				$zip_path = $this->create_temp_file_from_url( $url );
+				$import_settings['referrer'] = 'kit-library';
+				break;
+			case 'remote':
+				$zip_path = $this->create_temp_file_from_url( $file_path );
+				break;
+			case 'local':
+				$zip_path = $file_path;
+				break;
+			default:
+				\WP_CLI::error( 'Unknown source type.' );
+				break;
 		}
 
 		if ( 'enable' === $assoc_args['unfilteredFilesUpload'] ) {
@@ -134,6 +139,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			if ( ! in_array( $key, static::AVAILABLE_SETTINGS, true ) ) {
 				continue;
 			}
+
 			$import_settings[ $key ] = explode( ',', $value );
 		}
 
