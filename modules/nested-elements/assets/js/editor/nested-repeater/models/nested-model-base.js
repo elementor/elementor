@@ -23,7 +23,7 @@ export default class NestedModelBase extends elementor.modules.elements.models.E
 		return 'container' === childElType &&
 			'widget' === parentElType &&
 			isWidgetSupportNesting( this.get( 'widgetType' ) ) &&
-			// When creating a container for the tabs widget specifcly from the repeater, the container should be locked,
+			// When creating a container for the tabs widget specifically from the repeater, the container should be locked,
 			// so only containers that are locked (created from the repeater) can be inside the tabs widget.
 			childModel.get( 'isLocked' );
 	}
