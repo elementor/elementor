@@ -1,26 +1,29 @@
 import Base from '../../../base';
+import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 /**
  * Hook responsible for removing container element for the removed repeater item.
  */
 export class NestedRepeaterRemoveContainer extends Base {
 	getId() {
-		return 'nested-elements-remove-container';
+		return 'document/repeater/remove--nested-elements-remove-container';
 	}
 
 	getCommand() {
 		return 'document/repeater/remove';
 	}
 
-	apply( args ) {
-		const { containers = [ args.container ] } = args;
+	getConditions( args ) {
+		// Will only handle when command called directly and not through another command like `duplicate` or `move`.
+		const isCommandCalledDirectly = $e.commands.isCurrentFirstTrace( this.getCommand() );
 
-		containers.forEach( ( container ) => {
-			const childView = container.view.children.findByIndex( args.index );
+		return super.getConditions( args ) && isCommandCalledDirectly;
+	}
 
-			$e.run( 'document/elements/delete', {
-				container: childView.getContainer(),
-			} );
+	apply( { container, index } ) {
+		$e.run( 'document/elements/delete', {
+			container: findChildContainerOrFail( container, index ),
+			force: true,
 		} );
 	}
 }

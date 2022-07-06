@@ -1,3 +1,5 @@
+import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+
 /**
  * Since the nested tabs can have different depths, it should focus the current edited container,
  * but the problem is, without timeout it will be so fast, that the USER will not be able to see it.
@@ -28,12 +30,12 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 		// If some of the parents are supporting nested elements, then return true.
 		const allParents = args.view.container.getParentAncestry(),
 			result = allParents.some( ( parent ) =>
-				$e.components.get( 'nested-elements' ).isWidgetSupportNesting( parent.model.get( 'widgetType' ) )
+				isWidgetSupportNesting( parent.model.get( 'widgetType' ) ),
 			);
 
 		if ( result ) {
 			this.navigationMap = this.getNavigationMapForContainers( allParents.filter(
-				( container ) => 'container' === container.type && 'widget' === container.parent.type
+				( container ) => 'container' === container.type && 'widget' === container.parent.type,
 			) ).filter( ( map ) => {
 				// Filter out paths that are the same as current.
 				return map.index !== map.current;

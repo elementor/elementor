@@ -1,6 +1,5 @@
-/**
- * @extends ControlRepeaterItemView
- */
+import { extractNestedItemTitle } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+
 export default class Repeater extends elementor.modules.controls.Repeater {
 	className() {
 		// Repeater Panel CSS, depends on 'elementor-control-type-repeater` control.
@@ -9,18 +8,18 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 	}
 
 	/**
-	 * @inheritDoc
 	 * Override to avoid the default behavior to adjust the title of the row.
+	 *
+	 * @return {Object}
 	 */
 	getDefaults() {
-		const component = $e.components.get( 'nested-elements/nested-repeater' ),
-			widgetContainer = this.options.container,
+		const widgetContainer = this.options.container,
 			defaults = widgetContainer.model.config.defaults,
 			index = widgetContainer.children.length + 1;
 
 		return {
 			_id: '',
-			[ defaults.repeater_title_setting ]: component.getChildrenTitle( widgetContainer, index ),
+			[ defaults.repeater_title_setting ]: extractNestedItemTitle( widgetContainer, index ),
 		};
 	}
 
@@ -34,10 +33,7 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		$e.run( 'document/repeater/select', {
 			container: this.container,
 			index: activeItemIndex,
+			options: { useHistory: false },
 		} );
-	}
-
-	onAddChild() {
-		this.updateChildIndexes();
 	}
 }
