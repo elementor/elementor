@@ -49,14 +49,14 @@ class BaseWidgetView extends BaseElementView {
 			editTools = {};
 
 		editTools.edit = {
-			/* translators: %s: Element name. */
+			/* Translators: %s: Element name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'edit',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element name. */
+				/* Translators: %s: Element name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};

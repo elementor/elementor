@@ -7,7 +7,7 @@ export default function CardBody( props ) {
 		classes = [ classNameBase, props.className ],
 		style = {};
 
-	if ( props.hasOwnProperty( 'padding' ) ) {
+	if ( Object.prototype.hasOwnProperty.call( props, 'padding' ) ) {
 		style[ '--eps-card-body-padding' ] = pxToRem( props.padding );
 
 		classes.push( classNameBase + '--padding' );

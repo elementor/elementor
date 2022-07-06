@@ -131,7 +131,7 @@ export default class extends elementorModules.Module {
 		}
 
 		// Show recommended tab if selected from it
-		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && iconManagerConfig.recommended.hasOwnProperty( selected.library ) ) {
+		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && Object.prototype.hasOwnProperty.call( iconManagerConfig.recommended, selected.library ) ) {
 			const iconLibrary = icons.filter( ( library ) => selected.library === library.name );
 			const selectedIconName = selected.value.replace( iconLibrary[ 0 ].displayPrefix + ' ' + iconLibrary[ 0 ].prefix, '' );
 			if ( iconManagerConfig.recommended[ selected.library ].some( ( icon ) => -1 < icon.indexOf( selectedIconName ) ) ) {

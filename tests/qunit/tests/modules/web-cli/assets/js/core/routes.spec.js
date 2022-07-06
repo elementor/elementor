@@ -532,7 +532,7 @@ jQuery( () => {
 				$e.components.register( new Component() );
 
 				// Simulate `CTRL+Z`.
-				CommonHelper.runShortcut( 90 /* z */, true );
+				CommonHelper.runShortcut( 90 /* Z */, true );
 
 				assert.equal( commandStatus, 'afterRun' );
 			} );
@@ -574,14 +574,14 @@ jQuery( () => {
 				$e.components.register( new Component() );
 
 				// Outside scope.
-				CommonHelper.runShortcut( 90 /* z */, true );
+				CommonHelper.runShortcut( 90 /* Z */, true );
 
 				assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
 
 				// Inside scope.
 				$e.route( namespace + '/routeA' );
 
-				CommonHelper.runShortcut( 90 /* z */, true );
+				CommonHelper.runShortcut( 90 /* Z */, true );
 
 				assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
 
@@ -590,7 +590,7 @@ jQuery( () => {
 
 				commandStatus = 'beforeRunInScope';
 
-				CommonHelper.runShortcut( 90 /* z */, true );
+				CommonHelper.runShortcut( 90 /* Z */, true );
 
 				assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
 
@@ -624,14 +624,14 @@ jQuery( () => {
 				// Activate the first component.
 				$e.route( namespace + '/routeA' );
 
-				CommonHelper.runShortcut( 90 /* z */, true );
+				CommonHelper.runShortcut( 90 /* Z */, true );
 
 				assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
 
 				// Close the first component.
 				$e.components.get( namespace ).close();
 
-				CommonHelper.runShortcut( 90 /* z */, true );
+				CommonHelper.runShortcut( 90 /* Z */, true );
 
 				assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
 			} );
@@ -676,7 +676,7 @@ jQuery( () => {
 
 				$e.route( namespace );
 
-				CommonHelper.runShortcut( 27 /* esc */ );
+				CommonHelper.runShortcut( 27 /* Esc */ );
 
 				assert.equal( $e.routes.is( namespace ), false, 'Component is closed by `esc` key.' );
 
@@ -712,13 +712,13 @@ jQuery( () => {
 				assert.equal( component.isOpen, true );
 				assert.equal( secondComponent.isOpen, true );
 
-				CommonHelper.runShortcut( 27 /* esc */ );
+				CommonHelper.runShortcut( 27 /* Esc */ );
 
 				// Modals should be closed in LIFO order.
 				assert.equal( component.isOpen, false, 'First Component is closed first' );
 				assert.equal( secondComponent.isOpen, true );
 
-				CommonHelper.runShortcut( 27 /* esc */ );
+				CommonHelper.runShortcut( 27 /* Esc */ );
 
 				assert.equal( secondComponent.isOpen, false, 'Second Component is closed too' );
 			} );

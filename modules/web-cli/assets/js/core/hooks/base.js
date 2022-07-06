@@ -170,7 +170,7 @@ import forceMethodImplementation from '../../utils/force-method-implementation';
 	}
 
 	/**
-	 * function checkEvent().
+	 * Function checkEvent().
 	 *
 	 * Validate if the event is available.
 	 *

@@ -41,6 +41,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
 			return {
 				id: 'promotion',
+				// Translators: %s is the subscription plan name.
 				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
 				hideText: false,
 				variant: 'contained',

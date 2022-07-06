@@ -109,7 +109,7 @@ jQuery( () => {
 			const ancestry = eButton.getParentAncestry();
 
 			// Assert.
-			assert.equal( ancestry.length, 4 /* document>section>column>widget */ );
+			assert.equal( ancestry.length, 4 /* Document>section>column>widget */ );
 		} );
 	} );
 } );

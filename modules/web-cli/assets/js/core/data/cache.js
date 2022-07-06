@@ -41,7 +41,7 @@ export default class Cache {
 			// If data comes from cache, add 'cache = hit' to requestData.
 			requestData.cache = 'hit';
 
-			return new Promise( async ( resolve ) => {
+			return new Promise( ( resolve ) => {
 				resolve( data );
 			} );
 		}

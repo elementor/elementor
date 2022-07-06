@@ -34,10 +34,10 @@ export default function Promotion() {
 				<Grid container className="page-header">
 					<Grid item sm={ 7 } justify="end">
 						<Heading variant="h1">
-							{ __( 'Design Every Part of Your Website', 'elementor' ) }
+							{ __( 'Customize every part of your site', 'elementor' ) }
 						</Heading>
 						<Text>
-							{ __( 'Gain complete control and visually customize all the essential parts of your site, including its Header, Footer, Single Page, Single Post, Archive, WooCommerce pages, and more with Elementor Pro.', 'elementor' ) }
+							{ __( 'Get total control, consistency and a faster workflow by designing the recurring parts that make up a complete website like the Header & Footer, Archive, 404, WooCommerce pages and more.', 'elementor' ) }
 						</Text>
 					</Grid>
 					<Grid item container justify="end" alignItems="start" sm={ 5 }>
