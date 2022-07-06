@@ -19,7 +19,14 @@
 	--tabs-v2-tabs-wrapper-direction: row;
 	--tabs-v2-tabs-wrapper-grow: initial;
 	--tabs-v2-tabs-wrapper-justify-content: initial;
-	--tabs-v2-tabs-wrapper-width: initial; 
+	--tabs-v2-tabs-wrapper-width: initial;
+
+	--tabs-v2-height: initial;
+	--tabs-v2-border-width: 1px;
+	--tabs-v2-border-color: #{$gray-light};
+
+	--tabs-v2-content-wrapper-padding: initial;
+	--tabs-v2-content-wrapper-border-radius: initial;
 
 	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-title-background-color: #{$editor-background-light};
@@ -65,8 +72,9 @@
 		}
 	
 		&-content-wrapper {
-			background-color: var( --tabs-v2-background-color );
 			flex-grow: 1;
+			padding: var( --tabs-v2-content-wrapper-padding );
+			border-radius: var( --tabs-v2-content-wrapper-border-radius );
 		}	
 	}
 

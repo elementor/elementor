@@ -521,6 +521,13 @@ export default class Container extends ArgsObject {
 		return elementor.userCan( 'design' ) && this.isEditable();
 	}
 
+	/**
+	 * @return {boolean}
+	 */
+	isLocked() {
+		return this.model.get( 'isLocked' );
+	}
+
 	isRepeater() {
 		return Container.TYPE_REPEATER === this.type;
 	}

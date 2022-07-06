@@ -1,5 +1,10 @@
 import { freeMock, setupMock } from 'elementor/tests/jest/unit/assets/dev/js/editor/elements/models/mock/model';
 
+jest.mock( 'elementor/modules/nested-elements/assets/js/editor/utils', () => ( {
+	...jest.requireActual( 'elementor/modules/nested-elements/assets/js/editor/utils' ),
+	isWidgetSupportNesting: ( name ) => 'tabs-v2' === name,
+} ) );
+
 describe( 'NestedModelBase', () => {
 	let childModel,
 		nestedModelBase;
@@ -17,16 +22,6 @@ describe( 'NestedModelBase', () => {
 			},
 		};
 
-		global.$e = {
-			components: {
-				get: () => {
-					return {
-						isWidgetSupportNesting: ( name ) => 'tabs-v2' === name,
-					};
-				},
-			},
-		};
-
 		nestedModelBase = new ( await import( 'elementor/modules/nested-elements/assets/js/editor/nested-repeater/models/nested-model-base' ) ).default;
 	} );
 
@@ -40,6 +35,7 @@ describe( 'NestedModelBase', () => {
 	test( 'isValidChild() -- Sanity', () => {
 		// Arrange.
 		childModel.set( 'elType', 'container' );
+		childModel.set( 'isLocked', true );
 
 		nestedModelBase.set( 'elType', 'widget' );
 		nestedModelBase.set( 'widgetType', 'tabs-v2' );

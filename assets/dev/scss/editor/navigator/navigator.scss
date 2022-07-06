@@ -149,6 +149,10 @@ body {
 
 	&__element {
 
+		&[data-locked="true"] > .elementor-navigator__item {
+			cursor: not-allowed;
+		}
+
 		&.elementor-dragging-on-child {
 
 			> .elementor-navigator__elements {

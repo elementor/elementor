@@ -4,7 +4,7 @@ export default class BaseTabsV2 extends Base {
 	/**
 	 * @param {string|number} tabIndex
 	 *
-	 * @returns {string}
+	 * @return {string}
 	 */
 	getTabTitleFilterSelector( tabIndex ) {
 		return `[data-tab="${ tabIndex }"]`;
@@ -13,7 +13,7 @@ export default class BaseTabsV2 extends Base {
 	/**
 	 * @param {string|number} tabIndex
 	 *
-	 * @returns {string}
+	 * @return {string}
 	 */
 	getTabContentFilterSelector( tabIndex ) {
 		return `[data-tab="${ tabIndex }"]`;
@@ -21,8 +21,8 @@ export default class BaseTabsV2 extends Base {
 
 	/**
 	 * @param {HTMLElement} tabTitleElement
-
-	 * @returns {string}
+	 *
+	 * @return {string}
 	 */
 	getTabIndex( tabTitleElement ) {
 		return tabTitleElement.getAttribute( 'data-tab' );
