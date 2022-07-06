@@ -1,4 +1,5 @@
 import Base from '../../../base';
+import { extractNestedItemTitle } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 /**
  * Hook responsible for:
@@ -9,58 +10,33 @@ import Base from '../../../base';
  */
 export class NestedRepeaterCreateContainer extends Base {
 	getId() {
-		return 'nested-repeater-create-container';
+		return 'document/repeater/insert--nested-repeater-create-container';
 	}
 
 	getCommand() {
 		return 'document/repeater/insert';
 	}
 
-	apply( args ) {
-		const { containers = [ args.container ] } = args,
-			component = $e.components.get( 'nested-elements/nested-repeater' );
+	getConditions( args ) {
+		// Will only handle when command called directly and not through another command like `duplicate` or `move`.
+		const isCommandCalledDirectly = $e.commands.isCurrentFirstTrace( this.getCommand() );
 
-		containers.forEach( ( container ) => {
-			const index = container.repeaters[ args.name ].children.length,
-				optionsExtras = {},
-				modelExtras = {};
+		return super.getConditions( args ) && isCommandCalledDirectly;
+	}
 
-			if ( $e.commands.isCurrentFirstTrace( 'document/repeater/duplicate' ) ) {
-				const at = $e.commands.currentArgs.document.options.at - 1,
-					duplicatedContainer = container.children[ at ],
-					removeIdCallback = ( element ) => {
-						delete element.id;
+	apply( { container, name } ) {
+		const index = container.repeaters[ name ].children.length;
 
-						// Duplicate should generate new ID for the element(s).
-						if ( element.elements ) {
-							element.elements = element.elements.map( removeIdCallback );
-						}
-
-						return element;
-					};
-
-				// Remove id from elements recursively.
-				modelExtras.elements = duplicatedContainer.model.toJSON().elements.map(
-					( element ) => removeIdCallback( element )
-				);
-
-				modelExtras._title = duplicatedContainer.model.getSetting( '_title' );
-
-				optionsExtras.at = at + 1;
-			}
-
-			$e.run( 'document/elements/create', {
-				container,
-				model: {
-					... modelExtras,
-					elType: 'container',
-					_title: modelExtras._title || component.getChildrenTitle( container, index ),
-				},
-				options: {
-					... optionsExtras,
-					edit: false, // Not losing focus.
-				},
-			} );
+		$e.run( 'document/elements/create', {
+			container,
+			model: {
+				elType: 'container',
+				isLocked: true,
+				_title: extractNestedItemTitle( container, index ),
+			},
+			options: {
+				edit: false, // Not losing focus.
+			},
 		} );
 	}
 }
