@@ -331,6 +331,13 @@ class TabsV2 extends Widget_Nested_Base {
 				'fit' => esc_html__( 'Fit to content', 'elementor' ),
 				'height' => esc_html__( 'Height', 'elementor' ),
 			],
+			'selectors_dictionary' => [
+				'fit' => '--tabs-v2-overflow-x: initial; --tabs-v2-overflow-y: initial;',
+				'height' => '--tabs-v2-overflow-x: hidden; --tabs-v2-overflow-y: auto;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
 		] );
 
 		$this->add_responsive_control( 'tabs_height', [
@@ -776,6 +783,79 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'section_box_style', [
+			'label' => esc_html__( 'Box', 'elementor' ),
+			'tab' => Controls_Manager::TAB_STYLE,
+		] );
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'box_background_color',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'box_border',
+				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'elementor' ),
+					],
+					'width' => [
+						'label' => esc_html__( 'Border Width', 'elementor' ),
+					],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'box_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'condition' => [
+					'box_height!' => 'height',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'box_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 	}
