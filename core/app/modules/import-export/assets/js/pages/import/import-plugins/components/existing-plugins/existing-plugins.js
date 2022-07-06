@@ -10,7 +10,9 @@ export default function ExistingPlugins( { plugins } ) {
 		return null;
 	}
 
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const existingPlugins = useMemo( () => plugins, [] ),
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		initialSelected = useMemo( () => plugins.map( ( plugin, index ) => index ), [] );
 
 	return (
