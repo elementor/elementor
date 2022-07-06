@@ -82,6 +82,8 @@ class TabsV2 extends Widget_Nested_Base {
 	protected function register_controls() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
+		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
+		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -171,11 +173,11 @@ class TabsV2 extends Widget_Nested_Base {
 					'icon' => 'eicon-v-align-bottom',
 				],
 				'end' => [
-					'title' => esc_html__( 'Right', 'elementor' ),
+					'title' => $tooltip_end,
 					'icon' => 'eicon-h-align-' . $end,
 				],
 				'start' => [
-					'title' => esc_html__( 'Left', 'elementor' ),
+					'title' => $tooltip_start,
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
@@ -668,7 +670,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'selector' => '{{WRAPPER}} .elementor-tab-title',
+			'selector' => '{{WRAPPER}} .e-tab-title-text',
 		] );
 
 		$this->add_control(
@@ -709,7 +711,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography_hover',
-			'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+			'selector' => '{{WRAPPER}}  .e-tab-title-text:hover',
 		] );
 
 		$this->add_control(
@@ -750,7 +752,7 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography_active',
-			'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+			'selector' => '{{WRAPPER}} .elementor-active .e-tab-title-text',
 		] );
 
 		$this->add_control(
@@ -779,6 +781,151 @@ class TabsV2 extends Widget_Nested_Base {
 				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'icon_section_style', [
+			'label' => esc_html__( 'Icon', 'elementor' ),
+			'tab' => Controls_Manager::TAB_STYLE,
+		] );
+
+		$this->add_responsive_control( 'icon_position', [
+			'label' => esc_html__( 'Icon Position', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'top' => [
+					'title' => esc_html__( 'Top', 'elementor' ),
+					'icon' => 'eicon-v-align-top',
+				],
+				'end' => [
+					'title' => $tooltip_end,
+					'icon' => 'eicon-h-align-' . $end,
+				],
+				'bottom' => [
+					'title' => esc_html__( 'Bottom', 'elementor' ),
+					'icon' => 'eicon-v-align-bottom',
+				],
+				'start' => [
+					'title' => $tooltip_start,
+					'icon' => 'eicon-h-align-' . $start,
+				],
+			],
+			'selectors_dictionary' => [
+				'top' => '--tabs-v2-title-direction: column;',
+				'end' => '--tabs-v2-title-direction: row-reverse;',
+				'bottom' => '--tabs-v2-title-direction: column-reverse;',
+				'start' => '--tabs-v2-title-direction: row;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+		] );
+
+		$this->add_responsive_control( 'icon_size', [
+			'label' => esc_html__( 'Icon Size', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 100,
+				],
+				'em' => [
+					'min' => 0,
+					'max' => 10,
+					'step' => 0.1,
+				],
+				'rem' => [
+					'min' => 0,
+					'max' => 10,
+					'step' => 0.1,
+				],
+			],
+			'default' => [
+				'unit' => 'px',
+			],
+			'size_units' => [ 'px', 'em', 'rem' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-size: {{SIZE}}{{UNIT}}',
+			],
+		] );
+
+		$this->add_responsive_control( 'icon_spacing', [
+			'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 400,
+				],
+				'vw' => [
+					'min' => 0,
+					'max' => 50,
+					'step' => 0.1,
+				],
+			],
+			'default' => [
+				'unit' => 'px',
+			],
+			'size_units' => [ 'px', 'vw' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-gap: {{SIZE}}{{UNIT}}',
+			],
+		] );
+
+		$this->start_controls_tabs( 'icon_style_states' );
+
+		$this->start_controls_tab(
+			'icon_section_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control( 'icon_color', [
+			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-color: {{VALUE}};',
+			],
+		] );
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_section_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control( 'icon_color_hover', [
+			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-color-hover: {{VALUE}};',
+			],
+		] );
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_section_active',
+			[
+				'label' => esc_html__( 'Active', 'elementor' ),
+			]
+		);
+
+		$this->add_control( 'icon_color_active', [
+			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--tabs-v2-icon-color-active: {{VALUE}};',
+			],
+		] );
 
 		$this->end_controls_tab();
 
