@@ -23,12 +23,16 @@ class Utils {
 	public static function map_old_new_post_ids( array $imported_data ) {
 		$result = [];
 
-		foreach ( $imported_data['content'] as $post_type ) {
-			$result += $post_type['succeed'];
+		if ( isset( $imported_data['content'] ) ) {
+			foreach ( $imported_data['content'] as $post_type ) {
+				$result += $post_type['succeed'];
+			}
 		}
 
-		foreach ( $imported_data['wp-content'] as $post_type ) {
-			$result += $post_type['succeed'];
+		if ( isset( $imported_data['wp-content'] ) ) {
+			foreach ( $imported_data['wp-content'] as $post_type ) {
+				$result += $post_type['succeed'];
+			}
 		}
 
 		return $result;
@@ -36,6 +40,10 @@ class Utils {
 
 	public static function map_old_new_terms_ids( array $imported_data ) {
 		$result = [];
+
+		if ( ! isset( $imported_data['taxonomies'] ) ) {
+			return $result;
+		}
 
 		foreach ( $imported_data['taxonomies'] as $post_type_taxonomies ) {
 			foreach ( $post_type_taxonomies as $taxonomy ) {

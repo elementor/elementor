@@ -1,31 +1,30 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport\Content;
 
-use Elementor\Core\App\Modules\ImportExport\Utils;
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Taxonomies extends Runner_Base {
 
 	public function should_import( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'content', $data['include'], true )
-			&& ! empty( $data['extracted_directory_path'] )
-			&& ! empty( $data['manifest']['taxonomies'] )
+			isset( $data['include'] ) &&
+			in_array( 'content', $data['include'], true ) &&
+			! empty( $data['extracted_directory_path'] ) &&
+			! empty( $data['manifest']['taxonomies'] )
 		);
 	}
 
 	public function should_export( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'content', $data['include'], true )
+			isset( $data['include'] ) &&
+			in_array( 'content', $data['include'], true )
 		);
 	}
 
 	public function import( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . 'taxonomies/';
 
-		$wp_builtin_post_types = Utils::get_builtin_wp_post_types();
+		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
@@ -43,7 +42,7 @@ class Taxonomies extends Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$wp_builtin_post_types = Utils::get_builtin_wp_post_types();
+		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
@@ -129,16 +128,10 @@ class Taxonomies extends Runner_Base {
 	}
 
 	private function handle_duplicated_nav_menu_term( $term ) {
-		$duplicate_slug = $term['slug'] . '-duplicate';
-		$duplicate_name = $term['name'] . ' duplicate';
-
-		while ( term_exists( $duplicate_slug, 'nav_menu' ) ) {
-			$duplicate_slug .= '-duplicate';
-			$duplicate_name .= ' duplicate';
-		}
-
-		$term['slug'] = $duplicate_slug;
-		$term['name'] = $duplicate_name;
+		do {
+			$term['slug'] = $term['slug'] . '-duplicate';
+			$term['name'] = $term['name'] . ' duplicate';
+		} while ( term_exists( $term['slug'], 'nav_menu' ) );
 
 		return $term;
 	}

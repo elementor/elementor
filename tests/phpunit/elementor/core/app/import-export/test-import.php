@@ -31,17 +31,21 @@ class Test_Import extends Elementor_Test_Base {
 
 		$plugins_manager_mock->expects( $this->once() )
 			->method( 'install' )
-			->willReturn( [ 'succeeded' => [
-				'elementor/elementor.php',
-				'elementor-pro/elementor-pro.php',
-			] ] );
+			->willReturn( [
+				'succeeded' => [
+					'elementor/elementor.php',
+					'elementor-pro/elementor-pro.php',
+				]
+			] );
 
 		$plugins_manager_mock->expects( $this->once() )
 			->method( 'activate' )
-			->willReturn( [ 'succeeded' => [
-				'elementor/elementor.php',
-				'elementor-pro/elementor-pro.php',
-			] ] );
+			->willReturn( [
+				'succeeded' => [
+					'elementor/elementor.php',
+					'elementor-pro/elementor-pro.php',
+				]
+			] );
 
 		$zip_path = __DIR__ . '/mock/sample-kit.zip';
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
@@ -82,7 +86,7 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'specify-runners' );
+		$this->expectExceptionMessage( 'Please specify import runners.' );
 
 		// Arrange
 		$import = new Import( __DIR__ . '/mock/sample-kit.zip', [] );
@@ -99,17 +103,21 @@ class Test_Import extends Elementor_Test_Base {
 
 		$plugins_manager_mock->expects( $this->once() )
 			->method( 'install' )
-			->willReturn( [ 'succeeded' => [
-				'elementor/elementor.php',
-				'elementor-pro/elementor-pro.php',
-			] ] );
+			->willReturn( [
+				'succeeded' => [
+					'elementor/elementor.php',
+					'elementor-pro/elementor-pro.php',
+				]
+			] );
 
 		$plugins_manager_mock->expects( $this->once() )
 			->method( 'activate' )
-			->willReturn( [ 'succeeded' => [
-				'elementor/elementor.php',
-				'elementor-pro/elementor-pro.php',
-			] ] );
+			->willReturn( [
+				'succeeded' => [
+					'elementor/elementor.php',
+					'elementor-pro/elementor-pro.php',
+				]
+			] );
 
 		$import_settings = [
 			'include' => [ 'plugins' ],
@@ -123,7 +131,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertCount( 1, $result );
-		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins']);
+		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins'] );
 	}
 
 	public function test_run__import_plugins_selected_plugin() {
@@ -283,9 +291,6 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__import_wp_content_with_one_cpt_register_and_one_not() {
 		// Arrange
 		register_post_type( 'tests' );
-		if ( post_type_exists( 'sectests' ) ) {
-			unregister_post_type( 'sectests' );
-		}
 
 		$import_settings = [
 			'include' => [ 'content' ],
@@ -302,7 +307,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result['wp-content']['page']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['tests']['succeed'] );
 		$this->assertCount( 4, $result['wp-content']['nav_menu_item']['succeed'] );
-		$this->assertEmpty( $result['wp-content']['sectests'] );
+		$this->assertFalse( isset( $result['wp-content']['sectests'] ) );
 
 		unregister_post_type( 'tests' );
 	}
@@ -369,19 +374,19 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertEquals( $expected_settings_selected_plugins, $settings_selected_plugins );
 	}
 
-	public function test_constructor__import_by_not_existed_session() {
+	public function test_constructor__importing_a_not_existing_session_throws_an_error() {
 		// Arrange
 		$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
 
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'missing-tmp-folder-error' );
+		$this->expectExceptionMessage( 'session-does-not-exits-error' );
 
 		// Act
-		$import = new Import( $elementor_tmp_directory . 'session-that-not-exits', [] );
+		$import = new Import( $elementor_tmp_directory . 'session-not-exits', [] );
 	}
 
-	// Test if the kit-library adaptor is running and performing correctly.
+	// Test if the kit-library adapter is running and performing correctly.
 	public function test_get_manifest__kit_library() {
 		$import_settings = [
 			'referrer' => 'kit-library',
@@ -426,26 +431,26 @@ class Test_Import extends Elementor_Test_Base {
 	// Assertions for elementor content by testing if the post containing the "JSON" content.
 	// The "JSON" is located in the content folder inside the kit.
 	private function assert_valid_elementor_content( $result, $manifest, $zip_path) {
-		$import_process_tmp_dir = Plugin::instance()->uploads_manager->extract_and_validate_zip( $zip_path )['extraction_directory'];
+		$import_process_tmp_dir = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path )['extraction_directory'];
 		
 		foreach ( $manifest['content'] as $elementor_post_type => $elementor_posts ) {
-			foreach ($elementor_posts as $post_id => $post_settings) {
-				$expected_post_data = ImportExportUtils::read_json_file($import_process_tmp_dir . '/content/' . $elementor_post_type . '/' . $post_id);
+			foreach ( $elementor_posts as $post_id => $post_settings ) {
+				$expected_post_data = ImportExportUtils::read_json_file( $import_process_tmp_dir . '/content/' . $elementor_post_type . '/' . $post_id );
 				$expected_post_content = $expected_post_data['content'];
 
-				$imported_post_id = $result['content'][$elementor_post_type]['succeed'][$post_id];
-				$new_post = Plugin::$instance->documents->get($imported_post_id, false);
+				$imported_post_id = $result['content'][ $elementor_post_type ]['succeed'][ $post_id ];
+				$new_post = Plugin::$instance->documents->get( $imported_post_id, false );
 				$post_content = $new_post->get_json_meta('_elementor_data');
 
-				$this->recursive_unset($post_content, 'isInner');
-				$this->recursive_unset($expected_post_content, 'isInner');
+				$this->recursive_unset( $post_content, 'isInner' );
+				$this->recursive_unset( $expected_post_content, 'isInner' );
 
-				$this->assertEquals($expected_post_content, $post_content);
+				$this->assertEquals( $expected_post_content, $post_content );
 			}
 		}
 
 		// Cleanup
-		Plugin::instance()->uploads_manager->remove_file_or_dir( $import_process_tmp_dir );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $import_process_tmp_dir );
 	}
 
 	// Assertions for imported taxonomies and imported Elementor content by testing the terms of every Elementor post.
@@ -467,6 +472,10 @@ class Test_Import extends Elementor_Test_Base {
 	private function assert_valid_terms_with_wp_content( $result ) {
 		foreach ( $result['wp-content'] as $wp_post_type => $wp_posts ) {
 			foreach ( $wp_posts['succeed'] as $new_post_id ) {
+				if ( ! isset( $result['taxonomies'][ $wp_post_type ] ) ) {
+					continue;
+				}
+
 				foreach ( $result['taxonomies'][ $wp_post_type ] as $taxonomy => $terms ) {
 					$post_terms = get_the_terms( $new_post_id, $taxonomy );
 					$this->assertNotEmpty( $post_terms );
@@ -474,4 +483,6 @@ class Test_Import extends Elementor_Test_Base {
 			}
 		}
 	}
+
+	// TODO add test for duplicated menu terms.
 }

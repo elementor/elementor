@@ -9,24 +9,59 @@ use Elementor\Core\App\Modules\ImportExport\Content\Site_Settings;
 use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
 use Elementor\Core\App\Modules\ImportExport\Content\Templates;
 use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
+use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 
 class Export {
 	const ZIP_ARCHIVE_MODULE_NOT_INSTALLED_KEY = 'zip-archive-module-not-installed';
 
+	/**
+	 * Selected content types to export.
+	 *
+	 * @var array
+	 */
 	private $settings_include;
 
+	/**
+	 * The kit information. (e.g: title, description)
+	 *
+	 * @var array $export_data
+	 */
 	private $settings_kit_info;
 
+	/**
+	 * Selected plugins to export.
+	 * Contains the plugins essential data for export. (e.g: name, path, version, etc.)
+	 *
+	 * @var array
+	 */
 	private $settings_selected_plugins;
 
+	/**
+	 * Selected custom post types to export.
+	 *
+	 * @var array
+	 */
 	private $settings_selected_custom_post_types;
 
+	/**
+	 * The output data of the export process.
+	 * Will be written into the manifest.json file.
+	 *
+	 * @var array
+	 */
 	private $manifest_data;
 
+	/**
+	 * The zip archive object.
+	 *
+	 * @var \ZipArchive
+	 */
 	private $zip;
 
 	/**
+	 * Export runners for each content type.
+	 *
 	 * @var Runner_Base[]
 	 */
 	private $runners;
@@ -38,9 +73,15 @@ class Export {
 		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
 	}
 
+	/**
+	 * Execute the export process.
+	 *
+	 * @return array The export data output.
+	 * @throws \Exception
+	 */
 	public function run() {
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'specify-runners' );
+			throw new \Exception( 'Please specify export runners.' );
 		}
 
 		$this->set_default_settings();
@@ -72,6 +113,9 @@ class Export {
 		];
 	}
 
+	/**
+	 * Register all the default runners the export can run. (e.g: elementor, plugins, etc.)
+	 */
 	public function register_default_runners() {
 		$this->register( new Site_Settings() );
 		$this->register( new Plugins() );
@@ -81,10 +125,18 @@ class Export {
 		$this->register( new Wp_Content() );
 	}
 
+	/**
+	 * Register a runner for the import.
+	 *
+	 * @param Runner_Base $runner_instance
+	 */
 	public function register( Runner_Base $runner_instance ) {
 		$this->runners[ get_class( $runner_instance ) ] = $runner_instance;
 	}
 
+	/**
+	 * Set default settings for the export.
+	 */
 	public function set_default_settings() {
 		if ( ! is_array( $this->get_settings_include() ) ) {
 			$this->settings_include( $this->get_default_settings_include() );
@@ -135,10 +187,20 @@ class Export {
 		return $this->settings_selected_plugins;
 	}
 
+	/**
+	 * Get the default settings of which content types should be exported.
+	 *
+	 * @return array
+	 */
 	private function get_default_settings_include() {
 		return [ 'templates', 'content', 'settings', 'plugins' ];
 	}
 
+	/**
+	 * Get the default settings of the kit info.
+	 *
+	 * @return array
+	 */
 	private function get_default_settings_kit_info() {
 		return [
 			'title' => 'kit',
@@ -146,30 +208,37 @@ class Export {
 		];
 	}
 
+	/**
+	 * Get the default settings of the plugins that should be exported.
+	 *
+	 * @return array
+	 */
 	private function get_default_settings_selected_plugins() {
-		$plugins = [];
 		$installed_plugins = Plugin::$instance->wp->get_plugins();
 
-		$installed_plugins->map( function ( $item, $key ) {
-			return $item * 2;
-		} );
-
-		foreach ( $installed_plugins as $key => $value ) {
-			$plugins[] = [
-				'name' => $value['Name'],
+		return $installed_plugins->map( function ( $item, $key ) {
+			return [
+				'name' => $item['Name'],
 				'plugin' => $key,
-				'pluginUri' => $value['PluginURI'],
-				'version' => $value['Version'],
+				'pluginUri' => $item['PluginURI'],
+				'version' => $item['Version'],
 			];
-		}
-
-		return $plugins;
+		} )->all();
 	}
 
+	/**
+	 * Get the default settings of all the custom post types that should be exported.
+	 * Should be all the custom post types that are not built in to WordPress and not part of Elementor.
+	 *
+	 * @return array
+	 */
 	private function get_default_settings_custom_post_types() {
 		return Utils::get_registered_cpt_names();
 	}
 
+	/**
+	 * Init the zip archive.
+	 */
 	private function init_zip_archive() {
 		if ( ! class_exists( '\ZipArchive' ) ) {
 			throw new \Error( static::ZIP_ARCHIVE_MODULE_NOT_INSTALLED_KEY );
@@ -186,6 +255,9 @@ class Export {
 		$this->zip = $zip;
 	}
 
+	/**
+	 * Init the manifest data and add some basic info to it.
+	 */
 	private function init_manifest_data() {
 		$kit_post = Plugin::$instance->kits_manager->get_active_kit()->get_post();
 
@@ -204,6 +276,13 @@ class Export {
 		$this->manifest_data = $manifest_data;
 	}
 
+	/**
+	 * Handle the export process output.
+	 * Add the manifest data from the runner to the manifest.json file.
+	 * Create files according to the files array that should be exported by the runner.
+	 *
+	 * @param array $export_result
+	 */
 	private function handle_export_result( $export_result ) {
 		foreach ( $export_result['manifest'] as $data ) {
 			$this->manifest_data = $this->manifest_data + $data;
@@ -230,13 +309,26 @@ class Export {
 	}
 
 	/**
-	 * Helpers
+	 * Add json file to the zip archive.
+	 *
+	 * @param string $path The relative path to the file.
+	 * @param string $content The content of the file.
+	 * @param $json_flags
 	 */
+	private function add_json_file( $path, $content, $json_flags = null ) {
+		if ( ! Str::ends_with( $path, '.json' ) ) {
+			$path .= '.json';
+		}
 
-	private function add_json_file( $name, $content, $json_flags = null ) {
-		$this->add_file( $name . '.json', wp_json_encode( $content, $json_flags ) );
+		$this->add_file( $path, wp_json_encode( $content, $json_flags ) );
 	}
 
+	/**
+	 * Add file to the zip archive.
+	 *
+	 * @param string $file
+	 * @param string $content The content of the file.
+	 */
 	private function add_file( $file, $content ) {
 		$this->zip->addFromString( $file, $content );
 	}

@@ -6,8 +6,6 @@ use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Plugin;
 
 class Elementor_Content extends Runner_Base {
-	const ELEMENTOR_POST_TYPES = [ 'post', 'page', 'e_landing_page' ];
-
 	private $show_page_on_front;
 
 	private $page_on_front_id;
@@ -18,24 +16,24 @@ class Elementor_Content extends Runner_Base {
 
 	public function should_import( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'content', $data['include'], true )
-			&& is_array( $data['manifest']['content'] )
-			&& ! empty( $data['extracted_directory_path'] )
+			isset( $data['include'] ) &&
+			in_array( 'content', $data['include'], true ) &&
+			! empty( $data['manifest']['content'] ) &&
+			! empty( $data['extracted_directory_path'] )
 		);
 	}
 
 	public function should_export( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'content', $data['include'], true )
+			isset( $data['include'] ) &&
+			in_array( 'content', $data['include'], true )
 		);
 	}
 
 	public function import( array $data, array $imported_data ) {
 		$result['content'] = [];
 
-		$elementor_post_types = static::ELEMENTOR_POST_TYPES;
+		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
 
 		foreach ( $elementor_post_types as $post_type ) {
 			if ( empty( $data['manifest']['content'][ $post_type ] ) ) {
@@ -55,7 +53,7 @@ class Elementor_Content extends Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$elementor_post_types = static::ELEMENTOR_POST_TYPES;
+		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
 
 		$files = [];
 		$manifest = [];

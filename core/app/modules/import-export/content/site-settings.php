@@ -8,21 +8,21 @@ class Site_Settings extends Runner_Base {
 
 	public function should_import( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'settings', $data['include'], true )
-			&& is_array( $data['site_settings']['settings'] )
+			isset( $data['include'] ) &&
+			in_array( 'settings', $data['include'], true ) &&
+			! empty( $data['site_settings']['settings'] )
 		);
 	}
 
 	public function should_export( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'settings', $data['include'], true )
+			isset( $data['include'] ) &&
+			in_array( 'settings', $data['include'], true )
 		);
 	}
 
 	public function import( array $data, array $imported_data ) {
-		$site_settings = $data['site_settings']['settings'];
+		$new_site_settings = $data['site_settings']['settings'];
 		$title = isset( $data['manifest']['title'] ) ? $data['manifest']['title'] : 'Imported Kit';
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -33,16 +33,16 @@ class Site_Settings extends Runner_Base {
 		}
 
 		if ( ! empty( $old_settings['custom_colors'] ) ) {
-			$site_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $site_settings['custom_colors'] );
+			$new_site_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $new_site_settings['custom_colors'] );
 		}
 
 		if ( ! empty( $old_settings['custom_typography'] ) ) {
-			$site_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $site_settings['custom_typography'] );
+			$new_site_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $new_site_settings['custom_typography'] );
 		}
 
-		$site_settings = array_replace_recursive( $old_settings, $site_settings );
+		$new_site_settings = array_replace_recursive( $old_settings, $new_site_settings );
 
-		$new_kit = Plugin::$instance->kits_manager->create_new_kit( $title, $site_settings );
+		$new_kit = Plugin::$instance->kits_manager->create_new_kit( $title, $new_site_settings );
 
 		$result['site-settings'] = (bool) $new_kit;
 

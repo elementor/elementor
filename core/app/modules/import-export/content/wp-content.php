@@ -9,16 +9,17 @@ use Elementor\Core\Utils\ImportExport\WP_Import;
 class Wp_Content extends Runner_Base {
 	public function should_import( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'content', $data['include'], true )
-			&& ! empty( $data['extracted_directory_path'] )
+			isset( $data['include'] ) &&
+			in_array( 'content', $data['include'], true ) &&
+			! empty( $data['extracted_directory_path'] ) &&
+			! empty( $data['manifest']['wp-content'] )
 		);
 	}
 
 	public function should_export( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'content', $data['include'], true )
+			isset( $data['include'] ) &&
+			in_array( 'content', $data['include'], true )
 		);
 	}
 
@@ -30,12 +31,17 @@ class Wp_Content extends Runner_Base {
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 		$post_types = $this->array_force_last_element( $post_types, 'nav_menu_item' );
 
+		$taxonomies = isset( $imported_data['taxonomies'] ) ? $imported_data['taxonomies'] : [];
 		$imported_terms = ImportExportUtils::map_old_new_terms_ids( $imported_data );
 
 		$result['wp-content'] = [];
 
 		foreach ( $post_types as $post_type ) {
-			$import = $this->import_wp_post_type( $path, $post_type, $imported_data, $imported_data['taxonomies'], $imported_terms );
+			if ( ! post_type_exists( $post_type ) ) {
+				continue;
+			}
+
+			$import = $this->import_wp_post_type( $path, $post_type, $imported_data, $taxonomies, $imported_terms );
 			$result['wp-content'][ $post_type ] = $import;
 			$imported_data = array_merge( $imported_data, $result );
 		}
@@ -78,10 +84,6 @@ class Wp_Content extends Runner_Base {
 	}
 
 	private function import_wp_post_type( $path, $post_type, array $imported_data, array $taxonomies, array $imported_terms ) {
-		if ( ! post_type_exists( $post_type ) ) {
-			return [];
-		}
-
 		$args = [
 			'fetch_attachments' => true,
 			'posts' => ImportExportUtils::map_old_new_post_ids( $imported_data ),
@@ -122,9 +124,13 @@ class Wp_Content extends Runner_Base {
 		];
 	}
 
+	// force element in array to be last element
 	private function array_force_last_element( $array, $element ) {
-		unset( $array[ $element ] );
-		$array[] = $element;
+		$index = array_search( $element, $array );
+		if ( $index !== false ) {
+			unset( $array[ $index ] );
+			$array[] = $element;
+		}
 		return $array;
 	}
 }

@@ -23,17 +23,18 @@ class Plugins extends Runner_Base {
 
 	public function should_import( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'plugins', $data['include'], true )
-			&& is_array( $data['selected_plugins'] )
+			isset( $data['include'] ) &&
+			in_array( 'plugins', $data['include'], true ) &&
+			! empty( $data['manifest']['plugins'] ) &&
+			! empty( $data['selected_plugins'] )
 		);
 	}
 
 	public function should_export( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'plugins', $data['include'], true )
-			&& is_array( $data['selected_plugins'] )
+			isset( $data['include'] ) &&
+			in_array( 'plugins', $data['include'], true ) &&
+			is_array( $data['selected_plugins'] )
 		);
 	}
 
@@ -78,6 +79,7 @@ class Plugins extends Runner_Base {
 			'manifest' => [
 				$manifest_data,
 			],
+			'files' => [],
 		];
 	}
 }

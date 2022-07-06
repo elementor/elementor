@@ -11,17 +11,17 @@ class Templates extends Runner_Base {
 
 	public function should_import( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'templates', $data['include'], true )
-			&& ! empty( $data['extracted_directory_path'] )
-			&& ! empty( $data['manifest']['templates'] )
+			isset( $data['include'] ) &&
+			in_array( 'templates', $data['include'], true ) &&
+			! empty( $data['extracted_directory_path'] ) &&
+			! empty( $data['manifest']['templates'] )
 		);
 	}
 
 	public function should_export( array $data ) {
 		return (
-			isset( $data['include'] )
-			&& in_array( 'templates', $data['include'], true )
+			isset( $data['include'] ) &&
+			in_array( 'templates', $data['include'], true )
 		);
 	}
 
@@ -39,12 +39,6 @@ class Templates extends Runner_Base {
 			try {
 				$template_data = ImportExportUtils::read_json_file( $path . $id );
 				$import = $this->import_template( $id, $template_settings, $template_data );
-
-				if ( is_wp_error( $import ) ) {
-					$result['templates']['failed'][ $id ] = $import->get_error_message();
-
-					continue;
-				}
 
 				$result['templates']['succeed'][ $id ] = $import;
 			} catch ( \Exception $error ) {
@@ -68,7 +62,7 @@ class Templates extends Runner_Base {
 		);
 
 		if ( is_wp_error( $new_document ) ) {
-			return $new_document;
+			throw new \Exception( $new_document->get_error_message() );
 		}
 
 		$template_data['import_settings'] = $template_settings;

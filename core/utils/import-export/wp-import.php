@@ -328,10 +328,10 @@ class WP_Import extends \WP_Importer {
 		foreach ( (array) $this->args['imported_authors'] as $i => $old_login ) {
 			// Multisite adds strtolower to sanitize_user. Need to sanitize here to stop breakage in process_posts.
 			$santized_old_login = sanitize_user( $old_login, true );
-			$old_id = isset( $this->authors[ $old_login ]['author_id'] ) ? intval( $this->authors[ $old_login ]['author_id'] ) : false;
+			$old_id = isset( $this->authors[ $old_login ]['author_id'] ) ? (int) $this->authors[ $old_login ]['author_id'] : false;
 
 			if ( ! empty( $this->args['user_map'][ $i ] ) ) {
-				$user = get_userdata( intval( $this->args['user_map'][ $i ] ) );
+				$user = get_userdata( (int) $this->args['user_map'][ $i ] );
 				if ( isset( $user->ID ) ) {
 					if ( $old_id ) {
 						$this->processed_authors[ $old_id ] = $user->ID;
@@ -411,7 +411,8 @@ class WP_Import extends \WP_Importer {
 
 				if ( isset( $term['term_id'] ) ) {
 					if ( 'nav_menu' === $term['term_taxonomy'] ) {
-						// For BC
+						// BC - support old kits that the menu terms are part of the 'nav_menu_item' post type
+						// and not part of the taxonomies.
 						if ( ! empty( $this->processed_taxonomies[ $term['term_taxonomy'] ] ) ) {
 							foreach ( $this->processed_taxonomies[ $term['term_taxonomy'] ] as $processed_term ) {
 								$old_slug   = $processed_term['old_slug'];
@@ -425,8 +426,8 @@ class WP_Import extends \WP_Importer {
 							$term = $this->handle_duplicated_nav_menu_term( $term );
 						}
 					} else {
-						$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
-						$result['succeed'][ intval( $term['term_id'] ) ] = (int) $term_id;
+						$this->processed_terms[ (int) $term['term_id'] ] = (int) $term_id;
+						$result['succeed'][ (int) $term['term_id'] ] = (int) $term_id;
 						continue;
 					}
 				}
@@ -451,8 +452,8 @@ class WP_Import extends \WP_Importer {
 			$id = wp_insert_term( wp_slash( $term['term_name'] ), $term['term_taxonomy'], $args );
 			if ( ! is_wp_error( $id ) ) {
 				if ( isset( $term['term_id'] ) ) {
-					$this->processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
-					$result['succeed'][ intval( $term['term_id'] ) ] = $id['term_id'];
+					$this->processed_terms[ (int) $term['term_id'] ] = $id['term_id'];
+					$result['succeed'][ (int) $term['term_id'] ] = $id['term_id'];
 				}
 			} else {
 				/* translators: 1: Term taxonomy, 2: Term name. */
@@ -583,7 +584,7 @@ class WP_Import extends \WP_Importer {
 					$post_parent = $this->processed_posts[ $post_parent ];
 					// otherwise record the parent for later.
 				} else {
-					$this->post_orphans[ intval( $post['post_id'] ) ] = $post_parent;
+					$this->post_orphans[ (int) $post['post_id'] ] = $post_parent;
 					$post_parent = 0;
 				}
 			}
@@ -668,7 +669,7 @@ class WP_Import extends \WP_Importer {
 			}
 
 			// Map pre-import ID to local ID.
-			$this->processed_posts[ intval( $post['post_id'] ) ] = (int) $post_id;
+			$this->processed_posts[ (int) $post['post_id'] ] = (int) $post_id;
 
 			if ( ! isset( $post['terms'] ) ) {
 				$post['terms'] = [];
@@ -703,7 +704,7 @@ class WP_Import extends \WP_Importer {
 							continue;
 						}
 					}
-					$terms_to_set[ $taxonomy ][] = intval( $term_id );
+					$terms_to_set[ $taxonomy ][] = (int) $term_id;
 				}
 
 				foreach ( $terms_to_set as $tax => $ids ) {
@@ -781,8 +782,8 @@ class WP_Import extends \WP_Importer {
 					$value = false;
 
 					if ( '_edit_last' === $key ) {
-						if ( isset( $this->processed_authors[ intval( $meta['value'] ) ] ) ) {
-							$value = $this->processed_authors[ intval( $meta['value'] ) ];
+						if ( isset( $this->processed_authors[ (int) $meta['value'] ] ) ) {
+							$value = $this->processed_authors[ (int) $meta['value'] ];
 						} else {
 							$key = false;
 						}
@@ -879,19 +880,19 @@ class WP_Import extends \WP_Importer {
 		}
 
 		$_menu_item_object_id = $post_meta_key_value['_menu_item_object_id'];
-		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_terms[ intval( $_menu_item_object_id ) ] ) ) {
-			$_menu_item_object_id = $this->processed_terms[ intval( $_menu_item_object_id ) ];
-		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
-			$_menu_item_object_id = $this->processed_posts[ intval( $_menu_item_object_id ) ];
+		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_terms[ (int) $_menu_item_object_id ] ) ) {
+			$_menu_item_object_id = $this->processed_terms[ (int) $_menu_item_object_id ];
+		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_posts[ (int) $_menu_item_object_id ] ) ) {
+			$_menu_item_object_id = $this->processed_posts[ (int) $_menu_item_object_id ];
 		} elseif ( 'custom' !== $post_meta_key_value['_menu_item_type'] ) {
 			return $result;
 		}
 
 		$_menu_item_menu_item_parent = $post_meta_key_value['_menu_item_menu_item_parent'];
-		if ( isset( $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ] ) ) {
-			$_menu_item_menu_item_parent = $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ];
+		if ( isset( $this->processed_menu_items[ (int) $_menu_item_menu_item_parent ] ) ) {
+			$_menu_item_menu_item_parent = $this->processed_menu_items[ (int) $_menu_item_menu_item_parent ];
 		} elseif ( $_menu_item_menu_item_parent ) {
-			$this->menu_item_orphans[ intval( $item['post_id'] ) ] = (int) $_menu_item_menu_item_parent;
+			$this->menu_item_orphans[ (int) $item['post_id'] ] = (int) $_menu_item_menu_item_parent;
 			$_menu_item_menu_item_parent = 0;
 		}
 
@@ -905,7 +906,7 @@ class WP_Import extends \WP_Importer {
 			'menu-item-object-id' => $_menu_item_object_id,
 			'menu-item-object' => $post_meta_key_value['_menu_item_object'],
 			'menu-item-parent-id' => $_menu_item_menu_item_parent,
-			'menu-item-position' => intval( $item['menu_order'] ),
+			'menu-item-position' => (int) $item['menu_order'],
 			'menu-item-type' => $post_meta_key_value['_menu_item_type'],
 			'menu-item-title' => $item['post_title'],
 			'menu-item-url' => $post_meta_key_value['_menu_item_url'],
@@ -919,7 +920,7 @@ class WP_Import extends \WP_Importer {
 
 		$id = wp_update_nav_menu_item( $menu_id, 0, $args );
 		if ( $id && ! is_wp_error( $id ) ) {
-			$this->processed_menu_items[ intval( $item['post_id'] ) ] = (int) $id;
+			$this->processed_menu_items[ (int) $item['post_id'] ] = (int) $id;
 			$result[ $item['post_id'] ] = $id;
 		}
 

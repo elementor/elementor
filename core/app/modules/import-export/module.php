@@ -76,63 +76,9 @@ class Module extends BaseModule {
 		return $this->get_config_data();
 	}
 
-	public function get_summary_titles() {
-		$summary_titles = [];
-
-		$document_types = Plugin::$instance->documents->get_document_types();
-
-		foreach ( $document_types as $name => $document_type ) {
-			$summary_titles['templates'][ $name ] = [
-				'single' => $document_type::get_title(),
-				'plural' => $document_type::get_plural_title(),
-			];
-		}
-
-		$post_types = get_post_types_by_support( 'elementor' );
-		$post_types[] = 'nav_menu_item';
-
-		foreach ( $post_types as $post_type ) {
-			if ( Source_Local::CPT === $post_type ) {
-				continue;
-			}
-
-			$post_type_object = get_post_type_object( $post_type );
-
-			$summary_titles['content'][ $post_type ] = [
-				'single' => $post_type_object->labels->singular_name,
-				'plural' => $post_type_object->label,
-			];
-		}
-
-		$custom_post_types = ImportExportUtils::get_registered_cpt_names();
-		if ( ! empty( $custom_post_types ) ) {
-			foreach ( $custom_post_types as $custom_post_type ) {
-
-				$custom_post_types_object = get_post_type_object( $custom_post_type );
-				//cpt data appears in two arrays:
-				//1. content object: in order to show the export summary when completed in getLabel function
-				$summary_titles['content'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
-				];
-
-				//2. customPostTypes object: in order to actually export the data
-				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
-				];
-			}
-		}
-
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		foreach ( $active_kit->get_tabs() as $key => $tab ) {
-			$summary_titles['site-settings'][ $key ] = $tab->get_title();
-		}
-
-		return $summary_titles;
-	}
-
+	/**
+	 * Register the import/export tab in elementor tools.
+	 */
 	public function register_settings_tab( Tools $tools ) {
 		$tools->add_tab( 'import-export-kit', [
 			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
@@ -148,6 +94,9 @@ class Module extends BaseModule {
 		] );
 	}
 
+	/**
+	 * Render the import/export tab content.
+	 */
 	private function render_import_export_tab_content() {
 		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
 
@@ -215,8 +164,19 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	public function upload_kit( $file_name, $referrer ) {
-		$this->import = new Import( $file_name, [ 'referrer' => $referrer ] );
+	/**
+	 * Upload a kit zip file and get the kit data.
+	 *
+	 * Assigning the Import process to the 'import' property,
+	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
+	 *
+	 * @param string $file Path to the file.
+	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
+	 * @return array
+	 * @throws \Exception
+	 */
+	public function upload_kit( $file, $referrer ) {
+		$this->import = new Import( $file, [ 'referrer' => $referrer ] );
 
 		return [
 			'session' => $this->import->get_session_id(),
@@ -225,13 +185,37 @@ class Module extends BaseModule {
 		];
 	}
 
-	public function import_kit( $tmp_folder_id, $settings ) {
-		$this->import = new Import( $tmp_folder_id, $settings );
+	/**
+	 * Import a kit by session_id.
+	 * Upload and import a kit by kit zip file.
+	 *
+	 * Assigning the Import process to the 'import' property,
+	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
+	 *
+	 * @param string $path Path to the file or session_id.
+	 * @param array $settings Settings the import use to determine which content to import.
+	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @return array
+	 * @throws \Exception
+	 */
+	public function import_kit( $path, $settings ) {
+		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
 
 		return $this->import->run();
 	}
 
+	/**
+	 * Export a kit.
+	 *
+	 * Assigning the Export process to the 'export' property,
+	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
+	 *
+	 * @param array $settings Settings the export use to determine which content to export.
+	 *      (e.g: include, kit_info, selected_plugins, selected_cpt, etc.)
+	 * @return array
+	 * @throws \Exception
+	 */
 	public function export_kit( $settings ) {
 		$this->export = new Export( $settings );
 		$this->export->register_default_runners();
@@ -239,6 +223,9 @@ class Module extends BaseModule {
 		return $this->export->run();
 	}
 
+	/**
+	 * Register appropriate actions.
+	 */
 	private function register_actions() {
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
@@ -256,29 +243,33 @@ class Module extends BaseModule {
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
 	}
 
+	/**
+	 * Assign each ajax action to a method.
+	 */
 	private function maybe_handle_ajax() {
-		$result = [];
-
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		switch ( $_POST['action'] ) {
 			case static::EXPORT_TRIGGER_KEY:
 				$this->handle_export_kit();
 				break;
+
 			case static::UPLOAD_TRIGGER_KEY:
 				$this->handle_upload_kit();
 				break;
+
 			case static::IMPORT_TRIGGER_KEY:
 				$this->handle_import_kit();
 				break;
+
 			default:
 				throw new \Error( esc_html__( 'Invalid action', 'elementor' ) );
 		}
 	}
 
+	/**
+	 * Handle upload kit ajax request.
+	 */
 	private function handle_upload_kit() {
-		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
-		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
-
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			if (
@@ -340,6 +331,9 @@ class Module extends BaseModule {
 		wp_send_json_success( $result );
 	}
 
+	/**
+	 * Handle import kit ajax request.
+	 */
 	private function handle_import_kit() {
 		// PHPCS - Already validated in caller function
 		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -350,6 +344,9 @@ class Module extends BaseModule {
 		wp_send_json_success( $import );
 	}
 
+	/**
+	 * Handle export kit ajax request.
+	 */
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
 		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -372,6 +369,9 @@ class Module extends BaseModule {
 		wp_send_json_success( $result );
 	}
 
+	/**
+	 * Get config data that will be exposed to the frontend.
+	 */
 	private function get_config_data() {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
@@ -387,7 +387,62 @@ class Module extends BaseModule {
 		];
 	}
 
-	// TODO remove the url functions?
+	/**
+	 * Get labels of Elementor document types, Elementor Post types, WordPress Post types and Custom Post types.
+	 */
+	private function get_summary_titles() {
+		$summary_titles = [];
+
+		$document_types = Plugin::$instance->documents->get_document_types();
+
+		foreach ( $document_types as $name => $document_type ) {
+			$summary_titles['templates'][ $name ] = [
+				'single' => $document_type::get_title(),
+				'plural' => $document_type::get_plural_title(),
+			];
+		}
+
+		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
+		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
+		$post_types = array_merge( $elementor_post_types, $wp_builtin_post_types );
+
+		foreach ( $post_types as $post_type ) {
+			$post_type_object = get_post_type_object( $post_type );
+
+			$summary_titles['content'][ $post_type ] = [
+				'single' => $post_type_object->labels->singular_name,
+				'plural' => $post_type_object->label,
+			];
+		}
+
+		$custom_post_types = ImportExportUtils::get_registered_cpt_names();
+		if ( ! empty( $custom_post_types ) ) {
+			foreach ( $custom_post_types as $custom_post_type ) {
+
+				$custom_post_types_object = get_post_type_object( $custom_post_type );
+				//cpt data appears in two arrays:
+				//1. content object: in order to show the export summary when completed in getLabel function
+				$summary_titles['content'][ $custom_post_type ] = [
+					'single' => $custom_post_types_object->labels->singular_name,
+					'plural' => $custom_post_types_object->label,
+				];
+
+				//2. customPostTypes object: in order to actually export the data
+				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
+					'single' => $custom_post_types_object->labels->singular_name,
+					'plural' => $custom_post_types_object->label,
+				];
+			}
+		}
+
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		foreach ( $active_kit->get_tabs() as $key => $tab ) {
+			$summary_titles['site-settings'][ $key ] = $tab->get_title();
+		}
+
+		return $summary_titles;
+	}
 
 	private function get_elementor_editor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {

@@ -111,27 +111,29 @@ class Wp_Cli extends \WP_CLI_Command {
 		$url = null;
 		$file_path = $args[0];
 		$import_settings = [];
-		$import_settings['referrer'] = 'local';
+		$import_settings['referrer'] = Module::LOCAL_REFERRER_KEY;
 
 		switch ( $assoc_args['sourceType'] ) {
 			case 'library':
 				$url = $this->get_url_from_library( $file_path );
 				$zip_path = $this->create_temp_file_from_url( $url );
-				$import_settings['referrer'] = 'kit-library';
+				$import_settings['referrer'] = Module::KIT_LIBRARY_REFERRER_KEY;
 				break;
+
 			case 'remote':
 				$zip_path = $this->create_temp_file_from_url( $file_path );
 				break;
+
 			case 'local':
 				$zip_path = $file_path;
 				break;
+
 			default:
 				\WP_CLI::error( 'Unknown source type.' );
 				break;
 		}
 
 		if ( 'enable' === $assoc_args['unfilteredFilesUpload'] ) {
-			Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 			Plugin::$instance->uploads_manager->enable_unfiltered_files_upload();
 		}
 
@@ -212,7 +214,15 @@ class Wp_Cli extends \WP_CLI_Command {
 			\WP_CLI::error( "Download file url: {$response['response']['message']}" );
 		}
 
-		return Plugin::$instance->uploads_manager->create_temp_file( $response['body'], 'kit.zip' );
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
+		$file = Plugin::$instance->uploads_manager->create_temp_file( $response['body'], 'kit.zip' );
+
+		// After the upload complete, set the elementor upload state back to false.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
+
+		return $file;
 	}
 
 	/**
