@@ -300,8 +300,6 @@ class Server extends Base {
 		$paths_to_check = [
 			ABSPATH => 'WordPress root directory',
 		];
-		
-		$paths_to_check = apply_filters('elementor/modules/system-info/reporters/server/initial_paths_to_check', $paths_to_check);
 
 		$write_problems = [];
 
@@ -322,6 +320,13 @@ class Server extends Base {
 		if ( file_exists( $htaccess_file ) ) {
 			$paths_to_check[ $htaccess_file ] = '.htaccess file';
 		}
+
+		/**
+		 * Filters the list of files/directories that should be checked for write permissions
+		 *
+		 * @param array $paths_to_check 
+		 */
+		$paths_to_check = apply_filters('elementor/modules/system-info/reporters/server/initial_paths_to_check', $paths_to_check);
 
 		foreach ( $paths_to_check as $dir => $description ) {
 			if ( ! is_writable( $dir ) ) {
