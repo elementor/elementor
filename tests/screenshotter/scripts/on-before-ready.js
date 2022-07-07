@@ -44,12 +44,12 @@ module.exports = async function( page ) {
 			// Hack to fix placeholders URLs
 			await page.evaluate( () => {
 				const placeholders = document.querySelectorAll(
-					`[src='http://localhost/wp-content/plugins/elementor/assets/images/placeholder.png']`
+					`[src='http://localhost/wp-content/plugins/elementor/assets/images/placeholder.png']`,
 				);
 				placeholders.forEach( ( img ) => {
 					img.setAttribute(
 						'src',
-						'http://localhost:8080/wp-content/plugins/elementor/assets/images/placeholder.png'
+						'http://localhost:8080/wp-content/plugins/elementor/assets/images/placeholder.png',
 					);
 				} );
 			} );

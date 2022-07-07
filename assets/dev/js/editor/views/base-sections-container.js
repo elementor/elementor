@@ -19,7 +19,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		return ChildView;
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
@@ -30,32 +30,32 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'elements/base-section-container/behaviors', behaviors, this );
 	},
 
-	getSortableOptions: function() {
+	getSortableOptions() {
 		return {
 			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-section, > .e-container',
 		};
 	},
 
-	getChildType: function() {
+	getChildType() {
 		return [ 'section', 'container' ];
 	},
 
-	initialize: function() {
+	initialize() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
 			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
 	},
 
-	onPanelElementDragStart: function() {
+	onPanelElementDragStart() {
 		// A temporary workaround in order to fix Chrome's 70+ dragging above nested iframe bug
 		this.$el.find( '.elementor-background-video-embed' ).hide();
 
 		elementor.helpers.disableElementEvents( this.$el.find( 'iframe' ) );
 	},
 
-	onPanelElementDragEnd: function() {
+	onPanelElementDragEnd() {
 		this.$el.find( '.elementor-background-video-embed' ).show();
 
 		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );

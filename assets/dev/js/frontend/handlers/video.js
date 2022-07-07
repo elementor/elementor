@@ -181,7 +181,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		// to 'On', there might be a conflict with other videos that are loaded WITHOUT privacy mode, such as a
 		// video bBackground in a section. In these cases, to avoid the conflict, a timeout is added to postpone the
 		// initialization of the Youtube API object.
-		if ( ! elementorFrontend.config.experimentalFeatures[ 'e_optimized_assets_loading' ] ) {
+		if ( ! elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {
 			setTimeout( () => {
 				this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
 			}, 0 );

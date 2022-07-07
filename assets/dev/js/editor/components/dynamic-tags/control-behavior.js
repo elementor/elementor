@@ -6,14 +6,14 @@ module.exports = Marionette.Behavior.extend( {
 
 	listenerAttached: false,
 
-	initialize: function() {
+	initialize() {
 		if ( ! this.listenerAttached ) {
 			this.listenTo( this.view.options.container.settings, 'change:external:__dynamic__', this.onAfterExternalChange );
 			this.listenerAttached = true;
 		}
 	},
 
-	renderTools: function() {
+	renderTools() {
 		// If the user has Elementor Pro and the current control has no dynamic tags available, don't generate the dynamic switcher.
 		// If the user has the core version only, we do display the dynamic switcher for the promotion.
 		if ( this.getOption( 'dynamicSettings' ).default || ( elementor.helpers.hasPro() && ! this.getOption( 'tags' ).length ) ) {
@@ -45,7 +45,7 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 	},
 
-	moveDynamicSwitcherToColorPicker: function() {
+	moveDynamicSwitcherToColorPicker() {
 		const $colorPickerToolsContainer = this.view.colorPicker.$pickerToolsContainer;
 
 		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
@@ -59,17 +59,17 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	toggleDynamicClass: function() {
+	toggleDynamicClass() {
 		this.$el.toggleClass( 'elementor-control-dynamic-value', this.isDynamicMode() );
 	},
 
-	isDynamicMode: function() {
+	isDynamicMode() {
 		var dynamicSettings = this.view.container.settings.get( '__dynamic__' );
 
 		return ! ! ( dynamicSettings && dynamicSettings[ this.view.model.get( 'name' ) ] );
 	},
 
-	createTagsList: function() {
+	createTagsList() {
 		var tags = _.groupBy( this.getOption( 'tags' ), 'group' ),
 			groups = elementor.dynamicTags.getConfig( 'groups' ),
 			$tagsList = this.ui.tagsList = jQuery( '<div>', { class: 'elementor-tags-list' } ),
@@ -112,7 +112,7 @@ module.exports = Marionette.Behavior.extend( {
 		elementorCommon.elements.$body.append( $tagsList );
 	},
 
-	getTagsList: function() {
+	getTagsList() {
 		if ( ! this.ui.tagsList ) {
 			this.createTagsList();
 		}
@@ -120,7 +120,7 @@ module.exports = Marionette.Behavior.extend( {
 		return this.ui.tagsList;
 	},
 
-	toggleTagsList: function() {
+	toggleTagsList() {
 		var $tagsList = this.getTagsList();
 
 		if ( $tagsList.is( ':visible' ) ) {
@@ -138,15 +138,15 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 	},
 
-	setTagView: function( id, name, settings ) {
+	setTagView( id, name, settings ) {
 		if ( this.tagView ) {
 			this.tagView.destroy();
 		}
 
 		const tagView = this.tagView = new TagPanelView( {
-			id: id,
-			name: name,
-			settings: settings,
+			id,
+			name,
+			settings,
 			controlName: this.view.model.get( 'name' ),
 			dynamicSettings: this.getOption( 'dynamicSettings' ),
 		} ),
@@ -155,7 +155,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		tagView.options.container = new elementorModules.editor.Container( {
 			type: 'dynamic',
-			id: id,
+			id,
 			model: tagView.model,
 			settings: tagView.model,
 			view: tagView,
@@ -172,23 +172,23 @@ module.exports = Marionette.Behavior.extend( {
 		this.listenTo( tagView, 'remove', this.onTagViewRemove.bind( this ) );
 	},
 
-	setDefaultTagView: function() {
+	setDefaultTagView() {
 		var tagData = elementor.dynamicTags.tagTextToTagData( this.getDynamicValue() );
 
 		this.setTagView( tagData.id, tagData.name, tagData.settings );
 	},
 
-	tagViewToTagText: function() {
+	tagViewToTagText() {
 		var tagView = this.tagView;
 
 		return elementor.dynamicTags.tagDataToTagText( tagView.getOption( 'id' ), tagView.getOption( 'name' ), tagView.model );
 	},
 
-	getDynamicValue: function() {
+	getDynamicValue() {
 		return this.view.container.dynamic.get( this.view.model.get( 'name' ) );
 	},
 
-	destroyTagView: function() {
+	destroyTagView() {
 		if ( this.tagView ) {
 			this.tagView.destroy();
 
@@ -196,19 +196,19 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	showPromotion: function() {
+	showPromotion() {
 		const message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
 
 		elementor.promotion.showDialog( {
 			headerMessage: __( 'Dynamic Content', 'elementor' ),
-			message: message,
+			message,
 			top: '-10',
 			element: this.ui.dynamicSwitcher,
 			actionURL: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
 		} );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.$el.addClass( 'elementor-control-dynamic' );
 
 		this.renderTools();
@@ -220,7 +220,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onDynamicSwitcherClick: function( event ) {
+	onDynamicSwitcherClick( event ) {
 		event.stopPropagation();
 
 		if ( this.getOption( 'tags' ).length ) {
@@ -230,7 +230,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onTagsListItemClick: function( event ) {
+	onTagsListItemClick( event ) {
 		const $tag = jQuery( event.currentTarget );
 
 		this.setTagView( elementorCommon.helpers.getUniqueId(), $tag.data( 'tagName' ), {} );
@@ -264,7 +264,7 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onTagViewRemove: function() {
+	onTagViewRemove() {
 		$e.run( 'document/dynamic/disable', {
 			container: this.view.options.container,
 			settings: {
@@ -276,7 +276,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.toggleDynamicClass();
 	},
 
-	onAfterExternalChange: function() {
+	onAfterExternalChange() {
 		this.destroyTagView();
 
 		if ( this.isDynamicMode() ) {
@@ -286,7 +286,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.toggleDynamicClass();
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		this.destroyTagView();
 
 		if ( this.ui.tagsList ) {

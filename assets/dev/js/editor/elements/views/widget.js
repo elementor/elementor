@@ -9,7 +9,7 @@ WidgetView = BaseElementView.extend( {
 
 	toggleEditTools: true,
 
-	getTemplate: function() {
+	getTemplate() {
 		var editModel = this.getEditModel();
 
 		if ( 'remote' !== this.getTemplateType() ) {
@@ -18,13 +18,13 @@ WidgetView = BaseElementView.extend( {
 		return _.template( '' );
 	},
 
-	className: function() {
+	className() {
 		var baseClasses = BaseElementView.prototype.className.apply( this, arguments );
 
 		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	},
 
-	events: function() {
+	events() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
 		events.click = 'onClickEdit';
@@ -32,7 +32,7 @@ WidgetView = BaseElementView.extend( {
 		return events;
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
@@ -51,7 +51,7 @@ WidgetView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
 	},
 
-	getEditButtons: function() {
+	getEditButtons() {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
@@ -72,7 +72,7 @@ WidgetView = BaseElementView.extend( {
 		return editTools;
 	},
 
-	initialize: function() {
+	initialize() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		var editModel = this.getEditModel();
@@ -96,7 +96,7 @@ WidgetView = BaseElementView.extend( {
 		};
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
@@ -116,7 +116,7 @@ WidgetView = BaseElementView.extend( {
 		return groups;
 	},
 
-	render: function() {
+	render() {
 		if ( this.model.isRemoteRequestActive() ) {
 			this.handleEmptyWidget();
 
@@ -132,13 +132,13 @@ WidgetView = BaseElementView.extend( {
 		Marionette.CompositeView.prototype.render.apply( this, arguments );
 	},
 
-	handleEmptyWidget: function() {
+	handleEmptyWidget() {
 		this.$el
 			.addClass( 'elementor-widget-empty' )
 			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
 	},
 
-	getTemplateType: function() {
+	getTemplateType() {
 		if ( null === this._templateType ) {
 			var editModel = this.getEditModel(),
 				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
@@ -149,13 +149,13 @@ WidgetView = BaseElementView.extend( {
 		return this._templateType;
 	},
 
-	getHTMLContent: function( html ) {
+	getHTMLContent( html ) {
 		var htmlCache = this.getEditModel().getHtmlCache();
 
 		return htmlCache || html;
 	},
 
-	attachElContent: function( html ) {
+	attachElContent( html ) {
 		_.defer( () => {
 			elementorFrontend.elements.window.jQuery( this.el ).empty().append( this.getHandlesOverlay(), this.getHTMLContent( html ) );
 
@@ -165,7 +165,7 @@ WidgetView = BaseElementView.extend( {
 		return this;
 	},
 
-	addInlineEditingAttributes: function( key, toolbar ) {
+	addInlineEditingAttributes( key, toolbar ) {
 		this.addRenderAttribute( key, {
 			class: 'elementor-inline-editing',
 			'data-elementor-setting-key': key,
@@ -178,20 +178,20 @@ WidgetView = BaseElementView.extend( {
 		}
 	},
 
-	getRepeaterSettingKey: function( settingKey, repeaterKey, repeaterItemIndex ) {
+	getRepeaterSettingKey( settingKey, repeaterKey, repeaterItemIndex ) {
 		return [ repeaterKey, repeaterItemIndex, settingKey ].join( '.' );
 	},
 
-	onModelBeforeRemoteRender: function() {
+	onModelBeforeRemoteRender() {
 		this.$el.addClass( 'elementor-loading' );
 	},
 
-	onBeforeDestroy: function() {
+	onBeforeDestroy() {
 		// Remove old style from the DOM.
 		elementor.$previewContents.find( '#elementor-style-' + this.model.get( 'id' ) ).remove();
 	},
 
-	onModelRemoteRender: function() {
+	onModelRemoteRender() {
 		if ( this.isDestroyed ) {
 			return;
 		}
@@ -206,7 +206,7 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	onRender: function() {
+	onRender() {
 		var self = this;
 
 		BaseElementView.prototype.onRender.apply( self, arguments );
@@ -231,7 +231,7 @@ WidgetView = BaseElementView.extend( {
 		} );
 	},
 
-	onClickEdit: function( event ) {
+	onClickEdit( event ) {
 		if ( this.container?.isEditable() ) {
 			this.onEditButtonClick( event );
 		}

@@ -2,6 +2,13 @@ import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Helpers from 'elementor-api/utils/helpers';
 import ForceMethodImplementation from '../utils/force-method-implementation';
 
+/**
+ * @typedef {import('../modules/component-base')} ComponentBase
+ */
+/**
+ * @typedef {{}} Component
+ */
+
 export default class CommandBase extends ArgsObject {
 	static getInstanceType() {
 		return 'CommandBase';
@@ -12,7 +19,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Use to provide 'extra' information about the command.
 	 *
-	 * @returns {Object}
+	 * @return {Object} info of command
 	 */
 	static getInfo() {
 		return {};
@@ -30,8 +37,8 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Create Commands Base.
 	 *
-	 * @param [args={}]
-	 * @param [commandsAPI={}]
+	 * @param {*} [args={}]
+	 * @param {*} [commandsAPI={}]
 	 */
 	constructor( args, commandsAPI = $e.commands ) {
 		super( args );
@@ -82,7 +89,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Initialize command, called after construction.
 	 *
-	 * @param [args={}]
+	 * @param {*} [args={}]
 	 */
 	initialize( args = {} ) {} // eslint-disable-line no-unused-vars
 
@@ -91,7 +98,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Validate command arguments.
 	 *
-	 * @param [args={}]
+	 * @param {*} [args={}]
 	 */
 	validateArgs( args = {} ) {} // eslint-disable-line no-unused-vars
 
@@ -100,20 +107,21 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Whether the editor needs to set change flag on/off.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} Whether the editor needs to set change flag on/off.
 	 */
 	isDataChanged() {
 		return false;
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function apply().
 	 *
 	 * Do the actual command.
 	 *
-	 * @param [args={}]
+	 * @param {*} [args={}]
 	 *
-	 * @returns {*}
+	 * @return {*} callback
 	 */
 	apply( args = {} ) { // eslint-disable-line no-unused-vars
 		ForceMethodImplementation();
@@ -124,7 +132,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Run command with history & hooks.
 	 *
-	 * @returns {*}
+	 * @return {*} run results
 	 */
 	run() {
 		let result;
@@ -216,7 +224,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called before run().
 	 *
-	 * @param [args={}]
+	 * @param {*} [args={}]
 	 */
 	onBeforeRun( args = {} ) {
 		$e.hooks.runUIBefore( this.currentCommand, args );
@@ -227,8 +235,8 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called after run().
 	 *
-	 * @param [args={}]
-	 * @param [result={*}]
+	 * @param {*} [args={}]
+	 * @param {*} [result={*}]
 	 */
 	onAfterRun( args = {}, result ) {
 		$e.hooks.runUIAfter( this.currentCommand, args, result );
@@ -239,7 +247,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called before apply().
 	 *
-	 * @param [args={}]
+	 * @param {*} [args={}]
 	 */
 	onBeforeApply( args = {} ) {
 		$e.hooks.runDataDependency( this.currentCommand, args );
@@ -250,8 +258,8 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called after apply().
 	 *
-	 * @param [args={}]
-	 * @param [result={*}]
+	 * @param {*} [args={}]
+	 * @param {*} [result={*}]
 	 */
 	onAfterApply( args = {}, result ) {
 		return $e.hooks.runDataAfter( this.currentCommand, args, result );
