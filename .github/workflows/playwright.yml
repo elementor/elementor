@@ -80,7 +80,7 @@ jobs:
       - name: Install playwright/test
         run: |
           npm ci
-          npx playwright install-deps chromium
+          npx playwright install chromium
       - name: Run Playwright tests
         run: |
           npm run test:playwright
