@@ -174,7 +174,7 @@ class Settings extends Settings_Page {
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
-			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . esc_html__( 'Go Pro', 'elementor' ),
+			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . esc_html__( 'Upgrade', 'elementor' ),
 			'manage_options',
 			'go_elementor_pro',
 			[ $this, 'handle_external_redirects' ]
