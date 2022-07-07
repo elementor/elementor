@@ -326,7 +326,7 @@ class Server extends Base {
 		 *
 		 * @param array $paths_to_check 
 		 */
-		$paths_to_check = apply_filters('elementor/modules/system-info/reporters/server/initial_paths_to_check', $paths_to_check);
+		$paths_to_check = apply_filters('elementor/system-info/reporters/server/paths_to_check', $paths_to_check);
 
 		foreach ( $paths_to_check as $dir => $description ) {
 			if ( ! is_writable( $dir ) ) {
