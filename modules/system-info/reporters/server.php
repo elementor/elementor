@@ -324,7 +324,7 @@ class Server extends Base {
 		/**
 		 * Filters the list of files/directories that should be checked for write permissions
 		 *
-		 * @param array $paths_to_check 
+		 * @param array $paths_to_check
 		 */
 		$paths_to_check = apply_filters('elementor/modules/system-info/reporters/server/initial_paths_to_check', $paths_to_check);
 
