@@ -88,6 +88,7 @@ class Settings_Layout extends Tab_Base {
 					'label' => esc_html__( 'Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', 'em', '%', 'rem' ],
+					'description' => esc_html__( 'Sets the default space inside the container (Default is 10px)', 'elementor' ),
 					'selectors' => [
 						'.e-container' => '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
 					],
