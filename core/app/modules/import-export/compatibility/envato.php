@@ -58,7 +58,8 @@ class Envato extends Base_Adapter {
 			return $site_settings;
 		}
 
-		$global_file_data = ImportExportUtils::read_json_file( $path );
+		$global_file_path = $path . $manifest_data['path-to-envto-site-settings'];
+		$global_file_data = ImportExportUtils::read_json_file( $global_file_path );
 
 		return [
 			'settings' => $global_file_data['page_settings'],

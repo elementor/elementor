@@ -13,15 +13,19 @@ use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
 use Elementor\Core\App\Modules\ImportExport\Content\Templates;
 use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
 use Elementor\Core\Base\Document;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
+
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
+
 	const SESSION_DOES_NOT_EXITS_ERROR = 'session-does-not-exits-error';
+
 	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
 
 	/**
 	 * The session ID of the import process.
-	 * This ID is uniquely generated for each import process (by the temp folder which contains the import files).
+	 * This ID is uniquely generated for each import process (by the temp folder which contains the extracted kit files).
 	 *
 	 * @var string
 	 */
@@ -30,7 +34,7 @@ class Import {
 	/**
 	 * Import runners for each content type.
 	 *
-	 * @var Runner_Base[]
+	 * @var array{instance: Runner_Base, dependencies: string[]}
 	 */
 	private $runners;
 
@@ -118,6 +122,8 @@ class Import {
 	 * @throws \Exception
 	 */
 	public function __construct( $path, $settings = [] ) {
+		Utils::check_writing_permissions();
+
 		if ( is_file( $path ) ) {
 			$this->extracted_directory_path = $this->extract_zip( $path );
 		} else {
@@ -153,18 +159,30 @@ class Import {
 		$this->register( new Site_Settings() );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );
+
+		$this->register( new Elementor_Content(), [
+			Taxonomies::class,
+		] );
+
+		$this->register( new Wp_Content(), [
+			Taxonomies::class,
+			Elementor_Content::class,
+		] );
+
 		$this->register( new Taxonomies() );
-		$this->register( new Elementor_Content() );
-		$this->register( new Wp_Content() );
 	}
 
 	/**
 	 * Register a runner for the import.
 	 *
 	 * @param Runner_Base $runner_instance
+	 * @param string[] $dependencies
 	 */
-	public function register( Runner_Base $runner_instance ) {
-		$this->runners[ get_class( $runner_instance ) ] = $runner_instance;
+	public function register( Runner_Base $runner_instance, array $dependencies = [] ) {
+		$this->runners[ get_class( $runner_instance ) ] = [
+			'instance' => $runner_instance,
+			'dependencies' => $dependencies,
+		];
 	}
 
 	/**
@@ -199,6 +217,8 @@ class Import {
 			throw new \Exception( 'Please specify import runners.' );
 		}
 
+		$this->runners = $this->get_sorted_runners_by_dependencies();
+
 		$data = [
 			'include' => $this->settings_include,
 			'manifest' => $this->manifest,
@@ -213,8 +233,8 @@ class Import {
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
-		foreach ( $this->runners as $runner ) {
-			if ( $runner->should_import( $data ) ) {
+		foreach ( $this->get_sorted_runners() as $runner ) {
+			if ( $runner['instance']->should_import( $data ) ) {
 				$this->imported_data = $this->imported_data + $runner->import( $data, $this->imported_data );
 			}
 		}
@@ -338,6 +358,23 @@ class Import {
 		}
 
 		return $data;
+	}
+
+
+	private function get_sorted_runners_by_dependencies() {
+		$runners = $this->runners;
+		$sorted_runners = [];
+
+		foreach ( $runners as $runner_class => $runner ) {
+			if ( empty( array_diff( array_keys( $runners ), $runner['dependencies'] ) ) ) {
+				continue;
+			}
+
+			$sorted_runners[ $runner_class ] = $runner;
+			unset( $runners[ $runner_class ] );
+		}
+
+		return $sorted_runners;
 	}
 
 	/**

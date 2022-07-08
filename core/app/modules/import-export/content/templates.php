@@ -6,11 +6,13 @@ use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 class Templates extends Runner_Base {
 
 	public function should_import( array $data ) {
 		return (
+			Utils::has_pro() &&
 			isset( $data['include'] ) &&
 			in_array( 'templates', $data['include'], true ) &&
 			! empty( $data['extracted_directory_path'] ) &&
@@ -20,6 +22,7 @@ class Templates extends Runner_Base {
 
 	public function should_export( array $data ) {
 		return (
+			Utils::has_pro() &&
 			isset( $data['include'] ) &&
 			in_array( 'templates', $data['include'], true )
 		);

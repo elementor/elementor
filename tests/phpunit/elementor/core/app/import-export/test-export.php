@@ -79,16 +79,17 @@ class Test_Export extends Elementor_Test_Base {
 	}
 
 	public function test_run__export_site_settings() {
-		// TODO fix adding custom site settings
+		// Arrange
+		$this->act_as_admin();
+
 		$custom_colors = [
 			'_id' => '0fba91c',
 			'title' => 'Light Orange',
 			'color' => '#FAB89F',
 		];
 		$site_settings['custom_colors'] = $custom_colors;
-		$new_kit = Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
+		Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
 
-		// Arrange
 		$export = new Export();
 		$export->register( new Site_Settings() );
 

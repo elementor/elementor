@@ -205,7 +205,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertEquals( $expected_custom_typography, $new_settings['custom_typography'] );
 	}
 
-	public function test_run__import_templates() {
+	public function test_run__import_templates_will_fail_si() {
 		// Arrange
 		$import_settings = [
 			'include' => [ 'templates' ],
@@ -343,6 +343,23 @@ class Test_Import extends Elementor_Test_Base {
 		unregister_post_type( 'sectests' );
 	}
 
+	public function test_run__envato_kit() {
+		// Arrange
+		$import = new Import( __DIR__ . '/mock/envato-kit.zip', [] );
+		$import->register_default_runners();
+
+		// Act
+		$result = $import->run();
+
+		// Assert
+		$this->assertTrue( isset( $result['site-settings'] ) );
+		$this->assertTrue( isset( $result['templates'] ) );
+
+		$expected_result_failed_msg = 'Type footer does not exist.';
+		$this->assertNotEmpty( $result['templates']['failed'] );
+		$this->assertEquals( $expected_result_failed_msg, reset( $result['templates']['failed'] ) );
+	}
+
 	// Test the set default function. In this test we are also testing the import process by session ID.
 	public function test_set_default__import_by_session() {
 		// Arrange
@@ -374,12 +391,11 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertEquals( $expected_settings_selected_plugins, $settings_selected_plugins );
 	}
 
-	public function test_constructor__importing_a_not_existing_session_throws_an_error() {
+	public function test_construct__importing_a_not_existing_session_throws_an_error() {
 		// Arrange
 		$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
 
 		// Expect
-		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'session-does-not-exits-error' );
 
 		// Act

@@ -161,12 +161,12 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		$content = $exporter->run();
 
 		// Assert.
-		$this->assertCount( 1, $content['ids'] );
+		// The featured image is included as attachment and will not count at the content ids.
 		$this->assertEquals( [ $post->ID ], $content['ids'] );
 
 		$include_attachment = (boolean) strstr(
 			$content['xml'],
-			'<wp:attachment_url>' . $this->wxr_cdata( wp_get_attachment_url( $attachment->ID ) ) . '<\/wp:attachment_url>'
+			'<wp:attachment_url>'
 		);
 
 		$this->assertTrue( $include_attachment );

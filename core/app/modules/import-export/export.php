@@ -10,6 +10,7 @@ use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
 use Elementor\Core\App\Modules\ImportExport\Content\Templates;
 use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
 use Elementor\Core\Utils\Str;
+use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 
 class Export {
@@ -67,6 +68,8 @@ class Export {
 	private $runners;
 
 	public function __construct( $settings = [] ) {
+		Utils::check_writing_permissions();
+
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
 		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
@@ -211,7 +214,7 @@ class Export {
 	/**
 	 * Get the default settings of the plugins that should be exported.
 	 *
-	 * @return array
+	 * @return array{name: string, plugin:string, pluginUri: string, version: string}
 	 */
 	private function get_default_settings_selected_plugins() {
 		$installed_plugins = Plugin::$instance->wp->get_plugins();
@@ -312,10 +315,10 @@ class Export {
 	 * Add json file to the zip archive.
 	 *
 	 * @param string $path The relative path to the file.
-	 * @param string $content The content of the file.
-	 * @param $json_flags
+	 * @param array $content The content of the file.
+	 * @param int $json_flags
 	 */
-	private function add_json_file( $path, $content, $json_flags = null ) {
+	private function add_json_file( $path, array $content, $json_flags = 0 ) {
 		if ( ! Str::ends_with( $path, '.json' ) ) {
 			$path .= '.json';
 		}

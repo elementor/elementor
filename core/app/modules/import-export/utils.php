@@ -4,13 +4,24 @@ namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Core\Utils\Str;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
+use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 
 class Utils {
+	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
+
+	public static function check_writing_permissions() {
+		$server = new Server();
+
+		$server_write_permissions = $server->get_write_permissions();
+
+		if ( $server_write_permissions['warning'] ) {
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+		}
+	}
 
 	public static function read_json_file( $path ) {
-
 		if ( ! Str::ends_with( $path, '.json' ) ) {
 			$path .= '.json';
 		}
