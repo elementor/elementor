@@ -74,14 +74,14 @@
 		height: 100%;
 		// Use the Container's `min-height` or default to 100px.
 		min-height: var( --min-height, 100px );
-
+		
 		.elementor-first-add {
 			width: auto;
 			height: auto;
-			top: Min( calc( 10px - var( --container-default-padding-top ) ), 0px );
-			right: Min( calc( 10px - var( --container-default-padding-right ) ), 0px );
-			bottom: Min( calc( 10px - var( --container-default-padding-bottom ) ), 0px );
-			left: Min( calc( 10px - var( --container-default-padding-left ) ), 0px );
+			top: Max( calc( 10px - var( --container-default-padding-top ) ), 0px );
+			right: Max( calc( 10px - var( --container-default-padding-right ) ), 0px );
+			bottom: Max( calc( 10px - var( --container-default-padding-bottom ) ), 0px );
+			left: Max( calc( 10px - var( --container-default-padding-left ) ), 0px );
 		}
 	}
 
