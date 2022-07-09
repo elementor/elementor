@@ -168,6 +168,14 @@ class Manager {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
+
+		add_action( 'update_option_home', function () {
+			$this->reset_assets_data();
+		} );
+
+		add_action( 'update_option_siteurl', function () {
+			$this->reset_assets_data();
+		} );
 	}
 
 	/**

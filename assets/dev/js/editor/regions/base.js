@@ -4,7 +4,7 @@ module.exports = Marionette.Region.extend( {
 
 	storageSizeKeys: null,
 
-	constructor: function() {
+	constructor() {
 		Marionette.Region.prototype.constructor.apply( this, arguments );
 
 		var savedStorage = elementorCommon.storage.get( this.getStorageKey() );
@@ -14,13 +14,13 @@ module.exports = Marionette.Region.extend( {
 		this.storageSizeKeys = Object.keys( this.storage.size );
 	},
 
-	saveStorage: function( key, value ) {
+	saveStorage( key, value ) {
 		this.storage[ key ] = value;
 
 		elementorCommon.storage.set( this.getStorageKey(), this.storage );
 	},
 
-	saveSize: function( size ) {
+	saveSize( size ) {
 		if ( ! size ) {
 			size = elementor.helpers.getElementInlineStyle( this.$el, this.storageSizeKeys );
 		}
