@@ -41,8 +41,14 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'default' => '',
+			'selectors_dictionary' => [
+				'column' => '--flex-direction: %s; --container-flex-direction-widget-default-width: "";',
+				'column-reverse' => '--flex-direction: %s; --container-flex-direction-widget-default-width: "";',
+				'row' => '--flex-direction: %s; --container-flex-direction-widget-default-width: unset;',
+				'row-reverse' => '--flex-direction: %s; --container-flex-direction-widget-default-width: unset;',
+			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--flex-direction: {{VALUE}};',
+				'{{SELECTOR}}' => '{{VALUE}}',
 			],
 			'responsive' => true,
 		];
@@ -94,8 +100,14 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'icon' => 'eicon-flex eicon-align-stretch-v',
 				],
 			],
+			'selectors_dictionary' => [
+				'flex-start' => '--align-items: %s; --container-align-items-widget-default-width: "";',
+				'center' => '--align-items: %s; --container-align-items-widget-default-width: "";',
+				'flex-end' => '--align-items: %s; --container-align-items-widget-default-width: "";',
+				'stretch' => '--align-items: %s; --container-align-items-widget-default-width: unset;',
+			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
+				'{{SELECTOR}}' => '{{VALUE}}',
 			],
 			'responsive' => true,
 		];
