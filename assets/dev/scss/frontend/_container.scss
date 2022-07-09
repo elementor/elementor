@@ -172,7 +172,7 @@
 		// Fix swiper-based widgets (ED-6716).
 		// Since the default is `min-width: auto` for flex items.
 		min-width: 0;
-		width: var( --container-flex-direction-widget-default-width, var( --container-align-items-widget-default-width, inherit ) );
+		width: 100%;
 
 		// Fix iframe-based widgets (ED-5338).
 		// TODO: Find a better solution.

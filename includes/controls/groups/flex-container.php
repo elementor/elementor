@@ -47,14 +47,8 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'default' => '',
-			'selectors_dictionary' => [
-				'column' => '--flex-direction: %s; --container-flex-direction-widget-default-width: "";',
-				'column-reverse' => '--flex-direction: %s; --container-flex-direction-widget-default-width: "";',
-				'row' => '--flex-direction: %s; --container-flex-direction-widget-default-width: unset;',
-				'row-reverse' => '--flex-direction: %s; --container-flex-direction-widget-default-width: unset;',
-			],
 			'selectors' => [
-				'{{SELECTOR}}' => '{{VALUE}}',
+				'{{SELECTOR}}' => '--flex-direction: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -106,14 +100,8 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'icon' => 'eicon-flex eicon-align-stretch-v',
 				],
 			],
-			'selectors_dictionary' => [
-				'flex-start' => '--align-items: %s; --container-align-items-widget-default-width: "";',
-				'center' => '--align-items: %s; --container-align-items-widget-default-width: "";',
-				'flex-end' => '--align-items: %s; --container-align-items-widget-default-width: "";',
-				'stretch' => '--align-items: %s; --container-align-items-widget-default-width: unset;',
-			],
 			'selectors' => [
-				'{{SELECTOR}}' => '{{VALUE}}',
+				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -151,34 +139,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--justify-content: {{VALUE}};',
-			],
-			'responsive' => true,
-		];
-
-		$fields['align_items'] = [
-			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'default' => '',
-			'options' => [
-				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
-				],
-				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
-				],
-				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
-				],
-				'stretch' => [
-					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
-				],
-			],
-			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
