@@ -1,37 +1,44 @@
-export default class TemplateControls  {
-
- setDynamicFieldsVisibility = function ( lookup_control_id_prefix , controls )  {
-	if ( undefined === controls ){
-		return;
-	}
-
-	let controls_array = Object.entries( controls );
-	for ( const [ control_id , control_settings ] of controls_array ) {
-		setVisibilityForControl( lookup_control_id_prefix , control_settings , control_id );
-	}
-
-	function setVisibilityForControl( lookup_control_id_prefix , control_settings , control_id ) {
-		let conditions = Object.entries( control_settings.conditions ?? {} );
-		conditions.forEach( condition => {
-			changeVisibilityBasedOnCondition( lookup_control_id_prefix , condition , control_id );
-		})
-	}
-
-	function changeVisibilityBasedOnCondition( lookup_control_id_prefix , condition , control_id ) {
-		const [ condition_key , condition_value ] = condition;
-		const target_control_wrapper = document.getElementById( lookup_control_id_prefix + control_id + '__wrapper' );
-		if (target_control_wrapper) {
-			target_control_wrapper.classList.add( 'elementor-hidden' );
-		}
-		let lookup_control = document.getElementById( lookup_control_id_prefix + condition_key );
-		if ( ! lookup_control ) {
+export default class TemplateControls {
+	setDynamicFieldsVisibility( lookupControlIdPrefix, controls ) {
+		if ( undefined === controls ) {
 			return;
 		}
-		if ( ! ( condition_value === lookup_control.value ) ) {
+
+		const controlsArray = Object.entries( controls );
+
+		for ( const [ controlId, controlSettings ] of controlsArray ) {
+			this.setVisibilityForControl( lookupControlIdPrefix, controlSettings, controlId );
+		}
+	}
+
+	setVisibilityForControl( lookupControlIdPrefix, controlSettings, controlId ) {
+		const conditions = Object.entries( controlSettings.conditions ?? {} );
+
+		conditions.forEach( ( condition ) => {
+			this.changeVisibilityBasedOnCondition( lookupControlIdPrefix, condition, controlId );
+		} );
+	}
+
+	changeVisibilityBasedOnCondition( lookupControlIdPrefix, condition, controlId ) {
+		const [ conditionKey, conditionValue ] = condition;
+		const targetControlWrapper = document.getElementById( lookupControlIdPrefix + controlId + '__wrapper' );
+
+		if ( targetControlWrapper ) {
+			targetControlWrapper.classList.add( 'elementor-hidden' );
+		}
+
+		const lookupControl = document.getElementById( lookupControlIdPrefix + conditionKey );
+
+		if ( ! lookupControl ) {
 			return;
 		}
-		if ( target_control_wrapper ) {
-			target_control_wrapper.classList.remove( 'elementor-hidden' );
+
+		if ( ! ( conditionValue === lookupControl.value ) ) {
+			return;
+		}
+
+		if ( targetControlWrapper ) {
+			targetControlWrapper.classList.remove( 'elementor-hidden' );
 		}
 	}
 }
