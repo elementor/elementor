@@ -252,7 +252,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
@@ -265,7 +265,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_RC,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
@@ -296,6 +296,19 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'additional_custom_breakpoints',
+			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
+			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
+						. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
+						. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_STABLE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.4.0-beta',
+			],
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_import_export',
 			'title' => esc_html__( 'Import Export Template Kit', 'elementor' ),
 			'description' => esc_html__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
@@ -306,19 +319,6 @@ class Manager extends Base_Object {
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
-			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'additional_custom_breakpoints',
-			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
-			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.4.0-beta',
 			],
 		] );
 
