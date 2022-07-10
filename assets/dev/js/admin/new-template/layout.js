@@ -20,6 +20,27 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.showLogo();
 
 		this.showContentView();
+
+		function getDynamicFieldsVisibilityListener() {
+			elementorAdmin.templateControls.setDynamicFieldsVisibility('elementor-new-template__form__', elementor_new_template_form_controls);
+		}
+
+		function getTemplateTypeSelect() {
+			return document.getElementById('elementor-new-template__form__template-type');
+		}
+
+		this.getModal().onShow = () => {
+			elementorAdmin.templateControls.setDynamicFieldsVisibility('elementor-new-template__form__', elementor_new_template_form_controls);
+			getTemplateTypeSelect().addEventListener(
+				'change', getDynamicFieldsVisibilityListener);
+
+		};
+
+		this.getModal().onHide = () => {
+			getTemplateTypeSelect().removeEventListener(
+				'change', getDynamicFieldsVisibilityListener);
+		};
+
 	},
 
 	showContentView() {

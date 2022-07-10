@@ -1,16 +1,13 @@
 <?php
 namespace Elementor;
 
-require_once __DIR__ . '/new-template-form.php';
-require_once __DIR__ . '/new-template-renderer-factory.php';
-
-use Elementor\Admin_Templates\New_Template_Form;
 use Elementor\Core\Base\Document;
+use Elementor\TemplateLibrary\Controls\New_Template_Form;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-
+$new_template_control_form = new New_Template_Form( [ 'id' => 'form' ] );
 $document_types = Plugin::$instance->documents->get_document_types();
 
 $types = [];
@@ -39,6 +36,7 @@ foreach ( $document_types as $document_type ) {
  * @param Document $document_types Document types.
  */
 $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $types, $document_types );
+
 ?>
 <script type="text/template" id="tmpl-elementor-new-template">
 	<div id="elementor-new-template__description">
@@ -72,7 +70,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 			</div>
 		</div>
 		<?php
-		$new_template_control_form = new New_Template_Form( new New_Template_Renderer_Factory(), [ 'id' => 'form' ] );
+
 		/**
 		 * Template library dialog fields.
 		 *
@@ -85,7 +83,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		$additional_controls = $new_template_control_form->get_controls();
 		if ( $additional_controls ) {
 			wp_add_inline_script( 'elementor-admin', 'var elementor_new_template_form_controls = ' . wp_json_encode( $additional_controls ) . ';' );
-			$new_template_control_form->render_controls();
+			$new_template_control_form->render();
 		}
 		?>
 
@@ -99,42 +97,6 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		</div>
 		<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
 	</form>
-	<script>
-		const setDynamicFieldsVisibility = function() {
-			//alert(document.getElementById('elementor-new-template__form__template-type').value);
-			let controls = Object.entries(elementor_new_template_form_controls);
-			for (const [control_id, control_settings] of controls) {
-				setVisibilityForControl(control_settings, control_id);
-			}
-
-			function setVisibilityForControl(control_settings, control_id) {
-				let conditions = Object.entries(control_settings.conditions ?? {});
-				conditions.forEach(condition => {
-					changeVisibilityBasedOnCondition(condition, control_id);
-				})
-			}
-
-			function changeVisibilityBasedOnCondition(condition, control_id) {
-				const [condition_key, condition_value] = condition;
-				const target_control_wrapper = document.getElementById('elementor-new-template__form__' + control_id + '__wrapper');
-				if (target_control_wrapper) {
-					target_control_wrapper.classList.add('elementor-hidden');
-				}
-				let lookup_control = document.getElementById('elementor-new-template__form__' + condition_key);
-				if (!lookup_control) {
-					return;
-				}
-				if (!(lookup_control.value === condition_value)) {
-					return;
-				}
-				if (target_control_wrapper) {
-					target_control_wrapper.classList.remove('elementor-hidden');
-				}
-			}
-		}
-		setDynamicFieldsVisibility();
-		document.getElementById('elementor-new-template__form__template-type').addEventListener('change',setDynamicFieldsVisibility )
-	</script>
 </script>
 
 
