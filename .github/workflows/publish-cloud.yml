@@ -7,7 +7,7 @@ jobs:
   poc-job:
     runs-on: ubuntu-20.04
     steps:
-      - uses: ${GITHUB_WORKSPACE}/.github/workflows/slack-notify.yml
+      - uses: ./.github/workflows/slack-notify.yml
         with:
           PACKAGE_VERSION: ${{ 'test version 123' }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
