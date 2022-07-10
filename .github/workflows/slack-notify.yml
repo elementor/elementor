@@ -1,16 +1,7 @@
 name: Slack Version Notify
 on:
   workflow_call:
-    inputs:
-      PACKAGE_VERSION:
-        required: true
-        type: string
-      SLACK_TOKEN:
-        required: true
-        type: string
-      SLACK_CHANNELS:
-        required: true
-        type: string
+
 jobs:
   send-slack-notification:
     runs-on: ubuntu-latest
