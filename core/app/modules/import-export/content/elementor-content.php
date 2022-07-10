@@ -22,7 +22,7 @@ class Elementor_Content extends Runner_Base {
 			! empty( $data['extracted_directory_path'] )
 		);
 	}
-
+	
 	public function should_export( array $data ) {
 		return (
 			isset( $data['include'] ) &&

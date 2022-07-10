@@ -262,7 +262,7 @@ class Module extends BaseModule {
 				break;
 
 			default:
-				throw new \Error( esc_html__( 'Invalid action', 'elementor' ) );
+				break;
 		}
 	}
 

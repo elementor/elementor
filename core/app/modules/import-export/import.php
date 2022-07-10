@@ -34,7 +34,7 @@ class Import {
 	/**
 	 * Import runners for each content type.
 	 *
-	 * @var array{instance: Runner_Base, dependencies: string[]}
+	 * @var array
 	 */
 	private $runners;
 
@@ -154,35 +154,24 @@ class Import {
 
 	/**
 	 * Register all the default runners the import can run. (e.g: elementor, plugins, etc.)
+	 * The order of the runners is very important, because the import process is running as a pipeline.
 	 */
 	public function register_default_runners() {
 		$this->register( new Site_Settings() );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );
-
-		$this->register( new Elementor_Content(), [
-			Taxonomies::class,
-		] );
-
-		$this->register( new Wp_Content(), [
-			Taxonomies::class,
-			Elementor_Content::class,
-		] );
-
 		$this->register( new Taxonomies() );
+		$this->register( new Elementor_Content() );
+		$this->register( new Wp_Content() );
 	}
 
 	/**
 	 * Register a runner for the import.
 	 *
 	 * @param Runner_Base $runner_instance
-	 * @param string[] $dependencies
 	 */
-	public function register( Runner_Base $runner_instance, array $dependencies = [] ) {
-		$this->runners[ get_class( $runner_instance ) ] = [
-			'instance' => $runner_instance,
-			'dependencies' => $dependencies,
-		];
+	public function register( Runner_Base $runner_instance ) {
+		$this->runners[ get_class( $runner_instance ) ] = $runner_instance;
 	}
 
 	/**
@@ -217,8 +206,6 @@ class Import {
 			throw new \Exception( 'Please specify import runners.' );
 		}
 
-		$this->runners = $this->get_sorted_runners_by_dependencies();
-
 		$data = [
 			'include' => $this->settings_include,
 			'manifest' => $this->manifest,
@@ -233,8 +220,8 @@ class Import {
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
-		foreach ( $this->get_sorted_runners() as $runner ) {
-			if ( $runner['instance']->should_import( $data ) ) {
+		foreach ( $this->runners as $runner ) {
+			if ( $runner->should_import( $data ) ) {
 				$this->imported_data = $this->imported_data + $runner->import( $data, $this->imported_data );
 			}
 		}
@@ -358,23 +345,6 @@ class Import {
 		}
 
 		return $data;
-	}
-
-
-	private function get_sorted_runners_by_dependencies() {
-		$runners = $this->runners;
-		$sorted_runners = [];
-
-		foreach ( $runners as $runner_class => $runner ) {
-			if ( empty( array_diff( array_keys( $runners ), $runner['dependencies'] ) ) ) {
-				continue;
-			}
-
-			$sorted_runners[ $runner_class ] = $runner;
-			unset( $runners[ $runner_class ] );
-		}
-
-		return $sorted_runners;
 	}
 
 	/**

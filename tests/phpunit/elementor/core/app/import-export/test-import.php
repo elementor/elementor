@@ -205,7 +205,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertEquals( $expected_custom_typography, $new_settings['custom_typography'] );
 	}
 
-	public function test_run__import_templates_will_fail_si() {
+	public function test_run__import_templates_will_be_empty_without_the_pro() {
 		// Arrange
 		$import_settings = [
 			'include' => [ 'templates' ],
@@ -217,11 +217,7 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 1, $result );
-
-		$expected_result_failed_msg = 'Type header does not exist.';
-		$this->assertNotEmpty( $result['templates']['failed'] );
-		$this->assertEquals( $expected_result_failed_msg, reset( $result['templates']['failed'] ) );
+		$this->assertEmpty( $result );
 	}
 
 	public function test_run__import_taxonomies_without_register_custom_taxonomies() {
@@ -353,11 +349,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertTrue( isset( $result['site-settings'] ) );
-		$this->assertTrue( isset( $result['templates'] ) );
-
-		$expected_result_failed_msg = 'Type footer does not exist.';
-		$this->assertNotEmpty( $result['templates']['failed'] );
-		$this->assertEquals( $expected_result_failed_msg, reset( $result['templates']['failed'] ) );
+		$this->assertFalse( isset( $result['templates'] ) );
 	}
 
 	// Test the set default function. In this test we are also testing the import process by session ID.
