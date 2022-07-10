@@ -238,26 +238,6 @@ class Compatibility {
 	 * @static
 	 */
 	private static function polylang_compatibility() {
-		// Fix language if the `get_user_locale` is difference from the `get_locale
-		if ( isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
-			add_action( 'set_current_user', function() {
-				global $current_user;
-				$current_user->locale = get_locale();
-			} );
-
-			// Fix for Polylang
-			define( 'PLL_AJAX_ON_FRONT', true );
-
-			add_action( 'pll_pre_init', function( $polylang ) {
-				if ( isset( $_REQUEST['post'] ) ) {
-					$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
-					if ( ! empty( $post_language ) ) {
-						$_REQUEST['lang'] = $post_language->locale;
-					}
-				}
-			} );
-		}
-
 		// Copy elementor data while polylang creates a translation copy
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
 	}
