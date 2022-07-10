@@ -36,6 +36,7 @@ foreach ( $document_types as $document_type ) {
  * @param Document $document_types Document types.
  */
 $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $types, $document_types );
+ksort( $types );
 
 ?>
 <script type="text/template" id="tmpl-elementor-new-template">
@@ -98,5 +99,3 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
 	</form>
 </script>
-
-

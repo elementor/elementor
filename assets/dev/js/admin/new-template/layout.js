@@ -1,4 +1,4 @@
-var NewTemplateView = require( 'elementor-admin/new-template/view' );
+const NewTemplateView = require( 'elementor-admin/new-template/view' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 
@@ -17,25 +17,24 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	initialize() {
 		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
+		const templateTypeSelect = document.getElementById( 'elementor-new-template__form__template-type' );
+		const lookupControlIdPrefix = 'elementor-new-template__form__';
+
 		this.showLogo();
 
 		this.showContentView();
 
-		function getDynamicFieldsVisibilityListener() {
-			elementorAdmin.templateControls.setDynamicFieldsVisibility( 'elementor-new-template__form__', elementor_new_template_form_controls );
-		}
-
-		function getTemplateTypeSelect() {
-			return document.getElementById( 'elementor-new-template__form__template-type' );
-		}
+		const getDynamicFieldsVisibilityListener = () => {
+			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
+		};
 
 		this.getModal().onShow = () => {
-			elementorAdmin.templateControls.setDynamicFieldsVisibility( 'elementor-new-template__form__', elementor_new_template_form_controls );
-			getTemplateTypeSelect().addEventListener( 'change', getDynamicFieldsVisibilityListener );
+			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
+			templateTypeSelect.addEventListener( 'change', getDynamicFieldsVisibilityListener );
 		};
 
 		this.getModal().onHide = () => {
-			getTemplateTypeSelect().removeEventListener( 'change', getDynamicFieldsVisibilityListener );
+			templateTypeSelect.removeEventListener( 'change', getDynamicFieldsVisibilityListener );
 		};
 	},
 
