@@ -76,6 +76,8 @@ const frontendRulesPresets = [ [
 				'last 2 Opera versions',
 			],
 		},
+		"useBuiltIns": "entry",
+        "corejs": "3.23.4",
 	}
 ] ];
 
