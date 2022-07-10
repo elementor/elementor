@@ -38,7 +38,7 @@
         "autoprefixer": "~8.5.0",
         "babel-jest": "^28.1.2",
         "babel-loader": "8.2.5",
-        "chalk": "^4.1.0",
+        "chalk": "^5.0.1",
         "cssnano": "4.1.11",
         "eslint": "^8.19.0",
         "eslint-plugin-babel": "^5.3.1",
