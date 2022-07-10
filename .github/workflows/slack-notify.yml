@@ -16,5 +16,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack
-        run: |
-          bash "echo 'This is a POC for reusable workflow job $PACKAGE_VERSION'"
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/slack-notify.sh"
