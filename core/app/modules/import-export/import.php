@@ -448,17 +448,6 @@ class Import {
 	 */
 	private function get_default_settings_plugins() {
 		return ! empty( $this->manifest['plugins'] ) ? $this->manifest['plugins'] : [];
-				case 'custom':
-					$url = $post_meta['_menu_item_url'][0];
-
-					$migrated_url = Url::migrate( $url, $original_site );
-
-					if ( $migrated_url !== $url ) {
-						update_post_meta( $new_post_id, '_menu_item_url', $migrated_url );
-					}
-					break;
-			}
-		}
 	}
 
 	/**
