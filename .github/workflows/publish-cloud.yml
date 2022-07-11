@@ -1,8 +1,8 @@
 name: Publish Cloud Version
 
-on:
-  workflow_dispatch:
-
+# on:
+#   workflow_dispatch:
+on: [push, pull_request]
 jobs:
   poc-job:
     runs-on: ubuntu-20.04
