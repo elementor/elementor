@@ -1,8 +1,5 @@
 name: Publish Cloud Version
-env:
-  WORKING_BRANCH: dev/cloud-publish
-# on:
-#   workflow_dispatch:
+
 on: [push, pull_request]
 jobs:
   poc-job:
