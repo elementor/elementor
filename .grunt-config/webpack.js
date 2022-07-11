@@ -44,7 +44,6 @@ const getModuleRules = ( presets ) => {
 						options: {
 							presets,
 							plugins: [
-								[ '@wordpress/babel-plugin-import-jsx-pragma' ],
 								[ '@babel/plugin-transform-react-jsx', {
 									'pragmaFrag': 'React.Fragment',
 								} ],
