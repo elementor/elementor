@@ -10,11 +10,8 @@ jobs:
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
-          ref: $WORKING_BRANCH
       - name: Send slack message
-        uses: ./.github/workflows/slack-notify.yml@$WORKING_BRANCH
+        uses: ./.github/workflows/slack-notify.yml
         with:
           PACKAGE_VERSION: ${{ 'test version 123' }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
