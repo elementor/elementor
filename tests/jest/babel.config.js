@@ -4,6 +4,7 @@ module.exports = {
 		corejs: '3.23',
 	} ] ],
 	plugins: [
+		[ '@wordpress/babel-plugin-import-jsx-pragma' ],
 		[ '@babel/plugin-transform-react-jsx', {
 			pragmaFrag: 'React.Fragment',
 		} ],
