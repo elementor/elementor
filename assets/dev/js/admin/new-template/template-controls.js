@@ -1,9 +1,5 @@
 export default class TemplateControls {
 	setDynamicFieldsVisibility( lookupControlIdPrefix, controls ) {
-		if ( undefined === controls ) {
-			return;
-		}
-
 		const controlsArray = Object.entries( controls );
 
 		for ( const [ controlId, controlSettings ] of controlsArray ) {
@@ -22,24 +18,9 @@ export default class TemplateControls {
 	changeVisibilityBasedOnCondition( lookupControlIdPrefix, condition, controlId ) {
 		const [ conditionKey, conditionValue ] = condition;
 		const targetControlWrapper = document.getElementById( lookupControlIdPrefix + controlId + '__wrapper' );
-
-		if ( targetControlWrapper ) {
-			targetControlWrapper.classList.add( 'elementor-hidden' );
-		}
-
 		const lookupControl = document.getElementById( lookupControlIdPrefix + conditionKey );
 
-		if ( ! lookupControl ) {
-			return;
-		}
-
-		if ( ! ( conditionValue === lookupControl.value ) ) {
-			return;
-		}
-
-		if ( targetControlWrapper ) {
-			targetControlWrapper.classList.remove( 'elementor-hidden' );
-		}
+		targetControlWrapper.classList.toggle( 'elementor-hidden', ! lookupControl || conditionValue !== lookupControl.value );
 	}
 }
 

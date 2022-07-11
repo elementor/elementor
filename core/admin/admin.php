@@ -575,7 +575,9 @@ class Admin extends App {
 		 */
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
-		$meta = array_merge( $_GET['meta'], $meta );
+		if ( isset( $_GET['meta'] ) ) {
+			$meta = array_merge( sanitize_text_field( $_GET['meta'] ), $meta );
+		}
 		$post_data['post_type'] = $post_type;
 
 		$document = Plugin::$instance->documents->create( $type, $post_data, $meta );

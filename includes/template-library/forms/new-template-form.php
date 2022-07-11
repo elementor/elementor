@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\TemplateLibrary\Controls;
+namespace Elementor\TemplateLibrary\Forms;
 
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;

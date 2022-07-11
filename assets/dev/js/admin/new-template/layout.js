@@ -24,17 +24,17 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		this.showContentView();
 
-		const getDynamicFieldsVisibilityListener = () => {
+		const dynamicFieldsVisibilityListener = () => {
 			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
 		};
 
 		this.getModal().onShow = () => {
 			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
-			document.getElementById( templateTypeSelectId ).addEventListener( 'change', getDynamicFieldsVisibilityListener );
+			document.getElementById( templateTypeSelectId ).addEventListener( 'change', dynamicFieldsVisibilityListener );
 		};
 
 		this.getModal().onHide = () => {
-			document.getElementById( templateTypeSelectId ).removeEventListener( 'change', getDynamicFieldsVisibilityListener );
+			document.getElementById( templateTypeSelectId ).removeEventListener( 'change', dynamicFieldsVisibilityListener );
 		};
 	},
 
