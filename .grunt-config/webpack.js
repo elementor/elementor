@@ -77,7 +77,7 @@ const frontendRulesPresets = [ [
 			],
 		},
 		"useBuiltIns": "usage",
-        "corejs": "3.23",
+		"corejs": "3.23",
 	}
 ] ];
 
