@@ -48,9 +48,9 @@ jQuery( () => {
 			// TODO: Same with all instanceOf validations, each file handle his own tests.
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommandData = ( command ) => {
-					assert.equal( command instanceof CommandBase, true, );
+					assert.equal( command instanceof CommandBase, true );
 					assert.equal( command instanceof CommandInternalBase, false );
-					assert.equal( command instanceof CommandData, true, );
+					assert.equal( command instanceof CommandData, true );
 					assert.equal( command instanceof CommandHistory, false );
 					assert.equal( command instanceof CommandHistoryDebounce, false );
 					assert.equal( command instanceof $e.modules.CommandBase, true );

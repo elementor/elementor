@@ -12,7 +12,7 @@ export default window.elementorModules = {
 	ForceMethodImplementation,
 
 	utils: {
-		Masonry: Masonry,
-		Scroll: Scroll,
+		Masonry,
+		Scroll,
 	},
 };

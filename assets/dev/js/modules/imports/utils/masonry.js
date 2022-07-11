@@ -2,7 +2,7 @@ import ViewModule from '../view-module';
 
 module.exports = ViewModule.extend( {
 
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			container: null,
 			items: null,
@@ -11,14 +11,14 @@ module.exports = ViewModule.extend( {
 		};
 	},
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		return {
 			$container: jQuery( this.getSettings( 'container' ) ),
 			$items: jQuery( this.getSettings( 'items' ) ),
 		};
 	},
 
-	run: function() {
+	run() {
 		var heights = [],
 			distanceFromTop = this.elements.$container.position().top,
 			settings = this.getSettings(),

@@ -417,7 +417,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		// Trigger async render.
 		$e.run( command, {
 			container: this.view.options.container,
-			settings: settings,
+			settings,
 		} );
 	}
 

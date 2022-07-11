@@ -287,7 +287,7 @@ class Module extends BaseModule {
 	}
 
 	private function render_import_export_tab_content() {
-		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
+		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
 		/* translators: 1: New line break, 2: Learn More link. */
@@ -305,7 +305,7 @@ class Module extends BaseModule {
 				],
 				'description' => esc_html__( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
 				'link' => [
-					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow',
+					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow/',
 					'text' => esc_html__( 'Learn More', 'elementor' ),
 				],
 			],
@@ -317,7 +317,7 @@ class Module extends BaseModule {
 				],
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
-					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow',
+					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow/',
 					'text' => esc_html__( 'Learn More', 'elementor' ),
 				],
 			],
