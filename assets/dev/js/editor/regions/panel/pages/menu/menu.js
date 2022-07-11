@@ -173,7 +173,7 @@ PanelMenu.createExitIntroductionDialog = () => {
 				elementor.config.user.introduction.exit_to = true;
 				PanelMenu.exitShouldRedirect = true;
 			},
-			onConfirm: () => {
+			onConfirm: async () => {
 				$e.run( 'document/elements/settings', {
 					container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 					settings: {
@@ -184,9 +184,8 @@ PanelMenu.createExitIntroductionDialog = () => {
 					},
 				} );
 
-				elementor.settings.editorPreferences.save( () => {
-					window.location.href = PanelMenu.getExitUrl();
-				} );
+				await elementor.settings.editorPreferences.save();
+				window.location.href = PanelMenu.getExitUrl();
 			},
 			onCancel: () => {
 				window.location.href = PanelMenu.getExitUrl();
