@@ -1,14 +1,15 @@
 name: Publish Cloud Version
 
-on:
-  workflow_dispatch:
-
+on: [push, pull_request, workflow_dispatch]
 jobs:
   poc-job:
     runs-on: ubuntu-20.04
     steps:
-      - uses: ${GITHUB_WORKSPACE}/.github/workflows/slack-notify
+      - name: Checkout master branch
+        uses: actions/checkout@v2
+      - name: Send slack message
+        uses: ./.github/workflows/slack-notify.yml
         with:
           PACKAGE_VERSION: ${{ 'test version 123' }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNELS: ${{ "C03PMU9HK24" }}
+          SLACK_CHANNELS: ${{ 'C03PMU9HK24' }}
