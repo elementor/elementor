@@ -100,11 +100,6 @@ export default class Button extends React.Component {
 			attributes.onClick = this.props.onClick;
 		}
 
-		if ( this.props.eventTrack ) {
-			// TODO: NOT WORKING
-			this.props.eventTrack();
-		}
-
 		if ( this.props.rel ) {
 			attributes.rel = this.props.rel;
 		}

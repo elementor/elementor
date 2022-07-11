@@ -11,6 +11,18 @@ export default function KitContentCheckbox( props ) {
 			const isChecked = event.target.checked,
 				actionType = isChecked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
 
+			// TODO: how to exactly show this daevent
+			if ( 'kit-library' === props.referrer ) {
+				console.log( 'event.target.checked', event.target.checked );
+				console.log( 'props.type', props.type );
+			}
+
+			switch ( props.type ) {
+				case 'settings':
+					props.onCheck();
+				break;
+			}
+
 			sharedContext.dispatch( { type: actionType, payload: props.type } );
 		};
 
@@ -20,16 +32,11 @@ export default function KitContentCheckbox( props ) {
 		}
 	}, [] );
 
-	// console.log( 'referrer: ', props )
-
 	return useMemo( () => (
 		<Checkbox
 			checked={ isSelected() }
 			onChange={ setIncludes }
 			className={ props.className }
-			onCheck={ props.onCheck }
-			onUncheck={ props.onUncheck }
-			referrer={ props.referrer }
 		/>
 	), [ sharedContext.data.includes ] );
 }

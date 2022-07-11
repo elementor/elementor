@@ -172,6 +172,7 @@ export default function ImportProcess() {
 						setShowUnfilteredFilesDialog( false );
 						onCancelProcess();
 					} }
+					referrer={ sharedContext.data.referrer }
 				/>
 			</section>
 		</Layout>

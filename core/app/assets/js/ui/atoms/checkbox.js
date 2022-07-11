@@ -18,7 +18,6 @@ export default function Checkbox( { className, checked, rounded, indeterminate, 
 		classes.push( baseClassName + '--error' );
 	}
 
-	// console.log( 'checked, referrer: ', checked, referrer )
 	if ( 'kit-library' === referrer ) {
 		if ( ! checked ) {
 			onUncheck();

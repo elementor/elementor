@@ -1,10 +1,13 @@
+import { useContext } from 'react';
 import { useNavigate } from '@reach/router';
-
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
+import { SharedContext } from 'elementor/core/app/modules/import-export/assets/js/context/shared-context/shared-context-provider';
 
 export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess } ) {
-	const navigate = useNavigate(),
+	const sharedContext = useContext( SharedContext ),
+	{ referrer } = sharedContext.data,
+	navigate = useNavigate(),
 		getNextPageUrl = () => {
 			if ( hasConflicts ) {
 				return 'import/resolver';
@@ -13,6 +16,10 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 			}
 
 			return 'import/process';
+		};
+
+		const eventTrack = ( action ) => {
+			$e.run( action );
 		};
 
 	return (
@@ -26,6 +33,9 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 					} else {
 						onResetProcess();
 					}
+					if ( 'kit-library' === referrer ) {
+						eventTrack( 'kit-library/go-back' );
+					}
 				} }
 			/>
 
@@ -33,7 +43,12 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				variant="contained"
 				text={ __( 'Import', 'elementor' ) }
 				color={ isImportAllowed ? 'primary' : 'disabled' }
-				onClick={ () => isImportAllowed && navigate( getNextPageUrl() ) }
+				onClick={ () => {
+					if ( 'kit-library' === referrer ) {
+						eventTrack( 'kit-library/approve-import' );
+					}
+					return isImportAllowed && navigate( getNextPageUrl() );
+				} }
 			/>
 		</ActionsFooter>
 	);

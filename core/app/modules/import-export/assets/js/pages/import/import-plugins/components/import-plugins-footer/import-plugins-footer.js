@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { ImportContext } from '../../../../../context/import-context/import-context-provider';
+import { SharedContext } from '../../../../../context/shared-context/shared-context-provider';
 
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
@@ -9,8 +10,12 @@ import useImportActions from '../../../hooks/use-import-actions';
 
 export default function ImportPluginsFooter() {
 	const importContext = useContext( ImportContext ),
-		{ navigateToMainScreen } = useImportActions();
-
+	 	sharedContext = useContext( SharedContext ),
+		{ referrer } = sharedContext.data,
+		{ navigateToMainScreen } = useImportActions(),
+		eventTrack = ( action ) => {
+			$e.run( action );
+		};
 	return (
 		<ActionsFooter>
 			<Button
@@ -18,7 +23,9 @@ export default function ImportPluginsFooter() {
 				variant="contained"
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
-
+					if ( 'kit-library' === referrer ) {
+						eventTrack( 'kit-library/go-back' );
+					}
 					navigateToMainScreen();
 				} }
 			/>
@@ -28,6 +35,11 @@ export default function ImportPluginsFooter() {
 				text={ __( 'Next', 'elementor' ) }
 				color="primary"
 				url="/import/content"
+				onClick={ () => {
+					if ( 'kit-library' === referrer ) {
+						eventTrack( 'kit-library/approve-selection' );
+					}
+				} }
 			/>
 		</ActionsFooter>
 	);

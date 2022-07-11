@@ -12,7 +12,7 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
-							eventTrack={ () => $e.run( 'kit-library/seek-more-info' ) }
+							eventTrack="kit-library/seek-more-info"
 						>{ __( ' Learn more about Template Kits', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>

@@ -8,8 +8,31 @@ import DialogButton from './dialog-button';
 import './dialog.scss';
 
 export default function Dialog( props ) {
+	{ console.log( 'props: ', props ) }
+	const eventTrack = ( action ) => {
+		$e.run( action );
+	},
+	dismissButtonOnClick = () => {
+		if ( 'kit-library' === props.referrer ) {
+			eventTrack( 'kit-library/skip' );
+		}
+		props.dismissButtonOnClick();
+	},
+	approveButtonOnClick = () => {
+		if ( 'kit-library' === props.referrer ) {
+			eventTrack( 'kit-library/enable' );
+		}
+		props.approveButtonOnClick();
+	},
+	onClose = () => {
+		if ( 'kit-library' === props.referrer ) {
+			eventTrack( 'kit-library/close' );
+		}
+		props.onClose();
+	}
+
 	return (
-		<DialogWrapper onSubmit={ props.onSubmit } onClose={ props.onClose }>
+		<DialogWrapper onSubmit={ props.onSubmit } onClose={ onClose }>
 			<DialogContent>
 				{ props.title && <DialogTitle>{ props.title }</DialogTitle> }
 				{ props.text && <DialogText>{ props.text }</DialogText> }
@@ -19,7 +42,7 @@ export default function Dialog( props ) {
 				<DialogButton
 					key="dismiss"
 					text={ props.dismissButtonText }
-					onClick={ props.dismissButtonOnClick }
+					onClick={ dismissButtonOnClick }
 					url={ props.dismissButtonUrl }
 					target={ props.dismissButtonTarget }
 					// eslint-disable-next-line jsx-a11y/tabindex-no-positive
@@ -28,7 +51,7 @@ export default function Dialog( props ) {
 				<DialogButton
 					key="approve"
 					text={ props.approveButtonText }
-					onClick={ props.approveButtonOnClick }
+					onClick={ approveButtonOnClick }
 					url={ props.approveButtonUrl }
 					target={ props.approveButtonTarget }
 					color={ props.approveButtonColor }

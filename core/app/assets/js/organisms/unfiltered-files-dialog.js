@@ -58,6 +58,7 @@ export default function UnfilteredFilesDialog( props ) {
 						dismissButtonText={ __( 'Go Back', 'elementor' ) }
 						dismissButtonOnClick={ onCancel }
 						onClose={ onCancel }
+						referrer={ props.referrer }
 				/>
 				: <Dialog
 						title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
@@ -68,6 +69,7 @@ export default function UnfilteredFilesDialog( props ) {
 						dismissButtonText={ __( 'Skip', 'elementor' ) }
 						dismissButtonOnClick={ onDismiss || onReady }
 						onClose={ onDismiss || onReady }
+						referrer={ props.referrer }
 				/>
 			}
 		</>

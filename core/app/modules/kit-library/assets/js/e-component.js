@@ -12,16 +12,22 @@ export default class EComponent extends $e.modules.ComponentBase {
 	 */
 	defaultCommands() {
 		const trackingCommands = [
+			'approve-import',
+			'approve-selection',
 			'check',
-			'uncheck',
 			'choose-file',
 			'choose-site-parts-to-import',
+			'close',
+			'enable',
+			'go-back',
 			'kit-import',
 			'logo',
 			'modal-close',
 			'modal-open',
 			'refetch',
 			'seek-more-info',
+			'skip',
+			'uncheck',
 		].reduce( ( allCommands, command ) => ( {
 			...allCommands,
 			[ command ]: () => {
