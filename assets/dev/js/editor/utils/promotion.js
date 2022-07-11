@@ -13,7 +13,7 @@ export default class extends elementorModules.Module {
 		const isProExistNotConnected = ! ! ( elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect );
 
 		// `isProExistNotConnected` is for BC.
-		 this.setActionButtonConfig( {
+		this.setActionButtonConfig( {
 			text: isProExistNotConnected ? __( 'Connect & Activate', 'elementor' ) : __( 'See it in Action', 'elementor' ),
 			url: isProExistNotConnected ? elementorProEditorConfig.urls.connect : null,
 		} );
