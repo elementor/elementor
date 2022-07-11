@@ -11,4 +11,4 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ 'test version 123' }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNELS: ${{ "C03PMU9HK24" }}
+          SLACK_CHANNELS: ${{ 'C03PMU9HK24' }}
