@@ -78,10 +78,7 @@
 		.elementor-first-add {
 			width: auto;
 			height: auto;
-			top: Max( calc( 10px - var( --container-default-padding-top ) ), 0px );
-			right: Max( calc( 10px - var( --container-default-padding-right ) ), 0px );
-			bottom: Max( calc( 10px - var( --container-default-padding-bottom ) ), 0px );
-			left: Max( calc( 10px - var( --container-default-padding-left ) ), 0px );
+			inset: 0;
 		}
 	}
 
@@ -253,10 +250,6 @@
 				}
 			}
 		}
-	}
-
-	.e-container {
-		margin: --container-inside-padding;
 	}
 }
 
