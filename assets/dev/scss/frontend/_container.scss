@@ -1,9 +1,5 @@
 .e-container {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
-	--container-default-padding-top: 10px;
-	--container-default-padding-right: 10px;
-	--container-default-padding-bottom: 10px;
-	--container-default-padding-left: 10px;
 	--border-radius: 0;
 	--display: flex;
 	--flex-direction: column;
@@ -22,10 +18,10 @@
 	--margin-right: 0;
 	--margin-bottom: 0;
 	--margin-left: 0;
-	--padding-top: var( --container-default-padding-top );
-	--padding-right: var( --container-default-padding-right );
-	--padding-bottom: var( --container-default-padding-bottom );
-	--padding-left: var( --container-default-padding-left );
+	--padding-top: var( --container-default-padding-top, 10px );
+	--padding-right: var( --container-default-padding-right, 10px );
+	--padding-bottom: var( --container-default-padding-bottom, 10px );
+	--padding-left: var( --container-default-padding-left, 10px );
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
@@ -74,7 +70,7 @@
 		height: 100%;
 		// Use the Container's `min-height` or default to 100px.
 		min-height: var( --min-height, 100px );
-		
+
 		.elementor-first-add {
 			width: auto;
 			height: auto;
