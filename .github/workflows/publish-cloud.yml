@@ -7,8 +7,11 @@ jobs:
   poc-job:
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout branch
+      - name: Checkout master branch
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: dev/cloud-publish
       - name: Send slack message
         uses: ./.github/workflows/slack-notify.yml@dev/cloud-publish
         with:
