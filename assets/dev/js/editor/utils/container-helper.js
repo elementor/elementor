@@ -1,4 +1,8 @@
 /**
+ * @typedef {import('../container/container')} Container
+ */
+
+/**
  * Container element helper functions.
  */
 export class ContainerHelper {
@@ -7,14 +11,15 @@ export class ContainerHelper {
 	static DIRECTION_COLUMN = 'column';
 	static DIRECTION_ROW_REVERSED = 'row-reverse';
 	static DIRECTION_COLUMN_REVERSED = 'column-reverse';
+	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
 
 	/**
 	 * Create multiple container elements.
 	 *
-	 * @param {Number} count - Count of Containers to create.
-	 * @param {Object} settings - Settings to set to each Container.
-	 * @param {Container} target - The Container object to create the new Container elements inside.
-	 * @param {Object} options - Additional command options.
+	 * @param {number}    count    - Count of Containers to create.
+	 * @param {Object}    settings - Settings to set to each Container.
+	 * @param {Container} target   - The Container object to create the new Container elements inside.
+	 * @param {Object}    options  - Additional command options.
 	 *
 	 * @return {Container[]} - Array of the newly created Containers.
 	 */
@@ -31,9 +36,9 @@ export class ContainerHelper {
 	/**
 	 * Create a Container element.
 	 *
-	 * @param {Object} settings - Settings to set to each Container.
-	 * @param {Container} target - The Container object to create the new Container elements inside.
-	 * @param {Object} options - Additional command options.
+	 * @param {Object}    settings - Settings to set to each Container.
+	 * @param {Container} target   - The Container object to create the new Container elements inside.
+	 * @param {Object}    options  - Additional command options.
 	 *
 	 * @return {Container} - The newly created Container.
 	 */
@@ -51,7 +56,7 @@ export class ContainerHelper {
 	/**
 	 * Change Container settings.
 	 *
-	 * @param {Object} settings - New settings.
+	 * @param {Object}    settings  - New settings.
 	 * @param {Container} container - Container to set the settings to.
 	 *
 	 * @return {void}
@@ -69,12 +74,12 @@ export class ContainerHelper {
 	/**
 	 * Create a Container element based on a sizes.
 	 *
-	 * @param {array} sizes - Preset sizes.
-	 * @param {Container} target - The target of new created element.
-	 * @param {Object} options - Additional command options.
-	 * @param {Boolean} [options.createWrapper=true] - Create a wrapper container for the preset.
+	 * @param {Array}     sizes                        - Preset sizes.
+	 * @param {Container} target                       - The target of new created element.
+	 * @param {Object}    options                      - Additional command options.
+	 * @param {boolean}   [options.createWrapper=true] - Create a wrapper container for the preset.
 	 *
-	 * @returns {Container} - Container created on.
+	 * @return {Container} - Container created on.
 	 */
 	static createContainerFromSizes( sizes, target, options = {} ) {
 		const { createWrapper = true } = options,
@@ -132,12 +137,12 @@ export class ContainerHelper {
 	/**
 	 * Create a Container element based on a preset.
 	 *
-	 * @param {string} preset - Preset structure of the sub containers (e.g. `33-66-66-33`).
-	 * @param {Container} target - The target container of the newly created Container.
-	 * @param {Object} options - Additional command options.
-	 * @param {Boolean} [options.createWrapper=true] - Create a wrapper container for the preset.
+	 * @param {string}    preset                       - Preset structure of the sub containers (e.g. `33-66-66-33`).
+	 * @param {Container} target                       - The target container of the newly created Container.
+	 * @param {Object}    options                      - Additional command options.
+	 * @param {boolean}   [options.createWrapper=true] - Create a wrapper container for the preset.
 	 *
-	 * @returns {Container} - Container created on.
+	 * @return {Container} - Container created on.
 	 */
 	static createContainerFromPreset( preset, target = elementor.getPreviewContainer(), options ) {
 		const historyId = $e.internal( 'document/history/start-log', {
@@ -151,13 +156,22 @@ export class ContainerHelper {
 
 		try {
 			switch ( preset ) {
-				// Single Container without sub Containers.
-				case '100':
-					newContainer = ContainerHelper.createContainer( {}, target, options );
+				// Single column Container without sub Containers.
+				case 'c100':
+					newContainer = ContainerHelper.createContainer( {
+						flex_direction: ContainerHelper.DIRECTION_COLUMN,
+					}, target, options );
+					break;
+
+				// Single row Container without sub Containers.
+				case 'r100':
+					newContainer = ContainerHelper.createContainer( {
+						flex_direction: ContainerHelper.DIRECTION_ROW,
+					}, target, options );
 					break;
 
 				// Exceptional preset.
-				case 'c100-c50-50':
+				case 'c100-c50-50': {
 					settings = {
 						flex_direction: ContainerHelper.DIRECTION_ROW,
 						flex_wrap: 'wrap',
@@ -197,12 +211,13 @@ export class ContainerHelper {
 					ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 
 					break;
-
+				}
 				// Containers by preset.
-				default:
+				default: {
 					const sizes = preset.split( '-' );
 
 					newContainer = ContainerHelper.createContainerFromSizes( sizes, target, options );
+				}
 			}
 
 			$e.internal( 'document/history/end-log', { id: historyId } );
@@ -217,8 +232,6 @@ export class ContainerHelper {
 	 * Open edit mode of a Container.
 	 *
 	 * @param {Container} container - Container to open edit mode for.
-	 *
-	 * @return void
 	 */
 	static openEditMode( container ) {
 		$e.run( 'panel/editor/open', {

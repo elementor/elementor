@@ -5,12 +5,12 @@ import BaseHandler from './handlers/base';
 import SwiperBase from './handlers/base-swiper';
 
 elementorModules.frontend = {
-	Document: Document,
+	Document,
 	tools: {
-		StretchElement: StretchElement,
+		StretchElement,
 	},
 	handlers: {
 		Base: BaseHandler,
-		SwiperBase: SwiperBase,
+		SwiperBase,
 	},
 };

@@ -145,25 +145,34 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 			return true;
 		} );
 
+		// Create invalid file.
+		$invalid_file_basename = 'invalid_file.php';
+		$invalid_file_path = self::$temp_directory . $invalid_file_basename;
+
+		file_put_contents( $invalid_file_path, '' );
+
+		$valid_file_path = self::$temp_directory . self::$template_json_file_name;
 		$zip_file_path = self::$temp_directory . self::$zip_file_name;
 		$zip_file = new \ZipArchive();
 		$zip_file->open( $zip_file_path, \ZipArchive::CREATE || \ZipArchive::OVERWRITE );
+
 		// Add a template file.
-		$zip_file->addFile( self::$temp_directory . self::$template_json_file_name, self::$template_json_file_name );
-		// Save the file.
+		$zip_file->addFile( $valid_file_path, self::$template_json_file_name );
+
+		// Add invalid file.
+		$zip_file->addFile( $invalid_file_path, $invalid_file_basename );
+
 		$zip_file->close();
 
-		$result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_file_path );
+		$result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_file_path, [ 'json' ] );
 
 		$is_extract_successful = ! is_wp_error( $result ) && ! empty( $result['files'] );
 
 		$this->assertTrue( $is_extract_successful );
-
-		if ( $is_extract_successful ) {
-			foreach ( $result['files'] as $file ) {
-				$this->assertTrue( file_exists( $file ) );
-			}
-		}
+		$this->assertCount( 1, $result['files'] );
+		$this->assertEquals( $result['extraction_directory'] . self::$template_json_file_name, $result['files'][0] );
+		$this->assertTrue( file_exists( $result['extraction_directory'] . self::$template_json_file_name ) );
+		$this->assertFalse( file_exists( $result['extraction_directory'] . $invalid_file_basename ) );
 
 		// Cleanup.
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $result['extraction_directory'] );
@@ -179,7 +188,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 			return true;
 		} );
 
-		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file );
+		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file, [ 'json' ] );
 
 		$result = ! is_wp_error( $validation_result );
 
@@ -197,7 +206,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 			return true;
 		} );
 
-		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file );
+		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file, [ 'json' ] );
 
 		$result = ! is_wp_error( $validation_result );
 

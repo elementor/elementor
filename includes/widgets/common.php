@@ -52,6 +52,7 @@ class Widget_Common extends Widget_Base {
 	 * Returns an array of device args.
 	 *
 	 * @since 3.4.7
+	 * @deprcated 3.7.0 - Not needed anymore because responsive conditioning in the Editor was fixed in v3.7.0.
 	 * @access protected
 	 *
 	 * @param array $args arguments to duplicate per breakpoint
@@ -60,6 +61,8 @@ class Widget_Common extends Widget_Base {
 	 * @return array responsive device args
 	 */
 	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.7.0' );
+
 		$device_args = [];
 		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
@@ -255,13 +258,7 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
-				'separator' => 'after',
 				'condition' => [ '_element_width' => 'initial' ],
-				'device_args' => $this->get_responsive_device_args( [
-					'condition' => [
-						'_element_width_{{DEVICE}}' => [ 'initial' ],
-					],
-				] ),
 			]
 		);
 
@@ -281,6 +278,11 @@ class Widget_Common extends Widget_Base {
 						'size',
 						'grow',
 						'shrink',
+					],
+					'fields_options' => [
+						'align_self' => [
+							'separator' => 'before',
+						],
 					],
 				]
 			);
@@ -1588,10 +1590,10 @@ class Widget_Common extends Widget_Base {
 				'label' => esc_html__( 'Repeat', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'no-repeat' => esc_html__( 'No-Repeat', 'elementor' ),
+					'no-repeat' => esc_html__( 'No-repeat', 'elementor' ),
 					'repeat' => esc_html__( 'Repeat', 'elementor' ),
-					'repeat-x' => esc_html__( 'Repeat-X', 'elementor' ),
-					'repeat-Y' => esc_html__( 'Repeat-Y', 'elementor' ),
+					'repeat-x' => esc_html__( 'Repeat-x', 'elementor' ),
+					'repeat-Y' => esc_html__( 'Repeat-y', 'elementor' ),
 					'round' => esc_html__( 'Round', 'elementor' ),
 					'space' => esc_html__( 'Space', 'elementor' ),
 				],

@@ -1,3 +1,4 @@
+/* eslint-disable @wordpress/i18n-ellipsis */
 import { useContext, useEffect, useState, useCallback } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
@@ -59,11 +60,14 @@ export default function HelloTheme() {
 		setIsInstalling( false );
 
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'success',
-			action: 'hello theme activation',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'success',
+				action: 'hello theme activation',
+			},
 		} );
 
 		setNoticeState( noticeStateSuccess );
@@ -83,11 +87,14 @@ export default function HelloTheme() {
 
 	const onErrorInstallHelloTheme = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'indication prompt',
-			step: state.currentStep,
-			action_state: 'failure',
-			action: 'hello theme install',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+				action_state: 'failure',
+				action: 'hello theme install',
+			},
 		} );
 
 		setNoticeState( {
@@ -123,9 +130,12 @@ export default function HelloTheme() {
 
 	const sendNextButtonEvent = () => {
 		elementorCommon.events.dispatchEvent( {
-			placement: elementorAppConfig.onboarding.eventPlacement,
 			event: 'next',
-			step: state.currentStep,
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				step: state.currentStep,
+			},
 		} );
 	};
 
@@ -179,7 +189,7 @@ export default function HelloTheme() {
 		if ( isInstalling ) {
 			setActionButtonText( (
 				<>
-					<i className="eicon-loading eicon-animation-spin" aria-hidden="true"/>
+					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
 				</>
 			) );
 		}
@@ -193,7 +203,7 @@ export default function HelloTheme() {
 
 			setActionButtonText( (
 				<>
-					<i className="eicon-loading eicon-animation-spin" aria-hidden="true"/>
+					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
 					<span className="e-onboarding__action-button-text">{ __( 'Hold on, this can take a minute...', 'elementor' ) }</span>
 				</>
 			) );
@@ -208,7 +218,7 @@ export default function HelloTheme() {
 
 			setActionButtonText( (
 				<>
-					<i className="eicon-loading eicon-animation-spin" aria-hidden="true"/>
+					<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
 					<span className="e-onboarding__action-button-text">{ __( 'Okay, now we\'re really close...', 'elementor' ) }</span>
 				</>
 			) );
@@ -225,11 +235,14 @@ export default function HelloTheme() {
 				onHelloThemeActivationSuccess();
 			} else if ( 'error' === activateHelloThemeAjaxState.status ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					step: state.currentStep,
-					action_state: 'failure',
-					action: 'hello theme activation',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						action_state: 'failure',
+						action: 'hello theme activation',
+					},
 				} );
 
 				setNoticeState( {
@@ -248,20 +261,26 @@ export default function HelloTheme() {
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Hello.svg' }
-				title={ __( 'We always start with Hello.', 'elementor' ) }
+				title={ __( 'Every site starts with a theme.', 'elementor' ) }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
 			>
-				<span>
-					{ __( 'Every WordPress site needs a theme. Join over 1M people already using Elementor’s Hello theme and build your website exactly the way you want.', 'elementor' ) }
-				</span>
+				<p>
+					{ __( 'Hello is Elementor\'s official blank canvas theme optimized to build your website exactly the way you want.', 'elementor' ) }
+				</p>
+				<p>
+					{ __( 'Here\'s why:', 'elementor' ) }
+				</p>
 				<ul className="e-onboarding__feature-list">
-					<li>{ __( 'It’s a flexible, lightweight canvas', 'elementor' ) }</li>
-					<li>{ __( 'Super-fast loading time', 'elementor' ) }</li>
-					<li>{ __( 'And it’s great for SEO', 'elementor' ) }</li>
+					<li>{ __( 'Light-weight and fast loading', 'elementor' ) }</li>
+					<li>{ __( 'Great for SEO', 'elementor' ) }</li>
+					<li>{ __( 'Already being used by 1M+ web creators', 'elementor' ) }</li>
 				</ul>
 			</PageContentLayout>
+			<div className="e-onboarding__footnote">
+				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }
+			</div>
 		</Layout>
 	);
 }

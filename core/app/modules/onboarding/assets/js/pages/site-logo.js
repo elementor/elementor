@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useContext, useEffect, useState, useCallback } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
@@ -24,9 +26,12 @@ export default function SiteLogo() {
 			role: 'button',
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'next',
-					step: state.currentStep,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+					},
 				} );
 
 				if ( file.id ) {
@@ -55,7 +60,7 @@ export default function SiteLogo() {
 	if ( isUploading ) {
 		actionButton.text = (
 			<>
-				<i className="eicon-loading eicon-animation-spin" aria-hidden="true"/>
+				<i className="eicon-loading eicon-animation-spin" aria-hidden="true" />
 			</>
 		);
 	} else {
@@ -85,7 +90,7 @@ export default function SiteLogo() {
 		setUploadImageAjax( {
 			data: {
 				action: 'elementor_upload_site_logo',
-				fileToUpload: fileToUpload,
+				fileToUpload,
 			},
 		} );
 	};
@@ -116,6 +121,18 @@ export default function SiteLogo() {
 		}
 	};
 
+	const onImageRemoveClick = () => {
+		elementorCommon.events.dispatchEvent( {
+			event: 'remove selected logo',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+			},
+		} );
+
+		setFile( null );
+	};
+
 	/**
 	 * Ajax Callbacks
 	 */
@@ -124,10 +141,12 @@ export default function SiteLogo() {
 		if ( 'initial' !== uploadImageAjaxState.status ) {
 			if ( 'success' === uploadImageAjaxState.status && uploadImageAjaxState.response?.imageAttachment?.id ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'logo image uploaded',
-					step: state.currentStep,
-					source: fileSource,
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						source: fileSource,
+					},
 				} );
 
 				setIsUploading( false );
@@ -143,10 +162,13 @@ export default function SiteLogo() {
 				setFile( null );
 
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					action_state: 'failure',
-					action: 'logo image upload',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						action_state: 'failure',
+						action: 'logo image upload',
+					},
 				} );
 
 				setNoticeState( {
@@ -163,8 +185,12 @@ export default function SiteLogo() {
 		if ( 'initial' !== updateLogoAjaxState.status ) {
 			if ( 'success' === updateLogoAjaxState.status && updateLogoAjaxState.response?.siteLogoUpdated ) {
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'logo image updated',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						source: fileSource,
+					},
 				} );
 
 				setIsUploading( false );
@@ -187,11 +213,14 @@ export default function SiteLogo() {
 				setIsUploading( false );
 
 				elementorCommon.events.dispatchEvent( {
-					placement: elementorAppConfig.onboarding.eventPlacement,
 					event: 'indication prompt',
-					step: state.currentStep,
-					action_state: 'failure',
-					action: 'update site logo',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+						action_state: 'failure',
+						action: 'update site logo',
+					},
 				} );
 
 				setNoticeState( {
@@ -215,16 +244,16 @@ export default function SiteLogo() {
 				<span>
 					{ __( 'Otherwise, you can skip this and add one later.', 'elementor' ) }
 				</span>
-				{ ( file && ! showUnfilteredFilesDialog ) ?
-					(
+				{ ( file && ! showUnfilteredFilesDialog )
+					? (
 						<div className={ 'e-onboarding__logo-container' + ( isUploading ? ' e-onboarding__is-uploading' : '' ) }>
-							<div className="e-onboarding__logo-remove" onClick={ () => setFile( null ) }>
-								<i className="eicon-trash-o"/>
+							<div className="e-onboarding__logo-remove" onClick={ () => onImageRemoveClick() }>
+								<i className="eicon-trash-o" />
 							</div>
-							<img src={ file.url } alt={ __( 'Potential Site Logo', 'elementor' ) }/>
+							<img src={ file.url } alt={ __( 'Potential Site Logo', 'elementor' ) } />
 						</div>
-					) :
-					<>
+					)
+					: <>
 						<DropZone
 							className="e-onboarding__drop-zone"
 							heading={ __( 'Drop image here', 'elementor' ) }
@@ -232,7 +261,7 @@ export default function SiteLogo() {
 							buttonText={ __( 'Open Media Library', 'elementor' ) }
 							buttonVariant="outlined"
 							buttonColor="cta"
-							icon={''}
+							icon={ '' }
 							type="wp-media"
 							filetypes={ [ 'jpg', 'jpeg', 'png', 'svg' ] }
 							onFileSelect={ ( selectedFile ) => onFileSelect( selectedFile ) }
@@ -247,19 +276,26 @@ export default function SiteLogo() {
 							} }
 							onButtonClick={ () => {
 								elementorCommon.events.dispatchEvent( {
-									placement: elementorAppConfig.onboarding.eventPlacement,
 									event: 'browse file click',
+									version: '',
+									details: {
+										placement: elementorAppConfig.onboarding.eventPlacement,
+										step: state.currentStep,
+									},
 								} );
 							} }
 							// TODO: DEAL WITH ERROR
 							onError={ ( error ) => {
 								if ( 'file_not_allowed' === error.id ) {
 									elementorCommon.events.dispatchEvent( {
-										placement: elementorAppConfig.onboarding.eventPlacement,
 										event: 'indication prompt',
-										step: state.currentStep,
-										action_state: 'failure',
-										action: 'logo upload format',
+										version: '',
+										details: {
+											placement: elementorAppConfig.onboarding.eventPlacement,
+											step: state.currentStep,
+											action_state: 'failure',
+											action: 'logo upload format',
+										},
 									} );
 
 									setNoticeState( {

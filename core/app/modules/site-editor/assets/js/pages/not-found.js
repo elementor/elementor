@@ -7,7 +7,7 @@ export default function NotFound() {
 		<Dialog
 			title={ __( 'Theme Builder could not be loaded', 'elementor' ) }
 			text={ __( 'We’re sorry, but something went wrong. Click on ‘Learn more’ and follow each of the steps to quickly solve it.', 'elementor' ) }
-			approveButtonUrl="https://go.elementor.com/app-theme-builder-load-issue"
+			approveButtonUrl="https://go.elementor.com/app-theme-builder-load-issue/"
 			approveButtonColor="link"
 			approveButtonTarget="_blank"
 			approveButtonText={ __( 'Learn More', 'elementor' ) }

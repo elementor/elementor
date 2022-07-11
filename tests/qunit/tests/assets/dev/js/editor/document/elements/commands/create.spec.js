@@ -8,7 +8,7 @@ export const Create = () => {
 			QUnit.test( 'Section', ( assert ) => {
 				const eSection = ElementsHelper.createSection( 1 ),
 					isSectionCreated = !! elementor.getPreviewContainer().children.find(
-						( section ) => eSection.id === section.id
+						( section ) => eSection.id === section.id,
 					);
 
 				// Check.
@@ -19,7 +19,7 @@ export const Create = () => {
 			QUnit.test( 'Column', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					isColumnCreated = !! elementor.getPreviewContainer().children[ 0 ].children.find(
-						( column ) => eColumn.id === column.id
+						( column ) => eColumn.id === column.id,
 					);
 
 				// Check column exist.
@@ -29,9 +29,9 @@ export const Create = () => {
 
 			QUnit.test( 'Widget', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					isButtonCreated = !! elementor.getPreviewContainer().children[ 0 ].children[ 0 ].children.find(
-						( widget ) => widget.id === eButton.id
+						( widget ) => widget.id === eButton.id,
 					);
 
 				// Check button exist.
@@ -50,7 +50,7 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widget: Custom Position', ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton();
+				const eButton = ElementsHelper.createWrappedButton();
 
 				ElementsHelper.settings( eButton, {
 					_position: 'absolute',
@@ -108,7 +108,7 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widget', ( assert ) => {
-					const eWidget = ElementsHelper.createAutoButton(),
+					const eWidget = ElementsHelper.createWrappedButton(),
 						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
@@ -178,7 +178,7 @@ export const Create = () => {
 				let count = 1;
 				eColumns.forEach( ( eColumn ) => {
 					const isColumnCreated = !! elementor.getPreviewContainer().children.find( ( section ) =>
-						!! section.children.find( ( column ) => eColumn.id === column.id )
+						!! section.children.find( ( column ) => eColumn.id === column.id ),
 					);
 
 					assert.equal( isColumnCreated, true, `Column #${ count } were created.` );
@@ -189,7 +189,7 @@ export const Create = () => {
 			QUnit.test( 'Widgets', ( assert ) => {
 				const eColumn1 = ElementsHelper.createSection( 1, true ),
 					eColumn2 = ElementsHelper.createSection( 1, true ),
-					eButtons = ElementsHelper.multiCreateButton( [ eColumn1, eColumn2 ] ),
+					eButtons = ElementsHelper.multiCreateWidgetButton( [ eColumn1, eColumn2 ] ),
 					isButton1Created = !! eColumn1.children.find( ( widget ) => eButtons[ 0 ].id === widget.id ),
 					isButton2Created = !! eColumn2.children.find( ( widget ) => eButtons[ 1 ].id === widget.id );
 
@@ -222,7 +222,7 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widgets', ( assert ) => {
-					const eWidgets = ElementsHelper.multiCreateAutoButton(),
+					const eWidgets = ElementsHelper.multiCreateWrappedButton(),
 						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
@@ -284,7 +284,7 @@ export const Create = () => {
 						}
 
 						eInnerSection.children.forEach( ( eInnerColumn ) =>
-							innerSectionAfterRedoColumnsIds[ eInnerSection.id ].push( eInnerColumn.id )
+							innerSectionAfterRedoColumnsIds[ eInnerSection.id ].push( eInnerColumn.id ),
 						);
 					} );
 

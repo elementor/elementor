@@ -14,6 +14,10 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
+if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
+	$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
+}
+
 define( 'ELEMENTOR_TESTS', true );
 
 /**
@@ -29,6 +33,8 @@ $GLOBALS['wp_tests_options'] = [
 	'template' => 'twentytwentyone',
 	'stylesheet' => 'twentytwentyone',
 ];
+
+copy_language_files( $_tests_dir );
 
 require_once $_tests_dir . '/includes/functions.php';
 
@@ -67,3 +73,22 @@ do_action( 'init' );
 do_action( 'plugins_loaded' );
 
 \Elementor\Plugin::$instance->init_common();
+
+/**
+ * Copying language files is required to run before WordPress initializes.
+ *
+ * @param string $_tests_dir
+ *
+ * @return void
+ */
+function copy_language_files( $_tests_dir ) {
+	$tests_data_dir = $_tests_dir . '/data';
+	$tests_lang_dir = $tests_data_dir . '/languages';
+
+	@mkdir( $tests_data_dir );
+	@mkdir( $tests_lang_dir );
+	@mkdir( $tests_lang_dir . '/plugins' );
+
+	touch( $tests_lang_dir . '/he_IL.mo' );
+	copy( __DIR__ . '/phpunit/resources/languages/plugins/elementor-he_IL.mo', $tests_lang_dir . '/plugins/elementor-he_IL.mo' );
+}
