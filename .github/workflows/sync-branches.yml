@@ -16,10 +16,10 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Sync developer-edition branch
         env:
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
