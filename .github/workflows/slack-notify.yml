@@ -6,5 +6,7 @@ jobs:
   send-slack-notification:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v2
       - name: Notify Slack
-        run: bash "${GITHUB_WORKSPACE}/.github/scripts/slack-notify.sh"
+        run: bash "./.github/scripts/slack-notify.sh"
