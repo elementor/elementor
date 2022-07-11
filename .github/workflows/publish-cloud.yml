@@ -1,4 +1,6 @@
 name: Publish Cloud Version
+env:
+  WORKING_BRANCH: dev/cloud-publish
 
 on: [push, pull_request, workflow_dispatch]
 jobs:
@@ -8,7 +10,7 @@ jobs:
       - name: Checkout master branch
         uses: actions/checkout@v2
       - name: Send slack message
-        uses: ./.github/workflows/slack-notify.yml
+        uses: ./.github/workflows/slack-notify.yml@WORKING_BRANCH
         with:
           PACKAGE_VERSION: ${{ 'test version 123' }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
