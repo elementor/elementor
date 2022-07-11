@@ -7,9 +7,10 @@ jobs:
   poc-job:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v1
-      - name: Checkout
-      - uses: ./.github/workflows/slack-notify.yml
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Send slack message
+        uses: ./.github/workflows/slack-notify.yml
         with:
           PACKAGE_VERSION: ${{ 'test version 123' }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
