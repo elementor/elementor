@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
+      - name: Checkout
       - uses: ./.github/workflows/slack-notify.yml
         with:
           PACKAGE_VERSION: ${{ 'test version 123' }}
