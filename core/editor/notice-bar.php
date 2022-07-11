@@ -27,13 +27,17 @@ class Notice_Bar extends Base_Object {
 	}
 
 	final public function get_notice() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		$default_settings = [
+			'is_visible' => current_user_can( 'manage_options' ),
+		];
+
+		$settings = wp_parse_args( $this->get_settings(), $default_settings );
+
+		if ( empty( $settings['option_key'] ) ) {
 			return null;
 		}
 
-		$settings = $this->get_settings();
-
-		if ( empty( $settings['option_key'] ) ) {
+		if ( ! $settings['is_visible'] ) {
 			return null;
 		}
 
