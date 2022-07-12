@@ -421,7 +421,7 @@ class Module extends BaseModule {
 			foreach ( $custom_post_types as $custom_post_type ) {
 
 				$custom_post_types_object = get_post_type_object( $custom_post_type );
-				// Cpt data appears in two arrays:
+				// CPT data appears in two arrays:
 				// 1. content object: in order to show the export summary when completed in getLabel function
 				$summary_titles['content'][ $custom_post_type ] = [
 					'single' => $custom_post_types_object->labels->singular_name,
