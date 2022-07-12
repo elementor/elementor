@@ -28,9 +28,9 @@ class Module extends BaseModule {
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
 
-	const KIT_LIBRARY_REFERRER_KEY = 'kit-library';
+	const REFERRER_KIT_LIBRARY = 'kit-library';
 
-	const LOCAL_REFERRER_KEY = 'local';
+	const REFERRER_LOCAL = 'local';
 
 	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
 
@@ -296,11 +296,11 @@ class Module extends BaseModule {
 			}
 
 			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
-			$referrer = static::KIT_LIBRARY_REFERRER_KEY;
+			$referrer = static::REFERRER_KIT_LIBRARY;
 		} else {
 			// PHPCS - Already validated in caller function.
 			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$referrer = static::LOCAL_REFERRER_KEY;
+			$referrer = static::REFERRER_LOCAL;
 		}
 
 		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
@@ -420,7 +420,7 @@ class Module extends BaseModule {
 			foreach ( $custom_post_types as $custom_post_type ) {
 
 				$custom_post_types_object = get_post_type_object( $custom_post_type );
-				// Cpt data appears in two arrays:
+				// CPT data appears in two arrays:
 				// 1. content object: in order to show the export summary when completed in getLabel function
 				$summary_titles['content'][ $custom_post_type ] = [
 					'single' => $custom_post_types_object->labels->singular_name,

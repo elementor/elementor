@@ -111,13 +111,13 @@ class Wp_Cli extends \WP_CLI_Command {
 		$url = null;
 		$file_path = $args[0];
 		$import_settings = [];
-		$import_settings['referrer'] = Module::LOCAL_REFERRER_KEY;
+		$import_settings['referrer'] = Module::REFERRER_LOCAL;
 
 		switch ( $assoc_args['sourceType'] ) {
 			case 'library':
 				$url = $this->get_url_from_library( $file_path );
 				$zip_path = $this->create_temp_file_from_url( $url );
-				$import_settings['referrer'] = Module::KIT_LIBRARY_REFERRER_KEY;
+				$import_settings['referrer'] = Module::REFERRER_KIT_LIBRARY;
 				break;
 
 			case 'remote':
