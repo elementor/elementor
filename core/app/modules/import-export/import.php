@@ -34,7 +34,7 @@ class Import {
 	/**
 	 * Import runners for each content type.
 	 *
-	 * @var array
+	 * @var Runner_Base[]
 	 */
 	private $runners;
 
@@ -122,7 +122,7 @@ class Import {
 	 * @throws \Exception
 	 */
 	public function __construct( $path, $settings = [] ) {
-		Utils::check_writing_permissions();
+		Utils::ensure_writing_permissions();
 
 		if ( is_file( $path ) ) {
 			$this->extracted_directory_path = $this->extract_zip( $path );

@@ -29,7 +29,7 @@ class Wp_Content extends Runner_Base {
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
-		$post_types = $this->array_force_last_element( $post_types, 'nav_menu_item' );
+		$post_types = $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' );
 
 		$taxonomies = isset( $imported_data['taxonomies'] ) ? $imported_data['taxonomies'] : [];
 		$imported_terms = ImportExportUtils::map_old_new_terms_ids( $imported_data );
@@ -41,7 +41,14 @@ class Wp_Content extends Runner_Base {
 				continue;
 			}
 
-			$import = $this->import_wp_post_type( $path, $post_type, $imported_data, $taxonomies, $imported_terms );
+			$import = $this->import_wp_post_type(
+				$path,
+				$post_type,
+				$imported_data,
+				$taxonomies,
+				$imported_terms
+			);
+
 			$result['wp-content'][ $post_type ] = $import;
 			$imported_data = array_merge( $imported_data, $result );
 		}
@@ -124,13 +131,19 @@ class Wp_Content extends Runner_Base {
 		];
 	}
 
-	// force element in array to be last element
-	private function array_force_last_element( $array, $element ) {
-		$index = array_search( $element, $array );
-		if ( $index !== false ) {
+	/**
+	 * @param $array array The array we want to relocate his element.
+	 * @param $element mixed The value of the element in the array we want to shift to end of the array.
+	 * @return mixed
+	 */
+	private function force_element_to_be_last_by_value( $array, $element ) {
+		$index = array_search( $element, $array, true );
+
+		if ( false !== $index ) {
 			unset( $array[ $index ] );
 			$array[] = $element;
 		}
+
 		return $array;
 	}
 }

@@ -36,7 +36,7 @@ class Test_Export extends Elementor_Test_Base {
 		$expected_manifest_base_keys = [ 'name', 'title', 'description', 'author', 'version', 'elementor_version', 'created', 'thumbnail', 'site' ];
 		$this->assert_array_have_keys( $expected_manifest_base_keys, $result['manifest'] );
 
-		$expected_manifest_registered_keys = [ 'site-settings', 'plugins', 'templates', 'taxonomies', 'content', 'wp-content', 'custom-post-type-title' ];
+		$expected_manifest_registered_keys = [ 'site-settings', 'plugins', 'taxonomies', 'content', 'wp-content', 'custom-post-type-title' ];
 		$this->assert_array_have_keys( $expected_manifest_registered_keys, $result['manifest'] );
 
 		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
@@ -179,7 +179,7 @@ class Test_Export extends Elementor_Test_Base {
 		$result = $export->run();
 
 		// Assert
-		$this->assertEmpty( $result['manifest']['templates'] );
+		$this->assertFalse( isset( $result['manifest']['templates'] ) );
 
 		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
 
@@ -190,6 +190,7 @@ class Test_Export extends Elementor_Test_Base {
 	}
 
 	public function test_run__export_elementor_content() {
+		// Arrange
 		$documents = ( new Collection( [
 			$this->factory()->documents->publish_and_get( [ 'post_type' => 'page', ] ),
 			$this->factory()->documents->publish_and_get( [ 'post_type' => 'e-landing-page', ] ),
@@ -203,7 +204,6 @@ class Test_Export extends Elementor_Test_Base {
 		// Add a draft document to make sure that it's not getting exported.
 		$this->factory()->documents->create();
 
-		// Arrange
 		$export = new Export();
 		$export->register( new Elementor_Content() );
 

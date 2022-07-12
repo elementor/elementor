@@ -11,7 +11,7 @@ use Elementor\Utils as ElementorUtils;
 class Utils {
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
-	public static function check_writing_permissions() {
+	public static function ensure_writing_permissions() {
 		$server = new Server();
 
 		$server_write_permissions = $server->get_write_permissions();

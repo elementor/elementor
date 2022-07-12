@@ -14,7 +14,7 @@ use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 
 class Export {
-	const ZIP_ARCHIVE_MODULE_NOT_INSTALLED_KEY = 'zip-archive-module-not-installed';
+	const ZIP_ARCHIVE_MODULE_MISSING = 'zip-archive-module-is-missing';
 
 	/**
 	 * Selected content types to export.
@@ -68,7 +68,7 @@ class Export {
 	private $runners;
 
 	public function __construct( $settings = [] ) {
-		Utils::check_writing_permissions();
+		Utils::ensure_writing_permissions();
 
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
@@ -244,7 +244,7 @@ class Export {
 	 */
 	private function init_zip_archive() {
 		if ( ! class_exists( '\ZipArchive' ) ) {
-			throw new \Error( static::ZIP_ARCHIVE_MODULE_NOT_INSTALLED_KEY );
+			throw new \Error( static::ZIP_ARCHIVE_MODULE_MISSING );
 		}
 
 		$zip = new \ZipArchive();
@@ -288,7 +288,7 @@ class Export {
 	 */
 	private function handle_export_result( $export_result ) {
 		foreach ( $export_result['manifest'] as $data ) {
-			$this->manifest_data = $this->manifest_data + $data;
+			$this->manifest_data += $data;
 		}
 
 		if ( isset( $export_result['files']['path'] ) ) {

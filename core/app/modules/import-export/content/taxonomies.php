@@ -60,15 +60,15 @@ class Taxonomies extends Runner_Base {
 
 	private function import_taxonomies( array $taxonomies, $path ) {
 		$result = [];
-		$already_imported_taxonomies = [];
+		$imported_taxonomies = [];
 
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( ! taxonomy_exists( $taxonomy ) ) {
 				continue;
 			}
 
-			if ( ! empty( $already_imported_taxonomies[ $taxonomy ] ) ) {
-				$result[ $taxonomy ] = $already_imported_taxonomies[ $taxonomy ];
+			if ( ! empty( $imported_taxonomies[ $taxonomy ] ) ) {
+				$result[ $taxonomy ] = $imported_taxonomies[ $taxonomy ];
 				continue;
 			}
 
@@ -79,7 +79,7 @@ class Taxonomies extends Runner_Base {
 
 			$import = $this->import_taxonomy( $taxonomy_data );
 			$result[ $taxonomy ] = $import;
-			$already_imported_taxonomies[ $taxonomy ] = $import;
+			$imported_taxonomies[ $taxonomy ] = $import;
 		}
 
 		return $result;
@@ -90,14 +90,15 @@ class Taxonomies extends Runner_Base {
 
 		foreach ( $taxonomy_data as $term ) {
 			$old_slug = $term['slug'];
-			$existed_term = term_exists( $term['slug'], $term['taxonomy'] );
-			if ( $existed_term ) {
+
+			$existing_term = term_exists( $term['slug'], $term['taxonomy'] );
+			if ( $existing_term ) {
 				if ( 'nav_menu' === $term['taxonomy'] ) {
 					$term = $this->handle_duplicated_nav_menu_term( $term );
 				} else {
 					$terms[] = [
-						'old_id' => $term['term_id'],
-						'new_id' => (int) $existed_term['term_id'],
+						'old_id' => (int) $term['term_id'],
+						'new_id' => (int) $existing_term['term_id'],
 						'old_slug' => $old_slug,
 						'new_slug' => $term['slug'],
 					];
@@ -218,11 +219,14 @@ class Taxonomies extends Runner_Base {
 	private function order_terms( array $terms ) {
 		$ordered_terms = [];
 
-		while ( $t = array_shift( $terms ) ) {
-			if ( 0 === $t->parent || isset( $ordered_terms[ $t->parent ] ) ) {
-				$ordered_terms[ $t->term_id ] = $t;
+		while ( $term = array_shift( $terms ) ) {
+			$is_top_level = 0 === $term->parent;
+			$is_parent_exits = isset( $ordered_terms[ $term->parent ] );
+
+			if ( $is_top_level || $is_parent_exits ) {
+				$ordered_terms[ $term->term_id ] = $term;
 			} else {
-				$terms[] = $t;
+				$terms[] = $term;
 			}
 		}
 

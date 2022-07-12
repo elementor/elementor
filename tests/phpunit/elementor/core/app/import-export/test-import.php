@@ -491,6 +491,4 @@ class Test_Import extends Elementor_Test_Base {
 			}
 		}
 	}
-
-	// TODO add test for duplicated menu terms.
 }
