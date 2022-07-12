@@ -16,7 +16,7 @@ export default function OverviewTaxonomyBadge( props ) {
 
 			return data.find( ( item ) => item.text === taxonomyText )?.type;
 		},
-		[ data, taxonomyText ]
+		[ data, taxonomyText ],
 	);
 
 	if ( ! type ) {

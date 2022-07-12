@@ -8,8 +8,8 @@ jQuery( () => {
 		QUnit.module( 'CommandInternalBase', () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommand = ( command ) => {
-					assert.equal( command instanceof CommandInfra, true, );
-					assert.equal( command instanceof CommandBase, true, );
+					assert.equal( command instanceof CommandInfra, true );
+					assert.equal( command instanceof CommandBase, true );
 					assert.equal( command instanceof CommandInternalBase, true );
 					assert.equal( command instanceof $e.modules.CommandBase, true );
 					assert.equal( command instanceof $e.modules.CommandInternalBase, true );

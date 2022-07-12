@@ -10,7 +10,7 @@ import ElementorLoading from 'elementor-app/molecules/elementor-loading';
 export default function UploadAndInstallPro() {
 	usePageTitle( { title: __( 'Upload and Install Elementor Pro', 'elementor' ) } );
 
-	const { state, updateState } = useContext( OnboardingContext ),
+	const { state } = useContext( OnboardingContext ),
 		{ ajaxState: installProZipAjaxState, setAjax: setInstallProZipAjaxState } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ isLoading, setIsLoading ] = useState( false ),
@@ -108,15 +108,15 @@ export default function UploadAndInstallPro() {
 					filetypes={ [ 'zip' ] }
 					buttonColor="cta"
 					buttonVariant="contained"
-					heading={ __( 'Import you Elementor Pro plugin file', 'elementor' ) }
+					heading={ __( 'Import your Elementor Pro plugin file', 'elementor' ) }
 					text={ __( 'Drag & Drop your .zip file here', 'elementor' ) }
 					secondaryText={ __( 'or', 'elementor' ) }
 					buttonText={ __( 'Browse', 'elementor' ) }
 				/>
-				{ noticeState && <Notice noticeState={ noticeState }/> }
+				{ noticeState && <Notice noticeState={ noticeState } /> }
 				<div className="e-onboarding__upload-pro-get-file">
 					{ __( 'Don\'t know where to get the file from?', 'elementor' ) + ' ' }
-					{/* eslint-disable-next-line react/jsx-no-target-blank */}
+					{ /* eslint-disable-next-line react/jsx-no-target-blank */ }
 					<a onClick={ () => onProUploadHelpLinkClick() } href={ 'https://my.elementor.com/subscriptions/' + elementorAppConfig.onboarding.utms.downloadPro } target="_blank">
 						{ __( 'Click here', 'elementor' ) }
 					</a>

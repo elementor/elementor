@@ -59,7 +59,7 @@ export default function ImportProcess() {
 			navigateToMainScreen();
 		};
 
-	// on load.
+	// On load.
 	useEffect( () => {
 		// Saving the referrer value globally.
 		if ( referrer ) {
@@ -87,7 +87,7 @@ export default function ImportProcess() {
 			kitActions.import( {
 				session: uploadedData.session,
 				include: includes,
-				overrideConditions: overrideConditions,
+				overrideConditions,
 				referrer,
 				selectedCustomPostTypes,
 			} );
