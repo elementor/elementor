@@ -60,6 +60,10 @@ EditorView = ControlsStack.extend( {
 			activeSection: this.activeSection,
 		} );
 
+		setTimeout( () => {
+			elementor.getRegion( 'inspector' ).currentView.updateScrollbar();
+		} );
+
 		return this;
 	},
 
