@@ -134,7 +134,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		return data;
 	},
 
-	save( callback ) {
+	async save( callback ) {
 		var self = this;
 
 		if ( ! self.hasChange ) {
@@ -148,7 +148,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		NProgress.start();
 
-		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
+		return elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data,
 			success() {
 				NProgress.done();

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Utils;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Utils\ImportExport;
 
 use Elementor\Core\Utils\ImportExport\WP_Import;
 use ElementorEditorTesting\Elementor_Test_Base;
