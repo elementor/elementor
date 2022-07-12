@@ -47,8 +47,14 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'default' => '',
+			'selectors_dictionary' => [
+				'column' => '--flex-direction: column; --container-mobile-flex-wrap: nowrap;',
+				'column-reverse' => '--flex-direction: column-reverse; --container-mobile-flex-wrap: nowrap;',
+				'row' => '--flex-direction: row; --container-mobile-flex-wrap: wrap;',
+				'row-reverse' => '--flex-direction: row-reverse; --container-mobile-flex-wrap: wrap;',
+			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--flex-direction: {{VALUE}};',
+				'{{SELECTOR}}' => '{{VALUE}}',
 			],
 			'responsive' => true,
 		];
