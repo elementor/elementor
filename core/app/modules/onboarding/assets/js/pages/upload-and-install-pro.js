@@ -108,7 +108,7 @@ export default function UploadAndInstallPro() {
 					filetypes={ [ 'zip' ] }
 					buttonColor="cta"
 					buttonVariant="contained"
-					heading={ __( 'Import you Elementor Pro plugin file', 'elementor' ) }
+					heading={ __( 'Import your Elementor Pro plugin file', 'elementor' ) }
 					text={ __( 'Drag & Drop your .zip file here', 'elementor' ) }
 					secondaryText={ __( 'or', 'elementor' ) }
 					buttonText={ __( 'Browse', 'elementor' ) }
