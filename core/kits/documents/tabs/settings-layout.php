@@ -81,11 +81,10 @@ class Settings_Layout extends Tab_Base {
 		$is_container_active = Plugin::instance()->experiments->is_feature_active( 'container' );
 
 		if ( $is_container_active ) {
-
 			$this->add_responsive_control(
 				'container_padding',
 				[
-					'label' => esc_html__( 'Padding', 'elementor' ),
+					'label' => esc_html__( 'Container Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', 'em', '%', 'rem' ],
 					'default' => [

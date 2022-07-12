@@ -1,4 +1,4 @@
-import AddSectionBase from 'elementor-views/add-section/base';
+import AddSectionBase	from 'elementor-views/add-section/base';
 
 var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 
