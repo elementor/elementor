@@ -1,4 +1,4 @@
-var NewTemplateView = require( 'elementor-admin/new-template/view' );
+const NewTemplateView = require( 'elementor-admin/new-template/view' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 
@@ -17,9 +17,25 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	initialize() {
 		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
+		const lookupControlIdPrefix = 'elementor-new-template__form__';
+		const templateTypeSelectId = 'elementor-new-template__form__template-type';
+
 		this.showLogo();
 
 		this.showContentView();
+
+		const dynamicFieldsVisibilityListener = () => {
+			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
+		};
+
+		this.getModal().onShow = () => {
+			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
+			document.getElementById( templateTypeSelectId ).addEventListener( 'change', dynamicFieldsVisibilityListener );
+		};
+
+		this.getModal().onHide = () => {
+			document.getElementById( templateTypeSelectId ).removeEventListener( 'change', dynamicFieldsVisibilityListener );
+		};
 	},
 
 	showContentView() {
