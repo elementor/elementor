@@ -3,7 +3,16 @@ import Panel from './panel';
 import ChildrenArray from './model/children-array';
 
 /**
+ * @typedef {import('../../../../lib/backbone/backbone.marionette')} Backbone
+ * @typedef {import('../../../../lib/backbone/backbone.marionette')} Marionette
+ * @typedef {import('../elements/views/base')} BaseElementView
+ * @typedef {import('../elements/views/section')} SectionView
+ * @typedef {import('../views/base-container')} BaseContainer
+ * @typedef {import('../elements/models/base-element-model')} BaseElementModel
+ */
+/**
  * TODO: ViewsOptions
+ *
  * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView|BaseContainer)} ViewsOptions
  */
 
@@ -200,7 +209,7 @@ export default class Container extends ArgsObject {
 	 *
 	 * @param {{}} settings
 	 *
-	 * @return {{}}
+	 * @return {{}} result
 	 */
 	getGroupRelatedControls( settings ) {
 		const result = {};
@@ -225,7 +234,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Function getAffectingControls().
 	 *
-	 * Should return all controls that effecting the container.
+	 * @return {{}} All controls that effecting the container.
 	 */
 	getAffectingControls() {
 		const result = {},
@@ -276,9 +285,9 @@ export default class Container extends ArgsObject {
 	/**
 	 * Function getParentAncestry().
 	 *
-	 * Recursively run over all parents from current container till the top, and return them as flat array.
+	 * Recursively run over all parents from current container till the top
 	 *
-	 * @return {Array.<Container>}
+	 * @return {Array.<Container>} All parent as flat array.
 	 */
 	getParentAncestry() {
 		const result = [];
@@ -366,7 +375,7 @@ export default class Container extends ArgsObject {
 			if ( 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
-						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						elementorDevTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
 						return this.repeaters[ repeaters[ 0 ].name ].children;
 					},
 				} );
@@ -379,11 +388,11 @@ export default class Container extends ArgsObject {
 	 *
 	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
 	 *
-	 * @param {string} repeaterName
+	 * @param {string}         repeaterName
 	 * @param {Backbone.Model} rowSettingsModel
-	 * @param {number} index
+	 * @param {number}         index
 	 *
-	 * @returns {Container}
+	 * @return {Container} container
 	 */
 	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
 		let rowId = rowSettingsModel.get( '_id' );
@@ -418,7 +427,7 @@ export default class Container extends ArgsObject {
 	 *
 	 * TODO: Refactor.
 	 *
-	 * @returns {Container}
+	 * @return {Container} container
 	 */
 	lookup() {
 		let result = this;
@@ -460,20 +469,20 @@ export default class Container extends ArgsObject {
 	}
 
 	findChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
 			'3.5.0',
-			'container.children.findRecursive( callback )'
+			'container.children.findRecursive( callback )',
 		);
 
 		return this.children.findRecursive( callback );
 	}
 
 	forEachChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
 			'3.5.0',
-			'container.children.forEachRecursive( callback )'
+			'container.children.forEachRecursive( callback )',
 		);
 
 		return this.children.forEachRecursive( callback );
@@ -559,7 +568,7 @@ export default class Container extends ArgsObject {
 
 		let value;
 
-		// it's a global settings with additional controls in group.
+		// It's a global settings with additional controls in group.
 		if ( control.groupType ) {
 			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
 			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();
@@ -589,7 +598,7 @@ export default class Container extends ArgsObject {
 	 * It actually checks if the local value is different than the global value.
 	 *
 	 * @param {string} controlName - Control name
-	 * @returns {boolean}
+	 * @return {boolean} true if a control's global value is applied
 	 */
 	isGlobalApplied( controlName ) {
 		return this.getSetting( controlName ) !== this.settings.get( controlName );

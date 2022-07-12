@@ -1,10 +1,19 @@
 import CommandBase from './command-base';
 import * as errors from '../core/data/errors/';
-import Helpers from 'elementor-api/utils/helpers';
 
 /**
  * @name $e.modules.CommandData
  */
+/**
+ * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
+ */
+/**
+ * @typedef {{}} RequestData
+ */
+/**
+ * @typedef {import('../core/data/errors/base-error')} BaseError
+ */
+
 export default class CommandData extends CommandBase {
 	/**
 	 * Data returned from remote.
@@ -35,7 +44,7 @@ export default class CommandData extends CommandBase {
 	/**
 	 * Function getEndpointFormat().
 	 *
-	 * @returns {(null|string)}
+	 * @return {null|string} endpoint format
 	 */
 	static getEndpointFormat() {
 		return null;
@@ -44,7 +53,7 @@ export default class CommandData extends CommandBase {
 	/**
 	 * @param {DataTypes} type
 	 *
-	 * @returns {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}}
+	 * @return {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}} apply methods
 	 */
 	getApplyMethods( type = this.type ) {
 		let before, after;
@@ -84,7 +93,7 @@ export default class CommandData extends CommandBase {
 	/**
 	 * Function getRequestData().
 	 *
-	 * @returns {RequestData}
+	 * @return {RequestData} request data
 	 */
 	getRequestData() {
 		return {
@@ -93,7 +102,7 @@ export default class CommandData extends CommandBase {
 			timestamp: new Date().getTime(),
 			component: this.component,
 			command: this.command,
-			endpoint: $e.data.commandToEndpoint( this.command, Helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
+			endpoint: $e.data.commandToEndpoint( this.command, JSON.parse( JSON.stringify( this.args ) ), this.constructor.getEndpointFormat() ),
 		};
 	}
 
@@ -121,8 +130,8 @@ export default class CommandData extends CommandBase {
 	}
 
 	/**
-	 * @param [args={}]
-	 * @returns {{}} filtered args
+	 * @param {*} [args={}]
+	 * @return {{}} filtered args
 	 */
 	applyBeforeCreate( args = {} ) {
 		return args;
@@ -130,16 +139,16 @@ export default class CommandData extends CommandBase {
 
 	/**
 	 * @param {{}} data
-	 * @param [args={}]
-	 * @returns {{}} filtered result
+	 * @param {*}  [args={}]
+	 * @return {{}} filtered result
 	 */
 	applyAfterCreate( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
 	/**
-	 * @param [args={}]
-	 * @returns {{}} filtered args
+	 * @param {*} [args={}]
+	 * @return {{}} filtered args
 	 */
 	applyBeforeDelete( args = {} ) {
 		return args;
@@ -147,16 +156,16 @@ export default class CommandData extends CommandBase {
 
 	/**
 	 * @param {{}} data
-	 * @param [args={}]
-	 * @returns {{}} filtered result
+	 * @param {*}  [args={}]
+	 * @return {{}} filtered result
 	 */
 	applyAfterDelete( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
 	/**
-	 * @param [args={}]
-	 * @returns {{}} filtered args
+	 * @param {*} [args={}]
+	 * @return {{}} filtered args
 	 */
 	applyBeforeGet( args = {} ) {
 		return args;
@@ -164,16 +173,16 @@ export default class CommandData extends CommandBase {
 
 	/**
 	 * @param {{}} data
-	 * @param [args={}]
-	 * @returns {{}} filtered result
+	 * @param {*}  [args={}]
+	 * @return {{}} filtered result
 	 */
 	applyAfterGet( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
 	/**
-	 * @param [args={}]
-	 * @returns {{}} filtered args
+	 * @param {*} [args={}]
+	 * @return {{}} filtered args
 	 */
 	applyBeforeUpdate( args = {} ) {
 		return args;
@@ -181,16 +190,16 @@ export default class CommandData extends CommandBase {
 
 	/**
 	 * @param {{}} data
-	 * @param [args={}]
-	 * @returns {{}} filtered result
+	 * @param {*}  [args={}]
+	 * @return {{}} filtered result
 	 */
 	applyAfterUpdate( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
 	/**
-	 * @param [args={}]
-	 * @returns {{}} filtered args
+	 * @param {*} [args={}]
+	 * @return {{}} filtered args
 	 */
 	applyBeforeOptions( args = {} ) {
 		return args;
@@ -198,8 +207,8 @@ export default class CommandData extends CommandBase {
 
 	/**
 	 * @param {{}} data
-	 * @param [args={}]
-	 * @returns {{}} filtered result
+	 * @param {*}  [args={}]
+	 * @return {{}} filtered result
 	 */
 	applyAfterOptions( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
@@ -217,7 +226,7 @@ export default class CommandData extends CommandBase {
 		const httpErrorCode = e?.data?.status || 501;
 
 		let dataError = Object.values( errors ).find(
-			( error ) => error.getHTTPErrorCode() === httpErrorCode
+			( error ) => error.getHTTPErrorCode() === httpErrorCode,
 		);
 
 		if ( ! dataError ) {

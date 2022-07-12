@@ -11,7 +11,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 		config: elementorAdminConfig,
 
-		getDefaultElements: function() {
+		getDefaultElements() {
 			var elements = {
 				$switchMode: $( '#elementor-switch-mode' ),
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
@@ -42,7 +42,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			return elements;
 		},
 
-		toggleStatus: function() {
+		toggleStatus() {
 			var isElementorMode = this.isElementorMode();
 
 			elementorCommon.elements.$body
@@ -50,7 +50,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 				.toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
 
-		bindEvents: function() {
+		bindEvents() {
 			var self = this;
 
 			self.elements.$switchModeButton.on( 'click', function( event ) {
@@ -65,7 +65,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
-						onConfirm: function() {
+						onConfirm() {
 							self.elements.$switchModeInput.val( '' );
 							self.toggleStatus();
 						},
@@ -247,12 +247,12 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			} );
 
 			self.elements.$settingsTabs.on( {
-				click: function( event ) {
+				click( event ) {
 					event.preventDefault();
 
 					event.currentTarget.focus(); // Safari does not focus the tab automatically
 				},
-				focus: function() { // Using focus event to enable navigation by tab key
+				focus() { // Using focus event to enable navigation by tab key
 					var hrefWithoutHash = location.href.replace( /#.*/, '' );
 
 					history.pushState( {}, '', hrefWithoutHash + this.hash );
@@ -283,7 +283,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 						confirm: __( 'Continue', 'elementor' ),
 						cancel: __( 'Cancel', 'elementor' ),
 					},
-					onConfirm: function() {
+					onConfirm() {
 						$this.addClass( 'loading' );
 
 						location.href = $this.attr( 'href' );
@@ -321,7 +321,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			} ).trigger( 'change' );
 		},
 
-		onInit: function() {
+		onInit() {
 			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 			this.initTemplatesImport();
@@ -362,7 +362,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 		 *
 		 * @since 3.6.0
 		 */
-		openLinksInNewTab: function() {
+		openLinksInNewTab() {
 			const elements = [
 				this.elements.$menuGetHelpLink,
 				this.elements.$menuGoProLink,
@@ -376,7 +376,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			} );
 		},
 
-		initTemplatesImport: function() {
+		initTemplatesImport() {
 			if ( ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
@@ -409,21 +409,21 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			} );
 		},
 
-		initMaintenanceMode: function() {
+		initMaintenanceMode() {
 			var MaintenanceMode = require( 'elementor-admin/maintenance-mode' );
 
 			this.maintenanceMode = new MaintenanceMode();
 		},
 
-		isElementorMode: function() {
+		isElementorMode() {
 			return ! ! this.elements.$switchModeInput.val();
 		},
 
-		animateLoader: function() {
+		animateLoader() {
 			this.elements.$goToEditLink.addClass( 'elementor-animate' );
 		},
 
-		goToSettingsTabFromHash: function() {
+		goToSettingsTabFromHash() {
 			var hash = location.hash.slice( 1 );
 
 			if ( hash ) {
@@ -431,7 +431,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			}
 		},
 
-		goToSettingsTab: function( tabName ) {
+		goToSettingsTab( tabName ) {
 			const $pages = this.elements.$settingsFormPages;
 
 			if ( ! $pages.length ) {
@@ -457,7 +457,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			this.elements.$activeSettingsTab = $activeTab;
 		},
 
-		translate: function( stringKey, templateArgs ) {
+		translate( stringKey, templateArgs ) {
 			return elementorCommon.translate( stringKey, null, templateArgs, this.config.i18n );
 		},
 
@@ -473,7 +473,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 				arrowUp: 'dashicons-arrow-up',
 				arrowDown: 'dashicons-arrow-down',
 			},
-			toggle: function( $trigger ) {
+			toggle( $trigger ) {
 				var self = this,
 					$row = $trigger.closest( self.selectors.row ),
 					$toggleHandleIcon = $row.find( self.selectors.toggleHandle ).find( '.dashicons' ),
@@ -487,7 +487,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 				}
 				self.updateLabel( $row );
 			},
-			updateLabel: function( $row ) {
+			updateLabel( $row ) {
 				var self = this,
 					$indicator = $row.find( self.selectors.excludedIndicator ),
 					excluded = $row.find( self.selectors.excludedField ).is( ':checked' );
@@ -498,7 +498,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 				}
 				self.setAdvancedState( $row, excluded );
 			},
-			setAdvancedState: function( $row, state ) {
+			setAdvancedState( $row, state ) {
 				var self = this,
 					$controls = $row.find( 'input[type="checkbox"]' ).not( self.selectors.excludedField );
 
@@ -506,7 +506,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 					$( input ).prop( 'disabled', state );
 				} );
 			},
-			bind: function() {
+			bind() {
 				var self = this;
 				$( document ).on( 'click', self.selectors.label + ',' + self.selectors.toggleHandle, function( event ) {
 					event.stopPropagation();
@@ -516,7 +516,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 					self.updateLabel( $( this ).closest( self.selectors.row ) );
 				} );
 			},
-			init: function() {
+			init() {
 				var self = this;
 				if ( ! $( 'body[class*="' + self.selectors.body + '"]' ).length ) {
 					return;

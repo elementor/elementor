@@ -141,6 +141,7 @@ class App extends BaseApp {
 				'elementor-web-cli',
 				'elementor-dialog',
 				'wp-api-request',
+				'elementor-dev-tools',
 			],
 			ELEMENTOR_VERSION,
 			true

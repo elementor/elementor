@@ -62,8 +62,8 @@ function useHeaderButtons( id ) {
 /**
  * Get preview url.
  *
- * @param data
- * @returns {null|string}
+ * @param {*} data
+ * @return {null|string} Preview URL
  */
 function usePreviewUrl( data ) {
 	const location = useLocation();
@@ -73,7 +73,7 @@ function usePreviewUrl( data ) {
 			return null;
 		}
 
-		const documentId = new URLSearchParams( location.pathname.split( '?' )?.[1] ).get( 'document_id' ),
+		const documentId = new URLSearchParams( location.pathname.split( '?' )?.[ 1 ] ).get( 'document_id' ),
 			utm = '?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=preview',
 			previewUrl = data.previewUrl ? data.previewUrl + utm : data.previewUrl;
 
@@ -94,13 +94,14 @@ export default function Preview( props ) {
 	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
 	const iframeStyle = useMemo(
 		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
-		[ activeDevice ]
+		[ activeDevice ],
 	);
 
 	usePageTitle( {
-		title: data ?
-			`${ __( 'Kit Library', 'elementor' ) } | ${ data.title }` :
-			__( 'Loading...', 'elementor' ),
+		title: data
+			? `${ __( 'Kit Library', 'elementor' ) } | ${ data.title }`
+			// eslint-disable-next-line @wordpress/i18n-ellipsis
+			: __( 'Loading...', 'elementor' ),
 	} );
 
 	if ( isError ) {
@@ -117,7 +118,7 @@ export default function Preview( props ) {
 			<ItemHeader
 				model={ data }
 				buttons={ headersButtons }
-				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice }/> }
+				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice } /> }
 				pageId="demo"
 			/>
 		}>
@@ -127,7 +128,7 @@ export default function Preview( props ) {
 					<PreviewIframe
 						previewUrl={ previewUrl }
 						style={ iframeStyle }
-						onLoaded={() => setIsIframeLoading( false )}
+						onLoaded={ () => setIsIframeLoading( false ) }
 					/>
 			}
 		</Layout>
