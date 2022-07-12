@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -192,6 +193,17 @@ class Widgets_Manager {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
 
+	private function pluck_default_controls( $controls ) {
+		return ( new Collection( $controls ) )
+			->reduce( function ( $controls_defaults, $control, $control_key ) {
+				if ( ! empty( $control['default'] ) ) {
+					$controls_defaults[ $control_key ]['default'] = $control['default'];
+				}
+
+				return $controls_defaults;
+			}, [] );
+	}
+
 	/**
 	 * Register widget type.
 	 *
@@ -341,6 +353,27 @@ class Widgets_Manager {
 		}
 
 		return $config;
+	}
+
+	public function ajax_get_widgets_default_value_translations( array $data = [] ) {
+		$locale = empty( $data['locale'] )
+			? get_locale()
+			: $data['locale'];
+
+		switch_to_locale( $locale );
+
+		return ( new Collection( $this->get_widget_types() ) )
+			->map( function ( Widget_Base $widget ) {
+				$controls = $widget->get_stack( false )['controls'];
+
+				return [
+					'controls' => $this->pluck_default_controls( $controls ),
+				];
+			} )
+			->filter( function ( $widget ) {
+				return ! empty( $widget['controls'] );
+			} )
+			->all();
 	}
 
 	/**
@@ -586,5 +619,9 @@ class Widgets_Manager {
 		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
 		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
+
+		$ajax_manager->register_ajax_action( 'get_widgets_default_value_translations', function ( array $data ) {
+			return $this->ajax_get_widgets_default_value_translations( $data );
+		} );
 	}
 }

@@ -426,9 +426,6 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
 				],

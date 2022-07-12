@@ -13,10 +13,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x    
+          node-version: 16.x    
       - name: Cache node modules
         uses: actions/cache@v1
         env:
