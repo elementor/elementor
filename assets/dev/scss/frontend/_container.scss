@@ -168,11 +168,6 @@
 		z-index: $under-layer;
 	}
 
-	// Set a default widget width inside flex containers using `flex column` (ED-7524).
-	& > .elementor-widget {
-		// width: var( --container-flex-direction-widget-default-width, var( --container-align-items-widget-default-width, 100% ) );
-	}
-
 	.elementor-widget {
 		// Fix swiper-based widgets (ED-6716).
 		// Since the default is `min-width: auto` for flex items.
