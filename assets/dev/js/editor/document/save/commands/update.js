@@ -7,9 +7,6 @@ export class Update extends Base {
 			status = document.container.settings.get( 'post_status' ),
 		} = args;
 
-		return $e.internal( 'document/save/save', {
-			status,
-			document,
-		} );
+		return $e.internal( 'document/save/save', args );
 	}
 }
