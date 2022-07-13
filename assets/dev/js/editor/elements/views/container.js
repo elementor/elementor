@@ -154,7 +154,7 @@ const ContainerView = BaseElementView.extend( {
 					currentTargetParentContainer = this.container;
 
 				while ( ! draggingParent && currentTargetParentContainer ) {
-					if ( targetContainer.id === draggedId ) {
+					if ( currentTargetParentContainer.id === draggedId ) {
 						draggingParent = true;
 					} else {
 						currentTargetParentContainer = currentTargetParentContainer.parent;
