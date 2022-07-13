@@ -658,6 +658,10 @@ module.exports = {
 		return !! window.elementorPro;
 	},
 
+	hasProAndNotConnected() {
+		return elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect;
+	},
+
 	/**
 	 * Function validateHTMLTag().
 	 *

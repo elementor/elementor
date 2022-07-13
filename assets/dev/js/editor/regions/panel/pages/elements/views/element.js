@@ -72,7 +72,7 @@ module.exports = Marionette.ItemView.extend( {
 	onMouseDown() {
 		const title = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
-			isProExistNotConnected = ! ! ( elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect ),
+			hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
 			dialogOptions = {
 				/* translators: %s: Widget title. */
 				title: sprintf( __( '%s Widget', 'elementor' ), title ),
@@ -88,11 +88,11 @@ module.exports = Marionette.ItemView.extend( {
 					blockStart: '-7',
 				},
 				actionButton: {
-					url: isProExistNotConnected
+					url: hasProAndNotConnected
 						? elementorProEditorConfig.urls.connect
 						/* translators: %s: Widget title. */
 						: elementor.config.elementPromotionURL.replace( '%s', widgetType ),
-					text: isProExistNotConnected
+					text: hasProAndNotConnected
 						? __( 'Connect & Activate', 'elementor' )
 						: __( 'See it in Action', 'elementor' ),
 				},

@@ -197,7 +197,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion() {
-			const isProExistNotConnected = ! ! ( elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect ),
+			const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
 				dialogOptions = {
 					title: __( 'Dynamic Content', 'elementor' ),
 					content: __(
@@ -209,10 +209,10 @@ module.exports = Marionette.Behavior.extend( {
 						blockStart: '-10',
 					},
 					actionButton: {
-						url: isProExistNotConnected
+						url: hasProAndNotConnected
 							? elementorProEditorConfig.urls.connect
 							: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
-						text: isProExistNotConnected
+						text: hasProAndNotConnected
 							? __( 'Connect & Activate', 'elementor' )
 							: __( 'See it in Action', 'elementor' ),
 					},

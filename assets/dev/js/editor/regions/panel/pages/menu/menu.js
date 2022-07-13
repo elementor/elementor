@@ -78,7 +78,7 @@ PanelMenu.addAdminMenu = () => {
 		icon: 'eicon-commenting-o',
 		title: __( 'Notes', 'elementor' ),
 		callback() {
-			const isProExistNotConnected = ! ! ( elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect ),
+			const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
 				dialogOptions = {
 					title: __( 'Notes', 'elementor' ),
 					content: __(
@@ -91,10 +91,10 @@ PanelMenu.addAdminMenu = () => {
 						inlineStart: '+10',
 					},
 					actionButton: {
-						url: isProExistNotConnected
+						url: hasProAndNotConnected
 							? elementorProEditorConfig.urls.connect
 							: 'https://go.elementor.com/go-pro-notes/',
-						text: isProExistNotConnected
+						text: hasProAndNotConnected
 							? __( 'Connect & Activate', 'elementor' )
 							: __( 'See it in Action', 'elementor' ),
 					},
