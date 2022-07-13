@@ -12,7 +12,7 @@ const layout = [ 3, 1 ],
 function ExportPluginsSelection( { onSelect } ) {
 	const { response } = usePlugins(),
 		{ pluginsData } = usePluginsData( response.data ),
-		activePlugins = pluginsData.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ),
+		activePlugins = pluginsData.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status || PLUGIN_STATUS_MAP.MULTISITE_ACTIVE === status ),
 		getInitialSelected = () => {
 			// Elementor Core will always be the first plugin on the list.
 			const initialSelected = [ 0 ];
