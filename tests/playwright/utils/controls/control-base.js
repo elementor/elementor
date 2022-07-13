@@ -29,8 +29,6 @@ class ControlBase {
 	 */
 	static getType() {
 		throw this.constructor.name + '.getType() is not implemented!';
-
-		return '';
 	}
 
 	/**
@@ -40,8 +38,6 @@ class ControlBase {
 	 */
 	async getValue() {
 		throw this.constructor.name + '.getValue() is not implemented!';
-
-		return '';
 	}
 
 	/**
@@ -53,8 +49,6 @@ class ControlBase {
 	 */
 	async setValue( newValue ) {
 		throw this.constructor.name + '.setValue() is not implemented!';
-
-		return newValue;
 	}
 
 	/**
@@ -64,8 +58,6 @@ class ControlBase {
 	 */
 	getSelector() {
 		throw this.constructor.name + '.getSelector() is not implemented!';
-
-		return '';
 	}
 
 	/**
