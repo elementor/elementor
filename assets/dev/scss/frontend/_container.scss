@@ -252,10 +252,7 @@
 @media ( max-width: $editor-screen-sm-max ) {
 	.e-container {
 		--width: 100%;
-	}
-
-	body .elementor .elementor-element.e-container {
-		--flex-wrap: var( --container-mobile-flex-wrap, nowrap );
+		--flex-wrap: wrap;
 	}
 }
 
