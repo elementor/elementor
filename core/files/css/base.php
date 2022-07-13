@@ -274,11 +274,11 @@ abstract class Base extends Base_File {
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
 		 * @since 2.0.0
-		 * @deprecated 3.6.8 . Use {@see 'elementor/css-file/{$name}/after-enqueue'} hook instead.
+		 * @deprecated 3.8.0 . Use {@see 'elementor/css-file/{$name}/after-enqueue'} hook instead.
 		 *
 		 * @param Base $this The current CSS file.
 		 */
-		do_action_deprecated( "elementor/css-file/{$name}/enqueue", [$this], '3.6.8', "elementor/css-file/{$name}/after-enqueue" );
+		do_action_deprecated( "elementor/css-file/{$name}/enqueue", [$this], '3.8.0', "elementor/css-file/{$name}/after-enqueue" );
 
 		/**
 		 * Enqueue CSS file.
