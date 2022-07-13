@@ -147,32 +147,34 @@ const ContainerView = BaseElementView.extend( {
 					newIndex++;
 				}
 
-				// Prevent the user from dragging a parent container into a child container
-				const draggedId = draggedView.getContainer().id;
-
-				let draggingParent = false,
-					currentTargetParentContainer = this.container;
-
-				while ( ! draggingParent && currentTargetParentContainer ) {
-					if ( currentTargetParentContainer.id === draggedId ) {
-						draggingParent = true;
-					} else {
-						currentTargetParentContainer = currentTargetParentContainer.parent;
-					}
-				}
-
 				// User is sorting inside a Container.
-				if ( draggedView && ! draggingParent ) {
-					// Reset the dragged element cache.
-					elementor.channels.editor.reply( 'element:dragged', null );
+				if ( draggedView ) {
+					// Prevent the user from dragging a parent container into its own child container
+					const draggedId = draggedView.getContainer().id;
 
-					$e.run( 'document/elements/move', {
-						container: draggedView.getContainer(),
-						target: this.getContainer(),
-						options: {
-							at: newIndex,
-						},
-					} );
+					let draggingParent = false,
+						currentTargetParentContainer = this.container;
+
+					while ( ! draggingParent && currentTargetParentContainer ) {
+						if ( currentTargetParentContainer.id === draggedId ) {
+							draggingParent = true;
+						} else {
+							currentTargetParentContainer = currentTargetParentContainer.parent;
+						}
+					}
+
+					if ( ! draggingParent ) {
+						// Reset the dragged element cache.
+						elementor.channels.editor.reply( 'element:dragged', null );
+
+						$e.run( 'document/elements/move', {
+							container: draggedView.getContainer(),
+							target: this.getContainer(),
+							options: {
+								at: newIndex,
+							},
+						} );
+					}
 
 					return;
 				}
