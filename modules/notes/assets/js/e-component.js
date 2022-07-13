@@ -9,7 +9,7 @@ export default class EComponent extends $e.modules.ComponentBase {
 	}
 
 	/**
-	 * @return {string} the namespace of the component
+	 * @return {string} The namespace of the component
 	 */
 	getNamespace() {
 		return 'notes';
