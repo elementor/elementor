@@ -659,7 +659,7 @@ module.exports = {
 	},
 
 	hasProAndNotConnected() {
-		return this.hasPro() && elementorProEditorConfig.urls.connect;
+		return elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect;
 	},
 
 	/**
