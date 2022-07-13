@@ -79,6 +79,25 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		elementorDevTools.deprecation.deprecated( 'onReady', '3.0.0' );
 	},
 
+	/**
+	 * Get Input Value
+	 *
+	 * This method is an override of the base method. It is needed because when clearing the Select2 value in single
+	 * value mode, the library sets that value to `null`, and an empty string is the system's default empty value.
+	 *
+	 * @param {*} input current control input
+	 * @return {*} potentially modified input value
+	 */
+	getInputValue( input ) {
+		let inputValue = super.get( input );
+
+		if ( null === inputValue ) {
+			inputValue = '';
+		}
+
+		return inputValue;
+	},
+
 	onBaseInputChange() {
 		ControlBaseDataView.prototype.onBaseInputChange.apply( this, arguments );
 
