@@ -1,7 +1,17 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlImageDimensionsItemView;
 
 ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
+
+	behaviors: {
+		Scrubbing: {
+			behaviorClass: Scrubbing,
+			scrubSettings: { intentTime: 800 },
+		},
+	},
+
 	ui() {
 		return {
 			inputWidth: 'input[data-setting="width"]',

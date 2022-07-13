@@ -1,11 +1,13 @@
+import CommandCallbackBase from 'elementor-api/modules/command-callback-base';
+
 import { createSlice } from '@reduxjs/toolkit';
-import Module from 'elementor-assets-js/modules/imports/module.js';
+import Module from 'elementor/assets/dev/js/modules/imports/module.js';
 import ForceMethodImplementation from '../utils/force-method-implementation';
+import Deprecation from 'elementor-api/utils/deprecation';
 
 /**
+ * @typedef {import('./command-infra')} CommandInfra
  * @typedef {import('./hook-base')} HookBase
- */
-/**
  * @typedef {import('../core/states/ui-state-base')} UiStateBase
  */
 
@@ -57,8 +59,21 @@ export default class ComponentBase extends Module {
 	}
 
 	getRootContainer() {
-		const parts = this.getNamespace().split( '/' );
-		return parts[ 0 ];
+		Deprecation.deprecated(
+			'getRootContainer()',
+			'3.7.0',
+			'getServiceName()',
+		);
+
+		return this.getServiceName();
+	}
+
+	getServiceName() {
+		return this.getNamespace().split( '/' )[ 0 ];
+	}
+
+	get store() {
+		return $e.store.get( this.getNamespace() );
 	}
 
 	defaultTabs() {
@@ -157,8 +172,53 @@ export default class ComponentBase extends Module {
 		return this.data;
 	}
 
-	registerCommand( command, callback ) {
-		$e.commands.register( this, command, callback );
+	/**
+	 * @param {string}                      command
+	 * @param {(()=>{}|CommandInfra)}       context
+	 * @param {'default'|'internal'|'data'} commandsType
+	 */
+	registerCommand( command, context, commandsType = 'default' ) {
+		let commandsManager;
+
+		switch ( commandsType ) {
+			case 'default':
+				commandsManager = $e.commands;
+				break;
+
+			case 'internal':
+				commandsManager = $e.commandsInternal;
+				break;
+
+			case 'data':
+				commandsManager = $e.data;
+				break;
+
+			default:
+				throw new Error( `Invalid commands type: '${ command }'` );
+		}
+
+		const fullCommand = this.getNamespace() + '/' + command,
+			instanceType = context.getInstanceType ? context.getInstanceType() : false,
+			registerConfig = {
+				command: fullCommand,
+				component: this,
+			};
+
+		// Support pure callback.
+		if ( ! instanceType ) {
+			if ( $e.devTools ) {
+				$e.devTools.log.warn( `Attach command-callback-base, on command: '${ fullCommand }', context is unknown type.` );
+			}
+
+			registerConfig.callback = context;
+
+			// Unique class.
+			context = class extends CommandCallbackBase {};
+		}
+
+		context.setRegisterConfig( registerConfig );
+
+		commandsManager.register( this, command, context );
 	}
 
 	/**
@@ -166,6 +226,10 @@ export default class ComponentBase extends Module {
 	 */
 	registerHook( instance ) {
 		return instance.register();
+	}
+
+	registerCommandInternal( command, context ) {
+		this.registerCommand( command, context, 'internal' );
 	}
 
 	/**
@@ -198,16 +262,12 @@ export default class ComponentBase extends Module {
 		$e.store.register( id, slice );
 	}
 
-	registerCommandInternal( command, callback ) {
-		$e.commandsInternal.register( this, command, callback );
-	}
-
 	registerRoute( route, callback ) {
 		$e.routes.register( this, route, callback );
 	}
 
-	registerData( command, callback ) {
-		$e.data.register( this, command, callback );
+	registerData( command, context ) {
+		this.registerCommand( command, context, 'data' );
 	}
 
 	unregisterRoute( route ) {
@@ -237,7 +297,7 @@ export default class ComponentBase extends Module {
 
 		$e.routes.clearCurrent( this.getNamespace() );
 
-		$e.routes.clearHistory( this.getRootContainer() );
+		$e.routes.clearHistory( this.getServiceName() );
 
 		return true;
 	}
@@ -350,17 +410,17 @@ export default class ComponentBase extends Module {
 		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
 	}
 
+	/**
+	 * @param {{}} commandsFromImport
+	 * @return {{}} imported commands
+	 */
 	importCommands( commandsFromImport ) {
 		const commands = {};
 
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
-			commands[ command ] = ( args ) => ( new Class( args ) ).run();
-
-			// TODO: Temporary code, remove after merge with 'require-commands-base' branch.
-			// should not return callback, but Class or Instance without run ( gain performance ).
-			$e.commands.classes[ this.getNamespace() + '/' + command ] = Class;
+			commands[ command ] = Class;
 		} );
 
 		return commands;
@@ -416,6 +476,6 @@ export default class ComponentBase extends Module {
 	}
 
 	toggleHistoryClass() {
-		document.body.classList.toggle( 'e-routes-has-history', !! $e.routes.getHistory( this.getRootContainer() ).length );
+		document.body.classList.toggle( 'e-routes-has-history', !! $e.routes.getHistory( this.getServiceName() ).length );
 	}
 }

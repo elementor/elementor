@@ -59,7 +59,7 @@ export default function ImportProcess() {
 			navigateToMainScreen();
 		};
 
-	// on load.
+	// On load.
 	useEffect( () => {
 		// Saving the referrer value globally.
 		if ( referrer ) {

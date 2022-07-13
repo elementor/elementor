@@ -19,6 +19,7 @@ export default function ApplyKitDialog( props ) {
 
 	return (
 		<Dialog
+			// Translators: %s is the kit name.
 			title={ __( 'Apply %s?', 'elementor' ).replace( '%s', props.title ) }
 			text={ <>
 				{ __( 'You can use everything in this kit, or Customize to only include some items.', 'elementor' ) }

@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Icons_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -137,12 +138,47 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'show_dismiss',
 			[
-				'label' => esc_html__( 'Dismiss Button', 'elementor' ),
+				'label' => esc_html__( 'Dismiss Icon', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'show',
 				'options' => [
 					'show' => esc_html__( 'Show', 'elementor' ),
 					'hide' => esc_html__( 'Hide', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'dismiss_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'render_type' => 'template',
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
+							'label' => 'Default',
+							'icon' => 'eicon-close',
+						],
+						'icon' => [
+							'icon' => 'eicon-star',
+						],
+					],
+				],
+				'recommended' => [
+					'fa-regular' => [
+						'times-circle',
+					],
+					'fa-solid' => [
+						'times',
+						'times-circle',
+					],
+				],
+				'condition' => [
+					'show_dismiss' => 'show',
 				],
 			]
 		);
@@ -287,6 +323,126 @@ class Widget_Alert extends Widget_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'section_dismiss_icon',
+			[
+				'label' => esc_html__( 'Dismiss Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_dismiss' => 'show',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'dismiss_icon_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-size: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'dismiss_icon_vertical_position',
+			[
+				'label' => esc_html__( 'Vertical Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -100,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ '%', 'px' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-vertical-position: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'dismiss_icon_horizontal_position',
+			[
+				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -100,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ '%', 'px' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-horizontal-position: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->start_controls_tabs( 'dismiss_icon_colors' );
+
+		$this->start_controls_tab( 'dismiss_icon_normal_colors', [
+			'label' => esc_html__( 'Normal', 'elementor' ),
+		] );
+
+		$this->add_control(
+			'dismiss_icon_normal_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-normal-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'dismiss_icon_hover_colors', [
+			'label' => esc_html__( 'Hover', 'elementor' ),
+		] );
+
+		$this->add_control(
+			'dismiss_icon_hover_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-hover-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'dismiss_icon_hover_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
 	}
 
 	/**
@@ -326,7 +482,14 @@ class Widget_Alert extends Widget_Base {
 			<?php endif; ?>
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
 				<button type="button" class="elementor-alert-dismiss">
-					<span aria-hidden="true">&times;</span>
+					<?php
+					if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
+						Icons_Manager::render_icon( $settings['dismiss_icon'], [
+							'aria-hidden' => 'true',
+						] );
+					} else { ?>
+						<span aria-hidden="true">&times;</span>
+					<?php } ?>
 					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
 				</button>
 			<?php endif; ?>
@@ -352,13 +515,20 @@ class Widget_Alert extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'alert_title', 'none' );
 			view.addInlineEditingAttributes( 'alert_description' );
+
+			var iconHTML = elementor.helpers.renderIcon( view, settings.dismiss_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+				migrated = elementor.helpers.isIconMigrated( settings, 'dismiss_icon' );
 			#>
 			<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
 				<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
 				<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
 				<# if ( 'show' === settings.show_dismiss ) { #>
 					<button type="button" class="elementor-alert-dismiss">
-						<span aria-hidden="true">&times;</span>
+						<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+						{{{ iconHTML.value }}}
+						<# } else { #>
+							<span aria-hidden="true">&times;</span>
+						<# } #>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
 					</button>
 				<# } #>

@@ -53,6 +53,7 @@ class Manager extends Base_Object {
 	 * }
 	 *
 	 * @return array|null
+	 * @throws \Exception
 	 */
 	public function add_feature( array $options ) {
 		if ( isset( $this->features[ $options['name'] ] ) ) {
@@ -72,7 +73,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change', 'dependencies' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -100,13 +101,35 @@ class Manager extends Base_Object {
 			$experimental_data['state'] = self::STATE_DEFAULT;
 		}
 
+		if ( ! empty( $experimental_data['dependencies'] ) ) {
+			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
+				$feature = $this->get_features( $dependency );
+				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
+					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
+				} else {
+					$experimental_data['dependencies'][ $key ] = $dependency::instance();
+				}
+			}
+		}
+
 		$this->features[ $options['name'] ] = $experimental_data;
 
 		if ( $experimental_data['mutable'] && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
-			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
-				$this->on_feature_state_change( $experimental_data, $new_state );
+			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
+				try {
+					$this->on_feature_state_change( $experimental_data, $new_state, $feature_option_key );
+				} catch ( Exceptions\Dependency_Exception $e ) {
+					$message = sprintf(
+						'<p>%s</p><p><a href="#" onclick="location.href=\'%s\'">%s</a></p>',
+						esc_html( $e->getMessage() ),
+						site_url( 'wp-admin/admin.php?page=elementor#tab-experiments' ),
+						esc_html__( 'Back', 'elementor' )
+					);
+
+					wp_die( $message ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				}
 			};
 
 			add_action( 'add_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
@@ -183,7 +206,7 @@ class Manager extends Base_Object {
 	 * @access public
 	 *
 	 * @param string $feature_name
-	 * @param int $default_state
+	 * @param string $default_state
 	 */
 	public function set_feature_default_state( $feature_name, $default_state ) {
 		$feature = $this->get_features( $feature_name );
@@ -229,7 +252,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
@@ -242,7 +265,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_RC,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
@@ -252,7 +275,7 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
 			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
-			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awsome and the eicons libraries and its related CSS files and fonts. Learn More.', 'elementor' )
+			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
@@ -273,6 +296,19 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'additional_custom_breakpoints',
+			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
+			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
+						. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
+						. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_STABLE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.4.0-beta',
+			],
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_import_export',
 			'title' => esc_html__( 'Import Export Template Kit', 'elementor' ),
 			'description' => esc_html__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
@@ -283,20 +319,6 @@ class Manager extends Base_Object {
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
-			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'additional_custom_breakpoints',
-			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
-			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
-							. '<br /><strong>' . esc_html__( 'Please note! Conditioning controls on values of responsive controls is not supported when this mode is active.', 'elementor' ) . '</strong>'
-				. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.4.0-beta',
 			],
 		] );
 
@@ -517,7 +539,20 @@ class Manager extends Base_Object {
 				<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 			<?php } ?>
 		</div>
-		<?php
+		<?php $this->render_feature_dependency( $feature );
+	}
+
+	private function render_feature_dependency( $feature ) {
+		if ( ! empty( $feature['dependencies'] ) ) {
+			?>
+			<div class="e-experiment__dependency">
+				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on', 'elementor' ); ?>:</strong>
+			<?php foreach ( $feature['dependencies'] as $dependency ) : ?>
+				<span class="e-experiment__dependency__item"><?php Utils::print_unescaped_internal_string( $dependency->get_name() ); ?></span>
+			<?php endforeach; ?>
+			</div>
+			<?php
+		}
 	}
 
 	/**
@@ -614,15 +649,19 @@ class Manager extends Base_Object {
 	 *
 	 * @param array $old_feature_data
 	 * @param string $new_state
+	 *
+	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
-	private function on_feature_state_change( array $old_feature_data, $new_state ) {
-		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
-
+	private function on_feature_state_change( array $old_feature_data, $new_state, $feature_option_key ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
+
+		$this->validate_dependency( $new_feature_data, $new_state );
 
 		$actual_old_state = $this->get_feature_actual_state( $old_feature_data );
 
 		$actual_new_state = $this->get_feature_actual_state( $new_feature_data );
+
+		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
 
 		if ( $actual_old_state === $actual_new_state ) {
 			return;
@@ -632,6 +671,86 @@ class Manager extends Base_Object {
 
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
+		}
+	}
+
+	/**
+	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
+	 */
+	private function validate_dependency( array $feature, $new_state ) {
+		$rollback = function ( $feature_option_key, $state ) {
+			remove_all_actions( 'add_option_' . $feature_option_key );
+			remove_all_actions( 'update_option_' . $feature_option_key );
+
+			update_option( $feature_option_key, $state );
+		};
+
+		if ( self::STATE_DEFAULT === $new_state ) {
+			$new_state = $this->get_feature_actual_state( $feature );
+		}
+
+		$feature_option_key = $this->get_feature_option_key( $feature['name'] );
+
+		if ( self::STATE_ACTIVE === $new_state ) {
+			if ( empty( $feature['dependencies'] ) ) {
+				return;
+			}
+
+			// Validate if the current feature dependency is available.
+			foreach ( $feature['dependencies'] as $dependency ) {
+				$dependency_feature = $this->get_features( $dependency->get_name() );
+
+				if ( ! $dependency_feature ) {
+					$rollback( $feature_option_key, self::STATE_INACTIVE );
+
+					throw new Exceptions\Dependency_Exception(
+						sprintf( 'The feature `%s` has a dependency `%s` that is not available.',
+							$feature['name'],
+							$dependency->get_name()
+						)
+					);
+				}
+
+				$dependency_state = $this->get_feature_actual_state( $dependency_feature );
+
+				// If dependency is not active.
+				if ( self::STATE_INACTIVE === $dependency_state ) {
+					$rollback( $feature_option_key, self::STATE_INACTIVE );
+
+					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
+					throw new Exceptions\Dependency_Exception(
+						sprintf(
+							esc_html__( 'To turn on `%1$s`, Experiment: `%2$s` activity is required!', 'elementor' ),
+							$feature['name'],
+							$dependency_feature['name']
+						)
+					);
+				}
+			}
+		} elseif ( self::STATE_INACTIVE === $new_state ) {
+			// Validate if current feature that goes 'inactive' is not a dependency of current active feature.
+			foreach ( $this->get_features() as $current_feature ) {
+				if ( empty( $current_feature['dependencies'] ) ) {
+					continue;
+				}
+
+				$current_feature_state = $this->get_feature_actual_state( $current_feature );
+
+				foreach ( $current_feature['dependencies'] as $dependency ) {
+					if ( self::STATE_ACTIVE === $current_feature_state && $feature['name'] === $dependency->get_name() ) {
+						$rollback( $feature_option_key, self::STATE_ACTIVE );
+
+						/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
+						throw new Exceptions\Dependency_Exception(
+							sprintf(
+								esc_html__( 'Cannot turn off `%1$s`, Experiment: `%2$s` is still active!', 'elementor' ),
+								$feature['name'],
+								$current_feature['name']
+							)
+						);
+					}
+				}
+			}
 		}
 	}
 

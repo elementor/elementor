@@ -21,7 +21,7 @@ export default function InfoModal( props ) {
 			setShow: props.setShow,
 		};
 
-	if ( props.hasOwnProperty( 'show' ) ) {
+	if ( Object.prototype.hasOwnProperty.call( props, 'show' ) ) {
 		attrs.show = props.show;
 	} else {
 		attrs.toggleButtonProps = infoButtonProps;

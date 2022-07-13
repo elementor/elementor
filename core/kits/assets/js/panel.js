@@ -1,6 +1,6 @@
 import PanelContent from './panel-content';
 
-module.exports = Marionette.LayoutView.extend( {
+export default Marionette.LayoutView.extend( {
 	id: 'elementor-kit-panel',
 
 	template: '#tmpl-elementor-kit-panel',
