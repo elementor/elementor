@@ -147,17 +147,17 @@ const ContainerView = BaseElementView.extend( {
 					newIndex++;
 				}
 
-				// Prevent the user from draggin a parent container into a child container
+				// Prevent the user from dragging a parent container into a child container
 				const draggedId = draggedView.getContainer().id;
 
 				let draggingParent = false,
-					targetContainer = this.container;
+					currentTargetParentContainer = this.container;
 
-				while ( ! draggingParent && targetContainer ) {
+				while ( ! draggingParent && currentTargetParentContainer ) {
 					if ( targetContainer.id === draggedId ) {
 						draggingParent = true;
 					} else {
-						targetContainer = targetContainer.parent;
+						currentTargetParentContainer = currentTargetParentContainer.parent;
 					}
 				}
 
