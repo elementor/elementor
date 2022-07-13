@@ -67,6 +67,7 @@ PanelMenu.addAdminMenu = () => {
 		],
 	}, { at: 0 } );
 
+	// TODO: Move to the Notes module
 	PanelMenu.addItem( {
 		name: 'finder',
 		icon: 'eicon-search',
