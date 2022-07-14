@@ -29,7 +29,7 @@ class Settings_Site_Identity extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-site-identity';
+		return 'https://go.elementor.com/global-site-identity/';
 	}
 
 	protected function register_tab_controls() {

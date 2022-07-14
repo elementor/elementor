@@ -9,7 +9,7 @@ const WidgetView = BaseWidget.extend( {
 
 	toggleEditTools: true,
 
-	events: function() {
+	events() {
 		var events = BaseWidget.prototype.events.apply( this, arguments );
 
 		events.click = 'onClickEdit';
@@ -17,7 +17,7 @@ const WidgetView = BaseWidget.extend( {
 		return events;
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = BaseWidget.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
@@ -36,7 +36,7 @@ const WidgetView = BaseWidget.extend( {
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
@@ -56,7 +56,7 @@ const WidgetView = BaseWidget.extend( {
 		return groups;
 	},
 
-	render: function() {
+	render() {
 		if ( this.model.isRemoteRequestActive() ) {
 			this.handleEmptyWidget();
 
@@ -72,13 +72,13 @@ const WidgetView = BaseWidget.extend( {
 		BaseElementView.prototype.render.apply( this, arguments );
 	},
 
-	handleEmptyWidget: function() {
+	handleEmptyWidget() {
 		this.$el
 			.addClass( 'elementor-widget-empty' )
 			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
 	},
 
-	getTemplateType: function() {
+	getTemplateType() {
 		if ( null === this._templateType ) {
 			var editModel = this.getEditModel(),
 				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
@@ -89,13 +89,13 @@ const WidgetView = BaseWidget.extend( {
 		return this._templateType;
 	},
 
-	getHTMLContent: function( html ) {
+	getHTMLContent( html ) {
 		var htmlCache = this.getEditModel().getHtmlCache();
 
 		return htmlCache || html;
 	},
 
-	attachElContent: function( html ) {
+	attachElContent( html ) {
 		_.defer( () => {
 			elementorFrontend.elements.window.jQuery( this.el ).empty().append( this.getHandlesOverlay(), this.getHTMLContent( html ) );
 
@@ -105,7 +105,7 @@ const WidgetView = BaseWidget.extend( {
 		return this;
 	},
 
-	addInlineEditingAttributes: function( key, toolbar ) {
+	addInlineEditingAttributes( key, toolbar ) {
 		this.addRenderAttribute( key, {
 			class: 'elementor-inline-editing',
 			'data-elementor-setting-key': key,
@@ -118,7 +118,7 @@ const WidgetView = BaseWidget.extend( {
 		}
 	},
 
-	onRender: function() {
+	onRender() {
 		var self = this;
 
 		BaseWidget.prototype.onRender.apply( self, arguments );
@@ -147,7 +147,7 @@ const WidgetView = BaseWidget.extend( {
 		} );
 	},
 
-	onClickEdit: function( event ) {
+	onClickEdit( event ) {
 		if ( this.container?.isEditable() ) {
 			this.onEditButtonClick( event );
 		}

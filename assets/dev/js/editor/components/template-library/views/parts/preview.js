@@ -9,7 +9,7 @@ TemplateLibraryPreviewView = Marionette.ItemView.extend( {
 		iframe: '> iframe',
 	},
 
-	onRender: function() {
+	onRender() {
 		this.ui.iframe.attr( 'src', this.getOption( 'url' ) );
 	},
 } );

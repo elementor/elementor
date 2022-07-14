@@ -11,8 +11,8 @@ export default function FooterButtons( { actionButton, skipButton, className } )
 
 	return (
 		<Grid container alignItems="center" justify="space-between" className={ classNames }>
-			{ actionButton && <Button buttonSettings={ actionButton } type="action"/> }
-			{ skipButton && <SkipButton button={ skipButton }/> }
+			{ actionButton && <Button buttonSettings={ actionButton } type="action" /> }
+			{ skipButton && <SkipButton button={ skipButton } /> }
 		</Grid>
 	);
 }

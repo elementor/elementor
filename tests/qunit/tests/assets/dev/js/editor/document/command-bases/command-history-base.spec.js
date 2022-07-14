@@ -14,7 +14,7 @@ jQuery( () => {
 
 						instance.getHistory( {} );
 					},
-					new Error( 'CommandHistoryBaseMock.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
+					new Error( 'CommandHistoryBaseMock.getHistory() should be implemented, please provide \'getHistory\' functionality.' ),
 				);
 			} );
 
@@ -57,7 +57,7 @@ jQuery( () => {
 					assert.equal( command instanceof CommandInfra, true );
 					assert.equal( command instanceof CommandBase, true );
 					// Editor.
-					assert.equal( command instanceof CommandContainerBase, true, );
+					assert.equal( command instanceof CommandContainerBase, true );
 					// Editor-Document.
 					assert.equal( command instanceof CommandHistoryBase, true );
 					// Base.
