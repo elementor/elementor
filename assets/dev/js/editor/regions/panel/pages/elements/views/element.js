@@ -70,16 +70,34 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onMouseDown() {
-		const title = this.model.get( 'title' );
+		const title = this.model.get( 'title' ),
+			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
+			hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
+			dialogOptions = {
+				/* translators: %s: Widget title. */
+				title: sprintf( __( '%s Widget', 'elementor' ), title ),
+				content: sprintf(
+					__(
+						'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.',
+						'elementor',
+					),
+					title,
+				),
+				targetElement: this.el,
+				position: {
+					blockStart: '-7',
+				},
+				actionButton: {
+					url: hasProAndNotConnected
+						? elementorProEditorConfig.urls.connect
+						/* translators: %s: Widget title. */
+						: elementor.config.elementPromotionURL.replace( '%s', widgetType ),
+					text: hasProAndNotConnected
+						? __( 'Connect & Activate', 'elementor' )
+						: __( 'See it in Action', 'elementor' ),
+				},
+			};
 
-		elementor.promotion.showDialog( {
-			/* Translators: %s: Widget title. */
-			headerMessage: sprintf( __( '%s Widget', 'elementor' ), title ),
-			/* Translators: %s: Widget title. */
-			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), title ),
-			top: '-7',
-			element: this.el,
-			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) || this.model.get( 'widgetType' ) ),
-		} );
+		elementor.promotion.showDialog( dialogOptions );
 	},
 } );
