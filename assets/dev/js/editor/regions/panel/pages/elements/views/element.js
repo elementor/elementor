@@ -75,9 +75,7 @@ module.exports = Marionette.ItemView.extend( {
 			promotion = elementor.config.promotion.elements;
 
 		elementor.promotion.showDialog( {
-			/* translators: %s: Widget title. */
 			title: sprintf( promotion.title, title ),
-			/* translators: %s: Widget title. */
 			content: sprintf( promotion.content, title ),
 			targetElement: this.el,
 			position: {
