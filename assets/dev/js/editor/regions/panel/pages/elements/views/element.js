@@ -75,13 +75,16 @@ module.exports = Marionette.ItemView.extend( {
 			promotion = elementor.config.promotion.elements;
 
 		elementor.promotion.showDialog( {
+			// eslint-disable-next-line @wordpress/valid-sprintf
 			title: sprintf( promotion.title, title ),
+			// eslint-disable-next-line @wordpress/valid-sprintf
 			content: sprintf( promotion.content, title ),
 			targetElement: this.el,
 			position: {
 				blockStart: '-7',
 			},
 			actionButton: {
+				// eslint-disable-next-line @wordpress/valid-sprintf
 				url: sprintf( promotion.action_button.url, widgetType ),
 				text: promotion.action_button.text,
 				classes: promotion.action_button.classes || [ 'elementor-button', 'elementor-button-success' ],
