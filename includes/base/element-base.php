@@ -396,7 +396,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( $attributes ) {
-			$this->add_render_attribute( $element, $attributes, $overwrite );
+			$this->add_render_attribute( $element, $attributes, null, $overwrite );
 		}
 
 		return $this;
