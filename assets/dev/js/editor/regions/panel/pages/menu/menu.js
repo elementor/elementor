@@ -72,14 +72,29 @@ PanelMenu.addAdminMenu = () => {
 		icon: 'eicon-commenting-o',
 		title: __( 'Notes', 'elementor' ),
 		callback() {
-			elementor.promotion.showDialog( {
-				headerMessage: __( 'Notes', 'elementor' ),
-				message: __( 'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.', 'elementor' ),
-				top: '-3',
-				inlineStart: '+10',
-				element: this.$el,
-				actionURL: 'https://go.elementor.com/go-pro-notes/',
-			} );
+			const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
+				dialogOptions = {
+					title: __( 'Notes', 'elementor' ),
+					content: __(
+						'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.',
+						'elementor',
+					),
+					targetElement: this.$el,
+					position: {
+						blockStart: '-3',
+						inlineStart: '+10',
+					},
+					actionButton: {
+						url: hasProAndNotConnected
+							? elementorProEditorConfig.urls.connect
+							: 'https://go.elementor.com/go-pro-notes/',
+						text: hasProAndNotConnected
+							? __( 'Connect & Activate', 'elementor' )
+							: __( 'See it in Action', 'elementor' ),
+					},
+				};
+
+			elementor.promotion.showDialog( dialogOptions );
 		},
 	}, 'navigate_from_page', 'view-page' );
 
