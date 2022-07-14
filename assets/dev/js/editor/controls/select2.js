@@ -89,9 +89,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	 * @return {*} potentially modified input value
 	 */
 	getInputValue( input ) {
-		const inputValue = super.get( input );
-
-		return null === inputValue ? '' : inputValue;
+		return super.get( input ) ?? '';
 	},
 
 	onBaseInputChange() {
