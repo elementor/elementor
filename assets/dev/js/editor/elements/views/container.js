@@ -157,9 +157,9 @@ const ContainerView = BaseElementView.extend( {
 					while ( currentTargetParentContainer ) {
 						if ( currentTargetParentContainer.id === draggedId ) {
 							return;
-						} else {
-							currentTargetParentContainer = currentTargetParentContainer.parent;
 						}
+
+						currentTargetParentContainer = currentTargetParentContainer.parent;
 					}
 
 					// Reset the dragged element cache.
