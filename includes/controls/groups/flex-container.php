@@ -47,7 +47,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'default' => '',
-			'selectors_dictionary' => [
+			'selectors_dictionary' => [ // The `--container-widget-width` is used for handling widgets that get an undefined width in column mode (ED-7524 & ED-7604).
 				'row' => '--flex-direction: row; --container-widget-width: initial;',
 				'column' => '--flex-direction: column; --container-widget-width: 100%;',
 				'row-reverse' => '--flex-direction: row-reverse; --container-widget-width: initial;',
