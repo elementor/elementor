@@ -69,6 +69,11 @@ class Editor {
 	public $notice_bar;
 
 	/**
+	 * @var Promotion
+	 */
+	public $promotion;
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
@@ -585,6 +590,9 @@ class Editor {
 				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
 				'icons_map' => Plugin::$instance->breakpoints->get_responsive_icons_classes_map(),
 			],
+			'promotion' => [
+				'elements' => $this->promotion->get_elements_promotion(),
+			],
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
@@ -867,6 +875,7 @@ class Editor {
 		Plugin::$instance->data_manager_v2->register_controller( new Data\Globals\Controller() );
 
 		$this->notice_bar = new Notice_Bar();
+		$this->promotion = new Promotion();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
