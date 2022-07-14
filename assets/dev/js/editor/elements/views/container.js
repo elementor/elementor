@@ -152,29 +152,26 @@ const ContainerView = BaseElementView.extend( {
 					// Prevent the user from dragging a parent container into its own child container
 					const draggedId = draggedView.getContainer().id;
 
-					let draggingParent = false,
-						currentTargetParentContainer = this.container;
+					let currentTargetParentContainer = this.container;
 
-					while ( ! draggingParent && currentTargetParentContainer ) {
+					while ( currentTargetParentContainer ) {
 						if ( currentTargetParentContainer.id === draggedId ) {
-							draggingParent = true;
+							return;
 						} else {
 							currentTargetParentContainer = currentTargetParentContainer.parent;
 						}
 					}
 
-					if ( ! draggingParent ) {
-						// Reset the dragged element cache.
-						elementor.channels.editor.reply( 'element:dragged', null );
+					// Reset the dragged element cache.
+					elementor.channels.editor.reply( 'element:dragged', null );
 
-						$e.run( 'document/elements/move', {
-							container: draggedView.getContainer(),
-							target: this.getContainer(),
-							options: {
-								at: newIndex,
-							},
-						} );
-					}
+					$e.run( 'document/elements/move', {
+						container: draggedView.getContainer(),
+						target: this.getContainer(),
+						options: {
+							at: newIndex,
+						},
+					} );
 
 					return;
 				}
