@@ -1,13 +1,22 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
-const { ControlBase } = require( '../utils/controls/control-base' );
-const { ControlsManager } = require( '../utils/controls/controls-manager' );
-const { Choose } = require( '../utils/controls/choose' );
-const { Select } = require( '../utils/controls/select' );
-const { Textarea } = require( '../utils/controls/textarea' );
 const widgetsCache = require( './widgets-cache' );
 
-test( 'All widgets sanity test', async ( { page }, testInfo ) => {
+const {
+	Heading,
+	WidgetBase,
+} = require( '../utils/widgets' );
+
+const {
+	Choose,
+	ControlBase,
+	Select,
+	Textarea,
+} = require( '../utils/controls' );
+
+const { Registrar } = require( '../utils/registrar' );
+
+test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
@@ -18,47 +27,48 @@ test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		await navigatorCloseButton.click();
 	}
 
-	const controlsManager = new ControlsManager();
-	controlsManager.register( Textarea );
-	controlsManager.register( Select );
-	controlsManager.register( Choose );
+	const widgetsRegistrar = new Registrar()
+		.register( Heading )
+		.register( WidgetBase );
+
+	const controlsRegistrar = new Registrar()
+		.register( Choose )
+		.register( Select )
+		.register( Textarea );
 
 	for ( const widgetType of Object.keys( widgetsCache ) ) {
-		const { controls } = widgetsCache[ widgetType ];
+		// Arrange.
+		const WidgetClass = widgetsRegistrar.get( widgetType );
 
-		// TODO: Set section background color for blend mode.
-		const widgetId = await editor.addWidget( widgetType ),
-			element = await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` );
+		/**
+		 * @type {WidgetBase}
+		 */
+		const widget = new WidgetClass(
+				editor,
+				{
+					widgetType,
+					controls: widgetsCache[ widgetType ].controls,
+				},
+				controlsRegistrar,
+			);
 
-		// Match snapshot for default appearance.
+		// Act.
+		await widget.create();
+
+		const element = await widget.getElement();
+
+		// Assert - Match snapshot for default appearance.
 		expect( await element.screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( `${ widgetType }--default.jpeg` );
 
-		for ( const [ controlId, controlData ] of Object.entries( controls ) ) {
-			const ControlClass = controlsManager.get( controlData.type );
-
-			// TODO: Remove after all of the controls will have classes.
-			if ( ! ControlClass ) {
-				continue;
-			}
-
-			/**
-			 * @type {ControlBase}
-			 */
-			const control = new ControlClass( page, controlData );
-			await control.switchToView();
-
-			// Act & Assert.
-			await control.test( async ( currentControlValue ) => {
-				expect( await element.screenshot( {
-					type: 'jpeg',
-					quality: 70,
-				} ) ).toMatchSnapshot( `${ widgetType }--${ controlId }--${ currentControlValue }.jpeg` );
-			} );
-		}
-
-		await editor.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
+		await widget.test( async ( controlId, currentControlValue ) => {
+			// Assert - Match snapshot for specific control.
+			expect( await element.screenshot( {
+				type: 'jpeg',
+				quality: 70,
+			} ) ).toMatchSnapshot( `${ widgetType }--${ controlId }--${ currentControlValue }.jpeg` );
+		} );
 	}
 } );
