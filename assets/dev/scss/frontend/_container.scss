@@ -18,10 +18,10 @@
 	--margin-right: 0;
 	--margin-bottom: 0;
 	--margin-left: 0;
-	--padding-top: var( --container-default-padding, 0px );
-	--padding-right: var( --container-default-padding, 0px );
-	--padding-bottom: var( --container-default-padding, 0px );
-	--padding-left: var( --container-default-padding, 0px );
+	--padding-top: var( --container-default-padding-top, 10px );
+	--padding-right: var( --container-default-padding-right, 10px );
+	--padding-bottom: var( --container-default-padding-bottom, 10px );
+	--padding-left: var( --container-default-padding-left, 10px );
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
@@ -74,7 +74,7 @@
 		.elementor-first-add {
 			width: auto;
 			height: auto;
-			inset: 10px;
+			inset: 0px;
 		}
 	}
 

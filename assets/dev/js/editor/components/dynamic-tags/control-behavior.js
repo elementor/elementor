@@ -197,15 +197,28 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion() {
-		const message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
+			const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
+				dialogOptions = {
+					title: __( 'Dynamic Content', 'elementor' ),
+					content: __(
+						'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.',
+						'elementor',
+					),
+					targetElement: this.ui.dynamicSwitcher,
+					position: {
+						blockStart: '-10',
+					},
+					actionButton: {
+						url: hasProAndNotConnected
+							? elementorProEditorConfig.urls.connect
+							: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
+						text: hasProAndNotConnected
+							? __( 'Connect & Activate', 'elementor' )
+							: __( 'See it in Action', 'elementor' ),
+					},
+				};
 
-		elementor.promotion.showDialog( {
-			headerMessage: __( 'Dynamic Content', 'elementor' ),
-			message,
-			top: '-10',
-			element: this.ui.dynamicSwitcher,
-			actionURL: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
-		} );
+		elementor.promotion.showDialog( dialogOptions );
 	},
 
 	onRender() {
