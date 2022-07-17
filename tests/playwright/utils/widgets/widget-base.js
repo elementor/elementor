@@ -122,12 +122,11 @@ class WidgetBase {
 			// TODO: Remove after there is support for conditional controls.
 			const controlSection = this.getControls()[ controlConfig.section ];
 
-			if (
-				controlConfig.condition ||
-				controlConfig.conditions ||
-				controlSection.conditions ||
-				controlSection.conditions
-			) {
+			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
+			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
+			const isSectionConditional = ( controlSection.condition || controlSection.conditions );
+
+			if ( isWidgetConditional || isSectionConditional ) {
 				continue;
 			}
 

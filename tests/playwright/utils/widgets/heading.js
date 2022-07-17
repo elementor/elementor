@@ -30,7 +30,7 @@ class Heading extends WidgetBase {
 				await this.editor.page.waitForTimeout( 250 );
 			}
 
-			if ( [ 'blend_mode' ].includes( controlId ) ) {
+			if ( [ 'blend_mode', 'typography_font_weight' ].includes( controlId ) ) {
 				await this.editor.page.waitForTimeout( 700 );
 			}
 
