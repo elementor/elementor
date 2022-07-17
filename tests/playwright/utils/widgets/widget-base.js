@@ -119,6 +119,18 @@ class WidgetBase {
 				continue;
 			}
 
+			// TODO: Remove after there is support for conditional controls.
+			const controlSection = this.getControls()[ controlConfig.section ];
+
+			if (
+				controlConfig.condition ||
+				controlConfig.conditions ||
+				controlSection.conditions ||
+				controlSection.conditions
+			) {
+				continue;
+			}
+
 			const control = new ControlClass( this.editor.page, controlConfig );
 
 			await this.testControl( control, controlId, assertionsCallback );

@@ -4,6 +4,7 @@ const widgetsCache = require( './widgets-cache' );
 
 const {
 	Heading,
+	TextEditor,
 	WidgetBase,
 } = require( '../utils/widgets' );
 
@@ -28,6 +29,7 @@ test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 
 	const widgetsRegistrar = new Registrar()
 		.register( Heading )
+		.register( TextEditor )
 		.register( WidgetBase );
 
 	const controlsRegistrar = new Registrar()
@@ -53,6 +55,8 @@ test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		// Act.
 		await widget.create();
 
+		await page.waitForTimeout( 500 );
+
 		const element = await widget.getElement();
 
 		// Assert - Match snapshot for default appearance.
@@ -62,6 +66,11 @@ test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		} ) ).toMatchSnapshot( `${ widgetType }--default.jpeg` );
 
 		await widget.test( async ( controlId, currentControlValue ) => {
+			// Skip default values.
+			if ( [ '', 'default' ].includes( currentControlValue ) ) {
+				return;
+			}
+
 			// Assert - Match snapshot for specific control.
 			expect( await element.screenshot( {
 				type: 'jpeg',

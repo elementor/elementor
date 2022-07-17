@@ -20,6 +20,25 @@ class Heading extends WidgetBase {
 			} );
 		} );
 	}
+
+	async testControl( control, controlId, assertionsCallback ) {
+		await control.setup();
+
+		await control.test( async ( currentControlValue ) => {
+			// Wait for renders.
+			if ( [ 'size', 'header_size' ].includes( controlId ) ) {
+				await this.editor.page.waitForTimeout( 250 );
+			}
+
+			if ( [ 'blend_mode' ].includes( controlId ) ) {
+				await this.editor.page.waitForTimeout( 700 );
+			}
+
+			await assertionsCallback( controlId, currentControlValue );
+		} );
+
+		await control.teardown();
+	}
 }
 
 module.exports = {
