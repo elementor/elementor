@@ -9,14 +9,13 @@ const {
 
 const {
 	Choose,
-	ControlBase,
 	Select,
 	Textarea,
 } = require( '../utils/controls' );
 
 const { Registrar } = require( '../utils/registrar' );
 
-test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
+test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
@@ -37,20 +36,19 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 		.register( Textarea );
 
 	for ( const widgetType of Object.keys( widgetsCache ) ) {
-		// Arrange.
 		const WidgetClass = widgetsRegistrar.get( widgetType );
 
 		/**
 		 * @type {WidgetBase}
 		 */
 		const widget = new WidgetClass(
-				editor,
-				{
-					widgetType,
-					controls: widgetsCache[ widgetType ].controls,
-				},
-				controlsRegistrar,
-			);
+			editor,
+			controlsRegistrar,
+			{
+				widgetType,
+				controls: widgetsCache[ widgetType ].controls,
+			},
+		);
 
 		// Act.
 		await widget.create();

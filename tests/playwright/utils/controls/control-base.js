@@ -25,6 +25,7 @@ class ControlBase {
 		this.elementLocator = page.locator( this.getSelector() );
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Retreive the control type.
 	 *
@@ -50,10 +51,11 @@ class ControlBase {
 	 *
 	 * @return {void}
 	 */
-	async setValue( newValue ) {
+	async setValue( newValue ) { // eslint-disable-line no-unused-vars
 		throw this.constructor.name + '.setValue() is not implemented!';
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Retrieve the control selector.
 	 *
@@ -70,14 +72,14 @@ class ControlBase {
 	 *
 	 * @param {Function} assertionsCallback
 	 *
-	 * @return {void}
+	 * @return {Promise<void>}
 	 */
-	async test( assertionsCallback ) {
+	async test( assertionsCallback ) { // eslint-disable-line no-unused-vars
 		throw this.constructor.name + '.test() is not implemented!';
 	}
 
 	/**
-	 * Test setup.
+	 * Test's setup.
 	 * Can be overriden in sub-classes.
 	 *
 	 * @return {Promise<*>}
@@ -87,12 +89,13 @@ class ControlBase {
 	}
 
 	/**
-	 * Test teardown.
+	 * Test's teardown.
 	 * Can be overriden in sub-classes.
 	 *
 	 * @return {Promise<*>}
 	 */
 	async teardown() {
+		// TODO: Find a better way. This will work only if the last control in the popover is visible.
 		if ( this.config.popover?.end ) {
 			await this.resetPopover();
 		}
@@ -106,14 +109,17 @@ class ControlBase {
 	 * @return {Promise<void>}
 	 */
 	async switchToView() {
+		// Open tab.
 		await this.page.locator( `.elementor-panel-navigation-tab[data-tab="${ this.config.tab }"]` ).click();
 
+		// Open section.
 		const section = await this.page.$( `.elementor-control-${ this.config.section }:not( .elementor-open )` );
 
 		if ( section ) {
 			await section.click();
 		}
 
+		// Open popover.
 		if ( this.config.popover && ! await this.isPopoverOpen() ) {
 			await this.openPopover();
 		}

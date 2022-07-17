@@ -31,7 +31,7 @@ class WidgetBase {
 	 */
 	controlsRegistrar = null;
 
-	constructor( editor, config, controlsRegistrar ) {
+	constructor( editor, controlsRegistrar, config ) {
 		this.editor = editor;
 		this.config = config;
 		this.controlsRegistrar = controlsRegistrar;
@@ -80,7 +80,7 @@ class WidgetBase {
 	}
 
 	/**
-	 * Test setup.
+	 * Test's setup.
 	 *
 	 * @protected
 	 *
@@ -91,7 +91,7 @@ class WidgetBase {
 	}
 
 	/**
-	 * Test teardown.
+	 * Test's teardown.
 	 *
 	 * @protected
 	 *
@@ -102,7 +102,7 @@ class WidgetBase {
 	}
 
 	/**
-	 * Iterate over all of the widget's controls.
+	 * Iterate over all of the widget's controls and run assertions.
 	 *
 	 * @param {Function} assertionsCallback
 	 *
@@ -114,7 +114,7 @@ class WidgetBase {
 		for ( const [ controlId, controlConfig ] of Object.entries( this.getControls() ) ) {
 			const ControlClass = this.controlsRegistrar.get( controlConfig.type );
 
-			// TODO: Remove after all of the controls will have classes.
+			// TODO: Remove after all of the controls will have handlers.
 			if ( ! ControlClass ) {
 				continue;
 			}
