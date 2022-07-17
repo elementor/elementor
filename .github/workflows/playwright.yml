@@ -47,6 +47,8 @@ jobs:
         include:
           - phpVersion: '7.4'
             wpCoreVersion: 'latest'
+    env:
+      BASE_URL: 'http://localhost:8889'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -73,9 +75,6 @@ jobs:
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
           npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
-      - name: Set Hello Elementor as default theme
-        run: |
-          npx wp-env run tests-cli "wp theme activate hello-elementor"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
