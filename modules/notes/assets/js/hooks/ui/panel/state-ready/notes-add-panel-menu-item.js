@@ -11,7 +11,7 @@ export class NotesAddPanelMenuItem extends $e.modules.hookUI.After {
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
 			name: 'notes',
 			icon: 'eicon-commenting-o',
-			title: __( 'Notes', 'elementor-pro' ),
+			title: __( 'Notes', 'elementor' ),
 			callback() {
 				elementor.promotion.showDialog( {
 					headerMessage: __( 'Notes', 'elementor' ),
