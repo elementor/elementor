@@ -384,9 +384,11 @@ import TemplateControls from './new-template/template-controls.js';
 			}
 
 			const self = this,
+				$importForm = self.elements.$importForm,
 				$importButton = self.elements.$importButton,
 				$importArea = self.elements.$importArea,
-				$importNowButton = self.elements.$importNowButton;
+				$importNowButton = self.elements.$importNowButton,
+				$importFormFileInput = self.elements.$importFormFileInput;
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
@@ -398,12 +400,15 @@ import TemplateControls from './new-template/template-controls.js';
 				$( '#elementor-import-template-area' ).toggle();
 			} );
 
-			$importNowButton.on( 'click', ( event ) => {
-				if ( self.elements.$importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+			$importForm.on( 'submit', ( event ) => {
+				$importNowButton[ 0 ].disabled = true;
+				$importNowButton[ 0 ].value = __( 'Importing...', 'elementor' );
+
+				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
 					event.preventDefault();
 
 					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
-						self.elements.$importForm.trigger( 'submit' );
+						$importForm.trigger( 'submit' );
 					} );
 
 					enableUnfilteredFilesModal.show();

@@ -21,7 +21,7 @@ class Module extends BaseModule {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script(
-			'notes',
+			'elementor-notes',
 			$this->get_js_assets_url( 'notes' ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
