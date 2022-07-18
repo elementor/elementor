@@ -5,19 +5,11 @@ class TextEditor extends WidgetBase {
 		return 'text-editor';
 	}
 
-	async testControl( control, controlId, assertionsCallback ) {
-		await control.setup();
-
+	async beforeControlTest( { controlId } ) {
 		// Wait for server render after switching between tabs.
-		if ( [ 'align' ].includes( controlId ) ) {
+		if ( 'align' === controlId ) {
 			await this.editor.page.waitForTimeout( 1000 );
 		}
-
-		await control.test( async ( currentControlValue ) => {
-			await assertionsCallback( controlId, currentControlValue );
-		} );
-
-		await control.teardown();
 	}
 }
 

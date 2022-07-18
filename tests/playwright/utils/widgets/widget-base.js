@@ -151,15 +151,68 @@ class WidgetBase {
 	 * @return {Promise<void>}
 	 */
 	async testControl( control, controlId, assertionsCallback ) {
-		// TODO: Find a way to make the setup & teardown protected and call a single test function.
 		await control.setup();
 
+		await this.beforeControlTest( { control, controlId } );
+
 		await control.test( async ( currentControlValue ) => {
+			// TODO: Find a better way to show debug information.
+			//  We must have this info because Playwright doesn't give any useful errors.
+			console.log( { widget: this.config.widgetType, control: controlId, value: currentControlValue } );
+
+			await this.beforeControlAssertions( { control, controlId, currentControlValue } );
+
 			await assertionsCallback( controlId, currentControlValue );
+
+			await this.afterControlAssertions( { control, controlId, currentControlValue } );
 		} );
+
+		await this.afterControlTest( { control, controlId } );
 
 		await control.teardown();
 	}
+
+	/**
+	 * @param {import('../controls/control-base').ControlBase} control
+	 * @param {string}                                         controlId
+	 *
+	 * @protected
+	 *
+	 * @return {Promise<void>}
+	 */
+	async beforeControlTest( { control, controlId } ) {}
+
+	/**
+	 * @param {import('../controls/control-base').ControlBase} control
+	 * @param {string}                                         controlId
+	 *
+	 * @protected
+	 *
+	 * @return {Promise<void>}
+	 */
+	async afterControlTest( { control, controlId } ) {}
+
+	/**
+	 * @param {import('../controls/control-base').ControlBase} control
+	 * @param {string}                                         controlId
+	 * @param {any}                                            currentControlValue
+	 *
+	 * @protected
+	 *
+	 * @return {Promise<void>}
+	 */
+	async beforeControlAssertions( { control, controlId, currentControlValue } ) {}
+
+	/**
+	 * @param {import('../controls/control-base').ControlBase} control
+	 * @param {string}                                         controlId
+	 * @param {any}                                            currentControlValue
+	 *
+	 * @protected
+	 *
+	 * @return {Promise<void>}
+	 */
+	async afterControlAssertions( { control, controlId, currentControlValue } ) {}
 }
 
 module.exports = {
