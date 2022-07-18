@@ -148,7 +148,7 @@ export default class SiteEditor {
 			},
 			{
 				type: 'loop',
-				icon: 'eicon-custom',
+				icon: 'eicon-loop-builder',
 				title: __( 'Loop', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/loop.svg',
