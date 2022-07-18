@@ -125,7 +125,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	onReady() {
-		// is migration allowed from fa4
+		// Is migration allowed from fa4
 		if ( ! this.isMigrationAllowed() ) {
 			const migrationPopupTrigger = 'media' === this.model.get( 'skin' ) ? this.ui.previewContainer[ 0 ] : this.ui.inlineIconContainer[ 0 ];
 
@@ -202,7 +202,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		} );
 
 		this.frame.on( 'close', () => {
-			// restore allowed upload extensions
+			// Restore allowed upload extensions
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
 		} );
 	}

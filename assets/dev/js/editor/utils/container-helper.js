@@ -158,7 +158,9 @@ export class ContainerHelper {
 			switch ( preset ) {
 				// Single column Container without sub Containers.
 				case 'c100':
-					newContainer = ContainerHelper.createContainer( {}, target, options );
+					newContainer = ContainerHelper.createContainer( {
+						flex_direction: ContainerHelper.DIRECTION_COLUMN,
+					}, target, options );
 					break;
 
 				// Single row Container without sub Containers.
@@ -169,7 +171,7 @@ export class ContainerHelper {
 					break;
 
 				// Exceptional preset.
-				case 'c100-c50-50':
+				case 'c100-c50-50': {
 					settings = {
 						flex_direction: ContainerHelper.DIRECTION_ROW,
 						flex_wrap: 'wrap',
@@ -209,12 +211,13 @@ export class ContainerHelper {
 					ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 
 					break;
-
+				}
 				// Containers by preset.
-				default:
+				default: {
 					const sizes = preset.split( '-' );
 
 					newContainer = ContainerHelper.createContainerFromSizes( sizes, target, options );
+				}
 			}
 
 			$e.internal( 'document/history/end-log', { id: historyId } );

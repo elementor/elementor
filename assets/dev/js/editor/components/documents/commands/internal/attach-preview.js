@@ -1,14 +1,22 @@
-import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
+export class AttachPreview extends $e.modules.CommandInternalBase {
+	validateArgs( args = {} ) {
+		if ( args.selector ) {
+			this.requireArgumentType( 'selector', 'string' );
 
-export class AttachPreview extends CommandInternalBaseBase {
-	apply() {
+			if ( 0 === elementor.$previewContents.find( args.selector ).length ) {
+				throw new Error( 'Invalid argument. The `selector` argument must be existed selector.' );
+			}
+		}
+	}
+
+	apply( args ) {
 		const document = elementor.documents.getCurrent();
 
 		return $e.data.get( 'globals/index' )
 			.then( () => {
 				elementor.trigger( 'globals:loaded' );
 
-				return this.attachDocumentToPreview( document );
+				return this.attachDocumentToPreview( document, args );
 			} )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
@@ -25,7 +33,9 @@ export class AttachPreview extends CommandInternalBaseBase {
 		} );
 	}
 
-	attachDocumentToPreview( document ) {
+	attachDocumentToPreview( document, args ) {
+		const { selector = '.elementor-' + document.id } = args;
+
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
 			if ( ! document ) {
@@ -36,7 +46,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 				return resolve();
 			}
 
-			document.$element = elementor.$previewContents.find( '.elementor-' + document.id );
+			document.$element = elementor.$previewContents.find( selector );
 
 			if ( ! document.$element.length ) {
 				elementor.onPreviewElNotFound();
@@ -51,7 +61,10 @@ export class AttachPreview extends CommandInternalBaseBase {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 
-			elementor.initElements();
+			$e.internal( 'document/elements/populate', {
+				document,
+				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
+			} );
 
 			elementor.initPreviewView( document );
 

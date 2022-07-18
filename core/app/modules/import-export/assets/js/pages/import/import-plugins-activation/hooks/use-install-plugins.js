@@ -56,7 +56,7 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 			if ( Array.isArray( data ) ) {
 				// When the data type is an Array it means that the plugins data was fetched.
 				setIsPluginsFetched( true );
-			} else if ( ! data.hasOwnProperty( 'plugin' ) ) {
+			} else if ( ! Object.prototype.hasOwnProperty.call( data, 'plugin' ) ) {
 				setActionStatus( ACTION_STATUS_MAP.FAILED );
 			} else if ( PLUGIN_STATUS_MAP.ACTIVE === data.status ) {
 				setActionStatus( ACTION_STATUS_MAP.ACTIVATED );

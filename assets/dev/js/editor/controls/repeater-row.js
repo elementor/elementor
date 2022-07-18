@@ -65,7 +65,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! title ) {
-			/* translators: %s: Item Index (number). */
+			/* Translators: %s: Item Index (number). */
 			title = sprintf( __( 'Item #%s', 'elementor' ), this.getOption( 'itemIndex' ) );
 		}
 

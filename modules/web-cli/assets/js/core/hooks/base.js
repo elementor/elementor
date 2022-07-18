@@ -1,4 +1,4 @@
-import Helpers from 'elementor-api/utils/helpers';
+import Console from 'elementor-api/utils/console';
 import Module from 'elementor-assets-js/modules/imports/module.js';
 import forceMethodImplementation from '../../utils/force-method-implementation';
 
@@ -170,7 +170,7 @@ import forceMethodImplementation from '../../utils/force-method-implementation';
 	}
 
 	/**
-	 * function checkEvent().
+	 * Function checkEvent().
 	 *
 	 * Validate if the event is available.
 	 *
@@ -376,7 +376,7 @@ import forceMethodImplementation from '../../utils/force-method-implementation';
 						throw e;
 					}
 
-					Helpers.consoleError( e );
+					Console.error( e );
 				}
 			}
 

@@ -36,7 +36,7 @@ import After from 'elementor-api/modules/hooks/data/after';
 			containers = [ containers ];
 		}
 
-		containers.forEach( ( /**Container*/ container ) => {
+		containers.forEach( ( /** Container*/ container ) => {
 			const parent = container.parent;
 
 			// If deleted the last column, should recreate it.

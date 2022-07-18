@@ -1,7 +1,7 @@
 import BaseButton from '../ui/molecules/button';
 
 export default class Button extends BaseButton {
-	static defaultProps = Object.assign( {} /* clone */, BaseButton.defaultProps, {
+	static defaultProps = Object.assign( {} /* Clone */, BaseButton.defaultProps, {
 		hideText: true,
 		includeHeaderBtnClass: true,
 	} );

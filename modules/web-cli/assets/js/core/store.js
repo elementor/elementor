@@ -147,12 +147,16 @@ export default class Store {
 	}
 
 	/**
-	 * Proxy to Redux's `getState()` function.
+	 * Proxy to Redux's `getState()` function, with the ability to get a specific slice.
+	 *
+	 * @param {string|null} sliceId
 	 *
 	 * @return {*} The current state tree of the application
 	 */
-	getState() {
-		return this.reduxStore.getState( ...arguments );
+	getState( sliceId = null ) {
+		const state = this.reduxStore.getState();
+
+		return sliceId ? state[ sliceId ] : state;
 	}
 
 	/**

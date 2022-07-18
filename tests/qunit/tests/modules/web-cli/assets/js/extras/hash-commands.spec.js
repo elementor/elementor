@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Component from './mock/component.spec';
 
 QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks ) => {
@@ -7,12 +8,12 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 		$e.components.register( new Component() );
 
 		// Make sure the original warn function will not be triggered to avoid printing on the console.
-		originalWarnFunction = elementorCommon.helpers.consoleWarn;
-		elementorCommon.helpers.consoleWarn = () => {};
+		originalWarnFunction = console.warn;
+		console.warn = () => {};
 	} );
 
 	hooks.after( () => {
-		elementorCommon.helpers.consoleWarn = originalWarnFunction;
+		console.warn = originalWarnFunction;
 	} );
 
 	QUnit.test( 'get(): Ensure valid return format', ( assert ) => {
@@ -129,7 +130,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 		// Arrange.
 		let sharedReference = 0;
 
-		const callback = $e.commands.on( 'run:after', () => {
+		const callback = $e.commands.on( 'run', () => {
 			sharedReference++;
 		} );
 
@@ -150,9 +151,6 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 
 		// Ensure initial 'safe-command' run.
 		assert.equal( sharedReference, 1 );
-		// Why it works?
-		// Since the 'async-command' is still in callstack.
-		// Only the promise of 'async-command' is in the callstack.
 
 		// Give him tick to reach 2.
 		// When a waiting for promise, it will release the event loop, to run other callbacks in the stack.

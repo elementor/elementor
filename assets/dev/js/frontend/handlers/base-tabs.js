@@ -161,7 +161,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 				}
 			},
 			keyup: ( event ) => {
-				switch ( event.key ) {
+				switch ( event.code ) {
 					case 'ArrowLeft':
 					case 'ArrowRight':
 						this.handleKeyboardNavigation( event );
