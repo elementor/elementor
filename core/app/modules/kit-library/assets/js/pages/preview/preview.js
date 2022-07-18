@@ -42,7 +42,7 @@ export const breakpoints = [
 	},
 ];
 
-function useHeaderButtons( id ) {
+function useHeaderButtons( id, kitName ) {
 	const navigate = useNavigate();
 
 	return useMemo( () => [
@@ -53,7 +53,21 @@ function useHeaderButtons( id ) {
 			variant: 'outlined',
 			color: 'secondary',
 			size: 'sm',
-			onClick: () => navigate( `/kit-library/overview/${ id }` ),
+			onClick: () => {
+				elementorCommon.events.eventTracking(
+					'kit-library/check-out-kit',
+					{
+						placement: 'kit library',
+						event: 'top bar change view type',
+					},
+					{
+						source: 'overview',
+						kit_name: kitName,
+						view_type_clicked: 'overview',
+					},
+				)
+				navigate( `/kit-library/overview/${ id }` )
+			},
 			includeHeaderBtnClass: false,
 		},
 	], [ id ] );
@@ -89,7 +103,7 @@ function usePreviewUrl( data ) {
 export default function Preview( props ) {
 	const { data, isError, isLoading } = useKit( props.id );
 	const [ isIframeLoading, setIsIframeLoading ] = useState( true );
-	const headersButtons = useHeaderButtons( props.id );
+	const headersButtons = useHeaderButtons( props.id, data && data.title );
 	const previewUrl = usePreviewUrl( data );
 	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
 	const iframeStyle = useMemo(
@@ -118,7 +132,7 @@ export default function Preview( props ) {
 			<ItemHeader
 				model={ data }
 				buttons={ headersButtons }
-				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice } /> }
+				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice } kitName={ data.title } /> }
 				pageId="demo"
 			/>
 		}>

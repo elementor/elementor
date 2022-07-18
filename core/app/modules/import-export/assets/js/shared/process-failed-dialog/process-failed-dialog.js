@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
+import { eventTrackingObject } from 'elementor-app/consts/consts';
 
 const messagesContent = {
 		general: {
@@ -32,6 +34,21 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		error = 'string' === typeof errorType && messagesContent[ errorType ] ? errorType : 'general',
 		{ text } = messagesContent[ error ],
 		isTryAgainAction = 'general' === error && onApprove,
+		eventTrack = ( trackName, event, eventType = 'click' ) => {
+			const eventParams = {
+				...eventTrackingObject,
+				placement: 'kit library',
+				event,
+				details: {
+					...eventTrackingObject.details,
+					source: 'import',
+					step: '1',
+					event_type: eventType,
+				},
+			};
+
+			$e.run( trackName, eventParams );
+		},
 		handleOnApprove = () => {
 			/*
 			* When the errorType is general, there should be an option to trigger the onApprove function.
@@ -44,7 +61,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			}
 
 			if ( 'kit-library' === referrer ) {
-				$e.run( 'kit-library/seek-more-info' );
+				eventTrack( 'kit-library/seek-more-info', 'error modal learn more' );
 			}
 		},
 		handleOnDismiss = () => {
@@ -52,12 +69,15 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 				onDismiss();
 			} else if ( 'kit-library' === referrer ) {
 				navigate( '/kit-library' );
-				$e.run( 'kit-library/modal-close' )
+				eventTrack( 'kit-library/modal-close', 'error modal close' );
 			} else {
 				action.backToDashboard();
 			}
 		};
 
+		useEffect( () => {
+			eventTrack( 'kit-library/modal-error', 'error modal load' + error, 'load' );
+		}, [] );
 	return (
 		<Dialog
 			title={ dialogTitle }

@@ -16,8 +16,8 @@ export default function KitList( props ) {
 				<NewPageKitListItem />
 			}
 			{
-				props.data.map( ( model ) => (
-					<KitListItem key={ model.id } model={ model } />
+				props.data.map( ( model, index ) => (
+					<KitListItem key={ model.id } model={ model } index={ index } queryParams={ props.queryParams.search } source={ props.source } />
 				) )
 			}
 		</CssGrid>

@@ -21,9 +21,8 @@ import './item-header.scss';
  * @param {boolean}  root0.isApplyLoading
  * @return {Object} result
  */
-function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } ) {
+function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onConnect } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
-
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
 			return {
@@ -63,6 +62,22 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
 			onClick: isApplyLoading ? null : apply,
+			// onClick: () => {
+			// 	// TODO: Check what is wrong here
+			// 	elementorCommon.events.eventTracking(
+			// 		'kit-library/apply-kit',
+			// 		{
+			// 			placement: 'kit library',
+			// 			event: 'top bar apply kit',
+			// 		},
+			// 		{
+			// 			source: pageId,
+			// 			kit_name: model.title,
+			// 			view_type_clicked: pageId,
+			// 		},
+			// 	),
+			// 		isApplyLoading ? null : apply
+			// },
 			includeHeaderBtnClass: false,
 		};
 	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
@@ -102,7 +117,7 @@ export default function ItemHeader( props ) {
 		},
 	);
 
-	const applyButton = useKitCallToActionButton( props.model, {
+	const applyButton = useKitCallToActionButton( props.model, props.pageId, {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		apply,
 		isApplyLoading,
@@ -159,9 +174,11 @@ export default function ItemHeader( props ) {
 				/>
 			}
 			<Header
-				startColumn={ <HeaderBackButton /> }
+				startColumn={ <HeaderBackButton kitName={ props.model.title } pageId={ props.pageId } /> }
 				centerColumn={ props.centerColumn }
 				buttons={ buttons }
+				kitName={ props.model.title }
+				pageId={ props.pageId }
 			/>
 		</>
 	);
@@ -172,4 +189,5 @@ ItemHeader.propTypes = {
 	centerColumn: PropTypes.node,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
 	pageId: PropTypes.string,
+	kitName: PropTypes.string,
 };

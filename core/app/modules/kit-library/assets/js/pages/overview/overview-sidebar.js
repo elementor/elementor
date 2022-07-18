@@ -24,6 +24,9 @@ export default function OverviewSidebar( props ) {
 				<FavoritesActions
 					isFavorite={ props.model.isFavorite }
 					id={ props.model.id }
+					index={ props.index }
+					name={ props.model.title }
+					source={ 'overview' }
 				/>
 			</div>
 			<CardImage
@@ -39,10 +42,11 @@ export default function OverviewSidebar( props ) {
 					onChange={ setIsTagsCollapseOpen }
 					title={ __( 'TAGS', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-tags"
+					pageId="overview"
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.taxonomies.map( ( taxonomy ) => (
-							<OverviewTaxonomyBadge key={ taxonomy }>{ taxonomy }</OverviewTaxonomyBadge>
+							<OverviewTaxonomyBadge key={ taxonomy } kitName={ props.model.title }>{ taxonomy }</OverviewTaxonomyBadge>
 						) ) }
 					</Grid>
 				</Collapse>
@@ -54,6 +58,7 @@ export default function OverviewSidebar( props ) {
 					onChange={ setIsInformationCollapseOpen }
 					title={ __( 'WHAT\'S INSIDE', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-info"
+					pageId="overview"
 				>
 					{
 						props.groupedKitContent.map( ( contentType ) => {

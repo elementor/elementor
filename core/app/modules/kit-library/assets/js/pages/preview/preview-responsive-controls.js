@@ -20,7 +20,21 @@ export default function PreviewResponsiveControls( props ) {
 						hideText={ true }
 						className={ className }
 						icon={ `eicon-device-${ value }` }
-						onClick={ () => props.onChange( value ) }
+						onClick={ () => {
+							elementorCommon.events.eventTracking(
+								'kit-library/responsive-controls',
+								{
+									placement: 'kit library',
+									event: 'top bar responsive views',
+								},
+								{
+									source: 'view-demo',
+									kit_name: props.kitName,
+									layout: value,
+								},
+							);
+							props.onChange( value );
+						} }
 					/>
 				);
 			} ) }

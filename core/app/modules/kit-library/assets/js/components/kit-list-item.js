@@ -8,7 +8,6 @@ import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
-
 	return (
 		<Card className="e-kit-library__kit-item">
 			<CardHeader>
@@ -20,7 +19,14 @@ const KitListItem = ( props ) => {
 				>
 					{ props.model.title }
 				</Heading>
-				<FavoritesActions id={ props.model.id } isFavorite={ props.model.isFavorite } />
+				<FavoritesActions
+					id={ props.model.id }
+					isFavorite={ props.model.isFavorite }
+					index={ props.index }
+					name={ props.model.title }
+					queryParams={ props.queryParams }
+					source={ props.source }
+				/>
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
@@ -41,6 +47,21 @@ const KitListItem = ( props ) => {
 								text={ __( 'View Demo', 'elementor' ) }
 								icon="eicon-preview-medium"
 								url={ `/kit-library/preview/${ props.model.id }` }
+								onClick={ () => {
+									elementorCommon.events.eventTracking(
+										'kit-library/check-out-kit',
+										{
+											placement: 'kit library',
+											event: 'view kit demo',
+										},
+										{
+											source: '/' === props.source ? 'home page' : 'overview',
+											kit_name: props.model.title,
+											grid_location: props.index,
+											search_term: props.queryParams,
+										},
+									)
+								} }
 							/>
 							{
 								type === TYPE_PROMOTION && subscriptionPlan?.label && <Button

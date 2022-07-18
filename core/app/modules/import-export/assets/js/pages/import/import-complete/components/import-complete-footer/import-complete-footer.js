@@ -3,7 +3,7 @@ import Button from 'elementor-app/ui/molecules/button';
 
 import useImportActions from '../../../hooks/use-import-actions';
 
-export default function ImportCompleteFooter( { seeItLiveUrl } ) {
+export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 	const { closeApp } = useImportActions();
 	return (
 		<ActionsFooter>
@@ -12,7 +12,21 @@ export default function ImportCompleteFooter( { seeItLiveUrl } ) {
 				<Button
 					text={ __( 'See it live', 'elementor' ) }
 					variant="contained"
-					onClick={ () => window.open( seeItLiveUrl, '_blank' ) }
+					onClick={ () => {
+						if ( 'kit-library' === referrer ) {
+							elementorCommon.events.eventTracking(
+								'kit-library/see-it-live',
+								{
+									placement: 'kit library',
+									event: 'see it live button',
+								},
+								{
+									source: 'kit is live',
+								},
+							);
+						}
+						window.open( seeItLiveUrl, '_blank' )
+					} }
 				/>
 			}
 
@@ -20,7 +34,21 @@ export default function ImportCompleteFooter( { seeItLiveUrl } ) {
 				text={ __( 'Close', 'elementor' ) }
 				variant="contained"
 				color="primary"
-				onClick={ closeApp }
+				onClick={ () => {
+					if ( 'kit-library' === referrer ) {
+						elementorCommon.events.eventTracking(
+							'kit-library/close',
+							{
+								placement: 'kit library',
+								event: 'close button',
+							},
+							{
+								source: 'kit is live',
+							},
+						);
+					}
+					closeApp();
+				} }
 			/>
 		</ActionsFooter>
 	);

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
+import { eventTrackingObject } from 'elementor-app/consts/consts';
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
@@ -29,13 +30,30 @@ export default function ImportKit() {
 			setErrorType( null );
 			setIsLoading( false );
 			kitActions.reset();
-		},
-		getLearnMoreLink = () => (
+		};
+		function eventTrack( trackName, event ) {
+			const eventParams = {
+				...eventTrackingObject,
+				placement: 'kit library',
+				event,
+				version: 'event_version',
+				details: {
+					...eventTrackingObject.details,
+					source: 'import',
+					step: '1',
+				},
+			};
+
+			$e.run( trackName, eventParams );
+		}
+		const getLearnMoreLink = () => (
 			<InlineLink
 				url="https://go.elementor.com/app-what-are-kits"
 				key="learn-more-link"
 				italic
-				eventTrack={ () => $e.run( 'kit-library/seek-more-info' ) }
+				eventTrack={ eventTrack }
+				trackingParams={ { trackName: 'kit-library/seek-more-info', event: 'learn more' } }
+				// EventTrack="kit-library/seek-more-info" // TODO: Add condition so it will fire only on kit library referral
 			>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
@@ -56,8 +74,10 @@ export default function ImportKit() {
 	// Listening to kit upload state.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
+			console.log( 'file uploaded' );
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 		} else if ( 'error' === kitState.status ) {
+			console.log( 'file error' );
 			setErrorType( kitState.data );
 		}
 	}, [ kitState.status ] );

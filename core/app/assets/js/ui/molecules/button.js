@@ -18,7 +18,6 @@ export default class Button extends React.Component {
 		target: PropTypes.string,
 		rel: PropTypes.string,
 		elRef: PropTypes.object,
-		eventTrack: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -82,7 +81,6 @@ export default class Button extends React.Component {
 	}
 
 	render() {
-		// {console.log('button: ', this.props)}
 		const attributes = {},
 			id = this.getCssId(),
 			className = this.getClassName();

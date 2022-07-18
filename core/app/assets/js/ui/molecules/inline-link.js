@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
 
@@ -29,16 +28,21 @@ export default function InlineLink( props ) {
 				</Link>
 			</LocationProvider>
 		),
-		getExternalLink = () => (
+		getExternalLink = () => {
+		return (
 			<a
 				href={ props.url }
 				target={ props.target }
 				rel={ props.rel }
 				className={ className }
+				onClick={ () => {
+					return 'undefined' !== typeof ( props.eventTrack ) ? props.eventTrack( props.trackingParams?.trackName, props.trackingParams?.event, props.trackingParams?.details ) : null;
+				} }
 			>
 				{ props.children }
 			</a>
-		),
+		)
+},
 		getActionLink = () => (
 			<button className={ className } onClick={ props.onClick }>
 				{ props.children }

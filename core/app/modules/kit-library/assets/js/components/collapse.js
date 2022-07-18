@@ -7,7 +7,25 @@ export default function Collapse( props ) {
 			className={ `eps-collapse ${ props.className }` }
 			data-open={ props.isOpen || undefined /* Set `undefined` when 'isOpen' equals `false` to avoid showing the attr "data-open" */ }
 		>
-			<button className="eps-collapse__title" onClick={ () => props.onChange( ( value ) => ! value ) }>
+			<button
+				className="eps-collapse__title"
+				onClick={ () => props.onChange( ( value ) => {
+					elementorCommon.events.eventTracking(
+						`kit-library/${ ( ! value ) ? 'expand' : 'collapse' }`,
+						{
+							placement: 'kit library',
+							event: 'sidebar section interaction',
+						},
+						{
+							source: props.pageId || 'home page',
+							section: props.title || null,
+							category: props.category || null,
+							action: ( ! value ) ? 'expand' : 'collapse',
+						},
+					);
+					return ! value
+				} ) }
+			>
 				<span>{ props.title }</span>
 				<i className="eicon-chevron-right eps-collapse__icon" />
 			</button>

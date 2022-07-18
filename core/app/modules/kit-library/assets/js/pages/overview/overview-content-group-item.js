@@ -22,6 +22,21 @@ export default function OverviewContentGroupItem( props ) {
 							text={ __( 'View Demo', 'elementor' ) }
 							icon="eicon-preview-medium"
 							url={ `/kit-library/preview/${ props.kitId }?document_id=${ props.document.id }` }
+							onClick={ () => {
+								elementorCommon.events.eventTracking(
+									'kit-library/kit-part-view-demo',
+									{
+										placement: 'kit library',
+										event: 'view demo part',
+									},
+									{
+										source: 'overview',
+										kit_name: props.kitTitle,
+										document_name: `${ props.groupData.label }-${ props.document.title }`,
+										document_type: props.groupData.id,
+									},
+								)
+							} }
 						/>
 					</CardOverlay> }
 				</CardImage>

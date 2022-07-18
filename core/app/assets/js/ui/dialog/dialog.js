@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import DialogWrapper from './dialog-wrapper';
 import DialogContent from './dialog-content';
 import DialogTitle from './dialog-title';
@@ -8,29 +9,72 @@ import DialogButton from './dialog-button';
 import './dialog.scss';
 
 export default function Dialog( props ) {
-	{ console.log( 'props: ', props ) }
-	const eventTrack = ( action ) => {
-		$e.run( action );
-	},
-	dismissButtonOnClick = () => {
+	const dismissButtonOnClick = () => {
 		if ( 'kit-library' === props.referrer ) {
-			eventTrack( 'kit-library/skip' );
+			elementorCommon.events.eventTracking(
+				'kit-library/skip',
+				{
+					placement: 'kit library',
+					event: 'unfiltered file modal skip button',
+				},
+				{
+					source: 'import',
+					step: '3',
+					event_type: 'load',
+				},
+			)
 		}
 		props.dismissButtonOnClick();
 	},
 	approveButtonOnClick = () => {
 		if ( 'kit-library' === props.referrer ) {
-			eventTrack( 'kit-library/enable' );
+			elementorCommon.events.eventTracking(
+				'kit-library/enable',
+				{
+					placement: 'kit library',
+					event: 'unfiltered file modal enable button',
+				},
+				{
+					source: 'import',
+					step: '3',
+				},
+			)
 		}
 		props.approveButtonOnClick();
 	},
 	onClose = () => {
 		if ( 'kit-library' === props.referrer ) {
-			eventTrack( 'kit-library/close' );
+			elementorCommon.events.eventTracking(
+				'kit-library/close',
+				{
+					placement: 'kit library',
+					event: 'unfiltered file modal close',
+				},
+				{
+					source: 'import',
+					step: '3',
+				},
+			)
 		}
 		props.onClose();
-	}
+	};
 
+	useEffect( () => {
+		if ( 'kit-library' === props.referrer ) {
+			elementorCommon.events.eventTracking(
+				'kit-library/unfiltered-file-modal-load',
+				{
+					placement: 'kit library',
+					event: 'unfiltered file modal load',
+				},
+				{
+					source: 'import',
+					step: '3',
+					event_type: 'load',
+				},
+			)
+		}
+	}, [] )
 	return (
 		<DialogWrapper onSubmit={ props.onSubmit } onClose={ onClose }>
 			<DialogContent>

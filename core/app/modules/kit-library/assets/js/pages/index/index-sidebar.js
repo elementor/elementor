@@ -11,6 +11,18 @@ export default function IndexSidebar( props ) {
 						className={ `eps-menu-item__link ${ item.isActive ? 'eps-menu-item--active' : '' }` }
 						icon={ item.icon }
 						url={ item.url }
+						onClick={ () => {
+							elementorCommon.events.eventTracking(
+								item.trackEventData.action,
+								{
+									placement: 'kit library',
+									event: item.trackEventData.event,
+								},
+								{
+									source: 'home page',
+								},
+							);
+						} }
 					/>
 				) )
 			}
@@ -26,5 +38,6 @@ IndexSidebar.propTypes = {
 		icon: PropTypes.string,
 		isActive: PropTypes.bool,
 		url: PropTypes.string,
+		onClick: PropTypes.func,
 	} ) ),
 };

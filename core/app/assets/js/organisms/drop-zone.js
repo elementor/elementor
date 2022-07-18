@@ -14,7 +14,6 @@ export default function DropZone( props ) {
 		onDrop: ( event ) => {
 			if ( ! props.isLoading ) {
 				const file = event.dataTransfer.files[ 0 ];
-
 				if ( file && isOneOf( file.type, props.filetypes ) ) {
 					props.onFileSelect( file, event, 'drop' );
 				} else {

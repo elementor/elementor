@@ -10,11 +10,26 @@ const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 const TaxonomiesFilterList = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( props.taxonomiesByType.isOpenByDefault );
 	const [ search, setSearch ] = useState( '' );
-
+	const category = ( '/' === props.category ? 'all kits' : 'favorites' );
 	const taxonomies = useMemo( () => {
 		if ( ! search ) {
 			return props.taxonomiesByType.data;
 		}
+
+		// TODO: debounce
+		elementorCommon.events.eventTracking(
+			'kit-library/checkbox-filtration',
+			{
+				placement: 'kit library',
+				event: 'sidebar section filters search',
+			},
+			{
+				source: 'home page',
+				category,
+				section: props.taxonomiesByType.label,
+				search_term: search || null,
+				event_type: 'search',
+			} );
 
 		const lowerCaseSearch = search.toLowerCase();
 
@@ -22,6 +37,9 @@ const TaxonomiesFilterList = ( props ) => {
 			( tag ) => tag.text.toLowerCase().includes( lowerCaseSearch ),
 		);
 	}, [ props.taxonomiesByType.data, search ] );
+		if ( props.onOpen ) {
+			props.onOpen( isOpen );
+		}
 
 	return (
 		<Collapse
@@ -29,6 +47,7 @@ const TaxonomiesFilterList = ( props ) => {
 			title={ props.taxonomiesByType.label }
 			isOpen={ isOpen }
 			onChange={ setIsOpen }
+			category={ category }
 		>
 			{
 				props.taxonomiesByType.data.length >= MIN_TAGS_LENGTH_FOR_SEARCH_INPUT &&
@@ -51,6 +70,35 @@ const TaxonomiesFilterList = ( props ) => {
 								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
+									if ( checked ) {
+										elementorCommon.events.eventTracking(
+											'kit-library/checking-a-checkbox',
+											{
+												placement: 'kit library',
+												event: 'sidebar section filters interaction',
+											},
+											{
+											source: 'home page',
+											category,
+											section: taxonomy.type,
+											action: 'check',
+											item: taxonomy.text,
+										} );
+									} else {
+										elementorCommon.events.eventTracking(
+											'kit-library/checking-a-checkbox',
+											{
+												placement: 'kit library',
+												event: 'sidebar section filters interaction',
+											},
+											{
+												source: 'home page',
+												category,
+												section: taxonomy.type,
+												action: 'unchecking-a-checkbox',
+												item: taxonomy.text,
+											} );
+									}
 
 									props.onSelect( taxonomy.type, ( prev ) => {
 										return checked

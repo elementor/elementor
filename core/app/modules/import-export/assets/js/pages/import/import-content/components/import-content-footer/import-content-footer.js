@@ -34,7 +34,17 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 						onResetProcess();
 					}
 					if ( 'kit-library' === referrer ) {
-						eventTrack( 'kit-library/go-back' );
+						elementorCommon.events.eventTracking(
+							'kit-library/go-back',
+							{
+								placement: 'kit library',
+								event: 'previous button',
+							},
+							{
+								source: 'import',
+								step: '2',
+							},
+						)
 					}
 				} }
 			/>
@@ -45,7 +55,17 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				color={ isImportAllowed ? 'primary' : 'disabled' }
 				onClick={ () => {
 					if ( 'kit-library' === referrer ) {
-						eventTrack( 'kit-library/approve-import' );
+						elementorCommon.events.eventTracking(
+							'kit-library/approve-import',
+							{
+								placement: 'kit library',
+								event: 'approve import',
+							},
+							{
+								source: 'import',
+								step: '2',
+							},
+						)
 					}
 					return isImportAllowed && navigate( getNextPageUrl() );
 				} }

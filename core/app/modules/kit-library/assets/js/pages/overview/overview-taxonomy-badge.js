@@ -24,7 +24,23 @@ export default function OverviewTaxonomyBadge( props ) {
 	}
 
 	return (
-		<Link to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }>
+		<Link
+			onClick={ () => {
+				elementorCommon.events.eventTracking(
+					'kit-library/clicking-on-a-tag',
+					{
+						placement: 'kit library',
+						event: 'overview sidebar tag select',
+					},
+					{
+						source: 'overview',
+						kit_name: props.kitName,
+						tag: taxonomyText,
+					},
+				);
+			} }
+			to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }
+		>
 			<Badge>
 				{ props.children }
 			</Badge>

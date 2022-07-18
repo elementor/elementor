@@ -12,10 +12,7 @@ export default function ImportPluginsFooter() {
 	const importContext = useContext( ImportContext ),
 	 	sharedContext = useContext( SharedContext ),
 		{ referrer } = sharedContext.data,
-		{ navigateToMainScreen } = useImportActions(),
-		eventTrack = ( action ) => {
-			$e.run( action );
-		};
+		{ navigateToMainScreen } = useImportActions();
 	return (
 		<ActionsFooter>
 			<Button
@@ -24,7 +21,17 @@ export default function ImportPluginsFooter() {
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
 					if ( 'kit-library' === referrer ) {
-						eventTrack( 'kit-library/go-back' );
+						elementorCommon.events.eventTracking(
+							'kit-library/go-back',
+							{
+								placement: 'kit library',
+								event: 'previous button',
+							},
+							{
+								source: 'import',
+								step: '3',
+							},
+						)
 					}
 					navigateToMainScreen();
 				} }
@@ -37,7 +44,17 @@ export default function ImportPluginsFooter() {
 				url="/import/content"
 				onClick={ () => {
 					if ( 'kit-library' === referrer ) {
-						eventTrack( 'kit-library/approve-selection' );
+						elementorCommon.events.eventTracking(
+							'kit-library/approve-selection',
+							{
+								placement: 'kit library',
+								event: 'next button',
+							},
+							{
+								source: 'import',
+								step: '3',
+							},
+						)
 					}
 				} }
 			/>

@@ -28,6 +28,10 @@ export default function TaxonomiesFilter( props ) {
 						taxonomiesByType={ group }
 						selected={ props.selected }
 						onSelect={ props.onSelect }
+						onOpen={ ( onOpen ) => {
+							console.log( onOpen );
+						} }
+						category={ props.category }
 					/>
 				) )
 			}
@@ -39,4 +43,5 @@ TaxonomiesFilter.propTypes = {
 	selected: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 	onSelect: PropTypes.func,
 	taxonomies: PropTypes.arrayOf( PropTypes.instanceOf( Taxonomy ) ),
+	category: PropTypes.string,
 };

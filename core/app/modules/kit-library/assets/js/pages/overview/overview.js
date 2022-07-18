@@ -12,7 +12,7 @@ import { useNavigate } from '@reach/router';
 
 import './overview.scss';
 
-function useHeaderButtons( id ) {
+function useHeaderButtons( id, kitName ) {
 	const navigate = useNavigate();
 
 	return useMemo( () => [
@@ -23,7 +23,21 @@ function useHeaderButtons( id ) {
 			variant: 'outlined',
 			color: 'secondary',
 			size: 'sm',
-			onClick: () => navigate( `/kit-library/preview/${ id }` ),
+			onClick: () => {
+				elementorCommon.events.eventTracking(
+					'kit-library/check-out-kit',
+					{
+						placement: 'kit library',
+						event: 'top bar change view type',
+					},
+					{
+						source: 'view demo',
+						kit_name: kitName,
+						view_type_clicked: 'demo',
+					},
+				)
+				navigate( `/kit-library/preview/${ id }` )
+			},
 			includeHeaderBtnClass: false,
 		},
 	], [ id ] );
@@ -32,7 +46,7 @@ function useHeaderButtons( id ) {
 export default function Overview( props ) {
 	const { data: kit, isError, isLoading } = useKit( props.id );
 	const { data: documentsByType } = useKitDocumentByType( kit );
-	const headerButtons = useHeaderButtons( props.id );
+	const headerButtons = useHeaderButtons( props.id, kit && kit.title );
 
 	usePageTitle( {
 		title: kit
@@ -64,6 +78,7 @@ export default function Overview( props ) {
 								key={ contentType.id }
 								contentType={ contentType }
 								kitId={ props.id }
+								kitTitle={ kit.title }
 							/>
 						) )
 					}

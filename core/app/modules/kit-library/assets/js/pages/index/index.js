@@ -59,19 +59,20 @@ function useTaxonomiesSelection( setQueryParams ) {
 function useMenuItems( path ) {
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
-
 		return [
 			{
 				label: __( 'All Template Kits', 'elementor' ),
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
+				trackEventData: { action: 'kit-library/select-organizing-category', event: 'all templates sidebar category' },
 			},
 			{
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
 				isActive: 'favorites' === page,
 				url: '/kit-library/favorites',
+				trackEventData: { action: 'kit-library/select-organizing-category', event: 'favorites sidebar category' },
 			},
 		];
 	}, [ path ] );
@@ -170,6 +171,7 @@ export default function Index( props ) {
 						selected={ queryParams.taxonomies }
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
+						category={ props.path }
 					/> }
 					menuItems={ menuItems }
 				/>
@@ -230,7 +232,7 @@ export default function Index( props ) {
 								} }
 							/>
 						}
-						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } /> }
+						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } queryParams={ queryParams } source={ props.path } /> }
 						{
 							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
 								defaultComponent: <ErrorScreen
@@ -239,12 +241,13 @@ export default function Index( props ) {
 									button={ {
 										text: __( 'Continue browsing.', 'elementor' ),
 										action: clearQueryParams,
+										category: props.path,
 									} }
 								/>,
 								isFilterActive,
 							} )
 						}
-						<EnvatoPromotion />
+						<EnvatoPromotion category={ props.path } />
 					</>
 				</Content>
 			</div>

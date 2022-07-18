@@ -21,6 +21,7 @@ export default function InfoModal( props ) {
 			setShow: props.setShow,
 			onOpen: props.onOpen,
 			onClose: props.onClose,
+			referrer: props.referrer,
 		};
 
 	if ( Object.prototype.hasOwnProperty.call( props, 'show' ) ) {

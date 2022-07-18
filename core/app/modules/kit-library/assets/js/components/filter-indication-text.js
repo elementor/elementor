@@ -7,7 +7,6 @@ import './filter-indication-text.scss';
 
 export default function FilterIndicationText( props ) {
 	const selectedTaxonomies = useSelectedTaxonomies( props.queryParams.taxonomies );
-
 	return (
 		<Grid container className="e-kit-library__filter-indication">
 			<Text className="e-kit-library__filter-indication-text">
@@ -27,7 +26,20 @@ export default function FilterIndicationText( props ) {
 									hideText={ true }
 									icon="eicon-editor-close"
 									className="e-kit-library__filter-indication-badge-remove"
-									onClick={ () => props.onRemoveTag( taxonomy ) }
+									onClick={ () => {
+										elementorCommon.events.eventTracking(
+											'kit-library/clear-filter',
+											{
+												placement: 'kit library',
+												event: 'remove filter tag',
+											},
+											{
+												source: 'home page',
+												tag: taxonomy,
+											},
+										)
+										props.onRemoveTag( taxonomy )
+									} }
 								/>
 							</Badge>
 						) ) }
@@ -39,7 +51,20 @@ export default function FilterIndicationText( props ) {
 				className="e-kit-library__filter-indication-button"
 				text={ __( 'Clear all', 'elementor' ) }
 				variant="underlined"
-				onClick={ props.onClear }
+				onClick={ () => {
+					elementorCommon.events.eventTracking(
+						'kit-library/clear-filter',
+						{
+							placement: 'kit library',
+							event: 'remove filter tag',
+						},
+						{
+							source: 'home page',
+							tag: 'all',
+						},
+					);
+					props.onClear();
+				} }
 			/>
 		</Grid>
 	);
