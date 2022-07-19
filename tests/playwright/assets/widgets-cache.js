@@ -1,3 +1,4 @@
+// Copied from `elementor.widgetsCache`.
 module.exports = {
 	heading: {
 		controls: {
