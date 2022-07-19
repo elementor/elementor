@@ -43,7 +43,7 @@ const InfoButton = ( props ) => {
 
 				{
 					<>
-							{ VideoSection }
+						{ VideoSection }
 					</>
 				}
 			</CssGrid>
