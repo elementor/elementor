@@ -151,7 +151,7 @@ export default class SiteEditor {
 				icon: 'eicon-loop-builder',
 				title: __( 'Loop', 'elementor' ),
 				urls: {
-					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/loop.svg',
+					thumbnail: elementorAppConfig.assets_url + 'images/app/site-editor/loop.svg',
 				},
 				tooltip_data: {
 					title: __( 'What is a loop?', 'elementor' ),
