@@ -10,26 +10,8 @@ export default function KitContentCheckbox( props ) {
 		setIncludes = ( event ) => {
 			const isChecked = event.target.checked,
 			actionType = isChecked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
-			if ( 'kit-library' === props.referrer ) {
-				elementorCommon.events.eventTracking(
-					'kit-library/choose-site-parts-to-import',
-					{
-						placement: 'kit library',
-						event: 'kit parts selection',
-					},
-					{
-						source: 'import',
-						step: '2',
-						action: event.target.checked ? 'check' : 'uncheck',
-						site_part: props.type,
-					},
-				);
-			}
-
-			switch ( props.type ) {
-				case 'settings':
-					props.onCheck();
-				break;
+			if ( 'kit-library' === props.referrer && props.onCheck ) {
+				props.onCheck( event, props.type );
 			}
 
 			sharedContext.dispatch( { type: actionType, payload: props.type } );

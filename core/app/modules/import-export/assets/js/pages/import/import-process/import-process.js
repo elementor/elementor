@@ -57,7 +57,19 @@ export default function ImportProcess() {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
 			navigateToMainScreen();
-		};
+		},
+		eventTracking = ( action, event, source, step, eventType = null ) => elementorCommon.events.eventTracking(
+		`kit-library/${ action }`,
+		{
+			placement: 'kit library',
+			event,
+		},
+		{
+			source,
+			step,
+			event_type: eventType,
+		},
+	);
 
 	// On load.
 	useEffect( () => {
@@ -173,6 +185,13 @@ export default function ImportProcess() {
 						onCancelProcess();
 					} }
 					referrer={ sharedContext.data.referrer }
+					onDIsmiss={ () => {
+						console.log( 'Cancelled', importContext.data.referrer );
+						console.log( 'referrer', referrer );
+						if ( 'kit-library' === importContext.data.referrer ) {
+							eventTracking( 'skip', 'unfiltered file modal skip button', 'import', '3', 'load' );
+						}
+					} }
 				/>
 			</section>
 		</Layout>

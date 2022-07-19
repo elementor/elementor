@@ -8,7 +8,7 @@ import Button from 'elementor-app/ui/molecules/button';
 
 import useImportActions from '../../../hooks/use-import-actions';
 
-export default function ImportPluginsFooter() {
+export default function ImportPluginsFooter( props ) {
 	const importContext = useContext( ImportContext ),
 	 	sharedContext = useContext( SharedContext ),
 		{ referrer } = sharedContext.data,
@@ -20,18 +20,8 @@ export default function ImportPluginsFooter() {
 				variant="contained"
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
-					if ( 'kit-library' === referrer ) {
-						elementorCommon.events.eventTracking(
-							'kit-library/go-back',
-							{
-								placement: 'kit library',
-								event: 'previous button',
-							},
-							{
-								source: 'import',
-								step: '3',
-							},
-						)
+					if ( 'kit-library' === referrer && props.goBack ) {
+						props.goBack();
 					}
 					navigateToMainScreen();
 				} }
@@ -43,18 +33,8 @@ export default function ImportPluginsFooter() {
 				color="primary"
 				url="/import/content"
 				onClick={ () => {
-					if ( 'kit-library' === referrer ) {
-						elementorCommon.events.eventTracking(
-							'kit-library/approve-selection',
-							{
-								placement: 'kit library',
-								event: 'next button',
-							},
-							{
-								source: 'import',
-								step: '3',
-							},
-						)
+					if ( 'kit-library' === referrer && props.approveSelection ) {
+						props.approveSelection();
 					}
 				} }
 			/>

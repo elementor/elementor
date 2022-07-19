@@ -194,6 +194,19 @@ export default function Index( props ) {
 							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
+							onSearchEvent={ () => {
+								$e.run(
+									'kit-library/kit-free-search',
+									{
+										search_term: queryParams.search,
+									},
+									{
+										meta: {
+											source: 'home page',
+										},
+									},
+								);
+							} }
 						/>
 						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
@@ -247,7 +260,9 @@ export default function Index( props ) {
 								isFilterActive,
 							} )
 						}
-						<EnvatoPromotion category={ props.path } />
+						<EnvatoPromotion
+							category={ props.path }
+						/>
 					</>
 				</Content>
 			</div>
@@ -265,3 +280,18 @@ Index.defaultProps = {
 	initialQueryParams: {},
 	renderNoResultsComponent: ( { defaultComponent } ) => defaultComponent,
 };
+
+$e.run(
+	'kit-library/sidebar-free-search',
+	{
+		search_term: queryParams.search,
+		category: 'all kits' / 'favorites',
+		section: { section },
+	}, {
+		meta: {
+			source: 'home page',
+			event_type: 'search',
+			event: 'sidebar section filters search',
+		},
+	},
+);

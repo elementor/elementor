@@ -61,7 +61,28 @@ export default function Conflict( props ) {
 
 	return (
 		<Grid container noWrap>
-			<ConflictCheckbox id={ props.importedId } type="main-type" className="e-app-import-resolver-conflicts__checkbox" title={ props.conflictData.template_title }/>
+			<ConflictCheckbox
+				id={ props.importedId }
+				type="main-type"
+				className="e-app-import-resolver-conflicts__checkbox"
+				title={ props.conflictData.template_title }
+				referrer={ referrer }
+				onCheck={ ( event, title ) => {
+					elementorCommon.events.eventTracking(
+					'kit-library/' + ( event.target.checked ? 'check' : 'uncheck' ),
+						{
+							placement: 'kit library',
+							event: 'kit parts conflict',
+						},
+						{
+							source: 'import',
+							step: '3',
+							action: event.target.checked ? 'check' : 'uncheck',
+							site_part: title,
+						},
+					);
+				} }
+			/>
 
 			<Grid item>
 				<Heading variant="h5" tag="h4" className="e-app-import-resolver-conflicts__title">

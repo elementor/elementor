@@ -21,7 +21,7 @@ import './item-header.scss';
  * @param {boolean}  root0.isApplyLoading
  * @return {Object} result
  */
-function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onConnect } ) {
+function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onConnect, eventTracking } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -62,21 +62,9 @@ function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onCon
 			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
 			onClick: isApplyLoading ? null : apply,
-			// onClick: () => {
-			// 	// TODO: Check what is wrong here
-			// 	elementorCommon.events.eventTracking(
-			// 		'kit-library/apply-kit',
-			// 		{
-			// 			placement: 'kit library',
-			// 			event: 'top bar apply kit',
-			// 		},
-			// 		{
-			// 			source: pageId,
-			// 			kit_name: model.title,
-			// 			view_type_clicked: pageId,
-			// 		},
-			// 	),
-			// 		isApplyLoading ? null : apply
+			// onClick: {
+			// 	function: eventTracking,
+			// 	isApplyLoading: isApplyLoading ? null : apply,
 			// },
 			includeHeaderBtnClass: false,
 		};
@@ -121,6 +109,20 @@ export default function ItemHeader( props ) {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		apply,
 		isApplyLoading,
+		eventTracking: () => {
+			elementorCommon.events.eventTracking(
+				'kit-library/apply-kit',
+				{
+					placement: 'kit library',
+					event: 'top bar apply kit',
+				},
+				{
+					source: props.pageId,
+					kit_name: props.model.title,
+					view_type_clicked: props.pageId,
+				},
+			);
+		},
 	} );
 
 	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );

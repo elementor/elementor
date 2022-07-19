@@ -100,7 +100,7 @@ export const Modal = ( props ) => {
 
 			// TODO: distinguish event type on modal close: overlay or close button
 			if ( props.onClose ) {
-				props.onClose();
+				props.onClose( e );
 			}
 		};
 

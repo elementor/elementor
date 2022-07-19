@@ -10,36 +10,24 @@ import './dialog.scss';
 
 export default function Dialog( props ) {
 	const dismissButtonOnClick = () => {
-		if ( 'kit-library' === props.referrer ) {
-			elementorCommon.events.eventTracking(
-				'kit-library/skip',
-				{
-					placement: 'kit library',
-					event: 'unfiltered file modal skip button',
-				},
-				{
-					source: 'import',
-					step: '3',
-					event_type: 'load',
-				},
-			)
-		}
 		props.dismissButtonOnClick();
 	},
 	approveButtonOnClick = () => {
-		if ( 'kit-library' === props.referrer ) {
-			elementorCommon.events.eventTracking(
-				'kit-library/enable',
-				{
-					placement: 'kit library',
-					event: 'unfiltered file modal enable button',
-				},
-				{
-					source: 'import',
-					step: '3',
-				},
-			)
-		}
+		// if ( 'kit-library' === props.referrer ) {
+		// 	elementorCommon.events.eventTracking(
+		// 		'kit-library/enable',
+		// 		{
+		// 			placement: 'kit library',
+		// 			event: 'unfiltered file modal enable button',
+		// 		},
+		// 		{
+		// 			source: 'import',
+		// 			step: '3',
+		// 		},
+		// 	)
+		// }
+
+		// TODO: Not shooting onDismiss from import-proccess.js
 		props.approveButtonOnClick();
 	},
 	onClose = () => {

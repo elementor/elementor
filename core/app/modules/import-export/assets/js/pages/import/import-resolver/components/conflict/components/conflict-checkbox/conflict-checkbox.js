@@ -6,25 +6,13 @@ import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function ConflictCheckbox( props ) {
 	const importContext = useContext( ImportContext ),
-		{ referrer } = importContext.data,
 		isSelected = () => importContext.data.overrideConditions.includes( props.id ),
 		updateOverrideCondition = ( event ) => {
 			const isChecked = event.target.checked,
 				actionType = isChecked ? 'ADD_OVERRIDE_CONDITION' : 'REMOVE_OVERRIDE_CONDITION';
-			if ( 'kit-library' === referrer ) {
-				elementorCommon.events.eventTracking(
-					'kit-library/choose-to-import-conflicting-parts-and-replace-existing',
-					{
-						placement: 'kit library',
-						event: 'kit parts conflict',
-					},
-					{
-						source: 'import',
-						step: '3',
-						action: event.target.checked ? 'check' : 'uncheck',
-						site_part: props.title,
-					},
-				)
+			console.log( 'referrer: ', props.referrer );
+			if ( props.onCheck ) {
+				props.onCheck( event, props.title );
 			}
 
 			importContext.dispatch( { type: actionType, payload: props.id } );
@@ -48,6 +36,8 @@ export default function ConflictCheckbox( props ) {
 ConflictCheckbox.propTypes = {
 	className: PropTypes.string,
 	id: PropTypes.number.isRequired,
+	referrer: PropTypes.string,
+	onCheck: PropTypes.func,
 };
 
 ConflictCheckbox.defaultProps = {

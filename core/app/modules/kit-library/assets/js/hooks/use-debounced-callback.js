@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react';
 
-export default function useDebouncedCallback( callback, wait ) {
+export default function useDebouncedCallback( callback, wait, searchEvent ) {
 	const timeout = useRef();
 
 	return useCallback(
@@ -9,17 +9,20 @@ export default function useDebouncedCallback( callback, wait ) {
 				clearTimeout( timeout.current );
 
 				callback( ...args );
-				elementorCommon.events.eventTracking(
-					'kit-library/kit-free-search',
-					{
-						placement: 'kit library',
-						event: 'search kit',
-					},
-					{
-						source: 'home page',
-						search_term: args[ 0 ],
-						event_type: 'search',
-					} );
+				if ( searchEvent ) {
+					searchEvent();
+				}
+				// elementorCommon.events.eventTracking(
+				// 	'kit-library/kit-free-search',
+				// 	{
+				// 		placement: 'kit library',
+				// 		event: 'search kit',
+				// 	},
+				// 	{
+				// 		source: 'home page',
+				// 		search_term: args[ 0 ],
+				// 		event_type: 'search',
+				// 	} );
 			};
 
 			clearTimeout( timeout.current );

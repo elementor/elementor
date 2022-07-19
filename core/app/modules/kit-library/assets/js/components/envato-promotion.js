@@ -3,7 +3,6 @@ import { Text, Button } from '@elementor/app-ui';
 import './envato-promotion.scss';
 
 export default function EnvatoPromotion( { category } ) {
-
 	return (
 		<Text className="e-kit-library-bottom-promotion" variant="xl">
 			{ __( 'Looking for more Kits?', 'elementor' ) } { ' ' }

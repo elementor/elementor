@@ -5,7 +5,6 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
-import { eventTrackingObject } from 'elementor-app/consts/consts';
 
 const messagesContent = {
 		general: {
@@ -27,28 +26,13 @@ const messagesContent = {
 	dialogTitle = __( 'Something went wrong.', 'elementor' ),
 	tryAgainText = __( 'Try Again', 'elementor' );
 
-export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton } ) {
+export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, isError, learnMoreEvent } ) {
 	const action = useAction(),
 		navigate = useNavigate(),
 		{ referrer } = useQueryParams().getAll(),
 		error = 'string' === typeof errorType && messagesContent[ errorType ] ? errorType : 'general',
 		{ text } = messagesContent[ error ],
 		isTryAgainAction = 'general' === error && onApprove,
-		eventTrack = ( trackName, event, eventType = 'click' ) => {
-			const eventParams = {
-				...eventTrackingObject,
-				placement: 'kit library',
-				event,
-				details: {
-					...eventTrackingObject.details,
-					source: 'import',
-					step: '1',
-					event_type: eventType,
-				},
-			};
-
-			$e.run( trackName, eventParams );
-		},
 		handleOnApprove = () => {
 			/*
 			* When the errorType is general, there should be an option to trigger the onApprove function.
@@ -60,23 +44,25 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 				window.open( 'https://elementor.com/help/how-to-fix-common-errors-with-import-export/', '_blank' );
 			}
 
-			if ( 'kit-library' === referrer ) {
-				eventTrack( 'kit-library/seek-more-info', 'error modal learn more' );
+			if ( 'kit-library' === referrer && learnMoreEvent) {
+				learnMoreEvent();
 			}
 		},
 		handleOnDismiss = () => {
 			if ( 'general' === error && onDismiss ) {
 				onDismiss();
-			} else if ( 'kit-library' === referrer ) {
+			} else if ( 'kit-library' === referrer && onModalClose ) {
+				onModalClose();
 				navigate( '/kit-library' );
-				eventTrack( 'kit-library/modal-close', 'error modal close' );
 			} else {
 				action.backToDashboard();
 			}
 		};
 
 		useEffect( () => {
-			eventTrack( 'kit-library/modal-error', 'error modal load' + error, 'load' );
+			if ( 'kit-library' === referrer && isError ) {
+				isError()
+			}
 		}, [] );
 	return (
 		<Dialog
@@ -98,6 +84,9 @@ ProcessFailedDialog.propTypes = {
 	errorType: PropTypes.string,
 	approveButton: PropTypes.string,
 	dismissButton: PropTypes.string,
+	onModalClose: PropTypes.func,
+	isError: PropTypes.func,
+	learnMoreEvent: PropTypes.func,
 };
 
 ProcessFailedDialog.defaultProps = {

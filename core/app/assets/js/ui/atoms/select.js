@@ -1,6 +1,17 @@
 export default function Select( props ) {
 	return (
-		<select multiple={ props.multiple } className={ props.className } value={ props.value } onChange={ props.onChange } ref={ props.elRef } onClick={ props.onClick } >
+		<select
+			multiple={ props.multiple }
+			className={ props.className }
+			value={ props.value }
+			onChange={ props.onChange }
+			ref={ props.elRef }
+			onClick={ () => {
+				if ( props.onClick ) {
+					props.onClick();
+				}
+			} }
+		>
 			{ props.options.map( ( option ) =>
 				option.children
 					? <optgroup label={ option.label } key={ option.label }>

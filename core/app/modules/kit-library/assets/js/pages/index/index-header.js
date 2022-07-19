@@ -100,8 +100,31 @@ export default function IndexHeader( props ) {
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) }
 				show={ isInfoModalOpen }
 				setShow={ setIsInfoModalOpen }
-				onOpen={ () => eventTrack( 'kit-library/modal-open', 'info modal load', 'load' ) }
-				onClose={ () => eventTrack( 'kit-library/modal-close', 'info modal close' ) }
+				onOpen={ () => elementorCommon.events.eventTracking(
+					'kit-library/modal-open',
+					{
+						placement: 'kit library',
+						event: 'info modal load',
+					},
+					{
+						source: 'home page',
+						event_type: 'load',
+					},
+				) }
+				onClose={ ( e ) => {
+					const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
+					elementorCommon.events.eventTracking(
+						'kit-library/modal-close',
+						{
+							placement: 'kit library',
+							event: 'overlay' === element ? 'background page' : 'info modal close',
+						},
+						{
+							source: 'home page',
+							element,
+						},
+					);
+				} }
 			>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s a kit?', 'elementor' ) }</Heading>
@@ -136,7 +159,6 @@ export default function IndexHeader( props ) {
 								} );
 								setIsInfoModalOpen( true );
 							} }
-							a="a test link"
 						/>{ ' ' }
 						{ __( 'about using templates', 'elementor' ) }
 					</Text>

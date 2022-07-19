@@ -4,7 +4,7 @@ import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 import { SharedContext } from 'elementor/core/app/modules/import-export/assets/js/context/shared-context/shared-context-provider';
 
-export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess } ) {
+export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess, goBack, approveImport } ) {
 	const sharedContext = useContext( SharedContext ),
 	{ referrer } = sharedContext.data,
 	navigate = useNavigate(),
@@ -17,11 +17,6 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 
 			return 'import/process';
 		};
-
-		const eventTrack = ( action ) => {
-			$e.run( action );
-		};
-
 	return (
 		<ActionsFooter>
 			<Button
@@ -33,18 +28,8 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 					} else {
 						onResetProcess();
 					}
-					if ( 'kit-library' === referrer ) {
-						elementorCommon.events.eventTracking(
-							'kit-library/go-back',
-							{
-								placement: 'kit library',
-								event: 'previous button',
-							},
-							{
-								source: 'import',
-								step: '2',
-							},
-						)
+					if ( 'kit-library' === referrer && goBack ) {
+						goBack();
 					}
 				} }
 			/>
@@ -54,18 +39,8 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				text={ __( 'Import', 'elementor' ) }
 				color={ isImportAllowed ? 'primary' : 'disabled' }
 				onClick={ () => {
-					if ( 'kit-library' === referrer ) {
-						elementorCommon.events.eventTracking(
-							'kit-library/approve-import',
-							{
-								placement: 'kit library',
-								event: 'approve import',
-							},
-							{
-								source: 'import',
-								step: '2',
-							},
-						)
+					if ( 'kit-library' === referrer && approveImport ) {
+						approveImport();
 					}
 					return isImportAllowed && navigate( getNextPageUrl() );
 				} }

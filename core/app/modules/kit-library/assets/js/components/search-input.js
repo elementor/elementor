@@ -6,7 +6,7 @@ import './search-input.scss';
 
 export default function SearchInput( props ) {
 	const [ localValue, setLocalValue ] = useState( props.value || '' );
-	const debouncedOnChange = useDebouncedCallback( ( value ) => props.onChange( value ), props.debounceTimeout );
+	const debouncedOnChange = useDebouncedCallback( ( value ) => props.onChange( value ), props.debounceTimeout, props.onSearchEvent );
 
 	useEffect( () => {
 		if ( props.value !== localValue ) {

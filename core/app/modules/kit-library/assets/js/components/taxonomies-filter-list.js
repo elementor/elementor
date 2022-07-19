@@ -15,21 +15,9 @@ const TaxonomiesFilterList = ( props ) => {
 		if ( ! search ) {
 			return props.taxonomiesByType.data;
 		}
-
-		// TODO: debounce
-		elementorCommon.events.eventTracking(
-			'kit-library/checkbox-filtration',
-			{
-				placement: 'kit library',
-				event: 'sidebar section filters search',
-			},
-			{
-				source: 'home page',
-				category,
-				section: props.taxonomiesByType.label,
-				search_term: search || null,
-				event_type: 'search',
-			} );
+		// if ( props.onSearchEvent ) {
+		// 	props.onSearchEvent( search, category );
+		// }
 
 		const lowerCaseSearch = search.toLowerCase();
 
@@ -38,7 +26,7 @@ const TaxonomiesFilterList = ( props ) => {
 		);
 	}, [ props.taxonomiesByType.data, search ] );
 		if ( props.onOpen ) {
-			props.onOpen( isOpen );
+			props.onOpen( isOpen, props.taxonomiesByType.label );
 		}
 
 	return (
@@ -46,9 +34,12 @@ const TaxonomiesFilterList = ( props ) => {
 			className="e-kit-library__tags-filter-list"
 			title={ props.taxonomiesByType.label }
 			isOpen={ isOpen }
-			onChange={ setIsOpen }
+			onChange={ () => {
+				setIsOpen( ! isOpen );
+			} }
 			category={ category }
 		>
+			{ console.log( 'search', search ) }
 			{
 				props.taxonomiesByType.data.length >= MIN_TAGS_LENGTH_FOR_SEARCH_INPUT &&
 					<SearchInput
@@ -58,6 +49,7 @@ const TaxonomiesFilterList = ( props ) => {
 						placeholder={ sprintf( __( 'Search %s...', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
+						onSearchEvent={ () => props.onSearchEvent( search, category ) }
 					/>
 			}
 			<div className="e-kit-library__tags-filter-list-container">

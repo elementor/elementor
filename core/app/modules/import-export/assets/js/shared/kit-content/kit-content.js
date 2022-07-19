@@ -57,8 +57,19 @@ export default function KitContent( { contentData, hasPro } ) {
 											type={ type }
 											className="e-app-export-kit-content__checkbox"
 											referrer={ referrer }
-											onCheck={ () => $e.run( 'kit-library/check' ) }
-											onUncheck={ () => $e.run( 'kit-library/uncheck' ) }
+											onCheck={ ( event, chosenPart ) => elementorCommon.events.eventTracking(
+												'kit-library/' + ( event.target.checked ? 'check' : 'uncheck' ),
+												{
+													placement: 'kit library',
+													event: 'kit parts selection',
+												},
+												{
+													source: 'import',
+													step: '2',
+													action: event.target.checked ? 'check' : 'uncheck',
+													site_part: chosenPart,
+												},
+											) }
 										/>
 
 										<Grid item container>

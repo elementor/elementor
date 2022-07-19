@@ -5,7 +5,7 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function UnfilteredFilesDialog( props ) {
-	const { show, setShow, onReady, onCancel, onDismiss } = props,
+	const { show, setShow, onReady, onCancel, onDismiss, referrer } = props,
 		{ ajaxState, setAjax } = useAjax(),
 		[ enableUnfilteredFiles, setEnableUnfilteredFiles ] = useState( false ),
 		[ isEnableError, setIsEnableError ] = useState( false );
@@ -58,7 +58,7 @@ export default function UnfilteredFilesDialog( props ) {
 						dismissButtonText={ __( 'Go Back', 'elementor' ) }
 						dismissButtonOnClick={ onCancel }
 						onClose={ onCancel }
-						referrer={ props.referrer }
+						referrer={ referrer }
 				/>
 				: <Dialog
 						title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
@@ -69,7 +69,7 @@ export default function UnfilteredFilesDialog( props ) {
 						dismissButtonText={ __( 'Skip', 'elementor' ) }
 						dismissButtonOnClick={ onDismiss || onReady }
 						onClose={ onDismiss || onReady }
-						referrer={ props.referrer }
+						referrer={ referrer }
 				/>
 			}
 		</>

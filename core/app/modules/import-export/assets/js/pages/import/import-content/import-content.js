@@ -19,6 +19,17 @@ export default function ImportContent() {
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ navigateToMainScreen } = useImportActions(),
 		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
+		eventTracking = ( action, event, source, step ) => elementorCommon.events.eventTracking(
+			`kit-library/${ action }`,
+			{
+				placement: 'kit library',
+				event,
+			},
+			{
+				source,
+				step,
+			},
+		),
 		getFooter = () => {
 			return (
 				<ImportContentFooter
@@ -26,6 +37,8 @@ export default function ImportContent() {
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
+					goBack={ () => eventTracking( 'go-back', 'previous button', 'import', '3' ) }
+					approveImport={ () => eventTracking( 'approve-import', 'approve import', 'import', '3' ) }
 				/>
 			);
 		};

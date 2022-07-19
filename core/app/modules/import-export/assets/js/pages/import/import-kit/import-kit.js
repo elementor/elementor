@@ -74,10 +74,40 @@ export default function ImportKit() {
 	// Listening to kit upload state.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
-			console.log( 'file uploaded' );
+			if ( 'kit library' === referrer ) {
+				elementorCommon.events.eventTracking(
+					'kit-library/file-upload',
+					{
+						placement: 'kit library',
+						event: 'top panel info',
+					},
+					{
+						source: 'import',
+						step: '1',
+						event_type: 'feedback',
+						status: 'success',
+						method: 'browse/drag-drop', // TODO: Distinguish upload type
+					},
+				);
+			}
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 		} else if ( 'error' === kitState.status ) {
-			console.log( 'file error' );
+			if ( 'kit library' === referrer ) {
+				elementorCommon.events.eventTracking(
+					'kit-library/file-upload',
+					{
+						placement: 'kit library',
+						event: 'top panel info',
+					},
+					{
+						source: 'import',
+						step: '1',
+						event_type: 'feedback',
+						status: 'failure',
+						method: 'browse/drag-drop', // TODO: Distinguish upload type
+					},
+				);
+			}
 			setErrorType( kitState.data );
 		}
 	}, [ kitState.status ] );
@@ -131,7 +161,47 @@ export default function ImportKit() {
 					referrer={ referrer }
 				/>
 
-				{ errorType && <ProcessFailedDialog errorType={ errorType } onApprove={ resetImportProcess } />	}
+				{ errorType && <ProcessFailedDialog
+					errorType={ errorType }
+					onApprove={ resetImportProcess }
+					onModalClose={ () => elementorCommon.events.eventTracking(
+							'kit-library/modal-open',
+							{
+								placement: 'kit library',
+								event: 'error modal close',
+							},
+							{
+								source: 'import',
+								step: '1',
+								event_type: 'load',
+							},
+						)
+					}
+					isError={ () => elementorCommon.events.eventTracking(
+							'kit-library/modal-error',
+							{
+								placement: 'kit library',
+								event: `error modal load  ${ errorType }`,
+							},
+							{
+								source: 'import',
+								step: '1',
+								event_type: 'load',
+							},
+						)
+					}
+					learnMoreEvent={ () => elementorCommon.events.eventTracking(
+						'kit-library/seek-more-info',
+						{
+							placement: 'kit library',
+							event: 'error modal learn more',
+						},
+						{
+							source: 'import',
+							step: '1',
+						},
+					) }
+				/>	}
 			</section>
 		</Layout>
 	);

@@ -28,8 +28,39 @@ export default function TaxonomiesFilter( props ) {
 						taxonomiesByType={ group }
 						selected={ props.selected }
 						onSelect={ props.onSelect }
-						onOpen={ ( onOpen ) => {
-							console.log( onOpen );
+						onOpen={ ( value, title ) => {
+							// TODO: Don't shoot this event on first load
+							if ( typeof ( value ) !== 'undefined' ) {
+								elementorCommon.events.eventTracking(
+									`kit-library/${ ( value ) ? 'expand' : 'collapse' }`,
+									{
+										placement: 'kit library',
+										event: 'sidebar section interaction',
+									},
+									{
+										source: 'home page',
+										section: title,
+										category: ( '/' === props.category ? 'all kits' : 'favorites' ),
+										action: ( value ) ? 'expand' : 'collapse',
+									},
+								);
+							}
+						} }
+						onSearchEvent={ ( search, category ) => {
+							elementorCommon.events.eventTracking(
+								'kit-library/checkbox-filtration',
+								{
+									placement: 'kit library',
+									event: 'sidebar section filters search',
+								},
+								{
+									source: 'home page',
+									category,
+									section: group.label,
+									search_term: search || null,
+									event_type: 'search',
+								},
+							);
 						} }
 						category={ props.category }
 					/>

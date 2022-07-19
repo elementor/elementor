@@ -39,9 +39,31 @@ export default function Layout( props ) {
 				infoModalProps = {
 					referrer,
 					...infoModalProps,
-					onOpen: () => eventTrack( 'kit-library/modal-open', 'info modal load', 'load' ),
-					// TODO: Figure out the element
-					onClose: () => eventTrack( 'kit-library/modal-close', 'info modal close', 'click' ),
+					onOpen: () => elementorCommon.events.eventTracking(
+						'kit-library/modal-open',
+						{
+							placement: 'kit library',
+							event: 'info modal load',
+						},
+						{
+							source: 'import',
+							event_type: 'load',
+						},
+					),
+					onClose: ( e ) => {
+						const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
+						elementorCommon.events.eventTracking(
+							'kit-library/modal-close',
+							{
+								placement: 'kit library',
+								event: 'overlay' === element ? 'background page' : 'info modal close',
+							},
+							{
+								source: 'import',
+								element,
+							},
+						);
+					},
 				};
 			}
 
@@ -67,7 +89,6 @@ export default function Layout( props ) {
 								source: 'import',
 							},
 						);
-						setIsInfoModalOpen( true );
 					}
 					setShowInfoModal( true );
 				},
