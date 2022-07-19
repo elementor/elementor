@@ -12,17 +12,6 @@ export default function useDebouncedCallback( callback, wait, searchEvent ) {
 				if ( searchEvent ) {
 					searchEvent();
 				}
-				// elementorCommon.events.eventTracking(
-				// 	'kit-library/kit-free-search',
-				// 	{
-				// 		placement: 'kit library',
-				// 		event: 'search kit',
-				// 	},
-				// 	{
-				// 		source: 'home page',
-				// 		search_term: args[ 0 ],
-				// 		event_type: 'search',
-				// 	} );
 			};
 
 			clearTimeout( timeout.current );

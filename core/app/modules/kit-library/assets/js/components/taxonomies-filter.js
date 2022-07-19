@@ -31,34 +31,36 @@ export default function TaxonomiesFilter( props ) {
 						onOpen={ ( value, title ) => {
 							// TODO: Don't shoot this event on first load
 							if ( typeof ( value ) !== 'undefined' ) {
-								elementorCommon.events.eventTracking(
+								$e.run(
 									`kit-library/${ ( value ) ? 'expand' : 'collapse' }`,
 									{
-										placement: 'kit library',
-										event: 'sidebar section interaction',
-									},
-									{
-										source: 'home page',
 										section: title,
 										category: ( '/' === props.category ? 'all kits' : 'favorites' ),
 										action: ( value ) ? 'expand' : 'collapse',
+									},
+									{
+										meta: {
+											event: 'sidebar section interaction',
+											source: 'home page',
+										},
 									},
 								);
 							}
 						} }
 						onSearchEvent={ ( search, category ) => {
-							elementorCommon.events.eventTracking(
+							$e.run(
 								'kit-library/checkbox-filtration',
 								{
-									placement: 'kit library',
-									event: 'sidebar section filters search',
-								},
-								{
-									source: 'home page',
+									search_term: search,
 									category,
 									section: group.label,
-									search_term: search || null,
-									event_type: 'search',
+								},
+								{
+									meta: {
+										source: 'home page',
+										event: 'sidebar section filters search',
+										event_type: 'search',
+									}
 								},
 							);
 						} }

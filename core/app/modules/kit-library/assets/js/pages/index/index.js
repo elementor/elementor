@@ -203,6 +203,7 @@ export default function Index( props ) {
 									{
 										meta: {
 											source: 'home page',
+											event: 'search kit',
 										},
 									},
 								);
@@ -280,18 +281,3 @@ Index.defaultProps = {
 	initialQueryParams: {},
 	renderNoResultsComponent: ( { defaultComponent } ) => defaultComponent,
 };
-
-$e.run(
-	'kit-library/sidebar-free-search',
-	{
-		search_term: queryParams.search,
-		category: 'all kits' / 'favorites',
-		section: { section },
-	}, {
-		meta: {
-			source: 'home page',
-			event_type: 'search',
-			event: 'sidebar section filters search',
-		},
-	},
-);

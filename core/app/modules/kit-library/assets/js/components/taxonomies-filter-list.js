@@ -15,7 +15,7 @@ const TaxonomiesFilterList = ( props ) => {
 		if ( ! search ) {
 			return props.taxonomiesByType.data;
 		}
-		// if ( props.onSearchEvent ) {
+		// If ( props.onSearchEvent ) {
 		// 	props.onSearchEvent( search, category );
 		// }
 
@@ -39,7 +39,6 @@ const TaxonomiesFilterList = ( props ) => {
 			} }
 			category={ category }
 		>
-			{ console.log( 'search', search ) }
 			{
 				props.taxonomiesByType.data.length >= MIN_TAGS_LENGTH_FOR_SEARCH_INPUT &&
 					<SearchInput
@@ -63,33 +62,39 @@ const TaxonomiesFilterList = ( props ) => {
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
 									if ( checked ) {
-										elementorCommon.events.eventTracking(
-											'kit-library/checking-a-checkbox',
+										$e.run(
+											'kit-library/filter',
 											{
-												placement: 'kit library',
-												event: 'sidebar section filters interaction',
-											},
-											{
-											source: 'home page',
-											category,
-											section: taxonomy.type,
-											action: 'check',
-											item: taxonomy.text,
-										} );
-									} else {
-										elementorCommon.events.eventTracking(
-											'kit-library/checking-a-checkbox',
-											{
-												placement: 'kit library',
-												event: 'sidebar section filters interaction',
-											},
-											{
-												source: 'home page',
 												category,
 												section: taxonomy.type,
-												action: 'unchecking-a-checkbox',
 												item: taxonomy.text,
-											} );
+												action: 'check',
+											},
+											{
+												meta: {
+													placement: 'kit library',
+													event: 'sidebar section filters interaction',
+													source: 'home page',
+												},
+											},
+										);
+									} else {
+										$e.run(
+											'kit-library/filter',
+											{
+												category,
+												section: taxonomy.type,
+												item: taxonomy.text,
+												action: 'uncheck',
+											},
+											{
+												meta: {
+													placement: 'kit library',
+													event: 'sidebar section filters interaction',
+													source: 'home page',
+												},
+											},
+										);
 									}
 
 									props.onSelect( taxonomy.type, ( prev ) => {
