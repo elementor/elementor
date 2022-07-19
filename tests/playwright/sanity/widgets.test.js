@@ -16,7 +16,7 @@ const {
 
 const { Registrar } = require( '../utils/registrar' );
 
-test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
+test( 'All widgets sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
