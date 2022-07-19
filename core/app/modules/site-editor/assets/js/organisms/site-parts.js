@@ -15,10 +15,10 @@ const InfoButton = ( props ) => {
 			icon: 'eicon-info-circle e-site-part__info-toggle',
 		};
 
-	let videoSection = '';
+	let VideoSection = '';
 
 	if ( showVideoSection ) {
-		videoSection = ( <section>
+		const VideoSection = ( <section>
 			<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
 			<div className="video-wrapper">
 				<iframe id="ytplayer" src={ props.video_url } frameBorder="0" />
@@ -42,7 +42,7 @@ const InfoButton = ( props ) => {
 				</section>
 
 				<>
-                    { videoSection }
+                    { VideoSection }
                 </>
 
 			</CssGrid>
