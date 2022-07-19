@@ -13,9 +13,8 @@ const InfoButton = ( props ) => {
 			text: __( 'Info', 'elementor' ),
 			hideText: true,
 			icon: 'eicon-info-circle e-site-part__info-toggle',
-		};
-
-	const VideoSection = showVideoSection
+		},
+		VideoSection = showVideoSection
 		? ( <section>
 			<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
 			<div className="video-wrapper">
