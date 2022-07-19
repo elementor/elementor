@@ -59,6 +59,14 @@ $remote-templates-items-space: 30px;
 	.elementor-template-library-template-insert {
 		color: #fff;
 		background-color: $editor-success;
+
+		&.elementor-disabled {
+			cursor: default;
+			pointer-events: none;
+			color: $editor-light;
+			background-color: $editor-darker;
+			transition: 0.3s;
+		}
 	}
 
 	.elementor-go-pro {
