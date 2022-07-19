@@ -1,10 +1,10 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
-const widgetsCache = require( './widgets-cache' );
+const widgetsCache = require( '../assets/widgets-cache' );
+const controlsTestConfig = require( '../assets/controls-test-config' );
 
 const {
 	Heading,
-	TextEditor,
 	WidgetBase,
 } = require( '../utils/widgets' );
 
@@ -29,7 +29,6 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 
 	const widgetsRegistrar = new Registrar()
 		.register( Heading )
-		.register( TextEditor )
 		.register( WidgetBase );
 
 	const controlsRegistrar = new Registrar()
@@ -49,6 +48,7 @@ test.only( 'All widgets sanity test', async ( { page }, testInfo ) => {
 			{
 				widgetType,
 				controls: widgetsCache[ widgetType ].controls,
+				controlsTestConfig: controlsTestConfig[ widgetType ] || {},
 			},
 		);
 

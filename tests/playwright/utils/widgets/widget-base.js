@@ -19,7 +19,11 @@ class WidgetBase {
 	 * Widget's config.
 	 *
 	 * @protected
-	 * @type {Object}
+	 * @type {{
+	 * 	widgetType: string,
+	 * 	controls: Object<string, Object>,
+	 * 	controlsTestConfig: import('../../assets/types/controls-test-config').ControlConfig,
+	 * }}
 	 */
 	config = null;
 
@@ -158,6 +162,7 @@ class WidgetBase {
 		await control.test( async ( currentControlValue ) => {
 			// TODO: Find a better way to show debug information.
 			//  We must have this info because Playwright doesn't give any useful errors.
+			// eslint-disable-next-line no-console
 			console.log( { widget: this.config.widgetType, control: controlId, value: currentControlValue } );
 
 			await this.beforeControlAssertions( { control, controlId, currentControlValue } );
@@ -173,46 +178,74 @@ class WidgetBase {
 	}
 
 	/**
-	 * @param {import('../controls/control-base').ControlBase} control
-	 * @param {string}                                         controlId
+	 * @param {Object}                                         args
+	 * @param {import('../controls/control-base').ControlBase} args.control
+	 * @param {string}                                         args.controlId
 	 *
 	 * @protected
 	 *
 	 * @return {Promise<void>}
 	 */
-	async beforeControlTest( { control, controlId } ) {}
+	async beforeControlTest( { control, controlId } ) { // eslint-disable-line no-unused-vars
+		const { timeoutBeforeTest = 0 } = this.config.controlsTestConfig[ controlId ] || {};
+
+		if ( timeoutBeforeTest ) {
+			await this.editor.page.waitForTimeout( timeoutBeforeTest );
+		}
+	}
 
 	/**
-	 * @param {import('../controls/control-base').ControlBase} control
-	 * @param {string}                                         controlId
+	 * @param {Object}                                         args
+	 * @param {import('../controls/control-base').ControlBase} args.control
+	 * @param {string}                                         args.controlId
 	 *
 	 * @protected
 	 *
 	 * @return {Promise<void>}
 	 */
-	async afterControlTest( { control, controlId } ) {}
+	async afterControlTest( { control, controlId } ) { // eslint-disable-line no-unused-vars
+		const { timeoutAfterTest = 0 } = this.config.controlsTestConfig[ controlId ] || {};
+
+		if ( timeoutAfterTest ) {
+			await this.editor.page.waitForTimeout( timeoutAfterTest );
+		}
+	}
 
 	/**
-	 * @param {import('../controls/control-base').ControlBase} control
-	 * @param {string}                                         controlId
-	 * @param {any}                                            currentControlValue
+	 * @param {Object}                                         args
+	 * @param {import('../controls/control-base').ControlBase} args.control
+	 * @param {string}                                         args.controlId
+	 * @param {any}                                            args.currentControlValue
 	 *
 	 * @protected
 	 *
 	 * @return {Promise<void>}
 	 */
-	async beforeControlAssertions( { control, controlId, currentControlValue } ) {}
+	async beforeControlAssertions( { control, controlId, currentControlValue } ) { // eslint-disable-line no-unused-vars
+		const { timeoutBeforeAssertions = 0 } = this.config.controlsTestConfig[ controlId ] || {};
+
+		if ( timeoutBeforeAssertions ) {
+			await this.editor.page.waitForTimeout( timeoutBeforeAssertions );
+		}
+	}
 
 	/**
-	 * @param {import('../controls/control-base').ControlBase} control
-	 * @param {string}                                         controlId
-	 * @param {any}                                            currentControlValue
+	 * @param {Object}                                         args
+	 * @param {import('../controls/control-base').ControlBase} args.control
+	 * @param {string}                                         args.controlId
+	 * @param {any}                                            args.currentControlValue
 	 *
 	 * @protected
 	 *
 	 * @return {Promise<void>}
 	 */
-	async afterControlAssertions( { control, controlId, currentControlValue } ) {}
+	async afterControlAssertions( { control, controlId, currentControlValue } ) { // eslint-disable-line no-unused-vars
+		const { timeoutAfterAssertions = 0 } = this.config.controlsTestConfig[ controlId ] || {};
+
+		if ( timeoutAfterAssertions ) {
+			await this.editor.page.waitForTimeout( timeoutAfterAssertions );
+		}
+	}
 }
 
 module.exports = {
