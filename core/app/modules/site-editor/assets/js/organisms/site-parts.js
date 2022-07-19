@@ -15,6 +15,17 @@ const InfoButton = ( props ) => {
 			icon: 'eicon-info-circle e-site-part__info-toggle',
 		};
 
+	let videoSection = '';
+
+	if ( showVideoSection ) {
+		videoSection = ( <section>
+			<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
+			<div className="video-wrapper">
+				<iframe id="ytplayer" src={ props.video_url } frameBorder="0" />
+			</div>
+		</section> );	
+	}
+
 	return (
 		<ModalProvider toggleButtonProps={ toggleButtonProps } title={ props.title }>
 			<CssGrid columns={ numberOfColumns } spacing={ 60 }>
@@ -30,15 +41,9 @@ const InfoButton = ( props ) => {
 					</div>
 				</section>
 
-				{
-					showVideoSection &&
-					<section>
-						<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
-						<div className="video-wrapper">
-							<iframe id="ytplayer" src={ props.video_url } frameBorder="0" />
-						</div>
-					</section>
-				}
+				<>
+                    { videoSection }
+                </>
 
 			</CssGrid>
 		</ModalProvider>
