@@ -22,6 +22,9 @@ class Icons_Manager {
 	const FONT_ICON_SVG_CLASS_NAME = 'e-font-icon-svg';
 
 	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
+
+	const ELEMENTOR_ICONS_VERSION = '5.16.0';
+
 	/**
 	 * Tabs.
 	 *

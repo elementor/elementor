@@ -40,10 +40,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: developer-edition
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Compare last tag to developer-edition head
         id: step_compare
         if: github.event_name != 'repository_dispatch'
@@ -98,10 +98,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: developer-edition
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_dev_version")
