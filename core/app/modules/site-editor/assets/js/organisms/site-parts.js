@@ -15,16 +15,14 @@ const InfoButton = ( props ) => {
 			icon: 'eicon-info-circle e-site-part__info-toggle',
 		};
 
-	let VideoSection = '';
-
-	if ( showVideoSection ) {
-		VideoSection = ( <section>
+	const VideoSection = showVideoSection
+		? ( <section>
 			<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
 			<div className="video-wrapper">
 				<iframe id="ytplayer" src={ props.video_url } frameBorder="0" />
 			</div>
-		</section> );
-	}
+		</section> )
+		: '';
 
 	return (
 		<ModalProvider toggleButtonProps={ toggleButtonProps } title={ props.title }>
