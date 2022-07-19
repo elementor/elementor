@@ -35,7 +35,7 @@
 
 	  	svg {
 			width: var(--dismiss-icon-size, 20px);
-			height: auto;
+			height: var(--dismiss-icon-size, 20px);
 			fill: var(--dismiss-icon-normal-color, currentColor);
 		  	transition-duration: var(--dismiss-icon-hover-transition-duration, 0.3s);
 

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/iframe-has-title */
 import Button from 'elementor-app/ui/molecules/button';
 import CssGrid from 'elementor-app/ui/atoms/css-grid';
 import ModalProvider from 'elementor-app/ui/modal/modal';
@@ -20,7 +21,7 @@ const InfoButton = ( props ) => {
 				<section>
 					<h3>{ props.type }</h3>
 					<p>
-						{ props.content }<br/>
+						{ props.content }<br />
 						<Button text={ __( 'Learn More', 'elementor' ) } color="link" target="_blank" url={ props.docs } />
 					</p>
 					<div className="eps-modal__tip">
@@ -57,7 +58,7 @@ export default function SiteParts( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext );
 
 	return (
-		<CssGrid className="e-site-editor__site-parts" colMinWidth={200} spacing={25}>
+		<CssGrid className="e-site-editor__site-parts" colMinWidth={ 200 } spacing={ 25 }>
 			{ (
 				templateTypes.map( ( item ) => (
 					<SitePart className="e-site-editor__site-part" actionButton={ <InfoButton type={ item.title }{ ...item.tooltip_data } /> } thumbnail={ item.urls.thumbnail } key={ item.type } { ...item }>

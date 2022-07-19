@@ -19,6 +19,12 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields = [];
 
+		$fields['items'] = [
+			'type' => Controls_Manager::HEADING,
+			'label' => esc_html__( 'Items', 'elementor' ),
+			'separator' => 'before',
+		];
+
 		$fields['direction'] = [
 			'label' => esc_html_x( 'Direction', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
@@ -41,8 +47,15 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'default' => '',
+			// The `--container-widget-width` CSS variable is used for handling widgets that get an undefined width in column mode.
+			'selectors_dictionary' => [
+				'row' => '--flex-direction: row; --container-widget-width: initial;',
+				'column' => '--flex-direction: column; --container-widget-width: 100%;',
+				'row-reverse' => '--flex-direction: row-reverse; --container-widget-width: initial;',
+				'column-reverse' => '--flex-direction: column-reverse; --container-widget-width: 100%;',
+			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--flex-direction: {{VALUE}};',
+				'{{SELECTOR}}' => '{{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -70,34 +83,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'column-reverse',
 				],
 			],
-		];
-
-		$fields['align_items'] = [
-			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'default' => '',
-			'options' => [
-				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
-				],
-				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
-				],
-				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
-				],
-				'stretch' => [
-					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
-				],
-			],
-			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
-			],
-			'responsive' => true,
 		];
 
 		$fields['justify_content'] = [
@@ -133,6 +118,34 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--justify-content: {{VALUE}};',
+			],
+			'responsive' => true,
+		];
+
+		$fields['align_items'] = [
+			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'default' => '',
+			'options' => [
+				'flex-start' => [
+					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-start-v',
+				],
+				'center' => [
+					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-center-v',
+				],
+				'flex-end' => [
+					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-end-v',
+				],
+				'stretch' => [
+					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-stretch-v',
+				],
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
 			'responsive' => true,
 		];

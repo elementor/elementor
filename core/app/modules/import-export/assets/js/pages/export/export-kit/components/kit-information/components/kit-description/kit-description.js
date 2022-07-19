@@ -10,9 +10,10 @@ export default function KitDescription() {
 	return (
 		<TextField
 			variant="outlined"
+			// eslint-disable-next-line @wordpress/i18n-ellipsis
 			placeholder={ __( 'Say something about the style and content of these files...', 'elementor' ) }
 			multiline
-			rows={5}
+			rows={ 5 }
 			onChange={ ( event ) => {
 				exportContext.dispatch( { type: 'SET_KIT_DESCRIPTION', payload: event.target.value } );
 			} }
