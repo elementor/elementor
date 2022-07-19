@@ -41,7 +41,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			if ( isTryAgainAction ) {
 				onApprove();
 			} else {
-				window.open( 'https://elementor.com/help/how-to-fix-common-errors-with-import-export/', '_blank' );
+				window.open( 'http://go.elementor.com/app-import-download-failed', '_blank' );
 			}
 
 			if ( 'kit-library' === referrer && learnMoreEvent) {

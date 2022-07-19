@@ -32,6 +32,7 @@ export default class EComponent extends $e.modules.ComponentBase {
 			'enable',
 			'expand',
 			'file-upload',
+			'filter',
 			'filter-selection',
 			'modal-error',
 			'favorite-icon',

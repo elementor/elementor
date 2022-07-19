@@ -5,3 +5,4 @@ assets/js/*.js
 **/vendor/**
 build/**
 tests/qunit/setup/tinymce.js
+/tmp/**
