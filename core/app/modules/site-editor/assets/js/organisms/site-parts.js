@@ -17,7 +17,7 @@ const InfoButton = ( props ) => {
 
 	return (
 		<ModalProvider toggleButtonProps={ toggleButtonProps } title={ props.title }>
-			<CssGrid columns={ numberOfColumns } spacing={60}>
+			<CssGrid columns={ numberOfColumns } spacing={ 60 }>
 				<section>
 					<h3>{ props.type }</h3>
 					<p>
@@ -35,7 +35,7 @@ const InfoButton = ( props ) => {
 					<section>
 						<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
 						<div className="video-wrapper">
-							<iframe id="ytplayer" src={ props.video_url } frameBorder="0"/>
+							<iframe id="ytplayer" src={ props.video_url } frameBorder="0" />
 						</div>
 					</section>
 				}
