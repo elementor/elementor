@@ -19,10 +19,10 @@ class Force_Locale {
 
 	private $original_locale;
 
-	public function __construct( $new_locale ) {
+	public function __construct( $new_locale, $original_locale = null ) {
 		$this->new_locale = $new_locale;
 
-		$this->original_locale = determine_locale();
+		$this->original_locale = $original_locale ? $original_locale : determine_locale();
 
 		$this->filter = function() use ( $new_locale ) {
 			return $new_locale;
