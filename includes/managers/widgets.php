@@ -240,7 +240,7 @@ class Widgets_Manager {
 		switch_to_locale( $new_locale );
 
 		/**
-		 * Force l10n to reset in order to clear the translations cache.
+		 * Reset `$l10n` in order to clear the translations cache.
 		 *
 		 * @see https://github.com/WordPress/wordpress-develop/blob/2437ef5130f10153bc4fffa412d4f37e65e3d66b/src/wp-includes/l10n.php#L1324
 		 * @see https://github.com/WordPress/wordpress-develop/blob/2437ef5130f10153bc4fffa412d4f37e65e3d66b/src/wp-includes/l10n.php#L804
@@ -248,7 +248,7 @@ class Widgets_Manager {
 		$reset_l10n();
 
 		/**
-		 * Force the translations of `$locale` to be loaded.
+		 * Force the translations of `$new_locale` to be loaded.
 		 *
 		 * @see https://github.com/WordPress/wordpress-develop/blob/2437ef5130f10153bc4fffa412d4f37e65e3d66b/src/wp-includes/l10n.php#L1294
 		 */
