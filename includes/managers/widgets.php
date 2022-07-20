@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Core\Utils\Force_Locale;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -360,9 +361,10 @@ class Widgets_Manager {
 			? get_locale()
 			: $data['locale'];
 
-		switch_to_locale( $locale );
+		$force_locale = new Force_Locale( $locale );
+		$force_locale->force();
 
-		return ( new Collection( $this->get_widget_types() ) )
+		$controls = ( new Collection( $this->get_widget_types() ) )
 			->map( function ( Widget_Base $widget ) {
 				$controls = $widget->get_stack( false )['controls'];
 
@@ -374,6 +376,10 @@ class Widgets_Manager {
 				return ! empty( $widget['controls'] );
 			} )
 			->all();
+
+		$force_locale->restore();
+
+		return $controls;
 	}
 
 	/**
