@@ -11,10 +11,6 @@ export const taxonomyType = [
 		label: __( 'Tags', 'elementor' ),
 	},
 	{
-		key: 'types',
-		label: __( 'Kit Types', 'elementor' ),
-	},
-	{
 		key: 'features',
 		label: __( 'Features', 'elementor' ),
 	},
