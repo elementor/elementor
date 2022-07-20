@@ -205,6 +205,66 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Force translation to use a specific locale.
+	 *
+	 * A hacky method to force any translation functions in the call-stack between this
+	 * method and its cleanup function to use a specific locale.
+	 *
+	 * @param string $new_locale
+	 *
+	 * @return \Closure - Cleanup function.
+	 */
+	private function force_locale( $new_locale ) {
+		$filter = function() use ( $new_locale ) {
+			return $new_locale;
+		};
+
+		$reset_l10n = function () {
+			global $l10n, $l10n_unloaded;
+
+			if ( is_array( $l10n ) ) {
+				foreach ( $l10n as $domain => $l10n_data ) {
+					unset( $l10n[ $domain ] );
+				}
+			}
+
+			if ( is_array( $l10n_unloaded ) ) {
+				foreach ( $l10n_unloaded as $domain => $l10n_unloaded_data ) {
+					unset( $l10n_unloaded[ $domain ] );
+				}
+			}
+		};
+
+		$old_locale = determine_locale();
+
+		switch_to_locale( $new_locale );
+
+		/**
+		 * Force l10n to reset in order to clear the translations cache.
+		 *
+		 * @see https://github.com/WordPress/wordpress-develop/blob/2437ef5130f10153bc4fffa412d4f37e65e3d66b/src/wp-includes/l10n.php#L1324
+		 * @see https://github.com/WordPress/wordpress-develop/blob/2437ef5130f10153bc4fffa412d4f37e65e3d66b/src/wp-includes/l10n.php#L804
+		 */
+		$reset_l10n();
+
+		/**
+		 * Force the translations of `$locale` to be loaded.
+		 *
+		 * @see https://github.com/WordPress/wordpress-develop/blob/2437ef5130f10153bc4fffa412d4f37e65e3d66b/src/wp-includes/l10n.php#L1294
+		 */
+		add_filter( 'pre_determine_locale', $filter );
+
+		// Revert the changes.
+		return function () use ( $filter, $reset_l10n, $old_locale ) {
+			remove_filter( 'pre_determine_locale', $filter );
+
+			$reset_l10n();
+
+			switch_to_locale( $old_locale );
+		};
+	}
+
+	/**
 	 * Register widget type.
 	 *
 	 * Add a new widget type to the list of registered widget types.
@@ -360,9 +420,9 @@ class Widgets_Manager {
 			? get_locale()
 			: $data['locale'];
 
-		switch_to_locale( $locale );
+		$cleanup = $this->force_locale( $locale );
 
-		return ( new Collection( $this->get_widget_types() ) )
+		$controls = ( new Collection( $this->get_widget_types() ) )
 			->map( function ( Widget_Base $widget ) {
 				$controls = $widget->get_stack( false )['controls'];
 
@@ -374,6 +434,10 @@ class Widgets_Manager {
 				return ! empty( $widget['controls'] );
 			} )
 			->all();
+
+		$cleanup();
+
+		return $controls;
 	}
 
 	/**

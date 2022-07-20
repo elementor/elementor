@@ -63,4 +63,12 @@ class Test_Widgets extends Elementor_Test_Base {
 		$this->assert_array_have_keys( [ 'button' ], $response );
 		$this->assert_array_not_have_keys( [ 'inner-section' ], $response );
 	}
+
+	public function test_ajax_get_widgets_default_value_translations__reverts_locale_change() {
+		// Act.
+		$response = Plugin::$instance->widgets_manager->ajax_get_widgets_default_value_translations( [ 'locale' => 'he_IL' ] );
+
+		// Assert.
+		$this->assertEquals( 'Click here', __( 'Click here', 'elementor' ) );
+	}
 }
