@@ -149,6 +149,19 @@ const ContainerView = BaseElementView.extend( {
 
 				// User is sorting inside a Container.
 				if ( draggedView ) {
+					// Prevent the user from dragging a parent container into its own child container
+					const draggedId = draggedView.getContainer().id;
+
+					let currentTargetParentContainer = this.container;
+
+					while ( currentTargetParentContainer ) {
+						if ( currentTargetParentContainer.id === draggedId ) {
+							return;
+						}
+
+						currentTargetParentContainer = currentTargetParentContainer.parent;
+					}
+
 					// Reset the dragged element cache.
 					elementor.channels.editor.reply( 'element:dragged', null );
 
