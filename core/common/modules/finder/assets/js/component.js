@@ -42,28 +42,28 @@ export default class Component extends ComponentModalBase {
 
 		return {
 			'navigate/down': () => {
-				elementorCommon.helpers.softDeprecated(
+				elementorDevTools.deprecation.deprecated(
 					"$e.run( 'finder/navigate/down' )",
 					'3.0.0',
-					"$e.run( 'finder/navigate-down' )"
+					"$e.run( 'finder/navigate-down' )",
 				);
 
 				$e.run( 'finder/navigate-down' );
 			},
 			'navigate/up': () => {
-				elementorCommon.helpers.softDeprecated(
+				elementorDevTools.deprecation.deprecated(
 					"$e.run( 'finder/navigate/up' )",
 					'3.0.0',
-					"$e.run( 'finder/navigate-up' )"
+					"$e.run( 'finder/navigate-up' )",
 				);
 
 				$e.run( 'finder/navigate-up' );
 			},
 			'navigate/select': ( event ) => {
-				elementorCommon.helpers.softDeprecated(
+				elementorDevTools.deprecation.deprecated(
 					"$e.run( 'finder/navigate/select', event )",
 					'3.0.0',
-					"$e.run( 'finder/navigate-select', event )"
+					"$e.run( 'finder/navigate-select', event )",
 				);
 
 				// TODO: Fix $e.shortcuts use args. ( args.event ).

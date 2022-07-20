@@ -68,6 +68,37 @@ PanelMenu.addAdminMenu = () => {
 	}, { at: 0 } );
 
 	PanelMenu.addItem( {
+		name: 'notes',
+		icon: 'eicon-commenting-o',
+		title: __( 'Notes', 'elementor' ),
+		callback() {
+			const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
+				dialogOptions = {
+					title: __( 'Notes', 'elementor' ),
+					content: __(
+						'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.',
+						'elementor',
+					),
+					targetElement: this.$el,
+					position: {
+						blockStart: '-3',
+						inlineStart: '+10',
+					},
+					actionButton: {
+						url: hasProAndNotConnected
+							? elementorProEditorConfig.urls.connect
+							: 'https://go.elementor.com/go-pro-notes/',
+						text: hasProAndNotConnected
+							? __( 'Connect & Activate', 'elementor' )
+							: __( 'See it in Action', 'elementor' ),
+					},
+				};
+
+			elementor.promotion.showDialog( dialogOptions );
+		},
+	}, 'navigate_from_page', 'view-page' );
+
+	PanelMenu.addItem( {
 		name: 'finder',
 		icon: 'eicon-search',
 		title: __( 'Finder', 'elementor' ),
@@ -79,10 +110,10 @@ PanelMenu.addExitItem = () => {
 	let itemArgs;
 
 	if ( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
-		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
+		PanelMenu.exitShouldRedirect = false;
 
 		itemArgs = {
-			callback: () => exitIntroduction.show(),
+			callback: () => PanelMenu.clickExitItem(),
 		};
 	} else {
 		itemArgs = {
@@ -97,6 +128,17 @@ PanelMenu.addExitItem = () => {
 		title: __( 'Exit', 'elementor' ),
 		...itemArgs,
 	}, 'navigate_from_page' );
+};
+
+// Callback being used to determine when to open the modal or redirect the user.
+PanelMenu.clickExitItem = () => {
+	if ( PanelMenu.exitShouldRedirect ) {
+		window.location.href = PanelMenu.getExitUrl();
+	} else {
+		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
+
+		exitIntroduction.show();
+	}
 };
 
 PanelMenu.createExitIntroductionDialog = () => {
@@ -123,9 +165,12 @@ PanelMenu.createExitIntroductionDialog = () => {
 				show: 'fadeIn',
 				hide: 'fadeOut',
 			},
-			onConfirm: () => {
+			onShow: () => {
 				introduction.setViewed();
-
+				elementor.config.user.introduction.exit_to = true;
+				PanelMenu.exitShouldRedirect = true;
+			},
+			onConfirm: async () => {
 				$e.run( 'document/elements/settings', {
 					container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 					settings: {
@@ -136,19 +181,16 @@ PanelMenu.createExitIntroductionDialog = () => {
 					},
 				} );
 
-				elementor.settings.editorPreferences.save( () => {
-					window.location.href = PanelMenu.getExitUrl();
-				} );
+				await elementor.settings.editorPreferences.save();
+				window.location.href = PanelMenu.getExitUrl();
 			},
 			onCancel: () => {
-				introduction.setViewed();
-
 				window.location.href = PanelMenu.getExitUrl();
 			},
 		},
 	} );
 
-	//Edit the template inside the dialog
+	// Edit the template inside the dialog
 	const messageContainer = introduction.getDialog().getElements().message[ 0 ],
 		select = messageContainer.querySelector( '#exit-to-preferences' ),
 		link = messageContainer.querySelector( '#user-preferences' );
@@ -164,8 +206,6 @@ PanelMenu.createExitIntroductionDialog = () => {
 	link.addEventListener( 'click', ( e ) => {
 		e.preventDefault();
 
-		introduction.setViewed();
-		elementor.config.user.introduction.exit_to = true;
 		introduction.getDialog().hide();
 		$e.route( 'panel/editor-preferences' );
 

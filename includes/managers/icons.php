@@ -22,6 +22,9 @@ class Icons_Manager {
 	const FONT_ICON_SVG_CLASS_NAME = 'e-font-icon-svg';
 
 	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
+
+	const ELEMENTOR_ICONS_VERSION = '5.16.0';
+
 	/**
 	 * Tabs.
 	 *
@@ -387,7 +390,7 @@ class Icons_Manager {
 			];
 		}
 		if ( false === $migration_dictionary ) {
-			$migration_dictionary = json_decode( file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
+			$migration_dictionary = json_decode( Utils::file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
 		}
 		if ( isset( $migration_dictionary[ $value ] ) ) {
 			return $migration_dictionary[ $value ];
@@ -502,18 +505,44 @@ class Icons_Manager {
 			},
 			'fields' => [
 				[
-					'label'      => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
+					'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
-						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
+						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" data-redirect-url="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
+							esc_url( $this->get_upgrade_redirect_url() ),
 							esc_html__( 'Upgrade To Font Awesome 5', 'elementor' )
 						),
 					],
 				],
 			],
 		] );
+	}
+
+	/**
+	 * Get redirect URL when upgrading font awesome.
+	 *
+	 * @return string
+	 */
+	public function get_upgrade_redirect_url() {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'tools-page-from-editor' ) ) {
+			return '';
+		}
+
+		$document_id = ! empty( $_GET['redirect_to_document'] ) ? absint( $_GET['redirect_to_document'] ) : null;
+
+		if ( ! $document_id ) {
+			return '';
+		}
+
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		if ( ! $document ) {
+			return '';
+		}
+
+		return $document->get_edit_url();
 	}
 
 	/**
@@ -524,7 +553,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => '<p>' . esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
+		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ] );
 	}
 
 	/**

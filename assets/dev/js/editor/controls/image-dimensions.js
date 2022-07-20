@@ -1,8 +1,18 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlImageDimensionsItemView;
 
 ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
-	ui: function() {
+
+	behaviors: {
+		Scrubbing: {
+			behaviorClass: Scrubbing,
+			scrubSettings: { intentTime: 800 },
+		},
+	},
+
+	ui() {
 		return {
 			inputWidth: 'input[data-setting="width"]',
 			inputHeight: 'input[data-setting="height"]',
@@ -12,7 +22,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	// Override the base events
-	events: function() {
+	events() {
 		return {
 			'click @ui.btnApply': 'onApplyClicked',
 			'keyup @ui.inputWidth': 'onDimensionKeyUp',
@@ -20,7 +30,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 		};
 	},
 
-	onDimensionKeyUp: function( event ) {
+	onDimensionKeyUp( event ) {
 		const ENTER_KEY = 13;
 
 		if ( ENTER_KEY === event.keyCode ) {
@@ -28,7 +38,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 		}
 	},
 
-	onApplyClicked: function( event ) {
+	onApplyClicked( event ) {
 		event.preventDefault();
 
 		this.setValue( {

@@ -15,6 +15,6 @@ export default function useDebouncedCallback( callback, wait ) {
 
 			timeout.current = setTimeout( later, wait );
 		},
-		[ callback, wait ]
+		[ callback, wait ],
 	);
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Utils\ImportExport\Parsers;
 
+use Elementor\Utils;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,7 +47,7 @@ class WXR_Parser_SimpleXML {
 			$old_value = libxml_disable_entity_loader( true ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
 		}
 
-		$success = $dom->loadXML( file_get_contents( $file ) );
+		$success = $dom->loadXML( Utils::file_get_contents( $file ) );
 
 		if ( $libxml_disable_entity_loader_exists && ! is_null( $old_value ) ) {
 			libxml_disable_entity_loader( $old_value ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
