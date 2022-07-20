@@ -10,13 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Force_Locale extends Elementor_Test_Base {
 
-	public function teardown() {
-		parent::teardown();
-
-		// Cleanup.
-		switch_to_locale( 'en_US' );
-	}
-
 	public function test_force() {
 		// Arrange.
 		$force_locale = new Force_Locale( 'he_IL' );
@@ -26,15 +19,18 @@ class Test_Force_Locale extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 'לחץ כאן', __( 'Click here', 'elementor' ) );
+
+		// Cleanup.
+		$force_locale->restore();
 	}
 
-	public function test_reset() {
+	public function test_restore() {
 		// Arrange.
 		$force_locale = new Force_Locale( 'he_IL' );
 		$force_locale->force();
 
 		// Act.
-		$force_locale->reset();
+		$force_locale->restore();
 
 		// Assert.
 		$this->assertEquals( 'Click here', __( 'Click here', 'elementor' ) );

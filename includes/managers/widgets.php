@@ -377,7 +377,7 @@ class Widgets_Manager {
 			} )
 			->all();
 
-		$force_locale->reset();
+		$force_locale->restore();
 
 		return $controls;
 	}
