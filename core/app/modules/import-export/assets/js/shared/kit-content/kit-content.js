@@ -57,17 +57,18 @@ export default function KitContent( { contentData, hasPro } ) {
 											type={ type }
 											className="e-app-export-kit-content__checkbox"
 											referrer={ referrer }
-											onCheck={ ( event, chosenPart ) => elementorCommon.events.eventTracking(
+											onCheck={ ( event, chosenPart ) => $e.run(
 												'kit-library/' + ( event.target.checked ? 'check' : 'uncheck' ),
 												{
-													placement: 'kit library',
-													event: 'kit parts selection',
-												},
-												{
-													source: 'import',
-													step: '2',
 													action: event.target.checked ? 'check' : 'uncheck',
 													site_part: chosenPart,
+												},
+												{
+													meta: {
+														event: 'kit parts selection',
+														source: 'import',
+														step: '2',
+													},
 												},
 											) }
 										/>

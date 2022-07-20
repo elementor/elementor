@@ -189,7 +189,17 @@ export default function ImportProcess() {
 						console.log( 'Cancelled', importContext.data.referrer );
 						console.log( 'referrer', referrer );
 						if ( 'kit-library' === importContext.data.referrer ) {
-							eventTracking( 'skip', 'unfiltered file modal skip button', 'import', '3', 'load' );
+							$e.run(
+								'kit-library/skip',
+								{},
+								{
+									meta: {
+										source: 'import',
+										step: '3',
+										event: 'unfiltered file modal skip button',
+									},
+								},
+							)
 						}
 					} }
 				/>

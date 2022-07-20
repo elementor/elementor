@@ -13,15 +13,15 @@ export default function EnvatoPromotion( { category } ) {
 				target="_blank"
 				rel="noreferrer"
 				text={ __( 'Check out Elementor Template Kits on ThemeForest', 'elementor' ) }
-				onClick={ () => elementorCommon.events.eventTracking(
+				onClick={ () => $e.run(
 					'kit-library/check-kits-on-theme-forest',
+					{},
 					{
-						placement: 'kit library',
-						event: 'browse themeforest',
-					},
-					{
-						source: 'home page',
-						category: '/' === category ? 'all kits' : 'favorites',
+						meta: {
+							event: 'browse themeforest',
+							source: 'home page',
+							category: '/' === category ? 'all kits' : 'favorites',
+						}
 					},
 				) }
 			/>

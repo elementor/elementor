@@ -62,11 +62,13 @@ function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onCon
 			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
 			onClick: isApplyLoading ? null : apply,
-			// onClick: {
-			// 	function: eventTracking,
-			// 	isApplyLoading: isApplyLoading ? null : apply,
-			// },
 			includeHeaderBtnClass: false,
+			// onClick: () => {
+			// 	TODO: Event tracking shoots but breaks isApplyLoading condition
+			// 	eslint-disable-next-line no-unused-expressions
+			// 	eventTracking(),
+			// 	isApplyLoading ? null : apply
+			// },
 		};
 	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
 }
@@ -110,16 +112,17 @@ export default function ItemHeader( props ) {
 		apply,
 		isApplyLoading,
 		eventTracking: () => {
-			elementorCommon.events.eventTracking(
+			$e.run(
 				'kit-library/apply-kit',
 				{
-					placement: 'kit library',
-					event: 'top bar apply kit',
-				},
-				{
-					source: props.pageId,
 					kit_name: props.model.title,
 					view_type_clicked: props.pageId,
+				},
+				{
+					meta: {
+						event: 'top bar apply kit',
+						source: props.pageId,
+					},
 				},
 			);
 		},

@@ -5,7 +5,6 @@ import Button from 'elementor-app/ui/molecules/button';
 import { arrayToClassName, isOneOf } from 'elementor-app/utils/utils.js';
 
 import './upload-file.scss';
-import { eventTrackingObject } from 'elementor-app/consts/consts';
 
 export default function UploadFile( props ) {
 	const fileInput = useRef( null ),
@@ -48,14 +47,14 @@ export default function UploadFile( props ) {
 				icon={ props.isLoading ? 'eicon-loading eicon-animation-spin' : '' }
 				onClick={ () => {
 					if ( 'kit-library' === props.referrer ) {
-						elementorCommon.events.eventTracking(
+						$e.run(
 							'kit-library/choose-file',
+							{},
 							{
-								placement: 'kit library',
-								event: 'select kit file',
-							},
-							{
-								source: 'import',
+								meta: {
+									event: 'select kit file',
+									source: 'import',
+								},
 							},
 						);
 					}

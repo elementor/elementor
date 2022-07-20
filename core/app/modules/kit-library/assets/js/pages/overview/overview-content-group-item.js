@@ -23,17 +23,18 @@ export default function OverviewContentGroupItem( props ) {
 							icon="eicon-preview-medium"
 							url={ `/kit-library/preview/${ props.kitId }?document_id=${ props.document.id }` }
 							onClick={ () => {
-								elementorCommon.events.eventTracking(
-									'kit-library/kit-part-view-demo',
+								$e.run(
+									'kit-library/view-demo-part,',
 									{
-										placement: 'kit library',
-										event: 'view demo part',
-									},
-									{
-										source: 'overview',
 										kit_name: props.kitTitle,
 										document_name: `${ props.groupData.label }-${ props.document.title }`,
 										document_type: props.groupData.id,
+									},
+									{
+										meta: {
+											event: 'view demo part',
+											source: 'overview',
+										}
 									},
 								)
 							} }

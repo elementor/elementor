@@ -12,14 +12,15 @@ export default function IndexSidebar( props ) {
 						icon={ item.icon }
 						url={ item.url }
 						onClick={ () => {
-							elementorCommon.events.eventTracking(
+							$e.run(
 								item.trackEventData.action,
+								{},
 								{
-									placement: 'kit library',
-									event: item.trackEventData.event,
-								},
-								{
-									source: 'home page',
+									meta: {
+										placement: 'kit library',
+										event: item.trackEventData.event,
+										source: 'home page',
+									},
 								},
 							);
 						} }

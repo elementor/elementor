@@ -7,14 +7,14 @@ export default function Header( props ) {
 			{ props.startColumn || <a
 				className="eps-app__logo-title-wrapper"
 				href="#/kit-library"
-				onClick={ () => elementorCommon.events.eventTracking(
+				onClick={ () => $e.run(
 					'kit-library/logo',
+					{},
 					{
-						placement: 'kit library',
-						event: 'top panel logo',
-					},
-					{
-						source: 'home page',
+						meta: {
+							event: 'top panel logo',
+							source: 'home page',
+						},
 					},
 				) }
 			>

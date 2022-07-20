@@ -54,16 +54,17 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				elementorCommon.events.eventTracking(
-					'kit-library/check-out-kit',
+				$e.run(
+					'kit-library/view-overview-page',
 					{
-						placement: 'kit library',
-						event: 'top bar change view type',
+						kit_name: kitName,
 					},
 					{
-						source: 'overview',
-						kit_name: kitName,
-						view_type_clicked: 'overview',
+						meta: {
+							event: 'top bar change view type',
+							source: 'view demo',
+							view_type_clicked: 'overview',
+						},
 					},
 				)
 				navigate( `/kit-library/overview/${ id }` )
@@ -110,6 +111,21 @@ export default function Preview( props ) {
 		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
 		[ activeDevice ],
 	);
+	const previewResponsiveControlsEvent = ( device, kitName ) => {
+		$e.run(
+			'kit-library/responsive-controls',
+			{
+				kit_name: kitName,
+				layout: device,
+			},
+			{
+				meta: {
+					event: 'top bar responsive views',
+					source: 'view-demo',
+				},
+			},
+		);
+	};
 
 	usePageTitle( {
 		title: data
@@ -126,13 +142,12 @@ export default function Preview( props ) {
 	if ( isLoading ) {
 		return <ElementorLoading />;
 	}
-
 	return (
 		<Layout header={
 			<ItemHeader
 				model={ data }
 				buttons={ headersButtons }
-				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice } kitName={ data.title } /> }
+				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice } kitName={ data.title } previewResponsiveControlsEvent={ ( device ) => previewResponsiveControlsEvent( device, data.title ) } /> }
 				pageId="demo"
 			/>
 		}>

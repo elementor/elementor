@@ -5,27 +5,11 @@ import { useNavigate } from '@reach/router';
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 
 import './index-header.scss';
-import { eventTrackingObject } from 'elementor-app/consts/consts';
 
 export default function IndexHeader( props ) {
 	const navigate = useNavigate();
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
 	const importRef = useRef();
-
-	const eventTrack = ( trackName, event, eventType = 'click' ) => {
-		const eventParams = {
-			...eventTrackingObject,
-			placement: 'kit library',
-			event,
-			details: {
-				...eventTrackingObject.details,
-				source: 'home page',
-				event_type: eventType,
-			},
-		};
-
-		$e.run( trackName, eventParams );
-	};
 	const buttons = useMemo( () => [
 		{
 			id: 'info',
@@ -33,14 +17,14 @@ export default function IndexHeader( props ) {
 			hideText: true,
 			icon: 'eicon-info-circle-o',
 			onClick: () => {
-				elementorCommon.events.eventTracking(
+				$e.run(
 					'kit-library/seek-more-info',
+					{},
 					{
-						placement: 'kit library',
-						event: 'top panel info',
-					},
-					{
-						source: 'home page',
+						meta: {
+							event: 'top panel info',
+							source: 'home page',
+						},
 					},
 				);
 				setIsInfoModalOpen( true );
@@ -53,14 +37,14 @@ export default function IndexHeader( props ) {
 			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
 
 			onClick: () => {
-				elementorCommon.events.eventTracking(
+				$e.run(
 					'kit-library/refetch',
+					{},
 					{
-						placement: 'kit library',
-						event: 'top panel refetch',
-					},
-					{
-						source: 'home page',
+						meta: {
+							event: 'top panel refetch',
+							source: 'home page',
+						},
 					},
 				);
 				props.refetch();
@@ -73,14 +57,14 @@ export default function IndexHeader( props ) {
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
 			onClick: () => {
-				elementorCommon.events.eventTracking(
+				$e.run(
 					'kit-library/kit-import',
+					{},
 					{
-						placement: 'kit library',
-						event: 'top panel kit import',
-					},
-					{
-						source: 'home page',
+						meta: {
+							event: 'top panel kit import',
+							source: 'home page',
+						},
 					},
 				);
 				navigate( '/import?referrer=kit-library' );
@@ -100,28 +84,31 @@ export default function IndexHeader( props ) {
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) }
 				show={ isInfoModalOpen }
 				setShow={ setIsInfoModalOpen }
-				onOpen={ () => elementorCommon.events.eventTracking(
+				onOpen={ () => $e.run(
 					'kit-library/modal-open',
+					{},
 					{
-						placement: 'kit library',
-						event: 'info modal load',
-					},
-					{
-						source: 'home page',
-						event_type: 'load',
+						meta: {
+							event: 'info modal load',
+							source: 'home page',
+							event_type: 'load',
+						},
 					},
 				) }
 				onClose={ ( e ) => {
 					const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
-					elementorCommon.events.eventTracking(
+					console.log( 'element: ', element );
+					$e.run(
 						'kit-library/modal-close',
 						{
-							placement: 'kit library',
-							event: 'overlay' === element ? 'background page' : 'info modal close',
+							element,
 						},
 						{
-							source: 'home page',
-							element,
+							meta: {
+								event: 'overlay' === element ? 'background page' : 'info modal close',
+								placement: 'kit library',
+								source: 'home page',
+							},
 						},
 					);
 				} }
@@ -148,13 +135,11 @@ export default function IndexHeader( props ) {
 							text={ __( 'Learn more', 'elementor' ) }
 							color="link"
 							onClick={ () => {
-								elementorCommon.events.eventTracking(
+								$e.run(
 								'kit-library/seek-more-info',
+								{},
 								{
-									placement: 'kit library',
 									event: 'info modal learn more',
-								},
-								{
 									source: 'home page',
 								} );
 								setIsInfoModalOpen( true );

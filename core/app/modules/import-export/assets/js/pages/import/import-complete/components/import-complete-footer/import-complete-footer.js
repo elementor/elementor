@@ -14,13 +14,11 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 					variant="contained"
 					onClick={ () => {
 						if ( 'kit-library' === referrer ) {
-							elementorCommon.events.eventTracking(
+							$e.run(
 								'kit-library/see-it-live',
+								{},
 								{
-									placement: 'kit library',
 									event: 'see it live button',
-								},
-								{
 									source: 'kit is live',
 								},
 							);
@@ -36,14 +34,14 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 				color="primary"
 				onClick={ () => {
 					if ( 'kit-library' === referrer ) {
-						elementorCommon.events.eventTracking(
+						$e.run(
 							'kit-library/close',
+							{},
 							{
-								placement: 'kit library',
-								event: 'close button',
-							},
-							{
-								source: 'kit is live',
+								meta: {
+									event: 'close button',
+									source: 'kit is live',
+								},
 							},
 						);
 					}

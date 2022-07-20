@@ -26,18 +26,9 @@ export default function OverviewTaxonomyBadge( props ) {
 	return (
 		<Link
 			onClick={ () => {
-				elementorCommon.events.eventTracking(
-					'kit-library/clicking-on-a-tag',
-					{
-						placement: 'kit library',
-						event: 'overview sidebar tag select',
-					},
-					{
-						source: 'overview',
-						kit_name: props.kitName,
-						tag: taxonomyText,
-					},
-				);
+				if ( props.sidebarTagFilterEvent ) {
+					props.sidebarTagFilterEvent( taxonomyText );
+				}
 			} }
 			to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }
 		>
@@ -50,4 +41,5 @@ export default function OverviewTaxonomyBadge( props ) {
 
 OverviewTaxonomyBadge.propTypes = {
 	children: PropTypes.string,
+	sidebarTagFilterEvent: PropTypes.func,
 };

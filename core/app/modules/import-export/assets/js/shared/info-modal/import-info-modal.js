@@ -1,22 +1,7 @@
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import InfoModal from './info-modal';
-import { eventTrackingObject } from 'elementor-app/consts/consts';
 
 export default function ImportInfoModal( props ) {
-	function eventTrack( trackName, event ) {
-		const eventParams = {
-			...eventTrackingObject,
-			placement: 'kit library',
-			event,
-			details: {
-				...eventTrackingObject.details,
-				source: 'import',
-			},
-		};
-
-		$e.run( trackName, eventParams );
-	}
-
 	return (
 		<InfoModal { ...props } title={ __( 'Import a Template Kit', 'elementor' ) }>
 			<InfoModal.Section>
@@ -27,8 +12,18 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
-							eventTrack={ eventTrack }
-							trackingParams={ { trackName: 'kit-library/seek-more-info', event: 'info modal learn more-kits' } }
+							onLinkClick={ () => {
+								$e.run(
+									'kit-library/seek-more-info',
+									{},
+									{
+										meta: {
+											source: 'import',
+											event: 'info modal learn more-kits',
+										},
+									},
+								)
+							} }
 						>{ __( ' Learn more about Template Kits', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
@@ -42,9 +37,18 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="http://go.elementor.com/app-import-kit"
-							eventTrack={ eventTrack }
-							trackingParams={ { trackName: 'kit-library/seek-more-info', event: 'info modal learn more-kits' } }
-						>
+							onLinkClick={ () => {
+								$e.run(
+									'kit-library/seek-more-info',
+									{},
+									{
+										meta: {
+											source: 'import',
+											event: 'info modal learn more-import',
+										},
+									},
+								)
+							} }						>
 							{ __( 'Learn More', 'elementor' ) }
 						</InlineLink>
 					</>

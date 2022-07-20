@@ -35,8 +35,8 @@ export default function TaxonomiesFilter( props ) {
 									`kit-library/${ ( value ) ? 'expand' : 'collapse' }`,
 									{
 										section: title,
-										category: ( '/' === props.category ? 'all kits' : 'favorites' ),
 										action: ( value ) ? 'expand' : 'collapse',
+										category: ( '/' === props.category ? 'all kits' : 'favorites' ),
 									},
 									{
 										meta: {

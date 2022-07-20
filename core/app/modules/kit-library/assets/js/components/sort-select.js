@@ -23,17 +23,10 @@ export default function SortSelect( props ) {
 					onChange={ ( e ) => {
 						const value = e.target.value;
 						setSelectedSortBy( getSelectedOptionDetails( value ) );
-						elementorCommon.events.eventTracking(
-							'kit-library/change-sort-type',
-							{
-								placement: 'kit library',
-								event: 'kit sort type select',
-							},
-							{
-								source: 'home page',
-								sort_type: value,
-							} );
 						props.onChange( { by: value, direction: props.value.direction } );
+						if ( props.onChangeSortValue ) {
+							props.onChangeSortValue( value );
+						}
 					} }
 					className="eps-sort-select__select"
 
@@ -43,17 +36,9 @@ export default function SortSelect( props ) {
 							by: props.value.by,
 							direction: 'asc' === props.value.direction ? 'desc' : 'asc',
 						} );
-						elementorCommon.events.eventTracking(
-							'kit-library/change-sort-type',
-							{
-								placement: 'kit library',
-								event: 'kit sort type dropdown',
-								version: 'v1',
-							},
-							{
-								source: 'home page',
-								action: 'expand',
-							} );
+						if ( props.onSortTypeDropdown ) {
+							props.onSortTypeDropdown();
+						}
 					} }
 				/>
 			</div>
@@ -66,16 +51,9 @@ export default function SortSelect( props ) {
 						className="eps-sort-select__button"
 						onClick={ () => {
 							const direction = 'asc' === props.value.direction ? 'desc' : 'asc';
-							elementorCommon.events.eventTracking(
-								'kit-library/change-sort-direction',
-								{
-									placement: 'kit library',
-									event: 'kit sort direction',
-								},
-								{
-									source: 'home page',
-									sort_direction: direction,
-								} );
+							if ( props.onChangeSortDirection ) {
+								props.onChangeSortDirection( direction );
+							}
 							props.onChange( {
 								by: props.value.by,
 								direction: 'asc' === props.value.direction ? 'desc' : 'asc',

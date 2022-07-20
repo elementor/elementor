@@ -12,7 +12,6 @@ export default function OverviewContentGroup( props ) {
 			<Heading tag="h3" variant="h3" className="e-kit-library__content-overview-group-title">
 				{ props.contentType.label }
 			</Heading>
-			{console.log('props.contentType', props.contentType)}
 			<CssGrid spacing={ 24 } colMinWidth={ 250 }>
 				{ props.contentType.documents.map( ( document ) => {
 					return <OverviewContentGroupItem key={ document.id } document={ document } kitId={ props.kitId } kitTitle={ props.kitTitle } groupData={ props.contentType } />;

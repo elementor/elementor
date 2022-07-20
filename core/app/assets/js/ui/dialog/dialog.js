@@ -32,15 +32,15 @@ export default function Dialog( props ) {
 	},
 	onClose = () => {
 		if ( 'kit-library' === props.referrer ) {
-			elementorCommon.events.eventTracking(
+			$e.run(
 				'kit-library/close',
+				{},
 				{
-					placement: 'kit library',
-					event: 'unfiltered file modal close',
-				},
-				{
-					source: 'import',
-					step: '3',
+					meta: {
+						event: 'unfiltered file modal close',
+						source: 'import',
+						step: '3',
+					},
 				},
 			)
 		}
@@ -49,16 +49,16 @@ export default function Dialog( props ) {
 
 	useEffect( () => {
 		if ( 'kit-library' === props.referrer ) {
-			elementorCommon.events.eventTracking(
+			$e.run(
 				'kit-library/unfiltered-file-modal-load',
+				{},
 				{
-					placement: 'kit library',
-					event: 'unfiltered file modal load',
-				},
-				{
-					source: 'import',
-					step: '3',
-					event_type: 'load',
+					meta: {
+						event: 'unfiltered file modal load',
+						source: 'import',
+						step: '3',
+						event_type: 'load',
+					},
 				},
 			)
 		}

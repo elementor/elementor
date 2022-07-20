@@ -48,17 +48,19 @@ const KitListItem = ( props ) => {
 								icon="eicon-preview-medium"
 								url={ `/kit-library/preview/${ props.model.id }` }
 								onClick={ () => {
-									elementorCommon.events.eventTracking(
+									$e.run(
 										'kit-library/check-out-kit',
 										{
-											placement: 'kit library',
-											event: 'view kit demo',
-										},
-										{
-											source: '/' === props.source ? 'home page' : 'overview',
 											kit_name: props.model.title,
 											grid_location: props.index,
 											search_term: props.queryParams,
+										},
+										{
+											meta: {
+												placement: 'kit library',
+												event: 'view kit demo',
+												source: '/' === props.source ? 'all- kits' : 'favorites',
+											},
 										},
 									)
 								} }

@@ -5,15 +5,15 @@ import './error-screen.scss';
 
 export default function ErrorScreen( props ) {
 	const onClick = () => {
-		elementorCommon.events.eventTracking(
+		$e.run(
 			'kit-library/go-back-to-view-kits',
+			{},
 			{
-				placement: 'kit library',
-				event: 'empty state-continue browsing',
-			},
-			{
-				source: 'home page',
-				category: '/' === props.button.category ? 'all kits' : 'favorites',
+				meta: {
+					event: 'empty state-continue browsing',
+					source: 'home page',
+					category: '/' === props.button.category ? 'all kits' : 'favorites',
+				}
 			},
 		)
 		props.button.action()

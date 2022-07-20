@@ -45,18 +45,7 @@ export default function ImportPlugins() {
 			if ( proData && ! elementorAppConfig.hasPro ) {
 				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
-		},
-		eventTracking = ( action, event, source, step ) => elementorCommon.events.eventTracking(
-			`kit-library/${ action }`,
-			{
-				placement: 'kit library',
-				event,
-			},
-			{
-				source,
-				step,
-			},
-		);
+		};
 
 	// On load.
 	useEffect( () => {
@@ -78,9 +67,29 @@ export default function ImportPlugins() {
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter
-			goBack={ () => eventTracking( 'go-back', 'previous button', 'import', '2' ) }
-			approveSelection={ () => eventTracking( 'approve-selection', 'next buttons', 'import', '2' ) }
-		/> }>
+			goBack={ () => $e.run(
+				'kit-library/go-back',
+				{},
+				{
+					meta: {
+						source: 'import',
+						step: '2',
+						event: 'previous button',
+					},
+				},
+			) }
+			approveSelection={ () => $e.run(
+				'kit-library/approve-selection',
+				{},
+				{
+					meta: {
+						source: 'import',
+						step: '2',
+						event: 'next button',
+					},
+				},
+			) }
+		/> } >
 			<section className="e-app-import-plugins">
 				{ ! importPluginsData && <Loader absoluteCenter />	}
 

@@ -29,19 +29,9 @@ export default function Conflict( props ) {
 				text={ __( 'Edit Template', 'elementor' ) }
 				hideText
 				onClick={ () => {
-					if ( 'kit-library' === referrer ) {
-						elementorCommon.events.eventTracking(
-							'kit-library/check-item',
-							{
-								placement: 'kit library',
-								event: 'open kit part - new tab',
-							},
-							{
-								source: 'import',
-								step: '3',
-								site_part: title,
-							},
-						)
+					console.log('props.viewConflictItemEvent', title )
+					if ( 'kit-library' === referrer && props.viewConflictItemEvent ) {
+						props.viewConflictItemEvent( title );
 					}
 				} }
 			/>
@@ -68,17 +58,18 @@ export default function Conflict( props ) {
 				title={ props.conflictData.template_title }
 				referrer={ referrer }
 				onCheck={ ( event, title ) => {
-					elementorCommon.events.eventTracking(
+					$e.run(
 					'kit-library/' + ( event.target.checked ? 'check' : 'uncheck' ),
 						{
-							placement: 'kit library',
-							event: 'kit parts conflict',
-						},
-						{
-							source: 'import',
-							step: '3',
 							action: event.target.checked ? 'check' : 'uncheck',
 							site_part: title,
+						},
+						{
+							meta: {
+								event: 'kit parts conflict',
+								source: 'import',
+								step: '3',
+							},
 						},
 					);
 				} }
@@ -106,4 +97,5 @@ export default function Conflict( props ) {
 Conflict.propTypes = {
 	importedId: PropTypes.number,
 	conflictData: PropTypes.object,
+	viewConflictItemEvent: PropTypes.func,
 };

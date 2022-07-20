@@ -14,7 +14,6 @@ import ConnectProNotice from './components/connect-pro-notice/connect-pro-notice
 import ImportCompleteFooter from './components/import-complete-footer/import-complete-footer';
 
 import useImportedKitData from './hooks/use-imported-kit-data';
-import {eventTrackingObject} from "elementor-app/consts/consts";
 
 export default function ImportComplete() {
 	const sharedContext = useContext( SharedContext ),
@@ -43,38 +42,23 @@ export default function ImportComplete() {
 			};
 		},
 		kitData = useMemo( () => getKitData(), [] );
-
-	function eventTracking( trackName, event ) {
-		const eventParams = {
-			...eventTrackingObject,
-			placement: 'kit library',
-			event,
-			version: 'v1',
-			details: {
-				...eventTrackingObject.details,
-				source: 'import',
-			},
-		};
-
-		$e.run( trackName, eventParams );
-	}
-	useEffect( () => {
-		if ( ! uploadedData ) {
-			navigate( '/import' );
-		} else if ( 'kit-library' === referrer ) {
-				elementorCommon.events.eventTracking(
+		useEffect( () => {
+			if ( ! uploadedData ) {
+				navigate( '/import' );
+			} else if ( 'kit-library' === referrer ) {
+				$e.run(
 					'kit-library/kit-is-live-load',
+					{},
 					{
-						placement: 'kit library',
-						event: 'kit is live load',
-					},
-					{
-						source: 'kit is live',
-						event_type: 'load',
+						meta: {
+							event: 'kit is live load',
+							source: 'kit is live',
+							event_type: 'load',
+						},
 					},
 				);
 			}
-	}, [] );
+		}, [] );
 
 	return (
 		<Layout type="import" footer={ <ImportCompleteFooter seeItLiveUrl={ seeItLiveUrl } referrer={ referrer } /> }>
@@ -87,12 +71,20 @@ export default function ImportComplete() {
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
 							italic
-							// TODO: Would like to use the global function elementorCommon.events.eventTracking
-							// eventTrack={ elementorCommon.events.eventTracking }
-							// trackingParams={ { trackName: 'kit-library/learn-more-kits', event: { event: 'learn more-kits' }, details: { source: 'kit is live' } } }
-
-							eventTrack={ eventTracking }
-							trackingParams={ { trackName: 'kit-library/seek-more-info', event: 'info modal learn more-kits' } }
+							onLinkClick={ () => {
+								if ( 'kit-library' === referrer ) {
+									$e.run(
+										'kit-library/seek-more-info',
+										{},
+										{
+											meta: {
+												event: 'learn more-kits',
+												source: 'kit-is-live',
+											},
+										},
+									)
+								}
+							} }
 						>
 							{ __( 'Click here', 'elementor' ) }
 						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }

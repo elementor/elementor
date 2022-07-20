@@ -24,16 +24,17 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				elementorCommon.events.eventTracking(
-					'kit-library/check-out-kit',
+				$e.run(
+					'kit-library/view-demo-page',
 					{
-						placement: 'kit library',
-						event: 'top bar change view type',
+						kit_name: kitName,
 					},
 					{
-						source: 'view demo',
-						kit_name: kitName,
-						view_type_clicked: 'demo',
+						meta: {
+							event: 'top bar change view type',
+							source: 'overview',
+							view_type_clicked: 'demo',
+						},
 					},
 				)
 				navigate( `/kit-library/preview/${ id }` )

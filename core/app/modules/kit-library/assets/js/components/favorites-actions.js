@@ -16,16 +16,18 @@ export default function FavoritesActions( props ) {
 					onClick={ () => {
 						// eslint-disable-next-line no-unused-expressions
 						! isLoading && removeFromFavorites.mutate( props.id );
-						elementorCommon.events.eventTracking(
+						$e.run(
 							'kit-library/mark-as-favorite',
 							{
-								placement: 'kit library',
-								event: 'favorite icon interaction',
+								kit_name: props.name,
 							},
 							{
-								source: '/' === props.source ? 'home page' : 'overview',
-								action: 'uncheck',
-								kit_name: props.name,
+								meta: {
+									event: 'favorite icon interaction',
+									source: '/' === props.source ? 'home page' : 'overview',
+									event_type: 'search',
+									action: 'uncheck',
+								},
 							},
 						)
 					} }
@@ -38,18 +40,20 @@ export default function FavoritesActions( props ) {
 					onClick={ () => {
 						// eslint-disable-next-line no-unused-expressions
 						! isLoading && addToFavorites.mutate( props.id );
-						elementorCommon.events.eventTracking(
+						$e.run(
 							'kit-library/mark-as-favorite',
 							{
-								placement: 'kit library',
-								event: 'favorite icon interaction',
+								grid_location: props.index,
+								search_term: props.queryParams,
+								kit_name: props.name,
 							},
 							{
-								source: '/' === props.source ? 'home page' : 'overview',
-								action: 'check',
-								kit_name: props.name,
-								grid_location: props.index || null,
-								search_term: props.queryParams || null,
+								meta: {
+									source: '/' === props.source ? 'home page' : 'overview',
+									event: 'favorite icon interaction',
+									event_type: 'search',
+									action: 'check',
+								},
 							},
 						)
 					} }
@@ -60,4 +64,8 @@ export default function FavoritesActions( props ) {
 FavoritesActions.propTypes = {
 	isFavorite: PropTypes.bool,
 	id: PropTypes.string,
+	name: PropTypes.string,
+	index: PropTypes.number,
+	queryParams: PropTypes.string,
+	source: PropTypes.string,
 };

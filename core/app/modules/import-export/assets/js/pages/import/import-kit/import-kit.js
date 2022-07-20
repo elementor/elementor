@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { eventTrackingObject } from 'elementor-app/consts/consts';
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
@@ -31,29 +30,27 @@ export default function ImportKit() {
 			setIsLoading( false );
 			kitActions.reset();
 		};
-		function eventTrack( trackName, event ) {
-			const eventParams = {
-				...eventTrackingObject,
-				placement: 'kit library',
-				event,
-				version: 'event_version',
-				details: {
-					...eventTrackingObject.details,
-					source: 'import',
-					step: '1',
-				},
-			};
 
-			$e.run( trackName, eventParams );
-		}
 		const getLearnMoreLink = () => (
 			<InlineLink
 				url="https://go.elementor.com/app-what-are-kits"
 				key="learn-more-link"
 				italic
-				eventTrack={ eventTrack }
-				trackingParams={ { trackName: 'kit-library/seek-more-info', event: 'learn more' } }
-				// EventTrack="kit-library/seek-more-info" // TODO: Add condition so it will fire only on kit library referral
+				onLinkClick={ () => {
+					if ( 'kit-library' === referrer ) {
+						$e.run(
+							'kit-library/seek-more-info',
+							{},
+							{
+								meta: {
+									event: 'learn more',
+									source: 'import',
+									step: '1',
+								},
+							},
+						)
+					}
+				} }
 			>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
@@ -75,38 +72,38 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
 			if ( 'kit library' === referrer ) {
-				elementorCommon.events.eventTracking(
-					'kit-library/file-upload',
-					{
-						placement: 'kit library',
-						event: 'top panel info',
-					},
-					{
-						source: 'import',
-						step: '1',
-						event_type: 'feedback',
-						status: 'success',
-						method: 'browse/drag-drop', // TODO: Distinguish upload type
-					},
-				);
+				// elementorCommon.events.eventTracking(
+				// 	'kit-library/file-upload',
+				// 	{
+				// 		placement: 'kit library',
+				// 		event: 'top panel info',
+				// 	},
+				// 	{
+				// 		source: 'import',
+				// 		step: '1',
+				// 		event_type: 'feedback',
+				// 		status: 'success',
+				// 		method: 'browse/drag-drop', // TODO: Distinguish upload type
+				// 	},
+				// );
 			}
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 		} else if ( 'error' === kitState.status ) {
 			if ( 'kit library' === referrer ) {
-				elementorCommon.events.eventTracking(
-					'kit-library/file-upload',
-					{
-						placement: 'kit library',
-						event: 'top panel info',
-					},
-					{
-						source: 'import',
-						step: '1',
-						event_type: 'feedback',
-						status: 'failure',
-						method: 'browse/drag-drop', // TODO: Distinguish upload type
-					},
-				);
+				// elementorCommon.events.eventTracking(
+				// 	'kit-library/file-upload',
+				// 	{
+				// 		placement: 'kit library',
+				// 		event: 'top panel info',
+				// 	},
+				// 	{
+				// 		source: 'import',
+				// 		step: '1',
+				// 		event_type: 'feedback',
+				// 		status: 'failure',
+				// 		method: 'browse/drag-drop', // TODO: Distinguish upload type
+				// 	},
+				// );
 			}
 			setErrorType( kitState.data );
 		}
@@ -155,50 +152,86 @@ export default function ImportKit() {
 					onFileSelect={ ( file ) => {
 						setIsLoading( true );
 						importContext.dispatch( { type: 'SET_FILE', payload: file } );
+						if ( 'kit-library' === referrer ) {
+							$e.run(
+								'kit-library/choose-file',
+								{},
+								{
+									meta: {
+										event: 'select kit file',
+										source: 'import',
+									},
+								},
+							);
+						}
 					} }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 					referrer={ referrer }
+					onFileSelectEvent={ ( uploadType ) => {
+						let uploadMethod;
+						if ( 'file-upload' === uploadType ) {
+							uploadMethod = 'drag-drop';
+						} else if ( 'file-explorer' === uploadType ) {
+							uploadMethod = 'browse';
+						}
+						$e.run(
+								'kit-library/file-upload',
+								{
+									method: uploadMethod,
+								},
+								{
+									meta: {
+										event: 'top panel info',
+										source: 'import',
+										step: '1',
+									},
+								},
+							)
+						} }
 				/>
 
 				{ errorType && <ProcessFailedDialog
 					errorType={ errorType }
 					onApprove={ resetImportProcess }
-					onModalClose={ () => elementorCommon.events.eventTracking(
-							'kit-library/modal-open',
+					onModalClose={ () => $e.run(
+							'kit-library/modal-close',
+							{},
 							{
-								placement: 'kit library',
-								event: 'error modal close',
-							},
-							{
-								source: 'import',
-								step: '1',
-								event_type: 'load',
+								meta: {
+									placement: 'kit library',
+									event: 'error modal close',
+									source: 'import',
+									step: '1',
+									event_type: 'load',
+								},
 							},
 						)
 					}
-					isError={ () => elementorCommon.events.eventTracking(
+					isError={ () => {
+							$e.run(
 							'kit-library/modal-error',
 							{
-								placement: 'kit library',
-								event: `error modal load  ${ errorType }`,
+								errorType: `error modal load  ${ errorType }`,
 							},
 							{
-								source: 'import',
-								step: '1',
-								event_type: 'load',
+								meta: {
+									source: 'import',
+									step: '1',
+									event_type: 'load',
+								},
 							},
 						)
-					}
-					learnMoreEvent={ () => elementorCommon.events.eventTracking(
+					} }
+					learnMoreEvent={ () => $e.run(
 						'kit-library/seek-more-info',
+						{},
 						{
-							placement: 'kit library',
-							event: 'error modal learn more',
-						},
-						{
-							source: 'import',
-							step: '1',
+							meta: {
+								event: 'error modal learn more',
+								source: 'import',
+								step: '1',
+							},
 						},
 					) }
 				/>	}

@@ -15,15 +15,16 @@ export default function HeaderBackButton( { kitName, pageId } ) {
 				icon="eicon-chevron-left"
 				text={ __( 'Back to Library', 'elementor' ) }
 				onClick={ () => {
-					elementorCommon.events.eventTracking(
+					$e.run(
 						'kit-library/back-to-library',
-						{
-							placement: 'kit library',
-							event: 'top bar back to library',
-						},
 						{
 							source: pageId,
 							kit_name: kitName,
+						},
+						{
+							meta: {
+								event: 'top bar back to library',
+							},
 						},
 					);
 					navigate( wp.url.addQueryArgs( '/kit-library', lastFilter ) )

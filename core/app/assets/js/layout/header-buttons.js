@@ -6,16 +6,17 @@ export default function HeaderButtons( props ) {
 	const actionOnClose = () => {
 		if ( props.onClose ) {
 		} else if ( 'kit-library' === props?.referrer ) {
-			elementorCommon.events.eventTracking(
+			$e.run(
 				'kit-library/close',
-				{
-					placement: 'kit library',
-					event: 'top bar close kit library',
-				},
 				{
 					source: props.pageId,
 					kit_name: props.kitName,
 					view_type_clicked: props.pageId,
+				},
+				{
+					meta: {
+						event: 'top bar close kit library',
+					},
 				},
 			);
 		}

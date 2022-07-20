@@ -9,12 +9,10 @@ export default function ConflictCheckbox( props ) {
 		isSelected = () => importContext.data.overrideConditions.includes( props.id ),
 		updateOverrideCondition = ( event ) => {
 			const isChecked = event.target.checked,
-				actionType = isChecked ? 'ADD_OVERRIDE_CONDITION' : 'REMOVE_OVERRIDE_CONDITION';
-			console.log( 'referrer: ', props.referrer );
+			actionType = isChecked ? 'ADD_OVERRIDE_CONDITION' : 'REMOVE_OVERRIDE_CONDITION';
 			if ( props.onCheck ) {
 				props.onCheck( event, props.title );
 			}
-
 			importContext.dispatch( { type: actionType, payload: props.id } );
 		};
 

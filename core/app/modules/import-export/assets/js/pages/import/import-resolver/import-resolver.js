@@ -92,7 +92,23 @@ export default function ImportResolver() {
 							<List separated className="e-app-import-resolver-conflicts">
 								{ Object.entries( conflicts ).map( ( [ id, conflict ], index ) => (
 									<List.Item padding="20" key={ index } className="e-app-import-resolver-conflicts__item">
-										<Conflict importedId={ parseInt( id ) } conflictData={ conflict[ 0 ] } />
+										<Conflict
+											importedId={ parseInt( id ) }
+											conflictData={ conflict[ 0 ] }
+											viewConflictItemEvent={ ( title ) => {
+												$e.run(
+													'kit-library/check-item',
+													{
+														site_part: title,
+													},
+													{
+														event: 'open kit part - new tab',
+														source: 'import',
+														step: '3',
+													},
+												)
+											} }
+										/>
 									</List.Item>
 								) ) }
 							</List>

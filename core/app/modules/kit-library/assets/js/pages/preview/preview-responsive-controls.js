@@ -21,18 +21,9 @@ export default function PreviewResponsiveControls( props ) {
 						className={ className }
 						icon={ `eicon-device-${ value }` }
 						onClick={ () => {
-							elementorCommon.events.eventTracking(
-								'kit-library/responsive-controls',
-								{
-									placement: 'kit library',
-									event: 'top bar responsive views',
-								},
-								{
-									source: 'view-demo',
-									kit_name: props.kitName,
-									layout: value,
-								},
-							);
+							if ( props.previewResponsiveControlsEvent ) {
+								props.previewResponsiveControlsEvent( value );
+							}
 							props.onChange( value );
 						} }
 					/>
@@ -45,6 +36,7 @@ export default function PreviewResponsiveControls( props ) {
 PreviewResponsiveControls.propTypes = {
 	active: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
+	previewResponsiveControlsEvent: PropTypes.func,
 };
 
 PreviewResponsiveControls.defaultProps = {

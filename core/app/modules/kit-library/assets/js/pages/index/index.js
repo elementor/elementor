@@ -245,7 +245,51 @@ export default function Index( props ) {
 								},
 							] }
 							value={ queryParams.order }
-							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
+							onChange={ ( order ) => {
+								setQueryParams( ( prev ) => ( { ...prev, order } ) )
+							} }
+							onChangeSortDirection={ ( direction ) => {
+								$e.run(
+									'kit-library/change-sort-direction',
+									{
+										sort_direction: direction,
+									},
+									{
+										meta: {
+											event: 'kit sort direction',
+											source: 'home page',
+										},
+									},
+								);
+							} }
+							onChangeSortValue={ ( value ) => {
+								$e.run(
+									'kit-library/change-sort-value',
+									{
+										sort_type: value,
+									},
+									{
+										meta: {
+											event: 'kit sort type select',
+											source: 'home page',
+										},
+									},
+								);
+							} }
+							onSortTypeDropdown={ () => {
+								// TODO: Add onBlur event to sort type dropdown
+								$e.run(
+									'kit-library/change-sort-type',
+									{},
+									{
+										meta: {
+											event: 'kit sort type dropdown',
+											source: 'home page',
+											action: 'expand',
+										},
+									},
+								);
+							} }
 						/>
 					</Grid>
 				</Grid>

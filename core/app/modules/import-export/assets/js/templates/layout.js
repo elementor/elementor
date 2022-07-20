@@ -8,7 +8,6 @@ import ExportInfoModal from '../shared/info-modal/export-info-modal';
 import { SharedContext } from '../context/shared-context/shared-context-provider';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
-import { eventTrackingObject } from 'elementor-app/consts/consts';
 
 export default function Layout( props ) {
 	const [ showInfoModal, setShowInfoModal ] = useState( false ),
@@ -18,49 +17,36 @@ export default function Layout( props ) {
 			let infoModalProps = {
 				show: showInfoModal,
 				setShow: setShowInfoModal,
-			},
-		eventTrack = ( trackName, event, eventType = 'click', element ) => {
-			const eventParams = {
-				...eventTrackingObject,
-				placement: 'kit library',
-				event,
-				details: {
-					...eventTrackingObject.details,
-					source: 'import',
-					element,
-					event_type: eventType,
-				},
 			};
-
-			$e.run( trackName, eventParams );
-		};
 
 			if ( 'kit-library' === referrer ) {
 				infoModalProps = {
 					referrer,
 					...infoModalProps,
-					onOpen: () => elementorCommon.events.eventTracking(
+					onOpen: () => $e.run(
 						'kit-library/modal-open',
+						{},
 						{
-							placement: 'kit library',
-							event: 'info modal load',
-						},
-						{
-							source: 'import',
-							event_type: 'load',
+							meta: {
+								event: 'info modal load',
+								source: 'import',
+								event_type: 'load',
+							},
 						},
 					),
 					onClose: ( e ) => {
 						const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
-						elementorCommon.events.eventTracking(
+						$e.run(
 							'kit-library/modal-close',
 							{
-								placement: 'kit library',
-								event: 'overlay' === element ? 'background page' : 'info modal close',
+								element,
 							},
 							{
-								source: 'import',
-								element,
+								meta: {
+									event: 'overlay' === element ? 'background page' : 'info modal close',
+									source: 'import',
+									event_type: 'load',
+								},
 							},
 						);
 					},
@@ -79,14 +65,14 @@ export default function Layout( props ) {
 				...infoButtonProps,
 				onClick: () => {
 					if ( 'kit-library' === referrer ) {
-						elementorCommon.events.eventTracking(
+						$e.run(
 							'kit-library/seek-more-info',
+							{},
 							{
-								placement: 'kit library',
-								event: 'top panel info',
-							},
-							{
-								source: 'import',
+								meta: {
+									event: 'top panel info',
+									source: 'import',
+								},
 							},
 						);
 					}
