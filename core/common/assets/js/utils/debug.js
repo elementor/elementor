@@ -75,7 +75,7 @@ var Debug = function() {
 			column: error.columnNumber || error.column,
 			customFields: {
 				category: category || 'general',
-				tag: tag,
+				tag,
 			},
 		};
 
@@ -120,7 +120,7 @@ var Debug = function() {
 				_nonce: elementorCommon.ajax.getSettings( 'nonce' ),
 				data: errorStack,
 			},
-			success: function() {
+			success() {
 				errorStack = [];
 
 				// Restore error handler

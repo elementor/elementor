@@ -27,8 +27,7 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
-		const insideHandleClass = 'elementor-section--handles-inside',
-			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
+		const insideHandleClass = 'elementor-section--handles-inside';
 
 		if ( elementor.settings.page.model.attributes.scroll_snap ) {
 			this.$element.addClass( insideHandleClass );
@@ -46,6 +45,7 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		if ( offset < 25 ) {
 			this.$element.addClass( insideHandleClass );
 
+			const $handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
 			if ( offset < -5 ) {
 				$handlesElement.css( 'top', -offset );
 			} else {

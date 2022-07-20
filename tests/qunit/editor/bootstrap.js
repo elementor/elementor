@@ -1,7 +1,5 @@
 import tests from '../tests';
 
-/* global require */
-
 export default class EditorBootstrap {
 	constructor() {
 		jQuery( this.initialize.bind( this ) );

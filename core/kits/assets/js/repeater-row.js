@@ -99,7 +99,7 @@ export default class extends RepeaterRow {
 			globalTypeTranslatedCapitalized = 'font' === globalType ? __( 'Font', 'elementor' ) : __( 'Color', 'elementor' ),
 			globalTypeTranslatedLowercase = 'font' === globalType ? __( 'font', 'elementor' ) : __( 'color', 'elementor' ),
 			/* translators: 1: Font/Color, 2: typography/color. */
-			translatedMessage = sprintf( __( 'You\'re about to delete a Global %s. Note that if it\'s being used anywhere on your site, it will inherit a default %s.', 'elementor' ), globalTypeTranslatedCapitalized, globalTypeTranslatedLowercase );
+			translatedMessage = sprintf( __( 'You\'re about to delete a Global %1$s. Note that if it\'s being used anywhere on your site, it will inherit a default %1$s.', 'elementor' ), globalTypeTranslatedCapitalized, globalTypeTranslatedLowercase );
 
 		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			className: 'e-global__confirm-delete',

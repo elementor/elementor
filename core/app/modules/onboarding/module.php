@@ -134,26 +134,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Set Opt In
-	 *
-	 * This method opts the user into sharing non-sensitive usage data with Elementor.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function set_usage_data_opt_in() {
-		Tracker::set_opt_in( true );
-
-		return [
-			'status' => 'success',
-			'payload' => [
-				'usageDataShared' => true,
-			],
-		];
-	}
-
-	/**
 	 * Maybe Update Site Logo
 	 *
 	 * If a new name is provided, it will be updated as the Site Name.
@@ -444,9 +424,6 @@ class Module extends BaseModule {
 				break;
 			case 'elementor_upload_site_logo':
 				$result = $this->maybe_upload_logo_image();
-				break;
-			case 'elementor_update_data_sharing':
-				$result = $this->set_usage_data_opt_in();
 				break;
 			case 'elementor_activate_hello_theme':
 				$result = $this->maybe_activate_hello_theme();

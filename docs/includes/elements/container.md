@@ -18,6 +18,8 @@ Container uses Flex (in the future also Grid) and gives you the option to drag &
 - [Flex Cheatsheet](https://yoksel.github.io/flex-cheatsheet/)
 
 
+- [Elementor Container Playground](https://playground.elementor.com/demo/flexbox/)
+
 
 ## Attention Needed / Known Issues:
 
@@ -74,3 +76,150 @@ Another aspect is the new elements hierarchy. We needed to decide which elements
       nested Containers.
 - Some of the styles in the `_container.scss` file are leftovers from the POC phase that should be editor-only, and
   should be moved to another file.
+
+## How-Tos:
+
+### Adding a new control:
+
+In the `container.php` file, add a new control as any other widget:
+
+```PHP
+// container.php
+
+$this->add_control(
+	'overflow',
+	[
+		'label' => esc_html__( 'Overflow', 'elementor' ),
+		'type' => Controls_Manager::SELECT,
+		'default' => '',
+		'options' => [
+			'' => esc_html__( 'Default', 'elementor' ),
+			'hidden' => esc_html__( 'Hidden', 'elementor' ),
+			'auto' => esc_html__( 'Auto', 'elementor' ),
+		],
+		'selectors' => [
+			'{{WRAPPER}}' => '--overflow: {{VALUE}}',
+		],
+	]
+);
+```
+
+Notice that we've set a CSS variable to the `{{WRAPPER}}` - We're gonna use that in the SCSS file:
+
+```SCSS
+// _container.scss
+
+// First, reset the CSS var in the top of the file, to its initial value:
+--overflow: visible;
+// ...
+// other vars declarations
+// ...
+
+// Then, consume it:
+overflow: var( --overflow );
+```
+
+This variables reset method is required in order to avoid style leakage as stated above.
+
+#### Guidelines:
+
+- Name the CSS variable after the corresponding CSS property.
+- Try to always use `{{WRAPPER}}` as the selector, and consume the variable under the proper selector in the SCSS file
+  instead of putting a long selector in the PHP file. 
+- If the control should have a default value, reset the variable value to this value. Otherwise, make sure that the
+  default value you set for the property is the real default according to [MDN](https://developer.mozilla.org)
+  (Sometimes `--var-name: revert;` will be your best bet, but don't overuse it).
+
+### Extending the Container - WIP:
+
+In order to extend the Container element, you'll need to extend it in PHP & JS:
+
+1. PHP - Create a new module with a class that extends the Container.
+2. PHP - Set the default child types (`_get_default_child_type()`).
+3. PHP - Register it under elements manager using `elementor/elements/elements_registered` hook.
+4. PHP - Add its config using `elementor/document/config` filter.
+5. JS - Create a Marionette view that extends the Container view.
+6. JS - Register the element under `views/base.js::getChildView()`.
+7. JS - Update the `elementsHierarchy` object under `/js/editor/utils/helpers.js`.
+8. JS - Go over every element view (column/section/container) in order to enable dropping inside other elements (`views/*.js::isDroppingAllowed()`).
+9. JS - How do you override the current "add new container" thing (the one that replaces the Section's one)?
+
+#### PHP:
+
+Create a new class under the `/includes/elements` directory that extends `Elementor\Includes\Elements\Container`.
+
+Relevant (or interesting) methods to override might be:
+- `_get_default_child_type()`
+- `get_type()`
+- `get_name()`
+- `get_title()`
+- `get_icon()`
+- `register_controls()`
+
+
+
+In order to inform the Editor about this new element, register it under the `Elements_Manager::init_elements()` method (`/includes/managers/elements.php`):
+
+```PHP
+private function init_elements() {
+	// ...
+	// Other code
+	// ...
+
+	$this->register_element_type( new Awesome_Element() );
+
+	// ...
+	// Other code
+	// ...
+}
+```
+
+#### JS:
+
+Create a new Marionette class under the `/assets/dev/js/editor/elements/views` directory that extends `ContainerView` (`container.js` in the same directory).
+
+Then, just add/remove methods and features. Relevant (or interesting) methods to override might be:
+
+- `classname()`
+- `getCurrentUiStates()`
+- `getDroppableOptions()`
+- `isDroppingAllowed()`
+- `onDragStart()`
+- `onDragEnd()`
+
+In order to inform the Editor about this new element, add a new `case` under the `getChildView()` method in `/views/base.js`, 
+that imports your newly created element:
+
+```JS
+switch ( elType ) {
+	// ...
+	// Other cases
+	// ...
+
+	case 'my-awesome-container':
+		ChildView = require( 'elementor-elements/views/my-awesome-container' );
+		break;
+}
+```
+
+## Related Hooks:
+
+Currently, the Container element has only a single related hook called "set-direction-mode"
+(`/js/editor/document/hooks/ui/settings/set-direction-mode.js`).
+
+This hook handles changes in the "Direction Mode" UI state that's attached to the Container.
+Theoretically, this hook should support any element that has "Direction Mode" support in its Marionette view, but
+currently it's only implemented in Container.
+
+Each time a setting gets changed (either from the Panel or using an external `document/elements/settings` command), this hook gets fired
+and handles the UI state change.
+
+**_Note_**: When the user is viewing the "Advanced" tab in the Panel, the UI state change is fired on the parent
+because the Direction Mode is mainly responsible for rotating flex icons, and the controls in the advanced tab should be
+rotated relatively to the parent (e.g. "align-self" is a child control, but it's relative to the parent).
+
+___
+
+## See Also:
+
+- [Container Converter](../../modules/container-converter/container-converter.md) - A migration tool for Containers.
