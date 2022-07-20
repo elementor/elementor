@@ -1,4 +1,26 @@
 export default class extends elementorModules.Module {
+	defaultOptions = {
+		title: '',
+		content: '',
+		targetElement: null,
+		position: {
+			blockStart: null,
+			inlineStart: null,
+		},
+		actionButton: {
+			url: null,
+			text: null,
+			classes: [ 'elementor-button', 'elementor-button-success' ],
+		},
+	};
+
+	elements = {
+		$title: null,
+		$titleBadge: null,
+		$closeButton: null,
+		$header: null,
+	};
+
 	constructor() {
 		super();
 
@@ -20,46 +42,69 @@ export default class extends elementorModules.Module {
 			},
 		} );
 
-		// We also need to check if the 'connect' URL exist for not breaking older pro versions that does not contain this link.
-		const isProExistNotConnected = ! ! ( elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect );
+		this.elements.$header = this.dialog.getElements( 'header' );
+
+		this.elements.$title = jQuery( '<div>', { id: 'elementor-element--promotion__dialog__title' } );
+		this.elements.$titleBadge = jQuery( '<i>', { class: 'eicon-pro-icon' } );
+		this.elements.$closeButton = jQuery( '<i>', { class: 'eicon-close' } );
+
+		this.elements.$closeButton.on( 'click', () => this.dialog.hide() );
+
+		this.elements.$header.append(
+			this.elements.$title,
+			this.elements.$titleBadge,
+			this.elements.$closeButton,
+		);
+	}
+
+	createButton( options ) {
+		const $actionButton = this.dialog.getElements( 'action' );
+
+		if ( $actionButton ) {
+			$actionButton.remove();
+		}
 
 		this.dialog.addButton( {
 			name: 'action',
-			text: isProExistNotConnected ? __( 'Connect & Activate', 'elementor' ) : __( 'See it in action', 'elementor' ),
-			callback: () => {
-				const url = isProExistNotConnected ? elementorProEditorConfig.urls.connect : this.actionURL;
-
-				open( url, '_blank' );
-			},
+			text: options.text,
+			classes: options.classes.join( ' ' ),
+			callback: () => open( options.url, '_blank' ),
 		} );
-
-		this.dialog.getElements( 'action' ).addClass( 'elementor-button elementor-button-success' );
-
-		const $promotionTitle = jQuery( '<div>', { id: 'elementor-element--promotion__dialog__title' } ),
-			$proIcon = jQuery( '<i>', { class: 'eicon-pro-icon' } ),
-			$closeButton = jQuery( '<i>', { class: 'eicon-close' } );
-
-		$closeButton.on( 'click', () => this.dialog.hide() );
-
-		this.dialog.getElements( 'header' ).append( $promotionTitle, $proIcon, $closeButton );
-
-		this.$promotionTitle = $promotionTitle;
 	}
 
-	showDialog( options ) {
+	parseOptions( options = {} ) {
+		return {
+			...this.defaultOptions,
+			...options,
+			position: {
+				...this.defaultOptions.position,
+				...( options?.position || {} ),
+			},
+			actionButton: {
+				...this.defaultOptions.actionButton,
+				...( options?.actionButton || {} ),
+			},
+		};
+	}
+
+	showDialog( options = {} ) {
 		if ( ! this.dialog ) {
 			this.initDialog();
 		}
 
-		this.actionURL = options.actionURL;
+		options = this.parseOptions( options );
 
-		this.$promotionTitle.text( options.headerMessage );
+		this.createButton( options.actionButton );
+
+		this.elements.$title.text( options.title );
+
+		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
 
 		this.dialog
-			.setMessage( options.message )
+			.setMessage( options.content )
 			.setSettings( 'position', {
-				of: options.element,
-				at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ( options.inlineStart || '' ) + ' top' + options.top,
+				of: options.targetElement,
+				at: `${ inlineStartKey }${ options.position.inlineStart || '' } top${ options.position.blockStart || '' }`,
 			} );
 
 		return this.dialog.show();
