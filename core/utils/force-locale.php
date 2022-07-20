@@ -69,11 +69,11 @@ class Force_Locale {
 	 * @return void
 	 */
 	public function restore() {
-		remove_filter( 'pre_determine_locale', $this->filter );
-
 		$this->reset_l10n();
 
 		switch_to_locale( $this->original_locale );
+
+		remove_filter( 'pre_determine_locale', $this->filter );
 	}
 
 	/**
@@ -82,7 +82,13 @@ class Force_Locale {
 	 * @return void
 	 */
 	private function reset_l10n() {
-		global $l10n_unloaded;
+		global $l10n, $l10n_unloaded;
+
+		if ( is_array( $l10n ) ) {
+			foreach ( $l10n as $domain => $l10n_data ) {
+				unset( $l10n[ $domain ] );
+			}
+		}
 
 		if ( is_array( $l10n_unloaded ) ) {
 			foreach ( $l10n_unloaded as $domain => $l10n_unloaded_data ) {
