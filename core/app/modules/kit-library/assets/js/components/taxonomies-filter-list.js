@@ -68,11 +68,10 @@ const TaxonomiesFilterList = ( props ) => {
 												category,
 												section: taxonomy.type,
 												item: taxonomy.text,
-												action: 'check',
 											},
 											{
 												meta: {
-													placement: 'kit library',
+													action: 'check',
 													event: 'sidebar section filters interaction',
 													source: 'home page',
 												},
@@ -85,11 +84,10 @@ const TaxonomiesFilterList = ( props ) => {
 												category,
 												section: taxonomy.type,
 												item: taxonomy.text,
-												action: 'uncheck',
 											},
 											{
 												meta: {
-													placement: 'kit library',
+													action: 'uncheck',
 													event: 'sidebar section filters interaction',
 													source: 'home page',
 												},

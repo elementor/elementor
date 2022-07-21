@@ -17,7 +17,6 @@ export default function IndexSidebar( props ) {
 								{},
 								{
 									meta: {
-										placement: 'kit library',
 										event: item.trackEventData.event,
 										source: 'home page',
 									},

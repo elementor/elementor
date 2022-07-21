@@ -5,10 +5,13 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function UnfilteredFilesDialog( props ) {
-	const { show, setShow, onReady, onCancel, onDismiss, referrer } = props,
+	const { show, setShow, onReady, onCancel, onDismiss, onLoad, onEnable, onClose } = props,
 		{ ajaxState, setAjax } = useAjax(),
 		[ enableUnfilteredFiles, setEnableUnfilteredFiles ] = useState( false ),
 		[ isEnableError, setIsEnableError ] = useState( false );
+	if ( onDismiss ) {
+		console.log( 'onDismiss: ', onDismiss )
+	}
 
 	// Sending the enable unfiltered files request.
 	useEffect( () => {
@@ -25,6 +28,10 @@ export default function UnfilteredFilesDialog( props ) {
 					} ),
 				},
 			} );
+
+			if ( onEnable ) {
+				onEnable();
+			}
 		}
 	}, [ enableUnfilteredFiles ] );
 
@@ -41,6 +48,12 @@ export default function UnfilteredFilesDialog( props ) {
 		}
 	}, [ ajaxState ] );
 
+	useEffect( () => {
+		if ( show && onLoad ) {
+			onLoad();
+		}
+	}, [ show ] )
+
 	if ( ! show ) {
 		return null;
 	}
@@ -48,28 +61,26 @@ export default function UnfilteredFilesDialog( props ) {
 	return (
 		<>
 			{
-				isEnableError
-				? <Dialog
-						title={ __( 'Something went wrong.', 'elementor' ) }
-						text={ props.errorModalText }
-						approveButtonColor="link"
-						approveButtonText={ __( 'Continue', 'elementor' ) }
-						approveButtonOnClick={ onReady }
-						dismissButtonText={ __( 'Go Back', 'elementor' ) }
-						dismissButtonOnClick={ onCancel }
-						onClose={ onCancel }
-						referrer={ referrer }
-				/>
-				: <Dialog
-						title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
-						text={ props.confirmModalText }
-						approveButtonColor="link"
-						approveButtonText={ __( 'Enable', 'elementor' ) }
-						approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
-						dismissButtonText={ __( 'Skip', 'elementor' ) }
-						dismissButtonOnClick={ onDismiss || onReady }
-						onClose={ onDismiss || onReady }
-						referrer={ referrer }
+				isEnableError ?
+				<Dialog
+					title={ __( 'Sorry, something went wrong.', 'elementor' ) }
+					text={ props.errorModalText }
+					approveButtonColor="link"
+					approveButtonText={ __( 'Continue', 'elementor' ) }
+					approveButtonOnClick={ onReady }
+					dismissButtonText={ __( 'Go back', 'elementor' ) }
+					dismissButtonOnClick={ onCancel }
+					onClose={ onCancel }
+				/> :
+				<Dialog
+					title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
+					text={ props.confirmModalText }
+					approveButtonColor="link"
+					approveButtonText={ __( 'Enable', 'elementor' ) }
+					approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
+					dismissButtonText={ __( 'Skip', 'elementor' ) }
+					dismissButtonOnClick={ onDismiss || onReady }
+					onClose={ onDismiss || onReady }
 				/>
 			}
 		</>
@@ -84,6 +95,7 @@ UnfilteredFilesDialog.propTypes = {
 	onDismiss: PropTypes.func,
 	confirmModalText: PropTypes.string.isRequired,
 	errorModalText: PropTypes.string.isRequired,
+	onLoad: PropTypes.func,
 };
 
 UnfilteredFilesDialog.defaultProps = {

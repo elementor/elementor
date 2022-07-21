@@ -30,16 +30,17 @@ export default function TaxonomiesFilter( props ) {
 						onSelect={ props.onSelect }
 						onOpen={ ( value, title ) => {
 							// TODO: Don't shoot this event on first load
+							const command = value ? 'kit-library/expand' : 'kit-library/collapse';
 							if ( typeof ( value ) !== 'undefined' ) {
 								$e.run(
-									`kit-library/${ ( value ) ? 'expand' : 'collapse' }`,
+									command,
 									{
 										section: title,
-										action: ( value ) ? 'expand' : 'collapse',
 										category: ( '/' === props.category ? 'all kits' : 'favorites' ),
 									},
 									{
 										meta: {
+											action: command,
 											event: 'sidebar section interaction',
 											source: 'home page',
 										},
@@ -49,7 +50,7 @@ export default function TaxonomiesFilter( props ) {
 						} }
 						onSearchEvent={ ( search, category ) => {
 							$e.run(
-								'kit-library/checkbox-filtration',
+								'kit-library/filter',
 								{
 									search_term: search,
 									category,
@@ -60,7 +61,7 @@ export default function TaxonomiesFilter( props ) {
 										source: 'home page',
 										event: 'sidebar section filters search',
 										event_type: 'search',
-									}
+									},
 								},
 							);
 						} }

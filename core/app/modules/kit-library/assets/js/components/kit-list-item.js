@@ -57,7 +57,6 @@ const KitListItem = ( props ) => {
 										},
 										{
 											meta: {
-												placement: 'kit library',
 												event: 'view kit demo',
 												source: '/' === props.source ? 'all- kits' : 'favorites',
 											},

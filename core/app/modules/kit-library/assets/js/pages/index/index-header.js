@@ -106,7 +106,6 @@ export default function IndexHeader( props ) {
 						{
 							meta: {
 								event: 'overlay' === element ? 'background page' : 'info modal close',
-								placement: 'kit library',
 								source: 'home page',
 							},
 						},

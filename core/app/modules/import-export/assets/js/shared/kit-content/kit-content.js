@@ -57,20 +57,23 @@ export default function KitContent( { contentData, hasPro } ) {
 											type={ type }
 											className="e-app-export-kit-content__checkbox"
 											referrer={ referrer }
-											onCheck={ ( event, chosenPart ) => $e.run(
-												'kit-library/' + ( event.target.checked ? 'check' : 'uncheck' ),
+											onCheck={ ( event, chosenPart ) => {
+												const command = event.target.checked ? 'kit-library/check' : 'kit-library/uncheck';
+												$e.run(
+													command,
 												{
-													action: event.target.checked ? 'check' : 'uncheck',
 													site_part: chosenPart,
 												},
 												{
 													meta: {
+														action: command,
 														event: 'kit parts selection',
 														source: 'import',
 														step: '2',
 													},
 												},
-											) }
+											)
+										} }
 										/>
 
 										<Grid item container>

@@ -30,7 +30,6 @@ export default function FilterIndicationText( props ) {
 										elementorCommon.events.eventTracking(
 											'kit-library/clear-filter',
 											{
-												placement: 'kit library',
 												event: 'remove filter tag',
 											},
 											{
@@ -55,7 +54,6 @@ export default function FilterIndicationText( props ) {
 					elementorCommon.events.eventTracking(
 						'kit-library/clear-filter',
 						{
-							placement: 'kit library',
 							event: 'remove filter tag',
 						},
 						{

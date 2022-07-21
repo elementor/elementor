@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
@@ -6,9 +6,10 @@ import { SharedContext } from 'elementor/core/app/modules/import-export/assets/j
 
 export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess, goBack, approveImport } ) {
 	const sharedContext = useContext( SharedContext ),
-	{ referrer } = sharedContext.data,
+	{ referrer, wizardStep } = sharedContext.data,
 	navigate = useNavigate(),
 		getNextPageUrl = () => {
+			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUMBER' } );
 			if ( hasConflicts ) {
 				return 'import/resolver';
 			} else if ( hasPlugins ) {
@@ -17,6 +18,9 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 
 			return 'import/process';
 		};
+	useEffect( () => {
+		sharedContext.dispatch( { type: 'SET_WIZARD_STEP', payload: wizardStep + 1 } );
+	}, [] )
 	return (
 		<ActionsFooter>
 			<Button

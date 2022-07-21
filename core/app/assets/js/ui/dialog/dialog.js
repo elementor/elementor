@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import DialogWrapper from './dialog-wrapper';
 import DialogContent from './dialog-content';
 import DialogTitle from './dialog-title';
@@ -9,62 +8,8 @@ import DialogButton from './dialog-button';
 import './dialog.scss';
 
 export default function Dialog( props ) {
-	const dismissButtonOnClick = () => {
-		props.dismissButtonOnClick();
-	},
-	approveButtonOnClick = () => {
-		// if ( 'kit-library' === props.referrer ) {
-		// 	elementorCommon.events.eventTracking(
-		// 		'kit-library/enable',
-		// 		{
-		// 			placement: 'kit library',
-		// 			event: 'unfiltered file modal enable button',
-		// 		},
-		// 		{
-		// 			source: 'import',
-		// 			step: '3',
-		// 		},
-		// 	)
-		// }
-
-		// TODO: Not shooting onDismiss from import-proccess.js
-		props.approveButtonOnClick();
-	},
-	onClose = () => {
-		if ( 'kit-library' === props.referrer ) {
-			$e.run(
-				'kit-library/close',
-				{},
-				{
-					meta: {
-						event: 'unfiltered file modal close',
-						source: 'import',
-						step: '3',
-					},
-				},
-			)
-		}
-		props.onClose();
-	};
-
-	useEffect( () => {
-		if ( 'kit-library' === props.referrer ) {
-			$e.run(
-				'kit-library/unfiltered-file-modal-load',
-				{},
-				{
-					meta: {
-						event: 'unfiltered file modal load',
-						source: 'import',
-						step: '3',
-						event_type: 'load',
-					},
-				},
-			)
-		}
-	}, [] )
 	return (
-		<DialogWrapper onSubmit={ props.onSubmit } onClose={ onClose }>
+		<DialogWrapper onSubmit={ props.onSubmit } onClose={ props.onClose }>
 			<DialogContent>
 				{ props.title && <DialogTitle>{ props.title }</DialogTitle> }
 				{ props.text && <DialogText>{ props.text }</DialogText> }
@@ -74,21 +19,19 @@ export default function Dialog( props ) {
 				<DialogButton
 					key="dismiss"
 					text={ props.dismissButtonText }
-					onClick={ dismissButtonOnClick }
+					onClick={ props.dismissButtonOnClick }
 					url={ props.dismissButtonUrl }
 					target={ props.dismissButtonTarget }
-					// eslint-disable-next-line jsx-a11y/tabindex-no-positive
 					tabIndex="2"
 				/>
 				<DialogButton
 					key="approve"
 					text={ props.approveButtonText }
-					onClick={ approveButtonOnClick }
+					onClick={ props.approveButtonOnClick }
 					url={ props.approveButtonUrl }
 					target={ props.approveButtonTarget }
 					color={ props.approveButtonColor }
 					elRef={ props.approveButtonRef }
-					// eslint-disable-next-line jsx-a11y/tabindex-no-positive
 					tabIndex="1"
 				/>
 			</DialogActions>
@@ -112,6 +55,7 @@ Dialog.propTypes = {
 	approveButtonColor: PropTypes.string,
 	approveButtonTarget: PropTypes.string,
 	approveButtonRef: PropTypes.object,
+	referrer: PropTypes.string,
 };
 
 Dialog.defaultProps = {};

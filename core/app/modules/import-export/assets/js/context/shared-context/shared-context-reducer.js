@@ -14,6 +14,10 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, customPostTypes: payload };
 		case 'SET_SELECTED_CPT':
 			return { ...state, selectedCustomPostTypes: payload };
+		case 'SET_WIZARD_STEP_NUM':
+			console.log( 'state: ', state );
+			console.log( 'payload: ', payload );
+			return { ...state, wizardStepNum: payload + 1 };
 		default:
 			return state;
 	}

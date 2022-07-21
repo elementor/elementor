@@ -58,18 +58,22 @@ export default function ImportProcess() {
 
 			navigateToMainScreen();
 		},
-		eventTracking = ( action, event, source, step, eventType = null ) => elementorCommon.events.eventTracking(
-		`kit-library/${ action }`,
-		{
-			placement: 'kit library',
-			event,
-		},
-		{
-			source,
-			step,
-			event_type: eventType,
-		},
-	);
+		eventTracking = ( command, event, source, step, eventType = null ) => {
+			if ( 'kit-library' === sharedContext.data.referrer ) {
+				$e.run(
+					command,
+					{},
+					{
+						meta: {
+							event,
+							source,
+							step,
+							event_type: eventType,
+						},
+					},
+				);
+			}
+		}
 
 	// On load.
 	useEffect( () => {
@@ -181,26 +185,29 @@ export default function ImportProcess() {
 						setStartImport( true );
 					} }
 					onCancel={ () => {
+						debugger;
+						console.log( 'cancel' );
 						setShowUnfilteredFilesDialog( false );
 						onCancelProcess();
 					} }
 					referrer={ sharedContext.data.referrer }
-					onDIsmiss={ () => {
-						console.log( 'Cancelled', importContext.data.referrer );
-						console.log( 'referrer', referrer );
-						if ( 'kit-library' === importContext.data.referrer ) {
-							$e.run(
-								'kit-library/skip',
-								{},
-								{
-									meta: {
-										source: 'import',
-										step: '3',
-										event: 'unfiltered file modal skip button',
-									},
-								},
-							)
-						}
+					onLoad={ () => {
+						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load', 'import', '3' );
+					} }
+					//
+					onClose={ () => {
+						// console.log( 'close' );
+						// eventTracking( 'kit-library/close', 'unfiltered file modal skip button', 'import', '3' );
+					} }
+
+					onDismiss={ () => {
+						// console.log( 'dismiss' );
+					// TODO: If additional data is passed here it breaks the dismiss functionality. shoots on x and skip buttons.
+
+					} }
+
+					onEnable={ () => {
+						eventTracking( 'kit-library/enable', 'unfiltered file modal enable button', 'import', '3' );
 					} }
 				/>
 			</section>

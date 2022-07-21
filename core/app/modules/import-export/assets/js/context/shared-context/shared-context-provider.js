@@ -12,6 +12,7 @@ export default function SharedContextProvider( props ) {
 		referrer: null,
 		customPostTypes: [],
 		selectedCustomPostTypes: [],
+		wizardStepNum: null,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

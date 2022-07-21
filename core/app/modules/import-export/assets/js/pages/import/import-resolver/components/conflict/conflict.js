@@ -58,14 +58,15 @@ export default function Conflict( props ) {
 				title={ props.conflictData.template_title }
 				referrer={ referrer }
 				onCheck={ ( event, title ) => {
+					const command = event.target.checked ? 'kit-library/check' : 'kit-library/uncheck';
 					$e.run(
-					'kit-library/' + ( event.target.checked ? 'check' : 'uncheck' ),
+						command,
 						{
-							action: event.target.checked ? 'check' : 'uncheck',
 							site_part: title,
 						},
 						{
 							meta: {
+								action: command,
 								event: 'kit parts conflict',
 								source: 'import',
 								step: '3',

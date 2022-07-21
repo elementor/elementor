@@ -59,6 +59,7 @@ export default function ImportKit() {
 	// On load.
 	useEffect( () => {
 		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+		sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 0 } );
 	}, [] );
 
 	// Uploading the kit after file is selected.
@@ -75,7 +76,6 @@ export default function ImportKit() {
 				// elementorCommon.events.eventTracking(
 				// 	'kit-library/file-upload',
 				// 	{
-				// 		placement: 'kit library',
 				// 		event: 'top panel info',
 				// 	},
 				// 	{
@@ -93,7 +93,6 @@ export default function ImportKit() {
 				// elementorCommon.events.eventTracking(
 				// 	'kit-library/file-upload',
 				// 	{
-				// 		placement: 'kit library',
 				// 		event: 'top panel info',
 				// 	},
 				// 	{
@@ -199,7 +198,6 @@ export default function ImportKit() {
 							{},
 							{
 								meta: {
-									placement: 'kit library',
 									event: 'error modal close',
 									source: 'import',
 									step: '1',

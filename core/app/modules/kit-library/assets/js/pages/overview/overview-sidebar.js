@@ -12,7 +12,6 @@ export default function OverviewSidebar( props ) {
 	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( false );
 	const sidebarTagFilterEvent = ( kitName, taxonomyText ) => {
-		debugger;
 		$e.run(
 			'kit-library/sidebar-tag-filter',
 			{
@@ -28,14 +27,15 @@ export default function OverviewSidebar( props ) {
 		);
 	};
 	const sidebarDropDownEvent = ( value, title ) => {
+		const command = value ? 'kit-library/expand' : 'kit-library/collapse';
 		$e.run(
-			`kit-library/${ ( value ) ? 'expand' : 'collapse' }`,
+			command,
 			{
 				section: title,
-				action: ( value ) ? 'expand' : 'collapse',
 			},
 			{
 				meta: {
+					action: command,
 					event: 'sidebar section interaction',
 					source: 'overview',
 				},
