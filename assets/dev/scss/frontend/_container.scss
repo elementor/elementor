@@ -180,14 +180,21 @@
 			flex-basis: 100%;
 		}
 
-		// Fix align-self:stretch (ED-7359)
-		display: flex;
-
 		// Fix swiper-based widgets broken (ED-6849).
 		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
 		&.e-widget-swiper {
 			max-width: 100%;
 			flex-basis: 100%;
+		}
+	}
+
+	& > .elementor-widget {
+
+		& > .elementor-widget-container {
+			// Fix align-self:stretch (ED-7359)
+			display: flex;
+    		flex-direction: column;
+			height: 100%;
 		}
 	}
 
