@@ -438,7 +438,7 @@ class Import {
 	 * @return array
 	 */
 	private function get_default_settings_override_conditions() {
-		return apply_filters( 'elementor/import/get_default_settings_override_conditions', [], $this->manifest );
+		return apply_filters( 'elementor/import/get_default_settings_override_conditions', $this->manifest );
 	}
 
 	/**
