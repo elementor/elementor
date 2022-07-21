@@ -8,3 +8,12 @@
 		height: var( --spacer-size );
 	}
 }
+
+.e-container {
+
+	& > .elementor-widget-space {
+		// Fix - Spacer widget has undefined width and height issues inside the flex container (ED-7720).
+		width: var( --container-widget-width, 100% );
+		flex-grow: 1;
+	}
+}
