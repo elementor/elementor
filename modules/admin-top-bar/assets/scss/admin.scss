@@ -184,7 +184,7 @@ $top-bar-height: 50px;
 
 @media screen and (max-width: 600px) {
 	#e-admin-top-bar-root {
-		top: 46px;
+		margin-top: 46px;
 	}
 }
 
@@ -193,7 +193,7 @@ $top-bar-height: 50px;
 	#e-admin-top-bar-root {
 		.e-admin-top-bar__main-area-buttons {
 			position: absolute;
-			top: calc(100% + 10px);
+			margin-top: calc(100% + 10px);
 		}
 
 		display: inline-flex;
