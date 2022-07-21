@@ -16,15 +16,13 @@ $top-bar-height: 50px;
 
 // The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
 #e-admin-top-bar-root {
-	@include end( 0 );
-	background: $white;
-	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.0394871);
-	display: none;
-	position: absolute;
-	top: 0;
-	width: calc(100% - 160px);
-	z-index: $first-layer;
+	--wp-nav-width: 20px;
 
+	background: $white;
+	box-shadow: 0 4px 6px rgba( 0, 0, 0, 0.04 );
+	display: none;
+	width: calc( 100% + var( --wp-nav-width, 0 ) );
+	margin-left: calc( -1 * var( --wp-nav-width, 0 ) );
 
 	.e-admin-top-bar {
 		display: flex;
