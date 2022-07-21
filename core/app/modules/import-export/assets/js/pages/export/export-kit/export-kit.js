@@ -44,7 +44,7 @@ export default function ExportKit() {
 		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export-kit">
 				<PageHeader
-					heading={ __( 'Export a Template Kit', 'elementor' ) }
+					heading={ __( 'Export a Website Kit', 'elementor' ) }
 					description={ [
 						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit file.', 'elementor' ),
 						<React.Fragment key="description-secondary-line">
