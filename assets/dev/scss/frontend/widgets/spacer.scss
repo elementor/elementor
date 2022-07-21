@@ -1,11 +1,14 @@
-.elementor-spacer-inner {
-	.e-container.e-container--row & {
-		width: var( --spacer-size );
-	}
+.elementor-widget-spacer {
+    --spacer-size: 50px;
+}
 
-	.elementor-column &,
-	.e-container.e-container--column & {
-		height: var( --spacer-size );
+.elementor-column {
+
+	& > .elementor-widget-spacer {
+
+		& > .elementor-spacer-inner {
+			height: var( --spacer-size );
+		}
 	}
 }
 
@@ -13,7 +16,19 @@
 
 	& > .elementor-widget-spacer {
 		// Fix - Spacer widget has undefined width and height issues inside the flex container (ED-7720).
-		width: var( --container-widget-width, 100% );
-		flex-grow: 1;
+		width: var( --container-widget-width, var( --spacer-size ) );
+		flex-shrink: 0;
+
+		& > .elementor-widget-container {
+			height: 100%;
+			align-self: stretch;
+
+			& > .elementor-spacer {
+			
+				& > .elementor-spacer-inner {
+					height: var( --container-widget-height, var( --spacer-size ) );
+				}
+			}
+		}
 	}
 }
