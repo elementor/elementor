@@ -193,7 +193,7 @@
 		& > .elementor-widget-container {
 			// Fix align-self:stretch (ED-7359)
 			display: flex;
-    		flex-direction: column;
+			flex-direction: column;
 			height: 100%;
 		}
 	}
