@@ -86,7 +86,7 @@
         "webpack": "^5.40.0"
     },
     "dependencies": {
-        "@reduxjs/toolkit": "^1.6.2",
+        "@reduxjs/toolkit": "^1.8.3",
         "@testing-library/jest-dom": "^5.15.0",
         "acorn": "^8.7.0",
         "core-js": "^2.6.5",
