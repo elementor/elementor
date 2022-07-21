@@ -29,7 +29,7 @@ export default function ImportContentDisplay( {
 	if ( ! kitData.length && hasPlugins ) {
 		return (
 			<Notice color="info" label={ __( 'Note:', 'elementor' ) }>
-				{ __( 'The Template Kit you’re using contains plugins for functionality, but no content or pages, etc.', 'elementor' ) }
+				{ __( 'The Website Kit you’re using contains plugins for functionality, but no content or pages, etc.', 'elementor' ) }
 			</Notice>
 		);
 	}
@@ -37,7 +37,7 @@ export default function ImportContentDisplay( {
 	if ( ! kitData.length ) {
 		return (
 			<Notice color="danger">
-				{ __( 'You can’t use this Template Kit because it doesn’t contain any content, pages, etc. Try again with a different file.', 'elementor' ) } <InlineLink onClick={ onResetProcess }>{ __( 'Go Back', 'elementor' ) }</InlineLink>
+				{ __( 'You can’t use this Website Kit because it doesn’t contain any content, pages, etc. Try again with a different file.', 'elementor' ) } <InlineLink onClick={ onResetProcess }>{ __( 'Go Back', 'elementor' ) }</InlineLink>
 			</Notice>
 		);
 	}
