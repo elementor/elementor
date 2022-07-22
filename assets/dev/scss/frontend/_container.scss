@@ -132,6 +132,11 @@
 		}
 	}
 
+	& > .e-container {
+		// Fix - Remove max width from nested container (ED-7719).
+		max-width: initial;
+	}
+
 	// Extracted from the inline CSS of `behaviors/sortable.js`.
 	.elementor-sortable-helper {
 		height: 84px;
