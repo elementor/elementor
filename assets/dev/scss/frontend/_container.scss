@@ -192,8 +192,7 @@
 
 		& > .elementor-widget-container {
 			// Fix align-self:stretch (ED-7359)
-			background: pink;
-			opacity: .8;
+			height: 100%;
 		}
 	}
 
