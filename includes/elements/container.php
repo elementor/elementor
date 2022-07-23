@@ -300,8 +300,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
-
 		$this->add_control(
 			'content_width',
 			[
@@ -344,12 +342,6 @@ class Container extends Element_Base {
 			'default' => [
 				'unit' => '%',
 			],
-			'min_affected_device' => [
-				Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
-			],
 			'separator' => 'none',
 		];
 
@@ -361,10 +353,6 @@ class Container extends Element_Base {
 				],
 				'condition' => [
 					'content_width' => 'full',
-				],
-				'placeholder' => [
-					'size' => '100',
-					'unit' => '%',
 				],
 			] )
 		);
@@ -424,8 +412,6 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Elements Gap', 'Flex Container Control', 'elementor' ),
-						// Use the default "elements gap" from the kit as a placeholder.
-						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 					],
 				],
 				'condition' => [
