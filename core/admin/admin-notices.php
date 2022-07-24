@@ -311,7 +311,7 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'title' => esc_html__( 'Improve your site’s performance score.', 'elementor' ),
-			'description' => esc_html__( 'With our experimental speed boosting features you can go faster than ever before:', 'elementor' ),
+			'description' => esc_html__( 'With our experimental speed boosting features you can go faster than ever before. Look for the Performance label on our Experiments page and activate those experiments to improve your site loading speed.', 'elementor' ),
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Try it out', 'elementor' ),
@@ -600,7 +600,7 @@ class Admin_Notices extends Module {
 				<?php } ?>
 
 				<?php if ( $options['description'] ) { ?>
-					<p><?php echo wp_kses_post( $options['label'] ); ?><?php echo wp_kses_post( $options['description'] ); ?></p>
+					<p><?php echo wp_kses_post( $options['description'] ); ?></p>
 				<?php } ?>
 
 				<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
