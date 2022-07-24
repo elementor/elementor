@@ -339,11 +339,11 @@ class Manager extends Base_Object {
 			'name' => 'container',
 			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
 			'description' => sprintf( esc_html__(
-				'Create advanced layouts and responsive designs with the new Flexbox Container element.
+				'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
 				This experiment replaces the current section/column structure, but you\'ll still keep your existing
-				Sections, Inner Sections and Columns and be able to edit them. %1$sLearn More%2$s',
+				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
 				'elementor'
-			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>' ),
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
