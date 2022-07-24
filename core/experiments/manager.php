@@ -313,7 +313,7 @@ class Manager extends Base_Object {
 			'name' => 'e_hidden_wordpress_widgets',
 			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
 			'tag' => esc_html__( 'Improvement', 'elementor' ),
-			'description' => '<span class="e-experiment__tag">' . esc_html__( 'Improvement', 'elementor' ) . '</span>' . esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
+			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 		] );
