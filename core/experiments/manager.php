@@ -558,9 +558,9 @@ class Manager extends Base_Object {
 		<div class="e-experiment__title">
 			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"></div>
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
-			<?php if ( '' !== $feature['tag'] ) { ?>
+			<?php if ( ! empty( $feature['tag'] ) ) : ?>
 				<span class="e-experiment__title__tag"><?php echo $feature['tag']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-			<?php } ?>
+			<?php endif; ?>
 		</div>
 		<?php
 

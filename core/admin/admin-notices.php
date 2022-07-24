@@ -29,7 +29,7 @@ class Admin_Notices extends Module {
 		'mc4wp_promote',
 		'popup_maker_promote',
 		'role_manager_promote',
-		'experiment_promotion'
+		'experiment_promotion',
 	];
 
 	private $elementor_pages_count = null;
@@ -136,7 +136,7 @@ class Admin_Notices extends Module {
 			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 			esc_url( $details_url ),
 			esc_attr( sprintf(
-			/* translators: %s: Elementor version. */
+				/* translators: %s: Elementor version. */
 				__( 'View Elementor version %s details', 'elementor' ),
 				$new_version
 			) ),
@@ -288,40 +288,6 @@ class Admin_Notices extends Module {
 				'text' => esc_html__( 'Hide Notification', 'elementor' ),
 				'classes' => [ 'e-notice-dismiss' ],
 				'url' => esc_url_raw( $dismiss_url ),
-				'new_tab' => true,
-				'type' => 'cta',
-			],
-		];
-
-		$this->print_admin_notice( $options );
-
-		return true;
-	}
-
-	private function notice_experiment_promotion() {
-		$notice_id = 'experiment_promotion';
-
-		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization') && Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints') && Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading') && Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading') ) {
-			return false;
-		}
-
-		$options = [
-			'title' => esc_html__( 'Improve your site’s performance score.', 'elementor' ),
-			'description' => esc_html__( 'With our experimental speed boosting features you can go faster than ever before:', 'elementor' ),
-			'id' => $notice_id,
-			'button' => [
-				'text' => esc_html__( 'Try it out', 'elementor' ),
-				'url' => '/wp-admin/admin.php?page=elementor#tab-experiments',
-				'type' => 'cta',
-			],
-			'button_secondary' => [
-				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'classes' => [ 'e-notice-dismiss' ],
-				'url' => 'https://go.elementor.com/wp-dash-experiment-promotion/',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
@@ -530,6 +496,48 @@ class Admin_Notices extends Module {
 			'button' => [
 				'text' => esc_html__( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function notice_experiment_promotion() {
+		$notice_id = 'experiment_promotion';
+
+		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$experiments = Plugin::$instance->experiments;
+		$is_all_performance_features_active = (
+			$experiments->is_feature_active( 'e_dom_optimization' ) &&
+			$experiments->is_feature_active( 'additional_custom_breakpoints' ) &&
+			$experiments->is_feature_active( 'e_optimized_css_loading' ) &&
+			$experiments->is_feature_active( 'e_optimized_assets_loading' )
+		);
+
+		if ( $is_all_performance_features_active ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Improve your site’s performance score.', 'elementor' ),
+			'description' => esc_html__( 'With our experimental speed boosting features you can go faster than ever before:', 'elementor' ),
+			'id' => $notice_id,
+			'button' => [
+				'text' => esc_html__( 'Try it out', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=elementor#tab-experiments' ),
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'classes' => [ 'e-notice-dismiss' ],
+				'url' => 'https://go.elementor.com/wp-dash-experiment-promotion/',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
