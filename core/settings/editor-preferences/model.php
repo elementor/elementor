@@ -116,8 +116,8 @@ class Model extends BaseModel {
 			[
 				'label' => __( 'Hidden Elements', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_on' => 'Show',
-				'label_off' => 'Hide',
+				'label_on' => __( 'Show', 'elementor' ),
+				'label_off' => __( 'Hide', 'elementor' ),
 				'default' => 'yes',
 			]
 		);
