@@ -15,7 +15,7 @@ import './import-content.scss';
 export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
-		{ includes } = sharedContext.data,
+		{ referrer, includes, wizardStepNum } = sharedContext.data,
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ navigateToMainScreen } = useImportActions(),
 		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
@@ -27,24 +27,24 @@ export default function ImportContent() {
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
-					goBack={ () => $e.run(
+					onPreviousClick={ () => $e.run(
 						'kit-library/go-back',
 						{},
 						{
 							meta: {
 								source: 'import',
-								step: '3',
+								step: wizardStepNum,
 								event: 'previous button',
 							},
 						},
 					) }
-					approveImport={ () => $e.run(
+					onImportClick={ () => $e.run(
 						'kit-library/approve-import',
 						{},
 						{
 							meta: {
 								source: 'import',
-								step: '3',
+								step: wizardStepNum,
 								event: 'approve-import',
 							},
 						},
@@ -53,6 +53,11 @@ export default function ImportContent() {
 			);
 		};
 
+	useEffect( () => {
+		if ( 'kit-library' === referrer && ! wizardStepNum ) {
+			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 1 } );
+		}
+	}, [] );
 	// On file change.
 	useEffect( () => {
 		if ( ! file ) {

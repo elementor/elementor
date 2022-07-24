@@ -1,15 +1,16 @@
 import { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
+
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 import { SharedContext } from 'elementor/core/app/modules/import-export/assets/js/context/shared-context/shared-context-provider';
 
-export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess, goBack, approveImport } ) {
-	const sharedContext = useContext( SharedContext ),
-	{ referrer, wizardStep } = sharedContext.data,
-	navigate = useNavigate(),
-		getNextPageUrl = () => {
-			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUMBER' } );
+export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess, onPreviousClick, onImportClick } ) {
+	const navigate = useNavigate(),
+		sharedContext = useContext( SharedContext ),
+		{ referrer, wizardStepNum } = sharedContext.data || {},
+
+	getNextPageUrl = () => {
 			if ( hasConflicts ) {
 				return 'import/resolver';
 			} else if ( hasPlugins ) {
@@ -19,8 +20,8 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 			return 'import/process';
 		};
 	useEffect( () => {
-		sharedContext.dispatch( { type: 'SET_WIZARD_STEP', payload: wizardStep + 1 } );
-	}, [] )
+		sharedContext.dispatch( { type: 'SET_WIZARD_STEP', payload: wizardStepNum + 1 } );
+	}, [] );
 	return (
 		<ActionsFooter>
 			<Button
@@ -28,12 +29,13 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				variant="contained"
 				onClick={ () => {
 					if ( hasPlugins ) {
+						sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
 						navigate( 'import/plugins/' );
 					} else {
 						onResetProcess();
 					}
-					if ( 'kit-library' === referrer && goBack ) {
-						goBack();
+					if ( 'kit-library' === referrer && onPreviousClick ) {
+						onPreviousClick();
 					}
 				} }
 			/>
@@ -43,9 +45,10 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				text={ __( 'Import', 'elementor' ) }
 				color={ isImportAllowed ? 'primary' : 'disabled' }
 				onClick={ () => {
-					if ( 'kit-library' === referrer && approveImport ) {
-						approveImport();
+					if ( 'kit-library' === referrer && onImportClick ) {
+						onImportClick();
 					}
+					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 					return isImportAllowed && navigate( getNextPageUrl() );
 				} }
 			/>
@@ -58,4 +61,6 @@ ImportContentFooter.propTypes = {
 	hasConflicts: PropTypes.bool,
 	isImportAllowed: PropTypes.bool,
 	onResetProcess: PropTypes.func.isRequired,
+	onPreviousClick: PropTypes.func,
+	onImportClick: PropTypes.func,
 };

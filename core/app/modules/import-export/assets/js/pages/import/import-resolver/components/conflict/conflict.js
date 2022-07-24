@@ -13,7 +13,7 @@ export default function Conflict( props ) {
 	const importContext = useContext( ImportContext ),
 		sharedContext = useContext( SharedContext ),
 		manifest = importContext.data.uploadedData?.manifest,
-		{ referrer } = sharedContext.data,
+		{ referrer, wizardStepNum } = sharedContext.data,
 		getConflictTitle = ( id ) => {
 			const templateType = manifest.templates[ id ].doc_type,
 				summaryTitle = elementorAppConfig[ 'import-export' ].summaryTitles.templates?.[ templateType ];
@@ -29,7 +29,6 @@ export default function Conflict( props ) {
 				text={ __( 'Edit Template', 'elementor' ) }
 				hideText
 				onClick={ () => {
-					console.log('props.viewConflictItemEvent', title )
 					if ( 'kit-library' === referrer && props.viewConflictItemEvent ) {
 						props.viewConflictItemEvent( title );
 					}
@@ -69,7 +68,7 @@ export default function Conflict( props ) {
 								action: command,
 								event: 'kit parts conflict',
 								source: 'import',
-								step: '3',
+								step: wizardStepNum,
 							},
 						},
 					);
@@ -83,11 +82,11 @@ export default function Conflict( props ) {
 
 				<Grid item>
 					<Text variant="sm" tag="span" className={ getImportedAssetClasses( props.importedId ) }>
-						{ __( 'Imported' ) }: { manifest.templates[ props.importedId ].title }
+						{ __( 'Imported', 'elementor' ) }: { manifest.templates[ props.importedId ].title }
 					</Text>
 
 					<Text style variant="sm" tag="span" className={ getExistingAssetClasses( props.importedId ) }>
-						{ __( 'Existing' ) }: { props.conflictData.template_title } { getEditTemplateButton( props.conflictData.edit_url, props.conflictData.template_title ) }
+						{ __( 'Existing', 'elementor' ) }: { props.conflictData.template_title } { getEditTemplateButton( props.conflictData.edit_url, props.conflictData.template_title ) }
 					</Text>
 				</Grid>
 			</Grid>

@@ -9,7 +9,10 @@ export default function Collapse( props ) {
 		>
 			<button
 				className="eps-collapse__title"
-				onClick={ () => props.onChange( ( value ) => ! value ) }
+				onClick={ () => {
+					props.onChange( ( value ) => ! value );
+					props.onClick?.( props.isOpen, props.title );
+				} }
 			>
 				<span>{ props.title }</span>
 				<i className="eicon-chevron-right eps-collapse__icon" />
@@ -26,6 +29,7 @@ Collapse.propTypes = {
 	onChange: PropTypes.func,
 	className: PropTypes.string,
 	title: PropTypes.node,
+	onClick: PropTypes.func,
 	children: PropTypes.oneOfType( [
 		PropTypes.node,
 		PropTypes.arrayOf( PropTypes.node ),

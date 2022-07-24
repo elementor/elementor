@@ -23,12 +23,26 @@ export default function ImportKit() {
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
 		[ isLoading, setIsLoading ] = useState( false ),
-		{ referrer } = sharedContext.data,
+		{ referrer, wizardStepNum } = sharedContext.data,
 		resetImportProcess = () => {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 			setErrorType( null );
 			setIsLoading( false );
 			kitActions.reset();
+		},
+		onFileChoose = () => {
+			if ( 'kit-library' === referrer ) {
+				$e.run(
+					'kit-library/choose-file',
+					{},
+					{
+						meta: {
+							event: 'select kit file',
+							source: 'import',
+						},
+					},
+				);
+			}
 		};
 
 		const getLearnMoreLink = () => (
@@ -45,7 +59,7 @@ export default function ImportKit() {
 								meta: {
 									event: 'learn more',
 									source: 'import',
-									step: '1',
+									step: wizardStepNum,
 								},
 							},
 						)
@@ -59,7 +73,7 @@ export default function ImportKit() {
 	// On load.
 	useEffect( () => {
 		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
-		sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 0 } );
+		sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 1 } );
 	}, [] );
 
 	// Uploading the kit after file is selected.
@@ -72,38 +86,9 @@ export default function ImportKit() {
 	// Listening to kit upload state.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
-			if ( 'kit library' === referrer ) {
-				// elementorCommon.events.eventTracking(
-				// 	'kit-library/file-upload',
-				// 	{
-				// 		event: 'top panel info',
-				// 	},
-				// 	{
-				// 		source: 'import',
-				// 		step: '1',
-				// 		event_type: 'feedback',
-				// 		status: 'success',
-				// 		method: 'browse/drag-drop', // TODO: Distinguish upload type
-				// 	},
-				// );
-			}
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 		} else if ( 'error' === kitState.status ) {
-			if ( 'kit library' === referrer ) {
-				// elementorCommon.events.eventTracking(
-				// 	'kit-library/file-upload',
-				// 	{
-				// 		event: 'top panel info',
-				// 	},
-				// 	{
-				// 		source: 'import',
-				// 		step: '1',
-				// 		event_type: 'feedback',
-				// 		status: 'failure',
-				// 		method: 'browse/drag-drop', // TODO: Distinguish upload type
-				// 	},
-				// );
-			}
 			setErrorType( kitState.data );
 		}
 	}, [ kitState.status ] );
@@ -148,13 +133,17 @@ export default function ImportKit() {
 					text={ __( 'Drag & drop the .zip file with your Kit', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
-					onFileSelect={ ( file ) => {
+					onFileChoose={ onFileChoose }
+					onFileSelect={ ( file, event ) => {
 						setIsLoading( true );
 						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 						if ( 'kit-library' === referrer ) {
+							const uploadMethod = ( 'drop' === event.type ? 'drop' : 'browse' );
 							$e.run(
-								'kit-library/choose-file',
-								{},
+								`kit-library/${ uploadMethod }`,
+								{
+									method: uploadMethod,
+								},
 								{
 									meta: {
 										event: 'select kit file',
@@ -167,60 +156,37 @@ export default function ImportKit() {
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 					referrer={ referrer }
-					onFileSelectEvent={ ( uploadType ) => {
-						let uploadMethod;
-						if ( 'file-upload' === uploadType ) {
-							uploadMethod = 'drag-drop';
-						} else if ( 'file-explorer' === uploadType ) {
-							uploadMethod = 'browse';
-						}
-						$e.run(
-								'kit-library/file-upload',
-								{
-									method: uploadMethod,
-								},
-								{
-									meta: {
-										event: 'top panel info',
-										source: 'import',
-										step: '1',
-									},
-								},
-							)
-						} }
 				/>
 
 				{ errorType && <ProcessFailedDialog
 					errorType={ errorType }
 					onApprove={ resetImportProcess }
 					onModalClose={ () => $e.run(
-							'kit-library/modal-close',
-							{},
-							{
-								meta: {
-									event: 'error modal close',
-									source: 'import',
-									step: '1',
-									event_type: 'load',
-								},
+						'kit-library/modal-close',
+						{},
+						{
+							meta: {
+								event: 'error modal close',
+								source: 'import',
+								step: wizardStepNum,
+								event_type: 'load',
 							},
-						)
-					}
-					isError={ () => {
-							$e.run(
-							'kit-library/modal-error',
-							{
-								errorType: `error modal load  ${ errorType }`,
+						},
+					) }
+					isError={ () => $e.run(
+						'kit-library/modal-error',
+						{
+							errorType: `error modal load  ${ errorType }`,
+						},
+						{
+							meta: {
+								event: 'error modal load',
+								source: 'import',
+								step: wizardStepNum,
+								event_type: 'load',
 							},
-							{
-								meta: {
-									source: 'import',
-									step: '1',
-									event_type: 'load',
-								},
-							},
-						)
-					} }
+						},
+					) }
 					learnMoreEvent={ () => $e.run(
 						'kit-library/seek-more-info',
 						{},
@@ -228,7 +194,7 @@ export default function ImportKit() {
 							meta: {
 								event: 'error modal learn more',
 								source: 'import',
-								step: '1',
+								step: wizardStepNum,
 							},
 						},
 					) }

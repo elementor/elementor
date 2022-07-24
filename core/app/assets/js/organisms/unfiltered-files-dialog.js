@@ -9,9 +9,6 @@ export default function UnfilteredFilesDialog( props ) {
 		{ ajaxState, setAjax } = useAjax(),
 		[ enableUnfilteredFiles, setEnableUnfilteredFiles ] = useState( false ),
 		[ isEnableError, setIsEnableError ] = useState( false );
-	if ( onDismiss ) {
-		console.log( 'onDismiss: ', onDismiss )
-	}
 
 	// Sending the enable unfiltered files request.
 	useEffect( () => {
@@ -80,7 +77,7 @@ export default function UnfilteredFilesDialog( props ) {
 					approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
 					dismissButtonText={ __( 'Skip', 'elementor' ) }
 					dismissButtonOnClick={ onDismiss || onReady }
-					onClose={ onDismiss || onReady }
+					onClose={ onClose || onDismiss || onReady }
 				/>
 			}
 		</>
@@ -96,8 +93,12 @@ UnfilteredFilesDialog.propTypes = {
 	confirmModalText: PropTypes.string.isRequired,
 	errorModalText: PropTypes.string.isRequired,
 	onLoad: PropTypes.func,
+	onEnable: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 UnfilteredFilesDialog.defaultProps = {
 	show: false,
+	onReady: () => {},
+	onCancel: () => {},
 };

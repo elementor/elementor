@@ -80,11 +80,29 @@ export default function Layout( props ) {
 				},
 			};
 		},
+		onClose = () => {
+			if ( 'kit-library' === referrer ) {
+				$e.run(
+					'kit-library/close',
+					{},
+					{
+						meta: {
+							event: 'modal close',
+							step: wizardStepNum,
+							source: 'import',
+						},
+					},
+				);
+			}
+
+			window.top.location = elementorAppConfig.admin_url;
+		},
 		config = {
 			title: 'import' === props.type ? __( 'Import', 'elementor' ) : __( 'Export', 'elementor' ),
 			headerButtons: [ getInfoButtonProps(), ...props.headerButtons ],
 			content: getContent(),
 			footer: props.footer,
+			onClose: () => onClose(),
 		},
 		moduleAdminTab = '#tab-import-export-kit';
 

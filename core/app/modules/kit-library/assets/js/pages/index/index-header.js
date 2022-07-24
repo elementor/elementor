@@ -97,7 +97,6 @@ export default function IndexHeader( props ) {
 				) }
 				onClose={ ( e ) => {
 					const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
-					console.log( 'element: ', element );
 					$e.run(
 						'kit-library/modal-close',
 						{

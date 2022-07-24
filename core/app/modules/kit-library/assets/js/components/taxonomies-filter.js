@@ -28,10 +28,9 @@ export default function TaxonomiesFilter( props ) {
 						taxonomiesByType={ group }
 						selected={ props.selected }
 						onSelect={ props.onSelect }
-						onOpen={ ( value, title ) => {
-							// TODO: Don't shoot this event on first load
-							const command = value ? 'kit-library/expand' : 'kit-library/collapse';
-							if ( typeof ( value ) !== 'undefined' ) {
+						onCollapseChange={ ( collapseState, title ) => {
+							const command = collapseState ? 'kit-library/collapse' : 'kit-library/expand';
+							if ( typeof ( collapseState ) !== 'undefined' ) {
 								$e.run(
 									command,
 									{
@@ -78,4 +77,5 @@ TaxonomiesFilter.propTypes = {
 	onSelect: PropTypes.func,
 	taxonomies: PropTypes.arrayOf( PropTypes.instanceOf( Taxonomy ) ),
 	category: PropTypes.string,
+	onSearchEvent: PropTypes.func,
 };

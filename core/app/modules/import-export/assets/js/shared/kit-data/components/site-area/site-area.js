@@ -18,7 +18,7 @@ export default function SiteArea( { text, link } ) {
 		);
 	}
 	return (
-		<InlineLink url={ link } color="secondary" underline="none" onLinkClick={ () => goToSitePartEventTracking }>
+		<InlineLink url={ link } color="secondary" underline="none" onLinkClick={ () => goToSitePartEventTracking() }>
 			<Text className="e-app-import-export-kit-data__site-area">
 				{ text } { link && <Icon className="eicon-editor-external-link" /> }
 			</Text>

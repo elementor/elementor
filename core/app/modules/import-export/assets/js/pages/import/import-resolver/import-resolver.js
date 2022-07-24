@@ -22,12 +22,16 @@ export default function ImportResolver() {
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		conflicts = importContext.data?.uploadedData?.conflicts || {},
+		{ wizardStepNum } = sharedContext.data || {},
 		getFooter = () => (
 			<ActionsFooter>
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
-					onClick={ () => navigate( 'import/content' ) }
+					onClick={ () => {
+						sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
+						navigate( 'import/content' );
+					} }
 				/>
 
 				<Button
@@ -35,6 +39,7 @@ export default function ImportResolver() {
 					variant="contained"
 					color="primary"
 					onClick={ () => {
+						sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 						const url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
 						importContext.dispatch( { type: 'SET_IS_RESOLVED', payload: true } );
 						navigate( url );
@@ -104,7 +109,7 @@ export default function ImportResolver() {
 													{
 														event: 'open kit part - new tab',
 														source: 'import',
-														step: '3',
+														step: wizardStepNum,
 													},
 												)
 											} }

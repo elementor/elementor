@@ -50,6 +50,7 @@ export default function DropZone( props ) {
 						variant={ props.buttonVariant }
 						color={ props.buttonColor }
 						referrer={ props.referrer }
+						onFileChoose={ props.onFileChoose }
 					/> }
 
 				{ props.description && <Text variant="xl" className="e-app-drop-zone__description">{ props.description }</Text> }

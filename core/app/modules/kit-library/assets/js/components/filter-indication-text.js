@@ -27,14 +27,16 @@ export default function FilterIndicationText( props ) {
 									icon="eicon-editor-close"
 									className="e-kit-library__filter-indication-badge-remove"
 									onClick={ () => {
-										elementorCommon.events.eventTracking(
+										$e.run(
 											'kit-library/clear-filter',
 											{
-												event: 'remove filter tag',
+												tag: taxonomy,
 											},
 											{
-												source: 'home page',
-												tag: taxonomy,
+												meta: {
+													event: 'remove filter tag',
+													source: 'home page',
+												},
 											},
 										)
 										props.onRemoveTag( taxonomy )
@@ -51,14 +53,16 @@ export default function FilterIndicationText( props ) {
 				text={ __( 'Clear all', 'elementor' ) }
 				variant="underlined"
 				onClick={ () => {
-					elementorCommon.events.eventTracking(
+					$e.run(
 						'kit-library/clear-filter',
 						{
-							event: 'remove filter tag',
+							tag: 'all',
 						},
 						{
-							source: 'home page',
-							tag: 'all',
+							meta: {
+								event: 'remove filter tag',
+								source: 'home page',
+							},
 						},
 					);
 					props.onClear();

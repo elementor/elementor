@@ -18,14 +18,6 @@ export default function Checkbox( { className, checked, rounded, indeterminate, 
 		classes.push( baseClassName + '--error' );
 	}
 
-	if ( 'kit-library' === referrer ) {
-		if ( ! checked ) {
-			onUncheck();
-		} else {
-			onCheck();
-		}
-	}
-
 	return (
 		<input
 			className={ arrayToClassName( classes ) }

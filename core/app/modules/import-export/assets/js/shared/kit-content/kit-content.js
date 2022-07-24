@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import { useContext, useState } from 'react';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
@@ -16,7 +16,7 @@ import { SharedContext } from './../../context/shared-context/shared-context-pro
 export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
 		sharedContext = useContext( SharedContext ),
-		{ referrer } = sharedContext.data,
+		{ referrer, wizardStepNum } = sharedContext.data,
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
@@ -69,7 +69,7 @@ export default function KitContent( { contentData, hasPro } ) {
 														action: command,
 														event: 'kit parts selection',
 														source: 'import',
-														step: '2',
+														step: wizardStepNum,
 													},
 												},
 											)

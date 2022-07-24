@@ -28,21 +28,21 @@ export default function InlineLink( props ) {
 				</Link>
 			</LocationProvider>
 		),
-		getExternalLink = () => {
-		return (
+		getExternalLink = () => (
 			<a
 				href={ props.url }
 				target={ props.target }
 				rel={ props.rel }
 				className={ className }
 				onClick={ () => {
-					return 'undefined' !== typeof ( props.eventTrack ) ? props.eventTrack( props.trackingParams?.trackName, props.trackingParams?.event, props.trackingParams?.details ) : null;
+					if ( props.onLinkClick ) {
+						props.onLinkClick();
+					}
 				} }
 			>
 				{ props.children }
 			</a>
-		)
-},
+		),
 		getActionLink = () => (
 			<button className={ className } onClick={ props.onClick }>
 				{ props.children }
@@ -66,6 +66,8 @@ InlineLink.propTypes = {
 	color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
 	underline: PropTypes.oneOf( [ 'none', 'hover', 'always' ] ),
 	italic: PropTypes.bool,
+	onClick: PropTypes.func,
+	onLinkClick: PropTypes.func,
 };
 
 InlineLink.defaultProps = {
@@ -74,4 +76,7 @@ InlineLink.defaultProps = {
 	underline: 'always',
 	target: '_blank',
 	rel: 'noopener noreferrer',
+	italic: false,
+	onClick: ( () => {} ),
+	onLinkClick: ( () => {} ),
 };

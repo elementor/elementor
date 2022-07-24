@@ -4,7 +4,7 @@ import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
 import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 import { Heading, CardImage, Text, Grid } from '@elementor/app-ui';
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 
 import './overview-sidebar.scss';
 
@@ -26,8 +26,8 @@ export default function OverviewSidebar( props ) {
 			},
 		);
 	};
-	const sidebarDropDownEvent = ( value, title ) => {
-		const command = value ? 'kit-library/expand' : 'kit-library/collapse';
+	const onCollapseChange = ( value, title ) => {
+		const command = value ? 'kit-library/collapse' : 'kit-library/expand';
 		$e.run(
 			command,
 			{
@@ -42,15 +42,6 @@ export default function OverviewSidebar( props ) {
 			},
 		);
 	};
-
-	//TODO: Shoots on first load
-	useEffect( () => {
-		sidebarDropDownEvent( isTagsCollapseOpen, 'tags' )
-	}, [ isTagsCollapseOpen ] );
-
-	useEffect( () => {
-		sidebarDropDownEvent( isInformationCollapseOpen, 'what\'s inside' )
-	}, [ isInformationCollapseOpen ] );
 
 	return (
 		<div className="e-kit-library__item-sidebar">
@@ -83,9 +74,9 @@ export default function OverviewSidebar( props ) {
 					title={ __( 'TAGS', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-tags"
 					pageId="overview"
-					// sidebarDropDownEvent={ ( category ) => {
-					// 	sidebarDropDownEvent( category, 'tags' )
-					// } }
+					onClick={ ( val, title ) => {
+						onCollapseChange( val, title );
+					} }
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.taxonomies.map( ( taxonomy ) => (
@@ -102,6 +93,9 @@ export default function OverviewSidebar( props ) {
 					title={ __( 'WHAT\'S INSIDE', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-info"
 					pageId="overview"
+					onClick={ ( val, title ) => {
+						onCollapseChange( val, title );
+					} }
 				>
 					{
 						props.groupedKitContent.map( ( contentType ) => {

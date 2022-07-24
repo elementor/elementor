@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useEffect, useContext } from 'react';
 
 import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 import { SharedContext } from '../../../../../context/shared-context/shared-context-provider';
@@ -10,8 +10,8 @@ import useImportActions from '../../../hooks/use-import-actions';
 
 export default function ImportPluginsFooter( props ) {
 	const importContext = useContext( ImportContext ),
-	 	sharedContext = useContext( SharedContext ),
-		{ referrer } = sharedContext.data,
+		sharedContext = useContext( SharedContext ),
+		{ referrer, wizardStepNum } = sharedContext.data || {},
 		{ navigateToMainScreen } = useImportActions();
 	return (
 		<ActionsFooter>
@@ -20,8 +20,9 @@ export default function ImportPluginsFooter( props ) {
 				variant="contained"
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
-					if ( 'kit-library' === referrer && props.goBack ) {
-						props.goBack();
+					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
+					if ( 'kit-library' === referrer && props.onPreviousClick ) {
+						props.onPreviousClick();
 					}
 					navigateToMainScreen();
 				} }
@@ -33,11 +34,17 @@ export default function ImportPluginsFooter( props ) {
 				color="primary"
 				url="/import/content"
 				onClick={ () => {
-					if ( 'kit-library' === referrer && props.approveSelection ) {
-						props.approveSelection();
+					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
+					if ( 'kit-library' === referrer && props.onNextClick ) {
+						props.onNextClick();
 					}
 				} }
 			/>
 		</ActionsFooter>
 	);
+}
+
+ImportPluginsFooter.propTypes = {
+	onPreviousClick: PropTypes.func,
+	onNextClick: PropTypes.func,
 }

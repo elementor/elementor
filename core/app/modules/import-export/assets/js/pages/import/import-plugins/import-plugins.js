@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../context/import-context/import-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -23,12 +24,14 @@ import './import-plugins.scss';
 
 export default function ImportPlugins() {
 	const importContext = useContext( ImportContext ),
+		sharedContext = useContext( SharedContext ),
 		navigate = useNavigate(),
 		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
 		{ response, pluginsActions } = usePlugins(),
 		{ pluginsData } = usePluginsData( response.data ),
 		{ importPluginsData } = useImportPluginsData( kitPlugins, pluginsData ),
 		{ missing, existing, minVersionMissing, proData } = importPluginsData || {},
+		{ data: { referrer, wizardStepNum } } = sharedContext,
 		handleRequiredPlugins = () => {
 			if ( missing.length ) {
 				// Saving globally the plugins data that the kit requires in order to work properly.
@@ -52,6 +55,9 @@ export default function ImportPlugins() {
 		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}
+		if ( 'kit-library' === referrer && ! wizardStepNum ) {
+			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 1 } );
+		}
 	}, [] );
 
 	// On plugins data ready.
@@ -67,24 +73,24 @@ export default function ImportPlugins() {
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter
-			goBack={ () => $e.run(
+			onPreviousClick={ () => $e.run(
 				'kit-library/go-back',
 				{},
 				{
 					meta: {
 						source: 'import',
-						step: '2',
+						step: wizardStepNum,
 						event: 'previous button',
 					},
 				},
 			) }
-			approveSelection={ () => $e.run(
+			onNextClick={ () => $e.run(
 				'kit-library/approve-selection',
 				{},
 				{
 					meta: {
 						source: 'import',
-						step: '2',
+						step: wizardStepNum,
 						event: 'next button',
 					},
 				},

@@ -3,24 +3,13 @@ import Button from './header-button';
 
 export default function HeaderButtons( props ) {
 	const action = useAction();
+
 	const actionOnClose = () => {
 		if ( props.onClose ) {
-		} else if ( 'kit-library' === props?.referrer ) {
-			$e.run(
-				'kit-library/close',
-				{
-					source: props.pageId,
-					kit_name: props.kitName,
-					view_type_clicked: props.pageId,
-				},
-				{
-					meta: {
-						event: 'top bar close kit library',
-					},
-				},
-			);
+			props.onClose();
+		} else {
+			action.backToDashboard();
 		}
-		action.backToDashboard();
 	};
 
 	let tools = '';

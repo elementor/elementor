@@ -1,9 +1,9 @@
+import { useState, useMemo } from 'react';
 import Taxonomy from '../models/taxonomy';
 import Collapse from './collapse';
 import SearchInput from './search-input';
 import { Checkbox, Text } from '@elementor/app-ui';
 import { sprintf } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 
@@ -15,9 +15,6 @@ const TaxonomiesFilterList = ( props ) => {
 		if ( ! search ) {
 			return props.taxonomiesByType.data;
 		}
-		// If ( props.onSearchEvent ) {
-		// 	props.onSearchEvent( search, category );
-		// }
 
 		const lowerCaseSearch = search.toLowerCase();
 
@@ -25,9 +22,6 @@ const TaxonomiesFilterList = ( props ) => {
 			( tag ) => tag.text.toLowerCase().includes( lowerCaseSearch ),
 		);
 	}, [ props.taxonomiesByType.data, search ] );
-		if ( props.onOpen ) {
-			props.onOpen( isOpen, props.taxonomiesByType.label );
-		}
 
 	return (
 		<Collapse
@@ -38,6 +32,9 @@ const TaxonomiesFilterList = ( props ) => {
 				setIsOpen( ! isOpen );
 			} }
 			category={ category }
+			onClick={ ( collapseState, title ) => {
+				props.onCollapseChange( collapseState, title );
+			} }
 		>
 			{
 				props.taxonomiesByType.data.length >= MIN_TAGS_LENGTH_FOR_SEARCH_INPUT &&
@@ -119,6 +116,8 @@ TaxonomiesFilterList.propTypes = {
 	} ),
 	selected: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 	onSelect: PropTypes.func,
+	onSearchEvent: PropTypes.func,
+	onCollapseChange: PropTypes.func,
 };
 
 export default React.memo( TaxonomiesFilterList );

@@ -24,7 +24,7 @@ export default function ImportProcess() {
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
-		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
+		{ includes, selectedCustomPostTypes, wizardStepNum } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
@@ -57,6 +57,10 @@ export default function ImportProcess() {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
 			navigateToMainScreen();
+		},
+		onReady = () => {
+			setShowUnfilteredFilesDialog( false );
+			setStartImport( true );
 		},
 		eventTracking = ( command, event, source, step, eventType = null ) => {
 			if ( 'kit-library' === sharedContext.data.referrer ) {
@@ -180,34 +184,26 @@ export default function ImportProcess() {
 					setShow={ setShowUnfilteredFilesDialog }
 					confirmModalText={ __( 'This allows Elementor to scan your SVGs for malicious content. Otherwise, you can skip any SVGs in this import.', 'elementor' ) }
 					errorModalText={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
-					onReady={ () => {
-						setShowUnfilteredFilesDialog( false );
-						setStartImport( true );
-					} }
+					onReady={ () => onReady() }
 					onCancel={ () => {
-						debugger;
-						console.log( 'cancel' );
 						setShowUnfilteredFilesDialog( false );
 						onCancelProcess();
 					} }
 					referrer={ sharedContext.data.referrer }
 					onLoad={ () => {
-						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load', 'import', '3' );
+						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load', 'import', wizardStepNum );
 					} }
-					//
 					onClose={ () => {
-						// console.log( 'close' );
-						// eventTracking( 'kit-library/close', 'unfiltered file modal skip button', 'import', '3' );
+						eventTracking( 'kit-library/close', 'unfiltered file modal skip button', 'import', wizardStepNum );
+						onReady();
 					} }
-
 					onDismiss={ () => {
-						// console.log( 'dismiss' );
-					// TODO: If additional data is passed here it breaks the dismiss functionality. shoots on x and skip buttons.
-
+						onReady();
+						eventTracking( 'kit-library/skip', 'unfiltered file modal skip button', 'import', wizardStepNum );
+						console.log( 'dismiss' );
 					} }
-
 					onEnable={ () => {
-						eventTracking( 'kit-library/enable', 'unfiltered file modal enable button', 'import', '3' );
+						eventTracking( 'kit-library/enable', 'unfiltered file modal enable button', 'import', wizardStepNum );
 					} }
 				/>
 			</section>

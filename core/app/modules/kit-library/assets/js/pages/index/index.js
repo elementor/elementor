@@ -263,6 +263,7 @@ export default function Index( props ) {
 								);
 							} }
 							onChangeSortValue={ ( value ) => {
+								console.log( 'value:', value );
 								$e.run(
 									'kit-library/change-sort-value',
 									{

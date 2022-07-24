@@ -24,46 +24,6 @@ export default function FileProcess( props ) {
 					onApprove={ props.onDialogApprove }
 					onDismiss={ props.onDialogDismiss }
 					errorType={ props.errorType }
-					// onModalClose={ () => {
-					// 	$e.run(
-					// 		'kit-library/modal-close',
-					// 		{},
-					// 		{
-					// 			meta: {
-					// 				event: 'error modal close',
-					// 				source: 'import',
-					// 				step: '1',
-					// 				event_type: 'load',
-					// 			},
-					// 		},
-					// 	)
-					// } }
-					// isError={ () => {
-					// 	$e.run(
-					// 		'kit-library/modal-error',
-					// 		{
-					// 			errorType: `error modal load  ${ errorType }`,
-					// 		},
-					// 		{
-					// 			meta: {
-					// 				source: 'import',
-					// 				step: '1',
-					// 				event_type: 'load',
-					// 			},
-					// 		},
-					// 	)
-					// } }
-					// learnMoreEvent={ () => $e.run(
-					// 	'kit-library/seek-more-info',
-					// 	{},
-					// 	{
-					// 		meta: {
-					// 			event: 'error modal learn more',
-					// 			source: 'import',
-					// 			step: '1',
-					// 		},
-					// 	},
-					// ) }
 				/>
 			}
 		</WizardStep>

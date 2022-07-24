@@ -107,11 +107,7 @@ export const Modal = ( props ) => {
 	useEffect( () => {
 		if ( props.show ) {
 			document.addEventListener( 'mousedown', closeModal, false );
-		}
-
-		// Kit library event tracking
-		if ( props.onOpen && props.show ) {
-			props.onOpen();
+			props.onOpen?.();
 		}
 
 		return () => document.removeEventListener( 'mousedown', closeModal, false );
@@ -132,12 +128,7 @@ export const Modal = ( props ) => {
 					</Grid>
 					<Grid item>
 						<div className="eps-modal__close-wrapper" ref={ closeRef }>
-							<Button
-								text={ __( 'Close', 'elementor' ) }
-								hideText
-								icon="eicon-close"
-								onClick={ props.closeModal }
-							/>
+							<Button text={ __( 'Close', 'elementor' ) } hideText icon="eicon-close" onClick={ props.closeModal } />
 						</div>
 					</Grid>
 				</Grid>

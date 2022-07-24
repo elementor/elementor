@@ -61,14 +61,8 @@ function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onCon
 			variant: 'contained',
 			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
-			onClick: isApplyLoading ? null : apply,
 			includeHeaderBtnClass: false,
-			// onClick: () => {
-			// 	TODO: Event tracking shoots but breaks isApplyLoading condition
-			// 	eslint-disable-next-line no-unused-expressions
-			// 	eventTracking(),
-			// 	isApplyLoading ? null : apply
-			// },
+			onClick: eventTracking(),
 		};
 	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
 }
@@ -112,7 +106,7 @@ export default function ItemHeader( props ) {
 		apply,
 		isApplyLoading,
 		eventTracking: () => {
-			$e.run(
+			return $e.run(
 				'kit-library/apply-kit',
 				{
 					kit_name: props.model.title,
@@ -124,7 +118,8 @@ export default function ItemHeader( props ) {
 						source: props.pageId,
 					},
 				},
-			);
+			),
+			isApplyLoading ? null : apply
 		},
 	} );
 

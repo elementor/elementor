@@ -46,17 +46,8 @@ export default function UploadFile( props ) {
 				hideText={ props.isLoading }
 				icon={ props.isLoading ? 'eicon-loading eicon-animation-spin' : '' }
 				onClick={ () => {
-					if ( 'kit-library' === props.referrer ) {
-						$e.run(
-							'kit-library/choose-file',
-							{},
-							{
-								meta: {
-									event: 'select kit file',
-									source: 'import',
-								},
-							},
-						);
+					if ( props.onFileChoose ) {
+						props.onFileChoose();
 					}
 
 					if ( ! props.isLoading ) {

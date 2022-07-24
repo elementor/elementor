@@ -41,22 +41,25 @@ export default function ImportComplete() {
 				configData: importedData.configData,
 			};
 		},
+		kitLiveLoadEvent = () => $e.run(
+			'kit-library/kit-is-live-load',
+			{},
+			{
+				meta: {
+					event: 'kit is live load',
+					source: 'kit is live',
+					event_type: 'load',
+				},
+			},
+		),
 		kitData = useMemo( () => getKitData(), [] );
 		useEffect( () => {
 			if ( ! uploadedData ) {
 				navigate( '/import' );
-			} else if ( 'kit-library' === referrer ) {
-				$e.run(
-					'kit-library/kit-is-live-load',
-					{},
-					{
-						meta: {
-							event: 'kit is live load',
-							source: 'kit is live',
-							event_type: 'load',
-						},
-					},
-				);
+			}
+
+			if ( uploadedData && 'kit-library' === referrer ) {
+				kitLiveLoadEvent();
 			}
 		}, [] );
 

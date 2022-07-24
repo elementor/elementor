@@ -15,13 +15,29 @@ export default class Events {
 		} );
 	}
 
-	// TODO: Delete this function!!
-	eventTracking = ( trackName, eventTrackingObjectData, details ) => {
-		if ( ! trackName ) {
+	/**
+	 * New event tracking function.
+	 * @param eventData
+	 * @param command - Optional. The command name.
+	 */
+	dispatchEventObject( eventData, command ) {
+		if ( ! eventData ) {
 			return;
 		}
+		const eventCommand = ! command ? 'event-tracker/index' : command;
 
-		eventTrackingObjectData.ts = getUserTimestamp();
+		eventData.ts = getUserTimestamp();
+
+		// No need to wait for response, no need to block browser in any way.
+		$e.data.create( eventCommand, {
+			event_data: eventData,
+		} );
+	}
+
+	// TODO: Delete this function!!
+	appsEventTracking = ( command, userActions, metadata ) => {
+		$e.run( command, userActions, metadata );
+		// eventTrackingObjectData.ts = getUserTimestamp();
 			const eventParams = {
 				...eventTrackingObject,
 				...eventTrackingObjectData,

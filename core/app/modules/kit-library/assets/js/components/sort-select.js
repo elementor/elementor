@@ -24,9 +24,7 @@ export default function SortSelect( props ) {
 						const value = e.target.value;
 						setSelectedSortBy( getSelectedOptionDetails( value ) );
 						props.onChange( { by: value, direction: props.value.direction } );
-						if ( props.onChangeSortValue ) {
-							props.onChangeSortValue( value );
-						}
+						props.onChangeSortValue?.( value );
 					} }
 					className="eps-sort-select__select"
 
@@ -36,9 +34,7 @@ export default function SortSelect( props ) {
 							by: props.value.by,
 							direction: 'asc' === props.value.direction ? 'desc' : 'asc',
 						} );
-						if ( props.onSortTypeDropdown ) {
-							props.onSortTypeDropdown();
-						}
+						props.onSortTypeDropdown?.();
 					} }
 				/>
 			</div>
@@ -75,4 +71,7 @@ SortSelect.propTypes = {
 		by: PropTypes.string.isRequired,
 	} ).isRequired,
 	onChange: PropTypes.func.isRequired,
+	onChangeSortValue: PropTypes.func,
+	onChangeSortDirection: PropTypes.func,
+	onSortTypeDropdown: PropTypes.func,
 };

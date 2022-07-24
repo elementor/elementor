@@ -2,6 +2,17 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import InfoModal from './info-modal';
 
 export default function ImportInfoModal( props ) {
+	const onLinkClick = () => $e.run(
+		'kit-library/seek-more-info',
+		{},
+		{
+			meta: {
+				source: 'import',
+				event: 'info modal learn more-kits',
+			},
+		},
+	);
+
 	return (
 		<InfoModal { ...props } title={ __( 'Import a Template Kit', 'elementor' ) }>
 			<InfoModal.Section>
@@ -12,18 +23,7 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
-							onLinkClick={ () => {
-								$e.run(
-									'kit-library/seek-more-info',
-									{},
-									{
-										meta: {
-											source: 'import',
-											event: 'info modal learn more-kits',
-										},
-									},
-								)
-							} }
+							onLinkClick={ onLinkClick }
 						>{ __( ' Learn more about Template Kits', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
@@ -37,18 +37,8 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="http://go.elementor.com/app-import-kit"
-							onLinkClick={ () => {
-								$e.run(
-									'kit-library/seek-more-info',
-									{},
-									{
-										meta: {
-											source: 'import',
-											event: 'info modal learn more-import',
-										},
-									},
-								)
-							} }						>
+							onLinkClick={ onLinkClick }
+						>
 							{ __( 'Learn More', 'elementor' ) }
 						</InlineLink>
 					</>

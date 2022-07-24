@@ -6,11 +6,7 @@ export default function Select( props ) {
 			value={ props.value }
 			onChange={ props.onChange }
 			ref={ props.elRef }
-			onClick={ () => {
-				if ( props.onClick ) {
-					props.onClick();
-				}
-			} }
+			onClick={ props.onClick }
 		>
 			{ props.options.map( ( option ) =>
 				option.children

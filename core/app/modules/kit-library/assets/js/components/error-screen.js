@@ -13,7 +13,7 @@ export default function ErrorScreen( props ) {
 					event: 'empty state-continue browsing',
 					source: 'home page',
 					category: '/' === props.button.category ? 'all kits' : 'favorites',
-				}
+				},
 			},
 		)
 		props.button.action()

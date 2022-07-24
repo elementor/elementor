@@ -46,7 +46,6 @@ function KitData( { data } ) {
 					// eslint-disable-next-line array-callback-return
 					return;
 				}
-				console.log( 'link', link );
 				return [
 					<SiteArea key={ siteArea } text={ siteArea } link={ link } />,
 					<Included key={ included } data={ included } />,
