@@ -23,7 +23,9 @@
 	}
 
 	&-item {
-		display: table;
+		display: flex;
+		align-items: center;
+		padding: 10px;
 		width: 100%;
 		height: 40px;
 		cursor: pointer;
@@ -34,14 +36,10 @@
 			background-color: rgba( 255, 255, 255, .8 );
 		}
 
-		> * {
-			display: table-cell;
-			vertical-align: middle;
-		}
-
 		&-icon {
 			text-align: center;
-			width: 50px;
+			width: 30px;
+			margin-inline-end: 10px;
 			color: $editor-light;
 			font-size: 19px;
 
@@ -51,7 +49,13 @@
 		}
 
 		&-title {
+			display: flex;
+			flex-grow: 1;
 			font-weight: 500;
+
+			&-badge {
+				margin-inline-start: auto;
+			}
 
 			> span {
 				color: $editor-success;

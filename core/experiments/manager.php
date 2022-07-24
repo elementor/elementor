@@ -310,8 +310,8 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'e_import_export',
-			'title' => esc_html__( 'Import Export Template Kit', 'elementor' ),
-			'description' => esc_html__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
+			'title' => esc_html__( 'Import Export Website Kit', 'elementor' ),
+			'description' => esc_html__( 'Design sites faster with a Website Kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
 				. '<br>'
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
