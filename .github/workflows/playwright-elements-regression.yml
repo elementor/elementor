@@ -1,4 +1,4 @@
-name: Playwright
+name: Playwright Elements Regression
 
 on:
   push:
@@ -47,6 +47,8 @@ jobs:
         include:
           - phpVersion: '7.4'
             wpCoreVersion: 'latest'
+    env:
+      BASE_URL: 'http://localhost:8889'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -83,7 +85,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright -- --grep-invert regression
+          npm run test:playwright -- -g "elements-regression.test.js"
       - uses: actions/upload-artifact@v2
         if: always()
         with:
