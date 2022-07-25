@@ -4,11 +4,8 @@
 
 .elementor-column {
 
-	& > .elementor-widget-spacer {
-
-		& > .elementor-spacer-inner {
-			height: var( --spacer-size );
-		}
+	.elementor-spacer-inner {
+		height: var( --spacer-size );
 	}
 }
 
