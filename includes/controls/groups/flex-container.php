@@ -47,8 +47,15 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'default' => '',
+			// The `--container-widget-width` CSS variable is used for handling widgets that get an undefined width in column mode.
+			'selectors_dictionary' => [
+				'row' => '--flex-direction: row; --container-widget-width: initial;',
+				'column' => '--flex-direction: column; --container-widget-width: 100%;',
+				'row-reverse' => '--flex-direction: row-reverse; --container-widget-width: initial;',
+				'column-reverse' => '--flex-direction: column-reverse; --container-widget-width: 100%;',
+			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--flex-direction: {{VALUE}};',
+				'{{SELECTOR}}' => '{{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -159,8 +166,12 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'min' => 0,
 					'max' => 100,
 				],
+				'em' => [
+					'min' => 0,
+					'max' => 50,
+				],
 			],
-			'size_units' => [ 'px', '%', 'vw' ],
+			'size_units' => [ 'px', '%', 'vw', 'em' ],
 			'selectors' => [
 				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
 			],
