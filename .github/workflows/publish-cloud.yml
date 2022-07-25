@@ -1,4 +1,5 @@
 name: Publish Cloud
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_CHANNELS, MAINTAIN_TOKEN
 
 on: 
   workflow_dispatch:
