@@ -14,12 +14,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
-            npm install --no-package-lock --no-save @octokit/core@3.4.0
-            node ./.github/scripts/generate-changelog.js
-      shell: bash
+    - shell: bash
       env:
         TOKEN: ${{ inputs.TOKEN }}
         REPOSITORY: ${{ inputs.REPOSITORY }}
         HEAD_BRANCH_NAME: ${{ inputs.HEAD_BRANCH_NAME }}
         BASE_TAG_NAME: ${{ inputs.BASE_TAG_NAME }}
+      run: |
+            npm install --no-package-lock --no-save @octokit/core@3.4.0
+            node ./.github/scripts/generate-changelog.js
