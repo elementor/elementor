@@ -20,7 +20,6 @@ export default function IndexHeader( props ) {
 			onClick: () => {
 				eventTrackingDispatch(
 					'kit-library/seek-more-info',
-					{},
 					{
 						event: 'top panel info',
 						source: 'home page',
@@ -38,7 +37,6 @@ export default function IndexHeader( props ) {
 			onClick: () => {
 				eventTrackingDispatch(
 					'kit-library/refetch',
-					{},
 					{
 						event: 'top panel refetch',
 						source: 'home page',
@@ -56,7 +54,6 @@ export default function IndexHeader( props ) {
 			onClick: () => {
 				eventTrackingDispatch(
 					'kit-library/kit-import',
-					{},
 					{
 						event: 'top panel kit import',
 						source: 'home page',
@@ -81,7 +78,6 @@ export default function IndexHeader( props ) {
 				setShow={ setIsInfoModalOpen }
 				onOpen={ () => eventTrackingDispatch(
 					'kit-library/modal-open',
-					{},
 					{
 						event: 'info modal load',
 						source: 'home page',
@@ -94,8 +90,6 @@ export default function IndexHeader( props ) {
 						'kit-library/modal-close',
 						{
 							element,
-						},
-						{
 							event: 'overlay' === element ? 'background page' : 'info modal close',
 							source: 'home page',
 						},
@@ -125,12 +119,12 @@ export default function IndexHeader( props ) {
 							color="link"
 							onClick={ () => {
 								eventTrackingDispatch(
-								'kit-library/seek-more-info',
-								{},
-								{
-									event: 'info modal learn more',
-									source: 'home page',
-								} );
+									'kit-library/seek-more-info',
+									{
+										event: 'info modal learn more',
+										source: 'home page',
+									},
+								);
 								setIsInfoModalOpen( true );
 							} }
 						/>{ ' ' }

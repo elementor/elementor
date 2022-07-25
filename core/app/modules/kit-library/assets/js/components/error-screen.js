@@ -1,19 +1,17 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './error-screen.scss';
 
 export default function ErrorScreen( props ) {
 	const onClick = () => {
-		$e.run(
+		eventTrackingDispatch(
 			'kit-library/go-back-to-view-kits',
-			{},
 			{
-				meta: {
-					event: 'empty state-continue browsing',
-					source: 'home page',
-					category: '/' === props.button.category ? 'all kits' : 'favorites',
-				},
+				event: 'empty state-continue browsing',
+				source: 'home page',
+				category: '/' === props.button.category ? 'all kits' : 'favorites',
 			},
 		)
 		props.button.action()

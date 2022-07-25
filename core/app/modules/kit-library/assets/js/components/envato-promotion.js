@@ -1,4 +1,5 @@
 import { Text, Button } from '@elementor/app-ui';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './envato-promotion.scss';
 
@@ -13,15 +14,12 @@ export default function EnvatoPromotion( { category } ) {
 				target="_blank"
 				rel="noreferrer"
 				text={ __( 'Check out Elementor Template Kits on ThemeForest', 'elementor' ) }
-				onClick={ () => $e.run(
+				onClick={ () => eventTrackingDispatch(
 					'kit-library/check-kits-on-theme-forest',
-					{},
 					{
-						meta: {
-							event: 'browse themeforest',
-							source: 'home page',
-							category: '/' === category ? 'all kits' : 'favorites',
-						}
+						event: 'browse themeforest',
+						source: 'home page',
+						category: '/' === category ? 'all kits' : 'favorites',
 					},
 				) }
 			/>

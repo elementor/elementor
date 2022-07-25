@@ -76,7 +76,6 @@ export default function ImportPlugins() {
 		<Layout type="export" footer={ <ImportPluginsFooter
 			onPreviousClick={ () => eventTrackingDispatch(
 				'kit-library/go-back',
-				{},
 				{
 					source: 'import',
 					step: wizardStepNum,
@@ -85,7 +84,6 @@ export default function ImportPlugins() {
 			) }
 			onNextClick={ () => eventTrackingDispatch(
 				'kit-library/approve-selection',
-				{},
 				{
 					source: 'import',
 					step: wizardStepNum,

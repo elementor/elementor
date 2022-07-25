@@ -3,6 +3,7 @@ import FavoritesActions from '../components/favorites-actions';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button } from '@elementor/app-ui';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './kit-list-item.scss';
 
@@ -47,22 +48,17 @@ const KitListItem = ( props ) => {
 								text={ __( 'View Demo', 'elementor' ) }
 								icon="eicon-preview-medium"
 								url={ `/kit-library/preview/${ props.model.id }` }
-								onClick={ () => {
-									$e.run(
+								onClick={ () => eventTrackingDispatch(
 										'kit-library/check-out-kit',
 										{
 											kit_name: props.model.title,
 											grid_location: props.index,
 											search_term: props.queryParams,
-										},
-										{
-											meta: {
-												event: 'view kit demo',
-												source: '/' === props.source ? 'all- kits' : 'favorites',
-											},
+											event: 'view kit demo',
+											source: '/' === props.source ? 'all- kits' : 'favorites',
 										},
 									)
-								} }
+								}
 							/>
 							{
 								type === TYPE_PROMOTION && subscriptionPlan?.label && <Button

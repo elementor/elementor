@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import Collapse from '../../components/collapse';
 import ContentType from '../../models/content-type';
 import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
 import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 import { Heading, CardImage, Text, Grid } from '@elementor/app-ui';
-import { useState } from 'react';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+
 
 import './overview-sidebar.scss';
 
@@ -12,33 +14,25 @@ export default function OverviewSidebar( props ) {
 	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( false );
 	const sidebarTagFilterEvent = ( kitName, taxonomyText ) => {
-		$e.run(
+		eventTrackingDispatch(
 			'kit-library/sidebar-tag-filter',
 			{
 				kit_name: kitName,
 				tag: taxonomyText,
-			},
-			{
-				meta: {
-					event: 'overview sidebar tag select',
-					source: 'overview',
-				},
+				event: 'overview sidebar tag select',
+				source: 'overview',
 			},
 		);
 	};
 	const onCollapseChange = ( value, title ) => {
 		const command = value ? 'kit-library/collapse' : 'kit-library/expand';
-		$e.run(
+		eventTrackingDispatch(
 			command,
 			{
 				section: title,
-			},
-			{
-				meta: {
-					action: command,
-					event: 'sidebar section interaction',
-					source: 'overview',
-				},
+				action: command,
+				event: 'sidebar section interaction',
+				source: 'overview',
 			},
 		);
 	};

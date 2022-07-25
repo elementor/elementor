@@ -44,7 +44,6 @@ export default function ImportComplete() {
 		},
 		kitLiveLoadEvent = () => eventTrackingDispatch(
 			'kit-library/kit-is-live-load',
-			{},
 			{
 				event: 'kit is live load',
 				source: 'kit is live',
@@ -77,7 +76,6 @@ export default function ImportComplete() {
 								if ( 'kit-library' === referrer ) {
 									eventTrackingDispatch(
 										'kit-library/seek-more-info',
-										{},
 										{
 											event: 'learn more-kits',
 											source: 'kit-is-live',

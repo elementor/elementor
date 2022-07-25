@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import ApplyKitDialog from './apply-kit-dialog';
 import ConnectDialog from './connect-dialog';
 import Header from './layout/header';
@@ -6,8 +7,9 @@ import Kit from '../models/kit';
 import useDownloadLinkMutation from '../hooks/use-download-link-mutation';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
 import { Dialog } from '@elementor/app-ui';
-import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+
 
 import './item-header.scss';
 
@@ -106,17 +108,13 @@ export default function ItemHeader( props ) {
 		apply,
 		isApplyLoading,
 		eventTracking: () => {
-			return $e.run(
+			return eventTrackingDispatch(
 				'kit-library/apply-kit',
 				{
 					kit_name: props.model.title,
 					view_type_clicked: props.pageId,
-				},
-				{
-					meta: {
-						event: 'top bar apply kit',
-						source: props.pageId,
-					},
+					event: 'top bar apply kit',
+					source: props.pageId,
 				},
 			),
 			isApplyLoading ? null : apply

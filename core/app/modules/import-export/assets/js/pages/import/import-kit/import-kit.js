@@ -35,7 +35,6 @@ export default function ImportKit() {
 			if ( 'kit-library' === referrer ) {
 				eventTrackingDispatch(
 					'kit-library/choose-file',
-					{},
 					{
 						event: 'select kit file',
 						source: 'import',
@@ -53,7 +52,6 @@ export default function ImportKit() {
 					if ( 'kit-library' === referrer ) {
 						eventTrackingDispatch(
 							'kit-library/seek-more-info',
-							{},
 							{
 								event: 'learn more',
 								source: 'import',
@@ -136,16 +134,12 @@ export default function ImportKit() {
 						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 						if ( 'kit-library' === referrer ) {
 							const uploadMethod = ( 'drop' === event.type ? 'drop' : 'browse' );
-							$e.run(
+							eventTrackingDispatch(
 								`kit-library/${ uploadMethod }`,
 								{
 									method: uploadMethod,
-								},
-								{
-									meta: {
-										event: 'select kit file',
-										source: 'import',
-									},
+									event: 'select kit file',
+									source: 'import',
 								},
 							);
 						}
@@ -160,7 +154,6 @@ export default function ImportKit() {
 					onApprove={ resetImportProcess }
 					onModalClose={ () => eventTrackingDispatch(
 						'kit-library/modal-close',
-						{},
 						{
 							event: 'error modal close',
 							source: 'import',
@@ -172,8 +165,6 @@ export default function ImportKit() {
 						'kit-library/modal-error',
 						{
 							errorType: `error modal load  ${ errorType }`,
-						},
-						{
 							event: 'error modal load',
 							source: 'import',
 							step: wizardStepNum,
@@ -182,7 +173,6 @@ export default function ImportKit() {
 					) }
 					learnMoreEvent={ () => eventTrackingDispatch(
 						'kit-library/seek-more-info',
-						{},
 						{
 							event: 'error modal learn more',
 							source: 'import',

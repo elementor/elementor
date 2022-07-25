@@ -8,6 +8,7 @@ import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { PreviewIframe } from './preview-iframe';
 import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './preview.scss';
 
@@ -54,17 +55,13 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				$e.run(
+				eventTrackingDispatch(
 					'kit-library/view-overview-page',
 					{
 						kit_name: kitName,
-					},
-					{
-						meta: {
-							event: 'top bar change view type',
-							source: 'view demo',
-							view_type_clicked: 'overview',
-						},
+						event: 'top bar change view type',
+						source: 'view demo',
+						view_type_clicked: 'overview',
 					},
 				)
 				navigate( `/kit-library/overview/${ id }` )
@@ -112,17 +109,13 @@ export default function Preview( props ) {
 		[ activeDevice ],
 	);
 	const previewResponsiveControlsEvent = ( device, kitName ) => {
-		$e.run(
+		eventTrackingDispatch(
 			'kit-library/responsive-controls',
 			{
 				kit_name: kitName,
 				layout: device,
-			},
-			{
-				meta: {
-					event: 'top bar responsive views',
-					source: 'view-demo',
-				},
+				event: 'top bar responsive views',
+				source: 'view-demo',
 			},
 		);
 	};

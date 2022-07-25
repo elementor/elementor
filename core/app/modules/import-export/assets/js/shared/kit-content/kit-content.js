@@ -64,8 +64,6 @@ export default function KitContent( { contentData, hasPro } ) {
 													command,
 												{
 													site_part: chosenPart,
-												},
-												{
 													action: command,
 													event: 'kit parts selection',
 													source: 'import',

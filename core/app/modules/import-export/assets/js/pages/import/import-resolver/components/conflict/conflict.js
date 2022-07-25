@@ -63,8 +63,6 @@ export default function Conflict( props ) {
 						`kit-library/${ command }`,
 						{
 							site_part: title,
-						},
-						{
 							action: command,
 							event: 'kit parts conflict',
 							source: 'import',

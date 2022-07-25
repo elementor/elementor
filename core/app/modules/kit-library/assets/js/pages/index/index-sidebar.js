@@ -1,4 +1,5 @@
 import { MenuItem } from '@elementor/app-ui';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function IndexSidebar( props ) {
 	return (
@@ -11,18 +12,14 @@ export default function IndexSidebar( props ) {
 						className={ `eps-menu-item__link ${ item.isActive ? 'eps-menu-item--active' : '' }` }
 						icon={ item.icon }
 						url={ item.url }
-						onClick={ () => {
-							$e.run(
+						onClick={ () => eventTrackingDispatch(
 								item.trackEventData.action,
-								{},
 								{
-									meta: {
-										event: item.trackEventData.event,
-										source: 'home page',
-									},
+									event: item.trackEventData.event,
+									source: 'home page',
 								},
-							);
-						} }
+							)
+						}
 					/>
 				) )
 			}

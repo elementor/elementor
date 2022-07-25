@@ -67,7 +67,6 @@ export default function ImportProcess() {
 			if ( 'kit-library' === sharedContext.data.referrer ) {
 				eventTrackingDispatch(
 					command,
-					{},
 					{
 						event,
 						source,

@@ -5,7 +5,6 @@ import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 export default function ImportInfoModal( props ) {
 	const onLinkClick = () => eventTrackingDispatch(
 		'kit-library/seek-more-info',
-		{},
 		{
 			source: 'import',
 			event: 'info modal learn more-kits',

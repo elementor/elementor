@@ -2,6 +2,7 @@ import useSelectedTaxonomies from '../hooks/use-selected-taxonomies';
 import Badge from './badge';
 import { sprintf, _n } from '@wordpress/i18n';
 import { Text, Button, Grid } from '@elementor/app-ui';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './filter-indication-text.scss';
 
@@ -27,16 +28,12 @@ export default function FilterIndicationText( props ) {
 									icon="eicon-editor-close"
 									className="e-kit-library__filter-indication-badge-remove"
 									onClick={ () => {
-										$e.run(
+										eventTrackingDispatch(
 											'kit-library/clear-filter',
 											{
 												tag: taxonomy,
-											},
-											{
-												meta: {
-													event: 'remove filter tag',
-													source: 'home page',
-												},
+												event: 'remove filter tag',
+												source: 'home page',
 											},
 										)
 										props.onRemoveTag( taxonomy )
@@ -53,16 +50,12 @@ export default function FilterIndicationText( props ) {
 				text={ __( 'Clear all', 'elementor' ) }
 				variant="underlined"
 				onClick={ () => {
-					$e.run(
+					eventTrackingDispatch(
 						'kit-library/clear-filter',
 						{
 							tag: 'all',
-						},
-						{
-							meta: {
-								event: 'remove filter tag',
-								source: 'home page',
-							},
+							event: 'remove filter tag',
+							source: 'home page',
 						},
 					);
 					props.onClear();

@@ -1,32 +1,26 @@
 import { Grid } from '@elementor/app-ui';
 import HeaderButtons from '../../../../../../assets/js/layout/header-buttons';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function Header( props ) {
 	const onClose = () => {
-		$e.run(
+		eventTrackingDispatch(
 			'kit-library/close',
 			{
 				kit_name: props.kitName,
 				view_type_clicked: props.pageId,
-			},
-			{
-				meta: {
-					source: props.pageId,
-					event: 'top bar close kit library',
-				},
+				source: props.pageId,
+				event: 'top bar close kit library',
 			},
 		);
 
 		window.top.location = elementorAppConfig.admin_url;
 	},
-		onLogoClick = () => $e.run(
+		onLogoClick = () => eventTrackingDispatch(
 			'kit-library/logo',
-			{},
 			{
-				meta: {
-					event: 'top panel logo',
-					source: 'home page',
-				},
+				event: 'top panel logo',
+				source: 'home page',
 			},
 		);
 

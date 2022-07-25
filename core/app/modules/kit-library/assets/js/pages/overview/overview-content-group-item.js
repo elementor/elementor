@@ -1,5 +1,6 @@
 import Document from '../../models/document';
 import { Button, Card, CardBody, CardOverlay, CardHeader, CardImage, Heading } from '@elementor/app-ui';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function OverviewContentGroupItem( props ) {
 	return (
@@ -22,22 +23,17 @@ export default function OverviewContentGroupItem( props ) {
 							text={ __( 'View Demo', 'elementor' ) }
 							icon="eicon-preview-medium"
 							url={ `/kit-library/preview/${ props.kitId }?document_id=${ props.document.id }` }
-							onClick={ () => {
-								$e.run(
+							onClick={ () => eventTrackingDispatch(
 									'kit-library/view-demo-part,',
 									{
 										kit_name: props.kitTitle,
 										document_name: `${ props.groupData.label }-${ props.document.title }`,
 										document_type: props.groupData.id,
-									},
-									{
-										meta: {
-											event: 'view demo part',
-											source: 'overview',
-										}
+										event: 'view demo part',
+										source: 'overview',
 									},
 								)
-							} }
+							}
 						/>
 					</CardOverlay> }
 				</CardImage>

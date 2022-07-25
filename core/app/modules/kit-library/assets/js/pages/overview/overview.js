@@ -9,6 +9,8 @@ import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+
 
 import './overview.scss';
 
@@ -24,17 +26,13 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				$e.run(
+				eventTrackingDispatch(
 					'kit-library/view-demo-page',
 					{
 						kit_name: kitName,
-					},
-					{
-						meta: {
-							event: 'top bar change view type',
-							source: 'overview',
-							view_type_clicked: 'demo',
-						},
+						event: 'top bar change view type',
+						source: 'overview',
+						view_type_clicked: 'demo',
 					},
 				)
 				navigate( `/kit-library/preview/${ id }` )

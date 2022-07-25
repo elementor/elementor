@@ -106,8 +106,6 @@ export default function ImportResolver() {
 													'kit-library/check-item',
 													{
 														site_part: title,
-													},
-													{
 														event: 'open kit part - new tab',
 														source: 'import',
 														step: wizardStepNum,

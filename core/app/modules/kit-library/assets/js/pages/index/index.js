@@ -17,6 +17,7 @@ import { Grid } from '@elementor/app-ui';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './index.scss';
 
@@ -195,16 +196,12 @@ export default function Index( props ) {
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 							onSearchEvent={ () => {
-								$e.run(
+								eventTrackingDispatch(
 									'kit-library/kit-free-search',
 									{
 										search_term: queryParams.search,
-									},
-									{
-										meta: {
-											source: 'home page',
-											event: 'search kit',
-										},
+										source: 'home page',
+										event: 'search kit',
 									},
 								);
 							} }
@@ -248,49 +245,34 @@ export default function Index( props ) {
 							onChange={ ( order ) => {
 								setQueryParams( ( prev ) => ( { ...prev, order } ) )
 							} }
-							onChangeSortDirection={ ( direction ) => {
-								$e.run(
+							onChangeSortDirection={ ( direction ) => eventTrackingDispatch(
 									'kit-library/change-sort-direction',
 									{
 										sort_direction: direction,
+										event: 'kit sort direction',
+										source: 'home page',
 									},
-									{
-										meta: {
-											event: 'kit sort direction',
-											source: 'home page',
-										},
-									},
-								);
-							} }
-							onChangeSortValue={ ( value ) => {
-								console.log( 'value:', value );
-								$e.run(
+								)
+							}
+							onChangeSortValue={ ( value ) => eventTrackingDispatch(
 									'kit-library/change-sort-value',
 									{
 										sort_type: value,
+										event: 'kit sort type select',
+										source: 'home page',
 									},
-									{
-										meta: {
-											event: 'kit sort type select',
-											source: 'home page',
-										},
-									},
-								);
-							} }
-							onSortTypeDropdown={ () => {
-								// TODO: Add onBlur event to sort type dropdown
-								$e.run(
+								)
+							}
+							// TODO: Add onBlur event to sort type dropdown
+							onSortTypeDropdown={ () => eventTrackingDispatch(
 									'kit-library/change-sort-type',
-									{},
 									{
-										meta: {
-											event: 'kit sort type dropdown',
-											source: 'home page',
-											action: 'expand',
-										},
+										event: 'kit sort type dropdown',
+										source: 'home page',
+										action: 'expand',
 									},
-								);
-							} }
+								)
+							}
 						/>
 					</Grid>
 				</Grid>

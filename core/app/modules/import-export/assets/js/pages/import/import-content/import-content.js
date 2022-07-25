@@ -30,7 +30,6 @@ export default function ImportContent() {
 					onResetProcess={ handleResetProcess }
 					onPreviousClick={ () => eventTrackingDispatch(
 						'kit-library/go-back',
-						{},
 						{
 							source: 'import',
 							step: wizardStepNum,
@@ -39,7 +38,6 @@ export default function ImportContent() {
 					) }
 					onImportClick={ () => eventTrackingDispatch(
 						'kit-library/approve-import',
-						{},
 						{
 							source: 'import',
 							step: wizardStepNum,

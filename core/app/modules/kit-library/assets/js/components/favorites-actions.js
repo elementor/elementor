@@ -1,5 +1,7 @@
 import { useKitFavoritesMutations } from '../hooks/use-kit-favorites-mutations';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 import { Button } from '@elementor/app-ui';
+
 import './favorites-actions.scss';
 
 export default function FavoritesActions( props ) {
@@ -16,18 +18,14 @@ export default function FavoritesActions( props ) {
 					onClick={ () => {
 						// eslint-disable-next-line no-unused-expressions
 						! isLoading && removeFromFavorites.mutate( props.id );
-						$e.run(
+						eventTrackingDispatch(
 							'kit-library/mark-as-favorite',
 							{
 								kit_name: props.name,
-							},
-							{
-								meta: {
-									event: 'favorite icon interaction',
-									source: '/' === props.source ? 'home page' : 'overview',
-									event_type: 'search',
-									action: 'uncheck',
-								},
+								event: 'favorite icon interaction',
+								source: '/' === props.source ? 'home page' : 'overview',
+								event_type: 'search',
+								action: 'uncheck',
 							},
 						)
 					} }
@@ -40,20 +38,16 @@ export default function FavoritesActions( props ) {
 					onClick={ () => {
 						// eslint-disable-next-line no-unused-expressions
 						! isLoading && addToFavorites.mutate( props.id );
-						$e.run(
+						eventTrackingDispatch(
 							'kit-library/mark-as-favorite',
 							{
 								grid_location: props.index,
 								search_term: props.queryParams,
 								kit_name: props.name,
-							},
-							{
-								meta: {
-									source: '/' === props.source ? 'home page' : 'overview',
-									event: 'favorite icon interaction',
-									event_type: 'search',
-									action: 'check',
-								},
+								source: '/' === props.source ? 'home page' : 'overview',
+								event: 'favorite icon interaction',
+								event_type: 'search',
+								action: 'check',
 							},
 						)
 					} }

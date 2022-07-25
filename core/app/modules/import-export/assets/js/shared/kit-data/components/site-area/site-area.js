@@ -1,19 +1,16 @@
 import Text from 'elementor-app/ui/atoms/text';
 import Icon from 'elementor-app/ui/atoms/icon';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function SiteArea( { text, link } ) {
 	const goToSitePartEventTracking = () => {
-		$e.run(
+		eventTrackingDispatch(
 			'kit-library/open-site-area',
 			{
 				site_area: text,
-			},
-			{
-				meta: {
-					event: 'open site area in a new tab',
-					source: 'import complete',
-				},
+				event: 'open site area in a new tab',
+				source: 'import complete',
 			},
 		);
 	}

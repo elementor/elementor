@@ -1,5 +1,6 @@
 import TaxonomiesFilterList from './taxonomies-filter-list';
 import Taxonomy, { taxonomyType } from '../models/taxonomy';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './tags-filter.scss';
 
@@ -31,39 +32,30 @@ export default function TaxonomiesFilter( props ) {
 						onCollapseChange={ ( collapseState, title ) => {
 							const command = collapseState ? 'kit-library/collapse' : 'kit-library/expand';
 							if ( typeof ( collapseState ) !== 'undefined' ) {
-								$e.run(
+								eventTrackingDispatch(
 									command,
 									{
 										section: title,
 										category: ( '/' === props.category ? 'all kits' : 'favorites' ),
-									},
-									{
-										meta: {
-											action: command,
-											event: 'sidebar section interaction',
-											source: 'home page',
-										},
+										action: command,
+										event: 'sidebar section interaction',
+										source: 'home page',
 									},
 								);
 							}
 						} }
-						onSearchEvent={ ( search, category ) => {
-							$e.run(
+						onSearchEvent={ ( search, category ) => eventTrackingDispatch(
 								'kit-library/filter',
 								{
 									search_term: search,
 									category,
 									section: group.label,
+									source: 'home page',
+									event: 'sidebar section filters search',
+									event_type: 'search',
 								},
-								{
-									meta: {
-										source: 'home page',
-										event: 'sidebar section filters search',
-										event_type: 'search',
-									},
-								},
-							);
-						} }
+							)
+						}
 						category={ props.category }
 					/>
 				) )

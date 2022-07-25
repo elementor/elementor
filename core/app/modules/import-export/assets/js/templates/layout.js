@@ -27,7 +27,6 @@ export default function Layout( props ) {
 					...infoModalProps,
 					onOpen: () => eventTrackingDispatch(
 						'kit-library/modal-open',
-						{},
 						{
 							event: 'info modal load',
 							source: 'import',
@@ -36,7 +35,7 @@ export default function Layout( props ) {
 					),
 					onClose: ( e ) => {
 						const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
-						newEventTrackingDispatch(
+						eventTrackingDispatch(
 							'kit-library/modal-close',
 							{
 								element,
@@ -63,7 +62,6 @@ export default function Layout( props ) {
 					if ( 'kit-library' === referrer ) {
 						eventTrackingDispatch(
 							'kit-library/seek-more-info',
-							{},
 							{
 								event: 'top panel info',
 								source: 'import',
@@ -78,7 +76,6 @@ export default function Layout( props ) {
 			if ( 'kit-library' === referrer ) {
 				eventTrackingDispatch(
 					'kit-library/close',
-					{},
 					{
 						event: 'modal close',
 						step: wizardStepNum,

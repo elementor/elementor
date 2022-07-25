@@ -4,6 +4,7 @@ import Collapse from './collapse';
 import SearchInput from './search-input';
 import { Checkbox, Text } from '@elementor/app-ui';
 import { sprintf } from '@wordpress/i18n';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 
@@ -59,35 +60,27 @@ const TaxonomiesFilterList = ( props ) => {
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
 									if ( checked ) {
-										$e.run(
+										eventTrackingDispatch(
 											'kit-library/filter',
 											{
 												category,
 												section: taxonomy.type,
 												item: taxonomy.text,
-											},
-											{
-												meta: {
-													action: 'check',
-													event: 'sidebar section filters interaction',
-													source: 'home page',
-												},
+												action: 'check',
+												event: 'sidebar section filters interaction',
+												source: 'home page',
 											},
 										);
 									} else {
-										$e.run(
+										eventTrackingDispatch(
 											'kit-library/filter',
 											{
 												category,
 												section: taxonomy.type,
 												item: taxonomy.text,
-											},
-											{
-												meta: {
-													action: 'uncheck',
-													event: 'sidebar section filters interaction',
-													source: 'home page',
-												},
+												action: 'uncheck',
+												event: 'sidebar section filters interaction',
+												source: 'home page',
 											},
 										);
 									}

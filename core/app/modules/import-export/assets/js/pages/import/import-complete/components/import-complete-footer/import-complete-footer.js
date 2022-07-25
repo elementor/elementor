@@ -17,7 +17,6 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 						if ( 'kit-library' === referrer ) {
 							eventTrackingDispatch(
 								'kit-library/see-it-live',
-								{},
 								{
 									event: 'see it live button',
 									source: 'kit is live',
@@ -37,7 +36,6 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 					if ( 'kit-library' === referrer ) {
 						eventTrackingDispatch(
 							'kit-library/close',
-							{},
 							{
 								event: 'close button',
 								source: 'kit is live',
