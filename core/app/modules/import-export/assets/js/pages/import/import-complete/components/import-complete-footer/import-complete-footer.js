@@ -23,7 +23,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 								},
 							);
 						}
-						window.open( seeItLiveUrl, '_blank' )
+						window.open( seeItLiveUrl, '_blank' );
 					} }
 				/>
 			}

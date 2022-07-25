@@ -110,7 +110,7 @@ export default function ImportResolver() {
 														source: 'import',
 														step: wizardStepNum,
 													},
-												)
+												);
 											} }
 										/>
 									</List.Item>

@@ -69,7 +69,7 @@ export default function KitContent( { contentData, hasPro } ) {
 													source: 'import',
 													step: wizardStepNum,
 												},
-											)
+											);
 										} }
 										/>
 

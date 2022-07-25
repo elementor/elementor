@@ -80,7 +80,7 @@ export default function ImportComplete() {
 											event: 'learn more-kits',
 											source: 'kit-is-live',
 										},
-									)
+									);
 								}
 							} }
 						>

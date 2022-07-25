@@ -99,7 +99,6 @@ class App extends BaseApp {
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
-			'user_id' => get_current_user_id(),
 		];
 	}
 

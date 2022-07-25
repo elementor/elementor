@@ -18,7 +18,6 @@
 // };
 
 export const eventTrackingDispatch = ( command, eventParams ) => {
-
 	const data = {
 		...( eventParams.element ? { element: eventParams.element } : {} ),
 		...( eventParams.searchTerm ? { search_term: eventParams.searchTerm } : {} ),
@@ -36,8 +35,7 @@ export const eventTrackingDispatch = ( command, eventParams ) => {
 		...( eventParams.document_type ? { document_type: eventParams.document_type } : {} ),
 		...( eventParams.document_name ? { document_name: eventParams.document_name } : {} ),
 		...( eventParams.layout ? { layout: eventParams.layout } : {} ),
-
-	}
+	};
 	const meta = {
 		...( eventParams.site_part ? { site_part: eventParams.site_part } : {} ),
 		...( eventParams.event ? { event: eventParams.event } : {} ),
@@ -46,11 +44,11 @@ export const eventTrackingDispatch = ( command, eventParams ) => {
 		...( eventParams.event_type ? { event_type: eventParams.event_type } : { event_type: 'click' } ),
 		...( eventParams.step ? { step: eventParams.step } : {} ),
 		...( eventParams.category ? { category: eventParams.category } : {} ),
-	}
+	};
 
 	$e.run(
 		command,
-		data,
+		...data,
 		{
 			meta,
 		},

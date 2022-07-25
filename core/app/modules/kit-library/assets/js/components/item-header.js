@@ -65,7 +65,7 @@ function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onCon
 			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
 			includeHeaderBtnClass: false,
-			onClick: eventTracking(),
+			onClick: eventTracking?.(),
 		};
 	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
 }
@@ -108,18 +108,18 @@ export default function ItemHeader( props ) {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		apply,
 		isApplyLoading,
-		eventTracking: () => {
-			return eventTrackingDispatch(
-				'kit-library/apply-kit',
-				{
-					kit_name: props.model.title,
-					view_type_clicked: props.pageId,
-					event: 'top bar apply kit',
-					source: props.pageId,
-				},
-			),
-			isApplyLoading ? null : apply
-		},
+		// eventTracking: () => {
+		// 	return eventTrackingDispatch(
+		// 		'kit-library/apply-kit',
+		// 		{
+		// 			kit_name: props.model.title,
+		// 			view_type_clicked: props.pageId,
+		// 			event: 'top bar apply kit',
+		// 			source: props.pageId,
+		// 		},
+		// 	),
+		// 	isApplyLoading ? null : apply
+		// },
 	} );
 
 	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );
