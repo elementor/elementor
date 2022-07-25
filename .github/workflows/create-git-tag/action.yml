@@ -12,10 +12,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
+    - shell: bash 
+      run: |
             git config user.name ${{ inputs.MAINTAIN_USERNAME }}
             git config user.email ${{ inputs.MAINTAIN_EMAIL }}
             echo "Create tag v${PACKAGE_VERSION}"
             git tag "v${PACKAGE_VERSION}"
             git push origin "v${PACKAGE_VERSION}"
-      shell: bash
+      

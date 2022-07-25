@@ -8,7 +8,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
+    - shell: bash
+      run: |
             if [ "${{ inputs.INPUT_VERSION }}" == "" ];
               then
                 PACKAGE_VERSION=$(node -p "require('./package.json').version")
@@ -21,4 +22,4 @@ runs:
               fi
               echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_ENV
               echo "RELEASE_BRANCH : ${RELEASE_BRANCH}"
-      shell: bash
+      

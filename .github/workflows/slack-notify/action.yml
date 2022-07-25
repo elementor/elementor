@@ -12,7 +12,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
+    - shell: bash
+      run: |
             SLACK_BOT_NAME="ElementorBot"
             curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${{ inputs.SLACK_TOKEN }}&channel=${{ inputs.SLACK_CHANNEL }}&text=${{ inputs.MESSAGE }}&link_names=true"
-      shell: bash
+      

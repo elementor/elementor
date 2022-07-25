@@ -4,7 +4,8 @@ description: Validate user permissions for the current repository & run the work
 runs:
   using: "composite"
   steps:
-    - run: |
+    - shell: bash
+      run: |
             if [[ ${{ env.config_deployment_envirement }} == "dev" ]];then
                echo "Pass validation in the development environment"
                exit 0
@@ -13,8 +14,8 @@ runs:
                echo "::error::No deployment permissions have been granted to the user : ${{ github.actor }}"
                exit 1
             fi
-            if [[ "${{github.config_deployment_repository}}" != "elementor/"* ]];then
+            if [[ "${{github.config_deployment_repository}}" != "${{ env.config_deployment_repository }}/"* ]];then
                echo "::error::The deployment cannot start outside the elementor organization"
                exit 1
             fi
-      shell: bash
+      
