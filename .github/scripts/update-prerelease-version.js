@@ -5,7 +5,7 @@ const packageJson = require('../../package.json');
 const fs = require('fs');
 
 const preId = process.argv[2];
-if (!['dev', 'beta'].includes(preId)) {
+if (!['dev', 'beta', 'cloud' ].includes(preId)) {
 	console.error('missing argument dev or beta mode');
 	process.exit(1);
 	return;
@@ -41,6 +41,12 @@ const bumpVersion = (relativeVersion, lastVersionTagName, bumpsFromCurrentVersio
 if (preId === 'beta') {
 	const relativeVersion = packageJson.version;
 	bumpVersion(relativeVersion, 'last_beta_version');
+	return;
+}
+
+if (preId === 'cloud') {
+	const relativeVersion = packageJson.version;
+	bumpVersion(relativeVersion, 'last_cloud_version');
 	return;
 }
 
