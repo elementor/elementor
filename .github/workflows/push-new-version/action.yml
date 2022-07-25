@@ -18,5 +18,3 @@ runs:
             git config user.email ${{ inputs.MAINTAIN_EMAIL }}
             git commit -am "${{ inputs.COMMIT_MESSAGE }}"
             git push
-      
-      
