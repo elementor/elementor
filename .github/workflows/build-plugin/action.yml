@@ -10,6 +10,11 @@ runs:
   steps:
     - shell: bash
       run: |
+            if [ "${{ PACKAGE_VERSION }}" == "" ] || [ "${{ PACKAGE_VERSION }}" == "undefined" ];
+              then
+                echo "PACKAGE_VERSION is empty string or undefined"
+                exit 1
+            fi
             sed -i -E "s/Stable tag: .*/Stable tag: ${PACKAGE_VERSION}/g" ./readme.txt
             sed -i -E "s/Version: .*/Version: ${PACKAGE_VERSION}/g" elementor.php
             sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}'/g" elementor.php
