@@ -1,6 +1,5 @@
 .elementor-widget-spacer {
     --spacer-size: 50px;
-	--container-widget-width: 100%;
 }
 
 .elementor-column {
@@ -14,6 +13,7 @@
 }
 
 .e-container {
+	--container-widget-width: 100%;
 
 	& > .elementor-widget-spacer {
 		width: var( --container-widget-width, var( --spacer-size ) );
@@ -24,6 +24,7 @@
 			height: 100%;
 
 			& > .elementor-spacer {
+				height: 100%;
 			
 				& > .elementor-spacer-inner {
 					height: var( --container-widget-height, var( --spacer-size ) );
