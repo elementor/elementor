@@ -24,10 +24,10 @@ jobs:
             prefix: config
       - name: Test permissions
         uses: ./.github/workflows/permissions
-      - name: Install Node.js 16.x
+      - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 14.x
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
         with:
@@ -49,10 +49,10 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
-      - name: Install Node.js 16.x
+      - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 14.x
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
         with:
