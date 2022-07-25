@@ -33,7 +33,7 @@ class New_Template_Form extends Controls_Stack {
 		$control_id = "elementor-new-template__form__{$control_settings['name']}";
 		$wrapper_class = isset( $control_settings['wrapper_class'] ) ? $control_settings['wrapper_class'] : '';
 		?>
-		<div id="<?php echo esc_html( $control_id ); ?>__wrapper" class="elementor-form-field <?php echo esc_html( $wrapper_class ); ?>">
+		<div id="<?php echo esc_attr( $control_id ); ?>__wrapper" class="elementor-form-field <?php echo esc_attr( $wrapper_class ); ?>">
 			<label for="<?php echo esc_html( $control_id ); ?>" class="elementor-form-field__label">
 				<?php echo esc_html( $control_settings['label'] ); ?>
 			</label>
