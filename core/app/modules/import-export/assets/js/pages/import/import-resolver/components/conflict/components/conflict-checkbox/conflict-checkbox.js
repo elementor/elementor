@@ -10,6 +10,7 @@ export default function ConflictCheckbox( props ) {
 		updateOverrideCondition = ( event ) => {
 			const isChecked = event.target.checked,
 				actionType = isChecked ? 'ADD_OVERRIDE_CONDITION' : 'REMOVE_OVERRIDE_CONDITION';
+
 			if ( props.onCheck ) {
 				props.onCheck( event, props.title );
 			}

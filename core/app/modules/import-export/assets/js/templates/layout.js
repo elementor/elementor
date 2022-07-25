@@ -51,6 +51,7 @@ export default function Layout( props ) {
 			return (
 				<ContentLayout>
 					{ props.children }
+
 					{ 'import' === props.type ? <ImportInfoModal { ...infoModalProps } /> : <ExportInfoModal { ...infoModalProps } /> }
 				</ContentLayout>
 			);

@@ -1,5 +1,4 @@
 import getUserTimestamp from 'elementor-utils/time';
-import { eventTrackingObject } from 'elementor-app/consts/consts';
 
 export default class Events {
 	dispatchEvent( eventData ) {
@@ -14,20 +13,4 @@ export default class Events {
 			event_data: eventData,
 		} );
 	}
-
-	// TODO: Delete this function!!
-	appsEventTracking = ( command, userActions, metadata ) => {
-		$e.run( command, userActions, metadata );
-		// eventTrackingObjectData.ts = getUserTimestamp();
-			const eventParams = {
-				...eventTrackingObject,
-				...eventTrackingObjectData,
-				details: {
-					...eventTrackingObject.details,
-					...details,
-				},
-			};
-			console.log( 'eventParams', eventParams );
-			$e.run( trackName, eventParams );
-		};
 }

@@ -25,6 +25,7 @@ import './item-header.scss';
  */
 function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onConnect, eventTracking } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
+
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
 			return {

@@ -7,4 +7,4 @@ export const ConstTrackingMetaParams = {
 	source: 'event_source',
 	action: 'event_action',
 	event_type: 'click',
-}
+};

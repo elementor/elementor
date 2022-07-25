@@ -14,6 +14,7 @@ export default function DropZone( props ) {
 		onDrop: ( event ) => {
 			if ( ! props.isLoading ) {
 				const file = event.dataTransfer.files[ 0 ];
+
 				if ( file && isOneOf( file.type, props.filetypes ) ) {
 					props.onFileSelect( file, event, 'drop' );
 				} else {
@@ -79,6 +80,8 @@ DropZone.propTypes = {
 	onError: PropTypes.func,
 	description: PropTypes.string,
 	onButtonClick: PropTypes.func,
+	onFileChoose: PropTypes.func,
+	referrer: PropTypes.string,
 };
 
 DropZone.defaultProps = {

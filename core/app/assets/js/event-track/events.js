@@ -1,4 +1,4 @@
-import { ConstTrackingMetaParams, ConstTrackingEventParams } from 'elementor-app/consts/consts';
+// import { ConstTrackingMetaParams, ConstTrackingEventParams } from 'elementor-app/consts/consts';
 
 // export const eventTrackingDispatch = ( command, eventParams, metaParams ) => {
 // 	const eventData = {
@@ -18,6 +18,7 @@ import { ConstTrackingMetaParams, ConstTrackingEventParams } from 'elementor-app
 // };
 
 export const eventTrackingDispatch = ( command, eventParams ) => {
+
 	const data = {
 		...( eventParams.element ? { element: eventParams.element } : {} ),
 		...( eventParams.searchTerm ? { search_term: eventParams.searchTerm } : {} ),

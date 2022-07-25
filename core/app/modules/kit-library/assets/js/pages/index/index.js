@@ -60,6 +60,7 @@ function useTaxonomiesSelection( setQueryParams ) {
 function useMenuItems( path ) {
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
+
 		return [
 			{
 				label: __( 'All Website Kits', 'elementor' ),

@@ -11,8 +11,9 @@ import useImportActions from '../../../hooks/use-import-actions';
 export default function ImportPluginsFooter( props ) {
 	const importContext = useContext( ImportContext ),
 		sharedContext = useContext( SharedContext ),
-		{ referrer, wizardStepNum } = sharedContext.data || {},
+		{ data: { referrer, wizardStepNum } } = sharedContext.data,
 		{ navigateToMainScreen } = useImportActions();
+
 	return (
 		<ActionsFooter>
 			<Button
@@ -21,6 +22,7 @@ export default function ImportPluginsFooter( props ) {
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
 					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
+
 					if ( 'kit-library' === referrer && props.onPreviousClick ) {
 						props.onPreviousClick();
 					}

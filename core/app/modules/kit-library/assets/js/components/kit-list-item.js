@@ -9,6 +9,7 @@ import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
+
 	return (
 		<Card className="e-kit-library__kit-item">
 			<CardHeader>

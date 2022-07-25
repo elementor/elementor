@@ -23,7 +23,7 @@ export default function OverviewContentGroup( props ) {
 
 OverviewContentGroup.propTypes = {
 	contentType: PropTypes.instanceOf( ContentType ),
-	kitId: PropTypes.string,
+	kitId: PropTypes.string.isRequired,
 	kitTitle: PropTypes.string,
 	groupData: PropTypes.object,
 };

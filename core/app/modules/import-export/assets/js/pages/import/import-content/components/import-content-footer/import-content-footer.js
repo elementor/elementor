@@ -9,8 +9,7 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 	const navigate = useNavigate(),
 		sharedContext = useContext( SharedContext ),
 		{ referrer, wizardStepNum } = sharedContext.data || {},
-
-	getNextPageUrl = () => {
+		getNextPageUrl = () => {
 			if ( hasConflicts ) {
 				return 'import/resolver';
 			} else if ( hasPlugins ) {
@@ -19,6 +18,7 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 
 			return 'import/process';
 		};
+
 	useEffect( () => {
 		sharedContext.dispatch( { type: 'SET_WIZARD_STEP', payload: wizardStepNum + 1 } );
 	}, [] );

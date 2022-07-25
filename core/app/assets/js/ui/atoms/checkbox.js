@@ -37,6 +37,9 @@ Checkbox.propTypes = {
 	rounded: PropTypes.bool,
 	error: PropTypes.bool,
 	onChange: PropTypes.func,
+	onCheck: PropTypes.func,
+	onUncheck: PropTypes.func,
+	referrer: PropTypes.string,
 };
 
 Checkbox.defaultProps = {

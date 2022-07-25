@@ -6,8 +6,8 @@ import './favorites-actions.scss';
 
 export default function FavoritesActions( props ) {
 	const { addToFavorites, removeFromFavorites, isLoading } = useKitFavoritesMutations();
-
 	const loadingClasses = isLoading ? 'e-kit-library__kit-favorite-actions--loading' : '';
+
 	return (
 		props.isFavorite
 			? <Button

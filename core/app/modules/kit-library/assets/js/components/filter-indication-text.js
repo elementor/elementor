@@ -8,6 +8,7 @@ import './filter-indication-text.scss';
 
 export default function FilterIndicationText( props ) {
 	const selectedTaxonomies = useSelectedTaxonomies( props.queryParams.taxonomies );
+
 	return (
 		<Grid container className="e-kit-library__filter-indication">
 			<Text className="e-kit-library__filter-indication-text">

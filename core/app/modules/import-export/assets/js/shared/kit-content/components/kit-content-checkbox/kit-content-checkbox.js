@@ -9,7 +9,7 @@ export default function KitContentCheckbox( props ) {
 		isSelected = () => sharedContext.data.includes.includes( props.type ),
 		setIncludes = ( event ) => {
 			const isChecked = event.target.checked,
-			actionType = isChecked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
+				actionType = isChecked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
 			if ( 'kit-library' === props.referrer && props.onCheck ) {
 				props.onCheck( event, props.type );
 			}

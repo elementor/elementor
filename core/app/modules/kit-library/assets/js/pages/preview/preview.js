@@ -135,6 +135,7 @@ export default function Preview( props ) {
 	if ( isLoading ) {
 		return <ElementorLoading />;
 	}
+
 	return (
 		<Layout header={
 			<ItemHeader

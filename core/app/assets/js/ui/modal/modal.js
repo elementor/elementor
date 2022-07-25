@@ -80,6 +80,7 @@ export const Modal = ( props ) => {
 			const node = modalRef.current,
 				closeNode = closeRef.current,
 				isInCloseNode = closeNode && closeNode.contains( e.target );
+
 			// Ignore if click is inside the modal
 			if ( node && node.contains( e.target ) && ! isInCloseNode ) {
 				return;
@@ -87,18 +88,6 @@ export const Modal = ( props ) => {
 
 			props.hideModal();
 
-			// TODO: distinguish event type on modal close: overlay or close button
-			// if ( 'kit-library' === props.referrer && props.onClose ) {
-			// 	if ( e.target.classList.contains( 'eps-modal__overlay' ) ) {
-			// 		props.onClose( 'overlay' );
-			// 		console.log( 'close overlay' )
-			// 	} else {
-			// 		console.log( 'close button' )
-			// 		props.onClose( 'button' );
-			// 	}
-			// }
-
-			// TODO: distinguish event type on modal close: overlay or close button
 			if ( props.onClose ) {
 				props.onClose( e );
 			}
