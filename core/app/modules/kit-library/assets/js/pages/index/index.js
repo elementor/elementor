@@ -62,7 +62,7 @@ function useMenuItems( path ) {
 
 		return [
 			{
-				label: __( 'All Template Kits', 'elementor' ),
+				label: __( 'All Website Kits', 'elementor' ),
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
@@ -189,7 +189,7 @@ export default function Index( props ) {
 					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
 							// eslint-disable-next-line @wordpress/i18n-ellipsis
-							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
+							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>

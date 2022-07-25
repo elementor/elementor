@@ -47,7 +47,7 @@ export default function ExportPlugins() {
 		<Layout type="export" footer={ <ExportPluginsFooter isKitReady={ isKitReady } /> }>
 			<section className="e-app-export-plugins">
 				<PageHeader
-					heading={ __( 'Export your site as a Template Kit', 'elementor' ) }
+					heading={ __( 'Export your site as a Website Kit', 'elementor' ) }
 					description={ __( 'Select which of these plugins are required for this kit work.', 'elementor' ) }
 				/>
 
