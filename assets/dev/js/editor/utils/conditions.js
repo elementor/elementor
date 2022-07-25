@@ -37,10 +37,10 @@ export default class Conditions {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param  conditionValue
-	 * @param  isNegativeCondition
-	 * @param  currentValue
-	 * @return {string}
+	 * @param {*}       conditionValue
+	 * @param {boolean} isNegativeCondition
+	 * @param {8}       currentValue
+	 * @return {string} The operator to use.
 	 */
 	getOperator( conditionValue, isNegativeCondition, currentValue ) {
 		let operator;
@@ -63,11 +63,11 @@ export default class Conditions {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param  comparisonObject A settings object (e.g. element settings - keys and values)
-	 * @param  conditionName    The conditioning item's name
-	 * @param  subConditionName If the conditioning item's value is an object, and the condition checks for a
-	 *                          specific property, this is the property name.
-	 * @return {*}
+	 * @param {{}}     comparisonObject A settings object (e.g. element settings - keys and values)
+	 * @param {string} conditionName    The conditioning item's name
+	 * @param {string} subConditionName If the conditioning item's value is an object, and the condition checks for a
+	 *                                  specific property, this is the property name.
+	 * @return {*} Condition Value
 	 */
 	getConditionValue( comparisonObject, conditionName, subConditionName ) {
 		let value;

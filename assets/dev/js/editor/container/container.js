@@ -4,18 +4,11 @@ import ChildrenArray from './model/children-array';
 
 /**
  * @typedef {import('../../../../lib/backbone/backbone.marionette')} Backbone
- */
-/**
  * @typedef {import('../../../../lib/backbone/backbone.marionette')} Marionette
- */
-/**
  * @typedef {import('../elements/views/base')} BaseElementView
- */
-/**
  * @typedef {import('../elements/views/section')} SectionView
- */
-/**
  * @typedef {import('../views/base-container')} BaseContainer
+ * @typedef {import('../elements/models/base-element-model')} BaseElementModel
  */
 /**
  * TODO: ViewsOptions
@@ -241,7 +234,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Function getAffectingControls().
 	 *
-	 * Should return all controls that effecting the container.
+	 * @return {{}} All controls that effecting the container.
 	 */
 	getAffectingControls() {
 		const result = {},
@@ -292,9 +285,9 @@ export default class Container extends ArgsObject {
 	/**
 	 * Function getParentAncestry().
 	 *
-	 * Recursively run over all parents from current container till the top, and return them as flat array.
+	 * Recursively run over all parents from current container till the top
 	 *
-	 * @return {Array.<Container>}
+	 * @return {Array.<Container>} All parent as flat array.
 	 */
 	getParentAncestry() {
 		const result = [];

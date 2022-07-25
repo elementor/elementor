@@ -149,6 +149,19 @@ const ContainerView = BaseElementView.extend( {
 
 				// User is sorting inside a Container.
 				if ( draggedView ) {
+					// Prevent the user from dragging a parent container into its own child container
+					const draggedId = draggedView.getContainer().id;
+
+					let currentTargetParentContainer = this.container;
+
+					while ( currentTargetParentContainer ) {
+						if ( currentTargetParentContainer.id === draggedId ) {
+							return;
+						}
+
+						currentTargetParentContainer = currentTargetParentContainer.parent;
+					}
+
 					// Reset the dragged element cache.
 					elementor.channels.editor.reply( 'element:dragged', null );
 
@@ -268,27 +281,27 @@ const ContainerView = BaseElementView.extend( {
 			editTools = {};
 
 		editTools.add = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 			icon: 'plus',
 		};
 
 		editTools.edit = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'handle',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element Name. */
+				/* Translators: %s: Element Name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 		}
 
 		editTools.remove = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
 			icon: 'close',
 		};
@@ -346,7 +359,7 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		// Re-initialize the droppable in order to make sure the axis works properly.
-		if ( !! settings.changed.flex_direction ) {
+		if ( settings.changed.flex_direction ) {
 			this.$el.html5Droppable( 'destroy' );
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		}

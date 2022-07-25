@@ -96,7 +96,7 @@ module.exports = {
 			return;
 		}
 
-		if ( this._inlineSvg.hasOwnProperty( value.id ) ) {
+		if ( Object.prototype.hasOwnProperty.call( this._inlineSvg, value.id ) ) {
 			return this._inlineSvg[ value.id ];
 		}
 
@@ -178,7 +178,7 @@ module.exports = {
 			};
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
-		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
+		if ( iconSettings && ! Object.prototype.hasOwnProperty.call( iconSettings, 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
@@ -254,7 +254,7 @@ module.exports = {
 		let	fontUrl;
 
 		switch ( fontType ) {
-			case 'googlefonts' :
+			case 'googlefonts':
 				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 
 				if ( subsets[ elementor.config.locale ] ) {
@@ -263,10 +263,11 @@ module.exports = {
 
 				break;
 
-			case 'earlyaccess' :
-				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-				break;
+			case 'earlyaccess': {
+					const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+					fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+					break;
+				}
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
@@ -637,6 +638,10 @@ module.exports = {
 
 	hasPro() {
 		return !! window.elementorPro;
+	},
+
+	hasProAndNotConnected() {
+		return elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect;
 	},
 
 	/**

@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../../../container/container')} Container
  */
- export class Settings extends $e.modules.CommandBase {
+export class Settings extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
 	 *

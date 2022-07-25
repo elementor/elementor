@@ -1,9 +1,11 @@
+const sassImplementation = require('sass');
+
 const sass = {
+	options: {
+		implementation: sassImplementation,
+		sourceMap: true,
+	},
 	dist: {
-		options: {
-			sourcemap: true,
-			sourceMap: true
-		},
 		files: [
 			{
 				expand: true,

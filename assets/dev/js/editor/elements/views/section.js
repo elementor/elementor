@@ -83,21 +83,21 @@ const SectionView = BaseElementView.extend( {
 
 		if ( ! this.isInner() ) {
 			editTools.add = {
-				/* translators: %s: Element name. */
+				/* Translators: %s: Element name. */
 				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
 			};
 		}
 
 		editTools.edit = {
-			/* translators: %s: Element name. */
+			/* Translators: %s: Element name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'handle',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element name. */
+				/* Translators: %s: Element name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
