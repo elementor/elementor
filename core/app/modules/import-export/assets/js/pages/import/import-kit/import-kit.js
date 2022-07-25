@@ -111,7 +111,7 @@ export default function ImportKit() {
 				}
 
 				<PageHeader
-					heading={ __( 'Import a Template Kit', 'elementor' ) }
+					heading={ __( 'Import a Website Kit', 'elementor' ) }
 					description={ [
 						__( 'Upload a file with templates, site settings, content, etc., and apply them to your site automatically.', 'elementor' ),
 						getLearnMoreLink(),

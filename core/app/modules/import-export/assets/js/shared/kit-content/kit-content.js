@@ -78,7 +78,7 @@ export default function KitContent( { contentData, hasPro } ) {
 												{ data.title }
 											</Heading>
 
-											<Grid item container direction="column">
+											<Grid item container direction={ isLockedFeaturesNoPro ? 'row' : 'column' } alignItems={ 'baseline' } >
 												<Text variant="sm" tag="p" className="e-app-export-kit-content__description">
 													{ data.description || getTemplateFeatures( data.features, index ) }
 												</Text>

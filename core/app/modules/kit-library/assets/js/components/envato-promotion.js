@@ -13,7 +13,7 @@ export default function EnvatoPromotion( { category } ) {
 				url="https://go.elementor.com/app-envato-kits/"
 				target="_blank"
 				rel="noreferrer"
-				text={ __( 'Check out Elementor Template Kits on ThemeForest', 'elementor' ) }
+				text={ __( 'Check out Elementor Website Kits on ThemeForest', 'elementor' ) }
 				onClick={ () => eventTrackingDispatch(
 					'kit-library/check-kits-on-theme-forest',
 					{
