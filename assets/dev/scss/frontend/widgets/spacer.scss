@@ -1,10 +1,6 @@
 .elementor-widget-spacer {
-    --spacer-size: 50px;
-}
 
-.elementor-column {
-
-	.elementor-spacer-inner {
+	.elementor-column {
 		height: var( --spacer-size );
 	}
 }
