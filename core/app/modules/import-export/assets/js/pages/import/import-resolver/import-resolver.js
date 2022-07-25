@@ -14,6 +14,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './import-resolver.scss';
 
@@ -101,7 +102,7 @@ export default function ImportResolver() {
 											importedId={ parseInt( id ) }
 											conflictData={ conflict[ 0 ] }
 											viewConflictItemEvent={ ( title ) => {
-												$e.run(
+												eventTrackingDispatch(
 													'kit-library/check-item',
 													{
 														site_part: title,

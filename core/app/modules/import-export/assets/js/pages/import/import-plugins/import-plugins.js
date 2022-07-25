@@ -19,6 +19,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import usePlugins, { PLUGIN_STATUS_MAP } from '../../../hooks/use-plugins';
 import usePluginsData from '../../../hooks/use-plugins-data';
 import useImportPluginsData from './hooks/use-import-plugins-data';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import './import-plugins.scss';
 
@@ -73,26 +74,22 @@ export default function ImportPlugins() {
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter
-			onPreviousClick={ () => $e.run(
+			onPreviousClick={ () => eventTrackingDispatch(
 				'kit-library/go-back',
 				{},
 				{
-					meta: {
-						source: 'import',
-						step: wizardStepNum,
-						event: 'previous button',
-					},
+					source: 'import',
+					step: wizardStepNum,
+					event: 'previous button',
 				},
 			) }
-			onNextClick={ () => $e.run(
+			onNextClick={ () => eventTrackingDispatch(
 				'kit-library/approve-selection',
 				{},
 				{
-					meta: {
-						source: 'import',
-						step: wizardStepNum,
-						event: 'next button',
-					},
+					source: 'import',
+					step: wizardStepNum,
+					event: 'next button',
 				},
 			) }
 		/> } >

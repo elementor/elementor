@@ -8,6 +8,7 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function Conflict( props ) {
 	const importContext = useContext( ImportContext ),
@@ -57,19 +58,17 @@ export default function Conflict( props ) {
 				title={ props.conflictData.template_title }
 				referrer={ referrer }
 				onCheck={ ( event, title ) => {
-					const command = event.target.checked ? 'kit-library/check' : 'kit-library/uncheck';
-					$e.run(
-						command,
+					const command = event.target.checked ? 'check' : 'uncheck';
+					eventTrackingDispatch(
+						`kit-library/${ command }`,
 						{
 							site_part: title,
 						},
 						{
-							meta: {
-								action: command,
-								event: 'kit parts conflict',
-								source: 'import',
-								step: wizardStepNum,
-							},
+							action: command,
+							event: 'kit parts conflict',
+							source: 'import',
+							step: wizardStepNum,
 						},
 					);
 				} }

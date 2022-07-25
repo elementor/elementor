@@ -9,9 +9,10 @@ import List from 'elementor-app/ui/molecules/list';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { SharedContext } from './../../context/shared-context/shared-context-provider.js';
 
 import './kit-content.scss';
-import { SharedContext } from './../../context/shared-context/shared-context-provider.js';
 
 export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
@@ -59,18 +60,16 @@ export default function KitContent( { contentData, hasPro } ) {
 											referrer={ referrer }
 											onCheck={ ( event, chosenPart ) => {
 												const command = event.target.checked ? 'kit-library/check' : 'kit-library/uncheck';
-												$e.run(
+												eventTrackingDispatch(
 													command,
 												{
 													site_part: chosenPart,
 												},
 												{
-													meta: {
-														action: command,
-														event: 'kit parts selection',
-														source: 'import',
-														step: wizardStepNum,
-													},
+													action: command,
+													event: 'kit parts selection',
+													source: 'import',
+													step: wizardStepNum,
 												},
 											)
 										} }

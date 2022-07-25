@@ -14,6 +14,7 @@ import ConnectProNotice from './components/connect-pro-notice/connect-pro-notice
 import ImportCompleteFooter from './components/import-complete-footer/import-complete-footer';
 
 import useImportedKitData from './hooks/use-imported-kit-data';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function ImportComplete() {
 	const sharedContext = useContext( SharedContext ),
@@ -41,15 +42,13 @@ export default function ImportComplete() {
 				configData: importedData.configData,
 			};
 		},
-		kitLiveLoadEvent = () => $e.run(
+		kitLiveLoadEvent = () => eventTrackingDispatch(
 			'kit-library/kit-is-live-load',
 			{},
 			{
-				meta: {
-					event: 'kit is live load',
-					source: 'kit is live',
-					event_type: 'load',
-				},
+				event: 'kit is live load',
+				source: 'kit is live',
+				event_type: 'load',
 			},
 		),
 		kitData = useMemo( () => getKitData(), [] );
@@ -76,14 +75,12 @@ export default function ImportComplete() {
 							italic
 							onLinkClick={ () => {
 								if ( 'kit-library' === referrer ) {
-									$e.run(
+									eventTrackingDispatch(
 										'kit-library/seek-more-info',
 										{},
 										{
-											meta: {
-												event: 'learn more-kits',
-												source: 'kit-is-live',
-											},
+											event: 'learn more-kits',
+											source: 'kit-is-live',
 										},
 									)
 								}

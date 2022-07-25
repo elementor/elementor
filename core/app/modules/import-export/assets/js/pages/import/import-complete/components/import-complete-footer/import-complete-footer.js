@@ -2,6 +2,7 @@ import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 import useImportActions from '../../../hooks/use-import-actions';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 	const { closeApp } = useImportActions();
@@ -14,7 +15,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 					variant="contained"
 					onClick={ () => {
 						if ( 'kit-library' === referrer ) {
-							$e.run(
+							eventTrackingDispatch(
 								'kit-library/see-it-live',
 								{},
 								{
@@ -34,14 +35,12 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 				color="primary"
 				onClick={ () => {
 					if ( 'kit-library' === referrer ) {
-						$e.run(
+						eventTrackingDispatch(
 							'kit-library/close',
 							{},
 							{
-								meta: {
-									event: 'close button',
-									source: 'kit is live',
-								},
+								event: 'close button',
+								source: 'kit is live',
 							},
 						);
 					}

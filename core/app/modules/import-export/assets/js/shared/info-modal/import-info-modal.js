@@ -1,15 +1,14 @@
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import InfoModal from './info-modal';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function ImportInfoModal( props ) {
-	const onLinkClick = () => $e.run(
+	const onLinkClick = () => eventTrackingDispatch(
 		'kit-library/seek-more-info',
 		{},
 		{
-			meta: {
-				source: 'import',
-				event: 'info modal learn more-kits',
-			},
+			source: 'import',
+			event: 'info modal learn more-kits',
 		},
 	);
 

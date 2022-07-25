@@ -11,6 +11,7 @@ import ImportContentFooter from './components/import-content-footer/import-conte
 import useImportActions from '../hooks/use-import-actions';
 
 import './import-content.scss';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
@@ -27,26 +28,22 @@ export default function ImportContent() {
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
-					onPreviousClick={ () => $e.run(
+					onPreviousClick={ () => eventTrackingDispatch(
 						'kit-library/go-back',
 						{},
 						{
-							meta: {
-								source: 'import',
-								step: wizardStepNum,
-								event: 'previous button',
-							},
+							source: 'import',
+							step: wizardStepNum,
+							event: 'previous button',
 						},
 					) }
-					onImportClick={ () => $e.run(
+					onImportClick={ () => eventTrackingDispatch(
 						'kit-library/approve-import',
 						{},
 						{
-							meta: {
-								source: 'import',
-								step: wizardStepNum,
-								event: 'approve-import',
-							},
+							source: 'import',
+							step: wizardStepNum,
+							event: 'approve-import',
 						},
 					) }
 				/>

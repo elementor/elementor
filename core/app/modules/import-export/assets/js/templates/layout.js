@@ -6,6 +6,7 @@ import { infoButtonProps } from '../shared/info-modal/info-modal';
 import ImportInfoModal from '../shared/info-modal/import-info-modal';
 import ExportInfoModal from '../shared/info-modal/export-info-modal';
 import { SharedContext } from '../context/shared-context/shared-context-provider';
+import { newEventTrackingDispatch, eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 
@@ -13,6 +14,7 @@ export default function Layout( props ) {
 	const [ showInfoModal, setShowInfoModal ] = useState( false ),
 		sharedContext = useContext( SharedContext ),
 		{ referrer } = useQueryParams().getAll(),
+		{ wizardStepNum } = sharedContext.data,
 		getContent = () => {
 			let infoModalProps = {
 				show: showInfoModal,
@@ -23,30 +25,24 @@ export default function Layout( props ) {
 				infoModalProps = {
 					referrer,
 					...infoModalProps,
-					onOpen: () => $e.run(
+					onOpen: () => eventTrackingDispatch(
 						'kit-library/modal-open',
 						{},
 						{
-							meta: {
-								event: 'info modal load',
-								source: 'import',
-								event_type: 'load',
-							},
+							event: 'info modal load',
+							source: 'import',
+							event_type: 'load',
 						},
 					),
 					onClose: ( e ) => {
 						const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
-						$e.run(
+						newEventTrackingDispatch(
 							'kit-library/modal-close',
 							{
 								element,
-							},
-							{
-								meta: {
-									event: 'overlay' === element ? 'background page' : 'info modal close',
-									source: 'import',
-									event_type: 'load',
-								},
+								event: 'overlay' === element ? 'background page' : 'info modal close',
+								source: 'import',
+								event_type: 'load',
 							},
 						);
 					},
@@ -65,14 +61,12 @@ export default function Layout( props ) {
 				...infoButtonProps,
 				onClick: () => {
 					if ( 'kit-library' === referrer ) {
-						$e.run(
+						eventTrackingDispatch(
 							'kit-library/seek-more-info',
 							{},
 							{
-								meta: {
-									event: 'top panel info',
-									source: 'import',
-								},
+								event: 'top panel info',
+								source: 'import',
 							},
 						);
 					}
@@ -82,15 +76,13 @@ export default function Layout( props ) {
 		},
 		onClose = () => {
 			if ( 'kit-library' === referrer ) {
-				$e.run(
+				eventTrackingDispatch(
 					'kit-library/close',
 					{},
 					{
-						meta: {
-							event: 'modal close',
-							step: wizardStepNum,
-							source: 'import',
-						},
+						event: 'modal close',
+						step: wizardStepNum,
+						source: 'import',
 					},
 				);
 			}

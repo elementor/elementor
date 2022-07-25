@@ -11,6 +11,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 import useKit from '../../../hooks/use-kit';
 
@@ -32,14 +33,12 @@ export default function ImportKit() {
 		},
 		onFileChoose = () => {
 			if ( 'kit-library' === referrer ) {
-				$e.run(
+				eventTrackingDispatch(
 					'kit-library/choose-file',
 					{},
 					{
-						meta: {
-							event: 'select kit file',
-							source: 'import',
-						},
+						event: 'select kit file',
+						source: 'import',
 					},
 				);
 			}
@@ -52,17 +51,15 @@ export default function ImportKit() {
 				italic
 				onLinkClick={ () => {
 					if ( 'kit-library' === referrer ) {
-						$e.run(
+						eventTrackingDispatch(
 							'kit-library/seek-more-info',
 							{},
 							{
-								meta: {
-									event: 'learn more',
-									source: 'import',
-									step: wizardStepNum,
-								},
+								event: 'learn more',
+								source: 'import',
+								step: wizardStepNum,
 							},
-						)
+						);
 					}
 				} }
 			>
@@ -161,41 +158,35 @@ export default function ImportKit() {
 				{ errorType && <ProcessFailedDialog
 					errorType={ errorType }
 					onApprove={ resetImportProcess }
-					onModalClose={ () => $e.run(
+					onModalClose={ () => eventTrackingDispatch(
 						'kit-library/modal-close',
 						{},
 						{
-							meta: {
-								event: 'error modal close',
-								source: 'import',
-								step: wizardStepNum,
-								event_type: 'load',
-							},
+							event: 'error modal close',
+							source: 'import',
+							step: wizardStepNum,
+							event_type: 'load',
 						},
 					) }
-					isError={ () => $e.run(
+					isError={ () => eventTrackingDispatch(
 						'kit-library/modal-error',
 						{
 							errorType: `error modal load  ${ errorType }`,
 						},
 						{
-							meta: {
-								event: 'error modal load',
-								source: 'import',
-								step: wizardStepNum,
-								event_type: 'load',
-							},
+							event: 'error modal load',
+							source: 'import',
+							step: wizardStepNum,
+							event_type: 'load',
 						},
 					) }
-					learnMoreEvent={ () => $e.run(
+					learnMoreEvent={ () => eventTrackingDispatch(
 						'kit-library/seek-more-info',
 						{},
 						{
-							meta: {
-								event: 'error modal learn more',
-								source: 'import',
-								step: wizardStepNum,
-							},
+							event: 'error modal learn more',
+							source: 'import',
+							step: wizardStepNum,
 						},
 					) }
 				/>	}

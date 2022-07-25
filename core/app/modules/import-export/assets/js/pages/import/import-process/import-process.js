@@ -12,6 +12,7 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
+import { eventTrackingDispatch } from 'elementor-app/event-track/events';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -64,16 +65,14 @@ export default function ImportProcess() {
 		},
 		eventTracking = ( command, event, source, step, eventType = null ) => {
 			if ( 'kit-library' === sharedContext.data.referrer ) {
-				$e.run(
+				eventTrackingDispatch(
 					command,
 					{},
 					{
-						meta: {
-							event,
-							source,
-							step,
-							event_type: eventType,
-						},
+						event,
+						source,
+						step,
+						event_type: eventType,
 					},
 				);
 			}
