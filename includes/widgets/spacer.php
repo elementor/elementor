@@ -107,6 +107,9 @@ class Widget_Spacer extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 50,
+				],
 				'size_units' => [ 'px', 'vh', 'em' ],
 				'range' => [
 					'px' => [
@@ -119,7 +122,7 @@ class Widget_Spacer extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-spacer-inner' => '--spacer-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--spacer-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
