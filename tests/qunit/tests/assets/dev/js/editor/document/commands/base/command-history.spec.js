@@ -10,7 +10,7 @@ jQuery( () => {
 
 						instance.getHistory( {} );
 					},
-					new Error( 'CommandHistory.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
+					new Error( 'CommandHistory.getHistory() should be implemented, please provide \'getHistory\' functionality.' ),
 				);
 			} );
 		} );

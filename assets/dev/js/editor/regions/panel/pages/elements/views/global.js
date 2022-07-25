@@ -3,7 +3,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	id: 'elementor-panel-global',
 
-	initialize: function() {
+	initialize() {
 		elementor.getPanelView().getCurrentPageView().search.reset();
 	},
 } );

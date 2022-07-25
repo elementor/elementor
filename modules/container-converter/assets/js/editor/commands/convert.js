@@ -1,6 +1,9 @@
 import Migrator from '../migrator';
 
-export class Convert extends $e.modules.document.CommandHistory {
+/**
+ * @typedef {import('../../../../../../assets/dev/js/editor/container/container')} Container
+ */
+ export class Convert extends $e.modules.document.CommandHistory {
 	getHistory() {
 		return {
 			type: __( 'Converted to Container', 'elementor' ),
@@ -22,8 +25,9 @@ export class Convert extends $e.modules.document.CommandHistory {
 	 * TODO: It's static in order to be able to test it without initializing the whole editor in a browser.
 	 *  Should be moved to `apply()` when there is a proper way to test commands using jest.
 	 *
-	 * @param {Container} container - Element to convert.
-	 * @param {Container} rootContainer - Root element to migrate the `container` into (used for recursion).
+	 * @param {Object}    root0
+	 * @param {Container} root0.container     - Element to convert.
+	 * @param {Container} root0.rootContainer - Root element to migrate the `container` into (used for recursion).
 	 *
 	 * @return {void}
 	 */

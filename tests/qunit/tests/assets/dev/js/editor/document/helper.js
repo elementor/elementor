@@ -7,7 +7,7 @@ export default class DocumentHelper {
 		elementor.channels.editor.reply( 'contextMenu:targetView', target.view );
 
 		return $e.commands.runShortcut( 'document/ui/paste',
-			jQuery.Event( 'keydown', { which: 86, ctrlKey: true, metaKey: true } )
+			jQuery.Event( 'keydown', { which: 86, ctrlKey: true, metaKey: true } ),
 		);
 	}
 
@@ -37,7 +37,7 @@ export default class DocumentHelper {
 
 			case 'innerSection':
 				result = ElementsHelper.createInnerSection(
-					ElementsHelper.createSection( 1, true )
+					ElementsHelper.createSection( 1, true ),
 				);
 				break;
 		}

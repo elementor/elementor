@@ -14,11 +14,7 @@ class Router {
 
 	/**
 	 *
-	 * @param route {{
-	 *		path: string,
-	 *		component: object,
-	 *		props: object,
-	 * }}
+	 * @param {{path: string, component: Object, props: Object}} route
 	 */
 	addRoute( route ) {
 		this.routes.push( route );

@@ -3,7 +3,7 @@
  *
  * @since 3.6.0
  *
- * @returns {Date}
+ * @return {Date} timestamp
  */
 export default function getUserTimestamp() {
 	const date = new Date(),
