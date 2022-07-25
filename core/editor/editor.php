@@ -566,6 +566,7 @@ class Editor {
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
+				'locale' => get_user_locale(),
 			],
 			'preview' => [
 				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',

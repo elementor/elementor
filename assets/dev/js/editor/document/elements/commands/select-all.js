@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class SelectAll extends CommandBase {
+export class SelectAll extends $e.modules.CommandBase {
 	apply() {
 		elementor.selection.add(
 			this.flattenContainersList(

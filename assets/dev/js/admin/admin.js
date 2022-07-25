@@ -27,6 +27,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
+				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 
@@ -329,7 +330,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 			this.goToSettingsTabFromHash();
 
-			this.openGetHelpInNewTab();
+			this.openLinksInNewTab();
 
 			this.addUserAgentClasses();
 
@@ -353,8 +354,26 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			} );
 		},
 
-		openGetHelpInNewTab() {
-			this.elements.$menuGetHelpLink.attr( 'target', '_blank' );
+		/**
+		 * Open Links in New Tab
+		 *
+		 * Adds a `target="_blank"` attribute to the Admin Dashboard menu items specified in the `elements` array,
+		 * if the elements are found in the DOM. The items in the `elements` array should be jQuery instances.
+		 *
+		 * @since 3.6.0
+		 */
+		openLinksInNewTab() {
+			const elements = [
+				this.elements.$menuGetHelpLink,
+				this.elements.$menuGoProLink,
+			];
+
+			elements.forEach( ( $element ) => {
+				// Only add the attribute if the element is found.
+				if ( $element.length ) {
+					$element.attr( 'target', '_blank' );
+				}
+			} );
 		},
 
 		initTemplatesImport() {

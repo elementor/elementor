@@ -50,12 +50,12 @@ export default function UnfilteredFilesDialog( props ) {
 			{
 				isEnableError
 				? <Dialog
-						title={ __( 'Sorry, something went wrong.', 'elementor' ) }
+						title={ __( 'Something went wrong.', 'elementor' ) }
 						text={ props.errorModalText }
 						approveButtonColor="link"
 						approveButtonText={ __( 'Continue', 'elementor' ) }
 						approveButtonOnClick={ onReady }
-						dismissButtonText={ __( 'Go back', 'elementor' ) }
+						dismissButtonText={ __( 'Go Back', 'elementor' ) }
 						dismissButtonOnClick={ onCancel }
 						onClose={ onCancel }
 				/>

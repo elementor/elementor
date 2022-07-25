@@ -52,7 +52,7 @@ TemplateLibraryManager = function() {
 		jQuery.each( translationMap, function( type, title ) {
 			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
-					/* translators: %s: Template type. */
+					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
 				},
 			} );
@@ -133,7 +133,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.importTemplate = function( model, args = {} ) {
-		elementorCommon.helpers.softDeprecated( 'importTemplate', '2.8.0',
+		elementorDevTools.deprecation.deprecated( 'importTemplate', '2.8.0',
 			"$e.run( 'library/insert-template' )" );
 
 		args.model = model;

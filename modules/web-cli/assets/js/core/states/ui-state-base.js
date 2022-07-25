@@ -28,7 +28,7 @@ export default class UiStateBase {
 	 * @return {void}
 	 */
 	set( newValue ) {
-		if ( newValue && ! this.options.hasOwnProperty( newValue ) ) {
+		if ( newValue && ! Object.prototype.hasOwnProperty.call( this.options, newValue ) ) {
 			throw `Option '${ newValue }' for state '${ this.id }' is invalid.`;
 		}
 

@@ -1,4 +1,3 @@
-// global-setup.js
 const { chromium } = require( '@playwright/test' );
 
 module.exports = async ( config ) => {

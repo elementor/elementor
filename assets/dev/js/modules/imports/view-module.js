@@ -1,6 +1,6 @@
 import Module from './module';
 
-module.exports = Module.extend( {
+export default Module.extend( {
 	elements: null,
 
 	getDefaultElements() {

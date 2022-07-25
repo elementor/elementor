@@ -1,4 +1,4 @@
-import Helpers from 'elementor-api/utils/helpers';
+import Console from 'elementor-api/utils/console';
 
 export default class HashCommands {
 	/**
@@ -135,7 +135,7 @@ export default class HashCommands {
 				decodeURI( rawArgs || '{}' ),
 			);
 		} catch ( e ) {
-			Helpers.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
+			Console.warn( 'Hash commands JSON args cannot be parsed. \n\n', e );
 
 			return {};
 		}
