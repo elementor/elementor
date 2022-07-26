@@ -28,13 +28,13 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
-      - name: Test step
-        id: test
-        uses: LouisBrunner/checks-action@v1.1.1
-        if: always()
+      - name: Validate Checks
+        uses: LouisBrunner/checks-action@v1.2.0
+        if: success()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: PHPUnit
+          name: PHPUnit,Lint
+          status: completed
           conclusion: ${{ job.status }}
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
