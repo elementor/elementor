@@ -76,7 +76,7 @@ export default function ImportComplete() {
 							italic
 							onClick={ () => {
 								if ( 'kit-library' === referrer ) {
-									eventTracking( 'kit-library/seek-more-info', 'learn more-kits', 'kit-is-live' )
+									eventTracking( 'kit-library/seek-more-info', 'learn more-kits', 'kit-is-live' );
 								}
 							} }
 						>

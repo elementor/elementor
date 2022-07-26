@@ -14,7 +14,8 @@ export default function OverviewContentGroupItem( props ) {
 				source: 'overview',
 			},
 		);
-	}
+	};
+
 	return (
 		<Card>
 			<CardHeader>

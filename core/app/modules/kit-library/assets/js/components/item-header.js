@@ -10,7 +10,6 @@ import { Dialog } from '@elementor/app-ui';
 import { useSettingsContext } from '../context/settings-context';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
-
 import './item-header.scss';
 
 /**

@@ -3,7 +3,6 @@ import Button from 'elementor-app/ui/molecules/button';
 
 import useImportActions from '../../../hooks/use-import-actions';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-import { isKitLibraryReferrer } from 'elementor/core/app/modules/import-export/assets/js/context/shared-context/shared-context-provider';
 
 export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 	const { closeApp } = useImportActions(),
@@ -15,7 +14,8 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 					source: 'kit is live',
 				},
 			);
-		}
+		};
+
 	return (
 		<ActionsFooter>
 			{

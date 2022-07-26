@@ -13,7 +13,6 @@ export default class KitLibrary {
 		$e.components.register( new TaxonomiesComponent() );
 		$e.components.register( new KitLibraryComponent() );
 
-
 		router.addRoute( {
 			path: '/kit-library/*',
 			component: React.lazy( () => import( /* webpackChunkName: 'kit-library' */ './app' ) ),

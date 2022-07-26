@@ -45,7 +45,7 @@ export default function TaxonomiesFilter( props ) {
 							eventTracking( command, 'sidebar section filters search', null, title );
 						} }
 						onFilter={ ( search ) => {
-							eventTracking( 'kit-library/filter', 'sidebar section filters search', search, group.label, 'search' )
+							eventTracking( 'kit-library/filter', 'sidebar section filters search', search, group.label, 'search' );
 						} }
 						category={ props.category }
 					/>

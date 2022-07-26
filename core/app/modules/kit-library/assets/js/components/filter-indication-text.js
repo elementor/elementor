@@ -16,8 +16,8 @@ export default function FilterIndicationText( props ) {
 				event: 'remove filter tag',
 				source: 'home page',
 			},
-		)
-	}
+		);
+	};
 	return (
 		<Grid container className="e-kit-library__filter-indication">
 			<Text className="e-kit-library__filter-indication-text">

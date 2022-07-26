@@ -12,7 +12,7 @@ export default function EnvatoPromotion( { category } ) {
 				source: 'home page',
 				category: '/favorites' === category ? 'favorites' : 'all kits',
 			},
-		)
+		);
 	};
 
 	return (

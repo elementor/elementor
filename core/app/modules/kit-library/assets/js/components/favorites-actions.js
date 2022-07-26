@@ -19,8 +19,8 @@ export default function FavoritesActions( props ) {
 				event_type: 'search',
 				action,
 			},
-		)
-	}
+		);
+	};
 	return (
 		props.isFavorite
 			? <Button
@@ -56,5 +56,3 @@ FavoritesActions.propTypes = {
 	queryParams: PropTypes.string,
 	source: PropTypes.string,
 };
-
-

@@ -13,7 +13,7 @@ export default function SiteArea( { text, link } ) {
 				source: 'import complete',
 			},
 		);
-	}
+	};
 	return (
 		<InlineLink url={ link } color="secondary" underline="none" onClick={ () => eventTracking( 'kit-library/open-site-area' ) }>
 			<Text className="e-app-import-export-kit-data__site-area">

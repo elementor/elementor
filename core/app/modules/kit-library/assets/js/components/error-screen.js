@@ -13,9 +13,9 @@ export default function ErrorScreen( props ) {
 				source: 'home page',
 				category: '/favorites' === props.button.category ? 'favorites' : 'all kits',
 			},
-		)
-		props.button.action()
-	}
+		);
+		props.button.action();
+	};
 	return (
 		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
 			<img src={ `${ elementorAppConfig.assets_url }images/no-search-results.svg` } />

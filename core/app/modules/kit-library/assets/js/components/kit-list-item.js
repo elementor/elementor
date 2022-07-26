@@ -9,7 +9,7 @@ import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
-	const eventTracking = ( command, eventName ) => {
+	const eventTracking = ( command ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
@@ -19,7 +19,7 @@ const KitListItem = ( props ) => {
 				event: 'view kit demo',
 				source: '/' === props.source ? 'all- kits' : 'favorites',
 			},
-		)
+		);
 	};
 	return (
 		<Card className="e-kit-library__kit-item">

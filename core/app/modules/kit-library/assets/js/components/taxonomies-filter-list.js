@@ -68,7 +68,7 @@ const TaxonomiesFilterList = ( props ) => {
 								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
-									eventTracking( 'kit-library/filter', 'sidebar section filters interaction', taxonomy.type, checked, taxonomy.text )
+									eventTracking( 'kit-library/filter', 'sidebar section filters interaction', taxonomy.type, checked, taxonomy.text );
 
 									props.onSelect( taxonomy.type, ( prev ) => {
 										return checked

@@ -17,7 +17,7 @@ export default function HeaderBackButton( { kitName, pageId } ) {
 				event: eventName,
 			},
 		);
-	}
+	};
 
 	return (
 		<div className="e-kit-library__header-back-container">
@@ -26,8 +26,8 @@ export default function HeaderBackButton( { kitName, pageId } ) {
 				icon="eicon-chevron-left"
 				text={ __( 'Back to Library', 'elementor' ) }
 				onClick={ () => {
-					eventTracking( 'kit-library/back-to-library', 'top bar back to library')
-					navigate( wp.url.addQueryArgs( '/kit-library', lastFilter ) )
+					eventTracking( 'kit-library/back-to-library', 'top bar back to library' );
+					navigate( wp.url.addQueryArgs( '/kit-library', lastFilter ) );
 				} }
 			/>
 		</div>

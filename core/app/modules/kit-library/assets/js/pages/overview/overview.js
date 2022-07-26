@@ -11,7 +11,6 @@ import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
-
 import './overview.scss';
 
 function useHeaderButtons( id, kitName ) {
@@ -34,8 +33,8 @@ function useHeaderButtons( id, kitName ) {
 						source: 'overview',
 						view_type_clicked: 'demo',
 					},
-				)
-				navigate( `/kit-library/preview/${ id }` )
+				);
+				navigate( `/kit-library/preview/${ id }` );
 			},
 			includeHeaderBtnClass: false,
 		},

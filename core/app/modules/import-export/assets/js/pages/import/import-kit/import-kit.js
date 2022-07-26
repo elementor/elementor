@@ -135,7 +135,7 @@ export default function ImportKit() {
 					filetypes={ [ 'zip' ] }
 					onFileChoose={ () => {
 						if ( 'kit-library' === referrer ) {
-							eventTracking( 'kit-library/choose-file', 'select kit file' )
+							eventTracking( 'kit-library/choose-file', 'select kit file' );
 						}
 					} }
 					onFileSelect={ ( file, e ) => {

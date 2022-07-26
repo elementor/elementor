@@ -84,12 +84,12 @@ export default function ImportPlugins() {
 		<Layout type="export" footer={ <ImportPluginsFooter
 			onPreviousClick={ () => {
 				if ( 'kit-library' === referrer ) {
-					eventTracking( 'kit-library/go-back', 'previous button' )
+					eventTracking( 'kit-library/go-back', 'previous button' );
 				}
 			} }
 			onNextClick={ () => {
 				if ( 'kit-library' === referrer ) {
-					eventTracking( 'kit-library/approve-selection', 'next button' )
+					eventTracking( 'kit-library/approve-selection', 'next button' );
 				}
 			} }
 		/> } >

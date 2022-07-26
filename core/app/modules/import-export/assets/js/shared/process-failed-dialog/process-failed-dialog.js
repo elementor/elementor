@@ -61,7 +61,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 
 		useEffect( () => {
 			if ( 'kit-library' === referrer ) {
-				onError?.()
+				onError?.();
 			}
 		}, [] );
 	return (

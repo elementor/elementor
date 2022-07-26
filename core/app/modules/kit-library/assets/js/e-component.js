@@ -65,7 +65,6 @@ export default class EComponent extends $e.modules.ComponentBase {
 		].reduce( ( allCommands, command ) => ( {
 			...allCommands,
 			[ command ]: () => {
-            console.log( this.getNamespace(), command ) // TODO: Delete when task is done
 			},
 		} ), {} );
 

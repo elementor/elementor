@@ -75,7 +75,7 @@ export default function ImportProcess() {
 					},
 				);
 			}
-		}
+		};
 
 	// On load.
 	useEffect( () => {
@@ -189,7 +189,7 @@ export default function ImportProcess() {
 					} }
 					referrer={ sharedContext.data.referrer }
 					onLoad={ useCallback( () => {
-						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load' )
+						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load' );
 					}, [] ) }
 					onClose={ () => {
 						eventTracking( 'kit-library/close', 'unfiltered file modal skip button' );

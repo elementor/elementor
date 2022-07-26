@@ -7,7 +7,6 @@ import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 import { Heading, CardImage, Text, Grid } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
-
 import './overview-sidebar.scss';
 
 export default function OverviewSidebar( props ) {
@@ -25,7 +24,7 @@ export default function OverviewSidebar( props ) {
 				source: 'overview',
 			},
 		);
-	}
+	};
 	const onCollapseChange = ( value, title ) => {
 		const command = value ? 'kit-library/collapse' : 'kit-library/expand';
 		appsEventTrackingDispatch(

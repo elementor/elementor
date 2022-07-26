@@ -8,7 +8,7 @@ import { SharedContext } from 'elementor/core/app/modules/import-export/assets/j
 export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess, onPreviousClick, onImportClick } ) {
 	const navigate = useNavigate(),
 		sharedContext = useContext( SharedContext ),
-		{ referrer, wizardStepNum } = sharedContext.data || {},
+		{ wizardStepNum } = sharedContext.data || {},
 		getNextPageUrl = () => {
 			if ( hasConflicts ) {
 				return 'import/resolver';

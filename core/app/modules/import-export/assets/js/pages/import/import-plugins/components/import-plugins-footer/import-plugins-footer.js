@@ -44,4 +44,4 @@ export default function ImportPluginsFooter( props ) {
 ImportPluginsFooter.propTypes = {
 	onPreviousClick: PropTypes.func,
 	onNextClick: PropTypes.func,
-}
+};

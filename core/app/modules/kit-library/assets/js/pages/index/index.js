@@ -177,7 +177,8 @@ export default function Index( props ) {
 				action,
 			},
 		);
-	}
+	};
+
 	return (
 		<Layout
 			sidebar={
@@ -248,7 +249,7 @@ export default function Index( props ) {
 							] }
 							value={ queryParams.order }
 							onChange={ ( order ) => {
-								setQueryParams( ( prev ) => ( { ...prev, order } ) )
+								setQueryParams( ( prev ) => ( { ...prev, order } ) );
 							} }
 							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'kit sort direction', null, direction ) }
 							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'kit sort type select', null, null, value ) }

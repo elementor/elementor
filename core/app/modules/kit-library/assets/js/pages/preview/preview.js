@@ -54,7 +54,7 @@ function useHeaderButtons( id, kitName ) {
 				source: 'view demo',
 				view_type_clicked: viewTypeClicked,
 			},
-		)
+		);
 	};
 
 	return useMemo( () => [
@@ -120,13 +120,14 @@ export default function Preview( props ) {
 				source: 'view demo',
 				layout,
 			},
-		)
+		);
 	};
 
 	const onChange = ( device ) => {
 		setActiveDevice( device );
-		eventTracking( 'kit-library/responsive-controls', 'top bar responsive views', device )
-	}
+		eventTracking( 'kit-library/responsive-controls', 'top bar responsive views', device );
+	};
+
 	usePageTitle( {
 		title: data
 			? `${ __( 'Kit Library', 'elementor' ) } | ${ data.title }`
