@@ -1,7 +1,7 @@
 export default class TemplateControls {
 	setDynamicFieldsVisibility( lookupControlIdPrefix, controls ) {
 		if ( undefined === controls ) {
-				return;
+			return;
 		}
 
 		const controlsArray = Object.entries( controls );

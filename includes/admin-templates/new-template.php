@@ -82,7 +82,7 @@ ksort( $types );
 
 		$additional_controls = $new_template_control_form->get_controls();
 		if ( $additional_controls ) {
-			wp_add_inline_script( 'elementor-admin', 'var elementor_new_template_form_controls = ' . wp_json_encode( $additional_controls ) . ';' );
+			wp_add_inline_script( 'elementor-admin', 'const elementor_new_template_form_controls = ' . wp_json_encode( $additional_controls ) . ';' );
 			$new_template_control_form->render();
 		}
 		?>
