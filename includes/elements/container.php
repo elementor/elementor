@@ -354,22 +354,37 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'full',
 				],
-				'placeholder' => [
-					'size' => '100',
-					'unit' => '%',
+				'device_args' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
 				],
 			] )
 		);
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-		$default_widths = [];
+		$placeholder_widths = [];
+
+		if ( ! empty( $this->active_kit->get_settings_for_display( 'container_width' )['size'] ) ) {
+			$placeholder_widths = [
+				'desktop' => [
+					'placeholder' => [
+						'size' => $this->active_kit->get_settings_for_display( 'container_width' )['size'],
+						'unit' => 'px',
+					],
+				],
+			];
+		}
 
 		// Add default values for all active breakpoints.
 		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint_instance ) {
 
 			if ( ! empty( $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )['size'] ) ) {
-				$default_widths[ $breakpoint_name ] = [
-					'default' => [
+				$placeholder_widths[ $breakpoint_name ] = [
+					'placeholder' => [
 						'size' => $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )['size'],
 						'unit' => 'px',
 					],
@@ -387,9 +402,9 @@ class Container extends Element_Base {
 					'content_width' => 'boxed',
 				],
 				'default' => [
-					'size' => $this->active_kit->get_settings_for_display( 'container_width' )['size'],
+					'unit' => 'px',
 				],
-				'device_args' => $default_widths,
+				'device_args' => $placeholder_widths,
 			] )
 		);
 
