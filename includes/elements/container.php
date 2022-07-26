@@ -300,8 +300,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
-
 		$this->add_control(
 			'content_width',
 			[
@@ -344,12 +342,6 @@ class Container extends Element_Base {
 			'default' => [
 				'unit' => '%',
 			],
-			'min_affected_device' => [
-				Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
-			],
 			'separator' => 'none',
 		];
 
@@ -369,6 +361,22 @@ class Container extends Element_Base {
 			] )
 		);
 
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+		$default_widths = [];
+
+		// Add default values for all active breakpoints.
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint_instance ) {
+
+			if ( ! empty( $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )[ 'size' ] ) ) {
+				$default_widths[ $breakpoint_name ] = [
+					'default' => [
+						'size' => $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )[ 'size' ],
+						'unit' => 'px',
+					],
+				];
+			}
+		}
+
 		$this->add_responsive_control(
 			'boxed_width',
 			array_merge( $width_control_settings, [
@@ -379,14 +387,9 @@ class Container extends Element_Base {
 					'content_width' => 'boxed',
 				],
 				'default' => [
-					'unit' => 'px',
+					'size' => $this->active_kit->get_settings_for_display( 'container_width' )[ 'size' ],
 				],
-				'device_args' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-						// Use the default width from the kit as a placeholder.
-						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
-					],
-				],
+				'device_args' => $default_widths,
 			] )
 		);
 
@@ -424,8 +427,8 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Elements Gap', 'Flex Container Control', 'elementor' ),
-						// Use the default "elements gap" from the kit as a placeholder.
-						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+						// Use the default "elements gap" from the kit as a default value.
+						'default' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 					],
 				],
 				'condition' => [
