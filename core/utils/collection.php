@@ -119,6 +119,22 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Run a callback over each of the items.
+	 *
+	 * @param callable $callback
+	 * @return void
+	 */
+	public function each( callable $callback ) {
+		foreach ( $this->items as $key => $value ) {
+			if ( false === $callback( $value, $key ) ) {
+				break;
+			}
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param callable $callback
 	 * @param null     $initial
 	 *

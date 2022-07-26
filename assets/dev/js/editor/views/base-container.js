@@ -1,3 +1,9 @@
+
+/**
+ * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
+ * @name BaseContainer
+ * @augments {Marionette.CompositeView}
+ */
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers() {
 		return {
@@ -160,14 +166,18 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		this.createElementFromModel(
-			Object.fromEntries(
-				Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
-					// The `custom` property is responsible for storing global-widgets related data.
-					.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) ),
-			),
-			options,
+		const args = {};
+
+		args.model = Object.fromEntries(
+			Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+				// The `custom` property is responsible for storing global-widgets related data.
+				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) ),
 		);
+
+		args.container = this.getContainer();
+		args.options = options;
+
+		$e.run( 'preview/drop', args );
 	},
 
 	getHistoryType( event ) {
@@ -223,3 +233,28 @@ module.exports = Marionette.CompositeView.extend( {
 		return false;
 	},
 } );
+
+/**
+ * Source: https://marionettejs.com/docs/v2.4.5/marionette.collectionview.html#collectionviews-buildchildview
+ *
+ * Since Elementor created custom container(bridge) between view, model, settings, children, parent and so on,
+ * the container requires the parent view for proper work, but in 'marionettejs', the parent view is not available
+ * during the `buildChildView` method, but actually exist, Elementor modified the `buildChildView` method to
+ * set the parent view as a property `_parent` of the child view.
+ * Anyways later, the `_parent` property is set by: 'marionettejs' to same view.
+ */
+
+/**
+ * @inheritDoc
+ */
+Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewClass, childViewOptions ) {
+	const options = _.extend( { model: child }, childViewOptions ),
+		childView = new ChildViewClass( options );
+
+	// `ELEMENTOR EDITING`: Fix `_parent` not available on render.
+	childView._parent = this;
+
+	Marionette.MonitorDOMRefresh( childView );
+
+	return childView;
+};

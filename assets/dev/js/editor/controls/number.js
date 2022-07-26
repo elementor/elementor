@@ -1,7 +1,16 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlNumberItemView;
 
 ControlNumberItemView = ControlBaseDataView.extend( {
+
+	behaviors: {
+		Scrubbing: {
+			behaviorClass: Scrubbing,
+			scrubSettings: { intentTime: 800 },
+		},
+	},
 
 	registerValidators() {
 		ControlBaseDataView.prototype.registerValidators.apply( this, arguments );

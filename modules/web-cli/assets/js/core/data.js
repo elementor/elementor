@@ -296,7 +296,7 @@ export default class Data extends Commands {
 			nonce = elementorWebCliConfig.nonce,
 			params = {
 				signal: requestData.args?.options?.signal,
-				credentials: 'include', // cookies is required for wp reset.
+				credentials: 'include', // Cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
 
@@ -383,6 +383,7 @@ export default class Data extends Commands {
 		}
 
 		const params = this.prepareHeaders( requestData );
+		// eslint-disable-next-line no-async-promise-executor
 		return new Promise( async ( resolve, reject ) => {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
@@ -590,7 +591,7 @@ export default class Data extends Commands {
 		super.register( component, command, callback );
 
 		const fullCommandName = component.getNamespace() + '/' + command,
-			commandInstance = $e.commands.getCommandClass( fullCommandName ),
+			commandInstance = $e.data.getCommandClass( fullCommandName ),
 			format = commandInstance?.getEndpointFormat ? commandInstance.getEndpointFormat() : false;
 
 		if ( format ) {

@@ -128,7 +128,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => __( 'you are not allowed to perform this action', 'elementor' ),
+				'error_message' => esc_html__( 'you are not allowed to perform this action', 'elementor' ),
 			],
 		];
 	}
@@ -146,7 +146,7 @@ class Module extends BaseModule {
 		$problem_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => 'There was a problem setting your site name',
+				'error_message' => esc_html__( 'There was a problem setting your site name', 'elementor' ),
 			],
 		];
 
@@ -253,7 +253,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_upload_logo_image() {
-		$error_message = __( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
@@ -336,7 +336,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$error_message = __( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {

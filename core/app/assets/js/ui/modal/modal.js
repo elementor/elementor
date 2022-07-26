@@ -79,7 +79,7 @@ export const Modal = ( props ) => {
 				closeNode = closeRef.current,
 				isInCloseNode = closeNode && closeNode.contains( e.target );
 
-			// ignore if click is inside the modal
+			// Ignore if click is inside the modal
 			if ( node && node.contains( e.target ) && ! isInCloseNode ) {
 				return;
 			}

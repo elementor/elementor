@@ -21,6 +21,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		try {
 			$container = jQuery( containerSelector );
+			// eslint-disable-next-line no-empty
 		} catch ( e ) {}
 
 		if ( ! $container || ! $container.length ) {

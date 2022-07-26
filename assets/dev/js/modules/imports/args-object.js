@@ -31,7 +31,7 @@ export default class ArgsObject extends InstanceType {
 	 *
 	 */
 	requireArgument( property, args = this.args ) {
-		if ( ! args.hasOwnProperty( property ) ) {
+		if ( ! Object.prototype.hasOwnProperty.call( args, property ) ) {
 			throw Error( `${ property } is required.` );
 		}
 	}

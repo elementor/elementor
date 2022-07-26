@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Load extends CommandBase {
+export class Load extends $e.modules.CommandBase {
 	apply( args ) {
 		const component = this.component;
 
