@@ -3,11 +3,11 @@
  *
  * @since 3.6.0
  *
+ * @param {Date} date
  * @return {Date} timestamp
  */
-export default function getUserTimestamp() {
-	const date = new Date(),
-		timezoneOffset = date.getTimezoneOffset();
+export default function getUserTimestamp( date = new Date() ) {
+	const timezoneOffset = date.getTimezoneOffset();
 
 	// Local time for the user
 	let UTCTimestamp = new Date( date.getTime() - ( timezoneOffset * 60000 ) ).toISOString();
