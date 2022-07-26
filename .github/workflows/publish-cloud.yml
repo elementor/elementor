@@ -73,7 +73,7 @@ jobs:
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
-          name: elementor-build-${{ env.PACKAGE_VERSION }}
+          name: elementor-${{ env.PACKAGE_VERSION }}
           path: ${{ github.workspace }}/elementor/**/*
           if-no-files-found: error
       - name: Create Git tag
