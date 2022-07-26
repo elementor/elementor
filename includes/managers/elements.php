@@ -298,13 +298,12 @@ class Elements_Manager {
 			],
 		];
 
-		if ( Plugin::instance()->experiments->is_feature_active( 'container' ) ) {
-			$this->categories = array_merge_recursive( [
-				'layout' => [
-					'title' => esc_html__( 'Layout', 'elementor' ),
-				],
-			], $this->categories );
-		}
+		$this->categories = array_merge_recursive( [
+			'layout' => [
+				'title' => esc_html__( 'Layout', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
+		], $this->categories );
 
 		// Not using the `add_category` because it doesn't allow 3rd party to inject a category on top the others.
 		if ( Plugin::instance()->experiments->is_feature_active( 'favorite-widgets' ) ) {
