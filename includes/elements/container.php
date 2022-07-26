@@ -367,10 +367,10 @@ class Container extends Element_Base {
 		// Add default values for all active breakpoints.
 		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint_instance ) {
 
-			if ( ! empty( $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )[ 'size' ] ) ) {
+			if ( ! empty( $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )['size'] ) ) {
 				$default_widths[ $breakpoint_name ] = [
 					'default' => [
-						'size' => $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )[ 'size' ],
+						'size' => $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )['size'],
 						'unit' => 'px',
 					],
 				];
@@ -387,7 +387,7 @@ class Container extends Element_Base {
 					'content_width' => 'boxed',
 				],
 				'default' => [
-					'size' => $this->active_kit->get_settings_for_display( 'container_width' )[ 'size' ],
+					'size' => $this->active_kit->get_settings_for_display( 'container_width' )['size'],
 				],
 				'device_args' => $default_widths,
 			] )
