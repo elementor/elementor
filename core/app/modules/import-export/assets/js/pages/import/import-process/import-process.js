@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState, useMemo } from 'react';
+import { useEffect, useContext, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
@@ -12,7 +12,7 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -63,14 +63,14 @@ export default function ImportProcess() {
 			setShowUnfilteredFilesDialog( false );
 			setStartImport( true );
 		},
-		eventTracking = ( command, event, source, step, eventType = null ) => {
+		eventTracking = ( command, eventName, source, step, eventType = null ) => {
 			if ( 'kit-library' === sharedContext.data.referrer ) {
-				eventTrackingDispatch(
+				appsEventTrackingDispatch(
 					command,
 					{
-						event,
-						source,
-						step,
+						event: eventName,
+						source: 'import',
+						wizardStepNum,
 						event_type: eventType,
 					},
 				);
@@ -188,20 +188,19 @@ export default function ImportProcess() {
 						onCancelProcess();
 					} }
 					referrer={ sharedContext.data.referrer }
-					onLoad={ () => {
-						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load', 'import', wizardStepNum );
-					} }
+					onLoad={ useCallback( () => {
+						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load' )
+					}, [] ) }
 					onClose={ () => {
-						eventTracking( 'kit-library/close', 'unfiltered file modal skip button', 'import', wizardStepNum );
+						eventTracking( 'kit-library/close', 'unfiltered file modal skip button' );
 						onReady();
 					} }
 					onDismiss={ () => {
 						onReady();
-						eventTracking( 'kit-library/skip', 'unfiltered file modal skip button', 'import', wizardStepNum );
-						console.log( 'dismiss' );
+						eventTracking( 'kit-library/skip', 'unfiltered file modal skip button' );
 					} }
 					onEnable={ () => {
-						eventTracking( 'kit-library/enable', 'unfiltered file modal enable button', 'import', wizardStepNum );
+						eventTracking( 'kit-library/enable', 'unfiltered file modal enable button' );
 					} }
 				/>
 			</section>

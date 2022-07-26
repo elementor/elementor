@@ -6,7 +6,11 @@ export default function Select( props ) {
 			value={ props.value }
 			onChange={ props.onChange }
 			ref={ props.elRef }
-			onClick={ props.onClick }
+			onClick={ () => {
+				if ( props.onClick ) {
+					props.onClick();
+				}
+			} }
 		>
 			{ props.options.map( ( option ) =>
 				option.children
@@ -36,5 +40,4 @@ Select.propTypes = {
 Select.defaultProps = {
 	className: '',
 	options: [],
-	onClick: ( () => {} ),
 };

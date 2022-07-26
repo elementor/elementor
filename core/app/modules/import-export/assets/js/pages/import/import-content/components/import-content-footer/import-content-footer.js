@@ -28,14 +28,12 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				text={ __( 'Previous', 'elementor' ) }
 				variant="contained"
 				onClick={ () => {
+					onPreviousClick?.();
 					if ( hasPlugins ) {
 						sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
 						navigate( 'import/plugins/' );
 					} else {
 						onResetProcess();
-					}
-					if ( 'kit-library' === referrer && onPreviousClick ) {
-						onPreviousClick();
 					}
 				} }
 			/>
@@ -45,9 +43,7 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				text={ __( 'Import', 'elementor' ) }
 				color={ isImportAllowed ? 'primary' : 'disabled' }
 				onClick={ () => {
-					if ( 'kit-library' === referrer && onImportClick ) {
-						onImportClick();
-					}
+					onImportClick?.();
 					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 					return isImportAllowed && navigate( getNextPageUrl() );
 				} }

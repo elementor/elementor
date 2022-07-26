@@ -11,7 +11,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import useKit from '../../../hooks/use-kit';
 
@@ -31,16 +31,28 @@ export default function ImportKit() {
 			setIsLoading( false );
 			kitActions.reset();
 		},
-		onFileChoose = () => {
-			if ( 'kit-library' === referrer ) {
-				eventTrackingDispatch(
-					'kit-library/choose-file',
-					{
-						event: 'select kit file',
-						source: 'import',
-					},
-				);
-			}
+		eventTracking = ( command, eventName, element = null, eventType = 'click', step = null, error = null ) => appsEventTrackingDispatch(
+			command,
+			{
+				event: eventName,
+				element,
+				source: 'import',
+				event_type: eventType,
+				step,
+				error_type: error,
+
+			},
+		),
+		onFileUpload = ( uploadMethod ) => {
+			const uploadMethodName = ( 'drop' === uploadMethod ? 'drop' : 'browse' );
+			appsEventTrackingDispatch(
+				`kit-library/${ uploadMethodName }`,
+				{
+					method: uploadMethodName,
+					event: 'select kit file',
+					source: 'import',
+				},
+			);
 		};
 
 		const getLearnMoreLink = () => (
@@ -48,16 +60,9 @@ export default function ImportKit() {
 				url="https://go.elementor.com/app-what-are-kits"
 				key="learn-more-link"
 				italic
-				onLinkClick={ () => {
+				onClick={ () => {
 					if ( 'kit-library' === referrer ) {
-						eventTrackingDispatch(
-							'kit-library/seek-more-info',
-							{
-								event: 'learn more',
-								source: 'import',
-								step: wizardStepNum,
-							},
-						);
+						eventTracking( 'kit-library/seek-more-info', 'learn more', null, 'click', wizardStepNum );
 					}
 				} }
 			>
@@ -82,7 +87,6 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
-			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 		} else if ( 'error' === kitState.status ) {
 			setErrorType( kitState.data );
 		}
@@ -91,6 +95,7 @@ export default function ImportKit() {
 	// After kit was uploaded.
 	useEffect( () => {
 		if ( importContext.data.uploadedData && importContext.data.file ) {
+			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 			const url = importContext.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
 
 			navigate( url );
@@ -128,20 +133,16 @@ export default function ImportKit() {
 					text={ __( 'Drag & drop the .zip file with your Kit', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
-					onFileChoose={ onFileChoose }
-					onFileSelect={ ( file, event ) => {
+					onFileChoose={ () => {
+						if ( 'kit-library' === referrer ) {
+							eventTracking( 'kit-library/choose-file', 'select kit file' )
+						}
+					} }
+					onFileSelect={ ( file, e ) => {
 						setIsLoading( true );
 						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 						if ( 'kit-library' === referrer ) {
-							const uploadMethod = ( 'drop' === event.type ? 'drop' : 'browse' );
-							eventTrackingDispatch(
-								`kit-library/${ uploadMethod }`,
-								{
-									method: uploadMethod,
-									event: 'select kit file',
-									source: 'import',
-								},
-							);
+							onFileUpload( e.type );
 						}
 					} }
 					onError={ () => setErrorType( 'general' ) }
@@ -152,33 +153,9 @@ export default function ImportKit() {
 				{ errorType && <ProcessFailedDialog
 					errorType={ errorType }
 					onApprove={ resetImportProcess }
-					onModalClose={ () => eventTrackingDispatch(
-						'kit-library/modal-close',
-						{
-							event: 'error modal close',
-							source: 'import',
-							step: wizardStepNum,
-							event_type: 'load',
-						},
-					) }
-					isError={ () => eventTrackingDispatch(
-						'kit-library/modal-error',
-						{
-							errorType: `error modal load  ${ errorType }`,
-							event: 'error modal load',
-							source: 'import',
-							step: wizardStepNum,
-							event_type: 'load',
-						},
-					) }
-					learnMoreEvent={ () => eventTrackingDispatch(
-						'kit-library/seek-more-info',
-						{
-							event: 'error modal learn more',
-							source: 'import',
-							step: wizardStepNum,
-						},
-					) }
+					onModalClose={ () => eventTracking( 'kit-library/modal-close', 'error modal close', null, 'load', wizardStepNum ) }
+					onError={ () => eventTracking( 'kit-library/modal-error', 'error modal load', null, 'load', wizardStepNum, `error modal load  ${ errorType }` ) }
+					onLearnMore={ () => eventTracking( 'kit-library/seek-more-info', 'error modal learn more', null, 'click', wizardStepNum ) }
 				/>	}
 			</section>
 		</Layout>

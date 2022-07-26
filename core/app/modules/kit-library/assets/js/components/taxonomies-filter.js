@@ -1,6 +1,6 @@
 import TaxonomiesFilterList from './taxonomies-filter-list';
 import Taxonomy, { taxonomyType } from '../models/taxonomy';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './tags-filter.scss';
 
@@ -18,7 +18,18 @@ export default function TaxonomiesFilter( props ) {
 				data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
 			} ) )
 			.filter( ( { data } ) => data.length > 0 );
-	}, [ props.taxonomies ] );
+	}, [ props.taxonomies ] ),
+		eventTracking = ( command, eventName, search, section, eventType = null ) => appsEventTrackingDispatch(
+			command,
+			{
+				search_term: search,
+				category: '/favorites' === props.category ? 'favorites' : 'all kits',
+				section,
+				source: 'home page',
+				event: eventName,
+				event_type: eventType,
+			},
+		);
 
 	return (
 		<div className="e-kit-library__tags-filter">
@@ -31,31 +42,11 @@ export default function TaxonomiesFilter( props ) {
 						onSelect={ props.onSelect }
 						onCollapseChange={ ( collapseState, title ) => {
 							const command = collapseState ? 'kit-library/collapse' : 'kit-library/expand';
-							if ( typeof ( collapseState ) !== 'undefined' ) {
-								eventTrackingDispatch(
-									command,
-									{
-										section: title,
-										category: ( '/' === props.category ? 'all kits' : 'favorites' ),
-										action: command,
-										event: 'sidebar section interaction',
-										source: 'home page',
-									},
-								);
-							}
+							eventTracking( command, 'sidebar section filters search', null, title );
 						} }
-						onSearchEvent={ ( search, category ) => eventTrackingDispatch(
-								'kit-library/filter',
-								{
-									search_term: search,
-									category,
-									section: group.label,
-									source: 'home page',
-									event: 'sidebar section filters search',
-									event_type: 'search',
-								},
-							)
-						}
+						onFilter={ ( search ) => {
+							eventTracking( 'kit-library/filter', 'sidebar section filters search', search, group.label, 'search' )
+						} }
 						category={ props.category }
 					/>
 				) )
@@ -69,5 +60,5 @@ TaxonomiesFilter.propTypes = {
 	onSelect: PropTypes.func,
 	taxonomies: PropTypes.arrayOf( PropTypes.instanceOf( Taxonomy ) ),
 	category: PropTypes.string,
-	onSearchEvent: PropTypes.func,
+	onFilter: PropTypes.func,
 };

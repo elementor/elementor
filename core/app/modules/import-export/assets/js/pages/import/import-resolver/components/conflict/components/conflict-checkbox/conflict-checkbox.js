@@ -12,7 +12,7 @@ export default function ConflictCheckbox( props ) {
 				actionType = isChecked ? 'ADD_OVERRIDE_CONDITION' : 'REMOVE_OVERRIDE_CONDITION';
 
 			if ( props.onCheck ) {
-				props.onCheck( event, props.title );
+				props.onCheck( isChecked, props.title );
 			}
 			importContext.dispatch( { type: actionType, payload: props.id } );
 		};
@@ -42,7 +42,7 @@ ConflictCheckbox.propTypes = {
 
 ConflictCheckbox.defaultProps = {
 	className: '',
-	referrer: '',
+	referrer: null,
 	onCheck: null,
 	title: '',
 };

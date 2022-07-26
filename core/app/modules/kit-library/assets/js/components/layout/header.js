@@ -1,42 +1,34 @@
 import { Grid } from '@elementor/app-ui';
 import HeaderButtons from '../../../../../../assets/js/layout/header-buttons';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function Header( props ) {
-	const onClose = () => {
-		eventTrackingDispatch(
-			'kit-library/close',
+	const eventTracking = ( command, eventName, source, kitName = null ) => appsEventTrackingDispatch(
+			command,
 			{
-				kit_name: props.kitName,
-				view_type_clicked: props.pageId,
-				source: props.pageId,
-				event: 'top bar close kit library',
+				kit_name: kitName,
+				source,
+				event: eventName,
 			},
-		);
-
-		window.top.location = elementorAppConfig.admin_url;
-	},
-		onLogoClick = () => eventTrackingDispatch(
-			'kit-library/logo',
-			{
-				event: 'top panel logo',
-				source: 'home page',
-			},
-		);
+		),
+		onClose = () => {
+			eventTracking( 'kit-library/close', 'top bar close kit library', props.pageId, props.kitName );
+			window.top.location = elementorAppConfig.admin_url;
+		};
 
 	return (
 		<Grid container alignItems="center" justify="space-between" className="eps-app__header">
 			{ props.startColumn || <a
 				className="eps-app__logo-title-wrapper"
 				href="#/kit-library"
-				onClick={ () => onLogoClick() }
+				onClick={ () => eventTracking( 'kit-library/logo', 'top panel logo', 'home page' ) }
 			>
 				<i className="eps-app__logo eicon-elementor" />
 				<h1 className="eps-app__title">{ __( 'Kit Library', 'elementor' ) }</h1>
 			</a> }
 			{ props.centerColumn || <span /> }
 			{ props.endColumn || <div style={ { flex: 1 } }>
-				<HeaderButtons buttons={ props.buttons } onClose={ onClose } />
+				<HeaderButtons buttons={ props.buttons } onClose={ () => onClose() } />
 			</div> }
 		</Grid>
 	);

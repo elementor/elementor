@@ -1,8 +1,20 @@
 import Document from '../../models/document';
 import { Button, Card, CardBody, CardOverlay, CardHeader, CardImage, Heading } from '@elementor/app-ui';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function OverviewContentGroupItem( props ) {
+	const eventTracking = ( command, eventName ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				kit_name: props.kitTitle,
+				document_type: props.groupData.id,
+				document_name: `${ props.groupData.label }-${ props.document.title }`,
+				event: eventName,
+				source: 'overview',
+			},
+		);
+	}
 	return (
 		<Card>
 			<CardHeader>
@@ -23,17 +35,7 @@ export default function OverviewContentGroupItem( props ) {
 							text={ __( 'View Demo', 'elementor' ) }
 							icon="eicon-preview-medium"
 							url={ `/kit-library/preview/${ props.kitId }?document_id=${ props.document.id }` }
-							onClick={ () => eventTrackingDispatch(
-									'kit-library/view-demo-part,',
-									{
-										kit_name: props.kitTitle,
-										document_name: `${ props.groupData.label }-${ props.document.title }`,
-										document_type: props.groupData.id,
-										event: 'view demo part',
-										source: 'overview',
-									},
-								)
-							}
+							onClick={ () => eventTracking( 'kit-library/view-demo-part', 'view demo part' ) }
 						/>
 					</CardOverlay> }
 				</CardImage>
@@ -45,4 +47,9 @@ export default function OverviewContentGroupItem( props ) {
 OverviewContentGroupItem.propTypes = {
 	document: PropTypes.instanceOf( Document ).isRequired,
 	kitId: PropTypes.string.isRequired,
+	kitTitle: PropTypes.string,
+	groupData: PropTypes.shape( {
+		label: PropTypes.string,
+		id: PropTypes.string,
+	} ).isRequired,
 };

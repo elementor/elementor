@@ -5,7 +5,7 @@ import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
 import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 import { Heading, CardImage, Text, Grid } from '@elementor/app-ui';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 
 import './overview-sidebar.scss';
@@ -13,20 +13,22 @@ import './overview-sidebar.scss';
 export default function OverviewSidebar( props ) {
 	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( false );
-	const sidebarTagFilterEvent = ( kitName, taxonomyText ) => {
-		eventTrackingDispatch(
-			'kit-library/sidebar-tag-filter',
+	const eventTracking = ( command, eventName, section = null, kitName = null, tag = null ) => {
+		appsEventTrackingDispatch(
+			command,
 			{
 				kit_name: kitName,
-				tag: taxonomyText,
-				event: 'overview sidebar tag select',
+				tag,
+				section,
+				action: command,
+				event: eventName,
 				source: 'overview',
 			},
 		);
-	};
+	}
 	const onCollapseChange = ( value, title ) => {
 		const command = value ? 'kit-library/collapse' : 'kit-library/expand';
-		eventTrackingDispatch(
+		appsEventTrackingDispatch(
 			command,
 			{
 				section: title,
@@ -69,12 +71,12 @@ export default function OverviewSidebar( props ) {
 					className="e-kit-library__item-sidebar-collapse-tags"
 					pageId="overview"
 					onClick={ ( val, title ) => {
-						onCollapseChange( val, title );
+						onCollapseChange?.( val, title );
 					} }
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.taxonomies.map( ( taxonomy ) => (
-							<OverviewTaxonomyBadge key={ taxonomy } kitName={ props.model.title } sidebarTagFilterEvent={ ( taxonomyText ) => sidebarTagFilterEvent( props.model.title, taxonomyText ) }>{ taxonomy }</OverviewTaxonomyBadge>
+							<OverviewTaxonomyBadge key={ taxonomy } kitName={ props.model.title } onFilter={ ( taxonomyText ) => eventTracking( 'kit-library/sidebar-tag-filter', 'overview sidebar tag select', null, props.model.title, taxonomyText ) }>{ taxonomy }</OverviewTaxonomyBadge>
 						) ) }
 					</Grid>
 				</Collapse>
@@ -88,7 +90,7 @@ export default function OverviewSidebar( props ) {
 					className="e-kit-library__item-sidebar-collapse-info"
 					pageId="overview"
 					onClick={ ( val, title ) => {
-						onCollapseChange( val, title );
+						onCollapseChange?.( val, title );
 					} }
 				>
 					{

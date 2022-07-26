@@ -11,7 +11,7 @@ import ImportContentFooter from './components/import-content-footer/import-conte
 import useImportActions from '../hooks/use-import-actions';
 
 import './import-content.scss';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
@@ -20,6 +20,14 @@ export default function ImportContent() {
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ navigateToMainScreen } = useImportActions(),
 		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
+		eventTracking = ( command, eventName ) => appsEventTrackingDispatch(
+			command,
+			{
+				source: 'import',
+				step: wizardStepNum,
+				event: eventName,
+			},
+		),
 
 		getFooter = () => {
 			return (
@@ -28,22 +36,16 @@ export default function ImportContent() {
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
-					onPreviousClick={ () => eventTrackingDispatch(
-						'kit-library/go-back',
-						{
-							source: 'import',
-							step: wizardStepNum,
-							event: 'previous button',
-						},
-					) }
-					onImportClick={ () => eventTrackingDispatch(
-						'kit-library/approve-import',
-						{
-							source: 'import',
-							step: wizardStepNum,
-							event: 'approve-import',
-						},
-					) }
+					onPreviousClick={ () => {
+						if ( 'kit-library' === referrer ) {
+							eventTracking( 'kit-library/go-back', 'previous button' );
+						}
+					} }
+					onImportClick={ () => {
+						if ( 'kit-library' === referrer ) {
+							eventTracking( 'kit-library/approve-import', 'approve-import' );
+						}
+					} }
 				/>
 			);
 		};

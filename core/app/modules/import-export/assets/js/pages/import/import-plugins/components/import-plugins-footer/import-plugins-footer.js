@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useContext } from 'react';
 
 import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 import { SharedContext } from '../../../../../context/shared-context/shared-context-provider';
@@ -11,7 +11,7 @@ import useImportActions from '../../../hooks/use-import-actions';
 export default function ImportPluginsFooter( props ) {
 	const importContext = useContext( ImportContext ),
 		sharedContext = useContext( SharedContext ),
-		{ data: { referrer, wizardStepNum } } = sharedContext.data,
+		{ wizardStepNum } = sharedContext.data || {},
 		{ navigateToMainScreen } = useImportActions();
 
 	return (
@@ -22,10 +22,7 @@ export default function ImportPluginsFooter( props ) {
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
 					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
-
-					if ( 'kit-library' === referrer && props.onPreviousClick ) {
-						props.onPreviousClick();
-					}
+					props.onPreviousClick?.();
 					navigateToMainScreen();
 				} }
 			/>
@@ -37,9 +34,7 @@ export default function ImportPluginsFooter( props ) {
 				url="/import/content"
 				onClick={ () => {
 					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
-					if ( 'kit-library' === referrer && props.onNextClick ) {
-						props.onNextClick();
-					}
+					props.onNextClick?.();
 				} }
 			/>
 		</ActionsFooter>

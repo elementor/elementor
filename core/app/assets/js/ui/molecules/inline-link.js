@@ -34,11 +34,7 @@ export default function InlineLink( props ) {
 				target={ props.target }
 				rel={ props.rel }
 				className={ className }
-				onClick={ () => {
-					if ( props.onLinkClick ) {
-						props.onLinkClick();
-					}
-				} }
+				onClick={ props.onClick }
 			>
 				{ props.children }
 			</a>
@@ -76,7 +72,4 @@ InlineLink.defaultProps = {
 	underline: 'always',
 	target: '_blank',
 	rel: 'noopener noreferrer',
-	italic: false,
-	onClick: ( () => {} ),
-	onLinkClick: ( () => {} ),
 };

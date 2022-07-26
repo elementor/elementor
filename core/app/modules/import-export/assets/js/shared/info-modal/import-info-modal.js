@@ -1,13 +1,13 @@
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import InfoModal from './info-modal';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ImportInfoModal( props ) {
-	const onLinkClick = () => eventTrackingDispatch(
+	const eventTracking = ( event ) => appsEventTrackingDispatch(
 		'kit-library/seek-more-info',
 		{
 			source: 'import',
-			event: 'info modal learn more-kits',
+			event,
 		},
 	);
 
@@ -21,7 +21,7 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
-							onLinkClick={ onLinkClick }
+							onClick={ () => eventTracking( 'info modal learn more-kits' ) }
 						>{ __( ' Learn more about Website Kits', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
@@ -35,7 +35,7 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="http://go.elementor.com/app-import-kit"
-							onLinkClick={ onLinkClick }
+							onClick={ () => eventTracking( 'info modal learn more-import' ) }
 						>
 							{ __( 'Learn More', 'elementor' ) }
 						</InlineLink>

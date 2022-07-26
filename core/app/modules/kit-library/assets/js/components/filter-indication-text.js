@@ -2,13 +2,22 @@ import useSelectedTaxonomies from '../hooks/use-selected-taxonomies';
 import Badge from './badge';
 import { sprintf, _n } from '@wordpress/i18n';
 import { Text, Button, Grid } from '@elementor/app-ui';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './filter-indication-text.scss';
 
 export default function FilterIndicationText( props ) {
 	const selectedTaxonomies = useSelectedTaxonomies( props.queryParams.taxonomies );
-
+	const eventTracking = ( taxonomy ) => {
+		appsEventTrackingDispatch(
+			'kit-library/clear-filter',
+			{
+				tag: taxonomy,
+				event: 'remove filter tag',
+				source: 'home page',
+			},
+		)
+	}
 	return (
 		<Grid container className="e-kit-library__filter-indication">
 			<Text className="e-kit-library__filter-indication-text">
@@ -29,15 +38,8 @@ export default function FilterIndicationText( props ) {
 									icon="eicon-editor-close"
 									className="e-kit-library__filter-indication-badge-remove"
 									onClick={ () => {
-										eventTrackingDispatch(
-											'kit-library/clear-filter',
-											{
-												tag: taxonomy,
-												event: 'remove filter tag',
-												source: 'home page',
-											},
-										)
-										props.onRemoveTag( taxonomy )
+										eventTracking( taxonomy );
+										props.onRemoveTag( taxonomy );
 									} }
 								/>
 							</Badge>
@@ -51,14 +53,7 @@ export default function FilterIndicationText( props ) {
 				text={ __( 'Clear all', 'elementor' ) }
 				variant="underlined"
 				onClick={ () => {
-					eventTrackingDispatch(
-						'kit-library/clear-filter',
-						{
-							tag: 'all',
-							event: 'remove filter tag',
-							source: 'home page',
-						},
-					);
+					eventTracking( 'all' );
 					props.onClear();
 				} }
 			/>

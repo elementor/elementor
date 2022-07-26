@@ -19,7 +19,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import usePlugins, { PLUGIN_STATUS_MAP } from '../../../hooks/use-plugins';
 import usePluginsData from '../../../hooks/use-plugins-data';
 import useImportPluginsData from './hooks/use-import-plugins-data';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './import-plugins.scss';
 
@@ -49,7 +49,15 @@ export default function ImportPlugins() {
 			if ( proData && ! elementorAppConfig.hasPro ) {
 				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
-		};
+		},
+		eventTracking = ( command, eventName ) => appsEventTrackingDispatch(
+			command,
+			{
+				source: 'import',
+				step: wizardStepNum,
+				event: eventName,
+			},
+		);
 
 	// On load.
 	useEffect( () => {
@@ -74,22 +82,16 @@ export default function ImportPlugins() {
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter
-			onPreviousClick={ () => eventTrackingDispatch(
-				'kit-library/go-back',
-				{
-					source: 'import',
-					step: wizardStepNum,
-					event: 'previous button',
-				},
-			) }
-			onNextClick={ () => eventTrackingDispatch(
-				'kit-library/approve-selection',
-				{
-					source: 'import',
-					step: wizardStepNum,
-					event: 'next button',
-				},
-			) }
+			onPreviousClick={ () => {
+				if ( 'kit-library' === referrer ) {
+					eventTracking( 'kit-library/go-back', 'previous button' )
+				}
+			} }
+			onNextClick={ () => {
+				if ( 'kit-library' === referrer ) {
+					eventTracking( 'kit-library/approve-selection', 'next button' )
+				}
+			} }
 		/> } >
 			<section className="e-app-import-plugins">
 				{ ! importPluginsData && <Loader absoluteCenter />	}

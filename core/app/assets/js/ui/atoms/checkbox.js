@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import './checkbox.scss';
 
-export default function Checkbox( { className, checked, rounded, indeterminate, error, disabled, onChange, onCheck, onUncheck, referrer } ) {
+export default function Checkbox( { className, checked, rounded, indeterminate, error, disabled, onChange } ) {
 	const baseClassName = 'eps-checkbox',
 		classes = [ baseClassName, className ];
 
@@ -37,9 +37,6 @@ Checkbox.propTypes = {
 	rounded: PropTypes.bool,
 	error: PropTypes.bool,
 	onChange: PropTypes.func,
-	onCheck: PropTypes.func,
-	onUncheck: PropTypes.func,
-	referrer: PropTypes.string,
 };
 
 Checkbox.defaultProps = {

@@ -2,10 +2,20 @@ import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 import useImportActions from '../../../hooks/use-import-actions';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { isKitLibraryReferrer } from 'elementor/core/app/modules/import-export/assets/js/context/shared-context/shared-context-provider';
 
 export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
-	const { closeApp } = useImportActions();
+	const { closeApp } = useImportActions(),
+		eventTracking = ( command, event ) => {
+			appsEventTrackingDispatch(
+				`kit-library/${ command }`,
+				{
+					event,
+					source: 'kit is live',
+				},
+			);
+		}
 	return (
 		<ActionsFooter>
 			{
@@ -15,13 +25,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 					variant="contained"
 					onClick={ () => {
 						if ( 'kit-library' === referrer ) {
-							eventTrackingDispatch(
-								'kit-library/see-it-live',
-								{
-									event: 'see it live button',
-									source: 'kit is live',
-								},
-							);
+							eventTracking( 'see-it-live', 'see it live button' );
 						}
 						window.open( seeItLiveUrl, '_blank' );
 					} }
@@ -34,13 +38,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 				color="primary"
 				onClick={ () => {
 					if ( 'kit-library' === referrer ) {
-						eventTrackingDispatch(
-							'kit-library/close',
-							{
-								event: 'close button',
-								source: 'kit is live',
-							},
-						);
+						eventTracking( 'close', 'close button' );
 					}
 					closeApp();
 				} }

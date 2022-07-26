@@ -26,8 +26,8 @@ export default function OverviewTaxonomyBadge( props ) {
 	return (
 		<Link
 			onClick={ () => {
-				if ( props.sidebarTagFilterEvent ) {
-					props.sidebarTagFilterEvent( taxonomyText );
+				if ( props.onFilter ) {
+					props.onFilter( taxonomyText );
 				}
 			} }
 			to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }
@@ -41,5 +41,5 @@ export default function OverviewTaxonomyBadge( props ) {
 
 OverviewTaxonomyBadge.propTypes = {
 	children: PropTypes.string,
-	sidebarTagFilterEvent: PropTypes.func,
+	onFilter: PropTypes.func,
 };

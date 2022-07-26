@@ -98,7 +98,7 @@ UploadFile.propTypes = {
 	variant: PropTypes.string,
 	color: PropTypes.string,
 	onButtonClick: PropTypes.func,
-	eventTrack: PropTypes.func,
+	onFileChoose: PropTypes.func,
 };
 
 UploadFile.defaultProps = {

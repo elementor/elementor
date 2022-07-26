@@ -8,7 +8,7 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function Conflict( props ) {
 	const importContext = useContext( ImportContext ),
@@ -30,8 +30,8 @@ export default function Conflict( props ) {
 				text={ __( 'Edit Template', 'elementor' ) }
 				hideText
 				onClick={ () => {
-					if ( 'kit-library' === referrer && props.viewConflictItemEvent ) {
-						props.viewConflictItemEvent( title );
+					if ( props.onClick ) {
+						props.onClick( title );
 					}
 				} }
 			/>
@@ -47,7 +47,17 @@ export default function Conflict( props ) {
 			return classes.join( ' ' );
 		},
 		getImportedAssetClasses = ( importedAssetId ) => getAssetClassName( isImportedAssetSelected( importedAssetId ) ),
-		getExistingAssetClasses = ( importedAssetId ) => getAssetClassName( ! isImportedAssetSelected( importedAssetId ) );
+		getExistingAssetClasses = ( importedAssetId ) => getAssetClassName( ! isImportedAssetSelected( importedAssetId ) ),
+		eventTracking = ( command, eventName, title ) => appsEventTrackingDispatch(
+			`kit-library/${ command }`,
+			{
+				site_part: title,
+				action: command,
+				event: eventName,
+				source: 'import',
+				step: wizardStepNum,
+			},
+		);
 
 	return (
 		<Grid container noWrap>
@@ -57,18 +67,9 @@ export default function Conflict( props ) {
 				className="e-app-import-resolver-conflicts__checkbox"
 				title={ props.conflictData.template_title }
 				referrer={ referrer }
-				onCheck={ ( event, title ) => {
-					const command = event.target.checked ? 'check' : 'uncheck';
-					eventTrackingDispatch(
-						`kit-library/${ command }`,
-						{
-							site_part: title,
-							action: command,
-							event: 'kit parts conflict',
-							source: 'import',
-							step: wizardStepNum,
-						},
-					);
+				onCheck={ ( isChecked, title ) => {
+					const command = isChecked ? 'check' : 'uncheck';
+					eventTracking( command, 'kit parts conflict', title );
 				} }
 			/>
 

@@ -8,7 +8,7 @@ import useDownloadLinkMutation from '../hooks/use-download-link-mutation';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
 import { Dialog } from '@elementor/app-ui';
 import { useSettingsContext } from '../context/settings-context';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 
 import './item-header.scss';
@@ -23,7 +23,7 @@ import './item-header.scss';
  * @param {boolean}  root0.isApplyLoading
  * @return {Object} result
  */
-function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onConnect, eventTracking } ) {
+function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, eventTracking } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
 
 	return useMemo( () => {
@@ -65,7 +65,12 @@ function useKitCallToActionButton( model, pageId, { apply, isApplyLoading, onCon
 			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
 			includeHeaderBtnClass: false,
-			onClick: eventTracking?.(),
+			// onClick: () => {
+			// 	if ( eventTracking ) {
+			// 		eventTracking()
+			// 	}
+			// }
+			onClick: isApplyLoading ? null : apply,
 		};
 	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
 }
@@ -76,6 +81,10 @@ export default function ItemHeader( props ) {
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ downloadLinkData, setDownloadLinkData ] = useState( null );
 	const [ error, setError ] = useState( false );
+	const kitData = {
+		kitName: props.model.title,
+		pageId: props.pageId,
+	};
 
 	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
 		props.model,
@@ -104,12 +113,12 @@ export default function ItemHeader( props ) {
 		},
 	);
 
-	const applyButton = useKitCallToActionButton( props.model, props.pageId, {
+	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		apply,
 		isApplyLoading,
 		// eventTracking: () => {
-		// 	return eventTrackingDispatch(
+		// 	return appsEventTrackingDispatch(
 		// 		'kit-library/apply-kit',
 		// 		{
 		// 			kit_name: props.model.title,
@@ -173,11 +182,10 @@ export default function ItemHeader( props ) {
 				/>
 			}
 			<Header
-				startColumn={ <HeaderBackButton kitName={ props.model.title } pageId={ props.pageId } /> }
+				startColumn={ <HeaderBackButton { ...kitData } /> }
 				centerColumn={ props.centerColumn }
 				buttons={ buttons }
-				kitName={ props.model.title }
-				pageId={ props.pageId }
+				{ ...kitData }
 			/>
 		</>
 	);

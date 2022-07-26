@@ -50,7 +50,6 @@ export default function DropZone( props ) {
 						filetypes={ props.filetypes }
 						variant={ props.buttonVariant }
 						color={ props.buttonColor }
-						referrer={ props.referrer }
 						onFileChoose={ props.onFileChoose }
 					/> }
 
@@ -81,7 +80,6 @@ DropZone.propTypes = {
 	description: PropTypes.string,
 	onButtonClick: PropTypes.func,
 	onFileChoose: PropTypes.func,
-	referrer: PropTypes.string,
 };
 
 DropZone.defaultProps = {

@@ -3,7 +3,7 @@ import { ModalProvider, Heading, Text, Button } from '@elementor/app-ui';
 import { useMemo, useState, useRef } from 'react';
 import { useNavigate } from '@reach/router';
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './index-header.scss';
 
@@ -11,6 +11,22 @@ export default function IndexHeader( props ) {
 	const navigate = useNavigate();
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
 	const importRef = useRef();
+	const eventTracking = ( command, eventName, source, element = null, eventType = 'click' ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				event: eventName,
+				source,
+				element,
+				event_type: eventType,
+			},
+		);
+	};
+	const onClose = ( e ) => {
+		const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
+		const eventName = 'overlay' === element ? 'background page' : 'info modal close';
+		eventTracking( 'kit-library/modal-close', eventName, 'home page', element );
+	};
 	const buttons = useMemo( () => [
 		{
 			id: 'info',
@@ -18,13 +34,7 @@ export default function IndexHeader( props ) {
 			hideText: true,
 			icon: 'eicon-info-circle-o',
 			onClick: () => {
-				eventTrackingDispatch(
-					'kit-library/seek-more-info',
-					{
-						event: 'top panel info',
-						source: 'home page',
-					},
-				);
+				eventTracking( 'kit-library/seek-more-info', 'top panel info', 'home page' );
 				setIsInfoModalOpen( true );
 			},
 		},
@@ -35,13 +45,7 @@ export default function IndexHeader( props ) {
 			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
 
 			onClick: () => {
-				eventTrackingDispatch(
-					'kit-library/refetch',
-					{
-						event: 'top panel refetch',
-						source: 'home page',
-					},
-				);
+				eventTracking( 'kit-library/refetch', 'top panel refetch', 'home page' );
 				props.refetch();
 			},
 		},
@@ -52,13 +56,7 @@ export default function IndexHeader( props ) {
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
 			onClick: () => {
-				eventTrackingDispatch(
-					'kit-library/kit-import',
-					{
-						event: 'top panel kit import',
-						source: 'home page',
-					},
-				);
+				eventTracking( 'kit-library/kit-import', 'top panel kit import', 'home page' );
 				navigate( '/import?referrer=kit-library' );
 			},
 		},
@@ -76,25 +74,8 @@ export default function IndexHeader( props ) {
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) }
 				show={ isInfoModalOpen }
 				setShow={ setIsInfoModalOpen }
-				onOpen={ () => eventTrackingDispatch(
-					'kit-library/modal-open',
-					{
-						event: 'info modal load',
-						source: 'home page',
-						event_type: 'load',
-					},
-				) }
-				onClose={ ( e ) => {
-					const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
-					eventTrackingDispatch(
-						'kit-library/modal-close',
-						{
-							element,
-							event: 'overlay' === element ? 'background page' : 'info modal close',
-							source: 'home page',
-						},
-					);
-				} }
+				onOpen={ () => eventTracking( 'kit-library/modal-open', 'info modal load', 'home page', null, 'load' ) }
+				onClose={ ( e ) => onClose( e ) }
 			>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s a Website Kit?', 'elementor' ) }</Heading>
@@ -118,13 +99,7 @@ export default function IndexHeader( props ) {
 							text={ __( 'Learn more', 'elementor' ) }
 							color="link"
 							onClick={ () => {
-								eventTrackingDispatch(
-									'kit-library/seek-more-info',
-									{
-										event: 'info modal learn more',
-										source: 'home page',
-									},
-								);
+								eventTracking( 'kit-library/seek-more-info', 'info modal learn more', 'home page' );
 								setIsInfoModalOpen( true );
 							} }
 						/>{ ' ' }

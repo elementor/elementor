@@ -1,27 +1,26 @@
-// import { ConstTrackingMetaParams, ConstTrackingEventParams } from 'elementor-app/consts/consts';
-
-// export const eventTrackingDispatch = ( command, eventParams, metaParams ) => {
-// 	const eventData = {
-// 		...ConstTrackingEventParams,
-// 		...eventParams,
-// 	};
-//
-// 	const metaData = {
-// 		meta: {
-// 			...ConstTrackingMetaParams,
-// 			...metaParams,
-// 		},
-// 	};
-//
-// 	$e.run( command, eventData, metaData );
-// 	console.log( 'eventTracking', JSON.parse( JSON.stringify( { command, eventData, metaData } ) ) );
-// };
-
-export const eventTrackingDispatch = ( command, eventParams ) => {
+export const appsEventTrackingDispatch = ( command, eventParams ) => {
 	const data = {
-		...( eventParams.element ? { element: eventParams.element } : {} ),
+		// ...( { element: eventParams.element } || {} ),
+		// ...{ search_term: eventParams.searchTerm || {} },
+		// ...{ error_type: eventParams.errorType || {} },
+		// ...{ site_part: eventParams.site_part || {} },
+		// ...{ sort_direction: eventParams.sort_direction || {} },
+		// ...{ sort_type: eventParams.sort_type || {} },
+		// ...{ section: eventParams.section || {} },
+		// ...{ item: eventParams.item || {} },
+		// ...{ grid_location: eventParams.grid_location || {} },
+		// ...{ tag: eventParams.tag || {} },
+		// ...{ view_type_clicked: eventParams.view_type_clicked || {} },
+		// ...{ site_area: eventParams.site_area || {} },
+		// ...{ kit_name: eventParams.kit_name || {} },
+		// ...{ document_type: eventParams.document_type || {} },
+		// ...{ document_name: eventParams.document_name || null },
+		// ...{ layout: eventParams.layout || {} },
+
+
+
 		...( eventParams.searchTerm ? { search_term: eventParams.searchTerm } : {} ),
-		...( eventParams.errorType ? { search_term: eventParams.errorType } : {} ),
+		...( eventParams.errorType ? { error_type: eventParams.errorType } : {} ),
 		...( eventParams.site_part ? { site_part: eventParams.site_part } : {} ),
 		...( eventParams.sort_direction ? { sort_direction: eventParams.sort_direction } : {} ),
 		...( eventParams.section ? { section: eventParams.section } : {} ),
@@ -44,15 +43,23 @@ export const eventTrackingDispatch = ( command, eventParams ) => {
 		...( eventParams.event_type ? { event_type: eventParams.event_type } : { event_type: 'click' } ),
 		...( eventParams.step ? { step: eventParams.step } : {} ),
 		...( eventParams.category ? { category: eventParams.category } : {} ),
+
+		// ...{ site_part: eventParams.site_part || {} },
+		// ...{ event: eventParams.event || {} },
+		// ...{ source: eventParams.source || {} },
+		// ...{ action: eventParams.action || {} },
+		// ...{ event_type: eventParams.event_type || {} },
+		// ...{ step: eventParams.step || {} },
+		// ...{ category: eventParams.category || {} },
 	};
 
 	$e.run(
 		command,
-		...data,
+		data,
 		{
 			meta,
 		},
 	);
 
-	console.log( 'newEventTrackingDispatch', JSON.parse( JSON.stringify( { command, eventParams, data, meta } ) ) );
+	console.log( 'appsEventTrackingDispatch', JSON.parse( JSON.stringify( { command, eventParams, data, meta } ) ) );
 };

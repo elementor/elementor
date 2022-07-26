@@ -26,7 +26,7 @@ const messagesContent = {
 	dialogTitle = __( 'Something went wrong.', 'elementor' ),
 	tryAgainText = __( 'Try Again', 'elementor' );
 
-export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, isError, learnMoreEvent } ) {
+export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
 	const action = useAction(),
 		navigate = useNavigate(),
 		{ referrer } = useQueryParams().getAll(),
@@ -44,15 +44,15 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 				window.open( 'http://go.elementor.com/app-import-download-failed', '_blank' );
 			}
 
-			if ( 'kit-library' === referrer && learnMoreEvent) {
-				learnMoreEvent();
+			if ( 'kit-library' === referrer ) {
+				onLearnMore?.();
 			}
 		},
 		handleOnDismiss = () => {
 			if ( 'general' === error && onDismiss ) {
 				onDismiss();
-			} else if ( 'kit-library' === referrer && onModalClose ) {
-				onModalClose();
+			} else if ( 'kit-library' === referrer ) {
+				onModalClose?.();
 				navigate( '/kit-library' );
 			} else {
 				action.backToDashboard();
@@ -60,8 +60,8 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		};
 
 		useEffect( () => {
-			if ( 'kit-library' === referrer && isError ) {
-				isError()
+			if ( 'kit-library' === referrer ) {
+				onError?.()
 			}
 		}, [] );
 	return (
@@ -85,8 +85,8 @@ ProcessFailedDialog.propTypes = {
 	approveButton: PropTypes.string,
 	dismissButton: PropTypes.string,
 	onModalClose: PropTypes.func,
-	isError: PropTypes.func,
-	learnMoreEvent: PropTypes.func,
+	onError: PropTypes.func,
+	onLearnMore: PropTypes.func,
 };
 
 ProcessFailedDialog.defaultProps = {

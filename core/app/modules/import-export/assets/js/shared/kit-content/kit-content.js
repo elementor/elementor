@@ -9,7 +9,7 @@ import List from 'elementor-app/ui/molecules/list';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { SharedContext } from './../../context/shared-context/shared-context-provider.js';
 
 import './kit-content.scss';
@@ -35,7 +35,17 @@ export default function KitContent( { contentData, hasPro } ) {
 		},
 		setContainerHoverState = ( index, state ) => {
 			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
-		};
+		},
+		eventTracking = ( command, eventName, chosenPart ) => appsEventTrackingDispatch(
+			command,
+			{
+				site_part: chosenPart,
+				action: command,
+				event: eventName,
+				source: 'import',
+				step: wizardStepNum,
+			},
+		);
 
 	if ( ! contentData.length ) {
 		return null;
@@ -59,18 +69,11 @@ export default function KitContent( { contentData, hasPro } ) {
 											className="e-app-export-kit-content__checkbox"
 											referrer={ referrer }
 											onCheck={ ( event, chosenPart ) => {
-												const command = event.target.checked ? 'kit-library/check' : 'kit-library/uncheck';
-												eventTrackingDispatch(
-													command,
-												{
-													site_part: chosenPart,
-													action: command,
-													event: 'kit parts selection',
-													source: 'import',
-													step: wizardStepNum,
-												},
-											);
-										} }
+												if ( 'kit-library' === referrer ) {
+													const command = event.target.checked ? 'kit-library/check' : 'kit-library/uncheck';
+													eventTracking( command, 'kit parts selection', chosenPart );
+												}
+											} }
 										/>
 
 										<Grid item container>

@@ -14,7 +14,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './import-resolver.scss';
 
@@ -23,7 +23,7 @@ export default function ImportResolver() {
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		conflicts = importContext.data?.uploadedData?.conflicts || {},
-		{ wizardStepNum } = sharedContext.data || {},
+		{ referrer, wizardStepNum } = sharedContext.data || {},
 		getFooter = () => (
 			<ActionsFooter>
 				<Button
@@ -61,7 +61,16 @@ export default function ImportResolver() {
 			}
 
 			return false;
-		};
+		},
+		eventTracking = ( command, eventName, sitePart ) => appsEventTrackingDispatch(
+			'kit-library/check-item',
+			{
+				site_part: sitePart,
+				event: eventName,
+				source: 'import',
+				step: wizardStepNum,
+			},
+		);
 
 	useEffect( () => {
 		if ( ! importContext.data.uploadedData ) {
@@ -101,16 +110,10 @@ export default function ImportResolver() {
 										<Conflict
 											importedId={ parseInt( id ) }
 											conflictData={ conflict[ 0 ] }
-											viewConflictItemEvent={ ( title ) => {
-												eventTrackingDispatch(
-													'kit-library/check-item',
-													{
-														site_part: title,
-														event: 'open kit part - new tab',
-														source: 'import',
-														step: wizardStepNum,
-													},
-												);
+											onClick={ ( title ) => {
+												if ( 'kit-library' === referrer ) {
+													eventTracking( 'kit-library/check-item', 'open kit part - new tab', title );
+												}
 											} }
 										/>
 									</List.Item>

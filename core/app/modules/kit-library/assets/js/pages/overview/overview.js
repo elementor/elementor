@@ -9,7 +9,7 @@ import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 
 import './overview.scss';
@@ -26,7 +26,7 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				eventTrackingDispatch(
+				appsEventTrackingDispatch(
 					'kit-library/view-demo-page',
 					{
 						kit_name: kitName,

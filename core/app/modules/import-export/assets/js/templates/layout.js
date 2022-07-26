@@ -6,7 +6,7 @@ import { infoButtonProps } from '../shared/info-modal/info-modal';
 import ImportInfoModal from '../shared/info-modal/import-info-modal';
 import ExportInfoModal from '../shared/info-modal/export-info-modal';
 import { SharedContext } from '../context/shared-context/shared-context-provider';
-import { newEventTrackingDispatch, eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 
@@ -15,6 +15,21 @@ export default function Layout( props ) {
 		sharedContext = useContext( SharedContext ),
 		{ referrer } = useQueryParams().getAll(),
 		{ wizardStepNum } = sharedContext.data,
+		eventTracking = ( command, eventName, element = null, eventType = 'click', step = null ) => appsEventTrackingDispatch(
+			command,
+			{
+				event: eventName,
+				element,
+				source: 'import',
+				event_type: eventType,
+				step,
+			},
+		),
+		onModalClose = ( e, command ) => {
+			const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
+			const eventName = 'overlay' === element ? 'background page' : 'info modal close';
+			eventTracking( command, eventName, element );
+		},
 		getContent = () => {
 			let infoModalProps = {
 				show: showInfoModal,
@@ -25,26 +40,8 @@ export default function Layout( props ) {
 				infoModalProps = {
 					referrer,
 					...infoModalProps,
-					onOpen: () => eventTrackingDispatch(
-						'kit-library/modal-open',
-						{
-							event: 'info modal load',
-							source: 'import',
-							event_type: 'load',
-						},
-					),
-					onClose: ( e ) => {
-						const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
-						eventTrackingDispatch(
-							'kit-library/modal-close',
-							{
-								element,
-								event: 'overlay' === element ? 'background page' : 'info modal close',
-								source: 'import',
-								event_type: 'load',
-							},
-						);
-					},
+					onOpen: () => eventTracking( 'kit-library/modal-open', 'info modal load', null, 'load' ),
+					onClose: ( e ) => onModalClose( e, 'kit-library/modal-close' ),
 				};
 			}
 
@@ -61,13 +58,7 @@ export default function Layout( props ) {
 				...infoButtonProps,
 				onClick: () => {
 					if ( 'kit-library' === referrer ) {
-						eventTrackingDispatch(
-							'kit-library/seek-more-info',
-							{
-								event: 'top panel info',
-								source: 'import',
-							},
-						);
+						eventTracking( 'kit-library/seek-more-info', 'top panel info' );
 					}
 					setShowInfoModal( true );
 				},
@@ -75,14 +66,7 @@ export default function Layout( props ) {
 		},
 		onClose = () => {
 			if ( 'kit-library' === referrer ) {
-				eventTrackingDispatch(
-					'kit-library/close',
-					{
-						event: 'modal close',
-						step: wizardStepNum,
-						source: 'import',
-					},
-				);
+				eventTracking( 'kit-library/close', 'import export close', null, 'click', wizardStepNum );
 			}
 
 			window.top.location = elementorAppConfig.admin_url;

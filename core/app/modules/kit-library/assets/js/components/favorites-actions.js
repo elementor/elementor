@@ -1,5 +1,5 @@
 import { useKitFavoritesMutations } from '../hooks/use-kit-favorites-mutations';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { Button } from '@elementor/app-ui';
 
 import './favorites-actions.scss';
@@ -7,7 +7,20 @@ import './favorites-actions.scss';
 export default function FavoritesActions( props ) {
 	const { addToFavorites, removeFromFavorites, isLoading } = useKitFavoritesMutations();
 	const loadingClasses = isLoading ? 'e-kit-library__kit-favorite-actions--loading' : '';
-
+	const eventTracking = ( kitName, source, eventName, action, gridLocation = null, searchTerm = null ) => {
+		appsEventTrackingDispatch(
+			'kit-library/mark-as-favorite',
+			{
+				grid_location: gridLocation,
+				search_term: searchTerm,
+				kit_name: kitName,
+				source: '/' === source ? 'home page' : 'overview',
+				event: eventName,
+				event_type: 'search',
+				action,
+			},
+		)
+	}
 	return (
 		props.isFavorite
 			? <Button
@@ -18,16 +31,7 @@ export default function FavoritesActions( props ) {
 					onClick={ () => {
 						// eslint-disable-next-line no-unused-expressions
 						! isLoading && removeFromFavorites.mutate( props.id );
-						eventTrackingDispatch(
-							'kit-library/mark-as-favorite',
-							{
-								kit_name: props.name,
-								event: 'favorite icon interaction',
-								source: '/' === props.source ? 'home page' : 'overview',
-								event_type: 'search',
-								action: 'uncheck',
-							},
-						)
+						eventTracking( props?.name, props?.source, 'favorite icon interaction', 'uncheck' );
 					} }
 			/>
 			: <Button
@@ -38,18 +42,7 @@ export default function FavoritesActions( props ) {
 					onClick={ () => {
 						// eslint-disable-next-line no-unused-expressions
 						! isLoading && addToFavorites.mutate( props.id );
-						eventTrackingDispatch(
-							'kit-library/mark-as-favorite',
-							{
-								grid_location: props.index,
-								search_term: props.queryParams,
-								kit_name: props.name,
-								source: '/' === props.source ? 'home page' : 'overview',
-								event: 'favorite icon interaction',
-								event_type: 'search',
-								action: 'check',
-							},
-						)
+						eventTracking( props?.name, props?.source, 'favorite icon interaction', 'check', props?.index, props?.queryParams );
 					} }
 			/>
 	);
@@ -63,3 +56,5 @@ FavoritesActions.propTypes = {
 	queryParams: PropTypes.string,
 	source: PropTypes.string,
 };
+
+

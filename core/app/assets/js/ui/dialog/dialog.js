@@ -57,7 +57,6 @@ Dialog.propTypes = {
 	approveButtonColor: PropTypes.string,
 	approveButtonTarget: PropTypes.string,
 	approveButtonRef: PropTypes.object,
-	referrer: PropTypes.string,
 };
 
 Dialog.defaultProps = {};

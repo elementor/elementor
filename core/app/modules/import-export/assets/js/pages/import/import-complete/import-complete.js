@@ -14,7 +14,7 @@ import ConnectProNotice from './components/connect-pro-notice/connect-pro-notice
 import ImportCompleteFooter from './components/import-complete-footer/import-complete-footer';
 
 import useImportedKitData from './hooks/use-imported-kit-data';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ImportComplete() {
 	const sharedContext = useContext( SharedContext ),
@@ -42,14 +42,16 @@ export default function ImportComplete() {
 				configData: importedData.configData,
 			};
 		},
-		kitLiveLoadEvent = () => eventTrackingDispatch(
-			'kit-library/kit-is-live-load',
-			{
-				event: 'kit is live load',
-				source: 'kit is live',
-				event_type: 'load',
-			},
-		),
+		eventTracking = ( command, eventName, source, eventType = null ) => {
+			appsEventTrackingDispatch(
+				command,
+				{
+					event,
+					source,
+					event_type: eventType,
+				},
+			);
+		},
 		kitData = useMemo( () => getKitData(), [] );
 		useEffect( () => {
 			if ( ! uploadedData ) {
@@ -57,7 +59,7 @@ export default function ImportComplete() {
 			}
 
 			if ( uploadedData && 'kit-library' === referrer ) {
-				kitLiveLoadEvent();
+				eventTracking( 'kit-library/kit-is-live-load', 'kit is live load', 'kit is live', 'load' );
 			}
 		}, [] );
 
@@ -72,15 +74,9 @@ export default function ImportComplete() {
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
 							italic
-							onLinkClick={ () => {
+							onClick={ () => {
 								if ( 'kit-library' === referrer ) {
-									eventTrackingDispatch(
-										'kit-library/seek-more-info',
-										{
-											event: 'learn more-kits',
-											source: 'kit-is-live',
-										},
-									);
+									eventTracking( 'kit-library/seek-more-info', 'learn more-kits', 'kit-is-live' )
 								}
 							} }
 						>

@@ -21,9 +21,6 @@ export default function PreviewResponsiveControls( props ) {
 						className={ className }
 						icon={ `eicon-device-${ value }` }
 						onClick={ () => {
-							if ( props.previewResponsiveControlsEvent ) {
-								props.previewResponsiveControlsEvent( value );
-							}
 							props.onChange( value );
 						} }
 					/>
@@ -36,7 +33,6 @@ export default function PreviewResponsiveControls( props ) {
 PreviewResponsiveControls.propTypes = {
 	active: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
-	previewResponsiveControlsEvent: PropTypes.func,
 };
 
 PreviewResponsiveControls.defaultProps = {

@@ -3,13 +3,24 @@ import FavoritesActions from '../components/favorites-actions';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button } from '@elementor/app-ui';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
-
+	const eventTracking = ( command, eventName ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				kit_name: props.model.title,
+				grid_location: props.index,
+				search_term: props.queryParams,
+				event: 'view kit demo',
+				source: '/' === props.source ? 'all- kits' : 'favorites',
+			},
+		)
+	};
 	return (
 		<Card className="e-kit-library__kit-item">
 			<CardHeader>
@@ -49,17 +60,7 @@ const KitListItem = ( props ) => {
 								text={ __( 'View Demo', 'elementor' ) }
 								icon="eicon-preview-medium"
 								url={ `/kit-library/preview/${ props.model.id }` }
-								onClick={ () => eventTrackingDispatch(
-										'kit-library/check-out-kit',
-										{
-											kit_name: props.model.title,
-											grid_location: props.index,
-											search_term: props.queryParams,
-											event: 'view kit demo',
-											source: '/' === props.source ? 'all- kits' : 'favorites',
-										},
-									)
-								}
+								onClick={ () => eventTracking( 'kit-library/check-out-kit', 'view kit demo' ) }
 							/>
 							{
 								type === TYPE_PROMOTION && subscriptionPlan?.label && <Button

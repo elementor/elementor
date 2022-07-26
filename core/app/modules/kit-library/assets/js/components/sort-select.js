@@ -32,9 +32,9 @@ export default function SortSelect( props ) {
 					onClick={ () => {
 						props.onChange( {
 							by: props.value.by,
-							direction: 'asc' === props.value.direction ? 'desc' : 'asc',
+							direction: props.value.direction,
 						} );
-						props.onSortTypeDropdown?.();
+						props.onSortSelectOpen?.();
 					} }
 				/>
 			</div>
@@ -52,7 +52,7 @@ export default function SortSelect( props ) {
 							}
 							props.onChange( {
 								by: props.value.by,
-								direction: 'asc' === props.value.direction ? 'desc' : 'asc',
+								direction: props.value.direction,
 							} );
 						} }
 					/>
@@ -73,5 +73,5 @@ SortSelect.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	onChangeSortValue: PropTypes.func,
 	onChangeSortDirection: PropTypes.func,
-	onSortTypeDropdown: PropTypes.func,
+	onSortSelectOpen: PropTypes.func,
 };

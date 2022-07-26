@@ -4,14 +4,14 @@ import Collapse from './collapse';
 import SearchInput from './search-input';
 import { Checkbox, Text } from '@elementor/app-ui';
 import { sprintf } from '@wordpress/i18n';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 
 const TaxonomiesFilterList = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( props.taxonomiesByType.isOpenByDefault );
 	const [ search, setSearch ] = useState( '' );
-	const category = ( '/' === props.category ? 'all kits' : 'favorites' );
+	const category = ( '/favorites' === props.category ? 'favorites' : 'all kits' );
 	const taxonomies = useMemo( () => {
 		if ( ! search ) {
 			return props.taxonomiesByType.data;
@@ -23,7 +23,17 @@ const TaxonomiesFilterList = ( props ) => {
 			( tag ) => tag.text.toLowerCase().includes( lowerCaseSearch ),
 		);
 	}, [ props.taxonomiesByType.data, search ] );
-
+	const eventTracking = ( command, eventName, section, action, item ) => appsEventTrackingDispatch(
+		command,
+		{
+			category,
+			section,
+			item,
+			action: action ? 'checked' : 'unchecked',
+			event: eventName,
+			source: 'home page',
+		},
+	);
 	return (
 		<Collapse
 			className="e-kit-library__tags-filter-list"
@@ -32,9 +42,8 @@ const TaxonomiesFilterList = ( props ) => {
 			onChange={ () => {
 				setIsOpen( ! isOpen );
 			} }
-			category={ category }
 			onClick={ ( collapseState, title ) => {
-				props.onCollapseChange( collapseState, title );
+				props.onCollapseChange?.( collapseState, title );
 			} }
 		>
 			{
@@ -46,7 +55,7 @@ const TaxonomiesFilterList = ( props ) => {
 						placeholder={ sprintf( __( 'Search %s...', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
-						onSearchEvent={ () => props.onSearchEvent( search, category ) }
+						onFilter={ () => props.onFilter?.( search ) }
 					/>
 			}
 			<div className="e-kit-library__tags-filter-list-container">
@@ -59,31 +68,7 @@ const TaxonomiesFilterList = ( props ) => {
 								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
-									if ( checked ) {
-										eventTrackingDispatch(
-											'kit-library/filter',
-											{
-												category,
-												section: taxonomy.type,
-												item: taxonomy.text,
-												action: 'check',
-												event: 'sidebar section filters interaction',
-												source: 'home page',
-											},
-										);
-									} else {
-										eventTrackingDispatch(
-											'kit-library/filter',
-											{
-												category,
-												section: taxonomy.type,
-												item: taxonomy.text,
-												action: 'uncheck',
-												event: 'sidebar section filters interaction',
-												source: 'home page',
-											},
-										);
-									}
+									eventTracking( 'kit-library/filter', 'sidebar section filters interaction', taxonomy.type, checked, taxonomy.text )
 
 									props.onSelect( taxonomy.type, ( prev ) => {
 										return checked
@@ -109,7 +94,7 @@ TaxonomiesFilterList.propTypes = {
 	} ),
 	selected: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 	onSelect: PropTypes.func,
-	onSearchEvent: PropTypes.func,
+	onFilter: PropTypes.func,
 	onCollapseChange: PropTypes.func,
 };
 

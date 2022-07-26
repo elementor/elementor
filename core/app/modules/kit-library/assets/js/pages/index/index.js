@@ -17,7 +17,7 @@ import { Grid } from '@elementor/app-ui';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './index.scss';
 
@@ -165,6 +165,19 @@ export default function Index( props ) {
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
+	const eventTracking = ( command, eventName, search = null, direction = null, sortType = null, action = null ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				search_term: search,
+				source: 'home page',
+				event: eventName,
+				sort_direction: direction,
+				sort_type: sortType,
+				action,
+			},
+		);
+	}
 	return (
 		<Layout
 			sidebar={
@@ -196,16 +209,7 @@ export default function Index( props ) {
 							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
-							onSearchEvent={ () => {
-								eventTrackingDispatch(
-									'kit-library/kit-free-search',
-									{
-										search_term: queryParams.search,
-										source: 'home page',
-										event: 'search kit',
-									},
-								);
-							} }
+							onFilter={ () => eventTracking( 'kit-library/kit-free-search', 'search kit', queryParams.search ) }
 						/>
 						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
@@ -246,34 +250,10 @@ export default function Index( props ) {
 							onChange={ ( order ) => {
 								setQueryParams( ( prev ) => ( { ...prev, order } ) )
 							} }
-							onChangeSortDirection={ ( direction ) => eventTrackingDispatch(
-									'kit-library/change-sort-direction',
-									{
-										sort_direction: direction,
-										event: 'kit sort direction',
-										source: 'home page',
-									},
-								)
-							}
-							onChangeSortValue={ ( value ) => eventTrackingDispatch(
-									'kit-library/change-sort-value',
-									{
-										sort_type: value,
-										event: 'kit sort type select',
-										source: 'home page',
-									},
-								)
-							}
+							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'kit sort direction', null, direction ) }
+							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'kit sort type select', null, null, value ) }
 							// TODO: Add onBlur event to sort type dropdown
-							onSortTypeDropdown={ () => eventTrackingDispatch(
-									'kit-library/change-sort-type',
-									{
-										event: 'kit sort type dropdown',
-										source: 'home page',
-										action: 'expand',
-									},
-								)
-							}
+							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'kit sort type dropdown', null, null, null, 'expand' ) }
 						/>
 					</Grid>
 				</Grid>

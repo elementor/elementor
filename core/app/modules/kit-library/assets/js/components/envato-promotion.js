@@ -1,9 +1,20 @@
 import { Text, Button } from '@elementor/app-ui';
-import { eventTrackingDispatch } from 'elementor-app/event-track/events';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './envato-promotion.scss';
 
 export default function EnvatoPromotion( { category } ) {
+	const eventTracking = ( command, eventName ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				event: eventName,
+				source: 'home page',
+				category: '/favorites' === category ? 'favorites' : 'all kits',
+			},
+		)
+	};
+
 	return (
 		<Text className="e-kit-library-bottom-promotion" variant="xl">
 			{ __( 'Looking for more Kits?', 'elementor' ) } { ' ' }
@@ -14,14 +25,7 @@ export default function EnvatoPromotion( { category } ) {
 				target="_blank"
 				rel="noreferrer"
 				text={ __( 'Check out Elementor Website Kits on ThemeForest', 'elementor' ) }
-				onClick={ () => eventTrackingDispatch(
-					'kit-library/check-kits-on-theme-forest',
-					{
-						event: 'browse themeforest',
-						source: 'home page',
-						category: '/' === category ? 'all kits' : 'favorites',
-					},
-				) }
+				onClick={ () => eventTracking( 'kit-library/check-kits-on-theme-forest', 'browse themeforest' ) }
 			/>
 		</Text>
 	);
