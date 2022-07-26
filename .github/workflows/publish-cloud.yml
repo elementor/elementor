@@ -33,7 +33,7 @@ jobs:
         if: success()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: PHPUnit,Lint
+          name: ThereIsNoSuchCheck
           status: completed
           conclusion: ${{ job.status }}
       - name: Get next release branch
