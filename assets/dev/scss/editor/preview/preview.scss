@@ -1078,6 +1078,12 @@ html.elementor-html {
 						fill: $editor-dark;
 					}
 				}
+
+				&[data-preset="r100"] {
+					@if 'rtl' == $direction {
+						transform: scaleX(-1);
+					}
+				}
 			}
 		}
 	}
