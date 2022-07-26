@@ -4,7 +4,7 @@ import Text from 'elementor-app/ui/atoms/text';
 
 export default function KitInfoModal( props ) {
 	return (
-		<ModalProvider { ...props } className="e-app-export-kit-info-modal" title={ __( 'Template Kit Information', 'elementor' ) }>
+		<ModalProvider { ...props } className="e-app-export-kit-info-modal" title={ __( 'Website Kit Information', 'elementor' ) }>
 			<ModalProvider.Section>
 				<Heading className="e-app-export-kit-info-modal__heading" variant="h2" tag="h3">
 					{ __( 'What is kit information?', 'elementor' ) }
