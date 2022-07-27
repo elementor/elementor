@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Content;
+namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Base\Document;
@@ -10,6 +10,10 @@ use Elementor\Utils;
 
 // TODO: Move to Pro.
 class Templates extends Runner_Base {
+
+	public static function get_name() {
+		return 'templates';
+	}
 
 	public function should_import( array $data ) {
 		return (

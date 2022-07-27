@@ -1,9 +1,10 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport;
 
+use Elementor\Core\App\Modules\ImportExport\Processes\Export;
+use Elementor\Core\App\Modules\ImportExport\Processes\Import;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use Elementor\Tools;

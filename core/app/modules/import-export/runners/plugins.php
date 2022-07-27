@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Content;
+namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Plugins_Manager;
@@ -19,6 +19,10 @@ class Plugins extends Runner_Base {
 		} else {
 			$this->plugins_manager = new Plugins_Manager();
 		}
+	}
+
+	public static function get_name() {
+		return 'plugins';
 	}
 
 	public function should_import( array $data ) {

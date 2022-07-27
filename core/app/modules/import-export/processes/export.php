@@ -1,19 +1,13 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport;
+namespace Elementor\Core\App\Modules\ImportExport\Processes;
 
-use Elementor\Core\App\Modules\ImportExport\Content\Elementor_Content;
-use Elementor\Core\App\Modules\ImportExport\Content\Plugins;
-use Elementor\Core\App\Modules\ImportExport\Content\Runner_Base;
-use Elementor\Core\App\Modules\ImportExport\Content\Site_Settings;
-use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
-use Elementor\Core\App\Modules\ImportExport\Content\Templates;
-use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
+use Elementor\Core\App\Modules\ImportExport\Module;
+use Elementor\Core\App\Modules\ImportExport\Utils;
 use Elementor\Core\Utils\Str;
-use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 
-class Export {
+class Export extends Process_Base {
 	const ZIP_ARCHIVE_MODULE_MISSING = 'zip-archive-module-is-missing';
 
 	/**
@@ -60,15 +54,8 @@ class Export {
 	 */
 	private $zip;
 
-	/**
-	 * Export runners for each content type.
-	 *
-	 * @var Runner_Base[]
-	 */
-	private $runners;
-
 	public function __construct( $settings = [] ) {
-		Utils::ensure_writing_permissions();
+		parent::__construct();
 
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
@@ -114,27 +101,6 @@ class Export {
 			'manifest' => $this->manifest_data,
 			'file_name' => $zip_file_name,
 		];
-	}
-
-	/**
-	 * Register all the default runners the export can run. (e.g: elementor, plugins, etc.)
-	 */
-	public function register_default_runners() {
-		$this->register( new Site_Settings() );
-		$this->register( new Plugins() );
-		$this->register( new Templates() );
-		$this->register( new Taxonomies() );
-		$this->register( new Elementor_Content() );
-		$this->register( new Wp_Content() );
-	}
-
-	/**
-	 * Register a runner for the import.
-	 *
-	 * @param Runner_Base $runner_instance
-	 */
-	public function register( Runner_Base $runner_instance ) {
-		$this->runners[ get_class( $runner_instance ) ] = $runner_instance;
 	}
 
 	/**

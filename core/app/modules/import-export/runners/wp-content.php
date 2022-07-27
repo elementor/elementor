@@ -1,12 +1,17 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Content;
+namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Utils\ImportExport\WP_Exporter;
 use Elementor\Core\Utils\ImportExport\WP_Import;
 
 class Wp_Content extends Runner_Base {
+
+	public static function get_name() {
+		return 'wp-content';
+	}
+
 	public function should_import( array $data ) {
 		return (
 			isset( $data['include'] ) &&

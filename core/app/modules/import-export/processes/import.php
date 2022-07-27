@@ -1,22 +1,15 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport;
+namespace Elementor\Core\App\Modules\ImportExport\Processes;
 
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
-use Elementor\Core\App\Modules\ImportExport\Content\Elementor_Content;
-use Elementor\Core\App\Modules\ImportExport\Content\Plugins;
-use Elementor\Core\App\Modules\ImportExport\Content\Runner_Base;
-use Elementor\Core\App\Modules\ImportExport\Content\Site_Settings;
-use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
-use Elementor\Core\App\Modules\ImportExport\Content\Templates;
-use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
+use Elementor\Core\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 
-class Import {
+class Import extends Process_Base {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
 	const SESSION_DOES_NOT_EXITS_ERROR = 'session-does-not-exits-error';
@@ -30,13 +23,6 @@ class Import {
 	 * @var string
 	 */
 	private $session_id;
-
-	/**
-	 * Import runners for each content type.
-	 *
-	 * @var Runner_Base[]
-	 */
-	private $runners;
 
 	/**
 	 * Adapter for the kit compatibility.
@@ -122,7 +108,7 @@ class Import {
 	 * @throws \Exception
 	 */
 	public function __construct( $path, $settings = [] ) {
-		Utils::ensure_writing_permissions();
+		parent::__construct();
 
 		if ( is_file( $path ) ) {
 			$this->extracted_directory_path = $this->extract_zip( $path );
@@ -150,28 +136,6 @@ class Import {
 		$this->site_settings = $this->read_site_settings_json();
 
 		$this->set_default_settings();
-	}
-
-	/**
-	 * Register all the default runners the import can run. (e.g: elementor, plugins, etc.)
-	 * The order of the runners is very important, because the import process is running as a pipeline.
-	 */
-	public function register_default_runners() {
-		$this->register( new Site_Settings() );
-		$this->register( new Plugins() );
-		$this->register( new Templates() );
-		$this->register( new Taxonomies() );
-		$this->register( new Elementor_Content() );
-		$this->register( new Wp_Content() );
-	}
-
-	/**
-	 * Register a runner for the import.
-	 *
-	 * @param Runner_Base $runner_instance
-	 */
-	public function register( Runner_Base $runner_instance ) {
-		$this->runners[ get_class( $runner_instance ) ] = $runner_instance;
 	}
 
 	/**
@@ -438,7 +402,7 @@ class Import {
 	 * @return array
 	 */
 	private function get_default_settings_override_conditions() {
-		return apply_filters( 'elementor/import/get_default_settings_override_conditions', $this->manifest );
+		return apply_filters( 'elementor/import/get_default_settings_override_conditions', [], $this->manifest );
 	}
 
 	/**

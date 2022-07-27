@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Content;
+namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Plugin;
@@ -12,6 +12,10 @@ class Elementor_Content extends Runner_Base {
 
 	public function __constructor() {
 		$this->init_page_on_front_data();
+	}
+
+	public static function get_name() {
+		return 'elementor-content';
 	}
 
 	public function should_import( array $data ) {

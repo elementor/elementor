@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport;
 
-use Elementor\Core\App\Modules\ImportExport\Content\Elementor_Content;
-use Elementor\Core\App\Modules\ImportExport\Content\Plugins;
-use Elementor\Core\App\Modules\ImportExport\Content\Site_Settings;
-use Elementor\Core\App\Modules\ImportExport\Content\Taxonomies;
-use Elementor\Core\App\Modules\ImportExport\Content\Templates;
-use Elementor\Core\App\Modules\ImportExport\Content\Wp_Content;
-use Elementor\Core\App\Modules\ImportExport\Import;
+use Elementor\Core\App\Modules\ImportExport\Runners\Elementor_Content;
+use Elementor\Core\App\Modules\ImportExport\Runners\Plugins;
+use Elementor\Core\App\Modules\ImportExport\Runners\Site_Settings;
+use Elementor\Core\App\Modules\ImportExport\Runners\Taxonomies;
+use Elementor\Core\App\Modules\ImportExport\Runners\Templates;
+use Elementor\Core\App\Modules\ImportExport\Runners\Wp_Content;
+use Elementor\Core\App\Modules\ImportExport\Processes\Import;
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Plugins_Manager;

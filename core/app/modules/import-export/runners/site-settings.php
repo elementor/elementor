@@ -1,10 +1,14 @@
 <?php
-namespace Elementor\Core\App\Modules\ImportExport\Content;
+namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
 use Elementor\Plugin;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 
 class Site_Settings extends Runner_Base {
+
+	public static function get_name() {
+		return 'site-settings';
+	}
 
 	public function should_import( array $data ) {
 		return (

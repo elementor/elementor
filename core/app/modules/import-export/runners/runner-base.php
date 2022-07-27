@@ -1,8 +1,15 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Content;
+namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
 abstract class Runner_Base {
+
+	/**
+	 * @return string
+	 */
+	public static function get_name() {
+		throw new \Exception( 'You must implement `get_name()` inside ' . static::class );
+	}
 
 	/**
 	 * By the passed data we should decide if we want to run the import function of the runner or not.
