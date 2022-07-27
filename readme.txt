@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.6.8 - 2022-07-27 =
+* Fix: Bad request error is being thrown when trying to import a template
+* Fix: License status is not being updated immediately after license renewal
+
 = 3.6.7 - 2022-07-03 =
 * Tweak: Optimized file handling for better security policies
 * Fix: Modified controls sanitization to enforce better security policies in Text Editor widget

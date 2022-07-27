@@ -189,6 +189,14 @@
 		}
 	}
 
+	& > .elementor-widget {
+
+		& > .elementor-widget-container {
+			// Fix align-self:stretch (ED-7359)
+			height: 100%;
+		}
+	}
+
 	// Inner Container handle.
 	// TODO: Find a better solution.
 	& > &, .elementor-widget & {
