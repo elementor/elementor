@@ -61,25 +61,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.RELEASE_BRANCH }}
-      - name: validate all check-runs
-        run: |
-          check_runs=$(curl -s -H "Authorization: token ${{ secrets.MAINTAIN_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/antifree/commits/$GITHUB_SHA/check-runs?per_page=50" | jq -r '.check_runs[]')
-          for check_run in $check_runs; do
-            conclusion=$(echo $check_run | jq -r '.conclusion')
-            name=$(echo $check_run | jq -r '.name')
-            title=$(echo $check_run | jq -r '.output.title')
-            summary=$(echo $check_run | jq -r '.output.summary')
-            echo "Check run $name: $title completed with $conclusion: $summary"
-            if [ "$conclusion" == "failure" ]; then
-              echo "Check $name failed: $title $summary"
-              exit 1
-            fi
-          done
-      # - name: Check GitHub checks
-      #   uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
-      #   with:
-      #     github_token: ${{ secrets.MAINTAIN_TOKEN }}
-      #     checks: 'PHPUnit - Test Results'
+      - name: Validate Run Checks
+        uses : ./.github/workflows/validate-run-checks
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          CURRENT_SHA: v${{ github.sha }}
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")

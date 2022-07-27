@@ -1,0 +1,22 @@
+name: Validate Run Checks
+description: Validate run checks for the current version.
+
+inputs:
+  TOKEN:
+    required: true
+  REPOSITORY:
+    required: true
+  CURRENT_SHA:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        TOKEN: ${{ inputs.TOKEN }}
+        REPOSITORY: ${{ inputs.REPOSITORY }}
+        CURRENT_SHA: ${{ inputs.CURRENT_SHA }}
+      run: |
+            npm install --no-package-lock --no-save @octokit/core@3.4.0
+            node ./.github/scripts/validate-run-checks.js
