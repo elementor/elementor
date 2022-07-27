@@ -130,7 +130,7 @@
 		width: var( --widget-width, var( --widget-width-custom ) );
 	}
 
-	:is( .elementor-column > .elementor-widget-wrap ) {
+	:is( .elementor-column > .elementor-column-wrap > .elementor-widget-wrap ) {
 
 		& > .elementor-widget.elementor-widget {
 			max-width: var( --widget-width, var( --widget-width-custom ) );
