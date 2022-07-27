@@ -25,7 +25,7 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.navigator': 'onNavigatorClick',
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = {
 			saver: {
 				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver,
@@ -35,11 +35,11 @@ module.exports = Marionette.ItemView.extend( {
 		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	addSubMenuItem: function( subMenuName, itemData ) {
+	addSubMenuItem( subMenuName, itemData ) {
 		const $newItem = jQuery( '<div>', {
 				id: 'elementor-panel-footer-sub-menu-item-' + itemData.name,
 				class: 'elementor-panel-footer-sub-menu-item',
@@ -81,17 +81,17 @@ module.exports = Marionette.ItemView.extend( {
 		return $newItem.appendTo( $subMenu );
 	},
 
-	removeSubMenuItem: function( subMenuName, itemData ) {
+	removeSubMenuItem( subMenuName, itemData ) {
 		const $item = jQuery( '#elementor-panel-footer-sub-menu-item-' + itemData.name );
 
 		return $item.remove();
 	},
 
-	showSettingsPage: function() {
+	showSettingsPage() {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onMenuButtonsClick: function( event ) {
+	onMenuButtonsClick( event ) {
 		var $tool = jQuery( event.currentTarget );
 
 		// If the tool is not toggleable or the click is inside of a tool
@@ -108,11 +108,11 @@ module.exports = Marionette.ItemView.extend( {
 		}
 	},
 
-	onSettingsClick: function() {
+	onSettingsClick() {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onDeviceModeIconClick: function() {
+	onDeviceModeIconClick() {
 		if ( elementor.isDeviceModeActive() ) {
 			elementor.changeDeviceMode( 'desktop' );
 
@@ -129,15 +129,15 @@ module.exports = Marionette.ItemView.extend( {
 		}
 	},
 
-	onSaveTemplateClick: function() {
+	onSaveTemplateClick() {
 		$e.route( 'library/save-template' );
 	},
 
-	onHistoryClick: function() {
+	onHistoryClick() {
 		$e.route( 'panel/history/actions' );
 	},
 
-	onNavigatorClick: function() {
+	onNavigatorClick() {
 		$e.run( 'navigator/toggle' );
 	},
 } );

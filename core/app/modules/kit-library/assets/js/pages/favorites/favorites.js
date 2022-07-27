@@ -6,6 +6,7 @@ export default function Favorites( props ) {
 	const navigate = useNavigate();
 
 	const indexNotResultsFavorites = <ErrorScreen
+		// eslint-disable-next-line @wordpress/i18n-ellipsis
 		title={ __( 'No favorites here yet...', 'elementor' ) }
 		description={ __( 'Use the heart icon to save kits that inspire you. You\'ll be able to find them here.', 'elementor' ) }
 		button={ {

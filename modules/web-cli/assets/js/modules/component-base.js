@@ -1,9 +1,15 @@
 import CommandCallbackBase from 'elementor-api/modules/command-callback-base';
 
 import { createSlice } from '@reduxjs/toolkit';
-import Module from 'elementor-assets-js/modules/imports/module.js';
+import Module from 'elementor/assets/dev/js/modules/imports/module.js';
 import ForceMethodImplementation from '../utils/force-method-implementation';
 import Deprecation from 'elementor-api/utils/deprecation';
+
+/**
+ * @typedef {import('./command-infra')} CommandInfra
+ * @typedef {import('./hook-base')} HookBase
+ * @typedef {import('../core/states/ui-state-base')} UiStateBase
+ */
 
 export default class ComponentBase extends Module {
 	__construct( args = {} ) {
@@ -44,8 +50,9 @@ export default class ComponentBase extends Module {
 		Object.entries( this.getStates() ).forEach( ( [ id, state ] ) => this.registerState( id, state ) );
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
-	 * @returns {string}
+	 * @return {string} namespace
 	 */
 	getNamespace() {
 		ForceMethodImplementation();
@@ -92,7 +99,7 @@ export default class ComponentBase extends Module {
 	/**
 	 * Get the component's default UI states.
 	 *
-	 * @return {Object}
+	 * @return {Object} default UI states
 	 */
 	defaultUiStates() {
 		return {};
@@ -101,7 +108,7 @@ export default class ComponentBase extends Module {
 	/**
 	 * Get the component's Redux slice settings.
 	 *
-	 * @return {Object}
+	 * @return {Object} Redux slice settings
 	 */
 	defaultStates() {
 		return {};
@@ -134,7 +141,7 @@ export default class ComponentBase extends Module {
 	/**
 	 * Retrieve the component's UI states.
 	 *
-	 * @return {Object}
+	 * @return {Object} UI states
 	 */
 	getUiStates() {
 		return this.uiStates;
@@ -143,7 +150,7 @@ export default class ComponentBase extends Module {
 	/**
 	 * Retrieve the component's Redux Slice.
 	 *
-	 * @return {Object}
+	 * @return {Object} Redux Slice
 	 */
 	getStates() {
 		return this.states;
@@ -166,8 +173,8 @@ export default class ComponentBase extends Module {
 	}
 
 	/**
-	 * @param {string} command
-	 * @param {(function()|typeof CommandInfra)} context
+	 * @param {string}                      command
+	 * @param {(()=>{}|CommandInfra)}       context
 	 * @param {'default'|'internal'|'data'} commandsType
 	 */
 	registerCommand( command, context, commandsType = 'default' ) {
@@ -239,7 +246,7 @@ export default class ComponentBase extends Module {
 	/**
 	 * Register a Redux Slice.
 	 *
-	 * @param {string} id - State id.
+	 * @param {string} id          - State id.
 	 * @param {Object} stateConfig - The state config.
 	 *
 	 * @return {void}
@@ -396,14 +403,16 @@ export default class ComponentBase extends Module {
 	/**
 	 * If command includes uppercase character convert it to lowercase and add `-`.
 	 * e.g: `CopyAll` is converted to `copy-all`.
+	 *
+	 * @param {string} commandName
 	 */
 	normalizeCommandName( commandName ) {
 		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
 	}
 
 	/**
-	 * @param {Object.<CommandBase>} commandsFromImport
-	 * @returns {{}} imported commands
+	 * @param {{}} commandsFromImport
+	 * @return {{}} imported commands
 	 */
 	importCommands( commandsFromImport ) {
 		const commands = {};
@@ -435,7 +444,7 @@ export default class ComponentBase extends Module {
 	 *
 	 * @param {Object} statesFromImport - UI states from import.
 	 *
-	 * @return {Object}
+	 * @return {Object} UI States
 	 */
 	importUiStates( statesFromImport ) {
 		const uiStates = {};
@@ -453,8 +462,8 @@ export default class ComponentBase extends Module {
 	 * Set a UI state value.
 	 * TODO: Should we provide such function? Maybe the developer should implicitly pass the full state ID?
 	 *
-	 * @param state - Non-prefixed state ID.
-	 * @param value - New state value.
+	 * @param {string} state - Non-prefixed state ID.
+	 * @param {*}      value - New state value.
 	 *
 	 * @return {void}
 	 */

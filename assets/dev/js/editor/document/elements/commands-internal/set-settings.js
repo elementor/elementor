@@ -30,7 +30,7 @@ export class SetSettings extends $e.modules.editor.CommandContainerInternalBase 
 					documentId: elementor.documents.getCurrentId(),
 					elementId: container.id,
 					settings,
-				} )
+				} ),
 			);
 		} );
 	}

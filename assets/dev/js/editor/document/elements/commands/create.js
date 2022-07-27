@@ -75,7 +75,7 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 					parentId: container.id,
 					elements: [ createdContainer.model.toJSON() ],
 					index: options.at,
-				} )
+				} ),
 			);
 		} );
 

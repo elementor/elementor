@@ -1,10 +1,10 @@
 === Elementor Website Builder ===
-Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
+Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 3.6.6
+Stable tag: 3.6.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -229,17 +229,26 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Screenshots ==
 
-1. **Drag & Drop.** Our instant drag & drop lets you easily place every element anywhere on the page.
-2. **Visual Resize Control.** Customize the various elements of the page. Resizing images, changing column sizes and much more.
-3. **Truly Live Edit.** Changes on the page are displayed in realtime. No need to press update or preview.
-4. **Template Library.** Save your pages or sections as templates, so you can easily reuse them again, or choose one of our beautiful pre-designed templates.
-5. **Responsive Design.** Create custom settings for desktop, tablet & mobile by switching between devices.
-6. **Revision History.** Switch between earlier versions of your page design, so your design process is backed up, every step of the way.
-7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
+1. **Visual Drag and Drop Editor** Our instant drag and drop lets you easily place every element anywhere on the page and create pixel perfect designs.
+2. **Full Design System** Speed up your workflow and ensure consistency across your site with settings you define once, use globally, and change anytime - no coding required.
+3. **Motion Effects** Add transitions and animations to your website elements/designs to create a unique user experience.
+4. **Kit Library** Choose from a variety of designer-made website kits created to fit any industry. Add content, customize it, and make it your own.
+5. **Templates Library** Save your pages or sections as templates, so you can easily reuse them again or choose one of our beautiful pre-designed templates.
+6. **Responsive Design** Fully edit your websites and customize the behavior on desktop, tablet & mobile to maximize the experience by switching between devices and breaking points.
 
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.6.8 - 2022-07-27 =
+* Fix: Align-self set to stretch is not working as expected in Container ([#17052](https://github.com/elementor/elementor/issues/17052))
+* Fix: Bad request error is being thrown when trying to import a template
+* Fix: License status is not being updated immediately after license renewal
+
+= 3.6.7 - 2022-07-03 =
+* Tweak: Optimized file handling for better security policies
+* Fix: Modified controls sanitization to enforce better security policies in Text Editor widget
+* Fix: Modified controls sanitization to enforce better security policies in Anchor widget
 
 = 3.6.6 - 2022-06-08 =
 * Tweak: Added "Skip & Deactivate" button in plugin deactivation survey
