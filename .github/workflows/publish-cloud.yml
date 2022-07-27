@@ -65,7 +65,7 @@ jobs:
         uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
         with:
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
-          checks: ''
+          checks: 'PHPUnit - Test Results'
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
