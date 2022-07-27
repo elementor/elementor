@@ -1,0 +1,19 @@
+name: Slack Notify
+description: Send a notification to a Slack channel.
+
+inputs:
+  MESSAGE:
+    required: true
+  SLACK_TOKEN:
+    required: true
+  SLACK_CHANNEL:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            SLACK_BOT_NAME="ElementorBot"
+            curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${{ inputs.SLACK_TOKEN }}&channel=${{ inputs.SLACK_CHANNEL }}&text=${{ inputs.MESSAGE }}&link_names=true"
+      
