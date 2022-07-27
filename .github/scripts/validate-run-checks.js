@@ -19,16 +19,16 @@ const ignoreChacks = ['publish-to-cloud'];
 		  )
 		  const checkRuns = result.data.check_runs;
 		  checkRuns.forEach(checkRun => {
+			console.log(checkRun);
 			if( ignoreChacks.includes(checkRun.name) ) {
 				return;
 			}
 			if (checkRun.status === 'queued' || checkRun.status === 'in_progress') {
 				throw new Error(`Check run ${checkRun.name} is ${checkRun.status}, aborting deploy process, please wait for all checks to complete`);
 			}
-			if (checkRun.conclusion !== 'success') {
+			if (checkRun.conclusion === 'failure') {
 				throw new Error(`Check run ${checkRun.name} failed with conclusion ${checkRun.conclusion}, message: ${checkRun.output.summary || checkRun.output.text || 'no message'}`);
 			}
-			console.log(checkRun);
 		  }
 		  );
 	} catch (err) {
