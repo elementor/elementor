@@ -320,6 +320,7 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
+		// apply this filter to allow the attributes to be modified by different sources
 		return apply_filters( 'elementor/document/container_attributes', $attributes, $this );
 	}
 
