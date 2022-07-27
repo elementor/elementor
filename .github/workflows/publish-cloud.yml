@@ -63,10 +63,8 @@ jobs:
           ref: ${{ env.RELEASE_BRANCH }}
       - name: validate all check-runs
         run: |
+            apt-get update && apt-get install -y jq
             curl -s -H "Authorization: token ${{ secrets.MAINTAIN_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs?per_page=50" | jq -r '.check_runs[] | select(.conclusion == \"failure\") | .name' | xargs -I {} echo "Check run {} failed" >&2; exit 1
-                echo "Check run ${check_run_name} is neutral"
-                exit 1
-            done
       # - name: Check GitHub checks
       #   uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
       #   with:
