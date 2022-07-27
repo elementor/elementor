@@ -53,7 +53,7 @@ export default class View extends Marionette.ItemView {
 				title() {
 					return jQuery( this ).data( 'tooltip' );
 				},
-			}
+			},
 		);
 	}
 

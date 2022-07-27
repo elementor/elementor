@@ -10,14 +10,14 @@ import Text from 'elementor-app/ui/atoms/text';
 import './promotion.scss';
 
 export default function Promotion() {
-	const promotionUrl = 'https://go.elementor.com/go-pro-theme-builder',
+	const promotionUrl = 'https://go.elementor.com/go-pro-theme-builder/',
 		PromotionHoverElement = ( props ) => {
 			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
 			return (
 				<CardOverlay className="e-site-editor__promotion-overlay">
 					<a className="e-site-editor__promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
 						<i className="e-site-editor__promotion-overlay__icon eicon-lock" />
-						<Button size="sm" color="cta" variant="contained" text={__( 'Go Pro', 'elementor' )} />
+						<Button size="sm" color="cta" variant="contained" text={ __( 'Upgrade', 'elementor' ) } />
 					</a>
 				</CardOverlay>
 			);
@@ -29,22 +29,22 @@ export default function Promotion() {
 	};
 
 	return (
-		<Layout allPartsButton={ <AllPartsButton promotion/> } promotion>
+		<Layout allPartsButton={ <AllPartsButton promotion /> } promotion>
 			<section className="e-site-editor__promotion">
 				<Grid container className="page-header">
-					<Grid item sm={7} justify="end">
+					<Grid item sm={ 7 } justify="end">
 						<Heading variant="h1">
-							{ __( 'Create Full Site', 'elementor' ) }
+							{ __( 'Customize every part of your site', 'elementor' ) }
 						</Heading>
 						<Text>
-							{ __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
+							{ __( 'Get total control, consistency and a faster workflow by designing the recurring parts that make up a complete website like the Header & Footer, Archive, 404, WooCommerce pages and more.', 'elementor' ) }
 						</Text>
 					</Grid>
-					<Grid item container justify="end" alignItems="start" sm={5}>
-						<Button size="sm" color="cta" variant="contained" url={ promotionUrl }text={__( 'Go Pro', 'elementor' )} />
+					<Grid item container justify="end" alignItems="start" sm={ 5 }>
+						<Button size="sm" color="cta" variant="contained" url={ promotionUrl }text={ __( 'Upgrade Now', 'elementor' ) } />
 					</Grid>
 				</Grid>
-				<hr className="eps-separator"/>
+				<hr className="eps-separator" />
 				<SiteParts hoverElement={ PromotionHoverElement } />
 			</section>
 		</Layout>
