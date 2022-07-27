@@ -18,10 +18,12 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onShow() {
-		this.popover = this.$el.next( '.elementor-controls-popover' );
+		const $popover = this.$el.next( '.elementor-controls-popover' );
 
 		// Attach the current control as a toggle of its popover.
-		this.popover[ 0 ].dataset.popoverToggle = `elementor-control-default-${ this.model.cid }`;
+		if ( $popover.length ) {
+			$popover[ 0 ].dataset.popoverToggle = `elementor-control-default-${ this.model.cid }`;
+		}
 	}
 
 	onResetInputClick() {
@@ -50,7 +52,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
-		this.popover.toggle();
+		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
 	getGlobalCommand() {
