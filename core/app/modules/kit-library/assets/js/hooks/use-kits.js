@@ -21,7 +21,7 @@ export const defaultQueryParams = {
 		};
 	}, {} ),
 	order: {
-		direction: 'desc',
+		direction: 'asc',
 		by: 'featuredIndex',
 	},
 	referrer: null,
