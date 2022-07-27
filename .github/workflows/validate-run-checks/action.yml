@@ -8,6 +8,8 @@ inputs:
     required: true
   CURRENT_SHA:
     required: true
+  IGNORE_CHECKS_LIST:
+    required: false
 
 runs:
   using: "composite"
@@ -19,4 +21,4 @@ runs:
         CURRENT_SHA: ${{ inputs.CURRENT_SHA }}
       run: |
             npm install --no-package-lock --no-save @octokit/core@3.4.0
-            node ./.github/scripts/validate-run-checks.js
+            node .github/workflows/validate-run-checks/validate-run-checks.js
