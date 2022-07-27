@@ -61,6 +61,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.RELEASE_BRANCH }}
+      - name: Check GitHub checks
+        uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
+        with:
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
+          checks: 'JS-Lint,PHP-Lint,Qunit - Test,Lighthouse test - WP latest on PHP 7.4,PHPUnit - Test Results'
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
@@ -73,7 +78,7 @@ jobs:
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
-          name: elementor-${{ env.PACKAGE_VERSION }}#Build
+          name: elementor-${{ env.PACKAGE_VERSION }}
           path: ${{ github.workspace }}/elementor/**/*
           if-no-files-found: error
       - name: Create Git tag
