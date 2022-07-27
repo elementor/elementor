@@ -61,11 +61,14 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.RELEASE_BRANCH }}
-      - name: Check GitHub checks
-        uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
-        with:
-          github_token: ${{ secrets.MAINTAIN_TOKEN }}
-          checks: 'PHPUnit - Test Results'
+      - name: validate all check-runs
+        run: |
+            curl -s -H "Authorization: token ${{ secrets.MAINTAIN_TOKEN }}" "https://api.github.com/repos/${{GITHUB_REPOSITORY}}/commits/${{ GITHUB_SHA }}/check-runs | jq -r '.check_runs[] | select(.conclusion == \"failure\") | .name' | xargs -I {} echo "Check run {} failed" >&2; exit 1
+      # - name: Check GitHub checks
+      #   uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
+      #   with:
+      #     github_token: ${{ secrets.MAINTAIN_TOKEN }}
+      #     checks: 'PHPUnit - Test Results'
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
