@@ -63,9 +63,17 @@ jobs:
           ref: ${{ env.RELEASE_BRANCH }}
       - name: validate all check-runs
         run: |
-          curl -s -H "Authorization: token ${{ secrets.MAINTAIN_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs?per_page=50" | jq -r '.check_runs[] | select(.conclusion == "failure") | .name' | while read -r check_runs; do
-            echo "Check run: $check_runs failed"
-            exit 1
+          check_runs=$(curl -s -H "Authorization: token ${{ secrets.MAINTAIN_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/antifree/commits/$GITHUB_SHA/check-runs?per_page=50" | jq -r '.check_runs[]')
+          for check_run in $check_runs; do
+            conclusion=$(echo $check_run | jq -r '.conclusion')
+            name=$(echo $check_run | jq -r '.name')
+            title=$(echo $check_run | jq -r '.output.title')
+            summary=$(echo $check_run | jq -r '.output.summary')
+            echo "Check run $name: $title completed with $conclusion: $summary"
+            if [ "$conclusion" == "failure" ]; then
+              echo "Check $name failed: $title $summary"
+              exit 1
+            fi
           done
       # - name: Check GitHub checks
       #   uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
