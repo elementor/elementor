@@ -67,6 +67,7 @@ jobs:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           CURRENT_SHA: ${{ github.sha }}
+          IGNORE_CHECKS_LIST: "publish-to-cloud" #comma separated list of checks to ignore
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")

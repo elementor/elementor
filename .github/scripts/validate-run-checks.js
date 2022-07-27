@@ -4,7 +4,7 @@ const { repoToOwnerAndOwner, getPrCommits } = require('./repo-utils');
 const { Octokit } = require("@octokit/core");
 const { REPOSITORY, CURRENT_SHA , TOKEN } = process.env;
 const octokit = new Octokit({ auth: TOKEN });
-const ignoreChacks = ['publish-to-cloud'];
+const IGNORE_CHECKS_LIST = process.env.IGNORE_CHECKS_LIST.split(',');
 
 (async () => {
 	try {
@@ -20,7 +20,7 @@ const ignoreChacks = ['publish-to-cloud'];
 		  const checkRuns = result.data.check_runs;
 		  checkRuns.forEach(checkRun => {
 			console.log(checkRun);
-			if( ignoreChacks.includes(checkRun.name) ) {
+			if( IGNORE_CHECKS_LIST.includes(checkRun.name) ) {
 				return;
 			}
 			if (checkRun.status === 'queued' || checkRun.status === 'in_progress') {
