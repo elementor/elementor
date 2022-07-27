@@ -132,7 +132,9 @@ PanelMenu.addExitItem = () => {
 
 // Callback being used to determine when to open the modal or redirect the user.
 PanelMenu.clickExitItem = () => {
-	if ( PanelMenu.exitShouldRedirect ) {
+	const currentValue = elementor.getPreferences( 'exit_to' );
+	const defaultValue = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to.default;
+	if ( currentValue !== defaultValue || PanelMenu.exitShouldRedirect ) {
 		window.location.href = PanelMenu.getExitUrl();
 	} else {
 		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
