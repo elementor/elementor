@@ -30,19 +30,19 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'row' => [
-					'title' => esc_html_x( 'Row', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Row - horizontal', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-' . $end,
 				],
 				'column' => [
-					'title' => esc_html_x( 'Column', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Column - vertical', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-down',
 				],
 				'row-reverse' => [
-					'title' => esc_html_x( 'Reversed Row', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Row - reversed', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-' . $start,
 				],
 				'column-reverse' => [
-					'title' => esc_html_x( 'Reversed Column', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Column - reversed', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-up',
 				],
 			],
@@ -92,7 +92,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Start', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-start-h',
 				],
 				'center' => [
@@ -100,7 +100,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'icon' => 'eicon-flex eicon-justify-center-h',
 				],
 				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'End', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-end-h',
 				],
 				'space-between' => [
@@ -128,7 +128,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Start', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-start-v',
 				],
 				'center' => [
@@ -136,7 +136,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'icon' => 'eicon-flex eicon-align-center-v',
 				],
 				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'End', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
@@ -192,7 +192,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'description' => esc_html_x(
-				'Define whether the items are forced in a single line (No Wrap) or can be flowed into multiple lines (Wrap)',
+				'Items within the container can stay in a single line (No wrap), or break into multiple lines (Wrap).',
 				'Flex Container Control',
 				'elementor'
 			),

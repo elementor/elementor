@@ -731,8 +731,8 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SWITCHER,
 					'default' => '',
 					'prefix_class' => 'elementor-',
-					'label_on' => 'Hide',
-					'label_off' => 'Show',
+					'label_on' => __( 'Hide', 'elementor' ),
+					'label_off' => __( 'Show', 'elementor' ),
 					'return_value' => 'hidden-' . $breakpoint_key,
 				]
 			);

@@ -1,0 +1,21 @@
+name: Permissions 
+description: Validate user permissions for the current repository & run the workflow.
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            if [[ ${{ env.config_deployment_envirement }} == "dev" ]];then
+               echo "Pass validation in the development environment"
+               exit 0
+            fi
+             if [[ ${{ env.config_deployment_permitted }} != *"${{ github.actor }}"* ]];then
+               echo "::error::No deployment permissions have been granted to the user : ${{ github.actor }}"
+               exit 1
+            fi
+            if [[ "${{github.config_deployment_repository}}" != "${{ env.config_deployment_repository }}/"* ]];then
+               echo "::error::The deployment cannot start outside the elementor organization"
+               exit 1
+            fi
+      
