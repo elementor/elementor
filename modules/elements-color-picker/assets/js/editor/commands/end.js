@@ -8,7 +8,7 @@ export class End extends CommandBase {
 	/**
 	 * Initialize the command.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	apply() {
 		// In-Activate the component since the default behavior will in-activate it only on route change,

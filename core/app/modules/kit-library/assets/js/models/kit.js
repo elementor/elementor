@@ -1,7 +1,10 @@
 import BaseModel from './base-model';
 import Document from './document';
 
-export default class Kit extends BaseModel {
+/**
+ * @typedef {import('./content-type')} ContentType
+ */
+ export default class Kit extends BaseModel {
 	id = '';
 	title = '';
 	description = '';
@@ -21,7 +24,7 @@ export default class Kit extends BaseModel {
 	/**
 	 * Create a kit from server response
 	 *
-	 * @param kit
+	 * @param {Kit} kit
 	 */
 	static createFromResponse( kit ) {
 		return new Kit().init( {
@@ -41,9 +44,9 @@ export default class Kit extends BaseModel {
 			//
 			keywords: kit.keywords,
 			taxonomies: kit.taxonomies,
-			documents: kit.documents ?
-				kit.documents.map( ( document ) => Document.createFromResponse( document ) ) :
-				[],
+			documents: kit.documents
+				? kit.documents.map( ( document ) => Document.createFromResponse( document ) )
+				: [],
 		} );
 	}
 
@@ -51,7 +54,7 @@ export default class Kit extends BaseModel {
 	 * Get content types as param and group all the documents based on it.
 	 *
 	 * @param {ContentType[]} contentTypes
-	 * @returns {ContentType[]}
+	 * @return {ContentType[]} content types
 	 */
 	getDocumentsByTypes( contentTypes ) {
 		return contentTypes.map( ( contentType ) => {

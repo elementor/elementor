@@ -69,6 +69,11 @@ class Editor {
 	public $notice_bar;
 
 	/**
+	 * @var Promotion
+	 */
+	public $promotion;
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
@@ -540,7 +545,7 @@ class Editor {
 			],
 			'icons' => [
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
-				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library&utm_campaign=gopro&utm_medium=wp-dash' ),
+				'goProURL' => 'https://go.elementor.com/go-pro-icon-library/',
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
@@ -584,6 +589,9 @@ class Editor {
 			'responsive' => [
 				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
 				'icons_map' => Plugin::$instance->breakpoints->get_responsive_icons_classes_map(),
+			],
+			'promotion' => [
+				'elements' => $this->promotion->get_elements_promotion(),
 			],
 		];
 
@@ -867,6 +875,7 @@ class Editor {
 		Plugin::$instance->data_manager_v2->register_controller( new Data\Globals\Controller() );
 
 		$this->notice_bar = new Notice_Bar();
+		$this->promotion = new Promotion();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );

@@ -14,6 +14,8 @@ const webpack = require('webpack');
 // Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
 
+const WatchTimePlugin = require('./plugins/watch-time/index');
+
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
@@ -74,6 +76,8 @@ const frontendRulesPresets = [ [
 				'last 2 Opera versions',
 			],
 		},
+		"useBuiltIns": "usage",
+		"corejs": "3.23",
 	}
 ] ];
 
@@ -129,7 +133,8 @@ const plugins = [
 		PropTypes: 'prop-types',
 		__: ['@wordpress/i18n', '__'],
 		sprintf: ['@wordpress/i18n', 'sprintf'],
-	} )
+	} ),
+	new WatchTimePlugin(),
 ];
 
 const baseConfig = {
