@@ -3,9 +3,8 @@
 const { repoToOwnerAndOwner, getPrCommits } = require('./repo-utils');
 const { Octokit } = require("@octokit/core");
 const { REPOSITORY, CURRENT_SHA , TOKEN } = process.env;
-
-
 const octokit = new Octokit({ auth: TOKEN });
+const ignoreChacks = ['publish-to-cloud'];
 
 (async () => {
 	try {
@@ -20,13 +19,16 @@ const octokit = new Octokit({ auth: TOKEN });
 		  )
 		  const checkRuns = result.data.check_runs;
 		  checkRuns.forEach(checkRun => {
-			console.log(checkRun);
+			if( ignoreChacks.includes(checkRun.name) ) {
+				return;
+			}
 			if (checkRun.status === 'queued' || checkRun.status === 'in_progress') {
 				throw new Error(`Check run ${checkRun.name} is ${checkRun.status}, aborting deploy process, please wait for all checks to complete`);
 			}
 			if (checkRun.conclusion !== 'success') {
 				throw new Error(`Check run ${checkRun.name} failed with conclusion ${checkRun.conclusion}, message: ${checkRun.output.summary.text}`);
 			}
+			console.log(checkRun);
 		  }
 		  );
 	} catch (err) {
