@@ -93,7 +93,7 @@ class Library extends Common_App {
 	 *
 	 * After Connecting to the library, re-fetch the library data to get it up to date.
 	 *
-	 * @since 3.8.0
+	 * @since 3.7.0
 	 */
 	protected function after_connect() {
 		Api::get_library_data( true );
