@@ -153,9 +153,21 @@ export default function ImportKit() {
 				{ errorType && <ProcessFailedDialog
 					errorType={ errorType }
 					onApprove={ resetImportProcess }
-					onModalClose={ () => eventTracking( 'kit-library/modal-close', 'error modal close', null, 'load', wizardStepNum ) }
-					onError={ () => eventTracking( 'kit-library/modal-error', 'error modal load', null, 'load', wizardStepNum, `error modal load  ${ errorType }` ) }
-					onLearnMore={ () => eventTracking( 'kit-library/seek-more-info', 'error modal learn more', null, 'click', wizardStepNum ) }
+					onModalClose={ () => {
+						if ( 'kit-library' === referrer ) {
+							eventTracking( 'kit-library/modal-close', 'error modal close', null, 'load', wizardStepNum );
+						}
+					} }
+					onError={ () => {
+						if ( 'kit-library' === referrer ) {
+							eventTracking( 'kit-library/modal-error', 'error modal load', null, 'load', wizardStepNum, `error modal load  ${ errorType }` );
+						}
+					} }
+					onLearnMore={ () => {
+						if ( 'kit-library' === referrer ) {
+							eventTracking( 'kit-library/seek-more-info', 'error modal learn more', null, 'click', wizardStepNum );
+						}
+					} }
 				/>	}
 			</section>
 		</Layout>

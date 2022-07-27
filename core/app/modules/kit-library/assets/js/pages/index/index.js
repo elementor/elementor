@@ -210,7 +210,7 @@ export default function Index( props ) {
 							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
-							onFilter={ () => eventTracking( 'kit-library/kit-free-search', 'search kit', queryParams.search ) }
+							onFilter={ ( searchTerm ) => eventTracking( 'kit-library/kit-free-search', 'search kit', searchTerm ) }
 						/>
 						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }

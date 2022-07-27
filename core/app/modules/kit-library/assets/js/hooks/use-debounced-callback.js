@@ -10,7 +10,7 @@ export default function useDebouncedCallback( callback, wait, onFilter ) {
 
 				callback( ...args );
 				if ( onFilter ) {
-					onFilter();
+					onFilter( ...args );
 				}
 			};
 

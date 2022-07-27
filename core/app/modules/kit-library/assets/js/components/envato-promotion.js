@@ -10,7 +10,7 @@ export default function EnvatoPromotion( { category } ) {
 			{
 				event: eventName,
 				source: 'home page',
-				category: '/favorites' === category ? 'favorites' : 'all kits',
+				category: category && ( '/favorites' === category ? 'favorites' : 'all kits' ),
 			},
 		);
 	};

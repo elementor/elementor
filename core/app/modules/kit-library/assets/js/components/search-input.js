@@ -32,7 +32,7 @@ export default function SearchInput( props ) {
 					text={ __( 'Clear', 'elementor' ) }
 					hideText={ true }
 					className={ `eicon-close-circle eps-search-input__clear-icon eps-search-input__clear-icon--${ props.size }` }
-					onClick={ () => props.onChange( '' ) }
+					onClick={ ( e ) => props.onChange( '' ) }
 				/>
 			}
 		</div>

@@ -43,10 +43,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			} else {
 				window.open( 'http://go.elementor.com/app-import-download-failed', '_blank' );
 			}
-
-			if ( 'kit-library' === referrer ) {
-				onLearnMore?.();
-			}
+			onLearnMore?.();
 		},
 		handleOnDismiss = () => {
 			if ( 'general' === error && onDismiss ) {
@@ -60,9 +57,8 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		};
 
 		useEffect( () => {
-			if ( 'kit-library' === referrer ) {
-				onError?.();
-			}
+			console.log( 'process faild dialog' )
+			onError?.();
 		}, [] );
 	return (
 		<Dialog

@@ -23,7 +23,7 @@ export default function TaxonomiesFilter( props ) {
 			command,
 			{
 				search_term: search,
-				category: '/favorites' === props.category ? 'favorites' : 'all kits',
+				category: props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' ),
 				section,
 				source: 'home page',
 				event: eventName,

@@ -22,7 +22,7 @@ import './item-header.scss';
  * @param {boolean}  root0.isApplyLoading
  * @return {Object} result
  */
-function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, eventTracking } ) {
+function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
 
 	return useMemo( () => {
@@ -34,7 +34,10 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, ev
 				variant: 'contained',
 				color: 'primary',
 				size: 'sm',
-				onClick: onConnect,
+				onClick: ( e ) => {
+					onConnect( e );
+					onClick?.( e );
+				},
 				includeHeaderBtnClass: false,
 			};
 		}
@@ -64,12 +67,13 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, ev
 			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
 			includeHeaderBtnClass: false,
-			// onClick: () => {
-			// 	if ( eventTracking ) {
-			// 		eventTracking()
-			// 	}
-			// }
-			onClick: isApplyLoading ? null : apply,
+			onClick: ( e ) => {
+				if ( ! isApplyLoading ) {
+					apply( e );
+				}
+
+				onClick?.( e );
+			},
 		};
 	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
 }
@@ -116,18 +120,17 @@ export default function ItemHeader( props ) {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		apply,
 		isApplyLoading,
-		// eventTracking: () => {
-		// 	return appsEventTrackingDispatch(
-		// 		'kit-library/apply-kit',
-		// 		{
-		// 			kit_name: props.model.title,
-		// 			view_type_clicked: props.pageId,
-		// 			event: 'top bar apply kit',
-		// 			source: props.pageId,
-		// 		},
-		// 	),
-		// 	isApplyLoading ? null : apply
-		// },
+		onClick: () => {
+			return appsEventTrackingDispatch(
+				'kit-library/apply-kit',
+				{
+					kit_name: props.model.title,
+					view_type_clicked: props.pageId,
+					event: 'top bar apply kit',
+					source: props.pageId,
+				},
+			);
+		},
 	} );
 
 	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );

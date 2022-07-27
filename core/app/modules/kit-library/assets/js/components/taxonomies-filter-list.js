@@ -11,7 +11,7 @@ const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 const TaxonomiesFilterList = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( props.taxonomiesByType.isOpenByDefault );
 	const [ search, setSearch ] = useState( '' );
-	const category = ( '/favorites' === props.category ? 'favorites' : 'all kits' );
+	const category = props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' );
 	const taxonomies = useMemo( () => {
 		if ( ! search ) {
 			return props.taxonomiesByType.data;
@@ -55,7 +55,7 @@ const TaxonomiesFilterList = ( props ) => {
 						placeholder={ sprintf( __( 'Search %s...', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
-						onFilter={ () => props.onFilter?.( search ) }
+						onFilter={ ( searchTerm ) => props.onFilter?.( searchTerm ) }
 					/>
 			}
 			<div className="e-kit-library__tags-filter-list-container">
