@@ -124,6 +124,27 @@
 	}
 }
 
+.elementor {
+
+	.elementor-widget.elementor-widget {
+		width: var( --widget-width, var( --widget-width-custom ) );
+	}
+
+	:is( .elementor-column > .elementor-widget-wrap ) {
+
+		& > .elementor-widget.elementor-widget {
+			max-width: var( --widget-width, var( --widget-width-custom ) );
+		}
+	}
+
+	:is( .e-container ) {
+
+		& > .elementor-widget {
+			max-width: 100%;
+		}
+	}
+}
+
 .elementor-widget-wrap, .e-container {
 
 	> .elementor-element.elementor-absolute {
@@ -372,7 +393,7 @@
 	@include button-alignment(mobile);
 }
 
-// Elementor Page Title
+// Elementor Page Title	
 :root {
 	--page-title-display: block;
 }
