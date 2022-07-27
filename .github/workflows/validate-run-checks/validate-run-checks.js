@@ -1,12 +1,9 @@
 'use strict';
 
 const { repoToOwnerAndOwner, getPrCommits } = require('../../scripts/repo-utils');
-
-
-
 const { Octokit } = require("@octokit/core");
-const { REPOSITORY, CURRENT_SHA , TOKEN } = process.env;
 const octokit = new Octokit({ auth: TOKEN });
+const { REPOSITORY, CURRENT_SHA , TOKEN } = process.env;
 const IGNORE_CHECKS_LIST = process.env.IGNORE_CHECKS_LIST.split(',');
 
 (async () => {
@@ -22,7 +19,7 @@ const IGNORE_CHECKS_LIST = process.env.IGNORE_CHECKS_LIST.split(',');
 		  )
 		  const checkRuns = result.data.check_runs;
 		  checkRuns.forEach(checkRun => {
-			console.log(checkRun);
+			console.log(`${checkRun.name} ${checkRun.status} - conclusion: ${checkRun.conclusion}`);
 			if( IGNORE_CHECKS_LIST.includes(checkRun.name) ) {
 				return;
 			}
