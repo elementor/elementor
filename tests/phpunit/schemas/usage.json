@@ -650,7 +650,8 @@
 				"non-elementor-posts",
 				"library",
 				"library-details",
-				"elements"
+				"elements",
+				"documents"
 			],
 			"properties": {
 				"posts": {
@@ -854,6 +855,46 @@
 							}
 						}
 					},
+					"additionalProperties": false
+				},
+				"documents": {
+					"$id": "#/usages/documents",
+					"description": "Usage of documents per document-type.",
+					"patternProperties": {
+						"([^\\s]+)": {
+							"$id": "#/usages/documents/$document-type",
+							"type": "object",
+							"description": "Each document-type holding the settings that are used within the document-type.",
+							"patternProperties": {
+								"([^\\s]+)": {
+									"$id": "#/usages/documents/$document-type/$setting",
+									"type": "number",
+									"description": "Count of usage for each setting per document-type."
+								}
+							},
+							"additionalProperties": false
+						},
+						"additionalProperties": false
+					},
+					"examples": [
+						{
+							"kit": {
+								"custom_colors": 7,
+								"system_typography": 4,
+								"custom_typography": 4,
+								"body_background_background": 1,
+								"body_background_color": 1,
+								"default_page_template": 1,
+								"viewport_md": 1,
+								"viewport_lg": 1
+							},
+							"wp-page": {
+								"background_background": 1,
+								"background_color": 1,
+								"background_color_stop": 1
+							}
+						}
+					],
 					"additionalProperties": false
 				},
 				"settings": {
