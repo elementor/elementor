@@ -70,16 +70,25 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onMouseDown() {
-		const title = this.model.get( 'title' );
+		const title = this.model.get( 'title' ),
+			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
+			promotion = elementor.config.promotion.elements;
 
 		elementor.promotion.showDialog( {
-			/* translators: %s: Widget title. */
-			headerMessage: sprintf( __( '%s Widget', 'elementor' ), title ),
-			/* translators: %s: Widget title. */
-			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), title ),
-			top: '-7',
-			element: this.el,
-			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) || this.model.get( 'widgetType' ) ),
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			title: sprintf( promotion.title, title ),
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			content: sprintf( promotion.content, title ),
+			targetElement: this.el,
+			position: {
+				blockStart: '-7',
+			},
+			actionButton: {
+				// eslint-disable-next-line @wordpress/valid-sprintf
+				url: sprintf( promotion.action_button.url, widgetType ),
+				text: promotion.action_button.text,
+				classes: promotion.action_button.classes || [ 'elementor-button', 'elementor-button-success' ],
+			},
 		} );
 	},
 } );

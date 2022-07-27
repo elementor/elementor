@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -55,11 +55,11 @@ jobs:
       - name: Checkout source code
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Restore build from cache
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/cache@v2
