@@ -26,7 +26,7 @@ const ignoreChacks = ['publish-to-cloud'];
 				throw new Error(`Check run ${checkRun.name} is ${checkRun.status}, aborting deploy process, please wait for all checks to complete`);
 			}
 			if (checkRun.conclusion !== 'success') {
-				throw new Error(`Check run ${checkRun.name} failed with conclusion ${checkRun.conclusion}, message: ${checkRun.output.summary.text}`);
+				throw new Error(`Check run ${checkRun.name} failed with conclusion ${checkRun.conclusion}, message: ${checkRun.output.summary || checkRun.output.text || 'no message'}`);
 			}
 			console.log(checkRun);
 		  }
