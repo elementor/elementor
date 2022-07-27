@@ -342,14 +342,6 @@ class Container extends Element_Base {
 			'default' => [
 				'unit' => '%',
 			],
-			'device_args' => [
-				'desktop' => [
-					'placeholder' => [
-						'size' => '100',
-						'unit' => '%',
-					],
-				],
-			],
 			'separator' => 'none',
 		];
 
@@ -361,6 +353,14 @@ class Container extends Element_Base {
 				],
 				'condition' => [
 					'content_width' => 'full',
+				],
+				'device_args' => [
+					'desktop' => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
 				],
 			] )
 		);
