@@ -241,6 +241,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
 = 3.6.8 - 2022-07-27 =
+* Fix: Align-self set to stretch is not working as expected in Container ([#17052](https://github.com/elementor/elementor/issues/17052))
 * Fix: Bad request error is being thrown when trying to import a template
 * Fix: License status is not being updated immediately after license renewal
 
