@@ -57,7 +57,6 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		};
 
 		useEffect( () => {
-			console.log( 'process faild dialog' )
 			onError?.();
 		}, [] );
 	return (
