@@ -10,7 +10,7 @@ const octokit = new Octokit({ auth: TOKEN });
 (async () => {
 	try {
 		const { owner, repo } = repoToOwnerAndOwner(REPOSITORY);
-		const result = await octo.request(
+		const result = await octokit.request(
 			'GET /repos/{owner}/{repo}/commits/{ref}/check-runs?per_page=100',
 			{
 			  owner,
