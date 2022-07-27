@@ -73,7 +73,7 @@ jobs:
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
-          name: elementor-${{ env.PACKAGE_VERSION }}
+          name: elementor-${{ env.PACKAGE_VERSION }}#Build
           path: ${{ github.workspace }}/elementor/**/*
           if-no-files-found: error
       - name: Create Git tag
@@ -93,7 +93,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
-          files: elementor-*.zip#Build
+          files: elementor-*.zip
           prerelease: true
           body_path: temp-changelog.txt
         env:
