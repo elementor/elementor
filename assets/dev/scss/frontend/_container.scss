@@ -41,10 +41,6 @@
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
 	min-width: 0;
-	// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
-	// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
-	// Capital `M` in order to use the CSS function and not the SCSS one.
-	max-width: Min( 100%, var( --width ) );
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
@@ -58,10 +54,15 @@
 	overflow: var( --overflow );
 	transition: var( --transition );
 
-	// Default top-level containers to be centered.
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+		// Default top-level containers to be centered.
 		--margin-right: auto;
 		--margin-left: auto;
+
+		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
+		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
+		// Capital `M` in order to use the CSS function and not the SCSS one.
+		max-width: Min( 100%, var( --width ) );
 	}
 
 	.elementor-empty-view {
