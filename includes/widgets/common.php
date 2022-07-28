@@ -227,7 +227,7 @@ class Widget_Common extends Widget_Base {
 					'initial' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors_dictionary' => [
-					'' => 'inherit',
+					'' => '100%',
 				],
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
