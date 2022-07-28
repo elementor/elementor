@@ -16,7 +16,7 @@
 
 	&::after {
 		display: inline-block;
-		margin-bottom: percentage($eps-checkbox-indicator-scale-unit / 2);
+		margin-bottom: calc(#{$eps-checkbox-indicator-scale-unit} / 2 * 100%);
 		content: " ";
 		width: $eps-checkbox-indicator-size-unit;
 		height: (2 * $eps-checkbox-indicator-size-unit);

@@ -703,7 +703,6 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
-		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
