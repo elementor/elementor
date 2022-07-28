@@ -294,9 +294,6 @@ class Container extends Element_Base {
 			[
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'flex',
-				'selectors' => [
-					'{{WRAPPER}}' => '--display: {{VALUE}}',
-				],
 			]
 		);
 
