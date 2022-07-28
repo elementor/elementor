@@ -200,6 +200,10 @@ export class ContainerHelper {
 							unit: '%',
 							size: '50',
 						},
+						width_mobile: {
+							unit: '%',
+							size: '100',
+						},
 					};
 
 					ContainerHelper.createContainer( settings, newContainer, { edit: false } );
@@ -210,6 +214,10 @@ export class ContainerHelper {
 						flex_gap: {
 							unit: 'px',
 							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+						},
+						width_mobile: {
+							unit: '%',
+							size: '100',
 						},
 					}, newContainer, { edit: false } );
 
