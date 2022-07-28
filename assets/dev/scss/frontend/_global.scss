@@ -127,21 +127,9 @@
 .elementor {
 
 	// Hack to preserve the original specificity for BC purposes.
-	.elementor-widget.elementor-widget {
-		width: var( --widget-width, var( --widget-width-custom ) );
-	}
-
-	:is( .elementor-column > .elementor-column-wrap > .elementor-widget-wrap ) {
-
-		// Hack to preserve the original specificity for BC purposes.
-		& > .elementor-widget.elementor-widget {
-			max-width: var( --widget-width, var( --widget-width-custom ) );
-		}
-	}
-
 	:is( .e-container ) {
 
-		& > .elementor-widget {
+		& > .elementor-widget.elementor-widget {
 			max-width: 100%;
 		}
 	}

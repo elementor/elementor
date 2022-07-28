@@ -227,11 +227,11 @@ class Widget_Common extends Widget_Base {
 					'initial' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors_dictionary' => [
-					'' => '100%',
+					'inherit' => '100%',
 				],
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
-					'{{WRAPPER}}' => '--widget-width: {{VALUE}};',
+					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
 				],
 			]
 		);
@@ -256,7 +256,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--widget-width-custom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [ '_element_width' => 'initial' ],
 			]
