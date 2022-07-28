@@ -18,7 +18,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
 		const lookupControlIdPrefix = 'elementor-new-template__form__';
-		const templateTypeSelectId = 'elementor-new-template__form__template-type';
+		const templateTypeSelectId = `${ lookupControlIdPrefix }template-type`;
 
 		this.showLogo();
 
