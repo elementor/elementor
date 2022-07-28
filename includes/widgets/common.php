@@ -227,14 +227,11 @@ class Widget_Common extends Widget_Base {
 					'initial' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors_dictionary' => [
-					'' => '--widget-width: \'\'; --widget-max-width: auto;',
-					'inherit' => '--widget-width: 100%; --widget-max-width: 100%;',
-					'auto' => '--widget-width: auto; --widget-max-width: auto;',
-					'initial' => '--widget-width: initial; --widget-max-width: initial;',
+					'' => 'inherit',
 				],
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
-					'{{WRAPPER}}' => '{{VALUE}};',
+					'{{WRAPPER}}' => '--widget-width: {{VALUE}};',
 				],
 			]
 		);
