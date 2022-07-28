@@ -43,7 +43,7 @@ class Library extends \WP_CLI_Command {
 		if ( $network ) {
 			$blog_ids = get_sites( [
 				'fields' => 'ids',
-				'number' => 0
+				'number' => 0,
 			] );
 
 			foreach ( $blog_ids as $blog_id ) {

@@ -126,7 +126,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	private function foreach_sites( callable $callback ) {
 		$blog_ids = get_sites( [
 			'fields' => 'ids',
-			'number' => 0
+			'number' => 0,
 		] );
 
 		foreach ( $blog_ids as $blog_id ) {
