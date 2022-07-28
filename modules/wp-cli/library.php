@@ -41,7 +41,10 @@ class Library extends \WP_CLI_Command {
 		$network = isset( $assoc_args['network'] ) && is_multisite();
 
 		if ( $network ) {
-			$blog_ids = get_sites( [ 'fields' => 'ids', 'number' => 0 ] );
+			$blog_ids = get_sites( [
+				'fields' => 'ids',
+				'number' => 0
+			] );
 
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
