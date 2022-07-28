@@ -126,9 +126,9 @@
 
 .elementor {
 
-	// Hack to preserve the original specificity for BC purposes.
 	:is( .e-container ) {
 
+		// Hack to increase specificity and avoid using `!important`.
 		& > .elementor-widget.elementor-widget {
 			max-width: 100%;
 		}
