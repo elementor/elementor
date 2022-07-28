@@ -291,14 +291,14 @@ class Module extends BaseModule {
 
 		$intro_text = sprintf(
 		/* translators: 1: New line break, 2: Learn More link. */
-			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
+			__( 'Design sites faster with a Website kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
 			'<br>',
 			$intro_text_link
 		);
 
 		$content_data = [
 			'export' => [
-				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
+				'title' => esc_html__( 'Export a Website Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
 					'text' => esc_html__( 'Start Export', 'elementor' ),
@@ -310,7 +310,7 @@ class Module extends BaseModule {
 				],
 			],
 			'import' => [
-				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
+				'title' => esc_html__( 'Import a Website Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => esc_html__( 'Start Import', 'elementor' ),
@@ -326,7 +326,7 @@ class Module extends BaseModule {
 		$home_page_editor_url = $this->get_elementor_editor_home_page_url();
 		$editor_page_link = $home_page_editor_url ? $home_page_editor_url : $this->get_recently_edited_elementor_editor_page_url();
 
-		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>';
+		$info_text = esc_html__( 'Even after you import and apply a Website Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>';
 		$info_text .= sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $editor_page_link . '#e:run:panel/global/open&e:route:panel/history/revisions', esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' ) );
 		?>
 
@@ -434,7 +434,7 @@ class Module extends BaseModule {
 			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
 			'sections' => [
 				'intro' => [
-					'label' => esc_html__( 'Template Kits', 'elementor' ),
+					'label' => esc_html__( 'Website Kits', 'elementor' ),
 					'callback' => function() {
 						$this->render_import_export_tab_content();
 					},
