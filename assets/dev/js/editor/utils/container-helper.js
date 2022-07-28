@@ -99,6 +99,7 @@ export class ContainerHelper {
 					unit: 'px',
 					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
 				},
+				flex_direction_mobile: this.DIRECTION_COLUMN,
 			};
 
 		// Create a parent container to contain all of the sub containers.
@@ -127,6 +128,10 @@ export class ContainerHelper {
 				width: {
 					unit: '%',
 					size,
+				},
+				width_mobile: {
+					unit: '%',
+					size: '100',
 				},
 			}, parentContainer, { edit: false } );
 		} );
