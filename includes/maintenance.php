@@ -38,7 +38,6 @@ class Maintenance {
 			static::create_default_kit(
 				get_sites( [
 					'fields' => 'ids',
-					'number' => 0
 				] );
 			);
 
