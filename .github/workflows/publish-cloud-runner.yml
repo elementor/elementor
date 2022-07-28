@@ -1,0 +1,34 @@
+name: Elementor Tests / Init
+
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release branch version'
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+      - name: get configuration
+        id: configuration
+        uses: antifree/json-to-variables@v1.0.1
+        with: 
+            filename: './.github/workflows/config.json'
+            prefix: config
+      - name: Test permissions
+        uses: ./.github/workflows/permissions
+      - name: Elementor Tests / Init
+        env:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
+          REMOTE_TESTS_REPO: ${{ secrets.REMOTE_TESTS_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
+        uses: peter-evans/repository-dispatch@d57191493a947e8da4f7bf3fbc389e5b20f21cdf
+        with:
+          token: ${{ env.TOKEN }}
+          repository: ${{ env.REMOTE_TESTS_REPO }}
+          event-type: remote-tests
+          client-payload: '{ "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.event.pull_request.head.sha || github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'
