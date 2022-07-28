@@ -17,7 +17,7 @@ export default function HeaderButtons( props ) {
 
 	if ( props.buttons.length ) {
 		const buttons = props.buttons.map( ( button ) => {
-			return <Button key={ button.id } {...button } />;
+			return <Button key={ button.id } { ...button } />;
 		} );
 
 		tools = (

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
 
 import './error-screen.scss';
@@ -5,7 +6,7 @@ import './error-screen.scss';
 export default function ErrorScreen( props ) {
 	return (
 		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
-			<img src={ `${ elementorAppConfig.assets_url }images/no-search-results.svg` }/>
+			<img src={ `${ elementorAppConfig.assets_url }images/no-search-results.svg` } />
 			<Heading
 				tag="h3"
 				variant="display-1"

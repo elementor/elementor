@@ -78,7 +78,7 @@ export class Paste extends CommandHistory {
 							{
 								at: index,
 								edit: false,
-							} )
+							} ),
 						);
 						index++;
 					}

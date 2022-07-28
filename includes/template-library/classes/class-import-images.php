@@ -4,6 +4,7 @@ namespace Elementor\TemplateLibrary\Classes;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -111,7 +112,7 @@ class Import_Images {
 			// Used when called to import a directly-uploaded file.
 			$filename = $attachment['name'];
 
-			$file_content = file_get_contents( $attachment['tmp_name'] );
+			$file_content = Utils::file_get_contents( $attachment['tmp_name'] );
 		} else {
 			// Used when attachment information is passed to this method.
 			if ( ! empty( $attachment['id'] ) ) {

@@ -20,7 +20,7 @@ const KitListItem = ( props ) => {
 				>
 					{ props.model.title }
 				</Heading>
-				<FavoritesActions id={ props.model.id } isFavorite={ props.model.isFavorite }/>
+				<FavoritesActions id={ props.model.id } isFavorite={ props.model.isFavorite } />
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
@@ -29,7 +29,7 @@ const KitListItem = ( props ) => {
 							<Badge
 								variant="sm"
 								className="e-kit-library__kit-item-subscription-plan-badge"
-								style={{ backgroundColor: subscriptionPlan.color }}
+								style={ { backgroundColor: subscriptionPlan.color } }
 							>
 								{ subscriptionPlan.label }
 							</Badge>

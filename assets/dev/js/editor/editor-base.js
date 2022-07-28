@@ -24,6 +24,9 @@ import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 
+/**
+ * @typedef {import('./container/container')} Container
+ */
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
 
@@ -60,7 +63,7 @@ export default class EditorBase extends Marionette.Application {
 		elementorCommon.helpers.softDeprecated(
 			'elementor.debug',
 			'3.0.0',
-			'elementorCommon.debug'
+			'elementorCommon.debug',
 		);
 
 		return elementorCommon.debug;
@@ -314,7 +317,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	/**
-	 * @returns {Container}
+	 * @return {Container} container
 	 */
 	getPreviewContainer() {
 		return this.getPreviewView().getContainer();
@@ -383,7 +386,7 @@ export default class EditorBase extends Marionette.Application {
 	/**
 	 * Toggle sortable state globally.
 	 *
-	 * @param state
+	 * @param {boolean} state
 	 */
 	toggleSortableState( state = true ) {
 		const sections = [
@@ -507,6 +510,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getCurrentElement() {
+		// eslint-disable-next-line @wordpress/no-global-active-element
 		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
 		if ( ! isPreview && ! elementorCommonConfig.isTesting ) {
@@ -737,7 +741,7 @@ export default class EditorBase extends Marionette.Application {
 
 	preventClicksInsideEditor() {
 		this.$previewContents.on( 'submit', ( event ) =>
-			event.preventDefault()
+			event.preventDefault(),
 		);
 
 		// Cannot use arrow function here since it use `this.contains`.
@@ -1296,7 +1300,7 @@ export default class EditorBase extends Marionette.Application {
 
 		// Set the desktop to be the first device, so desktop will the the parent of all devices.
 		devices.unshift(
-			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ]
+			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ],
 		);
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {

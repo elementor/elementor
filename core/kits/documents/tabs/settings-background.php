@@ -27,7 +27,7 @@ class Settings_Background extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-background';
+		return 'https://go.elementor.com/global-background/';
 	}
 
 	protected function register_tab_controls() {
