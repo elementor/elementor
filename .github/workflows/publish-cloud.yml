@@ -1,7 +1,9 @@
 name: Publish Cloud
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
-on: 
+on:
+  repository_dispatch:
+    types: [publish-cloud-core]
   workflow_dispatch:
     inputs:
       version:
@@ -31,7 +33,7 @@ jobs:
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
         with:
-          INPUT_VERSION: ${{ github.event.inputs.version }}
+          INPUT_VERSION: ${{ github.event.inputs.version  ||  github.event.client_payload.version }}
       - name: Bump version
         id: bump_version_step
         uses: ./.github/workflows/bump-version
@@ -61,6 +63,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.RELEASE_BRANCH }}
+      - name: Validate Run Checks
+        uses : ./.github/workflows/validate-run-checks
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          CURRENT_SHA: ${{ github.sha }}
+          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
@@ -98,6 +107,12 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Generate Release JSON
+        uses : ./.github/workflows/generate-release-json
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ secrets.JSON_BRANCH }}
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
