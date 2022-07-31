@@ -1,4 +1,4 @@
-name: Elementor Tests / Init
+name: Publish Cloud Runner
 
 on: 
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
             prefix: config
       - name: Test permissions
         uses: ./.github/workflows/permissions
-      - name: Elementor Tests / Init
+      - name: Publish Remoate Branch
         env:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
           REMOTE_TESTS_REPO: ${{ secrets.REMOTE_TESTS_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
@@ -30,5 +30,5 @@ jobs:
         with:
           token: ${{ env.TOKEN }}
           repository: ${{ env.REMOTE_TESTS_REPO }}
-          event-type: remote-tests
-          client-payload: '{ "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.event.pull_request.head.sha || github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'
+          event-type: publish-cloud-core
+          client-payload: '{ "repository": "${{ env.HEAD_REPO }}" , "version" : "${{ github.event.inputs.version }}" , "sha": "${{ github.event.pull_request.head.sha || github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'
