@@ -2,8 +2,6 @@ name: Publish Cloud
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
 on:
-  repository_dispatch:
-    types: [publish-cloud-core]
   workflow_dispatch:
     inputs:
       version:
@@ -33,7 +31,7 @@ jobs:
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
         with:
-          INPUT_VERSION: ${{ github.event.inputs.version  ||  github.event.client_payload.version }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
       - name: Bump version
         id: bump_version_step
         uses: ./.github/workflows/bump-version
