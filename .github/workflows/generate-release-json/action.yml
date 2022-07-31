@@ -1,0 +1,26 @@
+name: Generate Release JSON
+description: Validate run checks for the current version.
+
+inputs:
+  TOKEN:
+    required: true
+  BRANCH:
+    required: true
+  REPOSITORY:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout next release branch
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.BRANCH }}
+    - shell: bash
+      env:
+        TOKEN: ${{ inputs.TOKEN }}
+        REPOSITORY: ${{ inputs.REPOSITORY }}
+        BRANCH: ${{ inputs.BRANCH }}
+      run: |
+            npm install --no-package-lock --no-save @octokit/core@3.4.0
+            node .github/workflows/generate-release-json/generate-release-json.js

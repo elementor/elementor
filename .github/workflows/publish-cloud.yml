@@ -107,6 +107,12 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Generate Release JSON
+        uses : ./.github/workflows/generate-release-json
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ secrets.JSON_BRANCH }}
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
