@@ -7,8 +7,9 @@ export default class LocalizedValueStore {
 	 * Receives the incoming event and returns the stored localized value
 	 * English values will be returned as is
 	 * Paste will return an empty value
-	 * @param event - the incoming event
-	 * @returns string
+	 *
+	 * @param  event - the incoming event
+	 * @return string
 	 */
 
 	appendAndParseLocalizedData( event ) {

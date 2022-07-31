@@ -8,7 +8,7 @@ elementorModules.common = {
 	get Component() {
 		// `elementorCommon` isn't available during it self initialize.
 		setTimeout( () => {
-			elementorCommon.helpers.softDeprecated( 'elementorModules.common.Component', '2.9.0',
+			elementorDevTools.deprecation.deprecated( 'elementorModules.common.Component', '2.9.0',
 				'$e.modules.ComponentBase' );
 		}, 2000 );
 		return ComponentBase;
@@ -17,7 +17,7 @@ elementorModules.common = {
 	get ComponentModal() {
 		// `elementorCommon` isn't available during it self initialize.
 		setTimeout( () => {
-			elementorCommon.helpers.softDeprecated( 'elementorModules.common.ComponentModal', '2.9.0',
+			elementorDevTools.deprecation.deprecated( 'elementorModules.common.ComponentModal', '2.9.0',
 				'$e.modules.ComponentModalBase' );
 		}, 2000 );
 		return ComponentModalBase;
@@ -26,7 +26,7 @@ elementorModules.common = {
 	get HookBreak() {
 		// `elementorCommon` isn't available during it self initialize.
 		setTimeout( () => {
-			elementorCommon.helpers.softDeprecated( 'elementorModules.common.HookBreak', '2.9.0',
+			elementorDevTools.deprecation.deprecated( 'elementorModules.common.HookBreak', '2.9.0',
 				'$e.modules.HookBreak' );
 		}, 2000 );
 		return HookBreak;

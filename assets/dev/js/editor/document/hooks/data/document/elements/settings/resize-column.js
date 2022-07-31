@@ -20,7 +20,7 @@ export class ResizeColumn extends After {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		containers.forEach( ( /**Container*/ container ) => {
+		containers.forEach( ( /** Container*/ container ) => {
 			this.resizeColumn( container, args.settings._inline_size );
 		} );
 

@@ -33,7 +33,7 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-layout';
+		return 'https://go.elementor.com/global-layout/';
 	}
 
 	protected function register_tab_controls() {
@@ -80,8 +80,26 @@ class Settings_Layout extends Tab_Base {
 
 		$is_container_active = Plugin::instance()->experiments->is_feature_active( 'container' );
 
+		if ( $is_container_active ) {
+			$this->add_responsive_control(
+				'container_padding',
+				[
+					'label' => esc_html__( 'Container Padding', 'elementor' ),
+					'type' => Controls_Manager::DIMENSIONS,
+					'size_units' => [ 'px', 'em', '%', 'rem' ],
+					'default' => [
+						'unit' => 'px',
+					],
+					'description' => esc_html__( 'Sets the default space inside the container (Default is 10px)', 'elementor' ),
+					'selectors' => [
+						'.e-container' => '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
+					],
+				]
+			);
+		}
+
 		$widgets_space_label = $is_container_active
-			? esc_html__( 'Elements Gap', 'elementor' )
+			? esc_html__( 'Gap between elements', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
 
 		$this->add_control(

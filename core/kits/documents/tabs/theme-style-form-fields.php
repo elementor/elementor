@@ -30,7 +30,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-theme-style-form-fields';
+		return 'https://go.elementor.com/global-theme-style-form-fields/';
 	}
 
 	protected function register_tab_controls() {

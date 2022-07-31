@@ -1,10 +1,10 @@
-/* global jQuery, ElementorGutenbergSettings */
+/* global ElementorGutenbergSettings */
 ( function( $ ) {
 	'use strict';
 
 	var ElementorGutenbergApp = {
 
-		cacheElements: function() {
+		cacheElements() {
 			var self = this;
 
 			self.isElementorMode = ElementorGutenbergSettings.isElementorMode;
@@ -25,7 +25,7 @@
 			} );
 		},
 
-		buildPanel: function() {
+		buildPanel() {
 			var self = this;
 
 			if ( ! self.cache.$gutenberg.find( '#elementor-switch-mode' ).length ) {
@@ -63,7 +63,7 @@
 			}
 		},
 
-		bindEvents: function() {
+		bindEvents() {
 			var self = this;
 
 			self.cache.$switchModeButton.on( 'click', function() {
@@ -76,7 +76,7 @@
 							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
-						onConfirm: function() {
+						onConfirm() {
 							const wpEditor = wp.data.dispatch( 'core/editor' );
 
 							wpEditor.editPost( { gutenberg_elementor_mode: false } );
@@ -93,7 +93,7 @@
 			} );
 		},
 
-		redirectWhenSave: function() {
+		redirectWhenSave() {
 			var self = this;
 
 			setTimeout( function() {
@@ -105,17 +105,17 @@
 			}, 300 );
 		},
 
-		animateLoader: function() {
+		animateLoader() {
 			this.cache.$editorPanelButton.addClass( 'elementor-animate' );
 		},
 
-		toggleStatus: function() {
+		toggleStatus() {
 			jQuery( 'body' )
 				.toggleClass( 'elementor-editor-active', this.isElementorMode )
 				.toggleClass( 'elementor-editor-inactive', ! this.isElementorMode );
 		},
 
-		init: function() {
+		init() {
 			this.cacheElements();
 		},
 	};

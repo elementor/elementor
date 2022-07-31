@@ -25,7 +25,7 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 		},
 	},
 
-	getCurrentMode: function() {
+	getCurrentMode() {
 		if ( elementor.templates.getFilter( 'text' ) ) {
 			return 'noResults';
 		}
@@ -37,7 +37,7 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 		return 'empty';
 	},
 
-	onRender: function() {
+	onRender() {
 		var modeStrings = this.modesStrings[ this.getCurrentMode() ];
 
 		this.ui.title.html( modeStrings.title );
