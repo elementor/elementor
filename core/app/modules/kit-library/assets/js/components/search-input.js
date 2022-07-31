@@ -6,7 +6,11 @@ import './search-input.scss';
 
 export default function SearchInput( props ) {
 	const [ localValue, setLocalValue ] = useState( props.value || '' );
-	const debouncedOnChange = useDebouncedCallback( ( value ) => props.onChange( value ), props.debounceTimeout, props.onFilter );
+	const onChange = ( value ) => {
+		props.onChange( value );
+		props.onFilter( value );
+	};
+	const debouncedOnChange = useDebouncedCallback( ( value ) => onChange( value ), props.debounceTimeout );
 
 	useEffect( () => {
 		if ( props.value !== localValue ) {
@@ -32,7 +36,7 @@ export default function SearchInput( props ) {
 					text={ __( 'Clear', 'elementor' ) }
 					hideText={ true }
 					className={ `eicon-close-circle eps-search-input__clear-icon eps-search-input__clear-icon--${ props.size }` }
-					onClick={ ( e ) => props.onChange( '' ) }
+					onClick={ () => props.onChange( '' ) }
 				/>
 			}
 		</div>

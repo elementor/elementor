@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 
-import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -16,18 +16,22 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
-		{ referrer, includes, wizardStepNum } = sharedContext.data,
+		{ referrer, includes, currentPage } = sharedContext.data,
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ navigateToMainScreen } = useImportActions(),
 		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
-		eventTracking = ( command, eventName ) => appsEventTrackingDispatch(
-			command,
-			{
-				source: 'import',
-				step: wizardStepNum,
-				event: eventName,
-			},
-		),
+		eventTracking = ( command, eventName ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						source: 'import',
+						step: currentPage,
+						event: eventName,
+					},
+				);
+			}
+		},
 
 		getFooter = () => {
 			return (
@@ -36,24 +40,14 @@ export default function ImportContent() {
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
-					onPreviousClick={ () => {
-						if ( 'kit-library' === referrer ) {
-							eventTracking( 'kit-library/go-back', 'previous button' );
-						}
-					} }
-					onImportClick={ () => {
-						if ( 'kit-library' === referrer ) {
-							eventTracking( 'kit-library/approve-import', 'approve-import' );
-						}
-					} }
+					onPreviousClick={ () => eventTracking( 'kit-library/go-back', 'previous button' ) }
+					onImportClick={ () => eventTracking( 'kit-library/approve-import', 'approve-import' ) }
 				/>
 			);
 		};
 
 	useEffect( () => {
-		if ( 'kit-library' === referrer && ! wizardStepNum ) {
-			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 1 } );
-		}
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportContent ) } );
 	}, [] );
 	// On file change.
 	useEffect( () => {

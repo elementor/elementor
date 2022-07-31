@@ -14,7 +14,7 @@ export default function Conflict( props ) {
 	const importContext = useContext( ImportContext ),
 		sharedContext = useContext( SharedContext ),
 		manifest = importContext.data.uploadedData?.manifest,
-		{ referrer, wizardStepNum } = sharedContext.data,
+		{ referrer, currentPage } = sharedContext.data,
 		getConflictTitle = ( id ) => {
 			const templateType = manifest.templates[ id ].doc_type,
 				summaryTitle = elementorAppConfig[ 'import-export' ].summaryTitles.templates?.[ templateType ];
@@ -55,7 +55,7 @@ export default function Conflict( props ) {
 				action: command,
 				event: eventName,
 				source: 'import',
-				step: wizardStepNum,
+				step: currentPage,
 			},
 		);
 

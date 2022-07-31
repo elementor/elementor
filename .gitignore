@@ -32,4 +32,3 @@ test-results/
 tests/playwright/config/storageState.json
 tests/playwright/config/local.config.js
 
-.run/watch-styles.run.xml

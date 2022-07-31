@@ -17,7 +17,7 @@ import './kit-content.scss';
 export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
 		sharedContext = useContext( SharedContext ),
-		{ referrer, wizardStepNum } = sharedContext.data,
+		{ referrer, currentPage } = sharedContext.data,
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
@@ -36,16 +36,20 @@ export default function KitContent( { contentData, hasPro } ) {
 		setContainerHoverState = ( index, state ) => {
 			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
 		},
-		eventTracking = ( command, eventName, chosenPart ) => appsEventTrackingDispatch(
-			command,
-			{
-				site_part: chosenPart,
-				action: command,
-				event: eventName,
-				source: 'import',
-				step: wizardStepNum,
-			},
-		);
+		eventTracking = ( command, eventName, chosenPart ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					`kit-library/${ command }`,
+					{
+						site_part: chosenPart,
+						action: command,
+						event: eventName,
+						source: 'import',
+						step: currentPage,
+					},
+				);
+			}
+		};
 
 	if ( ! contentData.length ) {
 		return null;
@@ -69,10 +73,8 @@ export default function KitContent( { contentData, hasPro } ) {
 											className="e-app-export-kit-content__checkbox"
 											referrer={ referrer }
 											onCheck={ ( event, chosenPart ) => {
-												if ( 'kit-library' === referrer ) {
-													const command = event.target.checked ? 'kit-library/check' : 'kit-library/uncheck';
-													eventTracking( command, 'kit parts selection', chosenPart );
-												}
+												const command = event.target.checked ? 'check' : 'uncheck';
+												eventTracking( command, 'kit parts selection', chosenPart );
 											} }
 										/>
 

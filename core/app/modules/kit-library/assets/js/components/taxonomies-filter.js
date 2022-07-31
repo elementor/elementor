@@ -19,7 +19,7 @@ export default function TaxonomiesFilter( props ) {
 			} ) )
 			.filter( ( { data } ) => data.length > 0 );
 	}, [ props.taxonomies ] ),
-		eventTracking = ( command, eventName, search, section, eventType = null ) => appsEventTrackingDispatch(
+		eventTracking = ( command, eventName, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
 			command,
 			{
 				search_term: search,

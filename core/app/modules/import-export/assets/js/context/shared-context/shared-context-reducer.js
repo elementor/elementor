@@ -14,8 +14,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, customPostTypes: payload };
 		case 'SET_SELECTED_CPT':
 			return { ...state, selectedCustomPostTypes: payload };
-		case 'SET_WIZARD_STEP_NUM':
-			return { ...state, wizardStepNum: payload };
+		case 'SET_CURRENT_PAGE_NAME':
+			return { ...state, currentPage: payload };
 		default:
 			return state;
 	}

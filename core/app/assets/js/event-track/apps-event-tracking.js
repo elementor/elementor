@@ -1,34 +1,31 @@
 export const appsEventTrackingDispatch = ( command, eventParams ) => {
+	const detailsKeys = [ 'action', 'category', 'event', 'event_type', 'site_part', 'source', 'step' ];
+	const dataKeys = [ 'document_type', 'document_name', 'element', 'error_type', 'grid_location', 'item', 'kit_name', 'layout', 'search_term', 'section', 'site_area', 'site_part', 'sort_direction', 'sort_type', 'tag', 'view_type_clicked' ];
+	const data = {};
+	const details = {};
 
-	const details = {
-		action: eventParams.action || {},
-		category: eventParams.category || {},
-		event: eventParams.event || {},
-		event_type: eventParams.event_type || 'click',
-		site_part: eventParams.site_part || {},
-		source: eventParams.source || {},
-		step: eventParams.step || {},
-	};
-	const data = {
-		document_type: eventParams.document_type || {},
-		document_name: eventParams.document_name || {},
-		element: eventParams.element || {},
-		error_type: eventParams.errorType || {},
-		grid_location: eventParams.grid_location || {},
-		item: eventParams.item || {},
-		kit_name: eventParams.kit_name || {},
-		layout: eventParams.layout || {},
-		search_term: eventParams.searchTerm || {},
-		section: eventParams.section || {},
-		site_area: eventParams.site_area || {},
-		site_part: eventParams.site_part || {},
-		sort_direction: eventParams.sort_direction || {},
-		sort_type: eventParams.sort_type || {},
-		tag: eventParams.tag || {},
-		view_type_clicked: eventParams.view_type_clicked || {},
+	const init = () => {
+		objectCreator( detailsKeys, data );
+		objectCreator( dataKeys, details );
+		data.placement = 'kit-library';
+
+		if ( ! Object.keys( length ).length ) {
+			data.details = details;
+		}
 	};
 
-	data.details = details;
+	// Add existing event params to the data object.
+	const objectCreator = ( array, obj ) => {
+		for ( const key of array ) {
+			if ( eventParams.hasOwnProperty( key ) && eventParams[ key ] !== null ) {
+				obj[ key ] = eventParams[ key ];
+			}
+		}
+		return obj;
+	};
+
+	init();
 
 	$e.run( command, data );
+	console.log( 'appsEventTrackingDispatch', command, JSON.stringify( data ) );
 };

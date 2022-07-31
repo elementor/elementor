@@ -3,12 +3,9 @@ import { useNavigate } from '@reach/router';
 
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
-import { SharedContext } from 'elementor/core/app/modules/import-export/assets/js/context/shared-context/shared-context-provider';
 
 export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess, onPreviousClick, onImportClick } ) {
 	const navigate = useNavigate(),
-		sharedContext = useContext( SharedContext ),
-		{ wizardStepNum } = sharedContext.data || {},
 		getNextPageUrl = () => {
 			if ( hasConflicts ) {
 				return 'import/resolver';
@@ -19,9 +16,6 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 			return 'import/process';
 		};
 
-	useEffect( () => {
-		sharedContext.dispatch( { type: 'SET_WIZARD_STEP', payload: wizardStepNum + 1 } );
-	}, [] );
 	return (
 		<ActionsFooter>
 			<Button
@@ -30,7 +24,6 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				onClick={ () => {
 					onPreviousClick?.();
 					if ( hasPlugins ) {
-						sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
 						navigate( 'import/plugins/' );
 					} else {
 						onResetProcess();
@@ -44,7 +37,6 @@ export default function ImportContentFooter( { hasPlugins, hasConflicts, isImpor
 				color={ isImportAllowed ? 'primary' : 'disabled' }
 				onClick={ () => {
 					onImportClick?.();
-					sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 					return isImportAllowed && navigate( getNextPageUrl() );
 				} }
 			/>

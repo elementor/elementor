@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../context/import-context/import-context-provider';
-import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -32,7 +32,7 @@ export default function ImportPlugins() {
 		{ pluginsData } = usePluginsData( response.data ),
 		{ importPluginsData } = useImportPluginsData( kitPlugins, pluginsData ),
 		{ missing, existing, minVersionMissing, proData } = importPluginsData || {},
-		{ data: { referrer, wizardStepNum } } = sharedContext,
+		{ referrer, currentPage } = sharedContext.data || {},
 		handleRequiredPlugins = () => {
 			if ( missing.length ) {
 				// Saving globally the plugins data that the kit requires in order to work properly.
@@ -50,23 +50,25 @@ export default function ImportPlugins() {
 				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
 		},
-		eventTracking = ( command, eventName ) => appsEventTrackingDispatch(
-			command,
-			{
-				source: 'import',
-				step: wizardStepNum,
-				event: eventName,
-			},
-		);
+		eventTracking = ( command, eventName ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						source: 'import',
+						step: currentPage,
+						event: eventName,
+					},
+				);
+			}
+		}
 
 	// On load.
 	useEffect( () => {
 		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}
-		if ( 'kit-library' === referrer && ! wizardStepNum ) {
-			sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 1 } );
-		}
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportPlugins ) } );
 	}, [] );
 
 	// On plugins data ready.
@@ -82,16 +84,8 @@ export default function ImportPlugins() {
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter
-			onPreviousClick={ () => {
-				if ( 'kit-library' === referrer ) {
-					eventTracking( 'kit-library/go-back', 'previous button' );
-				}
-			} }
-			onNextClick={ () => {
-				if ( 'kit-library' === referrer ) {
-					eventTracking( 'kit-library/approve-selection', 'next button' );
-				}
-			} }
+			onPreviousClick={ () => eventTracking( 'kit-library/go-back', 'previous button' ) }
+			onNextClick={ () => eventTracking( 'kit-library/approve-selection', 'next button' ) }
 		/> } >
 			<section className="e-app-import-plugins">
 				{ ! importPluginsData && <Loader absoluteCenter />	}

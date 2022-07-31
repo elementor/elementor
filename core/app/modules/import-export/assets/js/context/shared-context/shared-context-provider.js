@@ -12,7 +12,7 @@ export default function SharedContextProvider( props ) {
 		referrer: null,
 		customPostTypes: [],
 		selectedCustomPostTypes: [],
-		wizardStepNum: null,
+		currentPage: null,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 
@@ -25,4 +25,8 @@ export default function SharedContextProvider( props ) {
 
 SharedContextProvider.propTypes = {
 	children: PropTypes.object.isRequired,
+};
+
+export const getComponentName = ( component ) => {
+	return component.name || 'Component';
 };

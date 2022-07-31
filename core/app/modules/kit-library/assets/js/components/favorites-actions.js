@@ -14,7 +14,7 @@ export default function FavoritesActions( props ) {
 				grid_location: gridLocation,
 				search_term: searchTerm,
 				kit_name: kitName,
-				source: '/' === source ? 'home page' : 'overview',
+				source: source && ( '/' === source ? 'home page' : 'overview' ),
 				event: eventName,
 				event_type: 'search',
 				action,

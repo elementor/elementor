@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react';
 
-export default function useDebouncedCallback( callback, wait, onFilter ) {
+export default function useDebouncedCallback( callback, wait ) {
 	const timeout = useRef();
 
 	return useCallback(
@@ -9,9 +9,6 @@ export default function useDebouncedCallback( callback, wait, onFilter ) {
 				clearTimeout( timeout.current );
 
 				callback( ...args );
-				if ( onFilter ) {
-					onFilter( ...args );
-				}
 			};
 
 			clearTimeout( timeout.current );

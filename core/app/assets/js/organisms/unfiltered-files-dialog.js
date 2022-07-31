@@ -49,7 +49,7 @@ export default function UnfilteredFilesDialog( props ) {
 		if ( show && onLoad ) {
 			onLoad();
 		}
-	}, [ show, onLoad ] );
+	}, [ show ] );
 
 	if ( ! show ) {
 		return null;

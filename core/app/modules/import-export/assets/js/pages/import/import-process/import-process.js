@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -25,7 +25,7 @@ export default function ImportProcess() {
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
-		{ includes, selectedCustomPostTypes, wizardStepNum } = sharedContext.data || {},
+		{ includes, selectedCustomPostTypes, currentPage } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
@@ -70,7 +70,7 @@ export default function ImportProcess() {
 					{
 						event: eventName,
 						source: 'import',
-						wizardStepNum,
+						currentPage,
 						event_type: eventType,
 					},
 				);
@@ -97,6 +97,7 @@ export default function ImportProcess() {
 		} else {
 			navigate( 'import' );
 		}
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportProcess ) } );
 	}, [] );
 
 	// Starting the import process.
@@ -188,9 +189,7 @@ export default function ImportProcess() {
 						onCancelProcess();
 					} }
 					referrer={ sharedContext.data.referrer }
-					onLoad={ useCallback( () => {
-						eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load' );
-					}, [] ) }
+					onLoad={ () => eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load' ) }
 					onClose={ () => {
 						eventTracking( 'kit-library/close', 'unfiltered file modal skip button' );
 						onReady();

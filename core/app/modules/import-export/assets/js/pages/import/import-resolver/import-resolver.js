@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -23,14 +23,13 @@ export default function ImportResolver() {
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		conflicts = importContext.data?.uploadedData?.conflicts || {},
-		{ referrer, wizardStepNum } = sharedContext.data || {},
+		{ referrer, currentPage } = sharedContext.data || {},
 		getFooter = () => (
 			<ActionsFooter>
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
 					onClick={ () => {
-						sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum - 1 } );
 						navigate( 'import/content' );
 					} }
 				/>
@@ -40,7 +39,6 @@ export default function ImportResolver() {
 					variant="contained"
 					color="primary"
 					onClick={ () => {
-						sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: wizardStepNum + 1 } );
 						const url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
 						importContext.dispatch( { type: 'SET_IS_RESOLVED', payload: true } );
 						navigate( url );
@@ -62,20 +60,25 @@ export default function ImportResolver() {
 
 			return false;
 		},
-		eventTracking = ( command, eventName, sitePart ) => appsEventTrackingDispatch(
-			'kit-library/check-item',
-			{
-				site_part: sitePart,
-				event: eventName,
-				source: 'import',
-				step: wizardStepNum,
-			},
-		);
+		eventTracking = ( command, eventName, sitePart ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					'kit-library/check-item',
+					{
+						site_part: sitePart,
+						event: eventName,
+						source: 'import',
+						step: currentPage,
+					},
+				);
+			}
+		};
 
 	useEffect( () => {
 		if ( ! importContext.data.uploadedData ) {
 			navigate( 'import' );
 		}
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportResolver ) } );
 	}, [] );
 
 	return (
@@ -110,11 +113,7 @@ export default function ImportResolver() {
 										<Conflict
 											importedId={ parseInt( id ) }
 											conflictData={ conflict[ 0 ] }
-											onClick={ ( title ) => {
-												if ( 'kit-library' === referrer ) {
-													eventTracking( 'kit-library/check-item', 'open kit part - new tab', title );
-												}
-											} }
+											onClick={ ( title ) => eventTracking( 'kit-library/check-item', 'open kit part - new tab', title ) }
 										/>
 									</List.Item>
 								) ) }

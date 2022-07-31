@@ -14,17 +14,21 @@ export default function Layout( props ) {
 	const [ showInfoModal, setShowInfoModal ] = useState( false ),
 		sharedContext = useContext( SharedContext ),
 		{ referrer } = useQueryParams().getAll(),
-		{ wizardStepNum } = sharedContext.data,
-		eventTracking = ( command, eventName, element = null, eventType = 'click', step = null ) => appsEventTrackingDispatch(
-			command,
-			{
-				event: eventName,
-				element,
-				source: 'import',
-				event_type: eventType,
-				step,
-			},
-		),
+		{ currentPage } = sharedContext.data,
+		eventTracking = ( command, eventName, element = null, eventType = 'click', step = null ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						event: eventName,
+						element,
+						source: 'import',
+						event_type: eventType,
+						step,
+					},
+				);
+			}
+		},
 		onModalClose = ( e, command ) => {
 			const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
 			const eventName = 'overlay' === element ? 'background page' : 'info modal close';
@@ -57,18 +61,13 @@ export default function Layout( props ) {
 			return {
 				...infoButtonProps,
 				onClick: () => {
-					if ( 'kit-library' === referrer ) {
-						eventTracking( 'kit-library/seek-more-info', 'top panel info' );
-					}
+					eventTracking( 'kit-library/seek-more-info', 'top panel info' );
 					setShowInfoModal( true );
 				},
 			};
 		},
 		onClose = () => {
-			if ( 'kit-library' === referrer ) {
-				eventTracking( 'kit-library/close', 'import export close', null, 'click', wizardStepNum );
-			}
-
+			eventTracking( 'kit-library/close', 'import export close', null, 'click', currentPage );
 			window.top.location = elementorAppConfig.admin_url;
 		},
 		config = {

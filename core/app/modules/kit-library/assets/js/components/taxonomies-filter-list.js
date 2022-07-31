@@ -55,7 +55,11 @@ const TaxonomiesFilterList = ( props ) => {
 						placeholder={ sprintf( __( 'Search %s...', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
-						onFilter={ ( searchTerm ) => props.onFilter?.( searchTerm ) }
+						onFilter={
+							( searchTerm ) => {
+								props.onFilter?.( searchTerm )
+							}
+						}
 					/>
 			}
 			<div className="e-kit-library__tags-filter-list-container">

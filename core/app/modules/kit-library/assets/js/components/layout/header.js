@@ -3,7 +3,7 @@ import HeaderButtons from '../../../../../../assets/js/layout/header-buttons';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function Header( props ) {
-	const eventTracking = ( command, eventName, source, kitName = null ) => appsEventTrackingDispatch(
+	const eventTracking = ( command, eventName, source = null, kitName = null ) => appsEventTrackingDispatch(
 			command,
 			{
 				kit_name: kitName,
@@ -12,7 +12,7 @@ export default function Header( props ) {
 			},
 		),
 		onClose = () => {
-			eventTracking( 'kit-library/close', 'top bar close kit library', props.pageId, props.kitName );
+			eventTracking( 'kit-library/close', 'top bar close kit library', props?.pageId, props.kitName );
 			window.top.location = elementorAppConfig.admin_url;
 		};
 

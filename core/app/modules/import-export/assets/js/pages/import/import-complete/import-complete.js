@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -43,14 +43,16 @@ export default function ImportComplete() {
 			};
 		},
 		eventTracking = ( command, eventName, source, eventType = null ) => {
-			appsEventTrackingDispatch(
-				command,
-				{
-					event,
-					source,
-					event_type: eventType,
-				},
-			);
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						event,
+						source,
+						event_type: eventType,
+					},
+				);
+			}
 		},
 		kitData = useMemo( () => getKitData(), [] );
 		useEffect( () => {
@@ -58,9 +60,10 @@ export default function ImportComplete() {
 				navigate( '/import' );
 			}
 
-			if ( uploadedData && 'kit-library' === referrer ) {
+			if ( uploadedData ) {
 				eventTracking( 'kit-library/kit-is-live-load', 'kit is live load', 'kit is live', 'load' );
 			}
+			sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportComplete ) } );
 		}, [] );
 
 	return (
@@ -74,11 +77,7 @@ export default function ImportComplete() {
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
 							italic
-							onClick={ () => {
-								if ( 'kit-library' === referrer ) {
-									eventTracking( 'kit-library/seek-more-info', 'learn more-kits', 'kit-is-live' );
-								}
-							} }
+							onClick={ () => eventTracking( 'kit-library/seek-more-info', 'learn more-kits', 'kit-is-live' ) }
 						>
 							{ __( 'Click here', 'elementor' ) }
 						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }

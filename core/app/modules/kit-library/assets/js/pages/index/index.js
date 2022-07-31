@@ -165,7 +165,7 @@ export default function Index( props ) {
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
-	const eventTracking = ( command, eventName, search = null, direction = null, sortType = null, action = null ) => {
+	const eventTracking = ( command, eventName, search = null, direction = null, sortType = null, action = undefined ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
@@ -253,7 +253,6 @@ export default function Index( props ) {
 							} }
 							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'kit sort direction', null, direction ) }
 							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'kit sort type select', null, null, value ) }
-							// TODO: Add onBlur event to sort type dropdown
 							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'kit sort type dropdown', null, null, null, 'expand' ) }
 						/>
 					</Grid>
