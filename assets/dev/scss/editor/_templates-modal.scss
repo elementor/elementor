@@ -323,7 +323,7 @@ label.elementor-template-library-order-label {
 }
 
 .elementor-template-library-template-remote {
-	margin: $remote-templates-items-space / 2;
+	margin: calc( #{$remote-templates-items-space} / 2 );
 	padding: 8px;
 	background-color: #fff;
 	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
