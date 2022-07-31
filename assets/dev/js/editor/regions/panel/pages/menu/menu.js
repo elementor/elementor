@@ -134,6 +134,7 @@ PanelMenu.addExitItem = () => {
 PanelMenu.clickExitItem = () => {
 	const currentValue = elementor.getPreferences( 'exit_to' );
 	const defaultValue = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to.default;
+
 	if ( currentValue !== defaultValue || PanelMenu.exitShouldRedirect ) {
 		window.location.href = PanelMenu.getExitUrl();
 	} else {
