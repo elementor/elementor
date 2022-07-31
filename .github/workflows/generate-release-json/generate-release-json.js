@@ -23,7 +23,7 @@ const octokit = new Octokit({ auth: TOKEN });
 		const releasesJson = JSON.stringify(cloudReleases, null, 2);
 		const releasesJsonBase64 = Buffer.from(releasesJson).toString('base64');
 		const releasesJsonSha = await octokit.request(
-			'POST /repos/{owner}/{repo}/contents/releases.json',
+			'PUT /repos/{owner}/{repo}/contents/releases.json',
 			{
 				owner, repo },
 			{
@@ -35,9 +35,7 @@ const octokit = new Octokit({ auth: TOKEN });
 				})
 			}
 		);
-
 		console.log(`Releases.json updated with sha ${releasesJsonSha.data.content.sha}`);
-
 	} catch (err) {
 		console.error(`Failed to update releases.json: ${err}`);
 		process.exit(1);
