@@ -1,10 +1,12 @@
+@use "sass:math";
+
 //
 // Mixins
 //
 
 // Simple PX to REM units converter
 @function pxToRem($size) {
-	@return calc( #{$size} / 16 * 1rem );
+	@return math.div( $size, 16px ) * 1rem;
 }
 
 // Forms > Input Style
