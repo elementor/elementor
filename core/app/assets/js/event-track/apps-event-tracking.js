@@ -14,10 +14,12 @@ export const appsEventTrackingDispatch = ( command, eventParams ) => {
 		return obj;
 	};
 
-	keyRename( eventParams, 'source', 'source_page' );
+	keyRename( eventParams, 'source', 'page_source' );
 
-	const dataKeys = [ 'action', 'category', 'event', 'event_type', 'site_part', 'source_page', 'step' ];
-	const detailsKeys = [ 'document_type', 'document_name', 'element', 'error_type', 'grid_location', 'item', 'kit_name', 'layout', 'search_term', 'section', 'site_area', 'site_part', 'sort_direction', 'sort_type', 'tag', 'view_type_clicked' ];
+	const dataKeysOld = [ 'action', 'category', 'event', 'event_type', 'site_part', 'source_page', 'step' ];
+	const detailsKeysOld = [ 'document_type', 'document_name', 'element', 'error_type', 'grid_location', 'item', 'kit_name', 'layout', 'search_term', 'section', 'site_area', 'site_part', 'sort_direction', 'sort_type', 'tag', 'view_type_clicked' ];
+	const dataKeys = [];
+	const detailsKeys = [ 'page_source', 'element_position', 'element', 'event_type', 'modal_type', 'method', 'status', 'step', 'item', 'category', 'element_location', 'search_term', 'section' ];
 	const data = {};
 	const details = {};
 

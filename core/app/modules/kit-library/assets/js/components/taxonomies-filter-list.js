@@ -11,7 +11,6 @@ const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 const TaxonomiesFilterList = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( props.taxonomiesByType.isOpenByDefault );
 	const [ search, setSearch ] = useState( '' );
-	const category = props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' );
 	const taxonomies = useMemo( () => {
 		if ( ! search ) {
 			return props.taxonomiesByType.data;
@@ -23,17 +22,20 @@ const TaxonomiesFilterList = ( props ) => {
 			( tag ) => tag.text.toLowerCase().includes( lowerCaseSearch ),
 		);
 	}, [ props.taxonomiesByType.data, search ] );
-	const eventTracking = ( command, eventName, section, action, item ) => appsEventTrackingDispatch(
-		command,
-		{
-			category,
-			section,
-			item,
-			action: action ? 'checked' : 'unchecked',
-			event: eventName,
-			source: 'home page',
-		},
-	);
+	const eventTracking = ( command, section, action, item ) => {
+		const category = props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' );
+		appsEventTrackingDispatch(
+			command,
+			{
+				source: 'home page',
+				element_location: 'home page',
+				category,
+				section,
+				item,
+				action: action ? 'checked' : 'unchecked',
+			},
+		);
+	};
 	return (
 		<Collapse
 			className="e-kit-library__tags-filter-list"
@@ -72,7 +74,7 @@ const TaxonomiesFilterList = ( props ) => {
 								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
-									eventTracking( 'kit-library/filter', 'sidebar section filters interaction', taxonomy.type, checked, taxonomy.text );
+									eventTracking( 'kit-library/filter', taxonomy.type, checked, taxonomy.text );
 
 									props.onSelect( taxonomy.type, ( prev ) => {
 										return checked

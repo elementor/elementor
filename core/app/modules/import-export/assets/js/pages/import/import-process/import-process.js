@@ -63,14 +63,14 @@ export default function ImportProcess() {
 			setShowUnfilteredFilesDialog( false );
 			setStartImport( true );
 		},
-		eventTracking = ( command, eventName, source, step, eventType = null ) => {
+		eventTracking = ( command, eventType = null ) => {
 			if ( 'kit-library' === sharedContext.data.referrer ) {
 				appsEventTrackingDispatch(
 					command,
 					{
-						event: eventName,
 						source: 'import',
-						currentPage,
+						step: currentPage,
+						modal_type: 'unfiltered_file',
 						event_type: eventType,
 					},
 				);
@@ -189,17 +189,17 @@ export default function ImportProcess() {
 						onCancelProcess();
 					} }
 					referrer={ sharedContext.data.referrer }
-					onLoad={ () => eventTracking( 'kit-library/unfiltered-file-modal-load', 'unfiltered file modal load' ) }
+					onLoad={ () => eventTracking( 'kit-library/modal-load', 'load' ) }
 					onClose={ () => {
-						eventTracking( 'kit-library/close', 'unfiltered file modal skip button' );
+						eventTracking( 'kit-library/close' );
 						onReady();
 					} }
 					onDismiss={ () => {
 						onReady();
-						eventTracking( 'kit-library/skip', 'unfiltered file modal skip button' );
+						eventTracking( 'kit-library/skip' );
 					} }
 					onEnable={ () => {
-						eventTracking( 'kit-library/enable', 'unfiltered file modal enable button' );
+						eventTracking( 'kit-library/enable' );
 					} }
 				/>
 			</section>

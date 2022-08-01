@@ -36,14 +36,12 @@ export default function KitContent( { contentData, hasPro } ) {
 		setContainerHoverState = ( index, state ) => {
 			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
 		},
-		eventTracking = ( command, eventName, chosenPart ) => {
+		eventTracking = ( command, chosenPart ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
 					`kit-library/${ command }`,
 					{
 						site_part: chosenPart,
-						action: command,
-						event: eventName,
 						source: 'import',
 						step: currentPage,
 					},
@@ -73,8 +71,8 @@ export default function KitContent( { contentData, hasPro } ) {
 											className="e-app-export-kit-content__checkbox"
 											referrer={ referrer }
 											onCheck={ ( event, chosenPart ) => {
-												const command = event.target.checked ? 'check' : 'uncheck';
-												eventTracking( command, 'kit parts selection', chosenPart );
+												const command = event.target.checked && event.target.checked ? 'check' : 'uncheck';
+												eventTracking( command, chosenPart );
 											} }
 										/>
 

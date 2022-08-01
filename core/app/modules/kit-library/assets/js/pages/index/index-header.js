@@ -11,21 +11,24 @@ export default function IndexHeader( props ) {
 	const navigate = useNavigate();
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
 	const importRef = useRef();
-	const eventTracking = ( command, eventName, source, element = null, eventType = 'click' ) => {
+	const eventTracking = ( command, element = null, eventType = 'click', modalType = null ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
-				event: eventName,
-				source,
 				element,
 				event_type: eventType,
+				source: 'home page',
+				element_position: 'app_header',
+				modal_type: modalType,
+
 			},
 		);
 	};
 	const onClose = ( e ) => {
-		const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
+		const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'x';
+		// TODO: How do we pass this data?
 		const eventName = 'overlay' === element ? 'background page' : 'info modal close';
-		eventTracking( 'kit-library/modal-close', eventName, 'home page', element );
+		eventTracking( 'kit-library/modal-close', element, null, 'info' );
 	};
 	const buttons = useMemo( () => [
 		{
@@ -34,7 +37,7 @@ export default function IndexHeader( props ) {
 			hideText: true,
 			icon: 'eicon-info-circle-o',
 			onClick: () => {
-				eventTracking( 'kit-library/seek-more-info', 'top panel info', 'home page' );
+				eventTracking( 'kit-library/seek-more-info' );
 				setIsInfoModalOpen( true );
 			},
 		},
@@ -45,7 +48,7 @@ export default function IndexHeader( props ) {
 			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
 
 			onClick: () => {
-				eventTracking( 'kit-library/refetch', 'top panel refetch', 'home page' );
+				eventTracking( 'kit-library/refetch' );
 				props.refetch();
 			},
 		},
@@ -56,7 +59,7 @@ export default function IndexHeader( props ) {
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
 			onClick: () => {
-				eventTracking( 'kit-library/kit-import', 'top panel kit import', 'home page' );
+				eventTracking( 'kit-library/kit-import' );
 				navigate( '/import?referrer=kit-library' );
 			},
 		},
@@ -74,7 +77,7 @@ export default function IndexHeader( props ) {
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) }
 				show={ isInfoModalOpen }
 				setShow={ setIsInfoModalOpen }
-				onOpen={ () => eventTracking( 'kit-library/modal-open', 'info modal load', 'home page', null, 'load' ) }
+				onOpen={ () => eventTracking( 'kit-library/modal-open', null, 'load', 'info' ) }
 				onClose={ ( e ) => onClose( e ) }
 			>
 				<div className="e-kit-library-header-info-modal-container">
@@ -99,7 +102,7 @@ export default function IndexHeader( props ) {
 							text={ __( 'Learn more', 'elementor' ) }
 							color="link"
 							onClick={ () => {
-								eventTracking( 'kit-library/seek-more-info', 'info modal learn more', 'home page' );
+								eventTracking( 'kit-library/seek-more-info', 'text link', null, 'info' );
 								setIsInfoModalOpen( true );
 							} }
 						/>{ ' ' }

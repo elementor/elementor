@@ -31,31 +31,31 @@ export default function ImportKit() {
 			setIsLoading( false );
 			kitActions.reset();
 		},
-		eventTracking = ( command, eventName, element = null, eventType = 'click', step = null, error = null ) => {
+		eventTracking = ( command, element = null, eventType = 'click', step = null, error = null, modalType = null ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
 					command,
 					{
-						event: eventName,
 						element,
 						source: 'import',
 						event_type: eventType,
 						step,
-						error_type: error,
-
+						error_type: 'general' === error ? 'unknown' : error,
+						modal_type: modalType,
 					},
 				);
 			}
 		},
 		onFileUpload = ( uploadMethod ) => {
 			if ( 'kit-library' === referrer ) {
-				const uploadMethodName = ( 'drop' === uploadMethod ? 'drop' : 'browse' );
+				// TODO: add file upload status success/failure
+				const uploadMethodName = ( 'drop' === uploadMethod ? 'drag-drop' : 'browse' );
 				appsEventTrackingDispatch(
-					`kit-library/${ uploadMethodName }`,
+					'kit-library/file-upload',
 					{
 						method: uploadMethodName,
-						event: 'select kit file',
 						source: 'import',
+						step: currentPage,
 					},
 				);
 			}
@@ -66,7 +66,7 @@ export default function ImportKit() {
 				url="https://go.elementor.com/app-what-are-kits"
 				key="learn-more-link"
 				italic
-				onClick={ () => eventTracking( 'kit-library/seek-more-info', 'learn more', null, 'click', currentPage ) }
+				onClick={ () => eventTracking( 'kit-library/seek-more-info', null, 'click', currentPage ) }
 			>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
@@ -75,7 +75,6 @@ export default function ImportKit() {
 	// On load.
 	useEffect( () => {
 		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
-		sharedContext.dispatch( { type: 'SET_WIZARD_STEP_NUM', payload: 1 } );
 		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportKit ) } );
 	}, [] );
 
@@ -135,7 +134,7 @@ export default function ImportKit() {
 					text={ __( 'Drag & drop the .zip file with your Kit', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
-					onFileChoose={ () => eventTracking( 'kit-library/choose-file', 'select kit file' ) }
+					onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
 					onFileSelect={ ( file, e ) => {
 						setIsLoading( true );
 						importContext.dispatch( { type: 'SET_FILE', payload: file } );
@@ -149,9 +148,9 @@ export default function ImportKit() {
 				{ errorType && <ProcessFailedDialog
 					errorType={ errorType }
 					onApprove={ resetImportProcess }
-					onModalClose={ () => eventTracking( 'kit-library/modal-close', 'error modal close', null, 'load', currentPage ) }
-					onError={ () => eventTracking( 'kit-library/modal-error', 'error modal load', null, 'load', currentPage, `error modal load  ${ errorType }` ) }
-					onLearnMore={ () => eventTracking( 'kit-library/seek-more-info', 'error modal learn more', null, 'click', currentPage ) }
+					onModalClose={ () => eventTracking( 'kit-library/modal-close', 'x', 'load', currentPage, null, 'error' ) }
+					onError={ () => eventTracking( 'kit-library/modal-open', null, 'load', currentPage, `error modal load  ${ errorType }`, 'error' ) }
+					onLearnMore={ () => eventTracking( 'kit-library/seek-more-info', null, 'click', currentPage, null, 'error' ) }
 				/>	}
 			</section>
 		</Layout>

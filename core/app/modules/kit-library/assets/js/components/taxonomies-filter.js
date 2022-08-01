@@ -19,14 +19,14 @@ export default function TaxonomiesFilter( props ) {
 			} ) )
 			.filter( ( { data } ) => data.length > 0 );
 	}, [ props.taxonomies ] ),
-		eventTracking = ( command, eventName, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
+		eventTracking = ( command, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
 			command,
 			{
-				search_term: search,
+				source: 'home page',
+				element_location: 'app_sidebar',
 				category: props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' ),
 				section,
-				source: 'home page',
-				event: eventName,
+				search_term: search,
 				event_type: eventType,
 			},
 		);
@@ -42,10 +42,10 @@ export default function TaxonomiesFilter( props ) {
 						onSelect={ props.onSelect }
 						onCollapseChange={ ( collapseState, title ) => {
 							const command = collapseState ? 'kit-library/collapse' : 'kit-library/expand';
-							eventTracking( command, 'sidebar section filters search', null, title );
+							eventTracking( command, null, title );
 						} }
 						onFilter={ ( search ) => {
-							eventTracking( 'kit-library/filter', 'sidebar section filters search', search, group.label, 'search' );
+							eventTracking( 'kit-library/filter', search, group.label, 'search' );
 						} }
 						category={ props.category }
 					/>

@@ -20,14 +20,13 @@ export default function ImportContent() {
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ navigateToMainScreen } = useImportActions(),
 		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
-		eventTracking = ( command, eventName ) => {
+		eventTracking = ( command ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
 					command,
 					{
 						source: 'import',
 						step: currentPage,
-						event: eventName,
 					},
 				);
 			}
@@ -40,8 +39,8 @@ export default function ImportContent() {
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
-					onPreviousClick={ () => eventTracking( 'kit-library/go-back', 'previous button' ) }
-					onImportClick={ () => eventTracking( 'kit-library/approve-import', 'approve-import' ) }
+					onPreviousClick={ () => eventTracking( 'kit-library/go-back' ) }
+					onImportClick={ () => eventTracking( 'kit-library/approve-import' ) }
 				/>
 			);
 		};

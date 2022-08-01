@@ -3,11 +3,11 @@ import InfoModal from './info-modal';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ImportInfoModal( props ) {
-	const eventTracking = ( event ) => appsEventTrackingDispatch(
+	const eventTracking = ( element ) => appsEventTrackingDispatch(
 		'kit-library/seek-more-info',
 		{
 			source: 'import',
-			event,
+			element,
 		},
 	);
 
@@ -21,7 +21,7 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
-							onClick={ () => eventTracking( 'info modal learn more-kits' ) }
+							onClick={ () => eventTracking( 'Learn more about website kits' ) }
 						>{ __( ' Learn more about Website Kits', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
@@ -35,7 +35,7 @@ export default function ImportInfoModal( props ) {
 						<br /><br />
 						<InlineLink
 							url="http://go.elementor.com/app-import-kit"
-							onClick={ () => eventTracking( 'info modal learn more-import' ) }
+							onClick={ () => eventTracking( 'learn more' ) }
 						>
 							{ __( 'Learn More', 'elementor' ) }
 						</InlineLink>

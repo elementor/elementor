@@ -67,14 +67,14 @@ function useMenuItems( path ) {
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
-				trackEventData: { action: 'kit-library/select-organizing-category', event: 'all templates sidebar category' },
+				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
 			},
 			{
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
 				isActive: 'favorites' === page,
 				url: '/kit-library/favorites',
-				trackEventData: { action: 'kit-library/select-organizing-category', event: 'favorites sidebar category' },
+				trackEventData: { command: 'kit-library/select-organizing-category', category: 'favorites' },
 			},
 		];
 	}, [ path ] );

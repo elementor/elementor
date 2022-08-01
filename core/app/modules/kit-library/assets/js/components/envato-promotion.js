@@ -4,12 +4,12 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 import './envato-promotion.scss';
 
 export default function EnvatoPromotion( { category } ) {
-	const eventTracking = ( command, eventName ) => {
+	const eventTracking = ( command ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
-				event: eventName,
 				source: 'home page',
+				element_position: 'library_bottom_promotion',
 				category: category && ( '/favorites' === category ? 'favorites' : 'all kits' ),
 			},
 		);
@@ -25,7 +25,7 @@ export default function EnvatoPromotion( { category } ) {
 				target="_blank"
 				rel="noreferrer"
 				text={ __( 'Check out Elementor Website Kits on ThemeForest', 'elementor' ) }
-				onClick={ () => eventTracking( 'kit-library/check-kits-on-theme-forest', 'browse themeforest' ) }
+				onClick={ () => eventTracking( 'kit-library/check-kits-on-theme-forest' ) }
 			/>
 		</Text>
 	);

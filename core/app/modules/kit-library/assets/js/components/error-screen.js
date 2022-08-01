@@ -11,7 +11,8 @@ export default function ErrorScreen( props ) {
 			{
 				event: 'empty state-continue browsing',
 				source: 'home page',
-				category: props.button.category && ( '/favorites' === props.button.category ? 'favorites' : 'all kits' ),
+				element_position: 'empty state',
+				category: props.button.category && ( '/favorites' === props.button.category ? 'favorites' : 'all' ),
 			},
 		);
 		props.button.action();

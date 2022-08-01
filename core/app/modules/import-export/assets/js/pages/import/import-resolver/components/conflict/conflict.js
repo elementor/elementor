@@ -48,12 +48,10 @@ export default function Conflict( props ) {
 		},
 		getImportedAssetClasses = ( importedAssetId ) => getAssetClassName( isImportedAssetSelected( importedAssetId ) ),
 		getExistingAssetClasses = ( importedAssetId ) => getAssetClassName( ! isImportedAssetSelected( importedAssetId ) ),
-		eventTracking = ( command, eventName, title ) => appsEventTrackingDispatch(
+		eventTracking = ( command, title ) => appsEventTrackingDispatch(
 			`kit-library/${ command }`,
 			{
-				site_part: title,
-				action: command,
-				event: eventName,
+				item: title,
 				source: 'import',
 				step: currentPage,
 			},
@@ -68,8 +66,8 @@ export default function Conflict( props ) {
 				title={ props.conflictData.template_title }
 				referrer={ referrer }
 				onCheck={ ( isChecked, title ) => {
-					const command = isChecked ? 'check' : 'uncheck';
-					eventTracking( command, 'kit parts conflict', title );
+					const command = isChecked && isChecked ? 'check' : 'uncheck';
+					eventTracking( command, title );
 				} }
 			/>
 

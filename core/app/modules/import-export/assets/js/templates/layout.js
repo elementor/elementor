@@ -15,24 +15,25 @@ export default function Layout( props ) {
 		sharedContext = useContext( SharedContext ),
 		{ referrer } = useQueryParams().getAll(),
 		{ currentPage } = sharedContext.data,
-		eventTracking = ( command, eventName, element = null, eventType = 'click', step = null ) => {
+		eventTracking = ( command, element = null, eventType = 'click', modalType = null ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
 					command,
 					{
-						event: eventName,
 						element,
 						source: 'import',
 						event_type: eventType,
-						step,
+						currentPage,
+						element_position: 'app_header',
+						modal_type: modalType,
 					},
 				);
 			}
 		},
 		onModalClose = ( e, command ) => {
-			const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'close';
+			const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'x';
 			const eventName = 'overlay' === element ? 'background page' : 'info modal close';
-			eventTracking( command, eventName, element );
+			eventTracking( command, element, null, 'info' );
 		},
 		getContent = () => {
 			let infoModalProps = {
@@ -44,7 +45,7 @@ export default function Layout( props ) {
 				infoModalProps = {
 					referrer,
 					...infoModalProps,
-					onOpen: () => eventTracking( 'kit-library/modal-open', 'info modal load', null, 'load' ),
+					onOpen: () => eventTracking( 'kit-library/modal-open', null, 'load', 'info' ),
 					onClose: ( e ) => onModalClose( e, 'kit-library/modal-close' ),
 				};
 			}
@@ -61,13 +62,13 @@ export default function Layout( props ) {
 			return {
 				...infoButtonProps,
 				onClick: () => {
-					eventTracking( 'kit-library/seek-more-info', 'top panel info' );
+					eventTracking( 'kit-library/seek-more-info' );
 					setShowInfoModal( true );
 				},
 			};
 		},
 		onClose = () => {
-			eventTracking( 'kit-library/close', 'import export close', null, 'click', currentPage );
+			eventTracking( 'kit-library/close', null, 'click' );
 			window.top.location = elementorAppConfig.admin_url;
 		},
 		config = {

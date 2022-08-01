@@ -46,11 +46,6 @@ export default function ImportResolver() {
 				/>
 			</ActionsFooter>
 		),
-		getLearnMoreLink = () => (
-			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
-				{ __( 'Learn More', 'elementor' ) }
-			</InlineLink>
-		),
 		isHomePageOverride = () => {
 			if ( sharedContext.data.includes.includes( 'content' ) ) {
 				const pages = importContext.data?.uploadedData?.manifest.content?.page || {};
@@ -60,19 +55,23 @@ export default function ImportResolver() {
 
 			return false;
 		},
-		eventTracking = ( command, eventName, sitePart ) => {
+		eventTracking = ( command, sitePart = null ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
 					'kit-library/check-item',
 					{
 						site_part: sitePart,
-						event: eventName,
 						source: 'import',
 						step: currentPage,
 					},
 				);
 			}
-		};
+		},
+		getLearnMoreLink = () => (
+			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic onClick={ () => eventTracking( 'kit-library/seek-more-info' ) }>
+				{ __( 'Learn More', 'elementor' ) }
+			</InlineLink>
+		);
 
 	useEffect( () => {
 		if ( ! importContext.data.uploadedData ) {
@@ -113,7 +112,7 @@ export default function ImportResolver() {
 										<Conflict
 											importedId={ parseInt( id ) }
 											conflictData={ conflict[ 0 ] }
-											onClick={ ( title ) => eventTracking( 'kit-library/check-item', 'open kit part - new tab', title ) }
+											onClick={ ( title ) => eventTracking( 'kit-library/check-item', title ) }
 										/>
 									</List.Item>
 								) ) }

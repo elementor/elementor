@@ -50,14 +50,13 @@ export default function ImportPlugins() {
 				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
 		},
-		eventTracking = ( command, eventName ) => {
+		eventTracking = ( command ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
 					command,
 					{
 						source: 'import',
 						step: currentPage,
-						event: eventName,
 					},
 				);
 			}
@@ -84,8 +83,8 @@ export default function ImportPlugins() {
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter
-			onPreviousClick={ () => eventTracking( 'kit-library/go-back', 'previous button' ) }
-			onNextClick={ () => eventTracking( 'kit-library/approve-selection', 'next button' ) }
+			onPreviousClick={ () => eventTracking( 'kit-library/go-back' ) }
+			onNextClick={ () => eventTracking( 'kit-library/approve-selection' ) }
 		/> } >
 			<section className="e-app-import-plugins">
 				{ ! importPluginsData && <Loader absoluteCenter />	}

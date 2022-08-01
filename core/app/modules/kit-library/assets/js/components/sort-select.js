@@ -28,7 +28,7 @@ export default function SortSelect( props ) {
 					} }
 					className="eps-sort-select__select"
 
-					// TODO: Add onBlur handler
+					// TODO: Add an onBlur handler
 					onClick={ () => {
 						props.onChange( {
 							by: props.value.by,
