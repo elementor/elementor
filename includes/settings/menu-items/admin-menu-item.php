@@ -42,5 +42,4 @@ class Admin_Menu_Item implements \Elementor\Core\Admin\Menu\Interfaces\Admin_Men
 	public function callback() {
 		$this->settings_page->display_settings_page();
 	}
-
 }

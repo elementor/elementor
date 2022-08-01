@@ -43,6 +43,5 @@ class Role_Manager_Menu_Item implements Admin_Menu_Item {
 	public function callback() {
 		$this->role_manager->display_settings_page();
 	}
-
 }
 
