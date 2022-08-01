@@ -358,6 +358,15 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'loop',
+			'title' => esc_html__( 'Loop', 'elementor' ),
+			'description' => esc_html__( 'A Loop is a layout you can customize to display recurring dynamic content - like listings, posts, portfolios, products etc.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'dependencies' => [ 'container' ],
+		] );
 	}
 
 	/**

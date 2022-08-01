@@ -85,5 +85,10 @@
 			margin: 10px 0;
 			max-width: 820px;
 		}
+
+		&.elementor_experiment-loop {
+			display: none;
+			pointer-events: none;
+		}
 	}
 }
