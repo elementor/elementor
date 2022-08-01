@@ -95,5 +95,6 @@
         "reach-router-hash-history": "0.0.3",
         "react-redux": "^7.2.6",
         "write": "^2.0.0"
-    }
+    },
+    "last_dev_version": "3.8.0-dev1"
 }
