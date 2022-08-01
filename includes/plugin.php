@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Menu\Admin_Menu;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
@@ -409,6 +410,11 @@ class Plugin {
 	public $inspector;
 
 	/**
+	 * @var Admin_Menu
+	 */
+	public $admin_menu;
+
+	/**
 	 * Common functionality.
 	 *
 	 * Holds the plugin common functionality.
@@ -696,6 +702,9 @@ class Plugin {
 		$this->inspector = new Inspector();
 
 		Settings_Manager::run();
+
+		$this->admin_menu = new Admin_Menu();
+		$this->admin_menu->register_actions();
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
