@@ -417,9 +417,6 @@ class Container extends Element_Base {
 						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 					],
 				],
-				'condition' => [
-					'container_type' => 'flex',
-				],
 			]
 		);
 
@@ -798,9 +795,6 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
 				'range' => [
 					'px' => [
 						'max' => 3,
