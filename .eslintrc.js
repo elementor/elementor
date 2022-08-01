@@ -86,6 +86,7 @@ module.exports = {
 			onlyEquality: true,
 		} ],
 		'react/react-in-jsx-scope': 'off',
+		'react/prop-types': 'error',
 		'babel/semi': 1,
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 		'import/no-unresolved': [ 2, { ignore: [ 'elementor', 'modules', '@wordpress/i18n', 'e-utils', 'e-styles' ] } ],
