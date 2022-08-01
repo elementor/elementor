@@ -301,14 +301,8 @@ class Container extends Element_Base {
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
-				'render_type' => 'ui',
-				'selectors' => [
-					'{{WRAPPER}}' => '{{VALUE}}',
-				],
-				'selectors_dictionary' => [
-					'boxed' => '--width: 100%;',
-					'full' => '--content-width: 100%;',
-				],
+				'render_type' => 'template',
+				'prefix_class' => 'e-container--width-',
 			]
 		);
 
