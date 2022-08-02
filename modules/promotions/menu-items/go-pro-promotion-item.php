@@ -37,7 +37,6 @@ class Go_Pro_Promotion_Item implements Renderable_Admin_Menu_Item {
 	}
 
 	public function callback() {
-		// TODO: Check this???
 		// Redirects from the module on `admin_init`.
 		die;
 	}

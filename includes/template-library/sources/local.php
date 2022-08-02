@@ -381,19 +381,6 @@ class Source_Local extends Source_Base {
 
 			$admin_menu->register( $category_slug, new Templates_Categories_Menu_Item() );
 		}
-
-		if ( $this->is_current_screen() ) {
-			$library_title = $this->get_library_title();
-
-			foreach ( $library_submenu as &$item ) {
-				if ( $library_title === $item[0] ) {
-					if ( ! isset( $item[4] ) ) {
-						$item[4] = '';
-					}
-					$item[4] .= ' current';
-				}
-			}
-		}
 	}
 
 	public function admin_menu( Admin_Menu $admin_menu ) {

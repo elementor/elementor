@@ -37,7 +37,6 @@ class Get_Help_Menu_Item implements Renderable_Admin_Menu_Item {
 	}
 
 	public function callback() {
-		// TODO: Check this???
 		// Redirects from the settings page on `admin_init`.
 		die;
 	}
