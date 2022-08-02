@@ -23,6 +23,7 @@ class Admin {
 
 		$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
 
+		// TODO: Find a way to get the hook name from the register.
 		add_action( 'load-elementor_page_' . static::PAGE_ID, [ $this, 'on_load_page' ] );
 	}
 

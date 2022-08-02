@@ -44,4 +44,3 @@ class Role_Manager_Menu_Item implements Renderable_Admin_Menu_Item {
 		$this->role_manager->display_settings_page();
 	}
 }
-
