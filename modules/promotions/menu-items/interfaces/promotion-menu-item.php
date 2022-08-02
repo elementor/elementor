@@ -2,13 +2,13 @@
 
 namespace Elementor\Modules\Promotions\MenuItems\Interfaces;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-interface Promotion_Menu_Item extends Admin_Menu_Item {
+interface Promotion_Menu_Item extends Renderable_Admin_Menu_Item {
 	public function image_url();
 
 	public function promotion_title();

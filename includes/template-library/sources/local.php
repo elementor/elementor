@@ -1,12 +1,17 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Core\Admin\Menu\Admin_Menu;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\File_Types\Zip;
+use Elementor\Core\Utils\Collection;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
+use Elementor\Includes\TemplateLibrary\Sources\MenuItems\Add_New_Template_Menu_Item;
+use Elementor\Includes\TemplateLibrary\Sources\MenuItems\Saved_Templates_Menu_Item;
+use Elementor\Includes\TemplateLibrary\Sources\MenuItems\Templates_Categories_Menu_Item;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -343,28 +348,38 @@ class Source_Local extends Source_Base {
 	 * @since 2.4.0
 	 * @access public
 	 */
-	public function admin_menu_reorder() {
+	public function admin_menu_reorder( Admin_Menu $admin_menu ) {
 		global $submenu;
 
-		if ( ! isset( $submenu[ self::ADMIN_MENU_SLUG ] ) ) {
+		if ( ! isset( $submenu[ static::ADMIN_MENU_SLUG ] ) ) {
 			return;
 		}
-		$library_submenu = &$submenu[ self::ADMIN_MENU_SLUG ];
 
-		// Remove 'All Templates' menu.
-		unset( $library_submenu[5] );
+		remove_submenu_page( static::ADMIN_MENU_SLUG, static::ADMIN_MENU_SLUG );
 
-		// If current use can 'Add New' - move the menu to end, and add the '#add_new' anchor.
-		if ( isset( $library_submenu[10][2] ) ) {
-			$library_submenu[700] = $library_submenu[10];
-			unset( $library_submenu[10] );
-			$library_submenu[700][2] = admin_url( self::ADMIN_MENU_SLUG . '#add_new' );
+		$add_new_slug = 'post-new.php?post_type=elementor_library';
+		$category_slug = 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library';
+
+		$library_submenu = new Collection( $submenu[ static::ADMIN_MENU_SLUG ] );
+
+		$add_new_item = $library_submenu->find( function ( $item ) use ( $add_new_slug ) {
+			return $add_new_slug === $item[2];
+		} );
+
+		$categories_item = $library_submenu->find( function ( $item ) use ( $category_slug ) {
+			return $category_slug === $item[2];
+		} );
+
+		if ( $add_new_item ) {
+			remove_submenu_page( static::ADMIN_MENU_SLUG, $add_new_slug );
+
+			$admin_menu->register( admin_url( static::ADMIN_MENU_SLUG . '#add_new' ), new Add_New_Template_Menu_Item() );
 		}
 
-		// Move the 'Categories' menu to end.
-		if ( isset( $library_submenu[15] ) ) {
-			$library_submenu[800] = $library_submenu[15];
-			unset( $library_submenu[15] );
+		if ( $categories_item ) {
+			remove_submenu_page( static::ADMIN_MENU_SLUG, $category_slug );
+
+			$admin_menu->register( $category_slug, new Templates_Categories_Menu_Item() );
 		}
 
 		if ( $this->is_current_screen() ) {
@@ -381,8 +396,8 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	public function admin_menu() {
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', esc_html__( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
+	public function admin_menu( Admin_Menu $admin_menu ) {
+		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1543,8 +1558,8 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-			add_action( 'admin_menu', [ $this, 'admin_menu' ] );
-			add_action( 'admin_menu', [ $this, 'admin_menu_reorder' ], 800 );
+			add_action( 'elementor/admin/menu/register', [ $this, 'admin_menu' ] );
+			add_action( 'elementor/admin/menu/register', [ $this, 'admin_menu_reorder' ] );
 			add_filter( 'admin_title', [ $this, 'admin_title' ], 10, 2 );
 			add_action( 'all_admin_notices', [ $this, 'replace_admin_heading' ] );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );

@@ -2,14 +2,14 @@
 
 namespace Elementor\Modules\Promotions\MenuItems;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Go_Pro_Promotion_Item implements Admin_Menu_Item {
+class Go_Pro_Promotion_Item implements Renderable_Admin_Menu_Item {
 	const URL = 'https://go.elementor.com/pro-admin-menu/';
 
 	public function is_visible() {
@@ -37,6 +37,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item {
 	}
 
 	public function callback() {
+		// TODO: Check this???
 		// Redirects from the module on `admin_init`.
 		die;
 	}

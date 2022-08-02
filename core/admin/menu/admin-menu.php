@@ -3,6 +3,7 @@
 namespace Elementor\Core\Admin\Menu;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -31,7 +32,6 @@ class Admin_Menu {
 		return $this->items[ $item_slug ];
 	}
 
-
 	public function get_all() {
 		return $this->items;
 	}
@@ -45,7 +45,9 @@ class Admin_Menu {
 			$this->register_menus();
 		}, 20 );
 
-		// TODO: Handle is_visible()
+		add_action( 'admin_head', function () {
+			$this->hide_invisible_menus();
+		} );
 	}
 
 	private function register_menus() {
@@ -65,25 +67,50 @@ class Admin_Menu {
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {
+		$callback = $item instanceof Renderable_Admin_Menu_Item
+			? [ $item, 'callback' ]
+			: '';
+
 		add_menu_page(
 			$item->page_title(),
 			$item->label(),
 			$item->capability(),
 			$item_slug,
-			[ $item, 'callback' ],
+			$callback,
 			'', // TODO: Add support?
 			$item->position()
 		);
 	}
 
 	private function register_sub_menu( $item_slug, Admin_Menu_Item $item ) {
+		$callback = $item instanceof Renderable_Admin_Menu_Item
+			? [ $item, 'callback' ]
+			: '';
+
 		add_submenu_page(
 			$item->parent_slug(),
 			$item->page_title(),
 			$item->label(),
 			$item->capability(),
 			$item_slug,
-			[ $item, 'callback' ],
+			$callback,
 			$item->position()
 		);
-	}}
+	}
+
+	private function hide_invisible_menus() {
+		foreach ( $this->get_all() as $item_slug => $item ) {
+			if ( $item->is_visible() ) {
+				continue;
+			}
+
+			$is_top_level = empty( $item->parent_slug() );
+
+			if ( $is_top_level ) {
+				remove_menu_page( $item_slug );
+			} else {
+				remove_submenu_page( $item->parent_slug(), $item_slug );
+			}
+		}
+	}
+}

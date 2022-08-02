@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Includes\Settings\MenuItems;
 
+use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -9,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Getting_Started_Menu_Item implements \Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item {
+class Getting_Started_Menu_Item implements Renderable_Admin_Menu_Item {
 	public function is_visible() {
 		return true;
 	}

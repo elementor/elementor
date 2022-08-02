@@ -1,21 +1,22 @@
 <?php
 namespace Elementor\Modules\System_Info;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
-use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
 use Elementor\Settings;
+use Elementor\Modules\System_Info\Module as System_Info_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class System_Info_Menu_Item implements Admin_Menu_Item {
+class System_Info_Menu_Item implements Renderable_Admin_Menu_Item {
 
 	private $system_info_page;
 
-	public function __construct( Module $system_info_page ) {
+	public function __construct( System_Info_Page $system_info_page ) {
 		$this->system_info_page = $system_info_page;
 	}
+
 	public function is_visible() {
 		return true;
 	}

@@ -18,6 +18,4 @@ interface Admin_Menu_Item {
 	public function position();
 
 	public function capability();
-
-	public function callback();
 }

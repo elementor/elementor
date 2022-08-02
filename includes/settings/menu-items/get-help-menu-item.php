@@ -1,15 +1,14 @@
 <?php
 namespace Elementor\Includes\Settings\MenuItems;
 
-use Elementor\Plugin;
+use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
 use Elementor\Settings;
-use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Get_Help_Menu_Item implements \Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item {
+class Get_Help_Menu_Item implements Renderable_Admin_Menu_Item {
 	const URL = 'https://go.elementor.com/docs-admin-menu/';
 
 	public function is_visible() {
@@ -38,6 +37,7 @@ class Get_Help_Menu_Item implements \Elementor\Core\Admin\Menu\Interfaces\Admin_
 	}
 
 	public function callback() {
+		// TODO: Check this???
 		// Redirects from the settings page on `admin_init`.
 		die;
 	}

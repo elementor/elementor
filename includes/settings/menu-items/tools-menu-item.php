@@ -1,16 +1,15 @@
 <?php
 namespace Elementor\Includes\Settings\MenuItems;
 
-use Elementor\Plugin;
+use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
 use Elementor\Settings;
 use Elementor\Tools;
-use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Tools_Menu_Item implements \Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item {
+class Tools_Menu_Item implements Renderable_Admin_Menu_Item {
 
 	private $tools_page;
 

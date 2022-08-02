@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
+use Elementor\Core\Admin\Menu\Admin_Menu;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
@@ -165,19 +166,11 @@ class Module extends BaseModule {
 	 *
 	 * @since 3.1.0
 	 */
-	private function register_admin_menu_legacy() {
-		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
+	private function register_admin_menu_legacy( Admin_Menu $admin_menu ) {
 
 		$menu_args = $this->get_menu_args();
 
-		add_submenu_page(
-			Source_Local::ADMIN_MENU_SLUG,
-			$landing_pages_title,
-			$landing_pages_title,
-			'manage_options',
-			$menu_args['menu_slug'],
-			$menu_args['function']
-		);
+		$admin_menu->register( $menu_args['menu_slug'], new Landing_Pages_Menu_Item( $menu_args['function'] ) );
 	}
 
 	/**
@@ -476,8 +469,8 @@ class Module extends BaseModule {
 				$this->register_admin_menu( $menu );
 			} );
 		} else {
-			add_action( 'admin_menu', function() {
-				$this->register_admin_menu_legacy();
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu $admin_menu ) {
+				$this->register_admin_menu_legacy( $admin_menu );
 			}, 30 );
 		}
 
