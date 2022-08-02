@@ -3,8 +3,8 @@ Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
 Tested up to: 6.0
-Requires PHP: 5.6
-Stable tag: 3.6.7
+Requires PHP: 7.0
+Stable tag: 3.6.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,7 +147,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 = Minimum Requirements =
 
 * WordPress 5.0 or greater
-* PHP version 5.6 or greater
+* PHP version 7.0 or greater
 * MySQL version 5.0 or greater
 
 = We recommend your host supports: =
@@ -239,6 +239,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.6.8 - 2022-07-27 =
+* Fix: Align-self set to stretch is not working as expected in Container ([#17052](https://github.com/elementor/elementor/issues/17052))
+* Fix: Bad request error is being thrown when trying to import a template
+* Fix: License status is not being updated immediately after license renewal
 
 = 3.6.7 - 2022-07-03 =
 * Tweak: Optimized file handling for better security policies
