@@ -306,6 +306,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 				'selectors_dictionary' => [
+					'boxed' => '',
 					'full' => '--content-width: 100%;',
 				],
 			]
