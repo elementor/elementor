@@ -11,7 +11,7 @@ $eps-checkbox-checked-active-background-color: lighten($eps-checkbox-checked-bac
 $eps-checkbox-checked-disabled-background-color: theme-colors(disabled);
 $eps-checkbox-indicator-color: theme-colors(light);
 $eps-checkbox-indicator-border-width: 1px;
-$eps-checkbox-indicator-scale-unit: 1/4;
+$eps-checkbox-indicator-scale-unit: calc(1/4);
 $eps-checkbox-indicator-size-unit: ceil($eps-checkbox-indicator-scale-unit * $eps-checkbox-size) - $eps-checkbox-indicator-border-width;
 $eps-checkbox-indeterminate-indicator-size-unit: 7px;
 $eps-checkbox-error-background-color: theme-colors(danger);
