@@ -257,6 +257,7 @@
 		}
 	}
 
+	// Hack to increase specificity and avoid using `!important`.
 	.elementor .elementor-section-wrap & {
 
 		& > .elementor-widget {
