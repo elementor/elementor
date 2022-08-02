@@ -21,7 +21,6 @@ class Getting_Started_Menu_Item implements Renderable_Admin_Menu_Item {
 
 	public function label() {
 		return esc_html__( 'Getting Started', 'elementor' );
-
 	}
 
 	public function page_title() {
