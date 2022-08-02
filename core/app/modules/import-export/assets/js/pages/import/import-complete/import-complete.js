@@ -42,14 +42,14 @@ export default function ImportComplete() {
 				configData: importedData.configData,
 			};
 		},
-		eventTracking = ( command, eventName, source, eventType = null ) => {
+		eventTracking = ( command, source, eventType = null, elementLocation = null ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
 					command,
 					{
-						event,
 						source,
 						event_type: eventType,
+						element_location: elementLocation,
 					},
 				);
 			}
@@ -61,7 +61,7 @@ export default function ImportComplete() {
 			}
 
 			if ( uploadedData ) {
-				eventTracking( 'kit-library/kit-is-live-load', 'kit is live load', 'kit is live', 'load' );
+				eventTracking( 'kit-library/kit-is-live-load', 'kit is live', 'load' );
 			}
 			sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportComplete ) } );
 		}, [] );
@@ -77,7 +77,7 @@ export default function ImportComplete() {
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
 							italic
-							onClick={ () => eventTracking( 'kit-library/seek-more-info', 'learn more-kits', 'kit-is-live' ) }
+							onClick={ () => eventTracking( 'kit-library/seek-more-info', 'kit-is-live', 'click', 'app_header' ) }
 						>
 							{ __( 'Click here', 'elementor' ) }
 						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }

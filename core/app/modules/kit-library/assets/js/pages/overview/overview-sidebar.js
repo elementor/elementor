@@ -12,28 +12,26 @@ import './overview-sidebar.scss';
 export default function OverviewSidebar( props ) {
 	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( false );
-	const eventTracking = ( command, eventName, section = null, kitName = null, tag = null ) => {
+	const eventTracking = ( command, section = null, kitName = null, tag = null ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
+				source: 'overview',
+				element_location: 'app_sidebar',
 				kit_name: kitName,
 				tag,
-				section,
-				action: command,
-				event: eventName,
-				source: 'overview',
 			},
 		);
 	};
 	const onCollapseChange = ( value, title ) => {
-		const command = value ? 'kit-library/collapse' : 'kit-library/expand';
+		const command = value && value ? 'collapse' : 'expand';
 		appsEventTrackingDispatch(
-			command,
+			`kit-library/${ command }`,
 			{
-				section: title,
-				action: command,
-				event: 'sidebar section interaction',
 				source: 'overview',
+				element_location: 'app_sidebar',
+				kit_name: title,
+				action: command,
 			},
 		);
 	};
@@ -75,7 +73,7 @@ export default function OverviewSidebar( props ) {
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.taxonomies.map( ( taxonomy ) => (
-							<OverviewTaxonomyBadge key={ taxonomy } kitName={ props.model.title } onFilter={ ( taxonomyText ) => eventTracking( 'kit-library/sidebar-tag-filter', 'overview sidebar tag select', null, props.model.title, taxonomyText ) }>{ taxonomy }</OverviewTaxonomyBadge>
+							<OverviewTaxonomyBadge key={ taxonomy } kitName={ props.model.title } onFilter={ ( taxonomyText ) => eventTracking( 'kit-library/filter', null, props.model.title, taxonomyText ) }>{ taxonomy }</OverviewTaxonomyBadge>
 						) ) }
 					</Grid>
 				</Collapse>

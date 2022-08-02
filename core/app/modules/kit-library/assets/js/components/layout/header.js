@@ -6,9 +6,9 @@ export default function Header( props ) {
 	const eventTracking = ( command, source = 'home page', kitName = null ) => appsEventTrackingDispatch(
 			command,
 			{
-				kit_name: kitName,
 				source,
-				event: eventName,
+				element_type: 'app_header',
+				kit_name: kitName,
 			},
 		),
 		onClose = () => {

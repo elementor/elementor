@@ -29,8 +29,8 @@ function useHeaderButtons( id, kitName ) {
 					'kit-library/view-demo-page',
 					{
 						kit_name: kitName,
-						event: 'top bar change view type',
 						source: 'overview',
+						element_position: 'app_header',
 						view_type_clicked: 'demo',
 					},
 				);

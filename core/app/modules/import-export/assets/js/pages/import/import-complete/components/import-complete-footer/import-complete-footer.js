@@ -6,13 +6,13 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 
 export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 	const { closeApp } = useImportActions(),
-		eventTracking = ( command, event ) => {
+		eventTracking = ( command ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
-					`kit-library/${ command }`,
+					command,
 					{
-						event,
 						source: 'kit is live',
+						element_location: 'app_wizard_footer',
 					},
 				);
 			}
@@ -26,7 +26,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 					text={ __( 'See it live', 'elementor' ) }
 					variant="contained"
 					onClick={ () => {
-						eventTracking( 'see-it-live', 'see it live button' );
+						eventTracking( 'kit-library/see-it-live' );
 
 						window.open( seeItLiveUrl, '_blank' );
 					} }
@@ -38,7 +38,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 				variant="contained"
 				color="primary"
 				onClick={ () => {
-					eventTracking( 'close', 'close button' );
+					eventTracking( 'kit-library/close' );
 
 					closeApp();
 				} }

@@ -4,7 +4,7 @@ export const appsEventTrackingDispatch = ( command, eventParams ) => {
 		delete Object.assign( obj, { [ newKey ]: obj[ oldKey ] } )[ oldKey ];
 	}
 
-	// Add existing eventParams key value pair to the data object.
+	// Add existing eventParams key value pair to the data/details object.
 	const objectCreator = ( array, obj ) => {
 		for ( const key of array ) {
 			if ( eventParams.hasOwnProperty( key ) && eventParams[ key ] !== null ) {
@@ -16,10 +16,8 @@ export const appsEventTrackingDispatch = ( command, eventParams ) => {
 
 	keyRename( eventParams, 'source', 'page_source' );
 
-	const dataKeysOld = [ 'action', 'category', 'event', 'event_type', 'site_part', 'source_page', 'step' ];
-	const detailsKeysOld = [ 'document_type', 'document_name', 'element', 'error_type', 'grid_location', 'item', 'kit_name', 'layout', 'search_term', 'section', 'site_area', 'site_part', 'sort_direction', 'sort_type', 'tag', 'view_type_clicked' ];
 	const dataKeys = [];
-	const detailsKeys = [ 'page_source', 'element_position', 'element', 'event_type', 'modal_type', 'method', 'status', 'step', 'item', 'category', 'element_location', 'search_term', 'section' ];
+	const detailsKeys = [ 'document_name', 'document_type', 'view_type_clicked', 'tag', 'sort_direction', 'sort_type', 'action', 'grid_location', 'kit_name', 'page_source', 'element_position', 'element', 'event_type', 'modal_type', 'method', 'status', 'step', 'item', 'category', 'element_location', 'search_term', 'section', 'site_area' ];
 	const data = {};
 	const details = {};
 
@@ -40,7 +38,4 @@ export const appsEventTrackingDispatch = ( command, eventParams ) => {
 	init();
 
 	$e.run( command, data );
-
-	console.log( 'appsEventTrackingDispatch', command, JSON.stringify( data ) );
-	console.log( 'data', data );
 };

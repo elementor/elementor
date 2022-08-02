@@ -45,12 +45,12 @@ export const breakpoints = [
 
 function useHeaderButtons( id, kitName ) {
 	const navigate = useNavigate();
-	const eventTracking = ( command, eventName, viewTypeClicked ) => {
+	const eventTracking = ( command, viewTypeClicked ) => {
 		appsEventTrackingDispatch(
-			'kit-library/view-overview-page',
+			command,
 			{
 				kit_name: kitName,
-				event: eventName,
+				element_position: 'app_header',
 				source: 'view demo',
 				view_type_clicked: viewTypeClicked,
 			},
@@ -66,7 +66,7 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				eventTracking( 'kit-library/view-overview-page', 'top bar change view type', 'overview' );
+				eventTracking( 'kit-library/view-overview-page', 'overview' );
 				navigate( `/kit-library/overview/${ id }` );
 			},
 			includeHeaderBtnClass: false,
@@ -111,21 +111,21 @@ export default function Preview( props ) {
 		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
 		[ activeDevice ],
 	);
-	const eventTracking = ( command, eventName, layout ) => {
+	const eventTracking = ( command, layout, elementPosition = null ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
 				kit_name: data.title,
-				event: eventName,
 				source: 'view demo',
 				layout,
+				element_position: elementPosition,
 			},
 		);
 	};
 
 	const onChange = ( device ) => {
 		setActiveDevice( device );
-		eventTracking( 'kit-library/responsive-controls', 'top bar responsive views', device );
+		eventTracking( 'kit-library/responsive-controls', device, 'app_header' );
 	};
 
 	usePageTitle( {

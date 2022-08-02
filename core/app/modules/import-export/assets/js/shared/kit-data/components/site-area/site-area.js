@@ -9,7 +9,6 @@ export default function SiteArea( { text, link } ) {
 			command,
 			{
 				site_area: text,
-				event: 'open site area in a new tab',
 				source: 'import complete',
 			},
 		);

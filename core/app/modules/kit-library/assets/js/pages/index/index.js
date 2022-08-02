@@ -165,15 +165,16 @@ export default function Index( props ) {
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
-	const eventTracking = ( command, eventName, search = null, direction = null, sortType = null, action = undefined ) => {
+	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = null ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
-				search_term: search,
 				source: 'home page',
-				event: eventName,
+				element_position: elementPosition,
+				search_term: search,
 				sort_direction: direction,
 				sort_type: sortType,
+				event_type: eventType,
 				action,
 			},
 		);
@@ -210,7 +211,7 @@ export default function Index( props ) {
 							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
-							onFilter={ ( searchTerm ) => eventTracking( 'kit-library/kit-free-search', 'search kit', searchTerm ) }
+							onFilter={ ( searchTerm ) => eventTracking( 'kit-library/kit-free-search', 'top_area_search', searchTerm, null, null, null, 'search' ) }
 						/>
 						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
@@ -251,9 +252,9 @@ export default function Index( props ) {
 							onChange={ ( order ) => {
 								setQueryParams( ( prev ) => ( { ...prev, order } ) );
 							} }
-							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'kit sort direction', null, direction ) }
-							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'kit sort type select', null, null, value ) }
-							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'kit sort type dropdown', null, null, null, 'expand' ) }
+							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction ) }
+							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value ) }
+							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'top_area_sort', null, null, null, 'expand' ) }
 						/>
 					</Grid>
 				</Grid>

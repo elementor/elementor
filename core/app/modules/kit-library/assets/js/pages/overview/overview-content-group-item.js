@@ -3,15 +3,15 @@ import { Button, Card, CardBody, CardOverlay, CardHeader, CardImage, Heading } f
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function OverviewContentGroupItem( props ) {
-	const eventTracking = ( command, eventName ) => {
+	const eventTracking = ( command ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
 				kit_name: props.kitTitle,
 				document_type: props.groupData.id,
 				document_name: `${ props.groupData.label }-${ props.document.title }`,
-				event: eventName,
 				source: 'overview',
+				element_position: 'content_overview',
 			},
 		);
 	};
@@ -36,7 +36,7 @@ export default function OverviewContentGroupItem( props ) {
 							text={ __( 'View Demo', 'elementor' ) }
 							icon="eicon-preview-medium"
 							url={ `/kit-library/preview/${ props.kitId }?document_id=${ props.document.id }` }
-							onClick={ () => eventTracking( 'kit-library/view-demo-part', 'view demo part' ) }
+							onClick={ () => eventTracking( 'kit-library/view-demo-part' ) }
 						/>
 					</CardOverlay> }
 				</CardImage>

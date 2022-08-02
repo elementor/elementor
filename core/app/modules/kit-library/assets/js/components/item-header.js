@@ -125,8 +125,7 @@ export default function ItemHeader( props ) {
 				'kit-library/apply-kit',
 				{
 					kit_name: props.model.title,
-					view_type_clicked: props.pageId,
-					event: 'top bar apply kit',
+					element_position: 'app_header',
 					source: props.pageId,
 				},
 			);

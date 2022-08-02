@@ -16,8 +16,7 @@ const KitListItem = ( props ) => {
 				kit_name: props.model.title,
 				grid_location: props.index,
 				search_term: props.queryParams,
-				event: 'view kit demo',
-				source: '/' === props.source ? 'all- kits' : 'favorites',
+				source: props.source && '/' === props.source ? 'all kits' : 'favorites',
 			},
 		);
 	};
@@ -60,7 +59,7 @@ const KitListItem = ( props ) => {
 								text={ __( 'View Demo', 'elementor' ) }
 								icon="eicon-preview-medium"
 								url={ `/kit-library/preview/${ props.model.id }` }
-								onClick={ () => eventTracking( 'kit-library/check-out-kit', 'view kit demo' ) }
+								onClick={ () => eventTracking( 'kit-library/check-out-kit' ) }
 							/>
 							{
 								type === TYPE_PROMOTION && subscriptionPlan?.label && <Button

@@ -23,7 +23,6 @@ export default function SortSelect( props ) {
 					onChange={ ( e ) => {
 						const value = e.target.value;
 						setSelectedSortBy( getSelectedOptionDetails( value ) );
-						props.onChange( { by: value, direction: props.value.direction } );
 						props.onChangeSortValue?.( value );
 					} }
 					className="eps-sort-select__select"

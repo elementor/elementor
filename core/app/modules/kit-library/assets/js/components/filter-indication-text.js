@@ -13,7 +13,6 @@ export default function FilterIndicationText( props ) {
 			'kit-library/clear-filter',
 			{
 				tag: taxonomy,
-				event: 'remove filter tag',
 				source: 'home page',
 			},
 		);

@@ -28,7 +28,7 @@ const TaxonomiesFilterList = ( props ) => {
 			command,
 			{
 				source: 'home page',
-				element_location: 'home page',
+				element_location: 'app_sidebar',
 				category,
 				section,
 				item,
