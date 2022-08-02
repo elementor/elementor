@@ -41,7 +41,7 @@
 		transform: translateX(-50%);
 		border-color: transparent;
 		border-style: solid;
-		border-width: 0 ($eps-popover-arrow-width / 2) $eps-popover-arrow-height ($eps-popover-arrow-width / 2);
+		border-width: 0 calc(#{$eps-popover-arrow-width} / 2) $eps-popover-arrow-height calc(#{$eps-popover-arrow-width} / 2);
 		border-bottom-color: var(--popover-arrow-color);
 	}
 
