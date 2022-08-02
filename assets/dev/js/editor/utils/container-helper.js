@@ -206,14 +206,6 @@ export class ContainerHelper {
 							unit: 'px',
 							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
 						},
-						width_mobile_extra: {
-							unit: '%',
-							size: '100',
-						},
-						width_mobile: {
-							unit: '%',
-							size: '100',
-						},
 					}, newContainer, { edit: false } );
 
 					ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
