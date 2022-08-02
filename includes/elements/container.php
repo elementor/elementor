@@ -300,6 +300,8 @@ class Container extends Element_Base {
 			]
 		);
 
+		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
+
 		$this->add_control(
 			'content_width',
 			[
@@ -343,6 +345,13 @@ class Container extends Element_Base {
 				'unit' => '%',
 			],
 			'separator' => 'none',
+			'min_affected_device' => [
+				Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
+			],
 		];
 
 		$this->add_responsive_control(
@@ -365,33 +374,6 @@ class Container extends Element_Base {
 			] )
 		);
 
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-		$placeholder_widths = [];
-
-		if ( ! empty( $this->active_kit->get_settings_for_display( 'container_width' )['size'] ) ) {
-			$placeholder_widths = [
-				'desktop' => [
-					'placeholder' => [
-						'size' => $this->active_kit->get_settings_for_display( 'container_width' )['size'],
-						'unit' => 'px',
-					],
-				],
-			];
-		}
-
-		// Add placeholder values for all active breakpoints.
-		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint_instance ) {
-
-			if ( ! empty( $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )['size'] ) ) {
-				$placeholder_widths[ $breakpoint_name ] = [
-					'placeholder' => [
-						'size' => $this->active_kit->get_settings_for_display( 'container_width_' . $breakpoint_name )['size'],
-						'unit' => 'px',
-					],
-				];
-			}
-		}
-
 		$this->add_responsive_control(
 			'boxed_width',
 			array_merge( $width_control_settings, [
@@ -404,7 +386,12 @@ class Container extends Element_Base {
 				'default' => [
 					'unit' => 'px',
 				],
-				'device_args' => $placeholder_widths,
+				'device_args' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						// Use the default width from the kit as a placeholder.
+						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+					],
+				],
 			] )
 		);
 
@@ -434,19 +421,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$placeholder_width = [];
-
-		if ( ! empty( $this->active_kit->get_settings_for_display( 'space_between_widgets' )['size'] ) ) {
-			$placeholder_width = [
-				'desktop' => [
-					'placeholder' => [
-						'size' => $this->active_kit->get_settings_for_display( 'space_between_widgets' )['size'],
-						'unit' => 'px',
-					],
-				],
-			];
-		}
-
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
 			[
@@ -456,7 +430,12 @@ class Container extends Element_Base {
 					'gap' => [
 						'label' => esc_html_x( 'Elements Gap', 'Flex Container Control', 'elementor' ),
 						// Use the default "elements gap" from the kit as a placeholder value.
-						'device_args' => $placeholder_width,
+						'device_args' => [
+							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+								// Use the default width from the kit as a placeholder.
+								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+							],
+						],
 					],
 				],
 				'condition' => [
