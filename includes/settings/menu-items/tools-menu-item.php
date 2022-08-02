@@ -21,23 +21,23 @@ class Tools_Menu_Item implements Renderable_Admin_Menu_Item {
 		return true;
 	}
 
-	public function parent_slug() {
+	public function get_parent_slug() {
 		return Settings::PAGE_ID;
 	}
 
-	public function label() {
+	public function get_label() {
 		return esc_html__( 'Tools', 'elementor' );
 	}
 
-	public function page_title() {
+	public function get_page_title() {
 		return esc_html__( 'Tools', 'elementor' );
 	}
 
-	public function position() {
+	public function get_position() {
 		return 1;
 	}
 
-	public function capability() {
+	public function get_capability() {
 		return 'manage_options';
 	}
 

@@ -15,23 +15,23 @@ class Saved_Templates_Menu_Item implements Admin_Menu_Item {
 		return true;
 	}
 
-	public function parent_slug() {
+	public function get_parent_slug() {
 		return Source_Local::ADMIN_MENU_SLUG;
 	}
 
-	public function label() {
+	public function get_label() {
 		return esc_html__( 'Saved Templates', 'elementor' );
 	}
 
-	public function page_title() {
+	public function get_page_title() {
 		return esc_html__( 'Saved Templates', 'elementor' );
 	}
 
-	public function position() {
+	public function get_position() {
 		return 0;
 	}
 
-	public function capability() {
+	public function get_capability() {
 		return Editor::EDITING_CAPABILITY;
 	}
 }

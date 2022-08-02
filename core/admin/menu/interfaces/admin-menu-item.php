@@ -9,13 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 interface Admin_Menu_Item {
 	public function is_visible();
 
-	public function parent_slug();
+	public function get_parent_slug();
 
-	public function label();
+	public function get_label();
 
-	public function page_title();
+	public function get_page_title();
 
-	public function position();
+	public function get_position();
 
-	public function capability();
+	public function get_capability();
 }

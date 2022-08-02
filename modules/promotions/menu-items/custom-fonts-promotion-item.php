@@ -7,26 +7,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
-	public function label() {
+	public function get_label() {
 		return esc_html__( 'Custom Fonts', 'elementor' );
 	}
 
-	public function page_title() {
+	public function get_page_title() {
 		return esc_html__( 'Custom Fonts', 'elementor' );
 	}
 
-	public function promotion_title() {
+	public function get_promotion_title() {
 		return esc_html__( 'Add Your Custom Fonts', 'elementor' );
 	}
 
-	public function promotion_description() {
+	public function render_promotion_description() {
 		echo esc_html__(
 			'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.',
 			'elementor'
 		);
 	}
 
-	public function cta_url() {
+	public function get_cta_url() {
 		return 'https://go.elementor.com/go-pro-custom-fonts/';
 	}
 }

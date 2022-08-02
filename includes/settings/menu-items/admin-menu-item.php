@@ -19,23 +19,23 @@ class Admin_Menu_Item implements Renderable_Admin_Menu_Item {
 		return true;
 	}
 
-	public function parent_slug() {
+	public function get_parent_slug() {
 		return null;
 	}
 
-	public function label() {
+	public function get_label() {
 		return esc_html__( 'Elementor', 'elementor' );
 	}
 
-	public function page_title() {
+	public function get_page_title() {
 		return esc_html__( 'Elementor', 'elementor' );
 	}
 
-	public function position() {
+	public function get_position() {
 		return '58.5';
 	}
 
-	public function capability() {
+	public function get_capability() {
 		return 'manage_options';
 	}
 

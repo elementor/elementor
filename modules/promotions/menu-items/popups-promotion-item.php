@@ -9,34 +9,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Popups_Promotion_Item extends Base_Promotion_Item {
-	public function parent_slug() {
+	public function get_parent_slug() {
 		return Source_Local::ADMIN_MENU_SLUG;
 	}
 
-	public function position() {
+	public function get_position() {
 		return 4;
 	}
 
-	public function label() {
+	public function get_label() {
 		return esc_html__( 'Popups', 'elementor' );
 	}
 
-	public function page_title() {
+	public function get_page_title() {
 		return esc_html__( 'Popups', 'elementor' );
 	}
 
-	public function promotion_title() {
+	public function get_promotion_title() {
 		return esc_html__( 'Get Popup Builder', 'elementor' );
 	}
 
-	public function promotion_description() {
+	public function render_promotion_description() {
 		echo esc_html__(
 			'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.',
 			'elementor'
 		);
 	}
 
-	public function cta_url() {
+	public function get_cta_url() {
 		return 'https://go.elementor.com/go-pro-popup-builder/';
 	}
 }

@@ -9,13 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 interface Promotion_Menu_Item extends Renderable_Admin_Menu_Item {
-	public function image_url();
+	public function get_image_url();
 
-	public function promotion_title();
+	public function get_promotion_title();
 
-	public function promotion_description();
+	public function render_promotion_description();
 
-	public function cta_text();
+	public function get_cta_text();
 
-	public function cta_url();
+	public function get_cta_url();
 }

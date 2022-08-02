@@ -38,10 +38,6 @@ class Admin_Menu {
 
 	public function register_actions() {
 		add_action( 'admin_menu', function () {
-			if ( ! current_user_can( 'manage_options' ) ) {
-				return;
-			}
-
 			$this->register_menus();
 		}, 20 );
 
@@ -54,7 +50,7 @@ class Admin_Menu {
 		do_action( 'elementor/admin/menu/register', $this );
 
 		foreach ( $this->get_all() as $item_slug => $item ) {
-			$is_top_level = empty( $item->parent_slug() );
+			$is_top_level = empty( $item->get_parent_slug() );
 
 			if ( $is_top_level ) {
 				$this->register_top_level_menu( $item_slug, $item );
@@ -72,13 +68,13 @@ class Admin_Menu {
 			: '';
 
 		add_menu_page(
-			$item->page_title(),
-			$item->label(),
-			$item->capability(),
+			$item->get_page_title(),
+			$item->get_label(),
+			$item->get_capability(),
 			$item_slug,
 			$callback,
 			'', // TODO: Add support?
-			$item->position()
+			$item->get_position()
 		);
 	}
 
@@ -88,13 +84,13 @@ class Admin_Menu {
 			: '';
 
 		add_submenu_page(
-			$item->parent_slug(),
-			$item->page_title(),
-			$item->label(),
-			$item->capability(),
+			$item->get_parent_slug(),
+			$item->get_page_title(),
+			$item->get_label(),
+			$item->get_capability(),
 			$item_slug,
 			$callback,
-			$item->position()
+			$item->get_position()
 		);
 	}
 
@@ -104,12 +100,12 @@ class Admin_Menu {
 				continue;
 			}
 
-			$is_top_level = empty( $item->parent_slug() );
+			$is_top_level = empty( $item->get_parent_slug() );
 
 			if ( $is_top_level ) {
 				remove_menu_page( $item_slug );
 			} else {
-				remove_submenu_page( $item->parent_slug(), $item_slug );
+				remove_submenu_page( $item->get_parent_slug(), $item_slug );
 			}
 		}
 	}

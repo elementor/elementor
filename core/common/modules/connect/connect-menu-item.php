@@ -16,23 +16,23 @@ class Connect_Menu_Item implements Renderable_Admin_Menu_Item {
 		return false;
 	}
 
-	public function parent_slug() {
+	public function get_parent_slug() {
 		return Settings::PAGE_ID;
 	}
 
-	public function label() {
+	public function get_label() {
 		return esc_html__( 'Connect', 'elementor' );
 	}
 
-	public function page_title() {
+	public function get_page_title() {
 		return esc_html__( 'Connect', 'elementor' );
 	}
 
-	public function position() {
+	public function get_position() {
 		return null;
 	}
 
-	public function capability() {
+	public function get_capability() {
 		return 'edit_posts';
 	}
 

@@ -16,23 +16,23 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		return true;
 	}
 
-	public function parent_slug() {
+	public function get_parent_slug() {
 		return Settings::PAGE_ID;
 	}
 
-	public function position() {
+	public function get_position() {
 		return null;
 	}
 
-	public function capability() {
+	public function get_capability() {
 		return 'manage_options';
 	}
 
-	public function cta_text() {
+	public function get_cta_text() {
 		return esc_html__( 'Upgrade Now', 'elementor' );
 	}
 
-	public function image_url() {
+	public function get_image_url() {
 		return ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg';
 	}
 
@@ -40,14 +40,14 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo esc_url( $this->image_url() ); ?>" />
+				<img src="<?php echo esc_url( $this->get_image_url() ); ?>" />
 
-				<h2><?php Utils::print_unescaped_internal_string( $this->promotion_title() ); ?></h2>
+				<h2><?php Utils::print_unescaped_internal_string( $this->get_promotion_title() ); ?></h2>
 
-				<p><?php $this->promotion_description(); ?></p>
+				<p><?php $this->render_promotion_description(); ?></p>
 
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $this->cta_url() ); ?>">
-					<?php Utils::print_unescaped_internal_string( $this->cta_text() ); ?>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $this->get_cta_url() ); ?>">
+					<?php Utils::print_unescaped_internal_string( $this->get_cta_text() ); ?>
 				</a>
 			</div>
 		</div>

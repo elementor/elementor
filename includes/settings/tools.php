@@ -36,20 +36,6 @@ class Tools extends Settings_Page {
 	}
 
 	/**
-	 * Register admin menu legacy.
-	 *
-	 * Add new Elementor Tools admin menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function register_admin_menu_legacy( Admin_Menu $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
-	}
-
-	/**
 	 * Clear cache.
 	 *
 	 * Delete post meta containing the post CSS file data. And delete the actual
@@ -182,7 +168,7 @@ class Tools extends Settings_Page {
 			} );
 		} else {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu $admin_menu ) {
-				$this->register_admin_menu_legacy( $admin_menu );
+				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
 			} );
 		}
 
