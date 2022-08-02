@@ -248,6 +248,13 @@
 			}
 		}
 	}
+
+	.elementor .elementor-section-wrap  & {
+
+		& > .elementor-widget {
+			max-width: 100%;
+		}
+	}
 }
 
 @media ( max-width: $editor-screen-sm-max ) {

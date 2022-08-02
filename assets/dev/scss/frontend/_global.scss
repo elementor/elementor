@@ -124,17 +124,6 @@
 	}
 }
 
-.elementor {
-
-	:is( .e-container ) {
-
-		// Hack to increase specificity and avoid using `!important`.
-		& > .elementor-widget.elementor-widget {
-			max-width: 100%;
-		}
-	}
-}
-
 .elementor-widget-wrap, .e-container {
 
 	> .elementor-element.elementor-absolute {
