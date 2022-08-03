@@ -256,6 +256,15 @@
 			}
 		}
 	}
+
+	// Hack to increase specificity and avoid using `!important`.
+	.elementor .elementor-section-wrap & {
+
+		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+		& > .elementor-widget {
+			max-width: 100%;
+		}
+	}
 }
 
 @media ( max-width: $editor-screen-sm-max ) {
