@@ -7,6 +7,11 @@ on:
       version:
         description: 'Release branch version'
         required: false
+      pre_release:
+        type: boolean
+        description: 'Is this a pre-release?'
+        required: false
+
 
 jobs:
   bump-version:
@@ -106,7 +111,7 @@ jobs:
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          prerelease: true
+          prerelease: ${{ github.event.inputs.pre_release }}
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
