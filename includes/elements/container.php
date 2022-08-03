@@ -413,12 +413,12 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
-						// 'device_args' => [
-						// 	Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-						// 		// Use the default gap from the kit as a placeholder.
-						// 		'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-						// 	],
-						// ],
+						'device_args' => [
+							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+								// Use the default gap from the kit as a placeholder.
+								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+							],
+						],
 					],
 				],
 			]
@@ -480,6 +480,18 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
+			]
+		);
+
+		$this->add_control(
+			'link_note',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'raw' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
+				'condition' => [
+					'html_tag' => 'a',
+				],
 			]
 		);
 
