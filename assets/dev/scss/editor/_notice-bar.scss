@@ -38,6 +38,11 @@
 		}
 	}
 
+	&__secondary_message,
+	&__secondary_action {
+		font-size: 11px;
+	}
+
 	&__secondary_action {
 		margin-inline: 4px;
 
@@ -46,7 +51,7 @@
 			text-decoration: underline;
 
 			&:hover {
-				color: $white; // TODO: Check final color with the Design.
+				color: $gray-lighter;
 			}
 		}
 	}
