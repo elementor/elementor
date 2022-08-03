@@ -289,17 +289,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'container_type',
-			[
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'flex',
-				'selectors' => [
-					'{{WRAPPER}}' => '--display: {{VALUE}}',
-				],
-			]
-		);
-
 		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
 		$this->add_control(
@@ -317,7 +306,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 				'selectors_dictionary' => [
-					'boxed' => '--width: 100%;',
+					'boxed' => '',
 					'full' => '--content-width: 100%;',
 				],
 			]
@@ -432,9 +421,6 @@ class Container extends Element_Base {
 						// Use the default "elements gap" from the kit as a placeholder.
 						// 'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 					],
-				],
-				'condition' => [
-					'container_type' => 'flex',
 				],
 			]
 		);
@@ -814,9 +800,6 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
 				'range' => [
 					'px' => [
 						'max' => 3,
