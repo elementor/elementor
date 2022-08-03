@@ -419,7 +419,7 @@ class Container extends Element_Base {
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
 						// Use the default "elements gap" from the kit as a placeholder.
-						// 'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 					],
 				],
 			]
