@@ -1,5 +1,5 @@
 name: Publish Cloud
-# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN, JSON_BRANCH
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
 on: 
   workflow_dispatch:
@@ -115,17 +115,6 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Checkout master
-        uses: actions/checkout@v3
-      - name: Generate Release JSON
-        uses : ./.github/workflows/generate-release-json
-        with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          BRANCH: ${{ secrets.JSON_BRANCH }} # Branch to generate JSON to.
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          TAG_NAME_FILTER: "cloud"
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
