@@ -26,7 +26,3 @@ export default function SharedContextProvider( props ) {
 SharedContextProvider.propTypes = {
 	children: PropTypes.object.isRequired,
 };
-
-export const getComponentName = ( component ) => {
-	return component.name || 'Component';
-};

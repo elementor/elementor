@@ -42,7 +42,7 @@ export default function KitContent( { contentData, hasPro } ) {
 					`kit-library/${ command }`,
 					{
 						site_part: chosenPart,
-						source: 'import',
+						page_source: 'import',
 						step: currentPage,
 					},
 				);

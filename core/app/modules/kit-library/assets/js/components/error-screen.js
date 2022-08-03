@@ -10,7 +10,7 @@ export default function ErrorScreen( props ) {
 			'kit-library/go-back-to-view-kits',
 			{
 				event: 'empty state-continue browsing',
-				source: 'home page',
+				page_source: 'home page',
 				element_position: 'empty state',
 				category: props.button.category && ( '/favorites' === props.button.category ? 'favorites' : 'all' ),
 			},

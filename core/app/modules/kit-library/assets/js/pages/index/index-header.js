@@ -17,7 +17,7 @@ export default function IndexHeader( props ) {
 			{
 				element,
 				event_type: eventType,
-				source: 'home page',
+				page_source: 'home page',
 				element_position: 'app_header',
 				modal_type: modalType,
 

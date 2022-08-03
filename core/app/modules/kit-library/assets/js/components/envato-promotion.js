@@ -8,7 +8,7 @@ export default function EnvatoPromotion( { category } ) {
 		appsEventTrackingDispatch(
 			command,
 			{
-				source: 'home page',
+				page_source: 'home page',
 				element_position: 'library_bottom_promotion',
 				category: category && ( '/favorites' === category ? 'favorites' : 'all kits' ),
 			},

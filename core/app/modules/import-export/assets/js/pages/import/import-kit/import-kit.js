@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -37,7 +37,7 @@ export default function ImportKit() {
 					command,
 					{
 						element,
-						source: 'import',
+						page_source: 'import',
 						event_type: eventType,
 						step,
 						error_type: 'general' === error ? 'unknown' : error,
@@ -54,7 +54,7 @@ export default function ImportKit() {
 					'kit-library/file-upload',
 					{
 						method: uploadMethodName,
-						source: 'import',
+						page_source: 'import',
 						step: currentPage,
 					},
 				);
@@ -75,7 +75,7 @@ export default function ImportKit() {
 	// On load.
 	useEffect( () => {
 		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
-		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportKit ) } );
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportKit.name } );
 	}, [] );
 
 	// Uploading the kit after file is selected.

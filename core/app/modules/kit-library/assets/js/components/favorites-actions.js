@@ -14,7 +14,7 @@ export default function FavoritesActions( props ) {
 				grid_location: gridLocation,
 				search_term: searchTerm,
 				kit_name: kitName,
-				source: source && ( '/' === source ? 'home page' : 'overview' ),
+				page_source: source && ( '/' === source ? 'home page' : 'overview' ),
 				element_location: source && 'overview' === source ? 'app_sidebar' : null,
 				action,
 			},

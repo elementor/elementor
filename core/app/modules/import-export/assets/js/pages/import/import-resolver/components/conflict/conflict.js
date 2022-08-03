@@ -52,7 +52,7 @@ export default function Conflict( props ) {
 			`kit-library/${ command }`,
 			{
 				item: title,
-				source: 'import',
+				page_source: 'import',
 				step: currentPage,
 			},
 		);

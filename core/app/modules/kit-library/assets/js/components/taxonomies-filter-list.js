@@ -27,7 +27,7 @@ const TaxonomiesFilterList = ( props ) => {
 		appsEventTrackingDispatch(
 			command,
 			{
-				source: 'home page',
+				page_source: 'home page',
 				element_location: 'app_sidebar',
 				category,
 				section,

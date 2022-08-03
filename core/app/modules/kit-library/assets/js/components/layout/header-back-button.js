@@ -12,7 +12,7 @@ export default function HeaderBackButton( { kitName, pageId } ) {
 		appsEventTrackingDispatch(
 			command,
 			{
-				source: pageId,
+				page_source: pageId,
 				kit_name: kitName,
 				element_position: 'app_header',
 			},

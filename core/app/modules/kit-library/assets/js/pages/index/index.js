@@ -169,7 +169,7 @@ export default function Index( props ) {
 		appsEventTrackingDispatch(
 			command,
 			{
-				source: 'home page',
+				page_source: 'home page',
 				element_position: elementPosition,
 				search_term: search,
 				sort_direction: direction,

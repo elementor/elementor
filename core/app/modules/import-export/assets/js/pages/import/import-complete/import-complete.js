@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -63,7 +63,7 @@ export default function ImportComplete() {
 			if ( uploadedData ) {
 				eventTracking( 'kit-library/kit-is-live-load', 'kit is live', 'load' );
 			}
-			sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportComplete ) } );
+			sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportComplete.name } );
 		}, [] );
 
 	return (

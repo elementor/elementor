@@ -16,7 +16,7 @@ export default function OverviewSidebar( props ) {
 		appsEventTrackingDispatch(
 			command,
 			{
-				source: 'overview',
+				page_source: 'overview',
 				element_location: 'app_sidebar',
 				kit_name: kitName,
 				tag,
@@ -28,7 +28,7 @@ export default function OverviewSidebar( props ) {
 		appsEventTrackingDispatch(
 			`kit-library/${ command }`,
 			{
-				source: 'overview',
+				page_source: 'overview',
 				element_location: 'app_sidebar',
 				kit_name: title,
 				action: command,

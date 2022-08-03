@@ -29,7 +29,7 @@ function useHeaderButtons( id, kitName ) {
 					'kit-library/view-demo-page',
 					{
 						kit_name: kitName,
-						source: 'overview',
+						page_source: 'overview',
 						element_position: 'app_header',
 						view_type_clicked: 'demo',
 					},

@@ -11,7 +11,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 				appsEventTrackingDispatch(
 					command,
 					{
-						source: 'kit is live',
+						page_source: 'kit is live',
 						element_location: 'app_wizard_footer',
 					},
 				);

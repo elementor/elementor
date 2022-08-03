@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -68,7 +68,7 @@ export default function ImportProcess() {
 				appsEventTrackingDispatch(
 					command,
 					{
-						source: 'import',
+						page_source: 'import',
 						step: currentPage,
 						modal_type: 'unfiltered_file',
 						event_type: eventType,
@@ -97,7 +97,7 @@ export default function ImportProcess() {
 		} else {
 			navigate( 'import' );
 		}
-		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportProcess ) } );
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportProcess.name } );
 	}, [] );
 
 	// Starting the import process.

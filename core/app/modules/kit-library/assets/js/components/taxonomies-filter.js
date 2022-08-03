@@ -22,7 +22,7 @@ export default function TaxonomiesFilter( props ) {
 		eventTracking = ( command, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
 			command,
 			{
-				source: 'home page',
+				page_source: 'home page',
 				element_location: 'app_sidebar',
 				category: props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' ),
 				section,

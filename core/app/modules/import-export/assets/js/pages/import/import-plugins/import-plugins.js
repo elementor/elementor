@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../context/import-context/import-context-provider';
-import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -55,7 +55,7 @@ export default function ImportPlugins() {
 				appsEventTrackingDispatch(
 					command,
 					{
-						source: 'import',
+						page_source: 'import',
 						step: currentPage,
 					},
 				);
@@ -67,7 +67,7 @@ export default function ImportPlugins() {
 		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}
-		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportPlugins ) } );
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportPlugins.name } );
 	}, [] );
 
 	// On plugins data ready.

@@ -16,7 +16,7 @@ const KitListItem = ( props ) => {
 				kit_name: props.model.title,
 				grid_location: props.index,
 				search_term: props.queryParams,
-				source: props.source && '/' === props.source ? 'all kits' : 'favorites',
+				page_source: props.source && '/' === props.source ? 'all kits' : 'favorites',
 			},
 		);
 	};

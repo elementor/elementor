@@ -51,7 +51,7 @@ function useHeaderButtons( id, kitName ) {
 			{
 				kit_name: kitName,
 				element_position: 'app_header',
-				source: 'view demo',
+				page_source: 'view demo',
 				view_type_clicked: viewTypeClicked,
 			},
 		);
@@ -116,7 +116,7 @@ export default function Preview( props ) {
 			command,
 			{
 				kit_name: data.title,
-				source: 'view demo',
+				page_source: 'view demo',
 				layout,
 				element_position: elementPosition,
 			},

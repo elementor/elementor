@@ -21,7 +21,7 @@ export default function Layout( props ) {
 					command,
 					{
 						element,
-						source: 'import',
+						page_source: 'import',
 						event_type: eventType,
 						currentPage,
 						element_position: 'app_header',

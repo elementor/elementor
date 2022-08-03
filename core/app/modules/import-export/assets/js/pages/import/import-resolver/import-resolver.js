@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -61,7 +61,7 @@ export default function ImportResolver() {
 					'kit-library/check-item',
 					{
 						site_part: sitePart,
-						source: 'import',
+						page_source: 'import',
 						step: currentPage,
 					},
 				);
@@ -77,7 +77,7 @@ export default function ImportResolver() {
 		if ( ! importContext.data.uploadedData ) {
 			navigate( 'import' );
 		}
-		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportResolver ) } );
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportResolver.name } );
 	}, [] );
 
 	return (

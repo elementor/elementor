@@ -6,7 +6,7 @@ export default function ImportInfoModal( props ) {
 	const eventTracking = ( element ) => appsEventTrackingDispatch(
 		'kit-library/seek-more-info',
 		{
-			source: 'import',
+			page_source: 'import',
 			element,
 		},
 	);

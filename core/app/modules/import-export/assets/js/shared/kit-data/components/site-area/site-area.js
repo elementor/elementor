@@ -9,7 +9,7 @@ export default function SiteArea( { text, link } ) {
 			command,
 			{
 				site_area: text,
-				source: 'import complete',
+				page_source: 'import complete',
 			},
 		);
 	};

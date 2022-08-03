@@ -13,7 +13,7 @@ export default function FilterIndicationText( props ) {
 			'kit-library/clear-filter',
 			{
 				tag: taxonomy,
-				source: 'home page',
+				page_source: 'home page',
 			},
 		);
 	};

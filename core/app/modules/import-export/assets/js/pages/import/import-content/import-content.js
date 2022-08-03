@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 
-import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -25,7 +25,7 @@ export default function ImportContent() {
 				appsEventTrackingDispatch(
 					command,
 					{
-						source: 'import',
+						page_source: 'import',
 						step: currentPage,
 					},
 				);
@@ -46,7 +46,7 @@ export default function ImportContent() {
 		};
 
 	useEffect( () => {
-		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportContent ) } );
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportContent.name } );
 	}, [] );
 	// On file change.
 	useEffect( () => {

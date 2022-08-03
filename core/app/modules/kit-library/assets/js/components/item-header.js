@@ -126,7 +126,7 @@ export default function ItemHeader( props ) {
 				{
 					kit_name: props.model.title,
 					element_position: 'app_header',
-					source: props.pageId,
+					page_source: props.pageId,
 				},
 			);
 		},

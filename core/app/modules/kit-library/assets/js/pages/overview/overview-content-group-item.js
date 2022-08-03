@@ -10,7 +10,7 @@ export default function OverviewContentGroupItem( props ) {
 				kit_name: props.kitTitle,
 				document_type: props.groupData.id,
 				document_name: `${ props.groupData.label }-${ props.document.title }`,
-				source: 'overview',
+				page_source: 'overview',
 				element_position: 'content_overview',
 			},
 		);

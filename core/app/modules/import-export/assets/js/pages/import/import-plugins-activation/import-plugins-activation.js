@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext, getComponentName } from '../../../context/shared-context/shared-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -33,7 +33,7 @@ export default function ImportPluginsActivation() {
 		if ( isDone ) {
 			importContext.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: ready } );
 			importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'success' } );
-			sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: getComponentName( ImportPluginsActivation ) } );
+			sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportPluginsActivation.name } );
 		}
 	}, [ isDone ] );
 
