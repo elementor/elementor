@@ -353,7 +353,13 @@ class Container extends Element_Base {
 					'content_width' => 'full',
 				],
 				'device_args' => [
-					'desktop' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
 						'placeholder' => [
 							'size' => '100',
 							'unit' => '%',
@@ -379,6 +385,12 @@ class Container extends Element_Base {
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 						// Use the default width from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
 					],
 				],
 			] )
@@ -418,8 +430,12 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
-						// Use the default "elements gap" from the kit as a placeholder.
-						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+						'device_args' => [
+							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+								// Use the default "Gap between elements" from the kit as a placeholder value.
+								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+							],
+						],
 					],
 				],
 			]
