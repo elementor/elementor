@@ -30,7 +30,7 @@
 
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
-	--overlay-transition: 0;
+	--overlay-transition: 0.3s;
 
 	position: var( --position );
 	display: var( --display );
@@ -254,6 +254,15 @@
 					padding: 2px;
 				}
 			}
+		}
+	}
+
+	// Hack to increase specificity and avoid using `!important`.
+	.elementor .elementor-section-wrap & {
+
+		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+		& > .elementor-widget {
+			max-width: 100%;
 		}
 	}
 }
