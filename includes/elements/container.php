@@ -289,7 +289,7 @@ class Container extends Element_Base {
 			]
 		);
 
-		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
 
 		$this->add_control(
 			'content_width',
@@ -338,6 +338,7 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
 			'separator' => 'none',
 		];
