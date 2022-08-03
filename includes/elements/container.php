@@ -430,10 +430,9 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
-						// Use the default "Gap between elements" from the kit as a placeholder value.
 						'device_args' => [
 							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-								// Use the default width from the kit as a placeholder.
+								// Use the default gap from the kit as a placeholder.
 								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 							],
 						],
