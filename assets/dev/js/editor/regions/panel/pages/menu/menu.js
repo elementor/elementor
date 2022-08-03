@@ -101,7 +101,11 @@ PanelMenu.addExitItem = () => {
 
 // Callback being used to determine when to open the modal or redirect the user.
 PanelMenu.clickExitItem = () => {
-	if ( PanelMenu.exitShouldRedirect ) {
+	const currentValue = elementor.getPreferences( 'exit_to' );
+	const defaultValue = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to.default;
+
+	// The modal will pop if the user has not set the exit to preference yet or if the model never showed before.
+	if ( currentValue !== defaultValue || PanelMenu.exitShouldRedirect ) {
 		window.location.href = PanelMenu.getExitUrl();
 	} else {
 		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
