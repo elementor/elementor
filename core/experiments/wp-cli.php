@@ -124,13 +124,12 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return void
 	 */
 	private function foreach_sites( callable $callback ) {
-		/** @var \WP_Site[] $sites */
-		$sites = get_sites();
+		$blog_ids = get_sites( [
+			'fields' => 'ids',
+			'number' => 0,
+		] );
 
-		foreach ( $sites as $keys => $site ) {
-			// Cast $blog as an array instead of object
-			$blog_id = $site->blog_id;
-
+		foreach ( $blog_ids as $blog_id ) {
 			switch_to_blog( $blog_id );
 
 			$callback( get_option( 'home' ), $blog_id );
