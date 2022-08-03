@@ -289,17 +289,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'container_type',
-			[
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'flex',
-				'selectors' => [
-					'{{WRAPPER}}' => '--display: {{VALUE}}',
-				],
-			]
-		);
-
 		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
 
 		$this->add_control(
