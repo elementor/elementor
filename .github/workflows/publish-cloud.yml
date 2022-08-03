@@ -110,6 +110,8 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Checkout master
+        uses: actions/checkout@v3
       - name: Generate Release JSON
         uses : ./.github/workflows/generate-release-json
         with:
