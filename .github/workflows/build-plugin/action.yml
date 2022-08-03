@@ -1,0 +1,27 @@
+name: Build Plugin
+description: Inject the given version into the plugin files and then build it and zip it.
+
+inputs:
+  PACKAGE_VERSION:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            if [ "${{ inputs.PACKAGE_VERSION }}" == "" ] || [ "${{ inputs.PACKAGE_VERSION }}" == "undefined" ];
+              then
+                echo "PACKAGE_VERSION is empty string or undefined"
+                exit 1
+            fi
+            sed -i -E "s/Stable tag: .*/Stable tag: ${{ inputs.PACKAGE_VERSION }}/g" ./readme.txt
+            sed -i -E "s/Version: .*/Version: ${{ inputs.PACKAGE_VERSION }}/g" elementor.php
+            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${{ inputs.PACKAGE_VERSION }}'/g" elementor.php
+            PLUGIN_ZIP_FILENAME="elementor-${{ inputs.PACKAGE_VERSION }}.zip"
+            npx grunt build
+            mv build elementor
+            zip -r $PLUGIN_ZIP_FILENAME elementor
+            echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+            echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}"
+      

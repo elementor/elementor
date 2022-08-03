@@ -15,8 +15,11 @@ function PluginsSelection( {
 		return null;
 	}
 
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const cachedPlugins = useMemo( () => plugins, [ plugins ] ),
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		cachedInitialSelected = useMemo( () => initialSelected, [ plugins ] ),
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		cachedInitialDisabled = useMemo( () => initialDisabled, [ plugins ] ),
 		handleOnSelect = ( selectedIndexes ) => {
 			if ( ! onSelect ) {

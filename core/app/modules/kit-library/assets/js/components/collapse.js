@@ -9,7 +9,7 @@ export default function Collapse( props ) {
 		>
 			<button className="eps-collapse__title" onClick={ () => props.onChange( ( value ) => ! value ) }>
 				<span>{ props.title }</span>
-				<i className="eicon-chevron-right eps-collapse__icon"/>
+				<i className="eicon-chevron-right eps-collapse__icon" />
 			</button>
 			<div className="eps-collapse__content">
 				{ props.children }

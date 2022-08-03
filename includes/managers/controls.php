@@ -989,7 +989,7 @@ class Controls_Manager {
 				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Our Custom CSS', 'elementor' ),
 					'messages' => $messages,
-					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash',
+					'link' => 'https://go.elementor.com/go-pro-custom-css/',
 				] ),
 			]
 		);
@@ -1034,7 +1034,7 @@ class Controls_Manager {
 				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Page Transitions', 'elementor' ),
 					'messages' => $messages,
-					'link' => 'https://elementor.com/pro/?utm_source=panel-page-transitions&utm_campaign=gopro&utm_medium=wp-dash',
+					'link' => 'https://go.elementor.com/go-pro-page-transitions/',
 				] ),
 			]
 		);
@@ -1054,8 +1054,8 @@ class Controls_Manager {
 
 			// Show a `Go Pro` button only if the user doesn't have Pro.
 			if ( $texts['link'] && ! Utils::has_pro() ) { ?>
-				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( Utils::get_pro_link( $texts['link'] ) ); ?>" target="_blank">
-					<?php echo esc_html__( 'Go Pro', 'elementor' ); ?>
+				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( ( $texts['link'] ) ); ?>" target="_blank">
+					<?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?>
 				</a>
 			<?php } ?>
 		</div>
@@ -1094,7 +1094,7 @@ class Controls_Manager {
 					'messages' => [
 						esc_html__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
 					],
-					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash',
+					'link' => 'https://go.elementor.com/go-pro-custom-attributes/',
 				] ),
 			]
 		);

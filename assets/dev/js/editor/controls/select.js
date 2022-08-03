@@ -44,7 +44,7 @@ ControlSelectItemView = ControlBaseDataView.extend( {
 	},
 }, {
 
-	onPasteStyle: function( control, clipboardValue ) {
+	onPasteStyle( control, clipboardValue ) {
 		if ( control.groups ) {
 			return control.groups.some( function( group ) {
 				return ControlSelectItemView.onPasteStyle( group, clipboardValue );
