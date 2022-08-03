@@ -352,14 +352,14 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'full',
 				],
-				// 'device_args' => [
-				// 	'desktop' => [
-				// 		'placeholder' => [
-				// 			'size' => '100',
-				// 			'unit' => '%',
-				// 		],
-				// 	],
-				// ],
+				'device_args' => [
+					'desktop' => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
+				],
 			] )
 		);
 
