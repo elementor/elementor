@@ -317,7 +317,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 				'selectors_dictionary' => [
-					'boxed' => '--width: 100%;',
+					'boxed' => '',
 					'full' => '--content-width: 100%;',
 				],
 			]
@@ -364,7 +364,13 @@ class Container extends Element_Base {
 					'content_width' => 'full',
 				],
 				'device_args' => [
-					'desktop' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
 						'placeholder' => [
 							'size' => '100',
 							'unit' => '%',
@@ -390,6 +396,12 @@ class Container extends Element_Base {
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 						// Use the default width from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
 					],
 				],
 			] )
@@ -437,9 +449,6 @@ class Container extends Element_Base {
 							],
 						],
 					],
-				],
-				'condition' => [
-					'container_type' => 'flex',
 				],
 			]
 		);
@@ -819,9 +828,6 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
 				'range' => [
 					'px' => [
 						'max' => 3,
