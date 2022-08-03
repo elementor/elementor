@@ -32,6 +32,7 @@ runs:
         TAG_NAME_FILTER: ${{ inputs.TAG_NAME_FILTER }}
       run: |
             npm install --no-package-lock --no-save @octokit/rest@19.0.3
+            mkdir -p ./releases
             node .github/workflows/generate-release-json/generate-release-json.js
             git config user.name ${{ inputs.MAINTAIN_USERNAME }}
             git config user.email ${{ inputs.MAINTAIN_EMAIL }}
