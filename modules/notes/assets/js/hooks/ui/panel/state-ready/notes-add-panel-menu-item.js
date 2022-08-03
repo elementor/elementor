@@ -19,7 +19,7 @@ export class NotesAddPanelMenuItem extends $e.modules.hookUI.After {
 					title: __( 'Notes', 'elementor' ),
 					content: __( 'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.', 'elementor' ),
 					position: {
-						top: '-3',
+						blockStart: '-3',
 						inlineStart: '+10',
 					},
 					targetElement: this.$el,
