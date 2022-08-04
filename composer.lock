@@ -2903,7 +2903,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.6"
+        "php": ">=7.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
