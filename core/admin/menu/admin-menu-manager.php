@@ -3,13 +3,13 @@
 namespace Elementor\Core\Admin\Menu;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
-use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Admin_Menu {
+class Admin_Menu_Manager {
 
 	/**
 	 * @var Admin_Menu_Item[]
@@ -38,7 +38,7 @@ class Admin_Menu {
 
 	public function register_actions() {
 		add_action( 'admin_menu', function () {
-			$this->register_menus();
+			$this->register_wp_menus();
 		}, 20 );
 
 		add_action( 'admin_head', function () {
@@ -46,7 +46,7 @@ class Admin_Menu {
 		} );
 	}
 
-	private function register_menus() {
+	private function register_wp_menus() {
 		do_action( 'elementor/admin/menu/register', $this );
 
 		foreach ( $this->get_all() as $item_slug => $item ) {
@@ -63,8 +63,8 @@ class Admin_Menu {
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {
-		$callback = $item instanceof Renderable_Admin_Menu_Item
-			? [ $item, 'callback' ]
+		$callback = $item instanceof Admin_Menu_Item_With_Page
+			? [ $item, 'render' ]
 			: '';
 
 		add_menu_page(
@@ -79,8 +79,8 @@ class Admin_Menu {
 	}
 
 	private function register_sub_menu( $item_slug, Admin_Menu_Item $item ) {
-		$callback = $item instanceof Renderable_Admin_Menu_Item
-			? [ $item, 'callback' ]
+		$callback = $item instanceof Admin_Menu_Item_With_Page
+			? [ $item, 'render' ]
 			: '';
 
 		add_submenu_page(

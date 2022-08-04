@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -39,7 +39,7 @@ class Module extends BaseModule {
 	/**
 	 * Register the admin menu the old way.
 	 */
-	private function register_admin_menu_legacy( Admin_Menu $admin_menu ) {
+	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register(
 			Plugin::$instance->app->get_base_url() . '#/kit-library',
 			new Kit_Library_Menu_Item()
@@ -84,7 +84,7 @@ class Module extends BaseModule {
 				$this->register_admin_menu( $menu );
 			} );
 		} else {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu $admin_menu ) {
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu_legacy( $admin_menu );
 			} );
 		}

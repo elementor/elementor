@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Includes\Settings\MenuItems;
 
-use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
 use Elementor\Tools;
 
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Tools_Menu_Item implements Renderable_Admin_Menu_Item {
+class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private $tools_page;
 
@@ -41,7 +41,7 @@ class Tools_Menu_Item implements Renderable_Admin_Menu_Item {
 		return 'manage_options';
 	}
 
-	public function callback() {
+	public function render() {
 		$this->tools_page->display_settings_page();
 	}
 }

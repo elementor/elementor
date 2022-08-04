@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Includes\Settings\MenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\MenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\MenuItems\Getting_Started_Menu_Item;
@@ -64,9 +64,9 @@ class Settings extends Settings_Page {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function register_admin_menu( Admin_Menu $admin_menu ) {
+	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 		global $menu;
 
 		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -119,9 +119,9 @@ class Settings extends Settings_Page {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 2.0.3
-	 * @access public
+	 * @access private
 	 */
-	public function register_knowledge_base_menu( Admin_Menu $admin_menu ) {
+	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
 		$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
 	}
@@ -395,8 +395,14 @@ class Settings extends Settings_Page {
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
-			add_action( 'elementor/admin/menu/register', [ $this, 'register_knowledge_base_menu' ] );
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->register_admin_menu( $admin_menu );
+			} );
+
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->register_knowledge_base_menu( $admin_menu );
+			} );
+
 			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 
 			add_filter( 'custom_menu_order', '__return_true' );

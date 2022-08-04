@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\App;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\App\MenuItems\Theme_Builder_Menu_Item;
 use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
@@ -36,7 +36,7 @@ class App extends BaseApp {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID . '&ver=' . ELEMENTOR_VERSION );
 	}
 
-	public function register_admin_menu( Admin_Menu $admin_menu ) {
+	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
 	}
 

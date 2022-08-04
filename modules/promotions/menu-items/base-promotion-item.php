@@ -36,7 +36,7 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		return ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg';
 	}
 
-	public function callback() {
+	public function render() {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">

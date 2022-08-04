@@ -6,6 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-interface Renderable_Admin_Menu_Item extends Admin_Menu_Item {
-	public function callback();
+interface Admin_Menu_Item_With_Page extends Admin_Menu_Item {
+	public function render();
 }

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -19,7 +19,7 @@ class Admin {
 	 * @since 2.3.0
 	 * @access public
 	 */
-	public function register_admin_menu( Admin_Menu $admin_menu ) {
+	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 
 		$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
 

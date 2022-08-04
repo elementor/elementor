@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
 use Elementor\Includes\Settings\MenuItems\Tools_Menu_Item;
@@ -167,7 +167,7 @@ class Tools extends Settings_Page {
 				$this->register_admin_menu( $menu );
 			} );
 		} else {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu $admin_menu ) {
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
 			} );
 		}

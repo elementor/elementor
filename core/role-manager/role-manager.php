@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\Settings_Page;
 
@@ -35,7 +35,7 @@ class Role_Manager extends Settings_Page {
 	 * @since 2.0.0
 	 * @access public
 	 */
-	public function register_admin_menu( Admin_Menu $admin_menu ) {
+	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( static::PAGE_ID, new Role_Manager_Menu_Item( $this ) );
 	}
 

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\System_Info;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
@@ -134,7 +134,7 @@ class Module extends BaseModule {
 	 * @since 2.9.0
 	 * @access public
 	 */
-	public function register_menu( Admin_Menu $admin_menu ) {
+	public function register_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
 	}
 

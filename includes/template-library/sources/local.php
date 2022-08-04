@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\File_Types\Zip;
@@ -346,9 +346,9 @@ class Source_Local extends Source_Base {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 2.4.0
-	 * @access public
+	 * @access private
 	 */
-	public function admin_menu_reorder( Admin_Menu $admin_menu ) {
+	private function admin_menu_reorder( Admin_Menu_Manager $admin_menu ) {
 		global $submenu;
 
 		if ( ! isset( $submenu[ static::ADMIN_MENU_SLUG ] ) ) {
@@ -357,8 +357,8 @@ class Source_Local extends Source_Base {
 
 		remove_submenu_page( static::ADMIN_MENU_SLUG, static::ADMIN_MENU_SLUG );
 
-		$add_new_slug = 'post-new.php?post_type=elementor_library';
-		$category_slug = 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library';
+		$add_new_slug = 'post-new.php?post_type=' . static::CPT;
+		$category_slug = 'edit-tags.php?taxonomy=' . static::TAXONOMY_CATEGORY_SLUG . '&amp;post_type=' . static::CPT;
 
 		$library_submenu = new Collection( $submenu[ static::ADMIN_MENU_SLUG ] );
 
@@ -383,7 +383,7 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	public function admin_menu( Admin_Menu $admin_menu ) {
+	private function admin_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
 	}
 
@@ -1545,8 +1545,14 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-			add_action( 'elementor/admin/menu/register', [ $this, 'admin_menu' ] );
-			add_action( 'elementor/admin/menu/register', [ $this, 'admin_menu_reorder' ] );
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->admin_menu( $admin_menu );
+			} );
+
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->admin_menu_reorder( $admin_menu );
+			} );
+
 			add_filter( 'admin_title', [ $this, 'admin_title' ], 10, 2 );
 			add_action( 'all_admin_notices', [ $this, 'replace_admin_heading' ] );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );

@@ -1,14 +1,14 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
-use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Role_Manager_Menu_Item implements Renderable_Admin_Menu_Item {
+class Role_Manager_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private $role_manager;
 
@@ -40,7 +40,7 @@ class Role_Manager_Menu_Item implements Renderable_Admin_Menu_Item {
 		return 'manage_options';
 	}
 
-	public function callback() {
+	public function render() {
 		$this->role_manager->display_settings_page();
 	}
 }

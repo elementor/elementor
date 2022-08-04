@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Promotions;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\MenuItems\Custom_Code_Promotion_Item;
 use Elementor\Modules\Promotions\MenuItems\Custom_Fonts_Promotion_Item;
@@ -28,7 +28,7 @@ class Module extends Base_Module {
 			$this->handle_external_redirects();
 		} );
 
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_menu_items( $admin_menu );
 		} );
 	}
@@ -44,7 +44,7 @@ class Module extends Base_Module {
 		}
 	}
 
-	private function register_menu_items( Admin_Menu $admin_menu ) {
+	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
 		$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
 		$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );

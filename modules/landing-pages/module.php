@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
-use Elementor\Core\Admin\Menu\Admin_Menu;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
@@ -166,7 +166,7 @@ class Module extends BaseModule {
 	 *
 	 * @since 3.1.0
 	 */
-	private function register_admin_menu_legacy( Admin_Menu $admin_menu ) {
+	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
 
 		$menu_args = $this->get_menu_args();
 
@@ -469,7 +469,7 @@ class Module extends BaseModule {
 				$this->register_admin_menu( $menu );
 			} );
 		} else {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu $admin_menu ) {
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu_legacy( $admin_menu );
 			}, 30 );
 		}

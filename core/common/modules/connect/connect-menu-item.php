@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
-use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Connect_Menu_Item implements Renderable_Admin_Menu_Item {
+class Connect_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	public function is_visible() {
 		return false;
@@ -36,7 +36,7 @@ class Connect_Menu_Item implements Renderable_Admin_Menu_Item {
 		return 'edit_posts';
 	}
 
-	public function callback() {
+	public function render() {
 		$apps = Plugin::$instance->common->get_component( 'connect' )->get_apps();
 		?>
 		<style>

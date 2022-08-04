@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Includes\Settings\MenuItems;
 
-use Elementor\Core\Admin\Menu\Interfaces\Renderable_Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Getting_Started_Menu_Item implements Renderable_Admin_Menu_Item {
+class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 	public function is_visible() {
 		return true;
 	}
@@ -35,7 +35,7 @@ class Getting_Started_Menu_Item implements Renderable_Admin_Menu_Item {
 		return 'manage_options';
 	}
 
-	public function callback() {
+	public function render() {
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = esc_html__( 'Create Your First Page', 'elementor' );
 			$create_new_cpt = 'page';
