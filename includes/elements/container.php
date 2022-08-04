@@ -360,6 +360,7 @@ class Container extends Element_Base {
 						],
 					],
 					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						// The mobile width is not affected by higher breakpoints.
 						'placeholder' => [
 							'size' => '100',
 							'unit' => '%',
@@ -387,6 +388,7 @@ class Container extends Element_Base {
 						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
 					],
 					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						// The mobile width is not affected by settings in higher breakpoints.
 						'placeholder' => [
 							'size' => '100',
 							'unit' => '%',
