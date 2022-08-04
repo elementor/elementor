@@ -102,7 +102,7 @@ class Container extends Element_Base {
 		$config['controls'] = $this->get_controls();
 		$config['tabs_controls'] = $this->get_tabs_controls();
 		$config['show_in_panel'] = true;
-		$config['categories'] = [ 'layout' ];
+		$config['categories'] = [ 'basic' ];
 
 		return $config;
 	}
@@ -289,7 +289,18 @@ class Container extends Element_Base {
 			]
 		);
 
-		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+		$this->add_control(
+			'container_type',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'default' => 'flex',
+				'selectors' => [
+					'{{WRAPPER}}' => '--display: {{VALUE}}',
+				],
+			]
+		);
+
+		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
 
 		$this->add_control(
 			'content_width',
@@ -306,7 +317,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 				'selectors_dictionary' => [
-					'boxed' => '',
+					'boxed' => '--width: 100%;',
 					'full' => '--content-width: 100%;',
 				],
 			]
@@ -338,6 +349,7 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
 			'separator' => 'none',
 		];
@@ -385,6 +397,12 @@ class Container extends Element_Base {
 						// Use the default width from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
 					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
 				],
 			] )
 		);
@@ -415,47 +433,12 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Flex_Container::get_type(),
-			[
-				'name' => 'flex',
-				'selector' => '{{WRAPPER}}',
-				'fields_options' => [
-					'gap' => [
-						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
-						'device_args' => [
-							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-								// Use the default gap from the kit as a placeholder.
-								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-							],
-						],
-					],
-				],
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	/**
-	 * Register the Container's items layout controls.
-	 *
-	 * @return void
-	 */
-	protected function register_items_layout_controls() {
-		$this->start_controls_section(
-			'section_layout_additional_options',
-			[
-				'label' => esc_html__( 'Additional Options', 'elementor' ),
-				'tab' => Controls_Manager::TAB_LAYOUT,
-			]
-		);
-
 		$this->add_control(
 			'overflow',
 			[
 				'label' => esc_html__( 'Overflow', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
 				'default' => '',
 				'options' => [
 					'' => esc_html__( 'Default', 'elementor' ),
@@ -494,18 +477,6 @@ class Container extends Element_Base {
 		);
 
 		$this->add_control(
-			'link_note',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				'raw' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
-				'condition' => [
-					'html_tag' => 'a',
-				],
-			]
-		);
-
-		$this->add_control(
 			'link',
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
@@ -516,6 +487,43 @@ class Container extends Element_Base {
 				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'html_tag' => 'a',
+				],
+				'description' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+	}
+
+	/**
+	 * Register the Container's items layout controls.
+	 *
+	 * @return void
+	 */
+	protected function register_items_layout_controls() {
+		$this->start_controls_section(
+			'section_layout_items',
+			[
+				'label' => esc_html__( 'Items', 'elementor' ),
+				'tab' => Controls_Manager::TAB_LAYOUT,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Flex_Container::get_type(),
+			[
+				'name' => 'flex',
+				'selector' => '{{WRAPPER}}',
+				'fields_options' => [
+					'gap' => [
+						'label' => esc_html_x( 'Elements Gap', 'Flex Container Control', 'elementor' ),
+						// Use the default "elements gap" from the kit as a placeholder.
+						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+					],
+				],
+				'condition' => [
+					'container_type' => 'flex',
 				],
 			]
 		);
@@ -809,6 +817,9 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
 				'range' => [
 					'px' => [
 						'max' => 3,
