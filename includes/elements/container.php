@@ -114,7 +114,10 @@ class Container extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
+		<# if ( 'boxed' === settings.content_width ) { #>
+			<div class="e-container-boxed--inner">
 		<#
+		}
 		if ( settings.background_video_link ) {
 			let videoAttributes = 'autoplay muted playsinline';
 
@@ -124,7 +127,7 @@ class Container extends Element_Base {
 
 			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
-			if ( ! settings.background_play_on_mobile ) {
+			if ( ! settings.background_play_on_mobile ) { 
 				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 			}
 			#>
@@ -135,6 +138,9 @@ class Container extends Element_Base {
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
+		<# if ( 'boxed' === settings.content_width ) { #>
+			</div>
+		<# } #>
 		<?php
 	}
 
@@ -238,8 +244,8 @@ class Container extends Element_Base {
 		}
 
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
-		$this->render_video_background();
-?>
+		$this->render_inner_wrapper( $settings, 'open' ); ?> <?php $this->render_video_background(); ?>
+
 		<?php
 
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
@@ -257,7 +263,17 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function after_render() {
-		?></<?php $this->print_html_tag(); ?>><?php
+		$settings = $this->get_settings_for_display();
+		?><?php $this->render_inner_wrapper( $settings, 'close' ); ?></<?php $this->print_html_tag(); ?>><?php
+	}
+
+	private function render_inner_wrapper( $settings, $context ) {
+		if ( ! isset( $settings['content_width'] ) || 'boxed' !== $settings['content_width'] ) {
+			return '';
+		}
+		//return '';
+
+		echo 'open' === $context ? '<div class="e-container-boxed--inner">' : '</div>';
 	}
 
 	/**
