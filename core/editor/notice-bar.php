@@ -102,7 +102,7 @@ class Notice_Bar extends Base_Object {
 			$this->render_action( 'secondary' );
 			?>
 
-			<i class="e-notice-bar__close eicon-close"></i>
+			<i id="e-notice-bar__close" class="e-notice-bar__close eicon-close"></i>
 		</div>
 		<?php
 	}
