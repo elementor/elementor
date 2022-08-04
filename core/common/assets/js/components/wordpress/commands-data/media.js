@@ -34,6 +34,7 @@ export class Media extends CommandData {
 
 		if ( args.options?.progress ) {
 			this.toast = elementor.notifications.showToast( {
+				// eslint-disable-next-line @wordpress/i18n-ellipsis
 				message: __( 'Uploading...' ),
 				sticky: true,
 			} );
@@ -59,7 +60,7 @@ export class Media extends CommandData {
 
 		if (
 			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
-				this.file.name.split( '.' ).pop()
+				this.file.name.split( '.' ).pop(),
 			) &&
 			! elementor.config.filesUpload.unfilteredFiles
 		) {

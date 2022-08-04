@@ -35,9 +35,10 @@ export default function Overview( props ) {
 	const headerButtons = useHeaderButtons( props.id );
 
 	usePageTitle( {
-		title: kit ?
-			`${ __( 'Kit Library', 'elementor' ) } | ${ kit.title }` :
-			__( 'Loading...', 'elementor' ),
+		title: kit
+			? `${ __( 'Kit Library', 'elementor' ) } | ${ kit.title }`
+			// eslint-disable-next-line @wordpress/i18n-ellipsis
+			: __( 'Loading...', 'elementor' ),
 	} );
 
 	if ( isError ) {
@@ -52,7 +53,7 @@ export default function Overview( props ) {
 	return (
 		<Layout
 			header={ <ItemHeader model={ kit } buttons={ headerButtons } pageId="overview" /> }
-			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType }/> }
+			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType } /> }
 		>
 			{
 				documentsByType.length > 0 &&

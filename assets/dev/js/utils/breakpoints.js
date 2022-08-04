@@ -73,7 +73,7 @@ export default class Breakpoints extends elementorModules.Module {
 	 *
 	 * @since 3.4.0
 	 *
-	 * @returns {string}
+	 * @return {string} device key
 	 */
 	getDesktopPreviousDeviceKey() {
 		let desktopPreviousDevice = '';
@@ -103,7 +103,7 @@ export default class Breakpoints extends elementorModules.Module {
 	 *
 	 * @since 3.4.0
 	 *
-	 * @returns {number|*}
+	 * @return {number|*} minimum breakpoint
 	 */
 	getDesktopMinPoint() {
 		const { activeBreakpoints } = this.responsiveConfig,
@@ -121,8 +121,8 @@ export default class Breakpoints extends elementorModules.Module {
 	 *
 	 * @since 3.4.0
 	 *
-	 * @param device
-	 * @returns {number|*}
+	 * @param {string} device
+	 * @return {number|*} minimum breakpoint
 	 */
 	getDeviceMinBreakpoint( device ) {
 		if ( 'desktop' === device ) {
@@ -162,7 +162,7 @@ export default class Breakpoints extends elementorModules.Module {
 	 *
 	 * Returns a regular expression containing all active breakpoints prefixed with an underscore.
 	 *
-	 * @returns {RegExp}
+	 * @return {RegExp} Active Match Regex
 	 */
 	getActiveMatchRegex() {
 		return new RegExp( this.getActiveBreakpointsList().map( ( device ) => '_' + device ).join( '|' ) + '$' );
