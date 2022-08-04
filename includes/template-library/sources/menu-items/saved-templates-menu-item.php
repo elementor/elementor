@@ -23,10 +23,6 @@ class Saved_Templates_Menu_Item implements Admin_Menu_Item {
 		return esc_html__( 'Saved Templates', 'elementor' );
 	}
 
-	public function get_page_title() {
-		return esc_html__( 'Saved Templates', 'elementor' );
-	}
-
 	public function get_position() {
 		return 0;
 	}

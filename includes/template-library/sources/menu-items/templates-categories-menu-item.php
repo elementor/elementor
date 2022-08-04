@@ -23,10 +23,6 @@ class Templates_Categories_Menu_Item implements Admin_Menu_Item {
 		return esc_html__( 'Categories', 'elementor' );
 	}
 
-	public function get_page_title() {
-		return esc_html__( 'Categories', 'elementor' );
-	}
-
 	public function get_position() {
 		return null;
 	}

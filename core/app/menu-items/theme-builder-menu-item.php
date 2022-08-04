@@ -22,10 +22,6 @@ class Theme_Builder_Menu_Item implements Admin_Menu_Item {
 		return esc_html__( 'Theme Builder', 'elementor' );
 	}
 
-	public function get_page_title() {
-		return esc_html__( 'Theme Builder', 'elementor' );
-	}
-
 	public function get_position() {
 		return 1;
 	}

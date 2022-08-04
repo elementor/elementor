@@ -63,12 +63,13 @@ class Admin_Menu_Manager {
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {
-		$callback = $item instanceof Admin_Menu_Item_With_Page
-			? [ $item, 'render' ]
-			: '';
+		$has_page = ( $item instanceof Admin_Menu_Item_With_Page );
+
+		$page_title = $has_page ? $item->get_page_title() : '';
+		$callback = $has_page ? [ $item, 'render' ] : '';
 
 		add_menu_page(
-			$item->get_page_title(),
+			$page_title,
 			$item->get_label(),
 			$item->get_capability(),
 			$item_slug,
@@ -79,13 +80,14 @@ class Admin_Menu_Manager {
 	}
 
 	private function register_sub_menu( $item_slug, Admin_Menu_Item $item ) {
-		$callback = $item instanceof Admin_Menu_Item_With_Page
-			? [ $item, 'render' ]
-			: '';
+		$has_page = ( $item instanceof Admin_Menu_Item_With_Page );
+
+		$page_title = $has_page ? $item->get_page_title() : '';
+		$callback = $has_page ? [ $item, 'render' ] : '';
 
 		add_submenu_page(
 			$item->get_parent_slug(),
-			$item->get_page_title(),
+			$page_title,
 			$item->get_label(),
 			$item->get_capability(),
 			$item_slug,
