@@ -24,7 +24,12 @@ export default function OverviewTaxonomyBadge( props ) {
 	}
 
 	return (
-		<Link to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }>
+		<Link
+			onClick={ () => {
+					props?.onClick( taxonomyText );
+			} }
+			to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }
+		>
 			<Badge>
 				{ props.children }
 			</Badge>
@@ -34,4 +39,5 @@ export default function OverviewTaxonomyBadge( props ) {
 
 OverviewTaxonomyBadge.propTypes = {
 	children: PropTypes.string,
+	onClick: PropTypes.func,
 };
