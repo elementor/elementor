@@ -66,7 +66,7 @@ export default function OverviewSidebar( props ) {
 							<OverviewTaxonomyBadge
 								key={ taxonomy }
 								onClick={ ( taxonomyText ) => {
-									eventTracking( 'kit-library/filter', null, props.model.title, taxonomyText )
+									eventTracking( 'kit-library/filter', null, props.model.title, taxonomyText );
 								} }
 							>{ taxonomy }</OverviewTaxonomyBadge>
 						) ) }

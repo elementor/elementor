@@ -10,7 +10,6 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
-
 export default function Conflict( props ) {
 	const importContext = useContext( ImportContext ),
 		sharedContext = useContext( SharedContext ),

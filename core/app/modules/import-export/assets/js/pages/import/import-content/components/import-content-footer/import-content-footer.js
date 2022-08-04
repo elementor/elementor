@@ -1,4 +1,3 @@
-import { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';

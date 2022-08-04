@@ -18,7 +18,7 @@ export const appsEventTrackingDispatch = ( command, eventParams ) => {
 		objectCreator( detailsKeys, details );
 		objectCreator( dataKeys, data );
 
-		const commandSplit = command.split( '/' )
+		const commandSplit = command.split( '/' );
 		data.placement = commandSplit[ 0 ];
 		data.event = commandSplit[ 1 ];
 

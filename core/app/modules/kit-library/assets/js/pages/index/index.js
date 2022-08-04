@@ -211,8 +211,8 @@ export default function Index( props ) {
 							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
-								setQueryParams( ( prev ) => ( { ...prev, search: value } ) )
-								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' )
+								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
+								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
 							} }
 						/>
 						{ isFilterActive && <FilterIndicationText

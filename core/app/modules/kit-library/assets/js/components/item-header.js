@@ -20,6 +20,7 @@ import './item-header.scss';
  * @param {Function} root0.apply
  * @param {Function} root0.onConnect
  * @param {boolean}  root0.isApplyLoading
+ * @param            root0.onClick
  * @return {Object} result
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
