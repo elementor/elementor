@@ -39,16 +39,19 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 		}
 
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
-			const buildSubscriptionLink = () => {
+			const getButtonURL = () => {
 				let url = subscriptionPlan.promotion_url;
+
 				if ( model.title ) {
 					// Remove special characters, replace spaces with '-' and convert url kit name to lowercase.
-					let cleanTitle = model.title.replace( /[^\w\s]/g, '' ).replace( /\s/g, '-' ).toLowerCase();
+					const cleanTitle = model.title.replace( /[^\w\s]/g, '' ).replace( /\s/g, '-' ).toLowerCase();
 					url += `&utm_term=${ cleanTitle }`;
 				}
+
 				if ( model.id ) {
 					url += `&utm_content=${ model.id }`;
 				}
+
 				return url;
 			};
 
@@ -60,7 +63,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 				variant: 'contained',
 				color: 'cta',
 				size: 'sm',
-				url: buildSubscriptionLink(),
+				url: getButtonURL(),
 				target: '_blank',
 				includeHeaderBtnClass: false,
 			};
