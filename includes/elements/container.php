@@ -290,7 +290,13 @@ class Container extends Element_Base {
 			]
 		);
 
-		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		if ( $active_breakpoints[ 'mobile_extra' ] ) {
+			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
+		} else {
+			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+		}
 
 		$this->add_control(
 			'content_width',
