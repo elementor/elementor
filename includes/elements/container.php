@@ -360,13 +360,14 @@ class Container extends Element_Base {
 					'content_width' => 'full',
 				],
 				'device_args' => [
-					'desktop' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 						'placeholder' => [
 							'size' => 100,
 							'unit' => '%',
 						],
 					],
-					'mobile' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						// The mobile width is not inherited from the higher breakpoint width controls.
 						'placeholder' => [
 							'size' => 100,
 							'unit' => '%',
@@ -389,11 +390,12 @@ class Container extends Element_Base {
 					'unit' => 'px',
 				],
 				'device_args' => [
-					'desktop' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 						// Use the default width from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
 					],
-					'mobile' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						// The mobile width is not inherited from the higher breakpoint width controls.
 						'placeholder' => [
 							'size' => 100,
 							'unit' => '%',
