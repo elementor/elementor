@@ -44,7 +44,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 
 				if ( model.title ) {
 					// Remove special characters, replace spaces with '-' and convert url kit name to lowercase.
-					const cleanTitle = model.title.replace( /[^\w\s]/g, '' ).replace( /\s/g, '-' ).toLowerCase();
+					const cleanTitle = model.title.replace( /\s/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
 					url += `&utm_term=${ cleanTitle }`;
 				}
 
