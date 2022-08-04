@@ -351,9 +351,19 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'full',
 				],
-				'placeholder' => [
-					'size' => '100',
-					'unit' => '%',
+				'device_args' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
 				],
 			] )
 		);
