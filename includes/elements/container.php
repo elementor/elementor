@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+// Test.
 class Container extends Element_Base {
 
 	/**
@@ -413,12 +414,8 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
-						// 'device_args' => [
-						// 	Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-						// 		// Use the default gap from the kit as a placeholder.
-						// 		'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-						// 	],
-						// ],
+						// Use the default "elements gap" from the kit as a placeholder.
+						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
 					],
 				],
 			]
