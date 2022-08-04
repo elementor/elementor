@@ -17,7 +17,6 @@ export default function Layout( props ) {
 		{ currentPage } = sharedContext.data,
 		eventTracking = ( command, elementPosition = null, element = null, eventType = 'click', modalType = null ) => {
 			if ( 'kit-library' === sharedContext.data.referrer || referrer ) {
-				console.log( 'currentPage', currentPage );
 				appsEventTrackingDispatch(
 					command,
 					{

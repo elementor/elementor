@@ -20,9 +20,7 @@ export default function PreviewResponsiveControls( props ) {
 						hideText={ true }
 						className={ className }
 						icon={ `eicon-device-${ value }` }
-						onClick={ () => {
-							props.onChange( value );
-						} }
+						onClick={ () => props.onChange( value ) }
 					/>
 				);
 			} ) }

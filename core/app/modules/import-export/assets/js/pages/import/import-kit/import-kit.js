@@ -33,7 +33,6 @@ export default function ImportKit() {
 		},
 		eventTracking = ( command, event = null, eventType = 'click', error = null, modalType = null, uploadMethod ) => {
 			if ( 'kit-library' === referrer ) {
-				// TODO: add file upload status success/failure
 				let uploadMethodName = null;
 				if ( uploadMethod ) {
 					uploadMethodName = 'drop' === uploadMethod ? 'drag-drop' : 'browse';
