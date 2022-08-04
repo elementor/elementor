@@ -34,6 +34,7 @@ export default function InlineLink( props ) {
 				target={ props.target }
 				rel={ props.rel }
 				className={ className }
+				onClick={ props.onClick }
 			>
 				{ props.children }
 			</a>
@@ -61,6 +62,7 @@ InlineLink.propTypes = {
 	color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
 	underline: PropTypes.oneOf( [ 'none', 'hover', 'always' ] ),
 	italic: PropTypes.bool,
+	onClick: PropTypes.func,
 };
 
 InlineLink.defaultProps = {
