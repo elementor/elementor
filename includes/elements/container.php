@@ -376,6 +376,12 @@ class Container extends Element_Base {
 						// Use the default width from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
 					],
+					'mobile' => [
+						'placeholder' => [
+							'size' => '100',
+							'unit' => '%',
+						],
+					],
 				],
 			] )
 		);
