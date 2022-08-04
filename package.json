@@ -97,6 +97,6 @@
         "react-redux": "^7.2.6",
         "write": "^2.0.0"
     },
-    "last_dev_version": "3.8.0-dev1"
+    "last_dev_version": "3.8.0-dev1",
     "last_cloud_version": "3.7.0-cloud1"
 }
