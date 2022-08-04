@@ -31,5 +31,4 @@ export const appsEventTrackingDispatch = ( command, eventParams ) => {
 	init();
 
 	$e.run( command, data );
-	console.log( 'appsEventTrackingDispatch', data );
 };
