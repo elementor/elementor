@@ -60,7 +60,7 @@ const TaxonomiesFilterList = ( props ) => {
 						onChange={ ( searchTerm ) => {
 							setSearch( searchTerm );
 							if ( searchTerm ) {
-								props.onChange?.( searchTerm )
+								props.onChange?.( searchTerm );
 							}
 						} }
 					/>

@@ -19,8 +19,8 @@ import './item-header.scss';
  * @param {Object}   root0
  * @param {Function} root0.apply
  * @param {Function} root0.onConnect
+ * @param {Function} root0.onClick
  * @param {boolean}  root0.isApplyLoading
- * @param            root0.onClick
  * @return {Object} result
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
