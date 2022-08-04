@@ -524,40 +524,6 @@ class Container extends Element_Base {
 				'condition' => [
 					'html_tag' => 'a',
 				],
-				'description' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
-			]
-		);
-
-		$this->end_controls_section();
-
-	}
-
-	/**
-	 * Register the Container's items layout controls.
-	 *
-	 * @return void
-	 */
-	protected function register_items_layout_controls() {
-		$this->start_controls_section(
-			'section_layout_items',
-			[
-				'label' => esc_html__( 'Items', 'elementor' ),
-				'tab' => Controls_Manager::TAB_LAYOUT,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Flex_Container::get_type(),
-			[
-				'name' => 'flex',
-				'selector' => '{{WRAPPER}}',
-				'fields_options' => [
-					'gap' => [
-						'label' => esc_html_x( 'Elements Gap', 'Flex Container Control', 'elementor' ),
-						// Use the default "elements gap" from the kit as a placeholder.
-						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-					],
-				],
 			]
 		);
 
