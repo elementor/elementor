@@ -27,32 +27,43 @@
 	--overflow: visible;
 	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
-
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
 
 	position: var( --position );
-	display: var( --display );
-	text-align: var( --text-align );
-	flex-direction: var( --flex-direction );
 	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
-	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
-	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
-	min-width: 0;
-	min-height: var( --min-height );
-	height: var( --height );
-	border-radius: var( --border-radius );
 	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
-	// Custom content-width hack.
-	padding-left: Max( var( --padding-left ), calc( ( 100% - var( --content-width ) ) / 2 ) );
-	padding-right: Max( var( --padding-right ), calc( ( 100% - var( --content-width ) ) / 2 ) );
+	padding-left: var( --padding-left );
+	padding-right: var( --padding-right );
 	padding-top: var( --padding-top );
 	padding-bottom: var( --padding-bottom );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
-	transition: var( --transition );
+
+	&, &-boxed--inner {
+		display: var( --display );
+		border-radius: var( --border-radius );
+		// Set `min-width` to fix nested Containers shrink bug (ED-4964).
+		// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
+		min-width: 0;
+		min-height: var( --min-height );
+		height: var( --height );
+		transition: var( --transition );
+	}
+
+	&--full, &-boxed--inner {
+		text-align: var( --text-align );
+		flex-direction: var( --flex-direction );
+	}
+
+	&-boxed--inner {
+		width: 100%;
+		max-width: var( --content-width );
+		margin-inline: auto;
+		height: 100%;
+	}
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
 		// Default top-level containers to be centered.

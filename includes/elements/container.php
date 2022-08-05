@@ -325,6 +325,7 @@ class Container extends Element_Base {
 					'boxed' => '',
 					'full' => '--content-width: 100%;',
 				],
+				'prefix_class' => '.e-container--%s',
 			]
 		);
 
