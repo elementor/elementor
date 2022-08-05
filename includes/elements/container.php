@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-// Test.
 class Container extends Element_Base {
 
 	/**
@@ -292,7 +291,7 @@ class Container extends Element_Base {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		if ( $active_breakpoints[ 'mobile_extra' ] ) {
+		if ( array_key_exists( 'mobile_extra', $active_breakpoints ) ) {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
 		} else {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
