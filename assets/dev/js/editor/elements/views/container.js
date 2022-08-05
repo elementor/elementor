@@ -11,8 +11,10 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	// Child view is empty in order to use the parent element.
-	childViewContainer: '',
+	// Child view of `content_width: full` is empty in order to use the parent element.
+	childViewContainer() {
+		return ( 'boxed' === this.getContainer().settings.attributes.content_width ) ? '.e-container-boxed--inner' : '';
+	},
 
 	className() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
@@ -112,9 +114,11 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
+		const itemsClasses = ( 'boxed' === this.getContainer().settings.attributes.content_width ) ? '> .e-container-boxed--inner > .elementor-element, > .e-container-boxed--inner > .elementor-empty-view > .elementor-first-add' : '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+
 		return {
 			axis: this.getDroppableAxis(),
-			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+			items: itemsClasses,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
