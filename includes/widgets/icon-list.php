@@ -473,6 +473,37 @@ class Widget_Icon_List extends Widget_Base {
 				],
 			]
 		);
+		
+		$this->add_responsive_control(
+			'icon_self_vertical_align',
+			[
+				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'top' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'default' => '',
+				'selectors_dictionary' => [
+					'top' => sprintf( 'align-self: flex-start;' ),
+					'center' => sprintf( 'align-self: center;' ),
+					'bottom' => sprintf( 'align-self: flex-end;' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon' => '{{VALUE}}',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 
