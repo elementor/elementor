@@ -87,7 +87,7 @@
         "@reduxjs/toolkit": "^1.8.3",
         "@testing-library/jest-dom": "^5.16.4",
         "acorn": "^8.7.1",
-        "core-js": "^3.23.4",
+        "core-js": "^3.23.5",
         "grunt-cli": "^1.4.3",
         "jest": "^28.1.2",
         "mime": "^3.0.0",
