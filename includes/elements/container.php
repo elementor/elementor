@@ -244,7 +244,7 @@ class Container extends Element_Base {
 		}
 
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
-		$this->render_inner_wrapper( $settings, 'open' ); ?> <?php $this->render_video_background(); ?>
+		$this->render_inner_wrapper( $settings, 'open' ); ?><?php $this->render_video_background(); ?>
 
 		<?php
 
