@@ -13,8 +13,10 @@ const ContainerView = BaseElementView.extend( {
 
 	// Child view of `content_width: full` is empty in order to use the parent element.
 	childViewContainer() {
-		return ( 'boxed' === this.getContainer().settings.attributes.content_width ) ? '.e-container-boxed--inner' : "";
+		return ( 'boxed' === this.getContainer().settings.attributes.content_width ) ? '.e-container-boxed--inner' : '.e-container';
 	},
+
+	// childViewContainer: '',
 
 	className() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
