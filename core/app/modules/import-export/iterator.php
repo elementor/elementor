@@ -46,7 +46,15 @@ abstract class Iterator extends Base_Object {
 
 		$server = new Server();
 
-		$server_write_permissions = $server->get_write_permissions();
+		$paths_to_check = [
+			WP_CONTENT_DIR => 'WordPress content directory',
+		];
+
+		$upload_directories = $server->get_upload_directories_paths();
+
+		$paths_to_check = array_merge( $paths_to_check, $upload_directories['paths'] );
+
+		$server_write_permissions = $server->check_write_permissions( $paths_to_check, $upload_directories['errors'] );
 
 		if ( $server_write_permissions['warning'] ) {
 			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );

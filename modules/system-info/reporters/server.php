@@ -310,44 +310,17 @@ class Server extends Base {
 			ABSPATH => 'WordPress root directory',
 		];
 
-		$write_problems = [];
-
-		$wp_upload_dir = wp_upload_dir();
-
-		if ( $wp_upload_dir['error'] ) {
-			$write_problems[] = 'WordPress root uploads directory';
-		}
-
-		$elementor_uploads_path = $wp_upload_dir['basedir'] . '/elementor';
-
-		if ( is_dir( $elementor_uploads_path ) ) {
-			$paths_to_check[ $elementor_uploads_path ] = 'Elementor uploads directory';
-		}
-
 		$htaccess_file = ABSPATH . '/.htaccess';
 
 		if ( file_exists( $htaccess_file ) ) {
 			$paths_to_check[ $htaccess_file ] = '.htaccess file';
 		}
 
-		foreach ( $paths_to_check as $dir => $description ) {
-			if ( ! is_writable( $dir ) ) {
-				$write_problems[] = $description;
-			}
-		}
+		$upload_directories = $this->get_upload_directories_paths();
 
-		if ( $write_problems ) {
-			$value = 'There are some writing permissions issues with the following directories/files:' . "\n\t\t - ";
+		$paths_to_check = array_merge( $paths_to_check, $upload_directories['paths'] );
 
-			$value .= implode( "\n\t\t - ", $write_problems );
-		} else {
-			$value = 'All right';
-		}
-
-		return [
-			'value' => $value,
-			'warning' => ! ! $write_problems,
-		];
+		return $this->check_write_permissions( $paths_to_check, $upload_directories['errors'] );
 	}
 
 	/**
@@ -409,5 +382,76 @@ class Server extends Base {
 		return [
 			'value' => 'Connected',
 		];
+	}
+
+	/**
+	 * Check write permissions by provided paths.
+	 *
+	 * @since 3.7.0
+	 * @access public
+	 *
+	 * @param array $paths_to_check
+	 * @return array {
+	 *      @type string value: Writing permissions status.
+	 *      @type bool   warning: Whether to display a warning. True if some required.
+	 * }
+	 */
+	public function check_write_permissions( array $paths_to_check, $errors = [] ) {
+		$write_problems = $errors;
+
+		foreach ( $paths_to_check as $dir => $description ) {
+			if ( ! is_writable( $dir ) ) {
+				$write_problems[] = $description;
+			}
+		}
+
+		if ( $write_problems ) {
+			$value = 'There are some writing permissions issues with the following directories/files:' . "\n\t\t - ";
+
+			$value .= implode( "\n\t\t - ", $write_problems );
+		} else {
+			$value = 'All right';
+		}
+
+		return [
+			'value' => $value,
+			'warning' => ! ! $write_problems,
+		];
+	}
+
+	/**
+	 * Get upload directories paths (root,Elementor) including relevant messages.
+	 *
+	 * @since 3.7.0
+	 * @access public
+	 *
+	 * @return array {
+	 *      @type array paths: Paths of upload directories and their relevant messages.
+	 *      @type array errors: Errors while getting upload directories.
+	 * }
+	 */
+	public function get_upload_directories_paths() {
+		$result = [
+			'paths' => [],
+			'errors' => [],
+		];
+
+		$wp_upload_dir = wp_upload_dir();
+
+		if ( ! empty( $wp_upload_dir['error'] ) ) {
+			$result['errors'][] = 'WordPress uploads directory';
+		}
+
+		if ( ! empty( $wp_upload_dir['basedir'] ) ) {
+			$result['paths'][ $wp_upload_dir['basedir'] ] = 'WordPress root uploads directory';
+
+			$elementor_uploads_path = $wp_upload_dir['basedir'] . '/elementor';
+
+			if ( is_dir( $elementor_uploads_path ) ) {
+				$result['paths'][ $elementor_uploads_path ] = 'Elementor uploads directory';
+			}
+		}
+
+		return $result;
 	}
 }
