@@ -19,13 +19,6 @@ class Test_Widgets extends Elementor_Test_Base {
 		Plugin::$instance->controls_manager = new Controls_Manager();
 	}
 
-	public function teardown() {
-		parent::teardown();
-
-		// Cleanup.
-		switch_to_locale( 'en_US' );
-	}
-
 	public function test_ajax_get_widgets_default_value_translations__uses_specific_locale_if_passed() {
 		// Act.
 		$response = Plugin::$instance->widgets_manager->ajax_get_widgets_default_value_translations( [ 'locale' => 'he_IL' ] );

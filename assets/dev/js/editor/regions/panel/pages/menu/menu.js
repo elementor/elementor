@@ -67,23 +67,6 @@ PanelMenu.addAdminMenu = () => {
 		],
 	}, { at: 0 } );
 
-	// TODO: Move to the Notes module
-	PanelMenu.addItem( {
-		name: 'notes',
-		icon: 'eicon-commenting-o',
-		title: __( 'Notes', 'elementor' ),
-		callback() {
-			elementor.promotion.showDialog( {
-				headerMessage: __( 'Notes', 'elementor' ),
-				message: __( 'With Notes, teamwork gets even better. Stay in sync with comments, feedback & more on your website.', 'elementor' ),
-				top: '-3',
-				inlineStart: '+10',
-				element: this.$el,
-				actionURL: 'https://go.elementor.com/go-pro-notes/',
-			} );
-		},
-	}, 'navigate_from_page', 'view-page' );
-
 	PanelMenu.addItem( {
 		name: 'finder',
 		icon: 'eicon-search',
@@ -118,7 +101,11 @@ PanelMenu.addExitItem = () => {
 
 // Callback being used to determine when to open the modal or redirect the user.
 PanelMenu.clickExitItem = () => {
-	if ( PanelMenu.exitShouldRedirect ) {
+	const currentValue = elementor.getPreferences( 'exit_to' );
+	const defaultValue = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to.default;
+
+	// The modal will pop if the user has not set the exit to preference yet or if the model never showed before.
+	if ( currentValue !== defaultValue || PanelMenu.exitShouldRedirect ) {
 		window.location.href = PanelMenu.getExitUrl();
 	} else {
 		const exitIntroduction = PanelMenu.createExitIntroductionDialog();

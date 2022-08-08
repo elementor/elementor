@@ -21,11 +21,25 @@ class Module extends BaseModule {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script(
-			'notes',
+			'elementor-notes',
 			$this->get_js_assets_url( 'notes' ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
+		);
+	}
+
+	/**
+	 * Enqueue the module styles.
+	 *
+	 * @return void
+	 */
+	public function enqueue_styles() {
+		wp_enqueue_style(
+			'elementor-notes',
+			$this->get_css_assets_url( 'modules/notes/editor' ),
+			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION
 		);
 	}
 
@@ -45,5 +59,6 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 	}
 }
