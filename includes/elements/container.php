@@ -271,7 +271,6 @@ class Container extends Element_Base {
 		if ( ! isset( $settings['content_width'] ) || 'boxed' !== $settings['content_width'] ) {
 			return '';
 		}
-		//return '';
 
 		echo 'open' === $context ? '<div class="e-container-boxed--inner">' : '</div>';
 	}
@@ -319,11 +318,11 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'template',
 				'selectors' => [
-					'{{SELECTOR}}' => '{{VALUE}};',
+					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 				'selectors_dictionary' => [
-					'full' => '',
 					'boxed' => '--container-flex-direction: column; --container-flex-grow: 1;',
+					'full' => '',
 				],
 			]
 		);
