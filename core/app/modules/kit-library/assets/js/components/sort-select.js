@@ -25,6 +25,13 @@ export default function SortSelect( props ) {
 						setSelectedSortBy( getSelectedOptionDetails( value ) );
 					} }
 					className="eps-sort-select__select"
+					onClick={ () => {
+						props.onChange( {
+							by: props.value.by,
+							direction: props.value.direction,
+						} );
+						props.onSortSelectOpen?.();
+					} }
 				/>
 			</div>
 			{
@@ -56,4 +63,7 @@ SortSelect.propTypes = {
 		by: PropTypes.string.isRequired,
 	} ).isRequired,
 	onChange: PropTypes.func.isRequired,
+	onChangeSortValue: PropTypes.func,
+	onSortSelectOpen: PropTypes.func,
+	onChangeSortDirection: PropTypes.func,
 };
