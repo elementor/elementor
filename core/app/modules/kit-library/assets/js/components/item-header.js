@@ -44,6 +44,22 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 		}
 
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
+			const getButtonURL = () => {
+				let url = subscriptionPlan.promotion_url;
+
+				if ( model.title ) {
+					// Remove special characters, replace spaces with '-' and convert url kit name to lowercase.
+					const cleanTitle = model.title.replace( /\s/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
+					url += `&utm_term=${ cleanTitle }`;
+				}
+
+				if ( model.id ) {
+					url += `&utm_content=${ model.id }`;
+				}
+
+				return url;
+			};
+
 			return {
 				id: 'promotion',
 				// Translators: %s is the subscription plan name.
@@ -52,7 +68,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 				variant: 'contained',
 				color: 'cta',
 				size: 'sm',
-				url: subscriptionPlan.promotion_url,
+				url: getButtonURL(),
 				target: '_blank',
 				includeHeaderBtnClass: false,
 			};
