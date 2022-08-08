@@ -5,12 +5,10 @@
 	--flex-direction: column;
 	// Additional `flex-direction` value, which is used to set set a default value for the parent container.
 	--container-flex-direction: initial;
-	--container-flex-direction: column;
 	--flex-basis: auto;
 	--flex-grow: 0;
 	// Additional `flex-grow` value, which is used to set set a default value for the parent container.
 	--container-flex-grow: initial;
-	--container-flex-grow: 1;
 	--flex-shrink: 1;
 	// Use the width from `Site Settings` or default to 1140px.
 	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)

@@ -182,25 +182,20 @@
 	--order: initial;
 	--align-self: initial;
 
-	&, & > .e-container-boxed--inner {
-
-		// Flex container.
-		flex-direction: var( --flex-direction );
-		flex-wrap: var( --flex-wrap );
-		justify-content: var( --justify-content );
-		align-items: var( --align-items );
-		align-content: var( --align-content );
-		gap: var( --gap );
-
-		// Flex item.
-		flex-basis: var( --flex-basis );
-		flex-grow: var( --flex-grow );
-		flex-shrink: var( --flex-shrink );
-		align-self: var( --align-self );
-	}
+	// Flex container.
+	flex-direction: var( --flex-direction );
+	flex-wrap: var( --flex-wrap );
+	justify-content: var( --justify-content );
+	align-items: var( --align-items );
+	align-content: var( --align-content );
+	gap: var( --gap );
 
 	// Flex item.
+	flex-basis: var( --flex-basis );
+	flex-grow: var( --flex-grow );
+	flex-shrink: var( --flex-shrink );
 	order: var( --order );
+	align-self: var( --align-self );
 }
 
 .elementor-invisible {
