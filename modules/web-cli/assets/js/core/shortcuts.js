@@ -1,5 +1,5 @@
 import environment from 'elementor-api/utils/environment';
-import Helpers from 'elementor-api/utils/helpers';
+import Console from 'elementor-api/utils/console';
 
 export default class Shortcuts {
 	constructor( $window ) {
@@ -95,7 +95,7 @@ export default class Shortcuts {
 		}
 
 		if ( 1 < filteredHandlers.length && elementorWebCliConfig.isDebug ) {
-			Helpers.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
+			Console.warn( 'Multiple handlers for shortcut.', filteredHandlers, event );
 		}
 
 		event.preventDefault();
@@ -149,7 +149,7 @@ export default class Shortcuts {
 		}
 
 		// Else filter by namespaceRoot.
-		const namespaceRoot = component.getRootContainer();
+		const namespaceRoot = component.getServiceName();
 		return scopes.some( ( scope ) => namespaceRoot === scope );
 	}
 

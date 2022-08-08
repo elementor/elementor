@@ -20,12 +20,22 @@ export class SetDirectionMode extends After {
 		return 'set-direction-mode--document/elements/settings';
 	}
 
+	hasUiStates( container ) {
+		return !! container.renderer?.view?.getCurrentUiStates;
+	}
+
 	getConditions( args = {} ) {
-		return ! ! args.container.renderer?.view?.getCurrentUiStates;
+		const containers = args.container ? [ args.container ] : args.containers;
+
+		return containers.some( this.hasUiStates );
 	}
 
 	apply( args ) {
-		SetDirectionMode.set( args.container );
+		const containers = args.container ? [ args.container ] : args.containers;
+
+		containers
+			.filter( this.hasUiStates )
+			.forEach( ( container ) => SetDirectionMode.set( container ) );
 	}
 
 	/**

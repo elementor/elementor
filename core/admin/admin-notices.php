@@ -29,6 +29,7 @@ class Admin_Notices extends Module {
 		'mc4wp_promote',
 		'popup_maker_promote',
 		'role_manager_promote',
+		'experiment_promotion',
 	];
 
 	private $elementor_pages_count = null;
@@ -505,6 +506,48 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
+	private function notice_experiment_promotion() {
+		$notice_id = 'experiment_promotion';
+
+		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$experiments = Plugin::$instance->experiments;
+		$is_all_performance_features_active = (
+			$experiments->is_feature_active( 'e_dom_optimization' ) &&
+			$experiments->is_feature_active( 'additional_custom_breakpoints' ) &&
+			$experiments->is_feature_active( 'e_optimized_css_loading' ) &&
+			$experiments->is_feature_active( 'e_optimized_assets_loading' )
+		);
+
+		if ( $is_all_performance_features_active ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Improve your site’s performance score.', 'elementor' ),
+			'description' => esc_html__( 'With our experimental speed boosting features you can go faster than ever before. Look for the Performance label on our Experiments page and activate those experiments to improve your site loading speed.', 'elementor' ),
+			'id' => $notice_id,
+			'button' => [
+				'text' => esc_html__( 'Try it out', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=elementor#tab-experiments' ),
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'classes' => [ 'e-notice-dismiss' ],
+				'url' => 'https://go.elementor.com/wp-dash-experiment-promotion/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
 	public function print_admin_notice( array $options ) {
 		global $pagenow;
 
@@ -559,34 +602,34 @@ class Admin_Notices extends Module {
 				<?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="e-notice__content">
-			<?php if ( $options['title'] ) { ?>
-				<h3><?php echo wp_kses_post( $options['title'] ); ?></h3>
-			<?php } ?>
+				<?php if ( $options['title'] ) { ?>
+					<h3><?php echo wp_kses_post( $options['title'] ); ?></h3>
+				<?php } ?>
 
-			<?php if ( $options['description'] ) { ?>
-				<p><?php echo wp_kses_post( $options['description'] ); ?></p>
-			<?php } ?>
+				<?php if ( $options['description'] ) { ?>
+					<p><?php echo wp_kses_post( $options['description'] ); ?></p>
+				<?php } ?>
 
-			<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
-				<div class="e-notice__actions">
-					<?php
-					foreach ( [ $options['button'], $options['button_secondary'] ] as $index => $button_settings ) {
-						if ( empty( $button_settings['variant'] ) && $index ) {
-							$button_settings['variant'] = 'outline';
-						}
+				<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
+					<div class="e-notice__actions">
+						<?php
+						foreach ( [ $options['button'], $options['button_secondary'] ] as $index => $button_settings ) {
+							if ( empty( $button_settings['variant'] ) && $index ) {
+								$button_settings['variant'] = 'outline';
+							}
 
-						if ( empty( $button_settings['text'] ) ) {
-							continue;
-						}
+							if ( empty( $button_settings['text'] ) ) {
+								continue;
+							}
 
-						$button = new Button( $button_settings );
-						$button->print_button();
-					} ?>
-				</div>
-			<?php } ?>
+							$button = new Button( $button_settings );
+							$button->print_button();
+						} ?>
+					</div>
+				<?php } ?>
 			</div>
 		</div>
-		<?php }
+	<?php }
 
 	public function admin_notices() {
 		$this->install_time = Plugin::$instance->get_install_time();

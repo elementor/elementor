@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../context/import-context/import-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
@@ -16,6 +17,7 @@ import useInstallPlugins from './hooks/use-install-plugins';
 
 export default function ImportPluginsActivation() {
 	const importContext = useContext( ImportContext ),
+		sharedContext = useContext( SharedContext ),
 		navigate = useNavigate(),
 		{ bulk, ready, isDone } = useInstallPlugins( { plugins: importContext.data.plugins } );
 
@@ -31,6 +33,7 @@ export default function ImportPluginsActivation() {
 		if ( isDone ) {
 			importContext.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: ready } );
 			importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'success' } );
+			sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportPluginsActivation.name } );
 		}
 	}, [ isDone ] );
 

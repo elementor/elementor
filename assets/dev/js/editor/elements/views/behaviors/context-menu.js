@@ -119,7 +119,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenuHide() {
-		// enable sortable when context menu closed
+		// Enable sortable when context menu closed
 		// TODO: Should be in UI hook when the context menu will move to command
 		if ( this.view._parent ) {
 			this.view._parent.triggerMethod( 'toggleSortMode', true );

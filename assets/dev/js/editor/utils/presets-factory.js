@@ -68,7 +68,7 @@ presetsFactory = {
 	},
 
 	_createSVGPreset( presetPath, svgWidth, svgHeight ) {
-		// this is here to avoid being picked up by https re-write systems
+		// This is here to avoid being picked up by https re-write systems
 		const protocol = 'ht' + 'tp';
 		var svg = document.createElementNS( protocol + '://www.w3.org/2000/svg', 'svg' );
 

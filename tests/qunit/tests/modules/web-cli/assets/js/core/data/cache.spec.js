@@ -34,7 +34,7 @@ jQuery( () => {
 
 			const result = await $e.data.cache.getAsync( requestData );
 
-			assert.equal( requestData.cache, 'hit' ); // added to requestData by receive.
+			assert.equal( requestData.cache, 'hit' ); // Added to requestData by receive.
 			assert.equal( randomValue, result );
 		} );
 

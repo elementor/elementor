@@ -1,9 +1,7 @@
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
-
 /**
  * @typedef {import('../../../container/container')} Container
  */
- export class Settings extends CommandHistoryDebounce {
+export class Settings extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -124,10 +122,6 @@ import CommandHistoryDebounce from 'elementor-document/commands/base/command-his
 				settings: newSettings,
 			} );
 		} );
-	}
-
-	isDataChanged() {
-		return true;
 	}
 }
 
