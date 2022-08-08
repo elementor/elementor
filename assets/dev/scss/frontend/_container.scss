@@ -46,7 +46,6 @@
 	min-width: 0;
 	min-height: var( --min-height );
 	height: var( --height );
-	transition: var( --transition );
 	border-radius: var( --border-radius );
 	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
 	padding-left: var( --padding-left );
@@ -55,6 +54,7 @@
 	padding-bottom: var( --padding-bottom );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
+	transition: var( --transition );
 
 	&, & > .e-container-boxed--inner {
 		display: var( --display );
