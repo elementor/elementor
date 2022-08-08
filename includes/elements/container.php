@@ -115,7 +115,7 @@ class Container extends Element_Base {
 	protected function content_template() {
 		?>
 		<# if ( 'boxed' === settings.content_width ) { #>
-			<div class="e-container-boxed--inner">
+			<div class="e-container-__inner">
 		<#
 		}
 		if ( settings.background_video_link ) {
@@ -272,7 +272,7 @@ class Container extends Element_Base {
 			return '';
 		}
 
-		echo 'open' === $context ? '<div class="e-container-boxed--inner">' : '</div>';
+		echo 'open' === $context ? '<div class="e-container-__inner">' : '</div>';
 	}
 
 	/**
@@ -424,7 +424,7 @@ class Container extends Element_Base {
 			Group_Control_Flex_Container::get_type(),
 			[
 				'name' => 'flex',
-				'selector' => '{{WRAPPER}}, {{WRAPPER}} > .e-container-box--inner',
+				'selector' => '{{WRAPPER}}, {{WRAPPER}} > .e-container__inner',
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
@@ -1193,7 +1193,7 @@ class Container extends Element_Base {
 					'grow',
 					'shrink',
 				],
-				'selector' => '{{WRAPPER}}.e-container, {{WRAPPER}} > .e-container-box--inner', // Hack to increase specificity.
+				'selector' => '{{WRAPPER}}.e-container, {{WRAPPER}} > .e-container__inner', // Hack to increase specificity.
 				'separator' => 'before',
 			]
 		);

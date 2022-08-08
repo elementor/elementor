@@ -54,13 +54,13 @@
 	overflow: var( --overflow );
 	transition: var( --transition );
 
-	&, & > .e-container-boxed--inner {
+	&, & > .e-container-__inner {
 		display: var( --display );
 		min-height: var( --min-height );
 		text-align: var( --text-align );
 	}
 
-	&-boxed--inner {
+	&-__inner {
 		flex-direction: var( --flex-direction );
 		flex-grow: var( --flex-grow );
 		flex-wrap: var( --flex-wrap );
@@ -113,7 +113,7 @@
 
 	&.e-container--row {
 
-		&, & > .e-container-boxed--inner {
+		&, & > .e-container-__inner {
 
 			& > .elementor-widget-placeholder {
 				position: relative;
@@ -131,7 +131,7 @@
 		// Fix nested Containers DnD issues (ED-5424).
 		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
 
-			&, & > .e-container-boxed--inner {
+			&, & > .e-container-__inner {
 
 				// Any placeholder which is not on first widget.
 				> .elementor-widget-placeholder {
@@ -150,7 +150,7 @@
 
 	&.e-container--column {
 
-		&, & > .e-container-boxed--inner {
+		&, & > .e-container-__inner {
 
 			> .elementor-widget-placeholder {
 				height: var( --size );
@@ -224,7 +224,7 @@
 		}
 	}
 
-	&, & > .e-container-boxed--inner {
+	&, & > .e-container-__inner {
 
 		& > .elementor-widget {
 
@@ -298,7 +298,7 @@
 	// Hack to increase specificity and avoid using `!important`.
 	.elementor .elementor-section-wrap & {
 
-		&, & > .e-container-boxed--inner {
+		&, & > .e-container-__inner {
 
 			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
 			& > .elementor-widget {
