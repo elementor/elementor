@@ -391,6 +391,8 @@ class Server extends Base {
 	 * @access public
 	 *
 	 * @param array $paths_to_check
+	 * @param array $errors
+	 *
 	 * @return array {
 	 *      @type string value: Writing permissions status.
 	 *      @type bool   warning: Whether to display a warning. True if some required.
