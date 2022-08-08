@@ -6,7 +6,7 @@ export default function Tooltip( props ) {
 		classes = [ baseClassName, props.className ],
 		childRef = useRef( null ),
 		isAborted = useRef( false ),
-		isManualControl = props.hasOwnProperty( 'show' ),
+		isManualControl = Object.prototype.hasOwnProperty.call( props, 'show' ),
 		[ isLibraryLoaded, setIsLibraryLoaded ] = useState( false ),
 		[ showTooltip, setShowTooltip ] = useState( false ),
 		directionsMap = {

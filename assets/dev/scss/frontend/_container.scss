@@ -18,10 +18,10 @@
 	--margin-right: 0;
 	--margin-bottom: 0;
 	--margin-left: 0;
-	--padding-top: var( --container-default-padding, 0px );
-	--padding-right: var( --container-default-padding, 0px );
-	--padding-bottom: var( --container-default-padding, 0px );
-	--padding-left: var( --container-default-padding, 0px );
+	--padding-top: var( --container-default-padding-top, 10px );
+	--padding-right: var( --container-default-padding-right, 10px );
+	--padding-bottom: var( --container-default-padding-bottom, 10px );
+	--padding-left: var( --container-default-padding-left, 10px );
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
@@ -30,7 +30,7 @@
 
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
-	--overlay-transition: 0;
+	--overlay-transition: 0.3s;
 
 	position: var( --position );
 	display: var( --display );
@@ -41,10 +41,6 @@
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
 	min-width: 0;
-	// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
-	// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
-	// Capital `M` in order to use the CSS function and not the SCSS one.
-	max-width: Min( 100%, var( --width ) );
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
@@ -58,10 +54,15 @@
 	overflow: var( --overflow );
 	transition: var( --transition );
 
-	// Default top-level containers to be centered.
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+		// Default top-level containers to be centered.
 		--margin-right: auto;
 		--margin-left: auto;
+
+		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
+		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
+		// Capital `M` in order to use the CSS function and not the SCSS one.
+		max-width: Min( 100%, var( --width ) );
 	}
 
 	.elementor-empty-view {
@@ -74,7 +75,7 @@
 		.elementor-first-add {
 			width: auto;
 			height: auto;
-			inset: 10px;
+			inset: 0px;
 		}
 	}
 
@@ -188,6 +189,14 @@
 		}
 	}
 
+	& > .elementor-widget {
+
+		& > .elementor-widget-container {
+			// Fix align-self:stretch (ED-7359)
+			height: 100%;
+		}
+	}
+
 	// Inner Container handle.
 	// TODO: Find a better solution.
 	& > &, .elementor-widget & {
@@ -245,6 +254,15 @@
 					padding: 2px;
 				}
 			}
+		}
+	}
+
+	// Hack to increase specificity and avoid using `!important`.
+	.elementor .elementor-section-wrap & {
+
+		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+		& > .elementor-widget {
+			max-width: 100%;
 		}
 	}
 }

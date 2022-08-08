@@ -38,7 +38,7 @@ export default function IndexHeader( props ) {
 
 	return (
 		<>
-			<Header buttons={ buttons }/>
+			<Header buttons={ buttons } />
 			<PopoverDialog
 				targetRef={ importRef }
 				wrapperClass="e-kit-library__tooltip"
@@ -47,14 +47,14 @@ export default function IndexHeader( props ) {
 			</PopoverDialog>
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) } show={ isInfoModalOpen } setShow={ setIsInfoModalOpen }>
 				<div className="e-kit-library-header-info-modal-container">
-					<Heading tag="h3" variant="h3">{ __( 'What\'s a kit?', 'elementor' ) }</Heading>
-					<Text>{ __( 'A Template Kit is full, ready-made design that you can apply to your site. It includes all the pages, parts, settings and content that you\'d expect in a fully functional website.', 'elementor' ) }</Text>
+					<Heading tag="h3" variant="h3">{ __( 'What\'s a Website Kit?', 'elementor' ) }</Heading>
+					<Text>{ __( 'A Website Kit is full, ready-made design that you can apply to your site. It includes all the pages, parts, settings and content that you\'d expect in a fully functional website.', 'elementor' ) }</Text>
 				</div>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s going on in the Kit Library?', 'elementor' ) }</Heading>
 					<Text>
 						{ __( 'Search & filter for kits by category and tags, or browse through individual kits to see what\'s inside.', 'elementor' ) }
-						<br/>
+						<br />
 						{ __( 'Once you\'ve picked a winner, apply it to your site!', 'elementor' ) }
 					</Text>
 				</div>

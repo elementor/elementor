@@ -20,7 +20,7 @@ describe( "$e.internal( 'document/elements/set-settings' )", () => {
 					},
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.
@@ -70,7 +70,7 @@ describe( "$e.internal( 'document/elements/set-settings' )", () => {
 					},
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.

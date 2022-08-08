@@ -1,4 +1,7 @@
-export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
+/**
+ * @typedef {import('../../../container/container')} Container
+ */
+ export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -79,6 +82,7 @@ export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 					}
 
 					if ( 'object' === typeof controlSourceValue ) {
+						// eslint-disable-next-line array-callback-return
 						const isEqual = Object.keys( controlSourceValue ).some( ( propertyKey ) => {
 							if ( controlSourceValue[ propertyKey ] !== controlTargetValue[ propertyKey ] ) {
 								return false;
@@ -105,7 +109,7 @@ export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 
 	/**
 	 * @param {Container} targetContainer
-	 * @param {{}} settings
+	 * @param {{}}        settings
 	 */
 	pasteStyle( targetContainer, settings ) {
 		const globals = settings.__globals__;
@@ -116,7 +120,7 @@ export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 
 		$e.run( 'document/elements/settings', {
 			container: targetContainer,
-			settings: settings,
+			settings,
 			options: {
 				external: true,
 				render: false,

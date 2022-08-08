@@ -79,7 +79,7 @@ export const Modal = ( props ) => {
 				closeNode = closeRef.current,
 				isInCloseNode = closeNode && closeNode.contains( e.target );
 
-			// ignore if click is inside the modal
+			// Ignore if click is inside the modal
 			if ( node && node.contains( e.target ) && ! isInCloseNode ) {
 				return;
 			}
@@ -100,11 +100,12 @@ export const Modal = ( props ) => {
 	}
 
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div className="eps-modal__overlay" onClick={ closeModal }>
 			<div className={ arrayToClassName( [ 'eps-modal', props.className ] ) } ref={ modalRef } >
 				<Grid container className="eps-modal__header" justify="space-between" alignItems="center">
 					<Grid item>
-						<Icon className={`eps-modal__icon ${ props.icon }`} />
+						<Icon className={ `eps-modal__icon ${ props.icon }` } />
 						<Text className="title" tag="span">{ props.title }</Text>
 					</Grid>
 					<Grid item>

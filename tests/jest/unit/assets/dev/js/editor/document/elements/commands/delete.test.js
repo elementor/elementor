@@ -30,7 +30,7 @@ describe( "$e.run( 'document/elements/delete' )", () => {
 						} ],
 					},
 				],
-			} )
+			} ),
 		);
 
 		// Act.
@@ -69,7 +69,7 @@ describe( "$e.run( 'document/elements/delete' )", () => {
 					id: 'element',
 					elements: [],
 				} ],
-			} )
+			} ),
 		);
 
 		// Act.

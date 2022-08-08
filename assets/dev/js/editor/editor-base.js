@@ -26,10 +26,14 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
+import ControlConditions from './utils/control-conditions';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
 
+/**
+ * @typedef {import('./container/container')} Container
+ */
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
 
@@ -49,7 +53,7 @@ export default class EditorBase extends Marionette.Application {
 
 	// TODO = BC Since 2.3.0
 	ajax = elementorCommon.ajax;
-	conditions = require( 'elementor-editor-utils/conditions' );
+	conditions = new ControlConditions();
 	history = require( 'elementor/modules/history/assets/js/module' );
 
 	channels = {
@@ -66,7 +70,7 @@ export default class EditorBase extends Marionette.Application {
 		elementorDevTools.deprecation.deprecated(
 			'elementor.debug',
 			'3.0.0',
-			'elementorCommon.debug'
+			'elementorCommon.debug',
 		);
 
 		return elementorCommon.debug;
@@ -326,7 +330,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	/**
-	 * @returns {Container}
+	 * @return {Container} container
 	 */
 	getPreviewContainer() {
 		return this.getPreviewView().getContainer();
@@ -405,7 +409,7 @@ export default class EditorBase extends Marionette.Application {
 	/**
 	 * Toggle sortable state globally.
 	 *
-	 * @param state
+	 * @param {boolean} state
 	 */
 	toggleSortableState( state = true ) {
 		const sections = [
@@ -529,6 +533,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getCurrentElement() {
+		// eslint-disable-next-line @wordpress/no-global-active-element
 		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
 		if ( ! isPreview ) {
@@ -759,7 +764,7 @@ export default class EditorBase extends Marionette.Application {
 
 	preventClicksInsideEditor() {
 		this.$previewContents.on( 'submit', ( event ) =>
-			event.preventDefault()
+			event.preventDefault(),
 		);
 
 		// Cannot use arrow function here since it use `this.contains`.
@@ -1047,6 +1052,10 @@ export default class EditorBase extends Marionette.Application {
 			success: ( data ) => {
 				this.addWidgetsCache( data );
 
+				if ( elementor.config.locale !== elementor.config.user.locale ) {
+					this.translateControlsDefaults( elementor.config.locale );
+				}
+
 				if ( this.loaded ) {
 					this.kitManager.renderGlobalsDefaultCSS();
 
@@ -1058,6 +1067,15 @@ export default class EditorBase extends Marionette.Application {
 				}
 			},
 		} );
+	}
+
+	translateControlsDefaults( locale ) {
+		elementorCommon.ajax.addRequest( 'get_widgets_default_value_translations', {
+			data: { locale },
+			success: ( data ) => {
+				this.addWidgetsCache( data );
+			},
+		}, true );
 	}
 
 	getPreferences( key ) {
@@ -1170,7 +1188,7 @@ export default class EditorBase extends Marionette.Application {
 
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
-		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+		this.trigger( 'preview:loaded', ! this.loaded /* IsFirst */ );
 
 		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
 
@@ -1241,7 +1259,7 @@ export default class EditorBase extends Marionette.Application {
 
 		jQuery.get( debugUrl, () => {
 			this.showFatalErrorDialog( dialogOptions );
-		} ).fail( ( response ) => { //Iframe can't be loaded
+		} ).fail( ( response ) => { // Iframe can't be loaded
 			this.showFatalErrorDialog( {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
@@ -1318,7 +1336,7 @@ export default class EditorBase extends Marionette.Application {
 
 		// Set the desktop to be the first device, so desktop will the the parent of all devices.
 		devices.unshift(
-			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ]
+			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ],
 		);
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
@@ -1526,7 +1544,7 @@ export default class EditorBase extends Marionette.Application {
 				get() {
 					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
 					elementorDevTools.deprecation.deprecated( 'elementor.config.' + key, '2.9.0', replacement );
-					// return from current document.
+					// Return from current document.
 					return data.value();
 				},
 				set() {

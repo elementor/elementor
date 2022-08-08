@@ -194,7 +194,7 @@ export default class Component extends ComponentModalBase {
 		const InsertTemplateHandler = {
 			dialog: null,
 
-			showImportDialog: function( model ) {
+			showImportDialog( model ) {
 				const dialog = InsertTemplateHandler.getDialog( model );
 
 				dialog.onConfirm = function() {
@@ -214,10 +214,12 @@ export default class Component extends ComponentModalBase {
 				dialog.show();
 			},
 
-			initDialog: function( model ) {
+			initDialog( model ) {
 				InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'elementor-insert-template-settings-dialog',
+					/* Translators: %s is the type content */
 					headerMessage: __( 'Apply the settings of this %s too?', 'elementor' ).replace( '%s', elementor.translate( model.attributes.type ) ),
+					/* Translators: %s is the type content */
 					message: __( 'This will override the design, layout, and other settings of the %s you’re working on.', 'elementor' ).replace( '%s', elementor.documents.getCurrent().container.label ),
 					strings: {
 						confirm: __( 'Apply', 'elementor' ),
@@ -226,7 +228,7 @@ export default class Component extends ComponentModalBase {
 				} );
 			},
 
-			getDialog: function( model ) {
+			getDialog( model ) {
 				if ( ! InsertTemplateHandler.dialog ) {
 					InsertTemplateHandler.initDialog( model );
 				}

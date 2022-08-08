@@ -14,10 +14,12 @@ import './item-header.scss';
 /**
  * Returns the right call to action button.
  *
- * @param model
- * @param onConnect
- * @param onApply
- * @returns {object}
+ * @param {Kit}      model
+ * @param {Object}   root0
+ * @param {Function} root0.apply
+ * @param {Function} root0.onConnect
+ * @param {boolean}  root0.isApplyLoading
+ * @return {Object} result
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
@@ -37,14 +39,31 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 		}
 
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
+			const getButtonURL = () => {
+				let url = subscriptionPlan.promotion_url;
+
+				if ( model.title ) {
+					// Remove special characters, replace spaces with '-' and convert url kit name to lowercase.
+					const cleanTitle = model.title.replace( /\s/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
+					url += `&utm_term=${ cleanTitle }`;
+				}
+
+				if ( model.id ) {
+					url += `&utm_content=${ model.id }`;
+				}
+
+				return url;
+			};
+
 			return {
 				id: 'promotion',
+				// Translators: %s is the subscription plan name.
 				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
 				hideText: false,
 				variant: 'contained',
 				color: 'cta',
 				size: 'sm',
-				url: subscriptionPlan.promotion_url,
+				url: getButtonURL(),
 				target: '_blank',
 				includeHeaderBtnClass: false,
 			};
@@ -96,7 +115,7 @@ export default function ItemHeader( props ) {
 					message: __( 'Something went wrong.', 'elementor' ),
 				} );
 			},
-		}
+		},
 	);
 
 	const applyButton = useKitCallToActionButton( props.model, {
@@ -156,7 +175,7 @@ export default function ItemHeader( props ) {
 				/>
 			}
 			<Header
-				startColumn={ <HeaderBackButton/> }
+				startColumn={ <HeaderBackButton /> }
 				centerColumn={ props.centerColumn }
 				buttons={ buttons }
 			/>

@@ -8,7 +8,7 @@ import Checkbox from 'elementor-app/ui/atoms/checkbox';
 export default function TableCheckbox( props ) {
 	const context = useContext( Context ),
 		{ selected, disabled, setSelected } = context || {},
-		isSelectAllCheckbox = props.hasOwnProperty( 'allSelectedCount' ),
+		isSelectAllCheckbox = Object.prototype.hasOwnProperty.call( props, 'allSelectedCount' ),
 		isAllSelected = selected.length === props.allSelectedCount,
 		isIndeterminate = isSelectAllCheckbox ? ! ! ( ( selected.length - disabled.length ) && ! isAllSelected ) : false,
 		isSelected = isSelectAllCheckbox ? isAllSelected : selected.includes( props.index ),

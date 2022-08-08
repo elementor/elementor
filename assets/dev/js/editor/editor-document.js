@@ -19,7 +19,7 @@ $e.modules.document = {
 		elementorDevTools.deprecation.deprecated(
 			'$e.modules.document.CommandHistory',
 			'3.7.0',
-			'$e.modules.editor.document.CommandHistoryBase'
+			'$e.modules.editor.document.CommandHistoryBase',
 		);
 
 		return $e.modules.editor.document.CommandHistoryBase;
@@ -29,7 +29,7 @@ $e.modules.document = {
 		elementorDevTools.deprecation.deprecated(
 			'$e.modules.CommandHistoryDebounce',
 			'3.7.0',
-			'$e.modules.editor.document.CommandHistoryDebounceBase'
+			'$e.modules.editor.document.CommandHistoryDebounceBase',
 		);
 
 		return $e.modules.editor.document.CommandHistoryDebounceBase;

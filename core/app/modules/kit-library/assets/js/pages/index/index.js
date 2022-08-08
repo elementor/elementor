@@ -23,8 +23,8 @@ import './index.scss';
 /**
  * Generate select and unselect taxonomy functions.
  *
- * @param setQueryParams
- * @returns {((function(*, *): *)|(function(*=): *))[]}
+ * @param {Function} setQueryParams
+ * @return {((function(*, *): *)|(function(*=): *))[]} taxonomy functions
  */
 function useTaxonomiesSelection( setQueryParams ) {
 	const selectTaxonomy = useCallback( ( type, callback ) => setQueryParams(
@@ -34,7 +34,7 @@ function useTaxonomiesSelection( setQueryParams ) {
 			taxonomies[ type ] = callback( prev.taxonomies[ type ] );
 
 			return { ...prev, taxonomies };
-		}
+		},
 	), [ setQueryParams ] );
 
 	const unselectTaxonomy = useCallback( ( taxonomy ) => setQueryParams( ( prev ) => {
@@ -53,8 +53,8 @@ function useTaxonomiesSelection( setQueryParams ) {
 /**
  * Generate the menu items for the index page.
  *
- * @param path
- * @returns {array}
+ * @param {string} path
+ * @return {Array} menu items
  */
 function useMenuItems( path ) {
 	return useMemo( () => {
@@ -62,7 +62,7 @@ function useMenuItems( path ) {
 
 		return [
 			{
-				label: __( 'All Template Kits', 'elementor' ),
+				label: __( 'All Website Kits', 'elementor' ),
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
@@ -80,9 +80,9 @@ function useMenuItems( path ) {
 /**
  * Update and read the query param from the url
  *
- * @param queryParams
- * @param setQueryParams
- * @param exclude
+ * @param {*}             queryParams
+ * @param {*}             setQueryParams
+ * @param {Array<string>} exclude
  */
 function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	const location = useLocation(),
@@ -91,7 +91,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	useEffect( () => {
 		const filteredQueryParams = Object.fromEntries(
 			Object.entries( queryParams )
-				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item )
+				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item ),
 		);
 
 		setLastFilter( filteredQueryParams );
@@ -100,8 +100,8 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 			null,
 			'',
 			decodeURI(
-				`#${ wp.url.addQueryArgs( location.pathname.split( '?' )[ 0 ] || '/', filteredQueryParams ) }`
-			)
+				`#${ wp.url.addQueryArgs( location.pathname.split( '?' )[ 0 ] || '/', filteredQueryParams ) }`,
+			),
 		);
 	}, [ queryParams ] );
 
@@ -188,7 +188,8 @@ export default function Index( props ) {
 				<Grid container className="e-kit-library__index-layout-top-area">
 					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
-							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
+							// eslint-disable-next-line @wordpress/i18n-ellipsis
+							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>
@@ -205,10 +206,27 @@ export default function Index( props ) {
 					>
 						<SortSelect
 							options={ [
-								{ label: __( 'Featured', 'elementor' ), value: 'featuredIndex' },
-								{ label: __( 'New', 'elementor' ), value: 'createdAt' },
-								{ label: __( 'Popular', 'elementor' ), value: 'popularityIndex' },
-								{ label: __( 'Trending', 'elementor' ), value: 'trendIndex' },
+								{
+									label: __( 'Featured', 'elementor' ),
+									value: 'featuredIndex',
+									defaultOrder: 'asc',
+									orderDisabled: true,
+								},
+								{
+									label: __( 'New', 'elementor' ),
+									value: 'createdAt',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Popular', 'elementor' ),
+									value: 'popularityIndex',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Trending', 'elementor' ),
+									value: 'trendIndex',
+									defaultOrder: 'desc',
+								},
 							] }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
@@ -229,7 +247,7 @@ export default function Index( props ) {
 								} }
 							/>
 						}
-						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data }/> }
+						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } /> }
 						{
 							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
 								defaultComponent: <ErrorScreen
