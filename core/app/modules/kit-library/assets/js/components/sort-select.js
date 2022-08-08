@@ -22,12 +22,7 @@ export default function SortSelect( props ) {
 					value={ props.value.by }
 					onChange={ ( e ) => {
 						const value = e.target.value;
-<<<<<<< HEAD
 						setSelectedSortBy( getSelectedOptionDetails( value ) );
-=======
-						props.onChangeSortValue?.( value );
-						props.onChange( { by: value, direction: props.value.direction } );
->>>>>>> 4f8477b5ab9ad95bf6da1eb5011246fb9745de0f
 					} }
 					className="eps-sort-select__select"
 					onClick={ () => {
@@ -39,7 +34,6 @@ export default function SortSelect( props ) {
 					} }
 				/>
 			</div>
-<<<<<<< HEAD
 			{
 				! selectedSortBy.orderDisabled &&
 					<Button
@@ -55,24 +49,6 @@ export default function SortSelect( props ) {
 						} }
 					/>
 			}
-=======
-			<Button
-				text={ 'asc' === props.value.direction ? __( 'Sort Descending', 'elementor' ) : __( 'Sort Ascending', 'elementor' ) }
-				hideText={ true }
-				icon={ 'asc' === props.value.direction ? 'eicon-arrow-up' : 'eicon-arrow-down' }
-				className="eps-sort-select__button"
-				onClick={ () => {
-					const direction = direction && 'asc' === props.value.direction ? 'desc' : 'asc';
-					if ( props.onChangeSortDirection ) {
-						props.onChangeSortDirection( direction );
-					}
-					props.onChange( {
-						by: props.value.by,
-						direction,
-					} );
-				} }
-			/>
->>>>>>> 4f8477b5ab9ad95bf6da1eb5011246fb9745de0f
 		</div>
 	);
 }

@@ -20,16 +20,7 @@ export default function ImportInfoModal( props ) {
 					<>
 						{ __( 'A Website Kit is a .zip file that contains all the parts of a complete site. It’s an easy way to get a site up and running quickly.', 'elementor' ) }
 						<br /><br />
-<<<<<<< HEAD
 						<InlineLink url="https://go.elementor.com/app-what-are-kits">{ __( ' Learn more about Website Kits', 'elementor' ) }</InlineLink>
-=======
-						<InlineLink
-							url="https://go.elementor.com/app-what-are-kits"
-							onClick={ () => eventTracking( 'Learn more about website kits' ) }
-						>
-							{ __( ' Learn more about Website Kits', 'elementor' ) }
-						</InlineLink>
->>>>>>> 4f8477b5ab9ad95bf6da1eb5011246fb9745de0f
 					</>
 				</InfoModal.Text>
 			</InfoModal.Section>
