@@ -3,8 +3,14 @@
 	--border-radius: 0;
 	--display: flex;
 	--flex-direction: column;
+	// Additional `flex-direction` value, which is used to set set a default value for the parent container.
+	--container-flex-direction: initial;
+	--container-flex-direction: column;
 	--flex-basis: auto;
 	--flex-grow: 0;
+	// Additional `flex-grow` value, which is used to set set a default value for the parent container.
+	--container-flex-grow: initial;
+	--container-flex-grow: 1;
 	--flex-shrink: 1;
 	// Use the width from `Site Settings` or default to 1140px.
 	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
@@ -32,7 +38,8 @@
 	--overlay-transition: 0.3s;
 
 	position: var( --position );
-	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
+	flex-direction: var( --container-flex-direction, var( --flex-direction ) );
+	flex: var( --container-flex-grow, var( --flex-grow ) ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
@@ -52,10 +59,11 @@
 	&, & > .e-container-boxed--inner {
 		display: var( --display );
 		text-align: var( --text-align );
-		flex-direction: var( --flex-direction );
 	}
 
 	&-boxed--inner {
+		flex-direction: var( --flex-direction );
+		flex-grow: var( --flex-grow );
 		width: 100%;
 		max-width: var( --content-width );
 		margin-inline: auto;

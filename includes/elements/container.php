@@ -318,6 +318,13 @@ class Container extends Element_Base {
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
 				'render_type' => 'ui',
+				'selectors' => [
+					'{{SELECTOR}}' => '{{VALUE}};',
+				],
+				'selectors_dictionary' => [
+					'full' => '',
+					'boxed' => '--container-flex-direction: column; --container-flex-grow: 1;',
+				],
 			]
 		);
 
