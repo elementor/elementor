@@ -115,7 +115,7 @@ class Container extends Element_Base {
 	protected function content_template() {
 		?>
 		<# if ( 'boxed' === settings.content_width ) { #>
-			<div class="e-container-__inner">
+			<div class="e-container__inner">
 		<#
 		}
 		if ( settings.background_video_link ) {
@@ -272,7 +272,7 @@ class Container extends Element_Base {
 			return '';
 		}
 
-		echo 'open' === $context ? '<div class="e-container-__inner">' : '</div>';
+		echo 'open' === $context ? '<div class="e-container__inner">' : '</div>';
 	}
 
 	/**
