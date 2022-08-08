@@ -4,12 +4,13 @@ namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
-use Elementor\Modules\Promotions\MenuItems\Custom_Code_Promotion_Item;
-use Elementor\Modules\Promotions\MenuItems\Custom_Fonts_Promotion_Item;
-use Elementor\Modules\Promotions\MenuItems\Custom_Icons_Promotion_Item;
-use Elementor\Modules\Promotions\MenuItems\Form_Submissions_Promotion_Item;
-use Elementor\Modules\Promotions\MenuItems\Go_Pro_Promotion_Item;
-use Elementor\Modules\Promotions\MenuItems\Popups_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -42,6 +43,10 @@ class Module extends Base_Module {
 			wp_redirect( Go_Pro_Promotion_Item::URL );
 			die;
 		}
+	}
+
+	public static function is_active() {
+		return ! Utils::has_pro();
 	}
 
 	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {

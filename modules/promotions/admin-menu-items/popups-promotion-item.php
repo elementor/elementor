@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Promotions\MenuItems;
+namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 use Elementor\TemplateLibrary\Source_Local;
 

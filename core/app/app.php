@@ -2,7 +2,7 @@
 namespace Elementor\Core\App;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\App\MenuItems\Theme_Builder_Menu_Item;
+use Elementor\Core\App\AdminMenuItems\Theme_Builder_Menu_Item;
 use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Settings\Manager as SettingsManager;

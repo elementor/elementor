@@ -4,7 +4,7 @@ namespace Elementor;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
-use Elementor\Includes\Settings\MenuItems\Tools_Menu_Item;
+use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

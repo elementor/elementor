@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Includes\Settings\MenuItems;
+namespace Elementor\Includes\Settings\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Plugin;

@@ -1,15 +1,16 @@
 <?php
-namespace Elementor\Includes\Settings\MenuItems;
+
+namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit; // Exit if accessed directly
 }
 
-class Get_Help_Menu_Item implements Admin_Menu_Item_With_Page {
-	const URL = 'https://go.elementor.com/docs-admin-menu/';
+class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
+	const URL = 'https://go.elementor.com/pro-admin-menu/';
 
 	public function is_visible() {
 		return true;
@@ -20,7 +21,7 @@ class Get_Help_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Get Help', 'elementor' );
+		return '<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . esc_html__( 'Upgrade', 'elementor' );
 	}
 
 	public function get_page_title() {
@@ -36,7 +37,7 @@ class Get_Help_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function render() {
-		// Redirects from the settings page on `admin_init`.
+		// Redirects from the module on `admin_init`.
 		die;
 	}
 }

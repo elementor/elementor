@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\Promotions\MenuItems;
+namespace Elementor\Modules\Promotions\AdminMenuItems;
 
-use Elementor\Modules\Promotions\MenuItems\Interfaces\Promotion_Menu_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Item;
 use Elementor\Settings;
 use Elementor\Utils;
 

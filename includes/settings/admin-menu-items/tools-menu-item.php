@@ -1,16 +1,21 @@
 <?php
-
-namespace Elementor\Modules\Promotions\MenuItems;
+namespace Elementor\Includes\Settings\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
+use Elementor\Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
-class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
-	const URL = 'https://go.elementor.com/pro-admin-menu/';
+class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
+
+	private $tools_page;
+
+	public function __construct( Tools $tools_page ) {
+		$this->tools_page = $tools_page;
+	}
 
 	public function is_visible() {
 		return true;
@@ -21,15 +26,15 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return '<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . esc_html__( 'Upgrade', 'elementor' );
+		return esc_html__( 'Tools', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return '';
+		return esc_html__( 'Tools', 'elementor' );
 	}
 
 	public function get_position() {
-		return null;
+		return 1;
 	}
 
 	public function get_capability() {
@@ -37,7 +42,6 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function render() {
-		// Redirects from the module on `admin_init`.
-		die;
+		$this->tools_page->display_settings_page();
 	}
 }

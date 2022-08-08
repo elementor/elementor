@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Promotions\MenuItems;
+namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

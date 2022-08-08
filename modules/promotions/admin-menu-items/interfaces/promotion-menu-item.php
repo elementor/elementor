@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Promotions\MenuItems\Interfaces;
+namespace Elementor\Modules\Promotions\AdminMenuItems\Interfaces;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 

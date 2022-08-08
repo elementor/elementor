@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\App\MenuItems;
+namespace Elementor\Core\App\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\TemplateLibrary\Source_Local;

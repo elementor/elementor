@@ -1,21 +1,15 @@
 <?php
-namespace Elementor\Includes\Settings\MenuItems;
+namespace Elementor\Includes\Settings\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
-use Elementor\Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
-
-	private $tools_page;
-
-	public function __construct( Tools $tools_page ) {
-		$this->tools_page = $tools_page;
-	}
+class Get_Help_Menu_Item implements Admin_Menu_Item_With_Page {
+	const URL = 'https://go.elementor.com/docs-admin-menu/';
 
 	public function is_visible() {
 		return true;
@@ -26,15 +20,15 @@ class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Tools', 'elementor' );
+		return esc_html__( 'Get Help', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Tools', 'elementor' );
+		return '';
 	}
 
 	public function get_position() {
-		return 1;
+		return null;
 	}
 
 	public function get_capability() {
@@ -42,6 +36,7 @@ class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function render() {
-		$this->tools_page->display_settings_page();
+		// Redirects from the settings page on `admin_init`.
+		die;
 	}
 }
