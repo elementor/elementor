@@ -8,6 +8,7 @@ import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { PreviewIframe } from './preview-iframe';
 import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './preview.scss';
 
@@ -42,9 +43,20 @@ export const breakpoints = [
 	},
 ];
 
-function useHeaderButtons( id ) {
+function useHeaderButtons( id, kitName ) {
 	const navigate = useNavigate();
-
+	const eventTracking = ( command, viewTypeClicked, eventType = 'click' ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				kit_name: kitName,
+				element_position: 'app_header',
+				page_source: 'view demo',
+				view_type_clicked: viewTypeClicked,
+				event_type: eventType,
+			},
+		);
+	};
 	return useMemo( () => [
 		{
 			id: 'overview',
@@ -53,7 +65,10 @@ function useHeaderButtons( id ) {
 			variant: 'outlined',
 			color: 'secondary',
 			size: 'sm',
-			onClick: () => navigate( `/kit-library/overview/${ id }` ),
+			onClick: () => {
+				eventTracking( 'kit-library/view-overview-page', 'overview' );
+				navigate( `/kit-library/overview/${ id }` );
+			},
 			includeHeaderBtnClass: false,
 		},
 	], [ id ] );
@@ -89,13 +104,30 @@ function usePreviewUrl( data ) {
 export default function Preview( props ) {
 	const { data, isError, isLoading } = useKit( props.id );
 	const [ isIframeLoading, setIsIframeLoading ] = useState( true );
-	const headersButtons = useHeaderButtons( props.id );
+	const headersButtons = useHeaderButtons( props.id, data && data.title );
 	const previewUrl = usePreviewUrl( data );
 	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
 	const iframeStyle = useMemo(
 		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
 		[ activeDevice ],
 	);
+	const eventTracking = ( command, layout, elementPosition = null, eventType = 'click' ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				kit_name: data.title,
+				page_source: 'view demo',
+				layout,
+				element_position: elementPosition,
+				event_type: eventType,
+			},
+		);
+	};
+
+	const onChange = ( device ) => {
+		setActiveDevice( device );
+		eventTracking( 'kit-library/responsive-controls', device, 'app_header' );
+	};
 
 	usePageTitle( {
 		title: data
@@ -118,7 +150,7 @@ export default function Preview( props ) {
 			<ItemHeader
 				model={ data }
 				buttons={ headersButtons }
-				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice } /> }
+				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ ( device ) => onChange( device ) } kitName={ data.title } /> }
 				pageId="demo"
 			/>
 		}>

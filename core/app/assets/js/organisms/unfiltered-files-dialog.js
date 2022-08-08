@@ -5,7 +5,7 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function UnfilteredFilesDialog( props ) {
-	const { show, setShow, onReady, onCancel, onDismiss } = props,
+	const { show, setShow, onReady, onCancel, onDismiss, onLoad, onEnable, onClose } = props,
 		{ ajaxState, setAjax } = useAjax(),
 		[ enableUnfilteredFiles, setEnableUnfilteredFiles ] = useState( false ),
 		[ isEnableError, setIsEnableError ] = useState( false );
@@ -25,6 +25,9 @@ export default function UnfilteredFilesDialog( props ) {
 					} ),
 				},
 			} );
+			if ( onEnable ) {
+				onEnable();
+			}
 		}
 	}, [ enableUnfilteredFiles ] );
 
@@ -40,6 +43,12 @@ export default function UnfilteredFilesDialog( props ) {
 				break;
 		}
 	}, [ ajaxState ] );
+
+	useEffect( () => {
+		if ( show && onLoad ) {
+			onLoad();
+		}
+	}, [ show ] );
 
 	if ( ! show ) {
 		return null;
@@ -67,7 +76,7 @@ export default function UnfilteredFilesDialog( props ) {
 						approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
 						dismissButtonText={ __( 'Skip', 'elementor' ) }
 						dismissButtonOnClick={ onDismiss || onReady }
-						onClose={ onDismiss || onReady }
+						onClose={ onClose || onDismiss || onReady }
 				/>
 			}
 		</>
@@ -82,8 +91,13 @@ UnfilteredFilesDialog.propTypes = {
 	onDismiss: PropTypes.func,
 	confirmModalText: PropTypes.string.isRequired,
 	errorModalText: PropTypes.string.isRequired,
+	onLoad: PropTypes.func,
+	onEnable: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 UnfilteredFilesDialog.defaultProps = {
 	show: false,
+	onReady: () => {},
+	onCancel: () => {},
 };
