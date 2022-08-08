@@ -127,7 +127,7 @@ class Container extends Element_Base {
 
 			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
-			if ( ! settings.background_play_on_mobile ) { 
+			if ( ! settings.background_play_on_mobile ) {
 				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 			}
 			#>
