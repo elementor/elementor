@@ -114,7 +114,10 @@ class Container extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
+		<# if ( 'boxed' === settings.content_width ) { #>
+			<div class="e-container-boxed--inner">
 		<#
+		}
 		if ( settings.background_video_link ) {
 			let videoAttributes = 'autoplay muted playsinline';
 
@@ -124,7 +127,7 @@ class Container extends Element_Base {
 
 			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
-			if ( ! settings.background_play_on_mobile ) {
+			if ( ! settings.background_play_on_mobile ) { 
 				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 			}
 			#>
@@ -135,6 +138,9 @@ class Container extends Element_Base {
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
+		<# if ( 'boxed' === settings.content_width ) { #>
+			</div>
+		<# } #>
 		<?php
 	}
 
@@ -238,8 +244,8 @@ class Container extends Element_Base {
 		}
 
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
-		$this->render_video_background();
-?>
+		$this->render_inner_wrapper( $settings, 'open' ); ?> <?php $this->render_video_background(); ?>
+
 		<?php
 
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
@@ -257,7 +263,17 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function after_render() {
-		?></<?php $this->print_html_tag(); ?>><?php
+		$settings = $this->get_settings_for_display();
+		?><?php $this->render_inner_wrapper( $settings, 'close' ); ?></<?php $this->print_html_tag(); ?>><?php
+	}
+
+	private function render_inner_wrapper( $settings, $context ) {
+		if ( ! isset( $settings['content_width'] ) || 'boxed' !== $settings['content_width'] ) {
+			return '';
+		}
+		//return '';
+
+		echo 'open' === $context ? '<div class="e-container-boxed--inner">' : '</div>';
 	}
 
 	/**
@@ -296,18 +312,18 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'boxed',
+				'default' => 'full',
 				'options' => [
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
-				'render_type' => 'ui',
+				'render_type' => 'template',
 				'selectors' => [
-					'{{WRAPPER}}' => '{{VALUE}}',
+					'{{SELECTOR}}' => '{{VALUE}};',
 				],
 				'selectors_dictionary' => [
-					'boxed' => '',
-					'full' => '--content-width: 100%;',
+					'full' => '',
+					'boxed' => '--container-flex-direction: column; --container-flex-grow: 1;',
 				],
 			]
 		);
@@ -409,7 +425,7 @@ class Container extends Element_Base {
 			Group_Control_Flex_Container::get_type(),
 			[
 				'name' => 'flex',
-				'selector' => '{{WRAPPER}}',
+				'selector' => '{{WRAPPER}}, {{WRAPPER}} > .e-container-box--inner',
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
@@ -429,6 +445,8 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	protected function register_items_layout_controls() {
+		$wrapper_include_inner = '{{WRAPPER}}, {{WRAPPER}} > .e-container-box__inner';
+
 		$this->start_controls_section(
 			'section_layout_additional_options',
 			[
@@ -1176,7 +1194,7 @@ class Container extends Element_Base {
 					'grow',
 					'shrink',
 				],
-				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
+				'selector' => '{{WRAPPER}}.e-container, {{WRAPPER}} > .e-container-box--inner', // Hack to increase specificity.
 				'separator' => 'before',
 			]
 		);
