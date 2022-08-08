@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -82,7 +84,23 @@ class Images_Manager {
 					],
 				];
 
-				$urls[ $size ] = Group_Control_Image_Size::get_attachment_image_src( $id, 'image', $instance );
+				$url = Group_Control_Image_Size::get_attachment_image_src( $id, 'image', $instance );
+
+				$thumbs_path = BFITHUMB_UPLOAD_DIR . '/' . basename( $url );
+
+				$image_meta = wp_get_attachment_metadata( $id );
+
+				// Attach custom image to original.
+				$image_meta['sizes'][ 'elementor_' . $size ] = [
+					'file' => $thumbs_path,
+					'width' => $matches[1],
+					'height' => $matches[2],
+					'mime-type' => get_post_mime_type( $id ),
+				];
+
+				wp_update_attachment_metadata( $id, $image_meta );
+
+				$urls[ $size ] = $url;
 			} else {
 				$urls[ $size ] = wp_get_attachment_image_src( $id, $size )[0];
 			}
@@ -130,6 +148,21 @@ class Images_Manager {
 		return $attributes;
 	}
 
+	private function delete_custom_images( $post_id ) {
+		$image_meta = wp_get_attachment_metadata( $post_id );
+		if ( ! empty( $image_meta ) && ! empty( $image_meta['sizes'] ) ) {
+			( new Collection( $image_meta['sizes'] ) )
+			->filter( function ( $value, $key ) {
+				return ( 0 === strpos( $key, 'elementor_custom_' ) );
+			} )
+			->pluck( 'file' )
+			->each( function ( $path ) {
+				$base_dir = wp_get_upload_dir()['basedir'];
+				wp_delete_file( $base_dir . '/' . $path );
+			} );
+		}
+	}
+
 	/**
 	 * Images manager constructor.
 	 *
@@ -140,5 +173,10 @@ class Images_Manager {
 	 */
 	public function __construct() {
 		add_action( 'wp_ajax_elementor_get_images_details', [ $this, 'get_images_details' ] );
+
+		// Delete elementor thumbnail files on deleting its main image.
+		add_action( 'delete_attachment', function ( $post_id ) {
+			$this->delete_custom_images( $post_id );
+		} );
 	}
 }

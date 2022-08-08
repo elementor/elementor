@@ -78,7 +78,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	// Static methods
 	getStyleValue( placeholder, controlValue ) {
 		if ( ! _.isObject( controlValue ) ) {
-			return ''; // invalid
+			return ''; // Invalid
 		}
 
 		return controlValue[ placeholder.toLowerCase() ];

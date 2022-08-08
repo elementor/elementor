@@ -22,6 +22,7 @@ import ElementModel from '../../elements/models/element';
 			type: model.get( 'elType' ),
 			settings: model.get( 'settings' ),
 			model,
+			parent: false,
 		} );
 	}
 

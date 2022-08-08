@@ -9,8 +9,8 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 		// Arrange.
 		const eColumn = ElementsHelper.createSection( 1, 1 );
 
-		ElementsHelper.createButton( eColumn );
-		ElementsHelper.createButton( eColumn );
+		ElementsHelper.createWidgetButton( eColumn );
+		ElementsHelper.createWidgetButton( eColumn );
 
 		assert.equal( eColumn.children.length, 2 );
 
@@ -23,10 +23,10 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 
 	QUnit.test( 'findRecursive(): Ensure children found', ( assert ) => {
 		// Arrange.
-		const eColumn = ElementsHelper.createSection( 1, 1 ),
+		const eColumn = ElementsHelper.createSection( 1, true ),
 			eWidgets = [
-				ElementsHelper.createButton( eColumn ),
-				ElementsHelper.createButton( eColumn ),
+				ElementsHelper.createWidgetButton( eColumn ),
+				ElementsHelper.createWidgetButton( eColumn ),
 			];
 
 		eWidgets.forEach( ( eWidget ) => {
@@ -45,8 +45,8 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 		const eSection = ElementsHelper.createSection( 1 ),
 			eColumn = eSection.children[ 0 ],
 			eWidgetsIds = [
-				ElementsHelper.createButton( eColumn ).id,
-				ElementsHelper.createButton( eColumn ).id,
+				ElementsHelper.createWidgetButton( eColumn ).id,
+				ElementsHelper.createWidgetButton( eColumn ).id,
 			],
 			expectedIds = [ eSection.id, eColumn.id, ... eWidgetsIds ],
 			actualIds = [];
@@ -63,8 +63,8 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 		const eSection = ElementsHelper.createSection( 1 ),
 			eColumn = eSection.children[ 0 ];
 
-		ElementsHelper.createButton( eColumn );
-		ElementsHelper.createButton( eColumn );
+		ElementsHelper.createWidgetButton( eColumn );
+		ElementsHelper.createWidgetButton( eColumn );
 
 		let iterationCounter = 0;
 
@@ -83,9 +83,9 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 	QUnit.test( 'someRecursive(): Ensure nested', ( assert ) => {
 		// Arrange.
 		ElementsHelper.empty();
-		ElementsHelper.createAutoButton();
+		ElementsHelper.createWrappedButton();
 
-		const eButtonInSection2 = ElementsHelper.createAutoButton();
+		const eButtonInSection2 = ElementsHelper.createWrappedButton();
 
 		let iterationCounter = 0;
 
