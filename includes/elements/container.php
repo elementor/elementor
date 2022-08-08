@@ -312,12 +312,12 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'boxed',
+				'default' => 'full',
 				'options' => [
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
-				'render_type' => 'ui',
+				'render_type' => 'template',
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
