@@ -8,6 +8,7 @@ export const PLUGINS_RESPONSE_MAP = Object.freeze( {
 
 export const PLUGIN_STATUS_MAP = Object.freeze( {
 	ACTIVE: 'active',
+	MULTISITE_ACTIVE: 'network-active',
 	INACTIVE: 'inactive',
 	NOT_INSTALLED: 'Not Installed',
 } );
