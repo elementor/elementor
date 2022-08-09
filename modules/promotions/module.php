@@ -31,7 +31,7 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_menu_items( $admin_menu );
-		} );
+		}, 0 /* First so it won't override others */ );
 	}
 
 	private function handle_external_redirects() {
@@ -43,10 +43,6 @@ class Module extends Base_Module {
 			wp_redirect( Go_Pro_Promotion_Item::URL );
 			die;
 		}
-	}
-
-	public static function is_active() {
-		return ! Utils::has_pro();
 	}
 
 	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
