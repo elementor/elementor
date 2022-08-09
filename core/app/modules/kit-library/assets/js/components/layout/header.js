@@ -29,7 +29,7 @@ export default function Header( props ) {
 			</a> }
 			{ props.centerColumn || <span /> }
 			{ props.endColumn || <div style={ { flex: 1 } }>
-				<HeaderButtons buttons={ props.buttons } onClose={ () => onClose() } />
+				<HeaderButtons buttons={ props.buttons } onClose={ onClose } />
 			</div> }
 		</Grid>
 	);
