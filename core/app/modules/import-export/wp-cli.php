@@ -153,6 +153,8 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			$import = $import_export_module->import_kit( $zip_path, $import_settings );
 
+			$manifest_data = $import_export_module->get_manifest();
+
 			/**
 			 * Import Export Manifest Data
 			 *
