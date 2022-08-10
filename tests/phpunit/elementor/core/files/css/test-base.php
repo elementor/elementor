@@ -8,7 +8,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
  */
 class Test_Base extends Elementor_Test_Base {
 
-	public function test_parse_property_placeholder() {
+	public function test_parse_property_placeholder_edge_cases() {
 		// Arrange.
 		// The CSS Base class is abstract, so it can't be instantiated. The inheriting Post class is used instead.
 		$css_base_class = new \Elementor\Core\Files\CSS\Post( 0 );
@@ -16,23 +16,82 @@ class Test_Base extends Elementor_Test_Base {
 		// Create mock data.
 		$control = [
 			'type' => 'number',
-			'default' => '20',
+			'default' => 20,
 		];
 
 		$controls_stack = [
 			'number' => $control,
 		];
 
-		//array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null
-		$control_value = $css_base_class->parse_property_placeholder(
+		/**
+		 * value of 0
+		 */
+		$value = 0;
+
+		// Act
+		$control_value_0 = $css_base_class->parse_property_placeholder(
 			$control,
-			0,
+			$value,
 			$controls_stack,
 			function() {},
 			''
 		);
 
-		// Assert. Check that when the control value is 0, `parse_property_placeholder()` returns 0.
-		$this->assertEquals( 0, $control_value );
+		// Assert.
+		$this->assertEquals( $value, $control_value_0 );
+
+		/**
+		 * value of '0'
+		 */
+		// Arrange.
+		$value = '0';
+
+		// Act
+		$control_value_0_string = $css_base_class->parse_property_placeholder(
+			$control,
+			$value,
+			$controls_stack,
+			function() {},
+			''
+		);
+
+		// Assert.
+		$this->assertEquals( $value, $control_value_0_string );
+
+		/**
+		 * value of ''
+		 */
+		// Arrange.
+		$value = '';
+
+		// Act
+		$control_value_0_string = $css_base_class->parse_property_placeholder(
+			$control,
+			$value,
+			$controls_stack,
+			function() {},
+			''
+		);
+
+		// Assert.
+		$this->assertEquals( null, $control_value_0_string );
+
+		/**
+		 * value of null
+		 */
+		// Arrange.
+		$value = null;
+
+		// Act
+		$control_value_0_string = $css_base_class->parse_property_placeholder(
+			$control,
+			$value,
+			$controls_stack,
+			function() {},
+			''
+		);
+
+		// Assert.
+		$this->assertEquals( $value, $control_value_0_string );
 	}
 }
