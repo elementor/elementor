@@ -443,7 +443,7 @@ abstract class Base extends Base_File {
 		}
 
 		// If the control value is empty, check for global default.
-		if ( ! $value ) {
+		if ( ! $value && 0 !== $value ) {
 			$value = $this->get_control_global_default_value( $control );
 		}
 
