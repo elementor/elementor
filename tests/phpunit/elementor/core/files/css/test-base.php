@@ -29,7 +29,7 @@ class Test_Base extends Elementor_Test_Base {
 			0,
 			$controls_stack,
 			function() {},
-			'{{{control_name}}}'
+			''
 		);
 
 		// Assert. Check that when the control value is 0, `parse_property_placeholder()` returns 0.
