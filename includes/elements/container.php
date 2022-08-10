@@ -424,7 +424,7 @@ class Container extends Element_Base {
 			Group_Control_Flex_Container::get_type(),
 			[
 				'name' => 'flex',
-				'selector' => '{{WRAPPER}}, {{WRAPPER}} > .e-container__inner',
+				'selector' => '{{WRAPPER}}',
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
@@ -444,8 +444,6 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	protected function register_items_layout_controls() {
-		$wrapper_include_inner = '{{WRAPPER}}, {{WRAPPER}} > .e-container-box__inner';
-
 		$this->start_controls_section(
 			'section_layout_additional_options',
 			[
@@ -1193,7 +1191,7 @@ class Container extends Element_Base {
 					'grow',
 					'shrink',
 				],
-				'selector' => '{{WRAPPER}}.e-container, {{WRAPPER}} > .e-container__inner', // Hack to increase specificity.
+				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
 				'separator' => 'before',
 			]
 		);
