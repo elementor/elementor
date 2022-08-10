@@ -291,7 +291,7 @@ class Container extends Element_Base {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		if ( array_key_exists( 'mobile_extra', $active_breakpoints ) ) {
+		if ( array_key_exists( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA, $active_breakpoints ) ) {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
 		} else {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
