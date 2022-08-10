@@ -8,90 +8,84 @@ use ElementorEditorTesting\Elementor_Test_Base;
  */
 class Test_Base extends Elementor_Test_Base {
 
-	public function test_parse_property_placeholder_edge_cases() {
-		// Arrange.
-		// The CSS Base class is abstract, so it can't be instantiated. The inheriting Post class is used instead.
-		$css_base_class = new \Elementor\Core\Files\CSS\Post( 0 );
+	/**
+	 * @var \Elementor\Core\Files\CSS\Post
+	 */
+	private static $css_base_class;
+	/**
+	 * @var array
+	 */
+	private static $mock_control;
+	/**
+	 * @var array[]
+	 */
+	private static $mock_controls_stack;
 
-		// Create mock data.
-		$control = [
+	public static function setUpBeforeClass() {
+		// The CSS Base class is abstract, so it can't be instantiated. The inheriting Post class is used instead.
+		self::$css_base_class = new \Elementor\Core\Files\CSS\Post( 0 );
+
+		self::$mock_control = [
 			'type' => 'number',
 			'default' => 20,
 		];
 
-		$controls_stack = [
-			'number' => $control,
+		self::$mock_controls_stack = [
+			'number' => self::$mock_control,
 		];
+	}
 
-		/**
-		 * value of 0
-		 */
+	public function test_parse_property_placeholder__value_0() {
+		// Arrange.
 		$value = 0;
 
 		// Act
-		$control_value_0 = $css_base_class->parse_property_placeholder(
-			$control,
-			$value,
-			$controls_stack,
-			function() {},
-			''
-		);
+		$control_value = $this->get_parsed_value( $value );
 
 		// Assert.
-		$this->assertEquals( $value, $control_value_0 );
+		$this->assertEquals( $value, $control_value );
+	}
 
-		/**
-		 * value of '0'
-		 */
+	public function test_parse_property_placeholder__value_0_string() {
 		// Arrange.
 		$value = '0';
 
 		// Act
-		$control_value_0_string = $css_base_class->parse_property_placeholder(
-			$control,
-			$value,
-			$controls_stack,
-			function() {},
-			''
-		);
+		$control_value = $this->get_parsed_value( $value );
 
 		// Assert.
-		$this->assertEquals( $value, $control_value_0_string );
+		$this->assertEquals( $value, $control_value );
+	}
 
-		/**
-		 * value of ''
-		 */
+	public function test_parse_property_placeholder__value_empty_string() {
 		// Arrange.
 		$value = '';
 
 		// Act
-		$control_value_0_string = $css_base_class->parse_property_placeholder(
-			$control,
-			$value,
-			$controls_stack,
-			function() {},
-			''
-		);
+		$control_value = $this->get_parsed_value( $value );
 
 		// Assert.
-		$this->assertEquals( null, $control_value_0_string );
+		$this->assertEquals( null, $control_value );
+	}
 
-		/**
-		 * value of null
-		 */
+	public function test_parse_property_placeholder__value_null() {
 		// Arrange.
 		$value = null;
 
 		// Act
-		$control_value_0_string = $css_base_class->parse_property_placeholder(
-			$control,
+		$control_value = $this->get_parsed_value( $value );
+
+		// Assert.
+		$this->assertEquals( $value, $control_value );
+	}
+
+	private function get_parsed_value( $value ) {
+		return self::$css_base_class->parse_property_placeholder(
+			self::$mock_control,
 			$value,
-			$controls_stack,
+			self::$mock_controls_stack,
 			function() {},
 			''
 		);
-
-		// Assert.
-		$this->assertEquals( $value, $control_value_0_string );
 	}
 }
