@@ -20,7 +20,7 @@ class Test_Base extends Elementor_Test_Base {
 		];
 
 		$controls_stack = [
-			$control,
+			'number' => $control,
 		];
 
 		//array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null
