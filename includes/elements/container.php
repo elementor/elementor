@@ -268,8 +268,6 @@ class Container extends Element_Base {
 	 */
 	public function after_render() {
 		$settings = $this->get_settings_for_display();
-		?>
-		<?php
 		if ( $this->is_boxed_container( $settings ) ) {
 			?></div><?php
 		}
