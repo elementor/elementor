@@ -443,7 +443,7 @@ abstract class Base extends Base_File {
 			$value = call_user_func( $value_callback, $control );
 		}
 
-		// If the control value is empty, check for global default. `0` (integer) is falsy but is a valid value.
+		// If the control value is empty, check for global default. `0` (integer, string) are falsy but are valid values.
 		if ( empty( $value ) && '0' !== $value && 0 !== $value ) {
 			$value = $this->get_control_global_default_value( $control );
 		}
