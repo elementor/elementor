@@ -115,9 +115,13 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
+		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
+			? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add'
+			: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+
 		return {
 			axis: this.getDroppableAxis(),
-			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add, > .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add',
+			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -362,7 +366,7 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		// Re-initialize the droppable in order to make sure the axis works properly.
-		if ( settings.changed.flex_direction ) {
+		if ( settings.changed.flex_direction || settings.changed.content_width ) {
 			this.$el.html5Droppable( 'destroy' );
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		}
