@@ -59,7 +59,7 @@
 		min-height: var( --min-height );
 	}
 
-	// Set default values to the parent container of the boxed container (ED-7867).
+	// Set default values to the outer div of the boxed container (ED-7867).
 	&--width-boxed {
 		flex-direction: initial;
 		text-align: initial;
@@ -80,6 +80,8 @@
 		max-width: var( --content-width );
 		margin-inline: auto;
 		height: 100%;
+
+		// Set default values to the inner div of the boxed container (ED-7867).
 		flex-basis: initial;
 		flex-grow: initial;
 		flex-shrink: initial;
