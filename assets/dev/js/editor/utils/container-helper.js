@@ -159,6 +159,7 @@ export class ContainerHelper {
 				// Single column Container without sub Containers.
 				case 'c100':
 					newContainer = ContainerHelper.createContainer( {
+						content_width: 'boxed',
 						flex_direction: ContainerHelper.DIRECTION_COLUMN,
 					}, target, options );
 					break;
@@ -166,6 +167,7 @@ export class ContainerHelper {
 				// Single row Container without sub Containers.
 				case 'r100':
 					newContainer = ContainerHelper.createContainer( {
+						content_width: 'boxed',
 						flex_direction: ContainerHelper.DIRECTION_ROW,
 					}, target, options );
 					break;
@@ -173,6 +175,7 @@ export class ContainerHelper {
 				// Exceptional preset.
 				case 'c100-c50-50': {
 					settings = {
+						content_width: 'boxed',
 						flex_direction: ContainerHelper.DIRECTION_ROW,
 						flex_wrap: 'wrap',
 						flex_gap: {
