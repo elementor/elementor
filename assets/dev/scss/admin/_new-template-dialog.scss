@@ -162,10 +162,7 @@
 			margin-top: 24px;
 			box-sizing: border-box;
 			text-align: center;
-		}
-
-		&__lock_button {
-			text-transform: none; // TODO: Check with the design if it's required.
+			text-transform: none;
 		}
 	}
 }

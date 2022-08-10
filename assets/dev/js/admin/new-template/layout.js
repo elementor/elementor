@@ -56,7 +56,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		}
 	},
 
-	onTemplateTypeChange( e ) {
+	onTemplateTypeChange() {
 		const lockOptions = this.getCurrentLockOptions();
 
 		if ( lockOptions.is_locked ) {
