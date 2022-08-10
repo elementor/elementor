@@ -10,11 +10,9 @@ use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
