@@ -41,7 +41,8 @@
             "settings": {
                 "content_width": "boxed",
                 "background_background": "classic",
-                "background_color": "#FF0000"
+                "background_color": "#FF0000",
+                "margin_top": "-20px"
             },
             "elements": [
                 {
