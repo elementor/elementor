@@ -317,13 +317,7 @@ class Container extends Element_Base {
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
 				'render_type' => 'template',
-				'selectors' => [
-					'{{WRAPPER}}' => '{{VALUE}}',
-				],
-				'selectors_dictionary' => [
-					'boxed' => '--container-flex-direction: column; --container-flex-grow: 1;',
-					'full' => '',
-				],
+				'prefix_class' => 'e-container--width-',
 			]
 		);
 
