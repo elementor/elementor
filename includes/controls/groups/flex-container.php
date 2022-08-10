@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Plugin;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -64,7 +62,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields['_is_row'] = [
 			'type' => Controls_Manager::HIDDEN,
-			// Only use the flex direction class inside the editor.
+			// Only use the flex direction prefix class inside the editor.
 			'prefix_class' => Plugin::$instance->editor->is_edit_mode() ? 'e-container--' : '',
 			'default' => 'row',
 			'condition' => [
@@ -77,7 +75,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields['_is_column'] = [
 			'type' => Controls_Manager::HIDDEN,
-			// Only use the flex direction class inside the editor.
+			// Only use the flex direction prefix class inside the editor.
 			'prefix_class' => Plugin::$instance->editor->is_edit_mode() ? 'e-container--' : '',
 			'default' => 'column',
 			'condition' => [
