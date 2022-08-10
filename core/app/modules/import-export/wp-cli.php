@@ -148,12 +148,16 @@ class Wp_Cli extends \WP_CLI_Command {
 		try {
 			\WP_CLI::line( 'Importing data...' );
 
-			// Running the import process through the import-export module so the import property in the module will be available to use.
+			/**
+			 * Running the import process through the import-export module so the import property in the module will be available to use.
+			 *
+			 * @type  Module $import_export_module
+			 */
 			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
 
 			$import = $import_export_module->import_kit( $zip_path, $import_settings );
 
-			$manifest_data = $import_export_module->get_manifest();
+			$manifest_data = $import_export_module->import->get_manifest();
 
 			/**
 			 * Import Export Manifest Data
