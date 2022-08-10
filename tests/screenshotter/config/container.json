@@ -2,9 +2,9 @@
     "content": [
         {
             "id": "1b8ecd7",
-            "settings": [
-                "content_width": "boxed",
-            ],
+            "settings": {
+                "content_width": "boxed"
+            },
             "elements": [
                 {
                     "id": "5341d664",
@@ -39,6 +39,7 @@
         {
             "id": "7866b97e",
             "settings": {
+                "content_width": "boxed",
                 "background_background": "classic",
                 "background_color": "#FF0000"
             },
@@ -486,8 +487,8 @@
         },
         {
             "id": "27cf5db2",
-            "content_width": "boxed",
             "settings": {
+                "content_width": "boxed",
                 "flex_direction": "row",
                 "flex_wrap": "wrap",
                 "flex_gap": {
