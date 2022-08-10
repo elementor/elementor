@@ -13,7 +13,7 @@ const ContainerView = BaseElementView.extend( {
 
 	childViewContainer() {
 		return 'boxed' === this.getContainer().settings.get( 'content_width' )
-			? ' > .e-container__inner' // The inner wrapper for `content_width: boxed`.
+			? ' > .e-container__inner'
 			: ''; // Child view of `content_width: full` is empty in order to use the parent element.
 	},
 
