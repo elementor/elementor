@@ -444,7 +444,7 @@ abstract class Base extends Base_File {
 		}
 
 		// If the control value is empty, check for global default. `0` (integer) is falsy but is a valid value.
-		if ( Utils::is_empty( $value ) && 0 !== $value ) {
+		if ( empty( $value ) && '0' !== $value && 0 !== $value ) {
 			$value = $this->get_control_global_default_value( $control );
 		}
 
