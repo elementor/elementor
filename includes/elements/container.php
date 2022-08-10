@@ -268,8 +268,6 @@ class Container extends Element_Base {
 	 */
 	public function after_render() {
 		$settings = $this->get_settings_for_display();
-		?>
-		<?php
 		if ( $this->is_boxed_container( $settings ) ) {
 			?></div><?php
 		}
@@ -335,6 +333,7 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'template',
 				'prefix_class' => 'e-container--width-',
+				'frontend_available' => true,
 			]
 		);
 
@@ -1036,7 +1035,7 @@ class Container extends Element_Base {
 						"shape_divider_$side!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
 					],
 				]
 			);
