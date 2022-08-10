@@ -243,8 +243,12 @@ class Container extends Element_Base {
 			$this->add_link_attributes( '_wrapper', $link );
 		}
 
-		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
-		$this->render_inner_wrapper( $settings, 'open' ); ?><?php $this->render_video_background(); ?>
+		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<?php
+		if ( $this->is_boxed_container( $settings ) ) {
+			?><div class="e-container__inner"><?php
+		}
+		?><?php $this->render_video_background(); ?>
 
 		<?php
 
@@ -264,15 +268,28 @@ class Container extends Element_Base {
 	 */
 	public function after_render() {
 		$settings = $this->get_settings_for_display();
-		?><?php $this->render_inner_wrapper( $settings, 'close' ); ?></<?php $this->print_html_tag(); ?>><?php
+		?>
+		<?php
+		if ( $this->is_boxed_container( $settings ) ) {
+			?></div><?php
+		}
+		?>
+		</<?php $this->print_html_tag(); ?>><?php
 	}
 
-	private function render_inner_wrapper( $settings, $context ) {
-		if ( ! isset( $settings['content_width'] ) || 'boxed' !== $settings['content_width'] ) {
-			return '';
+	/**
+	 * Is Boxed Container.
+	 *
+	 * @param array $settings
+	 *
+	 * @return boolean
+	 */
+	private function is_boxed_container( $settings ) {
+		if ( ! empty( $settings['content_width'] ) && 'boxed' === $settings['content_width'] ) {
+			return true;
 		}
 
-		echo 'open' === $context ? '<div class="e-container__inner">' : '</div>';
+		return false;
 	}
 
 	/**
