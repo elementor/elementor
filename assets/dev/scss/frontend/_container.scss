@@ -32,8 +32,8 @@
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
 
-	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	position: var( --position );
+	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
