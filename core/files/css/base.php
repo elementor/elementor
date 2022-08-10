@@ -14,6 +14,7 @@ use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -443,7 +444,7 @@ abstract class Base extends Base_File {
 		}
 
 		// If the control value is empty, check for global default. `0` (integer) is falsy but is a valid value.
-		if ( ! $value && 0 !== $value ) {
+		if ( Utils::is_empty( $value ) && 0 !== $value ) {
 			$value = $this->get_control_global_default_value( $control );
 		}
 
