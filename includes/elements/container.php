@@ -245,10 +245,10 @@ class Container extends Element_Base {
 
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
-		if ( $this->is_boxed_container( $settings ) ) {
-			?><div class="e-container__inner"><?php
-		}
-		?><?php $this->render_video_background(); ?>
+		if ( $this->is_boxed_container( $settings ) ) { ?>
+			<div class="e-container__inner">
+		<?php } ?>
+		<?php $this->render_video_background(); ?>
 
 		<?php
 
@@ -268,10 +268,9 @@ class Container extends Element_Base {
 	 */
 	public function after_render() {
 		$settings = $this->get_settings_for_display();
-		if ( $this->is_boxed_container( $settings ) ) {
-			?></div><?php
-		}
-		?>
+		if ( $this->is_boxed_container( $settings ) ) { ?>
+			</div>
+		<?php } ?>
 		</<?php $this->print_html_tag(); ?>><?php
 	}
 
