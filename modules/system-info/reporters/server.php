@@ -391,16 +391,14 @@ class Server extends Base {
 	 * @access public
 	 *
 	 * @param array $paths_to_check
-	 * @param array $errors
+	 * @param array $write_problems
 	 *
 	 * @return array {
 	 *      @type string value: Writing permissions status.
 	 *      @type bool   warning: Whether to display a warning. True if some required.
 	 * }
 	 */
-	public function check_write_permissions( array $paths_to_check, $errors = [] ) {
-		$write_problems = $errors;
-
+	public function check_write_permissions( array $paths_to_check, $write_problems = [] ) {
 		foreach ( $paths_to_check as $dir => $description ) {
 			if ( ! is_writable( $dir ) ) {
 				$write_problems[] = $description;
