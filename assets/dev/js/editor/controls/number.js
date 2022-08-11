@@ -5,11 +5,14 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlNumberItemView = ControlBaseDataView.extend( {
 
-	behaviors: {
-		Scrubbing: {
-			behaviorClass: Scrubbing,
-			scrubSettings: { intentTime: 800 },
-		},
+	behaviors() {
+		return {
+			...ControlBaseDataView.prototype.behaviors.apply( this ),
+			Scrubbing: {
+				behaviorClass: Scrubbing,
+				scrubSettings: { intentTime: 800 },
+			},
+		};
 	},
 
 	registerValidators() {
