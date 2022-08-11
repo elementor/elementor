@@ -45,6 +45,9 @@
                 "margin": {
                     "unit": "px",
                     "top": "-20",
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0,
                     "isLinked": true
                 }
             },
