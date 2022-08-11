@@ -274,14 +274,7 @@ class Container extends Element_Base {
 		</<?php $this->print_html_tag(); ?>><?php
 	}
 
-	/**
-	 * Is Boxed Container.
-	 *
-	 * @param array $settings
-	 *
-	 * @return boolean
-	 */
-	private function is_boxed_container( $settings ) {
+	private function is_boxed_container( array $settings ) {
 		if ( ! empty( $settings['content_width'] ) && 'boxed' === $settings['content_width'] ) {
 			return true;
 		}
