@@ -42,7 +42,11 @@
                 "content_width": "boxed",
                 "background_background": "classic",
                 "background_color": "#FF0000",
-                "margin_top": "-20px"
+                "margin": {
+                    "unit": "px",
+                    "top": "-20",
+                    "isLinked": true
+                }
             },
             "elements": [
                 {
