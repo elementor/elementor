@@ -33,7 +33,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		var $mainElement = this.$element;
 
 		return $mainElement.find( selector ).filter( function() {
-			return jQuery( this ).closest( '.elementor-element' ).is( $mainElement );
+			// Start `closest` from parent since self can be `.elementor-element`.
+			return jQuery( this ).parent().closest( '.elementor-element' ).is( $mainElement );
 		} );
 	},
 
@@ -99,7 +100,9 @@ module.exports = elementorModules.ViewModule.extend( {
 						return;
 					}
 
-					self.onEditSettingsChange( Object.keys( changedModel.changed )[ 0 ] );
+					const propName = Object.keys( changedModel.changed )[ 0 ];
+
+					self.onEditSettingsChange( propName, changedModel.changed[ propName ] );
 				},
 			} );
 		}

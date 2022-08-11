@@ -365,6 +365,7 @@
 .elementor-units-choices {
 	flex-grow: 1;
 	text-align: $end;
+	z-index: 3;
 
 	input {
 		display: none;

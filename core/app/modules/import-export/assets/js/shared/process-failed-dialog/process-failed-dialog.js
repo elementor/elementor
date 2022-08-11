@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Dialog from 'elementor-app/ui/dialog/dialog';
@@ -25,7 +26,7 @@ const messagesContent = {
 	dialogTitle = __( 'Something went wrong.', 'elementor' ),
 	tryAgainText = __( 'Try Again', 'elementor' );
 
-export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton } ) {
+export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
 	const action = useAction(),
 		navigate = useNavigate(),
 		{ referrer } = useQueryParams().getAll(),
@@ -42,16 +43,22 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			} else {
 				window.open( 'https://elementor.com/help/how-to-fix-common-errors-with-import-export/', '_blank' );
 			}
+			onLearnMore?.();
 		},
-		handleOnDismiss = () => {
+		handleOnDismiss = ( event ) => {
 			if ( 'general' === error && onDismiss ) {
 				onDismiss();
 			} else if ( 'kit-library' === referrer ) {
+				onModalClose?.( event );
 				navigate( '/kit-library' );
 			} else {
 				action.backToDashboard();
 			}
 		};
+
+	useEffect( () => {
+		onError?.();
+	}, [] );
 
 	return (
 		<Dialog
@@ -61,7 +68,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			approveButtonText={ isTryAgainAction ? tryAgainText : approveButton }
 			approveButtonOnClick={ handleOnApprove }
 			dismissButtonText={ dismissButton }
-			dismissButtonOnClick={ handleOnDismiss }
+			dismissButtonOnClick={ ( event ) => handleOnDismiss( event ) }
 			onClose={ handleOnDismiss }
 		/>
 	);
@@ -73,6 +80,9 @@ ProcessFailedDialog.propTypes = {
 	errorType: PropTypes.string,
 	approveButton: PropTypes.string,
 	dismissButton: PropTypes.string,
+	onModalClose: PropTypes.func,
+	onError: PropTypes.func,
+	onLearnMore: PropTypes.func,
 };
 
 ProcessFailedDialog.defaultProps = {

@@ -10,7 +10,9 @@ export default function ConflictCheckbox( props ) {
 		updateOverrideCondition = ( event ) => {
 			const isChecked = event.target.checked,
 				actionType = isChecked ? 'ADD_OVERRIDE_CONDITION' : 'REMOVE_OVERRIDE_CONDITION';
-
+			if ( props.onCheck ) {
+				props.onCheck( isChecked );
+			}
 			importContext.dispatch( { type: actionType, payload: props.id } );
 		};
 
@@ -32,6 +34,7 @@ export default function ConflictCheckbox( props ) {
 ConflictCheckbox.propTypes = {
 	className: PropTypes.string,
 	id: PropTypes.number.isRequired,
+	onCheck: PropTypes.func,
 };
 
 ConflictCheckbox.defaultProps = {

@@ -61,7 +61,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-start-v',
 				],
 				'center' => [
@@ -69,7 +69,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 					'icon' => 'eicon-flex eicon-align-center-v',
 				],
 				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [

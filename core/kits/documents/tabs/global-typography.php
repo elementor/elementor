@@ -109,6 +109,11 @@ class Global_Typography extends Tab_Base {
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
 						],
 					],
+					'word_spacing' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-word-spacing: {{SIZE}}{{UNIT}}',
+						],
+					],
 				],
 			]
 		);

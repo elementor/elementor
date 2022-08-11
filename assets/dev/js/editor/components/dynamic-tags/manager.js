@@ -139,7 +139,7 @@ module.exports = elementorModules.Module.extend( {
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},
 
-	tagContainerToTagText( /**Container*/ container ) {
+	tagContainerToTagText( /** Container*/ container ) {
 		return elementor.dynamicTags.tagDataToTagText(
 			container.view.getOption( 'id' ),
 			container.view.getOption( 'name' ),
