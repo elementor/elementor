@@ -48,7 +48,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 			let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
 
 			data.forEach( ( model ) => {
-				const elementType = ( elementorCommon.config.experimentalFeatures.container && ( 'section' !== model.elType || 'column' === model.elType ) )
+				const elementType = ( elementorCommon.config.experimentalFeatures.container && ( 'section' !== model.elType && 'column' !== model.elType ) )
 					? 'container' 
 					: model.elType;
 
