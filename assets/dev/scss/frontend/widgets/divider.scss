@@ -137,28 +137,15 @@
 	direction: rtl;
 }
 
-.elementor {
+// Hack to keep the original specificity for BC reasons.
+.elementor .elementor-element.elementor-element {
 
-	.elementor-element {
+	.elementor-widget-divider {
+		// Fix - Divider widget has undefined width and height issues inside the flex container (ED-7722 & ED-7869).
+		width: var(--divider-width, 100%);
+	}
 
-		&.elementor-section {
-
-			.elementor-divider-separator {
-				width: var( --divider-width, 100% );
-			}
-		}
-
-		&.e-container {
-
-			.elementor-widget-divider {
-				// Fix - Divider widget has undefined width and height issues inside the flex container (ED-7722 & ED-7869).
-				width: var( --divider-width, 100% );
-			}
-
-			.elementor-divider-separator {
-				width: 100%;
-			}
-		}
+	.elementor-divider-separator {
+		width: 100%;
 	}
 } 
-
