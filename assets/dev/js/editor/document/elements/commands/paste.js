@@ -48,20 +48,18 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 			let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
 
 			data.forEach( ( model ) => {
-				switch ( model.elType ) {
+				const elementType = elementorCommon.config.experimentalFeatures.container ? 'container' : model.elType;
+
+				switch ( elementType ) {
 					case 'container': {
 						const container = $e.run( 'document/elements/create', {
 							container: targetContainer,
 							model: {
 								elType: 'container',
 							},
-							options: {
-								at: ++index,
-							},
 						} );
 
 						result.push( this.pasteTo( [ container ], [ model ] ) );
-						index++;
 					}
 						break;
 
