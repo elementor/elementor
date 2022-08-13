@@ -437,7 +437,7 @@ class Widget_Divider extends Widget_Base {
 					'unit' => '%',
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--divider-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-divider-separator' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
