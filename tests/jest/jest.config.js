@@ -16,6 +16,7 @@ module.exports = {
 		'^elementor/tests/jest/(.*)$': `${ paths.currentDir }/$1`,
 		...transformWebpackAliasIntoJestAlias( require( paths.webpackAlias ).resolve.alias ),
 	},
+	testEnvironment: 'jsdom',
 };
 
 function transformWebpackAliasIntoJestAlias( webpackAlias ) {
