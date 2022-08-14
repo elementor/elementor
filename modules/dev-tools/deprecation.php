@@ -19,6 +19,9 @@ class Deprecation {
 	public function get_settings() {
 		return [
 			'soft_notices' => $this->soft_deprecated_notices,
+			'soft_version_count' => self::SOFT_VERSIONS_COUNT,
+			'hard_version_count' => self::HARD_VERSIONS_COUNT,
+			'current_version' => ELEMENTOR_VERSION,
 		];
 	}
 
@@ -346,7 +349,7 @@ class Deprecation {
 	 */
 	public function apply_deprecated_filter( $hook, $args, $version, $replacement = '', $base_version = null ) {
 		if ( ! has_action( $hook ) ) {
-			return;
+			return $args;
 		}
 
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );

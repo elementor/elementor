@@ -203,6 +203,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		try {
 			return parent && this.container.panel.getControlView( parent );
+			// eslint-disable-next-line no-empty
 		} catch ( e ) {}
 	},
 
@@ -219,6 +220,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 			for ( const child of children ) {
 				views.push( this.container.panel.getControlView( child ) );
 			}
+			// eslint-disable-next-line no-empty
 		} catch ( e ) {}
 
 		return views;

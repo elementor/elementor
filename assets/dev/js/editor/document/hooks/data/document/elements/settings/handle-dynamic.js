@@ -16,13 +16,13 @@ export class HandleDynamic extends After {
 	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 
-		return containers.some( ( /**Container*/ container ) => 'dynamic' === container.type );
+		return containers.some( ( /** Container*/ container ) => 'dynamic' === container.type );
 	}
 
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		containers.forEach( ( /**Container*/ container ) => {
+		containers.forEach( ( /** Container*/ container ) => {
 			if ( 'dynamic' === container.type ) {
 				const tagText = elementor.dynamicTags.tagContainerToTagText( container ),
 					commandArgs = {

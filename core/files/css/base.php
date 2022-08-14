@@ -10,7 +10,6 @@ use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
@@ -442,6 +441,11 @@ abstract class Base extends Base_File {
 			$value = call_user_func( $value_callback, $control );
 		}
 
+		// If the control value is empty, check for global default. `0` (integer, string) are falsy but are valid values.
+		if ( empty( $value ) && '0' !== $value && 0 !== $value ) {
+			$value = $this->get_control_global_default_value( $control );
+		}
+
 		if ( Controls_Manager::FONT === $control['type'] ) {
 			$this->fonts[] = $value;
 		}
@@ -671,6 +675,42 @@ abstract class Base extends Base_File {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements, $values
 		);
+	}
+
+	/**
+	 * Get Control Global Default Value
+	 *
+	 * If the control has a global default value, and the corresponding global default setting is enabled, this method
+	 * fetches and returns the global default value. Otherwise, it returns null.
+	 *
+	 * @since 3.7.0
+	 * @access private
+	 *
+	 * @param $control
+	 * @return string|null
+	 */
+	private function get_control_global_default_value( $control ) {
+		if ( empty( $control['global']['default'] ) ) {
+			return null;
+		}
+
+		// If the control value is empty, and the control has a global default set, fetch the global value and use it.
+		$global_enabled = false;
+
+		if ( 'color' === $control['type'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_colors_enabled();
+		} elseif ( isset( $control['groupType'] ) && 'typography' === $control['groupType'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_typography_enabled();
+		}
+
+		$value = null;
+
+		// Only apply the global default if Global Colors are enabled.
+		if ( $global_enabled ) {
+			$value = $this->get_selector_global_value( $control, $control['global']['default'] );
+		}
+
+		return $value;
 	}
 
 	/**

@@ -187,6 +187,8 @@ class Widget_Counter extends Widget_Base {
 					'' => 'Default',
 					'.' => 'Dot',
 					' ' => 'Space',
+					'_' => 'Underline',
+					"'" => 'Apostrophe',
 				],
 			]
 		);

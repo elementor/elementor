@@ -1,7 +1,17 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlDimensionsItemView;
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
+
+	behaviors: {
+		Scrubbing: {
+			behaviorClass: Scrubbing,
+			scrubSettings: { intentTime: 800 },
+		},
+	},
+
 	ui() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 
@@ -131,6 +141,15 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		}
 
 		if ( ! _.contains( this.getPossibleDimensions(), inputSetting ) ) {
+			return;
+		}
+
+		// When using input with type="number" and the user starts typing `-`, the actual value (`event.target.value`) is
+		// an empty string. Since the user probably has the intention to insert a negative value, the methods below will
+		// not be triggered. This will prevent updating the input again with an empty string.
+		const hasIntentionForNegativeNumber = '-' === event?.originalEvent?.data && ! event.target.value;
+
+		if ( hasIntentionForNegativeNumber ) {
 			return;
 		}
 

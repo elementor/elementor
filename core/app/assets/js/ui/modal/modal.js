@@ -62,6 +62,8 @@ ModalProvider.propTypes = {
 	icon: PropTypes.string,
 	show: PropTypes.bool,
 	setShow: PropTypes.func,
+	onOpen: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 ModalProvider.defaultProps = {
@@ -79,17 +81,22 @@ export const Modal = ( props ) => {
 				closeNode = closeRef.current,
 				isInCloseNode = closeNode && closeNode.contains( e.target );
 
-			// ignore if click is inside the modal
+			// Ignore if click is inside the modal
 			if ( node && node.contains( e.target ) && ! isInCloseNode ) {
 				return;
 			}
 
 			props.hideModal();
+
+			if ( props.onClose ) {
+				props.onClose( e );
+			}
 		};
 
 	useEffect( () => {
 		if ( props.show ) {
 			document.addEventListener( 'mousedown', closeModal, false );
+			props.onOpen?.();
 		}
 
 		return () => document.removeEventListener( 'mousedown', closeModal, false );
@@ -132,6 +139,8 @@ Modal.propTypes = {
 	hideModal: PropTypes.func,
 	showModal: PropTypes.func,
 	closeModal: PropTypes.func,
+	onOpen: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 Modal.defaultProps = {

@@ -67,7 +67,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
-		// on scroll animation start: remove scroll-snap.
+		// On scroll animation start: remove scroll-snap.
 		if ( isScrollSnapActive() ) {
 			elementorFrontend.elements.$body.css( 'scroll-snap-type', 'none' );
 		}
@@ -75,7 +75,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.elements.$scrollable.animate( {
 			scrollTop,
 		}, this.getSettings( 'scrollDuration' ), 'linear', () => {
-			// on scroll animation complete: add scroll-snap back.
+			// On scroll animation complete: add scroll-snap back.
 			if ( isScrollSnapActive() ) {
 					elementorFrontend.elements.$body.css( 'scroll-snap-type', '' );
 			}

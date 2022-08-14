@@ -63,6 +63,7 @@ module.exports = class WpAdminPage extends BasePage {
 
 	async waitForPanel() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
 	/**
