@@ -17,6 +17,7 @@ import { Grid } from '@elementor/app-ui';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './index.scss';
 
@@ -66,12 +67,14 @@ function useMenuItems( path ) {
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
+				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
 			},
 			{
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
 				isActive: 'favorites' === page,
 				url: '/kit-library/favorites',
+				trackEventData: { command: 'kit-library/select-organizing-category', category: 'favorites' },
 			},
 		];
 	}, [ path ] );
@@ -162,6 +165,21 @@ export default function Index( props ) {
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
+	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				page_source: 'home page',
+				element_position: elementPosition,
+				search_term: search,
+				sort_direction: direction,
+				sort_type: sortType,
+				event_type: eventType,
+				action,
+			},
+		);
+	};
+
 	return (
 		<Layout
 			sidebar={
@@ -170,6 +188,7 @@ export default function Index( props ) {
 						selected={ queryParams.taxonomies }
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
+						category={ props.path }
 					/> }
 					menuItems={ menuItems }
 				/>
@@ -191,7 +210,10 @@ export default function Index( props ) {
 							// eslint-disable-next-line @wordpress/i18n-ellipsis
 							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
 							value={ queryParams.search }
-							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
+							onChange={ ( value ) => {
+								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
+								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
+							} }
 						/>
 						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
@@ -230,6 +252,9 @@ export default function Index( props ) {
 							] }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
+							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction ) }
+							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value ) }
+							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'top_area_sort', null, null, null, 'expand' ) }
 						/>
 					</Grid>
 				</Grid>
@@ -247,7 +272,7 @@ export default function Index( props ) {
 								} }
 							/>
 						}
-						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } /> }
+						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } queryParams={ queryParams } source={ props.path } /> }
 						{
 							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
 								defaultComponent: <ErrorScreen
@@ -256,12 +281,13 @@ export default function Index( props ) {
 									button={ {
 										text: __( 'Continue browsing.', 'elementor' ),
 										action: clearQueryParams,
+										category: props.path,
 									} }
 								/>,
 								isFilterActive,
 							} )
 						}
-						<EnvatoPromotion />
+						<EnvatoPromotion category={ props.path } />
 					</>
 				</Content>
 			</div>

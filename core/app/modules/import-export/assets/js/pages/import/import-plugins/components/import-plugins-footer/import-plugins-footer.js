@@ -7,7 +7,7 @@ import Button from 'elementor-app/ui/molecules/button';
 
 import useImportActions from '../../../hooks/use-import-actions';
 
-export default function ImportPluginsFooter() {
+export default function ImportPluginsFooter( props ) {
 	const importContext = useContext( ImportContext ),
 		{ navigateToMainScreen } = useImportActions();
 
@@ -19,6 +19,7 @@ export default function ImportPluginsFooter() {
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
+					props.onPreviousClick?.();
 					navigateToMainScreen();
 				} }
 			/>
@@ -28,7 +29,15 @@ export default function ImportPluginsFooter() {
 				text={ __( 'Next', 'elementor' ) }
 				color="primary"
 				url="/import/content"
+				onClick={ () => {
+					props.onNextClick?.();
+				} }
 			/>
 		</ActionsFooter>
 	);
 }
+
+ImportPluginsFooter.propTypes = {
+	onPreviousClick: PropTypes.func,
+	onNextClick: PropTypes.func,
+};
