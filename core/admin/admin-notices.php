@@ -536,7 +536,6 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'classes' => [ 'e-notice-dismiss' ],
 				'url' => 'https://go.elementor.com/wp-dash-experiment-promotion/',
 				'new_tab' => true,
 				'type' => 'cta',
