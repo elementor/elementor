@@ -10,16 +10,6 @@ use Elementor\Utils as ElementorUtils;
 
 class Utils {
 
-	public static function ensure_writing_permissions() {
-		$server = new Server();
-
-		$server_write_permissions = $server->get_write_permissions();
-
-		if ( $server_write_permissions['warning'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
-		}
-	}
-
 	public static function read_json_file( $path ) {
 		if ( ! Str::ends_with( $path, '.json' ) ) {
 			$path .= '.json';
