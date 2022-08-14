@@ -27,5 +27,4 @@ class First_Menu_Item implements Admin_Menu_Item {
 	public function is_visible() {
 		return true;
 	}
-
 }
