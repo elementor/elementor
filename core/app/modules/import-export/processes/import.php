@@ -230,7 +230,9 @@ class Import extends Process_Base {
 				return $this->get_settings_include();
 
 			case 'overrideConditions':
-				return $this->get_settings_selected_override_conditions();
+				// BC: Remove it in the future,
+				// the consumer should work with the actual override_conditions object and not with his keys.
+				return array_keys( $this->get_settings_selected_override_conditions() );
 
 			case 'selectedCustomPostTypes':
 				return $this->get_settings_selected_custom_post_types();
