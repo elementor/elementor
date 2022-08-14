@@ -50,6 +50,7 @@ export default function DropZone( props ) {
 						filetypes={ props.filetypes }
 						variant={ props.buttonVariant }
 						color={ props.buttonColor }
+						onFileChoose={ props.onFileChoose }
 					/> }
 
 				{ props.description && <Text variant="xl" className="e-app-drop-zone__description">{ props.description }</Text> }
@@ -78,6 +79,7 @@ DropZone.propTypes = {
 	onError: PropTypes.func,
 	description: PropTypes.string,
 	onButtonClick: PropTypes.func,
+	onFileChoose: PropTypes.func,
 };
 
 DropZone.defaultProps = {
