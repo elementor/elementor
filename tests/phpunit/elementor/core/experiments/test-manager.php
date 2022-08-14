@@ -142,12 +142,12 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'default_activated_test_feature', $active_features );
 	}
 
-	public function test_is_feature_inactive() {
+	public function test_is_feature_active() {
 		$this->add_test_feature();
 
 		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
 
-		$this->assertFalse( $is_test_feature_active );
+		$this->assertTrue( $is_test_feature_active );
 	}
 
 	public function test_is_feature_active__new_site() {
