@@ -46,7 +46,7 @@ export default class extends Marionette.ItemView {
 		// %2$s => utm_medium
 
 		return link
-			.replace( /%1\$s/g, 'finder-create-new' ) // TODO: Should be same as renew?
-			.replace( /%2\$s/g, 'wp-dash' ); // TODO: Shouldn't it be based on the context?
+			.replace( /%1\$s/g, 'finder' )
+			.replace( /%2\$s/g, 'wp-dash' );
 	}
 }
