@@ -49,7 +49,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 			data.forEach( ( model ) => {
 				// Create a new target container for both 'container' and 'widget' elements when the container experiment is activated.
-				const elementType = ( elementorCommon.config.experimentalFeatures.container && ( 'section' !== model.elType && 'column' !== model.elType ) )
+				const elementType = ( 'undefined' !== 'model' && elementorCommon.config.experimentalFeatures.container && ( 'section' !== model.elType && 'column' !== model.elType ) )
 					? 'container'
 					: model.elType;
 
