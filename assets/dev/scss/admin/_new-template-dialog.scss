@@ -5,6 +5,11 @@
 		.dialog-message {
 			max-height: 70vh;
 		}
+
+		// Add specificity only here to avoid changing the global code selector.
+		.e-hidden {
+			display: none !important;
+		}
 	}
 
 	&-dialog-content {
@@ -79,6 +84,24 @@
 			max-width: initial;
 		}
 
+		&__template-type-badge {
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 2px;
+			border-radius: 2px;
+			background-color: $editor-background-light;
+			padding: 4px;
+			font-size: 8px;
+			font-weight: 500;
+			line-height: 1;
+			text-transform: uppercase;
+			top: 50%;
+			inset-inline-end: 28px;
+			transform: translateY( -50% );
+		}
+
 		.elementor-form-field {
 
 			&__label {
@@ -131,10 +154,15 @@
 			}
 		}
 
-		&__submit {
+		&__submit,
+		&__lock_button {
+			display: block;
 			width: 100%;
 			height: 50px;
-			margin-top: 25px;
+			margin-top: 24px;
+			box-sizing: border-box;
+			text-align: center;
+			text-transform: none;
 		}
 	}
 }
