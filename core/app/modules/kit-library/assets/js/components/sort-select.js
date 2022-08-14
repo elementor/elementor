@@ -1,8 +1,19 @@
 import { Select, Button } from '@elementor/app-ui';
+import { useState, useEffect } from 'react';
 
 import './sort-select.scss';
 
 export default function SortSelect( props ) {
+	const getSelectedOptionDetails = ( value ) => {
+		return props.options.find( ( option ) => option.value === value );
+	};
+
+	const [ selectedSortBy, setSelectedSortBy ] = useState( getSelectedOptionDetails( props.value.by ) );
+
+	useEffect( () => {
+		props.onChange( { by: selectedSortBy.value, direction: selectedSortBy.defaultOrder ?? props.value.direction } );
+	}, [ selectedSortBy ] );
+
 	return (
 		<div className="eps-sort-select">
 			<div className="eps-sort-select__select-wrapper">
@@ -11,24 +22,34 @@ export default function SortSelect( props ) {
 					value={ props.value.by }
 					onChange={ ( e ) => {
 						const value = e.target.value;
-
-						props.onChange( { by: value, direction: props.value.direction } );
+						setSelectedSortBy( getSelectedOptionDetails( value ) );
+						props.onChangeSortValue?.( value );
 					} }
 					className="eps-sort-select__select"
+					onClick={ () => {
+						props.onChange( {
+							by: props.value.by,
+							direction: props.value.direction,
+						} );
+						props.onSortSelectOpen?.();
+					} }
 				/>
 			</div>
-			<Button
-				text={ 'asc' === props.value.direction ? __( 'Sort Descending', 'elementor' ) : __( 'Sort Ascending', 'elementor' ) }
-				hideText={ true }
-				icon={ 'asc' === props.value.direction ? 'eicon-arrow-up' : 'eicon-arrow-down' }
-				className="eps-sort-select__button"
-				onClick={ () => {
-					props.onChange( {
-						by: props.value.by,
-						direction: 'asc' === props.value.direction ? 'desc' : 'asc',
-					} );
-				} }
-			/>
+			{
+				! selectedSortBy.orderDisabled &&
+					<Button
+						text={ 'asc' === props.value.direction ? __( 'Sort Descending', 'elementor' ) : __( 'Sort Ascending', 'elementor' ) }
+						hideText={ true }
+						icon={ 'asc' === props.value.direction ? 'eicon-arrow-up' : 'eicon-arrow-down' }
+						className="eps-sort-select__button"
+						onClick={ () => {
+							props.onChange( {
+								by: props.value.by,
+								direction: 'asc' === props.value.direction ? 'desc' : 'asc',
+							} );
+						} }
+					/>
+			}
 		</div>
 	);
 }
@@ -43,4 +64,7 @@ SortSelect.propTypes = {
 		by: PropTypes.string.isRequired,
 	} ).isRequired,
 	onChange: PropTypes.func.isRequired,
+	onChangeSortValue: PropTypes.func,
+	onSortSelectOpen: PropTypes.func,
+	onChangeSortDirection: PropTypes.func,
 };
