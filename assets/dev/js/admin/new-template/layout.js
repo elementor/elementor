@@ -118,12 +118,9 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	replaceLockLinkPlaceholders( link ) {
-		// %1$s => utm_source
-		// %2$s => utm_medium
-
 		return link
-			.replace( /%1\$s/g, 'wp-add-new' )
-			.replace( /%2\$s/g, 'wp-dash' );
+			.replace( /{{utm_source}}/g, 'wp-add-new' )
+			.replace( /{{utm_medium}}/g, 'wp-dash' );
 	},
 
 	showContentView() {
