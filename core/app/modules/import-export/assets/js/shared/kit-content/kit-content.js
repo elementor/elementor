@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
@@ -9,11 +9,15 @@ import List from 'elementor-app/ui/molecules/list';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { SharedContext } from './../../context/shared-context/shared-context-provider.js';
 
 import './kit-content.scss';
 
 export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
+		sharedContext = useContext( SharedContext ),
+		{ referrer, currentPage } = sharedContext.data,
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
@@ -31,6 +35,20 @@ export default function KitContent( { contentData, hasPro } ) {
 		},
 		setContainerHoverState = ( index, state ) => {
 			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
+		},
+		eventTracking = ( event, chosenPart ) => {
+			if ( 'kit-library' === referrer ) {
+				const command = event.target.checked && event.target.checked ? 'check' : 'uncheck';
+				appsEventTrackingDispatch(
+					`kit-library/${ command }`,
+					{
+						page_source: 'import',
+						step: currentPage,
+						event_type: 'click',
+						site_part: chosenPart,
+					},
+				);
+			}
 		};
 
 	if ( ! contentData.length ) {
@@ -50,7 +68,13 @@ export default function KitContent( { contentData, hasPro } ) {
 									onMouseLeave={ () => isLockedFeaturesNoPro && setContainerHoverState( index, false ) }
 								>
 									<Grid container noWrap >
-										<KitContentCheckbox type={ type } className="e-app-export-kit-content__checkbox" />
+										<KitContentCheckbox
+											type={ type }
+											className="e-app-export-kit-content__checkbox"
+											onCheck={ ( event, chosenPart ) => {
+												eventTracking( event, chosenPart );
+											} }
+										/>
 
 										<Grid item container>
 											<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">

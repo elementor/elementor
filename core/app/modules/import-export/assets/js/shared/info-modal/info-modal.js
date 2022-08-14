@@ -19,6 +19,9 @@ export default function InfoModal( props ) {
 	const attrs = {
 			className: 'e-app-import-export-info-modal',
 			setShow: props.setShow,
+			onOpen: props.onOpen,
+			onClose: props.onClose,
+			referrer: props.referrer,
 		};
 
 	if ( Object.prototype.hasOwnProperty.call( props, 'show' ) ) {
@@ -39,6 +42,9 @@ InfoModal.propTypes = {
 	setShow: PropTypes.func,
 	title: PropTypes.string,
 	children: PropTypes.any.isRequired,
+	onOpen: PropTypes.func,
+	onClose: PropTypes.func,
+	referrer: PropTypes.string,
 };
 
 InfoModal.Section = InfoModalSection;
