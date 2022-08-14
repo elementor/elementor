@@ -42,11 +42,8 @@ export default class extends Marionette.ItemView {
 	}
 
 	replaceLockLinkPlaceholders( link ) {
-		// %1$s => utm_source
-		// %2$s => utm_medium
-
 		return link
-			.replace( /%1\$s/g, 'finder' )
-			.replace( /%2\$s/g, 'wp-dash' );
+			.replace( /{{utm_source}}/g, 'finder' )
+			.replace( /{{utm_medium}}/g, 'wp-dash' );
 	}
 }
