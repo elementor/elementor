@@ -31,6 +31,7 @@ Header.propTypes = {
 	title: PropTypes.string,
 	titleRedirectRoute: PropTypes.string,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
+	onClose: PropTypes.func,
 };
 
 Header.defaultProps = {

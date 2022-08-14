@@ -1,10 +1,23 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './error-screen.scss';
 
 export default function ErrorScreen( props ) {
+	const onClick = () => {
+		appsEventTrackingDispatch(
+			'kit-library/go-back-to-view-kits',
+			{
+				page_source: 'home page',
+				element_position: 'empty state',
+				category: props.button.category && ( '/favorites' === props.button.category ? 'favorites' : 'all' ),
+			},
+		);
+		props.button.action();
+	};
 	return (
+
 		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
 			<img src={ `${ elementorAppConfig.assets_url }images/no-search-results.svg` } />
 			<Heading
@@ -19,7 +32,7 @@ export default function ErrorScreen( props ) {
 				<Button
 					text={ props.button.text }
 					color="link"
-					onClick={ props.button.action }
+					onClick={ onClick }
 					url={ props.button.url }
 					target={ props.button.target }
 				/>
@@ -36,5 +49,6 @@ ErrorScreen.propTypes = {
 		action: PropTypes.func,
 		url: PropTypes.string,
 		target: PropTypes.string,
+		category: PropTypes.string,
 	} ),
 };
