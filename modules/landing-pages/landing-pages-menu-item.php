@@ -41,8 +41,6 @@ class Landing_Pages_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function render() {
-		$render_callback = $this->render_callback;
-
-		$render_callback();
+		( $this->render_callback )();
 	}
 }
