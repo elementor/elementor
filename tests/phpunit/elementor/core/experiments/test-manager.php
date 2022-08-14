@@ -44,6 +44,7 @@ class Test_Manager extends Elementor_Test_Base {
 				'minimum_installation_version' => null,
 			],
 			'mutable' => true,
+			'hidden' => false,
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
@@ -66,8 +67,8 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'depended_feature',
 			'state' => Experiments_Manager::STATE_INACTIVE,
 			'dependencies' => [
-				'core_feature'
-			]
+				'core_feature',
+			],
 		];
 
 		$this->add_test_feature( $test_core_feature );
@@ -80,6 +81,29 @@ class Test_Manager extends Elementor_Test_Base {
 		// Assert.
 		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
+	}
+
+	public function test_feature_can_be_added_as_hidden() {
+		// Act
+		$args = [ 'hidden' => true ];
+		$this->add_test_feature( $args );
+
+		// Assert
+		$feature = $this->experiments->get_features( 'test_feature' );
+		self::assertNotEmpty( $feature );
+		self::assertTrue( $feature['hidden'] );
+	}
+
+	public function test_features_are_added_as_not_hidden_by_default() {
+		// Act
+		$this->add_test_feature();
+
+		// Assert
+		$features = $this->experiments->get_features();
+		self::assertNotEmpty( $features );
+		foreach ( $features as $feature ) {
+			self::assertFalse( $feature['hidden'] );
+		}
 	}
 
 	public function test_get_features() {

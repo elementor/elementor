@@ -68,6 +68,7 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 			'mutable' => true,
+			'hidden' => false,
 			'new_site' => [
 				'default_active' => false,
 				'always_active' => false,
@@ -76,7 +77,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change', 'dependencies' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', 'hidden', 'new_site', 'on_state_change', 'dependencies' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -420,7 +421,7 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			if ( ! $feature['mutable'] ) {
+			if ( ! $feature['mutable'] || $feature['hidden'] ) {
 				unset( $features[ $feature_name ] );
 
 				continue;
