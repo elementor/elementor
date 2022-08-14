@@ -153,6 +153,17 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			$import = $import_export_module->import_kit( $zip_path, $import_settings );
 
+			/**
+			 * Import Export Manifest Data
+			 *
+			 * Allows 3rd parties to read and edit the kit's manifest before it is used.
+			 *
+			 * @since 3.7.0
+			 *
+			 * @param array $manifest_data The Kit's Manifest data
+			 */
+			$manifest_data = apply_filters( 'elementor/import-export/wp-cli/manifest_data', $manifest_data );
+
 			\WP_CLI::line( 'Removing temp files...' );
 
 			// The file was created from remote or library request, it also should be removed.
