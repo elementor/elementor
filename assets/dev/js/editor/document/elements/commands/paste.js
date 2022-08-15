@@ -109,10 +109,6 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 								container: targetContainer,
 								model: {
 									elType: 'container',
-								},
-								options: {
-									at: index,
-									edit: false,
 								}
 							} );
 
