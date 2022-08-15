@@ -103,7 +103,7 @@ jobs:
         uses: maork-elementor/editor-actions/build-plugin@master
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          REPO_NAME: ${{ github.repository }}
+          REPO_NAME: ${{ github.event.repository.name }}
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
