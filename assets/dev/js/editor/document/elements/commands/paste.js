@@ -109,13 +109,13 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						// The 'default' case is widget.
 						let target;
 
-						if ( elementorCommon.config.experimentalFeatures.container ) {
+						if ( 'document' === targetContainer.model.get( 'elType' ) && elementorCommon.config.experimentalFeatures.container ) {
 							// If the container experiment is active, create a new wrapper container.
 							target = $e.run( 'document/elements/create', {
+								container: targetContainer,
 								model: {
 									elType: 'container',
 								},
-								container: targetContainer,
 							} );
 
 							target = [ target ];
