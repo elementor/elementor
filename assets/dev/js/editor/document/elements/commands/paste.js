@@ -104,15 +104,25 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						let target;
 
 						if ( elementorCommon.config.experimentalFeatures.container ) {
-							// If the container experiment is active, create a new wrapper container.
-							target = $e.run( 'document/elements/create', {
-								container: targetContainer,
-								model: {
-									elType: 'container',
-								}
-							} );
-
-							target = [ target ];
+							if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+								// On trying to paste widget on section, the paste should be at the first column.
+								target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
+							} else {
+								// Else, create section with one column for the element.
+								const section = $e.run( 'document/elements/create', {
+									container: targetContainer,
+									model: {
+										elType: 'section',
+									},
+									columns: 1,
+									options: {
+										at: ++index,
+									},
+								} );
+	
+								// Create the element inside the column that just was created.
+								target = [ section.view.children.first().getContainer() ];
+							}
 						} else if ( 'section' === targetContainer.model.get( 'elType' ) ) {
 							// On trying to paste widget on section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
