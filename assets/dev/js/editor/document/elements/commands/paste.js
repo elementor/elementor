@@ -49,6 +49,12 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
+					case 'container': {
+						// Push the cloned container to the 'document'.
+						result.push( this.pasteTo( [ targetContainer ], [ model ] ) );
+					}
+						break;
+
 					case 'section': {
 						// If is inner create section for `inner-section`.
 						if ( model.isInner ) {
@@ -103,18 +109,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						// The 'default' case is widget.
 						let target;
 
-						if ( elementorCommon.config.experimentalFeatures.container ) {
-							target = $e.run( 'document/elements/create', {
-								container: targetContainer,
-								model: {
-									elType: 'container',
-								},
-								options: {
-									at: ++index,
-									edit: false,
-								},
-							} );
-						} else if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
 							// On trying to paste widget on section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
 						} else {
