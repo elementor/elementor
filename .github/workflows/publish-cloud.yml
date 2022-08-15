@@ -58,7 +58,7 @@ jobs:
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          COMMIT_MESSAGE: "Bump ${{ inputs.PACKAGE_VERSION || steps.bump_version_step.outputs.new_version }}"
+          COMMIT_MESSAGE: "Bump ${{ inputs.PACKAGE_VERSION || env.PACKAGE_VERSION }}"
   publish-to-cloud:
     needs: bump-version
     runs-on: ubuntu-20.04
