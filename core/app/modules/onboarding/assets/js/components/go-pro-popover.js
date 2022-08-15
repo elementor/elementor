@@ -69,10 +69,10 @@ export default function GoProPopover( props ) {
 			},
 		},
 		hoverActivatingButton = () => {
-			props.goProButtonRef.current.classList.add( 'onboarding-go-pro__btn--hover' )
+			props.goProButtonRef.current.classList.add( 'onboarding-go-pro__btn--hover' );
 		},
 		blurActivatingButton = () => {
-			props.goProButtonRef.current.classList.remove( 'onboarding-go-pro__btn--hover' )
+			props.goProButtonRef.current.classList.remove( 'onboarding-go-pro__btn--hover' );
 		};
 
 	return (
