@@ -40,23 +40,21 @@ jobs:
             prefix: config
       - name: Test permissions
         uses: maork-elementor/editor-actions/permissions@master
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
       - name: Get next release branch
-        uses: ./.github/workflows/get-next-release-branch
+        uses: maork-elementor/editor-actions/get-next-release-branch@master
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
       - name: Bump version
         id: bump_version_step
-        uses: ./.github/workflows/bump-version
+        uses: maork-elementor/editor-actions/bump-version@master
         with:
           CHANNEL: "cloud"
       - name: Push version
-        uses : ./.github/workflows/push-new-version
+        uses : maork-elementor/editor-actions/push-new-version@master
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
@@ -72,7 +70,7 @@ jobs:
         with:
           node-version: 14.x
       - name: Get next release branch
-        uses: ./.github/workflows/get-next-release-branch
+        uses: maork-elementor/editor-actions/get-next-release-branch@master
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
       - name: Checkout next release branch
@@ -85,7 +83,7 @@ jobs:
           echo $(git rev-parse HEAD)
           echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: Validate Run Checks
-        uses : ./.github/workflows/validate-run-checks
+        uses : maork-elementor/editor-actions/validate-run-checks@master
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
@@ -97,7 +95,7 @@ jobs:
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           npm ci
       - name: Build plugin
-        uses: ./.github/workflows/build-plugin
+        uses: maork-elementor/editor-actions/build-plugin@master
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Upload zip file to GitHub actions artifact
@@ -107,13 +105,13 @@ jobs:
           path: ${{ github.workspace }}/elementor/**/*
           if-no-files-found: error
       - name: Create Git tag
-        uses : ./.github/workflows/create-git-tag
+        uses : maork-elementor/editor-actions/create-git-tag@master
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Generate changelog
-        uses : ./.github/workflows/generate-changelog
+        uses : maork-elementor/editor-actions/generate-changelog@master
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
@@ -129,7 +127,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Send slack message
-        uses: ./.github/workflows/slack-notify
+        uses: maork-elementor/editor-actions/slack-notify@master
         with:
           MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
