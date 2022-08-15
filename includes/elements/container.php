@@ -247,8 +247,9 @@ class Container extends Element_Base {
 		<?php
 		if ( $this->is_boxed_container( $settings ) ) { ?>
 			<div class="e-container__inner">
-		<?php } ?>
-		<?php $this->render_video_background(); ?>
+		<?php }
+
+		$this->render_video_background();
 
 		<?php
 
