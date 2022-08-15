@@ -272,7 +272,8 @@ class Container extends Element_Base {
 		if ( $this->is_boxed_container( $settings ) ) { ?>
 			</div>
 		<?php } ?>
-		</<?php $this->print_html_tag(); ?>><?php
+		</<?php $this->print_html_tag(); ?>>
+		<?php
 	}
 
 	private function is_boxed_container( array $settings ) {
