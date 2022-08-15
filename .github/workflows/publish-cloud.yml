@@ -5,6 +5,17 @@ on:
   workflow_dispatch:
     inputs:
       version:
+        type: string
+        description: 'Release branch version'
+        required: false
+      pre_release:
+        type: boolean
+        description: 'Is this a pre-release?'
+        required: false
+  workflow_call:
+    inputs:
+      version:
+        type: string
         description: 'Release branch version'
         required: false
       pre_release:
