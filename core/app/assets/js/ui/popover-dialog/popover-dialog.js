@@ -15,7 +15,6 @@ export default function PopoverDialog( props ) {
 			 */
 			const showPopover = () => {
 				popoverEl.style.display = 'block';
-
 				popoverEl.setAttribute( 'aria-expanded', true );
 
 				const targetRect = target.getBoundingClientRect(),

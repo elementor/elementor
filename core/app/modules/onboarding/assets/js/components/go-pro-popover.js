@@ -75,7 +75,7 @@ export default function GoProPopover( props ) {
 			wrapperClass="e-onboarding__go-pro"
 		>
 			<div className="e-onboarding__go-pro-content">
-				<h2 className="e-onboarding__go-pro-title">{ __( 'Ready to Go Pro?', 'elementor' ) }</h2>
+				<h2 className="e-onboarding__go-pro-title">{ __( 'Get Elementor Pro Plugin', 'elementor' ) }</h2>
 				<Checklist>
 					<ChecklistItem>{ __( '90+ Basic & Pro widgets', 'elementor' ) }</ChecklistItem>
 					<ChecklistItem>{ __( '300+ Basic & Pro templates', 'elementor' ) }</ChecklistItem>
@@ -89,7 +89,7 @@ export default function GoProPopover( props ) {
 				</div>
 				<div className="e-onboarding__go-pro-paragraph">
 					<a tabIndex="0" className="e-onboarding__go-pro-already-have" ref={ alreadyHaveProButtonRef } href={ elementorAppConfig.onboarding.urls.uploadPro } rel="opener">
-						{ __( 'Already have Elementor Pro?', 'elementor' ) }
+						{ __( 'Already have a pro?', 'elementor' ) }
 					</a>
 				</div>
 			</div>
