@@ -112,7 +112,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						break;
 
 					default: {
-						// In this case, the element is a widget:
+						// The 'default' case is widget.
 						let target;
 
 						if ( elementorCommon.config.experimentalFeatures.container ) {
@@ -122,11 +122,8 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 								model: {
 									elType: 'container',
 								},
-								options: {
-									at: ++index,
-									edit: false,
-								},
 							} );
+
 							target = [ target ];
 						} else if ( 'section' === targetContainer.model.get( 'elType' ) ) {
 							// On trying to paste widget on section, the paste should be at the first column.
