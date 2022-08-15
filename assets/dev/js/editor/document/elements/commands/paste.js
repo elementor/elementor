@@ -49,11 +49,11 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
-					case 'container': {
-						// Push the cloned container to the 'document'.
-						result.push( this.pasteTo( [ targetContainer ], [ model ] ) );
-					}
-						break;
+					// case 'container': {
+					// 	// Push the cloned container to the 'document'.
+					// 	result.push( this.pasteTo( [ targetContainer ], [ model ] ) );
+					// }
+					// 	break;
 
 					case 'section': {
 						// If is inner create section for `inner-section`.
