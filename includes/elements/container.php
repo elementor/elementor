@@ -251,8 +251,6 @@ class Container extends Element_Base {
 
 		$this->render_video_background();
 
-		<?php
-
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
 			$this->render_shape_divider( 'top' );
 		}
