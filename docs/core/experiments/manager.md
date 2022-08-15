@@ -69,7 +69,7 @@ default state (active / inactive) and more! Even a callback could be supplied to
 | `new_site.always_active`			  	    | `{Boolean}`																																				| `false`					| Whether the experiment is active and the state immutable.
 | `new_site.minimum_installation_version`	| `{String}`																																				| `null`					| Minimum version to determine if the current installation is a new one. 
 | `on_state_change`							| `{Callable}`																																				| `null`					| A callback that runs on each state change. 
-| `hidden`							        | `{Boolean}`																																				| `null`					| Whether the experiment is displayed to the end user.
+| `hidden`							        | `{Boolean}`																																				| `false`					| Whether the experiment is displayed to the end user.
 
 Then, the experiment state (active or inactive) can be checked directly through the manager:
 
