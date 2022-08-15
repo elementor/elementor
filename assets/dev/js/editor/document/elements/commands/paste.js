@@ -103,7 +103,21 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						// The 'default' case is widget.
 						let target;
 
-						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+						if ( elementorCommon.config.experimentalFeatures.container ) {
+							// If the container experiment is active, create a new wrapper container.
+							target = $e.run( 'document/elements/create', {
+								container: targetContainer,
+								model: {
+									elType: 'container',
+								},
+								options: {
+									at: index,
+									edit: false,
+								}
+							} );
+
+							target = [ target ];
+						} else if ( 'section' === targetContainer.model.get( 'elType' ) ) {
 							// On trying to paste widget on section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
 						} else {
