@@ -46,7 +46,7 @@
 		  font-size: 12px;
 		  transition: 0.5s;
 
-		  &--hover {
+		  &:hover {
 			background-color: $platform-accent-hover;
 		  }
 		}
@@ -85,8 +85,4 @@
 	&-already-have {
 		text-decoration: underline;
 	}
-
-  &:hover ~ .onboarding-go-pro__btn {
-	background: blue
-  }
 }

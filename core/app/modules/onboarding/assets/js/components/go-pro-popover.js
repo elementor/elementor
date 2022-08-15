@@ -67,20 +67,12 @@ export default function GoProPopover( props ) {
 					},
 				} );
 			},
-		},
-		hoverActivatingButton = () => {
-			props.goProButtonRef.current.classList.add( 'onboarding-go-pro__btn--hover' );
-		},
-		blurActivatingButton = () => {
-			props.goProButtonRef.current.classList.remove( 'onboarding-go-pro__btn--hover' );
 		};
 
 	return (
 		<PopoverDialog
 			targetRef={ goProButton.elRef }
 			wrapperClass="e-onboarding__go-pro"
-			activatingButtonHover={ () => hoverActivatingButton() }
-			activatingButtonBlur={ () => blurActivatingButton() }
 		>
 			<div className="e-onboarding__go-pro-content">
 				<h2 className="e-onboarding__go-pro-title">{ __( 'Get Elementor Pro Plugin', 'elementor' ) }</h2>
@@ -107,5 +99,4 @@ export default function GoProPopover( props ) {
 
 GoProPopover.propTypes = {
 	buttonsConfig: PropTypes.array.isRequired,
-	goProButtonRef: PropTypes.object,
 };
