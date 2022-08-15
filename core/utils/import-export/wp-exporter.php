@@ -43,6 +43,8 @@ class WP_Exporter {
 	 */
 	private $wpdb;
 
+	private $terms;
+
 	/**
 	 * Run export, by requested args.
 	 * Returns XML with exported data.
@@ -71,7 +73,7 @@ class WP_Exporter {
 		}
 
 		$join = '';
-		if ( $this->args['category'] && ( 'post' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) ) {
+		if ( $this->args['category'] && 'post' === $this->args['content'] ) {
 			$term = term_exists( $this->args['category'], 'category' );
 			if ( $term ) {
 				$join = "INNER JOIN {$this->wpdb->term_relationships} ON ({$this->wpdb->posts}.ID = {$this->wpdb->term_relationships}.object_id)";
@@ -119,62 +121,21 @@ class WP_Exporter {
 
 		// Grab a snapshot of post IDs, just in case it changes during the export.
 		$post_ids = $this->wpdb->get_col( "SELECT ID FROM {$this->wpdb->posts} $join WHERE $where $limit" );// phpcs:ignore
+		$thumbnail_ids = [];
 
 		if ( ! empty( $this->args['include_post_featured_image_as_attachment'] ) ) {
 			foreach ( $post_ids as $post_id ) {
 				$thumbnail_id = get_post_meta( $post_id, '_thumbnail_id', true );
 
-				if ( $thumbnail_id && false === array_search( $thumbnail_id, $post_ids, true ) ) {
-					$post_ids [] = $thumbnail_id;
+				if ( $thumbnail_id && ! in_array( $thumbnail_id, $post_ids, true ) ) {
+					$thumbnail_ids [] = $thumbnail_id;
 				}
 			}
-		}
-
-		/*
-		 * Get the requested terms ready, empty unless posts filtered by category
-		 * or all content.
-		 */
-		$cats = [];
-		$tags = [];
-		$terms = [];
-		if ( isset( $term ) && $term ) {
-			$cat = get_term( $term['term_id'], 'category' );
-			$cats = [ $cat->term_id => $cat ];
-			unset( $term, $cat );
-		} elseif ( 'all' === $this->args['content'] ) {
-			$categories = (array) get_categories( [ 'get' => 'all' ] );
-			$tags = (array) get_tags( array( 'get' => 'all' ) );
-
-			$custom_taxonomies = get_taxonomies( [ '_builtin' => false ] );
-			$custom_terms = (array) get_terms( [
-				'taxonomy' => $custom_taxonomies,
-				'get' => 'all',
-			] );
-
-			// Put categories in order with no child going before its parent.
-			while ( $cat = array_shift( $categories ) ) {
-				if ( 0 == $cat->parent || isset( $cats[ $cat->parent ] ) ) {
-					$cats[ $cat->term_id ] = $cat;
-				} else {
-					$categories[] = $cat;
-				}
-			}
-
-			// Put terms in order with no child going before its parent.
-			while ( $t = array_shift( $custom_terms ) ) {
-				if ( 0 == $t->parent || isset( $terms[ $t->parent ] ) ) {
-					$terms[ $t->term_id ] = $t;
-				} else {
-					$custom_terms[] = $t;
-				}
-			}
-
-			unset( $categories, $custom_taxonomies, $custom_terms );
 		}
 
 		return [
 			'ids' => $post_ids,
-			'xml' => $this->get_xml_export( $post_ids, $cats, $tags, $terms ),
+			'xml' => $this->get_xml_export( array_merge( $post_ids, $thumbnail_ids ) ),
 		];
 	}
 
@@ -344,7 +305,7 @@ class WP_Exporter {
 			 * @param object $meta     Current meta object.
 			 */
 			if ( ! apply_filters( 'wxr_export_skip_termmeta', false, $meta->meta_key, $meta ) ) {
-				$result .= sprintf( $this->indent( 3 ) . "<wp:termmeta>\n\t\t\t<wp:meta_key>%s</wp:meta_key>\n\t\t\t<wp:meta_value>%s</wp:meta_value>\n\t\t</wp:termmeta>\n", wxr_cdata( $meta->meta_key ), wxr_cdata( $meta->meta_value ) );
+				$result .= sprintf( $this->indent( 3 ) . "<wp:termmeta>\n\t\t\t<wp:meta_key>%s</wp:meta_key>\n\t\t\t<wp:meta_value>%s</wp:meta_value>\n\t\t</wp:termmeta>\n", $this->wxr_cdata( $meta->meta_key ), $this->wxr_cdata( $meta->meta_value ) );
 			}
 		}
 
@@ -409,8 +370,8 @@ class WP_Exporter {
 			$result .= $this->indent( 3 ) . '<wp:category_nicename>' . $this->wxr_cdata( $c->slug ) . '</wp:category_nicename>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:category_parent>' . $this->wxr_cdata( $c->parent ? $cats[ $c->parent ]->slug : '' ) . '</wp:category_parent>' . PHP_EOL;
 			$result .= $this->wxr_cat_name( $c ) .
-						$this->wxr_category_description( $c ) .
-						$this->wxr_term_meta( $c );
+				$this->wxr_category_description( $c ) .
+				$this->wxr_term_meta( $c );
 
 			$result .= $this->indent( 2 ) . '</wp:category>' . PHP_EOL;
 		}
@@ -434,8 +395,8 @@ class WP_Exporter {
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $t->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:tag_slug>' . $this->wxr_cdata( $t->slug ) . '</wp:tag_slug>' . PHP_EOL;
 			$result .= $this->wxr_tag_name( $t ) .
-						$this->wxr_tag_description( $t ) .
-						$this->wxr_term_meta( $t );
+				$this->wxr_tag_description( $t ) .
+				$this->wxr_term_meta( $t );
 
 			$result .= $this->indent( 2 ) . '</wp:tag>' . PHP_EOL;
 		}
@@ -456,12 +417,13 @@ class WP_Exporter {
 		foreach ( $terms as $t ) {
 			$result .= $this->indent( 2 ) . '<wp:term>' . PHP_EOL;
 
+			$result .= $this->indent( 3 ) . '<wp:term_id>' . $this->wxr_cdata( $t->term_id ) . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>' . $this->wxr_cdata( $t->taxonomy ) . '</wp:term_taxonomy>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $t->slug ) . '</wp:term_slug>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_parent>' . $this->wxr_cdata( $t->parent ? $terms[ $t->parent ]->slug : '' ) . '</wp:term_parent>' . PHP_EOL;
 			$result .= $this->wxr_term_name( $t ) .
-						$this->wxr_term_description( $t ) .
-						$this->wxr_term_meta( $t );
+				$this->wxr_term_description( $t ) .
+				$this->wxr_term_meta( $t );
 
 			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
 		}
@@ -639,6 +601,8 @@ class WP_Exporter {
 		$result = '';
 
 		foreach ( $nav_menus as $menu ) {
+			$this->terms[ $menu->term_id ] = $menu;
+
 			$result .= $this->indent( 2 ) . '<wp:term>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $menu->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>nav_menu</wp:term_taxonomy>' . PHP_EOL;
@@ -679,13 +643,10 @@ class WP_Exporter {
 	 * Get's the XML export.
 	 *
 	 * @param $post_ids
-	 * @param $cats
-	 * @param $tags
-	 * @param $terms
 	 *
 	 * @return string
 	 */
-	private function get_xml_export( array $post_ids, array $cats, array $tags, array $terms ) {
+	private function get_xml_export( array $post_ids ) {
 		$charset = get_bloginfo( 'charset' );
 		$generator = get_the_generator( 'export' );
 		$wxr_version = self::WXR_VERSION;
@@ -708,10 +669,7 @@ class WP_Exporter {
 			}
 		}
 
-		$dynamic = $this->wxr_authors_list( $post_ids ) .
-					$this->wxr_categories_list( $cats ) .
-					$this->wxr_tags_list( $tags ) .
-					$this->wxr_terms_list( $terms );
+		$dynamic = $this->wxr_authors_list( $post_ids );
 
 		ob_start();
 		/** This action is documented in wp-includes/feed-rss2.php */

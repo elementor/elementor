@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
-
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import ImportContentDisplay from './components/import-content-display/import-content-display';
@@ -15,10 +15,22 @@ import './import-content.scss';
 export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
-		{ includes } = sharedContext.data,
+		{ referrer, includes, currentPage } = sharedContext.data,
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ navigateToMainScreen } = useImportActions(),
 		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
+		eventTracking = ( command ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						page_source: 'import',
+						step: currentPage,
+						event_type: 'click',
+					},
+				);
+			}
+		},
 		getFooter = () => {
 			return (
 				<ImportContentFooter
@@ -26,10 +38,15 @@ export default function ImportContent() {
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
+					onPreviousClick={ () => eventTracking( 'kit-library/go-back' ) }
+					onImportClick={ () => eventTracking( 'kit-library/approve-import' ) }
 				/>
 			);
 		};
 
+	useEffect( () => {
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportContent.name } );
+	}, [] );
 	// On file change.
 	useEffect( () => {
 		if ( ! file ) {
