@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: get configuration
         id: configuration
         uses: antifree/json-to-variables@v1.0.1
@@ -65,6 +67,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
@@ -76,6 +80,7 @@ jobs:
       - name: Checkout next release branch
         uses: actions/checkout@v3
         with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: ${{ env.RELEASE_BRANCH }}
       - name: Get Current SHA
         shell: bash
