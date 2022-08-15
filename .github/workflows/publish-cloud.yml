@@ -36,7 +36,7 @@ jobs:
         id: configuration
         uses: antifree/json-to-variables@v1.0.1
         with: 
-            filename: 'maork-elementor/elementor/.github/workflows/config.json'
+            filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
         uses: ./.github/workflows/permissions
