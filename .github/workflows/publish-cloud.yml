@@ -39,7 +39,7 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        uses: maork-elementor/elementor/.github/workflows/permissions
+        uses: ./.github/workflows/permissions
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
