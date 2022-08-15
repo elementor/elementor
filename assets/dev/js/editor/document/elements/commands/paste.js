@@ -48,12 +48,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 			let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
 
 			data.forEach( ( model ) => {
-				// Create a new target container for both 'container' and 'widget' elements when the container experiment is activated.
-				const elementType = ( elementorCommon.config.experimentalFeatures.container && ( 'section' !== model.elType && 'column' !== model.elType ) )
-					? 'container'
-					: model.elType;
-
-				switch ( elementType ) {
+				switch ( model.elType ) {
 					case 'container': {
 						const container = $e.run( 'document/elements/create', {
 							container: targetContainer,
@@ -117,14 +112,27 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						break;
 
 					default: {
-						// In case it widget:
+						// In this case, the element is a widget:
 						let target;
 
-						// On trying to paste widget on section, the paste should be at the first column.
-						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+						if ( elementorCommon.config.experimentalFeatures.container ) {
+							// If the container experiment is active, create a new wrapper container.
+							target = $e.run( 'document/elements/create', {
+								container: targetContainer,
+								model: {
+									elType: 'container',
+								},
+								options: {
+									at: ++index,
+									edit: false,
+								},
+							} );
+							target = [ target ];
+						} else if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+							// On trying to paste widget on section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
 						} else {
-							// Else, create section with one column for element.
+							// Else, create section with one column for the element.
 							const section = $e.run( 'document/elements/create', {
 								container: targetContainer,
 								model: {
@@ -136,7 +144,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 								},
 							} );
 
-							// Create the element in the column that just was created.
+							// Create the element inside the column that just was created.
 							target = [ section.view.children.first().getContainer() ];
 						}
 
