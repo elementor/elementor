@@ -318,7 +318,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'full',
+				'default' => 'boxed',
 				'options' => [
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 					'full' => esc_html__( 'Full Width', 'elementor' ),
