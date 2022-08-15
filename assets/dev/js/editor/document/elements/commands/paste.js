@@ -112,10 +112,10 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						if ( elementorCommon.config.experimentalFeatures.container ) {
 							// If the container experiment is active, create a new wrapper container.
 							target = $e.run( 'document/elements/create', {
-								container: targetContainer,
 								model: {
-									elType: 'section',
+									elType: 'container',
 								},
+								container: targetContainer,
 							} );
 
 							target = [ target ];
