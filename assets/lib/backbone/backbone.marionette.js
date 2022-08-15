@@ -3010,7 +3010,7 @@
     // Internal method to ensure an `$childViewContainer` exists, for the
     // `attachHtml` method to use.
     getChildViewContainer: function(containerView, childView) {
-      if (!!containerView.$childViewContainer) { // childViewContainer was passed as an empty string.
+      if (!!containerView.$childViewContainer) {
         return containerView.$childViewContainer;
       }
   
@@ -3019,15 +3019,11 @@
       if (childViewContainer) {
   
         var selector = Marionette._getValue(childViewContainer, containerView);
-
-        if ( selector ) {
-          if (selector.charAt(0) === '@' && containerView.ui) {
-            container = containerView.ui[selector.substr(4)];
-          } else {
-            container = containerView.$(selector);
-          }
-        } else { // childViewContainer was passed as a function that returned an empty string.
-          container = containerView.$el;
+  
+        if (selector.charAt(0) === '@' && containerView.ui) {
+          container = containerView.ui[selector.substr(4)];
+        } else {
+          container = containerView.$(selector);
         }
   
         if (container.length <= 0) {

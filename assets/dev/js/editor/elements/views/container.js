@@ -11,10 +11,14 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer() {
-		return 'boxed' === this.getContainer().settings.get( 'content_width' )
+	childViewContainer: '', // Child view is empty in order to use the parent element.
+
+	getChildViewContainer() {
+		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
 			? ' > .e-container__inner'
-			: ''; // Child view of `content_width: full` is empty in order to use the parent element.
+			: '';
+
+		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
 	},
 
 	className() {
