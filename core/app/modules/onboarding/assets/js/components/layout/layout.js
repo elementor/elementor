@@ -48,6 +48,25 @@ export default function Layout( props ) {
 					},
 				} );
 			},
+		},
+		goProButton = {
+			id: 'go-pro',
+			text: __( 'Upgrade', 'elementor' ),
+			hideText: false,
+			className: 'onboarding-go-pro__btn',
+			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+			target: '_blank',
+			elRef: goProButtonRef,
+			onClick: () => {
+				elementorCommon.events.dispatchEvent( {
+					event: 'go pro',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+					},
+				} );
+			},
 		};
 
 	if ( state.isLibraryConnected ) {
@@ -75,25 +94,7 @@ export default function Layout( props ) {
 	}
 
 	if ( ! state.hasPro ) {
-		headerButtons.push( {
-			id: 'go-pro',
-			text: __( 'Go Pro', 'elementor-pro' ),
-			hideText: false,
-			icon: 'eicon-pro-icon',
-			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
-			target: '_blank',
-			elRef: goProButtonRef,
-			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'go pro',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
-			},
-		} );
+		headerButtons.push( goProButton );
 	}
 
 	return (
@@ -107,6 +108,7 @@ export default function Layout( props ) {
 				<Header
 					title={ __( 'Getting Started', 'elementor' ) }
 					buttons={ headerButtons }
+					goProButtonRef={ goProButton.elRef }
 				/>
 				<div className={ 'eps-app__main e-onboarding__page-' + props.pageId }>
 					<Content className="e-onboarding__content">

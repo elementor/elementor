@@ -33,7 +33,7 @@ export default function Header( props ) {
 				/>
 			</div>
 			<HeaderButtons buttons={ props.buttons } onClose={ onClose } />
-			{ ! state.hasPro && <GoProPopover buttonsConfig={ props.buttons } /> }
+			{ ! state.hasPro && <GoProPopover buttonsConfig={ props.buttons } goProButtonRef={ props.goProButtonRef } /> }
 		</Grid>
 	);
 }
@@ -41,6 +41,7 @@ export default function Header( props ) {
 Header.propTypes = {
 	title: PropTypes.string,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
+	goProButtonRef: PropTypes.object,
 };
 
 Header.defaultProps = {

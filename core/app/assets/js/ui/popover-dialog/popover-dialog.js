@@ -14,8 +14,8 @@ export default function PopoverDialog( props ) {
 			 * Show Popover
 			 */
 			const showPopover = () => {
+				props.activatingButtonHover();
 				popoverEl.style.display = 'block';
-
 				popoverEl.setAttribute( 'aria-expanded', true );
 
 				const targetRect = target.getBoundingClientRect(),
@@ -35,6 +35,7 @@ export default function PopoverDialog( props ) {
 			const hidePopover = () => {
 				popoverEl.style.display = 'none';
 				popoverEl.setAttribute( 'aria-expanded', false );
+				props.activatingButtonBlur();
 			};
 
 			/**
@@ -152,6 +153,8 @@ PopoverDialog.propTypes = {
 	wrapperClass: PropTypes.string,
 	children: PropTypes.any,
 	hideAfter: PropTypes.number,
+	activatingButtonHover: PropTypes.func,
+	activatingButtonBlur: PropTypes.func,
 };
 
 PopoverDialog.defaultProps = {
