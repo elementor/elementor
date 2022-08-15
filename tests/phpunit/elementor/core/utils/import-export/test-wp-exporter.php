@@ -45,35 +45,6 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		return preg_replace('/[\s\t\n]/', '', $content);
 	}
 
-	public function test_run__ensure_match_to_export_wp() {
-		// Arrange.
-		$replace_pub_date_timestamp = function ( $xml_data ) {
-			// Since the pubDate depends on time they cannot be always the same.
-			return preg_replace( '#(<pubDate.*?>).*?(</pubDate>)#', '<pubDate>same-for-tests</pubDate>', $xml_data );
-		};
-
-		require ABSPATH . 'wp-admin/includes/export.php';
-
-		$this->expected_error( 'Cannot modify header information' );
-
-		ob_start();
-		export_wp();
-		$original_wp_export_output = ob_get_clean();
-
-		$clean_wp_export_output = $this->remove_space_eols_and_tabulation( $original_wp_export_output );
-
-		// Act.
-		$elementor_export_output = ( new WP_Exporter() )->run();
-		$elementor_export_output = $elementor_export_output['xml'];
-		$clean_elementor_export_output = $this->remove_space_eols_and_tabulation( $elementor_export_output );
-
-		$clean_wp_export_output = $replace_pub_date_timestamp( $clean_wp_export_output );
-		$clean_elementor_export_output = $replace_pub_date_timestamp( $clean_elementor_export_output );
-
-		// Assert.
-		$this->assertEquals( $clean_wp_export_output, $clean_elementor_export_output );
-	}
-
 	// TODO: To be sure it have the same data in all cases, its require to insert the data for all the cases.
 	//public function test_run__ensure_match_to_export_wp_in_all_content_cases() {
 	//
@@ -168,7 +139,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 			'post_type' => 'attachment',
 		] );
 
-		$this->factory()->post->create_and_get( [
+		$post = $this->factory()->post->create_and_get( [
 			'meta_input' => [
 				'_thumbnail_id' => $attachment->ID,
 			],
@@ -190,9 +161,33 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		$content = $exporter->run();
 
 		// Assert.
-		$this->assertCount( 2, $content['ids'] );
+		// The featured image is included as attachment and will not count at the content ids.
+		$this->assertEquals( [ $post->ID ], $content['ids'] );
 
-		$include_attachment = (boolean) strstr( $content['xml'], '<wp:attachment_url>' );
+		$include_attachment = (boolean) strstr(
+			$content['xml'],
+			'<wp:attachment_url>'
+		);
+
 		$this->assertTrue( $include_attachment );
+	}
+
+	/**
+	 * Return wrapped given string in XML CDATA tag.
+	 *
+	 * @param string $str String to wrap in XML CDATA tag.
+	 *
+	 * @return string
+	 */
+	private function wxr_cdata( $str ) {
+		$str = (string) $str;
+
+		if ( ! seems_utf8( $str ) ) {
+			$str = utf8_encode( $str );
+		}
+
+		$str = '<![CDATA[' . str_replace( ']]>', ']]]]><![CDATA[>', $str ) . ']]>';
+
+		return $str;
 	}
 }
