@@ -257,12 +257,15 @@
 		}
 	}
 
-	// Hack to increase specificity and avoid using `!important`.
-	.elementor .elementor-section-wrap & {
+	.elementor & {
 
-		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
-		& > .elementor-widget {
-			max-width: 100%;
+		// Hack to increase specificity and avoid using `!important`.
+		&.e-container {
+
+			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+			& > .elementor-widget {
+				max-width: 100%;
+			}
 		}
 	}
 }
