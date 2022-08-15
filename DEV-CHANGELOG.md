@@ -1,5 +1,19 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.8.0-dev3 - 2022-08-15
+* Fix: Notes - Promotion dialog not opening in Panel menu [ED-7744] (#19192)
+* Fix: Align notices to RTL sites [ED-4809] (#19337)
+* Fix: Export kit doesn't work in a Multisite Network [ED-7696] (#19146)
+* Tweak: Add to the GoPro link URL from the Kit Library more UTM parameters [ED-7745] (#19336)
+* Fix: Theme Builder - Close window button isn't working [ED-7920] (#19379)
+* Fix: Breakpoints manager shouldn't run deprecated hook [ED-7929] (#19404)
+* Fix: Dynamic fields are missing in any number input field (#19419) [ED-7945] (#19429)
+* Fix: Controls do not implement a value of 0 [ED-7935] (#19411)
+* Fix: Importing and exporting duplicated posts [ED-7796] (#19381)
+* Fix: Experiments - Learn more button does not open the Help center in the notice (#19448) [ED-7963] (#19467)
+* Tweak: Import/Export CLI and UI mechanisms were merged into a unified service [ED-7157] (#19044)
+* Fix: Width and Elements gap values (ED-7694) (#19354)
+
 #### 3.8.0-dev2 - 2022-08-15
 * Fix: Go pro link is too wide in export kit tool [ED-7575] (#19317)
 * Fix: Notice Bar can't be closed in the editor [ED-7854] (#19321)
@@ -424,6 +438,3 @@
 * Tweak: System Info - New experiments reporter [ED-1938] (#14800)
 * Tweak: Added shortkey to panel tooltips [ED-4220] (#16478)
 * Tweak: Default-Values - Loader on default values save [ED-4925] (#16212)
-
-#### 3.5.0-dev38 - 2021-10-12
-* Tweak: Updated featured video in readme.txt (#16552)
