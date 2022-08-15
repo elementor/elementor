@@ -11,7 +11,8 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: '', // Child view is empty in order to use the parent element.
+	// Child view is empty in order to use the parent element.
+	childViewContainer: '',
 
 	getChildViewContainer() {
 		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
