@@ -28,7 +28,7 @@ class Get_Help_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_position() {
-		return null;
+		return 2;
 	}
 
 	public function get_capability() {
