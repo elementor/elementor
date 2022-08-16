@@ -23,18 +23,12 @@ on:
         description: 'Is this a pre-release?'
         required: false
 
-
 jobs:
   bump-version:
     runs-on: ubuntu-20.04
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
-      current_actor: ${{ steps.bump_version_step.outputs.current_actor }}
     steps:
-      - name: Get Actor
-        id: get_actor_step
-        run: |
-          echo "::set-output name=current_actor::${{{ github.actor }}}"
       - name: Checkout branch
         uses: actions/checkout@v3
         with:
@@ -46,7 +40,9 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        uses: ${{ needs.bump-version.outputs.current_actor }}/editor-actions/permissions@master
+        uses: editor-actions/permissions@master
+        with:
+          user: "${{ github.actor }}"
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
