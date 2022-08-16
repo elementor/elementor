@@ -41,7 +41,7 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        uses: ${{ github.event.repository.owner.login }}/editor-actions/permissions@master
+        uses: '${{ github.event.repository.owner.login }}/editor-actions/permissions@master'
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
