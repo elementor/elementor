@@ -49,6 +49,22 @@ jobs:
         uses: maork-elementor/editor-actions/get-next-release-branch@master
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
+      - name: Checkout next release branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.RELEASE_BRANCH }}
+      - name: Get Current SHA
+        shell: bash
+        run: |
+          echo $(git rev-parse HEAD)
+          echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      - name: Validate Run Checks
+        uses : ./.github/workflows/validate-run-checks
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          CURRENT_SHA: ${{ env.CURRENT_SHA }}
+          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Bump version
         id: bump_version_step
         uses: maork-elementor/editor-actions/bump-version@master
@@ -86,13 +102,13 @@ jobs:
         run: |
           echo $(git rev-parse HEAD)
           echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      # - name: Validate Run Checks
-      #   uses : maork-elementor/editor-actions/validate-run-checks@master
-      #   with:
-      #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      #     REPOSITORY: ${{ github.repository }}
-      #     CURRENT_SHA: ${{ env.CURRENT_SHA }}
-      #     IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
+      - name: Validate Run Checks
+        uses : maork-elementor/editor-actions/validate-run-checks@master
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          CURRENT_SHA: ${{ env.CURRENT_SHA }}
+          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
