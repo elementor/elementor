@@ -40,9 +40,7 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        uses: "$(git remote show origin -n | grep h.URL | sed 's/.*://;s/.git$//')editor-actions/permissions@master"
-        with:
-          user: "${{ github.actor }}"
+        uses: maork-elementor/editor-actions/permissions@master
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
