@@ -12,11 +12,6 @@ on:
         type: boolean
         description: 'Is this a pre-release?'
         required: false
-      actor:
-        type: string
-        description: 'Github actor'
-        required: true
-        default: ${{ github.actor }}
   workflow_call:
     inputs:
       version:
@@ -27,11 +22,6 @@ on:
         type: boolean
         description: 'Is this a pre-release?'
         required: false
-      actor:
-        type: string
-        description: 'Github actor'
-        required: true
-        default: ${{ github.actor }}
 
 
 jobs:
@@ -51,7 +41,7 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        uses: ${{ github.event.inputs.actor }}/editor-actions/permissions@master
+        uses: github.actor/editor-actions/permissions@master
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
