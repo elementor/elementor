@@ -27,6 +27,9 @@ on:
 jobs:
   bump-version:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        owner: ${{ github.actor }}
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
@@ -41,9 +44,7 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        env:
-          OWNER: ${{ github.actor }}
-        uses: ${{ env.OWNER }}/editor-actions/permissions@master
+        uses: ${{ matrix.owner }}/editor-actions/permissions@master
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
