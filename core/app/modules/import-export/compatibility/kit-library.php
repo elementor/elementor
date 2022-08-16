@@ -7,11 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit_Library extends Base_Adapter {
-	public static function is_compatibility_needed( array $manifest_data, array $import_settings ) {
-		return ! empty( $import_settings['referrer'] ) && 'kit-library' === $import_settings['referrer'];
+	public static function is_compatibility_needed( array $manifest_data, array $meta ) {
+		return ! empty( $meta['referrer'] ) && 'kit-library' === $meta['referrer'];
 	}
 
-	public function get_manifest_data( array $manifest_data ) {
+	public function adapt_manifest( array $manifest_data ) {
 		if ( ! empty( $manifest_data['content']['page'] ) ) {
 			foreach ( $manifest_data['content']['page'] as & $page ) {
 				$page['thumbnail'] = false;

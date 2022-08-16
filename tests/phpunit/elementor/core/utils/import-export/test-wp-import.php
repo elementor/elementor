@@ -13,23 +13,7 @@ class Test_WP_Import extends Elementor_Test_Base {
 		$this->remove_default_kit();
 	}
 
-	private function assert_valid_result( $expected_succeed, $result ) {
-		$this->assertEquals( [
-			'status' => 'success',
-			'errors' => [],
-			'summary' => [
-				'categories' => 0,
-				'tags' => 0,
-				'terms' => 0,
-				'posts' => [
-					'failed' => [],
-					'succeed' => $expected_succeed,
-				],
-			],
-		], $result );
-	}
-
-	public function test_run_import_menu() {
+	public function test_run__import_native_wp_content() {
 		// Arrange.
 		$page_importer = new WP_Import( __DIR__ . '/mock/page.xml' );
 		$post_importer = new WP_Import( __DIR__ . '/mock/post.xml' );
@@ -47,8 +31,9 @@ class Test_WP_Import extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 1 ],array_keys( $post_result['summary']['posts']['succeed'] ) );
 		$this->assertNotNull( get_posts( $post_result['summary']['posts']['succeed'][1] ) );
 
-		$this->assertEqualSets( [ 17, 18 ],array_keys( $menu_result['summary']['posts']['succeed'] ) );
+		$this->assertEqualSets( [ 17 ],array_keys( $menu_result['summary']['terms']['succeed'] ) );
+		$this->assertEqualSets( [ 17 ],array_keys( $menu_result['summary']['posts']['succeed'] ) );
+		$this->assertNotNull( get_term( $menu_result['summary']['terms']['succeed'][17], 'nav_menu' ) );
 		$this->assertNotNull( get_posts( $menu_result['summary']['posts']['succeed'][17] ) );
-		$this->assertNotNull( get_posts( $menu_result['summary']['posts']['succeed'][18] ) );
 	}
 }

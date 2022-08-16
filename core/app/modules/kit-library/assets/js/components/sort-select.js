@@ -23,8 +23,16 @@ export default function SortSelect( props ) {
 					onChange={ ( e ) => {
 						const value = e.target.value;
 						setSelectedSortBy( getSelectedOptionDetails( value ) );
+						props.onChangeSortValue?.( value );
 					} }
 					className="eps-sort-select__select"
+					onClick={ () => {
+						props.onChange( {
+							by: props.value.by,
+							direction: props.value.direction,
+						} );
+						props.onSortSelectOpen?.();
+					} }
 				/>
 			</div>
 			{
@@ -35,9 +43,13 @@ export default function SortSelect( props ) {
 						icon={ 'asc' === props.value.direction ? 'eicon-arrow-up' : 'eicon-arrow-down' }
 						className="eps-sort-select__button"
 						onClick={ () => {
+							const direction = props.value.direction && 'asc' === props.value.direction ? 'desc' : 'asc';
+							if ( props.onChangeSortDirection ) {
+								props.onChangeSortDirection( direction );
+							}
 							props.onChange( {
 								by: props.value.by,
-								direction: 'asc' === props.value.direction ? 'desc' : 'asc',
+								direction,
 							} );
 						} }
 					/>
@@ -56,4 +68,7 @@ SortSelect.propTypes = {
 		by: PropTypes.string.isRequired,
 	} ).isRequired,
 	onChange: PropTypes.func.isRequired,
+	onChangeSortValue: PropTypes.func,
+	onSortSelectOpen: PropTypes.func,
+	onChangeSortDirection: PropTypes.func,
 };
