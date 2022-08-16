@@ -78,7 +78,7 @@ ksort( $types );
 						printf(
 							'<option value="%1$s" data-lock=\'%2$s\' %3$s>%4$s</option>',
 							esc_attr( $value ),
-							wp_json_encode( $lock_configs[ $value ] ),
+							wp_json_encode( $lock_configs[ $value ] ?? (object) [] ),
 							selected( $selected, $value, false ),
 							esc_html( $type_title )
 						);
