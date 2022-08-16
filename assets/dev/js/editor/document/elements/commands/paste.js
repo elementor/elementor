@@ -109,21 +109,11 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						// The 'default' case is widget.
 						let target;
 
-						if ( elementorCommon.config.experimentalFeatures.container ) {
-							// If the container experiment is active, create a new wrapper container.
-							target = $e.run( 'document/elements/create', {
-								container: targetContainer,
-								model: {
-									elType: 'container',
-								},
-							} );
-
-							target = [ target ];
-						} else if ( 'section' === targetContainer.model.get( 'elType' ) ) {
-							// On trying to paste widget on section, the paste should be at the first column.
+						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+							// On trying to paste the widget on a section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
-						} else {
-							// Else, create section with one column for the element.
+						} else if ( 'column' === targetContainer.model.get( 'elType' ) ) {
+							// On trying to paste the widget on a column, create section with one column for the element.
 							const section = $e.run( 'document/elements/create', {
 								container: targetContainer,
 								model: {
@@ -137,6 +127,16 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 							// Create the element inside the column that just was created.
 							target = [ section.view.children.first().getContainer() ];
+						} else {
+							// If the container experiment is active, create a new wrapper container.
+							target = $e.run( 'document/elements/create', {
+								container: targetContainer,
+								model: {
+									elType: 'container',
+								},
+							} );
+
+							target = [ target ];
 						}
 
 						result.push( this.pasteTo( target, [ model ] ) );
