@@ -147,13 +147,15 @@ export const Paste = () => {
 				// Check pasted elements existence.
 				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
-				// Check whether they preserved their order.
-				assert.equal(
-					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
-					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-					'Elements preserved their position.',
-				);
+				if ( ! elementorCommon.config.experimentalFeatures.container ) {
+					// Check whether they preserved their order.
+					assert.equal(
+						elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
+							.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
+						toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
+						'Elements preserved their position.',
+					);
+				}
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
