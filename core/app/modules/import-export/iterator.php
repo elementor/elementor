@@ -47,17 +47,17 @@ abstract class Iterator extends Base_Object {
 		$server = new Server();
 
 		$paths_to_check = [
-			WP_CONTENT_DIR => 'WordPress content directory',
+			$server::KEY_PATH_WP_CONTENT_DIR,
+			$server::KEY_PATH_UPLOADS_DIR,
+			$server::KEY_PATH_ELEMENTOR_UPLOADS_DIR,
 		];
 
-		$upload_directories = $server->get_upload_directories_paths();
+		$permissions = $server->get_permissions( $paths_to_check );
 
-		$paths_to_check = array_merge( $paths_to_check, $upload_directories['paths'] );
-
-		$server_write_permissions = $server->check_write_permissions( $paths_to_check, $upload_directories['errors'] );
-
-		if ( $server_write_permissions['warning'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+		foreach ( $permissions as $permission ) {
+			if ( ! $permission['write'] ) {
+				throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			}
 		}
 
 		$this->set_settings( $settings );

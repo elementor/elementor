@@ -17,6 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Server extends Base {
 
+	const KEY_PATH_WP_ROOT_DIR = 'wp_root';
+	const KEY_PATH_WP_CONTENT_DIR = 'wp_content';
+	const KEY_PATH_UPLOADS_DIR = 'uploads';
+	const KEY_PATH_ELEMENTOR_UPLOADS_DIR = 'elementor_uploads';
+	const KEY_PATH_HTACCESS_FILE = '.htaccess';
+
 	/**
 	 * Get server environment reporter title.
 	 *
@@ -291,8 +297,8 @@ class Server extends Base {
 
 	/**
 	 * Get write permissions.
-	 *
-	 * Check whether the required folders has writing permissions.
+	 * Check whether the required paths have writing permissions.
+	 * Do not use this function if you want the check write permissions use get_permissions() instead.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -305,22 +311,36 @@ class Server extends Base {
 	 *                          folders don't have writing permissions, False otherwise.
 	 * }
 	 */
-	public function get_write_permissions() {
+	public function get_write_permissions(): array {
 		$paths_to_check = [
-			ABSPATH => 'WordPress root directory',
+			static::KEY_PATH_WP_ROOT_DIR => 'WordPress root directory',
+			static::KEY_PATH_HTACCESS_FILE => '.htaccess file',
+			static::KEY_PATH_UPLOADS_DIR => 'WordPress uploads directory',
+			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => 'Elementor uploads directory',
 		];
 
-		$htaccess_file = ABSPATH . '/.htaccess';
+		$permissions = $this->get_permissions( array_keys( $paths_to_check ) );
 
-		if ( file_exists( $htaccess_file ) ) {
-			$paths_to_check[ $htaccess_file ] = '.htaccess file';
+		$write_problems = [];
+
+		foreach ( $permissions as $key_path => $path_permissions ) {
+			if ( ! $path_permissions['write'] ) {
+				$write_problems[] = $paths_to_check[ $key_path ];
+			}
 		}
 
-		$upload_directories = $this->get_upload_directories_paths();
+		if ( $write_problems ) {
+			$value = 'There are some writing permissions issues with the following directories/files:' . "\n\t\t - ";
 
-		$paths_to_check = array_merge( $paths_to_check, $upload_directories['paths'] );
+			$value .= implode( "\n\t\t - ", $write_problems );
+		} else {
+			$value = 'All right';
+		}
 
-		return $this->check_write_permissions( $paths_to_check, $upload_directories['errors'] );
+		return [
+			'value' => $value,
+			'warning' => ! ! $write_problems,
+		];
 	}
 
 	/**
@@ -385,73 +405,63 @@ class Server extends Base {
 	}
 
 	/**
-	 * Check write permissions by provided paths.
+	 * Get permissions by keys. If empty keys, get all permissions.
+	 * Be aware that you can only use key paths that are defined in the get_paths() method.
 	 *
 	 * @since 3.7.0
-	 * @access public
 	 *
-	 * @param array $paths_to_check
-	 * @param array $write_problems
-	 *
-	 * @return array {
-	 *      @type string value: Writing permissions status.
-	 *      @type bool   warning: Whether to display a warning. True if some required.
-	 * }
+	 * @param array $key_paths
+	 * @return array {read: bool, write: bool, execute: bool}
 	 */
-	public function check_write_permissions( array $paths_to_check, $write_problems = [] ) {
-		foreach ( $paths_to_check as $dir => $description ) {
-			if ( ! is_writable( $dir ) ) {
-				$write_problems[] = $description;
-			}
+	public function get_permissions( array $key_paths = [] ):array {
+		$paths = $this->get_paths();
+		$all_key_paths = array_keys( $paths );
+
+		$key_paths = empty( $key_paths ) ? $all_key_paths : array_intersect( $key_paths, $all_key_paths );
+
+		$permissions = [];
+
+		foreach ( $key_paths as $key_path ) {
+			$path = $paths[ $key_path ];
+
+			$permissions[ $key_path ] = $this->get_path_permissions( $path );
 		}
 
-		if ( $write_problems ) {
-			$value = 'There are some writing permissions issues with the following directories/files:' . "\n\t\t - ";
+		return $permissions;
+	}
 
-			$value .= implode( "\n\t\t - ", $write_problems );
-		} else {
-			$value = 'All right';
-		}
-
+	/**
+	 * Get all the paths that we might need to check permissions.
+	 *
+	 * @return array
+	 */
+	private function get_paths(): array {
 		return [
-			'value' => $value,
-			'warning' => ! ! $write_problems,
+			static::KEY_PATH_WP_ROOT_DIR => ABSPATH,
+			static::KEY_PATH_HTACCESS_FILE => file_exists( ABSPATH . '/.htaccess' ) ? ABSPATH . '/.htaccess' : '',
+			static::KEY_PATH_WP_CONTENT_DIR => WP_CONTENT_DIR,
+			static::KEY_PATH_UPLOADS_DIR => wp_upload_dir()['basedir'] ?? '',
+			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => ! empty( wp_upload_dir()['basedir'] ) ? wp_upload_dir()['basedir'] . '/elementor' : '',
 		];
 	}
 
 	/**
-	 * Get upload directories paths (root,Elementor) including relevant messages.
-	 *
-	 * @since 3.7.0
-	 * @access public
-	 *
-	 * @return array {
-	 *      @type array paths: Paths of upload directories and their relevant messages.
-	 *      @type array errors: Errors while getting upload directories.
-	 * }
+	 * @param $path
+	 * @return array{read: bool, write: bool, execute: bool}
 	 */
-	public function get_upload_directories_paths() {
-		$result = [
-			'paths' => [],
-			'errors' => [],
+	private function get_path_permissions( $path ): array {
+		if ( empty( $path ) ) {
+			return [
+				'read' => false,
+				'write' => false,
+				'execute' => false,
+			];
+		}
+
+		return [
+			'read' => is_readable( $path ),
+			'write' => is_writeable( $path ),
+			'execute' => is_executable( $path ),
 		];
-
-		$wp_upload_dir = wp_upload_dir();
-
-		if ( ! empty( $wp_upload_dir['error'] ) ) {
-			$result['errors'][] = 'WordPress uploads directory';
-		}
-
-		if ( ! empty( $wp_upload_dir['basedir'] ) ) {
-			$result['paths'][ $wp_upload_dir['basedir'] ] = 'WordPress root uploads directory';
-
-			$elementor_uploads_path = $wp_upload_dir['basedir'] . '/elementor';
-
-			if ( is_dir( $elementor_uploads_path ) ) {
-				$result['paths'][ $elementor_uploads_path ] = 'Elementor uploads directory';
-			}
-		}
-
-		return $result;
 	}
 }
