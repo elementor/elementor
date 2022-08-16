@@ -30,7 +30,7 @@ export default function SortSelect( props ) {
 				icon={ 'asc' === props.value.direction ? 'eicon-arrow-up' : 'eicon-arrow-down' }
 				className="eps-sort-select__button"
 				onClick={ () => {
-					const direction = props.value.direction && 'asc' === props.value.direction ? 'desc' : 'asc';
+					const direction = direction && 'asc' === props.value.direction ? 'desc' : 'asc';
 					if ( props.onChangeSortDirection ) {
 						props.onChangeSortDirection( direction );
 					}
