@@ -1,6 +1,8 @@
 name: Publish Cloud
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
+env:
+  REPO_OWNER: ${{ github.repository.owner.login }}
 on: 
   workflow_dispatch:
     inputs:
@@ -41,7 +43,7 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        uses: '${{ github.event.repository.owner.login }}/editor-actions/permissions@master'
+        uses: ${{ env.REPO_OWNER }}/editor-actions/permissions@master
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
