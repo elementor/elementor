@@ -45,6 +45,10 @@ class Module extends Base_Module {
 		}
 	}
 
+	public static function is_active() {
+		return ! Utils::has_pro() || version_compare( ELEMENTOR_PRO_VERSION, '3.7.3', '>' );
+	}
+
 	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
 		$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
