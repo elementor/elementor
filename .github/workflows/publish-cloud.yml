@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
-      current_actor: ${{ setps.bump_version_step.outputs.current_actor }}
+      current_actor: ${{ steps.bump_version_step.outputs.current_actor }}
     steps:
       - name: Get Actor
         id: get_actor_step
