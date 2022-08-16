@@ -1297,11 +1297,24 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Frontend settings.
 	 */
 	public function get_frontend_settings() {
-		$frontend_settings = array_intersect_key( $this->get_settings_for_display(), array_flip( $this->get_frontend_settings_keys() ) );
+		$all_settings = $this->get_settings_for_display();
+		$frontend_settings = array_intersect_key( $all_settings, array_flip( $this->get_frontend_settings_keys() ) );
 
 		foreach ( $frontend_settings as $key => $setting ) {
 			if ( in_array( $setting, [ null, '' ], true ) ) {
 				unset( $frontend_settings[ $key ] );
+			}
+		}
+
+		// Check for global values.
+		if(isset($all_settings['__globals__'])){
+			$globals = $all_settings['__globals__'];
+
+			// Loop through the available values and replace color names with css variable so that it returns properly instead of showing default color.
+			foreach($globals as $key => $value){
+				if(isset($frontend_settings[$key]) && str_contains($value,'globals/colors?id=')){
+					$frontend_settings[$key] = 'var('.str_replace('globals/colors?id=','--e-global-color-',$value).')';
+				}
 			}
 		}
 
