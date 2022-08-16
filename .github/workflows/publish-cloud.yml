@@ -41,22 +41,22 @@ jobs:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
-        uses: "$GITHUB_REPOSITORY_OWNER/editor-actions/permissions@master"
+        uses: ${{ github.event.repository.owner.login }}/editor-actions/permissions@master
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
       - name: Get next release branch
-        uses: $GITHUB_REPOSITORY_OWNER/editor-actions/get-next-release-branch@master
+        uses: maork-elementor/editor-actions/get-next-release-branch@master
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
       - name: Bump version
         id: bump_version_step
-        uses: $GITHUB_REPOSITORY_OWNER/editor-actions/bump-version@master
+        uses: maork-elementor/editor-actions/bump-version@master
         with:
           CHANNEL: "cloud"
       - name: Push version
-        uses : $GITHUB_REPOSITORY_OWNER/editor-actions/push-new-version@master
+        uses : maork-elementor/editor-actions/push-new-version@master
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
@@ -74,7 +74,7 @@ jobs:
         with:
           node-version: 14.x
       - name: Get next release branch
-        uses: $GITHUB_REPOSITORY_OWNER/editor-actions/get-next-release-branch@master
+        uses: maork-elementor/editor-actions/get-next-release-branch@master
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
       - name: Checkout next release branch
@@ -87,20 +87,20 @@ jobs:
         run: |
           echo $(git rev-parse HEAD)
           echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      - name: Validate Run Checks
-        uses : $GITHUB_REPOSITORY_OWNER/editor-actions/validate-run-checks@master
-        with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          CURRENT_SHA: ${{ env.CURRENT_SHA }}
-          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
+      # - name: Validate Run Checks
+      #   uses : maork-elementor/editor-actions/validate-run-checks@master
+      #   with:
+      #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      #     REPOSITORY: ${{ github.repository }}
+      #     CURRENT_SHA: ${{ env.CURRENT_SHA }}
+      #     IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           npm ci
       - name: Build plugin
-        uses: $GITHUB_REPOSITORY_OWNER/editor-actions/build-plugin@master
+        uses: maork-elementor/editor-actions/build-plugin@master
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           REPO_NAME: ${{ github.event.repository.name }}
@@ -111,13 +111,13 @@ jobs:
           path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
       - name: Create Git tag
-        uses : $GITHUB_REPOSITORY_OWNER/editor-actions/create-git-tag@master
+        uses : maork-elementor/editor-actions/create-git-tag@master
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Generate changelog
-        uses : $GITHUB_REPOSITORY_OWNER/editor-actions/generate-changelog@master
+        uses : maork-elementor/editor-actions/generate-changelog@master
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
@@ -133,7 +133,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Send slack message
-        uses: $GITHUB_REPOSITORY_OWNER/editor-actions/slack-notify@master
+        uses: maork-elementor/editor-actions/slack-notify@master
         with:
           MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
