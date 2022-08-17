@@ -12,8 +12,8 @@ export default function Layout( props ) {
 		content: props.children,
 	};
 
-	if ( elementorAppConfig.hasPro ) {
-		config.titleRedirectRoute = '/site-editor';
+	if ( props.titleRedirectRoute ) {
+		config.titleRedirectRoute = props.titleRedirectRoute;
 	}
 
 	return (
@@ -28,6 +28,7 @@ Layout.propTypes = {
 	allPartsButton: PropTypes.element.isRequired,
 	children: PropTypes.object.isRequired,
 	promotion: PropTypes.bool,
+	titleRedirectRoute: PropTypes.string,
 };
 
 Layout.defaultProps = {
