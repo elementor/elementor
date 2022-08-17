@@ -7,11 +7,14 @@ import './site-editor.scss';
 export default function Layout( props ) {
 	const config = {
 		title: __( 'Theme Builder', 'elementor' ),
-		titleRedirectRoute: '/site-editor',
 		headerButtons: props.headerButtons,
 		sidebar: <Menu allPartsButton={ props.allPartsButton } promotion={ props.promotion } />,
 		content: props.children,
 	};
+
+	if ( elementorAppConfig.hasPro ) {
+		config.titleRedirectRoute = '/site-editor';
+	}
 
 	return (
 		<TemplateTypesContext>
