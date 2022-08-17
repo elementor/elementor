@@ -29,7 +29,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.config.legacyMode = {
 			get elementWrappers() {
 				if ( elementorFrontend.isEditMode() ) {
-					elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
+					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
 				}
 
 				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
