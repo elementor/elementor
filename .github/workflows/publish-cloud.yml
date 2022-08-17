@@ -12,130 +12,19 @@ on:
         type: boolean
         description: 'Is this a pre-release?'
         required: false
-  workflow_call:
-    inputs:
-      version:
-        type: string
-        description: 'Release branch version'
-        required: false
-      pre_release:
-        type: boolean
-        description: 'Is this a pre-release?'
-        required: false
-
+        
 jobs:
-  bump-version:
-    runs-on: ubuntu-20.04
-    outputs:
-      prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: get configuration
-        id: configuration
-        uses: antifree/json-to-variables@v1.0.1
-        with: 
-            filename: './.github/workflows/config.json'
-            prefix: config
-      - name: Test permissions
-        uses: maork-elementor/editor-actions/permissions@master
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Install Node.js 14.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
-      - name: Get next release branch
-        uses: maork-elementor/editor-actions/get-next-release-branch@master
-        with:
-          INPUT_VERSION: ${{ github.event.inputs.version }}
-      - name: Bump version
-        id: bump_version_step
-        uses: maork-elementor/editor-actions/bump-version@master
-        with:
-          CHANNEL: "cloud"
-      - name: Push version
-        uses : maork-elementor/editor-actions/push-new-version@master
-        with:
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          COMMIT_MESSAGE: "Bump ${{ inputs.PACKAGE_VERSION || env.PACKAGE_VERSION }}"
-  publish-to-cloud:
-    needs: bump-version
+  publish-remote-repo:
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Install Node.js 14.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
-      - name: Get next release branch
-        uses: maork-elementor/editor-actions/get-next-release-branch@master
-        with:
-          INPUT_VERSION: ${{ github.event.inputs.version }}
-      - name: Checkout next release branch
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
-          ref: ${{ env.RELEASE_BRANCH }}
-      - name: Get Current SHA
-        shell: bash
-        run: |
-          echo $(git rev-parse HEAD)
-          echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      # - name: Validate Run Checks
-      #   uses : maork-elementor/editor-actions/validate-run-checks@master
-      #   with:
-      #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      #     REPOSITORY: ${{ github.repository }}
-      #     CURRENT_SHA: ${{ env.CURRENT_SHA }}
-      #     IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
-      - name: Install Dependencies
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
-          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-          npm ci
-      - name: Build plugin
-        uses: maork-elementor/editor-actions/build-plugin@master
-        with:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          REPO_NAME: ${{ github.event.repository.name }}
-      - name: Upload zip file to GitHub actions artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.PLUGIN_ZIP_FILENAME }}
-          path: ${{ env.PLUGIN_ZIP_PATH }}
-          if-no-files-found: error
-      - name: Create Git tag
-        uses : maork-elementor/editor-actions/create-git-tag@master
-        with:
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-      - name: Generate changelog
-        uses : maork-elementor/editor-actions/generate-changelog@master
-        with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
-          BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ env.PACKAGE_VERSION }}
-          files: elementor-*.zip
-          prerelease: ${{ github.event.inputs.pre_release }}
-          body_path: temp-changelog.txt
+      - name: Publish Cloud
         env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Send slack message
-        uses: maork-elementor/editor-actions/slack-notify@master
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
+          REMOTE_PUBLISH_REPO: ${{ secrets.REMOTE_PUBLISH_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
+        uses: peter-evans/repository-dispatch@d57191493a947e8da4f7bf3fbc389e5b20f21cdf
         with:
-          MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNELS }}
+          token: ${{ env.TOKEN }}
+          repository: ${{ env.REMOTE_PUBLISH_REPO }}
+          event-type: deploy-cloud
+          client-payload: '{ "version" : "${{ github.event.inputs.version }}", "pre_release" : "${{ github.event.inputs.pre_release }}", "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.event.pull_request.head.sha || github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'
