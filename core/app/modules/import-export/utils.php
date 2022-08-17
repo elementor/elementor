@@ -25,21 +25,13 @@ class Utils {
 
 		if ( isset( $imported_data['content'] ) ) {
 			foreach ( $imported_data['content'] as $post_type ) {
-				if ( empty( $post_type['succeed'] ) ) {
-					continue;
-				}
-
-				$result += $post_type['succeed'];
+				$result += $post_type['succeed'] ?? [];
 			}
 		}
 
 		if ( isset( $imported_data['wp-content'] ) ) {
 			foreach ( $imported_data['wp-content'] as $post_type ) {
-				if ( empty( $post_type['succeed'] ) ) {
-					continue;
-				}
-
-				$result += $post_type['succeed'];
+				$result += $post_type['succeed'] ?? [];
 			}
 		}
 
