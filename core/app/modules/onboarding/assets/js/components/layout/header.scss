@@ -36,6 +36,20 @@
 		.eicon-pro-icon {
 			color: $brand-color-dark-pink;
 		}
+
+		&.onboarding-go-pro__btn {
+			background-color: $platform-accent;
+			color: $white;
+			padding: 4px 8px;
+			border-radius: 4px;
+			font-weight: 700;
+			font-size: 12px;
+			transition: 0.5s;
+
+			&:hover {
+			  	background-color: $platform-accent-hover;
+			}
+		}
 	}
 }
 
