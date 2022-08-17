@@ -41,6 +41,8 @@ jobs:
             prefix: config
       - name: Test permissions
         uses: maork-elementor/editor-actions/permissions@master
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Install Node.js 14.x
         uses: actions/setup-node@v2
         with:
