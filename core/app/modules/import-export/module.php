@@ -73,8 +73,6 @@ class Module extends BaseModule {
 		if ( ElementorUtils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
 		}
-
-		( new Usage() )->register();
 	}
 
 	public function get_init_settings() {
