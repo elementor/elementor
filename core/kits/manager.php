@@ -25,6 +25,8 @@ class Manager {
 
 	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
+	private $should_skip_trash_kit_confirmation = false;
+
 	public function get_active_id() {
 		return get_option( self::OPTION_ACTIVE );
 	}
@@ -33,14 +35,18 @@ class Manager {
 		return get_option( self::OPTION_PREVIOUS );
 	}
 
-	public function get_active_kit() {
-		$kit = Plugin::$instance->documents->get( $this->get_active_id() );
+	public function get_kit( $kit_id ) {
+		$kit = Plugin::$instance->documents->get( $kit_id );
 
 		if ( ! $this->is_valid_kit( $kit ) ) {
 			return $this->get_empty_kit_instance();
 		}
 
 		return $kit;
+	}
+
+	public function get_active_kit() {
+		return $this->get_kit( $this->get_active_id() );
 	}
 
 	public function get_active_kit_for_frontend() {
@@ -177,6 +183,18 @@ class Manager {
 		update_option( self::OPTION_ACTIVE, $id );
 
 		return $id;
+	}
+
+	public function revert( $new_kit_id, $active_kit_id, $previous_kit_id ) {
+		$this->should_skip_trash_kit_confirmation = true;
+
+		$kit = $this->get_kit( $new_kit_id );
+		$kit->delete();
+
+		$this->should_skip_trash_kit_confirmation = false;
+
+		update_option( self::OPTION_ACTIVE, $active_kit_id );
+		update_option( self::OPTION_PREVIOUS, $previous_kit_id );
 	}
 
 	/**
@@ -345,6 +363,10 @@ class Manager {
 	 * @param false $is_permanently_delete
 	 */
 	private function before_delete_kit( $post_id, $is_permanently_delete = false ) {
+		if ( $this->should_skip_trash_kit_confirmation ) {
+			return;
+		}
+
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if (

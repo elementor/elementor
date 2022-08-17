@@ -166,11 +166,14 @@ class Import extends Process_Base {
 	 * @throws \Exception
 	 */
 	public function run() {
+		$start_time = current_time( 'timestamp' );
+
 		if ( empty( $this->runners ) ) {
 			throw new \Exception( 'Please specify import runners.' );
 		}
 
 		$data = [
+			'session_id' => $this->session_id,
 			'include' => $this->settings_include,
 			'manifest' => $this->manifest,
 			'site_settings' => $this->site_settings,
@@ -186,7 +189,8 @@ class Import extends Process_Base {
 
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_import( $data ) ) {
-				$this->imported_data = $this->imported_data + $runner->import( $data, $this->imported_data );
+				$import = $runner->import( $data, $this->imported_data );
+				$this->imported_data = array_merge_recursive( $this->imported_data, $import );
 			}
 		}
 
@@ -194,6 +198,8 @@ class Import extends Process_Base {
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
+
+		$this->update_imports_option( $this->imported_data, $start_time );
 
 		$map_old_new_post_ids = Utils::map_old_new_post_ids( $this->imported_data );
 		$this->save_elements_of_imported_posts( $map_old_new_post_ids );
@@ -437,5 +443,22 @@ class Import extends Process_Base {
 			$updated_elements = $document->on_import_replace_dynamic_content( $document_elements, $map_old_new_post_ids );
 			$document->save( [ 'elements' => $updated_elements ] );
 		}
+	}
+
+	private function update_imports_option( array $imported_data, $start_time ) {
+		$option = get_option( 'elementor_import_sessions' );
+
+		$option[ time() ] = [
+			'session_id' => $this->session_id,
+			//'kit_id' => $this->manifest['kit_id'],
+			'kit_name' => $this->manifest['name'],
+			'kit_source' => $this->settings_referrer,
+			'user_id' => get_current_user_id(),
+			'start_timestamp' => $start_time,
+			'end_timestamp' => current_time( 'timestamp' ),
+			'runners' => $imported_data['revert_data'] ?? [],
+		];
+
+		update_option( 'elementor_import_sessions', $option, 'no' );
 	}
 }

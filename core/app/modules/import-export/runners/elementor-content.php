@@ -10,6 +10,8 @@ class Elementor_Content extends Runner_Base {
 
 	private $page_on_front_id;
 
+	private $import_session_id;
+
 	public function __constructor() {
 		$this->init_page_on_front_data();
 	}
@@ -34,8 +36,16 @@ class Elementor_Content extends Runner_Base {
 		);
 	}
 
+	public function should_revert( array $data ) {
+		return (
+			isset( $data['runners'] ) &&
+			array_key_exists( 'elementor-content', $data['runners'] )
+		);
+	}
+
 	public function import( array $data, array $imported_data ) {
 		$result['content'] = [];
+		$this->import_session_id = $data['session_id'];
 
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
 
@@ -52,6 +62,8 @@ class Elementor_Content extends Runner_Base {
 
 			$result['content'][ $post_type ] = $this->import_elementor_post_type( $posts_settings, $path, $post_type, $imported_terms );
 		}
+
+		$result = $this->add_revert_data( $result );
 
 		return $result;
 	}
@@ -77,6 +89,35 @@ class Elementor_Content extends Runner_Base {
 				$manifest_data,
 			],
 		];
+	}
+
+	public function revert( array $data ) {
+		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
+
+		$query_args = [
+			'post_type' => $elementor_post_types,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'meta_query' => [
+				[
+					'key' => '_elementor_edit_mode',
+					'compare' => 'EXISTS',
+				],
+				[
+					'key' => '_elementor_import_session_id',
+					'value' => $data['session_id'],
+				],
+			],
+		];
+
+		$query = new \WP_Query( $query_args );
+
+		foreach ( $query->posts as $post ) {
+			$post_type_document = Plugin::$instance->documents->get( $post->ID );
+			$post_type_document->delete();
+		}
+
+		$this->restore_page_on_front( $data );
 	}
 
 	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms ) {
@@ -126,7 +167,15 @@ class Elementor_Content extends Runner_Base {
 
 		$post_data['import_settings'] = $post_settings;
 
+		$update_callback = function( $attachment_id ) {
+			$this->set_session_post_meta( $attachment_id, $this->import_session_id );
+		};
+
+		add_filter( 'elementor/template_library/import_images/new_attachment', $update_callback );
+
 		$new_document->import( $post_data );
+
+		remove_filter( 'elementor/template_library/import_images/new_attachment', $update_callback );
 
 		$new_post_id = $new_document->get_main_id();
 
@@ -137,6 +186,8 @@ class Elementor_Content extends Runner_Base {
 		if ( ! empty( $post_settings['show_on_front'] ) ) {
 			$this->set_page_on_front( $new_post_id );
 		}
+
+		$this->set_session_post_meta( $new_post_id, $this->import_session_id );
 
 		return $new_post_id;
 	}
@@ -253,5 +304,29 @@ class Elementor_Content extends Runner_Base {
 		if ( ! $this->show_page_on_front ) {
 			update_option( 'show_on_front', 'page' );
 		}
+	}
+
+	private function add_revert_data( array $result ) {
+		$result['revert_data']['elementor-content'] = [
+			'page_on_front' => ! empty( $this->page_on_front_id ) ? $this->page_on_front_id : null,
+		];
+
+		return $result;
+	}
+
+	private function restore_page_on_front() {
+		if ( empty( $data['runners']['elementor-content']['page_on_front'] ) ) {
+			return;
+		}
+
+		$page_on_front = $data['runners']['elementor-content']['page_on_front'];
+
+		$document = Plugin::$instance->documents->get( $page_on_front );
+
+		if ( ! $document ) {
+			return;
+		}
+
+		update_option( 'page_on_front', $page_on_front );
 	}
 }

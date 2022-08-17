@@ -7,6 +7,7 @@ use Elementor\Core\Utils\ImportExport\WP_Exporter;
 use Elementor\Core\Utils\ImportExport\WP_Import;
 
 class Wp_Content extends Runner_Base {
+	private $import_session_id;
 
 	public static function get_name() {
 		return 'wp-content';
@@ -28,7 +29,16 @@ class Wp_Content extends Runner_Base {
 		);
 	}
 
+	public function should_revert( array $data ) {
+		return (
+			isset( $data['runners'] ) &&
+			array_key_exists( 'wp-content', $data['runners'] )
+		);
+	}
+
 	public function import( array $data, array $imported_data ) {
+		$this->import_session_id = $data['session_id'];
+
 		$path = $data['extracted_directory_path'] . 'wp-content/';
 
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
@@ -57,6 +67,8 @@ class Wp_Content extends Runner_Base {
 			$result['wp-content'][ $post_type ] = $import;
 			$imported_data = array_merge( $imported_data, $result );
 		}
+
+		$result = $this->add_revert_data( $result, $selected_custom_post_types );
 
 		return $result;
 	}
@@ -95,12 +107,56 @@ class Wp_Content extends Runner_Base {
 		];
 	}
 
+	public function revert( array $data ) {
+		$builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
+		$custom_post_types = isset( $data['runners']['wp-content']['custom_post_types'] )
+			? $data['runners']['wp-content']['custom_post_types']
+			: [];
+
+		$post_types = array_merge( $builtin_post_types, $custom_post_types );
+
+		$query_args = [
+			'post_type' => $post_types,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'meta_query' => [
+				[
+					'key' => '_elementor_edit_mode',
+					'compare' => 'NOT EXISTS',
+				],
+				[
+					'key' => '_elementor_import_session_id',
+					'value' => $data['session_id'],
+				],
+			],
+		];
+
+		$query = new \WP_Query( $query_args );
+
+		foreach ( $query->posts as $post ) {
+			wp_delete_post( $post->ID, true );
+		}
+
+		/**
+		 * Revert the nav menu terms.
+		 * BC: The nav menu in new kits will be imported as part of the taxonomies, but old kits
+		 * importing the nav menu terms as part from the wp-content import.
+		 */
+		$this->revert_nav_menus( $data );
+	}
+
 	private function import_wp_post_type( $path, $post_type, array $imported_data, array $taxonomies, array $imported_terms ) {
 		$args = [
 			'fetch_attachments' => true,
 			'posts' => ImportExportUtils::map_old_new_post_ids( $imported_data ),
 			'terms' => $imported_terms,
 			'taxonomies' => ! empty( $taxonomies[ $post_type ] ) ? $taxonomies[ $post_type ] : [],
+			'posts_meta' => [
+				'_elementor_import_session_id' => $this->import_session_id,
+			],
+			'terms_meta' => [
+				'_elementor_import_session_id' => $this->import_session_id,
+			],
 		];
 
 		$file = $path . $post_type . '/' . $post_type . '.xml';
@@ -136,12 +192,38 @@ class Wp_Content extends Runner_Base {
 		];
 	}
 
+	private function add_revert_data( array $result, $selected_custom_post_types ) {
+		$result['revert_data']['wp-content'] = [
+			'custom_post_types' => $selected_custom_post_types,
+		];
+
+		return $result;
+	}
+
+	private function revert_nav_menus( array $data ) {
+		$terms = get_terms( [
+			'taxonomy' => 'nav_menu',
+			'hide_empty' => false,
+			'get' => 'all',
+			'meta_query' => [
+				[
+					'key'       => '_elementor_import_session_id',
+					'value'     => $data['session_id'],
+				],
+			],
+		] );
+
+		foreach ( $terms as $term ) {
+			wp_delete_term( $term->term_id, $term->taxonomy );
+		}
+	}
+
 	/**
 	 * @param $array array The array we want to relocate his element.
 	 * @param $element mixed The value of the element in the array we want to shift to end of the array.
 	 * @return mixed
 	 */
-	private function force_element_to_be_last_by_value( $array, $element ) {
+	private function force_element_to_be_last_by_value( array $array, $element ) {
 		$index = array_search( $element, $array, true );
 
 		if ( false !== $index ) {

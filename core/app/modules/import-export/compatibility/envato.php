@@ -50,6 +50,8 @@ class Envato extends Base_Adapter {
 			$manifest_data['templates'][ $file_name_without_extension ] = $template;
 		}
 
+		$manifest_data['name'] = $manifest_data['title'];
+
 		return $manifest_data;
 	}
 

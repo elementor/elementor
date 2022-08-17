@@ -4,6 +4,7 @@ namespace Elementor\Core\App\Modules\ImportExport\Runners;
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Taxonomies extends Runner_Base {
+	private $import_session_id;
 
 	public static function get_name() {
 		return 'taxonomies';
@@ -25,8 +26,16 @@ class Taxonomies extends Runner_Base {
 		);
 	}
 
+	public function should_revert( array $data ) {
+		return (
+			isset( $data['runners'] ) &&
+			array_key_exists( 'taxonomies', $data['runners'] )
+		);
+	}
+
 	public function import( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . 'taxonomies/';
+		$this->import_session_id = $data['session_id'];
 
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
@@ -41,6 +50,8 @@ class Taxonomies extends Runner_Base {
 
 			$result['taxonomies'][ $post_type ] = $this->import_taxonomies( $data['manifest']['taxonomies'][ $post_type ], $path );
 		}
+
+		$result = $this->add_revert_data( $result );
 
 		return $result;
 	}
@@ -60,6 +71,26 @@ class Taxonomies extends Runner_Base {
 				$manifest_data,
 			],
 		];
+	}
+
+	public function revert( array $data ) {
+		$taxonomies = get_taxonomies();
+
+		$terms = get_terms( [
+			'taxonomy' => $taxonomies,
+			'hide_empty' => false,
+			'get' => 'all',
+			'meta_query' => [
+				[
+					'key'       => '_elementor_import_session_id',
+					'value'     => $data['session_id'],
+				],
+			],
+		] );
+
+		foreach ( $terms as $term ) {
+			wp_delete_term( $term->term_id, $term->taxonomy );
+		}
 	}
 
 	private function import_taxonomies( array $taxonomies, $path ) {
@@ -120,6 +151,8 @@ class Taxonomies extends Runner_Base {
 
 			$new_term = wp_insert_term( wp_slash( $term['name'] ), $term['taxonomy'], $args );
 			if ( ! is_wp_error( $new_term ) ) {
+				$this->set_session_term_meta( (int) $new_term['term_id'], $this->import_session_id );
+
 				$terms[] = [
 					'old_id' => $term['term_id'],
 					'new_id' => (int) $new_term['term_id'],
@@ -217,6 +250,12 @@ class Taxonomies extends Runner_Base {
 		}
 
 		return $data;
+	}
+
+	private function add_revert_data( array $result ) {
+		$result['revert_data']['taxonomies'] = [];
+
+		return $result;
 	}
 
 	// Put terms in order with no child going before its parent.

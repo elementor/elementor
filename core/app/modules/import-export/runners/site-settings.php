@@ -25,12 +25,25 @@ class Site_Settings extends Runner_Base {
 		);
 	}
 
+	public function should_revert( array $data ) {
+		return (
+			isset( $data['runners'] ) &&
+			array_key_exists( 'site-settings', $data['runners'] )
+		);
+	}
+
 	public function import( array $data, array $imported_data ) {
 		$new_site_settings = $data['site_settings']['settings'];
 		$title = isset( $data['manifest']['title'] ) ? $data['manifest']['title'] : 'Imported Kit';
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$old_settings = $kit->get_meta( PageManager::META_KEY );
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
+		$active_kit_id = $active_kit->get_id();
+
+		$result = [];
+
+		$old_settings = $active_kit->get_meta( PageManager::META_KEY );
 
 		if ( ! $old_settings ) {
 			$old_settings = [];
@@ -47,6 +60,8 @@ class Site_Settings extends Runner_Base {
 		$new_site_settings = array_replace_recursive( $old_settings, $new_site_settings );
 
 		$new_kit = Plugin::$instance->kits_manager->create_new_kit( $title, $new_site_settings );
+
+		$result = $this->add_revert_data( $result, $previous_kit_id, $active_kit_id, $new_kit );
 
 		$result['site-settings'] = (bool) $new_kit;
 
@@ -83,5 +98,23 @@ class Site_Settings extends Runner_Base {
 				$manifest_data,
 			],
 		];
+	}
+
+	public function revert( array $data ) {
+		Plugin::$instance->kits_manager->revert(
+			$data['runners']['site-settings']['new_kit_id'],
+			$data['runners']['site-settings']['active_kit_id'],
+			$data['runners']['site-settings']['previous_kit_id']
+		);
+	}
+
+	private function add_revert_data( array $result, $previous_kit_id, $active_kit_id, $new_kit_id ) {
+		$result['revert_data']['site-settings'] = [
+			'previous_kit_id' => $previous_kit_id,
+			'active_kit_id' => $active_kit_id,
+			'new_kit_id' => $new_kit_id,
+		];
+
+		return $result;
 	}
 }

@@ -84,6 +84,16 @@ class WP_Import extends \WP_Importer {
 	private $featured_images = [];
 
 	/**
+	 * @var array[] [meta_key => meta_value] Meta value that should be set for every imported post.
+	 */
+	private $posts_meta = [];
+
+	/**
+	 * @var array[] [meta_key => meta_value] Meta value that should be set for every imported term.
+	 */
+	private $terms_meta = [];
+
+	/**
 	 * Parses filename from a Content-Disposition header value.
 	 *
 	 * As per RFC6266:
@@ -454,6 +464,10 @@ class WP_Import extends \WP_Importer {
 				if ( isset( $term['term_id'] ) ) {
 					$this->processed_terms[ (int) $term['term_id'] ] = $id['term_id'];
 					$result['succeed'][ (int) $term['term_id'] ] = $id['term_id'];
+
+					foreach ( $this->terms_meta as $meta_key => $meta_value ) {
+						update_term_meta( $id['term_id'], $meta_key, $meta_value );
+					}
 				}
 			} else {
 				/* translators: 1: Term taxonomy, 2: Term name. */
@@ -639,6 +653,11 @@ class WP_Import extends \WP_Importer {
 				$comment_post_id = $post_id;
 			} else {
 				$post_id = wp_insert_post( $postdata, true );
+
+				foreach ( $this->posts_meta as $meta_key => $meta_value ) {
+					update_post_meta( $post_id, $meta_key, $meta_value );
+				}
+
 				$comment_post_id = $post_id;
 				do_action( 'wp_import_insert_post', $post_id, $original_post_id, $postdata, $post );
 			}
@@ -689,6 +708,11 @@ class WP_Import extends \WP_Importer {
 						$t = wp_insert_term( $term['name'], $taxonomy, [ 'slug' => $term['slug'] ] );
 						if ( ! is_wp_error( $t ) ) {
 							$term_id = $t['term_id'];
+
+							foreach ( $this->terms_meta as $meta_key => $meta_value ) {
+								update_term_meta( $term_id, $meta_key, $meta_value );
+							}
+
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
 							/* translators: 1: Taxonomy name, 2: Term name. */
@@ -927,6 +951,10 @@ class WP_Import extends \WP_Importer {
 		if ( $id && ! is_wp_error( $id ) ) {
 			$this->processed_menu_items[ (int) $item['post_id'] ] = (int) $id;
 			$result[ $item['post_id'] ] = $id;
+
+			foreach ( $this->posts_meta as $meta_key => $meta_value ) {
+				update_post_meta( $id, $meta_key, $meta_value );
+			}
 		}
 
 		return $result;
@@ -966,6 +994,11 @@ class WP_Import extends \WP_Importer {
 
 		// As per wp-admin/includes/upload.php.
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
+
+		foreach ( $this->posts_meta as $meta_key => $meta_value ) {
+			update_post_meta( $post_id, $meta_key, $meta_value );
+		}
+
 		wp_update_attachment_metadata( $post_id, wp_generate_attachment_metadata( $post_id, $upload['file'] ) );
 
 		// Remap resized image URLs, works by stripping the extension and remapping the URL stub.
@@ -1289,6 +1322,14 @@ class WP_Import extends \WP_Importer {
 
 		if ( isset( $this->args['taxonomies'] ) && is_array( $this->args['taxonomies'] ) ) {
 			$this->processed_taxonomies = $this->args['taxonomies'];
+		}
+
+		if ( ! empty( $this->args['posts_meta'] ) ) {
+			$this->posts_meta = $this->args['posts_meta'];
+		}
+
+		if ( ! empty( $this->args['terms_meta'] ) ) {
+			$this->terms_meta = $this->args['terms_meta'];
 		}
 	}
 }

@@ -3,6 +3,7 @@ namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Core\App\Modules\ImportExport\Processes\Export;
 use Elementor\Core\App\Modules\ImportExport\Processes\Import;
+use Elementor\Core\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
@@ -51,6 +52,11 @@ class Module extends BaseModule {
 	public $import;
 
 	/**
+	 * @var Revert
+	 */
+	private $revert;
+
+	/**
 	 * Get name.
 	 *
 	 * @access public
@@ -67,6 +73,8 @@ class Module extends BaseModule {
 		if ( ElementorUtils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
 		}
+
+		( new Usage() )->register();
 	}
 
 	public function get_init_settings() {
@@ -135,11 +143,30 @@ class Module extends BaseModule {
 			],
 		];
 
-		$home_page_editor_url = $this->get_elementor_editor_home_page_url();
-		$editor_page_link = $home_page_editor_url ? $home_page_editor_url : $this->get_recently_edited_elementor_editor_page_url();
+		$this->revert = new Revert();
+		$last_imported_kit = $this->revert->get_last_session_data();
+		$penultimate_imported_kit = $this->revert->get_penultimate_session_data();
+		$date_format = 'd-m-Y H:i:s';
 
-		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>';
-		$info_text .= sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $editor_page_link . '#e:run:panel/global/open&e:route:panel/history/revisions', esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' ) );
+		if ( ! empty( $last_imported_kit ) ) {
+			if ( ! empty( $penultimate_imported_kit ) ) {
+				$revert_text = sprintf(
+					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
+					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					date( $date_format, $last_imported_kit['start_timestamp'] ),
+					'<br>',
+					! empty( $penultimate_imported_kit['kit_name'] ) ? $penultimate_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					date( $date_format, $penultimate_imported_kit['start_timestamp'] )
+				);
+			} else {
+				$revert_text = sprintf(
+					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
+					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					date( $date_format, $last_imported_kit['start_timestamp'] ),
+					'<br>'
+				);
+			}
+		}
 		?>
 
 		<div class="tab-import-export-kit__content">
@@ -160,7 +187,21 @@ class Module extends BaseModule {
 				<?php } ?>
 			</div>
 
-			<p class="tab-import-export-kit__info"><?php ElementorUtils::print_unescaped_internal_string( $info_text ); ?></p>
+			<?php if ( ! empty( $last_imported_kit ) ) { ?>
+				<div class="tab-import-export-kit__revert">
+					<h2><?php echo esc_html__( 'Remove the most recent Kit', 'elementor' ); ?></h2>
+					<p class="tab-import-export-kit__info">
+						<?php echo $revert_text; ?>
+					</p>
+					<?php
+					echo sprintf(
+						'<a id="elementor-import-export__revert_kit" href="%s" class="button">%s</a>',
+						wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
+						esc_html__( 'Remove Kit', 'elementor' )
+					);
+					?>
+				</div>
+			<?php } ?>
 		</div>
 		<?php
 	}
@@ -225,6 +266,20 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Handle revert kit ajax request.
+	 */
+	public function revert_last_imported_kit() {
+		check_admin_referer( 'elementor_revert_kit' );
+
+		$this->revert = new Revert();
+		$this->revert->register_default_runners();
+		$this->revert->run();
+
+		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
+		die;
+	}
+
+	/**
 	 * Register appropriate actions.
 	 */
 	private function register_actions() {
@@ -239,9 +294,26 @@ class Module extends BaseModule {
 			}
 		} );
 
+		add_action( 'admin_post_elementor_revert_kit', [ $this, 'revert_last_imported_kit' ] );
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+
 		$page_id = Tools::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+	}
+
+	/**
+	 * Enqueue admin scripts
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-import-export-admin',
+			$this->get_js_assets_url( 'import-export-admin' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	/**

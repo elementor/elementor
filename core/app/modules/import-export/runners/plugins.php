@@ -42,6 +42,10 @@ class Plugins extends Runner_Base {
 		);
 	}
 
+	public function should_revert( array $data ) {
+		return false;
+	}
+
 	public function import( array $data, array $imported_data ) {
 		$plugins = $data['selected_plugins'];
 
@@ -86,4 +90,6 @@ class Plugins extends Runner_Base {
 			'files' => [],
 		];
 	}
+
+	public function revert( array $data ) {}
 }

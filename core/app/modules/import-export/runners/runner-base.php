@@ -3,6 +3,7 @@
 namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
 abstract class Runner_Base {
+	const IMPORT_SESSION_META_KEY = '_elementor_import_session_id';
 
 	/**
 	 * @return string
@@ -30,6 +31,15 @@ abstract class Runner_Base {
 	abstract public function should_export( array $data );
 
 	/**
+	 * By the passed data we should decide if we want to run the revert function of the runner or not.
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
+	abstract public function should_revert( array $data );
+
+	/**
 	 * Main function of the runner import process.
 	 *
 	 * @param array $data Necessary data for the import process.
@@ -48,4 +58,19 @@ abstract class Runner_Base {
 	 * The files that should be part of the kit and the relevant manifest data.
 	 */
 	abstract public function export( array $data );
+
+	/**
+	 * Main function of the runner revert process.
+	 *
+	 * @param array $data Necessary data for the revert process.
+	 */
+	abstract public function revert( array $data );
+
+	public function set_session_post_meta( $post_id, $meta_value ) {
+		update_post_meta( $post_id, static::IMPORT_SESSION_META_KEY, $meta_value );
+	}
+
+	public function set_session_term_meta( $term_id, $meta_value ) {
+		update_term_meta( $term_id, static::IMPORT_SESSION_META_KEY, $meta_value );
+	}
 }

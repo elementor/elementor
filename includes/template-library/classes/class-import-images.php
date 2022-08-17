@@ -181,6 +181,8 @@ class Import_Images {
 
 		$post_id = wp_insert_attachment( $post, $upload['file'], $parent_post_id );
 
+		apply_filters( 'elementor/template_library/import_images/new_attachment', $post_id );
+
 		// On REST requests.
 		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
 			require_once ABSPATH . '/wp-admin/includes/image.php';

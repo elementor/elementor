@@ -194,8 +194,9 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 1, $result );
+		$this->assertCount( 2, $result );
 		$this->assertTrue( $result['site-settings'] );
+		$this->assertTrue( is_array( $result['revert_data']['site-settings'] ) );
 
 		$new_active_kit = Plugin::$instance->kits_manager->get_active_kit();
 		$this->assertEquals( 'Imported Kit', $new_active_kit->get_post()->post_title );
@@ -232,8 +233,9 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 1, $result );
+		$this->assertCount( 2, $result );
 		$this->assert_valid_taxonomies( $result );
+		$this->assertTrue( is_array( $result['revert_data']['taxonomies'] ) );
 	}
 
 	public function test_run__import_taxonomies_with_register_custom_taxonomies() {
@@ -251,8 +253,9 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 1, $result );
+		$this->assertCount( 2, $result );
 		$this->assert_valid_taxonomies( $result );
+		$this->assertTrue( is_array( $result['revert_data']['taxonomies'] ) );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -277,9 +280,11 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 1, $result );
+		$this->assertCount( 2, $result );
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
 		$this->assertCount( 1, $result['content']['page']['succeed'] );
+
+		$this->assertTrue( is_array( $result['revert_data']['elementor-content'] ) );
 
 		$this->assert_valid_elementor_content( $result, $manifest, $zip_path );
 	}
@@ -298,12 +303,14 @@ class Test_Import extends Elementor_Test_Base {
 		// Act
 		$result = $import->run();
 
-		$this->assertCount( 1, $result );
+		$this->assertCount( 2, $result );
 		$this->assertCount( 1, $result['wp-content']['post']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['page']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['tests']['succeed'] );
 		$this->assertCount( 4, $result['wp-content']['nav_menu_item']['succeed'] );
 		$this->assertFalse( isset( $result['wp-content']['sectests'] ) );
+
+		$this->assertTrue( is_array( $result['revert_data']['wp-content'] ) );
 
 		unregister_post_type( 'tests' );
 	}
@@ -440,7 +447,7 @@ class Test_Import extends Elementor_Test_Base {
 	// The "JSON" is located in the content folder inside the kit.
 	private function assert_valid_elementor_content( $result, $manifest, $zip_path) {
 		$import_process_tmp_dir = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path )['extraction_directory'];
-		
+
 		foreach ( $manifest['content'] as $elementor_post_type => $elementor_posts ) {
 			foreach ( $elementor_posts as $post_id => $post_settings ) {
 				$expected_post_data = ImportExportUtils::read_json_file( $import_process_tmp_dir . '/content/' . $elementor_post_type . '/' . $post_id );
