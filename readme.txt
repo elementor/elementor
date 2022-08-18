@@ -240,7 +240,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
-= 3.7.2 - 2022-08-17 =
+= 3.7.2 - 2022-08-21 =
 * Fix: Motion Effects applied to a Column in any global Theme Builder template prevent Elementor editor to load ([#19390](https://github.com/elementor/elementor/issues/19390))
 * Fix: Experiments - Learn more button does not open the Help center in the notice ([#19448](https://github.com/elementor/elementor/issues/19448))
 * Fix: Widget width is not working as expected on frontend In Container element ([#19398](https://github.com/elementor/elementor/issues/19398))
