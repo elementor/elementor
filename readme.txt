@@ -243,7 +243,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 = 3.7.2 - 2022-08-21 =
 * Fix: Motion Effects applied to a Column in any global Theme Builder template prevent Elementor editor to load ([#19390](https://github.com/elementor/elementor/issues/19390))
 * Fix: Experiments - Learn more button does not open the Help center in the notice ([#19448](https://github.com/elementor/elementor/issues/19448))
-* Fix: Widget width is not working as expected on frontend In Container element ([#19398](https://github.com/elementor/elementor/issues/19398))
+* Fix: Widget width is not working as expected on frontend in Container element ([#19398](https://github.com/elementor/elementor/issues/19398))
 * Fix: Horizontal scrolling appears in the edit area when viewing it with different devices ([#19049](https://github.com/elementor/elementor/issues/19049))
 * Fix: Default Flex Grow affects the layout when the Container element is set to direction Colum in Divider widget ([#19325](https://github.com/elementor/elementor/issues/19325))
 * Fix: Background Fallback image is hiding the background video in Container element ([#19413](https://github.com/elementor/elementor/issues/19413))
