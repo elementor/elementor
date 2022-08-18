@@ -408,11 +408,6 @@ class Server extends Base {
 	}
 
 	/**
-	 * Get permissions by keys. If empty keys, get all permissions.
-	 * Be aware that you can only use key paths that are defined in the get_paths() method.
-	 *
-	 * @since 3.7.0
-	 *
 	 * @return array []{read: bool, write: bool, execute: bool}
 	 */
 	public function get_system_paths_permissions() : array {
