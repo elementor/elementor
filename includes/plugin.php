@@ -703,9 +703,6 @@ class Plugin {
 
 		Settings_Manager::run();
 
-		$this->admin_menu_manager = new Admin_Menu_Manager();
-		$this->admin_menu_manager->register_actions();
-
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
 		$this->documents = new Documents_Manager();
