@@ -1,5 +1,5 @@
 name: Publish Cloud
-# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_CHANNELS, MAINTAIN_TOKEN
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
 on: 
   workflow_dispatch:
@@ -7,6 +7,11 @@ on:
       version:
         description: 'Release branch version'
         required: false
+      pre_release:
+        type: boolean
+        description: 'Is this a pre-release?'
+        required: false
+
 
 jobs:
   bump-version:
@@ -32,6 +37,22 @@ jobs:
         uses: ./.github/workflows/get-next-release-branch
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
+      - name: Checkout next release branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.RELEASE_BRANCH }}
+      - name: Get Current SHA
+        shell: bash
+        run: |
+          echo $(git rev-parse HEAD)
+          echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      - name: Validate Run Checks
+        uses : ./.github/workflows/validate-run-checks
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          CURRENT_SHA: ${{ env.CURRENT_SHA }}
+          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Bump version
         id: bump_version_step
         uses: ./.github/workflows/bump-version
@@ -94,7 +115,7 @@ jobs:
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          prerelease: true
+          prerelease: ${{ github.event.inputs.pre_release }}
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

@@ -1,7 +1,6 @@
 // Common.
 // eslint-disable-next-line no-unused-vars
 const elementorCommonConfig = {
-	isTesting: true,
 	activeModules: [ 'ajax' ],
 	ajax: { url: '-' },
 	i18n: {},

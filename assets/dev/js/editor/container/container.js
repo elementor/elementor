@@ -4,18 +4,11 @@ import ChildrenArray from './model/children-array';
 
 /**
  * @typedef {import('../../../../lib/backbone/backbone.marionette')} Backbone
- */
-/**
  * @typedef {import('../../../../lib/backbone/backbone.marionette')} Marionette
- */
-/**
  * @typedef {import('../elements/views/base')} BaseElementView
- */
-/**
  * @typedef {import('../elements/views/section')} SectionView
- */
-/**
  * @typedef {import('../views/base-container')} BaseContainer
+ * @typedef {import('../elements/models/base-element-model')} BaseElementModel
  */
 /**
  * TODO: ViewsOptions
@@ -52,7 +45,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container model.
 	 *
-	 * @type {Backbone.Model}
+	 * @type {(Backbone.Model|BaseElementModel)}
 	 */
 	model;
 
@@ -199,6 +192,11 @@ export default class Container extends ArgsObject {
 
 		this.requireArgumentInstance( 'settings', Backbone.Model, args );
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
+
+		// Require it, unless it's forced to be `false`.
+		if ( false !== args.parent ) {
+			this.requireArgumentInstance( 'parent', elementorModules.editor.Container, args );
+		}
 	}
 
 	/**
@@ -236,7 +234,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Function getAffectingControls().
 	 *
-	 * Should return all controls that effecting the container.
+	 * @return {{}} All controls that effecting the container.
 	 */
 	getAffectingControls() {
 		const result = {},
@@ -280,6 +278,26 @@ export default class Container extends ArgsObject {
 
 			result[ controlName ] = control;
 		} );
+
+		return result;
+	}
+
+	/**
+	 * Function getParentAncestry().
+	 *
+	 * Recursively run over all parents from current container till the top
+	 *
+	 * @return {Array.<Container>} All parent as flat array.
+	 */
+	getParentAncestry() {
+		const result = [];
+
+		let parent = this;
+
+		while ( parent ) {
+			result.push( parent );
+			parent = parent.parent;
+		}
 
 		return result;
 	}
@@ -357,7 +375,7 @@ export default class Container extends ArgsObject {
 			if ( 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
-						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						elementorDevTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
 						return this.repeaters[ repeaters[ 0 ].name ].children;
 					},
 				} );
@@ -451,7 +469,7 @@ export default class Container extends ArgsObject {
 	}
 
 	findChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.findRecursive( callback )',
@@ -461,7 +479,7 @@ export default class Container extends ArgsObject {
 	}
 
 	forEachChildrenRecursive( callback ) {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
 			'3.5.0',
 			'container.children.forEachRecursive( callback )',
@@ -550,7 +568,7 @@ export default class Container extends ArgsObject {
 
 		let value;
 
-		// it's a global settings with additional controls in group.
+		// It's a global settings with additional controls in group.
 		if ( control.groupType ) {
 			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
 			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();

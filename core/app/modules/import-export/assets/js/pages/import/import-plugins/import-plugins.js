@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../context/import-context/import-context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -18,17 +19,20 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import usePlugins, { PLUGIN_STATUS_MAP } from '../../../hooks/use-plugins';
 import usePluginsData from '../../../hooks/use-plugins-data';
 import useImportPluginsData from './hooks/use-import-plugins-data';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './import-plugins.scss';
 
 export default function ImportPlugins() {
 	const importContext = useContext( ImportContext ),
+		sharedContext = useContext( SharedContext ),
 		navigate = useNavigate(),
 		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
 		{ response, pluginsActions } = usePlugins(),
 		{ pluginsData } = usePluginsData( response.data ),
 		{ importPluginsData } = useImportPluginsData( kitPlugins, pluginsData ),
 		{ missing, existing, minVersionMissing, proData } = importPluginsData || {},
+		{ referrer, currentPage } = sharedContext.data || {},
 		handleRequiredPlugins = () => {
 			if ( missing.length ) {
 				// Saving globally the plugins data that the kit requires in order to work properly.
@@ -45,6 +49,18 @@ export default function ImportPlugins() {
 			if ( proData && ! elementorAppConfig.hasPro ) {
 				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
+		},
+		eventTracking = ( command ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						page_source: 'import',
+						step: currentPage,
+						event_type: 'click',
+					},
+				);
+			}
 		};
 
 	// On load.
@@ -52,6 +68,7 @@ export default function ImportPlugins() {
 		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportPlugins.name } );
 	}, [] );
 
 	// On plugins data ready.
@@ -66,7 +83,10 @@ export default function ImportPlugins() {
 	}, [ importPluginsData ] );
 
 	return (
-		<Layout type="export" footer={ <ImportPluginsFooter /> }>
+		<Layout type="import" footer={ <ImportPluginsFooter
+			onPreviousClick={ () => eventTracking( 'kit-library/go-back' ) }
+			onNextClick={ () => eventTracking( 'kit-library/approve-selection' ) }
+		/> } >
 			<section className="e-app-import-plugins">
 				{ ! importPluginsData && <Loader absoluteCenter />	}
 

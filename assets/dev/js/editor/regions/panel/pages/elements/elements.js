@@ -170,7 +170,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	focusSearch() {
-		if ( ! elementor.userCan( 'design' ) || ! this.search /* default panel is not elements */ || ! this.search.currentView /* on global elements empty */ ) {
+		if ( ! elementor.userCan( 'design' ) || ! this.search /* Default panel is not elements */ || ! this.search.currentView /* On global elements empty */ ) {
 			return;
 		}
 

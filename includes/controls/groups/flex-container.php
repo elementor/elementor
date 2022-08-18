@@ -19,30 +19,43 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields = [];
 
+		$fields['items'] = [
+			'type' => Controls_Manager::HEADING,
+			'label' => esc_html__( 'Items', 'elementor' ),
+			'separator' => 'before',
+		];
+
 		$fields['direction'] = [
 			'label' => esc_html_x( 'Direction', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'row' => [
-					'title' => esc_html_x( 'Row', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Row - horizontal', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-' . $end,
 				],
 				'column' => [
-					'title' => esc_html_x( 'Column', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Column - vertical', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-down',
 				],
 				'row-reverse' => [
-					'title' => esc_html_x( 'Reversed Row', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Row - reversed', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-' . $start,
 				],
 				'column-reverse' => [
-					'title' => esc_html_x( 'Reversed Column', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Column - reversed', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-arrow-up',
 				],
 			],
 			'default' => '',
+			// The `--container-widget-width` CSS variable is used for handling widgets that get an undefined width in column mode.
+			'selectors_dictionary' => [
+				'row' => '--flex-direction: row; --container-widget-width: initial; --container-widget-height: 100%;',
+				'column' => '--flex-direction: column; --container-widget-width: 100%; --container-widget-height: initial;',
+				'row-reverse' => '--flex-direction: row-reverse; --container-widget-width: initial; --container-widget-height: 100%;',
+				'column-reverse' => '--flex-direction: column-reverse; --container-widget-width: 100%; --container-widget-height: initial;',
+			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--flex-direction: {{VALUE}};',
+				'{{SELECTOR}}' => '{{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -72,34 +85,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 		];
 
-		$fields['align_items'] = [
-			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'default' => '',
-			'options' => [
-				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
-				],
-				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
-				],
-				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
-				],
-				'stretch' => [
-					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
-				],
-			],
-			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
-			],
-			'responsive' => true,
-		];
-
 		$fields['justify_content'] = [
 			'label' => esc_html_x( 'Justify Content', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
@@ -107,7 +92,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'flex-start' => [
-					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'Start', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-start-h',
 				],
 				'center' => [
@@ -115,7 +100,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'icon' => 'eicon-flex eicon-justify-center-h',
 				],
 				'flex-end' => [
-					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html_x( 'End', 'Flex Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-end-h',
 				],
 				'space-between' => [
@@ -137,6 +122,34 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		$fields['align_items'] = [
+			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'default' => '',
+			'options' => [
+				'flex-start' => [
+					'title' => esc_html_x( 'Start', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-start-v',
+				],
+				'center' => [
+					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-center-v',
+				],
+				'flex-end' => [
+					'title' => esc_html_x( 'End', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-end-v',
+				],
+				'stretch' => [
+					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-stretch-v',
+				],
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
+			],
+			'responsive' => true,
+		];
+
 		$fields['gap'] = [
 			'label' => esc_html_x( 'Gap', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
@@ -153,8 +166,12 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'min' => 0,
 					'max' => 100,
 				],
+				'em' => [
+					'min' => 0,
+					'max' => 50,
+				],
 			],
-			'size_units' => [ 'px', '%', 'vw' ],
+			'size_units' => [ 'px', '%', 'vw', 'em' ],
 			'selectors' => [
 				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
 			],
@@ -175,7 +192,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'description' => esc_html_x(
-				'Define whether the items are forced in a single line (No Wrap) or can be flowed into multiple lines (Wrap)',
+				'Items within the container can stay in a single line (No wrap), or break into multiple lines (Wrap).',
 				'Flex Container Control',
 				'elementor'
 			),

@@ -5,9 +5,15 @@ export default function Collapse( props ) {
 	return (
 		<div
 			className={ `eps-collapse ${ props.className }` }
-			data-open={ props.isOpen || undefined /* set `undefined` when 'isOpen' equals `false` to avoid showing the attr "data-open" */ }
+			data-open={ props.isOpen || undefined /* Set `undefined` when 'isOpen' equals `false` to avoid showing the attr "data-open" */ }
 		>
-			<button className="eps-collapse__title" onClick={ () => props.onChange( ( value ) => ! value ) }>
+			<button
+				className="eps-collapse__title"
+				onClick={ () => {
+					props.onChange( ( value ) => ! value );
+					props.onClick?.( props.isOpen, props.title );
+				} }
+			>
 				<span>{ props.title }</span>
 				<i className="eicon-chevron-right eps-collapse__icon" />
 			</button>
@@ -23,6 +29,7 @@ Collapse.propTypes = {
 	onChange: PropTypes.func,
 	className: PropTypes.string,
 	title: PropTypes.node,
+	onClick: PropTypes.func,
 	children: PropTypes.oneOfType( [
 		PropTypes.node,
 		PropTypes.arrayOf( PropTypes.node ),
