@@ -297,8 +297,7 @@ class Server extends Base {
 
 	/**
 	 * Get write permissions.
-	 * Check whether the required paths have writing permissions.
-	 * Do not use this function if you want the check write permissions use get_permissions() instead.
+	 * Check whether the required paths for have writing permissions.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -311,7 +310,7 @@ class Server extends Base {
 	 *                          folders don't have writing permissions, False otherwise.
 	 * }
 	 */
-	public function get_write_permissions(): array {
+	public function get_write_permissions() : array {
 		$paths_to_check = [
 			static::KEY_PATH_WP_ROOT_DIR => 'WordPress root directory',
 			static::KEY_PATH_HTACCESS_FILE => '.htaccess file',
@@ -319,7 +318,11 @@ class Server extends Base {
 			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => 'Elementor uploads directory',
 		];
 
-		$permissions = $this->get_permissions( array_keys( $paths_to_check ) );
+		$permissions = $this->get_system_paths_permissions();
+
+		$permissions = array_filter( $permissions, function ( $key ) use ( $paths_to_check ) {
+			return array_key_exists( $key, $paths_to_check );
+		}, ARRAY_FILTER_USE_KEY  );
 
 		$write_problems = [];
 
@@ -410,18 +413,14 @@ class Server extends Base {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param array $key_paths
-	 * @return array {read: bool, write: bool, execute: bool}
+	 * @return array []{read: bool, write: bool, execute: bool}
 	 */
-	public function get_permissions( array $key_paths = [] ):array {
-		$paths = $this->get_paths();
-		$all_key_paths = array_keys( $paths );
-
-		$key_paths = empty( $key_paths ) ? $all_key_paths : array_intersect( $key_paths, $all_key_paths );
+	public function get_system_paths_permissions() : array {
+		$paths = $this->get_system_paths();
 
 		$permissions = [];
 
-		foreach ( $key_paths as $key_path ) {
+		foreach ( array_keys( $paths ) as $key_path ) {
 			$path = $paths[ $key_path ];
 
 			$permissions[ $key_path ] = $this->get_path_permissions( $path );
@@ -435,7 +434,7 @@ class Server extends Base {
 	 *
 	 * @return array
 	 */
-	private function get_paths(): array {
+	public function get_system_paths() : array {
 		return [
 			static::KEY_PATH_WP_ROOT_DIR => ABSPATH,
 			static::KEY_PATH_HTACCESS_FILE => file_exists( ABSPATH . '/.htaccess' ) ? ABSPATH . '/.htaccess' : '',
@@ -449,7 +448,7 @@ class Server extends Base {
 	 * @param $path
 	 * @return array{read: bool, write: bool, execute: bool}
 	 */
-	private function get_path_permissions( $path ): array {
+	public function get_path_permissions( $path ) : array {
 		if ( empty( $path ) ) {
 			return [
 				'read' => false,
