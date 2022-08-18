@@ -734,6 +734,9 @@ class Plugin {
 		$this->assets_loader = new Assets_Loader();
 		$this->uploads_manager = new Uploads_Manager();
 
+		$this->admin_menu_manager = new Admin_Menu_Manager();
+		$this->admin_menu_manager->register_actions();
+
 		User::init();
 		Api::init();
 		Tracker::init();

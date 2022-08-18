@@ -18,6 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends Base_Module {
 
+	public static function is_active() {
+		return ! Utils::has_pro();
+	}
+
 	public function get_name() {
 		return 'promotions';
 	}
@@ -43,10 +47,6 @@ class Module extends Base_Module {
 			wp_redirect( Go_Pro_Promotion_Item::URL );
 			die;
 		}
-	}
-
-	public static function is_active() {
-		return ! Utils::has_pro() || version_compare( ELEMENTOR_PRO_VERSION, '3.7.3', '>' );
 	}
 
 	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
