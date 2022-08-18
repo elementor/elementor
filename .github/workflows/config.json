@@ -1,7 +1,7 @@
 {
   "deployment" : { 
     "repository" : "elementor",
-    "envirement" : "prod",
-    "permitted" : "KingYes,shilo-ey,matipojo,"
+    "environment" : "prod",
+    "permitted" : "KingYes,shilo-ey,matipojo"
   }
 }
