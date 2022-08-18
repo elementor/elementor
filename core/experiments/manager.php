@@ -3,6 +3,7 @@ namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -538,32 +539,61 @@ class Manager extends Base_Object {
 	 * @param array $feature
 	 */
 	private function render_feature_settings_field( array $feature ) {
+		$control_id = 'e-experiment-' . $feature['name'];
+		$control_name = $this->get_feature_option_key( $feature['name'] );
+
+		$status = sprintf(
+			esc_html__( 'Status: %s', 'elementor' ),
+			$this->release_statuses[ $feature['release_status'] ]
+		);
+
 		?>
 		<div class="e-experiment__content">
-			<select id="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" class="e-experiment__select" name="<?php echo $this->get_feature_option_key( $feature['name'] ); ?>">
+			<select class="e-experiment__select"
+				id="<?php esc_attr( $control_id ); ?>"
+				name="<?php echo esc_attr( $control_name ); ?>"
+				data-experiment-id="<?php echo esc_attr( $feature['name'] ); ?>"
+			>
 				<?php foreach ( $this->states as $state_key => $state_title ) { ?>
-					<option value="<?php echo $state_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" <?php selected( $state_key, $feature['state'] ); ?>><?php echo $state_title; ?></option>
+					<option value="<?php echo esc_attr( $state_key ); ?>"
+						<?php selected( $state_key, $feature['state'] ); ?>
+					>
+						<?php echo esc_html( $state_title ); ?>
+					</option>
 				<?php } ?>
 			</select>
-			<p class="description"><?php echo $feature['description']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+
+			<p class="description">
+				<?php Utils::print_unescaped_internal_string( $feature['description'] ); ?>
+			</p>
+
+			<?php $this->render_feature_dependency( $feature ); ?>
+
 			<?php if ( 'stable' !== $feature['release_status'] ) { ?>
-				<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+				<div class="e-experiment__status">
+					<?php echo esc_html( $status ); ?>
+				</div>
 			<?php } ?>
 		</div>
-		<?php $this->render_feature_dependency( $feature );
+		<?php
 	}
 
 	private function render_feature_dependency( $feature ) {
-		if ( ! empty( $feature['dependencies'] ) ) {
-			?>
-			<div class="e-experiment__dependency">
-				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on', 'elementor' ); ?>:</strong>
-			<?php foreach ( $feature['dependencies'] as $dependency ) : ?>
-				<span class="e-experiment__dependency__item"><?php Utils::print_unescaped_internal_string( $dependency->get_name() ); ?></span>
-			<?php endforeach; ?>
-			</div>
-			<?php
+		if ( empty( $feature['dependencies'] ) ) {
+			return;
 		}
+
+		$dependencies = ( new Collection( $feature['dependencies'] ) )
+			->map( function ( $dependency ) {
+				return $dependency->get_title();
+			} )
+			->implode( ', ' );
+		?>
+			<div class="e-experiment__dependency">
+				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Requires', 'elementor' ); ?>:</strong>
+				<span><?php echo esc_html( $dependencies ); ?></span>
+			</div>
+		<?php
 	}
 
 	/**
@@ -742,7 +772,7 @@ class Manager extends Base_Object {
 				}
 			}
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
-			// Validate if current feature that goes 'inactive' is not a dependency of current active feature.
+			// Make sure to deactivate a dependant experiment of the current feature when it's deactivated.
 			foreach ( $this->get_features() as $current_feature ) {
 				if ( empty( $current_feature['dependencies'] ) ) {
 					continue;
@@ -752,16 +782,7 @@ class Manager extends Base_Object {
 
 				foreach ( $current_feature['dependencies'] as $dependency ) {
 					if ( self::STATE_ACTIVE === $current_feature_state && $feature['name'] === $dependency->get_name() ) {
-						$rollback( $feature_option_key, self::STATE_ACTIVE );
-
-						/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
-						throw new Exceptions\Dependency_Exception(
-							sprintf(
-								esc_html__( 'Cannot turn off `%1$s`, Experiment: `%2$s` is still active!', 'elementor' ),
-								$feature['name'],
-								$current_feature['name']
-							)
-						);
+						update_option( $this->get_feature_option_key( $current_feature['name'] ), static::STATE_INACTIVE );
 					}
 				}
 			}

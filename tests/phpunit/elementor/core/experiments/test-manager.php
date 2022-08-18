@@ -281,7 +281,7 @@ class Test_Manager extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_test_validate_dependency__ensure_depend_cannot_be_activated_if_dependency_is_inactive() {
+	public function test_validate_dependency__deactivate_experiment_when_its_dependency_is_inactivated() {
 		// Arrange.
 		$test_feature_data_a = [
 			'name' => Module_A::instance()->get_name(),
@@ -300,14 +300,16 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->add_test_feature( $test_feature_data_b );
 		$this->experiments->set_feature_default_state( $test_feature_data_b['name'], Experiments_Manager::STATE_ACTIVE );
 
-		// Assert.
-		$this->expectException( \WPDieException::class );
-		$this->expectExceptionMessage( '<p>Cannot turn off `module-b`, Experiment: `module-a` is still active!</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor#tab-experiments\'">Back</a></p>' );
-
 		// Act.
 		update_option(
 			$this->experiments->get_feature_option_key( $test_feature_data_b['name'] ),
 			Experiments_Manager::STATE_INACTIVE
+		);
+
+		// Assert.
+		$this->assertEquals(
+			Experiments_Manager::STATE_INACTIVE,
+			get_option( $this->experiments->get_feature_option_key( $test_feature_data_a['name'] ) )
 		);
 	}
 

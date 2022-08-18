@@ -17,6 +17,10 @@ class Wrap_Core_Dependency {
 		return $this->feature_data['name'];
 	}
 
+	public function get_title() {
+		return $this->feature_data['title'];
+	}
+
 	public static function instance( $feature_data ) {
 		return new static( $feature_data );
 	}
