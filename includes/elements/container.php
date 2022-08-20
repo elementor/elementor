@@ -1085,7 +1085,7 @@ class Container extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
 					],
 				]
 			);
@@ -1104,7 +1104,7 @@ class Container extends Element_Base {
 						"shape_divider_$side!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
 					],
 				]
 			);
@@ -1118,7 +1118,7 @@ class Container extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
 					],
 				]
 			);
@@ -1142,7 +1142,7 @@ class Container extends Element_Base {
 					'label' => esc_html__( 'Bring to Front', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
+						"{{WRAPPER}} > .elementor-shape-$side, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
 					],
 					'condition' => [
 						"shape_divider_$side!" => '',

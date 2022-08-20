@@ -27,7 +27,6 @@
 	--overflow: visible;
 	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
-
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
@@ -38,13 +37,12 @@
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
 	min-width: 0;
+	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
 	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
 	padding-left: var( --padding-left );
 	padding-right: var( --padding-right );
-	padding-top: var( --padding-top );
-	padding-bottom: var( --padding-bottom );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: var( --transition );
@@ -52,16 +50,17 @@
 	&--width-full, & > .e-container__inner {
 		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
+		padding-top: var( --padding-top );
+		padding-bottom: var( --padding-bottom );
 	}
 
 	&, & > .e-container__inner {
 		display: var( --display );
-		min-height: var( --min-height );
 	}
 
 	// Set default values to the outer div of the boxed container (ED-7867).
 	&--width-boxed {
-		flex-direction: initial;
+		flex-direction: column;
 		text-align: initial;
 		flex-wrap: initial;
 		justify-content: initial;
@@ -78,12 +77,14 @@
 		gap: var( --gap );
 		width: 100%;
 		max-width: var( --content-width );
-		margin-inline: auto;
-		height: 100%;
+		margin: 0 auto;
+		padding-inline: 0;
+		height: 100%;	
 
 		// Set default values to the inner div of the boxed container (ED-7867).
 		flex-basis: initial;
-		flex-grow: initial;
+		// Ensure that the inner div covers the full height of the container (ED-7867).
+		flex-grow: 1;
 		flex-shrink: initial;
 		align-self: initial;
 	}
@@ -163,19 +164,68 @@
 
 	&.e-container--column {
 
-		&, & > .e-container__inner {
+		& > .elementor-widget-placeholder {
 
+			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
+			&:nth-last-child( 2 ) {
+				margin-block-start: calc( 2 * var( --margin-start ) );
+				--margin-end: 0;
+			}
+		}
+
+		&, & > .e-container__inner {
+			
 			> .elementor-widget-placeholder {
 				height: var( --size );
 				// To make sure that it doesn't push & break the layout when appearing.
 				margin-block-start: var( --margin-start );
 				margin-block-end: var( --margin-end );
 				animation-name: dnd-placeholder-widget-horizontal;
-		
-				// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
-				&:nth-last-child( 2 ) {
-					margin-block-start: calc( 2 * var( --margin-start ) );
-					--margin-end: 0;
+			}
+		}
+
+		& > .e-container__inner {
+
+			// Hack to increase the dragable element size of the elements inside the `boxed width` container (ED-7867).
+			& > .e-container__inner > .elementor-html5dnd-current-element:not( .elementor-element-editable ) {
+				--spacer-size: 15px;
+				position: relative;
+
+				&:before, &:after {
+					position: absolute;
+					inset-inline: 0;
+					height: var( --spacer-size );
+					width: 100%;
+				}
+
+				&::before {
+					content: '';
+					top: calc( -1 * var( --spacer-size ) );
+				}
+
+				&::after {
+					content: '';
+					bottom: calc( -1 * var( --spacer-size ) );
+				}
+			}
+
+			& > div:last-child {
+
+				// Increase the space of the bottom placeholder (ED-7867).
+				&.elementor-widget-placeholder {
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		&.e-container--width-boxed {
+
+			// Hide the first placeholder in case multiple placeholders are displayed (ED-7867).
+			& > .elementor-widget-placeholder {
+				display: none;
+
+				&:last-of-child {
+					display: block;
 				}
 			}
 		}
@@ -250,8 +300,10 @@
 
 	// Inner Container handle.
 	// TODO: Find a better solution.
-	& > &, .elementor-widget & {
+	& > &, &__inner > &, .elementor-widget & {
 		> .elementor-element-overlay {
+			opacity: 8;
+
 			.elementor-editor-element-setting {
 				position: relative;
 				background-color: $editor-darker;

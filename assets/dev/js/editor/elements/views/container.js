@@ -122,7 +122,7 @@ const ContainerView = BaseElementView.extend( {
 	getDroppableOptions() {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
 			? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add'
-			: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+			: '> .elementor-element, > .elementor-empty-view > .elementor-first-add';
 
 		return {
 			axis: this.getDroppableAxis(),
