@@ -1,4 +1,5 @@
 var NewTemplateView = require( 'elementor-admin/new-template/view' );
+import LockPro from './behaviors/lock-pro';
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 
@@ -20,6 +21,26 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.showLogo();
 
 		this.showContentView();
+
+		this.initElements();
+
+		this.lockProBehavior = new LockPro( this.elements );
+		this.lockProBehavior.bindEvents();
+	},
+
+	initElements() {
+		const container = this.$el[ 0 ],
+			root = '#elementor-new-template__form';
+
+		this.elements = {
+			form: container.querySelector( root ),
+			submitButton: container.querySelector( `${ root }__submit` ),
+			lockButton: container.querySelector( `${ root }__lock_button` ),
+			templateType: container.querySelector( `${ root }__template-type` ),
+			lockBadge: container.querySelector( `${ root }__template-type-badge` ),
+			lockBadgeText: container.querySelector( `${ root }__template-type-badge__text` ),
+			lockBadgeIcon: container.querySelector( `${ root }__template-type-badge__icon` ),
+		};
 	},
 
 	showContentView() {
