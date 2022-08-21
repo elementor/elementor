@@ -82,6 +82,29 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
 	}
 
+	public function test_feature_can_be_added_as_hidden() {
+		// Act
+		$args = [ 'hidden' => true ];
+		$this->add_test_feature( $args );
+
+		// Assert
+		$feature = $this->experiments->get_features( 'test_feature' );
+		$this->assertNotEmpty( $feature );
+		$this->assertTrue( $feature['hidden'] );
+	}
+
+	public function test_features_are_added_as_not_hidden_by_default() {
+		// Act
+		$this->add_test_feature();
+
+		// Assert
+		$features = $this->experiments->get_features();
+		$this->assertNotEmpty( $features );
+		foreach ( $features as $feature ) {
+			$this->assertFalse( $feature['hidden'] );
+		}
+	}
+
 	public function test_get_features() {
 		$experiments = $this->experiments;
 
