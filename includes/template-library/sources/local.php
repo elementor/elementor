@@ -1547,9 +1547,6 @@ class Source_Local extends Source_Base {
 		if ( is_admin() ) {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu( $admin_menu );
-			} );
-
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu_reorder( $admin_menu );
 			} );
 

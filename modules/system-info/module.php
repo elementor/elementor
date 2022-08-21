@@ -118,7 +118,9 @@ class Module extends BaseModule {
 	 */
 	private function add_actions() {
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu/register', [ $this, 'register_menu' ] );
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
+				$this->register_menu( $admin_menu_manager );
+			} );
 		}
 
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
@@ -132,9 +134,9 @@ class Module extends BaseModule {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 2.9.0
-	 * @access public
+	 * @access private
 	 */
-	public function register_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
 	}
 
