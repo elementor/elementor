@@ -580,15 +580,19 @@ class Manager extends Base_Object {
 	}
 
 	private function render_feature_dependency( $feature ) {
-		if ( empty( $feature['dependencies'] ) ) {
+		$dependencies = ( new Collection( $feature['dependencies'] ?? [] ) )
+				->filter( function ( $dependency ) {
+					return ! $dependency->is_hidden();
+				} )
+				->map( function ( $dependency ) {
+					return $dependency->get_title();
+				} )
+				->implode( ', ' );
+
+		if ( empty( $dependencies ) ) {
 			return;
 		}
 
-		$dependencies = ( new Collection( $feature['dependencies'] ) )
-			->map( function ( $dependency ) {
-				return $dependency->get_title();
-			} )
-			->implode( ', ' );
 		?>
 			<div class="e-experiment__dependency">
 				<strong class="e-experiment__dependency__title"><?php echo esc_html__( 'Requires', 'elementor' ); ?>:</strong>
@@ -760,6 +764,13 @@ class Manager extends Base_Object {
 
 				// If dependency is not active.
 				if ( self::STATE_INACTIVE === $dependency_state ) {
+					// If the dependency is hidden, activate it automatically.
+					if ( $dependency_feature['hidden'] ) {
+						update_option( $this->get_feature_option_key( $dependency_feature['name'] ), static::STATE_ACTIVE );
+
+						return;
+					}
+
 					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */

@@ -252,7 +252,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNull( $feature );
 	}
 
-	public function test_validate_dependency__ensure_error_dependency_not_available() {
+	public function test_validate_dependency__throws_when_a_dependency_is_not_available() {
 		// Arrange.
 		$test_feature_data = [
 			'name' => Module_A::instance()->get_name(),
@@ -275,24 +275,24 @@ class Test_Manager extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_validate_dependency__ensure_cannot_depend_cannot_be_activated() {
+	public function test_validate_dependency__throws_when_a_dependency_is_inactive_and_user_activates_a_dependant_experiment() {
 		// Arrange.
-		$test_feature_data_a = [
+		$dependant = [
 			'name' => Module_A::instance()->get_name(),
 			'dependencies' => [
 				Module_B::class,
 			],
 		];
 
-		$test_feature_data_b = [
+		$dependency = [
 			'name' => Module_B::instance()->get_name(),
 		];
 
-		$this->add_test_feature( $test_feature_data_a );
-		$this->experiments->set_feature_default_state( $test_feature_data_a['name'], Experiments_Manager::STATE_INACTIVE );
+		$this->add_test_feature( $dependant );
+		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_INACTIVE );
 
-		$this->add_test_feature( $test_feature_data_b );
-		$this->experiments->set_feature_default_state( $test_feature_data_b['name'], Experiments_Manager::STATE_INACTIVE );
+		$this->add_test_feature( $dependency );
+		$this->experiments->set_feature_default_state( $dependency['name'], Experiments_Manager::STATE_INACTIVE );
 
 		// Assert.
 		$this->expectException( \WPDieException::class );
@@ -300,40 +300,73 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Act.
 		update_option(
-			$this->experiments->get_feature_option_key( $test_feature_data_a['name'] ),
+			$this->experiments->get_feature_option_key( $dependant['name'] ),
 			Experiments_Manager::STATE_ACTIVE
 		);
 	}
 
-	public function test_validate_dependency__deactivate_experiment_when_its_dependency_is_inactivated() {
+	public function test_validate_dependency__activates_a_hidden_dependency_when_its_inactive_and_user_activates_a_dependant_experiment() {
 		// Arrange.
-		$test_feature_data_a = [
+		$dependant = [
 			'name' => Module_A::instance()->get_name(),
 			'dependencies' => [
 				Module_B::class,
 			],
 		];
 
-		$test_feature_data_b = [
+		$dependency = [
 			'name' => Module_B::instance()->get_name(),
+			'hidden' => true,
 		];
 
-		$this->add_test_feature( $test_feature_data_a );
-		$this->experiments->set_feature_default_state( $test_feature_data_a['name'], Experiments_Manager::STATE_ACTIVE );
+		$this->add_test_feature( $dependant );
+		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_INACTIVE );
 
-		$this->add_test_feature( $test_feature_data_b );
-		$this->experiments->set_feature_default_state( $test_feature_data_b['name'], Experiments_Manager::STATE_ACTIVE );
+		$this->add_test_feature( $dependency );
+		$this->experiments->set_feature_default_state( $dependency['name'], Experiments_Manager::STATE_INACTIVE );
 
 		// Act.
 		update_option(
-			$this->experiments->get_feature_option_key( $test_feature_data_b['name'] ),
+			$this->experiments->get_feature_option_key( $dependant['name'] ),
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		// Assert.
+		$this->assertEquals(
+			Experiments_Manager::STATE_ACTIVE,
+			get_option( $this->experiments->get_feature_option_key( $dependency['name'] ) )
+		);
+	}
+
+	public function test_validate_dependency__deactivates_an_experiment_when_its_dependency_is_inactivated() {
+		// Arrange.
+		$dependant = [
+			'name' => Module_A::instance()->get_name(),
+			'dependencies' => [
+				Module_B::class,
+			],
+		];
+
+		$dependency = [
+			'name' => Module_B::instance()->get_name(),
+		];
+
+		$this->add_test_feature( $dependant );
+		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_ACTIVE );
+
+		$this->add_test_feature( $dependency );
+		$this->experiments->set_feature_default_state( $dependency['name'], Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		update_option(
+			$this->experiments->get_feature_option_key( $dependency['name'] ),
 			Experiments_Manager::STATE_INACTIVE
 		);
 
 		// Assert.
 		$this->assertEquals(
 			Experiments_Manager::STATE_INACTIVE,
-			get_option( $this->experiments->get_feature_option_key( $test_feature_data_a['name'] ) )
+			get_option( $this->experiments->get_feature_option_key( $dependant['name'] ) )
 		);
 	}
 

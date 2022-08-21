@@ -784,7 +784,7 @@ class Admin extends App {
 	private function get_experiments() {
 		return ( new Collection( Plugin::$instance->experiments->get_features() ) )
 			->map( function ( $experiment_data ) {
-				$dependencies = empty( $experiment_data['dependencies'] ) ? [] : $experiment_data['dependencies'];
+				$dependencies = $experiment_data['dependencies'] ?? [];
 
 				$dependencies = ( new Collection( $dependencies ) )
 					->map( function ( $dependency ) {
@@ -792,10 +792,11 @@ class Admin extends App {
 					} )->all();
 
 				return [
-					'default' => $experiment_data['default'],
 					'name' => $experiment_data['name'],
 					'title' => $experiment_data['title'],
 					'state' => $experiment_data['state'],
+					'default' => $experiment_data['default'],
+					'hidden' => $experiment_data['hidden'],
 					'dependencies' => $dependencies,
 				];
 			} )->all();
