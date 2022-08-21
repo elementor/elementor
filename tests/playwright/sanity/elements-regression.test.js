@@ -55,7 +55,7 @@ test( 'All widgets sanity test @regression', async ( { page }, testInfo ) => {
 		// Act.
 		await widget.create();
 
-		await page.waitForTimeout( 500 );
+		await page.waitForTimeout( 800 );
 
 		const element = await widget.getElement();
 
