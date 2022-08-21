@@ -33,7 +33,7 @@ class Landing_Pages_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_position() {
-		return 2;
+		return 1;
 	}
 
 	public function get_capability() {

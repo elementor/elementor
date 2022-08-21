@@ -23,7 +23,7 @@ class Kit_Library_Menu_Item implements Admin_Menu_Item {
 	}
 
 	public function get_position() {
-		return 1;
+		return 2;
 	}
 
 	public function get_capability() {
