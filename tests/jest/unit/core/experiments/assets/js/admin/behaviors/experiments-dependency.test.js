@@ -9,7 +9,7 @@ import {
 	mockDialog,
 } from './utils';
 
-describe( 'ExperimentDependency Behavior', () => {
+describe( 'ExperimentsDependency Behavior', () => {
 	let experimentsDependency, elements;
 
 	beforeEach( () => {
