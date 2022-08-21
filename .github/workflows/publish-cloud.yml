@@ -19,12 +19,10 @@ jobs:
     steps:
       - name: Publish Cloud
         env:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
-          REMOTE_PUBLISH_REPO: ${{ secrets.REMOTE_PUBLISH_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
         uses: peter-evans/repository-dispatch@d57191493a947e8da4f7bf3fbc389e5b20f21cdf
         with:
-          token: ${{ env.TOKEN }}
-          repository: ${{ env.REMOTE_PUBLISH_REPO }}
+          token: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
+          repository: ${{ secrets.REMOTE_PUBLISH_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
           event-type: deploy-cloud
           client-payload: '{ "version" : "${{ github.event.inputs.version }}", "pre_release" : "${{ github.event.inputs.pre_release }}", "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.event.pull_request.head.sha || github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'
