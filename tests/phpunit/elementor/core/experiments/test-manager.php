@@ -44,6 +44,7 @@ class Test_Manager extends Elementor_Test_Base {
 				'minimum_installation_version' => null,
 			],
 			'mutable' => true,
+			'hidden' => false,
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
@@ -66,8 +67,8 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'depended_feature',
 			'state' => Experiments_Manager::STATE_INACTIVE,
 			'dependencies' => [
-				'core_feature'
-			]
+				'core_feature',
+			],
 		];
 
 		$this->add_test_feature( $test_core_feature );
