@@ -19,19 +19,20 @@ export function getExperimentState( experimentId ) {
 export function mockDialog() {
 	const show = jest.fn();
 
+	let currentConfig = {};
+
 	const confirm = () => {
-		return window.currentDialog.config.onConfirm();
+		return currentConfig.onConfirm();
 	};
 
 	const cancel = () => {
-		return window.currentDialog.config.onCancel();
+		return currentConfig.onCancel();
 	};
 
 	window.elementorCommon = {
 		dialogsManager: {
 			createWidget: ( type, config ) => {
-				// TODO: Find a better solution.
-				window.currentDialog = { type, config };
+				currentConfig = config;
 
 				return {
 					show,
