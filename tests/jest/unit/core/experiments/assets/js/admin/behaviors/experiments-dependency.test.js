@@ -1,5 +1,4 @@
 import ExperimentsDependency from 'elementor/core/experiments/assets/js/admin/behaviors/experiments-dependency';
-import { fireEvent } from '@testing-library/dom';
 import {
 	mockExperimentsConfig,
 	mockExperimentsForm,
