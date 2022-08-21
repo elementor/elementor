@@ -6,7 +6,7 @@ runs:
   steps:
     - shell: bash
       run: |
-            if [[ ${{ env.config_deployment_envirement }} == "dev" ]];then
+            if [[ ${{ env.config_deployment_environment }} == "dev" ]];then
                echo "Pass validation in the development environment"
                exit 0
             fi
