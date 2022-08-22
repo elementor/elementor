@@ -242,6 +242,8 @@ class Module extends BaseModule {
 		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
 
+		do_action( 'elementor/import-export/import-kit', $this->import );
+
 		return $this->import->run();
 	}
 
@@ -260,6 +262,8 @@ class Module extends BaseModule {
 		$this->export = new Export( $settings );
 		$this->export->register_default_runners();
 
+		do_action( 'elementor/import-export/export-kit', $this->export );
+
 		return $this->export->run();
 	}
 
@@ -267,14 +271,12 @@ class Module extends BaseModule {
 	 * Handle revert kit ajax request.
 	 */
 	public function revert_last_imported_kit() {
-		check_admin_referer( 'elementor_revert_kit' );
-
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
-		$this->revert->run();
 
-		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
-		die;
+		do_action( 'elementor/import-export/revert-kit', $this->revert );
+
+		$this->revert->run();
 	}
 
 	/**
@@ -292,7 +294,7 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'admin_post_elementor_revert_kit', [ $this, 'revert_last_imported_kit' ] );
+		add_action( 'admin_post_elementor_revert_kit', [ $this, 'handle_revert_last_imported_kit' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
@@ -438,6 +440,18 @@ class Module extends BaseModule {
 		];
 
 		wp_send_json_success( $result );
+	}
+
+	/**
+	 * Handle revert last imported kit ajax request.
+	 */
+	private function handle_revert_last_imported_kit() {
+		check_admin_referer( 'elementor_revert_kit' );
+
+		$this->revert_last_imported_kit();
+
+		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
+		die;
 	}
 
 	/**

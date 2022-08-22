@@ -9,7 +9,6 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
-// TODO: Move to Pro.
 class Templates extends Runner_Base {
 	private $import_session_id;
 
@@ -140,9 +139,11 @@ class Templates extends Runner_Base {
 		foreach ( $templates_query->posts as $template_post ) {
 			$template_document = Plugin::$instance->documents->get( $template_post->ID );
 			$template_document->delete();
-		}
 
-		// TODO: Restore the conditions.
+			// TODD: Understand why deleting document doesn't delete the conditions attached to it.
+			// STR: import kit with template, revert kit, try to import new kit.
+			// It will run get_conditions_conflicts_by_location() in condition-manager which will drop an error.
+		}
 	}
 
 	private function import_template( $id, array $template_settings, array $template_data ) {

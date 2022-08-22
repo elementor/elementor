@@ -12,7 +12,7 @@ class Elementor_Content extends Runner_Base {
 
 	private $import_session_id;
 
-	public function __constructor() {
+	public function __construct() {
 		$this->init_page_on_front_data();
 	}
 
@@ -115,6 +115,12 @@ class Elementor_Content extends Runner_Base {
 		foreach ( $query->posts as $post ) {
 			$post_type_document = Plugin::$instance->documents->get( $post->ID );
 			$post_type_document->delete();
+
+			// Deleting the post will reset the show_on_front option. We need to set it to false,
+			// so we can set it back to what it was.
+			if ( $post->ID === $this->page_on_front_id ) {
+				$this->show_page_on_front = false;
+			}
 		}
 
 		$this->restore_page_on_front( $data );
@@ -314,7 +320,7 @@ class Elementor_Content extends Runner_Base {
 		return $result;
 	}
 
-	private function restore_page_on_front() {
+	private function restore_page_on_front( $data ) {
 		if ( empty( $data['runners']['elementor-content']['page_on_front'] ) ) {
 			return;
 		}
@@ -327,6 +333,6 @@ class Elementor_Content extends Runner_Base {
 			return;
 		}
 
-		update_option( 'page_on_front', $page_on_front );
+		$this->set_page_on_front( $document->get_main_id() );
 	}
 }

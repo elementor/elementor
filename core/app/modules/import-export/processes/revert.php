@@ -18,6 +18,7 @@ class Revert extends Process_Base {
 		if ( empty( $this->runners ) ) {
 			throw new \Exception( 'Please specify revert runners.' );
 		}
+
 		$data = $this->get_last_session_data();
 
 		foreach ( $this->runners as $runner ) {
