@@ -5,7 +5,6 @@ import Deprecation from './deprecation';
 export default class Module {
 	constructor() {
 		this.deprecation = new Deprecation();
-		this.notifyBackendDeprecations();
 	}
 
 	notifyBackendDeprecations() {
@@ -28,5 +27,5 @@ export default class Module {
 
 if ( ! window.elementorDevTools ) {
 	window.elementorDevTools = new Module();
-	
+	window.elementorDevTools.notifyBackendDeprecations();
 }
