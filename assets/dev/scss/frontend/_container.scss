@@ -220,14 +220,22 @@
 
 		&.e-container--width-boxed {
 
-			// Hide the first placeholder in case multiple placeholders are displayed (ED-7867).
-			& > .elementor-widget-placeholder {
-				display: none;
+			> .e-container__inner {
 
-				&:last-of-child {
-					display: block;
+				> .elementor-shape-bottom + .elementor-widget-placeholder {
+					margin-top: -20px;
+					border: 1px solid red;
 				}
 			}
+
+			// // Hide the first placeholder in case multiple placeholders are displayed (ED-7867).
+			// & > .elementor-widget-placeholder {
+			// 	display: none;
+
+			// 	&:last-of-child {
+			// 		display: block;
+			// 	}
+			// }
 		}
 	}
 

@@ -205,9 +205,12 @@
 				return;
 			}
 
+			// Make sure that the previous placeholders are removed before inserting a new one.
+			elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
+
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
+				isRowContainer = $currentElement.parent().hasClass( 'e-container--row' ) || $currentElement.hasClass( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {
@@ -217,7 +220,16 @@
 				return;
 			}
 
-			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo',
+				// Un clear if this works.
+				isBoxedWrapper = currentElement.classList.contains( 'e-container__inner' );
+
+			if ( isBoxedWrapper ) {
+				// currentElement = currentElement.find( '.e-container__inner' );
+				// insertMethod = 'prependTo';
+				console.log( 'boxed' );
+			}
+
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
