@@ -581,9 +581,6 @@ class Manager extends Base_Object {
 
 	private function render_feature_dependency( $feature ) {
 		$dependencies = ( new Collection( $feature['dependencies'] ?? [] ) )
-			->filter( function ( $dependency ) {
-				return ! $dependency->is_hidden();
-			} )
 			->map( function ( $dependency ) {
 				return $dependency->get_title();
 			} )
@@ -764,13 +761,6 @@ class Manager extends Base_Object {
 
 				// If dependency is not active.
 				if ( self::STATE_INACTIVE === $dependency_state ) {
-					// If the dependency is hidden, activate it automatically.
-					if ( $dependency_feature['hidden'] ) {
-						update_option( $this->get_feature_option_key( $dependency_feature['name'] ), static::STATE_ACTIVE );
-
-						return;
-					}
-
 					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */

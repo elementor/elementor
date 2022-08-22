@@ -97,8 +97,7 @@ export default class ExperimentsDependency {
 			.dependencies
 			.map( ( dependencyId ) => (
 				elementorAdminConfig.experiments[ dependencyId ]
-			) )
-			.filter( ( dependency ) => ! dependency.hidden );
+			) );
 
 		if ( this.areAllDependenciesActive( dependencies ) ) {
 			return;

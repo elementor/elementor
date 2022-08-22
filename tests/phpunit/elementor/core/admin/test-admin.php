@@ -152,7 +152,6 @@ class Test_Admin extends Elementor_Test_Base {
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'title' => 'Experiment 1',
 			'state' => Experiments_Manager::STATE_ACTIVE,
-			'hidden' => false,
 			'other-prop' => 'some-value',
 		];
 
@@ -161,7 +160,6 @@ class Test_Admin extends Elementor_Test_Base {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'title' => 'Experiment 2',
 			'state' => Experiments_Manager::STATE_ACTIVE,
-			'hidden' => true,
 			'other-prop-2' => 'some-value-2',
 			'dependencies' => [
 				new Wrap_Core_Dependency( $experiment1 ),
@@ -182,7 +180,6 @@ class Test_Admin extends Elementor_Test_Base {
 				'default' => Experiments_Manager::STATE_ACTIVE,
 				'title' => 'Experiment 1',
 				'state' => Experiments_Manager::STATE_ACTIVE,
-				'hidden' => false,
 				'dependencies' => [],
 			],
 			[
@@ -190,7 +187,6 @@ class Test_Admin extends Elementor_Test_Base {
 				'default' => Experiments_Manager::STATE_INACTIVE,
 				'title' => 'Experiment 2',
 				'state' => Experiments_Manager::STATE_ACTIVE,
-				'hidden' => true,
 				'dependencies' => [
 					'experiment-1',
 				],

@@ -796,7 +796,6 @@ class Admin extends App {
 					'title' => $experiment_data['title'] ?? $experiment_data['name'],
 					'state' => $experiment_data['state'],
 					'default' => $experiment_data['default'],
-					'hidden' => $experiment_data['hidden'],
 					'dependencies' => $dependencies,
 				];
 			} )->all();

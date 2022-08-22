@@ -34,21 +34,10 @@ describe( 'ExperimentsDependency Behavior', () => {
 		const { show } = mockDialog();
 
 		// Act.
-		activateExperiment( 'depends_on_regular_inactive' );
+		activateExperiment( 'depends_on_inactive' );
 
 		// Assert.
 		expect( show ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'Should not show a dependency dialog when activating an experiment that has only hidden dependencies', () => {
-		// Arrange.
-		const { show } = mockDialog();
-
-		// Act.
-		activateExperiment( 'depends_on_hidden_inactive' );
-
-		// Assert.
-		expect( show ).not.toHaveBeenCalled();
 	} );
 
 	it( 'Should not show a dependency dialog when activating an experiment that has no dependencies', () => {
@@ -56,7 +45,7 @@ describe( 'ExperimentsDependency Behavior', () => {
 		const { show } = mockDialog();
 
 		// Act.
-		activateExperiment( 'regular_inactive_dependency' );
+		activateExperiment( 'inactive_dependency' );
 
 		// Assert.
 		expect( show ).not.toHaveBeenCalled();
@@ -67,7 +56,7 @@ describe( 'ExperimentsDependency Behavior', () => {
 		const { show } = mockDialog();
 
 		// Act.
-		activateExperiment( 'depends_on_regular_active' );
+		activateExperiment( 'depends_on_active' );
 
 		// Assert.
 		expect( show ).not.toHaveBeenCalled();
@@ -81,12 +70,12 @@ describe( 'ExperimentsDependency Behavior', () => {
 		elements.form.addEventListener( 'submit', submitMock );
 
 		// Act.
-		activateExperiment( 'depends_on_regular_inactive' );
+		activateExperiment( 'depends_on_inactive' );
 		confirm();
 
 		// Assert.
-		expect( getExperimentState( 'regular_inactive_dependency' ) ).toBe( 'active' );
-		expect( getExperimentState( 'depends_on_hidden_active' ) ).toBe( 'inactive' ); // Make sure not to touch others.
+		expect( getExperimentState( 'inactive_dependency' ) ).toBe( 'active' );
+		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'inactive' ); // Make sure not to touch others.
 		expect( submitMock ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -98,26 +87,26 @@ describe( 'ExperimentsDependency Behavior', () => {
 		elements.form.addEventListener( 'submit', submitMock );
 
 		// Act.
-		activateExperiment( 'depends_on_regular_inactive' );
+		activateExperiment( 'depends_on_inactive' );
 		cancel();
 
 		// Assert.
-		expect( getExperimentState( 'depends_on_regular_inactive' ) ).toBe( 'inactive' );
-		expect( getExperimentState( 'regular_inactive_dependency' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'inactive_dependency' ) ).toBe( 'inactive' );
 		expect( submitMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'Should deactivate the experiments when deactivating their dependency', () => {
 		// Arrange.
-		activateExperiment( 'regular_inactive_dependency' );
-		activateExperiment( 'depends_on_regular_inactive' );
+		activateExperiment( 'inactive_dependency' );
+		activateExperiment( 'depends_on_inactive' );
 
 		// Act.
-		deactivateExperiment( 'regular_inactive_dependency' );
+		deactivateExperiment( 'inactive_dependency' );
 
 		// Assert.
-		expect( getExperimentState( 'regular_inactive_dependency' ) ).toBe( 'inactive' );
-		expect( getExperimentState( 'depends_on_regular_inactive' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'inactive_dependency' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
 	} );
 } );
 
