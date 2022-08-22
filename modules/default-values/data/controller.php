@@ -15,6 +15,14 @@ class Controller extends Base_Controller {
 		return 'default-values';
 	}
 
+	public function create_item_permissions_check( $request ) {
+		return current_user_can( 'manage_options' );
+	}
+
+	public function delete_item_permissions_check( $request ) {
+		return current_user_can( 'manage_options' );
+	}
+
 	public function register_endpoints() {
 		$type_validate_callback = function ( $param ) {
 			$types = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );

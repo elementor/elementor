@@ -26,6 +26,7 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
+import WidgetConfigComponent from './data/widgets-config/component';
 import ControlConditions from './utils/control-conditions';
 
 import * as elementTypes from './elements/types';
@@ -395,6 +396,8 @@ export default class EditorBase extends Marionette.Application {
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
+
+		$e.components.register( new WidgetConfigComponent() );
 
 		$e.components.register( new DocumentComponent() );
 
