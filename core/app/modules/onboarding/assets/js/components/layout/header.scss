@@ -33,11 +33,7 @@
 	.eps-button {
 		color: $platform-darkest-gray;
 
-		.eicon-pro-icon {
-			color: $brand-color-dark-pink;
-		}
-
-		&.onboarding-go-pro__btn {
+		&__go-pro-btn {
 			background-color: $platform-accent;
 			color: $white;
 			padding: 4px 8px;
@@ -47,7 +43,7 @@
 			transition: 0.5s;
 
 			&:hover {
-			  	background-color: $platform-accent-hover;
+			  	background: lighten($platform-accent, 20%)
 			}
 		}
 	}
