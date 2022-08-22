@@ -304,6 +304,18 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Handle revert last imported kit ajax request.
+	 */
+	public function handle_revert_last_imported_kit() {
+		check_admin_referer( 'elementor_revert_kit' );
+
+		$this->revert_last_imported_kit();
+
+		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
+		die;
+	}
+
+	/**
 	 * Enqueue admin scripts
 	 */
 	public function enqueue_scripts() {
@@ -440,18 +452,6 @@ class Module extends BaseModule {
 		];
 
 		wp_send_json_success( $result );
-	}
-
-	/**
-	 * Handle revert last imported kit ajax request.
-	 */
-	private function handle_revert_last_imported_kit() {
-		check_admin_referer( 'elementor_revert_kit' );
-
-		$this->revert_last_imported_kit();
-
-		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
-		die;
 	}
 
 	/**

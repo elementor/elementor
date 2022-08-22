@@ -3,8 +3,8 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport;
 
 use Elementor\Core\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\App\Modules\ImportExport\Processes\Import;
+use Elementor\Core\App\Modules\ImportExport\Runners\Elementor_Content;
 use Elementor\Core\App\Modules\ImportExport\Runners\Site_Settings;
-use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -86,7 +86,7 @@ class Test_Revert extends Elementor_Test_Base {
 		$this->assertNotEquals( $post_revert_kit, $post_import_kit );
 	}
 
-	public function test_run__import_elementor_content_only() {
+	public function test_run__revert_elementor_content_only() {
 		// Arrange
 		$old_option_page_on_front = get_option( 'page_on_front' );
 		$old_option_show_on_front = get_option( 'show_on_front' );
@@ -97,14 +97,14 @@ class Test_Revert extends Elementor_Test_Base {
 		update_option( 'show_on_front', 'post' );
 
 		$import = new Import( static::ZIP_PATH );
-		$import->register( new Site_Settings() );
+		$import->register( new Elementor_Content() );
 		$import->run();
 
 		$post_import_option_page_on_front = get_option( 'page_on_front' );
 		$post_import_option_show_on_front = get_option( 'show_on_front' );
 
 		$revert = new Revert();
-		$revert->register( new Site_Settings() );
+		$revert->register( new Elementor_Content() );
 
 		// Act
 		$revert->run();
