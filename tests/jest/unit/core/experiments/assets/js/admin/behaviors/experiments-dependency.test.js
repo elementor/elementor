@@ -20,8 +20,9 @@ describe( 'ExperimentsDependency Behavior', () => {
 		document.body.appendChild( form );
 
 		elements = {
-			selects: [ ...document.querySelectorAll( 'select' ) ],
 			form,
+			selects: [ ...form.querySelectorAll( 'select' ) ],
+			submit: form.querySelector( 'input[type="submit"]' ),
 		};
 
 		experimentsDependency = new ExperimentsDependency( elements );

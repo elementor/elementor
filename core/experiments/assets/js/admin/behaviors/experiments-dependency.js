@@ -7,7 +7,7 @@ const STATE_DEFAULT = 'default';
 export default class ExperimentsDependency {
 	elements = {};
 
-	constructor( { selects } ) {
+	constructor( { selects, submit } ) {
 		this.elements = {
 			/**
 			 * @type {HTMLSelectElement[]}
@@ -17,7 +17,7 @@ export default class ExperimentsDependency {
 			/**
 			 * @type {HTMLInputElement}
 			 */
-			submit: selects[ 0 ].form.querySelector( 'input[type="submit"]' ),
+			submit,
 		};
 	}
 
