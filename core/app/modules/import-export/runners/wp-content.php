@@ -64,6 +64,10 @@ class Wp_Content extends Runner_Base {
 				$imported_terms
 			);
 
+			if ( empty( $import ) ) {
+				continue;
+			}
+
 			$result['wp-content'][ $post_type ] = $import;
 			$imported_data = array_merge( $imported_data, $result );
 		}
@@ -160,6 +164,10 @@ class Wp_Content extends Runner_Base {
 		];
 
 		$file = $path . $post_type . '/' . $post_type . '.xml';
+
+		if ( ! file_exists( $file ) ) {
+			return [];
+		}
 
 		$wp_importer = new WP_Import( $file, $args );
 		$result = $wp_importer->run();
