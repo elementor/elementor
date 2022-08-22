@@ -338,7 +338,6 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	private function add_test_feature( array $args = [] ) {
-		
 		$test_feature_data = [
 			'name' => 'test_feature',
 		];
