@@ -90,8 +90,8 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$feature = $this->experiments->get_features( 'test_feature' );
-		self::assertNotEmpty( $feature );
-		self::assertTrue( $feature['hidden'] );
+		$this->assertNotEmpty( $feature );
+		$this->assertTrue( $feature['hidden'] );
 	}
 
 	public function test_features_are_added_as_not_hidden_by_default() {
@@ -100,9 +100,9 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$features = $this->experiments->get_features();
-		self::assertNotEmpty( $features );
+		$this->assertNotEmpty( $features );
 		foreach ( $features as $feature ) {
-			self::assertFalse( $feature['hidden'] );
+			$this->assertFalse( $feature['hidden'] );
 		}
 	}
 
