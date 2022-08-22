@@ -58,4 +58,8 @@ class Controller extends Base_Controller {
 		$this->register_endpoint( new Endpoints\Download_Link( $this ) );
 		$this->register_endpoint( new Endpoints\Favorites( $this ) );
 	}
+
+	public function get_permission_callback( $request ) {
+		return current_user_can( 'administrator' );
+	}
 }

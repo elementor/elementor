@@ -28,6 +28,7 @@ module.exports = {
 		'^react$': paths.libraries.react,
 		'^react-dom(.*)$': paths.libraries.reactDom,
 	},
+	testEnvironment: 'jsdom',
 };
 
 function transformWebpackAliasIntoJestAlias( webpackAlias ) {

@@ -4,6 +4,7 @@ namespace Elementor\Core\Breakpoints;
 use Elementor\Core\Base\Module;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
 use Elementor\Core\Responsive\Files\Frontend;
+use Elementor\Modules\DevTools\Deprecation;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -67,6 +68,18 @@ class Manager extends Module {
 
 	private $icons_map;
 
+	/**
+	 * Has Custom Breakpoints
+	 *
+	 * A flag that holds a cached value that indicates if there are active custom-breakpoints.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @var boolean
+	 */
+	private $has_custom_breakpoints;
+
 	public function get_name() {
 		return 'breakpoints';
 	}
@@ -121,6 +134,7 @@ class Manager extends Module {
 		$default_args = [
 			'add_desktop' => true,
 			'reverse' => false,
+			'desktop_first' => false,
 		];
 
 		$args = array_merge( $default_args, $args );
@@ -129,7 +143,7 @@ class Manager extends Module {
 
 		if ( $args['add_desktop'] ) {
 			// Insert the 'desktop' device in the correct position.
-			if ( in_array( 'widescreen', $active_devices, true ) ) {
+			if ( ! $args['desktop_first'] && in_array( 'widescreen', $active_devices, true ) ) {
 				$widescreen_index = array_search( 'widescreen', $active_devices, true );
 
 				array_splice( $active_devices, $widescreen_index, 0, [ 'desktop' ] );
@@ -157,6 +171,10 @@ class Manager extends Module {
 	 * @return boolean
 	 */
 	public function has_custom_breakpoints() {
+		if ( isset( $this->has_custom_breakpoints ) ) {
+			return $this->has_custom_breakpoints;
+		}
+
 		$breakpoints = $this->get_active_breakpoints();
 
 		$additional_breakpoints = [
@@ -168,14 +186,20 @@ class Manager extends Module {
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
 			if ( in_array( $breakpoint_name, $additional_breakpoints, true ) ) {
+				$this->has_custom_breakpoints = true;
+
 				return true;
 			}
 
 			/** @var Breakpoint $breakpoint */
 			if ( $breakpoint->is_custom() ) {
+				$this->has_custom_breakpoints = true;
+
 				return true;
 			}
 		}
+
+		$this->has_custom_breakpoints = false;
 
 		return false;
 	}
@@ -241,6 +265,8 @@ class Manager extends Module {
 	}
 
 	public function refresh() {
+		unset( $this->has_custom_breakpoints );
+
 		$this->init_breakpoints();
 		$this->init_active_breakpoints();
 	}
@@ -498,10 +524,13 @@ class Manager extends Module {
 		$deprecated_hook = 'elementor/core/responsive/get_stylesheet_templates';
 		$replacement_hook = 'elementor/core/breakpoints/get_stylesheet_template';
 
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_hook( $deprecated_hook, '3.2.0', $replacement_hook );
+		/**
+		 * @type Deprecation $deprecation_module
+		 */
+		$deprecation_module = Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation;
 
 		// TODO: REMOVE THIS DEPRECATED HOOK IN ELEMENTOR v3.10.0/v4.0.0
-		$templates = apply_filters( $deprecated_hook, $templates );
+		$templates = $deprecation_module->apply_deprecated_filter( $deprecated_hook, $templates, '3.2.0', $replacement_hook );
 
 		return apply_filters( $replacement_hook, $templates );
 	}

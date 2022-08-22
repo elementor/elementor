@@ -94,6 +94,9 @@ class Widget_Html extends Widget_Base {
 				'default' => '',
 				'placeholder' => esc_html__( 'Enter your code', 'elementor' ),
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 

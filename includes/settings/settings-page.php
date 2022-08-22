@@ -297,7 +297,7 @@ abstract class Settings_Page {
 			<div id="elementor-settings-tabs-wrapper" class="nav-tab-wrapper">
 				<?php
 				foreach ( $tabs as $tab_id => $tab ) {
-					if ( empty( $tab['sections'] ) ) {
+					if ( ! $this->should_render_tab( $tab ) ) {
 						continue;
 					}
 
@@ -320,7 +320,7 @@ abstract class Settings_Page {
 				settings_fields( static::PAGE_ID );
 
 				foreach ( $tabs as $tab_id => $tab ) {
-					if ( empty( $tab['sections'] ) ) {
+					if ( ! $this->should_render_tab( $tab ) ) {
 						continue;
 					}
 
@@ -406,5 +406,17 @@ abstract class Settings_Page {
 			 */
 			do_action( "elementor/admin/after_create_settings/{$page_id}", $this );
 		}
+	}
+
+	/**
+	 * Should it render the settings tab
+	 *
+	 * @param $tab
+	 *
+	 * @return bool
+	 */
+	private function should_render_tab( $tab ) {
+		// BC - When 'show_if' prop is not exists, it actually should render the tab.
+		return ! empty( $tab['sections'] ) && ( ! isset( $tab['show_if'] ) || $tab['show_if'] );
 	}
 }

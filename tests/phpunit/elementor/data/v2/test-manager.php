@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\V2;
 use Elementor\Data\V2\Base\Processor;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Data_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Controller as ControllerTemplate;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Endpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Processor\Controller as ControllerWithProcessor;
 
@@ -227,28 +228,51 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_run_endpoint() {
-		$controller = $this->manager->register_controller( new ControllerWithEndpoint );
+		$controller = new ControllerTemplate();
+
+		$this->manager->register_controller( $controller );
 
 		$this->manager->run_server();
-		$endpoint = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = $controller->get_endpoint_index();
 
-		$command = $controller->get_name() . '/' . $endpoint->get_name();
-
-		$endpoint = $this->manager->command_to_endpoint( $command, false, [] );
-
-		$data = $this->manager->run_endpoint( $endpoint );
+		$data = $this->manager->run_endpoint( $endpoint->get_base_route() );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $data_controller_name );
+	}
+
+	public function test_run__ensure_get_permission_callback_honored() {
+		// Arrange.
+		$controller = $this->manager->register_controller( new ControllerTemplate );
+		$this->get_manager()->run_server();
+
+		// Register new endpoint.
+		$endpoint = new Endpoint\Bypass_Permission( $controller );
+		$endpoint->do_register();
+
+		// Set some data for not having empty data in cases its fails.
+		$endpoint->set_test_data( 'get_items', 'valid' );
+
+		// Bypass permission check.
+		$endpoint->bypass_original_permission( true );
+		$endpoint->bypass_set_value( false );
+
+		$command = $controller->get_name() . '/' . $endpoint->get_name();
+
+		// Act.
+		$data = $this->manager->run( $command );
+
+		// Assert.
+		$this->assertEmpty( $data );
 	}
 
 	public function test_run() {
 		$controller = $this->manager->register_controller( new ControllerWithEndpoint );
 
 		$this->manager->run_server();
-		$endpoint = array_values( $controller->endpoints )[ 0 ];
+		$index_endpoint = $controller->index_endpoint;
 
-		$data = $this->manager->run( $controller->get_name() . '/' . $endpoint->get_name() );
+		$data = $this->manager->run( $controller->get_name() . '/' . $index_endpoint->get_name() );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $data_controller_name );
@@ -262,6 +286,8 @@ class Test_Manager extends Data_Test_Base {
 			'globals/colors' => 'globals/colors/{id}',
 			'globals/typography' => 'globals/typography/{id}',
 			'template-library/templates' => 'template-library/templates',
+			'favorites/index' => 'favorites/{id}',
+			'send-event/index' => 'send-event/{id}',
 			'widgets-config/index' => 'widgets-config/{id}',
             'default-values/index' => 'default-values/{id}'
 		], $this->manager->command_formats );

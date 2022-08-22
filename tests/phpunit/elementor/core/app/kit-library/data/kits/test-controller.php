@@ -44,7 +44,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$favorites = new User_Favorites( $user->ID );
 		$favorites->add( 'elementor', 'kits', 'id_2' );
 
-		$this->data_manager->register_controller( Controller::class );
+		$this->data_manager->register_controller( new Controller() );
 
 		// Act
 		$result = $this->http_get( 'kits', [ 'force' => true ] );
@@ -91,7 +91,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->app_mock->method( 'get_all' )->willReturn( $this->get_kits_api_mock() );
 		$this->app_mock->method( 'get_manifest' )->willReturn( $this->get_manifest_api_mock() );
 
-		$this->data_manager->register_controller( Controller::class );
+		$this->data_manager->register_controller( new Controller() );
 
 		// Act
 		$result = $this->http_get( "kits/id_1", [ 'force' => true ] );

@@ -1,0 +1,31 @@
+.e-onboarding__notice {
+	display: inline-block;
+	padding: 12px 14px;
+	margin-bottom: 16px;
+	color: $platform-darker-gray;
+
+	&--error {
+		background-color: $platform-danger-bg;
+
+		i {
+			font-size: 16px;
+			color: $platform-danger-text;
+		}
+	}
+
+	&--success {
+		background-color: $platform-success-bg;
+
+		i {
+			color: $platform-success-text;
+		}
+	}
+
+	i {
+		margin-inline-end: 14px;
+	}
+
+	&-empty-spacer {
+		height: 61px;
+	}
+}

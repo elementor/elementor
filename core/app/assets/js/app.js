@@ -1,6 +1,7 @@
 /**
  * Elementor App
  */
+import { useContext } from 'react';
 import router from '@elementor/router';
 import { Router, LocationProvider, createHistory } from '@reach/router';
 import { createHashSource } from 'reach-router-hash-history';
@@ -9,9 +10,24 @@ import Index from 'elementor-app/pages/index';
 import ErrorBoundary from 'elementor-app/organisms/error-boundary';
 import './app.scss';
 
+import { AppContext } from 'elementor-app/app-context';
+
+import { ThemeProvider } from 'styled-components';
+
 const { Suspense } = React;
 
 export default function App() {
+	const appContext = useContext( AppContext ),
+		{ isDarkMode } = appContext.state,
+		theme = {
+			config: {
+				variants: {
+					light: ! isDarkMode,
+					dark: isDarkMode,
+				},
+			},
+		};
+
 	// Use hash route because it's actually rendered on a WP Admin page.
 	// Make it public for external uses.
 	router.appHistory = createHistory( createHashSource() );
@@ -19,13 +35,15 @@ export default function App() {
 	return (
 		<ErrorBoundary>
 			<LocationProvider history={ router.appHistory }>
-				<Suspense fallback={null}>
-					<Router>
-						{ router.getRoutes() }
-						<Index path="/" />
-						<NotFound default />
-					</Router>
-				</Suspense>
+				<ThemeProvider theme={ theme }>
+					<Suspense fallback={ null }>
+						<Router>
+							{ router.getRoutes() }
+							<Index path="/" />
+							<NotFound default />
+						</Router>
+					</Suspense>
+				</ThemeProvider>
 			</LocationProvider>
 		</ErrorBoundary>
 	);

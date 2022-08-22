@@ -1,4 +1,5 @@
 # directories
+coverage-report/
 node_modules/
 .sass-cache/
 log/
@@ -25,3 +26,8 @@ yarn.lock
 Thumbs.db
 *.DS_Store
 coverage/
+
+# playwright
+test-results/
+tests/playwright/config/storageState.json
+tests/playwright/config/local.config.js

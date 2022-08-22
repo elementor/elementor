@@ -62,7 +62,7 @@ class Page extends Library_Document {
 	}
 
 	public static function get_add_new_title() {
-		return esc_html__( 'Add New Library Page', 'elementor' );
+		return esc_html__( 'Add New Page Template', 'elementor' );
 	}
 
 	/**

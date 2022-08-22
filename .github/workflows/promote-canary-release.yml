@@ -1,11 +1,11 @@
 name: Promote Canary Release
-
+# Update WP repo with the final release version
 on:
   workflow_dispatch:
 
 jobs:
   update-readme-develop:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout develop branch
@@ -13,6 +13,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - name: Bump version
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
@@ -35,6 +39,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - name: Merge develop -> master
         uses: devmasx/merge-branch@a1752b9ba42bb417ec19be7dc974e2faf77d3ef2 # v1.3.1
         with:

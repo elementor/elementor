@@ -113,7 +113,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function get_items( $request ) {
-		return $this->controller->get_items( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -125,7 +125,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function get_item( $id, $request ) {
-		return $this->controller->get_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -148,7 +148,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function create_item( $id, $request ) {
-		return $this->controller->create_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -171,7 +171,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function update_item( $id, $request ) {
-		return $this->controller->update_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -194,7 +194,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function delete_item( $id, $request ) {
-		return $this->controller->delete_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -206,7 +206,7 @@ abstract class Base_Route {
 		$this->register_items_route();
 	}
 
-	protected function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
+	protected function register_route( $route = '', $methods = WP_REST_Server::READABLE, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
 			trigger_error( "Invalid method: '$methods'.", E_USER_ERROR ); // phpcs:ignore
 		}
@@ -217,6 +217,21 @@ abstract class Base_Route {
 			'args' => $args,
 			'route' => $route,
 		];
+
+		/**
+		 * Determine behaviour of `base_callback()` and `get_permission_callback()`:
+		 * For `base_callback()` which applying the action.
+		 * Whether it's a one item request and should call `get_item_permission_callback()` or it's mutil items request and should call `get_items_permission_callback()`.
+		 */
+		$is_multi = ! empty( $args['is_multi'] );
+
+		if ( $is_multi ) {
+			unset( $args['is_multi'] );
+		}
+
+		$callback = function ( $request ) use ( $methods, $args, $is_multi ) {
+			return $this->base_callback( $methods, $request, $is_multi );
+		};
 
 		return register_rest_route( $this->controller->get_namespace(), $route, [
 			[
@@ -237,9 +252,9 @@ abstract class Base_Route {
 	 * @param array $args
 	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [] ) {
-		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
-			return $this->base_callback( $methods, $request, true );
-		}, $args );
+		$args['is_multi'] = true;
+
+		$this->register_route( '', $methods, $args );
 	}
 
 	/**
@@ -277,9 +292,7 @@ abstract class Base_Route {
 			'route' => $route,
 		];
 
-		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
-			return $this->base_callback( $methods, $request );
-		}, $args );
+		$this->register_route( $route, $methods, $args );
 	}
 
 	/**
@@ -303,47 +316,47 @@ abstract class Base_Route {
 		}
 
 		$args = wp_parse_args( $args, [
-			'is_debug' => defined( 'WP_DEBUG' ),
+			'is_debug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
 		] );
 
-		$result = [];
+		$result = new \WP_Error( 'invalid_methods', 'route not supported.' );
 
-		if ( $this->get_permission_callback( $request ) ) {
-			try {
-				switch ( $methods ) {
-					case WP_REST_Server::READABLE:
-						$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
-						break;
+		$request->set_param( 'is_multi', $is_multi );
 
-					case WP_REST_Server::CREATABLE:
-						$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
-						break;
+		try {
+			switch ( $methods ) {
+				case WP_REST_Server::READABLE:
+					$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
+					break;
 
-					case WP_REST_Server::EDITABLE:
-						$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
-						break;
+				case WP_REST_Server::CREATABLE:
+					$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
+					break;
 
-					case WP_REST_Server::DELETABLE:
-						$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
-						break;
-				}
-			} catch ( Data_Exception $e ) {
-				$result = $e->to_wp_error();
-			} catch ( \Exception $e ) {
-				if ( empty( $args['is_debug'] ) ) {
-					$result = ( new Error_500() )->to_wp_error();
-				} else {
-					// For frontend.
-					$exception_mapping = [
-						'trace' => $e->getTrace(),
-						'file' => $e->getFile(),
-						'line' => $e->getLine(),
-					];
+				case WP_REST_Server::EDITABLE:
+					$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
+					break;
 
-					$e->debug = $exception_mapping;
+				case WP_REST_Server::DELETABLE:
+					$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
+					break;
+			}
+		} catch ( Data_Exception $e ) {
+			$result = $e->to_wp_error();
+		} catch ( \Exception $e ) {
+			if ( empty( $args['is_debug'] ) ) {
+				$result = ( new Error_500() )->to_wp_error();
+			} else {
+				// For frontend.
+				$exception_mapping = [
+					'trace' => $e->getTrace(),
+					'file' => $e->getFile(),
+					'line' => $e->getLine(),
+				];
 
-					$result = ( new Data_Exception( $e->getMessage(), $e->getCode(), $e ) )->to_wp_error();
-				}
+				$e->debug = $exception_mapping;
+
+				$result = ( new Data_Exception( $e->getMessage(), $e->getCode(), $e ) )->to_wp_error();
 			}
 		}
 

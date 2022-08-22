@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Kits\Controls;
 
 use Elementor\Control_Repeater;
@@ -41,7 +40,6 @@ class Repeater extends Control_Repeater {
 		$settings = parent::get_default_settings();
 
 		$settings['item_actions']['duplicate'] = false;
-		$settings['item_actions']['sort'] = false;
 
 		return $settings;
 	}

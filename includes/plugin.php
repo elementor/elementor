@@ -1,10 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
@@ -410,6 +410,11 @@ class Plugin {
 	public $inspector;
 
 	/**
+	 * @var Admin_Menu_Manager
+	 */
+	public $admin_menu_manager;
+
+	/**
 	 * Common functionality.
 	 *
 	 * Holds the plugin common functionality.
@@ -453,6 +458,15 @@ class Plugin {
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
+
+	/**
+	 * Tasks manager.
+	 *
+	 * Holds the plugin tasks manager.
+	 *
+	 * @var Core\Upgrade\Custom_Tasks_Manager
+	 */
+	public $custom_tasks;
 
 	/**
 	 * Kits manager.
@@ -689,6 +703,9 @@ class Plugin {
 
 		Settings_Manager::run();
 
+		$this->admin_menu_manager = new Admin_Menu_Manager();
+		$this->admin_menu_manager->register_actions();
+
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
 		$this->documents = new Documents_Manager();
@@ -722,6 +739,7 @@ class Plugin {
 		Tracker::init();
 
 		$this->upgrade = new Core\Upgrade\Manager();
+		$this->custom_tasks = new Core\Upgrade\Custom_Tasks_Manager();
 
 		$this->app = new Core\App\App();
 
@@ -855,7 +873,7 @@ class Plugin {
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
-		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
+		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ], 9 );
 	}
 
 	final public static function get_title() {

@@ -1,57 +1,76 @@
 import React, { useContext, useEffect } from 'react';
-import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
-
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import KitContent from '../../../shared/kit-content/kit-content';
-import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import Button from 'elementor-app/ui/molecules/button';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
+import ImportContentDisplay from './components/import-content-display/import-content-display';
+import ImportContentFooter from './components/import-content-footer/import-content-footer';
 
-import ImportButton from './components/import-button/import-button';
+import useImportActions from '../hooks/use-import-actions';
+
+import './import-content.scss';
 
 export default function ImportContent() {
-	const context = useContext( Context ),
-		navigate = useNavigate(),
-		getFooter = () => (
-			<WizardFooter separator justify="end">
-				<Button
-					text={ __( 'Previous', 'elementor' ) }
-					variant="contained"
-					onClick={ () => context.dispatch( { type: 'SET_FILE', payload: null } ) }
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
+		{ referrer, includes, currentPage } = sharedContext.data,
+		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
+		{ navigateToMainScreen } = useImportActions(),
+		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
+		eventTracking = ( command ) => {
+			if ( 'kit-library' === referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						page_source: 'import',
+						step: currentPage,
+						event_type: 'click',
+					},
+				);
+			}
+		},
+		getFooter = () => {
+			return (
+				<ImportContentFooter
+					hasPlugins={ ! ! plugins.length }
+					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
+					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
+					onResetProcess={ handleResetProcess }
+					onPreviousClick={ () => eventTracking( 'kit-library/go-back' ) }
+					onImportClick={ () => eventTracking( 'kit-library/approve-import' ) }
 				/>
-
-				<ImportButton />
-			</WizardFooter>
-		),
-		getLearnMoreLink = () => (
-			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
-				{ __( 'Learn More', 'elementor' ) }
-			</InlineLink>
-		);
+			);
+		};
 
 	useEffect( () => {
-		if ( ! context.data.file ) {
-			navigate( 'import' );
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportContent.name } );
+	}, [] );
+	// On file change.
+	useEffect( () => {
+		if ( ! file ) {
+			navigateToMainScreen();
 		}
-	}, [ context.data.file ] );
+	}, [ file ] );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
-			<section className="e-app-export-kit">
+			<section className="e-app-import-content">
 				<PageHeader
-					heading={ __( 'Import a Template Kit', 'elementor' ) }
+					heading={ __( 'Select which parts you want to apply', 'elementor' ) }
 					description={ [
-						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit.', 'elementor' ),
-						<React.Fragment key="description-secondary-line">
-							{ __( 'By default, all of your components will be imported.', 'elementor' ) } { getLearnMoreLink() }
-						</React.Fragment>,
+						__( 'These are the templates, content and site settings that come with your kit.', 'elementor' ),
+						__( "All items are already selected by default. Uncheck the ones you don't want.", 'elementor' ),
 					] }
 				/>
-
-				<KitContent manifest={ context.data.uploadedData?.manifest } />
+				<ImportContentDisplay
+					manifest={ uploadedData?.manifest }
+					hasPro={ isProInstalledDuringProcess }
+					hasPlugins={ ! ! requiredPlugins.length }
+					isAllRequiredPluginsSelected={ requiredPlugins.length === plugins.length }
+					onResetProcess={ handleResetProcess }
+				/>
 			</section>
 		</Layout>
 	);

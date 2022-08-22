@@ -91,6 +91,20 @@ abstract class Controls_Stack extends Base_Object {
 	private $config;
 
 	/**
+	 * The additional configuration.
+	 *
+	 * Holds additional configuration that has been set using `set_config` method.
+	 * The `config` property is not modified directly while using the method because
+	 * it's used to check whether the initial config already loaded (in `get_config`).
+	 * After the initial config loaded, the additional config is merged into it.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
+	private $additional_config = [];
+
+	/**
 	 * Current section.
 	 *
 	 * Holds the current section while inserting a set of controls sections.
@@ -305,7 +319,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Active controls.
 	 */
 	public function get_active_controls( array $controls = null, array $settings = null ) {
-		// _deprecated_function( __METHOD__, '3.0.0' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
@@ -394,12 +408,14 @@ abstract class Controls_Stack extends Base_Object {
 
 		unset( $options['position'] );
 
-		if ( $this->current_popover && ! $this->current_popover['initialized'] ) {
-			$args['popover'] = [
-				'start' => true,
-			];
+		if ( $this->current_popover ) {
+			$args['popover'] = [];
 
-			$this->current_popover['initialized'] = true;
+			if ( ! $this->current_popover['initialized'] ) {
+				$args['popover']['start'] = true;
+
+				$this->current_popover['initialized'] = true;
+			}
 		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
@@ -703,11 +719,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Scheme controls.
 	 */
 	final public function get_scheme_controls() {
-		// _deprecated_function( __METHOD__, '3.0.0' );
+
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
 		return array_filter(
-			$this->get_controls(), function( $control ) use ( $enabled_schemes ) {
+			$this->get_controls(), function ( $control ) use ( $enabled_schemes ) {
 				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
 			}
 		);
@@ -730,7 +748,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Style controls.
 	 */
 	final public function get_style_controls( array $controls = null, array $settings = null ) {
-		// _deprecated_function( __METHOD__, '3.0.0' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		$controls = $this->get_active_controls( $controls, $settings );
 
@@ -802,7 +820,10 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [
+			'reverse' => true,
+			'desktop_first' => true,
+		] );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -860,7 +881,12 @@ abstract class Controls_Stack extends Base_Object {
 			$control_args = $args;
 
 			// Set parent using the name from previous iteration.
-			$control_args['parent'] = isset( $control_name ) ? $control_name : null;
+			if ( isset( $control_name ) ) {
+				// If $control_name end with _widescreen use desktop name instead
+				$control_args['parent'] = '_widescreen' === substr( $control_name, -strlen( '_widescreen' ) ) ? $id : $control_name;
+			} else {
+				$control_args['parent'] = null;
+			}
 
 			if ( isset( $control_args['device_args'] ) ) {
 				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {
@@ -948,11 +974,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $id Responsive control ID.
 	 */
 	final public function remove_responsive_control( $id ) {
-		$devices = [
-			Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP,
-			Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
-		];
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 		foreach ( $devices as $device_name ) {
 			$id_suffix = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_name ? '' : '_' . $device_name;
@@ -996,9 +1018,33 @@ abstract class Controls_Stack extends Base_Object {
 			} else {
 				$this->config = $this->get_initial_config();
 			}
+
+			foreach ( $this->additional_config as $key => $value ) {
+				if ( isset( $this->config[ $key ] ) ) {
+					$this->config[ $key ] = wp_parse_args( $value, $this->config[ $key ] );
+				} else {
+					$this->config[ $key ] = $value;
+				}
+			}
 		}
 
 		return $this->config;
+	}
+
+	/**
+	 * Set a config property.
+	 *
+	 * Set a specific property of the config list for this controls-stack.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 */
+	public function set_config( $key, $value ) {
+		if ( isset( $this->additional_config[ $key ] ) ) {
+			$this->additional_config[ $key ] = wp_parse_args( $value, $this->additional_config[ $key ] );
+		} else {
+			$this->additional_config[ $key ] = $value;
+		}
 	}
 
 	/**
@@ -1341,6 +1387,20 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$instance_value = $values[ $pure_condition_key ];
+
+			if ( ! $instance_value ) {
+				$controls = $this->get_controls();
+				$parent = isset( $controls[ $pure_condition_key ]['parent'] ) ? $controls[ $pure_condition_key ]['parent'] : false;
+
+				while ( $parent ) {
+					$instance_value = $values[ $parent ];
+
+					if ( $instance_value ) {
+						break;
+					}
+					$parent = isset( $controls[ $parent ]['parent'] ) ? $controls[ $parent ]['parent'] : false;
+				}
+			}
 
 			if ( $condition_sub_key && is_array( $instance_value ) ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
@@ -1921,6 +1981,15 @@ abstract class Controls_Stack extends Base_Object {
 			<?php $this->print_template_content( $template_content ); ?>
 		</script>
 		<?php
+	}
+
+	/**
+	 *
+	 * @since 3.6.0
+	 * @access public
+	 */
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		return $config;
 	}
 
 	/**

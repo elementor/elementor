@@ -1,4 +1,3 @@
-import Kit from '../models/kit';
 import { useCallback } from 'react';
 import { KEY as kitsKey } from '../hooks/use-kits';
 import { KEY as kitKey } from '../hooks/use-kit';
@@ -30,7 +29,7 @@ export function useKitFavoritesMutations() {
 
 						return item;
 					} );
-				}
+				},
 			);
 		}
 
@@ -43,18 +42,18 @@ export function useKitFavoritesMutations() {
 
 					// Should return a new kit to trigger rerender.
 					return currentKit.clone();
-				}
+				},
 			);
 		}
 	}, [ queryClient ] );
 
 	const addToFavorites = useMutation(
 		( id ) => $e.data.create( 'kits/favorites', {}, { id } ),
-		{ onSuccess }
+		{ onSuccess },
 	);
 	const removeFromFavorites = useMutation(
 		( id ) => $e.data.delete( 'kits/favorites', { id } ),
-		{ onSuccess }
+		{ onSuccess },
 	);
 
 	return {

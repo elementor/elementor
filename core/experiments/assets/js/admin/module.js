@@ -3,7 +3,7 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 		return {
 			selectors: {
 				experimentIndicators: '.e-experiment__title__indicator',
-				experimentForm: '#elementor-settings-form[action="options.php#tab-experiments"]',
+				experimentForm: '#elementor-settings-form',
 				experimentSelects: '.e-experiment__select',
 				experimentsButtons: '.e-experiment__button',
 			},
@@ -22,15 +22,14 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 	}
 
 	bindEvents() {
-		this.elements.$experimentForm.on( 'submit', ( event ) => this.onSettingsSubmit( event ) );
+		this.elements.$experimentsButtons.on( 'click', ( event ) => this.onExperimentsButtonsClick( event ) );
     }
 
-	onSettingsSubmit( event ) {
-		const submitButton = jQuery( event.originalEvent.submitter );
+	onExperimentsButtonsClick( event ) {
+		const submitButton = jQuery( event.currentTarget );
 
-		if ( submitButton.is( this.elements.$experimentsButtons ) ) {
-			this.elements.$experimentSelects.val( submitButton.val() );
-		}
+		this.elements.$experimentSelects.val( submitButton.val() );
+		this.elements.$experimentForm.find( '#submit' ).trigger( 'click' );
 	}
 
 	addTipsy( $element ) {

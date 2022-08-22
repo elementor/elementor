@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
-use Elementor\Core\Utils\Http;
-use Elementor\Core\Utils\Collection;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Http;
 use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Base_App {
 
 	const OPTION_NAME_PREFIX = 'elementor_connect_';
+
+	const OPTION_CONNECT_SITE_KEY = self::OPTION_NAME_PREFIX . 'site_key';
 
 	const SITE_URL = 'https://my.elementor.com/connect/v1';
 
@@ -76,6 +78,7 @@ abstract class Base_App {
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
+			/* translators: %s: Remote user. */
 			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
 			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
@@ -163,10 +166,8 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		delete_user_option( get_current_user_id(), 'elementor_connect_common_data' );
-
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( 'elementor_connect_site_key' );
+			delete_option( static::OPTION_CONNECT_SITE_KEY );
 			delete_option( 'elementor_remote_info_library' );
 		}
 
@@ -210,7 +211,7 @@ abstract class Base_App {
 		$this->after_connect();
 
 		// Add the notice *after* the method `after_connect`, so an app can redirect without the notice.
-		$this->add_notice( esc_html__( 'Connected Successfully.', 'elementor' ) );
+		$this->add_notice( esc_html__( 'Connected successfully.', 'elementor' ) );
 
 		$this->redirect_to_admin_page();
 	}
@@ -222,7 +223,7 @@ abstract class Base_App {
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
-			$this->add_notice( esc_html__( 'Disconnected Successfully.', 'elementor' ) );
+			$this->add_notice( esc_html__( 'Disconnected successfully.', 'elementor' ) );
 		}
 
 		$this->redirect_to_admin_page();
@@ -539,6 +540,8 @@ abstract class Base_App {
 			'utm_campaign',
 			'utm_term',
 			'utm_content',
+			'source',
+			'screen_hint',
 		];
 
 		$query_params = ( new Collection( $_GET ) ) // phpcs:ignore
@@ -586,10 +589,6 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function set_client_id() {
-		if ( $this->get( 'client_id' ) ) {
-			return;
-		}
-
 		$response = $this->request(
 			'get_client_id',
 			[
@@ -662,11 +661,11 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	public function get_site_key() {
-		$site_key = get_option( 'elementor_connect_site_key' );
+		$site_key = get_option( static::OPTION_CONNECT_SITE_KEY );
 
 		if ( ! $site_key ) {
 			$site_key = md5( uniqid( wp_generate_password() ) );
-			update_option( 'elementor_connect_site_key', $site_key );
+			update_option( static::OPTION_CONNECT_SITE_KEY, $site_key );
 		}
 
 		return $site_key;
@@ -764,7 +763,7 @@ abstract class Base_App {
 
 		if ( $is_rest || $is_ajax ) {
 			// Set default to 'xhr' if rest or ajax request.
-			$this->auth_mode = 'xhr';
+			$this->set_auth_mode( 'xhr' );
 		}
 
 		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
@@ -779,9 +778,13 @@ abstract class Base_App {
 			$mode = $_REQUEST['mode']; // phpcs:ignore -- nonce validation is not require here.
 
 			if ( in_array( $mode, $allowed_auth_modes, true ) ) {
-				$this->auth_mode = $mode;
+				$this->set_auth_mode( $mode );
 			}
 		}
+	}
+
+	public function set_auth_mode( $mode ) {
+		$this->auth_mode = $mode;
 	}
 
 	/**

@@ -1,12 +1,14 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
-use Elementor\Utils;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Plugin;
+use Elementor\Utils;
+use WP_User_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -74,6 +76,10 @@ class Module extends BaseModule {
 			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 			add_action( 'elementor/init', [ $this, 'init' ], 11 );
 		}
+
+		add_filter( 'elementor/tracker/send_tracking_data_params', function ( $params ) {
+			return $this->add_tracking_data( $params );
+		} );
 	}
 
 	/**
@@ -193,14 +199,46 @@ class Module extends BaseModule {
 			],
 			static::ACCESS_LEVEL_PRO => [
 				'label' => 'Pro',
-				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=gopro" ),
+				'promotion_url' => "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=gopro",
 				'color' => '#92003B',
 			],
 			static::ACCESS_LEVEL_EXPERT => [
 				'label' => 'Expert',
-				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=goexpert" ),
+				'promotion_url' => "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=goexpert",
 				'color' => '#010051',
 			],
 		];
+	}
+
+	private function add_tracking_data( $params ) {
+		$users = [];
+
+		$users_query = new WP_User_Query( [
+			'count_total' => false, // Disable SQL_CALC_FOUND_ROWS.
+			'meta_query' => [
+				'key' => Common_App::OPTION_CONNECT_COMMON_DATA_KEY,
+				'compare' => 'EXISTS',
+			],
+		] );
+
+		foreach ( $users_query->get_results() as $user ) {
+			$connect_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
+
+			if ( $connect_common_data ) {
+				$users [] = [
+					'id' => $user->ID,
+					'email' => $connect_common_data['user']->email,
+					'roles' => implode( ', ', $user->roles ),
+				];
+			}
+		}
+
+		$params['usages'][ $this->get_name() ] = [
+			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
+			'count' => count( $users ),
+			'users' => $users,
+		];
+
+		return $params;
 	}
 }

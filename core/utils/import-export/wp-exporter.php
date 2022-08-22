@@ -64,14 +64,14 @@ class WP_Exporter {
 			$where = $this->wpdb->prepare( "{$this->wpdb->posts}.post_type IN (" . implode( ',', $esses ) . ')', $post_types );// phpcs:ignore
 		}
 
-		if ( $this->args['status'] && ( 'post' === $this->args['content'] || 'page' === $this->args['content'] ) ) {
+		if ( $this->args['status'] && ( 'post' === $this->args['content'] || 'page' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) ) {
 			$where .= $this->wpdb->prepare( " AND {$this->wpdb->posts}.post_status = %s", $this->args['status'] );// phpcs:ignore
 		} else {
 			$where .= " AND {$this->wpdb->posts}.post_status != 'auto-draft'";
 		}
 
 		$join = '';
-		if ( $this->args['category'] && 'post' === $this->args['content'] ) {
+		if ( $this->args['category'] && ( 'post' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) ) {
 			$term = term_exists( $this->args['category'], 'category' );
 			if ( $term ) {
 				$join = "INNER JOIN {$this->wpdb->term_relationships} ON ({$this->wpdb->posts}.ID = {$this->wpdb->term_relationships}.object_id)";
@@ -640,12 +640,10 @@ class WP_Exporter {
 
 		foreach ( $nav_menus as $menu ) {
 			$result .= $this->indent( 2 ) . '<wp:term>' . PHP_EOL;
-
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $menu->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>nav_menu</wp:term_taxonomy>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $menu->slug ) . '</wp:term_slug>' . PHP_EOL;
-			$result .= wxr_term_name( $menu );
-
+			$result .= $this->indent( 3 ) . '<wp:term_name>' . $this->wxr_cdata( $menu->name ) . '</wp:term_name>' . PHP_EOL;
 			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
 		}
 
@@ -722,7 +720,7 @@ class WP_Exporter {
 
 		$dynamic .= $rss2_head;
 
-		if ( 'all' === $this->args['content'] ) {
+		if ( 'all' === $this->args['content'] || 'nav_menu_item' === $this->args['content'] ) {
 			$dynamic .= $this->wxr_nav_menu_terms();
 		}
 
@@ -764,7 +762,7 @@ $generator
 		<wp:base_site_url>$wxr_site_url</wp:base_site_url>
 		<wp:base_blog_url>$rss_info_url</wp:base_blog_url>
 		$page_on_front_xml
-$dynamic
+		$dynamic
 	</channel>
 </rss>
 EOT;

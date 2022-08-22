@@ -4,6 +4,11 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 ControlSelectItemView = ControlBaseDataView.extend( {
 	updatePlaceholder() {
 		const select = this.ui.select;
+
+		if ( ! select ) {
+			return;
+		}
+
 		let selected = select.find( 'option:selected' );
 
 		// When option with an empty value ('') selected, and it's not the placeholder option,
@@ -39,7 +44,7 @@ ControlSelectItemView = ControlBaseDataView.extend( {
 	},
 }, {
 
-	onPasteStyle: function( control, clipboardValue ) {
+	onPasteStyle( control, clipboardValue ) {
 		if ( control.groups ) {
 			return control.groups.some( function( group ) {
 				return ControlSelectItemView.onPasteStyle( group, clipboardValue );

@@ -21,10 +21,16 @@ class Manager {
 
 	const OPTION_ACTIVE = 'elementor_active_kit';
 
+	const OPTION_PREVIOUS = 'elementor_previous_kit';
+
 	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
 	public function get_active_id() {
 		return get_option( self::OPTION_ACTIVE );
+	}
+
+	public function get_previous_id() {
+		return get_option( self::OPTION_PREVIOUS );
 	}
 
 	public function get_active_kit() {
@@ -116,7 +122,27 @@ class Manager {
 
 		$kit = Plugin::$instance->documents->create( 'kit', $kit_data, $kit_meta_data );
 
+		if ( isset( $kit_data['settings'] ) ) {
+			$kit->save( [ 'settings' => $kit_data['settings'] ] );
+		}
+
 		return $kit->get_id();
+	}
+
+	public function create_new_kit( $kit_name = '', $settings = [], $active = true ) {
+		$kit_name = $kit_name ? $kit_name : esc_html__( 'Custom', 'elementor' );
+
+		$id = $this->create( [
+			'post_title' => $kit_name,
+			'settings' => $settings,
+		] );
+
+		if ( $active ) {
+			update_option( self::OPTION_PREVIOUS, $this->get_active_id() );
+			update_option( self::OPTION_ACTIVE, $id );
+		}
+
+		return $id;
 	}
 
 	public function create_default() {

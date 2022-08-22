@@ -13,7 +13,7 @@ class Controller extends Base_Controller {
 		return 'kit-taxonomies';
 	}
 
-	public function get_items_args( $methods ) {
+	public function get_collection_params() {
 		return [
 			'force' => [
 				'description' => 'Force an API request and skip the cache.',
@@ -30,5 +30,9 @@ class Controller extends Base_Controller {
 		return [
 			'data' => $data->values(),
 		];
+	}
+
+	public function get_permission_callback( $request ) {
+		return current_user_can( 'administrator' );
 	}
 }

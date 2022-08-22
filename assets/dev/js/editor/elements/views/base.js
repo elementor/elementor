@@ -1,10 +1,21 @@
 import environment from 'elementor-common/utils/environment';
+import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
+/**
+ * @typedef {{}} DataBinding
+ * @property {DOMStringMap} dataset The dataset of the element.
+ * @property {HTMLElement}  el      The element.
+ */
+
+/**
+ * @name BaseElementView
+ * @augments {BaseContainer}
+ */
 BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
@@ -51,7 +62,7 @@ BaseElementView = BaseContainer.extend( {
 		const behaviors = {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: groups,
+				groups,
 			},
 		};
 
@@ -85,18 +96,14 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChildView( model ) {
-		let ChildView;
-		const elType = model.get( 'elType' );
+		const elementType = model.get( 'widgetType' ) || model.get( 'elType' ),
+			elementTypeClass = elementor.elementsManager.getElementTypeClass( elementType );
 
-		if ( 'section' === elType ) {
-			ChildView = require( 'elementor-elements/views/section' );
-		} else if ( 'column' === elType ) {
-			ChildView = require( 'elementor-elements/views/column' );
-		} else {
-			ChildView = elementor.modules.elements.views.Widget;
+		if ( ! elementTypeClass ) {
+			throw new ElementTypeNotFound( elementType );
 		}
 
-		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
+		return elementor.hooks.applyFilters( 'element/view', elementTypeClass.getView(), model, this );
 	},
 
 	getTemplateType() {
@@ -117,11 +124,12 @@ BaseElementView = BaseContainer.extend( {
 				model: this.model,
 				settings: settingsModel,
 				view: this,
-				parent: this._parent ? this._parent.getContainer() : {},
+				parent: this._parent ? this._parent.getContainer() : false,
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
 		}
+
 		return this.container;
 	},
 
@@ -135,8 +143,9 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						/* translators: %s: Element Name. */
-						title: sprintf( __( 'Edit %s', 'elementor' ), this.options.model.getTitle() ),
+						/* Translators: %s: Element Name. */
+						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
+						isEnabled: () => ! elementor.selection.isMultiple(),
 						callback: () => $e.run( 'panel/editor/open', {
 							model: this.options.model, // Todo: remove on merge router
 							view: this, // Todo: remove on merge router
@@ -147,7 +156,8 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						callback: () => $e.run( 'document/elements/duplicate', { container: this.getContainer() } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			}, {
@@ -157,12 +167,14 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
-						callback: () => $e.run( 'document/elements/copy', { container: this.getContainer() } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ) &&
+							elementor.selection.isSameType(),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),
@@ -171,11 +183,11 @@ BaseElementView = BaseContainer.extend( {
 						title: __( 'Paste Style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
-						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'resetStyle',
 						title: __( 'Reset Style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			},
@@ -188,8 +200,8 @@ BaseElementView = BaseContainer.extend( {
 		 *
 		 * This filter allows adding new context menu groups to elements.
 		 *
-		 * @param array customGroups - An array of group objects.
-		 * @param string elementType - The current element type.
+		 * @param  array  customGroups - An array of group objects.
+		 * @param  string elementType - The current element type.
 		 */
 		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
 
@@ -203,9 +215,15 @@ BaseElementView = BaseContainer.extend( {
 				{
 					name: 'delete',
 					icon: 'eicon-trash',
-					title: __( 'Delete', 'elementor' ),
+					title: () => {
+						if ( elementor.selection.isMultiple() ) {
+							// Translators: %d: Elements count.
+							return sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length );
+						}
+						return __( 'Delete', 'elementor' );
+					},
 					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
+					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 				},
 			],
 		} );
@@ -213,7 +231,7 @@ BaseElementView = BaseContainer.extend( {
 		return groups;
 	},
 
-	getEditButtons: function() {
+	getEditButtons() {
 		return {};
 	},
 
@@ -223,12 +241,12 @@ BaseElementView = BaseContainer.extend( {
 		const editModel = this.getEditModel();
 
 		if ( this.collection && this.onCollectionChanged ) {
-			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.hooks' );
+			elementorDevTools.deprecation.deprecated( 'onCollectionChanged', '2.8.0', '$e.hooks' );
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
 		if ( this.onSettingsChanged ) {
-			elementorCommon.helpers.softDeprecated( 'onSettingsChanged', '2.8.0', '$e.hooks' );
+			elementorDevTools.deprecation.deprecated( 'onSettingsChanged', '2.8.0', '$e.hooks' );
 			this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged );
 		}
 
@@ -237,14 +255,9 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
-
-		_.defer( () => {
-			// Init container. Defer - in order to init the container after the element is fully initialized, and properties like `_parent` are available.
-			this.getContainer();
-		} );
 	},
 
-	getHandlesOverlay: function() {
+	getHandlesOverlay() {
 		const elementType = this.getElementType(),
 			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
 			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
@@ -255,16 +268,35 @@ BaseElementView = BaseContainer.extend( {
 
 		// We should only allow external modification to edit buttons if the user enabled edit buttons.
 		if ( editButtonsEnabled ) {
-			// A filter for adding edit buttons to all element types.
-			editButtons = elementor.hooks.applyFilters( `elements/base/edit-buttons`, editButtons );
-			// A filter for adding edit buttons only to a specific element type.
-			editButtons = elementor.hooks.applyFilters( `elements/${ elementType }/edit-buttons`, editButtons );
+			/**
+			 * Filter edit buttons.
+			 *
+			 * This filter allows adding edit buttons to all element types.
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param  array editButtons An array of buttons.
+			 */
+			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons`, editButtons );
+
+			/**
+			 * Filter edit buttons.
+			 *
+			 * This filter allows adding edit buttons only to a specific element type.
+			 *
+			 * The dynamic portion of the hook name, `elementType`, refers to element type (widget, column, section).
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param  array editButtons An array of buttons.
+			 */
+			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons/${ elementType }`, editButtons );
 		}
 
 		// Only sections always have the remove button, even if the Editing Handles preference is off.
 		if ( 'section' === elementType || editButtonsEnabled ) {
 			editButtons.remove = {
-				/* translators: %s: Element Name. */
+				/* Translators: %s: Element Name. */
 				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
 				icon: 'close',
 			};
@@ -287,61 +319,8 @@ BaseElementView = BaseContainer.extend( {
 		return $handlesOverlay;
 	},
 
-	attachElContent: function( html ) {
+	attachElContent( html ) {
 		this.$el.empty().append( this.getHandlesOverlay(), html );
-	},
-
-	startTransport() {
-		elementorCommon.helpers.softDeprecated( 'element.startTransport', '2.8.0', "$e.run( 'document/elements/copy' )" );
-
-		$e.run( 'document/elements/copy', {
-			container: this.getContainer(),
-		} );
-	},
-
-	copy() {
-		elementorCommon.helpers.softDeprecated( 'element.copy', '2.8.0', "$e.run( 'document/elements/copy' )" );
-
-		$e.run( 'document/elements/copy', {
-			container: this.getContainer(),
-		} );
-	},
-
-	cut() {
-		elementorCommon.helpers.softDeprecated( 'element.cut', '2.8.0' );
-	},
-
-	paste() {
-		elementorCommon.helpers.softDeprecated( 'element.paste', '2.8.0', "$e.run( 'document/elements/paste' )" );
-
-		$e.run( 'document/elements/paste', {
-			container: this.getContainer(),
-			at: this._parent.collection.indexOf( this.model ),
-		} );
-	},
-
-	duplicate() {
-		elementorCommon.helpers.softDeprecated( 'element.duplicate', '2.8.0', "$e.run( 'document/elements/duplicate' )" );
-
-		$e.run( 'document/elements/duplicate', {
-			container: this.getContainer(),
-		} );
-	},
-
-	pasteStyle() {
-		elementorCommon.helpers.softDeprecated( 'element.pasteStyle', '2.8.0', "$e.run( 'document/elements/paste-style' )" );
-
-		$e.run( 'document/elements/paste-style', {
-			container: this.getContainer(),
-		} );
-	},
-
-	resetStyle() {
-		elementorCommon.helpers.softDeprecated( 'element.resetStyle', '2.8.0', "$e.run( 'document/elements/reset-style' )" );
-
-		$e.run( 'document/elements/reset-style', {
-			container: this.getContainer(),
-		} );
 	},
 
 	isStyleTransferControl( control ) {
@@ -378,7 +357,8 @@ BaseElementView = BaseContainer.extend( {
 			model.widgetType = elementView.model.get( 'widgetType' );
 		} else if ( 'section' === model.elType ) {
 			model.isInner = true;
-		} else {
+		} else if ( 'container' !== model.elType ) {
+			// Don't allow adding anything other than widget, inner-section or a container.
 			return;
 		}
 
@@ -387,6 +367,9 @@ BaseElementView = BaseContainer.extend( {
 		if ( customData ) {
 			jQuery.extend( model, customData );
 		}
+
+		// Reset the selected element cache.
+		elementor.channels.panelElements.reply( 'element:selected', null );
 
 		return $e.run( 'document/elements/create', {
 			container: this.getContainer(),
@@ -462,7 +445,7 @@ BaseElementView = BaseContainer.extend( {
 		return attributes.join( ' ' );
 	},
 
-	isInner: function() {
+	isInner() {
 		return !! this.model.get( 'isInner' );
 	},
 
@@ -538,7 +521,7 @@ BaseElementView = BaseContainer.extend( {
 				}
 			}
 
-			const isVisible = elementor.helpers.isActiveControl( control, settings.attributes );
+			const isVisible = elementor.helpers.isActiveControl( control, settings.attributes, settings.controls );
 
 			if ( isVisible && ( classValue || 0 === classValue ) ) {
 				self.$el.addClass( control.prefix_class + classValue );
@@ -556,14 +539,14 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.attr( 'id', customElementID );
 	},
 
-	renderUI: function() {
+	renderUI() {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
 		this.enqueueFonts();
 	},
 
-	runReadyTrigger: function() {
+	runReadyTrigger() {
 		const self = this;
 
 		_.defer( function() {
@@ -588,7 +571,7 @@ BaseElementView = BaseContainer.extend( {
 		return 'elementor-element-' + this.getID();
 	},
 
-	renderHTML: function() {
+	renderHTML() {
 		const templateType = this.getTemplateType(),
 			editModel = this.getEditModel();
 
@@ -601,11 +584,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	renderOnChange( settings ) {
-		if ( ! this.allowRender ) {
-			return;
-		}
-
+	renderChanges( settings ) {
 		// Make sure is correct model
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
@@ -613,13 +592,12 @@ BaseElementView = BaseContainer.extend( {
 				isRenderRequired = ! hasChanged;
 
 			_.each( settings.changedAttributes(), ( settingValue, settingKey ) => {
-				const control = settings.getControl( settingKey );
-
 				if ( '_column_size' === settingKey ) {
 					isRenderRequired = true;
 					return;
 				}
 
+				const control = settings.getControl( settingKey );
 				if ( ! control ) {
 					isRenderRequired = true;
 					isContentChanged = true;
@@ -645,12 +623,142 @@ BaseElementView = BaseContainer.extend( {
 
 			if ( ! isContentChanged ) {
 				this.renderUI();
+
 				return;
 			}
 		}
 
-		// Re-render the template
 		this.renderHTML();
+	},
+
+	/**
+	 * Function linkDataBindings().
+	 *
+	 * Link data to allow partial render, instead of full re-render
+	 *
+	 * How to use?
+	 *  If the element which should be rendered for a setting key is known in advance, it's possible to add the following attributes to the element to avoid full re-render:
+	 *  Example for repeater item:
+	 * 'data-binding-type': 'repeater-item',               // Type of binding (to know how to behave).
+	 * 'data-binding-setting': 'tab_title',                // Setting key that effect the binding.
+	 * 'data-binding-index': tabCount,                     // Index is required for repeater items.
+	 *
+	 * Example for content:
+	 * 'data-binding-type': 'content',                     // Type of binding.
+	 * 'data-binding-setting': 'testimonial_content',      // Setting change to capture, the value will replace the link.
+	 *
+	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
+	 *
+	 * Current Limitation:
+	 * Not working with dynamics, will required full re-render.
+	 */
+	linkDataBindings() {
+		/**
+		 * @type {Array.<DataBinding>}
+		 */
+		this.dataBindings = [];
+
+		const id = this.$el.data( 'id' );
+
+		if ( ! id ) {
+			return;
+		}
+
+		const $dataBinding = this.$el.find( '[data-binding-type]' );
+
+		if ( ! $dataBinding.length ) {
+			return;
+		}
+
+		$dataBinding.each( ( index, current ) => {
+			// To support nested data-binding bypass nested data-binding that are not part of the current.
+			if ( jQuery( current ).closest( '.elementor-element' ).data( 'id' ) === id ) {
+				if ( current.dataset.bindingType ) {
+					this.dataBindings.push( {
+						el: current,
+						dataset: current.dataset,
+					} );
+				}
+			}
+		} );
+	},
+
+	/**
+	 * Function renderDataBindings().
+	 *
+	 * Render linked data.
+	 *
+	 * @param {Object}              settings
+	 * @param {Array.<DataBinding>} dataBindings
+	 *
+	 * @return {boolean} - false on fail.
+	 */
+	renderDataBindings( settings, dataBindings ) {
+		if ( ! this.dataBindings?.length ) {
+			return false;
+		}
+
+		let changed = false;
+
+		const renderDataBinding = ( dataBinding ) => {
+			const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+
+			if ( change !== undefined ) {
+				dataBinding.el.innerHTML = change;
+				return true;
+			}
+
+			return false;
+		};
+
+		for ( const dataBinding of dataBindings ) {
+			switch ( dataBinding.dataset.bindingType ) {
+				case 'repeater-item': {
+					const repeater = this.container.repeaters[ dataBinding.dataset.bindingRepeaterName ];
+
+					if ( ! repeater ) {
+						break;
+					}
+
+					const container = repeater.children.find( ( i ) => i.id === settings.attributes._id );
+
+					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
+						changed = renderDataBinding( dataBinding );
+					}
+				}
+				break;
+
+				case 'content': {
+					changed = renderDataBinding( dataBinding );
+				}
+				break;
+			}
+
+			if ( changed ) {
+				break;
+			}
+		}
+
+		return changed;
+	},
+
+	/**
+	 * Function renderOnChange().
+	 *
+	 * Render the changes in the settings according to the current situation.
+	 *
+	 * @param {Object} settings
+	 */
+	renderOnChange( settings ) {
+		if ( ! this.allowRender ) {
+			return;
+		}
+
+		if ( this.renderDataBindings( settings, this.dataBindings ) ) {
+			return;
+		}
+
+		this.renderChanges( settings );
 	},
 
 	getDynamicParsingSettings() {
@@ -686,7 +794,15 @@ BaseElementView = BaseContainer.extend( {
 		this.renderAttributes = {};
 	},
 
+	render() {
+		this.getContainer();
+
+		BaseContainer.prototype.render.apply( this, arguments );
+	},
+
 	onRender() {
+		this.linkDataBindings();
+
 		this.renderUI();
 
 		this.runReadyTrigger();
@@ -705,14 +821,17 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		this.triggerMethod( 'render:after' );
+
+		// Defer to wait for all of the children to render.
+		setTimeout( () => this.initDraggable(), 0 );
 	},
 
 	onEditSettingsChanged( changedModel ) {
 		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
 	},
 
-	onEditButtonClick() {
-		this.model.trigger( 'request:edit' );
+	onEditButtonClick( event ) {
+		this.model.trigger( 'request:edit', { append: event.ctrlKey || event.metaKey } );
 	},
 
 	onEditRequest( options = {} ) {
@@ -731,10 +850,24 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		$e.run( 'panel/editor/open', {
-			model: model,
-			view: this,
+		$e.run( 'document/elements/toggle-selection', {
+			container: this.getContainer(),
+			append: options.append,
 		} );
+	},
+
+	/**
+	 * Select current element.
+	 */
+	select() {
+		this.$el.addClass( 'elementor-element-editable' );
+	},
+
+	/**
+	 * Deselect current element.
+	 */
+	deselect() {
+		this.$el.removeClass( 'elementor-element-editable' );
 	},
 
 	onDuplicateButtonClick( event ) {
@@ -761,11 +894,101 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onDestroy() {
+		if ( this.dataBindings ) {
+			delete this.dataBindings;
+		}
+
 		this.controlsCSSParser.removeStyleFromDocument();
 
 		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
+	},
+
+	// eslint-disable-next-line jsdoc/require-returns-check
+	/**
+	 * On `$el` drag start event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 */
+	onDragStart() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * On `$el` drag end event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 */
+	onDragEnd() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * Create a drag helper element.
+	 * Copied from `behaviors/sortable.js` with some refactor.
+	 *
+	 * @return {HTMLDivElement} helper
+	 */
+	getDraggableHelper() {
+		const model = this.getEditModel();
+
+		const helper = document.createElement( 'div' );
+		helper.classList.add( 'elementor-sortable-helper', `elementor-sortable-helper-${ model.get( 'elType' ) }` );
+
+		helper.innerHTML = `
+			<div class="icon">
+				<i class="${ model.getIcon() }"></i>
+			</div>
+			<div class="elementor-element-title-wrapper">
+				<div class="title">${ model.getTitle() }</div>
+			</div>
+		`;
+
+		return helper;
+	},
+
+	/**
+	 * Initialize the Droppable instance.
+	 */
+	initDraggable() {
+		// Init the draggable only for Containers and their children.
+		if ( ! this.$el.hasClass( '.e-container' ) && ! this.$el.parents( '.e-container' ).length ) {
+			return;
+		}
+
+		this.$el.html5Draggable( {
+			onDragStart: ( e ) => {
+				e.stopPropagation();
+
+				// Need to stop this event when the element is absolute since it clashes with this one.
+				// See `behaviors/widget-draggable.js`.
+				if ( this.options.draggable?.isActive ) {
+					return;
+				}
+
+				const helper = this.getDraggableHelper();
+				this.$el[ 0 ].appendChild( helper );
+
+				// Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
+				e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
+
+				// Remove the helper element as soon as it's set as a drag image, since the element must be
+				// rendered for at least a fraction of a second in order to set it as a drag image.
+				setTimeout( () => {
+					helper.remove();
+				} );
+
+				this.onDragStart( e );
+
+				elementor.channels.editor.reply( 'element:dragged', this );
+			},
+			onDragEnd: ( e ) => {
+				e.stopPropagation();
+
+				this.onDragEnd( e );
+			},
+
+			groups: [ 'elementor-element' ],
+		} );
 	},
 } );
 

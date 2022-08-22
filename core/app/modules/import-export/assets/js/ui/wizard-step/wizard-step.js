@@ -18,6 +18,7 @@ export default function WizardStep( props ) {
 				<Grid className="e-app-import-export-wizard-step__media-container" justify="center" alignItems="end" container>
 					{
 						props.image &&
+						// eslint-disable-next-line jsx-a11y/alt-text
 						<img
 							className="e-app-import-export-wizard-step__image"
 							src={ props.image }
@@ -39,6 +40,12 @@ export default function WizardStep( props ) {
 				{ props.description &&
 				<Text variant="xl" className="e-app-import-export-wizard-step__description" >
 					{ props.description }
+				</Text>
+				}
+
+				{ props.info &&
+				<Text variant="xl" className="e-app-import-export-wizard-step__info" >
+					{ props.info }
 				</Text>
 				}
 
@@ -64,6 +71,7 @@ WizardStep.propTypes = {
 	icon: PropTypes.string,
 	heading: PropTypes.string,
 	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	info: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	notice: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	children: PropTypes.any,
 };

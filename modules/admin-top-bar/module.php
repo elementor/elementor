@@ -24,7 +24,7 @@ class Module extends BaseApp {
 			'name' => 'admin-top-bar',
 			'title' => esc_html__( 'Admin Top Bar', 'elementor' ),
 			'description' => esc_html__( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_BETA,
+			'release_status' => Manager::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 			],
@@ -57,6 +57,7 @@ class Module extends BaseApp {
 			'elementor-common',
 			'react',
 			'react-dom',
+			'tipsy',
 		], ELEMENTOR_VERSION, true );
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
@@ -83,6 +84,7 @@ class Module extends BaseApp {
 					'utm_medium' => 'wp-dash',
 					'utm_campaign' => 'connect-account',
 					'utm_content' => $current_screen->id,
+					'source' => 'generic',
 				] ),
 			] );
 		}

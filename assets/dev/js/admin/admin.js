@@ -1,6 +1,8 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 import environment from '../../../../core/common/assets/js/utils/environment';
+import Events from 'elementor-utils/events';
+import FilesUploadHandler from '../editor/utils/files-upload-handler';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -9,7 +11,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 
 		config: elementorAdminConfig,
 
-		getDefaultElements: function() {
+		getDefaultElements() {
 			var elements = {
 				$switchMode: $( '#elementor-switch-mode' ),
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
@@ -18,10 +20,14 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
+				$importNowButton: $( '#e-import-template-action' ),
 				$importArea: $( '#elementor-import-template-area' ),
+				$importForm: $( '#elementor-import-template-form' ),
+				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
+				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 
@@ -36,7 +42,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			return elements;
 		},
 
-		toggleStatus: function() {
+		toggleStatus() {
 			var isElementorMode = this.isElementorMode();
 
 			elementorCommon.elements.$body
@@ -44,7 +50,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				.toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
 
-		bindEvents: function() {
+		bindEvents() {
 			var self = this;
 
 			self.elements.$switchModeButton.on( 'click', function( event ) {
@@ -59,7 +65,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
-						onConfirm: function() {
+						onConfirm() {
 							self.elements.$switchModeInput.val( '' );
 							self.toggleStatus();
 						},
@@ -194,6 +200,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				event.preventDefault();
 				const $updateButton = $( this );
 				$updateButton.addClass( 'loading' );
+
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'confirm_fa_migration_admin_modal',
 					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
@@ -205,15 +212,28 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 					defaultOption: 'confirm',
 					onConfirm: () => {
 						$updateButton.removeClass( 'error' ).addClass( 'loading' );
-						$.post( ajaxurl, $updateButton.data() )
+
+						const {
+							_nonce,
+							action,
+							redirectUrl,
+						} = $updateButton.data();
+
+						$.post( ajaxurl, { action, _nonce } )
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
-								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
-								const redirectTo = ( location.search.split( 'redirect_to=' )[ 1 ] || '' ).split( '&' )[ 0 ];
-								if ( redirectTo ) {
-									location.href = decodeURIComponent( redirectTo );
+
+								const messageElement = document.createElement( 'p' );
+								messageElement.appendChild( document.createTextNode( response.data.message ) );
+
+								$( '#elementor_upgrade_fa_button' ).parent().append( messageElement );
+
+								if ( redirectUrl ) {
+									location.href = decodeURIComponent( redirectUrl );
+
 									return;
 								}
+
 								history.go( -1 );
 							} )
 							.fail( function() {
@@ -227,12 +247,12 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			} );
 
 			self.elements.$settingsTabs.on( {
-				click: function( event ) {
+				click( event ) {
 					event.preventDefault();
 
 					event.currentTarget.focus(); // Safari does not focus the tab automatically
 				},
-				focus: function() { // Using focus event to enable navigation by tab key
+				focus() { // Using focus event to enable navigation by tab key
 					var hrefWithoutHash = location.href.replace( /#.*/, '' );
 
 					history.pushState( {}, '', hrefWithoutHash + this.hash );
@@ -263,7 +283,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 						confirm: __( 'Continue', 'elementor' ),
 						cancel: __( 'Cancel', 'elementor' ),
 					},
-					onConfirm: function() {
+					onConfirm() {
 						$this.addClass( 'loading' );
 
 						location.href = $this.attr( 'href' );
@@ -301,7 +321,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			} ).trigger( 'change' );
 		},
 
-		onInit: function() {
+		onInit() {
 			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 			this.initTemplatesImport();
@@ -310,7 +330,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 
 			this.goToSettingsTabFromHash();
 
-			this.openGetHelpInNewTab();
+			this.openLinksInNewTab();
 
 			this.addUserAgentClasses();
 
@@ -334,18 +354,37 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			} );
 		},
 
-		openGetHelpInNewTab: function() {
-			this.elements.$menuGetHelpLink.attr( 'target', '_blank' );
+		/**
+		 * Open Links in New Tab
+		 *
+		 * Adds a `target="_blank"` attribute to the Admin Dashboard menu items specified in the `elements` array,
+		 * if the elements are found in the DOM. The items in the `elements` array should be jQuery instances.
+		 *
+		 * @since 3.6.0
+		 */
+		openLinksInNewTab() {
+			const elements = [
+				this.elements.$menuGetHelpLink,
+				this.elements.$menuGoProLink,
+			];
+
+			elements.forEach( ( $element ) => {
+				// Only add the attribute if the element is found.
+				if ( $element.length ) {
+					$element.attr( 'target', '_blank' );
+				}
+			} );
 		},
 
-		initTemplatesImport: function() {
+		initTemplatesImport() {
 			if ( ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 
-			var self = this,
+			const self = this,
 				$importButton = self.elements.$importButton,
-				$importArea = self.elements.$importArea;
+				$importArea = self.elements.$importArea,
+				$importNowButton = self.elements.$importNowButton;
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
@@ -356,23 +395,35 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
 			} );
+
+			$importNowButton.on( 'click', ( event ) => {
+				if ( self.elements.$importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+					event.preventDefault();
+
+					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						self.elements.$importForm.trigger( 'submit' );
+					} );
+
+					enableUnfilteredFilesModal.show();
+				}
+			} );
 		},
 
-		initMaintenanceMode: function() {
+		initMaintenanceMode() {
 			var MaintenanceMode = require( 'elementor-admin/maintenance-mode' );
 
 			this.maintenanceMode = new MaintenanceMode();
 		},
 
-		isElementorMode: function() {
+		isElementorMode() {
 			return ! ! this.elements.$switchModeInput.val();
 		},
 
-		animateLoader: function() {
+		animateLoader() {
 			this.elements.$goToEditLink.addClass( 'elementor-animate' );
 		},
 
-		goToSettingsTabFromHash: function() {
+		goToSettingsTabFromHash() {
 			var hash = location.hash.slice( 1 );
 
 			if ( hash ) {
@@ -380,7 +431,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			}
 		},
 
-		goToSettingsTab: function( tabName ) {
+		goToSettingsTab( tabName ) {
 			const $pages = this.elements.$settingsFormPages;
 
 			if ( ! $pages.length ) {
@@ -406,7 +457,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			this.elements.$activeSettingsTab = $activeTab;
 		},
 
-		translate: function( stringKey, templateArgs ) {
+		translate( stringKey, templateArgs ) {
 			return elementorCommon.translate( stringKey, null, templateArgs, this.config.i18n );
 		},
 
@@ -422,7 +473,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				arrowUp: 'dashicons-arrow-up',
 				arrowDown: 'dashicons-arrow-down',
 			},
-			toggle: function( $trigger ) {
+			toggle( $trigger ) {
 				var self = this,
 					$row = $trigger.closest( self.selectors.row ),
 					$toggleHandleIcon = $row.find( self.selectors.toggleHandle ).find( '.dashicons' ),
@@ -436,7 +487,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				}
 				self.updateLabel( $row );
 			},
-			updateLabel: function( $row ) {
+			updateLabel( $row ) {
 				var self = this,
 					$indicator = $row.find( self.selectors.excludedIndicator ),
 					excluded = $row.find( self.selectors.excludedField ).is( ':checked' );
@@ -447,7 +498,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				}
 				self.setAdvancedState( $row, excluded );
 			},
-			setAdvancedState: function( $row, state ) {
+			setAdvancedState( $row, state ) {
 				var self = this,
 					$controls = $row.find( 'input[type="checkbox"]' ).not( self.selectors.excludedField );
 
@@ -455,7 +506,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 					$( input ).prop( 'disabled', state );
 				} );
 			},
-			bind: function() {
+			bind() {
 				var self = this;
 				$( document ).on( 'click', self.selectors.label + ',' + self.selectors.toggleHandle, function( event ) {
 					event.stopPropagation();
@@ -465,7 +516,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 					self.updateLabel( $( this ).closest( self.selectors.row ) );
 				} );
 			},
-			init: function() {
+			init() {
 				var self = this;
 				if ( ! $( 'body[class*="' + self.selectors.body + '"]' ).length ) {
 					return;
@@ -481,6 +532,6 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 	$( function() {
 		window.elementorAdmin = new ElementorAdmin();
 
-		elementorCommon.elements.$window.trigger( 'elementor/admin/init' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/admin/init' );
 	} );
 }( jQuery ) );

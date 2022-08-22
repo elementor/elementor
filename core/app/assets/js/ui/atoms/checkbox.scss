@@ -16,7 +16,7 @@
 
 	&::after {
 		display: inline-block;
-		margin-bottom: percentage($eps-checkbox-indicator-scale-unit / 2);
+		margin-bottom: calc(#{$eps-checkbox-indicator-scale-unit} / 2 * 100%);
 		content: " ";
 		width: $eps-checkbox-indicator-size-unit;
 		height: (2 * $eps-checkbox-indicator-size-unit);
@@ -49,9 +49,58 @@
 		  --checkbox-background-color: var(--checkbox-checked-active-background-color);
 		  --checkbox-border-color: var(--checkbox-checked-active-background-color);
 		}
+
+		&:disabled {
+			--checkbox-background-color: var(--checkbox-checked-disabled-background-color);
+			--checkbox-border-color: var(--checkbox-checked-disabled-background-color);
+		}
 	}
 
 	&--rounded {
 		border-radius: 50%;
+	}
+
+	&--indeterminate {
+		&::after {
+			display: inline-block;
+			margin-bottom: 0;
+			content: " ";
+			width: $eps-checkbox-indeterminate-indicator-size-unit;
+			height: 0;
+			transform: rotate(0deg);
+			border-top: $eps-checkbox-indicator-border-width solid $eps-checkbox-indicator-color;
+		}
+
+		--checkbox-background-color: var(--checkbox-checked-background-color);
+		--checkbox-border-color: var(--checkbox-checked-background-color);
+	}
+
+	&--error,
+	&--error:checked {
+		&::before,
+		&::after {
+			display: inline-block;
+			margin-bottom: 0;
+			content: " ";
+			width: $eps-checkbox-indeterminate-indicator-size-unit;
+			height: 0;
+			border: solid $eps-checkbox-indicator-color;
+			border-width: $eps-checkbox-indicator-border-width 0 0 0;
+			position: absolute;
+		}
+
+		&::before {
+			transform: rotate(45deg);
+		}
+
+		&::after {
+			transform: rotate(-45deg);
+		}
+
+		&,
+		&:hover {
+			--checkbox-background-color: var(--checkbox-error-background-color);
+			--checkbox-border-color: var(--checkbox-error-background-color);
+		}
 	}
 }

@@ -84,6 +84,9 @@ class Test_Controller extends Data_Test_Base {
 
 		$controller = new ControllerWithEndpoint();
 		$controller->bypass_original_permission( false );
+		$controller->set_custom_permission_callback( function ( $request ) {
+			return current_user_can( 'administrator' );
+		} );
 
 		$methods = explode( ', ', \WP_REST_Server::ALLMETHODS );
 
@@ -102,6 +105,9 @@ class Test_Controller extends Data_Test_Base {
 
 		$controller = new ControllerWithEndpoint();
 		$controller->bypass_original_permission( false );
+		$controller->set_custom_permission_callback( function ( $request ) {
+			return current_user_can( 'administrator' );
+		} );
 
 		$methods = explode( ', ', \WP_REST_Server::ALLMETHODS );
 

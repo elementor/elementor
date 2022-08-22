@@ -29,7 +29,9 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	public function __construct() {
 		// TODO: Controllers and endpoints can have common interface.
-		$this->deprecated();
+
+		// TODO: Uncomment when native 3rd plugins uses V2.
+		//$this->deprecated();
 
 		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
 		$this->rest_base = Manager::REST_BASE . $this->get_name();

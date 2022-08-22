@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Includes;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -44,7 +44,7 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, '' );
 
-		update_option( Files_Upload_Handler::OPTION_KEY, '1' );
+		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '1' );
 
 		update_option( 'elementor_font_display', 'block' );
 

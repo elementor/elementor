@@ -38,8 +38,22 @@ $beta_tester_email = $user->user_email;
 			</button>
 		</div>
 		<div id="elementor-beta-tester-form__terms">
-			<?php // PHPCS - The content is escaped inside the sprintf. ?>
-			<?php echo sprintf( esc_html__( 'By clicking Sign Up, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php
+			echo sprintf(
+				/* translators: 1. "Terms of service" link, 2. "Privacy policy" link */
+				esc_html__( 'By clicking Sign Up, you agree to Elementor\'s %1$s and %2$s', 'elementor' ),
+				sprintf(
+					'<a href="%1$s" target="_blank">%2$s</a>',
+					esc_url( Beta_Testers::NEWSLETTER_TERMS_URL ),
+					esc_html__( 'Terms of Service', 'elementor' )
+				),
+				sprintf(
+					'<a href="%1$s" target="_blank">%2$s</a>',
+					esc_url( Beta_Testers::NEWSLETTER_PRIVACY_URL ),
+					esc_html__( 'Privacy Policy', 'elementor' )
+				)
+			)
+			?>
 		</div>
 	</form>
 </script>

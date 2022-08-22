@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -55,11 +55,11 @@ jobs:
       - name: Checkout source code
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Restore build from cache
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/cache@v2
@@ -82,7 +82,7 @@ jobs:
           npx wp-env start
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/import-temapltes.sh'"
+          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
@@ -93,19 +93,19 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
       - name: Save HTML dumps on failure
-        if: failure()
+        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
       - name: Upload Lighthouse reports on failure
+        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/upload-artifact@v2
-        if: failure()
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
           retention-days: 7
       - name: Upload Lighthouse HTML dumps on failure
+        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/upload-artifact@v2
-        if: failure()
         with:
           name: lighthouseci-htmls
           path: ${{ github.workspace }}/.lighthouseci/dumps/**/*

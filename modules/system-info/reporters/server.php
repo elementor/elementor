@@ -47,6 +47,7 @@ class Server extends Base {
 			'software' => 'Software',
 			'mysql_version' => 'MySQL version',
 			'php_version' => 'PHP Version',
+			'php_memory_limit' => 'PHP Memory Limit',
 			'php_max_input_vars' => 'PHP Max Input Vars',
 			'php_max_post_size' => 'PHP Max Post Size',
 			'gd_installed' => 'GD Installed',
@@ -119,6 +120,47 @@ class Server extends Base {
 
 		if ( version_compare( $result['value'], '5.4', '<' ) ) {
 			$result['recommendation'] = _x( 'We recommend to use php 5.4 or higher', 'System Info', 'elementor' );
+
+			$result['warning'] = true;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Get PHP memory limit.
+	 *
+	 * Retrieve the PHP memory limit.
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value          PHP memory limit.
+	 *    @type string $recommendation Recommendation memory limit.
+	 *    @type bool   $warning        Whether to display a warning. True if the limit
+	 *                                 is below the recommended 128M, False otherwise.
+	 * }
+	 */
+	public function get_php_memory_limit() {
+		$result = [
+			'value' => (string) get_cfg_var( 'memory_limit' ),
+		];
+
+		$min_recommended_memory = '128M';
+		$preferred_memory = '256M';
+
+		$memory_limit_bytes = wp_convert_hr_to_bytes( $result['value'] );
+
+		$min_recommended_bytes = wp_convert_hr_to_bytes( $min_recommended_memory );
+
+		if ( $memory_limit_bytes < $min_recommended_bytes ) {
+			$result['recommendation'] = sprintf(
+			/* translators: 1: Minimum recommended_memory, 2: Preferred memory, 3: WordPress wp-config memory documentation. */
+				_x( 'We recommend setting memory to at least %1$s. (%2$sMB or higher is preferred) For more information, read about <a href="%3$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+				$min_recommended_memory,
+				$preferred_memory,
+				'https://go.elementor.com/wordpress-wp-config-memory/'
+			);
 
 			$result['warning'] = true;
 		}
@@ -233,8 +275,17 @@ class Server extends Base {
 
 		$db_server_version = $wpdb->get_results( "SHOW VARIABLES WHERE `Variable_name` IN ( 'version_comment', 'innodb_version' )", OBJECT_K );
 
+		$db_server_version_string = $db_server_version['version_comment']->Value . ' v';
+
+		// On some hosts, `innodb_version` is empty, in PHP 8.1.
+		if ( isset( $db_server_version['innodb_version'] ) ) {
+			$db_server_version_string .= $db_server_version['innodb_version']->Value;
+		} else {
+			$db_server_version_string .= $wpdb->get_var( 'SELECT VERSION() AS version' );
+		}
+
 		return [
-			'value' => $db_server_version['version_comment']->Value . ' v' . $db_server_version['innodb_version']->Value,
+			'value' => $db_server_version_string,
 		];
 	}
 

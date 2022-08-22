@@ -160,7 +160,7 @@ $top-bar-height: 50px;
 	.e-admin-top-bar__bar-button-title {
 		font-size: 13px;
 		font-weight: 500;
-		font-family: 'Roboto';
+		font-family: $admin-font-family;
 		margin: 0 4px;
 		line-height: normal;
 	}

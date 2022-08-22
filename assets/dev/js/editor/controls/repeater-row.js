@@ -5,11 +5,13 @@ module.exports = Marionette.CompositeView.extend( {
 
 	className: 'elementor-repeater-fields',
 
-	ui: {
-		duplicateButton: '.elementor-repeater-tool-duplicate',
-		editButton: '.elementor-repeater-tool-edit',
-		removeButton: '.elementor-repeater-tool-remove',
-		itemTitle: '.elementor-repeater-row-item-title',
+	ui() {
+		return {
+			duplicateButton: '.elementor-repeater-tool-duplicate',
+			editButton: '.elementor-repeater-tool-edit',
+			removeButton: '.elementor-repeater-tool-remove',
+			itemTitle: '.elementor-repeater-row-item-title',
+		};
 	},
 
 	behaviors: {
@@ -28,7 +30,7 @@ module.exports = Marionette.CompositeView.extend( {
 		change: 'onModelChange',
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			itemIndex: this.getOption( 'itemIndex' ),
 			itemActions: this.getOption( 'itemActions' ),
@@ -37,23 +39,23 @@ module.exports = Marionette.CompositeView.extend( {
 
 	childViewContainer: '.elementor-repeater-row-controls',
 
-	getChildView: function( item ) {
+	getChildView( item ) {
 		var controlType = item.get( 'type' );
 
 		return elementor.getControlView( controlType );
 	},
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			container: this.options.container,
 		};
 	},
 
-	updateIndex: function( newIndex ) {
+	updateIndex( newIndex ) {
 		this.itemIndex = newIndex;
 	},
 
-	setTitle: function() {
+	setTitle() {
 		const titleField = this.getOption( 'titleField' );
 
 		let title = '';
@@ -63,7 +65,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! title ) {
-			/* translators: %s: Item Index (number). */
+			/* Translators: %s: Item Index (number). */
 			title = sprintf( __( 'Item #%s', 'elementor' ), this.getOption( 'itemIndex' ) );
 		}
 
@@ -74,26 +76,26 @@ module.exports = Marionette.CompositeView.extend( {
 		this.$el.toggleClass( 'elementor-repeater-row--disable-sort', ! enable );
 	},
 
-	initialize: function( options ) {
+	initialize( options ) {
 		this.itemIndex = 0;
 
 		// Collection for Controls list
 		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields ) ) );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.setTitle();
 
 		ControlsStack.handlePopovers( this );
 	},
 
-	onModelChange: function() {
+	onModelChange() {
 		if ( this.getOption( 'titleField' ) ) {
 			this.setTitle();
 		}
 	},
 
-	onChildviewResponsiveSwitcherClick: function( childView, device ) {
+	onChildviewResponsiveSwitcherClick( childView, device ) {
 		if ( 'desktop' === device ) {
 			elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}

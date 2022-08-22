@@ -54,7 +54,7 @@ class Test_Controller extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->data_manager->register_controller( Controller::class );
+		$this->data_manager->register_controller( new Controller( $this ) );
 
 		// Act
 		$result = $this->http_get( 'kit-taxonomies', [ 'force' => true ] );
