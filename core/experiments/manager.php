@@ -581,13 +581,13 @@ class Manager extends Base_Object {
 
 	private function render_feature_dependency( $feature ) {
 		$dependencies = ( new Collection( $feature['dependencies'] ?? [] ) )
-				->filter( function ( $dependency ) {
-					return ! $dependency->is_hidden();
-				} )
-				->map( function ( $dependency ) {
-					return $dependency->get_title();
-				} )
-				->implode( ', ' );
+			->filter( function ( $dependency ) {
+				return ! $dependency->is_hidden();
+			} )
+			->map( function ( $dependency ) {
+				return $dependency->get_title();
+			} )
+			->implode( ', ' );
 
 		if ( empty( $dependencies ) ) {
 			return;
