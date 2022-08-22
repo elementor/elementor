@@ -77,18 +77,7 @@ describe( 'ExperimentsDependency Behavior', () => {
 		const { confirm } = mockDialog();
 		const submitMock = jest.fn();
 
-		/**
-		 * Prevent form submission to avoid JSDOM `not-implemented` error.
-		 *
-		 * @see https://github.com/jsdom/jsdom/issues/1937
-		 * @see https://github.com/jsdom/jsdom#unimplemented-parts-of-the-web-platform
-		 * @see https://oliverjam.es/blog/frontend-testing-node-jsdom/#loading-external-resources
-		 */
-		elements.form.addEventListener( 'submit', ( e ) => {
-			submitMock();
-
-			e.preventDefault();
-		} );
+		elements.form.addEventListener( 'submit', submitMock );
 
 		// Act.
 		activateExperiment( 'depends_on_regular_inactive' );
@@ -105,11 +94,7 @@ describe( 'ExperimentsDependency Behavior', () => {
 		const { cancel } = mockDialog();
 		const submitMock = jest.fn();
 
-		elements.form.addEventListener( 'submit', ( e ) => {
-			submitMock();
-
-			e.preventDefault();
-		} );
+		elements.form.addEventListener( 'submit', submitMock );
 
 		// Act.
 		activateExperiment( 'depends_on_regular_inactive' );

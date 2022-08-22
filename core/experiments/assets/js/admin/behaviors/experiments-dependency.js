@@ -5,7 +5,7 @@ const STATE_INACTIVE = 'inactive';
 const STATE_DEFAULT = 'default';
 
 export default class ExperimentsDependency {
-	elemeents = {};
+	elements = {};
 
 	constructor( { selects } ) {
 		this.elements = {
@@ -15,9 +15,9 @@ export default class ExperimentsDependency {
 			selects,
 
 			/**
-			 * @type {HTMLFormElement}
+			 * @type {HTMLInputElement}
 			 */
-			form: selects[ 0 ].form,
+			submit: selects[ 0 ].form.querySelector( 'input[type="submit"]' ),
 		};
 	}
 
@@ -133,7 +133,7 @@ export default class ExperimentsDependency {
 					this.setExperimentState( dependency.name, STATE_ACTIVE );
 				} );
 
-				this.elements.form.submit();
+				this.elements.submit.click();
 			},
 			onCancel: () => {
 				this.setExperimentState( experimentId, STATE_INACTIVE );
