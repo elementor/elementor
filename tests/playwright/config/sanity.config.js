@@ -3,7 +3,7 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
 	timeout: 90000,
-	globalTimeout: 900000,
+	globalTimeout: 1200000,
 	reporter: 'list',
 	testDir: '../sanity/',
 	globalSetup: require.resolve( './global-setup' ),

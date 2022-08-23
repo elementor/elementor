@@ -1168,7 +1168,8 @@ module.exports = {
 							'background_slideshow_ken_burns!': '',
 					},
 			},
-			tab_button_hover: {
+			// Hover controls
+/* 			tab_button_hover: {
 					name: 'tab_button_hover',
 					tab: 'style',
 					section: 'section_style',
@@ -1946,7 +1947,7 @@ module.exports = {
 					section: 'section_style',
 					type: 'hover_animation',
 					condition: [],
-			},
+			}, */
 			border_border: {
 					name: 'border_border',
 					tab: 'style',
@@ -2004,7 +2005,7 @@ module.exports = {
 					type: 'dimensions',
 					condition: [],
 			},
-			button_box_shadow_box_shadow_type: {
+		/* 	Button_box_shadow_box_shadow_type: {
 					name: 'button_box_shadow_box_shadow_type',
 					tab: 'style',
 					section: 'section_style',
@@ -2033,7 +2034,7 @@ module.exports = {
 					condition: {
 							'button_box_shadow_box_shadow_type!': '',
 					},
-			},
+			}, */
 			text_padding: {
 					name: 'text_padding',
 					tab: 'style',
@@ -2304,7 +2305,7 @@ module.exports = {
 					'text_stroke_text_stroke_type!': '',
 				},
 			},
-			text_shadow_text_shadow_type: {
+		/* 	Text_shadow_text_shadow_type: {
 				name: 'text_shadow_text_shadow_type',
 				tab: 'style',
 				section: 'section_title_style',
@@ -2319,7 +2320,7 @@ module.exports = {
 				condition: {
 					'text_shadow_text_shadow_type!': '',
 				},
-			},
+			}, */
 			blend_mode: {
 				name: 'blend_mode',
 				tab: 'style',
