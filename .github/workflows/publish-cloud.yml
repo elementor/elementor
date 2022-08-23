@@ -42,7 +42,7 @@ jobs:
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
         with:
-          INPUT_VERSION: ${{ github.event.client_payload.version || inputs.version }}
+          INPUT_VERSION: ${{ inputs.version }}
       - name: Checkout next release branch
         uses: actions/checkout@v3
         with:
