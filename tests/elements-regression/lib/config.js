@@ -64,10 +64,11 @@ module.exports = class Config {
 	}
 
 	getWidgetConfig( pluginName, version, widgetName ) {
-		const { widget_type, name } = widgetsConfig?.[ pluginName ]?.[ version ]?.[ widgetName ] || {};
+		const { widget_type, name, title } = widgetsConfig?.[ pluginName ]?.[ version ]?.[ widgetName ] || {};
 
 		return {
 			name,
+			title,
 			type: widget_type,
 		};
 	}

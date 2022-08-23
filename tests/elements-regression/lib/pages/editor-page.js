@@ -21,6 +21,11 @@ module.exports = class EditorPage {
 		this.pageId = pageId;
 	}
 
+	async goto() {
+		await this.page.goto( `wp-admin/post.php?post=${ this.pageId }&action=elementor` );
+		await this.ensureLoaded();
+	}
+
 	/**
 	 * @return {Frame}
 	 */
@@ -77,6 +82,15 @@ module.exports = class EditorPage {
 		await this.getPreviewFrame().waitForSelector( widget.getPreviewSelector( elementId ) );
 
 		return elementId;
+	}
+
+	async selectWidget( widget, id ) {
+		await this.getPreviewFrame().click( widget.getPreviewSelector( id ) );
+		await this.page.waitForSelector( `#elementor-panel-header-title:has-text("Edit ${ widget.title }")` );
+	}
+
+	async getPreviewWidget( widget, id ) {
+		return await this.getPreviewFrame().locator( widget.getPreviewSelector( id ) );
 	}
 
 	/**

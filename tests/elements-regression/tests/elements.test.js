@@ -3,22 +3,10 @@ const test = require( '../lib/test' );
 const Config = require( '../lib/config' );
 const widgets = require( '../lib/widgets/index' );
 const controls = require( '../lib/controls/index' );
+const createWidget = require( '../lib/create-widget' );
+const createControl = require( '../lib/create-control' );
 
 const config = Config.create();
-
-function createWidget( pluginName, version, widgetName ) {
-	const widgetConfig = config.getWidgetConfig( pluginName, version, widgetName ),
-		Widget = widgets?.[ widgetConfig.name ];
-
-	return new Widget( widgetConfig );
-}
-
-function createControl( pluginName, version, widgetName, controlName ) {
-	const controlConfig = config.getControlConfig( pluginName, version, widgetName, controlName ),
-		Control = controls?.[ controlConfig.type ];
-
-	return new Control( controlConfig );
-}
 
 config.getPluginsNames().forEach( ( pluginName ) => {
 	config.getWidgetsConfigVersionsNames( pluginName ).forEach( ( version ) => {
@@ -32,7 +20,7 @@ config.getPluginsNames().forEach( ( pluginName ) => {
 				test( widgetName, async ( { editorPage }, testInfo ) => {
 					await editorPage.ensureNavigatorClosed();
 
-					const widget = createWidget( pluginName, version, widgetName );
+					const widget = createWidget( config, { pluginName, version, widgetName } );
 
 					const elementId = await editorPage.addWidget( widget );
 
@@ -47,10 +35,12 @@ config.getPluginsNames().forEach( ( pluginName ) => {
 					).toMatchSnapshot( [ widget.type, 'default.jpeg' ] );
 
 					for ( const controlName of config.getControlsNames( pluginName, version, widgetName ) ) {
-						const control = createControl( pluginName, version, widgetName, controlName );
+						const control = createControl( config, { pluginName, version, widgetName, controlName } );
 
 						for ( const value of control.getTestValues() ) {
 							await editorPage.setControlValue( control, value );
+
+							await editorPage.page.waitForTimeout( 300 );
 
 							// Assert - Match snapshot for current control and value.
 							console.log( `         control: ${ controlName }, value: ${ value }` );

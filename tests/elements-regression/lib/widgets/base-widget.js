@@ -1,6 +1,7 @@
 module.exports = class Widget {
-	constructor( { type } ) {
+	constructor( { type, title } ) {
 		this.type = type;
+		this.title = title;
 	}
 
 	getPreviewSelector( id ) {
