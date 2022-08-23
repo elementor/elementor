@@ -1,0 +1,30 @@
+name: Build Plugin
+description: Inject the given version into the plugin files and then build it and zip it.
+
+inputs:
+  PACKAGE_VERSION:
+    required: true
+    description: 'The version to inject into the plugin package.json file.'
+  SCRIPT_PATH:
+    required: true
+    description: 'The full path of the script to build the plugin.'
+  WORKSPACE:
+    required: true
+    description: 'The full path of the workspace to build the plugin.'
+
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            if [ "${{ inputs.PACKAGE_VERSION }}" == "" ] || [ "${{ inputs.PACKAGE_VERSION }}" == "undefined" ];
+              then
+                echo "PACKAGE_VERSION is empty string or undefined"
+                exit 1
+            fi
+            bash ${{ inputs.SCRIPT_PATH }}
+      env:
+        PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
+        SCRIPT_PATH: ${{ inputs.SCRIPT_PATH }}
+        WORKSPACE: ${{ inputs.WORKSPACE }}

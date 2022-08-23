@@ -1,7 +1,7 @@
 name: Publish Cloud
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       version:
@@ -12,17 +12,122 @@ on:
         type: boolean
         description: 'Is this a pre-release?'
         required: false
-        
+
 jobs:
-  publish-remote-repo:
+  bump-version:
+    runs-on: ubuntu-20.04
+    outputs:
+      prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Get Configuration
+        id: configuration
+        uses: antifree/json-to-variables@v1.0.1
+        with: 
+            filename: './.github/workflows/config.json'
+            prefix: config
+      - name: Test permissions
+        uses: ./.github/workflows/permissions
+        with:
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_REPOSITORY: ${{ github.config_deployment_repository }}
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Get next release branch
+        uses: ./.github/workflows/get-next-release-branch
+        with:
+          INPUT_VERSION: ${{ github.event.client_payload.version || inputs.version }}
+      - name: Get Current SHA
+        shell: bash
+        run: |
+          echo $(git rev-parse HEAD)
+          echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      # - name: Validate Run Checks
+      #   uses : ./.github/workflows/validate-run-checks
+      #   with:
+      #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      #     REPOSITORY: ${{ github.repository }}
+      #     CURRENT_SHA: ${{ env.CURRENT_SHA }}
+      #     IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
+      - name: Bump version
+        id: bump_version_step
+        uses: ./.github/workflows/bump-version
+        with:
+          CHANNEL: "cloud"
+      - name: Push version
+        uses : ./.github/workflows/push-new-version
+        with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION || inputs.version }}"
+  publish-to-cloud:
+    needs: bump-version
     runs-on: ubuntu-20.04
     steps:
-      - name: Publish Cloud
-        env:
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
-        uses: peter-evans/repository-dispatch@d57191493a947e8da4f7bf3fbc389e5b20f21cdf
+      - name: Checkout branch
+        uses: actions/checkout@v3
         with:
-          token: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
-          repository: ${{ secrets.REMOTE_PUBLISH_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
-          event-type: deploy-cloud
-          client-payload: '{ "version" : "${{ github.event.inputs.version }}", "pre_release" : "${{ github.event.inputs.pre_release }}", "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.event.pull_request.head.sha || github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Get next release branch
+        uses: ./.github/workflows/get-next-release-branch
+        with:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+      - name: Checkout next release branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: ${{ env.RELEASE_BRANCH }}
+      - name: Install Dependencies
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          npm ci
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+      - name: Upload zip file to GitHub actions artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PLUGIN_ZIP_FILENAME }}
+          path: ${{ env.PLUGIN_ZIP_PATH }}
+          if-no-files-found: error
+      - name: Create Git tag
+        uses : ./.github/workflows/create-git-tag
+        with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+      - name: Generate changelog
+        uses : ./.github/workflows/generate-changelog
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
+          BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.PACKAGE_VERSION }}
+          files: elementor-*.zip
+          prerelease: ${{ inputs.pre_release }}
+          body_path: temp-changelog.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Send slack message
+        uses: ./.github/workflows/slack-notify
+        with:
+          MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNELS }}
