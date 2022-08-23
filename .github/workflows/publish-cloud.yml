@@ -43,6 +43,10 @@ jobs:
         uses: ./.github/workflows/get-next-release-branch
         with:
           INPUT_VERSION: ${{ github.event.client_payload.version || inputs.version }}
+      - name: Checkout next release branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.RELEASE_BRANCH }}
       - name: Get Current SHA
         shell: bash
         run: |
@@ -55,6 +59,10 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           CURRENT_SHA: ${{ env.CURRENT_SHA }}
           IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Bump version
         id: bump_version_step
         uses: ./.github/workflows/bump-version
@@ -65,7 +73,7 @@ jobs:
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION || inputs.version }}"
+          COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
   publish-to-cloud:
     needs: bump-version
     runs-on: ubuntu-20.04
