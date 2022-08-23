@@ -3,6 +3,9 @@ import Deprecation from './deprecation';
 /* global elementorDevToolsConfig */
 
 export default class Module {
+	/**
+	 * @type {Deprecation}
+	 */
 	deprecation;
 
 	constructor( deprecation ) {
@@ -24,12 +27,4 @@ export default class Module {
 
 		console.warn( ...args ); // eslint-disable-line no-console
 	}
-}
-
-if ( ! window.elementorDevTools ) {
-	const deprecation = new Deprecation();
-
-	window.elementorDevTools = new Module( deprecation );
-
-	elementorDevTools.notifyBackendDeprecations();
 }
