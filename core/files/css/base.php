@@ -13,6 +13,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -343,6 +344,13 @@ abstract class Base extends Base_File {
 
 						$parsed_value = '';
 
+						if (0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
+							$image_src = Utils::performace_lab_get_webp_src( $value['id'], 'full' );
+							if ( $image_src ) {
+								$value['url'] = $image_src;
+							}
+						}
+						
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}

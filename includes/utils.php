@@ -790,4 +790,20 @@ class Utils {
 
 		return file_get_contents( $file, ...$args );
 	}
+
+	public static function performace_lab_get_webp_src( $attachment_id, $size = 'full' ) {
+		if ( function_exists( 'webp_uploads_img_tag_update_mime_type' ) ) {
+						$webp_option_name = 'site-health/webp-support';
+						$perflab_modules_settings = get_option( 'perflab_modules_settings' );
+			if ( isset( $perflab_modules_settings ) && isset( $perflab_modules_settings[ $webp_option_name ] ) &&
+							'1' === $perflab_modules_settings[ $webp_option_name ]['enabled'] ) {
+				$image_object = wp_get_attachment_image_src( $attachment_id, $size );
+				$image_src = webp_uploads_img_tag_update_mime_type( $image_object[0], 'webp', $attachment_id );
+				if ( ! empty( $image_src ) ) {
+					return $image_src;
+				}
+			}
+		}
+		return false;
+	}
 }
