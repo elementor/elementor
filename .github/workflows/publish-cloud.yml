@@ -129,7 +129,7 @@ jobs:
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          prerelease: ${{ inputs.pre_release }}
+          prerelease: ${{ github.event.inputs.pre_release }}
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
