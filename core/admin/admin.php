@@ -4,7 +4,7 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
+use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;

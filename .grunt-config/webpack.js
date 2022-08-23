@@ -28,7 +28,7 @@ const getModuleRules = ( presets ) => {
 	return {
 		rules: [
 			{
-				test: /core[/\\]app.*\.(s)?css$/i,
+				test: /app.*\.(s)?css$/i,
 				use: [
 					{
 						loader: './loaders/app-imports.js',
@@ -96,9 +96,9 @@ const entry = {
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
-	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
-	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
-	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
+	'app': path.resolve( __dirname, '../app/assets/js/index.js' ),
+	'app-loader': path.resolve( __dirname, '../app/assets/js/app-loader' ),
+	'app-packages': path.resolve( __dirname, '../app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
