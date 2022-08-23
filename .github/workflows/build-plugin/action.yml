@@ -22,4 +22,3 @@ runs:
             bash ${{ inputs.SCRIPT_PATH }}
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
-        SCRIPT_PATH: ${{ inputs.SCRIPT_PATH }}
