@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport;
 
+use Elementor\Core\App\Modules\ImportExport\Module;
 use Elementor\Core\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\App\Modules\ImportExport\Processes\Import;
 use Elementor\Core\App\Modules\ImportExport\Runners\Elementor_Content;
@@ -130,10 +131,10 @@ class Test_Revert extends Elementor_Test_Base {
 			1 => [ 1 ],
 		];
 
-		update_option('elementor_import_sessions', $import_sessions );
+		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_last_session_data();
+		$last_import_session = (new Revert())->get_last_import_session();
 
 		// Assert
 		$this->assertEquals( $import_sessions[ 1 ], $last_import_session );
@@ -143,10 +144,10 @@ class Test_Revert extends Elementor_Test_Base {
 		// Arrange
 		$import_sessions = [];
 
-		update_option('elementor_import_sessions', $import_sessions );
+		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_last_session_data();
+		$last_import_session = (new Revert())->get_last_import_session();
 
 		// Assert
 		$this->assertEquals( [], $last_import_session );
@@ -160,10 +161,10 @@ class Test_Revert extends Elementor_Test_Base {
 			2 => [ 2 ],
 		];
 
-		update_option('elementor_import_sessions', $import_sessions );
+		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_penultimate_session_data();
+		$last_import_session = (new Revert())->get_penultimate_import_session();
 
 		// Assert
 		$this->assertEquals( $import_sessions[2], $last_import_session );
@@ -175,10 +176,10 @@ class Test_Revert extends Elementor_Test_Base {
 			2 => [ 2 ],
 		];
 
-		update_option('elementor_import_sessions', $import_sessions );
+		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_penultimate_session_data();
+		$last_import_session = (new Revert())->get_penultimate_import_session();
 
 		// Assert
 		$this->assertEquals( [], $last_import_session );

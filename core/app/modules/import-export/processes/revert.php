@@ -1,9 +1,13 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport\Processes;
 
+use Elementor\Core\App\Modules\ImportExport\Module;
+
 class Revert extends Process_Base {
 
 	private $import_sessions;
+
+	private $revert_sessions;
 
 	/**
 	 * @throws \Exception
@@ -12,6 +16,7 @@ class Revert extends Process_Base {
 		parent::__construct();
 
 		$this->import_sessions = $this->get_import_sessions();
+		$this->revert_sessions = $this->get_revert_sessions();
 	}
 
 	public function run() {
@@ -19,7 +24,11 @@ class Revert extends Process_Base {
 			throw new \Exception( 'Please specify revert runners.' );
 		}
 
-		$data = $this->get_last_session_data();
+		$data = $this->get_last_import_session();
+
+		if ( empty( $data ) ) {
+			throw new \Exception( 'Could not find any import sessions to revert.' );
+		}
 
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_revert( $data ) ) {
@@ -33,7 +42,7 @@ class Revert extends Process_Base {
 	}
 
 	public function get_import_sessions() {
-		$import_sessions = get_option( 'elementor_import_sessions' );
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		if ( ! $import_sessions ) {
 			return [];
@@ -45,7 +54,7 @@ class Revert extends Process_Base {
 	}
 
 	public function get_revert_sessions() {
-		$revert_sessions = get_option( 'elementor_revert_sessions' );
+		$revert_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS );
 
 		if ( ! $revert_sessions ) {
 			return [];
@@ -54,44 +63,44 @@ class Revert extends Process_Base {
 		return $revert_sessions;
 	}
 
-	public function get_last_session_data() {
-		$session_data = $this->import_sessions;
+	public function get_last_import_session() {
+		$import_sessions = $this->import_sessions;
 
-		if ( empty( $session_data ) ) {
+		if ( empty( $import_sessions ) ) {
 			return [];
 		}
 
-		return end( $session_data );
+		return end( $import_sessions );
 	}
 
-	public function get_penultimate_session_data() {
-		$session_data = $this->import_sessions;
+	public function get_penultimate_import_session() {
+		$sessions_data = $this->import_sessions;
 		$penultimate_element_value = [];
 
-		if ( empty( $session_data ) ) {
+		if ( empty( $sessions_data ) ) {
 			return [];
 		}
 
-		end( $session_data );
+		end( $sessions_data );
 
-		prev( $session_data );
+		prev( $sessions_data );
 
-		if ( ! is_null( key( $session_data ) ) ) {
-			$penultimate_element_value = current( $session_data );
+		if ( ! is_null( key( $sessions_data ) ) ) {
+			$penultimate_element_value = current( $sessions_data );
 		}
 
 		return $penultimate_element_value;
 	}
 
 	private function delete_last_import_data() {
-		$import_sessions = get_option( 'elementor_import_sessions' );
-		$revert_sessions = get_option( 'elementor_revert_sessions' );
+		$import_sessions = $this->import_sessions;
+		$revert_sessions = $this->revert_sessions;
 
 		$reverted_session = array_pop( $import_sessions );
 
 		$revert_sessions[] = [
 			'session_id' => $reverted_session['session_id'],
-//			'kit_id' => $reverted_session['kit_id'],
+			//          'kit_id' => $reverted_session['kit_id'],
 			'kit_name' => $reverted_session['kit_name'],
 			'source' => $reverted_session['kit_source'],
 			'user_id' => get_current_user_id(),
@@ -99,8 +108,11 @@ class Revert extends Process_Base {
 			'revert_timestamp' => current_time( 'timestamp' ),
 		];
 
-		update_option( 'elementor_import_sessions', $import_sessions, 'no' );
-		update_option( 'elementor_revert_sessions', $revert_sessions, 'no' );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, 'no' );
+		update_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS, $revert_sessions, 'no' );
+
+		$this->import_sessions = $import_sessions;
+		$this->revert_sessions = $revert_sessions;
 	}
 
 	private function revert_attachments( $data ) {
@@ -110,7 +122,7 @@ class Revert extends Process_Base {
 			'posts_per_page' => -1,
 			'meta_query' => [
 				[
-					'key' => '_elementor_import_session_id',
+					'key' => static::IMPORT_SESSION_META_KEY,
 					'value' => $data['session_id'],
 				],
 			],

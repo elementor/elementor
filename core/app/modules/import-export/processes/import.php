@@ -5,6 +5,7 @@ namespace Elementor\Core\App\Modules\ImportExport\Processes;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
+use Elementor\Core\App\Modules\ImportExport\Module;
 use Elementor\Core\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Plugin;
@@ -444,7 +445,7 @@ class Import extends Process_Base {
 	}
 
 	private function update_imports_option( array $imported_data, $start_time ) {
-		$option = get_option( 'elementor_import_sessions' );
+		$option = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		$option[ time() ] = [
 			'session_id' => $this->session_id,
@@ -457,6 +458,6 @@ class Import extends Process_Base {
 			'runners' => $imported_data['revert_data'] ?? [],
 		];
 
-		update_option( 'elementor_import_sessions', $option, 'no' );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $option, 'no' );
 	}
 }

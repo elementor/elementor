@@ -63,7 +63,7 @@ class Templates extends Runner_Base {
 			}
 		}
 
-		$result = $this->add_revert_data( $result );
+		$result = $this->get_import_session_metadata( $result );
 
 		return $result;
 	}
@@ -128,7 +128,7 @@ class Templates extends Runner_Base {
 					'value' => $template_types,
 				],
 				[
-					'key' => '_elementor_import_session_id',
+					'key' => static::IMPORT_SESSION_META_KEY,
 					'value' => $data['session_id'],
 				],
 			],
@@ -182,9 +182,8 @@ class Templates extends Runner_Base {
 		return $document_id;
 	}
 
-	private function add_revert_data( array $result ) {
-		$result['revert_data']['templates'] = [];
-		// TODO: Add conditions for the revert data.
+	public function get_import_session_metadata(array $result ) {
+		$result['revert_data'][ static::get_name() ] = [];
 
 		return $result;
 	}

@@ -92,4 +92,8 @@ class Plugins extends Runner_Base {
 	}
 
 	public function revert( array $data ) {}
+
+	public function get_import_session_metadata() : array {
+		return [];
+	}
 }

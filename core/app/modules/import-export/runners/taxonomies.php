@@ -29,7 +29,7 @@ class Taxonomies extends Runner_Base {
 	public function should_revert( array $data ) {
 		return (
 			isset( $data['runners'] ) &&
-			array_key_exists( 'taxonomies', $data['runners'] )
+			array_key_exists( static::get_name(), $data['runners'] )
 		);
 	}
 
@@ -51,7 +51,7 @@ class Taxonomies extends Runner_Base {
 			$result['taxonomies'][ $post_type ] = $this->import_taxonomies( $data['manifest']['taxonomies'][ $post_type ], $path );
 		}
 
-		$result = $this->add_revert_data( $result );
+		$result = $this->get_import_session_metadata( $result );
 
 		return $result;
 	}
@@ -82,7 +82,7 @@ class Taxonomies extends Runner_Base {
 			'get' => 'all',
 			'meta_query' => [
 				[
-					'key'       => '_elementor_import_session_id',
+					'key'       => static::IMPORT_SESSION_META_KEY,
 					'value'     => $data['session_id'],
 				],
 			],
@@ -252,8 +252,8 @@ class Taxonomies extends Runner_Base {
 		return $data;
 	}
 
-	private function add_revert_data( array $result ) {
-		$result['revert_data']['taxonomies'] = [];
+	public function get_import_session_metadata(array $result ) {
+		$result['revert_data'][ static::get_name() ] = [];
 
 		return $result;
 	}

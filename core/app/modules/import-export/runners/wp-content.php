@@ -32,7 +32,7 @@ class Wp_Content extends Runner_Base {
 	public function should_revert( array $data ) {
 		return (
 			isset( $data['runners'] ) &&
-			array_key_exists( 'wp-content', $data['runners'] )
+			array_key_exists( static::get_name(), $data['runners'] )
 		);
 	}
 
@@ -72,7 +72,7 @@ class Wp_Content extends Runner_Base {
 			$imported_data = array_merge( $imported_data, $result );
 		}
 
-		$result = $this->add_revert_data( $result, $selected_custom_post_types );
+		$result = $this->get_import_session_metadata( $result, $selected_custom_post_types );
 
 		return $result;
 	}
@@ -129,7 +129,7 @@ class Wp_Content extends Runner_Base {
 					'compare' => 'NOT EXISTS',
 				],
 				[
-					'key' => '_elementor_import_session_id',
+					'key' => 'static::IMPORT_SESSION_META_KEY',
 					'value' => $data['session_id'],
 				],
 			],
@@ -156,10 +156,10 @@ class Wp_Content extends Runner_Base {
 			'terms' => $imported_terms,
 			'taxonomies' => ! empty( $taxonomies[ $post_type ] ) ? $taxonomies[ $post_type ] : [],
 			'posts_meta' => [
-				'_elementor_import_session_id' => $this->import_session_id,
+				static::IMPORT_SESSION_META_KEY => $this->import_session_id,
 			],
 			'terms_meta' => [
-				'_elementor_import_session_id' => $this->import_session_id,
+				static::IMPORT_SESSION_META_KEY => $this->import_session_id,
 			],
 		];
 
@@ -200,8 +200,8 @@ class Wp_Content extends Runner_Base {
 		];
 	}
 
-	private function add_revert_data( array $result, $selected_custom_post_types ) {
-		$result['revert_data']['wp-content'] = [
+	public function get_import_session_metadata(array $result, $selected_custom_post_types ) {
+		$result['revert_data'][ static::get_name() ] = [
 			'custom_post_types' => $selected_custom_post_types,
 		];
 
@@ -215,7 +215,7 @@ class Wp_Content extends Runner_Base {
 			'get' => 'all',
 			'meta_query' => [
 				[
-					'key'       => '_elementor_import_session_id',
+					'key'       => static::IMPORT_SESSION_META_KEY,
 					'value'     => $data['session_id'],
 				],
 			],

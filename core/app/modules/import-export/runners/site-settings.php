@@ -1,10 +1,17 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
+use Elementor\Core\Base\Document;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 
 class Site_Settings extends Runner_Base {
+
+	/**
+	 * @var Document|Kit|false
+	 */
+	private $active_kit;
 
 	public static function get_name() {
 		return 'site-settings';
@@ -28,7 +35,7 @@ class Site_Settings extends Runner_Base {
 	public function should_revert( array $data ) {
 		return (
 			isset( $data['runners'] ) &&
-			array_key_exists( 'site-settings', $data['runners'] )
+			array_key_exists( static::get_name(), $data['runners'] )
 		);
 	}
 
@@ -36,14 +43,14 @@ class Site_Settings extends Runner_Base {
 		$new_site_settings = $data['site_settings']['settings'];
 		$title = isset( $data['manifest']['title'] ) ? $data['manifest']['title'] : 'Imported Kit';
 
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$this->active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
-		$active_kit_id = $active_kit->get_id();
+		$active_kit_id = $this->active_kit->get_id();
 
 		$result = [];
 
-		$old_settings = $active_kit->get_meta( PageManager::META_KEY );
+		$old_settings = $this->active_kit->get_meta( PageManager::META_KEY );
 
 		if ( ! $old_settings ) {
 			$old_settings = [];
@@ -61,7 +68,7 @@ class Site_Settings extends Runner_Base {
 
 		$new_kit = Plugin::$instance->kits_manager->create_new_kit( $title, $new_site_settings );
 
-		$result = $this->add_revert_data( $result, $previous_kit_id, $active_kit_id, $new_kit );
+		$result = $this->get_import_session_metadata( $result, $previous_kit_id, $active_kit_id, $new_kit );
 
 		$result['site-settings'] = (bool) $new_kit;
 
@@ -102,14 +109,14 @@ class Site_Settings extends Runner_Base {
 
 	public function revert( array $data ) {
 		Plugin::$instance->kits_manager->revert(
-			$data['runners']['site-settings']['new_kit_id'],
-			$data['runners']['site-settings']['active_kit_id'],
-			$data['runners']['site-settings']['previous_kit_id']
+			$data['runners'][ static::get_name() ]['new_kit_id'],
+			$data['runners'][ static::get_name() ]['active_kit_id'],
+			$data['runners'][ static::get_name() ]['previous_kit_id']
 		);
 	}
 
-	private function add_revert_data( array $result, $previous_kit_id, $active_kit_id, $new_kit_id ) {
-		$result['revert_data']['site-settings'] = [
+	public function get_import_session_metadata() : array {
+		$result['revert_data'][ static::get_name() ] = [
 			'previous_kit_id' => $previous_kit_id,
 			'active_kit_id' => $active_kit_id,
 			'new_kit_id' => $new_kit_id,

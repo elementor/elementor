@@ -36,6 +36,10 @@ class Module extends BaseModule {
 
 	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
 
+	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
+
+	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
+
 
 	/**
 	 * Assigning the export process to a property, so we can use the process from outside the class.
@@ -142,25 +146,28 @@ class Module extends BaseModule {
 		];
 
 		$this->revert = new Revert();
-		$last_imported_kit = $this->revert->get_last_session_data();
-		$penultimate_imported_kit = $this->revert->get_penultimate_session_data();
-		$date_format = 'd-m-Y H:i:s';
+		$last_imported_kit = $this->revert->get_last_import_session();
+		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
+
+		$user_date_format = get_option( 'date_format' );
+		$user_time_format = get_option( 'time_format' );
+		$date_format = $user_date_format . ' ' . $user_time_format;
 
 		if ( ! empty( $last_imported_kit ) ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
 					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
-					date( $date_format, $last_imported_kit['start_timestamp'] ),
+					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>',
 					! empty( $penultimate_imported_kit['kit_name'] ) ? $penultimate_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
-					date( $date_format, $penultimate_imported_kit['start_timestamp'] )
+					gmdate( $date_format, $penultimate_imported_kit['start_timestamp'] )
 				);
 			} else {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
 					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
-					date( $date_format, $last_imported_kit['start_timestamp'] ),
+					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>'
 				);
 			}
@@ -185,19 +192,24 @@ class Module extends BaseModule {
 				<?php } ?>
 			</div>
 
-			<?php if ( ! empty( $last_imported_kit ) ) { ?>
+			<?php
+			if ( ! empty( $last_imported_kit ) ) {
+				$link_attributes = [
+					'href' => wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
+					'id' => 'elementor-import-export__revert_kit',
+					'class' => 'button',
+				];
+				?>
 				<div class="tab-import-export-kit__revert">
-					<h2><?php echo esc_html__( 'Remove the most recent Kit', 'elementor' ); ?></h2>
+					<h2>
+						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove the most recent Kit', 'elementor' ) ); ?>
+					</h2>
 					<p class="tab-import-export-kit__info">
-						<?php echo $revert_text; ?>
+						<?php ElementorUtils::print_unescaped_internal_string( $revert_text ); ?>
 					</p>
-					<?php
-					echo sprintf(
-						'<a id="elementor-import-export__revert_kit" href="%s" class="button">%s</a>',
-						wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
-						esc_html__( 'Remove Kit', 'elementor' )
-					);
-					?>
+					<a <?php ElementorUtils::print_html_attributes( $link_attributes ); ?> >
+						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Kit', 'elementor' ) ); ?>
+					</a>
 				</div>
 			<?php } ?>
 		</div>

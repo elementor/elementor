@@ -39,7 +39,7 @@ class Elementor_Content extends Runner_Base {
 	public function should_revert( array $data ) {
 		return (
 			isset( $data['runners'] ) &&
-			array_key_exists( 'elementor-content', $data['runners'] )
+			array_key_exists( static::get_name(), $data['runners'] )
 		);
 	}
 
@@ -63,7 +63,7 @@ class Elementor_Content extends Runner_Base {
 			$result['content'][ $post_type ] = $this->import_elementor_post_type( $posts_settings, $path, $post_type, $imported_terms );
 		}
 
-		$result = $this->add_revert_data( $result );
+		$result = $this->get_import_session_metadata( $result );
 
 		return $result;
 	}
@@ -104,7 +104,7 @@ class Elementor_Content extends Runner_Base {
 					'compare' => 'EXISTS',
 				],
 				[
-					'key' => '_elementor_import_session_id',
+					'key' => static::IMPORT_SESSION_META_KEY,
 					'value' => $data['session_id'],
 				],
 			],
@@ -312,20 +312,18 @@ class Elementor_Content extends Runner_Base {
 		}
 	}
 
-	private function add_revert_data( array $result ) {
-		$result['revert_data']['elementor-content'] = [
+	public function get_import_session_metadata() : array {
+		return [
 			'page_on_front' => ! empty( $this->page_on_front_id ) ? $this->page_on_front_id : null,
 		];
-
-		return $result;
 	}
 
 	private function restore_page_on_front( $data ) {
-		if ( empty( $data['runners']['elementor-content']['page_on_front'] ) ) {
+		if ( empty( $data['runners'][ static::get_name() ]['page_on_front'] ) ) {
 			return;
 		}
 
-		$page_on_front = $data['runners']['elementor-content']['page_on_front'];
+		$page_on_front = $data['runners'][ static::get_name() ]['page_on_front'];
 
 		$document = Plugin::$instance->documents->get( $page_on_front );
 

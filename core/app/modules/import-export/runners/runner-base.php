@@ -66,6 +66,8 @@ abstract class Runner_Base {
 	 */
 	abstract public function revert( array $data );
 
+	abstract public function get_import_session_metadata() : array;
+
 	public function set_session_post_meta( $post_id, $meta_value ) {
 		update_post_meta( $post_id, static::IMPORT_SESSION_META_KEY, $meta_value );
 	}
