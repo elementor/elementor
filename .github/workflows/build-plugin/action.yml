@@ -8,9 +8,6 @@ inputs:
   SCRIPT_PATH:
     required: true
     description: 'The full path of the script to build the plugin.'
-  WORKSPACE:
-    required: true
-    description: 'The full path of the workspace to build the plugin.'
 
 runs:
   using: "composite"
