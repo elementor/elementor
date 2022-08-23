@@ -52,7 +52,7 @@ jobs:
       #   uses : ./.github/workflows/validate-run-checks
       #   with:
       #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      #     REPOSITORY: ${{ github.event.client_payload.repository  || inputs.repository_name }}
+      #     REPOSITORY: ${{ github.repository }}
       #     CURRENT_SHA: ${{ env.CURRENT_SHA }}
       #     IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Bump version
@@ -113,7 +113,7 @@ jobs:
         uses : ./.github/workflows/generate-changelog
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ }
+          REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
           BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
       - name: Create GitHub release
