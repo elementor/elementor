@@ -59,10 +59,6 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           CURRENT_SHA: ${{ env.CURRENT_SHA }}
           IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
-      - name: Checkout branch
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Bump version
         id: bump_version_step
         uses: ./.github/workflows/bump-version
