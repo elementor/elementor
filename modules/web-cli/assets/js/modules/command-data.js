@@ -1,7 +1,9 @@
 import CommandBase from './command-base';
 import * as errors from '../core/data/errors/';
-import Helpers from 'elementor-api/utils/helpers';
 
+/**
+ * @name $e.modules.CommandData
+ */
 /**
  * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
  */
@@ -95,12 +97,12 @@ export default class CommandData extends CommandBase {
 	 */
 	getRequestData() {
 		return {
-			component: this.component,
-			command: this.currentCommand,
 			type: this.type,
 			args: this.args,
 			timestamp: new Date().getTime(),
-			endpoint: $e.data.commandToEndpoint( this.currentCommand, Helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
+			component: this.component,
+			command: this.command,
+			endpoint: $e.data.commandToEndpoint( this.command, JSON.parse( JSON.stringify( this.args ) ), this.constructor.getEndpointFormat() ),
 		};
 	}
 

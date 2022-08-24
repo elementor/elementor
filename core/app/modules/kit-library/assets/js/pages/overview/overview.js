@@ -9,10 +9,11 @@ import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './overview.scss';
 
-function useHeaderButtons( id ) {
+function useHeaderButtons( id, kitName ) {
 	const navigate = useNavigate();
 
 	return useMemo( () => [
@@ -23,7 +24,18 @@ function useHeaderButtons( id ) {
 			variant: 'outlined',
 			color: 'secondary',
 			size: 'sm',
-			onClick: () => navigate( `/kit-library/preview/${ id }` ),
+			onClick: () => {
+				appsEventTrackingDispatch(
+					'kit-library/view-demo-page',
+					{
+						kit_name: kitName,
+						page_source: 'overview',
+						element_position: 'app_header',
+						view_type_clicked: 'demo',
+					},
+				);
+				navigate( `/kit-library/preview/${ id }` );
+			},
 			includeHeaderBtnClass: false,
 		},
 	], [ id ] );
@@ -32,7 +44,7 @@ function useHeaderButtons( id ) {
 export default function Overview( props ) {
 	const { data: kit, isError, isLoading } = useKit( props.id );
 	const { data: documentsByType } = useKitDocumentByType( kit );
-	const headerButtons = useHeaderButtons( props.id );
+	const headerButtons = useHeaderButtons( props.id, kit && kit.title );
 
 	usePageTitle( {
 		title: kit
@@ -64,6 +76,7 @@ export default function Overview( props ) {
 								key={ contentType.id }
 								contentType={ contentType }
 								kitId={ props.id }
+								kitTitle={ kit.title }
 							/>
 						) )
 					}

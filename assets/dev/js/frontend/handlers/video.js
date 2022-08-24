@@ -41,7 +41,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 	playVideo() {
 		if ( this.elements.$video.length ) {
-			// this.youtubePlayer exists only for YouTube videos, and its play function is different.
+			// This.youtubePlayer exists only for YouTube videos, and its play function is different.
 			if ( this.youtubePlayer ) {
 				this.youtubePlayer.playVideo();
 			} else {

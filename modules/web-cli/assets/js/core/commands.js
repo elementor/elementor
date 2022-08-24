@@ -1,4 +1,7 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
+import CommandBase from '../modules/command-base';
+import Console from 'elementor-api/utils/console';
+import Deprecation from 'elementor-api/utils/deprecation';
 
 /**
  * @typedef {import('../modules/component-base')} ComponentBase
@@ -11,6 +14,8 @@ import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
  */
 
 export default class Commands extends CommandsBackwardsCompatibility {
+	static trace = [];
+
 	/**
 	 * Function constructor().
 	 *
@@ -18,8 +23,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {{}} args
 	 */
-	constructor( ...args ) {
-		super( ...args );
+	constructor( ... args ) {
+		super( ... args );
 
 		this.current = {};
 		this.currentArgs = {};
@@ -27,7 +32,22 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.commands = {};
 		this.components = {};
 
-		this.classes = {};
+		Object.defineProperty( this, 'classes', {
+			get() {
+				Deprecation.deprecated(
+					'$e.commands.classes',
+					'3.7.0',
+					'$e.commands.getCommandClass(), $e.commandsInternal.getCommandClass(), $e.data.getCommandClass(), $e.routes.getCommandClass() according to the requested command infra-structure,',
+				);
+
+				return {
+					... $e.commands.commands,
+					... $e.commandsInternal.commands,
+					... $e.data.commands,
+					... $e.routes.commands,
+				};
+			},
+		} );
 	}
 
 	/**
@@ -35,7 +55,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @return {CommandBase} command class
 	 */
 	getCommandClass( id ) {
-		return this.classes[ id ];
+		return this.commands[ id ];
 	}
 
 	/**
@@ -157,7 +177,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			return false;
 		}
 
-		return command === this.current[ component.getRootContainer() ];
+		return command === this.current[ component.getServiceName() ];
 	}
 
 	/**
@@ -253,17 +273,43 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	/**
 	 * Function beforeRun().
 	 *
+	 * Responsible to add current command to trace and trigger 'run:before' event.
+	 * Run before command.
+	 *
+	 * @param {string}  command
+	 * @param {{}}      args
+	 * @param {boolean} [addTrace=true]
+	 */
+	beforeRun( command, args = {}, addTrace = true ) {
+		const component = this.getComponent( command ),
+			container = component.getServiceName();
+
+		if ( addTrace ) {
+			this.addCurrentTrace( container, command, args );
+		}
+
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
+		}
+
+		this.trigger( 'run:before', component, command, args );
+	}
+
+	/**
+	 * Function validateRun().
+	 *
+	 * Responsible to validate if the run is even possible.
+	 * Runs immediately after entering `run()`.
+	 *
 	 * @param {string} command
 	 * @param {*}      args
 	 *
 	 * @return {boolean} dependency result
 	 */
-	beforeRun( command, args = {} ) {
+	validateRun( command, args = {} ) {
 		if ( ! this.commands[ command ] ) {
 			this.error( `\`${ command }\` not found.` );
 		}
-
-		this.currentTrace.push( command );
 
 		return this.getComponent( command ).dependency( command, args );
 	}
@@ -279,38 +325,204 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @return {boolean|*} results
 	 */
 	run( command, args = {} ) {
-		if ( ! this.beforeRun( command, args ) ) {
+		if ( ! this.validateRun( command, args ) ) {
 			return false;
 		}
 
-		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+		this.beforeRun( command, args );
 
-		this.current[ container ] = command;
-		this.currentArgs[ container ] = args;
+		// Get command class or callback.
+		let context = this.commands[ command ];
 
-		this.trigger( 'run:before', component, command, args );
-
-		if ( args.onBefore ) {
-			args.onBefore.apply( component, [ args ] );
+		// Is it command-base based class?
+		if ( context.getInstanceType ) {
+			context = new context( args );
 		}
 
-		const results = this.commands[ command ].apply( component, [ args ] );
+		const currentComponent = this.getComponent( command );
 
-		// TODO: Consider add results to `$e.devTools`.
+		// Is simple callback? (e.g.  a route)
+		if ( ! ( context instanceof CommandBase ) ) {
+			const results = context.apply( currentComponent, [ args ] );
+
+			this.afterRun( command, args, results );
+
+			return results;
+		}
+
+		if ( ! this.validateInstanceScope( context, currentComponent, command ) ) {
+			return this.removeCurrentTrace( currentComponent );
+		}
+
+		return this.runInstance( context );
+	}
+
+	/**
+	 * Function runInstance().
+	 *
+	 * @param {CommandBase} instance
+	 *
+	 * @return {boolean|Promise<*>}
+	 */
+	runInstance( instance ) {
+		let results = null;
+
+		// For UI Hooks.
+		instance.onBeforeRun( instance.args );
+
+		try {
+			// For data hooks.
+			instance.onBeforeApply( instance.args );
+
+			results = instance.run();
+		} catch ( e ) {
+			this.catchApply( e, instance );
+
+			if ( e instanceof $e.modules.HookBreak ) {
+				this.removeCurrentTrace( instance.component );
+				return false;
+			}
+		}
+
+		return this.applyRunAfter( instance, results );
+	}
+
+	/**
+	 * Function applyRunAfter().
+	 *
+	 * Responsible for applying everything that need to be run after each command runs.
+	 * Called on run() after runInstance(), to manipulate results & apply 'after' hooks.
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*}           result
+	 *
+	 * @return {Promise<*>|*}
+	 */
+	applyRunAfter( instance, result ) {
+		// TODO: Temp code determine if it's a jQuery deferred object.
+		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
+			const handleJQueryDeferred = ( _result ) => {
+				_result.fail( ( e ) => {
+					this.catchApply( e, instance );
+					this.afterRun( instance.command, instance.args, e );
+				} );
+				_result.done( ( __result ) => {
+					this.applyRunAfterSync( instance, __result );
+				} );
+
+				return _result;
+			};
+
+			return handleJQueryDeferred( result );
+		} else if ( result instanceof Promise ) {
+			return this.applyRunAfterAsync( instance, result );
+		}
+
+		this.applyRunAfterSync( instance, result );
+
+		return result;
+	}
+
+	/**
+	 * Function applyRunAfterSync().
+	 *
+	 * Responsible to handle simple(synchronous) 'run after' behavior.
+	 * Called on applyRunAfterSync() after runInstance(), to handle results.
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*}           result
+	 */
+	applyRunAfterSync( instance, result ) {
+		// Run Data hooks.
+		instance.onAfterApply( instance.args, result );
+
+		// For UI hooks.
+		instance.onAfterRun( instance.args, result );
+
+		this.afterRun( instance.command, instance.args, result );
+	}
+
+	/**
+	 * Function applyRunAfterAsync().
+	 *
+	 * Await for promise result.
+	 * Called on applyRunAfter() after runInstance().
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*}           result
+	 */
+	applyRunAfterAsync( instance, result ) {
+		// Override initial result ( promise ) to await onAfter promises, first!.
+		return ( async () => {
+			await result.catch( ( e ) => {
+				this.catchApply( e, instance );
+				this.afterRun( instance.command, instance.args, e );
+			} );
+			await result.then( ( _result ) => this.applyRunAfterAsyncResult( instance, _result ) );
+
+			return result;
+		} )();
+	}
+
+	/**
+	 * Function applyRunAfterAsyncResult().
+	 *
+	 * Responsible to await all promises results.
+	 * Called on applyRunAfterAsync() after runInstance(), to handle async results.
+	 * Awaits all the promises, before releasing the command.
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*}           result
+	 */
+	async applyRunAfterAsyncResult( instance, result ) {
+		// Run Data hooks.
+		const results = instance.onAfterApply( instance.args, result ),
+			promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
+
+		if ( promises.length ) {
+			// Wait for hooks before return the value.
+			await Promise.all( promises );
+		}
+
+		// For UI hooks.
+		instance.onAfterRun( instance.args, result );
+
+		this.afterRun( instance.command, instance.args, result );
+	}
+
+	/**
+	 * Function afterRun().
+	 *
+	 * Responsible to to clear command from trace, and run 'run:after' event.
+	 * Method fired after the command runs.
+	 *
+	 * @param {string}  command
+	 * @param {{}}      args
+	 * @param {*}       results
+	 * @param {boolean} [removeTrace=true]
+	 */
+	afterRun( command, args, results = undefined, removeTrace = true ) {
+		const component = this.getComponent( command );
+
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args, results ] );
 		}
 
 		this.trigger( 'run:after', component, command, args, results );
 
-		this.afterRun( command );
-
-		if ( false === args.returnValue ) {
-			return true;
+		if ( removeTrace ) {
+			this.removeCurrentTrace( component );
 		}
+	}
 
-		return results;
+	/**
+	 * @param {Error}       e
+	 * @param {CommandBase} instance
+	 */
+	catchApply( e, instance ) {
+		instance.onCatchApply( e );
+
+		Console.error( e );
 	}
 
 	/**
@@ -329,19 +541,47 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		return this.run( command, event );
 	}
 
-	/**
-	 * Function afterRun().
-	 *
-	 * Method fired after the command runs.
-	 *
-	 * @param {string} command
-	 */
-	afterRun( command ) {
-		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+	validateInstanceScope( instance, currentComponent, command ) {
+		if ( ! ( instance instanceof CommandBase ) ) {
+			this.error( `invalid instance, command: '${ command }' ` );
+		}
+
+		// In case of different scope.
+		if ( currentComponent !== instance.component ) {
+			if ( $e.devTools ) {
+				$e.devTools.log.warn( `Command: '${ command }' registerArgs.component: '${ instance.component.getNamespace() }' while current component is: '${ currentComponent.getNamespace() }'` );
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	addCurrentTrace( container, command, args ) {
+		this.currentTrace.push( command );
+
+		Commands.trace.push( command );
+
+		this.attachCurrent( container, command, args );
+	}
+
+	removeCurrentTrace( currentComponent ) {
+		const container = currentComponent.getServiceName();
 
 		this.currentTrace.pop();
 
+		Commands.trace.pop();
+
+		this.detachCurrent( container );
+	}
+
+	attachCurrent( container, command, args ) {
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
+	}
+
+	detachCurrent( container ) {
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
 	}

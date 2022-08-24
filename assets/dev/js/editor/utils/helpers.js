@@ -77,7 +77,7 @@ module.exports = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
@@ -96,14 +96,14 @@ module.exports = {
 			return;
 		}
 
-		if ( this._inlineSvg.hasOwnProperty( value.id ) ) {
+		if ( Object.prototype.hasOwnProperty.call( this._inlineSvg, value.id ) ) {
 			return this._inlineSvg[ value.id ];
 		}
 
 		const self = this;
 		this.fetchInlineSvg( value.url, ( data ) => {
 			if ( data ) {
-				self._inlineSvg[ value.id ] = data; //$( data ).find( 'svg' )[ 0 ].outerHTML;
+				self._inlineSvg[ value.id ] = data; // $( data ).find( 'svg' )[ 0 ].outerHTML;
 				if ( view ) {
 					view.render();
 				}
@@ -178,7 +178,7 @@ module.exports = {
 			};
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
-		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
+		if ( iconSettings && ! Object.prototype.hasOwnProperty.call( iconSettings, 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
@@ -224,7 +224,7 @@ module.exports = {
 		if ( mapping[ fa4Value ] ) {
 			return mapping[ fa4Value ];
 		}
-		// every thing else is converted to solid
+		// Every thing else is converted to solid
 		return {
 			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
 			library: 'fa-solid',
@@ -254,7 +254,7 @@ module.exports = {
 		let	fontUrl;
 
 		switch ( fontType ) {
-			case 'googlefonts' :
+			case 'googlefonts':
 				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 
 				if ( subsets[ elementor.config.locale ] ) {
@@ -263,10 +263,11 @@ module.exports = {
 
 				break;
 
-			case 'earlyaccess' :
-				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-				break;
+			case 'earlyaccess': {
+					const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+					fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+					break;
+				}
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
@@ -323,7 +324,7 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		elementorCommon.helpers.softDeprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
 
 		return elementorCommon.helpers.getUniqueId();
 	},
@@ -440,28 +441,9 @@ module.exports = {
 			const terms = [];
 
 			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
-				// Here we want to convert the 'condition' format to a 'conditions' format. The first step is to
-				// isolate the term from the negative operator if exists. For example, a condition format can look
-				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
-				const conditionNameParts = conditionName.match( /([\w-]+(?:\[[\w-]+])?)?(!?)$/i ),
-					conditionRealName = conditionNameParts[ 1 ],
-					isNegativeCondition = !! conditionNameParts[ 2 ],
-					controlValue = values[ conditionRealName ];
-				let operator;
+				const convertedCondition = elementor.conditions.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
 
-				if ( Array.isArray( conditionValue ) && conditionValue.length ) {
-					operator = isNegativeCondition ? '!in' : 'in';
-				} else if ( Array.isArray( controlValue ) && controlValue.length ) {
-					operator = isNegativeCondition ? '!contains' : 'contains';
-				} else if ( isNegativeCondition ) {
-					operator = '!==';
-				}
-
-				terms.push( {
-					name: conditionRealName,
-					operator,
-					value: conditionValue,
-				} );
+				terms.push( convertedCondition );
 			} );
 
 			conditions = {
@@ -474,7 +456,7 @@ module.exports = {
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -509,7 +491,7 @@ module.exports = {
 	},
 
 	wpColorPicker( $element ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},
@@ -656,6 +638,10 @@ module.exports = {
 
 	hasPro() {
 		return !! window.elementorPro;
+	},
+
+	hasProAndNotConnected() {
+		return elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect;
 	},
 
 	/**
