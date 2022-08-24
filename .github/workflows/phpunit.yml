@@ -18,6 +18,7 @@ jobs:
         with:
           PATTERNS: |
             **/*.php
+            composer.json
 
   test:
     runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
