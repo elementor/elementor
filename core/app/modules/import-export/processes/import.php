@@ -2,6 +2,13 @@
 
 namespace Elementor\Core\App\Modules\ImportExport\Processes;
 
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Elementor_Content;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Import_Runner_Base;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Plugins;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Site_Settings;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Taxonomies;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Templates;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
@@ -10,12 +17,17 @@ use Elementor\Core\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 
-class Import extends Process_Base {
+class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
 	const SESSION_DOES_NOT_EXITS_ERROR = 'session-does-not-exits-error';
 
 	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
+
+	/**
+	 * @var Import_Runner_Base[]
+	 */
+	protected $runners = [];
 
 	/**
 	 * The session ID of the import process.
@@ -103,14 +115,20 @@ class Import extends Process_Base {
 	private $imported_data = [];
 
 	/**
+	 * The metadata output of the import runners.
+	 * Will be saved in the import_session and will be used to revert the import process.
+	 *
+	 * @var array
+	 */
+	private $runners_import_metadata = [];
+
+	/**
 	 * @param $path string session_id | zip_file_path
 	 * @param $settings array Use to determine which content to import.
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @throws \Exception
 	 */
 	public function __construct( $path, $settings = [] ) {
-		parent::__construct();
-
 		if ( is_file( $path ) ) {
 			$this->extracted_directory_path = $this->extract_zip( $path );
 		} else {
@@ -137,6 +155,24 @@ class Import extends Process_Base {
 		$this->site_settings = $this->read_site_settings_json();
 
 		$this->set_default_settings();
+	}
+
+	/**
+	 * Register a runner.
+	 *
+	 * @param Import_Runner_Base $runner_instance
+	 */
+	public function register( Import_Runner_Base $runner_instance ) {
+		$this->runners[ $runner_instance::get_name() ] = $runner_instance;
+	}
+
+	public function register_default_runners() {
+		$this->register( new Site_Settings() );
+		$this->register( new Plugins() );
+		$this->register( new Templates() );
+		$this->register( new Taxonomies() );
+		$this->register( new Elementor_Content() );
+		$this->register( new Wp_Content() );
 	}
 
 	/**
@@ -192,6 +228,8 @@ class Import extends Process_Base {
 			if ( $runner->should_import( $data ) ) {
 				$import = $runner->import( $data, $this->imported_data );
 				$this->imported_data = array_merge_recursive( $this->imported_data, $import );
+
+				$this->runners_import_metadata[ $runner::get_name() ] = $runner->get_import_session_metadata();
 			}
 		}
 
@@ -200,7 +238,7 @@ class Import extends Process_Base {
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
-		$this->update_imports_option( $this->imported_data, $start_time );
+		$this->add_import_session_option( $start_time );
 
 		$map_old_new_post_ids = Utils::map_old_new_post_ids( $this->imported_data );
 		$this->save_elements_of_imported_posts( $map_old_new_post_ids );
@@ -444,10 +482,10 @@ class Import extends Process_Base {
 		}
 	}
 
-	private function update_imports_option( array $imported_data, $start_time ) {
-		$option = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+	private function add_import_session_option( $start_time ) {
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
-		$option[ time() ] = [
+		$import_sessions[ time() ] = [
 			'session_id' => $this->session_id,
 			//'kit_id' => $this->manifest['kit_id'],
 			'kit_name' => $this->manifest['name'],
@@ -455,9 +493,9 @@ class Import extends Process_Base {
 			'user_id' => get_current_user_id(),
 			'start_timestamp' => $start_time,
 			'end_timestamp' => current_time( 'timestamp' ),
-			'runners' => $imported_data['revert_data'] ?? [],
+			'runners' => $this->runners_import_metadata,
 		];
 
-		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $option, 'no' );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, 'no' );
 	}
 }

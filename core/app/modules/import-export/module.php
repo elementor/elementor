@@ -7,6 +7,7 @@ use Elementor\Core\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
@@ -35,6 +36,8 @@ class Module extends BaseModule {
 	const REFERRER_LOCAL = 'local';
 
 	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
+
+	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
@@ -153,7 +156,9 @@ class Module extends BaseModule {
 		$user_time_format = get_option( 'time_format' );
 		$date_format = $user_date_format . ' ' . $user_time_format;
 
-		if ( ! empty( $last_imported_kit ) ) {
+		$should_show_revert_section = $this->should_show_revert_section( $last_imported_kit );
+
+		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
@@ -193,7 +198,7 @@ class Module extends BaseModule {
 			</div>
 
 			<?php
-			if ( ! empty( $last_imported_kit ) ) {
+			if ( $should_show_revert_section ) {
 				$link_attributes = [
 					'href' => wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
 					'id' => 'elementor-import-export__revert_kit',
@@ -228,6 +233,8 @@ class Module extends BaseModule {
 	 * @throws \Exception
 	 */
 	public function upload_kit( $file, $referrer ) {
+		$this->ensure_writing_permissions();
+
 		$this->import = new Import( $file, [ 'referrer' => $referrer ] );
 
 		return [
@@ -251,6 +258,8 @@ class Module extends BaseModule {
 	 * @throws \Exception
 	 */
 	public function import_kit( $path, $settings ) {
+		$this->ensure_writing_permissions();
+
 		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
 
@@ -271,6 +280,8 @@ class Module extends BaseModule {
 	 * @throws \Exception
 	 */
 	public function export_kit( $settings ) {
+		$this->ensure_writing_permissions();
+
 		$this->export = new Export( $settings );
 		$this->export->register_default_runners();
 
@@ -289,6 +300,19 @@ class Module extends BaseModule {
 		do_action( 'elementor/import-export/revert-kit', $this->revert );
 
 		$this->revert->run();
+	}
+
+
+	/**
+	 * Handle revert last imported kit ajax request.
+	 */
+	public function handle_revert_last_imported_kit() {
+		check_admin_referer( 'elementor_revert_kit' );
+
+		$this->revert_last_imported_kit();
+
+		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
+		die;
 	}
 
 	/**
@@ -315,16 +339,14 @@ class Module extends BaseModule {
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
 	}
 
-	/**
-	 * Handle revert last imported kit ajax request.
-	 */
-	public function handle_revert_last_imported_kit() {
-		check_admin_referer( 'elementor_revert_kit' );
+	private function ensure_writing_permissions() {
+		$server = new Server();
 
-		$this->revert_last_imported_kit();
+		$server_write_permissions = $server->get_write_permissions();
 
-		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
-		die;
+		if ( $server_write_permissions['warning'] ) {
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+		}
 	}
 
 	/**
@@ -539,6 +561,29 @@ class Module extends BaseModule {
 		}
 
 		return $summary_titles;
+	}
+
+	public function should_show_revert_section( $last_imported_kit ) {
+		if ( empty( $last_imported_kit ) ) {
+			return false;
+		}
+
+		// TODO: BC - remove in the future
+		//  The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
+		//  The runner that is in the core version is missing the revert functionality,
+		//  therefore we shouldn't display the revert section if the import process done with the core version.
+		$is_import_templates_ran = isset( $last_imported_kit['runners']['templates'] );
+		if ( $this->has_pro() && $is_import_templates_ran ) {
+			$has_imported_templates = ! empty( $last_imported_kit['runners']['templates'] );
+
+			return $has_imported_templates;
+		}
+
+		return true;
+	}
+
+	public function has_pro(): bool {
+		return ElementorUtils::has_pro();
 	}
 
 	private function get_elementor_editor_home_page_url() {

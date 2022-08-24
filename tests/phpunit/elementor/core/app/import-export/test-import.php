@@ -1,12 +1,13 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport;
 
-use Elementor\Core\App\Modules\ImportExport\Runners\Elementor_Content;
-use Elementor\Core\App\Modules\ImportExport\Runners\Plugins;
-use Elementor\Core\App\Modules\ImportExport\Runners\Site_Settings;
-use Elementor\Core\App\Modules\ImportExport\Runners\Taxonomies;
-use Elementor\Core\App\Modules\ImportExport\Runners\Templates;
-use Elementor\Core\App\Modules\ImportExport\Runners\Wp_Content;
+use Elementor\Core\App\Modules\ImportExport\Module;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Elementor_Content;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Plugins;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Site_Settings;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Taxonomies;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Templates;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\Core\App\Modules\ImportExport\Processes\Import;
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Settings\Page\Manager as PageManager;
@@ -132,6 +133,9 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 1, $result );
 		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins'] );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'plugins' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_plugins_selected_plugin() {
@@ -173,11 +177,17 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 1, $result );
 		$this->assertEquals( [ 'Elementor', ], $result['plugins'] );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'plugins' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_site_settings() {
 		// Arrange
 		$this->act_as_admin();
+
+		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		$import_settings = [
 			'include' => [ 'settings' ],
@@ -194,9 +204,20 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 2, $result );
+		$this->assertCount( 1, $result );
 		$this->assertTrue( $result['site-settings'] );
-		$this->assertTrue( is_array( $result['revert_data']['site-settings'] ) );
+
+		$expected_runners = [
+			'elementor-content' => [
+				'site-settings' => [
+					'previous_kit_id' => $previous_kit_id,
+					'active_kit_id' => $active_kit_id,
+					'new_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
+				],
+			],
+		];
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		$new_active_kit = Plugin::$instance->kits_manager->get_active_kit();
 		$this->assertEquals( 'Imported Kit', $new_active_kit->get_post()->post_title );
@@ -219,6 +240,9 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEmpty( $result );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEmpty( array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_taxonomies_without_register_custom_taxonomies() {
@@ -233,9 +257,11 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 2, $result );
+		$this->assertCount( 1, $result );
 		$this->assert_valid_taxonomies( $result );
-		$this->assertTrue( is_array( $result['revert_data']['taxonomies'] ) );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'taxonomies' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_taxonomies_with_register_custom_taxonomies() {
@@ -253,9 +279,11 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 2, $result );
+		$this->assertCount( 1, $result );
 		$this->assert_valid_taxonomies( $result );
-		$this->assertTrue( is_array( $result['revert_data']['taxonomies'] ) );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'taxonomies' => [] ], array_pop( $import_sessions_options )['runners'] );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -283,11 +311,17 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 2, $result );
+		$this->assertCount( 1, $result );
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
 		$this->assertCount( 1, $result['content']['page']['succeed'] );
 
-		$this->assertTrue( is_array( $result['revert_data']['elementor-content'] ) );
+		$expected_runners = [
+			'elementor-content' => [
+				'page_on_front' => $old_option_page_on_front,
+			],
+		];
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		$this->assert_valid_elementor_content( $result, $manifest, $zip_path );
 
@@ -318,14 +352,20 @@ class Test_Import extends Elementor_Test_Base {
 		// Act
 		$result = $import->run();
 
-		$this->assertCount( 2, $result );
+		$this->assertCount( 1, $result );
 		$this->assertCount( 1, $result['wp-content']['post']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['page']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['tests']['succeed'] );
 		$this->assertCount( 4, $result['wp-content']['nav_menu_item']['succeed'] );
 		$this->assertFalse( isset( $result['wp-content']['sectests'] ) );
 
-		$this->assertTrue( is_array( $result['revert_data']['wp-content'] ) );
+		$expected_runners = [
+			'wp-content' => [
+				'custom_post_types' => [ 'tests' ],
+			],
+		];
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		unregister_post_type( 'tests' );
 	}

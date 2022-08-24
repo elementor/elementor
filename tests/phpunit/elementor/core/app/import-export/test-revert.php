@@ -4,8 +4,10 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport;
 use Elementor\Core\App\Modules\ImportExport\Module;
 use Elementor\Core\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\App\Modules\ImportExport\Processes\Import;
-use Elementor\Core\App\Modules\ImportExport\Runners\Elementor_Content;
-use Elementor\Core\App\Modules\ImportExport\Runners\Site_Settings;
+use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Elementor_Content as Revert_Elementor_Content;
+use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Site_Settings as Revert_Site_Settings;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Elementor_Content as Import_Elementor_Content;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Site_Settings as Import_Site_Settings;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -68,14 +70,14 @@ class Test_Revert extends Elementor_Test_Base {
 		$original_kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$import = new Import( static::ZIP_PATH );
-		$import->register( new Site_Settings() );
+		$import->register( new Import_Site_Settings() );
 		$import->run();
 
 		// TODO: is it redundant?
 		$post_import_kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$revert = new Revert();
-		$revert->register( new Site_Settings() );
+		$revert->register( new Revert_Site_Settings() );
 
 		// Act
 		$revert->run();
@@ -98,14 +100,14 @@ class Test_Revert extends Elementor_Test_Base {
 		update_option( 'show_on_front', 'post' );
 
 		$import = new Import( static::ZIP_PATH );
-		$import->register( new Elementor_Content() );
+		$import->register( new Import_Elementor_Content() );
 		$import->run();
 
 		$post_import_option_page_on_front = get_option( 'page_on_front' );
 		$post_import_option_show_on_front = get_option( 'show_on_front' );
 
 		$revert = new Revert();
-		$revert->register( new Elementor_Content() );
+		$revert->register( new Revert_Elementor_Content() );
 
 		// Act
 		$revert->run();

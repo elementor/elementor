@@ -1,12 +1,13 @@
 <?php
-namespace Elementor\Core\App\Modules\ImportExport\Runners;
+namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
 
-class Taxonomies extends Runner_Base {
+class Taxonomies extends Import_Runner_Base {
+
 	private $import_session_id;
 
-	public static function get_name() {
+	public static function get_name() : string {
 		return 'taxonomies';
 	}
 
@@ -16,20 +17,6 @@ class Taxonomies extends Runner_Base {
 			in_array( 'content', $data['include'], true ) &&
 			! empty( $data['extracted_directory_path'] ) &&
 			! empty( $data['manifest']['taxonomies'] )
-		);
-	}
-
-	public function should_export( array $data ) {
-		return (
-			isset( $data['include'] ) &&
-			in_array( 'content', $data['include'], true )
-		);
-	}
-
-	public function should_revert( array $data ) {
-		return (
-			isset( $data['runners'] ) &&
-			array_key_exists( static::get_name(), $data['runners'] )
 		);
 	}
 
@@ -51,46 +38,7 @@ class Taxonomies extends Runner_Base {
 			$result['taxonomies'][ $post_type ] = $this->import_taxonomies( $data['manifest']['taxonomies'][ $post_type ], $path );
 		}
 
-		$result = $this->get_import_session_metadata( $result );
-
 		return $result;
-	}
-
-	public function export( array $data ) {
-		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
-		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
-
-		$export = $this->export_taxonomies( $post_types );
-
-		$manifest_data['taxonomies'] = $export['manifest'];
-
-		return [
-			'files' => $export['files'],
-			'manifest' => [
-				$manifest_data,
-			],
-		];
-	}
-
-	public function revert( array $data ) {
-		$taxonomies = get_taxonomies();
-
-		$terms = get_terms( [
-			'taxonomy' => $taxonomies,
-			'hide_empty' => false,
-			'get' => 'all',
-			'meta_query' => [
-				[
-					'key'       => static::IMPORT_SESSION_META_KEY,
-					'value'     => $data['session_id'],
-				],
-			],
-		] );
-
-		foreach ( $terms as $term ) {
-			wp_delete_term( $term->term_id, $term->taxonomy );
-		}
 	}
 
 	private function import_taxonomies( array $taxonomies, $path ) {
@@ -185,94 +133,5 @@ class Taxonomies extends Runner_Base {
 		}
 
 		return 0;
-	}
-
-	private function export_taxonomies( array $post_types ) {
-		$files = [];
-		$manifest = [];
-
-		$taxonomies = get_taxonomies();
-
-		foreach ( $taxonomies as $taxonomy ) {
-			$taxonomy_post_types = get_taxonomy( $taxonomy )->object_type;
-			$intersected_post_types = array_intersect( $taxonomy_post_types, $post_types );
-
-			if ( empty( $intersected_post_types ) ) {
-				continue;
-			}
-
-			$data = $this->export_terms( $taxonomy );
-
-			if ( empty( $data ) ) {
-				continue;
-			}
-
-			foreach ( $intersected_post_types as $post_type ) {
-				$manifest[ $post_type ][] = $taxonomy;
-			}
-
-			$files[] = [
-				'path' => 'taxonomies/' . $taxonomy,
-				'data' => $data,
-			];
-		}
-
-		return [
-			'files' => $files,
-			'manifest' => $manifest,
-		];
-	}
-
-	private function export_terms( $taxonomy ) {
-		$terms = get_terms( [
-			'taxonomy' => (array) $taxonomy,
-			'hide_empty' => true,
-			'get' => 'all',
-		] );
-
-		$ordered_terms = $this->order_terms( $terms );
-
-		if ( empty( $ordered_terms ) ) {
-			return [];
-		}
-
-		$data = [];
-
-		foreach ( $ordered_terms as $term ) {
-			$data[] = [
-				'term_id' => $term->term_id,
-				'name' => $term->name,
-				'slug' => $term->slug,
-				'taxonomy' => $term->taxonomy,
-				'description' => $term->description,
-				'parent' => $term->parent,
-			];
-		}
-
-		return $data;
-	}
-
-	public function get_import_session_metadata(array $result ) {
-		$result['revert_data'][ static::get_name() ] = [];
-
-		return $result;
-	}
-
-	// Put terms in order with no child going before its parent.
-	private function order_terms( array $terms ) {
-		$ordered_terms = [];
-
-		while ( $term = array_shift( $terms ) ) {
-			$is_top_level = 0 === $term->parent;
-			$is_parent_exits = isset( $ordered_terms[ $term->parent ] );
-
-			if ( $is_top_level || $is_parent_exits ) {
-				$ordered_terms[ $term->term_id ] = $term;
-			} else {
-				$terms[] = $term;
-			}
-		}
-
-		return $ordered_terms;
 	}
 }
