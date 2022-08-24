@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export default class Base extends CommandBase {
+export default class Base extends $e.modules.CommandBase {
 	initialize( args ) {
 		super.initialize( args );
 

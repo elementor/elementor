@@ -211,7 +211,7 @@ abstract class Base_App {
 		$this->after_connect();
 
 		// Add the notice *after* the method `after_connect`, so an app can redirect without the notice.
-		$this->add_notice( esc_html__( 'Connected Successfully.', 'elementor' ) );
+		$this->add_notice( esc_html__( 'Connected successfully.', 'elementor' ) );
 
 		$this->redirect_to_admin_page();
 	}
@@ -223,7 +223,7 @@ abstract class Base_App {
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
-			$this->add_notice( esc_html__( 'Disconnected Successfully.', 'elementor' ) );
+			$this->add_notice( esc_html__( 'Disconnected successfully.', 'elementor' ) );
 		}
 
 		$this->redirect_to_admin_page();
@@ -589,10 +589,6 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function set_client_id() {
-		if ( $this->get( 'client_id' ) ) {
-			return;
-		}
-
 		$response = $this->request(
 			'get_client_id',
 			[

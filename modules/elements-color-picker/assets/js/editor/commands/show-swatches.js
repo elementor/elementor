@@ -1,4 +1,3 @@
-import CommandBase from 'elementor-api/modules/command-base';
 import { rgbToHex } from 'elementor/core/app/assets/js/utils/utils';
 
 /**
@@ -7,7 +6,7 @@ import { rgbToHex } from 'elementor/core/app/assets/js/utils/utils';
 /**
  * Show a palette of color swatches on click.
  */
-export class ShowSwatches extends CommandBase {
+export class ShowSwatches extends $e.modules.CommandBase {
 	/**
 	 * Initialize the command.
 	 *

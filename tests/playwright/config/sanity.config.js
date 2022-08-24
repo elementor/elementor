@@ -1,4 +1,3 @@
-// sanity.config.js
 // @ts-check
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
