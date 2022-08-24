@@ -63,9 +63,6 @@ class Global_Colors extends Tab_Base {
 			[
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
-				'dynamic' => [
-					'active' => true,
-				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
 				],
