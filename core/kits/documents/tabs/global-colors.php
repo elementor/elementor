@@ -3,6 +3,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
+use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,7 +63,9 @@ class Global_Colors extends Tab_Base {
 			[
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
-				'dynamic' => [],
+				'dynamic' => [
+					'active' => true,
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
 				],
