@@ -29,12 +29,12 @@ jobs:
         with: 
             filename: './.github/workflows/config.json'
             prefix: config
-      - name: Test permissions
-        uses: ./.github/workflows/permissions
-        with:
-          ENVIRONMENT: ${{ env.config_deployment_environment }}
-          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
-          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+      # - name: Test permissions
+      #   uses: ./.github/workflows/permissions
+      #   with:
+      #     ENVIRONMENT: ${{ env.config_deployment_environment }}
+      #     DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+      #     DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
       - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
@@ -52,13 +52,13 @@ jobs:
         run: |
           echo $(git rev-parse HEAD)
           echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      - name: Validate Run Checks
-        uses : ./.github/workflows/validate-run-checks
-        with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          CURRENT_SHA: ${{ env.CURRENT_SHA }}
-          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
+      # - name: Validate Run Checks
+      #   uses : ./.github/workflows/validate-run-checks
+      #   with:
+      #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      #     REPOSITORY: ${{ github.repository }}
+      #     CURRENT_SHA: ${{ env.CURRENT_SHA }}
+      #     IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Bump version
         id: bump_version_step
         uses: ./.github/workflows/bump-version
