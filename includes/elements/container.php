@@ -492,7 +492,7 @@ class Container extends Element_Base {
 			'section' => 'section',
 			'aside' => 'aside',
 			'nav' => 'nav',
-			'a' => 'a',
+			'a' => 'a' . ' (link)',
 		];
 
 		$options = [
