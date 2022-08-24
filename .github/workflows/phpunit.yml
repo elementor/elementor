@@ -14,10 +14,11 @@ jobs:
         uses: actions/checkout@v2
       - name: Check PHP files diff
         id: php_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.php
+            composer.json
 
   test:
     runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
