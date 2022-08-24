@@ -8,6 +8,11 @@ use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Elementor_Content as 
 use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Site_Settings as Revert_Site_Settings;
 use Elementor\Core\App\Modules\ImportExport\Runners\Import\Elementor_Content as Import_Elementor_Content;
 use Elementor\Core\App\Modules\ImportExport\Runners\Import\Site_Settings as Import_Site_Settings;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Plugins as Import_Plugins;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Taxonomies as Import_Taxonomies;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Templates as Import_Templates;
+use Elementor\Core\App\Modules\ImportExport\Runners\Import\Wp_Content as Import_Wp_Content;
+use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -25,8 +30,29 @@ class Test_Revert extends Elementor_Test_Base {
 		$base_terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
 		$base_posts = get_posts( [ 'numberposts' => -1 ] );
 
+		$plugins_manager_mock = $this->getMockBuilder( Plugins_Manager::class )
+			->setMethods( [ 'install', 'activate' ] )
+			->getMock();
+
+		$plugins_manager_mock->method( 'install' )
+			->willReturn( [
+				'succeeded' => []
+			] );
+
+		$plugins_manager_mock->method( 'activate' )
+			->willReturn( [
+				'succeeded' => []
+			] );
+
 		$import = new Import( static::ZIP_PATH );
-		$import->register_default_runners();
+
+		$import->register( new Import_Plugins( $plugins_manager_mock ) );
+		$import->register( new Import_Site_Settings() );
+		$import->register( new Import_Taxonomies() );
+		$import->register( new Import_Templates() );
+		$import->register( new Import_Elementor_Content() );
+		$import->register( new Import_Wp_Content() );
+
 		$import->run();
 
 		$post_import_terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );

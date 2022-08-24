@@ -13,7 +13,7 @@ class Wp_Content extends Import_Runner_Base {
 	/**
 	 * @var array
 	 */
-	private $selected_custom_post_types;
+	private $selected_custom_post_types = [];
 
 	public static function get_name() : string {
 		return 'wp-content';
@@ -33,10 +33,7 @@ class Wp_Content extends Import_Runner_Base {
 
 		$path = $data['extracted_directory_path'] . 'wp-content/';
 
-		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$this->selected_custom_post_types = $data['selected_custom_post_types'] ?? [];
-		$post_types = array_merge( $wp_builtin_post_types, $this->selected_custom_post_types );
-		$post_types = $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' );
+		$post_types = $this->filter_post_types( $data['selected_custom_post_types'] );
 
 		$taxonomies = $imported_data['taxonomies'] ?? [];
 		$imported_terms = ImportExportUtils::map_old_new_terms_ids( $imported_data );
@@ -44,10 +41,6 @@ class Wp_Content extends Import_Runner_Base {
 		$result['wp-content'] = [];
 
 		foreach ( $post_types as $post_type ) {
-			if ( ! post_type_exists( $post_type ) ) {
-				continue;
-			}
-
 			$import = $this->import_wp_post_type(
 				$path,
 				$post_type,
@@ -91,6 +84,21 @@ class Wp_Content extends Import_Runner_Base {
 		$result = $wp_importer->run();
 
 		return $result['summary']['posts'];
+	}
+
+	private function filter_post_types( $selected_custom_post_types = [] ) {
+		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
+
+		foreach ( $selected_custom_post_types as $custom_post_type ) {
+			if ( post_type_exists( $custom_post_type ) ) {
+				$this->selected_custom_post_types[] = $custom_post_type;
+			}
+		}
+
+		$post_types = array_merge( $wp_builtin_post_types, $this->selected_custom_post_types );
+		$post_types = $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' );
+
+		return $post_types;
 	}
 
 	public function get_import_session_metadata() : array {

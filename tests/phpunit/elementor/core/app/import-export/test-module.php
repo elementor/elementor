@@ -46,7 +46,6 @@ class Test_Module extends Elementor_Test_Base {
 					'runners' => []
 				],
 				'should_show' => true,
-				// Imported without Pro active.
 			],
 			'Import done with Pro active but without templates' => [
 				'has_pro' => true,
