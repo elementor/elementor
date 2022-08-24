@@ -5,6 +5,12 @@ class Heading extends WidgetBase {
 		return 'heading';
 	}
 
+	getExcludeControls() {
+		return [
+			'text_stroke_stroke_color', // Cannot be tested alone: setting stroke color without setting stroke width.
+		];
+	}
+
 	async beforeControlTest( { control, controlId } ) {
 		if ( 'blend_mode' === controlId ) {
 			// Set the parent section background to red in order to test controls such as "blend mode".

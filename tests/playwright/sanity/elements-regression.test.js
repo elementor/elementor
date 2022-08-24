@@ -12,6 +12,7 @@ const {
 	Choose,
 	Select,
 	Textarea,
+	Color,
 } = require( '../utils/controls' );
 
 const { Registrar } = require( '../utils/registrar' );
@@ -34,7 +35,8 @@ test( 'All widgets sanity test @regression', async ( { page }, testInfo ) => {
 	const controlsRegistrar = new Registrar()
 		.register( Choose )
 		.register( Select )
-		.register( Textarea );
+		.register( Textarea )
+		.register( Color );
 
 	for ( const widgetType of Object.keys( widgetsCache ) ) {
 		const WidgetClass = widgetsRegistrar.get( widgetType );
