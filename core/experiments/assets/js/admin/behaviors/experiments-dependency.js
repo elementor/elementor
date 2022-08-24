@@ -1,5 +1,3 @@
-import Arr from 'elementor-utils/arr';
-
 const STATE_ACTIVE = 'active';
 const STATE_INACTIVE = 'inactive';
 const STATE_DEFAULT = 'default';
@@ -33,7 +31,9 @@ export default class ExperimentsDependency {
 
 		switch ( experimentNewState ) {
 			case STATE_ACTIVE:
-				this.showDependenciesDialog( experimentId );
+				if ( this.shouldShowDependenciesDialog( experimentId ) ) {
+					this.showDependenciesDialog( experimentId );
+				}
 				break;
 
 			case STATE_INACTIVE:
@@ -43,6 +43,19 @@ export default class ExperimentsDependency {
 			default:
 				break;
 		}
+	}
+
+	getExperimentData( experimentId ) {
+		return elementorAdminConfig.experiments[ experimentId ];
+	}
+
+	getExperimentDependencies( experimentId ) {
+		return this
+			.getExperimentData( experimentId )
+			.dependencies
+			.map( ( dependencyId ) => (
+				this.getExperimentData( dependencyId )
+			) );
 	}
 
 	getExperimentSelect( experimentId ) {
@@ -71,7 +84,7 @@ export default class ExperimentsDependency {
 	}
 
 	isExperimentActiveByDefault( experimentId ) {
-		return ( elementorAdminConfig.experiments[ experimentId ].default === STATE_ACTIVE );
+		return ( this.getExperimentData( experimentId ).default === STATE_ACTIVE );
 	}
 
 	areAllDependenciesActive( dependencies ) {
@@ -90,20 +103,17 @@ export default class ExperimentsDependency {
 			} );
 	}
 
+	shouldShowDependenciesDialog( experimentId ) {
+		const dependencies = this.getExperimentDependencies( experimentId );
+
+		return ! this.areAllDependenciesActive( dependencies );
+	}
+
 	showDependenciesDialog( experimentId ) {
-		const experiment = elementorAdminConfig.experiments[ experimentId ];
+		const experiment = this.getExperimentData( experimentId ),
+			dependencies = this.getExperimentDependencies( experimentId );
 
-		const dependencies = experiment
-			.dependencies
-			.map( ( dependencyId ) => (
-				elementorAdminConfig.experiments[ dependencyId ]
-			) );
-
-		if ( this.areAllDependenciesActive( dependencies ) ) {
-			return;
-		}
-
-		const dependenciesList = Arr.join( dependencies.map( ( d ) => d.title ), ', ', ' & ' );
+		const dependenciesList = this.joinDepenednciesNames( dependencies.map( ( d ) => d.title ), ', ', ' & ' );
 
 		// Translators: %1$s: Experiment title, %2$s: Experiment dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
@@ -138,5 +148,24 @@ export default class ExperimentsDependency {
 				this.setExperimentState( experimentId, STATE_INACTIVE );
 			},
 		} ).show();
+	}
+
+	joinDepenednciesNames( array, glue, finalGlue = '' ) {
+		if ( '' === finalGlue ) {
+			return array.join( glue );
+		}
+
+		if ( ! array.length ) {
+			return '';
+		}
+
+		if ( 1 === array.length ) {
+			return array[ 0 ];
+		}
+
+		const clone = [ ...array ],
+			lastItem = clone.pop();
+
+		return clone.join( glue ) + finalGlue + lastItem;
 	}
 }

@@ -1,15 +1,21 @@
 import { fireEvent } from '@testing-library/dom';
 
 export function activateExperiment( experimentId ) {
-	const experiment = document.querySelector( `[data-experiment-id="${ experimentId }"]` );
-
-	fireEvent.change( experiment, { target: { value: 'active' } } );
+	setExperimentState( experimentId, 'active' );
 }
 
 export function deactivateExperiment( experimentId ) {
+	setExperimentState( experimentId, 'inactive' );
+}
+
+export function resetExperiment( experimentId ) {
+	setExperimentState( experimentId, 'default' );
+}
+
+function setExperimentState( experimentId, state ) {
 	const experiment = document.querySelector( `[data-experiment-id="${ experimentId }"]` );
 
-	fireEvent.change( experiment, { target: { value: 'inactive' } } );
+	fireEvent.change( experiment, { target: { value: state } } );
 }
 
 export function getExperimentState( experimentId ) {

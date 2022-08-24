@@ -4,6 +4,7 @@ import {
 	mockExperimentsForm,
 	activateExperiment,
 	deactivateExperiment,
+	resetExperiment,
 	getExperimentState,
 	mockDialog,
 } from './utils';
@@ -67,7 +68,18 @@ describe( 'ExperimentsDependency Behavior', () => {
 		const { confirm } = mockDialog();
 		const submitMock = jest.fn();
 
-		elements.form.addEventListener( 'submit', submitMock );
+		/**
+		 * Prevent form submission to avoid JSDOM `not-implemented` error.
+		 *
+		 * @see https://github.com/jsdom/jsdom/issues/1937
+		 * @see https://github.com/jsdom/jsdom#unimplemented-parts-of-the-web-platform
+		 * @see https://oliverjam.es/blog/frontend-testing-node-jsdom/#loading-external-resources
+		 */
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
 
 		// Act.
 		activateExperiment( 'depends_on_inactive' );
@@ -84,7 +96,11 @@ describe( 'ExperimentsDependency Behavior', () => {
 		const { cancel } = mockDialog();
 		const submitMock = jest.fn();
 
-		elements.form.addEventListener( 'submit', submitMock );
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
 
 		// Act.
 		activateExperiment( 'depends_on_inactive' );
@@ -96,7 +112,7 @@ describe( 'ExperimentsDependency Behavior', () => {
 		expect( submitMock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'Should deactivate the experiments when deactivating their dependency', () => {
+	it( 'Should deactivate the experiments when deactivating their dependency ("state = active")', () => {
 		// Arrange.
 		activateExperiment( 'inactive_dependency' );
 		activateExperiment( 'depends_on_inactive' );
@@ -106,6 +122,19 @@ describe( 'ExperimentsDependency Behavior', () => {
 
 		// Assert.
 		expect( getExperimentState( 'inactive_dependency' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
+	} );
+
+	it( 'Should deactivate the experiments when deactivating their dependency ("state = default")', () => {
+		// Arrange.
+		activateExperiment( 'inactive_dependency' );
+		activateExperiment( 'depends_on_inactive' );
+
+		// Act.
+		resetExperiment( 'inactive_dependency' );
+
+		// Assert.
+		expect( getExperimentState( 'inactive_dependency' ) ).toBe( 'default' );
 		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
 	} );
 } );
