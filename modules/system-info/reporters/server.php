@@ -415,9 +415,7 @@ class Server extends Base {
 
 		$permissions = [];
 
-		foreach ( array_keys( $paths ) as $key_path ) {
-			$path = $paths[ $key_path ];
-
+		foreach ( $paths as $key_path => $path ) {
 			$permissions[ $key_path ] = $this->get_path_permissions( $path );
 		}
 
@@ -440,6 +438,8 @@ class Server extends Base {
 	}
 
 	/**
+	 * Check the permissions of a path.
+	 *
 	 * @param $path
 	 * @return array{read: bool, write: bool, execute: bool}
 	 */

@@ -44,6 +44,12 @@ abstract class Iterator extends Base_Object {
 			throw new \Error( self::ZIP_ARCHIVE_MODULE_NOT_INSTALLED_KEY );
 		}
 
+		$this->ensure_write_permissions();
+
+		$this->set_settings( $settings );
+	}
+
+	private function ensure_write_permissions() {
 		$server = new Server();
 
 		$paths_to_check = [
@@ -63,7 +69,5 @@ abstract class Iterator extends Base_Object {
 				throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
 			}
 		}
-
-		$this->set_settings( $settings );
 	}
 }
