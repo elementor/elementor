@@ -25,7 +25,7 @@ runs:
                echo "::error::No deployment permissions have been granted to the user : ${{ github.actor }}"
                exit 1
             fi
-            if [ "${{ inputs.DEPLOYMENT_REPOSITORY_OWNER }}" != "${{ github.event.repository.owner.login }}" ];then
+            if [[ ${{ inputs.DEPLOYMENT_REPOSITORY_OWNER }} != ${{ github.event.repository.owner.login }} ]];then
                echo "::error::The deployment cannot start outside the elementor organization"
                exit 1
             fi
