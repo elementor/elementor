@@ -52,13 +52,13 @@ jobs:
         run: |
           echo $(git rev-parse HEAD)
           echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      - name: Validate Run Checks
-        uses : ./.github/workflows/validate-run-checks
-        with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          CURRENT_SHA: ${{ env.CURRENT_SHA }}
-          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
+      # - name: Validate Run Checks
+      #   uses : ./.github/workflows/validate-run-checks
+      #   with:
+      #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      #     REPOSITORY: ${{ github.repository }}
+      #     CURRENT_SHA: ${{ env.CURRENT_SHA }}
+      #     IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
       - name: Checkout branch
         uses: actions/checkout@v3
         with:
