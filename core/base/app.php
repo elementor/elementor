@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Base App
+ * Base App.  
  *
  * Base app utility class that provides shared functionality of apps.
  *
