@@ -173,6 +173,7 @@ class Module extends BaseModule {
 		$slug = $menu_args['menu_slug'];
 		$function = $menu_args['function'];
 
+
 		if ( is_callable( $function ) ) {
 			$admin_menu->register( $slug, new Landing_Pages_Promotion_Menu_Item( $function ) );
 		} else {
