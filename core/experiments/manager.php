@@ -108,6 +108,11 @@ class Manager extends Base_Object {
 		if ( ! empty( $experimental_data['dependencies'] ) ) {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 				$feature = $this->get_features( $dependency );
+
+				if ( ! empty( $feature['hidden'] ) ) {
+					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
+				}
+
 				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
 					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
 				} else {
