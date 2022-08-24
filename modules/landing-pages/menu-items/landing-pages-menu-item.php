@@ -1,20 +1,14 @@
 <?php
-namespace Elementor\Modules\LandingPages;
+namespace Elementor\Modules\LandingPages\MenuItems;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Landing_Pages_Menu_Item implements Admin_Menu_Item_With_Page {
-
-	private $render_callback;
-
-	public function __construct( callable $render_callback ) {
-		$this->render_callback = $render_callback;
-	}
+class Landing_Pages_Menu_Item implements Admin_Menu_Item {
 
 	public function is_visible() {
 		return true;
@@ -38,9 +32,5 @@ class Landing_Pages_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	public function get_capability() {
 		return 'manage_options';
-	}
-
-	public function render() {
-		( $this->render_callback )();
 	}
 }

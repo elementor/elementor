@@ -7,10 +7,11 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
+use Elementor\Modules\LandingPages\MenuItems\Landing_Pages_Menu_Item;
+use Elementor\Modules\LandingPages\MenuItems\Landing_Pages_Promotion_Menu_Item;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -167,10 +168,16 @@ class Module extends BaseModule {
 	 * @since 3.1.0
 	 */
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-
 		$menu_args = $this->get_menu_args();
 
-		$admin_menu->register( $menu_args['menu_slug'], new Landing_Pages_Menu_Item( $menu_args['function'] ) );
+		$slug = $menu_args['menu_slug'];
+		$function = $menu_args['function'];
+
+		if ( is_callable( $function ) ) {
+			$admin_menu->register( $slug, new Landing_Pages_Promotion_Menu_Item( $function ) );
+		} else {
+			$admin_menu->register( $slug, new Landing_Pages_Menu_Item() );
+		}
 	}
 
 	/**
