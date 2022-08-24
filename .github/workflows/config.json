@@ -1,6 +1,6 @@
 {
-  "deployment" : { 
-    "repository" : "elementor",
+  "deployment" : {
+    "repository_owner" : "elementor",
     "environment" : "prod",
     "permitted" : "KingYes,shilo-ey,matipojo"
   }
