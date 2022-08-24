@@ -8,6 +8,9 @@ export default class LockPro {
 
 		form.addEventListener( 'submit', this.onFormSubmit.bind( this ) );
 		templateType.addEventListener( 'change', this.onTemplateTypeChange.bind( this ) );
+
+		// Force checking on render, to make sure that default values are also checked.
+		this.onTemplateTypeChange();
 	}
 
 	onFormSubmit( e ) {
