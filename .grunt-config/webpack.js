@@ -14,6 +14,8 @@ const webpack = require('webpack');
 // Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
 
+const WatchTimePlugin = require('./plugins/watch-time/index');
+
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
@@ -74,6 +76,8 @@ const frontendRulesPresets = [ [
 				'last 2 Opera versions',
 			],
 		},
+		"useBuiltIns": "usage",
+		"corejs": "3.23",
 	}
 ] ];
 
@@ -88,6 +92,7 @@ const entry = {
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
+	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
@@ -102,6 +107,7 @@ const entry = {
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
+	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 };
 
@@ -129,7 +135,8 @@ const plugins = [
 		PropTypes: 'prop-types',
 		__: ['@wordpress/i18n', '__'],
 		sprintf: ['@wordpress/i18n', 'sprintf'],
-	} )
+	} ),
+	new WatchTimePlugin(),
 ];
 
 const baseConfig = {

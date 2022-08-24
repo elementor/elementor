@@ -46,6 +46,7 @@ class Manager extends Base_Object {
 	 * @param array $options {
 	 *     @type string $name
 	 *     @type string $title
+	 *     @type string $tag
 	 *     @type string $description
 	 *     @type string $release_status
 	 *     @type string $default
@@ -61,10 +62,12 @@ class Manager extends Base_Object {
 		}
 
 		$default_experimental_data = [
+			'tag' => '',
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 			'mutable' => true,
+			'hidden' => false,
 			'new_site' => [
 				'default_active' => false,
 				'always_active' => false,
@@ -73,7 +76,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change', 'dependencies' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', 'hidden', 'new_site', 'on_state_change', 'dependencies' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -104,6 +107,11 @@ class Manager extends Base_Object {
 		if ( ! empty( $experimental_data['dependencies'] ) ) {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 				$feature = $this->get_features( $dependency );
+
+				if ( ! empty( $feature['hidden'] ) ) {
+					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
+				}
+
 				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
 					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
 				} else {
@@ -236,8 +244,9 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_dom_optimization',
 			'title' => esc_html__( 'Optimized DOM Output', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
@@ -249,10 +258,11 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_optimized_assets_loading',
 			'title' => esc_html__( 'Improved Asset Loading', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
@@ -262,10 +272,11 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_optimized_css_loading',
 			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_RC,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
@@ -275,7 +286,8 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
 			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
-			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awsome and the eicons libraries and its related CSS files and fonts. Learn More.', 'elementor' )
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
@@ -284,9 +296,10 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'a11y_improvements',
 			'title' => esc_html__( 'Accessibility Improvements', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
 				. '<br><strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
@@ -296,9 +309,24 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'additional_custom_breakpoints',
+			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
+						. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
+						. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_STABLE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.4.0-beta',
+			],
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_import_export',
-			'title' => esc_html__( 'Import Export Template Kit', 'elementor' ),
-			'description' => esc_html__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
+			'title' => esc_html__( 'Import Export Website Kit', 'elementor' ),
+			'tag' => esc_html__( 'Feature', 'elementor' ),
+			'description' => esc_html__( 'Design sites faster with a Website Kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
 				. '<br>'
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
@@ -310,22 +338,9 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'additional_custom_breakpoints',
-			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
-			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
-							. '<br /><strong>' . esc_html__( 'Please note! Conditioning controls on values of responsive controls is not supported when this mode is active.', 'elementor' ) . '</strong>'
-				. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.4.0-beta',
-			],
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_hidden_wordpress_widgets',
 			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
+			'tag' => esc_html__( 'Improvement', 'elementor' ),
 			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
@@ -339,12 +354,13 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'container',
 			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
+			'tag' => esc_html__( 'Feature', 'elementor' ),
 			'description' => sprintf( esc_html__(
-				'Create advanced layouts and responsive designs with the new Flexbox Container element.
+				'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
 				This experiment replaces the current section/column structure, but you\'ll still keep your existing
-				Sections, Inner Sections and Columns and be able to edit them. %1$sLearn More%2$s',
+				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
 				'elementor'
-			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container">', '</a>' ),
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
@@ -409,7 +425,7 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			if ( ! $feature['mutable'] ) {
+			if ( ! $feature['mutable'] || $feature['hidden'] ) {
 				unset( $features[ $feature_name ] );
 
 				continue;
@@ -583,6 +599,9 @@ class Manager extends Base_Object {
 		<div class="e-experiment__title">
 			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"></div>
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
+			<?php if ( ! empty( $feature['tag'] ) ) : ?>
+				<span class="e-experiment__title__tag"><?php echo $feature['tag']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php endif; ?>
 		</div>
 		<?php
 

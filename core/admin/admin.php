@@ -4,7 +4,6 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\Core\Admin\Notices\Update_Php_Notice;
 use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
@@ -299,7 +298,7 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash' ), esc_html__( 'Go Pro', 'elementor' ) );
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Go Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -501,15 +500,15 @@ class Admin extends App {
 
 		$additions_actions = [
 			'go-pro' => [
-				'title' => esc_html__( 'Go Pro', 'elementor' ),
-				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
+				'title' => esc_html__( 'Upgrade', 'elementor' ),
+				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 			],
 		];
 
 		// Visible to all core users when Elementor Pro is not installed.
 		$additions_actions['find_an_expert'] = [
 			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
 		];
 
 		/**
@@ -701,7 +700,6 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
-		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
@@ -735,12 +733,6 @@ class Admin extends App {
 
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
-		} );
-
-		add_filter( 'elementor/core/admin/notices', function( $notices ) {
-			$notices[] = new Update_Php_Notice();
-
-			return $notices;
 		} );
 	}
 

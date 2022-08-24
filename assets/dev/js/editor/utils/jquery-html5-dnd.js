@@ -1,5 +1,7 @@
 /**
  * HTML5 - Drag and Drop
+ *
+ * @param {jQuery} $
  */
 ( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
@@ -46,7 +48,7 @@
 		var onDragStart = function( event ) {
 			var groups = settings.groups || [],
 				dataContainer = {
-					groups: groups,
+					groups,
 				};
 
 			if ( hasFullDataTransferSupport( event ) ) {
@@ -244,11 +246,11 @@
 							if ( -1 !== draggableGroups.groups.indexOf( groupName ) ) {
 								isGroupMatch = true;
 
-								return false; // stops the forEach from extra loops
+								return false; // Stops the forEach from extra loops
 							}
 						} );
-					} catch ( e ) {
-					}
+						// eslint-disable-next-line no-empty
+					} catch ( e ) {}
 				} );
 
 				if ( ! isGroupMatch ) {

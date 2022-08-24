@@ -337,6 +337,7 @@
 
 			> .elementor-control-title {
 				flex-shrink: 0;
+				max-width: 60%;
 			}
 
 			> .elementor-control-input-wrapper {
@@ -365,6 +366,7 @@
 .elementor-units-choices {
 	flex-grow: 1;
 	text-align: $end;
+	z-index: 3;
 
 	input {
 		display: none;

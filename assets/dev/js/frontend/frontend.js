@@ -29,7 +29,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.config.legacyMode = {
 			get elementWrappers() {
 				if ( elementorFrontend.isEditMode() ) {
-					elementorCommon.helpers.hardDeprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
+					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
 				}
 
 				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
@@ -42,7 +42,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	// TODO: BC since 2.5.0
 	get Module() {
 		if ( this.isEditMode() ) {
-			parent.elementorCommon.helpers.hardDeprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
+			parent.elementorDevTools.deprecation.deprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
 		}
 
 		return elementorModules.frontend.handlers.Base;
@@ -59,7 +59,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	getDefaultElements() {
 		const defaultElements = {
-			window: window,
+			window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
@@ -76,6 +76,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * @param {string} elementName
 	 * @deprecated 2.4.0 Use just `this.elements` instead
 	 */
 	getElements( elementName ) {
@@ -83,6 +84,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * @param {string} settingName
 	 * @deprecated 2.4.0 This method was never in use
 	 */
 	getPageSettings( settingName ) {
@@ -93,7 +95,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	getGeneralSettings( settingName ) {
 		if ( this.isEditMode() ) {
-			parent.elementorCommon.helpers.softDeprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
+			parent.elementorDevTools.deprecation.deprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
 		}
 
 		return this.getKitSettings( `elementor_${ settingName }` );
@@ -186,7 +188,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			},
 			urlActions: new URLActions(),
 			swiper: Swiper,
-			environment: environment,
+			environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
 			events: Events,

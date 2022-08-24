@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Core\Upgrade\Manager;
@@ -31,6 +32,7 @@ class Test_Manager extends Elementor_Test_Base {
 		];
 
 		$test_set = [
+			'tag' => '',
 			'description' => '',
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
@@ -43,6 +45,7 @@ class Test_Manager extends Elementor_Test_Base {
 				'minimum_installation_version' => null,
 			],
 			'mutable' => true,
+			'hidden' => false,
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
@@ -65,8 +68,8 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'depended_feature',
 			'state' => Experiments_Manager::STATE_INACTIVE,
 			'dependencies' => [
-				'core_feature'
-			]
+				'core_feature',
+			],
 		];
 
 		$this->add_test_feature( $test_core_feature );
@@ -79,6 +82,57 @@ class Test_Manager extends Elementor_Test_Base {
 		// Assert.
 		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
+	}
+
+	public function test_feature_can_be_added_as_hidden() {
+		// Act
+		$args = [ 'hidden' => true ];
+		$this->add_test_feature( $args );
+
+		// Assert
+		$feature = $this->experiments->get_features( 'test_feature' );
+		$this->assertNotEmpty( $feature );
+		$this->assertTrue( $feature['hidden'] );
+	}
+
+	public function test_features_are_added_as_not_hidden_by_default() {
+		// Act
+		$this->add_test_feature();
+
+		// Assert
+		$features = $this->experiments->get_features();
+		$this->assertNotEmpty( $features );
+		foreach ( $features as $feature ) {
+			$this->assertFalse( $feature['hidden'] );
+		}
+	}
+
+	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {
+		// Arrange.
+		$this->add_test_feature( [
+			'name' => 'regular-dependency',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'hidden-dependency',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'hidden'=> true,
+		] );
+
+		// Expect.
+		$this->expectException( Dependency_Exception::class );
+		$this->expectExceptionMessage( 'Depending on a hidden experiment is not allowed.' );
+
+		// Act.
+		$this->add_test_feature( [
+			'name' => 'dependant',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'regular-dependency',
+				'hidden-dependency',
+			],
+		] );
 	}
 
 	public function test_get_features() {

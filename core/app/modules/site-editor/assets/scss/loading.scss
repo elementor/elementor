@@ -65,17 +65,17 @@ $e-elementor-loader-container-dark-background-color: dark-tints(700);
 
 	&:nth-of-type(2) {
 		top: 0;
-		animation-delay: -($animation-time / 4 );
+		animation-delay: calc( #{$animation-time} / 4 * -1 );
 	}
 
 	&:nth-of-type(3) {
 		top: 40%;
-		animation-delay: -($animation-time / 4 )*2;
+		animation-delay: calc( #{$animation-time} / 4 * -2 );
 	}
 
 	&:nth-of-type(4) {
 		bottom: 0;
-		animation-delay: -($animation-time / 4 )*3;
+		animation-delay: calc( #{$animation-time} / 4 * -3 );
 	}
 }
 
