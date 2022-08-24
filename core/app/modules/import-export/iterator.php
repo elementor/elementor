@@ -61,7 +61,7 @@ abstract class Iterator extends Base_Object {
 		$permissions = $server->get_system_paths_permissions();
 
 		$permissions = array_filter( $permissions, function ( $key ) use ( $paths_to_check ) {
-			return array_key_exists( $key, $paths_to_check );
+			return in_array( $key, $paths_to_check, true );
 		}, ARRAY_FILTER_USE_KEY  );
 
 		foreach ( $permissions as $permission ) {
