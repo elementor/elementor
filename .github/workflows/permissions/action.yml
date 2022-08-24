@@ -17,15 +17,15 @@ runs:
   steps:
     - shell: bash
       run: |
-            if [[ ${{ inputs.ENVIRONMENT }} == "dev" ]];then
+            if [[ "${{ inputs.ENVIRONMENT }}" == "dev" ]];then
                echo "Pass validation in the development environment"
                exit 0
             fi
-             if [[ ${{ inputs.DEPLOYMENT_PERMITED }} != *"${{ github.actor }}"* ]];then
+             if [[ "${{ inputs.DEPLOYMENT_PERMITED }}"" != *"${{ github.actor }}"* ]];then
                echo "::error::No deployment permissions have been granted to the user : ${{ github.actor }}"
                exit 1
             fi
-            if [[ ${{ inputs.DEPLOYMENT_REPOSITORY_OWNER }} != ${{ github.event.repository.owner.login }} ]];then
+            if [[ "${{ inputs.DEPLOYMENT_REPOSITORY_OWNER }}" != "${{ github.event.repository.owner.login }}" ]];then
                echo "::error::The deployment cannot start outside the elementor organization"
                exit 1
             fi
