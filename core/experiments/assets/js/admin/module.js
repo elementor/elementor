@@ -1,4 +1,3 @@
-import Arr from 'elementor-utils/arr';
 import ExperimentsDependency from './behaviors/experiments-dependency';
 
 export default class ExperimentsModule extends elementorModules.ViewModule {
