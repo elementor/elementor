@@ -9,7 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * This App class was introduced for backwards compatibility with 3rd parties.
+ * This App class exists for backwards compatibility with 3rd parties.
+ *
+ * @deprecated 3.8.0
  */
 class Module extends BaseModule {
 

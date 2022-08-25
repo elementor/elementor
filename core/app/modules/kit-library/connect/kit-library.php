@@ -9,8 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * This App class exists for backwards compatibility with 3rd parties.
+ *
+ * @deprecated 3.8.0
+ */
 class Kit_Library extends Library {
 
+	/**
+	 * @deprecated 3.8.0
+	 */
 	public function is_connected() {
 		/** @var Kit_Library_Connect $kit_library */
 		$kit_library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' );
