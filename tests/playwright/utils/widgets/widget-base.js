@@ -55,7 +55,7 @@ class WidgetBase {
 	 *
 	 * @return {string[]}
 	 */
-	getExcludeControls() {
+	getExcludedControls() {
 		return [];
 	}
 
@@ -138,7 +138,7 @@ class WidgetBase {
 			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
 			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
 			const isSectionConditional = ( controlSection.condition || controlSection.conditions );
-			const isControlExcluded = this.getExcludeControls().includes( controlConfig.name );
+			const isControlExcluded = this.getExcludedControls().includes( controlConfig.name );
 
 			if ( isWidgetConditional || isSectionConditional || isControlExcluded ) {
 				continue;

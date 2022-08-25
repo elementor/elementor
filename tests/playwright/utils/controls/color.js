@@ -1,8 +1,8 @@
 const { ControlBase } = require( './control-base' );
 
 class Color extends ControlBase {
-	static GLOBAL_COLOR_TYPE = 'global';
-	static LOCAL_COLOR_TYPE = 'local';
+	static TYPE_GLOBAL_COLOR = 'global';
+	static TYPE_LOCAL_COLOR = 'local';
 
 	constructor( ...args ) {
 		super( ...args );
@@ -19,86 +19,111 @@ class Color extends ControlBase {
 		return `.elementor-control-${ this.config.name } .elementor-control-input-wrapper`;
 	}
 
-	async hasGlobalOption() {
-		return await this.globalToggleButton.count() > 0;
-	}
-
 	async getValue() {
-		if ( await this.hasGlobalOption() ) {
-			const isGlobalActive = await this.globalToggleButton.evaluate(
-				( el ) => el.classList.contains( 'e-global__popover-toggle--active' ),
-			);
+		const isCurrentValueVGlobal = await this.hasGlobalOption() && await this.isGlobalValueActive();
 
-			if ( isGlobalActive ) {
-				await this.globalToggleButton.click();
-
-				const value = await this.page
-					.locator( '.dialog-widget.e-global__popover:visible .e-global__preview-item--selected' )
-					.evaluate( ( el ) => el.dataset.globalId );
-
-				await this.globalToggleButton.click();
-
-				return [ this.constructor.GLOBAL_COLOR_TYPE, value ];
-			}
+		if ( isCurrentValueVGlobal ) {
+			return [ this.constructor.TYPE_GLOBAL_COLOR, await this.getGlobalValue() ];
 		}
 
-		await this.localToggleButton.click();
-
-		const value = await this.page.locator( '.pcr-app.visible input.pcr-result' ).inputValue();
-
-		await this.localToggleButton.click();
-
-		return [ this.constructor.LOCAL_COLOR_TYPE, value ];
+		return [ this.constructor.TYPE_LOCAL_COLOR, await this.getLocalValue() ];
 	}
 
 	async setValue( [ type, value ] ) {
-		if ( type === this.constructor.GLOBAL_COLOR_TYPE ) {
-			await this.globalToggleButton.click();
+		const shouldSetGlobalValue = type === this.constructor.TYPE_GLOBAL_COLOR;
 
-			await this.page
-				.locator( `.dialog-widget.e-global__popover:visible .e-global__preview-item[data-global-id=${ value }]` )
-				.click();
+		if ( shouldSetGlobalValue ) {
+			await this.setGlobalValue( value );
 
 			return;
 		}
 
-		await this.localToggleButton.click();
-
-		await this.page.locator( '.pcr-app.visible input.pcr-result' ).fill( value );
-
-		await this.localToggleButton.click();
+		await this.setLocalValue( value );
 	}
 
 	async test( assertionsCallback ) {
-		const [ originalType, originalColor ] = await this.getValue();
+		const originalColor = await this.getValue();
 
-		const testValues = [
-			[ this.constructor.LOCAL_COLOR_TYPE, '#FF0000' ],
-			[ this.constructor.LOCAL_COLOR_TYPE, '#0000FF' ],
-		];
-
-		if ( await this.hasGlobalOption() ) {
-			const colorChooseDictonary = {
-				primary: 'secondary',
-				secondary: 'primary',
-				text: 'primary',
-				accent: 'primary',
-			};
-
-			const value = originalType === this.constructor.GLOBAL_COLOR_TYPE
-				? colorChooseDictonary[ originalColor ]
-				: 'primary';
-
-			testValues.push( [ this.constructor.GLOBAL_COLOR_TYPE, value ] );
-		}
-
-		for ( const [ type, value ] of testValues ) {
+		for ( const [ type, value ] of await this.getTestValues( originalColor ) ) {
 			await this.setValue( [ type, value ] );
 
 			await assertionsCallback( `${ type }-${ value.replace( '#', '' ) }` );
 		}
 
-		await this.setValue( [ originalType, originalColor ] );
+		await this.setValue( originalColor );
+	}
+
+	async hasGlobalOption() {
+		return await this.globalToggleButton.count() > 0;
+	}
+
+	async isGlobalValueActive() {
+		return await this.globalToggleButton.evaluate(
+			( el ) => el.classList.contains( 'e-global__popover-toggle--active' ),
+		);
+	}
+
+	async getGlobalValue() {
+		await this.globalToggleButton.click();
+
+		const value = await this.getGlobalPopoverLocator()
+			.locator( '.e-global__preview-item--selected' )
+			.evaluate( ( el ) => el.dataset.globalId );
+
+		await this.globalToggleButton.click();
+
+		return value;
+	}
+
+	async setGlobalValue( value ) {
+		await this.globalToggleButton.click();
+
+		await this.getGlobalPopoverLocator()
+			.locator( `.e-global__preview-item[data-global-id=${ value }]` )
+			.click();
+	}
+
+	async getLocalValue() {
+		await this.localToggleButton.click();
+
+		const value = await this.getColorPickerInputLocator().inputValue();
+
+		await this.localToggleButton.click();
+
+		return value;
+	}
+
+	async setLocalValue( value ) {
+		await this.localToggleButton.click();
+
+		await this.getColorPickerInputLocator().fill( value );
+
+		await this.localToggleButton.click();
+	}
+
+	getColorPickerInputLocator() {
+		return this.page.locator( '.pcr-app.visible input.pcr-result' );
+	}
+
+	getGlobalPopoverLocator() {
+		return this.page.locator( '.dialog-widget.e-global__popover:visible' );
+	}
+
+	async getTestValues( [ originalType, originalColor ] ) {
+		const testValues = [
+			[ this.constructor.TYPE_LOCAL_COLOR, '#FF0000' ],
+			[ this.constructor.TYPE_LOCAL_COLOR, '#0000FF' ],
+		];
+
+		if ( await this.hasGlobalOption() ) {
+			const value = originalType === this.constructor.TYPE_GLOBAL_COLOR && 'primary' === originalColor
+				? 'secondary'
+				: 'primary';
+
+			testValues.push( [ this.constructor.TYPE_GLOBAL_COLOR, value ] );
+		}
+
+		return testValues;
 	}
 }
 

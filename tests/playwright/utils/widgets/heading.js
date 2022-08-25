@@ -5,7 +5,7 @@ class Heading extends WidgetBase {
 		return 'heading';
 	}
 
-	getExcludeControls() {
+	getExcludedControls() {
 		return [
 			'text_stroke_stroke_color', // Cannot be tested alone: setting stroke color without setting stroke width.
 		];
