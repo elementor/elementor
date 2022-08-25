@@ -100,7 +100,7 @@ jobs:
         uses: ./.github/workflows/build-plugin
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          UPDATE_VERSIONS_SCRIPT_PATH: "./.github/scripts/update-plugin-versions.sh"
+          UPDATE_VERSIONS_SCRIPT_PATH: "./.github/scripts/update-version-elementor-php.sh"
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
