@@ -20,8 +20,4 @@ class Module extends BaseModule {
 	public function get_name() {
 		return 'import-export-bc';
 	}
-
-	public function __construct() {
-		parent::__construct();
-	}
 }
