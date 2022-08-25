@@ -182,7 +182,7 @@ class Module extends BaseModule {
 		return [
 			'session' => $this->import->get_session_id(),
 			'manifest' => $this->import->get_manifest(),
-			'conflicts' => $this->import->get_settings_selected_override_conditions(),
+			'conflicts' => $this->import->get_settings_conflicts(),
 		];
 	}
 
@@ -324,10 +324,11 @@ class Module extends BaseModule {
 
 		if ( ! empty( $conflicts ) ) {
 			$result['conflicts'] = $conflicts;
+		} else {
+			// Moved into the IE process \Elementor\Core\App\Modules\ImportExport\Processes\Import::get_default_settings_conflicts
+			// TODO: remove in 3.10.0
+			$result = apply_filters( 'elementor/import/stage_1/result', $result );
 		}
-
-		// For BC with our PRO plugin.
-		$result = apply_filters( 'elementor/import/stage_1/result', $result );
 
 		wp_send_json_success( $result );
 	}
