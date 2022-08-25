@@ -13,7 +13,5 @@ interface Admin_Menu_Item {
 
 	public function get_parent_slug();
 
-	public function get_position();
-
 	public function is_visible();
 }

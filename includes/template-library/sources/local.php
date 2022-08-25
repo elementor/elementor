@@ -4,6 +4,7 @@ namespace Elementor\TemplateLibrary;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\File_Types\Zip;
+use Elementor\Core\Utils\Collection;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
@@ -346,38 +347,47 @@ class Source_Local extends Source_Base {
 	public function admin_menu_reorder() {
 		global $submenu;
 
-		if ( ! isset( $submenu[ self::ADMIN_MENU_SLUG ] ) ) {
+		if ( ! isset( $submenu[ static::ADMIN_MENU_SLUG ] ) ) {
 			return;
 		}
-		$library_submenu = &$submenu[ self::ADMIN_MENU_SLUG ];
 
-		// Remove 'All Templates' menu.
-		unset( $library_submenu[5] );
+		remove_submenu_page( static::ADMIN_MENU_SLUG, static::ADMIN_MENU_SLUG );
 
-		// If current use can 'Add New' - move the menu to end, and add the '#add_new' anchor.
-		if ( isset( $library_submenu[10][2] ) ) {
-			$library_submenu[700] = $library_submenu[10];
-			unset( $library_submenu[10] );
-			$library_submenu[700][2] = admin_url( self::ADMIN_MENU_SLUG . '#add_new' );
+		$add_new_slug = 'post-new.php?post_type=' . static::CPT;
+		$category_slug = 'edit-tags.php?taxonomy=' . static::TAXONOMY_CATEGORY_SLUG . '&amp;post_type=' . static::CPT;
+
+		$library_submenu = new Collection( $submenu[ static::ADMIN_MENU_SLUG ] );
+
+		$add_new_item = $library_submenu->find( function ( $item ) use ( $add_new_slug ) {
+			return $add_new_slug === $item[2];
+		} );
+
+		$categories_item = $library_submenu->find( function ( $item ) use ( $category_slug ) {
+			return $category_slug === $item[2];
+		} );
+
+		if ( $add_new_item ) {
+			remove_submenu_page( static::ADMIN_MENU_SLUG, $add_new_slug );
+
+			add_submenu_page(
+				static::ADMIN_MENU_SLUG,
+				esc_html__( 'Add New', 'elementor' ),
+				esc_html__( 'Add New', 'elementor' ),
+				Editor::EDITING_CAPABILITY,
+				admin_url( static::ADMIN_MENU_SLUG . '#add_new' )
+			);
 		}
 
-		// Move the 'Categories' menu to end.
-		if ( isset( $library_submenu[15] ) ) {
-			$library_submenu[800] = $library_submenu[15];
-			unset( $library_submenu[15] );
-		}
+		if ( $categories_item ) {
+			remove_submenu_page( static::ADMIN_MENU_SLUG, $category_slug );
 
-		if ( $this->is_current_screen() ) {
-			$library_title = $this->get_library_title();
-
-			foreach ( $library_submenu as &$item ) {
-				if ( $library_title === $item[0] ) {
-					if ( ! isset( $item[4] ) ) {
-						$item[4] = '';
-					}
-					$item[4] .= ' current';
-				}
-			}
+			add_submenu_page(
+				static::ADMIN_MENU_SLUG,
+				esc_html__( 'Categories', 'elementor' ),
+				esc_html__( 'Categories', 'elementor' ),
+				'manage_categories',
+				$category_slug
+			);
 		}
 	}
 
