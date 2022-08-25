@@ -3,7 +3,6 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
-use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
