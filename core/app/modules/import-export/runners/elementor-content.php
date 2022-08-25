@@ -10,7 +10,7 @@ class Elementor_Content extends Runner_Base {
 
 	private $page_on_front_id;
 
-	public function __constructor() {
+	public function __construct() {
 		$this->init_page_on_front_data();
 	}
 
