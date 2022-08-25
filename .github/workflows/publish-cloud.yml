@@ -47,6 +47,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.RELEASE_BRANCH }}
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Get Current SHA
         shell: bash
         run: |
