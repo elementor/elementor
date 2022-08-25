@@ -556,7 +556,7 @@ class Manager extends Base_Object {
 		?>
 		<div class="e-experiment__content">
 			<select class="e-experiment__select"
-				id="<?php esc_attr( $control_id ); ?>"
+				id="<?php echo esc_attr( $control_id ); ?>"
 				name="<?php echo esc_attr( $control_name ); ?>"
 				data-experiment-id="<?php echo esc_attr( $feature['name'] ); ?>"
 			>
