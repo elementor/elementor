@@ -387,6 +387,41 @@ class Source_Local extends Source_Base {
 		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
 	}
 
+	/**
+	 * Add a `current` CSS class to the `Saved Templates` submenu page when it's active.
+	 * It should work by default, but since we interfere with WordPress' builtin CPT menus it doesn't work properly.
+	 *
+	 * @return void
+	 */
+	private function admin_menu_set_current() {
+		global $submenu;
+
+		if ( empty( $submenu[ static::ADMIN_MENU_SLUG ] ) ) {
+			return;
+		}
+
+		if ( ! $this->is_current_screen() ) {
+			return;
+		}
+
+		$library_submenu = &$submenu[ static::ADMIN_MENU_SLUG ];
+		$library_title = $this->get_library_title();
+
+		foreach ( $library_submenu as &$item ) {
+			if ( $library_title !== $item[0] ) {
+				continue;
+			}
+
+			if ( ! isset( $item[4] ) ) {
+				$item[4] = '';
+			}
+
+			$item[4] .= ' current';
+
+			break;
+		}
+	}
+
 	public function admin_title( $admin_title, $title ) {
 		$library_title = $this->get_library_title();
 
@@ -1548,6 +1583,10 @@ class Source_Local extends Source_Base {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu( $admin_menu );
 				$this->admin_menu_reorder( $admin_menu );
+			} );
+
+			add_action( 'elementor/admin/menu/after_register', function () {
+				$this->admin_menu_set_current();
 			} );
 
 			add_filter( 'admin_title', [ $this, 'admin_title' ], 10, 2 );
