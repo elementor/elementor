@@ -5,7 +5,10 @@ inputs:
   PACKAGE_VERSION:
     required: true
     description: 'The version to inject into the plugin package.json file.'
-  SCRIPT_PATH:
+  UPDATE_VERSIONS_SCRIPT_PATH:
+    required: true
+    description: 'The path to the script that updates the versions in the plugin PHP files.'
+  BUILD_SCRIPT_PATH:
     required: true
     description: 'The full path of the script to build the plugin.'
 
@@ -19,6 +22,7 @@ runs:
                 echo "PACKAGE_VERSION is empty string or undefined"
                 exit 1
             fi
-            bash ${{ inputs.SCRIPT_PATH }}
+            bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
+            bash ${{ inputs.BUILD_SCRIPT_PATH }}
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
