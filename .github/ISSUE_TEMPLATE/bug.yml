@@ -9,17 +9,7 @@ body:
 
         - Please create GitHub issues only for Elementor bugs. GitHub issues ARE NOT FOR SUPPORT.
 
-        - For general support and questions, please use: https://wordpress.org/support/plugin/elementor
-
-        - For help and support from the Elementor community, see: https://www.facebook.com/groups/Elementors/
-
-        - For information and documentation about Elementor, see: https://elementor.com/help/
-
-        - For tech information and developers docs, please visit: https://developers.elementor.com/
-
-        - Developers docs are located at https://developers.elementor.com/
-
-        - to avoide duplicates, please search this repository for the issue.
+        - To avoide duplicates, please search this repository for the issue.
 
         - If the issue can't be recreated on other sites, it's not an Elementor bug. In that case use the support links above.
 
