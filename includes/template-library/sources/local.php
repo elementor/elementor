@@ -389,10 +389,36 @@ class Source_Local extends Source_Base {
 				$category_slug
 			);
 		}
+
+		$this->admin_menu_set_current();
 	}
 
 	public function admin_menu() {
 		add_submenu_page( self::ADMIN_MENU_SLUG, '', esc_html__( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
+	}
+
+	/**
+	 * Add a `current` CSS class to the `Saved Templates` submenu page when it's active.
+	 * It should work by default, but since we interfere with WordPress' builtin CPT menus it doesn't work properly.
+	 *
+	 * @return void
+	 */
+	private function admin_menu_set_current() {
+		global $submenu;
+
+		if ( $this->is_current_screen() ) {
+			$library_submenu = &$submenu[ static::ADMIN_MENU_SLUG ];
+			$library_title = $this->get_library_title();
+
+			foreach ( $library_submenu as &$item ) {
+				if ( $library_title === $item[0] ) {
+					if ( ! isset( $item[4] ) ) {
+						$item[4] = '';
+					}
+					$item[4] .= ' current';
+				}
+			}
+		}
 	}
 
 	public function admin_title( $admin_title, $title ) {
