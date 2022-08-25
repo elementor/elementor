@@ -389,11 +389,11 @@ class Import extends Process_Base {
 	 * @return array Custom post types names.
 	 */
 	private function get_default_settings_custom_post_types() {
-		if ( empty( $this->manifest['wp-content'] ) ) {
+		if ( empty( $this->manifest['custom-post-type-title'] ) ) {
 			return [];
 		}
 
-		$manifest_post_types = array_keys( $this->manifest['wp-content'] );
+		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] );
 
 		return array_diff( $manifest_post_types, Utils::get_builtin_wp_post_types() );
 	}
