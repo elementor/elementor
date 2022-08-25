@@ -191,9 +191,6 @@ class Test_Export extends Elementor_Test_Base {
 
 	public function test_run__export_elementor_content() {
 		// Arrange
-		$old_page_on_front = get_option( 'page_on_front' );
-		$old_show_on_front = get_option( 'show_on_front' );
-
 		$elementor_page = $this->factory()->documents->publish_and_get( [ 'post_type' => 'page', ] );
 
 		update_option( 'page_on_front', $elementor_page->get_id() );
@@ -222,10 +219,6 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assert_valid_elementor_content( $result, $documents );
 
 		$this->assertTrue( $result['manifest']['content']['page'][ $elementor_page->get_id() ]['show_on_front'] );
-
-		// Cleanups
-		update_option( 'page_on_front', $old_page_on_front );
-		update_option( 'show_on_front', $old_show_on_front );
 	}
 
 	public function test_run__export_wp_content() {
