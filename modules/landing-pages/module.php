@@ -7,8 +7,8 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
-use Elementor\Modules\LandingPages\MenuItems\Landing_Pages_Menu_Item;
-use Elementor\Modules\LandingPages\MenuItems\Landing_Pages_Promotion_Menu_Item;
+use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Menu_Item;
+use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Empty_View_Menu_Item;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -174,7 +174,7 @@ class Module extends BaseModule {
 		$function = $menu_args['function'];
 
 		if ( is_callable( $function ) ) {
-			$admin_menu->register( $slug, new Landing_Pages_Promotion_Menu_Item( $function ) );
+			$admin_menu->register( $slug, new Landing_Pages_Empty_View_Menu_Item( $function ) );
 		} else {
 			$admin_menu->register( $slug, new Landing_Pages_Menu_Item() );
 		}
