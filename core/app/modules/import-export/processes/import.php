@@ -74,6 +74,8 @@ class Import extends Process_Base {
 	private $settings_referrer;
 
 	/**
+	 * All the conflict between the exited templates and the kit templates.
+	 *
 	 * @var array
 	 */
 	private $settings_conflicts;
