@@ -16,10 +16,6 @@ const {
 
 const { Registrar } = require( '../utils/registrar' );
 
-test.beforeEach( ( {}, testInfo ) => {
-	testInfo.snapshotSuffix = '';
-} );
-
 test( 'All widgets sanity test @regression', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
