@@ -371,9 +371,9 @@ class Source_Local extends Source_Base {
 
 			add_submenu_page(
 				static::ADMIN_MENU_SLUG,
-				esc_html__( 'Add New', 'elementor' ),
-				esc_html__( 'Add New', 'elementor' ),
-				Editor::EDITING_CAPABILITY,
+				$add_new_item[0],
+				$add_new_item[0],
+				$add_new_item[1],
 				admin_url( static::ADMIN_MENU_SLUG . '#add_new' )
 			);
 		}
@@ -383,18 +383,14 @@ class Source_Local extends Source_Base {
 
 			add_submenu_page(
 				static::ADMIN_MENU_SLUG,
-				esc_html__( 'Categories', 'elementor' ),
-				esc_html__( 'Categories', 'elementor' ),
-				'manage_categories',
+				$categories_item[0],
+				$categories_item[0],
+				$categories_item[1],
 				$category_slug
 			);
 		}
 
 		$this->admin_menu_set_current();
-	}
-
-	public function admin_menu() {
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', esc_html__( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
 	}
 
 	/**
@@ -419,6 +415,10 @@ class Source_Local extends Source_Base {
 				}
 			}
 		}
+	}
+
+	public function admin_menu() {
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', esc_html__( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
 	}
 
 	public function admin_title( $admin_title, $title ) {
