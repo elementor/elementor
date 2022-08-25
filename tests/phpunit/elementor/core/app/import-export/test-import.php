@@ -292,8 +292,8 @@ class Test_Import extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$old_option_page_on_front = get_option( 'page_on_front' );
-		$old_option_show_on_front = get_option( 'show_on_front' );
+		update_option( 'page_on_front', 0 );
+		update_option( 'show_on_front', 'posts' );
 
 		$import_settings = [
 			'include' => [ 'content' ],
@@ -309,6 +309,9 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
+		$page_on_front = get_option( 'page_on_front' );
+		$show_on_front = get_option( 'show_on_front' );
+
 		$this->assertCount( 1, $result );
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
 		$this->assertCount( 1, $result['content']['page']['succeed'] );
@@ -323,17 +326,8 @@ class Test_Import extends Elementor_Test_Base {
 
 		$this->assert_valid_elementor_content( $result, $manifest, $zip_path );
 
-		$imported_page_id = $result['content']['page']['succeed'][27];
-
-		$option_page_on_front = get_option( 'page_on_front' );
-		$option_show_on_front = get_option( 'show_on_front' );
-
-		$this->assertEquals( $imported_page_id, $option_page_on_front );
-		$this->assertEquals( 'page', $option_show_on_front );
-
-		// Cleanups
-		update_option( 'page_on_front', $old_option_page_on_front );
-		update_option( 'show_on_front', $old_option_show_on_front );
+		$this->assertEquals( array_pop( $result['content']['page']['succeed'] ), $page_on_front );
+		$this->assertEquals( 'page', $show_on_front );
 	}
 
 	public function test_run__import_wp_content_with_one_cpt_register_and_one_not() {
