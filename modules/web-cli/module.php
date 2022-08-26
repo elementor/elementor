@@ -24,8 +24,8 @@ class Module extends App {
 		wp_register_script(
 			'elementor-web-cli',
 			$this->get_js_assets_url( 'web-cli' ),
-			[ 
-				'jquery'
+			[
+				'jquery',
 			],
 			ELEMENTOR_VERSION,
 			true
