@@ -210,7 +210,9 @@
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-				isRowContainer = $currentElement.parent().hasClass( 'e-container--row' ) || $currentElement.hasClass( 'e-container--row' ),
+				$parentContainers = $currentElement.parents( '.e-container' ),
+				// isRowContainer = $currentElement.hasClass( 'e-container--row' ) || $parentContainers[0].classList.contains( 'e-container--row' ),
+				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {
@@ -220,15 +222,7 @@
 				return;
 			}
 
-			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo',
-				// Un clear if this works.
-				isBoxedWrapper = currentElement.classList.contains( 'e-container__inner' );
-
-			if ( isBoxedWrapper ) {
-				// currentElement = currentElement.find( '.e-container__inner' );
-				// insertMethod = 'prependTo';
-				console.log( 'boxed' );
-			}
+			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
@@ -444,7 +438,7 @@
 			options = options || {};
 
 			this.each( function() {
-				var instance = $.data( this, pluginName ),
+				let instance = $.data( this, pluginName ),
 					hasInstance = instance instanceof Plugin;
 
 				if ( hasInstance ) {
@@ -457,9 +451,42 @@
 					return;
 				}
 
+				// //
+				// var additionalContainer = false;
+
+				// if ( this.classList.contains( 'e-container--width-boxed' ) ) {
+				// 	additionalContainer = $( this ).find( '>.e-container__inner' );
+				// } else if ( this.classList.contains( 'e-container__inner' ) ) {
+				// 	additionalContainer = $( this ).closest( '.e-container--width-boxed' );
+				// }
+
+				// if ( additionalContainer ) {
+				// 	instance = $.data( additionalContainer, pluginName ),
+				// 	hasInstance = instance instanceof Plugin;
+
+				// 	if ( hasInstance ) {
+				// 		if ( 'destroy' === options ) {
+				// 			instance.destroy();
+	
+				// 			$.removeData( additionalContainer, pluginName );
+				// 		}
+	
+				// 		return;
+				// 	}
+
+				// 	console.log( additionalContainer );
+
+				// 	options.element = additionalContainer;
+
+				// 	console.log( additionalContainer );
+
+				// 	$.data( additionalContainer, pluginName, new Plugin( options ) );
+				// }
+
 				options.element = this;
 
 				$.data( this, pluginName, new Plugin( options ) );
+
 			} );
 
 			return this;

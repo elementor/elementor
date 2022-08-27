@@ -184,10 +184,10 @@
 			}
 		}
 
-		& > .e-container__inner {
+		&.e-container--width-boxed {
 
 			// Hack to increase the dragable element size of the elements inside the `boxed width` container (ED-7867).
-			& > .e-container__inner > .elementor-html5dnd-current-element:not( .elementor-element-editable ) {
+			& > .elementor-html5dnd-current-element:not( .elementor-element-editable ) {
 				--spacer-size: 15px;
 				position: relative;
 
@@ -209,24 +209,24 @@
 				}
 			}
 
-			& > div:last-child {
+			// & > div:last-child {
 
-				// Increase the space of the bottom placeholder (ED-7867).
-				&.elementor-widget-placeholder {
-					margin-bottom: 0;
-				}
-			}
+			// 	// Increase the space of the bottom placeholder (ED-7867).
+			// 	&.elementor-widget-placeholder {
+			// 		margin-bottom: 0;
+			// 	}
+			// }
 		}
 
 		&.e-container--width-boxed {
 
-			> .e-container__inner {
+			// > .e-container__inner {
 
-				> .elementor-shape-bottom + .elementor-widget-placeholder {
-					margin-top: -20px;
-					border: 1px solid red;
-				}
-			}
+			// 	> .elementor-shape-bottom + .elementor-widget-placeholder {
+			// 		margin-top: -20px;
+			// 		border: 1px solid red;
+			// 	}
+			// }
 
 			// // Hide the first placeholder in case multiple placeholders are displayed (ED-7867).
 			// & > .elementor-widget-placeholder {

@@ -16,7 +16,7 @@ const ContainerView = BaseElementView.extend( {
 
 	getChildViewContainer() {
 		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
-			? ' > .e-container__inner'
+			? '> .e-container__inner'
 			: '';
 
 		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
@@ -121,20 +121,13 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-			? '> .e-container__inner > .elementor-widget,' +
-				'> .e-container__inner > .e-container--width-full,' +
-				// Disallow dragging into the container wrapper of the boxed container.
-				'> .e-container__inner > .e-container--width-boxed > .e-container__inner,' +
-				'> .e-container__inner > .elementor-empty-view > .elementor-first-add'
-			: '> .elementor-widget,' +
-				'> .e-container--width-full,' +
-				// Disallow dragging into the container wrapper of the boxed container.
-				'> .e-container--width-boxed > .e-container__inner,' +
-			 	'> .elementor-empty-view > .elementor-first-add';
+		// ? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add'
+		? '> .elementor-widget, > .e-container--width-full, > .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add, > .elementor-empty-view > .elementor-first-add'
+		: '> .elementor-element, > .elementor-empty-view > .elementor-first-add';
 
 		return {
 			axis: this.getDroppableAxis(),
-			items,
+			items: '> .elementor-element, > .elementor-empty-view > .elementor-first-add',
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -366,31 +359,38 @@ const ContainerView = BaseElementView.extend( {
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		// Defer to wait for everything to render.
+		// Defer to wait for everything to render.this.droppableInitialise
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
-
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+			// this.droppableInitialise( this.container.settings );
+
 			this.$el.html5Droppable( this.getDroppableOptions() );
+			// settings.containerDroppable = true;
+			// if ( this.$el.find( '>.e-container__inner' ) ) {
+			// 	this.$el.find( '>.e-container__inner' ).html5Droppable( this.getDroppableOptions() );
+			// } else {
+			// 	this.$el.html5Droppable( this.getDroppableOptions() );
+			// }
+			// this.$el.html5Droppable( this.getDroppableOptions() );
 		} );
 	},
 
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		// Re-initialize the droppable in order to make sure the axis works properly.
 		if ( settings.changed.flex_direction || settings.changed.content_width ) {
-			this.$el.html5Droppable( 'destroy' );
-			this.$el.html5Droppable( this.getDroppableOptions() );
+			this.droppableDestroy( settings );
+			this.droppableInitialise( settings );
 		}
 	},
 
 	onDragStart() {
-		this.$el.html5Droppable( 'destroy' );
+		this.droppableDestroy( this.container.settings );
 	},
 
 	onDragEnd() {
-		this.$el.html5Droppable( this.getDroppableOptions() );
+		this.droppableInitialise( this.container.settings );
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -439,6 +439,44 @@ const ContainerView = BaseElementView.extend( {
 			this.ui.percentsTooltip.hide();
 		}
 	},
+
+	droppableDestroy( settings) {
+		// if ( this.$el.html5Droppable().length ) this.$el.html5Droppable( 'destroy' );
+		// if ( this.$el.find( '>.e-container__inner' ).html5Droppable().length ) this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
+
+		if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
+		settings.containerDroppable = false;
+		if ( settings.containerDroppableInner ) this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
+		settings.containerDroppableInner = false;
+
+		// if ( this.$el.html5Droppable().length ) {
+		// 	this.$el.html5Droppable( 'destroy' );
+		// 	this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
+		// }
+
+		// if ( this.$el.find( '>.e-container__inner' ).html5Droppable().length ) {
+		// 	this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
+		// }
+
+		// if ( this.$el.closest('.e-container--width-boxed').html5Droppable().length ) {
+		// 	this.$el.closest('.e-container--width-boxed').html5Droppable();
+		// }
+	},
+
+	droppableInitialise( settings ) {
+		// this.$el.find( '>.e-container__inner' ) ? this.$el.find( '>.e-container__inner' ).html5Droppable( this.getDroppableOptions() ) : this.$el.html5Droppable( this.getDroppableOptions() );
+		if ( this.$el.hasClass( 'e-container' ) ) {
+			console.log('container');
+		}
+
+			if ( 'boxed' === settings.get( 'content_width' ) ) {
+				this.$el.find( '>.e-container__inner' ).html5Droppable( this.getDroppableOptions() );
+				settings.containerDroppableInner = true;
+			} else {
+				this.$el.html5Droppable( this.getDroppableOptions() );
+				settings.containerDroppable = true;
+			}
+	}
 } );
 
 module.exports = ContainerView;
