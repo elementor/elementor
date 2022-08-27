@@ -74,6 +74,13 @@ class Import extends Process_Base {
 	private $settings_referrer;
 
 	/**
+	 * All the conflict between the exited templates and the kit templates.
+	 *
+	 * @var array
+	 */
+	private $settings_conflicts;
+
+	/**
 	 * Selected elementor templates conditions to override.
 	 *
 	 * @var array
@@ -144,6 +151,10 @@ class Import extends Process_Base {
 	public function set_default_settings() {
 		if ( ! is_array( $this->get_settings_include() ) ) {
 			$this->settings_include( $this->get_default_settings_include() );
+		}
+
+		if ( ! is_array( $this->get_settings_conflicts() ) ) {
+			$this->settings_conflicts( $this->get_default_settings_conflicts() );
 		}
 
 		if ( ! is_array( $this->get_settings_selected_override_conditions() ) ) {
@@ -230,9 +241,7 @@ class Import extends Process_Base {
 				return $this->get_settings_include();
 
 			case 'overrideConditions':
-				// BC: Remove it in the future,
-				// the consumer should work with the actual override_conditions object and not with his keys.
-				return array_keys( $this->get_settings_selected_override_conditions() );
+				return $this->get_settings_selected_override_conditions();
 
 			case 'selectedCustomPostTypes':
 				return $this->get_settings_selected_custom_post_types();
@@ -263,6 +272,16 @@ class Import extends Process_Base {
 
 	public function get_settings_referrer() {
 		return $this->settings_referrer;
+	}
+
+	public function settings_conflicts( array $settings_conflicts ) {
+		$this->settings_conflicts = $settings_conflicts;
+
+		return $this;
+	}
+
+	public function get_settings_conflicts() {
+		return $this->settings_conflicts;
 	}
 
 	public function settings_selected_override_conditions( array $settings_selected_override_conditions ) {
@@ -403,8 +422,25 @@ class Import extends Process_Base {
 	 *
 	 * @return array
 	 */
+	private function get_default_settings_conflicts() {
+		if ( empty( $this->manifest['templates'] ) ) {
+			return [];
+		}
+
+		return apply_filters( 'elementor/import/get_default_settings_conflicts', [], $this->manifest['templates'] );
+	}
+
+	/**
+	 * Get the default settings of elementor templates conditions to override.
+	 *
+	 * @return array
+	 */
 	private function get_default_settings_override_conditions() {
-		return apply_filters( 'elementor/import/get_default_settings_override_conditions', [], $this->manifest );
+		if ( empty( $this->settings_conflicts ) ) {
+			return [];
+		}
+
+		return array_keys( $this->settings_conflicts );
 	}
 
 	/**
