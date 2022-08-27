@@ -120,14 +120,10 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
-		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-		// ? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add'
-		? '> .elementor-widget, > .e-container--width-full, > .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add, > .elementor-empty-view > .elementor-first-add'
-		: '> .elementor-element, > .elementor-empty-view > .elementor-first-add';
-
 		return {
 			axis: this.getDroppableAxis(),
-			items: '> .elementor-element, > .elementor-empty-view > .elementor-first-add',
+			// items: '> .elementor-widget, > .e-container--width-full, > .e-container--width-boxed > .e-container__inner, > .elementor-empty-view .elementor-first-add',
+			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -158,6 +154,10 @@ const ContainerView = BaseElementView.extend( {
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
 					newIndex++;
+				} 
+
+				if (  [ 'top' ].includes( side ) && event.currentTarget.classList.contains('e-container__inner') ) {
+					newIndex++;
 				}
 
 				// User is sorting inside a Container.
@@ -181,9 +181,9 @@ const ContainerView = BaseElementView.extend( {
 					$e.run( 'document/elements/move', {
 						container: draggedView.getContainer(),
 						target: this.getContainer(),
-						options: {
-							at: newIndex,
-						},
+						// options: {
+						// 	at: newIndex,
+						// },
 					} );
 
 					return;
@@ -359,20 +359,11 @@ const ContainerView = BaseElementView.extend( {
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		// Defer to wait for everything to render.this.droppableInitialise
+		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-			// this.droppableInitialise( this.container.settings );
-
-			this.$el.html5Droppable( this.getDroppableOptions() );
-			// settings.containerDroppable = true;
-			// if ( this.$el.find( '>.e-container__inner' ) ) {
-			// 	this.$el.find( '>.e-container__inner' ).html5Droppable( this.getDroppableOptions() );
-			// } else {
-			// 	this.$el.html5Droppable( this.getDroppableOptions() );
-			// }
-			// this.$el.html5Droppable( this.getDroppableOptions() );
+			this.droppableInitialise( this.container.settings );
 		} );
 	},
 
@@ -441,41 +432,22 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	droppableDestroy( settings) {
-		// if ( this.$el.html5Droppable().length ) this.$el.html5Droppable( 'destroy' );
-		// if ( this.$el.find( '>.e-container__inner' ).html5Droppable().length ) this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
-
 		if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
 		settings.containerDroppable = false;
-		if ( settings.containerDroppableInner ) this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
+
+		if ( settings.containerDroppableInner ) this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
 		settings.containerDroppableInner = false;
-
-		// if ( this.$el.html5Droppable().length ) {
-		// 	this.$el.html5Droppable( 'destroy' );
-		// 	this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
-		// }
-
-		// if ( this.$el.find( '>.e-container__inner' ).html5Droppable().length ) {
-		// 	this.$el.find( '>.e-container__inner' ).html5Droppable( 'destroy' );
-		// }
-
-		// if ( this.$el.closest('.e-container--width-boxed').html5Droppable().length ) {
-		// 	this.$el.closest('.e-container--width-boxed').html5Droppable();
-		// }
 	},
 
 	droppableInitialise( settings ) {
-		// this.$el.find( '>.e-container__inner' ) ? this.$el.find( '>.e-container__inner' ).html5Droppable( this.getDroppableOptions() ) : this.$el.html5Droppable( this.getDroppableOptions() );
-		if ( this.$el.hasClass( 'e-container' ) ) {
-			console.log('container');
-		}
 
-			if ( 'boxed' === settings.get( 'content_width' ) ) {
-				this.$el.find( '>.e-container__inner' ).html5Droppable( this.getDroppableOptions() );
-				settings.containerDroppableInner = true;
-			} else {
-				this.$el.html5Droppable( this.getDroppableOptions() );
-				settings.containerDroppable = true;
-			}
+		if ( 'boxed' === settings.get( 'content_width' ) ) {
+			this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
+			settings.containerDroppableInner = true;
+		} else {
+			this.$el.html5Droppable( this.getDroppableOptions() );
+			settings.containerDroppable = true;
+		}
 	}
 } );
 
