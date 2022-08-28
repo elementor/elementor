@@ -165,6 +165,11 @@
 	&.e-container--column {
 
 		& > .elementor-widget-placeholder {
+			height: var( --size );
+			// To make sure that it doesn't push & break the layout when appearing.
+			margin-block-start: var( --margin-start );
+			margin-block-end: var( --margin-end );
+			animation-name: dnd-placeholder-widget-horizontal;
 
 			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
 			&:nth-last-child( 2 ) {
@@ -173,67 +178,28 @@
 			}
 		}
 
-		&, & > .e-container__inner {
-			
-			> .elementor-widget-placeholder {
-				height: var( --size );
-				// To make sure that it doesn't push & break the layout when appearing.
-				margin-block-start: var( --margin-start );
-				margin-block-end: var( --margin-end );
-				animation-name: dnd-placeholder-widget-horizontal;
-			}
-		}
-
 		&.e-container--width-boxed {
 
 			// Hack to increase the dragable element size of the elements inside the `boxed width` container (ED-7867).
-			& > .elementor-html5dnd-current-element:not( .elementor-element-editable ) {
-				--spacer-size: 15px;
-				position: relative;
+			// & > .elementor-html5dnd-current-element:not( .elementor-element-editable ) {
+			// 	--spacer-size: 15px;
+			// 	position: relative;
 
-				&:before, &:after {
-					position: absolute;
-					inset-inline: 0;
-					height: var( --spacer-size );
-					width: 100%;
-				}
-
-				&::before {
-					content: '';
-					top: calc( -1 * var( --spacer-size ) );
-				}
-
-				&::after {
-					content: '';
-					bottom: calc( -1 * var( --spacer-size ) );
-				}
-			}
-
-			// & > div:last-child {
-
-			// 	// Increase the space of the bottom placeholder (ED-7867).
-			// 	&.elementor-widget-placeholder {
-			// 		margin-bottom: 0;
+			// 	&:before, &:after {
+			// 		position: absolute;
+			// 		inset-inline: 0;
+			// 		height: var( --spacer-size );
+			// 		width: 100%;
 			// 	}
-			// }
-		}
 
-		&.e-container--width-boxed {
-
-			// > .e-container__inner {
-
-			// 	> .elementor-shape-bottom + .elementor-widget-placeholder {
-			// 		margin-top: -20px;
-			// 		border: 1px solid red;
+			// 	&::before {
+			// 		content: '';
+			// 		top: calc( -1 * var( --spacer-size ) );
 			// 	}
-			// }
 
-			// // Hide the first placeholder in case multiple placeholders are displayed (ED-7867).
-			// & > .elementor-widget-placeholder {
-			// 	display: none;
-
-			// 	&:last-of-child {
-			// 		display: block;
+			// 	&::after {
+			// 		content: '';
+			// 		bottom: calc( -1 * var( --spacer-size ) );
 			// 	}
 			// }
 		}

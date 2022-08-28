@@ -123,7 +123,7 @@ const ContainerView = BaseElementView.extend( {
 		return {
 			axis: this.getDroppableAxis(),
 			// items: '> .elementor-widget, > .e-container--width-full, > .e-container--width-boxed > .e-container__inner, > .elementor-empty-view .elementor-first-add',
-			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+			items: '> .elementor-widget, > .e-container--width-full, > .e-container > .e-container__inner, > .elementor-empty-view .elementor-first-add',
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -156,8 +156,12 @@ const ContainerView = BaseElementView.extend( {
 					newIndex++;
 				} 
 
+				if (  [ 'top' ].includes( side ) && event.currentTarget.classList.contains('elementor-widget') ) {
+					newIndex--;
+				}
+
 				if (  [ 'top' ].includes( side ) && event.currentTarget.classList.contains('e-container__inner') ) {
-					newIndex++;
+					newIndex--;
 				}
 
 				// User is sorting inside a Container.
