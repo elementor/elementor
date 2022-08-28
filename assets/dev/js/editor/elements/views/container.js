@@ -11,9 +11,6 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	// Child view is empty in order to use the parent element.
-	childViewContainer: '',
-
 	getChildViewContainer() {
 		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
 			? '> .e-container__inner'
@@ -120,10 +117,16 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
+		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view .elementor-first-add'
+		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 		return {
 			axis: this.getDroppableAxis(),
 			// items: '> .elementor-widget, > .e-container--width-full, > .e-container--width-boxed > .e-container__inner, > .elementor-empty-view .elementor-first-add',
-			items: '> .elementor-widget, > .e-container--width-full, > .e-container > .e-container__inner, > .elementor-empty-view .elementor-first-add',
+			// items: '> .elementor-widget, > .e-container, > .elementor-empty-view .elementor-first-add',
+			// items: '> .elementor-element, > .elementor-element > .e-container__inner, > .elementor-empty-view .elementor-first-add',
+			// items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+			items: items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -138,9 +141,12 @@ const ContainerView = BaseElementView.extend( {
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggingInSameParent = ( draggedView?.parent === this );
+					draggingInSameParent = ( draggedView?.parent === this ),
+					parentContainer = event.currentTarget.parentElement.classList.contains( 'e-container__inner' ) ? jQuery( event.currentTarget.parentElement.parentElement ) : jQuery( event.currentTarget.parentElement );
 
 				let $elements = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+				// let $elements = jQuery( parentContainer ).find( '> .elementor-element, > .e-container__inner, > .e-container__inner > .elementor-element' );
+				// let $elements = parentContainer.find( '.e-container__inner' ).length ? parentContainer.find( '> .elementor-element' ) : parentContainer.find( '> .elementor-element' );
 
 				// Exclude the dragged element from the indexing calculations.
 				if ( draggingInSameParent ) {
@@ -156,12 +162,15 @@ const ContainerView = BaseElementView.extend( {
 					newIndex++;
 				} 
 
-				if (  [ 'top' ].includes( side ) && event.currentTarget.classList.contains('elementor-widget') ) {
-					newIndex--;
-				}
+				// if (  [ 'top' ].includes( side ) && event.currentTarget.classList.contains('elementor-widget') ) {
+				// 	newIndex--;
+				// }
 
-				if (  [ 'top' ].includes( side ) && event.currentTarget.classList.contains('e-container__inner') ) {
-					newIndex--;
+				if (  [ 'top' ].includes( side ) 
+				&& ( event.currentTarget.classList.contains('e-container__inner') || event.currentTarget.classList.contains('e-container--width-boxed') )
+				&& ! jQuery( event.currentTarget ).parents('.e-container')[1]?.classList.contains('e-container--row') ) {
+					// newIndex--;
+					// newIndex = 10;
 				}
 
 				// User is sorting inside a Container.
@@ -185,9 +194,9 @@ const ContainerView = BaseElementView.extend( {
 					$e.run( 'document/elements/move', {
 						container: draggedView.getContainer(),
 						target: this.getContainer(),
-						// options: {
-						// 	at: newIndex,
-						// },
+						options: {
+							at: newIndex,
+						},
 					} );
 
 					return;
@@ -436,22 +445,24 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	droppableDestroy( settings) {
-		if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
-		settings.containerDroppable = false;
+		// if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
+		// settings.containerDroppable = false;
 
-		if ( settings.containerDroppableInner ) this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
-		settings.containerDroppableInner = false;
+		// if ( settings.containerDroppableInner ) this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
+		// settings.containerDroppableInner = false;
+		this.$el.html5Droppable( 'destroy' );
 	},
 
 	droppableInitialise( settings ) {
 
-		if ( 'boxed' === settings.get( 'content_width' ) ) {
-			this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
-			settings.containerDroppableInner = true;
-		} else {
-			this.$el.html5Droppable( this.getDroppableOptions() );
-			settings.containerDroppable = true;
-		}
+		// if ( 'boxed' === settings.get( 'content_width' ) ) {
+		// 	this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
+		// 	settings.containerDroppableInner = true;
+		// } else {
+		// 	this.$el.html5Droppable( this.getDroppableOptions() );
+		// 	settings.containerDroppable = true;
+		// }
+		this.$el.html5Droppable( this.getDroppableOptions() );
 	}
 } );
 

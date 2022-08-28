@@ -180,6 +180,14 @@
 
 		&.e-container--width-boxed {
 
+			> .elementor-widget-placeholder {
+				margin-block-start: 0;
+				margin-block-end: 0;
+			}
+		}
+
+		&.e-container--width-boxed {
+
 			// Hack to increase the dragable element size of the elements inside the `boxed width` container (ED-7867).
 			// & > .elementor-html5dnd-current-element:not( .elementor-element-editable ) {
 			// 	--spacer-size: 15px;
