@@ -118,15 +118,16 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-		? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view .elementor-first-add'
+		// ? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add, > .elementor-element, > .elementor-empty-view .elementor-first-add'
+		? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 		return {
 			axis: this.getDroppableAxis(),
 			// items: '> .elementor-widget, > .e-container--width-full, > .e-container--width-boxed > .e-container__inner, > .elementor-empty-view .elementor-first-add',
 			// items: '> .elementor-widget, > .e-container, > .elementor-empty-view .elementor-first-add',
 			// items: '> .elementor-element, > .elementor-element > .e-container__inner, > .elementor-empty-view .elementor-first-add',
-			// items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
-			items: items,
+			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+			// items: items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -144,7 +145,7 @@ const ContainerView = BaseElementView.extend( {
 					draggingInSameParent = ( draggedView?.parent === this ),
 					parentContainer = event.currentTarget.parentElement.classList.contains( 'e-container__inner' ) ? jQuery( event.currentTarget.parentElement.parentElement ) : jQuery( event.currentTarget.parentElement );
 
-				let $elements = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+				let $elements = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ) ? jQuery( event.currentTarget.parentElement.panelElement ) : jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
 				// let $elements = jQuery( parentContainer ).find( '> .elementor-element, > .e-container__inner, > .e-container__inner > .elementor-element' );
 				// let $elements = parentContainer.find( '.e-container__inner' ).length ? parentContainer.find( '> .elementor-element' ) : parentContainer.find( '> .elementor-element' );
 
@@ -445,24 +446,22 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	droppableDestroy( settings) {
-		// if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
-		// settings.containerDroppable = false;
+		if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
+		settings.containerDroppable = false;
 
-		// if ( settings.containerDroppableInner ) this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
-		// settings.containerDroppableInner = false;
-		this.$el.html5Droppable( 'destroy' );
+		if ( settings.containerDroppableInner ) this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
+		settings.containerDroppableInner = false;
 	},
 
 	droppableInitialise( settings ) {
 
-		// if ( 'boxed' === settings.get( 'content_width' ) ) {
-		// 	this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
-		// 	settings.containerDroppableInner = true;
-		// } else {
-		// 	this.$el.html5Droppable( this.getDroppableOptions() );
-		// 	settings.containerDroppable = true;
-		// }
-		this.$el.html5Droppable( this.getDroppableOptions() );
+		if ( 'boxed' === settings.get( 'content_width' ) ) {
+			this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
+			settings.containerDroppableInner = true;
+		} else {
+			this.$el.html5Droppable( this.getDroppableOptions() );
+			settings.containerDroppable = true;
+		}
 	}
 } );
 
