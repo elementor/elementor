@@ -73,9 +73,7 @@ class Admin_Menu_Manager {
 			$item->get_label(),
 			$item->get_capability(),
 			$item_slug,
-			$callback,
-			'', // TODO: Add support?
-			$item->get_position()
+			$callback
 		);
 	}
 
@@ -91,8 +89,7 @@ class Admin_Menu_Manager {
 			$item->get_label(),
 			$item->get_capability(),
 			$item_slug,
-			$callback,
-			$item->get_position()
+			$callback
 		);
 	}
 

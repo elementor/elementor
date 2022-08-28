@@ -84,51 +84,6 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		], $submenu['top-level-menu-item'] );
 	}
 
-	public function test_register_wp_menus__registers_based_on_position() {
-		// Arrange.
-		$this->act_as_admin();
-
-		remove_all_actions( 'admin_menu' );
-		remove_all_actions( 'admin_head' );
-
-		$admin_menu_manager = new Admin_Menu_Manager();
-		$admin_menu_manager->register_actions();
-
-		$admin_menu_manager->register( 'top-level-menu-item', new Top_Level_Menu_Item() );
-
-		// Registered in a reversed order.
-		$admin_menu_manager->register( 'second-menu-item', new Second_Menu_Item() );
-		$admin_menu_manager->register( 'first-menu-item', new First_Menu_Item() );
-
-		// Act.
-		do_action( 'admin_menu' );
-		do_action( 'admin_head' );
-
-		// Assert.
-		global $submenu;
-
-		$this->assertEquals( [
-			[
-				'top-level-item-label',
-				'edit_posts',
-				'top-level-menu-item',
-				'',
-			],
-			[
-				'first-item-label',
-				'manage_options',
-				'first-menu-item',
-				'',
-			],
-			[
-				'second-item-label',
-				'edit_posts',
-				'second-menu-item',
-				'',
-			],
-		], $submenu['top-level-menu-item'] );
-	}
-
 	public function test_register_wp_menus__registers_based_on_capability() {
 		// Arrange.
 		$this->act_as_editor();
