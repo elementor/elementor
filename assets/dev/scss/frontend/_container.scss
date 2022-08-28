@@ -180,9 +180,12 @@
 
 		&.e-container--width-boxed {
 
-			> .elementor-widget-placeholder {
-				margin-block-start: 0;
-				margin-block-end: 0;
+			&, & > .e-container__inner {
+
+				> .elementor-widget-placeholder {
+					margin-block-start: 0;
+					margin-block-end: 0;
+				}
 			}
 		}
 

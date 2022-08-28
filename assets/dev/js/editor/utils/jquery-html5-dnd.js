@@ -216,13 +216,14 @@
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 
-				// if ( $currentElement.hasClass( 'e-container__inner' ) ) {
-				// 	insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
-				// }
-
-				$currentElement[ insertMethod ]( elementsCache.$placeholder );
+				if ( $currentElement.parent().parent().hasClass( 'e-container--column' ) && $currentElement.parent().hasClass( 'e-container__inner' ) ) {
+					let insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
+					elementsCache.$placeholder[ insertMethod ]( currentElement );
+				} else {
+					let insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+					$currentElement[ insertMethod ]( elementsCache.$placeholder );
+				}
 
 				return;
 			}
