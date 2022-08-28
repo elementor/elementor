@@ -216,7 +216,7 @@
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {
-				let insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 
 				// if ( $currentElement.hasClass( 'e-container__inner' ) ) {
 				// 	insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
@@ -459,7 +459,6 @@
 				options.element = this;
 
 				$.data( this, pluginName, new Plugin( options ) );
-
 			} );
 
 			return this;
