@@ -17,16 +17,18 @@ class Select extends ControlBase {
 		await this.elementLocator.selectOption( newValue );
 	}
 
-	async test( assertionsCallback ) {
-		const originalValue = await this.getValue(),
-			availableOptions = Object.keys( this.config.options );
-
-		for ( const currentOption of availableOptions ) {
-			await this.setValue( currentOption );
-			await assertionsCallback( await this.getValue() );
+	async getTestValues( defaultValue ) {
+		if ( this.config.groups ) {
+			return this.config.groups.reduce( ( carry, group ) => {
+				return [
+					...carry,
+					...Object.keys( group.options ),
+				];
+			}, [] );
 		}
 
-		await this.setValue( originalValue );
+		return Object.keys( this.config.options )
+			.filter( ( value ) => value !== defaultValue );
 	}
 }
 

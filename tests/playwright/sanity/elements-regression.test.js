@@ -5,6 +5,7 @@ const controlsTestConfig = require( '../assets/controls-test-config' );
 
 const {
 	Heading,
+	Divider,
 	WidgetBase,
 } = require( '../utils/widgets' );
 
@@ -12,6 +13,7 @@ const {
 	Choose,
 	Select,
 	Textarea,
+	Slider,
 } = require( '../utils/controls' );
 
 const { Registrar } = require( '../utils/registrar' );
@@ -29,12 +31,14 @@ test( 'All widgets sanity test @regression', async ( { page }, testInfo ) => {
 
 	const widgetsRegistrar = new Registrar()
 		.register( Heading )
+		.register( Divider )
 		.register( WidgetBase );
 
 	const controlsRegistrar = new Registrar()
 		.register( Choose )
 		.register( Select )
-		.register( Textarea );
+		.register( Textarea )
+		.register( Slider );
 
 	for ( const widgetType of Object.keys( widgetsCache ) ) {
 		const WidgetClass = widgetsRegistrar.get( widgetType );
@@ -66,11 +70,6 @@ test( 'All widgets sanity test @regression', async ( { page }, testInfo ) => {
 		} ) ).toMatchSnapshot( `${ widgetType }--default.jpeg` );
 
 		await widget.test( async ( controlId, currentControlValue ) => {
-			// Skip default values.
-			if ( [ '', 'default' ].includes( currentControlValue ) ) {
-				return;
-			}
-
 			// Assert - Match snapshot for specific control.
 			expect( await element.screenshot( {
 				type: 'jpeg',

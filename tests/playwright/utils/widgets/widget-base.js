@@ -51,6 +51,15 @@ class WidgetBase {
 	}
 
 	/**
+	 * Exclude specific controls
+	 *
+	 * @return {string[]}
+	 */
+	getExcludedControls() {
+		return [];
+	}
+
+	/**
 	 * Create a widget instance.
 	 *
 	 * @return {Promise<string>}
@@ -129,8 +138,9 @@ class WidgetBase {
 			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
 			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
 			const isSectionConditional = ( controlSection.condition || controlSection.conditions );
+			const isControlExcluded = this.getExcludedControls().includes( controlConfig.name );
 
-			if ( isWidgetConditional || isSectionConditional ) {
+			if ( isWidgetConditional || isSectionConditional || isControlExcluded ) {
 				continue;
 			}
 
@@ -159,18 +169,32 @@ class WidgetBase {
 
 		await this.beforeControlTest( { control, controlId } );
 
-		await control.test( async ( currentControlValue ) => {
+		const defaultValue = await control.getValue();
+
+		for ( const value of await control.getTestValues( defaultValue ) ) {
 			// TODO: Find a better way to show debug information.
 			//  We must have this info because Playwright doesn't give any useful errors.
 			// eslint-disable-next-line no-console
-			console.log( { widget: this.config.widgetType, control: controlId, value: currentControlValue } );
+			console.log( { widget: this.config.widgetType, control: controlId, value } );
 
-			await this.beforeControlAssertions( { control, controlId, currentControlValue } );
+			await control.setValue( value );
 
-			await assertionsCallback( controlId, currentControlValue );
+			if ( control.isForcingServerRender() ) {
+				await this.waitForServerRendered();
+			}
 
-			await this.afterControlAssertions( { control, controlId, currentControlValue } );
-		} );
+			await this.beforeControlAssertions( { control, controlId, currentControlValue: value } );
+
+			await assertionsCallback( controlId, control.generateValueName( value ) );
+
+			await this.afterControlAssertions( { control, controlId, currentControlValue: value } );
+		}
+
+		await control.setValue( defaultValue );
+
+		if ( control.isForcingServerRender() ) {
+			await this.waitForServerRendered();
+		}
 
 		await this.afterControlTest( { control, controlId } );
 
@@ -245,6 +269,15 @@ class WidgetBase {
 		if ( timeoutAfterAssertions ) {
 			await this.editor.page.waitForTimeout( timeoutAfterAssertions );
 		}
+	}
+
+	/**
+	 * @return {Promise<void>}
+	 */
+	async waitForServerRendered() {
+		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading` );
+		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading`, { state: 'detached' } );
+		await this.editor.page.waitForTimeout( 200 );
 	}
 }
 

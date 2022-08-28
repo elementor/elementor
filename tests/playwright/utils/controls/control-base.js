@@ -55,6 +55,26 @@ class ControlBase {
 		throw this.constructor.name + '.setValue() is not implemented!';
 	}
 
+	/**
+	 *	Get all the test values
+	 *
+	 * @param  defaultValue
+	 * @return {Promise<string[]>}
+	 */
+	async getTestValues( defaultValue ) { // eslint-disable-line no-unused-vars
+		throw this.constructor.name + '.getTestValue() is not implemented!';
+	}
+
+	/**
+	 * Generate name for the snapshot image name.
+	 *
+	 * @param {any} value
+	 * @return {string}
+	 */
+	generateValueName( value ) {
+		return value;
+	}
+
 	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Retrieve the control selector.
@@ -68,14 +88,10 @@ class ControlBase {
 	}
 
 	/**
-	 * Iterate over all of the control's available values.
-	 *
-	 * @param {Function} assertionsCallback
-	 *
-	 * @return {Promise<void>}
+	 * @return {boolean}
 	 */
-	async test( assertionsCallback ) { // eslint-disable-line no-unused-vars
-		throw this.constructor.name + '.test() is not implemented!';
+	isForcingServerRender() {
+		return 'template' === this.config.render_type;
 	}
 
 	/**
@@ -95,8 +111,8 @@ class ControlBase {
 	 * @return {Promise<*>}
 	 */
 	async teardown() {
-		// TODO: Find a better way. This will work only if the last control in the popover is visible.
-		if ( this.config.popover?.end ) {
+		// Close popover.
+		if ( this.config.popover && await this.isPopoverOpen() ) {
 			await this.resetPopover();
 		}
 	}
