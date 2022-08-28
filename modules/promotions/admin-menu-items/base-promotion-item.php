@@ -20,10 +20,6 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		return Settings::PAGE_ID;
 	}
 
-	public function get_position() {
-		return null;
-	}
-
 	public function get_capability() {
 		return 'manage_options';
 	}
