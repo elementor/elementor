@@ -20,10 +20,6 @@ class Hidden_Menu_Item implements Admin_Menu_Item {
 		return 'top-level-menu-item';
 	}
 
-	public function get_position() {
-		return null;
-	}
-
 	public function is_visible() {
 		return false;
 	}
