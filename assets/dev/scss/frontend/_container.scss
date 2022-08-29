@@ -125,14 +125,6 @@
 		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
-	// &.e-dragging-over, .e-dragging-over {
-
-	// 	// Hide placeholders which don't have a `e-dragging-over` class.
-	// 	.elementor-element > .elementor-widget-placeholder {
-	// 		opacity: 0;
-	// 	}
-	// }
-
 	&.e-container--row {
 
 		&, & > .e-container__inner {
@@ -173,53 +165,17 @@
 	&.e-container--column {
 
 		> .elementor-widget-placeholder {
+			height: var( --size );
+			// To make sure that it doesn't push & break the layout when appearing.
+			margin-block-start: var( --margin-start );
+			margin-block-end: var( --margin-end );
+			animation-name: dnd-placeholder-widget-horizontal;
 
 			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
 			&:nth-last-child( 2 ) {
 				margin-block-start: calc( 2 * var( --margin-start ) );
 				--margin-end: 0;
 			}
-		}
-
-		&.e-container--width-boxed {
-
-			&, & > .e-container__inner {
-
-				> .elementor-widget-placeholder {
-					height: var( --size );
-					// To make sure that it doesn't push & break the layout when appearing.
-					margin-block-start: var( --margin-start );
-					margin-block-end: var( --margin-end );
-					animation-name: dnd-placeholder-widget-horizontal;
-					border: 1px solid red !important;
-				}
-			}
-		}
-
-		&.e-container--width-boxed {
-
-			// Hack to increase the dragable element size of the elements inside the `boxed width` container (ED-7867).
-			// & > .elementor-html5dnd-current-element:not( .elementor-element-editable ) {
-			// 	--spacer-size: 15px;
-			// 	position: relative;
-
-			// 	&:before, &:after {
-			// 		position: absolute;
-			// 		inset-inline: 0;
-			// 		height: var( --spacer-size );
-			// 		width: 100%;
-			// 	}
-
-			// 	&::before {
-			// 		content: '';
-			// 		top: calc( -1 * var( --spacer-size ) );
-			// 	}
-
-			// 	&::after {
-			// 		content: '';
-			// 		bottom: calc( -1 * var( --spacer-size ) );
-			// 	}
-			// }
 		}
 	}
 

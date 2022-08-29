@@ -120,6 +120,7 @@ const ContainerView = BaseElementView.extend( {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
 		? '> .elementor-widget, > .e-container--width-full, > .e-container > .e-container__inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+
 		return {
 			axis: this.getDroppableAxis(),
 			items: items,
@@ -428,9 +429,9 @@ const ContainerView = BaseElementView.extend( {
 
 	droppableDestroy( settings) {
 		if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
-		settings.containerDroppable = false;
-
 		if ( settings.containerDroppableInner ) this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
+
+		settings.containerDroppable = false;
 		settings.containerDroppableInner = false;
 	},
 

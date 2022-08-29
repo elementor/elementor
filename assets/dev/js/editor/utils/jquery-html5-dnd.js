@@ -223,7 +223,7 @@
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
-				return;	
+				return;
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
@@ -387,7 +387,6 @@
 			// Trigger a Droppable-specific `onDropping` callback.
 			if ( settings.onDropping ) {
 				settings.onDropping( currentSide, event );
-				elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
 			}
 		};
 
@@ -413,7 +412,6 @@
 			}
 
 			elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
-
 
 			if ( 'function' === typeof settings.onDragLeave ) {
 				settings.onDragLeave.call( currentElement, event, self );
