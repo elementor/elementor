@@ -20,7 +20,7 @@ foreach ( $document_types as $document_type ) {
 		 * @var Document $instance
 		 */
 		$instance = new $document_type();
-		$lock_behavior = $instance->get_lock_behavior();
+		$lock_behavior = $document_type::get_lock_behavior_v2();
 
 		$types[ $instance->get_name() ] = $document_type::get_title();
 		$lock_configs[ $instance->get_name() ] = empty( $lock_behavior )
@@ -83,7 +83,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 						printf(
 							'<option value="%1$s" data-lock=\'%2$s\' %3$s>%4$s</option>',
 							esc_attr( $value ),
-							wp_json_encode( $lock_configs[ $value ] ),
+							wp_json_encode( $lock_configs[ $value ] ?? (object) [] ),
 							selected( $selected, $value, false ),
 							esc_html( $type_title )
 						);

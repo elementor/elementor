@@ -23,15 +23,17 @@ class Utils {
 	public static function map_old_new_post_ids( array $imported_data ) {
 		$result = [];
 
+		$result += $imported_data['templates']['succeed'] ?? [];
+
 		if ( isset( $imported_data['content'] ) ) {
 			foreach ( $imported_data['content'] as $post_type ) {
-				$result += $post_type['succeed'];
+				$result += $post_type['succeed'] ?? [];
 			}
 		}
 
 		if ( isset( $imported_data['wp-content'] ) ) {
 			foreach ( $imported_data['wp-content'] as $post_type ) {
-				$result += $post_type['succeed'];
+				$result += $post_type['succeed'] ?? [];
 			}
 		}
 
