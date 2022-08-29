@@ -211,14 +211,15 @@
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
 				$parentContainers = $currentElement.parents( '.e-container' ),
-				isColumnParentContainer = $parentContainers[0]?.classList.contains( 'e-container--column' ),
-				isRowParentGrandparentContainer = $parentContainers[0]?.classList.contains( 'e-container--row' ) || $parentContainers[1]?.classList.contains( 'e-container--row' ),
+				isColumnParentContainer = $parentContainers[ 0 ]?.classList.contains( 'e-container--column' ),
+				isRowParentGrandparentContainer = $parentContainers[ 0 ]?.classList.contains( 'e-container--row' ) || $parentContainers[ 1 ]?.classList.contains( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
-			if ( isRowParentGrandparentContainer 
-				&& ! isFirstInsert // Drag into the `First Add` element using the append/prepend method.
-				&& ( ! isColumnParentContainer && $currentElement.hasClass( 'elementor-widget' ) // Apply the before/after method for dragging widgets into an existing row container.
-				|| ( $currentElement.hasClass( 'e-container' ) || $currentElement.hasClass( 'e-container__inner' ) ) )  // Apply the before/after method for dragging containers into an existing row container.
+			if ( isRowParentGrandparentContainer && ! isFirstInsert &&
+				// Apply the before/after method for dragging widgets into an existing row container.
+				( ( ! isColumnParentContainer && $currentElement.hasClass( 'elementor-widget' ) ) ||
+				// Apply the before/after method for dragging containers into an existing row container.
+				( $currentElement.hasClass( 'e-container' ) || $currentElement.hasClass( 'e-container__inner' ) ) )
 			) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				$currentElement[ insertMethod ]( elementsCache.$placeholder );

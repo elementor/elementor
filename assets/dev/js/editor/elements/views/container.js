@@ -123,7 +123,7 @@ const ContainerView = BaseElementView.extend( {
 
 		return {
 			axis: this.getDroppableAxis(),
-			items: items,
+			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -154,7 +154,7 @@ const ContainerView = BaseElementView.extend( {
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
 					newIndex++;
-				} 
+				}
 
 				// User is sorting inside a Container.
 				if ( draggedView ) {
@@ -427,9 +427,14 @@ const ContainerView = BaseElementView.extend( {
 		}
 	},
 
-	droppableDestroy( settings) {
-		if ( settings.containerDroppable ) this.$el.html5Droppable( 'destroy' );
-		if ( settings.containerDroppableInner ) this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
+	droppableDestroy( settings ) {
+		if ( settings.containerDroppable ) {
+			this.$el.html5Droppable( 'destroy' );
+		}
+
+		if ( settings.containerDroppableInner ) {
+			this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
+		}
 
 		settings.containerDroppable = false;
 		settings.containerDroppableInner = false;
