@@ -67,14 +67,14 @@ test( 'All widgets sanity test @regression', async ( { page }, testInfo ) => {
 		expect( await element.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( `${ widgetType }--default.jpeg` );
+		} ) ).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
 		await widget.test( async ( controlId, currentControlValue ) => {
 			// Assert - Match snapshot for specific control.
 			expect( await element.screenshot( {
 				type: 'jpeg',
 				quality: 70,
-			} ) ).toMatchSnapshot( `${ widgetType }--${ controlId }--${ currentControlValue }.jpeg` );
+			} ) ).toMatchSnapshot( [ widgetType, controlId, `${ currentControlValue }.jpeg` ] );
 		} );
 	}
 } );

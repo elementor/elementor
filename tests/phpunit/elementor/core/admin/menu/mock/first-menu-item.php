@@ -20,10 +20,6 @@ class First_Menu_Item implements Admin_Menu_Item {
 		return 'top-level-menu-item';
 	}
 
-	public function get_position() {
-		return 1;
-	}
-
 	public function is_visible() {
 		return true;
 	}

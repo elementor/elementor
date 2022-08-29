@@ -22,4 +22,4 @@ runs:
         IGNORE_CHECKS_LIST: ${{ inputs.IGNORE_CHECKS_LIST }}
       run: |
             npm install --no-package-lock --no-save @octokit/core@3.4.0
-            node .github/workflows/validate-run-checks/validate-run-checks.js
+            node .github/scripts/validate-run-checks.js
