@@ -139,6 +139,7 @@ module.exports = {
 				tab: 'style',
 				section: 'section_title_style',
 				type: 'popover_toggle',
+				render_type: 'ui',
 			},
 			typography_font_family: {
 				name: 'typography_font_family',
@@ -158,6 +159,23 @@ module.exports = {
 				popover: true,
 				condition: {
 					'typography_typography!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+					'rem',
+					'vw',
+				],
+				range: {
+					px: {
+						min: 1,
+						max: 200,
+					},
+					vw: {
+						min: 0.1,
+						max: 10,
+						step: 0.1,
+					},
 				},
 			},
 			typography_font_weight: {
@@ -243,6 +261,15 @@ module.exports = {
 				condition: {
 					'typography_typography!': '',
 				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						min: 1,
+					},
+				},
 			},
 			typography_letter_spacing: {
 				name: 'typography_letter_spacing',
@@ -252,6 +279,13 @@ module.exports = {
 				popover: true,
 				condition: {
 					'typography_typography!': '',
+				},
+				range: {
+					px: {
+						min: -5,
+						max: 10,
+						step: 0.1,
+					},
 				},
 			},
 			typography_word_spacing: {
@@ -263,12 +297,25 @@ module.exports = {
 				condition: {
 					'typography_typography!': '',
 				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						step: 1,
+					},
+					em: {
+						step: 0.1,
+					},
+				},
 			},
 			text_stroke_text_stroke_type: {
 				name: 'text_stroke_text_stroke_type',
 				tab: 'style',
 				section: 'section_title_style',
 				type: 'popover_toggle',
+				render_type: 'ui',
 			},
 			text_stroke_text_stroke: {
 				name: 'text_stroke_text_stroke',
@@ -278,6 +325,27 @@ module.exports = {
 				popover: true,
 				condition: {
 					'text_stroke_text_stroke_type!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+					'rem',
+				],
+				range: {
+					px: {
+						min: 0,
+						max: 10,
+					},
+					em: {
+						min: 0,
+						max: 1,
+						step: 0.01,
+					},
+					rem: {
+						min: 0,
+						max: 1,
+						step: 0.01,
+					},
 				},
 			},
 			text_stroke_stroke_color: {
@@ -295,6 +363,7 @@ module.exports = {
 				tab: 'style',
 				section: 'section_title_style',
 				type: 'popover_toggle',
+				render_type: 'ui',
 			},
 			text_shadow_text_shadow: {
 				name: 'text_shadow_text_shadow',
@@ -372,6 +441,29 @@ module.exports = {
 				tab: 'content',
 				section: 'section_editor',
 				type: 'slider',
+				size_units: [
+					'px',
+					'%',
+					'em',
+					'vw',
+				],
+				range: {
+					px: {
+						max: 100,
+					},
+					'%': {
+						max: 10,
+						step: 0.1,
+					},
+					vw: {
+						max: 10,
+						step: 0.1,
+					},
+					em: {
+						max: 10,
+						step: 0.1,
+					},
+				},
 			},
 			section_style: {
 				name: 'section_style',
@@ -413,6 +505,7 @@ module.exports = {
 				tab: 'style',
 				section: 'section_style',
 				type: 'popover_toggle',
+				render_type: 'ui',
 			},
 			typography_font_family: {
 				name: 'typography_font_family',
@@ -432,6 +525,23 @@ module.exports = {
 				popover: true,
 				condition: {
 					'typography_typography!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+					'rem',
+					'vw',
+				],
+				range: {
+					px: {
+						min: 1,
+						max: 200,
+					},
+					vw: {
+						min: 0.1,
+						max: 10,
+						step: 0.1,
+					},
 				},
 			},
 			typography_font_weight: {
@@ -517,6 +627,15 @@ module.exports = {
 				condition: {
 					'typography_typography!': '',
 				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						min: 1,
+					},
+				},
 			},
 			typography_letter_spacing: {
 				name: 'typography_letter_spacing',
@@ -526,6 +645,13 @@ module.exports = {
 				popover: true,
 				condition: {
 					'typography_typography!': '',
+				},
+				range: {
+					px: {
+						min: -5,
+						max: 10,
+						step: 0.1,
+					},
 				},
 			},
 			typography_word_spacing: {
@@ -537,12 +663,25 @@ module.exports = {
 				condition: {
 					'typography_typography!': '',
 				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						step: 1,
+					},
+					em: {
+						step: 0.1,
+					},
+				},
 			},
 			text_shadow_text_shadow_type: {
 				name: 'text_shadow_text_shadow_type',
 				tab: 'style',
 				section: 'section_style',
 				type: 'popover_toggle',
+				render_type: 'ui',
 			},
 			text_shadow_text_shadow: {
 				name: 'text_shadow_text_shadow',
@@ -600,6 +739,7 @@ module.exports = {
 				tab: 'style',
 				section: 'section_drop_cap',
 				type: 'popover_toggle',
+				render_type: 'ui',
 				condition: {
 					drop_cap: 'yes',
 				},
@@ -624,6 +764,11 @@ module.exports = {
 					drop_cap: 'yes',
 					'drop_cap_view!': 'default',
 				},
+				range: {
+					px: {
+						max: 30,
+					},
+				},
 			},
 			drop_cap_space: {
 				name: 'drop_cap_space',
@@ -633,6 +778,11 @@ module.exports = {
 				condition: {
 					drop_cap: 'yes',
 				},
+				range: {
+					px: {
+						max: 50,
+					},
+				},
 			},
 			drop_cap_border_radius: {
 				name: 'drop_cap_border_radius',
@@ -641,6 +791,15 @@ module.exports = {
 				type: 'slider',
 				condition: {
 					drop_cap: 'yes',
+				},
+				size_units: [
+					'%',
+					'px',
+				],
+				range: {
+					'%': {
+						max: 50,
+					},
 				},
 			},
 			drop_cap_border_width: {
@@ -658,6 +817,7 @@ module.exports = {
 				tab: 'style',
 				section: 'section_drop_cap',
 				type: 'popover_toggle',
+				render_type: 'ui',
 				condition: {
 					drop_cap: 'yes',
 				},
@@ -682,6 +842,23 @@ module.exports = {
 				condition: {
 					drop_cap: 'yes',
 					'drop_cap_typography_typography!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+					'rem',
+					'vw',
+				],
+				range: {
+					px: {
+						min: 1,
+						max: 200,
+					},
+					vw: {
+						min: 0.1,
+						max: 10,
+						step: 0.1,
+					},
 				},
 			},
 			drop_cap_typography_font_weight: {
@@ -772,6 +949,15 @@ module.exports = {
 					drop_cap: 'yes',
 					'drop_cap_typography_typography!': '',
 				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						min: 1,
+					},
+				},
 			},
 			drop_cap_typography_word_spacing: {
 				name: 'drop_cap_typography_word_spacing',
@@ -782,6 +968,18 @@ module.exports = {
 				condition: {
 					drop_cap: 'yes',
 					'drop_cap_typography_typography!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						step: 1,
+					},
+					em: {
+						step: 0.1,
+					},
 				},
 			},
 		},

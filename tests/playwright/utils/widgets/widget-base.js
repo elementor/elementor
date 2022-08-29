@@ -137,7 +137,7 @@ class WidgetBase {
 
 			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
 			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
-			const isSectionConditional = ( controlSection.condition || controlSection.conditions );
+			const isSectionConditional = ( controlSection?.condition || controlSection?.conditions );
 			const isControlExcluded = this.getExcludedControls().includes( controlConfig.name );
 
 			if ( isWidgetConditional || isSectionConditional || isControlExcluded ) {
@@ -190,15 +190,29 @@ class WidgetBase {
 			await this.afterControlAssertions( { control, controlId, currentControlValue: value } );
 		}
 
-		await control.setValue( defaultValue );
+		await this.afterControlTest( { control, controlId } );
+
+		await control.teardown();
+
+		await this.resetSettings();
 
 		if ( control.isForcingServerRender() ) {
 			await this.waitForServerRendered();
 		}
+	}
 
-		await this.afterControlTest( { control, controlId } );
-
-		await control.teardown();
+	/**
+	 * @return {Promise<void>}
+	 */
+	async resetSettings() {
+		await this.editor.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/reset-settings', {
+				container: window.elementor.getContainer( id ),
+				options: {
+					external: true,
+				},
+			} );
+		}, { id: this.id } );
 	}
 
 	/**

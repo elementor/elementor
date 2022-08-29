@@ -55,7 +55,7 @@ class Slider extends ControlBase {
 					...carry,
 					...[
 						[ unit, range.min.toString() ],
-						[ unit, ( range.max / 2 ).toString() ],
+						[ unit, ( ( range.max + range.min ) / 2 ).toString() ],
 						[ unit, range.max.toString() ],
 					],
 				];

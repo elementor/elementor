@@ -72,6 +72,10 @@ class ControlBase {
 	 * @return {string}
 	 */
 	generateValueName( value ) {
+		if ( '' === value ) {
+			return 'empty';
+		}
+
 		return value;
 	}
 
@@ -184,10 +188,9 @@ class ControlBase {
 	 * @return {Promise<void>}
 	 */
 	async clickPopoverToggle( open = true ) {
-		const popoverToggleId = await this.getPopoverToggleId(),
-			labelType = open ? 'custom' : 'defalt';
+		const popoverToggleId = await this.getPopoverToggleId();
 
-		await this.page.click( `label.elementor-control-popover-toggle-toggle-label[for="${ popoverToggleId }-${ labelType }"]` );
+		await this.page.click( `label.elementor-control-popover-toggle-toggle-label[for="${ popoverToggleId }-custom"]` );
 	}
 
 	/**
@@ -207,9 +210,7 @@ class ControlBase {
 	 * @return {Promise<import('@playwright/test').ElementHandle>}
 	 */
 	async getPopover() {
-		return this.page.$( '.elementor-controls-popover', {
-			has: this.elementLocator,
-		} );
+		return this.page.$( `.elementor-controls-popover:has(${ this.getSelector() })` );
 	}
 }
 
