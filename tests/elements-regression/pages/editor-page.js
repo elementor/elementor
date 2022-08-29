@@ -24,9 +24,6 @@ module.exports = class EditorPage extends BasePage {
 		return await this.addElement( { widgetType, elType: 'widget' }, container );
 	}
 
-	/**
-	 * @return {Frame}
-	 */
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
