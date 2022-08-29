@@ -37,18 +37,6 @@
 	return element.id;
 };
 
-/**
- * Make an Elementor element CSS selector using Container ID.
- *
- * @param {string} id - Container ID.
- *
- * @return {string} css selector
- */
- const getElementSelector = ( id ) => {
-	return `[data-id = "${ id }"]`;
-};
-
 module.exports = {
 	addElement,
-	getElementSelector,
 };
