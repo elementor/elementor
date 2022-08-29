@@ -346,7 +346,7 @@ class Source_Local extends Source_Base {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 2.4.0
-	 * @access private
+	 * @access public
 	 */
 	private function admin_menu_reorder( Admin_Menu_Manager $admin_menu ) {
 		global $submenu;
@@ -381,10 +381,8 @@ class Source_Local extends Source_Base {
 
 			$admin_menu->register( $category_slug, new Templates_Categories_Menu_Item() );
 		}
-	}
 
-	private function admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
+		$this->admin_menu_set_current();
 	}
 
 	/**
@@ -396,30 +394,23 @@ class Source_Local extends Source_Base {
 	private function admin_menu_set_current() {
 		global $submenu;
 
-		if ( empty( $submenu[ static::ADMIN_MENU_SLUG ] ) ) {
-			return;
-		}
+		if ( $this->is_current_screen() ) {
+			$library_submenu = &$submenu[ static::ADMIN_MENU_SLUG ];
+			$library_title = $this->get_library_title();
 
-		if ( ! $this->is_current_screen() ) {
-			return;
-		}
-
-		$library_submenu = &$submenu[ static::ADMIN_MENU_SLUG ];
-		$library_title = $this->get_library_title();
-
-		foreach ( $library_submenu as &$item ) {
-			if ( $library_title !== $item[0] ) {
-				continue;
+			foreach ( $library_submenu as &$item ) {
+				if ( $library_title === $item[0] ) {
+					if ( ! isset( $item[4] ) ) {
+						$item[4] = '';
+					}
+					$item[4] .= ' current';
+				}
 			}
-
-			if ( ! isset( $item[4] ) ) {
-				$item[4] = '';
-			}
-
-			$item[4] .= ' current';
-
-			break;
 		}
+	}
+
+	private function admin_menu( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1582,11 +1573,10 @@ class Source_Local extends Source_Base {
 		if ( is_admin() ) {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu( $admin_menu );
-				$this->admin_menu_reorder( $admin_menu );
 			} );
 
-			add_action( 'elementor/admin/menu/after_register', function () {
-				$this->admin_menu_set_current();
+			add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->admin_menu_reorder( $admin_menu );
 			} );
 
 			add_filter( 'admin_title', [ $this, 'admin_title' ], 10, 2 );
