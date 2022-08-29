@@ -28,10 +28,6 @@ class Connect_Menu_Item implements Admin_Menu_Item_With_Page {
 		return esc_html__( 'Connect', 'elementor' );
 	}
 
-	public function get_position() {
-		return null;
-	}
-
 	public function get_capability() {
 		return 'edit_posts';
 	}

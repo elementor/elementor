@@ -37,7 +37,7 @@ class App extends BaseApp {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID . '&ver=' . ELEMENTOR_VERSION );
 	}
 
-	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
 	}
 
@@ -254,7 +254,9 @@ class App extends BaseApp {
 
 		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
 
-		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			$this->register_admin_menu( $admin_menu );
+		}, 15 /* After "Saved Templates" */ );
 
 		// Happens after WP plugin page validation.
 		add_filter( 'add_menu_classes', [ $this, 'fix_submenu' ] );

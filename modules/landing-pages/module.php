@@ -478,7 +478,7 @@ class Module extends BaseModule {
 		} else {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu_legacy( $admin_menu );
-			} );
+			}, 20 /* After "Theme Builder" */ );
 		}
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.

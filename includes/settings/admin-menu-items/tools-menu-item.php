@@ -33,10 +33,6 @@ class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
 		return esc_html__( 'Tools', 'elementor' );
 	}
 
-	public function get_position() {
-		return 1;
-	}
-
 	public function get_capability() {
 		return 'manage_options';
 	}

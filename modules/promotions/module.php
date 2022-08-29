@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends Base_Module {
 
+	const ADMIN_MENU_PRIORITY = 100;
+
 	public static function is_active() {
 		return ! Utils::has_pro();
 	}
@@ -35,7 +37,7 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_menu_items( $admin_menu );
-		}, 0 /* First so it won't override others */ );
+		}, static::ADMIN_MENU_PRIORITY );
 	}
 
 	private function handle_external_redirects() {

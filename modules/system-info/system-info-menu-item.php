@@ -33,10 +33,6 @@ class System_Info_Menu_Item implements Admin_Menu_Item_With_Page {
 		return esc_html__( 'System Info', 'elementor' );
 	}
 
-	public function get_position() {
-		return 3;
-	}
-
 	public function get_capability() {
 		return $this->system_info_page->get_capability();
 	}

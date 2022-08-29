@@ -28,10 +28,6 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 		return '';
 	}
 
-	public function get_position() {
-		return null;
-	}
-
 	public function get_capability() {
 		return 'manage_options';
 	}

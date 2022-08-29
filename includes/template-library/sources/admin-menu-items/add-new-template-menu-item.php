@@ -23,10 +23,6 @@ class Add_New_Template_Menu_Item implements Admin_Menu_Item {
 		return esc_html__( 'Add New', 'elementor' );
 	}
 
-	public function get_position() {
-		return null;
-	}
-
 	public function get_capability() {
 		return Editor::EDITING_CAPABILITY;
 	}

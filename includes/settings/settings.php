@@ -5,6 +5,7 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
+use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -401,7 +402,7 @@ class Settings extends Settings_Page {
 
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->register_knowledge_base_menu( $admin_menu );
-			} );
+			}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
 			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 

@@ -26,10 +26,6 @@ class Landing_Pages_Menu_Item implements Admin_Menu_Item {
 		return esc_html__( 'Landing Pages', 'elementor' );
 	}
 
-	public function get_position() {
-		return 1;
-	}
-
 	public function get_capability() {
 		return 'manage_options';
 	}

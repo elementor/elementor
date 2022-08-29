@@ -4,7 +4,6 @@ namespace Elementor\TemplateLibrary;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
-use Elementor\Core\Files\File_Types\Zip;
 use Elementor\Core\Utils\Collection;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -381,8 +380,6 @@ class Source_Local extends Source_Base {
 
 			$admin_menu->register( $category_slug, new Templates_Categories_Menu_Item() );
 		}
-
-		$this->admin_menu_set_current();
 	}
 
 	/**
@@ -409,7 +406,7 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	private function admin_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
 	}
 
@@ -1572,11 +1569,15 @@ class Source_Local extends Source_Base {
 	private function add_actions() {
 		if ( is_admin() ) {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->admin_menu( $admin_menu );
+				$this->register_admin_menu( $admin_menu );
 			} );
 
-			add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu ) {
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu_reorder( $admin_menu );
+			}, 800 );
+
+			add_action( 'elementor/admin/menu/after_register', function () {
+				$this->admin_menu_set_current();
 			} );
 
 			add_filter( 'admin_title', [ $this, 'admin_title' ], 10, 2 );
