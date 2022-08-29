@@ -90,7 +90,7 @@ class Test_Document extends Elementor_Test_Base {
 			'post_id' => $post->ID,
 		] );
 
-		$map_old_new_post_ids = [ '35' => '36', '37' => '38' ];
+		$new_ids_map = [ '35' => '36', '37' => '38' ];
 
 		$config = self::$document_mock_default[ 'elements' ];
 
@@ -118,15 +118,15 @@ class Test_Document extends Elementor_Test_Base {
 		];
 
 		$config[0]['elements'][0]['elements'] = array_merge(  $config[0]['elements'][0]['elements'], $dynamic_widgets);
-		
-		$updated_config = $document::on_import_replace_dynamic_content( $config, $map_old_new_post_ids );
 
-		$this->assertEquals( 
+		$updated_config = $document::on_import_replace_dynamic_content( $config, $new_ids_map );
+
+		$this->assertEquals(
 			'[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2236%22%7D"]',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][1][ 'settings' ][ '__dynamic__' ][ 'link' ]
 		);
 
-		$this->assertEquals( 
+		$this->assertEquals(
 			'38',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'template_id' ]
 		);
