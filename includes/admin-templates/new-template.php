@@ -20,7 +20,7 @@ foreach ( $document_types as $document_type ) {
 		 * @var Document $instance
 		 */
 		$instance = new $document_type();
-		$lock_behavior = $instance->get_lock_behavior();
+		$lock_behavior = $document_type::get_lock_behavior_v2();
 
 		$types[ $instance->get_name() ] = $document_type::get_title();
 		$lock_configs[ $instance->get_name() ] = empty( $lock_behavior )
