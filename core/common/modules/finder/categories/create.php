@@ -94,8 +94,7 @@ class Create extends Base_Category {
 			$document_class::get_create_url()
 		);
 
-		$document_instance = new $document_class();
-		$lock_behavior = $document_instance->get_lock_behavior();
+		$lock_behavior = $document_class::get_lock_behavior_v2();
 		$is_locked = ! empty( $lock_behavior ) && $lock_behavior->is_locked();
 
 		if ( $is_locked ) {

@@ -4,6 +4,13 @@ description: Inject the given version into the plugin files and then build it an
 inputs:
   PACKAGE_VERSION:
     required: true
+    description: 'The version to inject into the plugin package.json file.'
+  UPDATE_VERSIONS_SCRIPT_PATH:
+    required: true
+    description: 'The path to the script that updates the versions in the plugin PHP files.'
+  BUILD_SCRIPT_PATH:
+    required: true
+    description: 'The full path of the script to build the plugin.'
 
 runs:
   using: "composite"
@@ -15,13 +22,7 @@ runs:
                 echo "PACKAGE_VERSION is empty string or undefined"
                 exit 1
             fi
-            sed -i -E "s/Stable tag: .*/Stable tag: ${{ inputs.PACKAGE_VERSION }}/g" ./readme.txt
-            sed -i -E "s/Version: .*/Version: ${{ inputs.PACKAGE_VERSION }}/g" elementor.php
-            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${{ inputs.PACKAGE_VERSION }}'/g" elementor.php
-            PLUGIN_ZIP_FILENAME="elementor-${{ inputs.PACKAGE_VERSION }}.zip"
-            npx grunt build
-            mv build elementor
-            zip -r $PLUGIN_ZIP_FILENAME elementor
-            echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
-            echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}"
-      
+            bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
+            bash ${{ inputs.BUILD_SCRIPT_PATH }}
+      env:
+        PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
