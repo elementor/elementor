@@ -211,30 +211,22 @@
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
 				$parentContainers = $currentElement.parents( '.e-container' ),
-				isColumnContainer = $parentContainers[0]?.classList.contains( 'e-container--column' ),
-				isRowContainer = $parentContainers[0]?.classList.contains( 'e-container--row' ) || $parentContainers[1]?.classList.contains( 'e-container--row' ),
-				hasRowParentContainer = $parentContainers[1]?.classList.contains( 'e-container--row' ),
+				isColumnParentContainer = $parentContainers[0]?.classList.contains( 'e-container--column' ),
+				isRowParentGrandparentContainer = $parentContainers[0]?.classList.contains( 'e-container--row' ) || $parentContainers[1]?.classList.contains( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
-				console.log( 'row' );
-
-			if ( ( isRowContainer && ! isFirstInsert ) || ( isColumnContainer && hasRowParentContainer ) ) {
+			if ( isRowParentGrandparentContainer 
+				&& ! isFirstInsert // Drag into the `First Add` element using the append/prepend method.
+				&& ( ! isColumnParentContainer && $currentElement.hasClass( 'elementor-widget' ) // Apply the before/after method for dragging widgets into an existing row container.
+				|| ( $currentElement.hasClass( 'e-container' ) || $currentElement.hasClass( 'e-container__inner' ) ) )  // Apply the before/after method for dragging containers into an existing row container.
+			) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				console.log( 'row' );
-				console.log( $currentElement );
-				console.log( currentSide );
-
 				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
 				return;	
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
-
-			console.log( 'column' );
-			console.log( $currentElement );
-			console.log( currentSide );
-
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 

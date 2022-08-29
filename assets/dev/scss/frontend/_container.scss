@@ -174,7 +174,6 @@
 
 		> .elementor-widget-placeholder {
 
-
 			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
 			&:nth-last-child( 2 ) {
 				margin-block-start: calc( 2 * var( --margin-start ) );
@@ -192,8 +191,7 @@
 					margin-block-start: var( --margin-start );
 					margin-block-end: var( --margin-end );
 					animation-name: dnd-placeholder-widget-horizontal;
-					margin-block-start: 0;
-					margin-block-end: 0;
+					border: 1px solid red !important;
 				}
 			}
 		}
