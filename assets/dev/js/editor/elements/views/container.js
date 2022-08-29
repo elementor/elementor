@@ -441,7 +441,6 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	droppableInitialise( settings ) {
-
 		if ( 'boxed' === settings.get( 'content_width' ) ) {
 			this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
 			settings.containerDroppableInner = true;
@@ -449,7 +448,7 @@ const ContainerView = BaseElementView.extend( {
 			this.$el.html5Droppable( this.getDroppableOptions() );
 			settings.containerDroppable = true;
 		}
-	}
+	},
 } );
 
 module.exports = ContainerView;
