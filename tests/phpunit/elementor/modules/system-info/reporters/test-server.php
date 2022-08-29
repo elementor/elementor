@@ -21,9 +21,16 @@ class Test_Server extends Elementor_Test_Base {
 		rmdir( static::DIR_PATH );
 	}
 
-	public function test_get_path_permissions__no_permissions() {
+	/**
+	 * @dataProvider get_path_permissions_data_provider
+	 */
+	public function test_get_path_permissions( $permission_code, $expected ) {
+		if ( 0 === stripos( PHP_OS, 'WIN' ) ) {
+			$this->markTestSkipped( 'This test is not available on Windows.' );
+		}
+
 		// Arrange
-		chmod( static::DIR_PATH, 0000 );
+		chmod( static::DIR_PATH, $permission_code );
 
 		clearstatcache();
 
@@ -31,53 +38,43 @@ class Test_Server extends Elementor_Test_Base {
 		$permissions = ( new Server() )->get_path_permissions( static::DIR_PATH );
 
 		// Assert
-		$this->assertFalse( $permissions['read'] );
-		$this->assertFalse( $permissions['write'] );
-		$this->assertFalse( $permissions['execute'] );
+		$this->assertEquals( $expected, $permissions );
 	}
 
-	public function test_get_path_permissions__readable() {
-		// Arrange
-		chmod( static::DIR_PATH, 0400 );
-
-		clearstatcache();
-
-		// Act
-		$permissions = ( new Server() )->get_path_permissions( static::DIR_PATH );
-
-		// Assert
-		$this->assertTrue( $permissions['read'] );
-		$this->assertFalse( $permissions['write'] );
-		$this->assertFalse( $permissions['execute'] );
-	}
-
-	public function test_get_path_permissions__readable_writeable() {
-		// Arrange
-		chmod( static::DIR_PATH, 0600 );
-
-		clearstatcache();
-
-		// Act
-		$permissions = ( new Server() )->get_path_permissions( static::DIR_PATH );
-
-		// Assert
-		$this->assertTrue( $permissions['read'] );
-		$this->assertTrue( $permissions['write'] );
-		$this->assertFalse( $permissions['execute'] );
-	}
-
-	public function test_get_path_permissions__readable_writeable_executable() {
-		// Arrange
-		chmod( static::DIR_PATH, 0700 );
-
-		clearstatcache();
-
-		// Act
-		$permissions = ( new Server() )->get_path_permissions( static::DIR_PATH );
-
-		// Assert
-		$this->assertTrue( $permissions['read'] );
-		$this->assertTrue( $permissions['write'] );
-		$this->assertTrue( $permissions['execute'] );
+	public function get_path_permissions_data_provider() {
+		return [
+			'no_permissions' => [
+				'permission_code' => 0000,
+				'expected' => [
+					'read' => false,
+					'write' => false,
+					'execute' => false,
+				],
+			],
+			'readable' => [
+				'permission_code' => 0400,
+				'expected' => [
+					'read' => true,
+					'write' => false,
+					'execute' => false,
+				],
+			],
+			'readable_writeable' => [
+				'permission_code' => 0600,
+				'expected' => [
+					'read' => true,
+					'write' => true,
+					'execute' => false,
+				],
+			],
+			'readable_writeable_executable' => [
+				'permission_code' => 0700,
+				'expected' => [
+					'read' => true,
+					'write' => true,
+					'execute' => true,
+				],
+			],
+		];
 	}
 }

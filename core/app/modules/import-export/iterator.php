@@ -53,16 +53,12 @@ abstract class Iterator extends Base_Object {
 		$server = new Server();
 
 		$paths_to_check = [
-			Server::KEY_PATH_WP_CONTENT_DIR,
-			Server::KEY_PATH_UPLOADS_DIR,
-			Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR,
+			Server::KEY_PATH_WP_CONTENT_DIR => $server->get_system_path( Server::KEY_PATH_WP_CONTENT_DIR ),
+			Server::KEY_PATH_UPLOADS_DIR => $server->get_system_path( Server::KEY_PATH_UPLOADS_DIR ),
+			Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR => $server->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ),
 		];
 
-		$permissions = $server->get_system_paths_permissions();
-
-		$permissions = array_filter( $permissions, function ( $key ) use ( $paths_to_check ) {
-			return in_array( $key, $paths_to_check, true );
-		}, ARRAY_FILTER_USE_KEY  );
+		$permissions = $server->get_paths_permissions( $paths_to_check );
 
 		foreach ( $permissions as $permission ) {
 			if ( ! $permission['write'] ) {

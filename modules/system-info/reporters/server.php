@@ -311,24 +311,31 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_write_permissions() : array {
-		$paths_to_check = [
+		$paths_messages = [
 			static::KEY_PATH_WP_ROOT_DIR => 'WordPress root directory',
 			static::KEY_PATH_HTACCESS_FILE => '.htaccess file',
 			static::KEY_PATH_UPLOADS_DIR => 'WordPress uploads directory',
 			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => 'Elementor uploads directory',
 		];
 
-		$permissions = $this->get_system_paths_permissions();
+		$paths_to_check = [
+			static::KEY_PATH_WP_ROOT_DIR => $this->get_system_path( static::KEY_PATH_WP_ROOT_DIR ),
+			static::KEY_PATH_HTACCESS_FILE => $this->get_system_path( static::KEY_PATH_HTACCESS_FILE ),
+			static::KEY_PATH_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_UPLOADS_DIR ),
+			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_ELEMENTOR_UPLOADS_DIR ),
+		];
 
-		$permissions = array_filter( $permissions, function ( $key ) use ( $paths_to_check ) {
-			return array_key_exists( $key, $paths_to_check );
+		$permissions = $this->get_paths_permissions( $paths_to_check );
+
+		$permissions = array_filter( $permissions, function ( $key ) use ( $paths_messages ) {
+			return array_key_exists( $key, $paths_messages );
 		}, ARRAY_FILTER_USE_KEY  );
 
 		$write_problems = [];
 
 		foreach ( $permissions as $key_path => $path_permissions ) {
 			if ( ! $path_permissions['write'] ) {
-				$write_problems[] = $paths_to_check[ $key_path ];
+				$write_problems[] = $paths_messages[ $key_path ];
 			}
 		}
 
@@ -408,11 +415,10 @@ class Server extends Base {
 	}
 
 	/**
+	 * @param $paths [] Paths to check permissions.
 	 * @return array []{read: bool, write: bool, execute: bool}
 	 */
-	public function get_system_paths_permissions() : array {
-		$paths = $this->get_system_paths();
-
+	public function get_paths_permissions( $paths ) : array {
 		$permissions = [];
 
 		foreach ( $paths as $key_path => $path ) {
@@ -423,18 +429,21 @@ class Server extends Base {
 	}
 
 	/**
-	 * Get all the paths that we might need to check permissions.
+	 * Get path by path key.
 	 *
-	 * @return array
+	 * @param $path_key
+	 * @return string
 	 */
-	public function get_system_paths() : array {
-		return [
+	public function get_system_path( $path_key ) : string {
+		$system_paths = [
 			static::KEY_PATH_WP_ROOT_DIR => ABSPATH,
 			static::KEY_PATH_HTACCESS_FILE => file_exists( ABSPATH . '/.htaccess' ) ? ABSPATH . '/.htaccess' : '',
 			static::KEY_PATH_WP_CONTENT_DIR => WP_CONTENT_DIR,
 			static::KEY_PATH_UPLOADS_DIR => wp_upload_dir()['basedir'] ?? '',
 			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => ! empty( wp_upload_dir()['basedir'] ) ? wp_upload_dir()['basedir'] . '/elementor' : '',
 		];
+
+		return $system_paths[ $path_key ] ?? '';
 	}
 
 	/**
