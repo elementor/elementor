@@ -37,7 +37,7 @@ class Wp_Content extends Runner_Base {
 		$post_types = $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' );
 
 		$taxonomies = isset( $imported_data['taxonomies'] ) ? $imported_data['taxonomies'] : [];
-		$imported_terms = ImportExportUtils::map_old_new_terms_ids( $imported_data );
+		$imported_terms = ImportExportUtils::map_old_new_term_ids( $imported_data );
 
 		$result['wp-content'] = [];
 

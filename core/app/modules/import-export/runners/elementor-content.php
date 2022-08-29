@@ -47,7 +47,7 @@ class Elementor_Content extends Runner_Base {
 			$posts_settings = $data['manifest']['content'][ $post_type ];
 			$path = $data['extracted_directory_path'] . 'content/' . $post_type . '/';
 			$imported_terms = ! empty( $imported_data['taxonomies'] )
-				? ImportExportUtils::map_old_new_terms_ids( $imported_data )
+				? ImportExportUtils::map_old_new_term_ids( $imported_data )
 				: [];
 
 			$result['content'][ $post_type ] = $this->import_elementor_post_type( $posts_settings, $path, $post_type, $imported_terms );

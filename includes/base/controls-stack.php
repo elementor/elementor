@@ -1984,11 +1984,18 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * On Import Replace Dynamic Content.
 	 *
 	 * @since 3.6.0
 	 * @access public
+	 *
+	 * @param array $config
+	 * @param array $new_ids_map
+	 * @param array|null $controls
+	 *
+	 * @return array Element data.
 	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+	public static function on_import_replace_dynamic_content( array $config, array $new_ids_map, $controls = null ) {
 		return $config;
 	}
 

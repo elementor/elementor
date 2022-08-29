@@ -1150,22 +1150,27 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * On Import Replace Dynamic Content.
 	 *
 	 * @since 3.6.0
+	 * @access public
 	 *
 	 * @param array $config
+	 * @param array $new_ids_map
+	 * @param array|null $controls
 	 *
-	 * @param array $map_old_new_post_ids
+	 * @return array Element data.
 	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+	public static function on_import_replace_dynamic_content( array $config, array $new_ids_map, $controls = null ) {
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
-			if ( $element_instance ) {
-				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
-
-				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
+			if ( ! $element_instance ) {
+				continue;
 			}
+
+			$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $new_ids_map, $element_instance->get_controls() );
+			$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $new_ids_map );
 		}
 
 		return $config;
