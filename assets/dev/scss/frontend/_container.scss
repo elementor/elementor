@@ -125,11 +125,19 @@
 		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
+	// &.e-dragging-over, .e-dragging-over {
+
+	// 	// Hide placeholders which don't have a `e-dragging-over` class.
+	// 	.elementor-element > .elementor-widget-placeholder {
+	// 		opacity: 0;
+	// 	}
+	// }
+
 	&.e-container--row {
 
 		&, & > .e-container__inner {
 
-			& > .elementor-widget-placeholder {
+			> .elementor-widget-placeholder {
 				position: relative;
 				z-index: $editor-layer; // To put it above the element overlay.
 				width: var( --size );
@@ -165,11 +173,7 @@
 	&.e-container--column {
 
 		> .elementor-widget-placeholder {
-			height: var( --size );
-			// To make sure that it doesn't push & break the layout when appearing.
-			margin-block-start: var( --margin-start );
-			margin-block-end: var( --margin-end );
-			animation-name: dnd-placeholder-widget-horizontal;
+
 
 			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
 			&:nth-last-child( 2 ) {
@@ -183,8 +187,13 @@
 			&, & > .e-container__inner {
 
 				> .elementor-widget-placeholder {
-					margin-block-start: 0;
-					margin-block-end: 0;
+					// margin-block-start: 0;
+					// margin-block-end: 0;
+					height: var( --size );
+					// To make sure that it doesn't push & break the layout when appearing.
+					margin-block-start: var( --margin-start );
+					margin-block-end: var( --margin-end );
+					animation-name: dnd-placeholder-widget-horizontal;
 				}
 			}
 		}

@@ -119,15 +119,15 @@ const ContainerView = BaseElementView.extend( {
 	getDroppableOptions() {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
 		// ? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add, > .elementor-element, > .elementor-empty-view .elementor-first-add'
-		? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add'
+		? '> .elementor-widget, > .e-container--width-full, > .e-container > .e-container__inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 		return {
 			axis: this.getDroppableAxis(),
 			// items: '> .elementor-widget, > .e-container--width-full, > .e-container--width-boxed > .e-container__inner, > .elementor-empty-view .elementor-first-add',
 			// items: '> .elementor-widget, > .e-container, > .elementor-empty-view .elementor-first-add',
 			// items: '> .elementor-element, > .elementor-element > .e-container__inner, > .elementor-empty-view .elementor-first-add',
-			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
-			// items: items,
+			// items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+			items: items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -142,12 +142,9 @@ const ContainerView = BaseElementView.extend( {
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggingInSameParent = ( draggedView?.parent === this ),
-					parentContainer = event.currentTarget.parentElement.classList.contains( 'e-container__inner' ) ? jQuery( event.currentTarget.parentElement.parentElement ) : jQuery( event.currentTarget.parentElement );
+					draggingInSameParent = ( draggedView?.parent === this );
 
-				let $elements = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ) ? jQuery( event.currentTarget.parentElement.panelElement ) : jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
-				// let $elements = jQuery( parentContainer ).find( '> .elementor-element, > .e-container__inner, > .e-container__inner > .elementor-element' );
-				// let $elements = parentContainer.find( '.e-container__inner' ).length ? parentContainer.find( '> .elementor-element' ) : parentContainer.find( '> .elementor-element' );
+				let $elements = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ) ? jQuery( event.currentTarget.parentElement.parentElement ).find( '> .elementor-element' ) : jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
 
 				// Exclude the dragged element from the indexing calculations.
 				if ( draggingInSameParent ) {
@@ -156,7 +153,7 @@ const ContainerView = BaseElementView.extend( {
 
 				const widgetsArray = Object.values( $elements );
 
-				let newIndex = widgetsArray.indexOf( event.currentTarget );
+				let newIndex = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ) ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {

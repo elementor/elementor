@@ -206,29 +206,36 @@
 			}
 
 			// Make sure that the previous placeholders are removed before inserting a new one.
+
+			console.log( 'placeholders' );
+			console.log( elementsCache.$element );
+			console.log( 'parent placeholders' );
+			// console.log( elementsCache.$element[0].parent() );
+			console.log( elementsCache.$element.parent() );
 			elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-				// $parentContainers = $currentElement.parents( '.e-container' ),
-				// isRowContainer = $currentElement.hasClass( 'e-container--row' ) || $parentContainers[0].classList.contains( 'e-container--row' ),
-				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
+				$parentContainers = $currentElement.parents( '.e-container' ),
+				isColumnContainer = $parentContainers[0]?.classList.contains( 'e-container--column' ),
+				isRowContainer = $parentContainers[0]?.classList.contains( 'e-container--row' ) || $parentContainers[1]?.classList.contains( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
-			if ( isRowContainer && ! isFirstInsert ) {
-
-				if ( $currentElement.parent().parent().hasClass( 'e-container--column' ) && $currentElement.parent().hasClass( 'e-container__inner' ) ) {
-					let insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
-					elementsCache.$placeholder[ insertMethod ]( currentElement );
-				} else {
-					let insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-					$currentElement[ insertMethod ]( elementsCache.$placeholder );
-				}
+			if ( isRowContainer && ! isFirstInsert && ! isColumnContainer ) {
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+				console.log( 'row' );
+				console.log( insertMethod );
+				console.log( $currentElement );
+				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
 				return;
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+
+			console.log( 'column' );
+			console.log( insertMethod );
+			console.log( $currentElement );
 
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
@@ -371,6 +378,7 @@
 				return;
 			}
 
+			elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
 			$( currentElement ).removeClass( settings.currentElementClass );
 
 			self.doDragLeave();
@@ -390,6 +398,7 @@
 			// Trigger a Droppable-specific `onDropping` callback.
 			if ( settings.onDropping ) {
 				settings.onDropping( currentSide, event );
+				elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
 			}
 		};
 
@@ -415,6 +424,7 @@
 			}
 
 			elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
+
 
 			if ( 'function' === typeof settings.onDragLeave ) {
 				settings.onDragLeave.call( currentElement, event, self );
