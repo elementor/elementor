@@ -118,15 +118,10 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-		// ? '> .e-container__inner > .elementor-element, > .e-container__inner > .elementor-empty-view > .elementor-first-add, > .elementor-element, > .elementor-empty-view .elementor-first-add'
 		? '> .elementor-widget, > .e-container--width-full, > .e-container > .e-container__inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 		return {
 			axis: this.getDroppableAxis(),
-			// items: '> .elementor-widget, > .e-container--width-full, > .e-container--width-boxed > .e-container__inner, > .elementor-empty-view .elementor-first-add',
-			// items: '> .elementor-widget, > .e-container, > .elementor-empty-view .elementor-first-add',
-			// items: '> .elementor-element, > .elementor-element > .e-container__inner, > .elementor-empty-view .elementor-first-add',
-			// items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
 			items: items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
@@ -159,17 +154,6 @@ const ContainerView = BaseElementView.extend( {
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
 					newIndex++;
 				} 
-
-				// if (  [ 'top' ].includes( side ) && event.currentTarget.classList.contains('elementor-widget') ) {
-				// 	newIndex--;
-				// }
-
-				if (  [ 'top' ].includes( side ) 
-				&& ( event.currentTarget.classList.contains('e-container__inner') || event.currentTarget.classList.contains('e-container--width-boxed') )
-				&& ! jQuery( event.currentTarget ).parents('.e-container')[1]?.classList.contains('e-container--row') ) {
-					// newIndex--;
-					// newIndex = 10;
-				}
 
 				// User is sorting inside a Container.
 				if ( draggedView ) {

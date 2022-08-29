@@ -205,39 +205,35 @@
 				return;
 			}
 
-			// Make sure that the previous placeholders are removed before inserting a new one.
-
-			// console.log( 'placeholders' );
-			// console.log( elementsCache.$element );
-			// console.log( 'parent placeholders' );
-			// // console.log( elementsCache.$element[0].parent() );
-			// console.log( elementsCache.$element.parent() );
-			// elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
+			// Make sure that the previous placeholder is removed before inserting a new one.
+			elementsCache.$element.find( '.elementor-widget-placeholder' )?.remove();
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
 				$parentContainers = $currentElement.parents( '.e-container' ),
 				isColumnContainer = $parentContainers[0]?.classList.contains( 'e-container--column' ),
 				isRowContainer = $parentContainers[0]?.classList.contains( 'e-container--row' ) || $parentContainers[1]?.classList.contains( 'e-container--row' ),
+				hasRowParentContainer = $parentContainers[1]?.classList.contains( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
-			elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
+				console.log( 'row' );
 
-			if ( isRowContainer && ! isFirstInsert && ! isColumnContainer ) {
+			if ( ( isRowContainer && ! isFirstInsert ) || ( isColumnContainer && hasRowParentContainer ) ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				console.log( 'row' );
-				console.log( insertMethod );
 				console.log( $currentElement );
+				console.log( currentSide );
+
 				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
-				return;
+				return;	
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 
 			console.log( 'column' );
-			console.log( insertMethod );
 			console.log( $currentElement );
+			console.log( currentSide );
 
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
@@ -380,7 +376,6 @@
 				return;
 			}
 
-			elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
 			$( currentElement ).removeClass( settings.currentElementClass );
 
 			self.doDragLeave();
