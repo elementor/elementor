@@ -1,8 +1,7 @@
 <?php
+
 namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
 
-use Elementor\Core\Base\Document;
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 
@@ -21,7 +20,7 @@ class Site_Settings extends Import_Runner_Base {
 	/**
 	 * @var int
 	 */
-	private $new_kit_id;
+	private $imported_kit_id;
 
 	public static function get_name() : string {
 		return 'site-settings';
@@ -64,7 +63,7 @@ class Site_Settings extends Import_Runner_Base {
 
 		$new_kit = Plugin::$instance->kits_manager->create_new_kit( $title, $new_site_settings );
 
-		$this->new_kit_id = (int) $new_kit;
+		$this->imported_kit_id = (int) $new_kit;
 
 		$result['site-settings'] = (bool) $new_kit;
 
@@ -75,7 +74,7 @@ class Site_Settings extends Import_Runner_Base {
 		return [
 			'previous_kit_id' => $this->previous_kit_id,
 			'active_kit_id' => $this->active_kit_id,
-			'new_kit_id' => $this->new_kit_id,
+			'imported_kit_id' => $this->imported_kit_id,
 		];
 	}
 }

@@ -2,8 +2,6 @@
 
 namespace Elementor\Core\App\Modules\ImportExport;
 
-use Elementor\Core\Utils\Collection;
-use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 
@@ -189,6 +187,28 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::error( $error->getMessage() );
 		}
+	}
+
+	/**
+	 * Revert last imported kit.
+	 */
+	public function revert() {
+		\WP_CLI::line( 'Kit revert started.' );
+
+		try {
+			/**
+			 * Running the revert process through the import-export module so the revert property in the module will be available to use.
+			 *
+			 * @type  Module $import_export_module
+			 */
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module->revert_last_imported_kit();
+
+		} catch ( \Error $error ) {
+			\WP_CLI::error( $error->getMessage() );
+		}
+
+		\WP_CLI::success( 'Kit reverted successfully.' );
 	}
 
 	/**

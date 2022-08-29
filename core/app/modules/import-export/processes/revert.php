@@ -9,7 +9,6 @@ use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Taxonomies;
 use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Templates;
 use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Wp_Content;
 use Elementor\Core\App\Modules\ImportExport\Module;
-use Elementor\Core\App\Modules\ImportExport\Runners\Runner_Interface;
 
 class Revert {
 
@@ -129,7 +128,6 @@ class Revert {
 
 		$revert_sessions[] = [
 			'session_id' => $reverted_session['session_id'],
-			//          'kit_id' => $reverted_session['kit_id'],
 			'kit_name' => $reverted_session['kit_name'],
 			'source' => $reverted_session['kit_source'],
 			'user_id' => get_current_user_id(),
@@ -137,8 +135,8 @@ class Revert {
 			'revert_timestamp' => current_time( 'timestamp' ),
 		];
 
-		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, 'no' );
-		update_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS, $revert_sessions, 'no' );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+		update_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS, $revert_sessions, false );
 
 		$this->import_sessions = $import_sessions;
 		$this->revert_sessions = $revert_sessions;
@@ -151,7 +149,7 @@ class Revert {
 			'posts_per_page' => -1,
 			'meta_query' => [
 				[
-					'key' => '_elementor_import_session_id',
+					'key' => Module::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value' => $data['session_id'],
 				],
 			],

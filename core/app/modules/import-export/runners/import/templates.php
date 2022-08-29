@@ -3,8 +3,6 @@
 namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
-use Elementor\Core\Base\Document;
-use Elementor\Core\Documents_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -70,15 +68,15 @@ class Templates extends Import_Runner_Base {
 		$template_data['import_settings'] = $template_settings;
 		$template_data['id'] = $id;
 
-		$update_callback = function( $attachment_id ) {
+		$new_attachment_callback = function( $attachment_id ) {
 			$this->set_session_post_meta( $attachment_id, $this->import_session_id );
 		};
 
-		add_filter( 'elementor/template_library/import_images/new_attachment', $update_callback );
+		add_filter( 'elementor/template_library/import_images/new_attachment', $new_attachment_callback );
 
 		$new_document->import( $template_data );
 
-		remove_filter( 'elementor/template_library/import_images/new_attachment', $update_callback );
+		remove_filter( 'elementor/template_library/import_images/new_attachment', $new_attachment_callback );
 
 		$document_id = $new_document->get_main_id();
 

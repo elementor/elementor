@@ -10,7 +10,6 @@ use Elementor\Core\App\Modules\ImportExport\Runners\Export\Taxonomies;
 use Elementor\Core\App\Modules\ImportExport\Runners\Export\Templates;
 use Elementor\Core\App\Modules\ImportExport\Runners\Export\Wp_Content;
 use Elementor\Core\App\Modules\ImportExport\Module;
-use Elementor\Core\App\Modules\ImportExport\Runners\Runner_Interface;
 use Elementor\Core\App\Modules\ImportExport\Utils;
 use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
@@ -135,7 +134,7 @@ class Export {
 	/**
 	 * Set default settings for the export.
 	 */
-	public function set_default_settings() {
+	private function set_default_settings() {
 		if ( ! is_array( $this->get_settings_include() ) ) {
 			$this->settings_include( $this->get_default_settings_include() );
 		}

@@ -6,8 +6,6 @@ use Elementor\Core\App\Modules\ImportExport\Runners\Runner_Interface;
 
 abstract class Revert_Runner_Base implements Runner_Interface {
 
-	const IMPORT_SESSION_META_KEY = '_elementor_import_session_id';
-
 	/**
 	 * By the passed data we should decide if we want to run the revert function of the runner or not.
 	 *
@@ -15,7 +13,7 @@ abstract class Revert_Runner_Base implements Runner_Interface {
 	 *
 	 * @return bool
 	 */
-	abstract public function should_revert( array $data );
+	abstract public function should_revert( array $data ) : bool;
 
 	/**
 	 * Main function of the runner revert process.

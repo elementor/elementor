@@ -135,7 +135,7 @@ class Import {
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @throws \Exception
 	 */
-	public function __construct( $path, $settings = [] ) {
+	public function __construct( string $path, array $settings = [] ) {
 		if ( is_file( $path ) ) {
 			$this->extracted_directory_path = $this->extract_zip( $path );
 		} else {
@@ -151,12 +151,12 @@ class Import {
 
 		$this->session_id = basename( $this->extracted_directory_path );
 		$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
-
-		// Using isset and not empty is important since empty array is a valid option for those arrays.
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
-		$this->settings_selected_override_conditions = isset( $settings['overrideConditions'] ) ? $settings['overrideConditions'] : null;
-		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
-		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
+
+		// Using isset and not empty is important since empty array is valid option.
+		$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
+		$this->settings_selected_custom_post_types = $settings['selectedCustomPostTypes'] ?? null;
+		$this->settings_selected_plugins = $settings['plugins'] ?? null;
 
 		$this->manifest = $this->read_manifest_json();
 		$this->site_settings = $this->read_site_settings_json();
@@ -166,6 +166,7 @@ class Import {
 
 	/**
 	 * Register a runner.
+	 * Be aware that the runner will be executed in the order of registration, the order is crucial for the import process.
 	 *
 	 * @param Import_Runner_Base $runner_instance
 	 */
@@ -185,7 +186,7 @@ class Import {
 	/**
 	 * Set default settings for the import.
 	 */
-	public function set_default_settings() {
+	private function set_default_settings() {
 		if ( ! is_array( $this->get_settings_include() ) ) {
 			$this->settings_include( $this->get_default_settings_include() );
 		}
@@ -525,7 +526,6 @@ class Import {
 
 		$import_sessions[ time() ] = [
 			'session_id' => $this->session_id,
-			//'kit_id' => $this->manifest['kit_id'],
 			'kit_name' => $this->manifest['name'],
 			'kit_source' => $this->settings_referrer,
 			'user_id' => get_current_user_id(),
@@ -534,6 +534,6 @@ class Import {
 			'runners' => $this->runners_import_metadata,
 		];
 
-		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, 'no' );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 }

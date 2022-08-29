@@ -59,7 +59,7 @@ class Wp_Content extends Export_Runner_Base {
 			'limit' => 20,
 			'meta_query' => [
 				[
-					'key' => '_elementor_edit_mode',
+					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
 					'compare' => 'NOT EXISTS',
 				],
 			],

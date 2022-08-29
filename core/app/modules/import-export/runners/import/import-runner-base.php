@@ -6,8 +6,6 @@ use Elementor\Core\App\Modules\ImportExport\Runners\Runner_Interface;
 
 abstract class Import_Runner_Base implements Runner_Interface {
 
-	const IMPORT_SESSION_META_KEY = '_elementor_import_session_id';
-
 	/**
 	 * By the passed data we should decide if we want to run the import function of the runner or not.
 	 *
@@ -32,10 +30,10 @@ abstract class Import_Runner_Base implements Runner_Interface {
 	}
 
 	public function set_session_post_meta( $post_id, $meta_value ) {
-		update_post_meta( $post_id, static::IMPORT_SESSION_META_KEY, $meta_value );
+		update_post_meta( $post_id, static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID, $meta_value );
 	}
 
 	public function set_session_term_meta( $term_id, $meta_value ) {
-		update_term_meta( $term_id, static::IMPORT_SESSION_META_KEY, $meta_value );
+		update_term_meta( $term_id, static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID, $meta_value );
 	}
 }

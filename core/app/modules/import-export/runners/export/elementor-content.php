@@ -53,7 +53,7 @@ class Elementor_Content extends Export_Runner_Base {
 			'posts_per_page' => -1,
 			'meta_query' => [
 				[
-					'key' => '_elementor_edit_mode',
+					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
 					'compare' => 'EXISTS',
 				],
 				[

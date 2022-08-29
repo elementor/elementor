@@ -211,7 +211,7 @@ class Test_Import extends Elementor_Test_Base {
 			'site-settings' => [
 				'previous_kit_id' => $previous_kit_id,
 				'active_kit_id' => $active_kit_id,
-				'new_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
+				'imported_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
 			],
 		];
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
@@ -318,7 +318,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		$expected_runners = [
 			'elementor-content' => [
-				'page_on_front' => $old_option_page_on_front,
+				'page_on_front' => 0,
 			],
 		];
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
@@ -333,8 +333,6 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__import_wp_content_with_one_cpt_register_and_one_not() {
 		// Arrange
 		register_post_type( 'tests' );
-
-		$p = get_post_types();
 
 		$import_settings = [
 			'include' => [ 'content' ],

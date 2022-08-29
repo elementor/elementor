@@ -3,8 +3,6 @@
 namespace Elementor\Core\App\Modules\ImportExport\Runners\Revert;
 
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
-use Elementor\Core\Utils\ImportExport\WP_Exporter;
-use Elementor\Core\Utils\ImportExport\WP_Import;
 
 class Wp_Content extends Revert_Runner_Base {
 
@@ -12,7 +10,7 @@ class Wp_Content extends Revert_Runner_Base {
 		return 'wp-content';
 	}
 
-	public function should_revert( array $data ) {
+	public function should_revert( array $data ) : bool {
 		return (
 			isset( $data['runners'] ) &&
 			array_key_exists( static::get_name(), $data['runners'] )
@@ -31,11 +29,11 @@ class Wp_Content extends Revert_Runner_Base {
 			'posts_per_page' => -1,
 			'meta_query' => [
 				[
-					'key' => '_elementor_edit_mode',
+					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
 					'compare' => 'NOT EXISTS',
 				],
 				[
-					'key' => static::IMPORT_SESSION_META_KEY,
+					'key' => static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value' => $data['session_id'],
 				],
 			],
@@ -62,7 +60,7 @@ class Wp_Content extends Revert_Runner_Base {
 			'get' => 'all',
 			'meta_query' => [
 				[
-					'key'       => static::IMPORT_SESSION_META_KEY,
+					'key'       => static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value'     => $data['session_id'],
 				],
 			],

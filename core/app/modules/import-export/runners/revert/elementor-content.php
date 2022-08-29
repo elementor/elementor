@@ -18,7 +18,7 @@ class Elementor_Content extends Revert_Runner_Base {
 		return 'elementor-content';
 	}
 
-	public function should_revert( array $data ) {
+	public function should_revert( array $data ) : bool {
 		return (
 			isset( $data['runners'] ) &&
 			array_key_exists( static::get_name(), $data['runners'] )
@@ -34,11 +34,11 @@ class Elementor_Content extends Revert_Runner_Base {
 			'posts_per_page' => -1,
 			'meta_query' => [
 				[
-					'key' => '_elementor_edit_mode',
+					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
 					'compare' => 'EXISTS',
 				],
 				[
-					'key' => static::IMPORT_SESSION_META_KEY,
+					'key' => static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value' => $data['session_id'],
 				],
 			],

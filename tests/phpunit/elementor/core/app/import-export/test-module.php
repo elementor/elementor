@@ -51,7 +51,7 @@ class Test_Module extends Elementor_Test_Base {
 				'has_pro' => true,
 				'import_session' => [
 					'runners' => [
-						'any_other_runner' => [],
+						'tests' => [],
 					],
 				],
 				'should_show' => true,
@@ -67,7 +67,7 @@ class Test_Module extends Elementor_Test_Base {
 				],
 				'should_show' => true,
 			],
-			'Import done with Pro active and templates were imported by the Core runner but now the Pro deactivate' => [
+			'Import done with Pro active and templates were imported by the Core runner (runner not exits in the Pro) but now the Pro deactivate' => [
 				'has_pro' => false,
 				'import_session' => [
 					'runners' => [

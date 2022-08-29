@@ -1150,6 +1150,16 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
+	public function force_delete() {
+		$deleted = wp_delete_post( $this->post->ID, true );
+
+		return $deleted && ! is_wp_error( $deleted );
+	}
+
+	/**
 	 *
 	 * @since 3.6.0
 	 *

@@ -465,9 +465,7 @@ class WP_Import extends \WP_Importer {
 					$this->processed_terms[ (int) $term['term_id'] ] = $id['term_id'];
 					$result['succeed'][ (int) $term['term_id'] ] = $id['term_id'];
 
-					foreach ( $this->terms_meta as $meta_key => $meta_value ) {
-						update_term_meta( $id['term_id'], $meta_key, $meta_value );
-					}
+					$this->update_term_meta( $id['term_id'] );
 				}
 			} else {
 				/* translators: 1: Term taxonomy, 2: Term name. */
@@ -654,9 +652,7 @@ class WP_Import extends \WP_Importer {
 			} else {
 				$post_id = wp_insert_post( $postdata, true );
 
-				foreach ( $this->posts_meta as $meta_key => $meta_value ) {
-					update_post_meta( $post_id, $meta_key, $meta_value );
-				}
+				$this->update_post_meta( $post_id );
 
 				$comment_post_id = $post_id;
 				do_action( 'wp_import_insert_post', $post_id, $original_post_id, $postdata, $post );
@@ -709,9 +705,7 @@ class WP_Import extends \WP_Importer {
 						if ( ! is_wp_error( $t ) ) {
 							$term_id = $t['term_id'];
 
-							foreach ( $this->terms_meta as $meta_key => $meta_value ) {
-								update_term_meta( $term_id, $meta_key, $meta_value );
-							}
+							$this->update_term_meta( $term_id );
 
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
@@ -952,9 +946,7 @@ class WP_Import extends \WP_Importer {
 			$this->processed_menu_items[ (int) $item['post_id'] ] = (int) $id;
 			$result[ $item['post_id'] ] = $id;
 
-			foreach ( $this->posts_meta as $meta_key => $meta_value ) {
-				update_post_meta( $id, $meta_key, $meta_value );
-			}
+			$this->update_post_meta( $id );
 		}
 
 		return $result;
@@ -995,9 +987,7 @@ class WP_Import extends \WP_Importer {
 		// As per wp-admin/includes/upload.php.
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
 
-		foreach ( $this->posts_meta as $meta_key => $meta_value ) {
-			update_post_meta( $post_id, $meta_key, $meta_value );
-		}
+		$this->update_post_meta( $post_id );
 
 		wp_update_attachment_metadata( $post_id, wp_generate_attachment_metadata( $post_id, $upload['file'] ) );
 
@@ -1292,6 +1282,30 @@ class WP_Import extends \WP_Importer {
 		$term['term_name'] = $duplicate_name;
 
 		return $term;
+	}
+
+	/**
+	 * Add all term_meta to specified term.
+	 *
+	 * @param $term_id
+	 * @return void
+	 */
+	private function update_term_meta( $term_id ) {
+		foreach ( $this->terms_meta as $meta_key => $meta_value ) {
+			update_term_meta( $term_id, $meta_key, $meta_value );
+		}
+	}
+
+	/**
+	 * Add all post_meta to specified term.
+	 *
+	 * @param $post_id
+	 * @return void
+	 */
+	private function update_post_meta( $post_id ) {
+		foreach ( $this->posts_meta as $meta_key => $meta_value ) {
+			update_post_meta( $post_id, $meta_key, $meta_value );
+		}
 	}
 
 	public function run() {

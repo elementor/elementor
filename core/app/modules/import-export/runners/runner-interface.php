@@ -2,7 +2,13 @@
 
 namespace Elementor\Core\App\Modules\ImportExport\Runners;
 
+use Elementor\Core\App\Modules\ImportExport\Module;
+
 interface Runner_Interface {
+
+	const META_KEY_ELEMENTOR_IMPORT_SESSION_ID = Module::META_KEY_ELEMENTOR_IMPORT_SESSION_ID;
+
+	const META_KEY_ELEMENTOR_EDIT_MODE = Module::META_KEY_ELEMENTOR_EDIT_MODE;
 
 	/**
 	 * Get the name of the runners, used to identify the runner.

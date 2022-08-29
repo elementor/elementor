@@ -100,15 +100,15 @@ class Elementor_Content extends Import_Runner_Base {
 
 		$post_data['import_settings'] = $post_settings;
 
-		$update_callback = function( $attachment_id ) {
+		$new_attachment_callback = function( $attachment_id ) {
 			$this->set_session_post_meta( $attachment_id, $this->import_session_id );
 		};
 
-		add_filter( 'elementor/template_library/import_images/new_attachment', $update_callback );
+		add_filter( 'elementor/template_library/import_images/new_attachment', $new_attachment_callback );
 
 		$new_document->import( $post_data );
 
-		remove_filter( 'elementor/template_library/import_images/new_attachment', $update_callback );
+		remove_filter( 'elementor/template_library/import_images/new_attachment', $new_attachment_callback );
 
 		$new_post_id = $new_document->get_main_id();
 

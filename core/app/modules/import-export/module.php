@@ -43,6 +43,10 @@ class Module extends BaseModule {
 
 	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
 
+	const META_KEY_ELEMENTOR_IMPORT_SESSION_ID = '_elementor_import_session_id';
+
+	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
+
 
 	/**
 	 * Assigning the export process to a property, so we can use the process from outside the class.
@@ -59,9 +63,11 @@ class Module extends BaseModule {
 	public $import;
 
 	/**
+	 * Assigning the revert process to a property, so we can use the process from outside the class.
+	 *
 	 * @var Revert
 	 */
-	private $revert;
+	public $revert;
 
 	/**
 	 * Get name.

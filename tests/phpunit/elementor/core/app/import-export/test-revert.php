@@ -28,7 +28,7 @@ class Test_Revert extends Elementor_Test_Base {
 		$taxonomies = get_taxonomies();
 
 		$base_terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
-		$base_posts = get_posts( [ 'numberposts' => -1 ] );
+		$base_posts = get_posts( [ 'post_type' =>  'any', 'numberposts' => -1 ] );
 
 		$plugins_manager_mock = $this->getMockBuilder( Plugins_Manager::class )
 			->setMethods( [ 'install', 'activate' ] )
@@ -55,8 +55,8 @@ class Test_Revert extends Elementor_Test_Base {
 
 		$import->run();
 
-		$post_import_terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
-		$post_import_posts = get_posts( [ 'numberposts' => -1 ] );
+		$after_import__terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
+		$after_import__posts = get_posts( [ 'post_type' =>  'any', 'numberposts' => -1 ] );
 
 		// Act
 		$revert = new Revert();
@@ -64,14 +64,14 @@ class Test_Revert extends Elementor_Test_Base {
 		$revert->run();
 
 		// Assert
-		$post_revert_terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
-		$post_revert_posts = get_posts( [ 'numberposts' => -1 ] );
+		$after_revert__terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
+		$after_revert__posts = get_posts( [ 'post_type' =>  'any', 'numberposts' => -1 ] );
 
-		$this->assertEquals( $base_terms, $post_revert_terms );
-		$this->assertNotEquals( $post_import_terms, $post_revert_terms );
+		$this->assertEquals( $base_terms, $after_revert__terms );
+		$this->assertNotEquals( $after_import__terms, $after_revert__terms );
 
-		$this->assertEquals( $base_posts, $post_revert_posts );
-		$this->assertNotEquals( $post_import_posts, $post_revert_posts );
+		$this->assertEquals( $base_posts, $after_revert__posts );
+		$this->assertNotEquals( $after_import__posts, $after_revert__posts );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -99,8 +99,7 @@ class Test_Revert extends Elementor_Test_Base {
 		$import->register( new Import_Site_Settings() );
 		$import->run();
 
-		// TODO: is it redundant?
-		$post_import_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$after_import__kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$revert = new Revert();
 		$revert->register( new Revert_Site_Settings() );
@@ -109,28 +108,24 @@ class Test_Revert extends Elementor_Test_Base {
 		$revert->run();
 
 		// Assert
-		$post_revert_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$after_revert__kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$this->assertEquals( $original_kit, $post_revert_kit );
-		$this->assertNotEquals( $post_revert_kit, $post_import_kit );
+		$this->assertEquals( $original_kit, $after_revert__kit );
+		$this->assertNotEquals( $after_revert__kit, $after_import__kit );
 	}
 
 	public function test_run__revert_elementor_content_only() {
 		// Arrange
-		$old_option_page_on_front = get_option( 'page_on_front' );
-		$old_option_show_on_front = get_option( 'show_on_front' );
+		$document = $this->factory()->documents->publish_and_get();
 
-		$post = $this->factory()->post->create_and_get();
-
-		update_option( 'page_on_front', $post->ID );
-		update_option( 'show_on_front', 'post' );
+		update_option( 'page_on_front', $document->get_id() );
+		update_option( 'show_on_front', 'page' );
 
 		$import = new Import( static::ZIP_PATH );
 		$import->register( new Import_Elementor_Content() );
 		$import->run();
 
-		$post_import_option_page_on_front = get_option( 'page_on_front' );
-		$post_import_option_show_on_front = get_option( 'show_on_front' );
+		$after_import__option_page_on_front = get_option( 'page_on_front' );
 
 		$revert = new Revert();
 		$revert->register( new Revert_Elementor_Content() );
@@ -139,18 +134,13 @@ class Test_Revert extends Elementor_Test_Base {
 		$revert->run();
 
 		// Arrange
-		$post_revert_option_page_on_front = get_option( 'page_on_front' );
-		$post_revert_option_show_on_front = get_option( 'show_on_front' );
+		$after_revert__option_page_on_front = get_option( 'page_on_front' );
+		$after_revert__option_show_on_front = get_option( 'show_on_front' );
 
-		$this->assertEquals( $old_option_page_on_front, $post_revert_option_page_on_front );
-		$this->assertEquals( $old_option_show_on_front, $post_revert_option_show_on_front );
+		$this->assertEquals( $document->get_id(), $after_revert__option_page_on_front );
+		$this->assertEquals( 'page', $after_revert__option_show_on_front );
 
-		$this->assertNotEquals( $post_import_option_page_on_front, $post_revert_option_page_on_front );
-		$this->assertNotEquals( $post_import_option_show_on_front, $post_revert_option_show_on_front );
-
-		// Cleanups
-		update_option( 'page_on_front', $old_option_page_on_front );
-		update_option( 'show_on_front', $old_option_show_on_front );
+		$this->assertNotEquals( $after_import__option_page_on_front, $after_revert__option_page_on_front );
 	}
 
 	public function test_get_last_session_data() {

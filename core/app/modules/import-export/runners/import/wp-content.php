@@ -3,7 +3,6 @@
 namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
-use Elementor\Core\Utils\ImportExport\WP_Exporter;
 use Elementor\Core\Utils\ImportExport\WP_Import;
 
 class Wp_Content extends Import_Runner_Base {
@@ -67,10 +66,10 @@ class Wp_Content extends Import_Runner_Base {
 			'terms' => $imported_terms,
 			'taxonomies' => ! empty( $taxonomies[ $post_type ] ) ? $taxonomies[ $post_type ] : [],
 			'posts_meta' => [
-				static::IMPORT_SESSION_META_KEY => $this->import_session_id,
+				static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID => $this->import_session_id,
 			],
 			'terms_meta' => [
-				static::IMPORT_SESSION_META_KEY => $this->import_session_id,
+				static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID => $this->import_session_id,
 			],
 		];
 
