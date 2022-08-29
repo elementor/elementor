@@ -86,7 +86,7 @@ class Module extends BaseModule {
 		} else {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu_legacy( $admin_menu );
-			}, 25 /* After "Landing Pages" */ );
+			}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
 		}
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {

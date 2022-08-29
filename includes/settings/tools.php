@@ -169,7 +169,7 @@ class Tools extends Settings_Page {
 		} else {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
-			} );
+			}, Settings::ADMIN_MENU_PRIORITY + 20 );
 		}
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );

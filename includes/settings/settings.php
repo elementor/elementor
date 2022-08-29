@@ -57,6 +57,8 @@ class Settings extends Settings_Page {
 	 */
 	const TAB_ADVANCED = 'advanced';
 
+	const ADMIN_MENU_PRIORITY = 10;
+
 	/**
 	 * Register admin menu.
 	 *
@@ -65,14 +67,26 @@ class Settings extends Settings_Page {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	 */
-	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
+	public function register_admin_menu() {
 		global $menu;
 
 		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		$admin_menu->register( static::PAGE_ID, new Admin_Menu_Item( $this ) );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		add_menu_page(
+			esc_html__( 'Elementor', 'elementor' ),
+			esc_html__( 'Elementor', 'elementor' ),
+			'manage_options',
+			self::PAGE_ID,
+			[ $this, 'display_settings_page' ],
+			'',
+			'58.5'
+		);
 	}
 
 	/**
@@ -396,9 +410,7 @@ class Settings extends Settings_Page {
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->register_admin_menu( $admin_menu );
-			}, 0 /* First to make sure that legacy menus will also be able to hook into it */ );
+			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->register_knowledge_base_menu( $admin_menu );

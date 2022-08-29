@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
 use Elementor\Plugin;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -120,7 +121,7 @@ class Module extends BaseModule {
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
 				$this->register_menu( $admin_menu_manager );
-			} );
+			}, Settings::ADMIN_MENU_PRIORITY + 30 );
 		}
 
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );

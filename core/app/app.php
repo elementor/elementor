@@ -256,7 +256,7 @@ class App extends BaseApp {
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );
-		}, 15 /* After "Saved Templates" */ );
+		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
 
 		// Happens after WP plugin page validation.
 		add_filter( 'add_menu_classes', [ $this, 'fix_submenu' ] );

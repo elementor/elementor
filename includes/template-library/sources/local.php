@@ -62,6 +62,8 @@ class Source_Local extends Source_Base {
 
 	const ADMIN_MENU_SLUG = 'edit.php?post_type=elementor_library';
 
+	const ADMIN_MENU_PRIORITY = 10;
+
 	const ADMIN_SCREEN_ID = 'edit-elementor_library';
 
 	/**
@@ -1570,7 +1572,7 @@ class Source_Local extends Source_Base {
 		if ( is_admin() ) {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu( $admin_menu );
-			} );
+			}, static::ADMIN_MENU_PRIORITY );
 
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu_reorder( $admin_menu );
