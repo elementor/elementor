@@ -17,9 +17,9 @@ runs:
       id: bump_version_step
       run: |
             npm install --no-package-lock --no-save semver@7.3.4
-            PREV_PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
+            PREV_PACKAGE_VERSION=$(node -p "require('./package.json').last_${{ inputs.CHANNEL }}_version")
             NEW_PACKAGE_VERSION=$(node ./.github/scripts/update-prerelease-version.js ${{ inputs.CHANNEL }})
-            PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
+            PACKAGE_VERSION=$(node -p "require('./package.json').last_${{ inputs.CHANNEL }}_version")
             echo "PACKAGE_VERSION=${NEW_PACKAGE_VERSION}" >> $GITHUB_ENV
             echo "::set-output name=prev_version::${PREV_PACKAGE_VERSION}"
             echo "PACKAGE_VERSION : ${PACKAGE_VERSION}"
