@@ -435,15 +435,25 @@ class Server extends Base {
 	 * @return string
 	 */
 	public function get_system_path( $path_key ) : string {
-		$system_paths = [
-			static::KEY_PATH_WP_ROOT_DIR => ABSPATH,
-			static::KEY_PATH_HTACCESS_FILE => file_exists( ABSPATH . '/.htaccess' ) ? ABSPATH . '/.htaccess' : '',
-			static::KEY_PATH_WP_CONTENT_DIR => WP_CONTENT_DIR,
-			static::KEY_PATH_UPLOADS_DIR => wp_upload_dir()['basedir'] ?? '',
-			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => ! empty( wp_upload_dir()['basedir'] ) ? wp_upload_dir()['basedir'] . '/elementor' : '',
-		];
+		switch ( $path_key ) {
+			case static::KEY_PATH_WP_ROOT_DIR:
+				return ABSPATH;
 
-		return $system_paths[ $path_key ] ?? '';
+			case static::KEY_PATH_WP_CONTENT_DIR:
+				return WP_CONTENT_DIR;
+
+			case static::KEY_PATH_HTACCESS_FILE:
+				return file_exists( ABSPATH . '/.htaccess' ) ? ABSPATH . '/.htaccess' : '';
+
+			case static::KEY_PATH_UPLOADS_DIR:
+				return wp_upload_dir()['basedir'] ?? '';
+
+			case static::KEY_PATH_ELEMENTOR_UPLOADS_DIR:
+				return ! empty( wp_upload_dir()['basedir'] ) ? wp_upload_dir()['basedir'] . '/elementor' : '';
+
+			default:
+				return '';
+		}
 	}
 
 	/**
