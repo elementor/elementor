@@ -207,12 +207,12 @@
 
 			// Make sure that the previous placeholders are removed before inserting a new one.
 
-			console.log( 'placeholders' );
-			console.log( elementsCache.$element );
-			console.log( 'parent placeholders' );
-			// console.log( elementsCache.$element[0].parent() );
-			console.log( elementsCache.$element.parent() );
-			elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
+			// console.log( 'placeholders' );
+			// console.log( elementsCache.$element );
+			// console.log( 'parent placeholders' );
+			// // console.log( elementsCache.$element[0].parent() );
+			// console.log( elementsCache.$element.parent() );
+			// elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
@@ -220,6 +220,8 @@
 				isColumnContainer = $parentContainers[0]?.classList.contains( 'e-container--column' ),
 				isRowContainer = $parentContainers[0]?.classList.contains( 'e-container--row' ) || $parentContainers[1]?.classList.contains( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
+
+			elementsCache.$element.find( '.elementor-widget-placeholder' ).remove();
 
 			if ( isRowContainer && ! isFirstInsert && ! isColumnContainer ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
