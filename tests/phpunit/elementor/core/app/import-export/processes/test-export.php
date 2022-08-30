@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport;
+namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport\Processes;
 
 use Elementor\Core\App\Modules\ImportExport\Runners\Export\Elementor_Content;
 use Elementor\Core\App\Modules\ImportExport\Runners\Export\Plugins;

@@ -157,6 +157,10 @@ class Wp_Cli extends \WP_CLI_Command {
 			 */
 			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
 
+			if ( ! $import_export_module ) {
+				\WP_CLI::error( 'Import Export module is not available.' );
+			}
+
 			$import = $import_export_module->import_kit( $zip_path, $import_settings );
 
 			$manifest_data = $import_export_module->import->get_manifest();

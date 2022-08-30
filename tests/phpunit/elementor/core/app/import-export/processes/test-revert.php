@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport;
+namespace Elementor\Tests\Phpunit\Elementor\Core\App\ImportExport\Processes;
 
 use Elementor\Core\App\Modules\ImportExport\Module;
 use Elementor\Core\App\Modules\ImportExport\Processes\Revert;
@@ -17,7 +17,7 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Revert extends Elementor_Test_Base {
-	const ZIP_PATH = __DIR__ . '/mock/sample-kit.zip';
+	const MOCK_KIT_ZIP_PATH = __DIR__ . '/../mock/sample-kit.zip';
 
 	public function test_run__revert_all_one_imported_only() {
 		// Arrange
@@ -44,7 +44,7 @@ class Test_Revert extends Elementor_Test_Base {
 				'succeeded' => []
 			] );
 
-		$import = new Import( static::ZIP_PATH );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH );
 
 		$import->register( new Import_Plugins( $plugins_manager_mock ) );
 		$import->register( new Import_Site_Settings() );
@@ -95,7 +95,7 @@ class Test_Revert extends Elementor_Test_Base {
 		// Arrange
 		$original_kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$import = new Import( static::ZIP_PATH );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH );
 		$import->register( new Import_Site_Settings() );
 		$import->run();
 
@@ -121,7 +121,7 @@ class Test_Revert extends Elementor_Test_Base {
 		update_option( 'page_on_front', $document->get_id() );
 		update_option( 'show_on_front', 'page' );
 
-		$import = new Import( static::ZIP_PATH );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH );
 		$import->register( new Import_Elementor_Content() );
 		$import->run();
 
