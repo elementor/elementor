@@ -214,8 +214,8 @@
 				$targetParentContainer = $targetContainer.parent()?.closest( '.e-container' ),
 				isWidget = $currentElement.hasClass( 'elementor-widget' ),
 				hasColumnContainer = $targetContainer?.hasClass( 'e-container--column' ),
-				hasRowContainer = $targetContainer?.hasClass( 'e-container--row'),
-				hasRowParentContainer = $targetParentContainer?.hasClass( 'e-container--row'),
+				hasRowContainer = $targetContainer?.hasClass( 'e-container--row' ),
+				hasRowParentContainer = $targetParentContainer?.hasClass( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( ( hasRowContainer || hasRowParentContainer ) && ! isFirstInsert && ( hasColumnContainer && ! isWidget ) ) {
