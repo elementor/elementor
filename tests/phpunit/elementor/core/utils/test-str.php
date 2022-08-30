@@ -39,4 +39,14 @@ class Test_Str extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( $expected, $encoded_url );
 	}
+
+	public function test_ends_with() {
+		// Arrange
+		$str1 = 'test-str';
+		$str2 = 'test-str-2';
+
+		// Act & Assert
+		$this->assertTrue( Str::ends_with( $str1, 'str' ) );
+		$this->assertFalse( Str::ends_with( $str2, 'str' ) );
+	}
 }
