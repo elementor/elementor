@@ -210,15 +210,15 @@
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-			isRowContainer = $currentElement.parents( '.e-container--row' ).length,
-			isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
+				$targetContainer = $currentElement.closest( '.e-container' ),
+				$targetParentContainer = $targetContainer.parent()?.closest( '.e-container' ),
+				isWidget = $currentElement.hasClass( 'elementor-widget' ),
+				hasColumnContainer = $targetContainer?.hasClass( 'e-container--column' ),
+				hasRowContainer = $targetContainer?.hasClass( 'e-container--row'),
+				hasRowParentContainer = $targetParentContainer?.hasClass( 'e-container--row'),
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
-			if ( isRowContainer && ! isFirstInsert ) {
-				// Force the placeholder to be inserted before or after the container wrapper. 
-				if ( $currentElement.hasClass( 'e-container__inner' ) ) {
-					$currentElement = $currentElement.closest( '.e-container' );
-				}
-
+			if ( ( hasRowContainer || hasRowParentContainer ) && ! isFirstInsert && ( hasColumnContainer && ! isWidget ) ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
