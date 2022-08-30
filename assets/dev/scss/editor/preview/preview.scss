@@ -40,7 +40,8 @@ html.elementor-html {
 	--secondary-color: #{ darken($editor-info, 20%) };
 	--outline-color: var( --primary-color );
 
-	.e-container, .e-container__inner {
+	.e-container,
+	.e-container__inner {
 		--primary-color: #{ $editor-container-primary };
 		--secondary-color: #{ darken( $editor-container-primary, 10% ) };
 		--outline-color: var( --primary-color );

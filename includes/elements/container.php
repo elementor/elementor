@@ -275,11 +275,7 @@ class Container extends Element_Base {
 	}
 
 	private function is_boxed_container( array $settings ) {
-		if ( ! empty( $settings['content_width'] ) && 'boxed' === $settings['content_width'] ) {
-			return true;
-		}
-
-		return false;
+		return ! empty( $settings['content_width'] ) && 'boxed' === $settings['content_width'];
 	}
 
 	/**

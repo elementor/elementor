@@ -182,7 +182,7 @@
 	--order: initial;
 	--align-self: initial;
 
-	&:where( .e-container--width-full ), &:where( .elementor-widget ) {
+	&:where( .e-container--width-full, .elementor-widget ) {
 		// Flex container.
 		flex-direction: var( --flex-direction );
 		flex-wrap: var( --flex-wrap );

@@ -48,18 +48,20 @@
 	transition: var( --transition );
 	isolation: isolate;
 
-	&--width-full, & > .e-container__inner {
+	&--width-full,
+	> .e-container__inner {
 		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
 		padding-top: var( --padding-top );
 		padding-bottom: var( --padding-bottom );
 	}
 
-	&, & > .e-container__inner {
+	&,
+	> .e-container__inner {
 		display: var( --display );
 	}
 
-	// Set default values to the outer div of the boxed container (ED-7867).
+	// Set default values to the outer div of the boxed container.
 	&--width-boxed {
 		flex-direction: column;
 		text-align: initial;
@@ -82,9 +84,9 @@
 		padding-inline: 0;
 		height: 100%;	
 
-		// Set default values to the inner div of the boxed container (ED-7867).
+		// Set default values to the inner div of the boxed container.
 		flex-basis: initial;
-		// Ensure that the inner div covers the full height of the container (ED-7867).
+		// Ensure that the inner div covers the full height of the container.
 		flex-grow: 1;
 		flex-shrink: initial;
 		align-self: initial;

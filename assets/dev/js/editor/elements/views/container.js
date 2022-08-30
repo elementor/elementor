@@ -138,9 +138,10 @@ const ContainerView = BaseElementView.extend( {
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggingInSameParent = ( draggedView?.parent === this );
+					draggingInSameParent = ( draggedView?.parent === this ),
+					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-container__inner' );
 
-				let $elements = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ) ? jQuery( event.currentTarget.parentElement.parentElement ).find( '> .elementor-element' ) : jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+				let $elements = hasInnerContainer ? jQuery( event.currentTarget.parentElement.parentElement ).find( '> .elementor-element' ) : jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
 
 				// Exclude the dragged element from the indexing calculations.
 				if ( draggingInSameParent ) {
@@ -149,7 +150,7 @@ const ContainerView = BaseElementView.extend( {
 
 				const widgetsArray = Object.values( $elements );
 
-				let newIndex = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ) ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
+				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
@@ -359,7 +360,7 @@ const ContainerView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-			this.droppableInitialise( this.container.settings );
+			this.droppableInitialize( this.container.settings );
 		} );
 	},
 
@@ -367,17 +368,17 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		if ( settings.changed.flex_direction || settings.changed.content_width ) {
-			this.droppableDestroy( settings );
-			this.droppableInitialise( settings );
+			this.droppableDestroy();
+			this.droppableInitialize( settings );
 		}
 	},
 
 	onDragStart() {
-		this.droppableDestroy( this.container.settings );
+		this.droppableDestroy();
 	},
 
 	onDragEnd() {
-		this.droppableInitialise( this.container.settings );
+		this.droppableInitialize( this.container.settings );
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -427,26 +428,16 @@ const ContainerView = BaseElementView.extend( {
 		}
 	},
 
-	droppableDestroy( settings ) {
-		if ( settings.containerDroppable ) {
-			this.$el.html5Droppable( 'destroy' );
-		}
-
-		if ( settings.containerDroppableInner ) {
-			this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
-		}
-
-		settings.containerDroppable = false;
-		settings.containerDroppableInner = false;
+	droppableDestroy() {
+		this.$el.html5Droppable( 'destroy' );
+		this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
 	},
 
-	droppableInitialise( settings ) {
+	droppableInitialize( settings ) {
 		if ( 'boxed' === settings.get( 'content_width' ) ) {
 			this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
-			settings.containerDroppableInner = true;
 		} else {
 			this.$el.html5Droppable( this.getDroppableOptions() );
-			settings.containerDroppable = true;
 		}
 	},
 } );
