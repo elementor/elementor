@@ -63,7 +63,7 @@ function useMenuItems( path ) {
 
 		return [
 			{
-				label: __( 'All Template Kits', 'elementor' ),
+				label: __( 'All Website Kits', 'elementor' ),
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
@@ -208,7 +208,7 @@ export default function Index( props ) {
 					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
 							// eslint-disable-next-line @wordpress/i18n-ellipsis
-							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
+							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
@@ -228,10 +228,27 @@ export default function Index( props ) {
 					>
 						<SortSelect
 							options={ [
-								{ label: __( 'Featured', 'elementor' ), value: 'featuredIndex' },
-								{ label: __( 'New', 'elementor' ), value: 'createdAt' },
-								{ label: __( 'Popular', 'elementor' ), value: 'popularityIndex' },
-								{ label: __( 'Trending', 'elementor' ), value: 'trendIndex' },
+								{
+									label: __( 'Featured', 'elementor' ),
+									value: 'featuredIndex',
+									defaultOrder: 'asc',
+									orderDisabled: true,
+								},
+								{
+									label: __( 'New', 'elementor' ),
+									value: 'createdAt',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Popular', 'elementor' ),
+									value: 'popularityIndex',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Trending', 'elementor' ),
+									value: 'trendIndex',
+									defaultOrder: 'desc',
+								},
 							] }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }

@@ -9,6 +9,7 @@ const KIT_STATUS_MAP = Object.freeze( {
 		EXPORTED: 'exported',
 		ERROR: 'error',
 	} ),
+	UPLOAD_KIT_KEY = 'elementor_upload_kit',
 	IMPORT_KIT_KEY = 'elementor_import_kit',
 	EXPORT_KIT_KEY = 'elementor_export_kit';
 
@@ -22,11 +23,8 @@ export default function useKit() {
 		uploadKit = ( { file, kitLibraryNonce } ) => {
 			setAjax( {
 				data: {
-					action: IMPORT_KIT_KEY,
+					action: UPLOAD_KIT_KEY,
 					e_import_file: file,
-					data: JSON.stringify( {
-						stage: 1,
-					} ),
 					...( kitLibraryNonce ? { e_kit_library_nonce: kitLibraryNonce } : {} ),
 				},
 			} );
@@ -36,7 +34,6 @@ export default function useKit() {
 				data: {
 					action: IMPORT_KIT_KEY,
 					data: {
-						stage: 2,
 						session,
 						include,
 						overrideConditions,
