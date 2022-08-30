@@ -89,7 +89,7 @@
     },
     "dependencies": {
         "@reduxjs/toolkit": "^1.8.3",
-        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/jest-dom": "^5.16.5",
         "acorn": "^8.7.1",
         "core-js": "^3.24.1",
         "grunt-cli": "^1.4.3",
