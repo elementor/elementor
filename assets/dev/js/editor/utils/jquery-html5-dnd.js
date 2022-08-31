@@ -202,24 +202,24 @@
 
 		var insertPlaceholder = function() {
 			if ( ! settings.placeholder ) {
-				return;
+			   return;
 			}
-
-			// Make sure that the previous placeholder is removed before inserting a new one.
-			elementsCache.$element.find( '.elementor-widget-placeholder' )?.remove();
-
+		 
 			// Fix placeholder placement for Container with `flex-direction: row`.
-			const $currentElement = $( currentElement ).hasClass( 'e-container__inner' ) ? $( currentElement ).closest( '.e-container' ) : $( currentElement ),
+			const $currentElement = $( currentElement ),
 				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
-
+		 
+			// Make sure that the previous placeholder is removed before inserting a new one.
+			$currentElement.closest( '.e-container' ).parent().closest( '.e-container' ).find( '.elementor-widget-placeholder' )?.remove();
+		 
 			if ( isRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				$currentElement[ insertMethod ]( elementsCache.$placeholder );
-
-				return;
+			   const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+			   $currentElement[ insertMethod ]( elementsCache.$placeholder );
+		 
+			   return;
 			}
-
+		 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
