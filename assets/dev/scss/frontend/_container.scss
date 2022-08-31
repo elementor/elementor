@@ -49,7 +49,7 @@
 	isolation: isolate;
 
 	&--width-full,
-	> .e-container__inner {
+	& > .e-container__inner {
 		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
 		padding-top: var( --padding-top );
@@ -57,7 +57,7 @@
 	}
 
 	&,
-	> .e-container__inner {
+	& > .e-container__inner {
 		display: var( --display );
 	}
 
