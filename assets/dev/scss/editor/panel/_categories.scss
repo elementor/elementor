@@ -1,4 +1,8 @@
 // Panel elements categories
+#elementor-panel-elements-categories {
+	padding-bottom: 10px;
+}
+
 .elementor-panel-category {
 	position: relative;
 
@@ -52,5 +56,10 @@
 
 	&-items {
 		padding: 0 10px;
+
+		&-empty {
+			grid-column-start: 1;
+			grid-column-end: 3;
+		}
 	}
 }

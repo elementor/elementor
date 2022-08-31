@@ -22,6 +22,7 @@ export default function Dialog( props ) {
 					onClick={ props.dismissButtonOnClick }
 					url={ props.dismissButtonUrl }
 					target={ props.dismissButtonTarget }
+					// eslint-disable-next-line jsx-a11y/tabindex-no-positive
 					tabIndex="2"
 				/>
 				<DialogButton
@@ -31,6 +32,8 @@ export default function Dialog( props ) {
 					url={ props.approveButtonUrl }
 					target={ props.approveButtonTarget }
 					color={ props.approveButtonColor }
+					elRef={ props.approveButtonRef }
+					// eslint-disable-next-line jsx-a11y/tabindex-no-positive
 					tabIndex="1"
 				/>
 			</DialogActions>
@@ -53,6 +56,7 @@ Dialog.propTypes = {
 	approveButtonUrl: PropTypes.string,
 	approveButtonColor: PropTypes.string,
 	approveButtonTarget: PropTypes.string,
+	approveButtonRef: PropTypes.object,
 };
 
 Dialog.defaultProps = {};

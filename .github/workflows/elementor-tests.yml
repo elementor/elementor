@@ -5,7 +5,7 @@ on: [push, pull_request_target]
 jobs:
   run:
     if: github.repository_owner == 'elementor'
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
     steps:
@@ -24,4 +24,4 @@ jobs:
           token: ${{ env.TOKEN }}
           repository: ${{ env.REMOTE_TESTS_REPO }}
           event-type: remote-tests
-          client-payload: '{ "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'
+          client-payload: '{ "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.event.pull_request.head.sha || github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'

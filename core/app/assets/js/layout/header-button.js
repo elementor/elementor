@@ -1,8 +1,9 @@
 import BaseButton from '../ui/molecules/button';
 
 export default class Button extends BaseButton {
-	static defaultProps = Object.assign( {} /* clone */, BaseButton.defaultProps, {
-			hideText: true,
+	static defaultProps = Object.assign( {} /* Clone */, BaseButton.defaultProps, {
+		hideText: true,
+		includeHeaderBtnClass: true,
 	} );
 
 	getCssId() {
@@ -10,6 +11,11 @@ export default class Button extends BaseButton {
 	}
 
 	getClassName() {
+		// Avoid using the 'eps-app__header-btn' class to make sure it is not override custom styles.
+		if ( ! this.props.includeHeaderBtnClass ) {
+			return super.getClassName();
+		}
+
 		return `eps-app__header-btn ` + super.getClassName();
 	}
 }

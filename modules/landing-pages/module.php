@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
+use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -41,9 +42,10 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'landing-pages',
-			'title' => __( 'Landing Pages', 'elementor' ),
-			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'title' => esc_html__( 'Landing Pages', 'elementor' ),
+			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
@@ -67,6 +69,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
 		$trashed_posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
@@ -95,6 +98,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any landing pages.
 		$posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
@@ -123,6 +127,37 @@ class Module extends BaseModule {
 		return self::CPT === $post->post_type;
 	}
 
+	private function get_menu_args() {
+		$posts = $this->get_landing_page_posts();
+
+		// If there are no Landing Pages, show the "Create Your First Landing Page" page.
+		// If there are, show the pages table.
+		if ( ! empty( $posts ) ) {
+			$menu_slug = self::ADMIN_PAGE_SLUG;
+			$function = null;
+		} else {
+			$menu_slug = self::CPT;
+			$function = [ $this, 'print_empty_landing_pages_page' ];
+		}
+
+		return [
+			'menu_slug' => $menu_slug,
+			'function' => $function,
+		];
+	}
+
+	private function register_admin_menu( MainMenu $menu ) {
+		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
+
+		$menu_args = array_merge( $this->get_menu_args(), [
+			'page_title' => $landing_pages_title,
+			'menu_title' => $landing_pages_title,
+			'index' => 20,
+		] );
+
+		$menu->add_submenu( $menu_args );
+	}
+
 	/**
 	 * Add Submenu Page
 	 *
@@ -130,28 +165,18 @@ class Module extends BaseModule {
 	 *
 	 * @since 3.1.0
 	 */
-	private function add_submenu_page() {
-		$posts = $this->get_landing_page_posts();
+	private function register_admin_menu_legacy() {
+		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
 
-		// If there are no Landing Pages, show the "Create Your First Landing Page" page.
-		// If there are, show the pages table.
-		if ( ! empty( $posts ) ) {
-			$landing_page_menu_slug = self::ADMIN_PAGE_SLUG;
-			$landing_page_menu_callback = null;
-		} else {
-			$landing_page_menu_slug = self::CPT;
-			$landing_page_menu_callback = [ $this, 'print_empty_landing_pages_page' ];
-		}
-
-		$landing_pages_title = __( 'Landing Pages', 'elementor' );
+		$menu_args = $this->get_menu_args();
 
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
 			$landing_pages_title,
 			$landing_pages_title,
 			'manage_options',
-			$landing_page_menu_slug,
-			$landing_page_menu_callback
+			$menu_args['menu_slug'],
+			$menu_args['function']
 		);
 	}
 
@@ -168,7 +193,7 @@ class Module extends BaseModule {
 	 */
 	private function get_add_new_landing_page_url() {
 		if ( ! $this->new_lp_url ) {
-			$this->new_lp_url = Utils::get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
+			$this->new_lp_url = Plugin::$instance->documents->get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
 		}
 		return $this->new_lp_url;
 	}
@@ -190,11 +215,18 @@ class Module extends BaseModule {
 		<div class="e-landing-pages-empty">
 		<?php
 		/** @var Source_Local $source_local */
-		$source_local->print_blank_state_template( __( 'Landing Page', 'elementor' ), $this->get_add_new_landing_page_url(), __( 'Build Effective Landing Pages for your business\' marketing campaigns.', 'elementor' ) );
+		$source_local->print_blank_state_template( esc_html__( 'Landing Page', 'elementor' ), $this->get_add_new_landing_page_url(), esc_html__( 'Build Effective Landing Pages for your business\' marketing campaigns.', 'elementor' ) );
 
 		if ( ! empty( $trashed_posts ) ) : ?>
 			<div class="e-trashed-items">
-				<?php echo sprintf( __( 'Or view <a href="%s">Trashed Items</a>', 'elementor' ), admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ); ?>
+				<?php
+					printf(
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
+						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ) . '">',
+						'</a>'
+					);
+				?>
 			</div>
 		<?php endif; ?>
 		</div>
@@ -248,19 +280,19 @@ class Module extends BaseModule {
 	 */
 	private function register_landing_page_cpt() {
 		$labels = [
-			'name' => __( 'Landing Pages', 'elementor' ),
-			'singular_name' => __( 'Landing Page', 'elementor' ),
-			'add_new' => __( 'Add New', 'elementor' ),
-			'add_new_item' => __( 'Add New Landing Page', 'elementor' ),
-			'edit_item' => __( 'Edit Landing Page', 'elementor' ),
-			'new_item' => __( 'New Landing Page', 'elementor' ),
-			'all_items' => __( 'All Landing Pages', 'elementor' ),
-			'view_item' => __( 'View Landing Page', 'elementor' ),
-			'search_items' => __( 'Search Landing Pages', 'elementor' ),
-			'not_found' => __( 'No landing pages found', 'elementor' ),
-			'not_found_in_trash' => __( 'No landing pages found in trash', 'elementor' ),
+			'name' => esc_html__( 'Landing Pages', 'elementor' ),
+			'singular_name' => esc_html__( 'Landing Page', 'elementor' ),
+			'add_new' => esc_html__( 'Add New', 'elementor' ),
+			'add_new_item' => esc_html__( 'Add New Landing Page', 'elementor' ),
+			'edit_item' => esc_html__( 'Edit Landing Page', 'elementor' ),
+			'new_item' => esc_html__( 'New Landing Page', 'elementor' ),
+			'all_items' => esc_html__( 'All Landing Pages', 'elementor' ),
+			'view_item' => esc_html__( 'View Landing Page', 'elementor' ),
+			'search_items' => esc_html__( 'Search Landing Pages', 'elementor' ),
+			'not_found' => esc_html__( 'No landing pages found', 'elementor' ),
+			'not_found_in_trash' => esc_html__( 'No landing pages found in trash', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => __( 'Landing Pages', 'elementor' ),
+			'menu_name' => esc_html__( 'Landing Pages', 'elementor' ),
 		];
 
 		$args = [
@@ -342,7 +374,11 @@ class Module extends BaseModule {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.
-			$query->set( 'name', $query->query['pagename'] );
+			add_filter( 'pre_redirect_guess_404_permalink', function( $value ) use ( $query ) {
+				set_query_var( 'name', $query->query['pagename'] );
+
+				return $value;
+			} );
 		}
 	}
 
@@ -391,6 +427,7 @@ class Module extends BaseModule {
 
 		// Search for a Landing Page with the same name passed as the 'category name'.
 		$possible_new_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'name' => $query->query['category_name'],
 		] );
@@ -434,9 +471,15 @@ class Module extends BaseModule {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
 
-		add_action( 'admin_menu', function() {
-			$this->add_submenu_page();
-		}, 30 );
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
+				$this->register_admin_menu( $menu );
+			} );
+		} else {
+			add_action( 'admin_menu', function() {
+				$this->register_admin_menu_legacy();
+			}, 30 );
+		}
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
 		add_action( 'elementor/admin/localize_settings', function( array $settings ) {

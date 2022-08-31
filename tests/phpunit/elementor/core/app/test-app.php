@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\App;
 use Elementor\Core\App\App;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_App extends Elementor_Test_Base {
 	static $submenu_mock = [

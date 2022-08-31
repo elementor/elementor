@@ -24,8 +24,11 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		const elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
 			isSingleSlide = 1 === slidesToShow,
-			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
-			elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
+			elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
+			defaultSlidesToShowMap = {
+				mobile: 1,
+				tablet: isSingleSlide ? 1 : 2,
+			};
 
 		const swiperOptions = {
 			slidesPerView: slidesToShow,
@@ -36,15 +39,19 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 
 		swiperOptions.breakpoints = {};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.mobile.value ] = {
-			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
-			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
-		};
+		let lastBreakpointSlidesToShowValue = slidesToShow;
 
-		swiperOptions.breakpoints[ elementorBreakpoints.tablet.value ] = {
-			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
-			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
-		};
+		Object.keys( elementorBreakpoints ).reverse().forEach( ( breakpointName ) => {
+			// Tablet has a specific default `slides_to_show`.
+			const defaultSlidesToShow = defaultSlidesToShowMap[ breakpointName ] ? defaultSlidesToShowMap[ breakpointName ] : lastBreakpointSlidesToShowValue;
+
+			swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ] = {
+				slidesPerView: +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow,
+				slidesPerGroup: +elementSettings[ 'slides_to_scroll_' + breakpointName ] || 1,
+			};
+
+			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
+		} );
 
 		if ( 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
@@ -85,13 +92,18 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			};
 		}
 
+		if ( 'yes' === elementSettings.lazyload ) {
+			swiperOptions.lazy = {
+				loadPrevNext: true,
+				loadPrevNextAmount: 1,
+			};
+		}
+
 		return swiperOptions;
 	}
 
 	async onInit( ...args ) {
 		super.onInit( ...args );
-
-		const elementSettings = this.getElementSettings();
 
 		if ( ! this.elements.$swiperContainer.length || 2 > this.elements.$slides.length ) {
 			return;
@@ -104,6 +116,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		// Expose the swiper instance in the frontend
 		this.elements.$swiperContainer.data( 'swiper', this.swiper );
 
+		const elementSettings = this.getElementSettings();
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}

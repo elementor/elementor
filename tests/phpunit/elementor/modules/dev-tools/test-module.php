@@ -1,8 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\DevTools;
 
-use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\DevTools\Module;
 
 class Elementor_Test_Module extends Elementor_Test_Base {
@@ -17,13 +16,13 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->module = new Module();
 	}
 
-	public function test_localize_settings() {
-		$this->module->deprecation->deprecated_function(__FUNCTION__, '0.0.0', '', '0.0.0'  );
+	public function test_get_settings() {
+		// Act.
+		$settings = $this->module->get_settings();
 
-		$result = $this->module->localize_settings( [] );
-
-		$this->assertEqualSets( [
-			'0.0.0',
-			'',
-		], $result['dev_tools']['deprecation']['soft_notices'][ __FUNCTION__ ] );	}
+		// Assert.
+		$this->assertArrayHasKey( 'isDebug', $settings );
+		$this->assertArrayHasKey( 'urls', $settings );
+		$this->assertArrayHasKey( 'deprecation', $settings );
+	}
 }

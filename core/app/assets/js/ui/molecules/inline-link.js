@@ -34,17 +34,27 @@ export default function InlineLink( props ) {
 				target={ props.target }
 				rel={ props.rel }
 				className={ className }
+				onClick={ props.onClick }
 			>
 				{ props.children }
 			</a>
+		),
+		getActionLink = () => (
+			<button className={ className } onClick={ props.onClick }>
+				{ props.children }
+			</button>
 		);
+
+	if ( ! props.url ) {
+		return getActionLink();
+	}
 
 	return props.url.includes( 'http' ) ? getExternalLink() : getRouterLink();
 }
 
 InlineLink.propTypes = {
 	className: PropTypes.string,
-	children: PropTypes.string,
+	children: PropTypes.any,
 	url: PropTypes.string,
 	target: PropTypes.string,
 	rel: PropTypes.string,
@@ -52,6 +62,7 @@ InlineLink.propTypes = {
 	color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
 	underline: PropTypes.oneOf( [ 'none', 'hover', 'always' ] ),
 	italic: PropTypes.bool,
+	onClick: PropTypes.func,
 };
 
 InlineLink.defaultProps = {

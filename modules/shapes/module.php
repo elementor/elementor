@@ -9,40 +9,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends \Elementor\Core\Base\Module {
 
 	/**
+	 * Return a translated user-friendly list of the available SVG shapes.
+	 *
 	 * @param bool $add_custom Determine if the output should include the `Custom` option.
 	 *
 	 * @return array List of paths.
 	 */
 	public static function get_paths( $add_custom = true ) {
 		$paths = [
-			'wave' => __( 'Wave', 'elementor' ),
-			'arc' => __( 'Arc', 'elementor' ),
-			'circle' => __( 'Circle', 'elementor' ),
-			'line' => __( 'Line', 'elementor' ),
-			'oval' => __( 'Oval', 'elementor' ),
-			'spiral' => __( 'Spiral', 'elementor' ),
+			'wave' => esc_html__( 'Wave', 'elementor' ),
+			'arc' => esc_html__( 'Arc', 'elementor' ),
+			'circle' => esc_html__( 'Circle', 'elementor' ),
+			'line' => esc_html__( 'Line', 'elementor' ),
+			'oval' => esc_html__( 'Oval', 'elementor' ),
+			'spiral' => esc_html__( 'Spiral', 'elementor' ),
 		];
 
 		if ( $add_custom ) {
-			$paths['custom'] = __( 'Custom', 'elementor' );
+			$paths['custom'] = esc_html__( 'Custom', 'elementor' );
 		}
 
 		return $paths;
 	}
 
 	/**
-	 * @param $path string Path name.
+	 * Get an SVG Path URL from the pre-defined ones.
 	 *
-	 * @return string The path SVG markup.
+	 * @param string $path - Path name.
+	 *
+	 * @return string
 	 */
-	public static function get_path_svg( $path ) {
-		$file_name = ELEMENTOR_ASSETS_PATH . 'svg-paths/' . $path . '.svg';
-
-		if ( ! is_file( $file_name ) ) {
-			return '';
-		}
-
-		return file_get_contents( $file_name );
+	public static function get_path_url( $path ) {
+		return ELEMENTOR_ASSETS_URL . 'svg-paths/' . $path . '.svg';
 	}
 
 	/**

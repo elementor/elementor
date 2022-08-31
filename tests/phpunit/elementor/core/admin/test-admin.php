@@ -1,10 +1,12 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Admin;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Plugin;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Base\Document;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -132,5 +134,66 @@ class Test_Admin extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertRegExp( '/elementor-editor-active/', $result );
+	}
+
+	public function test_get_init_settings__returns_experiments_config() {
+		// Arrange.
+		$admin = new Admin();
+
+		$original_experiments = Plugin::$instance->experiments;
+
+		$mock_experiments = $this
+			->getMockBuilder( Experiments_Manager::class )
+			->setMethods( [ 'get_features' ] )
+			->getMock();
+
+		$experiment1 = [
+			'name' => 'experiment-1',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'title' => 'Experiment 1',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'other-prop' => 'some-value',
+		];
+
+		$experiment2 = [
+			'name' => 'experiment-2',
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'title' => 'Experiment 2',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'other-prop-2' => 'some-value-2',
+			'dependencies' => [
+				new Wrap_Core_Dependency( $experiment1 ),
+			],
+		];
+
+		$mock_experiments->method( 'get_features' )->willReturn( [ $experiment1, $experiment2 ] );
+
+		Plugin::$instance->experiments = $mock_experiments;
+
+		// Act.
+		$settings = $admin->get_settings();
+
+		// Assert.
+		$this->assertEqualSets( [
+			[
+				'name' => 'experiment-1',
+				'default' => Experiments_Manager::STATE_ACTIVE,
+				'title' => 'Experiment 1',
+				'state' => Experiments_Manager::STATE_ACTIVE,
+				'dependencies' => [],
+			],
+			[
+				'name' => 'experiment-2',
+				'default' => Experiments_Manager::STATE_INACTIVE,
+				'title' => 'Experiment 2',
+				'state' => Experiments_Manager::STATE_ACTIVE,
+				'dependencies' => [
+					'experiment-1',
+				],
+			],
+		], $settings['experiments'] );
+
+		// Cleanup.
+		Plugin::$instance->experiments = $original_experiments;
 	}
 }

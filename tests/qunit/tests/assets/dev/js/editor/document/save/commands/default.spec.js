@@ -42,7 +42,7 @@ export const Default = () => {
 
 		QUnit.test( 'Document post_status is "publish", "future", "private" ', async ( assert ) => {
 			// TODO: There is real bug with 'future'.
-			const testStatuses = [ 'publish', 'private' /*, 'future' */ ],
+			const testStatuses = [ 'publish', 'private' /* , 'future' */ ],
 				document = elementor.documents.getCurrent();
 
 			for ( const status of testStatuses ) {

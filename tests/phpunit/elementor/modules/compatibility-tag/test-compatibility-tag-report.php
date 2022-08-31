@@ -3,7 +3,7 @@ namespace Elementor\Testing\Modules\CompatibilityTag;
 
 use Elementor\Core\Utils\Version;
 use Elementor\Core\Utils\Collection;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\CompatibilityTag\Compatibility_Tag;
 use Elementor\Modules\CompatibilityTag\Compatibility_Tag_Report;
 
@@ -32,7 +32,7 @@ class Test_Compatibility_Tag_Report extends Elementor_Test_Base {
 		$report = $this->create_instance( 'html' );
 
 		// Act
-		$result = $report->get_report_data();
+		$result = $report->get_html_report_data();
 
 		// Assert
 		$this->assertArrayHasKey( 'value', $result );
@@ -45,7 +45,7 @@ class Test_Compatibility_Tag_Report extends Elementor_Test_Base {
 		$report = $this->create_instance( 'raw' );
 
 		// Act
-		$result = $report->get_report_data();
+		$result = $report->get_raw_report_data();
 
 		// Assert
 		$this->assertArrayHasKey( 'value', $result );

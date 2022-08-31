@@ -1,7 +1,10 @@
-import HeaderButtons from './header-buttons';
 import Grid from '../ui/grid/grid';
+import HeaderButtons from './header-buttons';
+import usePageTitle from 'elementor-app/hooks/use-page-title';
 
 export default function Header( props ) {
+	usePageTitle( { title: props.title } );
+
 	let TitleTag = 'span',
 		titleAttrs = {};
 
@@ -13,14 +16,10 @@ export default function Header( props ) {
 		};
 	}
 
-	React.useEffect( () => {
-		document.title = __( 'Elementor', 'elementor' ) + ' | ' + props.title;
-	} );
-
 	return (
 		<Grid container alignItems="center" justify="space-between" className="eps-app__header">
 			<TitleTag className="eps-app__logo-title-wrapper" { ...titleAttrs }>
-				<i className="eps-app__logo eicon-elementor"/>
+				<i className="eps-app__logo eicon-elementor" />
 				<h1 className="eps-app__title">{ props.title }</h1>
 			</TitleTag>
 			<HeaderButtons buttons={ props.buttons } />
@@ -32,6 +31,7 @@ Header.propTypes = {
 	title: PropTypes.string,
 	titleRedirectRoute: PropTypes.string,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
+	onClose: PropTypes.func,
 };
 
 Header.defaultProps = {

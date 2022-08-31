@@ -3,46 +3,72 @@ name: PHPUnit
 on: [push, pull_request]
 
 jobs:
-  run:
-    runs-on: ubuntu-16.04
+  file-diff:
+    runs-on: ubuntu-20.04
+    name: File Diff
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      php_diff: ${{ steps.php_diff_files.outputs.diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Check PHP files diff
+        id: php_diff_files
+        uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            **/*.php
+            composer.json
+
+  test:
+    runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['latest', '5.5', '5.4', '5.3']
-    name: WordPress ${{ matrix.wordpress_versions }}
+        wordpress_versions: ['latest', '5.8', '5.7']
+        php_versions: ['7.0', '7.1', '7.2', '7.3', '7.4']
+    name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
+    env:
+      WP_TESTS_DIR: /tmp/wordpress-tests-lib
     steps:
       - name: Startup MySQL service
         run: sudo /etc/init.d/mysql start
       - name: Checkout source code
         uses: actions/checkout@master
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_versions }}
       - name: Install Dependencies
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
-          wget --quiet -O /tmp/phpunit-5 https://phar.phpunit.de/phpunit-5.phar
-          wget --quiet -O /tmp/phpunit-6 https://phar.phpunit.de/phpunit-6.phar
-          wget --quiet -O /tmp/phpunit-7 https://phar.phpunit.de/phpunit-7.phar
-      - name: PHP5.6
-        run: php5.6 /tmp/phpunit-5
-      - name: PHP5.6 - Multisite
-        run: WP_MULTISITE=1 php5.6 /tmp/phpunit-5
-      - name: PHP7.0
-        run: php7.0 /tmp/phpunit-6
-      - name: PHP7.0 - Multisite
-        run: WP_MULTISITE=1 php7.0 /tmp/phpunit-6
-      - name: PHP7.1
-        run: php7.1 /tmp/phpunit-6
-      - name: PHP7.1 - Multisite
-        run: WP_MULTISITE=1 php7.1 /tmp/phpunit-6
-      - name: PHP7.2
-        run: php7.2 /tmp/phpunit-6
-      - name: PHP7.2 - Multisite
-        run: WP_MULTISITE=1 php7.2 /tmp/phpunit-6
-      - name: PHP7.3
-        run: php7.3 /tmp/phpunit-6
-      - name: PHP7.3 - Multisite
-        run: WP_MULTISITE=1 php7.3 /tmp/phpunit-6
-      - name: PHP7.4
-        run: php7.4 /tmp/phpunit-7
-      - name: PHP7.4 - Multisite
-        run: WP_MULTISITE=1 php7.4 /tmp/phpunit-7
+      - name: Run Tests with Coverage (latest PHP & WP)
+        if: ${{ matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' }}
+        run: |
+          composer update --no-interaction
+          composer run coverage
+      - name: Run Tests without Coverage
+        if: ${{ ! ( matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' ) }}
+        run: | # remove unsupported packages PHP < 7.4
+          composer remove --dev thor-juhasz/phpunit-coverage-check --ignore-platform-reqs
+          composer update --no-interaction
+          composer run test
+      - name: Run Test - Multisite
+        run: |
+          WP_MULTISITE=1
+          composer update --no-interaction
+          composer run test
+
+  test-result:
+    needs: test
+    if: ${{ always() }} # Will be run even if 'test' matrix will be skipped
+    runs-on: ubuntu-20.04
+    name: PHPUnit - Test Results
+    steps:
+      - name: Test status
+        run: echo "Test status is - ${{ needs.test.result }}"
+      - name: Check test matrix status
+        if: ${{ needs.test.result != 'success' && needs.test.result != 'skipped' }}
+        run: exit 1

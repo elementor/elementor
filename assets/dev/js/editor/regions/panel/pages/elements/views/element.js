@@ -1,7 +1,9 @@
+import ContextMenu from 'elementor-behaviors/context-menu';
+
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
 
-	className: function() {
+	className() {
 		let className = 'elementor-element-wrapper';
 
 		if ( ! this.isEditable() ) {
@@ -11,7 +13,7 @@ module.exports = Marionette.ItemView.extend( {
 		return className;
 	},
 
-	events: function() {
+	events() {
 		const events = {};
 
 		if ( ! this.isEditable() ) {
@@ -25,20 +27,38 @@ module.exports = Marionette.ItemView.extend( {
 		element: '.elementor-element',
 	},
 
-	isEditable: function() {
+	behaviors() {
+		const groups = elementor.hooks.applyFilters( 'panel/element/contextMenuGroups', [], this ),
+			behaviors = {};
+
+		if ( groups.length ) {
+			behaviors.contextMenu = {
+				behaviorClass: ContextMenu,
+				context: 'panel',
+				groups,
+			};
+		}
+
+		return elementor.hooks.applyFilters( 'panel/element/behaviors', behaviors, this );
+	},
+
+	isEditable() {
 		return false !== this.model.get( 'editable' );
 	},
 
-	onRender: function() {
+	onRender() {
 		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
 		}
 
 		this.ui.element.html5Draggable( {
 			onDragStart: () => {
+				// Reset the sort cache.
+				elementor.channels.editor.reply( 'element:dragged', null );
+
 				elementor.channels.panelElements
-						.reply( 'element:selected', this )
-						.trigger( 'element:drag:start' );
+					.reply( 'element:selected', this )
+					.trigger( 'element:drag:start' );
 			},
 
 			onDragEnd: () => {
@@ -49,17 +69,26 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onMouseDown: function() {
-		const title = this.model.get( 'title' );
+	onMouseDown() {
+		const title = this.model.get( 'title' ),
+			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
+			promotion = elementor.config.promotion.elements;
 
 		elementor.promotion.showDialog( {
-			/* translators: %s: Widget Title. */
-			headerMessage: sprintf( __( '%s Widget', 'elementor' ), title ),
-			/* translators: %s: Widget Title. */
-			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), title ),
-			top: '-7',
-			element: this.el,
-			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) ),
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			title: sprintf( promotion.title, title ),
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			content: sprintf( promotion.content, title ),
+			targetElement: this.el,
+			position: {
+				blockStart: '-7',
+			},
+			actionButton: {
+				// eslint-disable-next-line @wordpress/valid-sprintf
+				url: sprintf( promotion.action_button.url, widgetType ),
+				text: promotion.action_button.text,
+				classes: promotion.action_button.classes || [ 'elementor-button', 'elementor-button-success' ],
+			},
 		} );
 	},
 } );

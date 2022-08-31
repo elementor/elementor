@@ -1,8 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class ChangeDeviceMode extends CommandBase {
+export class ChangeDeviceMode extends $e.modules.CommandBase {
 	apply( args = {} ) {
-		const devices = [ 'desktop', 'tablet', 'mobile' ];
+		const devices = elementor.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } );
 		let { device } = args;
 
 		if ( ! device ) {

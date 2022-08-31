@@ -42,7 +42,7 @@ class Widget_Icon_List extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Icon List', 'elementor' );
+		return esc_html__( 'Icon List', 'elementor' );
 	}
 
 	/**
@@ -85,23 +85,23 @@ class Widget_Icon_List extends Widget_Base {
 		$this->start_controls_section(
 			'section_icon',
 			[
-				'label' => __( 'Icon List', 'elementor' ),
+				'label' => esc_html__( 'Icon List', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'view',
 			[
-				'label' => __( 'Layout', 'elementor' ),
+				'label' => esc_html__( 'Layout', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'traditional',
 				'options' => [
 					'traditional' => [
-						'title' => __( 'Default', 'elementor' ),
+						'title' => esc_html__( 'Default', 'elementor' ),
 						'icon' => 'eicon-editor-list-ul',
 					],
 					'inline' => [
-						'title' => __( 'Inline', 'elementor' ),
+						'title' => esc_html__( 'Inline', 'elementor' ),
 						'icon' => 'eicon-ellipsis-h',
 					],
 				],
@@ -117,11 +117,11 @@ class Widget_Icon_List extends Widget_Base {
 		$repeater->add_control(
 			'text',
 			[
-				'label' => __( 'Text', 'elementor' ),
+				'label' => esc_html__( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
-				'placeholder' => __( 'List Item', 'elementor' ),
-				'default' => __( 'List Item', 'elementor' ),
+				'placeholder' => esc_html__( 'List Item', 'elementor' ),
+				'default' => esc_html__( 'List Item', 'elementor' ),
 				'dynamic' => [
 					'active' => true,
 				],
@@ -131,7 +131,7 @@ class Widget_Icon_List extends Widget_Base {
 		$repeater->add_control(
 			'selected_icon',
 			[
-				'label' => __( 'Icon', 'elementor' ),
+				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'default' => [
 					'value' => 'fas fa-check',
@@ -144,38 +144,38 @@ class Widget_Icon_List extends Widget_Base {
 		$repeater->add_control(
 			'link',
 			[
-				'label' => __( 'Link', 'elementor' ),
+				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => __( 'https://your-link.com', 'elementor' ),
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'icon_list',
 			[
-				'label' => __( 'Items', 'elementor' ),
+				'label' => esc_html__( 'Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
-						'text' => __( 'List Item #1', 'elementor' ),
+						'text' => esc_html__( 'List Item #1', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-check',
 							'library' => 'fa-solid',
 						],
 					],
 					[
-						'text' => __( 'List Item #2', 'elementor' ),
+						'text' => esc_html__( 'List Item #2', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-times',
 							'library' => 'fa-solid',
 						],
 					],
 					[
-						'text' => __( 'List Item #3', 'elementor' ),
+						'text' => esc_html__( 'List Item #3', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-dot-circle',
 							'library' => 'fa-solid',
@@ -189,11 +189,11 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'link_click',
 			[
-				'label' => __( 'Apply Link On', 'elementor' ),
+				'label' => esc_html__( 'Apply Link On', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'full_width' => __( 'Full Width', 'elementor' ),
-					'inline' => __( 'Inline', 'elementor' ),
+					'full_width' => esc_html__( 'Full Width', 'elementor' ),
+					'inline' => esc_html__( 'Inline', 'elementor' ),
 				],
 				'default' => 'full_width',
 				'separator' => 'before',
@@ -206,7 +206,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->start_controls_section(
 			'section_icon_list',
 			[
-				'label' => __( 'List', 'elementor' ),
+				'label' => esc_html__( 'List', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -214,7 +214,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_responsive_control(
 			'space_between',
 			[
-				'label' => __( 'Space Between', 'elementor' ),
+				'label' => esc_html__( 'Space Between', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -235,19 +235,19 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_align',
 			[
-				'label' => __( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor' ),
+						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor' ),
+						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 				],
@@ -258,10 +258,10 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider',
 			[
-				'label' => __( 'Divider', 'elementor' ),
+				'label' => esc_html__( 'Divider', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'Off', 'elementor' ),
-				'label_on' => __( 'On', 'elementor' ),
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
 				],
@@ -272,13 +272,13 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_style',
 			[
-				'label' => __( 'Style', 'elementor' ),
+				'label' => esc_html__( 'Style', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'solid' => __( 'Solid', 'elementor' ),
-					'double' => __( 'Double', 'elementor' ),
-					'dotted' => __( 'Dotted', 'elementor' ),
-					'dashed' => __( 'Dashed', 'elementor' ),
+					'solid' => esc_html__( 'Solid', 'elementor' ),
+					'double' => esc_html__( 'Double', 'elementor' ),
+					'dotted' => esc_html__( 'Dotted', 'elementor' ),
+					'dashed' => esc_html__( 'Dashed', 'elementor' ),
 				],
 				'default' => 'solid',
 				'condition' => [
@@ -294,7 +294,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_weight',
 			[
-				'label' => __( 'Weight', 'elementor' ),
+				'label' => esc_html__( 'Weight', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 1,
@@ -318,7 +318,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_width',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'unit' => '%',
@@ -336,7 +336,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_height',
 			[
-				'label' => __( 'Height', 'elementor' ),
+				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%', 'px' ],
 				'default' => [
@@ -365,7 +365,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_color',
 			[
-				'label' => __( 'Color', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
 				'global' => [
@@ -385,7 +385,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->start_controls_section(
 			'section_icon_style',
 			[
-				'label' => __( 'Icon', 'elementor' ),
+				'label' => esc_html__( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -393,7 +393,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_color',
 			[
-				'label' => __( 'Color', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -409,7 +409,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_color_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -422,7 +422,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_size',
 			[
-				'label' => __( 'Size', 'elementor' ),
+				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 14,
@@ -433,34 +433,43 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-icon-list-icon-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
 
+		$e_icon_list_icon_css_var = 'var(--e-icon-list-icon-size, 1em)';
+		$e_icon_list_icon_align_left = sprintf( '0 calc(%s * 0.25) 0 0', $e_icon_list_icon_css_var );
+		$e_icon_list_icon_align_center = sprintf( '0 calc(%s * 0.125)', $e_icon_list_icon_css_var );
+		$e_icon_list_icon_align_right = sprintf( '0 0 0 calc(%s * 0.25)', $e_icon_list_icon_css_var );
+
 		$this->add_responsive_control(
 			'icon_self_align',
 			[
-				'label' => __( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor' ),
+						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor' ),
+						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'default' => '',
+				'selectors_dictionary' => [
+					'left' => sprintf( '--e-icon-list-icon-align: left; --e-icon-list-icon-margin: %s;', $e_icon_list_icon_align_left ),
+					'center' => sprintf( '--e-icon-list-icon-align: center; --e-icon-list-icon-margin: %s;', $e_icon_list_icon_align_center ),
+					'right' => sprintf( '--e-icon-list-icon-align: right; --e-icon-list-icon-margin: %s;', $e_icon_list_icon_align_right ),
+				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 			]
 		);
@@ -470,7 +479,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->start_controls_section(
 			'section_text_style',
 			[
-				'label' => __( 'Text', 'elementor' ),
+				'label' => esc_html__( 'Text', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -478,7 +487,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'text_color',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -493,7 +502,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'text_color_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -505,7 +514,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'text_indent',
 			[
-				'label' => __( 'Text Indent', 'elementor' ),
+				'label' => esc_html__( 'Text Indent', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -522,7 +531,7 @@ class Widget_Icon_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'icon_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-item, {{WRAPPER}} .elementor-icon-list-item a',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item > .elementor-icon-list-text, {{WRAPPER}} .elementor-icon-list-item > a',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
@@ -564,7 +573,7 @@ class Widget_Icon_List extends Widget_Base {
 			$this->add_render_attribute( 'list_item', 'class', 'elementor-inline-item' );
 		}
 		?>
-		<ul <?php echo $this->get_render_attribute_string( 'icon_list' ); ?>>
+		<ul <?php $this->print_render_attribute_string( 'icon_list' ); ?>>
 			<?php
 			foreach ( $settings['icon_list'] as $index => $item ) :
 				$repeater_setting_key = $this->get_repeater_setting_key( 'text', 'icon_list', $index );
@@ -574,14 +583,16 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_inline_editing_attributes( $repeater_setting_key );
 				$migration_allowed = Icons_Manager::is_migration_allowed();
 				?>
-				<li <?php echo $this->get_render_attribute_string( 'list_item' ); ?>>
+				<li <?php $this->print_render_attribute_string( 'list_item' ); ?>>
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
 						$link_key = 'link_' . $index;
 
 						$this->add_link_attributes( $link_key, $item['link'] );
+						?>
+						<a <?php $this->print_render_attribute_string( $link_key ); ?>>
 
-						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
+						<?php
 					}
 
 					// add old default
@@ -602,7 +613,7 @@ class Widget_Icon_List extends Widget_Base {
 							<?php } ?>
 						</span>
 					<?php endif; ?>
-					<span <?php echo $this->get_render_attribute_string( $repeater_setting_key ); ?>><?php echo $item['text']; ?></span>
+					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php $this->print_unescaped_setting( 'text', 'icon_list', $index ); ?></span>
 					<?php if ( ! empty( $item['link']['url'] ) ) : ?>
 						</a>
 					<?php endif; ?>

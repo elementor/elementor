@@ -2,14 +2,13 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
-use \Elementor\Data\Base\Controller as ControllerBase;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Format as EndpointFormatTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Processor as ProcessorTemplate;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Controller extends Elementor_Test_Base {
 
@@ -37,10 +36,10 @@ class Test_Controller extends Elementor_Test_Base {
 		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
 		$rest_routes = $rest_index['routes'];
 
-		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_internal_endpoints();`.' );
+		$this->assert_array_have_keys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_internal_endpoints();`.' );
 
 		foreach ( $controller->endpoints as $endpoint ) {
-			$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes, 'Validate `$this->register_endpoints();`.' );
+			$this->assert_array_have_keys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes, 'Validate `$this->register_endpoints();`.' );
 		}
 	}
 
@@ -172,11 +171,6 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	public function test_get_items_recursive_simulated() {
-		/**
-		 * TODO: Create Base Endpoint\Internal
-		 * TODO: Create Base Endpoint\Internal\Index
-		 */
-
 		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
 		$this->manager->run_server(); // Ensure controller loaded.
 

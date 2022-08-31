@@ -30,13 +30,13 @@ export default {
 				},
 				tablet_extra: {
 					label: 'Tablet Extra',
-					value: 1365,
+					value: 1200,
 					direction: 'max',
 					is_enabled: false,
 				},
 				laptop: {
 					label: 'Laptop',
-					value: 1620,
+					value: 1366,
 					direction: 'max',
 					is_enabled: false,
 				},
@@ -63,11 +63,18 @@ export default {
 			},
 		},
 	},
+	breakpoints: {
+		getDeviceMinBreakpoint: () => {
+		},
+	},
 	isEditMode: () => {
 	},
 	elementsHandler: {
 		runReadyTrigger: () => {
 		},
+	},
+	getCurrentDeviceMode: () => {
+		return 'desktop';
 	},
 	init: () => console.log( 'elementorFrontend::init' ), // eslint-disable-line no-console
 };

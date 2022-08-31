@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Utils;
 
 use Elementor\Core\Utils\Version;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

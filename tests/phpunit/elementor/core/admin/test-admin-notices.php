@@ -2,8 +2,8 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Admin;
 
 use Elementor\Core\Admin\Admin_Notices;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Admin\Notices\Base_Notice;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

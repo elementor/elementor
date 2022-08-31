@@ -1,0 +1,21 @@
+.e-app__popover {
+	display: none;
+	position: absolute;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 6px;
+	padding: 20px;
+	width: fit-content;
+	z-index: 999;
+	background-color: $white;
+
+	$triangle-size: 8px;
+
+	&:before {
+		content: '';
+		position: absolute;
+		top: -$triangle-size * 2;
+		@include end(var(--popover-arrow-offset-end, 22px));
+		border: $triangle-size solid transparent;
+		border-bottom-color: #fff;
+	}
+}

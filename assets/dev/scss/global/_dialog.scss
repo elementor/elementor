@@ -122,6 +122,34 @@
 	}
 }
 
+#elementor-change-exit-preference-dialog {
+
+	.dialog-message {
+
+		a {
+			cursor: pointer;
+		}
+
+		& > div {
+			margin-bottom: 10px;
+		}
+	}
+	.dialog-ok {
+		color: $editor-success;
+	}
+}
+
+#e-experiments-dependency-dialog {
+	.dialog-confirm-header {
+		font-weight: 600;
+	}
+
+	.dialog-ok {
+		color: $editor-success;
+	}
+}
+
+
 .dialog-prevent-scroll {
 	overflow: hidden;
 	max-height: 100vh;

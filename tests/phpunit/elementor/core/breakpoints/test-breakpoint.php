@@ -2,15 +2,12 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Breakpoints;
 
 use Elementor\Core\Breakpoints\Breakpoint;
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Testing\Traits\Breakpoints_Trait;
-use Elementor\Testing\Traits\Extra_Assertions;
+use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Traits\Breakpoints_Trait;
 
 class Test_Breakpoint extends Elementor_Test_Base {
 
-	use Extra_Assertions;
 	use Breakpoints_Trait;
 
 	/**

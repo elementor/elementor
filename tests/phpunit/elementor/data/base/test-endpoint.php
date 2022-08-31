@@ -2,10 +2,10 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Exception;
 
 class Test_Endpoint extends Elementor_Test_Base {
@@ -360,7 +360,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 
 		$data = $controller_instance->get_controller_index()->get_data();
 
-		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
+		$this->assert_array_have_keys( [ $except_route ], $data['routes'] );
 	}
 
 	public function test_register_items_route() {
@@ -375,7 +375,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$data = $controller_instance->get_controller_index()->get_data();
 		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name();
 
-		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
+		$this->assert_array_have_keys( [ $except_route ], $data['routes'] );
 	}
 
 	public function test_register_route() {
@@ -390,6 +390,6 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$data = $controller_instance->get_controller_index()->get_data();
 		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name() . '/custom-route';
 
-		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
+		$this->assert_array_have_keys( [ $except_route ], $data['routes'] );
 	}
 }

@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Tests\Phpunit\Includes\Base\Mock\Mock_Skin;
@@ -29,6 +29,31 @@ class Test_Widget_Base extends Elementor_Test_Base {
 		parent::tearDown();
 
 		Plugin::$instance->frontend->render_mode_manager = $this->default_render_mode;
+	}
+
+	public function test_set_config_string() {
+		require_once __DIR__ . '/mock/mock-widget.php';
+
+		$widget = new Mock_Widget( [ 'settings' => [], 'id' => '1' ], [] );
+
+		$widget->set_config( 'test', 'test' );
+
+		$config = $widget->get_config();
+
+		$this->assertEquals( 'test', $config[ 'test' ] );
+	}
+
+	public function test_set_config_array() {
+		require_once __DIR__ . '/mock/mock-widget.php';
+
+		$widget = new Mock_Widget( [ 'settings' => [], 'id' => '1' ], [] );
+
+		$widget->set_config( 'test', [ 'first' ] );
+		$widget->set_config( 'test', [ 'second' ] );
+
+		$config = $widget->get_config();
+
+		$this->assertEquals( [ 'first', 'second' ], $config[ 'test' ] );
 	}
 
 	public function test_render_content__should_render_static() {

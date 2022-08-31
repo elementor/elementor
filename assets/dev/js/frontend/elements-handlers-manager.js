@@ -1,6 +1,12 @@
 import globalHandler from './handlers/global';
-import sectionHandlers from './handlers/section/section';
+import backgroundHandlers from './handlers/background';
+import containerHandlers from './handlers/container/container';
 import columnHandlers from './handlers/column';
+
+// Section handlers.
+import HandlesPosition from './handlers/section/handles-position';
+import StretchedSection from './handlers/section/stretched-section';
+import Shapes from './handlers/section/shapes';
 
 module.exports = function( $ ) {
 	const handlersInstances = {};
@@ -15,12 +21,26 @@ module.exports = function( $ ) {
 		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
 		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
 		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
+		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
-		this.elementsHandlers.section = sectionHandlers;
+		this.elementsHandlers.section = [
+			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
+			...backgroundHandlers,
+			HandlesPosition,
+			Shapes,
+		];
+
+		this.elementsHandlers.container = [ ...backgroundHandlers ];
+
+		// Add editor-only handlers.
+		if ( elementorFrontend.isEditMode() ) {
+			this.elementsHandlers.container.push( ...containerHandlers );
+		}
+
 		this.elementsHandlers.column = columnHandlers;
 
 		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
@@ -34,7 +54,7 @@ module.exports = function( $ ) {
 		} );
 	};
 
-	const isClassHandler = ( Handler ) => Handler.prototype.getUniqueHandlerID;
+	const isClassHandler = ( Handler ) => Handler.prototype?.getUniqueHandlerID;
 
 	const addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
 		skin = skin ? '.' + skin : '';
@@ -44,6 +64,10 @@ module.exports = function( $ ) {
 				this.addHandler( Handler, { $element }, true );
 			} else {
 				const handlerValue = Handler();
+
+				if ( ! handlerValue ) {
+					return;
+				}
 
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
@@ -92,10 +116,6 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandler = function( handlerName ) {
-		if ( ! handlerName ) {
-			return;
-		}
-
 		const elementHandler = this.elementsHandlers[ handlerName ];
 
 		if ( isClassHandler( elementHandler ) ) {
@@ -110,7 +130,7 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandlers = function( handlerName ) {
-		elementorCommon.helpers.softDeprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
+		elementorDevTools.deprecation.deprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
 
 		if ( handlerName ) {
 			return this.getHandler( handlerName );
@@ -134,10 +154,11 @@ module.exports = function( $ ) {
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
-		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
+		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, $scope, $ );
 
 		if ( 'widget' === elementType ) {
-			elementorFrontend.hooks.doAction( 'frontend/element_ready/' + $scope.attr( 'data-widget_type' ), $scope, $ );
+			const widgetType = $scope.attr( 'data-widget_type' );
+			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, $scope, $ );
 		}
 	};
 

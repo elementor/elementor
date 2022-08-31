@@ -5,6 +5,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
 				video: '.elementor-video',
 				videoIframe: '.elementor-video-iframe',
+				playIcon: '.elementor-custom-embed-play',
 			},
 		};
 	}
@@ -16,6 +17,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
 			$video: this.$element.find( selectors.video ),
 			$videoIframe: this.$element.find( selectors.videoIframe ),
+			$playIcon: this.$element.find( selectors.playIcon ),
 		};
 	}
 
@@ -39,7 +41,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 	playVideo() {
 		if ( this.elements.$video.length ) {
-			// this.youtubePlayer exists only for YouTube videos, and its play function is different.
+			// This.youtubePlayer exists only for YouTube videos, and its play function is different.
 			if ( this.youtubePlayer ) {
 				this.youtubePlayer.playVideo();
 			} else {
@@ -56,17 +58,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
 
-		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
-
-		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
-
-		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
-			const videoSrc = $videoIframe[ 0 ].src,
-				timeMatch = /#t=[^&]*/.exec( videoSrc );
-
-			// Param '#t=' must be last in the URL
-			$videoIframe[ 0 ].src = videoSrc.slice( 0, timeMatch.index ) + videoSrc.slice( timeMatch.index + timeMatch[ 0 ].length ) + timeMatch[ 0 ];
-		}
+		$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
 	}
 
 	async animateVideo() {
@@ -129,6 +121,16 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 	bindEvents() {
 		this.elements.$imageOverlay.on( 'click', this.handleVideo.bind( this ) );
+		this.elements.$playIcon.on( 'keydown', ( event ) => {
+			const playKeys = [
+				13, // Enter key.
+				32, // Space bar key.
+			];
+
+			if ( playKeys.includes( event.keyCode ) ) {
+				this.handleVideo();
+			}
+		} );
 	}
 
 	onInit() {
@@ -136,12 +138,16 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 		const elementSettings = this.getElementSettings();
 
+		if ( elementorFrontend.utils[ elementSettings.video_type ] ) {
+			this.apiProvider = elementorFrontend.utils[ elementSettings.video_type ];
+		} else {
+			this.apiProvider = elementorFrontend.utils.baseVideoLoader;
+		}
+
 		if ( 'youtube' !== elementSettings.video_type ) {
 			// Currently the only API integration in the Video widget is for the YT API
 			return;
 		}
-
-		this.apiProvider = elementorFrontend.utils.youtube;
 
 		this.videoID = this.apiProvider.getVideoIDFromURL( elementSettings.youtube_url );
 
@@ -175,7 +181,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		// to 'On', there might be a conflict with other videos that are loaded WITHOUT privacy mode, such as a
 		// video bBackground in a section. In these cases, to avoid the conflict, a timeout is added to postpone the
 		// initialization of the Youtube API object.
-		if ( ! elementorFrontend.config.experimentalFeatures[ 'e_optimized_assets_loading' ] ) {
+		if ( ! elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {
 			setTimeout( () => {
 				this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
 			}, 0 );

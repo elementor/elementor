@@ -10,8 +10,8 @@ on:
 
 jobs:
   bump-version:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
-    runs-on: ubuntu-16.04
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-20.04
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
@@ -20,6 +20,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - name: Bump version
         id: bump_version_step
         run: |
@@ -60,7 +64,7 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
   publish:
     needs: bump-version
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v2
@@ -79,6 +83,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
@@ -127,7 +135,7 @@ jobs:
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          body_path: temp-changelog-from-changelog.txt
+          body_path: temp-changelog-from-readme.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Read changelog and set current date

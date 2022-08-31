@@ -2,7 +2,9 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Core\Utils\Force_Locale;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -42,6 +44,7 @@ class Widgets_Manager {
 	private function init_widgets() {
 		$build_widgets_filename = [
 			'common',
+			'inner-section',
 			'heading',
 			'image',
 			'text-editor',
@@ -82,7 +85,7 @@ class Widgets_Manager {
 
 			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
 
-			$this->register_widget_type( new $class_name() );
+			$this->register( new $class_name() );
 		}
 
 		$this->register_wp_widgets();
@@ -93,10 +96,27 @@ class Widgets_Manager {
 		 * Fires after Elementor widgets are registered.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 3.5.0 Use `elementor/widgets/register` hook instead.
 		 *
 		 * @param Widgets_Manager $this The widgets manager.
 		 */
-		do_action( 'elementor/widgets/widgets_registered', $this );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+			'elementor/widgets/widgets_registered',
+			[ $this ],
+			'3.5.0',
+			'elementor/widgets/register'
+		);
+
+		/**
+		 * After widgets registered.
+		 *
+		 * Fires after Elementor widgets are registered.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param Widgets_Manager $this The widgets manager.
+		 */
+		do_action( 'elementor/widgets/register', $this );
 	}
 
 	/**
@@ -154,7 +174,7 @@ class Widgets_Manager {
 
 			$elementor_widget_class = __NAMESPACE__ . '\Widget_WordPress';
 
-			$this->register_widget_type(
+			$this->register(
 				new $elementor_widget_class( [], [
 					'widget_name' => $widget_class,
 				] )
@@ -174,6 +194,17 @@ class Widgets_Manager {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
 
+	private function pluck_default_controls( $controls ) {
+		return ( new Collection( $controls ) )
+			->reduce( function ( $controls_defaults, $control, $control_key ) {
+				if ( ! empty( $control['default'] ) ) {
+					$controls_defaults[ $control_key ]['default'] = $control['default'];
+				}
+
+				return $controls_defaults;
+			}, [] );
+	}
+
 	/**
 	 * Register widget type.
 	 *
@@ -181,17 +212,38 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 *
 	 * @param Widget_Base $widget Elementor widget.
 	 *
 	 * @return true True if the widget was registered.
 	*/
 	public function register_widget_type( Widget_Base $widget ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
+
+		return $this->register( $widget );
+	}
+
+	/**
+	 * Register a new widget type.
+	 *
+	 * @param \Elementor\Widget_Base $widget_instance Elementor Widget.
+	 *
+	 * @return true True if the widget was registered.
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 */
+	public function register( Widget_Base $widget_instance ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->init_widgets();
 		}
 
-		$this->_widget_types[ $widget->get_name() ] = $widget;
+		$this->_widget_types[ $widget_instance->get_name() ] = $widget_instance;
 
 		return true;
 	}
@@ -203,12 +255,35 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
 	 *
 	 * @param string $name Widget name.
 	 *
 	 * @return true True if the widget was unregistered, False otherwise.
 	*/
 	public function unregister_widget_type( $name ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'unregister'
+		);
+
+		return $this->unregister( $name );
+	}
+
+	/**
+	 * Unregister widget type.
+	 *
+	 * Removes widget type from the list of registered widget types.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $name Widget name.
+	 *
+	 * @return boolean Whether the widget was unregistered.
+	 */
+	public function unregister( $name ) {
 		if ( ! isset( $this->_widget_types[ $name ] ) ) {
 			return false;
 		}
@@ -263,6 +338,8 @@ class Widgets_Manager {
 	}
 
 	public function ajax_get_widget_types_controls_config( array $data ) {
+		wp_raise_memory_limit( 'admin' );
+
 		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
@@ -277,6 +354,32 @@ class Widgets_Manager {
 		}
 
 		return $config;
+	}
+
+	public function ajax_get_widgets_default_value_translations( array $data = [] ) {
+		$locale = empty( $data['locale'] )
+			? get_locale()
+			: $data['locale'];
+
+		$force_locale = new Force_Locale( $locale );
+		$force_locale->force();
+
+		$controls = ( new Collection( $this->get_widget_types() ) )
+			->map( function ( Widget_Base $widget ) {
+				$controls = $widget->get_stack( false )['controls'];
+
+				return [
+					'controls' => $this->pluck_default_controls( $controls ),
+				];
+			} )
+			->filter( function ( $widget ) {
+				return ! empty( $widget['controls'] );
+			} )
+			->all();
+
+		$force_locale->restore();
+
+		return $controls;
 	}
 
 	/**
@@ -522,5 +625,9 @@ class Widgets_Manager {
 		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
 		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
+
+		$ajax_manager->register_ajax_action( 'get_widgets_default_value_translations', function ( array $data ) {
+			return $this->ajax_get_widgets_default_value_translations( $data );
+		} );
 	}
 }

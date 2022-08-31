@@ -23,4 +23,13 @@ export default class extends Repeater {
 
 		return defaults;
 	}
+
+	getSortableParams() {
+		const sortableParams = super.getSortableParams();
+
+		sortableParams.placeholder = 'e-sortable-placeholder';
+		sortableParams.cursor = 'move';
+
+		return sortableParams;
+	}
 }

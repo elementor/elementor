@@ -16,9 +16,15 @@ export default class extends elementorModules.ViewModule {
 			lightbox: async ( settings ) => {
 				const lightbox = await elementorFrontend.utils.lightbox;
 
-				if ( settings.id ) {
-					lightbox.openSlideshow( settings.id, settings.url );
+				if ( settings.slideshow ) {
+					// Handle slideshow display
+					lightbox.openSlideshow( settings.slideshow, settings.url );
 				} else {
+					// If the settings has an ID - the lightbox target content is an image - the ID is an attachment ID.
+					if ( settings.id ) {
+						settings.type = 'image';
+					}
+
 					lightbox.showModal( settings );
 				}
 			},
@@ -32,8 +38,7 @@ export default class extends elementorModules.ViewModule {
 	runAction( url, ...restArgs ) {
 		url = decodeURIComponent( url );
 
-		const actionMatch = url.match( /action=(.+?)&/ ),
-			settingsMatch = url.match( /settings=(.+)/ );
+		const actionMatch = url.match( /action=(.+?)&/ );
 
 		if ( ! actionMatch ) {
 			return;
@@ -47,6 +52,7 @@ export default class extends elementorModules.ViewModule {
 
 		let settings = {};
 
+		const settingsMatch = url.match( /settings=(.+)/ );
 		if ( settingsMatch ) {
 			settings = JSON.parse( atob( settingsMatch[ 1 ] ) );
 		}
@@ -61,8 +67,15 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	runHashAction() {
-		if ( location.hash ) {
-			this.runAction( location.hash );
+		if ( ! location.hash ) {
+			return;
+		}
+
+		// Only if an element with this action hash exists on the page do we allow running the action.
+		const elementWithHash = document.querySelector( `[e-action-hash="${ location.hash }"], a[href*="${ location.hash }"]` );
+
+		if ( elementWithHash ) {
+			this.runAction( elementWithHash.getAttribute( 'e-action-hash' ) );
 		}
 	}
 

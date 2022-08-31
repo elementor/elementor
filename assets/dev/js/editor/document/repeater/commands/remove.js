@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Remove extends CommandHistory {
+export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' );
@@ -25,7 +23,7 @@ export class Remove extends CommandHistory {
 		this.requireContainer( args );
 
 		this.requireArgumentType( 'name', 'string', args );
-		this.requireArgument( 'index', args ); // sometimes null.
+		this.requireArgument( 'index', args ); // Sometimes null.
 	}
 
 	getHistory( args ) {
@@ -38,10 +36,6 @@ export class Remove extends CommandHistory {
 		};
 	}
 
-	isDataChanged() {
-		return true;
-	}
-
 	apply( args ) {
 		const { name, containers = [ args.container ] } = args,
 			index = null === args.index ? -1 : args.index,
@@ -51,7 +45,8 @@ export class Remove extends CommandHistory {
 			container = container.lookup();
 
 			const collection = container.settings.get( name ),
-				model = collection.at( index );
+				model = collection.at( index ),
+				repeaterContainer = container.repeaters[ name ];
 
 			if ( this.isHistoryActive() ) {
 				$e.internal( 'document/history/log-sub-item', {
@@ -62,11 +57,12 @@ export class Remove extends CommandHistory {
 			}
 
 			// Remove from container and add to result.
-			result.push( container.repeaters[ name ].children.splice( index, 1 ) );
+			result.push( repeaterContainer.children.splice( index, 1 ) );
 
 			collection.remove( model );
 
-			container.render();
+			// Trigger render on widget but with the settings of the control.
+			repeaterContainer.render();
 		} );
 
 		if ( 1 === result.length ) {

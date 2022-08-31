@@ -1,14 +1,17 @@
 import EditorBase from 'elementor-editor/editor-base';
 import config from './config';
 import frontend from './frontend';
+import ContainerHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/container/helper';
 
 export default class EditorTest extends EditorBase {
 	constructor( options ) {
 		super( options );
 
 		QUnit.testStart( ( { module, name } ) => {
-			if ( this.$previewElementorEl ) {
-				this.$previewElementorEl.empty();
+			const $element = elementor.documents.getCurrent().$element;
+
+			if ( $element ) {
+				$element.empty();
 			}
 
 			if ( QUnit.config.showUI ) {
@@ -21,6 +24,13 @@ export default class EditorTest extends EditorBase {
 			if ( QUnit.config.showUI ) {
 				// eslint-disable-next-line no-console
 				console.log( `Done: ${ module } -> ${ name }` );
+			}
+
+			if ( QUnit.config.validateContainersAlive ) {
+				if ( ! ContainerHelper.isAllAliveRecursive( elementor.getPreviewContainer() ) ) {
+					// eslint-disable-next-line no-console
+					console.error( `Not all the containers alive: ${ module } -> ${ name }` );
+				}
 			}
 		} );
 	}

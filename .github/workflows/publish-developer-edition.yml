@@ -3,24 +3,24 @@ name: Publish Developer Edition Version
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 10 * * *' # run at 10 AM UTC
+    - cron: '0 0 1,15 * *' # Runs at 00:00 UTC on the 1 and 15th of every month.
   repository_dispatch:
     types: [new-release]
 
 jobs:
   bump-version:
-    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
-    runs-on: ubuntu-16.04
+    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-20.04
     outputs:
       cancel_workflow: ${{ steps.step_compare.outputs.cancel_workflow }}
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
       - name: Check developer-edition GitHub checks
-        uses: maael/confirm-checks-action@34a392d22e36c0cc7aace0ed98958169f36e16a7 # master
+        uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
         with:
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
           commit: developer-edition
-          checks: 'JS-Lint,PHP-Lint,Qunit,Lighthouse test - WP latest on PHP 7.4'
+          checks: 'JS-Lint,PHP-Lint,Qunit - Test,Lighthouse test - WP latest on PHP 7.4,PHPUnit - Test Results'
       - name: Checkout master branch
         if: github.event_name == 'repository_dispatch' && github.event.action == 'new-release'
         uses: actions/checkout@v2
@@ -40,10 +40,14 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: developer-edition
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - name: Compare last tag to developer-edition head
         id: step_compare
         if: github.event_name != 'repository_dispatch'
-        shell: bash +e {0}
+        shell: bash +e {0} # Don't exit on error, because the `compare-tag-to-branch.js` should catch the exit code
         env:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
@@ -75,21 +79,45 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
+      - name: Notify slack on failure
+        if: failure()
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_SYNC_CHANNEL }}
+          SLACK_BOT_NAME: ElementorBot
+        run: |
+          MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link> - <https://github.com/elementor/elementor/commits/developer-edition|commits>"
+          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
   publish:
     if: ${{ !needs.bump-version.outputs.cancel_workflow }}
     needs: bump-version
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout developer-edition branch
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: developer-edition
+      - name: Install Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - name: Install Dependencies
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_dev_version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           npm ci
+      - name: Get beta tag
+        run: |
+          npm install --no-package-lock --no-save semver@7.3.4
+          BETA_TAG=$(node ./.github/scripts/get-beta-version.js)
+          echo "BETA_TAG=${BETA_TAG}" >> $GITHUB_ENV
+      - name: Add beta tag
+        if: ${{ env.BETA_TAG }}
+        env:
+          PACKAGE_VERSION: ${{ env.BETA_TAG }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/add-to-readme-beta-tag.sh"
       - name: Build
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
@@ -133,6 +161,17 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Generate DEV-CHANGELOG.md
+        env:
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+        run: |
+          npm i got@11.8.2 --no-package-lock --no-save
+          node ./.github/scripts/generate-dev-changelog-md.js
+          bash "${GITHUB_WORKSPACE}/.github/scripts/set-git-user.sh"
+          git add DEV-CHANGELOG.md
+          git commit -m "Update DEV-CHANGELOG.md"
+          git push
       - name: Read changelog and set current date
         run: |
           CHANGELOG=$(cat temp-changelog.txt | tr -d '\n')

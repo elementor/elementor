@@ -173,7 +173,7 @@ class Manager extends CSS_Manager {
 			<# } ); #>
 		</div>
 		<# } #>
-		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<div id="elementor-panel-<?php echo esc_attr( $name ); ?>-settings-controls"></div>
 		<?php
 	}
 

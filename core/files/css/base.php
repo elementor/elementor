@@ -5,11 +5,11 @@ use Elementor\Base_Data_Control;
 use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
@@ -174,6 +174,17 @@ abstract class Base extends Base_File {
 		} else {
 			$this->delete_meta();
 		}
+	}
+
+	/**
+	 * Get Responsive Control Duplication Mode
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return string
+	 */
+	protected function get_responsive_control_duplication_mode() {
+		return 'on';
 	}
 
 	/**
@@ -387,7 +398,7 @@ abstract class Base extends Base_File {
 				$pure_device_rules = $pure_device_rules[1];
 
 				foreach ( $pure_device_rules as $device_rule ) {
-					if ( Element_Base::RESPONSIVE_DESKTOP === $device_rule ) {
+					if ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_rule ) {
 						continue;
 					}
 
@@ -404,7 +415,7 @@ abstract class Base extends Base_File {
 			if ( ! $query && ! empty( $control['responsive'] ) ) {
 				$query = array_intersect_key( $control['responsive'], array_flip( [ 'min', 'max' ] ) );
 
-				if ( ! empty( $query['max'] ) && Element_Base::RESPONSIVE_DESKTOP === $query['max'] ) {
+				if ( ! empty( $query['max'] ) && Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $query['max'] ) {
 					unset( $query['max'] );
 				}
 			}
@@ -428,6 +439,11 @@ abstract class Base extends Base_File {
 			$control = $controls_stack[ $parser_control_name ];
 
 			$value = call_user_func( $value_callback, $control );
+		}
+
+		// If the control value is empty, check for global default. `0` (integer, string) are falsy but are valid values.
+		if ( empty( $value ) && '0' !== $value && 0 !== $value ) {
+			$value = $this->get_control_global_default_value( $control );
 		}
 
 		if ( Controls_Manager::FONT === $control['type'] ) {
@@ -613,6 +629,10 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
+		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
+
 		$this->render_css();
 
 		$name = $this->get_name();
@@ -629,6 +649,8 @@ abstract class Base extends Base_File {
 		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
+
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
 
 		return $this->get_stylesheet()->__toString();
 	}
@@ -653,6 +675,42 @@ abstract class Base extends Base_File {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements, $values
 		);
+	}
+
+	/**
+	 * Get Control Global Default Value
+	 *
+	 * If the control has a global default value, and the corresponding global default setting is enabled, this method
+	 * fetches and returns the global default value. Otherwise, it returns null.
+	 *
+	 * @since 3.7.0
+	 * @access private
+	 *
+	 * @param $control
+	 * @return string|null
+	 */
+	private function get_control_global_default_value( $control ) {
+		if ( empty( $control['global']['default'] ) ) {
+			return null;
+		}
+
+		// If the control value is empty, and the control has a global default set, fetch the global value and use it.
+		$global_enabled = false;
+
+		if ( 'color' === $control['type'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_colors_enabled();
+		} elseif ( isset( $control['groupType'] ) && 'typography' === $control['groupType'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_typography_enabled();
+		}
+
+		$value = null;
+
+		// Only apply the global default if Global Colors are enabled.
+		if ( $global_enabled ) {
+			$value = $this->get_selector_global_value( $control, $control['global']['default'] );
+		}
+
+		return $value;
 	}
 
 	/**
@@ -761,7 +819,7 @@ abstract class Base extends Base_File {
 	}
 
 	private function get_selector_global_value( $control, $global_key ) {
-		$data = Plugin::$instance->data_manager->run( $global_key );
+		$data = Plugin::$instance->data_manager_v2->run( $global_key );
 
 		if ( empty( $data['value'] ) ) {
 			return null;
@@ -772,7 +830,15 @@ abstract class Base extends Base_File {
 		$id = $global_args[1];
 
 		if ( ! empty( $control['groupType'] ) ) {
-			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+			$strings_to_replace = [ $control['groupPrefix'] ];
+
+			$active_breakpoint_keys = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
+
+			foreach ( $active_breakpoint_keys as $breakpoint ) {
+				$strings_to_replace[] = '_' . $breakpoint;
+			}
+
+			$property_name = str_replace( $strings_to_replace, '', $control['name'] );
 
 			// TODO: This check won't retrieve the proper answer for array values (multiple controls).
 			if ( empty( $data['value'][ Global_Typography::TYPOGRAPHY_GROUP_PREFIX . $property_name ] ) ) {
