@@ -215,19 +215,15 @@
 
 			if ( isRowContainer && ! isFirstInsert ) {
 				// Insert before or after the main container.
+				let $targetElement = $currentElement;
 				if ( $currentElement.hasClass( 'e-container__inner' ) ) {
-					$currentElement = $currentElement.closest( '.e-container' );
+					$targetElement = $currentElement.closest( '.e-container' );
 				}
 
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				$currentElement[ insertMethod ]( elementsCache.$placeholder );
+				$targetElement[ insertMethod ]( elementsCache.$placeholder );
 
 				return;
-			}
-
-			// Append or prepend to the inner container.
-			if ( currentElement.hasClass( 'e-container--width-boxed' ) ) {
-				currentElement = currentElement.find( '> .e-container__inner' );
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
