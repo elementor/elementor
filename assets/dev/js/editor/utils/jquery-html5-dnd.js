@@ -202,9 +202,9 @@
 
 		var insertPlaceholder = function() {
 			if ( ! settings.placeholder ) {
-			   return;
+				return;
 			}
-		 
+
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
 				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
@@ -214,13 +214,13 @@
 				$parentContainer = $currentElement.closest( '.e-container' ).parent().closest( '.e-container' );
 
 			// Make sure that the previous placeholder is removed before inserting a new one.
-			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();	 
+			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
 
 			if ( isRowContainer && ! isFirstInsert ) {
-			   const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-			   $rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
 
-			   return;
+				return;
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
