@@ -205,7 +205,6 @@
 				return;
 			}
 
-			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
 				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' ),
@@ -216,6 +215,7 @@
 			// Make sure that the previous placeholder is removed before inserting a new one.
 			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
 
+			// Fix placeholder placement for Container with `flex-direction: row`.
 			if ( isRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
