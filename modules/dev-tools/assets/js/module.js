@@ -3,12 +3,16 @@ import Deprecation from './deprecation';
 /* global elementorDevToolsConfig */
 
 export default class Module {
-	constructor() {
-		this.notifyBackendDeprecations();
+	/**
+	 * @type {Deprecation}
+	 */
+	deprecation;
+
+	constructor( deprecation ) {
+		this.deprecation = deprecation;
 	}
 
 	notifyBackendDeprecations() {
-		// eslint-disable-next-line camelcase
 		const notices = elementorDevToolsConfig.deprecation.soft_notices;
 
 		Object.entries( notices ).forEach( ( [ key, notice ] ) => {
@@ -23,9 +27,4 @@ export default class Module {
 
 		console.warn( ...args ); // eslint-disable-line no-console
 	}
-}
-
-if ( ! window.elementorDevTools ) {
-	window.elementorDevTools = new Module();
-	window.elementorDevTools.deprecation = new Deprecation();
 }
