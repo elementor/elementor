@@ -1149,10 +1149,6 @@ abstract class Document extends Controls_Stack {
 		return $deleted && ! is_wp_error( $deleted );
 	}
 
-	/**
-	 * @since 2.0.0
-	 * @access public
-	 */
 	public function force_delete() {
 		$deleted = wp_delete_post( $this->post->ID, true );
 
