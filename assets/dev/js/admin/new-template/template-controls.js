@@ -1,5 +1,5 @@
 export default class TemplateControls {
-	setDynamicFieldsVisibility( lookupControlIdPrefix, controls ) {
+	setDynamicControlsVisibility(lookupControlIdPrefix, controls ) {
 		if ( undefined === controls ) {
 			return;
 		}

@@ -30,17 +30,17 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.lockProBehavior = new LockPro( this.elements );
 		this.lockProBehavior.bindEvents();
 
-		const dynamicFieldsVisibilityListener = () => {
-			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
+		const dynamicControlsVisibilityListener = () => {
+			elementorAdmin.templateControls.setDynamicControlsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
 		};
 
 		this.getModal().onShow = () => {
-			elementorAdmin.templateControls.setDynamicFieldsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
-			document.getElementById( templateTypeSelectId ).addEventListener( 'change', dynamicFieldsVisibilityListener );
+			dynamicControlsVisibilityListener();
+			document.getElementById( templateTypeSelectId ).addEventListener( 'change', dynamicControlsVisibilityListener );
 		};
 
 		this.getModal().onHide = () => {
-			document.getElementById( templateTypeSelectId ).removeEventListener( 'change', dynamicFieldsVisibilityListener );
+			document.getElementById( templateTypeSelectId ).removeEventListener( 'change', dynamicControlsVisibilityListener );
 		};
 	},
 
