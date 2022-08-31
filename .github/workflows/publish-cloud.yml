@@ -1,17 +1,17 @@
 name: Publish Cloud
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       version:
+        type: string
         description: 'Release branch version'
         required: false
       pre_release:
         type: boolean
         description: 'Is this a pre-release?'
         required: false
-
 
 jobs:
   bump-version:
@@ -21,7 +21,9 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
-      - name: get configuration
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Get Configuration
         id: configuration
         uses: antifree/json-to-variables@v1.0.1
         with: 
@@ -29,10 +31,14 @@ jobs:
             prefix: config
       - name: Test permissions
         uses: ./.github/workflows/permissions
-      - name: Install Node.js 14.x
+        with:
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
         with:
@@ -41,6 +47,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.RELEASE_BRANCH }}
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Get Current SHA
         shell: bash
         run: |
@@ -63,17 +70,19 @@ jobs:
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          COMMIT_MESSAGE: "Bump ${{ inputs.PACKAGE_VERSION }}"
+          COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
   publish-to-cloud:
     needs: bump-version
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
-      - name: Install Node.js 14.x
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Get next release branch
         uses: ./.github/workflows/get-next-release-branch
         with:
@@ -81,6 +90,7 @@ jobs:
       - name: Checkout next release branch
         uses: actions/checkout@v3
         with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: ${{ env.RELEASE_BRANCH }}
       - name: Install Dependencies
         run: |
@@ -91,11 +101,13 @@ jobs:
         uses: ./.github/workflows/build-plugin
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          UPDATE_VERSIONS_SCRIPT_PATH: "./.github/scripts/update-version-elementor-php.sh"
+          BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
-          name: elementor-${{ env.PACKAGE_VERSION }}
-          path: ${{ github.workspace }}/elementor/**/*
+          name: ${{ env.PLUGIN_ZIP_FILENAME }}
+          path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
