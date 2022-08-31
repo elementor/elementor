@@ -139,9 +139,10 @@ const ContainerView = BaseElementView.extend( {
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggingInSameParent = ( draggedView?.parent === this ),
-					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-container__inner' );
+					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ),
+					containerSelector = hasInnerContainer ? event.currentTarget.parentElement.parentElement : event.currentTarget.parentElement;
 
-				let $elements = hasInnerContainer ? jQuery( event.currentTarget.parentElement.parentElement ).find( '> .elementor-element' ) : jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+				let $elements = jQuery( containerSelector ).find( '> .elementor-element' );
 
 				// Exclude the dragged element from the indexing calculations.
 				if ( draggingInSameParent ) {
