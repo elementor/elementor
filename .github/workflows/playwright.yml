@@ -83,7 +83,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright -- --grep-invert regression
+          npm run test:playwright
       - uses: actions/upload-artifact@v2
         if: always()
         with:
