@@ -194,9 +194,7 @@
 
 			> .elementor-widget-placeholder {
 
-				// Hack to fix placeholder placement in Chrome when it's last.
 				&:last-child {
-					margin-block-start: calc( 2 * var( --margin-start ) );
 					--margin-end: 0;
 				}
 			}
