@@ -209,19 +209,13 @@
 			elementsCache.$element.find( '.elementor-widget-placeholder' )?.remove();
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
-			const $currentElement = $( currentElement ),
-			isRowContainer = $currentElement.parents( '.e-container--row' ).length,
-			isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
+			const $currentElement = $( currentElement ).hasClass( 'e-container__inner' ) ? $( currentElement ).closest( '.e-container' ) : $( currentElement ),
+				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {
-				// Insert before or after the main container.
-				let $targetElement = $currentElement;
-				if ( $currentElement.hasClass( 'e-container__inner' ) ) {
-					$targetElement = $currentElement.closest( '.e-container' );
-				}
-
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				$targetElement[ insertMethod ]( elementsCache.$placeholder );
+				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
 				return;
 			}
