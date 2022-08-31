@@ -130,7 +130,8 @@
 
 	&.e-container--row {
 
-		&, & > .e-container__inner {
+		&,
+		& > .e-container__inner {
 
 			> .elementor-widget-placeholder {
 				position: relative;
@@ -148,7 +149,8 @@
 		// Fix nested Containers DnD issues (ED-5424).
 		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
 
-			&, & > .e-container__inner {
+			&,
+			& > .e-container__inner {
 
 				// Any placeholder which is not on first widget.
 				> .elementor-widget-placeholder {
@@ -167,17 +169,36 @@
 
 	&.e-container--column {
 
+		&,
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+				height: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-block-start: var( --margin-start );
+				margin-block-end: var( --margin-end );
+				animation-name: dnd-placeholder-widget-horizontal;
+			}
+		}
+
 		> .elementor-widget-placeholder {
-			height: var( --size );
-			// To make sure that it doesn't push & break the layout when appearing.
-			margin-block-start: var( --margin-start );
-			margin-block-end: var( --margin-end );
-			animation-name: dnd-placeholder-widget-horizontal;
 
 			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
 			&:nth-last-child( 2 ) {
 				margin-block-start: calc( 2 * var( --margin-start ) );
 				--margin-end: 0;
+			}
+		}
+
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+
+				// Hack to fix placeholder placement in Chrome when it's last.
+				&:last-child {
+					margin-block-start: calc( 2 * var( --margin-start ) );
+					--margin-end: 0;
+				}
 			}
 		}
 	}
@@ -238,7 +259,8 @@
 		}
 	}
 
-	&, & > .e-container__inner {
+	&,
+	& > .e-container__inner {
 
 		& > .elementor-widget {
 
@@ -251,7 +273,10 @@
 
 	// Inner Container handle.
 	// TODO: Find a better solution.
-	& > &, &__inner > &, .elementor-widget & {
+	& > &,
+	&__inner > &,
+	.elementor-widget & {
+
 		> .elementor-element-overlay {
 
 			.elementor-editor-element-setting {
@@ -312,7 +337,8 @@
 
 	.elementor & {
 
-		&, & > .e-container__inner {
+		&,
+		& > .e-container__inner {
 
 			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
 			& > .elementor-widget {

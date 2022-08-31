@@ -40,8 +40,7 @@ html.elementor-html {
 	--secondary-color: #{ darken($editor-info, 20%) };
 	--outline-color: var( --primary-color );
 
-	.e-container,
-	.e-container__inner {
+	.e-container {
 		--primary-color: #{ $editor-container-primary };
 		--secondary-color: #{ darken( $editor-container-primary, 10% ) };
 		--outline-color: var( --primary-color );
@@ -49,7 +48,8 @@ html.elementor-html {
 		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
 		// between Containers.
 		&.e-dragging-over,
-		&.elementor-dragging-on-child {
+		&.elementor-dragging-on-child,
+		&.e-container--width-boxed.elementor-html5dnd-current-element {
 			outline: 1px solid var( --outline-color );
 		}
 	}

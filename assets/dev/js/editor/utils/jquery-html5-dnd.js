@@ -210,25 +210,24 @@
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-				$targetContainer = $currentElement.closest( '.e-container' ),
-				$targetParentContainer = $targetContainer.parent()?.closest( '.e-container' ),
-				isWidget = $currentElement.hasClass( 'elementor-widget' ),
-				hasColumnContainer = $targetContainer?.hasClass( 'e-container--column' ),
-				hasRowContainer = $targetContainer?.hasClass( 'e-container--row' ),
-				hasRowParentContainer = $targetParentContainer?.hasClass( 'e-container--row' ),
-				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
+			isRowContainer = $currentElement.parents( '.e-container--row' ).length,
+			isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
-			if ( ( ( hasRowContainer || hasRowParentContainer ) && ! isFirstInsert ) ||
-				( hasColumnContainer && ! isWidget && hasRowParentContainer ) 
-			) {
+			if ( isRowContainer && ! isFirstInsert ) {
+				// Insert before or after the main container.
 				if ( $currentElement.hasClass( 'e-container__inner' ) ) {
-					$currentElement = $currentElement.closest( '> .e-container' );
+					$currentElement = $currentElement.closest( '.e-container' );
 				}
 
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
 				return;
+			}
+
+			// Append or prepend to the inner container.
+			if ( currentElement.hasClass( 'e-container--width-boxed' ) ) {
+				currentElement = currentElement.find( '> .e-container__inner' );
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
