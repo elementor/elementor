@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.7.4 - 2022-08-31 =
+* Tweak: Removed redundant code in various widgets that includes images ([#12268] (https://github.com/elementor/elementor/issues/12268), props [@ibndawood](https://github.com/ibndawood))
+* Fix: Error message appears on front if WooCommerce is activated ([#19553] (https://github.com/elementor/elementor/issues/19553))
+* Fix: Web CLI requires jQuery to avoid errors when jQuery is loaded in the footer (props [@nicomollet](https://github.com/nicomollet))
+
 = 3.7.3 - 2022-08-29 =
 * Fix: Errors in deprecation module prevent Elementor editor to load ([#19390](https://github.com/elementor/elementor/issues/19390), [#19562](https://github.com/elementor/elementor/issues/19562))
 * Fix: `add_link_attributes` function does not overwrite all in foreach loop item link attributes ([#11498](https://github.com/elementor/elementor/issues/11498), props [@sol1](https://github.com/afoster))
