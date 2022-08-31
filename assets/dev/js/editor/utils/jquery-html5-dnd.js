@@ -452,6 +452,7 @@
 
 					return;
 				} else if ( 'destroy' === options ) {
+					// Escape the loop when an element is destroyed before initialisation.
 					return;
 				}
 
