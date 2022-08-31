@@ -218,7 +218,13 @@
 				hasRowParentContainer = $targetParentContainer?.hasClass( 'e-container--row' ),
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
-			if ( ( hasRowContainer || hasRowParentContainer ) && ! isFirstInsert && ( hasColumnContainer && ! isWidget ) ) {
+			if ( ( ( hasRowContainer || hasRowParentContainer ) && ! isFirstInsert ) ||
+				( hasColumnContainer && ! isWidget && hasRowParentContainer ) 
+			) {
+				if ( $currentElement.hasClass( 'e-container__inner' ) ) {
+					$currentElement = $currentElement.closest( '> .e-container' );
+				}
+
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
