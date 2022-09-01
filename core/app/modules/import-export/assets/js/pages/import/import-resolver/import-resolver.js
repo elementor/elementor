@@ -87,7 +87,7 @@ export default function ImportResolver() {
 		<Layout type="import" footer={ getFooter() }>
 			<section className="e-app-import-resolver">
 				<PageHeader
-					heading={ __( 'Import a Template Kit to your site', 'elementor' ) }
+					heading={ __( 'Import a Website Kit to your site', 'elementor' ) }
 					description={ [
 						<React.Fragment key="description-first-line">
 							{ __( 'Parts of this kit overlap with your site’s templates, design and settings. The items you leave checked on this list will replace your current design.', 'elementor' ) } { getLearnMoreLink() }
