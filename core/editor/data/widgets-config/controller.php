@@ -14,7 +14,7 @@ class Controller extends Controller_Base {
 		$this->index_endpoint->register_item_route(
 			\WP_REST_Server::READABLE,
 			[
-				'id_arg_type_regex' => '[\w]+',
+				'id_arg_type_regex' => '[\w\-]+',
 				'exclude' => [
 					'description' => 'ids of widgets that should be excluded',
 					'type' => 'array',

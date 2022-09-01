@@ -34,7 +34,7 @@ class Controller extends Base_Controller {
 			\WP_REST_Server::CREATABLE,
 			[
 				'id_arg_name' => 'type',
-				'id_arg_type_regex' => '[\w]+',
+				'id_arg_type_regex' => '[\w\-]+',
 				'type' => [
 					'description' => 'Unique identifier for the object.',
 					'required' => true,
@@ -53,7 +53,7 @@ class Controller extends Base_Controller {
 			\WP_REST_Server::DELETABLE,
 			[
 				'id_arg_name' => 'type',
-				'id_arg_type_regex' => '[\w]+',
+				'id_arg_type_regex' => '[\w\-]+',
 				'type' => [
 					'description' => 'Unique identifier for the object.',
 					'required' => true,
