@@ -36,7 +36,7 @@ body:
       required: true
     attributes:
       label: "Description"
-      description: "Describe the problem. What caused the issue? What did you expect to happen and what actual happen? Please be as descriptive as possible. Attach screenshots and related links.
+      description: "Describe the problem. What caused the issue? What did you expect to happen and what actual happen? Please be as descriptive as possible. Attach screenshots and related links."
   - type: textarea
     id: steps_to_reproduce
     validations:
