@@ -1,7 +1,11 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Editor\Editor;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
+use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
+use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
+use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,6 +56,8 @@ class Settings extends Settings_Page {
 	 * Settings page advanced tab slug.
 	 */
 	const TAB_ADVANCED = 'advanced';
+
+	const ADMIN_MENU_PRIORITY = 10;
 
 	/**
 	 * Register admin menu.
@@ -121,69 +127,6 @@ class Settings extends Settings_Page {
 	}
 
 	/**
-	 * Register Elementor Pro sub-menu.
-	 *
-	 * Add new Elementor Pro sub-menu under the main Elementor menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function register_pro_menu() {
-		add_submenu_page(
-			self::PAGE_ID,
-			esc_html__( 'Submissions', 'elementor' ),
-			esc_html__( 'Submissions', 'elementor' ),
-			'manage_options',
-			'e-form-submissions',
-			function() {
-				$this->elementor_form_submissions();
-			}
-		);
-
-		add_submenu_page(
-			self::PAGE_ID,
-			esc_html__( 'Custom Fonts', 'elementor' ),
-			esc_html__( 'Custom Fonts', 'elementor' ),
-			'manage_options',
-			'elementor_custom_fonts',
-			[ $this, 'elementor_custom_fonts' ]
-		);
-
-		add_submenu_page(
-			self::PAGE_ID,
-			esc_html__( 'Custom Icons', 'elementor' ),
-			esc_html__( 'Custom Icons', 'elementor' ),
-			'manage_options',
-			'elementor_custom_icons',
-			[ $this, 'elementor_custom_icons' ]
-		);
-
-		add_submenu_page(
-			self::PAGE_ID,
-			__( 'Custom Code', 'elementor' ),
-			__( 'Custom Code', 'elementor' ),
-			'manage_options',
-			'elementor_custom_custom_code',
-			function() {
-				$this->elementor_custom_code();
-			}
-		);
-
-		add_submenu_page(
-			self::PAGE_ID,
-			'',
-			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . esc_html__( 'Upgrade', 'elementor' ),
-			'manage_options',
-			'go_elementor_pro',
-			[ $this, 'handle_external_redirects' ]
-		);
-
-		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, esc_html__( 'Popups', 'elementor' ), esc_html__( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
-	}
-
-	/**
 	 * Register Elementor knowledge base sub-menu.
 	 *
 	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
@@ -191,26 +134,11 @@ class Settings extends Settings_Page {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 2.0.3
-	 * @access public
+	 * @access private
 	 */
-	public function register_knowledge_base_menu() {
-		add_submenu_page(
-			self::PAGE_ID,
-			'',
-			__( 'Getting Started', 'elementor' ),
-			'manage_options',
-			'elementor-getting-started',
-			[ $this, 'elementor_getting_started' ]
-		);
-
-		add_submenu_page(
-			self::PAGE_ID,
-			'',
-			esc_html__( 'Get Help', 'elementor' ),
-			'manage_options',
-			'go_knowledge_base_site',
-			[ $this, 'handle_external_redirects' ]
-		);
+	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
+		$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
 	}
 
 	/**
@@ -228,155 +156,10 @@ class Settings extends Settings_Page {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( 'https://go.elementor.com/pro-admin-menu/' );
-			die;
-		}
-
 		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
+			wp_redirect( Get_Help_Menu_Item::URL );
 			die;
 		}
-	}
-
-	/**
-	 * Display settings page.
-	 *
-	 * Output the content for the getting started page.
-	 *
-	 * @since 2.2.0
-	 * @access public
-	 */
-	public function elementor_getting_started() {
-		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
-			$create_new_label = esc_html__( 'Create Your First Page', 'elementor' );
-			$create_new_cpt = 'page';
-		} elseif ( User::is_current_user_can_edit_post_type( 'post' ) ) {
-			$create_new_label = esc_html__( 'Create Your First Post', 'elementor' );
-			$create_new_cpt = 'post';
-		}
-
-		?>
-		<div class="wrap">
-			<div class="e-getting-started">
-				<div class="e-getting-started__box postbox">
-					<div class="e-getting-started__header">
-						<div class="e-getting-started__title">
-							<div class="e-logo-wrapper">
-								<i class="eicon-elementor"></i>
-							</div>
-							<?php echo esc_html__( 'Getting Started', 'elementor' ); ?>
-						</div>
-						<a class="e-getting-started__skip" href="<?php echo esc_url( admin_url() ); ?>">
-							<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Skip', 'elementor' ); ?>"></i>
-							<span class="elementor-screen-only"><?php echo esc_html__( 'Skip', 'elementor' ); ?></span>
-						</a>
-					</div>
-					<div class="e-getting-started__content">
-						<div class="e-getting-started__content--narrow">
-							<h2><?php echo esc_html__( 'Welcome to Elementor', 'elementor' ); ?></h2>
-							<p><?php echo esc_html__( 'Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ); ?></p>
-						</div>
-
-						<div class="e-getting-started__video">
-							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?v=icTcREd1tAg&amp;list=PLZyp9H25CboE6dhe7MnUxUdp4zU7OsNSe&amp;index=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-						</div>
-
-						<div class="e-getting-started__actions e-getting-started__content--narrow">
-							<?php if ( ! empty( $create_new_cpt ) ) : ?>
-							<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
-							<?php endif; ?>
-
-							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo esc_html__( 'Watch the Full Guide', 'elementor' ); ?></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	/**
-	 * Display settings page.
-	 *
-	 * Output the content for the custom fonts page.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 */
-	public function elementor_custom_fonts() {
-		?>
-		<div class="wrap">
-			<div class="elementor-blank_state">
-				<?php // PHPCS - No need to escape an SVG image from the Elementor assets/images folder. ?>
-				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
-				<h2><?php echo esc_html__( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
-				<p><?php echo esc_html__( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-custom-fonts/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	/**
-	 * Display settings page.
-	 *
-	 * Output the content for the custom icons page.
-	 *
-	 * @since 2.8.0
-	 * @access public
-	 */
-	public function elementor_custom_icons() {
-		?>
-		<div class="wrap">
-			<div class="elementor-blank_state">
-				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg' ); ?>" />
-				<h2><?php echo esc_html__( 'Add Your Custom Icons', 'elementor' ); ?></h2>
-				<p><?php echo esc_html__( 'Don\'t rely solely on the FontAwesome icons everyone else is using! Differentiate your website and your style with custom icons you can upload from your favorite icons source.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-custom-icons/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	/**
-	 * Display settings page.
-	 *
-	 * Output the content for the Popups page.
-	 *
-	 * @since 2.4.0
-	 * @access public
-	 */
-	public function elementor_popups() {
-		?>
-		<div class="wrap">
-			<div class="elementor-blank_state">
-				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg' ); ?>" />
-				<h2><?php echo esc_html__( 'Get Popup Builder', 'elementor' ); ?></h2>
-				<p><?php echo esc_html__( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-popup-builder/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	public function elementor_form_submissions() {
-		?>
-		<div class="wrap">
-			<div class="elementor-blank_state">
-				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>images/go-pro-wp-dashboard.svg" />
-				<h2><?php echo esc_html__( 'Collect Your Form Submissions', 'elementor' ); ?></h2>
-				<p>
-					<?php echo esc_html__( 'Save and manage all of your form submissions in one single place.
-All within a simple, intuitive place.', 'elementor' ); ?>
-					<a href="http://go.elementor.com/wp-dash-submissions" target="_blank" rel="nofollow">
-						<?php echo esc_html__( 'Learn More', 'elementor' ); ?>
-					</a>
-				</p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-submissions/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
 	}
 
 	/**
@@ -614,22 +397,6 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	}
 
 	/**
-	 * Output the content for custom_code page.
-	 */
-	private function elementor_custom_code() {
-		?>
-		<div class="wrap">
-			<div class="elementor-blank_state">
-				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>images/go-pro-wp-dashboard.svg" />
-				<h2><?php echo esc_html__( 'Add Your Custom Code', 'elementor' ); ?></h2>
-				<p><?php echo esc_html__( 'Custom Code is a tool gives you one place where you can insert scripts, rather than dealing with dozens of different plugins and deal with code.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://go.elementor.com/go-pro-custom-code/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	/**
 	 * Settings page constructor.
 	 *
 	 * Initializing Elementor "Settings" page.
@@ -644,9 +411,12 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->register_knowledge_base_menu( $admin_menu );
+			}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
+
 			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-			add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
-			add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
 
 			add_filter( 'custom_menu_order', '__return_true' );
 			add_filter( 'menu_order', [ $this, 'menu_order' ] );
