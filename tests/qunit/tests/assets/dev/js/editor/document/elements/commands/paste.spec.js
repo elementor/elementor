@@ -4,7 +4,6 @@ import HistoryHelper from '../../history/helper';
 // TODO: Check code coverage and add required tests.
 export const Paste = () => {
 	QUnit.module( 'Paste', () => {
-
 		// Only run these tests when the container experiment is not active.
 		if ( ! elementorCommon.config.experimentalFeatures.container ) {
 			QUnit.module( 'Single Selection', () => {
@@ -136,7 +135,6 @@ export const Paste = () => {
 					}
 				} );
 
-
 				QUnit.test( 'On preview container', ( assert ) => {
 					const eColumn = ElementsHelper.createSection( 1, true ),
 						eButton = ElementsHelper.createWidgetButton( eColumn ),
@@ -154,7 +152,7 @@ export const Paste = () => {
 					// Check whether they preserved their order.
 					assert.equal(
 						elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-							.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
+							.children[ 0 ].model.get( 'widgetType' ),
 						toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 						'Elements preserved their position.',
 					);
