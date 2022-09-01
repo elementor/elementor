@@ -17,8 +17,10 @@ export const Paste = () => {
 				ElementsHelper.paste( eColumn );
 
 				// Check.
+				console.log( 'check1' );
 				assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 0 ).get( 'elements' ).length, 2,
 					'Pasted element were created.' );
+				console.log( 'check2' );
 				assert.equal( elementor.saver.isEditorChanged(), true,
 					'Command applied the saver editor is changed.' );
 			} );
@@ -31,6 +33,8 @@ export const Paste = () => {
 
 				const ePastedWidget = ElementsHelper.paste( eColumn ),
 					historyItem = HistoryHelper.getFirstItem().attributes;
+
+				console.log( 'check3' );
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
