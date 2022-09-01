@@ -208,6 +208,9 @@ const ContainerView = BaseElementView.extend( {
 		$e.run( 'document/elements/create', {
 			model: {
 				elType: 'container',
+				settings: {
+					content_width: 'full',
+				},
 			},
 			container: targetContainer,
 		} );
