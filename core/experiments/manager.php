@@ -32,6 +32,8 @@ class Manager extends Base_Object {
 
 	const STATE_INACTIVE = 'inactive';
 
+	const TYPE_HIDDEN = 'hidden';
+
 	private $states;
 
 	private $release_statuses;
@@ -68,7 +70,7 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 			'mutable' => true,
-			'hidden' => false,
+			static::TYPE_HIDDEN => false,
 			'new_site' => [
 				'default_active' => false,
 				'always_active' => false,
@@ -77,7 +79,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', 'hidden', 'new_site', 'on_state_change', 'dependencies' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -109,7 +111,7 @@ class Manager extends Base_Object {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 				$feature = $this->get_features( $dependency );
 
-				if ( ! empty( $feature['hidden'] ) ) {
+				if ( ! empty( $feature[static::TYPE_HIDDEN] ) ) {
 					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
 				}
 
@@ -426,7 +428,7 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			if ( ! $feature['mutable'] || $feature['hidden'] ) {
+			if ( ! $feature['mutable'] || $feature[static::TYPE_HIDDEN] ) {
 				unset( $features[ $feature_name ] );
 
 				continue;
