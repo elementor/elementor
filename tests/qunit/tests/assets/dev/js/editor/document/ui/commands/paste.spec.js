@@ -112,7 +112,9 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 	// Handle situation when target is inner.
 	if ( targetIsInner ) {
-		if ( 'column' === targetElType ) {
+		if ( 'container' === targetElType ) {
+			targetElType = 'container';
+		} else if ( 'column' === targetElType ) {
 			target = target.children[ 0 ];
 			targetElType = 'column';
 			isForce = true;
