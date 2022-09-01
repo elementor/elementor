@@ -7,7 +7,8 @@ export default class LocalValues extends BaseHandler {
 
 		// Filter all the non styled controls.
 		const localSettings = Object.entries( settingsWithoutHardcodedDefaults ).filter(
-			( [ controlName ] ) => controls[ controlName ] && container.view.isStyleTransferControl( controls[ controlName ] )
+			( [ controlName ] ) => controls[ controlName ],
+				// && container.view.isStyleTransferControl( controls[ controlName ] )
 		);
 
 		return {

@@ -48,6 +48,12 @@ export default class Component extends ComponentBase {
 					isEnabled: () => true,
 					callback: () => $e.run( 'default-values/create', { container: view.getContainer() } ),
 				},
+				{
+					name: 'reset-default',
+					title: __( 'Reset Defaults', 'elementor' ),
+					isEnabled: () => true,
+					callback: () => $e.run( 'default-values/reset', { type: view.getContainer().model.get( 'widgetType' ) } ),
+				},
 			];
 
 			return group;
