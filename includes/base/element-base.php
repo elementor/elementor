@@ -594,9 +594,35 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * On Import Replace Dynamic Content.
-	 *
 	 * @since 3.6.0
+	 * @access public
+	 *
+	 * @deprecated 3.8.0 Use `::updated_on_import_replace_dynamic_content()` instead.
+	 */
+	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::updated_on_import_replace_dynamic_content()' );
+
+		$tags_manager = Plugin::$instance->dynamic_tags;
+
+		if ( isset( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
+			foreach ( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+				$tag_config = $tags_manager->tag_text_to_tag_data( $dynamic_value );
+				$tag_instance = $tags_manager->create_tag( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+
+				if ( $tag_instance ) {
+					$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $map_old_new_post_ids );
+					$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+				}
+			}
+		}
+
+		return $config;
+	}
+
+	/**
+	 * On import replace dynamic content.
+	 *
+	 * @since 3.8.0
 	 * @access public
 	 *
 	 * @param array $config
@@ -605,7 +631,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_replace_dynamic_content( array $config, array $new_ids_map, $controls = null ) {
+	public static function updated_on_import_replace_dynamic_content( array $config, array $new_ids_map, $controls = null ) : array {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( empty( $config['settings'] ) || empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
@@ -620,7 +646,14 @@ abstract class Element_Base extends Controls_Stack {
 				continue;
 			}
 
-			$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $new_ids_map, $tag_instance->get_controls() );
+			if ( ! method_exists( $tag_instance, 'updated_on_import_replace_dynamic_content' ) ) {
+				// on_import_replace_dynamic_content() is deprecated since 3.8.0
+				// TODO: Remove this check in the future.
+				$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $new_ids_map );
+			} else {
+				$tag_config = $tag_instance->updated_on_import_replace_dynamic_content( $tag_config, $new_ids_map, $tag_instance->get_controls() );
+			}
+
 			$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
 		}
 

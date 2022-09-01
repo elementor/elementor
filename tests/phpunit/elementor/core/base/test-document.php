@@ -119,7 +119,7 @@ class Test_Document extends Elementor_Test_Base {
 
 		$config[0]['elements'][0]['elements'] = array_merge(  $config[0]['elements'][0]['elements'], $dynamic_widgets);
 
-		$updated_config = $document::on_import_replace_dynamic_content( $config, $new_ids_map );
+		$updated_config = $document::updated_on_import_replace_dynamic_content( $config, $new_ids_map );
 
 		$this->assertEquals(
 			'[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2236%22%7D"]',
