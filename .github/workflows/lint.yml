@@ -25,7 +25,7 @@ jobs:
         with:
           PATTERNS: |
             **/*.php
-
+            phpcs.xml
 
   JS-Lint:
     runs-on: ubuntu-18.04
