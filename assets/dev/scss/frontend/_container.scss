@@ -349,7 +349,11 @@
 @media ( max-width: $editor-screen-sm-max ) {
 	.e-container {
 		--width: 100%;
-		--flex-wrap: wrap;
+
+		&--width-full,
+		&__inner {
+			--flex-wrap: wrap;
+		}
 	}
 }
 
