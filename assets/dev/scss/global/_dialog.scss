@@ -139,6 +139,16 @@
 	}
 }
 
+#e-experiments-dependency-dialog {
+	.dialog-confirm-header {
+		font-weight: 600;
+	}
+
+	.dialog-ok {
+		color: $editor-success;
+	}
+}
+
 
 .dialog-prevent-scroll {
 	overflow: hidden;
