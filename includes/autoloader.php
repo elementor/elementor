@@ -144,6 +144,7 @@ class Autoloader {
 			'Stylesheet' => 'includes/stylesheet.php',
 			'System_Info\Main' => 'includes/settings/system-info/main.php',
 			'TemplateLibrary\Classes\Import_Images' => 'includes/template-library/classes/class-import-images.php',
+			'TemplateLibrary\Forms\New_Template_Form' => 'includes/template-library/forms/new-template-form.php',
 			'TemplateLibrary\Manager' => 'includes/template-library/manager.php',
 			'TemplateLibrary\Source_Base' => 'includes/template-library/sources/base.php',
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
