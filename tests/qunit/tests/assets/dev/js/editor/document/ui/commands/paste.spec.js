@@ -140,10 +140,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
-				} else if ( 'widget' === sourceElType ) {
-					const lastSection = lastChildrenContainer( searchTarget );
-
-					searchTarget = lastSection;
 				}
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
