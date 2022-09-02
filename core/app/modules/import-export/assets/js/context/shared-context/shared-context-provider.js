@@ -11,7 +11,8 @@ export default function SharedContextProvider( props ) {
 		includes: kitContentData.map( ( item ) => item.type ),
 		referrer: null,
 		customPostTypes: [],
-		selectedCustomPostTypes: [],
+		selectedCustomPostTypes: null,
+		currentPage: null,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

@@ -27,15 +27,11 @@
 	--overflow: visible;
 	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
-
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
 
 	position: var( --position );
-	display: var( --display );
-	text-align: var( --text-align );
-	flex-direction: var( --flex-direction );
 	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
@@ -45,14 +41,56 @@
 	height: var( --height );
 	border-radius: var( --border-radius );
 	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
-	// Custom content-width hack.
-	padding-left: Max( var( --padding-left ), calc( ( 100% - var( --content-width ) ) / 2 ) );
-	padding-right: Max( var( --padding-right ), calc( ( 100% - var( --content-width ) ) / 2 ) );
-	padding-top: var( --padding-top );
-	padding-bottom: var( --padding-bottom );
+	padding-left: var( --padding-left );
+	padding-right: var( --padding-right );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: var( --transition );
+	isolation: isolate;
+
+	&--width-full,
+	& > .e-container__inner {
+		flex-direction: var( --flex-direction );
+		text-align: var( --text-align );
+		padding-top: var( --padding-top );
+		padding-bottom: var( --padding-bottom );
+	}
+
+	&,
+	& > .e-container__inner {
+		display: var( --display );
+	}
+
+	// Set default values to the outer div of the boxed container.
+	&--width-boxed {
+		flex-direction: column;
+		text-align: initial;
+		flex-wrap: initial;
+		justify-content: initial;
+		align-items: initial;
+		align-content: initial;
+		gap: initial;
+	}
+
+	& > .e-container__inner {
+		flex-wrap: var( --flex-wrap );
+		justify-content: var( --justify-content );
+		align-items: var( --align-items );
+		align-content: var( --align-content );
+		gap: var( --gap );
+		width: 100%;
+		max-width: var( --content-width );
+		margin: 0 auto;
+		padding-inline: 0;
+		height: 100%;	
+
+		// Set default values to the inner div of the boxed container.
+		flex-basis: initial;
+		// Ensure that the inner div covers the full height of the container.
+		flex-grow: 1;
+		flex-shrink: initial;
+		align-self: initial;
+	}
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
 		// Default top-level containers to be centered.
@@ -78,7 +116,7 @@
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;
-		z-index: $ground-layer;
+		z-index: $under-layer;
 		width: 100%;
 		height: 100%;
 		left: 0;
@@ -91,7 +129,7 @@
 
 	.elementor-background-video-container,
 	.elementor-background-slideshow {
-		z-index: $under-layer;
+		z-index: calc( $under-layer - 1 );
 	}
 
 	.elementor-widget {
@@ -114,20 +152,27 @@
 		}
 	}
 
-	& > .elementor-widget {
+	&,
+	& > .e-container__inner {
 
-		& > .elementor-widget-container {
-			// Fix align-self:stretch (ED-7359)
-			height: 100%;
+		& > .elementor-widget {
+
+			& > .elementor-widget-container {
+				// Fix align-self:stretch (ED-7359)
+				height: 100%;
+			}
 		}
 	}
 
-	// Hack to increase specificity and avoid using `!important`.
-	.elementor .elementor-section-wrap & {
+	.elementor & {
 
-		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
-		& > .elementor-widget {
-			max-width: 100%;
+		&,
+		& > .e-container__inner {
+
+			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+			& > .elementor-widget {
+				max-width: 100%;
+			}
 		}
 	}
 }
@@ -136,33 +181,5 @@
 	.e-container {
 		--width: 100%;
 		--flex-wrap: wrap;
-	}
-}
-
-@keyframes dnd-placeholder-widget-vertical {
-	0% {
-		transform-origin: 0 50%;
-		transform: translateX( 50% ) scaleX( 0 );
-		opacity: 0;
-	}
-
-	100% {
-		transform-origin: 0 50%;
-		transform: translateX( 50% ) scaleX( 1 );
-		opacity: .9;
-	}
-}
-
-@keyframes dnd-placeholder-widget-horizontal {
-	0% {
-		transform-origin: 50% 0;
-		transform: scaleY( 0 );
-		opacity: 0;
-	}
-
-	100% {
-		transform-origin: 50% 0;
-		transform: scaleY( 1 );
-		opacity: .9;
 	}
 }

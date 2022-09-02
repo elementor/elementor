@@ -114,7 +114,10 @@ class Container extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
+		<# if ( 'boxed' === settings.content_width ) { #>
+			<div class="e-container__inner">
 		<#
+		}
 		if ( settings.background_video_link ) {
 			let videoAttributes = 'autoplay muted playsinline';
 
@@ -135,6 +138,9 @@ class Container extends Element_Base {
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
+		<# if ( 'boxed' === settings.content_width ) { #>
+			</div>
+		<# } #>
 		<?php
 	}
 
@@ -237,10 +243,13 @@ class Container extends Element_Base {
 			$this->add_link_attributes( '_wrapper', $link );
 		}
 
-		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
-		$this->render_video_background();
-?>
+		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
+		if ( $this->is_boxed_container( $settings ) ) { ?>
+			<div class="e-container__inner">
+		<?php }
+
+		$this->render_video_background();
 
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
 			$this->render_shape_divider( 'top' );
@@ -257,7 +266,16 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function after_render() {
-		?></<?php $this->print_html_tag(); ?>><?php
+		$settings = $this->get_settings_for_display();
+		if ( $this->is_boxed_container( $settings ) ) { ?>
+			</div>
+		<?php } ?>
+		</<?php $this->print_html_tag(); ?>>
+		<?php
+	}
+
+	private function is_boxed_container( array $settings ) {
+		return ! empty( $settings['content_width'] ) && 'boxed' === $settings['content_width'];
 	}
 
 	/**
@@ -289,7 +307,13 @@ class Container extends Element_Base {
 			]
 		);
 
-		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		if ( array_key_exists( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA, $active_breakpoints ) ) {
+			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
+		} else {
+			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+		}
 
 		$this->add_control(
 			'content_width',
@@ -301,14 +325,9 @@ class Container extends Element_Base {
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
-				'render_type' => 'ui',
-				'selectors' => [
-					'{{WRAPPER}}' => '{{VALUE}}',
-				],
-				'selectors_dictionary' => [
-					'boxed' => '',
-					'full' => '--content-width: 100%;',
-				],
+				'render_type' => 'template',
+				'prefix_class' => 'e-container--width-',
+				'frontend_available' => true,
 			]
 		);
 
@@ -338,6 +357,7 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
 			'separator' => 'none',
 		];
@@ -351,9 +371,20 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'full',
 				],
-				'placeholder' => [
-					'size' => '100',
-					'unit' => '%',
+				'device_args' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						'placeholder' => [
+							'size' => 100,
+							'unit' => '%',
+						],
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						// The mobile width is not inherited from the higher breakpoint width controls.
+						'placeholder' => [
+							'size' => 100,
+							'unit' => '%',
+						],
+					],
 				],
 			] )
 		);
@@ -374,6 +405,13 @@ class Container extends Element_Base {
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 						// Use the default width from the kit as a placeholder.
 						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						// The mobile width is not inherited from the higher breakpoint width controls.
+						'placeholder' => [
+							'size' => 100,
+							'unit' => '%',
+						],
 					],
 				],
 			] )
@@ -413,8 +451,12 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
-						// Use the default "elements gap" from the kit as a placeholder.
-						'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+						'device_args' => [
+							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+								// Use the default gap from the kit as a placeholder.
+								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+							],
+						],
 					],
 				],
 			]
@@ -463,7 +505,7 @@ class Container extends Element_Base {
 			'section' => 'section',
 			'aside' => 'aside',
 			'nav' => 'nav',
-			'a' => 'a',
+			'a' => 'a ' . esc_html__( '(link)', 'elementor' ),
 		];
 
 		$options = [
@@ -854,7 +896,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -893,7 +935,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1010,7 +1052,7 @@ class Container extends Element_Base {
 						"shape_divider_$side!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
 					],
 				]
 			);
@@ -1039,7 +1081,7 @@ class Container extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
 					],
 				]
 			);
@@ -1058,7 +1100,7 @@ class Container extends Element_Base {
 						"shape_divider_$side!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
 					],
 				]
 			);
@@ -1072,7 +1114,7 @@ class Container extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
 					],
 				]
 			);
@@ -1096,7 +1138,7 @@ class Container extends Element_Base {
 					'label' => esc_html__( 'Bring to Front', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
+						"{{WRAPPER}} > .elementor-shape-$side, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
 					],
 					'condition' => [
 						"shape_divider_$side!" => '',

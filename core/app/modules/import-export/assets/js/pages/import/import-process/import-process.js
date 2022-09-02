@@ -7,6 +7,7 @@ import { ImportContext } from '../../../context/import-context/import-context-pr
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
@@ -24,7 +25,7 @@ export default function ImportProcess() {
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
-		{ includes, selectedCustomPostTypes } = sharedContext.data || {},
+		{ includes, selectedCustomPostTypes, currentPage } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
@@ -57,6 +58,23 @@ export default function ImportProcess() {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
 			navigateToMainScreen();
+		},
+		onReady = () => {
+			setShowUnfilteredFilesDialog( false );
+			setStartImport( true );
+		},
+		eventTracking = ( command, eventType = 'click' ) => {
+			if ( 'kit-library' === sharedContext.data.referrer ) {
+				appsEventTrackingDispatch(
+					command,
+					{
+						page_source: 'import',
+						step: currentPage,
+						modal_type: 'unfiltered_file',
+						event_type: eventType,
+					},
+				);
+			}
 		};
 
 	// On load.
@@ -79,6 +97,7 @@ export default function ImportProcess() {
 		} else {
 			navigate( 'import' );
 		}
+		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportProcess.name } );
 	}, [] );
 
 	// Starting the import process.
@@ -164,14 +183,21 @@ export default function ImportProcess() {
 					setShow={ setShowUnfilteredFilesDialog }
 					confirmModalText={ __( 'This allows Elementor to scan your SVGs for malicious content. Otherwise, you can skip any SVGs in this import.', 'elementor' ) }
 					errorModalText={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
-					onReady={ () => {
-						setShowUnfilteredFilesDialog( false );
-						setStartImport( true );
-					} }
+					onReady={ () => onReady() }
 					onCancel={ () => {
 						setShowUnfilteredFilesDialog( false );
 						onCancelProcess();
 					} }
+					onLoad={ () => eventTracking( 'kit-library/modal-load', 'load' ) }
+					onClose={ () => {
+						eventTracking( 'kit-library/close' );
+						onReady();
+					} }
+					onDismiss={ () => {
+						onReady();
+						eventTracking( 'kit-library/skip' );
+					} }
+					onEnable={ () => eventTracking( 'kit-library/enable' ) }
 				/>
 			</section>
 		</Layout>

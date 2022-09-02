@@ -26,45 +26,75 @@
 	}
 
 	&.e-container--row {
-		& > .elementor-widget-placeholder {
-			position: relative;
-			z-index: $editor-layer; // To put it above the element overlay.
-			width: var( --size );
-			// To make sure that it doesn't push & break the layout when appearing.
-			margin-inline-start: var( --margin-start );
-			height: auto;
-			min-height: 100%;
-			animation-name: dnd-placeholder-widget-vertical;
-			animation-fill-mode: both;
+
+		&,
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+				position: relative;
+				z-index: $editor-layer; // To put it above the element overlay.
+				width: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-inline-start: var( --margin-start );
+				height: auto;
+				min-height: 100%;
+				animation-name: dnd-placeholder-widget-vertical;
+				animation-fill-mode: both;
+			}
 		}
 
 		// Fix nested Containers DnD issues (ED-5424).
 		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
-			// Any placeholder which is not on first widget.
-			> .elementor-widget-placeholder {
-				margin-inline-end: 0;
-				margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
-			}
 
-			// Placeholder on first widget.
-			> :not( .elementor-element ) + .elementor-widget-placeholder {
-				margin-inline-end: var( --margin-end );
-				margin-inline-start: var( --margin-start );
+			&,
+			& > .e-container__inner {
+
+				// Any placeholder which is not on first widget.
+				> .elementor-widget-placeholder {
+					margin-inline-end: 0;
+					margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
+				}
+	
+				// Placeholder on first widget.
+				> :not( .elementor-element ) + .elementor-widget-placeholder {
+					margin-inline-end: var( --margin-end );
+					margin-inline-start: var( --margin-start );
+				}
 			}
 		}
 	}
 
-	&.e-container--column > .elementor-widget-placeholder {
-		height: var( --size );
-		// To make sure that it doesn't push & break the layout when appearing.
-		margin-block-start: var( --margin-start );
-		margin-block-end: var( --margin-end );
-		animation-name: dnd-placeholder-widget-horizontal;
+	&.e-container--column {
 
-		// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
-		&:nth-last-child( 2 ) {
-			margin-block-start: calc( 2 * var( --margin-start ) );
-			--margin-end: 0;
+		&,
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+				height: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-block-start: var( --margin-start );
+				margin-block-end: var( --margin-end );
+				animation-name: dnd-placeholder-widget-horizontal;
+			}
+		}
+
+		> .elementor-widget-placeholder {
+
+			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
+			&:nth-last-child( 2 ) {
+				margin-block-start: calc( 2 * var( --margin-start ) );
+				--margin-end: 0;
+			}
+		}
+
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+
+				&:last-child {
+					--margin-end: 0;
+				}
+			}
 		}
 	}
 
@@ -74,12 +104,69 @@
 		width: 125px;
 		z-index: -1;
 	}
-}
 
-@media ( max-width: $editor-screen-sm-max ) {
-	.e-container {
-		--width: 100%;
-		--flex-wrap: wrap;
+	// Inner Container handle.
+	// TODO: Find a better solution.
+	& > &,
+	&__inner > &,
+	.elementor-widget & {
+
+		> .elementor-element-overlay {
+
+			.elementor-editor-element-setting {
+				position: relative;
+				background-color: $editor-darker;
+
+				&:hover {
+					background-color: $editor-darkest;
+				}
+
+				// Hide any unwanted setting controls.
+				&.elementor-editor-element-add,
+				&.elementor-editor-element-edit + .elementor-editor-element-remove,
+				&:first-child::before,
+				&:last-child::after {
+					display: none;
+				}
+
+				// Extended actions ("editing handles").
+				&:not( .elementor-editor-element-edit ) {
+					margin-inline-start: -25px;
+					z-index: -1;
+					transition: .3s all;
+					will-change: margin-inline-start;
+				}
+			}
+
+			> .elementor-editor-element-settings:hover {
+				> :is( .elementor-editor-element-duplicate, .elementor-editor-element-remove ) {
+					margin-inline-start: 0;
+				}
+			}
+
+			.elementor-editor-element-settings {
+				inset: initial;
+				transform: none;
+				inset-inline-start: 0;
+				top: 0;
+				border-radius: 0;
+				border-end-end-radius: 3px;
+				height: auto;
+				background-color: $editor-darker;
+
+				&:hover {
+					background-color: $editor-darkest;
+				}
+
+				// Replace the edit eicon with Container eicon.
+				i.eicon-handle::before {
+					content: '\e9b4'; // eicon-inner-container.
+					font-size: 20px;
+					display: block;
+					padding: 2px;
+				}
+			}
+		}
 	}
 }
 
