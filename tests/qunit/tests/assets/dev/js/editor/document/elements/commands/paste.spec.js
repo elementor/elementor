@@ -17,10 +17,8 @@ export const Paste = () => {
 				ElementsHelper.paste( eColumn );
 
 				// Check.
-				console.log( 'check1' );
 				assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 0 ).get( 'elements' ).length, 2,
 					'Pasted element were created.' );
-				console.log( 'check2' );
 				assert.equal( elementor.saver.isEditorChanged(), true,
 					'Command applied the saver editor is changed.' );
 			} );
@@ -33,8 +31,6 @@ export const Paste = () => {
 
 				const ePastedWidget = ElementsHelper.paste( eColumn ),
 					historyItem = HistoryHelper.getFirstItem().attributes;
-
-				console.log( 'check3' );
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
@@ -154,7 +150,7 @@ export const Paste = () => {
 				// Check whether they preserved their order.
 				assert.equal(
 					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 0 ].model.get( 'widgetType' ),
+						.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 					'Elements preserved their position.',
 				);

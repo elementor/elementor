@@ -112,9 +112,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 	// Handle situation when target is inner.
 	if ( targetIsInner ) {
-		if ( 'container' === targetElType ) {
-			targetElType = 'container';
-		} else if ( 'column' === targetElType ) {
+		if ( 'column' === targetElType ) {
 			target = target.children[ 0 ];
 			targetElType = 'column';
 			isForce = true;
@@ -140,6 +138,11 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
+				} else if ( 'widget' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
+
+					searchTarget = lastColumn;
 				}
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
