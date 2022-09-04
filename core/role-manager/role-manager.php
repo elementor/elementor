@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
-use Elementor\Settings_Page;
 use Elementor\Settings;
-use Elementor\Utils;
+use Elementor\Settings_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,17 +36,8 @@ class Role_Manager extends Settings_Page {
 	 * @since 2.0.0
 	 * @access public
 	 */
-	public function register_admin_menu() {
-		$sanitized_page_title = esc_html( $this->get_page_title() );
-
-		add_submenu_page(
-			Settings::PAGE_ID,
-			$sanitized_page_title,
-			$sanitized_page_title,
-			'manage_options',
-			self::PAGE_ID,
-			[ $this, 'display_settings_page' ]
-		);
+	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( static::PAGE_ID, new Role_Manager_Menu_Item( $this ) );
 	}
 
 	/**
@@ -243,7 +234,9 @@ class Role_Manager extends Settings_Page {
 		parent::__construct();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->register_admin_menu( $admin_menu );
+			}, Settings::ADMIN_MENU_PRIORITY + 10 );
 		}
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
