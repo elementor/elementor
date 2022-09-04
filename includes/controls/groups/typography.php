@@ -142,9 +142,9 @@ class Group_Control_Typography extends Group_Control_Base {
 				'700' => esc_html_x( '700 (Bold)', 'Typography Control', 'elementor' ),
 				'800' => esc_html_x( '800 (Extra Bold)', 'Typography Control', 'elementor' ),
 				'900' => esc_html_x( '900 (Black)', 'Typography Control', 'elementor' ),
-				'' => esc_html__( 'Default', 'elementor' ),
-				'normal' => esc_html__( 'Normal', 'elementor' ),
-				'bold' => esc_html__( 'Bold', 'elementor' ),
+				'' => esc_html_x( 'Default', 'Typography Control', 'elementor' ),
+				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
+				'bold' => esc_html_x( 'Bold', 'Typography Control', 'elementor' ),
 			],
 		];
 
