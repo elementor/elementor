@@ -730,6 +730,14 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'text_stroke',
+				'selector' => '{{WRAPPER}} .elementor-divider__text',
+			]
+		);
+
 		$this->add_control(
 			'text_align',
 			[
