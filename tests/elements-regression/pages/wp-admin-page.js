@@ -1,5 +1,4 @@
 const BasePage = require( './base-page.js' );
-const EditorPage = require( './editor-page.js' );
 
 module.exports = class WpAdminPage extends BasePage {
 	/**

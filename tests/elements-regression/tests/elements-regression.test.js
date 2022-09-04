@@ -37,7 +37,8 @@ test.describe( 'Elements regression', () => {
 		pageId = await wpAdminPage.createElementorPage();
 
 		editorPage = new EditorPage( wpAdminPage.page, testInfo );
-		await editorPage.ensureLoaded(),
+
+		await editorPage.ensureLoaded();
 		await editorPage.ensureNavigatorClosed();
 	} );
 
