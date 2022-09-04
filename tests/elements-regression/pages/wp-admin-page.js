@@ -1,28 +1,60 @@
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
 
-/**
- * This post is used for any tests that need a post, with empty elements.
- *
- * @type {number}
- */
-const CLEAN_POST_ID = 1;
-
 module.exports = class WpAdminPage extends BasePage {
-	async useElementorCleanPost() {
-		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
+	/**
+	 * @return {Promise<number>}
+	 */
+	async createElementorPage() {
+		await this.page.goto( '/wp-admin' );
 
-		await this.waitForPanel();
+		const button = await this.page.locator( 'text="Create New Page"' );
+		await button.click();
 
-		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
+		await this.page.waitForSelector( '#elementor-panel-header-title' );
 
-		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
-
-		return editor;
+		return await this.page.evaluate( () => window.ElementorConfig.document.id );
 	}
 
-	async waitForPanel() {
-		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
-		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
+	/**
+	 * @param {number} pageId
+	 * @return {Promise<void>}
+	 */
+	async moveElementorPageToTrash( pageId ) {
+		await this.page.goto( '/wp-admin/edit.php?post_type=page' );
+
+		await this.page
+			.locator( `[aria-label="“Elementor #${ pageId }” (Edit)"]` )
+			.hover();
+
+		await this.page
+			.locator( `[aria-label="Move “Elementor #${ pageId }” to the Trash"]` )
+			.click();
+
+		await this.page.waitForSelector(
+			`[aria-label="“Elementor #${ pageId }” (Edit)"]`,
+			{ state: 'detached' },
+		);
+	}
+
+	/**
+	 * @param {number} pageId
+	 * @return {Promise<void>}
+	 */
+	async deletePermenantlyElementorPageFromTrash( pageId ) {
+		await this.page.goto( '/wp-admin/edit.php?post_status=trash&post_type=page' );
+
+		await this.page
+			.locator( `strong:has-text("Elementor #${ pageId }")` )
+			.hover();
+
+		await this.page
+			.locator( `[aria-label="Delete “Elementor #${ pageId }” permanently"]` )
+			.click();
+
+		await this.page.waitForSelector(
+			`[aria-label="Delete “Elementor #${ pageId }” permanently"]`,
+			{ state: 'detached' },
+		);
 	}
 };
