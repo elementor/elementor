@@ -8,7 +8,6 @@ const config = {
 	workers: 1,
 	use: {
 		...base.use,
-		headless: false,
 		baseURL: 'http://localhost:8889/',
 		video: 'off',
 	},

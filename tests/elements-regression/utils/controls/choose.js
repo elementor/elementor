@@ -37,16 +37,9 @@ class Choose extends ControlBase {
 		await this.elementLocator.locator( `label[for="${ radioId }"]` ).click();
 	}
 
-	async test( assertionsCallback ) {
-		const originalValue = await this.getValue(),
-			availableOptions = Object.keys( this.config.options );
-
-		for ( const currentOption of availableOptions ) {
-			await this.setValue( currentOption );
-			await assertionsCallback( await this.getValue() );
-		}
-
-		await this.setValue( originalValue );
+	async getTestValues( initialValue ) {
+		return Object.keys( this.config.options )
+			.filter( ( value ) => value !== initialValue );
 	}
 }
 

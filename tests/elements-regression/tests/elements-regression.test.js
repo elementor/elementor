@@ -77,11 +77,6 @@ test.describe( 'Elements regression', () => {
 			} ) ).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
 			await widget.test( async ( controlId, currentControlValue ) => {
-				// Skip default values.
-				if ( [ '', 'default' ].includes( currentControlValue ) ) {
-					return;
-				}
-
 				// Assert - Match snapshot for specific control.
 				expect( await element.screenshot( {
 					type: 'jpeg',
