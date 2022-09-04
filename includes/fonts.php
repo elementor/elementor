@@ -1,5 +1,6 @@
 <?php
 namespace Elementor;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1550,6 +1551,9 @@ class Fonts {
 	}
 
 	public static function get_font_display_setting() {
-		return get_option( 'elementor_font_display', 'swap' );
+		// To prevent regressions for old installs, we only apply the new font-display setting for new installs (after 3.8.0).
+		$latest_install = key( Upgrade_Manager::get_installs_history() );
+		$is_new_install = ( ! empty( $latest_install ) ) && version_compare( $latest_install, '3.8.0', '>=' );
+		return get_option( 'elementor_font_display', $is_new_install ? 'swap' : 'auto' );
 	}
 }
