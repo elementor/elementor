@@ -1,5 +1,6 @@
 <?php
 namespace Elementor;
+
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
