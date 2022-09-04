@@ -17,14 +17,8 @@ class Textarea extends ControlBase {
 		await this.elementLocator.fill( newValue );
 	}
 
-	async test( assertionsCallback ) {
-		const originalValue = await this.getValue();
-
-		await this.setValue( 'test-value' );
-
-		await assertionsCallback( await this.getValue() );
-
-		await this.setValue( originalValue );
+	async getTestValues() {
+		return [ 'Test value' ];
 	}
 }
 
