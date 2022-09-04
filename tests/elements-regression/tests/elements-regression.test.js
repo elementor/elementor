@@ -36,9 +36,9 @@ test.describe( 'Elements regression', () => {
 		wpAdminPage = new WpAdminPage( page, testInfo );
 		pageId = await wpAdminPage.createElementorPage();
 
-		editorPage = new EditorPage( wpAdminPage.page, testInfo ),
-			await editorPage.ensureLoaded(),
-			await editorPage.ensureNavigatorClosed();
+		editorPage = new EditorPage( wpAdminPage.page, testInfo );
+		await editorPage.ensureLoaded(),
+		await editorPage.ensureNavigatorClosed();
 	} );
 
 	test.afterEach( async () => {

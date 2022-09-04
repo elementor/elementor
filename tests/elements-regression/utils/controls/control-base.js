@@ -58,7 +58,7 @@ class ControlBase {
 	/**
 	 * Get all the test values
 	 *
-	 * @param  initialValue
+	 * @param {any} initialValue the initial value of the control
 	 * @return {Promise<any[]>}
 	 */
 	async getTestValues( initialValue ) { // eslint-disable-line no-unused-vars
