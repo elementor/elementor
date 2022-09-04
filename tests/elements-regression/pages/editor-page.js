@@ -3,6 +3,27 @@ const BasePage = require( './base-page.js' );
 
 module.exports = class EditorPage extends BasePage {
 	/**
+	 * @return {Promise<void>}
+	 */
+	async ensureLoaded() {
+		await Promise.all( [
+			this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } ),
+			this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } ),
+		] );
+	}
+
+	/**
+	 * @return {Promise<void>}
+	 */
+	async ensureNavigatorClosed() {
+		const navigatorCloseButton = await this.page.$( '#elementor-navigator__close' );
+
+		if ( navigatorCloseButton ) {
+			await navigatorCloseButton.click();
+		}
+	}
+
+	/**
 	 * Add element to the page using a model.
 	 *
 	 * @param {Object} model     - Model definition.

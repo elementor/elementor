@@ -55,6 +55,30 @@ class ControlBase {
 		throw this.constructor.name + '.setValue() is not implemented!';
 	}
 
+	/**
+	 * Get all the test values
+	 *
+	 * @param {any} initialValue the initial value of the control
+	 * @return {Promise<any[]>}
+	 */
+	async getTestValues( initialValue ) { // eslint-disable-line no-unused-vars
+		throw this.constructor.name + '.getTestValues() is not implemented!';
+	}
+
+	/**
+	 * Generate name for the snapshot image name.
+	 *
+	 * @param {any} value
+	 * @return {string}
+	 */
+	generateValueName( value ) {
+		if ( '' === value ) {
+			return 'empty';
+		}
+
+		return value;
+	}
+
 	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Retrieve the control selector.
@@ -68,14 +92,10 @@ class ControlBase {
 	}
 
 	/**
-	 * Iterate over all of the control's available values.
-	 *
-	 * @param {Function} assertionsCallback
-	 *
-	 * @return {Promise<void>}
+	 * @return {boolean}
 	 */
-	async test( assertionsCallback ) { // eslint-disable-line no-unused-vars
-		throw this.constructor.name + '.test() is not implemented!';
+	isForcingServerRender() {
+		return 'template' === this.config.render_type;
 	}
 
 	/**
