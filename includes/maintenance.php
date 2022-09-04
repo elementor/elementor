@@ -45,8 +45,22 @@ class Maintenance {
 		}
 
 		static::create_default_kit();
+		static::insert_defaults_options();
 
 		set_transient( 'elementor_activation_redirect', true, MINUTE_IN_SECONDS );
+	}
+
+	public static function insert_defaults_options() {
+
+		$default_options = [
+			'elementor_font_display' => 'swap',
+		];
+
+		foreach ( $default_options as $option_name => $option_value ) {
+			if ( ! get_option( $option_name ) ) {
+				update_option( $option_name, $option_value );
+			}
+		}
 	}
 
 	/**
