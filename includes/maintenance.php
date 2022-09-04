@@ -57,8 +57,8 @@ class Maintenance {
 		];
 
 		foreach ( $default_options as $option_name => $option_value ) {
-			if ( ! get_option( $option_name ) ) {
-				update_option( $option_name, $option_value );
+			if ( \Elementor\Utils::is_empty( get_option( $option_name ) ) ) {
+				add_option( $option_name, $option_value );
 			}
 		}
 	}
