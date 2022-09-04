@@ -1,0 +1,46 @@
+@use "sass:math";
+// COMPONENT API: GRID
+// Used specific path here since, pro loads the grid and 'current path' will be wrong.
+@import "../../../../../assets/dev/scss/editor/_breakpoints.scss";
+
+// MIXIN: Grid Coll generator
+$eps-grid-columns: 12;
+$eps-grid-spacing-keys: (5 8 10 12 16);
+$grid-spacing-gutter: calc( var(--grid-spacing-gutter) * calc(#{spacing(10)} / 10) );
+
+//defining flex traits
+@mixin grid-item-auto($size) {
+	.#{$eps-prefix}grid-item-#{$size} {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+}
+
+// defining cols.
+@mixin grid-col-generator($size, $grid-columns: $eps-grid-columns) {
+	@for $i from 1 through $grid-columns {
+		.#{$eps-prefix}grid-item-#{$size}-#{$i} {
+			flex-grow: 0;
+			max-width: calc( #{$i} / #{$grid-columns} * 100% );
+			flex-basis: calc( #{$i} / #{$grid-columns} * 100% );
+		}
+	}
+}
+
+// generating spacing classes and custom properties
+@mixin grid-spacing-classes($keys, $amp:'&') {
+	@each $key in $keys {
+		#{$amp}-#{$key} {
+			--grid-spacing-gutter: #{spacing($key)};
+		}
+	}
+}
+
+// exporting custom properties
+@mixin grid-custom-properties {
+	:root {
+		--grid-spacing-width: calc(100% + var(#{--grid-container-gutters}));
+		--grid-spacing-gutters: calc(2 * var(#{--grid-spacing-gutter}));
+	}
+}
