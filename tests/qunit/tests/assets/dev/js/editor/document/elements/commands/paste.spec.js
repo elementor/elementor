@@ -3,7 +3,7 @@ import HistoryHelper from '../../history/helper';
 
 // TODO: Check code coverage and add required tests.
 export const Paste = () => {
-	QUnit.module.test( 'Paste', () => {
+	QUnit.module( 'Paste', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
@@ -133,7 +133,7 @@ export const Paste = () => {
 				}
 			} );
 
-			QUnit.test( 'On preview container', ( assert ) => {
+			QUnit.only( 'On preview container', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					eHeading = ElementsHelper.createWidgetHeading( eColumn ),
