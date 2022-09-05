@@ -148,10 +148,15 @@ export const Paste = () => {
 				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
 				assert.equal(
-					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.model.get( 'widgetType' ),
+					1,
+					1,
+					console.log( elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
+				)
+
+				assert.equal(
+					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).model.get( 'widgetType' ),
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-					'Elements preserved their position.',
+					'Elements preserved their position.' + toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ) + elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).model.get( 'widgetType' ),
 				);
 			} );
 
