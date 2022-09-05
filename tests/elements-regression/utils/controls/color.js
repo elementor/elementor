@@ -41,16 +41,21 @@ class Color extends ControlBase {
 		await this.setLocalValue( value );
 	}
 
-	async test( assertionsCallback ) {
-		const originalColor = await this.getValue();
+	async getTestValues( [ initialType, initialColor ] ) {
+		const testValues = [
+			[ this.constructor.TYPE_LOCAL_COLOR, '#FF0000' ],
+			[ this.constructor.TYPE_LOCAL_COLOR, '#0000FF' ],
+		];
 
-		for ( const [ type, value ] of await this.getTestValues( originalColor ) ) {
-			await this.setValue( [ type, value ] );
+		if ( await this.hasGlobalOption() ) {
+			const value = initialType === this.constructor.TYPE_GLOBAL_COLOR && 'primary' === initialColor
+				? 'secondary'
+				: 'primary';
 
-			await assertionsCallback( `${ type }-${ value.replace( '#', '' ) }` );
+			testValues.push( [ this.constructor.TYPE_GLOBAL_COLOR, value ] );
 		}
 
-		await this.setValue( originalColor );
+		return testValues;
 	}
 
 	async hasGlobalOption() {
@@ -107,23 +112,6 @@ class Color extends ControlBase {
 
 	getGlobalPopoverLocator() {
 		return this.page.locator( '.dialog-widget.e-global__popover:visible' );
-	}
-
-	async getTestValues( [ originalType, originalColor ] ) {
-		const testValues = [
-			[ this.constructor.TYPE_LOCAL_COLOR, '#FF0000' ],
-			[ this.constructor.TYPE_LOCAL_COLOR, '#0000FF' ],
-		];
-
-		if ( await this.hasGlobalOption() ) {
-			const value = originalType === this.constructor.TYPE_GLOBAL_COLOR && 'primary' === originalColor
-				? 'secondary'
-				: 'primary';
-
-			testValues.push( [ this.constructor.TYPE_GLOBAL_COLOR, value ] );
-		}
-
-		return testValues;
 	}
 }
 

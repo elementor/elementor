@@ -76,6 +76,10 @@ class ControlBase {
 			return 'empty';
 		}
 
+		if ( Array.isArray( value ) ) {
+			return value.join( '-' );
+		}
+
 		return value;
 	}
 
