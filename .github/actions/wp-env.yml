@@ -1,0 +1,34 @@
+name: 'WP Env'
+description: 'Create a wordpress environment'
+inputs:
+  php-version:
+    description: 'PHP version to install'
+    required: true
+
+  wp-version:
+    description: 'WordPress version to install'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Update wp-env.json file
+      env:
+        PHP_VERSION: ${{ inputs.php-version }}
+        WP_CORE_VERSION: ${{ inputs.wp-version }}
+      run: node ./.github/scripts/build-wp-env.js
+
+    - name: Install wp-env
+      run: npm install --no-package-lock --no-save @wordpress/env@4.0.0
+
+    - name: Install WordPress environment
+      run: |
+        npx wp-env start
+        # change wp-env folder owner to www-data
+        sudo chown 33:33 -R ~/wp-env/
+        npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+
+    - name: WordPress debug information
+      run: |
+        npx wp-env run tests-cli "wp core version"
+        npx wp-env run tests-cli "wp --info"
