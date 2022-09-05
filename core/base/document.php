@@ -1156,10 +1156,10 @@ abstract class Document extends Controls_Stack {
 	 * @param array $config
 	 * @param array $map_old_new_post_ids
 	 *
-	 * @deprecated 3.8.0 Use `::updated_on_import_replace_dynamic_content()` instead.
+	 * @deprecated 3.8.0 Use `::on_import_update_ids()` instead.
 	 */
 	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::updated_on_import_replace_dynamic_content()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_ids()' );
 
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
@@ -1181,12 +1181,12 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array $config
-	 * @param array $new_ids_map
+	 * @param array $data
 	 * @param array|null $controls
 	 *
 	 * @return array Element data.
 	 */
-	public static function updated_on_import_replace_dynamic_content( array $config, array $new_ids_map, $controls = null ) : array {
+	public static function on_import_update_ids( array $config, array $data, $controls = null ) : array {
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
@@ -1194,8 +1194,8 @@ abstract class Document extends Controls_Stack {
 				continue;
 			}
 
-			$element_config = $element_instance::updated_on_import_replace_dynamic_content( $element_config, $new_ids_map, $element_instance->get_controls() );
-			$element_config['elements'] = static::updated_on_import_replace_dynamic_content( $element_config['elements'], $new_ids_map );
+			$element_config = $element_instance::on_import_update_ids( $element_config, $data, $element_instance->get_controls() );
+			$element_config['elements'] = static::on_import_update_ids( $element_config['elements'], $data );
 		}
 
 		return $config;

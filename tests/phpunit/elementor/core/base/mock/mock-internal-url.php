@@ -25,9 +25,9 @@ class Mock_Internal_URL extends Data_Tag {
 		return ' ({{ url }})';
 	}
 
-	public static function updated_on_import_replace_dynamic_content( array $config, array $new_ids_map, $controls = null ) : array {
-		if ( isset( $config['settings']['post_id'] ) ) {
-			$config['settings']['post_id'] = $new_ids_map[ $config['settings']['post_id'] ];
+	public static function on_import_update_ids( array $config, array $data, $controls = null ) : array {
+		if ( isset( $config['settings']['post_id'] ) && isset( $data['post_ids'] ) ) {
+			$config['settings']['post_id'] = $data['post_ids'][ $config['settings']['post_id'] ];
 		}
 
 		return $config;

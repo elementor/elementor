@@ -465,7 +465,7 @@ class Import extends Process_Base {
 	 *
 	 * @return array
 	 */
-	protected function get_imported_data_replacements() : array {
+	private function get_imported_data_replacements() : array {
 		return [
 			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
@@ -479,7 +479,7 @@ class Import extends Process_Base {
 	private function save_elements_of_imported_posts() {
 		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
-			$updated_elements = $document->updated_on_import_replace_dynamic_content( $document_elements, $this->get_imported_data_replacements() );
+			$updated_elements = $document->on_import_update_ids( $document_elements, $this->get_imported_data_replacements() );
 			$document->save( [ 'elements' => $updated_elements ] );
 		}
 	}
