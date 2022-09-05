@@ -1,16 +1,17 @@
-name: 'WP Env'
-description: 'Create a wordpress environment'
+name: WP Env
+description: Create a wordpress environment
+
 inputs:
   php-version:
-    description: 'PHP version to install'
+    description: PHP version to install
     required: true
 
   wp-version:
-    description: 'WordPress version to install'
+    description: WordPress version to install
     required: true
 
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Update wp-env.json file
       env:
