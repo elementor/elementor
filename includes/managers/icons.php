@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
+use Elementor\Modules\DevTools\Deprecation;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -225,6 +226,15 @@ class Icons_Manager {
 	 */
 	private static function is_font_icon_inline_svg() {
 		return Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' );
+	}
+
+	public static function render_svg_symbols() {
+		/**
+		 * @var $deprecation Deprecation
+		 */
+		$deprecation = Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation;
+
+		$deprecation->deprecated_function( __METHOD__, '3.8.0' );
 	}
 
 	public static function get_icon_svg_data( $icon ) {
