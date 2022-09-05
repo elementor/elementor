@@ -338,7 +338,7 @@ class Settings extends Settings_Page {
 								'label' => esc_html__( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => 'swap',
+									'std' => 'auto',
 									'options' => [
 										'auto' => esc_html__( 'Default', 'elementor' ),
 										'block' => esc_html__( 'Blocking', 'elementor' ),
