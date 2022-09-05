@@ -14,15 +14,18 @@ runs:
   using: composite
   steps:
     - name: Update wp-env.json file
+      shell: bash
       env:
         PHP_VERSION: ${{ inputs.php-version }}
         WP_CORE_VERSION: ${{ inputs.wp-version }}
       run: node ./.github/scripts/build-wp-env.js
 
     - name: Install wp-env
+      shell: bash
       run: npm install --no-package-lock --no-save @wordpress/env@4.0.0
 
     - name: Install WordPress environment
+      shell: bash
       run: |
         npx wp-env start
         # change wp-env folder owner to www-data
@@ -30,6 +33,7 @@ runs:
         npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
 
     - name: WordPress debug information
+      shell: bash
       run: |
         npx wp-env run tests-cli "wp core version"
         npx wp-env run tests-cli "wp --info"
