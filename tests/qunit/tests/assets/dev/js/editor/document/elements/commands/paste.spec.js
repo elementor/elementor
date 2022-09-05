@@ -153,31 +153,6 @@ export const Paste = () => {
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 					'Elements preserved their position.',
 				);
-
-				const containerExperimentActive = elementorCommon.config.experimentalFeatures.container,
-					eContainer = containerExperimentActive ? ElementsHelper.createContainer() : ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createWidgetButton( eContainer ),
-					eHeading = ElementsHelper.createWidgetHeading( eContainer ),
-					toCopy = [ eButton, eHeading ];	
-
-				ElementsHelper.multiCopy( toCopy );
-
-				const pasted = ElementsHelper.paste( elementor.getPreviewContainer(), true ),
-					parents = pasted.map( ( container ) => container.parent.parent );
-
-				// Check pasted elements existence.
-				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
-
-				const widgetType = containerExperimentActive
-					? elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).model.get( 'widgetType' )
-					: elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].children[ 0 ].model.get( 'widgetType' );
-
-				// Check whether they preserved their order.
-				assert.equal(
-					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).model.get( 'widgetType' ),
-					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-					'Elements preserved their position.',
-				);
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
