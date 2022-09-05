@@ -138,10 +138,7 @@ export const Paste = () => {
 					eContainer = containerExperimentActive ? ElementsHelper.createContainer() : ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createWidgetButton( eContainer ),
 					eHeading = ElementsHelper.createWidgetHeading( eContainer ),
-					toCopy = [ eButton, eHeading ],
-					widgetType = containerExperimentActive
-					? elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].model.get( 'widgetType' )
-					: elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].children[ 0 ].model.get( 'widgetType' );
+					toCopy = [ eButton, eHeading ];	
 
 				ElementsHelper.multiCopy( toCopy );
 
@@ -151,9 +148,13 @@ export const Paste = () => {
 				// Check pasted elements existence.
 				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
+				const widgetType = containerExperimentActive
+					? elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].model.get( 'widgetType' )
+					: elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].children[ 0 ].model.get( 'widgetType' );
+
 				// Check whether they preserved their order.
 				assert.equal(
-					widgetType,
+					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].model.get( 'widgetType' ),
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 					'Elements preserved their position.',
 				);
