@@ -133,11 +133,15 @@ export const Paste = () => {
 				}
 			} );
 
-			QUnit.only( 'On preview container', ( assert ) => {
-				const eContainer = ElementsHelper.createContainer(),
+			QUnit.test( 'On preview container', ( assert ) => {
+				const containerExperimentActive = elementorCommon.config.experimentalFeatures.container,
+					eContainer = containerExperimentActive ? ElementsHelper.createContainer() : ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createWidgetButton( eContainer ),
 					eHeading = ElementsHelper.createWidgetHeading( eContainer ),
-					toCopy = [ eButton, eHeading ];
+					toCopy = [ eButton, eHeading ],
+					widgetType = containerExperimentActive
+					? elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].model.get( 'widgetType' )
+					: elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ).children[ 0 ].children[ 0 ].model.get( 'widgetType' );
 
 				ElementsHelper.multiCopy( toCopy );
 
@@ -149,8 +153,7 @@ export const Paste = () => {
 
 				// Check whether they preserved their order.
 				assert.equal(
-					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 0 ].model.get( 'widgetType' ),
+					widgetType,
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 					'Elements preserved their position.',
 				);
