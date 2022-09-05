@@ -3,7 +3,7 @@ import HistoryHelper from '../../history/helper';
 
 // TODO: Check code coverage and add required tests.
 export const Paste = () => {
-	QUnit.module( 'Paste', () => {
+	QUnit.module.test( 'Paste', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
@@ -150,7 +150,7 @@ export const Paste = () => {
 				// Check whether they preserved their order.
 				assert.equal(
 					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 0 ].model.get( 'widgetType' ),
+						.model.get( 'widgetType' ),
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 					'Elements preserved their position.',
 				);
