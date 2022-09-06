@@ -1,0 +1,32 @@
+$e-app-import-export-kit-data-site-area-color: tints(700);
+$e-app-import-export-kit-data-site-area-dark-color: dark-tints(200);
+$e-app-import-export-kit-data-included-color: tints(500);
+$e-app-import-export-kit-data-included-dark-color: dark-tints(300);
+
+$root: e-app-import-export-kit-data;
+
+.#{$root} {
+	--e-app-import-export-kit-data-site-area-color: #{$e-app-import-export-kit-data-site-area-color};
+	--e-app-import-export-kit-data-included-color: #{$e-app-import-export-kit-data-included-color};
+
+	&__site-area,
+	&__included {
+		margin-bottom: 0;
+	}
+
+	&__site-area {
+		color: var(--e-app-import-export-kit-data-site-area-color);
+		font-weight: bold;
+	}
+
+	&__included {
+		color: var(--e-app-import-export-kit-data-included-color);
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-export-kit-data-site-area-color: #{$e-app-import-export-kit-data-site-area-dark-color};
+		--e-app-import-export-kit-data-included-color: #{$e-app-import-export-kit-data-included-dark-color};
+	}
+}

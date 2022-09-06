@@ -1,18 +1,21 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Processes;
+namespace Elementor\App\Modules\ImportExport\Processes;
 
-use Elementor\Core\App\Modules\ImportExport\Runners\Export\Elementor_Content;
-use Elementor\Core\App\Modules\ImportExport\Runners\Export\Export_Runner_Base;
-use Elementor\Core\App\Modules\ImportExport\Runners\Export\Plugins;
-use Elementor\Core\App\Modules\ImportExport\Runners\Export\Site_Settings;
-use Elementor\Core\App\Modules\ImportExport\Runners\Export\Taxonomies;
-use Elementor\Core\App\Modules\ImportExport\Runners\Export\Templates;
-use Elementor\Core\App\Modules\ImportExport\Runners\Export\Wp_Content;
-use Elementor\Core\App\Modules\ImportExport\Module;
-use Elementor\Core\App\Modules\ImportExport\Utils;
+use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
+
+use Elementor\App\Modules\ImportExport\Runners\Export\Elementor_Content;
+use Elementor\App\Modules\ImportExport\Runners\Export\Export_Runner_Base;
+use Elementor\App\Modules\ImportExport\Runners\Export\Plugins;
+use Elementor\App\Modules\ImportExport\Runners\Export\Site_Settings;
+use Elementor\App\Modules\ImportExport\Runners\Export\Taxonomies;
+use Elementor\App\Modules\ImportExport\Runners\Export\Templates;
+use Elementor\App\Modules\ImportExport\Runners\Export\Wp_Content;
+use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Utils;
 
 class Export {
 	const ZIP_ARCHIVE_MODULE_MISSING = 'zip-archive-module-is-missing';

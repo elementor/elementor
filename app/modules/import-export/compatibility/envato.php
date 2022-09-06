@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Compatibility;
+namespace Elementor\App\Modules\ImportExport\Compatibility;
 
-use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
