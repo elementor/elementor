@@ -141,12 +141,14 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 					message += ' column';
 				} else if ( 'widget' === sourceElType ) {
 					if ( elementorCommon.config.experimentalFeatures.container ) {
-						const lastContainer = lastChildrenContainer( searchTarget ),
-							searchTarget = lastContainer;
+						const lastContainer = lastChildrenContainer( searchTarget );
+
+						searchTarget = lastContainer;
 					} else {
 						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection ),
-							searchTarget = lastColumn;;
+							lastColumn = lastChildrenContainer( lastSection );
+
+						searchTarget = lastColumn;
 					}
 					message += ' widget';
 				}
