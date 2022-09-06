@@ -134,24 +134,26 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( 'column' === sourceElType ) {
-					const lastSection = lastChildrenContainer( searchTarget );
-
-					searchTarget = lastSection;
-					message += ' column';
-				} else if ( 'widget' === sourceElType ) {
-					const lastSection = lastChildrenContainer( searchTarget ),
-						lastColumn = lastChildrenContainer( lastSection );
-
-					searchTarget = lastColumn;
-					message += ' widget';
-				}
-
-				message += ' document ';
-				message += ' document ';
 				if ( elementorCommon.config.experimentalFeatures.container ) {
 					passed = true;
 				} else {
+
+					if ( 'column' === sourceElType ) {
+						const lastSection = lastChildrenContainer( searchTarget );
+
+						searchTarget = lastSection;
+						message += ' column';
+					} else if ( 'widget' === sourceElType ) {
+						const lastSection = lastChildrenContainer( searchTarget ),
+							lastColumn = lastChildrenContainer( lastSection );
+
+						searchTarget = lastColumn;
+						message += ' widget';
+					}
+
+					message += ' document ';
+					message += ' document ';
+
 					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
 			}
