@@ -110,6 +110,11 @@ class ControlBase {
 	 */
 	async setup() {
 		await this.switchToView();
+
+		// Open popover.
+		if ( this.config.popover && ! await this.isPopoverOpen() ) {
+			await this.clickPopoverToggle();
+		}
 	}
 
 	/**
@@ -121,7 +126,7 @@ class ControlBase {
 	async teardown() {
 		// Close popover.
 		if ( this.config.popover && await this.isPopoverOpen() ) {
-			await this.resetPopover();
+			await this.clickPopoverToggle();
 		}
 	}
 
@@ -142,29 +147,6 @@ class ControlBase {
 		if ( section ) {
 			await section.click();
 		}
-
-		// Open popover.
-		if ( this.config.popover && ! await this.isPopoverOpen() ) {
-			await this.openPopover();
-		}
-	}
-
-	/**
-	 * @protected
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openPopover() {
-		await this.clickPopoverToggle( true );
-	}
-
-	/**
-	 * @protected
-	 *
-	 * @return {Promise<void>}
-	 */
-	async resetPopover() {
-		await this.clickPopoverToggle( false );
 	}
 
 	/**
@@ -187,25 +169,14 @@ class ControlBase {
 	 *
 	 * @protected
 	 *
-	 * @param {boolean} open - Whether to open or reset the popover.
-	 *
 	 * @return {Promise<void>}
 	 */
-	async clickPopoverToggle( open = true ) {
-		const popoverToggleId = await this.getPopoverToggleId();
-
-		await this.page.click( `label.elementor-control-popover-toggle-toggle-label[for="${ popoverToggleId }-custom"]` );
-	}
-
-	/**
-	 * @protected
-	 *
-	 * @return {Promise<string>}
-	 */
-	async getPopoverToggleId() {
+	async clickPopoverToggle() {
 		const popover = await this.getPopover();
 
-		return await popover.evaluate( ( node ) => node.dataset.popoverToggle );
+		const popoverToggleId = await popover.evaluate( ( node ) => node.dataset.popoverToggle );
+
+		await this.page.click( `label.elementor-control-popover-toggle-toggle-label[for="${ popoverToggleId }-custom"]` );
 	}
 
 	/**

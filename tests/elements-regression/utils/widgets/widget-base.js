@@ -230,15 +230,6 @@ class WidgetBase {
 		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading` );
 		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading`, { state: 'detached' } );
 	}
-
-	/**
-	 * @return {Promise<void>}
-	 */
-	async waitForServerRendered() {
-		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading` );
-		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading`, { state: 'detached' } );
-		await this.editor.page.waitForTimeout( 200 );
-	}
 }
 
 module.exports = {
