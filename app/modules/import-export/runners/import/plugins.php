@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
+namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Plugins_Manager;

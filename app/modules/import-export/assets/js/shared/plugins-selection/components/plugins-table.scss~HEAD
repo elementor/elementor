@@ -1,8 +1,0 @@
-$root: e-app-import-export-plugins-table;
-
-.#{$root} {
-	&__cell-content {
-		margin-bottom: 0;
-		text-transform: capitalize;
-	}
-}

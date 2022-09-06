@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
+namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
-use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Utils\ImportExport\WP_Import;
 
 class Wp_Content extends Import_Runner_Base {

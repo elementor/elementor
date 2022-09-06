@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Export;
+namespace Elementor\App\Modules\ImportExport\Runners\Export;
 
-use Elementor\Core\App\Modules\ImportExport\Runners\Runner_Interface;
+use Elementor\App\Modules\ImportExport\Runners\Runner_Interface;
 
 abstract class Export_Runner_Base implements Runner_Interface {
 

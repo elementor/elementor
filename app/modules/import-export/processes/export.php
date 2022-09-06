@@ -14,8 +14,6 @@ use Elementor\App\Modules\ImportExport\Runners\Export\Site_Settings;
 use Elementor\App\Modules\ImportExport\Runners\Export\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Export\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Export\Wp_Content;
-use Elementor\App\Modules\ImportExport\Module;
-use Elementor\App\Modules\ImportExport\Utils;
 
 class Export {
 	const ZIP_ARCHIVE_MODULE_MISSING = 'zip-archive-module-is-missing';

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Revert;
+namespace Elementor\App\Modules\ImportExport\Runners\Revert;
 
 class Taxonomies extends Revert_Runner_Base {
 

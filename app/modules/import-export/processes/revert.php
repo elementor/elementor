@@ -1,14 +1,14 @@
 <?php
-namespace Elementor\Core\App\Modules\ImportExport\Processes;
+namespace Elementor\App\Modules\ImportExport\Processes;
 
-use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Elementor_Content;
-use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Revert_Runner_Base;
-use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Plugins;
-use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Site_Settings;
-use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Taxonomies;
-use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Templates;
-use Elementor\Core\App\Modules\ImportExport\Runners\Revert\Wp_Content;
-use Elementor\Core\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Runners\Revert\Elementor_Content;
+use Elementor\App\Modules\ImportExport\Runners\Revert\Revert_Runner_Base;
+use Elementor\App\Modules\ImportExport\Runners\Revert\Plugins;
+use Elementor\App\Modules\ImportExport\Runners\Revert\Site_Settings;
+use Elementor\App\Modules\ImportExport\Runners\Revert\Taxonomies;
+use Elementor\App\Modules\ImportExport\Runners\Revert\Templates;
+use Elementor\App\Modules\ImportExport\Runners\Revert\Wp_Content;
 
 class Revert {
 
