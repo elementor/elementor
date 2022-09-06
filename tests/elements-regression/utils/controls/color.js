@@ -52,7 +52,7 @@ class Color extends ControlBase {
 				? 'secondary'
 				: 'primary';
 
-			testValues.push( [ this.constructor.TYPE_GLOBAL_COLOR, value ] );
+			testValues.unshift( [ this.constructor.TYPE_GLOBAL_COLOR, value ] );
 		}
 
 		return testValues;
