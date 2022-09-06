@@ -385,12 +385,12 @@ abstract class Base_App {
 	 */
 	protected function get_base_connect_info() {
 		return [
-				'app' => $this->get_slug(),
-				'access_token' => $this->get( 'access_token' ),
-				'client_id' => $this->get( 'client_id' ),
-				'local_id' => get_current_user_id(),
-				'site_key' => $this->get_site_key(),
-				'home_url' => trailingslashit( home_url() ),
+			'app' => $this->get_slug(),
+			'access_token' => $this->get( 'access_token' ),
+			'client_id' => $this->get( 'client_id' ),
+			'local_id' => get_current_user_id(),
+			'site_key' => $this->get_site_key(),
+			'home_url' => trailingslashit( home_url() ),
 		];
 	}
 
