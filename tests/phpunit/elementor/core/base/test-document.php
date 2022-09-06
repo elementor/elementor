@@ -183,16 +183,6 @@ class Test_Document extends Elementor_Test_Base {
 				'elements' => [],
 				'widgetType' => 'template',
 			],
-			[
-				'id' => '5a1e8e5',
-				'elType' => 'widget',
-				'settings' => [
-					'posts_include' => [ 'terms' ],
-					'posts_include_term_ids' => [ '42' ],
-				],
-				'elements' => [],
-				'widgetType' => 'posts',
-			],
 		];
 
 		$config[0]['elements'][0]['elements'] = array_merge( $config[0]['elements'][0]['elements'], $widgets );
@@ -207,11 +197,6 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals(
 			'38',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'template_id' ]
-		);
-
-		$this->assertEquals(
-			'43',
-			$updated_config[0][ 'elements' ][0][ 'elements' ][3][ 'settings' ][ 'posts_include_term_ids' ][0]
 		);
 	}
 
