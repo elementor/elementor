@@ -134,10 +134,10 @@ export const Paste = () => {
 			} );
 
 			QUnit.test( 'On preview container', ( assert ) => {
-				const eColumn = ElementsHelper.helpercreateSection( 1, true ),
-				eButton = ElementsHelper.createWidgetButton( eColumn ),
-				eHeading = ElementsHelper.createWidgetHeading( eColumn ),
-				toCopy = [ eButton, eHeading ];
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
+					eHeading = ElementsHelper.createWidgetHeading( eColumn ),
+					toCopy = [ eButton, eHeading ];
 
 				ElementsHelper.multiCopy( toCopy );
 
@@ -149,7 +149,7 @@ export const Paste = () => {
 
 				assert.equal(
 					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 0 ].children[ 1 ].model.get( 'widgetType' ),
+						.children[ 0 ].children[ children.length - 1 ].model.get( 'widgetType' ),
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 					'Elements preserved their position.',
 				);
