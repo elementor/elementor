@@ -1175,7 +1175,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * On import replace dynamic content.
+	 * On import update post and term IDs.
 	 *
 	 * @since 3.8.0
 	 * @access public

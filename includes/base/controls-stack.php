@@ -1996,7 +1996,7 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 * On import replace dynamic content.
+	 * On import update post and term IDs.
 	 *
 	 * @since 3.8.0
 	 *
