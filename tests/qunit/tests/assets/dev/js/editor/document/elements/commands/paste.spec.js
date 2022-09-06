@@ -147,9 +147,19 @@ export const Paste = () => {
 				// Check pasted elements existence.
 				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
+				let parentContainer = elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) );
+
+				while ( parentContainer?.children ) {
+					if ( ! parentContainer.children?.children ) {
+						const widgetType = parentContainer.children[ children.length -1 ].model.get( 'widgetType' );
+						return;
+					}
+
+					parentContainer = parentContainer.children[0];
+				}
+
 				assert.equal(
-					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 1 ].model.get( 'widgetType' ),
+					widgetType,
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
 					'Elements preserved their position.',
 				);
