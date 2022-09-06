@@ -155,7 +155,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				}
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
-				passed = true;
 			}
 			break;
 
