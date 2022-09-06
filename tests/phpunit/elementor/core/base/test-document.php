@@ -75,6 +75,14 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals( $expected_document_settings, $document->get_db_document_settings() );
 	}
 
+	/**
+	 * @return void
+	 * @throws \Exception
+	 *
+	 * Function 'on_import_replace_dynamic_content' deprecated since 3.8.0.
+	 * The function 'on_import_update_ids' is used instead.
+	 * TODO: Remove in the future.
+	 */
 	public function test_on_import_replace_dynamic_content() {
 		require_once __DIR__ . '/document.php';
 
@@ -129,6 +137,81 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals(
 			'38',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'template_id' ]
+		);
+	}
+
+	public function test_on_import_update_ids() {
+		require_once __DIR__ . '/document.php';
+
+		$this->act_as_admin();
+
+		Plugin::$instance->dynamic_tags->register( new Mock_Internal_URL() );
+
+		plugin::$instance->widgets_manager->register( new Mock_Template() );
+
+		$post = $this->factory()->create_and_get_default_post();
+
+		$document = new Document( [
+			'post_id' => $post->ID,
+		] );
+
+		$replace_data = [
+			'post_ids' => [ '35' => '36', '37' => '38' ],
+			'term_ids' => [ '42' => '43' ],
+		];
+
+		$config = self::$document_mock_default[ 'elements' ];
+
+		$widgets = [
+			[
+				'id' => '233273c4',
+				'elType' => 'widget',
+				'settings' => [
+					'__dynamic__' => [
+						'link' => '[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2235%22%7D"]',
+					],
+				],
+				'elements' => [],
+				'widgetType' => 'button',
+			],
+			[
+				'id' => '75341731',
+				'elType' => 'widget',
+				'settings' => [
+					'template_id' => '37',
+				],
+				'elements' => [],
+				'widgetType' => 'template',
+			],
+			[
+				'id' => '5a1e8e5',
+				'elType' => 'widget',
+				'settings' => [
+					'posts_include' => [ 'terms' ],
+					'posts_include_term_ids' => [ '42' ],
+				],
+				'elements' => [],
+				'widgetType' => 'posts',
+			],
+		];
+
+		$config[0]['elements'][0]['elements'] = array_merge( $config[0]['elements'][0]['elements'], $widgets );
+
+		$updated_config = $document::on_import_update_ids( $config, $replace_data );
+
+		$this->assertEquals(
+			'[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2236%22%7D"]',
+			$updated_config[0][ 'elements' ][0][ 'elements' ][1][ 'settings' ][ '__dynamic__' ][ 'link' ]
+		);
+
+		$this->assertEquals(
+			'38',
+			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'template_id' ]
+		);
+
+		$this->assertEquals(
+			'43',
+			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'posts_include_term_ids' ]
 		);
 	}
 
