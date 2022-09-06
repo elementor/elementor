@@ -85,7 +85,7 @@ const firstChildrenContainer = ( parent ) => {
 };
 
 const lastChildrenContainer = ( parent ) => {
-	return parent.children.length ? parent.children[ parent.children.length - 1 ] : parent;
+	return parent.children[ parent.children.length - 1 ];
 };
 
 const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed ) => {
@@ -134,28 +134,23 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( elementorCommon.config.experimentalFeatures.container ) {
-					passed = true;
-				} else {
+				if ( 'column' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget );
 
-					if ( 'column' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget );
+					searchTarget = lastSection;
+					message += ' column';
+				} else if ( 'widget' === sourceElType && ! elementorCommon.config.experimentalFeatures.container ) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
 
-						searchTarget = lastSection;
-						message += ' column';
-					} else if ( 'widget' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection );
-
-						searchTarget = lastColumn;
-						message += ' widget';
-					}
-
-					message += ' document ';
-					message += ' document ';
-
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
+					searchTarget = lastColumn;
+					message += ' widget';
 				}
+
+				message += ' document ';
+				message += ' document ';
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
 			break;
 
