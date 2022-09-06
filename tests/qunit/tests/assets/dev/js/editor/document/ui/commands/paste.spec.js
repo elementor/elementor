@@ -134,7 +134,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( 'column' === sourceElType ) {
+				if ( 'column' === sourceElType || ( 'widget' === sourceElType && elementorCommon.config.experimentalFeatures.container ) ) {
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
@@ -147,8 +147,8 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 					message += ' widget';
 				}
 
-				message += ' document ' + searchTarget;
-				message += ' document ' + copiedContainer;
+				message += ' document ' + searchTarget.attributes.model.get('widgetType');
+				message += ' document ' + copiedContainer.model.get( 'widgetType' );
 				if ( elementorCommon.config.experimentalFeatures.container ) {
 					message += ' exp on';
 				} else {
