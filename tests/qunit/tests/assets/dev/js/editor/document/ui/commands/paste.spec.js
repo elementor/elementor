@@ -134,21 +134,16 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( 'column' === sourceElType ) {
+				if ( 'column' === sourceElType && ( 'widget' === sourceElType && elementorCommon.config.experimentalFeatures.container ) ) {
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
-					message += ' column';
 				} else if ( 'widget' === sourceElType && ! elementorCommon.config.experimentalFeatures.container ) {
 					const lastSection = lastChildrenContainer( searchTarget ),
 						lastColumn = lastChildrenContainer( lastSection );
 
 					searchTarget = lastColumn;
-					message += ' widget';
 				}
-
-				message += ' document ';
-				message += ' document ';
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
@@ -173,7 +168,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 			case 'container': {
 				passed = !! findChildrenContainer( target, copiedContainer );
-				message += ' container';
 			}
 			break;
 
@@ -190,7 +184,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 			case 'widget': {
 				passed = !! findChildrenContainer( target.parent, copiedContainer );
-				message += ' target widget';
 			}
 			break;
 		}
