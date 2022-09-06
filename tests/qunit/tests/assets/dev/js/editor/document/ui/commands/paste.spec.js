@@ -147,8 +147,8 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 					message += ' widget';
 				}
 
-				message += ' document ' + searchTarget.model.get('widgetType');
-				message += ' document ' + copiedContainer.model.get( 'widgetType' );
+				message += ' document ';
+				message += ' document ';
 				if ( elementorCommon.config.experimentalFeatures.container ) {
 					message += ' exp on';
 				} else {
