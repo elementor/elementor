@@ -297,6 +297,7 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'range' => [
 					'px' => [
 						'min' => 6,

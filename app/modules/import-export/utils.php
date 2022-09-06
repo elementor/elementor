@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport;
+namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\Core\Utils\Str;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
