@@ -201,9 +201,9 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		passed = true;
 	}
 
-	if ( elementorCommon.config.experimentalFeatures.container ) {
-		passed = true;
-	}
+	// if ( elementorCommon.config.experimentalFeatures.container ) {
+	// 	passed = true;
+	// }
 
 	// Check.
 	assert.equal( passed, true, message );
