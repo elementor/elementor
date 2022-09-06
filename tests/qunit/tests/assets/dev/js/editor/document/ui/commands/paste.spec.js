@@ -140,14 +140,19 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 					searchTarget = lastSection;
 					message += ' column';
 				} else if ( 'widget' === sourceElType ) {
-					const lastSection = lastChildrenContainer( searchTarget ),
-						lastColumn = lastChildrenContainer( lastSection );
-
-					searchTarget = lastColumn;
+					if ( elementorCommon.config.experimentalFeatures.container ) {
+						const lastContainer = lastChildrenContainer( searchTarget ),
+							searchTarget = lastContainer;
+					} else {
+						const lastSection = lastChildrenContainer( searchTarget ),
+							lastColumn = lastChildrenContainer( lastSection ),
+							searchTarget = lastColumn;;
+					}
 					message += ' widget';
 				}
 
-				message += ' other';
+				message += ' document ' + searchTarget;
+				message += ' document ' + copiedContainer;
 				if ( elementorCommon.config.experimentalFeatures.container ) {
 					message += ' exp on';
 				} else {
