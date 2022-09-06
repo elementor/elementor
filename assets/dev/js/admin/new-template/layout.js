@@ -18,9 +18,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	initialize() {
 		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
-		const lookupControlIdPrefix = 'elementor-new-template__form__';
-		const templateTypeSelectId = `${ lookupControlIdPrefix }template-type`;
-
 		this.showLogo();
 
 		this.showContentView();
@@ -29,19 +26,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		this.lockProBehavior = new LockPro( this.elements );
 		this.lockProBehavior.bindEvents();
-
-		const dynamicControlsVisibilityListener = () => {
-			elementorAdmin.templateControls.setDynamicControlsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
-		};
-
-		this.getModal().onShow = () => {
-			dynamicControlsVisibilityListener();
-			document.getElementById( templateTypeSelectId ).addEventListener( 'change', dynamicControlsVisibilityListener );
-		};
-
-		this.getModal().onHide = () => {
-			document.getElementById( templateTypeSelectId ).removeEventListener( 'change', dynamicControlsVisibilityListener );
-		};
 	},
 
 	initElements() {

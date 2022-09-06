@@ -4,7 +4,7 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
+use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Collection;
@@ -562,6 +562,8 @@ class Admin extends App {
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
 
+		$meta = [];
+
 		/**
 		 * Create new post meta data.
 		 *
@@ -571,12 +573,6 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
-		$meta = [];
-
-		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
-			$meta = array_map( 'sanitize_text_field', $_GET['meta'] );
-		}
-
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
 		$post_data['post_type'] = $post_type;

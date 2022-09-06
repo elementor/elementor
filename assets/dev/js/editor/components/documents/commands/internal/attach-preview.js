@@ -34,7 +34,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 	}
 
 	attachDocumentToPreview( document, args ) {
-		const { selector = '.elementor-' + document.id, shouldScroll = true } = args;
+		const { selector = '.elementor-' + document.id } = args;
 
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
@@ -71,9 +71,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;
 
-			if ( shouldScroll ) {
-				elementor.helpers.scrollToView( document.$element );
-			}
+			elementor.helpers.scrollToView( document.$element );
 
 			document.$element
 				.addClass( 'elementor-edit-area-active' )

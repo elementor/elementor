@@ -182,15 +182,13 @@
 	--order: initial;
 	--align-self: initial;
 
-	&:where( .e-container--width-full, .elementor-widget ) {
-		// Flex container.
-		flex-direction: var( --flex-direction );
-		flex-wrap: var( --flex-wrap );
-		justify-content: var( --justify-content );
-		align-items: var( --align-items );
-		align-content: var( --align-content );
-		gap: var( --gap );
-	}
+	// Flex container.
+	flex-direction: var( --flex-direction );
+	flex-wrap: var( --flex-wrap );
+	justify-content: var( --justify-content );
+	align-items: var( --align-items );
+	align-content: var( --align-content );
+	gap: var( --gap );
 
 	// Flex item.
 	flex-basis: var( --flex-basis );

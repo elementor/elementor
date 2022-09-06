@@ -48,8 +48,7 @@ html.elementor-html {
 		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
 		// between Containers.
 		&.e-dragging-over,
-		&.elementor-dragging-on-child,
-		&.e-container--width-boxed.elementor-html5dnd-current-element {
+		&.elementor-dragging-on-child {
 			outline: 1px solid var( --outline-color );
 		}
 	}

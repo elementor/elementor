@@ -11,13 +11,8 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	getChildViewContainer() {
-		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
-			? '> .e-container__inner'
-			: '';
-
-		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
-	},
+	// Child view is empty in order to use the parent element.
+	childViewContainer: '',
 
 	className() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
@@ -117,13 +112,9 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
-		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-		? '> .elementor-widget, > .e-container--width-full, > .e-container > .e-container__inner, > .elementor-empty-view > .elementor-first-add'
-		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
-
 		return {
 			axis: this.getDroppableAxis(),
-			items,
+			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -138,11 +129,9 @@ const ContainerView = BaseElementView.extend( {
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggingInSameParent = ( draggedView?.parent === this ),
-					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ),
-					containerSelector = hasInnerContainer ? event.currentTarget.parentElement.parentElement : event.currentTarget.parentElement;
+					draggingInSameParent = ( draggedView?.parent === this );
 
-				let $elements = jQuery( containerSelector ).find( '> .elementor-element' );
+				let $elements = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
 
 				// Exclude the dragged element from the indexing calculations.
 				if ( draggingInSameParent ) {
@@ -151,7 +140,7 @@ const ContainerView = BaseElementView.extend( {
 
 				const widgetsArray = Object.values( $elements );
 
-				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
+				let newIndex = widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
@@ -360,26 +349,28 @@ const ContainerView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
+
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-			this.droppableInitialize( this.container.settings );
+			this.$el.html5Droppable( this.getDroppableOptions() );
 		} );
 	},
 
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		if ( settings.changed.flex_direction || settings.changed.content_width ) {
-			this.droppableDestroy();
-			this.droppableInitialize( settings );
+		// Re-initialize the droppable in order to make sure the axis works properly.
+		if ( settings.changed.flex_direction ) {
+			this.$el.html5Droppable( 'destroy' );
+			this.$el.html5Droppable( this.getDroppableOptions() );
 		}
 	},
 
 	onDragStart() {
-		this.droppableDestroy();
+		this.$el.html5Droppable( 'destroy' );
 	},
 
 	onDragEnd() {
-		this.droppableInitialize( this.container.settings );
+		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -426,19 +417,6 @@ const ContainerView = BaseElementView.extend( {
 	onResizeStop() {
 		if ( this.ui.percentsTooltip ) {
 			this.ui.percentsTooltip.hide();
-		}
-	},
-
-	droppableDestroy() {
-		this.$el.html5Droppable( 'destroy' );
-		this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
-	},
-
-	droppableInitialize( settings ) {
-		if ( 'boxed' === settings.get( 'content_width' ) ) {
-			this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
-		} else {
-			this.$el.html5Droppable( this.getDroppableOptions() );
 		}
 	},
 } );

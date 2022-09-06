@@ -503,7 +503,7 @@ class Plugin {
 	 * @since 3.0.0
 	 * @access public
 	 *
-	 * @var App\App
+	 * @var Core\App\App
 	 */
 	public $app;
 
@@ -741,7 +741,7 @@ class Plugin {
 		$this->upgrade = new Core\Upgrade\Manager();
 		$this->custom_tasks = new Core\Upgrade\Custom_Tasks_Manager();
 
-		$this->app = new App\App();
+		$this->app = new Core\App\App();
 
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();

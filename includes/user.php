@@ -84,7 +84,7 @@ class User {
 			return false;
 		}
 
-		if ( 'trash' === get_post_status( $post->ID ) ) {
+		if ( 'trash' === get_post_status( $post_id ) ) {
 			return false;
 		}
 
@@ -99,11 +99,11 @@ class User {
 		}
 
 		$edit_cap = $post_type_object->cap->edit_post;
-		if ( ! current_user_can( $edit_cap, $post->ID ) ) {
+		if ( ! current_user_can( $edit_cap, $post_id ) ) {
 			return false;
 		}
 
-		if ( intval( get_option( 'page_for_posts' ) ) === $post->ID ) {
+		if ( intval( get_option( 'page_for_posts' ) ) === $post_id ) {
 			return false;
 		}
 

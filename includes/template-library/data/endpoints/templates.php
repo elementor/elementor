@@ -59,7 +59,6 @@ class Templates extends Endpoint {
 			'title' => $request->get_param( 'title' ),
 			'type' => $request->get_param( 'type' ),
 			'content' => $request->get_param( 'content' ),
-			'page_settings' => $request->get_param( 'page_settings' ),
 		] );
 
 		if ( is_wp_error( $result ) ) {

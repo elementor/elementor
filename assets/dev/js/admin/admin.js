@@ -3,7 +3,6 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 import environment from '../../../../core/common/assets/js/utils/environment';
 import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
-import TemplateControls from './new-template/template-controls.js';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -340,7 +339,6 @@ import TemplateControls from './new-template/template-controls.js';
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
-			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();
 		},

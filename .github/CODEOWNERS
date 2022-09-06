@@ -33,7 +33,7 @@
 # Core
 /core                                                            @kingyes
 /core/admin/notices                                              @nevoss
-/app                                                             @matipojo @kobizz
+/core/app                                                        @matipojo @kobizz
 /core/base                                                       @matipojo @kobizz
 /core/base/db-upgrades-manager.php                               @matipojo
 /core/base/background-task.php                                   @matipojo

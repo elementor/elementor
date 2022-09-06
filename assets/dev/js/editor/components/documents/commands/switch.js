@@ -4,7 +4,7 @@ export class Switch extends $e.modules.CommandBase {
 	}
 
 	apply( args ) {
-		const { id, mode, onClose, scroll = true } = args;
+		const { id, mode, onClose } = args;
 
 		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
@@ -12,7 +12,7 @@ export class Switch extends $e.modules.CommandBase {
 			onClose,
 		} )
 		.then( () => {
-			return $e.run( 'editor/documents/open', { id, scroll } );
+			return $e.run( 'editor/documents/open', { id } );
 		} )
 		.then( () => {
 			elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
