@@ -149,9 +149,9 @@ export const Paste = () => {
 
 				let parentContainer = elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) );
 
-				while ( parentContainer?.children ) {
-					if ( ! parentContainer.children?.children ) {
-						const widgetType = parentContainer.children[ children.length -1 ].model.get( 'widgetType' );
+				while ( parentContainer.children.length ) {
+					if ( ! parentContainer.children[0].children.length ) {
+						const widgetType = parentContainer.children[ parentContainer.children.length - 1 ].model.get( 'widgetType' );
 						return;
 					}
 
