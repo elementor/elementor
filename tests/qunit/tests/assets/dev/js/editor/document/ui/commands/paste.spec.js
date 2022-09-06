@@ -139,17 +139,11 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 					searchTarget = lastSection;
 					message += ' column';
-				} else if ( 'widget' === sourceElType ) {
-					if ( elementorCommon.config.experimentalFeatures.container ) {
-						const lastContainer = lastChildrenContainer( searchTarget );
+				} else if ( 'widget' === sourceElType && ! elementorCommon.config.experimentalFeatures.container ) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
 
-						searchTarget = lastContainer;
-					} else {
-						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection );
-
-						searchTarget = lastColumn;
-					}
+					searchTarget = lastColumn;
 					message += ' widget';
 				}
 
