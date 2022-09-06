@@ -181,7 +181,7 @@ class WidgetBase {
 
 			await this.waitAfterSettingValue( control );
 
-			await assertionsCallback( controlId, control.generateValueName( value ) );
+			await assertionsCallback( controlId, control.generateSnapshotLabel( value ) );
 		}
 
 		await this.afterControlTest( { control, controlId } );

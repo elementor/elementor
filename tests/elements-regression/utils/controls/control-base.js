@@ -66,12 +66,12 @@ class ControlBase {
 	}
 
 	/**
-	 * Generate name for the snapshot image name.
+	 * Generate label for the snapshot image name.
 	 *
 	 * @param {any} value
 	 * @return {string}
 	 */
-	generateValueName( value ) {
+	generateSnapshotLabel( value ) {
 		if ( '' === value ) {
 			return 'empty';
 		}
