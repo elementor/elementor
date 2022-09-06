@@ -85,7 +85,7 @@ const firstChildrenContainer = ( parent ) => {
 };
 
 const lastChildrenContainer = ( parent ) => {
-	return parent.children[ parent.children.length - 1 ];
+	return parent.children.length ? parent.children[ parent.children.length - 1 ] : parent;
 };
 
 const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed ) => {
