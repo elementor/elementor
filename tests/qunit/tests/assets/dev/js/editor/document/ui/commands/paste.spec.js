@@ -74,7 +74,7 @@ export const DEFAULT_PASTE_RULES = {
 
 const findChildrenContainer = ( parent, children ) => {
 	if ( 0 === parent.model.attributes.elements.length ) {
-		return false;
+		return parent;
 	}
 
 	return parent.children.find( ( container ) => container.id === children.id );
