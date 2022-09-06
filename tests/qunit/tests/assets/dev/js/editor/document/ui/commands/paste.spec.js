@@ -74,7 +74,7 @@ export const DEFAULT_PASTE_RULES = {
 
 const findChildrenContainer = ( parent, children ) => {
 	if ( 0 === parent.model.attributes.elements.length ) {
-		return parent;
+		return false;
 	}
 
 	return parent.children.find( ( container ) => container.id === children.id );
@@ -150,12 +150,10 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				message += ' document ';
 				message += ' document ';
 				if ( elementorCommon.config.experimentalFeatures.container ) {
-					message += ' exp on';
+					passed = true;
 				} else {
-					message += ' exp off';
+					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
-
-				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
 			break;
 
