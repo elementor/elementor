@@ -3,8 +3,20 @@ const { ControlBase } = require( './control-base' );
 class Slider extends ControlBase {
 	static NO_UNIT = 'default';
 
+	/**
+	 * @protected
+	 * @type {import('@playwright/test').Locator}
+	 */
+	inputLocator;
+
 	static getType() {
 		return 'slider';
+	}
+
+	constructor( ...args ) {
+		super( ...args );
+
+		this.inputLocator = this.elementLocator.locator( 'input[type="number"]' );
 	}
 
 	getSelector() {
@@ -39,43 +51,50 @@ class Slider extends ControlBase {
 	}
 
 	async getCurrentInputValue() {
-		return await this.elementLocator.locator( 'input[type="number"]' ).inputValue();
+		return await this.inputLocator.inputValue();
 	}
 
 	async setInputValue( value ) {
-		await this.elementLocator.locator( 'input[type="number"]' ).fill( `${ value }` );
+		await this.inputLocator.fill( `${ value }` );
 	}
 
-	getTestValues( [ defaultUnit, defaultValue ] ) {
-		return ( this.hasUnits() ? this.config.size_units : [ this.constructor.NO_UNIT ] )
-			.reduce( ( carry, unit ) => {
-				const range = this.getUnitRange( unit );
+	async getTestValues( [ initialUnit, initialValue ] ) {
+		const units = this.hasUnits() ? this.config.size_units : [ this.constructor.NO_UNIT ];
+		const values = [];
 
-				return [
-					...carry,
-					...[
-						[ unit, range.min.toString() ],
-						[ unit, ( ( range.max + range.min ) / 2 ).toString() ],
-						[ unit, range.max.toString() ],
-					],
-				];
-			}, [] )
-			.filter( ( [ unit, value ] ) => ! ( unit === defaultUnit && value === defaultValue ) );
+		for ( const unit of units ) {
+			const range = await this.getUnitRange( unit );
+
+			values.push(
+				[ unit, range.min.toString() ],
+				[ unit, ( ( range.max + range.min ) / 2 ).toString() ],
+				[ unit, range.max.toString() ],
+			);
+		}
+
+		return values.filter(
+			( [ unit, value ] ) => ! ( unit === initialUnit && value === initialValue ),
+		);
 	}
 
 	hasUnits() {
 		return this.config?.size_units?.length > 0;
 	}
 
-	getUnitRange( unit ) {
-		const { min = 0, max = 100 } = (
-			unit === this.constructor.NO_UNIT ? this.config?.range : this.config?.range?.[ unit ]
-		) || {};
+	async getUnitRange( unit ) {
+		if ( this.hasUnits() ) {
+			await this.setUnit( unit );
+		}
 
-		return { min, max };
+		return await this.inputLocator.evaluate( ( el ) => {
+			return {
+				min: parseInt( el.getAttribute( 'min' ) ) || 0,
+				max: parseInt( el.getAttribute( 'max' ) ) || 100,
+			};
+		} );
 	}
 
-	generateValueName( [ unit, value ] ) {
+	generateSnapshotLabel( [ unit, value ] ) {
 		unit = '%' === unit ? 'percentage' : unit;
 
 		return `${ unit }-${ value }`;

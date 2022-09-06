@@ -24,6 +24,17 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * @return {Promise<void>}
+	 */
+	async ensureNoticeBarClosed() {
+		const noticeBarCloseButton = await this.page.$( '#e-notice-bar__close' );
+
+		if ( noticeBarCloseButton ) {
+			await noticeBarCloseButton.click();
+		}
+	}
+
+	/**
 	 * Add element to the page using a model.
 	 *
 	 * @param {Object} model     - Model definition.

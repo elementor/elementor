@@ -7,6 +7,7 @@ const controlsTestConfig = require( '../assets/controls-test-config' );
 const {
 	Heading,
 	Divider,
+	TextEditor,
 	WidgetBase,
 } = require( '../utils/widgets' );
 
@@ -23,12 +24,14 @@ const { Registrar } = require( '../utils/registrar' );
 const widgetsRegistrar = new Registrar()
 	.register( Heading )
 	.register( Divider )
+	.register( TextEditor )
 	.register( WidgetBase );
 
 const controlsRegistrar = new Registrar()
 	.register( Choose )
 	.register( Select )
 	.register( Color )
+	.register( Slider )
 	.register( Textarea );
 
 test.describe( 'Elements regression', () => {
@@ -45,6 +48,7 @@ test.describe( 'Elements regression', () => {
 
 		await editorPage.ensureLoaded();
 		await editorPage.ensureNavigatorClosed();
+		await editorPage.ensureNoticeBarClosed();
 	} );
 
 	test.afterEach( async () => {
