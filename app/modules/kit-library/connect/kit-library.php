@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary\Connect;
 
+use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,5 +41,39 @@ class Kit_Library extends Library {
 
 	protected function init() {
 		// Remove parent init actions.
+	}
+
+	/**
+	 * Get all the connect information
+	 *
+	 * @return array
+	 */
+	protected function get_connect_info() {
+		$connect_info = [
+			'app' => $this->get_slug(),
+			'access_token' => $this->get( 'access_token' ),
+			'client_id' => $this->get( 'client_id' ),
+			'local_id' => get_current_user_id(),
+			'site_key' => $this->get_site_key(),
+			'home_url' => trailingslashit( home_url() ),
+		];
+
+		$additional_info = [];
+
+		// BC Support.
+		$old_kit_library = new \Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library();
+
+		/**
+		 * Additional connect info.
+		 *
+		 * Filters the connection information when connecting to Elementor servers.
+		 * This hook can be used to add more information or add more data.
+		 *
+		 * @param array    $additional_info Additional connecting information array.
+		 * @param Base_App $this            The base app instance.
+		 */
+		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', $additional_info, $old_kit_library );
+
+		return array_merge( $connect_info, $additional_info );
 	}
 }
