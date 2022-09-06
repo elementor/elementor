@@ -16,9 +16,6 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Site_Settings;
 use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
-use Elementor\App\Modules\ImportExport\Compatibility\Base_Adapter;
-use Elementor\App\Modules\ImportExport\Compatibility\Envato;
-use Elementor\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\App\Modules\ImportExport\Module;
 
 class Import {

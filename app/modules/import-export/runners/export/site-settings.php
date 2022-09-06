@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Export;
+namespace Elementor\App\Modules\ImportExport\Runners\Export;
 
 use Elementor\Plugin;
 

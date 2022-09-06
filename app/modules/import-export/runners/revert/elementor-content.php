@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Revert;
+namespace Elementor\App\Modules\ImportExport\Runners\Revert;
 
-use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Plugin;
 
 class Elementor_Content extends Revert_Runner_Base {

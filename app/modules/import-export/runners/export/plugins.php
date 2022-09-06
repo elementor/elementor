@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Export;
+namespace Elementor\App\Modules\ImportExport\Runners\Export;
 
 class Plugins extends Export_Runner_Base {
 

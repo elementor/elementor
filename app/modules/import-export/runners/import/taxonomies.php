@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
+namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
-use Elementor\Core\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Taxonomies extends Import_Runner_Base {
 
