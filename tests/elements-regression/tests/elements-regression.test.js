@@ -6,6 +6,7 @@ const controlsTestConfig = require( '../assets/controls-test-config' );
 
 const {
 	Heading,
+	Divider,
 	WidgetBase,
 } = require( '../utils/widgets' );
 
@@ -14,12 +15,14 @@ const {
 	Select,
 	Textarea,
 	Color,
+	Slider,
 } = require( '../utils/controls' );
 
 const { Registrar } = require( '../utils/registrar' );
 
 const widgetsRegistrar = new Registrar()
 	.register( Heading )
+	.register( Divider )
 	.register( WidgetBase );
 
 const controlsRegistrar = new Registrar()
