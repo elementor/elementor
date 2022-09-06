@@ -41,7 +41,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			if ( isTryAgainAction ) {
 				onApprove();
 			} else {
-				window.open( 'http://go.elementor.com/app-import-download-failed', '_blank' );
+				window.open( 'https://go.elementor.com/app-import-download-failed', '_blank' );
 			}
 			onLearnMore?.();
 		},

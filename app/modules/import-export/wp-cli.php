@@ -1,9 +1,11 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport;
+namespace Elementor\App\Modules\ImportExport;
 
+use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
-use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

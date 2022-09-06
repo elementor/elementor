@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Compatibility;
+namespace Elementor\App\Modules\ImportExport\Compatibility;
 
-use Elementor\Core\App\Modules\ImportExport\Import;
+use Elementor\App\Modules\ImportExport\Import;
 use Elementor\Core\Base\Base_Object;
 
 if ( ! defined( 'ABSPATH' ) ) {
