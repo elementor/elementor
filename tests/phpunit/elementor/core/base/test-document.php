@@ -211,7 +211,7 @@ class Test_Document extends Elementor_Test_Base {
 
 		$this->assertEquals(
 			'43',
-			$updated_config[0][ 'elements' ][0][ 'elements' ][3][ 'settings' ][ 'posts_include_term_ids' ]
+			$updated_config[0][ 'elements' ][0][ 'elements' ][3][ 'settings' ][ 'posts_include_term_ids' ][0]
 		);
 	}
 
