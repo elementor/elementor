@@ -150,12 +150,12 @@ export const Paste = () => {
 				let parentContainer = elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) );
 
 				while ( parentContainer.children.length ) {
-					if ( ! parentContainer.children[0].children.length ) {
+					if ( ! parentContainer.children[ 0 ].children.length ) {
 						const widgetType = parentContainer.children[ parentContainer.children.length - 1 ].model.get( 'widgetType' );
 						return;
 					}
 
-					parentContainer = parentContainer.children[0];
+					parentContainer = parentContainer.children[ 0 ];
 				}
 
 				assert.equal(
