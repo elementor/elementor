@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners\Import;
+namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\Plugin;
 use Elementor\Core\Settings\Page\Manager as PageManager;

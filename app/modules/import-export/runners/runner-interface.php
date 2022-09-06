@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Core\App\Modules\ImportExport\Runners;
+namespace Elementor\App\Modules\ImportExport\Runners;
 
-use Elementor\Core\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Module;
 
 interface Runner_Interface {
 

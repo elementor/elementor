@@ -3,9 +3,11 @@ namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Processes\Export;
 use Elementor\App\Modules\ImportExport\Processes\Import;
+use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
@@ -447,7 +449,7 @@ class Module extends BaseModule {
 		if ( ! empty( $conflicts ) ) {
 			$result['conflicts'] = $conflicts;
 		} else {
-			// Moved into the IE process \Elementor\Core\App\Modules\ImportExport\Processes\Import::get_default_settings_conflicts
+			// Moved into the IE process \Elementor\App\Modules\ImportExport\Processes\Import::get_default_settings_conflicts
 			// TODO: remove in 3.10.0
 			$result = apply_filters( 'elementor/import/stage_1/result', $result );
 		}
