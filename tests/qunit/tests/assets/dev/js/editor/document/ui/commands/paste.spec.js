@@ -93,12 +93,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		message = '';
 
 	// Check.
-	if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
+	if ( elementorCommon.config.experimentalFeatures.container ) {
 		passed = true;
 		message = 'Skipped for `targetElType = document` when the container experiment is active.';
 	} else {
 		const targetIsInner = target.model.get( 'isInner' ),
-		sourceIsInner = source.model.get( 'isInner' );
+			sourceIsInner = source.model.get( 'isInner' );
 
 		let isForce = false,
 			copiedContainer = UIHelper.copyPaste( source, target );
@@ -209,6 +209,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			passed = true;
 		}
 	}
+
 	// Check.
 	assert.equal( passed, true, message );
 };
