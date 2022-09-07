@@ -230,6 +230,10 @@ export const Paste = () => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
 						// Escape pasting onto the document when the container experiment is active.
 						if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
+							const passed = true,
+								message = "Skipped for 'targetElType = documents' when the container experiment is active.";
+
+							assert.equal( passed, true, message );
 							return;
 						}
 
