@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 3.7.1
+Stable tag: 3.7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,26 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.7.4 - 2022-08-31 =
+* Tweak: Removed redundant code in various widgets that includes images ([#12268] (https://github.com/elementor/elementor/issues/12268), props [@ibndawood](https://github.com/ibndawood))
+* Fix: Error message appears on front if WooCommerce is activated ([#19553] (https://github.com/elementor/elementor/issues/19553))
+* Fix: Web CLI requires jQuery to avoid errors when jQuery is loaded in the footer (props [@nicomollet](https://github.com/nicomollet))
+
+= 3.7.3 - 2022-08-29 =
+* Fix: Errors in deprecation module prevent Elementor editor to load ([#19390](https://github.com/elementor/elementor/issues/19390), [#19562](https://github.com/elementor/elementor/issues/19562))
+* Fix: `add_link_attributes` function does not overwrite all in foreach loop item link attributes ([#11498](https://github.com/elementor/elementor/issues/11498), props [@sol1](https://github.com/afoster))
+* Tweak: Removed the clickable logo link in Theme Builder
+
+= 3.7.2 - 2022-08-21 =
+* Fix: Motion Effects applied to a Column in any global Theme Builder template prevent Elementor editor to load ([#19390](https://github.com/elementor/elementor/issues/19390))
+* Fix: Experiments - Learn more button does not open the Help center in the notice ([#19448](https://github.com/elementor/elementor/issues/19448))
+* Fix: Widget width is not working as expected on frontend in Container element ([#19398](https://github.com/elementor/elementor/issues/19398))
+* Fix: Horizontal scrolling appears in the edit area when viewing it with different devices ([#19049](https://github.com/elementor/elementor/issues/19049))
+* Fix: Default Flex Grow affects the layout when the Container element is set to direction Colum in Divider widget ([#19325](https://github.com/elementor/elementor/issues/19325))
+* Fix: Background Fallback image is hiding the background video in Container element ([#19413](https://github.com/elementor/elementor/issues/19413))
+* Fix: Previously edited with Elementor posts were imported with irrelevant content in Export/Import tool
+* Fix: Width and Elements gap values are not working as expected in various responsive devices in Container widget
 
 = 3.7.1 - 2022-08-14 =
 * Fix: Controls do not implement a value of 0 ([#19410](https://github.com/elementor/elementor/issues/19410), [#19391](https://github.com/elementor/elementor/issues/19391), [#19393](https://github.com/elementor/elementor/issues/19393), [#19386](https://github.com/elementor/elementor/issues/19386))

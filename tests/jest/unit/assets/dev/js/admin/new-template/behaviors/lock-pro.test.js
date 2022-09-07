@@ -20,8 +20,8 @@ describe( 'New Template - Lock Pro Behavior', () => {
 		window.document.body.innerHTML = `
 			<form>
 				<select class="template-type">
+					<option value="unlocked" selected data-lock='${ JSON.stringify( { is_locked: false } ) }'></option>
 					<option value="locked" data-lock='${ JSON.stringify( lockOptions ) }'></option>
-					<option value="unlocked" data-lock='${ JSON.stringify( { is_locked: false } ) }'></option>
 				</select>
 
 				<span class="badge e-hidden">
@@ -60,6 +60,19 @@ describe( 'New Template - Lock Pro Behavior', () => {
 		expect( elements.lockBadge.classList.contains( 'e-hidden' ) ).toBe( false );
 		expect( elements.lockBadgeText.innerText ).toBe( 'pro' );
 		expect( elements.lockBadgeIcon.classList.contains( 'eicon-lock' ) ).toBe( true );
+	} );
+
+	it( 'Should lock the UI for locked template type when set to default', () => {
+		// Arrange.
+		elements.templateType.options[ 1 ].selected = true; // Set locked as default
+
+		// Act.
+		const lockProBehavior = new LockPro( elements );
+		lockProBehavior.bindEvents();
+
+		// Assert.
+		expect( elements.submitButton.classList.contains( 'e-hidden' ) ).toBe( true );
+		expect( elements.lockButton.classList.contains( 'e-hidden' ) ).toBe( false );
 	} );
 
 	it( 'Should unlock the UI for unlocked template type', () => {

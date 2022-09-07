@@ -185,16 +185,31 @@ class Manager {
 		return $id;
 	}
 
-	public function revert( $new_kit_id, $active_kit_id, $previous_kit_id ) {
+	/**
+	 * @param $imported_kit_id int The id of the imported kit that should be deleted.
+	 * @param $active_kit_id int The id of the kit that should set as 'active_kit' after the deletion.
+	 * @param $previous_kit_id int The id of the kit that should set as 'previous_kit' after the deletion.
+	 * @return void
+	 */
+	public function revert( int $imported_kit_id, int $active_kit_id, int $previous_kit_id ) {
+		// If the kit that should set as active is not a valid kit then abort the revert.
+		if ( ! $this->is_kit( $active_kit_id ) ) {
+			return;
+		}
+
+		// This a hacky solution to avoid from the revert process to be interrupted by the `trash_kit_confirmation`.
 		$this->should_skip_trash_kit_confirmation = true;
 
-		$kit = $this->get_kit( $new_kit_id );
-		$kit->delete();
+		$kit = $this->get_kit( $imported_kit_id );
+		$kit->force_delete();
 
 		$this->should_skip_trash_kit_confirmation = false;
 
 		update_option( self::OPTION_ACTIVE, $active_kit_id );
-		update_option( self::OPTION_PREVIOUS, $previous_kit_id );
+
+		if ( $this->is_kit( $previous_kit_id ) ) {
+			update_option( self::OPTION_PREVIOUS, $previous_kit_id );
+		}
 	}
 
 	/**
