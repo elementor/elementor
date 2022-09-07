@@ -325,15 +325,11 @@ class Server extends Base {
 			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_ELEMENTOR_UPLOADS_DIR ),
 		];
 
-		$permissions = $this->get_paths_permissions( $paths_to_check );
-
-		$permissions = array_filter( $permissions, function ( $key ) use ( $paths_messages ) {
-			return array_key_exists( $key, $paths_messages );
-		}, ARRAY_FILTER_USE_KEY  );
+		$paths_permissions = $this->get_paths_permissions( $paths_to_check );
 
 		$write_problems = [];
 
-		foreach ( $permissions as $key_path => $path_permissions ) {
+		foreach ( $paths_permissions as $key_path => $path_permissions ) {
 			if ( ! $path_permissions['write'] ) {
 				$write_problems[] = $paths_messages[ $key_path ];
 			}
