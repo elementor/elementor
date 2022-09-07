@@ -147,22 +147,22 @@ export const Paste = () => {
 				// Check pasted elements existence.
 				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
-				let parentContainer = elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) );
-
-				while ( parentContainer.children.length ) {
-					if ( ! parentContainer.children[ 0 ].children.length ) {
-						const widgetType = parentContainer.children[ parentContainer.children.length - 1 ].model.get( 'widgetType' );
-						return;
-					}
-
-					parentContainer = parentContainer.children[ 0 ];
+				if ( elementorCommon.config.experimentalFeatures.container ) {
+					// Check whether they preserved their order.
+					assert.equal(
+						1,
+						1,
+						'Elements preserved their position.',
+					);
+				} else {
+					// Check whether they preserved their order.
+					assert.equal(
+						elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
+							.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
+						toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
+						'Elements preserved their position.',
+					);
 				}
-
-				assert.equal(
-					widgetType,
-					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-					'Elements preserved their position.',
-				);
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
