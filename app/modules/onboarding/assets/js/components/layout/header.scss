@@ -1,0 +1,84 @@
+.e-onboarding__header {
+
+	&-logo {
+
+		.eps-app__logo {
+			background-color: $platform-darkest-gray;
+			color: $white;
+			width: 1.3rem;
+			height: 1.3rem;
+			line-height: 1.3rem;
+			font-size: 0.48rem;
+
+			&:not(:last-child) {
+				margin-inline-end: 7px;
+			}
+		}
+
+		img {
+			width: 104px;
+		}
+	}
+
+	.eps-app__header-btn {
+		display: flex;
+		align-items: center;
+		font-size: 13px;
+
+		.eps-icon:not(:last-child) {
+			margin-inline-end: 7px;
+		}
+	}
+
+	.eps-button {
+		color: $platform-darkest-gray;
+
+		&__go-pro-btn {
+			background-color: $platform-accent;
+			color: $white;
+			padding: 4px 8px;
+			border-radius: 4px;
+			font-weight: 700;
+			font-size: 12px;
+			transition: 0.5s;
+
+			&:hover {
+			  	background: lighten($platform-accent, 10%)
+			}
+		}
+	}
+}
+
+.e-onboarding__go-pro {
+	width: 288px;
+	font-size: 12px;
+
+	&-title {
+		font-size: 18px;
+		font-weight: 700;
+		color: $platform-accent;
+	}
+
+	&-cta {
+		display: inline-block;
+		color: $platform-accent;
+		padding: 9px;
+		border: 1px solid $platform-accent;
+
+		// Specificity.
+		&.e-onboarding__button {
+			font-size: 14px;
+		}
+	}
+
+	&-paragraph {
+
+		&:not(:last-child) {
+			margin-bottom: 20px;
+		}
+	}
+
+	&-already-have {
+		text-decoration: underline;
+	}
+}
