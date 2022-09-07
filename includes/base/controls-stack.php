@@ -1407,7 +1407,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$are_control_and_condition_responsive = isset( $control['responsive'] ) && ! empty( $controls[ $pure_condition_key ]['responsive'] );
-			$condition_name_to_check = $condition_key;
+			$condition_name_to_check = $pure_condition_key;
 
 			if ( $are_control_and_condition_responsive ) {
 				$device_suffix = $this->get_responsive_control_device_suffix( $control );
