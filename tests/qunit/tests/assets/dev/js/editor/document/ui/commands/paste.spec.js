@@ -89,7 +89,8 @@ const lastChildrenContainer = ( parent ) => {
 };
 
 const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed ) => {
-	let passed = false;
+	let passed = false,
+		message = '';
 
 	// Escape pasting onto the document when the container experiment is active.
 	if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
