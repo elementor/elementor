@@ -98,6 +98,13 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		copiedContainer = UIHelper.copyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
+	
+	// Escape pasting onto the document when the container experiment is active.
+	if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType && ! sourceIsInner && ! targetIsInner ) {
+		copiedContainer = false;
+		passed = true;
+		message = 'Pasting onto the document when the container experiment is tested in a Jest test';
+	}
 
 	// Handle situation when source is inner.
 	if ( sourceIsInner ) {
@@ -130,12 +137,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	if ( copiedContainer ) {
 		switch ( targetElType ) {
 			case 'document': {
-				if ( elementorCommon.config.experimentalFeatures.container ) {
-					passed = true;
-					message = 'Pasting onto the document when the container experiment is tested in a Jest test';
-					break;
-				}
-
 				// Target is document.
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
