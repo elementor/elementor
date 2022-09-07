@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Kits\Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -45,8 +46,23 @@ class Maintenance {
 		}
 
 		static::create_default_kit();
+		static::insert_defaults_options();
 
 		set_transient( 'elementor_activation_redirect', true, MINUTE_IN_SECONDS );
+	}
+
+	public static function insert_defaults_options() {
+		$history = Upgrade_Manager::get_installs_history();
+		if ( empty( $history ) ) {
+			$default_options = [
+				'elementor_font_display' => 'swap',
+			];
+			foreach ( $default_options as $option_name => $option_value ) {
+				if ( \Elementor\Utils::is_empty( get_option( $option_name ) ) ) {
+					add_option( $option_name, $option_value );
+				}
+			}
+		}
 	}
 
 	/**

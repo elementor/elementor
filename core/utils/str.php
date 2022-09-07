@@ -20,4 +20,15 @@ class Str {
 			return $matches[1] . \Requests_IDNAEncoder::encode( $matches[2] );
 		}, $url );
 	}
+
+	/**
+	 * Checks if a string ends with a given substring
+	 *
+	 * @param $haystack
+	 * @param $needle
+	 * @return bool
+	 */
+	public static function ends_with( $haystack, $needle ) {
+		return substr( $haystack, -strlen( $needle ) ) === $needle;
+	}
 }

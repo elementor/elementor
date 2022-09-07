@@ -8,9 +8,18 @@
 	}
 }
 
-#elementor_rollback,
-#elementor_rollback_pro,
 #elementor_replace_url {
+	> div {
+		max-width: 800px;
+
+		input {
+			margin-bottom: 6px;
+		}
+	}
+}
+
+#elementor_rollback,
+#elementor_rollback_pro {
 	> div {
 		display: flex;
 
