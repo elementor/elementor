@@ -133,7 +133,7 @@ export const Paste = () => {
 				}
 			} );
 
-			QUnit.only( 'On preview container', ( assert ) => {
+			QUnit.test( 'On preview container', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					eHeading = ElementsHelper.createWidgetHeading( eColumn ),
