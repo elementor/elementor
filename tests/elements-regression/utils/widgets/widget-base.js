@@ -73,14 +73,14 @@ class WidgetBase {
 	/**
 	 * Get the widget's locator in the page.
 	 *
-	 * @return {Promise<import('@playwright/test').Locator>}
+	 * @return {import('@playwright/test').Locator}
 	 */
 	async getElement() {
 		if ( ! this.id ) {
 			await this.create();
 		}
 
-		return await this.editor.getPreviewFrame().locator( `.elementor-element-${ this.id }` );
+		return this.editor.getPreviewFrame().locator( `.elementor-element-${ this.id }` );
 	}
 
 	/**

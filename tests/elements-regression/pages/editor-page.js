@@ -59,4 +59,24 @@ module.exports = class EditorPage extends BasePage {
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
+
+	/**
+	 * @param {import('../utils/widgets/widget-base').WidgetBase} widget
+	 * @return {Promise<Buffer>}
+	 */
+	async screenshotElement( widget ) {
+		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
+		const elementRect = await ( await widget.getElement() ).boundingBox();
+
+		return await this.page.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+			clip: {
+				x: elementRect.x,
+				y: elementRect.y,
+				width: Math.min( elementRect.width, frameRect.width ),
+				height: Math.min( elementRect.height, frameRect.height ),
+			},
+		} );
+	}
 };
