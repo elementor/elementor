@@ -12,7 +12,6 @@ import ElementsHelper from '../../elements/helper';
  */
 export const DEFAULT_PASTE_RULES = {
 	section: {
-		document: true,
 		section: true,
 		container: false,
 		column: false,
@@ -24,7 +23,6 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	container: {
-		document: true,
 		section: false,
 		container: true,
 		column: true,
@@ -36,7 +34,6 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	column: {
-		document: true,
 		section: true,
 		container: false,
 		column: true,
@@ -48,7 +45,6 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	widget: {
-		document: true,
 		section: true,
 		container: true,
 		column: true,
@@ -60,7 +56,6 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	innerSection: {
-		document: true,
 		section: false,
 		container: false,
 		column: true,
@@ -208,32 +203,27 @@ export const Paste = () => {
 			QUnit.test( 'Rules', ( assert ) => {
 				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						if ( 'document' == targetElType ) {
-							assert.equal( 1, 1, 'document' );
+						ElementsHelper.empty();
+
+						const source = ElementsHelper.createAuto( sourceElType ),
+							target = ElementsHelper.createAuto( targetElType );
+
+						// Handle inner-section.
+						if ( 'object' === typeof isAllowed ) {
+							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
+								validateRule( assert,
+									target,
+									_targetElType,
+									source,
+									sourceElType,
+									isAllowed[ _targetElType ],
+								);
+							} );
+
 							return;
-						} else {
-							ElementsHelper.empty();
-
-							const source = ElementsHelper.createAuto( sourceElType ),
-								target = ElementsHelper.createAuto( targetElType );
-
-							// Handle inner-section.
-							if ( 'object' === typeof isAllowed ) {
-								Object.keys( isAllowed ).forEach( ( _targetElType ) => {
-									validateRule( assert,
-										target,
-										_targetElType,
-										source,
-										sourceElType,
-										isAllowed[ _targetElType ],
-									);
-								} );
-
-								return;
-							}
-
-							validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
 						}
+
+						validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
 					} );
 				} );
 			} );
