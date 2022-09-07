@@ -31,7 +31,7 @@ export default function GoProPopover( props ) {
 			window.open(
 				alreadyHaveProButton.href + '&mode=popup',
 				'elementorUploadPro',
-				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`
+				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`,
 			);
 
 			// Run the callback for when the upload succeeds.
@@ -52,7 +52,7 @@ export default function GoProPopover( props ) {
 	// The buttonsConfig prop is an array of objects. To find the 'Go Pro' button, we need to iterate over the object.
 	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
 		getElProButton = {
-			text: __( 'Get Elementor Pro', 'elementor' ),
+			text: __( 'Upgrade Now', 'elementor' ),
 			className: 'e-onboarding__go-pro-cta',
 			target: '_blank',
 			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,

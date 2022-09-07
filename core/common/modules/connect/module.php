@@ -199,12 +199,12 @@ class Module extends BaseModule {
 			],
 			static::ACCESS_LEVEL_PRO => [
 				'label' => 'Pro',
-				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=gopro" ),
+				'promotion_url' => "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=gopro",
 				'color' => '#92003B',
 			],
 			static::ACCESS_LEVEL_EXPERT => [
 				'label' => 'Expert',
-				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=goexpert" ),
+				'promotion_url' => "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=goexpert",
 				'color' => '#010051',
 			],
 		];

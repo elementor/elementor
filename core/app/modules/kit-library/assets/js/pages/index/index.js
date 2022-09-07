@@ -17,14 +17,15 @@ import { Grid } from '@elementor/app-ui';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './index.scss';
 
 /**
  * Generate select and unselect taxonomy functions.
  *
- * @param setQueryParams
- * @returns {((function(*, *): *)|(function(*=): *))[]}
+ * @param {Function} setQueryParams
+ * @return {((function(*, *): *)|(function(*=): *))[]} taxonomy functions
  */
 function useTaxonomiesSelection( setQueryParams ) {
 	const selectTaxonomy = useCallback( ( type, callback ) => setQueryParams(
@@ -34,7 +35,7 @@ function useTaxonomiesSelection( setQueryParams ) {
 			taxonomies[ type ] = callback( prev.taxonomies[ type ] );
 
 			return { ...prev, taxonomies };
-		}
+		},
 	), [ setQueryParams ] );
 
 	const unselectTaxonomy = useCallback( ( taxonomy ) => setQueryParams( ( prev ) => {
@@ -53,8 +54,8 @@ function useTaxonomiesSelection( setQueryParams ) {
 /**
  * Generate the menu items for the index page.
  *
- * @param path
- * @returns {array}
+ * @param {string} path
+ * @return {Array} menu items
  */
 function useMenuItems( path ) {
 	return useMemo( () => {
@@ -66,12 +67,14 @@ function useMenuItems( path ) {
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
+				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
 			},
 			{
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
 				isActive: 'favorites' === page,
 				url: '/kit-library/favorites',
+				trackEventData: { command: 'kit-library/select-organizing-category', category: 'favorites' },
 			},
 		];
 	}, [ path ] );
@@ -80,9 +83,9 @@ function useMenuItems( path ) {
 /**
  * Update and read the query param from the url
  *
- * @param queryParams
- * @param setQueryParams
- * @param exclude
+ * @param {*}             queryParams
+ * @param {*}             setQueryParams
+ * @param {Array<string>} exclude
  */
 function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	const location = useLocation(),
@@ -91,7 +94,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	useEffect( () => {
 		const filteredQueryParams = Object.fromEntries(
 			Object.entries( queryParams )
-				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item )
+				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item ),
 		);
 
 		setLastFilter( filteredQueryParams );
@@ -100,8 +103,8 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 			null,
 			'',
 			decodeURI(
-				`#${ wp.url.addQueryArgs( location.pathname.split( '?' )[ 0 ] || '/', filteredQueryParams ) }`
-			)
+				`#${ wp.url.addQueryArgs( location.pathname.split( '?' )[ 0 ] || '/', filteredQueryParams ) }`,
+			),
 		);
 	}, [ queryParams ] );
 
@@ -162,6 +165,21 @@ export default function Index( props ) {
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
+	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
+		appsEventTrackingDispatch(
+			command,
+			{
+				page_source: 'home page',
+				element_position: elementPosition,
+				search_term: search,
+				sort_direction: direction,
+				sort_type: sortType,
+				event_type: eventType,
+				action,
+			},
+		);
+	};
+
 	return (
 		<Layout
 			sidebar={
@@ -170,6 +188,7 @@ export default function Index( props ) {
 						selected={ queryParams.taxonomies }
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
+						category={ props.path }
 					/> }
 					menuItems={ menuItems }
 				/>
@@ -188,9 +207,13 @@ export default function Index( props ) {
 				<Grid container className="e-kit-library__index-layout-top-area">
 					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
+							// eslint-disable-next-line @wordpress/i18n-ellipsis
 							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
 							value={ queryParams.search }
-							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
+							onChange={ ( value ) => {
+								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
+								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
+							} }
 						/>
 						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
@@ -212,6 +235,9 @@ export default function Index( props ) {
 							] }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
+							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction ) }
+							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value ) }
+							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'top_area_sort', null, null, null, 'expand' ) }
 						/>
 					</Grid>
 				</Grid>
@@ -224,12 +250,12 @@ export default function Index( props ) {
 								description={ __( 'Nothing to worry about, use 🔄 on the top right to try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
 								button={ {
 									text: __( 'Learn More', 'elementor' ),
-									url: 'http://go.elementor.com/app-kit-library-error',
+									url: 'http://go.elementor.com/app-kit-library-error/',
 									target: '_blank',
 								} }
 							/>
 						}
-						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data }/> }
+						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } queryParams={ queryParams } source={ props.path } /> }
 						{
 							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
 								defaultComponent: <ErrorScreen
@@ -238,12 +264,13 @@ export default function Index( props ) {
 									button={ {
 										text: __( 'Continue browsing.', 'elementor' ),
 										action: clearQueryParams,
+										category: props.path,
 									} }
 								/>,
 								isFilterActive,
 							} )
 						}
-						<EnvatoPromotion />
+						<EnvatoPromotion category={ props.path } />
 					</>
 				</Content>
 			</div>

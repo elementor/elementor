@@ -5,12 +5,30 @@ import Kit from '../../models/kit';
 import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 import { Heading, CardImage, Text, Grid } from '@elementor/app-ui';
 import { useState } from 'react';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './overview-sidebar.scss';
 
 export default function OverviewSidebar( props ) {
 	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( false );
+	const eventTracking = ( command, section = null, kitName = null, tag = null, isCollapsed = null, eventType = 'click' ) => {
+		const action = isCollapsed && isCollapsed ? 'collapse' : 'expand';
+		if ( 'boolean' === typeof isCollapsed ) {
+			command = `kit-library/${ action }`;
+		}
+		appsEventTrackingDispatch(
+			command,
+			{
+				page_source: 'overview',
+				element_location: 'app_sidebar',
+				kit_name: kitName,
+				tag,
+				section,
+				event_type: eventType,
+			},
+		);
+	};
 
 	return (
 		<div className="e-kit-library__item-sidebar">
@@ -39,10 +57,18 @@ export default function OverviewSidebar( props ) {
 					onChange={ setIsTagsCollapseOpen }
 					title={ __( 'TAGS', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-tags"
+					onClick={ ( collapseState, title ) => {
+						eventTracking( null, title, null, null, collapseState );
+					} }
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.taxonomies.map( ( taxonomy ) => (
-							<OverviewTaxonomyBadge key={ taxonomy }>{ taxonomy }</OverviewTaxonomyBadge>
+							<OverviewTaxonomyBadge
+								key={ taxonomy }
+								onClick={ ( taxonomyText ) => {
+									eventTracking( 'kit-library/filter', null, props.model.title, taxonomyText );
+								} }
+							>{ taxonomy }</OverviewTaxonomyBadge>
 						) ) }
 					</Grid>
 				</Collapse>
@@ -54,6 +80,9 @@ export default function OverviewSidebar( props ) {
 					onChange={ setIsInformationCollapseOpen }
 					title={ __( 'WHAT\'S INSIDE', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-info"
+					onClick={ ( collapseState, title ) => {
+						eventTracking( null, title, null, null, collapseState );
+					} }
 				>
 					{
 						props.groupedKitContent.map( ( contentType ) => {
@@ -76,7 +105,8 @@ export default function OverviewSidebar( props ) {
 
 OverviewSidebar.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
+	index: PropTypes.number,
 	groupedKitContent: PropTypes.arrayOf(
-		PropTypes.instanceOf( ContentType )
+		PropTypes.instanceOf( ContentType ),
 	),
 };

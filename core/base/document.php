@@ -3,6 +3,7 @@ namespace Elementor\Core\Base;
 
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets as Assets_Iteration_Action;
 use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Action;
+use Elementor\Core\Behaviors\Interfaces\Lock_Behavior;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -258,6 +259,13 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $this->main_id;
+	}
+
+	/**
+	 * @return null|Lock_Behavior
+	 */
+	public static function get_lock_behavior_v2() {
+		return null;
 	}
 
 	/**

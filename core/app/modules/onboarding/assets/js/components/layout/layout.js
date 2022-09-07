@@ -77,9 +77,9 @@ export default function Layout( props ) {
 	if ( ! state.hasPro ) {
 		headerButtons.push( {
 			id: 'go-pro',
-			text: __( 'Go Pro', 'elementor-pro' ),
+			text: __( 'Upgrade', 'elementor' ),
 			hideText: false,
-			icon: 'eicon-pro-icon',
+			className: 'eps-button__go-pro-btn',
 			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			target: '_blank',
 			elRef: goProButtonRef,
@@ -110,7 +110,7 @@ export default function Layout( props ) {
 				/>
 				<div className={ 'eps-app__main e-onboarding__page-' + props.pageId }>
 					<Content className="e-onboarding__content">
-						<ProgressBar/>
+						<ProgressBar />
 						{ props.children }
 					</Content>
 				</div>
