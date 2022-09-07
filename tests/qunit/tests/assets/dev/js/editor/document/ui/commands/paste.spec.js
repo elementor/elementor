@@ -93,7 +93,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		message = '';
 
 	// Check.
-	if ( elementorCommon.config.experimentalFeatures.container ) {
+	if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
 		passed = true;
 		message = 'Skipped for `targetElType = document` when the container experiment is active.';
 	} else {
@@ -142,7 +142,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 					let searchTarget = elementor.getPreviewContainer();
 
 					if ( 'column' === sourceElType ) {
-					} else if ( 'column' === sourceElType ) {
 						const lastSection = lastChildrenContainer( searchTarget );
 
 						searchTarget = lastSection;
@@ -155,7 +154,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
-				break;
+					break;
 
 				case 'section': {
 					let searchTarget = target;
@@ -172,12 +171,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
-				break;
+					break;
 
 				case 'container': {
 					passed = !! findChildrenContainer( target, copiedContainer );
 				}
-				break;
+					break;
 
 				case 'column': {
 					let searchTarget = target;
@@ -188,12 +187,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
-				break;
+					break;
 
 				case 'widget': {
 					passed = !! findChildrenContainer( target.parent, copiedContainer );
 				}
-				break;
+					break;
 			}
 		}
 
