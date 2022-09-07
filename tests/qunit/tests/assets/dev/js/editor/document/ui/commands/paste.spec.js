@@ -208,8 +208,9 @@ export const Paste = () => {
 			QUnit.test( 'Rules', ( assert ) => {
 				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						if ( 'document' === targetElType ) {
+						if ( 'document' == targetElType ) {
 							assert.equal( 1, 1, 'document' );
+							return;
 						} else {
 							ElementsHelper.empty();
 
