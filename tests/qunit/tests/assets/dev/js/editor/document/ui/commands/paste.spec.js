@@ -12,6 +12,7 @@ import ElementsHelper from '../../elements/helper';
  */
 export const DEFAULT_PASTE_RULES = {
 	section: {
+		document: true,
 		section: true,
 		container: false,
 		column: false,
@@ -23,6 +24,7 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	container: {
+		document: true,
 		section: false,
 		container: true,
 		column: true,
@@ -34,6 +36,7 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	column: {
+		document: true,
 		section: true,
 		container: false,
 		column: true,
@@ -45,6 +48,7 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	widget: {
+		document: true,
 		section: true,
 		container: true,
 		column: true,
@@ -56,6 +60,7 @@ export const DEFAULT_PASTE_RULES = {
 	},
 
 	innerSection: {
+		document: true,
 		section: false,
 		container: false,
 		column: true,
@@ -124,6 +129,26 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	// There is no point in checking what was not successful copied.
 	if ( copiedContainer ) {
 		switch ( targetElType ) {
+			case 'document': {
+				// Target is document.
+				// Find source at document.
+				let searchTarget = elementor.getPreviewContainer();
+
+				if ( 'column' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget );
+
+					searchTarget = lastSection;
+				} else if ( 'widget' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
+
+					searchTarget = lastColumn;
+				}
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
+			}
+			break;
+
 			case 'section': {
 				let searchTarget = target;
 
@@ -207,7 +232,6 @@ export const Paste = () => {
 
 						const source = ElementsHelper.createAuto( sourceElType ),
 							target = ElementsHelper.createAuto( targetElType );
-
 						// Handle inner-section.
 						if ( 'object' === typeof isAllowed ) {
 							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
