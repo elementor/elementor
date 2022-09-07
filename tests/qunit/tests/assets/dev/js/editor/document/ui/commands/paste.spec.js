@@ -228,6 +228,11 @@ export const Paste = () => {
 			QUnit.test( 'Rules', ( assert ) => {
 				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
+						// Escape pasting onto the document when the container experiment is active.
+						if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
+							return;
+						}
+
 						ElementsHelper.empty();
 
 						const source = ElementsHelper.createAuto( sourceElType ),
@@ -246,12 +251,8 @@ export const Paste = () => {
 
 							return;
 						}
-						
-						if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
-							// Escape pasting onto the document when the container experiment is active.
-						} else {
-							validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
-						}
+
+						validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
 					} );
 				} );
 			} );
