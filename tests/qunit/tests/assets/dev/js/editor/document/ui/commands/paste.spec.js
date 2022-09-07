@@ -212,7 +212,7 @@ export const Paste = () => {
 
 						const source = ElementsHelper.createAuto( sourceElType ),
 							target = ElementsHelper.createAuto( targetElType );
-						
+
 						// Handle inner-section.
 						if ( 'object' === typeof isAllowed ) {
 							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
