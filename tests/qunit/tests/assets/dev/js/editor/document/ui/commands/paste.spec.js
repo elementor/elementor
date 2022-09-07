@@ -135,17 +135,21 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				let searchTarget = elementor.getPreviewContainer();
 
 				if ( 'column' === sourceElType ) {
+					passed = true;
+				} else if ( 'column' === sourceElType ) {
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
+					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				} else if ( 'widget' === sourceElType ) {
 					const lastSection = lastChildrenContainer( searchTarget ),
 						lastColumn = lastChildrenContainer( lastSection );
 
 					searchTarget = lastColumn;
+					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
 
-				passed = !! findChildrenContainer( searchTarget, copiedContainer );
+
 			}
 			break;
 

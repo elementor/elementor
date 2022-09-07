@@ -133,37 +133,37 @@ export const Paste = () => {
 				}
 			} );
 
-			// QUnit.test( 'On preview container', ( assert ) => {
-			// 	const eColumn = ElementsHelper.createSection( 1, true ),
-			// 		eButton = ElementsHelper.createWidgetButton( eColumn ),
-			// 		eHeading = ElementsHelper.createWidgetHeading( eColumn ),
-			// 		toCopy = [ eButton, eHeading ];
+			QUnit.only( 'On preview container', ( assert ) => {
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
+					eHeading = ElementsHelper.createWidgetHeading( eColumn ),
+					toCopy = [ eButton, eHeading ];
 
-			// 	ElementsHelper.multiCopy( toCopy );
+				ElementsHelper.multiCopy( toCopy );
 
-			// 	const pasted = ElementsHelper.paste( elementor.getPreviewContainer(), true ),
-			// 		parents = pasted.map( ( container ) => container.parent.parent );
+				const pasted = ElementsHelper.paste( elementor.getPreviewContainer(), true ),
+					parents = pasted.map( ( container ) => container.parent.parent );
 
-			// 	// Check pasted elements existence.
-			// 	assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
+				// Check pasted elements existence.
+				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
-			// 	if ( elementorCommon.config.experimentalFeatures.container ) {
-			// 		// Check whether they preserved their order.
-			// 		assert.equal(
-			// 			1,
-			// 			1,
-			// 			'Elements preserved their position.',
-			// 		);
-			// 	} else {
-			// 		// Check whether they preserved their order.
-			// 		assert.equal(
-			// 			elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-			// 				.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
-			// 			toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-			// 			'Elements preserved their position.',
-			// 		);
-			// 	}
-			// } );
+				if ( elementorCommon.config.experimentalFeatures.container ) {
+					// Check whether they preserved their order.
+					assert.equal(
+						1,
+						1,
+						'Elements preserved their position.',
+					);
+				} else {
+					// Check whether they preserved their order.
+					assert.equal(
+						elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
+							.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
+						toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
+						'Elements preserved their position.',
+					);
+				}
+			} );
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
