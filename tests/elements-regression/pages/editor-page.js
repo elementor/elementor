@@ -64,7 +64,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @param {import('../utils/widgets/widget-base').WidgetBase} widget
 	 * @return {Promise<Buffer>}
 	 */
-	async screenshotElement( widget ) {
+	async screenshotWidget( widget ) {
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
 		const elementRect = await ( await widget.getElement() ).boundingBox();
 

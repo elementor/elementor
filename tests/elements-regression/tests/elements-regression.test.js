@@ -81,12 +81,12 @@ test.describe( 'Elements regression', () => {
 			const element = await widget.getElement();
 
 			// Assert - Match snapshot for default appearance.
-			expect( await editorPage.screenshotElement( widget ) )
+			expect( await editorPage.screenshotWidget( widget ) )
 				.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
 			await widget.test( async ( controlId, currentControlValue ) => {
 				// Assert - Match snapshot for specific control.
-				expect( await editorPage.screenshotElement( widget ) )
+				expect( await editorPage.screenshotWidget( widget ) )
 					.toMatchSnapshot( [ widgetType, controlId, `${ currentControlValue }.jpeg` ] );
 			} );
 		} );
