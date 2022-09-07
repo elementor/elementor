@@ -92,7 +92,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	let passed = false,
 		message = '';
 
-	if ( elementorCommon.config.experimentalFeatures.container && 'random' === targetElType ) {
+	if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
 		passed = true;
 		message = 'Skipped for `targetElType = document` when the container experiment is active.';
 	} else {
@@ -136,8 +136,22 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		if ( copiedContainer ) {
 			switch ( targetElType ) {
 				case 'document': {
+					// Target is document.
+					// Find source at document.
+					let searchTarget = elementor.getPreviewContainer();
 
-					passed = true;
+					if ( 'column' === sourceElType ) {
+						const lastSection = lastChildrenContainer( searchTarget );
+
+						searchTarget = lastSection;
+					} else if ( 'widget' === sourceElType ) {
+						const lastSection = lastChildrenContainer( searchTarget ),
+							lastColumn = lastChildrenContainer( lastSection );
+
+						searchTarget = lastColumn;
+					}
+
+					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
 					break;
 
