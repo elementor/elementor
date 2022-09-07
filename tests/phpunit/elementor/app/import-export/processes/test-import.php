@@ -1,12 +1,13 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport;
+namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport\Processes;
 
-use Elementor\App\Modules\ImportExport\Runners\Elementor_Content;
-use Elementor\App\Modules\ImportExport\Runners\Plugins;
-use Elementor\App\Modules\ImportExport\Runners\Site_Settings;
-use Elementor\App\Modules\ImportExport\Runners\Taxonomies;
-use Elementor\App\Modules\ImportExport\Runners\Templates;
-use Elementor\App\Modules\ImportExport\Runners\Wp_Content;
+use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Runners\Import\Elementor_Content;
+use Elementor\App\Modules\ImportExport\Runners\Import\Plugins;
+use Elementor\App\Modules\ImportExport\Runners\Import\Site_Settings;
+use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies;
+use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
+use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Processes\Import;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Settings\Page\Manager as PageManager;
@@ -15,6 +16,7 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Import extends Elementor_Test_Base {
+	const MOCK_KIT_ZIP_PATH = __DIR__ . '/../mock/sample-kit.zip';
 
 	// Test the import all process, which include all the kit content:
 	// The plugins, site-settings, taxonomies ( for Elementor and WP including CPT taxonomy - tests_tax ),
@@ -47,8 +49,7 @@ class Test_Import extends Elementor_Test_Base {
 				]
 			] );
 
-		$zip_path = __DIR__ . '/mock/sample-kit.zip';
-		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
+		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( static::MOCK_KIT_ZIP_PATH, [ 'json', 'xml' ] );
 		$session = $extraction_result['extraction_directory'];
 		$import = new Import( $session );
 		$manifest = $import->get_manifest();
@@ -89,7 +90,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Please specify import runners.' );
 
 		// Arrange
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', [] );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, [] );
 
 		// Act
 		$import->run();
@@ -123,7 +124,7 @@ class Test_Import extends Elementor_Test_Base {
 			'include' => [ 'plugins' ],
 		];
 
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Plugins( $plugins_manager_mock ) );
 
 		// Act
@@ -132,6 +133,9 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 1, $result );
 		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins'] );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'plugins' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_plugins_selected_plugin() {
@@ -164,7 +168,7 @@ class Test_Import extends Elementor_Test_Base {
 			],
 		];
 
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Plugins( $plugins_manager_mock ) );
 
 		// Act
@@ -173,16 +177,22 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 1, $result );
 		$this->assertEquals( [ 'Elementor', ], $result['plugins'] );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'plugins' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_site_settings() {
 		// Arrange
 		$this->act_as_admin();
 
+		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+
 		$import_settings = [
 			'include' => [ 'settings' ],
 		];
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Site_Settings() );
 
 		$extracted_directory_path = $import->get_extracted_directory_path();
@@ -197,6 +207,16 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result );
 		$this->assertTrue( $result['site-settings'] );
 
+		$expected_runners = [
+			'site-settings' => [
+				'previous_kit_id' => $previous_kit_id,
+				'active_kit_id' => $active_kit_id,
+				'imported_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
+			],
+		];
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
+
 		$new_active_kit = Plugin::$instance->kits_manager->get_active_kit();
 		$this->assertEquals( 'Imported Kit', $new_active_kit->get_post()->post_title );
 
@@ -210,7 +230,7 @@ class Test_Import extends Elementor_Test_Base {
 		$import_settings = [
 			'include' => [ 'templates' ],
 		];
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Templates() );
 
 		// Act
@@ -218,6 +238,9 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEmpty( $result );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEmpty( array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_taxonomies_without_register_custom_taxonomies() {
@@ -225,7 +248,7 @@ class Test_Import extends Elementor_Test_Base {
 		$import_settings = [
 			'include' => [ 'content' ],
 		];
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Taxonomies() );
 
 		// Act
@@ -234,6 +257,9 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 1, $result );
 		$this->assert_valid_taxonomies( $result );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'taxonomies' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
 	public function test_run__import_taxonomies_with_register_custom_taxonomies() {
@@ -244,7 +270,7 @@ class Test_Import extends Elementor_Test_Base {
 		$import_settings = [
 			'include' => [ 'content' ],
 		];
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Taxonomies() );
 
 		// Act
@@ -253,6 +279,9 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 1, $result );
 		$this->assert_valid_taxonomies( $result );
+
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( [ 'taxonomies' => [] ], array_pop( $import_sessions_options )['runners'] );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -271,7 +300,7 @@ class Test_Import extends Elementor_Test_Base {
 			'selectedCustomPostTypes' => [],
 		];
 
-		$zip_path = __DIR__ . '/mock/sample-kit.zip';
+		$zip_path = static::MOCK_KIT_ZIP_PATH;
 		$import = new Import( $zip_path, $import_settings );
 		$import->register( new Elementor_Content() );
 		$manifest = $import->get_manifest();
@@ -287,6 +316,14 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
 		$this->assertCount( 1, $result['content']['page']['succeed'] );
 
+		$expected_runners = [
+			'elementor-content' => [
+				'page_on_front' => 0,
+			],
+		];
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
+
 		$this->assert_valid_elementor_content( $result, $manifest, $zip_path );
 
 		$this->assertEquals( array_pop( $result['content']['page']['succeed'] ), $page_on_front );
@@ -301,7 +338,7 @@ class Test_Import extends Elementor_Test_Base {
 			'include' => [ 'content' ],
 		];
 
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Wp_Content() );
 
 		// Act
@@ -313,6 +350,14 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result['wp-content']['tests']['succeed'] );
 		$this->assertCount( 4, $result['wp-content']['nav_menu_item']['succeed'] );
 		$this->assertFalse( isset( $result['wp-content']['sectests'] ) );
+
+		$expected_runners = [
+			'wp-content' => [
+				'custom_post_types' => [ 'tests' ],
+			],
+		];
+		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		unregister_post_type( 'tests' );
 	}
@@ -327,7 +372,7 @@ class Test_Import extends Elementor_Test_Base {
 			'selectedCustomPostTypes' => [ 'tests' ],
 		];
 
-		$import = new Import( __DIR__ . '/mock/sample-kit.zip', $import_settings );
+		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 		$import->register( new Elementor_Content() );
 		$import->register( new Wp_Content() );
 
@@ -350,7 +395,7 @@ class Test_Import extends Elementor_Test_Base {
 
 	public function test_run__envato_kit() {
 		// Arrange
-		$import = new Import( __DIR__ . '/mock/envato-kit.zip', [] );
+		$import = new Import( __DIR__ . '/../mock/envato-kit.zip', [] );
 		$import->register_default_runners();
 
 		// Act
@@ -364,8 +409,7 @@ class Test_Import extends Elementor_Test_Base {
 	// Test the set default function. In this test we are also testing the import process by session ID.
 	public function test_set_default__import_by_session() {
 		// Arrange
-		$zip_path = __DIR__ . '/mock/sample-kit.zip';
-		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
+		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( static::MOCK_KIT_ZIP_PATH, [ 'json', 'xml' ] );
 		$session = $extraction_result['extraction_directory'];
 
 		// Act
@@ -409,7 +453,7 @@ class Test_Import extends Elementor_Test_Base {
 			'referrer' => 'kit-library',
 		];
 
-		$import = new Import( __DIR__ . '/mock/kit-library-manifest-only.zip', $import_settings );
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
 		$manifest = $import->get_manifest();
 
 		foreach ( $manifest['content']['page'] as $page ) {
