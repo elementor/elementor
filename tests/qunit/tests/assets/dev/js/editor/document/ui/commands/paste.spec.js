@@ -92,7 +92,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	let passed = false;
 
 	// Check.
-	if ( 'widget' === sourceElType && 'document' === targetElType ) {
+	if ( 'document' === targetElType ) {
 		passed = true;
 		let message = 'skipped';
 		assert.equal( passed, true, message );
