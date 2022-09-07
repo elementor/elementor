@@ -328,7 +328,8 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		return $attributes;
+		// apply this filter to allow the attributes to be modified by different sources
+		return apply_filters( 'elementor/document/wrapper_attributes', $attributes, $this );
 	}
 
 	/**
@@ -1145,6 +1146,12 @@ abstract class Document extends Controls_Stack {
 		} else {
 			$deleted = wp_delete_post( $this->post->ID );
 		}
+
+		return $deleted && ! is_wp_error( $deleted );
+	}
+
+	public function force_delete() {
+		$deleted = wp_delete_post( $this->post->ID, true );
 
 		return $deleted && ! is_wp_error( $deleted );
 	}
