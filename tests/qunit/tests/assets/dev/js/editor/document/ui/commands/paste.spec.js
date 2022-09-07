@@ -91,6 +91,14 @@ const lastChildrenContainer = ( parent ) => {
 const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed ) => {
 	let passed = false;
 
+	// Check.
+	if ( 'widget' === sourceElType && 'document' === targetElType ) {
+		passed = true;
+		let message = 'skipped';
+		assert.equal( passed, true, message );
+		return;
+	}
+
 	const targetIsInner = target.model.get( 'isInner' ),
 		sourceIsInner = source.model.get( 'isInner' );
 
@@ -134,22 +142,19 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( 'widget' === sourceElType ) {
-					passed = true;
+				if ( 'column' === sourceElType ) {
 				} else if ( 'column' === sourceElType ) {
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				} else if ( 'widget' === sourceElType ) {
 					const lastSection = lastChildrenContainer( searchTarget ),
 						lastColumn = lastChildrenContainer( lastSection );
 
 					searchTarget = lastColumn;
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
 				}
 
-
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
 			break;
 
