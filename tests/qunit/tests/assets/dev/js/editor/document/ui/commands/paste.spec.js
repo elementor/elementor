@@ -201,6 +201,10 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		passed = true;
 	}
 
+	if ( 'widget' === { sourceElType } && 'document' === { targetElType } ) {
+		passed = true;
+	}
+
 	// Check.
 	assert.equal( passed, true, message );
 };
