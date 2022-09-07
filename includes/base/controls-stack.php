@@ -1987,26 +1987,26 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 3.6.0
 	 * @access public
 	 *
-	 * @deprecated 3.8.0 Use `::on_import_update_ids()` instead.
+	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
 	 */
 	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_ids()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
 
 		return $config;
 	}
 
 	/**
-	 * On import update post and term IDs.
+	 * On import update dynamic content (e.g. post and term IDs).
 	 *
 	 * @since 3.8.0
 	 *
-	 * @param array $config
-	 * @param array $data
-	 * @param array|null $controls
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_ids( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
 		return $config;
 	}
 

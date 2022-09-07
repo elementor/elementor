@@ -597,10 +597,10 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 3.6.0
 	 * @access public
 	 *
-	 * @deprecated 3.8.0 Use `::on_import_update_ids()` instead.
+	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
 	 */
 	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_ids()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
 
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
@@ -620,17 +620,17 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * On import update post and term IDs.
+	 * On import update dynamic content (e.g. post and term IDs).
 	 *
 	 * @since 3.8.0
 	 *
-	 * @param array $config
-	 * @param array $data
-	 * @param array|null $controls
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_ids( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
@@ -645,13 +645,13 @@ abstract class Element_Base extends Controls_Stack {
 				continue;
 			}
 
-			if ( ! method_exists( $tag_instance, 'on_import_update_ids' ) ) {
+			if ( ! method_exists( $tag_instance, 'on_import_update_dynamic_content' ) ) {
 				// on_import_replace_dynamic_content() is deprecated since 3.8.0
 				// Please note that the old on_import function 2nd parameter accepts only a "flat" array of post IDs.
 				// TODO: Remove this check in the future.
 				$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $data['post_ids'] );
 			} else {
-				$tag_config = $tag_instance->on_import_update_ids( $tag_config, $data, $tag_instance->get_controls() );
+				$tag_config = $tag_instance->on_import_update_dynamic_content( $tag_config, $data, $tag_instance->get_controls() );
 			}
 
 			$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );

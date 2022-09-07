@@ -80,7 +80,7 @@ class Test_Document extends Elementor_Test_Base {
 	 * @throws \Exception
 	 *
 	 * Function 'on_import_replace_dynamic_content' deprecated since 3.8.0.
-	 * The function 'on_import_update_ids' is used instead.
+	 * The function 'on_import_update_dynamic_content' is used instead.
 	 * TODO: Remove in the future.
 	 */
 	public function test_on_import_replace_dynamic_content() {
@@ -140,7 +140,7 @@ class Test_Document extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_on_import_update_ids() {
+	public function test_on_import_update_dynamic_content() {
 		require_once __DIR__ . '/document.php';
 
 		$this->act_as_admin();
@@ -187,7 +187,7 @@ class Test_Document extends Elementor_Test_Base {
 
 		$config[0]['elements'][0]['elements'] = array_merge( $config[0]['elements'][0]['elements'], $widgets );
 
-		$updated_config = $document::on_import_update_ids( $config, $replace_data );
+		$updated_config = $document::on_import_update_dynamic_content( $config, $replace_data );
 
 		$this->assertEquals(
 			'[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2236%22%7D"]',
