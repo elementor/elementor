@@ -463,7 +463,7 @@ class Import extends Process_Base {
 	/**
 	 * Get the data that requires updating/replacement when imported.
 	 *
-	 * @return array
+	 * @return array{post_ids: array, term_ids: array}
 	 */
 	private function get_imported_data_replacements() : array {
 		return [
@@ -479,7 +479,7 @@ class Import extends Process_Base {
 	private function save_elements_of_imported_posts() {
 		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
-			$updated_elements = $document->on_import_update_ids( $document_elements, $this->get_imported_data_replacements() );
+			$updated_elements = $document->on_import_update_dynamic_content( $document_elements, $this->get_imported_data_replacements() );
 			$document->save( [ 'elements' => $updated_elements ] );
 		}
 	}
