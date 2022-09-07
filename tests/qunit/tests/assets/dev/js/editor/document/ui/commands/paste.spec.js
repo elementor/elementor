@@ -210,27 +210,33 @@ export const Paste = () => {
 			QUnit.test( 'Rules', ( assert ) => {
 				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						ElementsHelper.empty();
+						if ( 'document' === targetElType ) {
+							assert( 1, 1, 'document' );
+						} else {
+							ElementsHelper.empty();
 
-						const source = ElementsHelper.createAuto( sourceElType ),
-							target = ElementsHelper.createAuto( targetElType );
-
-						// Handle inner-section.
-						if ( 'object' === typeof isAllowed ) {
-							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
-								validateRule( assert,
-									target,
-									_targetElType,
-									source,
-									sourceElType,
-									isAllowed[ _targetElType ],
-								);
-							} );
-
-							return;
+							const source = ElementsHelper.createAuto( sourceElType ),
+								target = ElementsHelper.createAuto( targetElType );
+	
+							// Handle inner-section.
+							if ( 'object' === typeof isAllowed ) {
+								Object.keys( isAllowed ).forEach( ( _targetElType ) => {
+									validateRule( assert,
+										target,
+										_targetElType,
+										source,
+										sourceElType,
+										isAllowed[ _targetElType ],
+									);
+								} );
+	
+								return;
+							}
+	
+							validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
 						}
-
-						validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
+						
+						
 					} );
 				} );
 			} );
