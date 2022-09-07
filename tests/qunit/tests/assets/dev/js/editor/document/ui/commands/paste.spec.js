@@ -246,10 +246,9 @@ export const Paste = () => {
 
 							return;
 						}
-
-						// Escape pasting onto the document when the container experiment is active.
+						
 						if ( elementorCommon.config.experimentalFeatures.container && 'document' === _targetElType ) {
-							return;
+							// Escape pasting onto the document when the container experiment is active.
 						} else {
 							validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
 						}
