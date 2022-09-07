@@ -78,8 +78,6 @@ test.describe( 'Elements regression', () => {
 
 			await editorPage.page.waitForTimeout( 500 );
 
-			const element = await widget.getElement();
-
 			// Assert - Match snapshot for default appearance.
 			expect( await editorPage.screenshotWidget( widget ) )
 				.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
