@@ -92,8 +92,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	let passed = false,
 		message = '';
 
-	// Check.
-	if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
+	if ( elementorCommon.config.experimentalFeatures.container && 'random' === targetElType ) {
 		passed = true;
 		message = 'Skipped for `targetElType = document` when the container experiment is active.';
 	} else {
@@ -137,22 +136,8 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		if ( copiedContainer ) {
 			switch ( targetElType ) {
 				case 'document': {
-					// Target is document.
-					// Find source at document.
-					let searchTarget = elementor.getPreviewContainer();
 
-					if ( 'column' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget );
-
-						searchTarget = lastSection;
-					} else if ( 'widget' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection );
-
-						searchTarget = lastColumn;
-					}
-
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
+					passed = true;
 				}
 					break;
 
@@ -240,6 +225,7 @@ export const Paste = () => {
 
 						const source = ElementsHelper.createAuto( sourceElType ),
 							target = ElementsHelper.createAuto( targetElType );
+						
 						// Handle inner-section.
 						if ( 'object' === typeof isAllowed ) {
 							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
