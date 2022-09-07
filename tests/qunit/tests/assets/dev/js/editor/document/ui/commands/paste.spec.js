@@ -179,6 +179,8 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		passed = true;
 	} else if ( ! isAllowed && ! copiedContainer ) {
 		passed = true;
+	} else if ( 'document' === targetElType ) {
+		passed = true;
 	}
 
 	// Check.
