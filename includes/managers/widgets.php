@@ -242,7 +242,7 @@ class Widgets_Manager {
 		if ( is_null( $this->_widget_types ) ) {
 			_doing_it_wrong(
 				__METHOD__,
-				__( 'Register widgets must running after `elementor/widgets/register` action.', 'elementor' ),
+				esc_html__( 'Register widgets must running after `elementor/widgets/register` action.', 'elementor' ),
 				'3.8.0'
 			);
 
