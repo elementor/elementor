@@ -93,121 +93,124 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		message = '';
 
 	// Check.
-	if ( elementorCommon.config.experimentalFeatures.container ) {
+	if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
 		passed = true;
-		message = 'skipped';
-	} else {
-		const targetIsInner = target.model.get( 'isInner' ),
-		sourceIsInner = source.model.get( 'isInner' );
+		message = 'Skipped for `targetElType = document` when the container experiment is active.';
 
-		let isForce = false,
-			copiedContainer = UIHelper.copyPaste( source, target );
-		
-		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
-			And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
+		assert.equal( passed, true, message );
+		return;
+	}
 
-		// Handle situation when source is inner.
-		if ( sourceIsInner ) {
-			if ( 'column' === sourceElType ) {
-				source = source.children[ 0 ];
-				sourceElType = 'column';
-				isForce = true;
-			} else {
-				sourceElType = 'section';
-			}
-		}
+	const targetIsInner = target.model.get( 'isInner' ),
+	sourceIsInner = source.model.get( 'isInner' );
 
-		// Handle situation when target is inner.
-		if ( targetIsInner ) {
-			if ( 'column' === targetElType ) {
-				target = target.children[ 0 ];
-				targetElType = 'column';
-				isForce = true;
-			} else {
-				targetElType = 'section';
-			}
-		}
+	let isForce = false,
+		copiedContainer = UIHelper.copyPaste( source, target );
+	
+	message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
+		And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
 
-		// When target or source is inner-section column, re-paste to the right depth.
-		if ( isForce ) {
-			copiedContainer = UIHelper.copyPaste( source, target );
-		}
-
-		// There is no point in checking what was not successful copied.
-		if ( copiedContainer ) {
-			switch ( targetElType ) {
-				case 'document': {
-					// Target is document.
-					// Find source at document.
-					let searchTarget = elementor.getPreviewContainer();
-
-					if ( 'column' === sourceElType ) {
-					} else if ( 'column' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget );
-
-						searchTarget = lastSection;
-					} else if ( 'widget' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection );
-
-						searchTarget = lastColumn;
-					}
-
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
-				}
-				break;
-
-				case 'section': {
-					let searchTarget = target;
-
-					if ( 'widget' === sourceElType && targetIsInner ) {
-						const firstInnerSectionColumn = firstChildrenContainer( target );
-
-						searchTarget = firstInnerSectionColumn;
-					} else if ( 'widget' === sourceElType ) {
-						searchTarget = lastChildrenContainer( target );
-					} else if ( 'section' === sourceElType ) {
-						searchTarget = target.parent;
-					}
-
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
-				}
-				break;
-
-				case 'container': {
-					passed = !! findChildrenContainer( target, copiedContainer );
-				}
-				break;
-
-				case 'column': {
-					let searchTarget = target;
-
-					if ( 'column' === sourceElType ) {
-						searchTarget = target.parent;
-					}
-
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
-				}
-				break;
-
-				case 'widget': {
-					passed = !! findChildrenContainer( target.parent, copiedContainer );
-				}
-				break;
-			}
-		}
-
-		if ( copiedContainer ) {
-			message += ' copy success';
+	// Handle situation when source is inner.
+	if ( sourceIsInner ) {
+		if ( 'column' === sourceElType ) {
+			source = source.children[ 0 ];
+			sourceElType = 'column';
+			isForce = true;
 		} else {
-			message += ' copy failed';
+			sourceElType = 'section';
 		}
+	}
 
-		if ( copiedContainer && isAllowed && passed ) {
-			passed = true;
-		} else if ( ! isAllowed && ! copiedContainer ) {
-			passed = true;
+	// Handle situation when target is inner.
+	if ( targetIsInner ) {
+		if ( 'column' === targetElType ) {
+			target = target.children[ 0 ];
+			targetElType = 'column';
+			isForce = true;
+		} else {
+			targetElType = 'section';
 		}
+	}
+
+	// When target or source is inner-section column, re-paste to the right depth.
+	if ( isForce ) {
+		copiedContainer = UIHelper.copyPaste( source, target );
+	}
+
+	// There is no point in checking what was not successful copied.
+	if ( copiedContainer ) {
+		switch ( targetElType ) {
+			case 'document': {
+				// Target is document.
+				// Find source at document.
+				let searchTarget = elementor.getPreviewContainer();
+
+				if ( 'column' === sourceElType ) {
+				} else if ( 'column' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget );
+
+					searchTarget = lastSection;
+				} else if ( 'widget' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
+
+					searchTarget = lastColumn;
+				}
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
+			}
+			break;
+
+			case 'section': {
+				let searchTarget = target;
+
+				if ( 'widget' === sourceElType && targetIsInner ) {
+					const firstInnerSectionColumn = firstChildrenContainer( target );
+
+					searchTarget = firstInnerSectionColumn;
+				} else if ( 'widget' === sourceElType ) {
+					searchTarget = lastChildrenContainer( target );
+				} else if ( 'section' === sourceElType ) {
+					searchTarget = target.parent;
+				}
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
+			}
+			break;
+
+			case 'container': {
+				passed = !! findChildrenContainer( target, copiedContainer );
+			}
+			break;
+
+			case 'column': {
+				let searchTarget = target;
+
+				if ( 'column' === sourceElType ) {
+					searchTarget = target.parent;
+				}
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
+			}
+			break;
+
+			case 'widget': {
+				passed = !! findChildrenContainer( target.parent, copiedContainer );
+			}
+			break;
+		}
+	}
+
+	if ( copiedContainer ) {
+		message += ' copy success';
+	} else {
+		message += ' copy failed';
+	}
+
+	if ( copiedContainer && isAllowed && passed ) {
+		passed = true;
+	} else if ( ! isAllowed && ! copiedContainer ) {
+		passed = true;
 	}
 
 	// Check.
@@ -237,15 +240,6 @@ export const Paste = () => {
 			QUnit.test( 'Rules', ( assert ) => {
 				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						// // Escape pasting onto the document when the container experiment is active.
-						// if ( elementorCommon.config.experimentalFeatures.container && 'document' === targetElType ) {
-						// 	const passed = true,
-						// 		message = "Skipped for 'targetElType = documents' when the container experiment is active.";
-
-						// 	assert.equal( passed, true, message );
-						// 	return;
-						// }
-
 						ElementsHelper.empty();
 
 						const source = ElementsHelper.createAuto( sourceElType ),
