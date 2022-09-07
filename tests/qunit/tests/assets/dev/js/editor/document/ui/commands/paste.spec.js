@@ -97,7 +97,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	let isForce = false,
 		copiedContainer = UIHelper.copyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
-			And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
+		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
 
 	// Handle situation when source is inner.
 	if ( sourceIsInner ) {
@@ -144,12 +144,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-				break;
+			break;
 
 			case 'container': {
 				passed = !! findChildrenContainer( target, copiedContainer );
 			}
-				break;
+			break;
 
 			case 'column': {
 				let searchTarget = target;
@@ -160,12 +160,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-				break;
+			break;
 
 			case 'widget': {
 				passed = !! findChildrenContainer( target.parent, copiedContainer );
 			}
-				break;
+			break;
 		}
 	}
 
@@ -178,8 +178,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	if ( copiedContainer && isAllowed && passed ) {
 		passed = true;
 	} else if ( ! isAllowed && ! copiedContainer ) {
-		passed = true;
-	} else if ( 'document' === targetElType ) {
 		passed = true;
 	}
 
@@ -211,13 +209,13 @@ export const Paste = () => {
 				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
 						if ( 'document' === targetElType ) {
-							assert( 1, 1, 'document' );
+							assert.equal( 1, 1, 'document' );
 						} else {
 							ElementsHelper.empty();
 
 							const source = ElementsHelper.createAuto( sourceElType ),
 								target = ElementsHelper.createAuto( targetElType );
-	
+
 							// Handle inner-section.
 							if ( 'object' === typeof isAllowed ) {
 								Object.keys( isAllowed ).forEach( ( _targetElType ) => {
@@ -229,14 +227,12 @@ export const Paste = () => {
 										isAllowed[ _targetElType ],
 									);
 								} );
-	
+
 								return;
 							}
-	
+
 							validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
 						}
-						
-						
 					} );
 				} );
 			} );
