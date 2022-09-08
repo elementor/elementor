@@ -15,7 +15,7 @@ class Module extends BaseModule {
 		return 'third-party-customization';
 	}
 
-	public static function performace_lab_get_webp_src( $attachment_id, $size = 'full' , $url ) {
+	public static function performace_lab_get_webp_src( $attachment_id, $size = 'full', $url ) {
 		if ( function_exists( 'webp_uploads_img_tag_update_mime_type' ) ) {
 			$webp_option_name = 'site-health/webp-support';
 			$perflab_modules_settings = get_option( 'perflab_modules_settings' );
