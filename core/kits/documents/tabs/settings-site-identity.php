@@ -97,6 +97,22 @@ class Settings_Site_Identity extends Tab_Base {
 		);
 
 		$this->add_control(
+			'custom_logo_promotion',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => esc_html__( 'Add a logo to display on your site.', 'elementor' ) .
+					' ' .
+					sprintf(
+						'<a href="#">%s</a>',
+						esc_html__( 'Custom Logo', 'elementor' )
+					),
+				'condition' => [
+					'site_logo[url]' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'site_favicon',
 			[
 				'label' => esc_html__( 'Site Favicon', 'elementor' ),
