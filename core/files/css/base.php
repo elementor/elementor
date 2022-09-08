@@ -344,12 +344,7 @@ abstract class Base extends Base_File {
 
 						$parsed_value = '';
 
-						if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
-							$image_src = Utils::performace_lab_get_webp_src( $value['id'], 'full' );
-							if ( $image_src ) {
-								$value['url'] = $image_src;
-							}
-						}
+						$value = apply_filters( 'elementor/css-file/css_property', $value, $css_property, $matches , $control );
 
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
