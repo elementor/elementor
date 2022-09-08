@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Base;
 
-use Elementor\Plugin;
+use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -316,13 +316,11 @@ abstract class Module extends Base_Object {
 	/**
 	 * Initialize the module related widgets.
 	 */
-	public function init_widgets() {
-		$widget_manager = Plugin::instance()->widgets_manager;
-
+	public function init_widgets( Widgets_Manager $widgets_manager ) {
 		foreach ( $this->get_widgets() as $widget ) {
 			$class_name = $this->get_reflection()->getNamespaceName() . '\Widgets\\' . $widget;
 
-			$widget_manager->register( new $class_name() );
+			$widgets_manager->register( new $class_name() );
 		}
 	}
 
