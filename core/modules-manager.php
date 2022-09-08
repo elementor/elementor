@@ -98,7 +98,7 @@ class Modules_Manager {
 			'web-cli',
 			'promotions',
 			'notes',
-			'third-party-customization'
+			'third-party-customization',
 		];
 	}
 
