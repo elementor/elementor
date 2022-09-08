@@ -4,6 +4,7 @@ const EditorPage = require( '../pages/editor-page' );
 const ElementorSettingsPage = require( '../pages/elementor-settings-page' );
 const widgetsCache = require( '../assets/widgets-cache' );
 const controlsTestConfig = require( '../assets/controls-test-config' );
+const envSetup = require( '../env-setup' );
 
 const {
 	Heading,
@@ -29,43 +30,18 @@ const controlsRegistrar = new Registrar()
 	.register( Color )
 	.register( Textarea );
 
-let elementorFontDisplayOriginalValue;
-
-test.beforeAll( async ( { browser } ) => {
-	const context = await browser.newContext();
-	const page = await context.newPage();
-
-	const settingsPage = new ElementorSettingsPage( page );
-
-	await settingsPage.goto();
-	await settingsPage.moveToTab( 'Advanced' );
-
-	elementorFontDisplayOriginalValue = await settingsPage.getSelectedValue( 'elementor_font_display' );
-
-	await settingsPage.setSelectedValue( 'elementor_font_display', 'auto' );
-	await settingsPage.save();
-
-	context.close();
-} );
-
-test.afterAll( async ( { browser } ) => {
-	const context = await browser.newContext();
-	const page = await context.newPage();
-
-	const settingsPage = new ElementorSettingsPage( page );
-
-	await settingsPage.goto();
-	await settingsPage.moveToTab( 'Advanced' );
-	await settingsPage.setSelectedValue( 'elementor_font_display', elementorFontDisplayOriginalValue );
-	await settingsPage.save();
-
-	context.close();
-} );
-
 test.describe( 'Elements regression', () => {
 	let editorPage,
 		wpAdminPage,
 		pageId;
+
+	test.beforeAll( async ( { browser } ) => {
+		await envSetup.beforeAll( { browser } );
+	} );
+
+	test.afterAll( async ( { browser } ) => {
+		await envSetup.afterAll( { browser } );
+	} );
 
 	test.beforeEach( async ( { page }, testInfo ) => {
 		// Arrange.
