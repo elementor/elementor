@@ -253,8 +253,7 @@ class Import {
 
 		$this->add_import_session_option( $start_time );
 
-		$map_old_new_post_ids = Utils::map_old_new_post_ids( $this->imported_data );
-		$this->save_elements_of_imported_posts( $map_old_new_post_ids );
+		$this->save_elements_of_imported_posts();
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $this->extracted_directory_path );
 		return $this->imported_data;
@@ -509,15 +508,25 @@ class Import {
 	}
 
 	/**
+	 * Get the data that requires updating/replacement when imported.
+	 *
+	 * @return array{post_ids: array, term_ids: array}
+	 */
+	private function get_imported_data_replacements() : array {
+		return [
+			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
+			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
+		];
+	}
+
+	/**
 	 * Save the prevented elements on elementor post creation elements.
 	 * Handle the replacement of all the dynamic content of the elements that probably have been changed during the import.
-	 *
-	 * @param array $map_old_new_post_ids Mapped array of old and new post ids.
 	 */
-	private function save_elements_of_imported_posts( array $map_old_new_post_ids ) {
+	private function save_elements_of_imported_posts() {
 		foreach ( $this->documents_elements as $new_id => $document_elements ) {
 			$document = Plugin::$instance->documents->get( $new_id );
-			$updated_elements = $document->on_import_replace_dynamic_content( $document_elements, $map_old_new_post_ids );
+			$updated_elements = $document->on_import_update_dynamic_content( $document_elements, $this->get_imported_data_replacements() );
 			$document->save( [ 'elements' => $updated_elements ] );
 		}
 	}

@@ -35,7 +35,7 @@ class Wp_Content extends Import_Runner_Base {
 		$post_types = $this->filter_post_types( $data['selected_custom_post_types'] );
 
 		$taxonomies = $imported_data['taxonomies'] ?? [];
-		$imported_terms = ImportExportUtils::map_old_new_terms_ids( $imported_data );
+		$imported_terms = ImportExportUtils::map_old_new_term_ids( $imported_data );
 
 		$result['wp-content'] = [];
 
