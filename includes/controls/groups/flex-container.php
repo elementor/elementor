@@ -16,6 +16,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 	protected function init_fields() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 
 		$fields = [];
 
@@ -61,10 +62,12 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		// Only use the flex direction prefix class inside the editor.
+		$edit_mode_prefix_class = $is_edit_mode ? [ 'prefix_class' => 'e-container--' ] : [];
+
 		$fields['_is_row'] = [
 			'type' => Controls_Manager::HIDDEN,
-			// Only use the flex direction prefix class inside the editor.
-			'prefix_class' => Plugin::$instance->editor->is_edit_mode() ? 'e-container--' : '',
+			$edit_mode_prefix_class,
 			'default' => 'row',
 			'condition' => [
 				'direction' => [
@@ -76,8 +79,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields['_is_column'] = [
 			'type' => Controls_Manager::HIDDEN,
-			// Only use the flex direction prefix class inside the editor.
-			'prefix_class' => Plugin::$instance->editor->is_edit_mode() ? 'e-container--' : '',
+			$edit_mode_prefix_class,
 			'default' => 'column',
 			'condition' => [
 				'direction' => [
