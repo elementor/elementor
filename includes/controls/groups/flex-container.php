@@ -16,7 +16,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 	protected function init_fields() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 
 		$fields = [];
 
@@ -63,11 +62,10 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		];
 
 		// Only use the flex direction prefix class inside the editor.
-		$flex_direction_prefix_class = $is_edit_mode ? [ 'prefix_class' => 'e-container--' ] : [];
+		$prefix = Plugin::$instance->editor->is_edit_mode() ? [ 'prefix_class' => 'e-container--' ] : [];
 
-		$fields['_is_row'] = [
+		$fields['_is_row'] = array_merge( $prefix, [
 			'type' => Controls_Manager::HIDDEN,
-			$flex_direction_prefix_class,
 			'default' => 'row',
 			'condition' => [
 				'direction' => [
@@ -75,11 +73,10 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'row-reverse',
 				],
 			],
-		];
+		] );
 
-		$fields['_is_column'] = [
+		$fields['_is_column'] = array_merge( $prefix, [
 			'type' => Controls_Manager::HIDDEN,
-			$flex_direction_prefix_class,
 			'default' => 'column',
 			'condition' => [
 				'direction' => [
@@ -88,7 +85,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'column-reverse',
 				],
 			],
-		];
+		] );
 
 		$fields['justify_content'] = [
 			'label' => esc_html_x( 'Justify Content', 'Flex Container Control', 'elementor' ),
