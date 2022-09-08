@@ -1,9 +1,7 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Plugin;
-use Elementor\Frontend;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Element_Base extends Elementor_Test_Base {
