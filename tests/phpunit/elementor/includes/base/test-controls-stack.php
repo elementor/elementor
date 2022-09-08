@@ -40,7 +40,7 @@ class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
 		 */
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
 
-		$this->remove_common_widget_stack_from_controls_manager_cache();
+		Plugin::$instance->controls_manager->delete_stack( $this->get_common_widget_instance() );
 
 		/**
 		 * Act
@@ -77,7 +77,7 @@ class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
 		 */
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
 
-		$this->remove_common_widget_stack_from_controls_manager_cache();
+		Plugin::$instance->controls_manager->delete_stack( $this->get_common_widget_instance() );
 
 		$widget_data = self::$element_with_conditions_mock;
 
@@ -101,12 +101,6 @@ class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
 		 * Cleanup
 		 */
 		$this->cleanup_is_control_visible_test( $initial_duplication_mode );
-	}
-
-	private function remove_common_widget_stack_from_controls_manager_cache() {
-		/** @var Widget_Common $common_widget */
-		$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
-		Plugin::$instance->controls_manager->delete_stack( $common_widget );
 	}
 
 	/**
