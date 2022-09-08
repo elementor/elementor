@@ -2,7 +2,6 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 const EditorPage = require( '../pages/editor-page' );
 const widgetsCache = require( '../assets/widgets-cache' );
-const controlsTestConfig = require( '../assets/controls-test-config' );
 
 const {
 	Heading,
@@ -69,7 +68,6 @@ test.describe( 'Elements regression', () => {
 				{
 					widgetType,
 					controls: widgetsCache[ widgetType ].controls,
-					controlsTestConfig: controlsTestConfig[ widgetType ] || {},
 				},
 			);
 

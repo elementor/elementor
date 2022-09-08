@@ -22,7 +22,6 @@ class WidgetBase {
 	 * @type {{
 	 * 	widgetType: string,
 	 * 	controls: Object<string, Object>,
-	 * 	controlsTestConfig: import('../../assets/types/controls-test-config').ControlConfig,
 	 * }}
 	 */
 	config = null;
