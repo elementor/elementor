@@ -51,14 +51,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 				switch ( model.elType ) {
 					case 'container': {
 						// Push the cloned container to the 'document'.
-						result.push( this.pasteTo( 
-							[ targetContainer ],
-							[ model ],
-							{
-								at: index,
-								edit: false,
-							}
-						) );
+						result.push( this.pasteTo( [ targetContainer ], [ model ] ) );
 					}
 						break;
 
@@ -123,9 +116,6 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 								model: {
 									elType: 'container',
 								},
-								options: {
-									at: index,
-								},
 							} );
 
 							target = [ target ];
@@ -149,14 +139,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 							target = [ section.view.children.first().getContainer() ];
 						}
 
-						result.push( this.pasteTo( 
-							target, 
-							[ model ],
-							{
-								at: index,
-								edit: false,
-							}
-						) );
+						result.push( this.pasteTo( target, [ model ] ) );
 					}
 				}
 			} );
