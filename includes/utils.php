@@ -790,5 +790,4 @@ class Utils {
 
 		return file_get_contents( $file, ...$args );
 	}
-	
 }
