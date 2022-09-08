@@ -100,7 +100,7 @@ class Settings_Site_Identity extends Tab_Base {
 			'custom_logo_promotion',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' =>  '<p>' . esc_html__( 'Add a logo to display on your website. Don\'t have one yet? Create a professional logo with Fiverr\'s logo maker.', 'elementor' ) .
+				'raw' => '<p>' . esc_html__( 'Add a logo to display on your website. Don\'t have one yet? Create a professional logo with Fiverr\'s logo maker.', 'elementor' ) .
 					'</p>' .
 					sprintf(
 						'<a target="_blank" class="elementor-button e-logo-maker" href="https://go.elementor.com/site-settings-logo-maker/">%s</a>',
