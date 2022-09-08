@@ -7,8 +7,21 @@ use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 
-class Export extends Process_Base {
+use Elementor\App\Modules\ImportExport\Runners\Export\Elementor_Content;
+use Elementor\App\Modules\ImportExport\Runners\Export\Export_Runner_Base;
+use Elementor\App\Modules\ImportExport\Runners\Export\Plugins;
+use Elementor\App\Modules\ImportExport\Runners\Export\Site_Settings;
+use Elementor\App\Modules\ImportExport\Runners\Export\Taxonomies;
+use Elementor\App\Modules\ImportExport\Runners\Export\Templates;
+use Elementor\App\Modules\ImportExport\Runners\Export\Wp_Content;
+
+class Export {
 	const ZIP_ARCHIVE_MODULE_MISSING = 'zip-archive-module-is-missing';
+
+	/**
+	 * @var Export_Runner_Base[]
+	 */
+	protected $runners = [];
 
 	/**
 	 * Selected content types to export.
@@ -55,12 +68,28 @@ class Export extends Process_Base {
 	private $zip;
 
 	public function __construct( $settings = [] ) {
-		parent::__construct();
-
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
 		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
 		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
+	}
+
+	/**
+	 * Register a runner.
+	 *
+	 * @param Export_Runner_Base $runner_instance
+	 */
+	public function register( Export_Runner_Base $runner_instance ) {
+		$this->runners[ $runner_instance::get_name() ] = $runner_instance;
+	}
+
+	public function register_default_runners() {
+		$this->register( new Site_Settings() );
+		$this->register( new Plugins() );
+		$this->register( new Templates() );
+		$this->register( new Taxonomies() );
+		$this->register( new Elementor_Content() );
+		$this->register( new Wp_Content() );
 	}
 
 	/**
@@ -106,7 +135,7 @@ class Export extends Process_Base {
 	/**
 	 * Set default settings for the export.
 	 */
-	public function set_default_settings() {
+	private function set_default_settings() {
 		if ( ! is_array( $this->get_settings_include() ) ) {
 			$this->settings_include( $this->get_default_settings_include() );
 		}

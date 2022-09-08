@@ -9,12 +9,26 @@ use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 
-class Import extends Process_Base {
+use Elementor\App\Modules\ImportExport\Runners\Import\Elementor_Content;
+use Elementor\App\Modules\ImportExport\Runners\Import\Import_Runner_Base;
+use Elementor\App\Modules\ImportExport\Runners\Import\Plugins;
+use Elementor\App\Modules\ImportExport\Runners\Import\Site_Settings;
+use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies;
+use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
+use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
+use Elementor\App\Modules\ImportExport\Module;
+
+class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
 	const SESSION_DOES_NOT_EXITS_ERROR = 'session-does-not-exits-error';
 
 	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
+
+	/**
+	 * @var Import_Runner_Base[]
+	 */
+	protected $runners = [];
 
 	/**
 	 * The session ID of the import process.
@@ -109,14 +123,20 @@ class Import extends Process_Base {
 	private $imported_data = [];
 
 	/**
+	 * The metadata output of the import runners.
+	 * Will be saved in the import_session and will be used to revert the import process.
+	 *
+	 * @var array
+	 */
+	private $runners_import_metadata = [];
+
+	/**
 	 * @param $path string session_id | zip_file_path
 	 * @param $settings array Use to determine which content to import.
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @throws \Exception
 	 */
-	public function __construct( $path, $settings = [] ) {
-		parent::__construct();
-
+	public function __construct( string $path, array $settings = [] ) {
 		if ( is_file( $path ) ) {
 			$this->extracted_directory_path = $this->extract_zip( $path );
 		} else {
@@ -132,12 +152,12 @@ class Import extends Process_Base {
 
 		$this->session_id = basename( $this->extracted_directory_path );
 		$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
-
-		// Using isset and not empty is important since empty array is a valid option for those arrays.
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
-		$this->settings_selected_override_conditions = isset( $settings['overrideConditions'] ) ? $settings['overrideConditions'] : null;
-		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
-		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
+
+		// Using isset and not empty is important since empty array is valid option.
+		$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
+		$this->settings_selected_custom_post_types = $settings['selectedCustomPostTypes'] ?? null;
+		$this->settings_selected_plugins = $settings['plugins'] ?? null;
 
 		$this->manifest = $this->read_manifest_json();
 		$this->site_settings = $this->read_site_settings_json();
@@ -146,9 +166,28 @@ class Import extends Process_Base {
 	}
 
 	/**
+	 * Register a runner.
+	 * Be aware that the runner will be executed in the order of registration, the order is crucial for the import process.
+	 *
+	 * @param Import_Runner_Base $runner_instance
+	 */
+	public function register( Import_Runner_Base $runner_instance ) {
+		$this->runners[ $runner_instance::get_name() ] = $runner_instance;
+	}
+
+	public function register_default_runners() {
+		$this->register( new Site_Settings() );
+		$this->register( new Plugins() );
+		$this->register( new Templates() );
+		$this->register( new Taxonomies() );
+		$this->register( new Elementor_Content() );
+		$this->register( new Wp_Content() );
+	}
+
+	/**
 	 * Set default settings for the import.
 	 */
-	public function set_default_settings() {
+	private function set_default_settings() {
 		if ( ! is_array( $this->get_settings_include() ) ) {
 			$this->settings_include( $this->get_default_settings_include() );
 		}
@@ -177,11 +216,14 @@ class Import extends Process_Base {
 	 * @throws \Exception
 	 */
 	public function run() {
+		$start_time = current_time( 'timestamp' );
+
 		if ( empty( $this->runners ) ) {
 			throw new \Exception( 'Please specify import runners.' );
 		}
 
 		$data = [
+			'session_id' => $this->session_id,
 			'include' => $this->settings_include,
 			'manifest' => $this->manifest,
 			'site_settings' => $this->site_settings,
@@ -197,7 +239,10 @@ class Import extends Process_Base {
 
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_import( $data ) ) {
-				$this->imported_data = $this->imported_data + $runner->import( $data, $this->imported_data );
+				$import = $runner->import( $data, $this->imported_data );
+				$this->imported_data = array_merge_recursive( $this->imported_data, $import );
+
+				$this->runners_import_metadata[ $runner::get_name() ] = $runner->get_import_session_metadata();
 			}
 		}
 
@@ -205,6 +250,8 @@ class Import extends Process_Base {
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
+
+		$this->add_import_session_option( $start_time );
 
 		$this->save_elements_of_imported_posts();
 
@@ -482,5 +529,21 @@ class Import extends Process_Base {
 			$updated_elements = $document->on_import_update_dynamic_content( $document_elements, $this->get_imported_data_replacements() );
 			$document->save( [ 'elements' => $updated_elements ] );
 		}
+	}
+
+	private function add_import_session_option( $start_time ) {
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+
+		$import_sessions[ time() ] = [
+			'session_id' => $this->session_id,
+			'kit_name' => $this->manifest['name'],
+			'kit_source' => $this->settings_referrer,
+			'user_id' => get_current_user_id(),
+			'start_timestamp' => $start_time,
+			'end_timestamp' => current_time( 'timestamp' ),
+			'runners' => $this->runners_import_metadata,
+		];
+
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 }

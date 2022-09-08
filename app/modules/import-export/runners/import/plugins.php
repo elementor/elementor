@@ -1,12 +1,12 @@
 <?php
 
-namespace Elementor\App\Modules\ImportExport\Runners;
+namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Core\Utils\Str;
 
-class Plugins extends Runner_Base {
+class Plugins extends Import_Runner_Base {
 
 	/**
 	 * @var Plugins_Manager
@@ -21,7 +21,7 @@ class Plugins extends Runner_Base {
 		}
 	}
 
-	public static function get_name() {
+	public static function get_name() : string {
 		return 'plugins';
 	}
 
@@ -31,14 +31,6 @@ class Plugins extends Runner_Base {
 			in_array( 'plugins', $data['include'], true ) &&
 			! empty( $data['manifest']['plugins'] ) &&
 			! empty( $data['selected_plugins'] )
-		);
-	}
-
-	public function should_export( array $data ) {
-		return (
-			isset( $data['include'] ) &&
-			in_array( 'plugins', $data['include'], true ) &&
-			is_array( $data['selected_plugins'] )
 		);
 	}
 
@@ -74,16 +66,5 @@ class Plugins extends Runner_Base {
 		$result['plugins'] = $ordered_activated_plugins;
 
 		return $result;
-	}
-
-	public function export( array $data ) {
-		$manifest_data['plugins'] = $data['selected_plugins'];
-
-		return [
-			'manifest' => [
-				$manifest_data,
-			],
-			'files' => [],
-		];
 	}
 }
