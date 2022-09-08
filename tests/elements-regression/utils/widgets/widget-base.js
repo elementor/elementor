@@ -51,6 +51,15 @@ class WidgetBase {
 	}
 
 	/**
+	 * Exclude specific controls
+	 *
+	 * @return {string[]}
+	 */
+	getExcludedControls() {
+		return [];
+	}
+
+	/**
 	 * Create a widget instance.
 	 *
 	 * @return {Promise<string>}
@@ -129,8 +138,9 @@ class WidgetBase {
 			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
 			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
 			const isSectionConditional = ( controlSection.condition || controlSection.conditions );
+			const isControlExcluded = this.getExcludedControls().includes( controlConfig.name );
 
-			if ( isWidgetConditional || isSectionConditional ) {
+			if ( isWidgetConditional || isSectionConditional || isControlExcluded ) {
 				continue;
 			}
 
@@ -171,7 +181,7 @@ class WidgetBase {
 
 			await this.waitAfterSettingValue( control );
 
-			await assertionsCallback( controlId, control.generateValueName( value ) );
+			await assertionsCallback( controlId, control.generateSnapshotLabel( value ) );
 		}
 
 		await this.afterControlTest( { control, controlId } );

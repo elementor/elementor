@@ -13,6 +13,7 @@ const {
 	Choose,
 	Select,
 	Textarea,
+	Color,
 } = require( '../utils/controls' );
 
 const { Registrar } = require( '../utils/registrar' );
@@ -24,6 +25,7 @@ const widgetsRegistrar = new Registrar()
 const controlsRegistrar = new Registrar()
 	.register( Choose )
 	.register( Select )
+	.register( Color )
 	.register( Textarea );
 
 test.describe( 'Elements regression', () => {
