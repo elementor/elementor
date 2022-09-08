@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\ImportExport\Url;
 use Elementor\Includes\Widgets\Traits\Button_Trait;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -75,6 +76,18 @@ class Widget_Button extends Widget_Base {
 	 */
 	public function get_categories() {
 		return [ 'basic' ];
+	}
+
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+		$base_site_url = $data['base_site_url'] ?? '';
+
+		if ( empty( $base_site_url ) ) {
+			return $config;
+		}
+
+		$config['settings']['link']['url'] = Url::migrate( $config['settings']['link']['url'], $base_site_url );
+
+		return $config;
 	}
 
 	protected function register_controls() {

@@ -510,12 +510,15 @@ class Import {
 	/**
 	 * Get the data that requires updating/replacement when imported.
 	 *
-	 * @return array{post_ids: array, term_ids: array}
+	 * @return array{post_ids: array, term_ids: array, base_site_url: string}
 	 */
 	private function get_imported_data_replacements() : array {
+		$base_site_url = $this->get_manifest()['site'] ?? '';
+
 		return [
 			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
+			'base_site_url' => esc_url( $base_site_url ),
 		];
 	}
 
