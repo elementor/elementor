@@ -2,10 +2,7 @@
 namespace Elementor\Modules\ThirdPartyCustomization;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Element_Base;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -18,7 +15,7 @@ class Module extends BaseModule {
 		return 'third-party-customization';
 	}
 
-	private function performace_lab_get_webp_src( $attachment_id, $size = 'full' ) {
+	public static function performace_lab_get_webp_src( $attachment_id, $size = 'full' , $url ) {
 		if ( function_exists( 'webp_uploads_img_tag_update_mime_type' ) ) {
 			$webp_option_name = 'site-health/webp-support';
 			$perflab_modules_settings = get_option( 'perflab_modules_settings' );
@@ -31,7 +28,7 @@ class Module extends BaseModule {
 				}
 			}
 		}
-		return false;
+		return $url;
 	}
 
 
@@ -39,10 +36,7 @@ class Module extends BaseModule {
 		parent::__construct();
 		add_filter('elementor/css-file/css_property', function( $value, $css_property, $matches, $control ) {
 			if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
-				$image_src = $this->performace_lab_get_webp_src( $value['id'], 'full' );
-				if ( $image_src ) {
-								$value['url'] = $image_src;
-				}
+				$value['url'] = $this->performace_lab_get_webp_src( $value['id'], 'full', $value['url'] );
 			}
 			return $value;
 		}, 10, 4 );
@@ -58,7 +52,6 @@ class Module extends BaseModule {
 				Plugin::$instance->files_manager->clear_cache();
 			}
 		} );
-		
 
 	}
 }
