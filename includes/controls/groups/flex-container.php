@@ -69,7 +69,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'default' => 'row',
 			'condition' => [
 				'direction' => [
-					'row',
+					'row',	
 					'row-reverse',
 				],
 			],
