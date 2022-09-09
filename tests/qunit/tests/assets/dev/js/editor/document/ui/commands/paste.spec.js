@@ -91,13 +91,23 @@ const lastChildrenContainer = ( parent ) => {
 const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed ) => {
 	let passed = false;
 
-	const targetIsInner = target.model.get( 'isInner' ),
+	if ( elementorCommon.config.experimentalFeatures.container ) {
+		const targetIsInner = false,
+			sourceIsInner = false;
+
+		let isForce = false,
+		copiedContainer = true,
+		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
+		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
+	} else {
+		const targetIsInner = target.model.get( 'isInner' ),
 		sourceIsInner = source.model.get( 'isInner' );
 
-	let isForce = false,
+		let isForce = false,
 		copiedContainer = UIHelper.copyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
+	}
 
 	// Handle situation when source is inner.
 	if ( sourceIsInner ) {
@@ -187,7 +197,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			}
 			break;
 		}
-	} else if ( elementorCommon.config.experimentalFeatures.container ) {
+	} else if ( copiedContainer && elementorCommon.config.experimentalFeatures.container ) {
 		passed = true;
 	}
 
