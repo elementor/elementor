@@ -187,7 +187,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			}
 			break;
 		}
-	} elseif ( elementorCommon.config.experimentalFeatures.container ) {
+	} else if ( elementorCommon.config.experimentalFeatures.container ) {
 		passed = true;
 	}
 
