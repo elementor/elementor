@@ -91,19 +91,18 @@ const lastChildrenContainer = ( parent ) => {
 const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed ) => {
 	let passed = false;
 
-	if ( elementorCommon.config.experimentalFeatures.container ) {
-		const targetIsInner = false,
-			sourceIsInner = false;
+	let targetIsInner = false,
+		sourceIsInner = false;
 
-		let isForce = false,
-		copiedContainer = true,
-		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
-		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
-	} else {
-		const targetIsInner = target.model.get( 'isInner' ),
+	let isForce = false,
+		 copiedContainer = true,
+		 message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
+		  And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
+
+	if ( ! elementorCommon.config.experimentalFeatures.container ) {
+		targetIsInner = target.model.get( 'isInner' );
 		sourceIsInner = source.model.get( 'isInner' );
 
-		let isForce = false,
 		copiedContainer = UIHelper.copyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
