@@ -127,30 +127,25 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	}
 
 	// There is no point in checking what was not successful copied.
-	if ( copiedContainer ) {
+	if ( copiedContainer && ! elementorCommon.config.experimentalFeatures.container ) {
 		switch ( targetElType ) {
 			case 'document': {
 				// Target is document.
 				// Find source at document.
-				if ( elementorCommon.config.experimentalFeatures.container ) {
-					passed = true;
-					// break;
-				} else {
-					let searchTarget = elementor.getPreviewContainer();
+				let searchTarget = elementor.getPreviewContainer();
 
-					if ( 'column' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget );
-	
-						searchTarget = lastSection;
-					} else if ( 'widget' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection );
-	
-						searchTarget = lastColumn;
-					}
-	
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
+				if ( 'column' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget );
+
+					searchTarget = lastSection;
+				} else if ( 'widget' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
+
+					searchTarget = lastColumn;
 				}
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
 			break;
 
@@ -192,6 +187,8 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			}
 			break;
 		}
+	} elseif ( elementorCommon.config.experimentalFeatures.container ) {
+		passed = true;
 	}
 
 	if ( copiedContainer ) {
