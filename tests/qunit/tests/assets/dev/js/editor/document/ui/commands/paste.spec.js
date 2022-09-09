@@ -132,7 +132,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			case 'document': {
 				// Target is document.
 				// Find source at document.
-				if ( elementorFrontend.config.experimentalFeatures.container ) {
+				if ( elementorCommon.config.experimentalFeatures.container ) {
 					passed = true;
 					// break;
 				} else {
