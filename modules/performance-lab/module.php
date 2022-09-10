@@ -44,7 +44,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( $this->does_performance_lab_is_active() ) {
-			add_filter('elementor/css-file/css_property', function( $value, $css_property, $matches, $control ) {
+			add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
 					$value['url'] = $this->performance_lab_get_webp_src( $value['id'], 'full', $value['url'] );
 				}
