@@ -30,6 +30,10 @@ class Test_Image extends Elementor_Test_Base {
 		return $attachment_id;
 	}
 
+	public function delete_image( $attachment_id ) {
+		wp_delete_attachment( $attachment_id, true );
+	}
+
 	public function test_get_details__adds_metadata() {
 		// Arrange
 		$attachment_id = $this->create_image();
@@ -55,6 +59,9 @@ class Test_Image extends Elementor_Test_Base {
 			'height' => 0,
 			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['elementor_custom_100x'] );
+
+		// Cleanup
+		$this->delete_image( $attachment_id );
 	}
 
 	public function test_delete_custom_images() {
@@ -94,5 +101,6 @@ class Test_Image extends Elementor_Test_Base {
 
 		// Cleanup
 		unlink( $base_full_path );
+		$this->delete_image( $attachment_id );
 	}
 }
