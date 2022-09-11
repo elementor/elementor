@@ -22,7 +22,6 @@ class WidgetBase {
 	 * @type {{
 	 * 	widgetType: string,
 	 * 	controls: Object<string, Object>,
-	 * 	controlsTestConfig: import('../../assets/types/controls-test-config').ControlConfig,
 	 * }}
 	 */
 	config = null;
@@ -73,14 +72,14 @@ class WidgetBase {
 	/**
 	 * Get the widget's locator in the page.
 	 *
-	 * @return {Promise<import('@playwright/test').Locator>}
+	 * @return {import('@playwright/test').Locator}
 	 */
 	async getElement() {
 		if ( ! this.id ) {
 			await this.create();
 		}
 
-		return await this.editor.getPreviewFrame().locator( `.elementor-element-${ this.id }` );
+		return this.editor.getPreviewFrame().locator( `.elementor-element-${ this.id }` );
 	}
 
 	/**
@@ -137,7 +136,7 @@ class WidgetBase {
 
 			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
 			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
-			const isSectionConditional = ( controlSection.condition || controlSection.conditions );
+			const isSectionConditional = ( controlSection?.condition || controlSection?.conditions );
 			const isControlExcluded = this.getExcludedControls().includes( controlConfig.name );
 
 			if ( isWidgetConditional || isSectionConditional || isControlExcluded ) {
