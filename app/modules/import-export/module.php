@@ -87,7 +87,7 @@ class Module extends BaseModule {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
 		}
 
-		( new Usage() )->register();
+		( new Usage() )->set_usage_data();
 	}
 
 	public function get_init_settings() {

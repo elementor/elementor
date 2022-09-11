@@ -12,7 +12,7 @@ class Test_Usage extends Elementor_Test_Base {
 
 		remove_all_filters('elementor/tracker/send_tracking_data_params');
 
-		( new Usage() )->register();
+		( new Usage() )->set_usage_data();
 	}
 
 	public function test_get_usage_data__without_any_data()	{

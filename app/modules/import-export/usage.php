@@ -15,7 +15,7 @@ class Usage {
 	 *
 	 * @return void
 	 */
-	public function register() {
+	public function set_usage_data() {
 		add_filter( 'elementor/tracker/send_tracking_data_params', function ( array $params ) {
 			$params['usages']['import_export']['revert'] = $this->get_revert_usage_data();
 
