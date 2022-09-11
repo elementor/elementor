@@ -43,17 +43,17 @@ class Test_Image extends Elementor_Test_Base {
 		$this->assertTrue( is_array( $new_metadata['sizes'] ) );
 
 		$this->assertSame( [
-				'file' => 'test-image.png',
-				'width' => 300,
-				'height' => 300,
-				'mime-type' => 'image/png',
+			'file' => 'test-image.png',
+			'width' => 300,
+			'height' => 300,
+			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['test_size'] );
 
 		$this->assertSame( [
-				'file' => 'elementor/thumbs/mock-image.png',
-				'width' => 100,
-				'height' => 0,
-				'mime-type' => 'image/png',
+			'file' => 'elementor/thumbs/mock-image.png',
+			'width' => 100,
+			'height' => 0,
+			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['elementor_custom_100x'] );
 	}
 
