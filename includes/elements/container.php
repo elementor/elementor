@@ -331,80 +331,49 @@ class Container extends Element_Base {
 			]
 		);
 
-		$width_control_settings = [
-			'label' => esc_html__( 'Width', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', '%', 'vw' ],
-			'range' => [
-				'px' => [
-					'min' => 500,
-					'max' => 1600,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
-				],
-			],
-			'default' => [
-				'unit' => '%',
-			],
-			'min_affected_device' => [
-				Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
-				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
-			],
-			'separator' => 'none',
-		];
-
 		$this->add_responsive_control(
 			'width',
-			array_merge( $width_control_settings, [
+			[
+				'label' => esc_html__( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => 500,
+						'max' => 1600,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+				],
+				'min_affected_device' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
+				],
+				'separator' => 'none',
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'content_width' => 'full',
-				],
-				'device_args' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-						'placeholder' => [
-							'size' => 100,
-							'unit' => '%',
-						],
-					],
-					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-						// The mobile width is not inherited from the higher breakpoint width controls.
-						'placeholder' => [
-							'size' => 100,
-							'unit' => '%',
-						],
-					],
-				],
-			] )
-		);
-
-		$this->add_responsive_control(
-			'boxed_width',
-			array_merge( $width_control_settings, [
-				'selectors' => [
-					'{{WRAPPER}}' => '--content-width: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
 					'content_width' => 'boxed',
 				],
-				'default' => [
-					'unit' => 'px',
-				],
 				'device_args' => [
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-						// Use the default width from the kit as a placeholder.
-						'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
+						'placeholder' => [
+							'size' => 100,
+							'unit' => '%',
+						],
 					],
 					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
 						// The mobile width is not inherited from the higher breakpoint width controls.
@@ -414,7 +383,7 @@ class Container extends Element_Base {
 						],
 					],
 				],
-			] )
+			]
 		);
 
 		$this->add_responsive_control(
