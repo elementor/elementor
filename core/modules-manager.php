@@ -95,6 +95,9 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'container-converter',
+			'web-cli',
+			'promotions',
+			'notes',
 		];
 	}
 

@@ -1,6 +1,4 @@
-import Base from '../base/base';
-
-export class ClearTransaction extends Base {
+export class ClearTransaction extends $e.modules.CommandInternalBase {
 	apply() {
 		this.component.transactions = [];
 	}

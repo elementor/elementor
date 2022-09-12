@@ -122,7 +122,7 @@ class Widget_Spacer extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-spacer-inner' => '--spacer-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--spacer-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

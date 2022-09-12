@@ -335,26 +335,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'image[url]!' => '',
 			],
 			'required' => true,
-			'device_args' => [
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => [
-					'selectors' => [
-						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_tablet.SIZE}}{{ypos_tablet.UNIT}}',
-					],
-					'condition' => [
-						'background' => [ 'classic' ],
-						'position_tablet' => [ 'initial' ],
-					],
-				],
-				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-					'selectors' => [
-						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_mobile.SIZE}}{{ypos_mobile.UNIT}}',
-					],
-					'condition' => [
-						'background' => [ 'classic' ],
-						'position_mobile' => [ 'initial' ],
-					],
-				],
-			],
 		];
 
 		$fields['ypos'] = [
@@ -401,26 +381,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'image[url]!' => '',
 			],
 			'required' => true,
-			'device_args' => [
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => [
-					'selectors' => [
-						'{{SELECTOR}}' => 'background-position: {{xpos_tablet.SIZE}}{{xpos_tablet.UNIT}} {{SIZE}}{{UNIT}}',
-					],
-					'condition' => [
-						'background' => [ 'classic' ],
-						'position_tablet' => [ 'initial' ],
-					],
-				],
-				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-					'selectors' => [
-						'{{SELECTOR}}' => 'background-position: {{xpos_mobile.SIZE}}{{xpos_mobile.UNIT}} {{SIZE}}{{UNIT}}',
-					],
-					'condition' => [
-						'background' => [ 'classic' ],
-						'position_mobile' => [ 'initial' ],
-					],
-				],
-			],
 		];
 
 		$fields['attachment'] = [
@@ -528,26 +488,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'size' => [ 'initial' ],
 				'image[url]!' => '',
 			],
-			'device_args' => [
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => [
-					'selectors' => [
-						'{{SELECTOR}}' => 'background-size: {{SIZE}}{{UNIT}} auto',
-					],
-					'condition' => [
-						'background' => [ 'classic' ],
-						'size_tablet' => [ 'initial' ],
-					],
-				],
-				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-					'selectors' => [
-						'{{SELECTOR}}' => 'background-size: {{SIZE}}{{UNIT}} auto',
-					],
-					'condition' => [
-						'background' => [ 'classic' ],
-						'size_mobile' => [ 'initial' ],
-					],
-				],
-			],
 		];
 
 		$fields['video_link'] = [
@@ -620,7 +560,7 @@ class Group_Control_Background extends Group_Control_Base {
 		// will not run properly. This added control allows users to align all their videos to one host (either
 		// youtube.com or youtube-nocookie.com, depending on whether the user wants privacy mode on or not).
 		$fields['privacy_mode'] = [
-			'label' => esc_html__( 'Privacy mode', 'elementor' ),
+			'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'description' => esc_html__( 'Only works for YouTube videos.', 'elementor' ),
 			'condition' => [

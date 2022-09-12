@@ -2,58 +2,105 @@
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--display: flex;
+	--flex-direction: column;
 	--flex-basis: auto;
 	--flex-grow: 0;
 	--flex-shrink: 1;
-	--content-width: var( --container-max-width, 1140px ); // Use the width from `Site Settings` or default to 1140px.;
+	// Use the width from `Site Settings` or default to 1140px.
+	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
+	// isn't working properly.
+	--content-width: Min( 100%, var( --container-max-width, 1140px ) );
 	--width: 100%;
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
-	--margin: 0;
-	--padding-top: var( --container-default-padding, 0px );
-	--padding-right: var( --container-default-padding, 0px );
-	--padding-bottom: var( --container-default-padding, 0px );
-	--padding-left: var( --container-default-padding, 0px );
+	--margin-top: 0;
+	--margin-right: 0;
+	--margin-bottom: 0;
+	--margin-left: 0;
+	--padding-top: var( --container-default-padding-top, 10px );
+	--padding-right: var( --container-default-padding-right, 10px );
+	--padding-bottom: var( --container-default-padding-bottom, 10px );
+	--padding-left: var( --container-default-padding-left, 10px );
 	--position: relative;
-	--z-index: 0;
+	--z-index: revert;
 	--overflow: visible;
 	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
-
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
-	--overlay-transition: 0;
+	--overlay-transition: 0.3s;
 
 	position: var( --position );
-	display: var( --display );
-	text-align: var( --text-align );
 	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
 	min-width: 0;
-	// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
-	// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
-	// Capital `M` in order to use the CSS function and not the SCSS one.
-	max-width: Min( 100%, var( --width ) );
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
-	margin: var( --margin );
-	// Custom content-width hack.
-	padding-left: calc( ( 100% - var( --content-width ) ) / 2 + var( --padding-left ) );
-	padding-right: calc( ( 100% - var( --content-width ) ) / 2 + var( --padding-right ) );
-	padding-top: var( --padding-top );
-	padding-bottom: var( --padding-bottom );
+	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
+	padding-left: var( --padding-left );
+	padding-right: var( --padding-right );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: var( --transition );
+	isolation: isolate;
 
-	// Force center only top-level containers.
-	:is( .elementor-section-wrap,/* To support legacy markup */ [data-elementor-id] ) > & {
-		margin-right: auto;
-		margin-left: auto;
+	&--width-full,
+	& > .e-container__inner {
+		flex-direction: var( --flex-direction );
+		text-align: var( --text-align );
+		padding-top: var( --padding-top );
+		padding-bottom: var( --padding-bottom );
+	}
+
+	&,
+	& > .e-container__inner {
+		display: var( --display );
+	}
+
+	// Set default values to the outer div of the boxed container.
+	&--width-boxed {
+		flex-direction: column;
+		text-align: initial;
+		flex-wrap: initial;
+		justify-content: initial;
+		align-items: initial;
+		align-content: initial;
+		gap: initial;
+	}
+
+	& > .e-container__inner {
+		flex-wrap: var( --flex-wrap );
+		justify-content: var( --justify-content );
+		align-items: var( --align-items );
+		align-content: var( --align-content );
+		gap: var( --gap );
+		width: 100%;
+		max-width: var( --content-width );
+		margin: 0 auto;
+		padding-inline: 0;
+		height: 100%;	
+
+		// Set default values to the inner div of the boxed container.
+		flex-basis: initial;
+		// Ensure that the inner div covers the full height of the container.
+		flex-grow: 1;
+		flex-shrink: initial;
+		align-self: initial;
+	}
+
+	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+		// Default top-level containers to be centered.
+		--margin-right: auto;
+		--margin-left: auto;
+
+		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
+		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
+		// Capital `M` in order to use the CSS function and not the SCSS one.
+		max-width: Min( 100%, var( --width ) );
 	}
 
 	.elementor-empty-view {
@@ -66,7 +113,7 @@
 		.elementor-first-add {
 			width: auto;
 			height: auto;
-			inset: 10px;
+			inset: 0px;
 		}
 	}
 
@@ -82,45 +129,75 @@
 	}
 
 	&.e-container--row {
-		& > .elementor-widget-placeholder {
-			position: relative;
-			z-index: $editor-layer; // To put it above the element overlay.
-			width: var( --size );
-			// To make sure that it doesn't push & break the layout when appearing.
-			margin-inline-start: var( --margin-start );
-			height: auto;
-			min-height: 100%;
-			animation-name: dnd-placeholder-widget-vertical;
-			animation-fill-mode: both;
+
+		&,
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+				position: relative;
+				z-index: $editor-layer; // To put it above the element overlay.
+				width: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-inline-start: var( --margin-start );
+				height: auto;
+				min-height: 100%;
+				animation-name: dnd-placeholder-widget-vertical;
+				animation-fill-mode: both;
+			}
 		}
 
 		// Fix nested Containers DnD issues (ED-5424).
 		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
-			// Any placeholder which is not on first widget.
-			> .elementor-widget-placeholder {
-				margin-inline-end: 0;
-				margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
-			}
 
-			// Placeholder on first widget.
-			> :not( .elementor-element ) + .elementor-widget-placeholder {
-				margin-inline-end: var( --margin-end );
-				margin-inline-start: var( --margin-start );
+			&,
+			& > .e-container__inner {
+
+				// Any placeholder which is not on first widget.
+				> .elementor-widget-placeholder {
+					margin-inline-end: 0;
+					margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
+				}
+	
+				// Placeholder on first widget.
+				> :not( .elementor-element ) + .elementor-widget-placeholder {
+					margin-inline-end: var( --margin-end );
+					margin-inline-start: var( --margin-start );
+				}
 			}
 		}
 	}
 
-	&.e-container--column > .elementor-widget-placeholder {
-		height: var( --size );
-		// To make sure that it doesn't push & break the layout when appearing.
-		margin-block-start: var( --margin-start );
-		margin-block-end: var( --margin-end );
-		animation-name: dnd-placeholder-widget-horizontal;
+	&.e-container--column {
 
-		// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
-		&:nth-last-child( 2 ) {
-			margin-block-start: calc( 2 * var( --margin-start ) );
-			--margin-end: 0;
+		&,
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+				height: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-block-start: var( --margin-start );
+				margin-block-end: var( --margin-end );
+				animation-name: dnd-placeholder-widget-horizontal;
+			}
+		}
+
+		> .elementor-widget-placeholder {
+
+			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
+			&:nth-last-child( 2 ) {
+				margin-block-start: calc( 2 * var( --margin-start ) );
+				--margin-end: 0;
+			}
+		}
+
+		& > .e-container__inner {
+
+			> .elementor-widget-placeholder {
+
+				&:last-child {
+					--margin-end: 0;
+				}
+			}
 		}
 	}
 
@@ -144,7 +221,7 @@
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;
-		z-index: 0;
+		z-index: $under-layer;
 		width: 100%;
 		height: 100%;
 		left: 0;
@@ -155,19 +232,51 @@
 		border-radius: var( --border-radius );
 	}
 
-	// Fix iframe-based widgets (ED-5338).
-	// TODO: Find a better solution.
+	.elementor-background-video-container,
+	.elementor-background-slideshow {
+		z-index: calc( $under-layer - 1 );
+	}
+
 	.elementor-widget {
+		// Fix swiper-based widgets (ED-6716).
+		// Since the default is `min-width: auto` for flex items.
+		min-width: 0;
+
+		// Fix iframe-based widgets (ED-5338).
+		// TODO: Find a better solution.
 		&-video,
 		&-google_maps {
 			flex-basis: 100%;
+		}
+
+		// Fix swiper-based widgets broken (ED-6849).
+		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		&.e-widget-swiper {
+			max-width: 100%;
+			flex-basis: 100%;
+		}
+	}
+
+	&,
+	& > .e-container__inner {
+
+		& > .elementor-widget {
+
+			& > .elementor-widget-container {
+				// Fix align-self:stretch (ED-7359)
+				height: 100%;
+			}
 		}
 	}
 
 	// Inner Container handle.
 	// TODO: Find a better solution.
-	& > &, .elementor-widget & {
+	& > &,
+	&__inner > &,
+	.elementor-widget & {
+
 		> .elementor-element-overlay {
+
 			.elementor-editor-element-setting {
 				position: relative;
 				background-color: $editor-darker;
@@ -220,6 +329,18 @@
 					display: block;
 					padding: 2px;
 				}
+			}
+		}
+	}
+
+	.elementor & {
+
+		&,
+		& > .e-container__inner {
+
+			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+			& > .elementor-widget {
+				max-width: 100%;
 			}
 		}
 	}

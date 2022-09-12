@@ -33,7 +33,7 @@
 # Core
 /core                                                            @kingyes
 /core/admin/notices                                              @nevoss
-/core/app                                                        @matipojo @kobizz
+/app                                                             @matipojo @kobizz
 /core/base                                                       @matipojo @kobizz
 /core/base/db-upgrades-manager.php                               @matipojo
 /core/base/background-task.php                                   @matipojo
@@ -121,6 +121,8 @@
 /modules/system-info                                             @matipojo @kobizz
 /modules/gutenberg                                               @kingyes
 /modules/usage                                                   @matipojo @inewlegend
+/modules/web-cli                                                 @matipojo @inewlegend
+/docs/modules/web-cli                                            @matipojo @inewlegend
 
 # Tests
 /tests                                                           @matipojo

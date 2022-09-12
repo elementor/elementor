@@ -7,6 +7,7 @@ use Elementor\Core\Common\Modules\Finder\Module as Finder;
 use Elementor\Core\Common\Modules\Connect\Module as Connect;
 use Elementor\Core\Common\Modules\EventTracker\Module as Event_Tracker;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Icons_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -138,8 +139,10 @@ class App extends BaseApp {
 				'backbone-marionette',
 				'backbone-radio',
 				'elementor-common-modules',
+				'elementor-web-cli',
 				'elementor-dialog',
 				'wp-api-request',
+				'elementor-dev-tools',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -166,7 +169,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.15.0'
+			Icons_Manager::ELEMENTOR_ICONS_VERSION
 		);
 
 		wp_enqueue_style(

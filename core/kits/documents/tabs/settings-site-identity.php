@@ -29,7 +29,7 @@ class Settings_Site_Identity extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-site-identity';
+		return 'https://go.elementor.com/global-site-identity/';
 	}
 
 	protected function register_tab_controls() {
@@ -93,6 +93,23 @@ class Settings_Site_Identity extends Tab_Base {
 				],
 				'description' => esc_html__( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
 				'export' => false,
+			]
+		);
+
+		$this->add_control(
+			'custom_logo_promotion',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => '<p>' . esc_html__( 'Add a logo to display on your website. Don\'t have one yet? Create a professional logo with Fiverr\'s logo maker.', 'elementor' ) .
+					'</p>' .
+					sprintf(
+						'<a target="_blank" class="elementor-button e-logo-maker" href="https://go.elementor.com/site-settings-logo-maker/">%s</a>',
+						esc_html__( 'Create a Logo in Minutes', 'elementor' )
+					),
+				'condition' => [
+					'site_logo[url]' => '',
+				],
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-success',
 			]
 		);
 

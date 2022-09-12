@@ -1,8 +1,12 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Core\Upgrade\Manager;
+use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_A;
+use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,11 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Manager extends Elementor_Test_Base {
+	/**
+	 * @var \Elementor\Core\Experiments\Manager
+	 */
+	private $experiments;
 
-	public function tearDown() {
-		parent::tearDown();
+	public function setUp() {
+		parent::setUp();
 
-		$this->elementor()->experiments->remove_feature( 'test_feature' );
+		$this->experiments = new Experiments_Manager();
 	}
 
 	public function test_add_feature() {
@@ -24,6 +32,7 @@ class Test_Manager extends Elementor_Test_Base {
 		];
 
 		$test_set = [
+			'tag' => '',
 			'description' => '',
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
@@ -36,6 +45,7 @@ class Test_Manager extends Elementor_Test_Base {
 				'minimum_installation_version' => null,
 			],
 			'mutable' => true,
+			'hidden' => false,
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
@@ -47,8 +57,86 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( null, $re_added_feature );
 	}
 
+	public function test_add_feature__ensure_wrap_core_dependency() {
+		// Arrange.
+		$test_core_feature = [
+			'name' => 'core_feature',
+			'state' => Experiments_Manager::STATE_INACTIVE,
+		];
+
+		$depended_feature = [
+			'name' => 'depended_feature',
+			'state' => Experiments_Manager::STATE_INACTIVE,
+			'dependencies' => [
+				'core_feature',
+			],
+		];
+
+		$this->add_test_feature( $test_core_feature );
+
+		// Act.
+		$depended_feature = $this->add_test_feature( $depended_feature );
+
+		$depended_feature_dependency = $depended_feature['dependencies'][0];
+
+		// Assert.
+		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
+		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
+	}
+
+	public function test_feature_can_be_added_as_hidden() {
+		// Act
+		$args = [ 'hidden' => true ];
+		$this->add_test_feature( $args );
+
+		// Assert
+		$feature = $this->experiments->get_features( 'test_feature' );
+		$this->assertNotEmpty( $feature );
+		$this->assertTrue( $feature['hidden'] );
+	}
+
+	public function test_features_are_added_as_not_hidden_by_default() {
+		// Act
+		$this->add_test_feature();
+
+		// Assert
+		$features = $this->experiments->get_features();
+		$this->assertNotEmpty( $features );
+		foreach ( $features as $feature ) {
+			$this->assertFalse( $feature['hidden'] );
+		}
+	}
+
+	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {
+		// Arrange.
+		$this->add_test_feature( [
+			'name' => 'regular-dependency',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'hidden-dependency',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'hidden'=> true,
+		] );
+
+		// Expect.
+		$this->expectException( Dependency_Exception::class );
+		$this->expectExceptionMessage( 'Depending on a hidden experiment is not allowed.' );
+
+		// Act.
+		$this->add_test_feature( [
+			'name' => 'dependant',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'regular-dependency',
+				'hidden-dependency',
+			],
+		] );
+	}
+
 	public function test_get_features() {
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		// Assert that `get_features` is called correctly even before adding any feature
 		$experiments->get_features();
@@ -67,7 +155,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_get_active_features() {
 		$this->add_test_feature();
 
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$experiments->set_feature_default_state( 'test_feature', Experiments_Manager::STATE_DEFAULT );
 
@@ -78,7 +166,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$this->add_test_feature( $default_activated_test_feature_data );
 
-		$active_features = $this->elementor()->experiments->get_active_features();
+		$active_features = $this->experiments->get_active_features();
 
 		$this->assertArrayHasKey( 'default_activated_test_feature', $active_features );
 	}
@@ -86,7 +174,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_is_feature_active() {
 		$this->add_test_feature();
 
-		$is_test_feature_active = $this->elementor()->experiments->is_feature_active( 'test_feature' );
+		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
 
 		$this->assertTrue( $is_test_feature_active );
 	}
@@ -104,7 +192,7 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 		] );
 
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$is_test_feature_active = $experiments->is_feature_active( 'test_feature' );
 
@@ -124,7 +212,7 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 		] );
 
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$is_test_feature_active = $experiments->is_feature_active( 'test_feature' );
 
@@ -136,7 +224,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_is_feature_active__default_activated() {
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$default_activated_test_feature_data = [
 			'default' => Experiments_Manager::STATE_ACTIVE,
@@ -150,7 +238,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_is_feature_active__not_exists() {
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$is_non_exist_active = $experiments->is_feature_active( 'not_exists_feature' );
 
@@ -162,7 +250,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$this->add_test_feature();
 
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$is_test_feature_active = $experiments->is_feature_active( 'test_feature' );
 
@@ -172,7 +260,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_set_feature_default_state() {
 		$this->add_test_feature();
 
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$experiments->set_feature_default_state( 'test_feature', Experiments_Manager::STATE_ACTIVE );
 
@@ -184,7 +272,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_remove_feature() {
 		$this->add_test_feature();
 
-		$experiments = $this->elementor()->experiments;
+		$experiments = $this->experiments;
 
 		$experiments->remove_feature( 'test_feature' );
 
@@ -193,9 +281,92 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNull( $feature );
 	}
 
-	private function add_test_feature( array $args = [] ) {
-		$experiments = $this->elementor()->experiments;
+	public function test_validate_dependency__throws_when_a_dependency_is_not_available() {
+		// Arrange.
+		$test_feature_data = [
+			'name' => Module_A::instance()->get_name(),
+			'state' => Experiments_Manager::STATE_INACTIVE,
+			'dependencies' => [
+				Module_B::class,
+			],
+		];
 
+		$this->add_test_feature( $test_feature_data );
+
+		// Assert.
+		$this->expectException( \WPDieException::class );
+		$this->expectExceptionMessage( '<p>The feature `module-a` has a dependency `module-b` that is not available.</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor#tab-experiments\'">Back</a></p>' );
+
+		// Act.
+		update_option(
+			$this->experiments->get_feature_option_key( $test_feature_data['name'] ),
+			Experiments_Manager::STATE_ACTIVE
+		);
+	}
+
+	public function test_validate_dependency__throws_when_a_dependency_is_inactive_and_user_activates_a_dependant_experiment() {
+		// Arrange.
+		$dependant = [
+			'name' => Module_A::instance()->get_name(),
+			'dependencies' => [
+				Module_B::class,
+			],
+		];
+
+		$dependency = [
+			'name' => Module_B::instance()->get_name(),
+		];
+
+		$this->add_test_feature( $dependant );
+		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_INACTIVE );
+
+		$this->add_test_feature( $dependency );
+		$this->experiments->set_feature_default_state( $dependency['name'], Experiments_Manager::STATE_INACTIVE );
+
+		// Assert.
+		$this->expectException( \WPDieException::class );
+		$this->expectExceptionMessage( '<p>To turn on `module-a`, Experiment: `module-b` activity is required!</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor#tab-experiments\'">Back</a></p>' );
+
+		// Act.
+		update_option(
+			$this->experiments->get_feature_option_key( $dependant['name'] ),
+			Experiments_Manager::STATE_ACTIVE
+		);
+	}
+
+	public function test_validate_dependency__deactivates_an_experiment_when_its_dependency_is_inactivated() {
+		// Arrange.
+		$dependant = [
+			'name' => Module_A::instance()->get_name(),
+			'dependencies' => [
+				Module_B::class,
+			],
+		];
+
+		$dependency = [
+			'name' => Module_B::instance()->get_name(),
+		];
+
+		$this->add_test_feature( $dependant );
+		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_ACTIVE );
+
+		$this->add_test_feature( $dependency );
+		$this->experiments->set_feature_default_state( $dependency['name'], Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		update_option(
+			$this->experiments->get_feature_option_key( $dependency['name'] ),
+			Experiments_Manager::STATE_INACTIVE
+		);
+
+		// Assert.
+		$this->assertEquals(
+			Experiments_Manager::STATE_INACTIVE,
+			get_option( $this->experiments->get_feature_option_key( $dependant['name'] ) )
+		);
+	}
+
+	private function add_test_feature( array $args = [] ) {
 		$test_feature_data = [
 			'name' => 'test_feature',
 		];
@@ -204,6 +375,6 @@ class Test_Manager extends Elementor_Test_Base {
 			$test_feature_data = array_merge( $test_feature_data, $args );
 		}
 
-		return $experiments->add_feature( $test_feature_data );
+		return $this->experiments->add_feature( $test_feature_data );
 	}
 }

@@ -396,7 +396,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( $attributes ) {
-			$this->add_render_attribute( $element, $attributes, $overwrite );
+			$this->add_render_attribute( $element, $attributes, null, $overwrite );
 		}
 
 		return $this;
@@ -543,6 +543,26 @@ abstract class Element_Base extends Controls_Stack {
 		];
 	}
 
+	public function get_data_for_save() {
+		$data = $this->get_raw_data();
+
+		$elements = [];
+
+		foreach ( $this->get_children() as $child ) {
+			$elements[] = $child->get_data_for_save();
+		}
+
+		if ( ! empty( $elements ) ) {
+			$data['elements'] = $elements;
+		}
+
+		if ( ! empty( $data['settings'] ) ) {
+			$data['settings'] = $this->on_save( $data['settings'] );
+		}
+
+		return $data;
+	}
+
 	/**
 	 * Get unique selector.
 	 *
@@ -574,14 +594,14 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * On Import Replace Dynamic Content.
-	 *
 	 * @since 3.6.0
 	 * @access public
 	 *
-	 * @return array Element data.
+	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
 	 */
 	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
+
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( isset( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
@@ -594,6 +614,47 @@ abstract class Element_Base extends Controls_Stack {
 					$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
 				}
 			}
+		}
+
+		return $config;
+	}
+
+	/**
+	 * On import update dynamic content (e.g. post and term IDs).
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
+	 *
+	 * @return array Element data.
+	 */
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+		$tags_manager = Plugin::$instance->dynamic_tags;
+
+		if ( empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
+			return $config;
+		}
+
+		foreach ( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+			$tag_config = $tags_manager->tag_text_to_tag_data( $dynamic_value );
+			$tag_instance = $tags_manager->create_tag( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+
+			if ( ! $tag_instance ) {
+				continue;
+			}
+
+			if ( ! method_exists( $tag_instance, 'on_import_update_dynamic_content' ) ) {
+				// on_import_replace_dynamic_content() is deprecated since 3.8.0
+				// Please note that the old on_import function 2nd parameter accepts only a "flat" array of post IDs.
+				// TODO: Remove this check in the future.
+				$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $data['post_ids'] );
+			} else {
+				$tag_config = $tag_instance->on_import_update_dynamic_content( $tag_config, $data, $tag_instance->get_controls() );
+			}
+
+			$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
 		}
 
 		return $config;
@@ -711,8 +772,8 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SWITCHER,
 					'default' => '',
 					'prefix_class' => 'elementor-',
-					'label_on' => 'Hide',
-					'label_off' => 'Show',
+					'label_on' => __( 'Hide', 'elementor' ),
+					'label_off' => __( 'Show', 'elementor' ),
 					'return_value' => 'hidden-' . $breakpoint_key,
 				]
 			);
@@ -801,6 +862,14 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * A Base method for sanitizing the settings before save.
+	 * This method is meant to be overridden by the element.
+	 */
+	protected function on_save( array $settings ) {
+		return $settings;
 	}
 
 	/**

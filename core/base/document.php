@@ -3,6 +3,7 @@ namespace Elementor\Core\Base;
 
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets as Assets_Iteration_Action;
 use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Action;
+use Elementor\Core\Behaviors\Interfaces\Lock_Behavior;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -261,6 +262,13 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * @return null|Lock_Behavior
+	 */
+	public static function get_lock_behavior_v2() {
+		return null;
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access public
 	 *
@@ -320,7 +328,8 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		return $attributes;
+		// apply this filter to allow the attributes to be modified by different sources
+		return apply_filters( 'elementor/document/wrapper_attributes', $attributes, $this );
 	}
 
 	/**
@@ -379,6 +388,60 @@ abstract class Document extends Controls_Stack {
 		 * @param Document $this The document instance.
 		 */
 		$url = apply_filters( 'elementor/document/urls/exit_to_dashboard', $url, $this );
+
+		return $url;
+	}
+
+	/**
+	 * Get All Post Type URL
+	 *
+	 * Get url of the page which display all the posts of the current active document's post type.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	public function get_all_post_type_url() {
+		$post_type = get_post_type( $this->get_main_id() );
+
+		$url = get_admin_url() . 'edit.php';
+
+		if ( 'post' !== $post_type ) {
+			$url .= '?post_type=' . $post_type;
+		}
+
+		/**
+		 * Document "display all post type" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/all_post_type', $url, $this );
+
+		return $url;
+	}
+
+	/**
+	 * Get Main WP dashboard URL.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string $url
+	 */
+	protected function get_main_dashboard_url() {
+		$url = get_dashboard_url();
+
+		/**
+		 * Document "Main Dashboard" URL.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $url The URL.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/urls/main_dashboard', $url, $this );
 
 		return $url;
 	}
@@ -544,28 +607,30 @@ abstract class Document extends Controls_Stack {
 				'locked' => $locked_user,
 			],
 			'urls' => [
-				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
+				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(), // WP post type edit page
+				'all_post_type' => $this->get_all_post_type_url(),
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),
 				'have_a_look' => $this->get_have_a_look_url(),
+				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
 
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$container = [];
+			$container_config = [];
 			$experiments_manager = Plugin::$instance->experiments;
 
 			if ( $experiments_manager->is_feature_active( 'container' ) ) {
-				$container = [
-					'container' => ( new Container() )->get_config(),
+				$container_config = [
+					'container' => Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config(),
 				];
 			}
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = $container + Plugin::$instance->widgets_manager->get_widget_types_config();
+			$config['widgets'] = $container_config + Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
 		$additional_config = [];
@@ -887,7 +952,13 @@ abstract class Document extends Controls_Stack {
 				continue;
 			}
 
-			$editor_data[] = $element->get_raw_data( $with_html_content );
+			if ( $this->is_saving ) {
+				$element_data = $element->get_data_for_save();
+			} else {
+				$element_data = $element->get_raw_data( $with_html_content );
+			}
+
+			$editor_data[] = $element_data;
 		} // End foreach().
 
 		Plugin::$instance->documents->restore_document();
@@ -1079,15 +1150,23 @@ abstract class Document extends Controls_Stack {
 		return $deleted && ! is_wp_error( $deleted );
 	}
 
+	public function force_delete() {
+		$deleted = wp_delete_post( $this->post->ID, true );
+
+		return $deleted && ! is_wp_error( $deleted );
+	}
+
 	/**
-	 *
 	 * @since 3.6.0
 	 *
 	 * @param array $config
-	 *
 	 * @param array $map_old_new_post_ids
+	 *
+	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
 	 */
 	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
+
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
@@ -1096,6 +1175,32 @@ abstract class Document extends Controls_Stack {
 
 				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
 			}
+		}
+
+		return $config;
+	}
+
+	/**
+	 * On import update dynamic content (e.g. post and term IDs).
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
+	 *
+	 * @return array Element data.
+	 */
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+		foreach ( $config as &$element_config ) {
+			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
+
+			if ( ! $element_instance ) {
+				continue;
+			}
+
+			$element_config = $element_instance::on_import_update_dynamic_content( $element_config, $data, $element_instance->get_controls() );
+			$element_config['elements'] = static::on_import_update_dynamic_content( $element_config['elements'], $data );
 		}
 
 		return $config;

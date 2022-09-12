@@ -211,7 +211,7 @@ abstract class Base_App {
 		$this->after_connect();
 
 		// Add the notice *after* the method `after_connect`, so an app can redirect without the notice.
-		$this->add_notice( esc_html__( 'Connected Successfully.', 'elementor' ) );
+		$this->add_notice( esc_html__( 'Connected successfully.', 'elementor' ) );
 
 		$this->redirect_to_admin_page();
 	}
@@ -223,7 +223,7 @@ abstract class Base_App {
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
-			$this->add_notice( esc_html__( 'Disconnected Successfully.', 'elementor' ) );
+			$this->add_notice( esc_html__( 'Disconnected successfully.', 'elementor' ) );
 		}
 
 		$this->redirect_to_admin_page();
@@ -377,12 +377,14 @@ abstract class Base_App {
 	}
 
 	/**
-	 * Get all the connect information
+	 * Get Base Connect Info
+	 *
+	 * Returns an array of connect info.
 	 *
 	 * @return array
 	 */
-	protected function get_connect_info() {
-		$connect_info = [
+	protected function get_base_connect_info() {
+		return [
 			'app' => $this->get_slug(),
 			'access_token' => $this->get( 'access_token' ),
 			'client_id' => $this->get( 'client_id' ),
@@ -390,6 +392,15 @@ abstract class Base_App {
 			'site_key' => $this->get_site_key(),
 			'home_url' => trailingslashit( home_url() ),
 		];
+	}
+
+	/**
+	 * Get all the connect information
+	 *
+	 * @return array
+	 */
+	protected function get_connect_info() {
+		$connect_info = $this->get_base_connect_info();
 
 		$additional_info = [];
 
@@ -540,6 +551,8 @@ abstract class Base_App {
 			'utm_campaign',
 			'utm_term',
 			'utm_content',
+			'source',
+			'screen_hint',
 		];
 
 		$query_params = ( new Collection( $_GET ) ) // phpcs:ignore
@@ -587,10 +600,6 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function set_client_id() {
-		if ( $this->get( 'client_id' ) ) {
-			return;
-		}
-
 		$response = $this->request(
 			'get_client_id',
 			[

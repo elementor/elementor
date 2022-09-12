@@ -1,12 +1,10 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Switch extends CommandBase {
+export class Switch extends $e.modules.CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
 
 	apply( args ) {
-		const { id, mode, onClose } = args;
+		const { id, mode, onClose, scroll = true } = args;
 
 		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
@@ -14,7 +12,10 @@ export class Switch extends CommandBase {
 			onClose,
 		} )
 		.then( () => {
-			return $e.run( 'editor/documents/open', { id } );
+			return $e.run( 'editor/documents/open', { id, scroll } );
+		} )
+		.then( () => {
+			elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
 		} );
 	}
 }

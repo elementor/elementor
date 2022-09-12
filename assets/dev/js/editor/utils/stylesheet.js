@@ -21,7 +21,7 @@
 			hash = hash.split( '-' ).filter( String );
 
 			hash.forEach( function( singleQuery ) {
-				// split {max}/{min}_{device name} to separate strings
+				// Split {max}/{min}_{device name} to separate strings
 				var queryParts = singleQuery.split( /_(.+)/ ),
 					endPoint = queryParts[ 0 ],
 					deviceName = queryParts[ 1 ];
@@ -54,12 +54,20 @@
 				var aQuery = hashToQuery( a ),
 					bQuery = hashToQuery( b );
 
-				// Using the max or the min value of the queries.
-				var aQueryValue, bQueryValue;
+				// Calculation should be either `max - max` or `min - min`.
+				// Caused when the `min_affected_device` is equal to the current responsive control.
+				// (e.g. `min_affected_device = tablet`, and the user is changing a tablet control).
+				if ( aQuery.max && bQuery.max ) {
+					return bQuery.max - aQuery.max;
+				}
 
-				aQueryValue = aQuery.max ?? aQuery.min;
+				if ( aQuery.min && bQuery.min ) {
+					return bQuery.min - aQuery.min;
+				}
 
-				bQueryValue = bQuery.max ?? bQuery.min;
+				// If one of the queries has only `min` and the other has only `max`.
+				const aQueryValue = aQuery.max ?? aQuery.min;
+				const bQueryValue = bQuery.max ?? bQuery.min;
 
 				return bQueryValue - aQueryValue;
 			} );
