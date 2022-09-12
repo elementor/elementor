@@ -53,11 +53,17 @@
 			display: flex;
 			flex-grow: 1;
 			font-weight: 500;
+			justify-content: space-between;
 
 			&-badge {
-				padding-inline-start: auto;
+				margin: 0 10px;
+			  	background: white;
+			  	border-radius: 3px;
 			}
 
+		  i {
+
+		  }
 			> span {
 				color: $editor-success;
 			}
