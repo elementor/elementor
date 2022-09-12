@@ -111,22 +111,13 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		sourceIsInner = source.model.get( 'isInner' );
 		// copiedContainer = UIHelper.copyPaste( source, target );
 
-		if ( 'widget' === sourceElType ) {
-			let model = {
-				elType: 'widget',
-				widgetType: source.model.get( 'widgetType' ),
-			};
-		} else {
-			let model = {
-				elType: sourceElType,
-			};
-		}
-
 		let targetContainer = ElementsHelper.createContainer(),
 			copiedContainer = $e.run( 'document/elements/create', {
 				container: source,
 				target: targetContainer,
-				model: model,	
+				model: {
+					elType: sourceElType,
+				},	
 			} );
 
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
