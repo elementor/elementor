@@ -108,7 +108,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
 	} else {
 		targetIsInner = target.model.get( 'isInner' );
-		// sourceIsInner = source.model.get( 'isInner' );
+		sourceIsInner = source.model.get( 'isInner' );
 		// copiedContainer = UIHelper.copyPaste( source, target );
 
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
