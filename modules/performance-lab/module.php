@@ -10,17 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const PERFORMANCE_LAB_FUNCTION_NAME = 'webp_uploads_img_tag_update_mime_type';
+	const PERFORMANCE_LAB_OPTION_NAME = 'site-health/webp-support';
 
 	public function get_name() {
 		return 'performance-lab';
 	}
 
-	private function does_performance_lab_is_active() {
-		if ( function_exists( 'webp_uploads_img_tag_update_mime_type' ) ) {
-			$webp_option_name = 'site-health/webp-support';
-			$perflab_modules_settings = get_option( 'perflab_modules_settings' );
-			if ( isset( $perflab_modules_settings ) && isset( $perflab_modules_settings[ $webp_option_name ] ) &&
-							'1' === $perflab_modules_settings[ $webp_option_name ]['enabled'] ) {
+	private function is_performance_lab_is_active() {
+		if ( function_exists( self::PERFORMANCE_LAB_FUNCTION_NAME ) ) {
+			$perflab_modules_settings = get_option( self::PERFORMANCE_LAB_OPTION_NAME, [] );
+			if ( isset( $perflab_modules_settings ) && isset( $perflab_modules_settings[ self::PERFORMANCE_LAB_OPTION_NAME ] ) &&
+							'1' === $perflab_modules_settings[ self::PERFORMANCE_LAB_OPTION_NAME ]['enabled'] ) {
 				return true;
 			}
 		}
@@ -28,12 +29,10 @@ class Module extends BaseModule {
 	}
 
 	private function performance_lab_get_webp_src( $attachment_id, $size = 'full', $url ) {
-		if ( $this->does_performance_lab_is_active() ) {
 				$image_object = wp_get_attachment_image_src( $attachment_id, $size );
 				$image_src = webp_uploads_img_tag_update_mime_type( $image_object[0], 'webp', $attachment_id );
-			if ( ! empty( $image_src ) ) {
-				return $image_src;
-			}
+		if ( ! empty( $image_src ) ) {
+			return $image_src;
 		}
 		return $url;
 	}
@@ -43,7 +42,7 @@ class Module extends BaseModule {
 
 		parent::__construct();
 
-		if ( $this->does_performance_lab_is_active() ) {
+		if ( $this->is_performance_lab_is_active() ) {
 			add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
 					$value['url'] = $this->performance_lab_get_webp_src( $value['id'], 'full', $value['url'] );

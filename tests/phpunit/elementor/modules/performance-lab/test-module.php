@@ -16,6 +16,5 @@ class Elementor_Test_PerformanceLab extends Elementor_Test_Base {
 		$performance_lab = new PerformanceLab();
 		$webp_src = $method->invokeArgs( $performance_lab, [ $image_id, 'full', $image_url ] );
 		$this->assertEquals( $image_url, $webp_src );
-
 	}
 }
