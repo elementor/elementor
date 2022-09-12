@@ -79,9 +79,11 @@ class Widget_Button extends Widget_Base {
 	}
 
 	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+		$config = parent::on_import_update_dynamic_content( $config, $data, $controls );
+
 		$base_site_url = $data['base_site_url'] ?? '';
 
-		if ( empty( $base_site_url ) ) {
+		if ( empty( $base_site_url ) || empty( $config['settings']['link']['url'] ) ) {
 			return $config;
 		}
 
