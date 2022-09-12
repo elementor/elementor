@@ -348,10 +348,18 @@ class Module extends BaseModule {
 	private function ensure_writing_permissions() {
 		$server = new Server();
 
-		$server_write_permissions = $server->get_write_permissions();
+		$paths_to_check = [
+			Server::KEY_PATH_WP_CONTENT_DIR => $server->get_system_path( Server::KEY_PATH_WP_CONTENT_DIR ),
+			Server::KEY_PATH_UPLOADS_DIR => $server->get_system_path( Server::KEY_PATH_UPLOADS_DIR ),
+			Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR => $server->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ),
+		];
 
-		if ( $server_write_permissions['warning'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+		$permissions = $server->get_paths_permissions( $paths_to_check );
+
+		foreach ( $permissions as $permission ) {
+			if ( ! $permission['write'] ) {
+				throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			}
 		}
 	}
 
