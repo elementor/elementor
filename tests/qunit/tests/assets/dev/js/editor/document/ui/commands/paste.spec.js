@@ -112,7 +112,10 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		// copiedContainer = UIHelper.copyPaste( source, target );
 
 		let targetContainer = ElementsHelper.createContainer(),
-			copiedContainer = ElementsHelper.paste( targetContainer, true );
+			copiedContainer = $e.run( 'document/elements/create', {
+				container: source,
+				target: targetContainer,
+			} );
 
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
