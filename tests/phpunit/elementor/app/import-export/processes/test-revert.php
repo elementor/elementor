@@ -73,7 +73,9 @@ class Test_Revert extends Elementor_Test_Base {
 		$this->assertEquals( $base_posts, $after_revert__posts );
 		$this->assertNotEquals( $after_import__posts, $after_revert__posts );
 
-		$this->assert_valid_revert_sessions_option();
+		$revert_sessions_option = get_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS );
+
+		$this->assert_valid_revert_sessions_option( $revert_sessions_option );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -205,7 +207,7 @@ class Test_Revert extends Elementor_Test_Base {
 		$this->assertEquals( [], $last_import_session );
 	}
 
-	private function assert_valid_revert_sessions_option() {
+	private function assert_valid_revert_sessions_option( $revert_sessions_option ) {
 		$revert_session_keys = [
 			'session_id',
 			'kit_name',
@@ -215,10 +217,8 @@ class Test_Revert extends Elementor_Test_Base {
 			'revert_timestamp',
 		];
 
-		$revert_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS );
+		$this->assertCount( 1 ,$revert_sessions_option );
 
-		$this->assertCount( 1 ,$revert_sessions );
-
-		$this->assert_array_have_keys( $revert_session_keys, $revert_sessions[0] );
+		$this->assert_array_have_keys( $revert_session_keys, $revert_sessions_option[0] );
 	}
 }

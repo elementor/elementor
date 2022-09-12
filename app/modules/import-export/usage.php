@@ -15,7 +15,7 @@ class Usage {
 	 *
 	 * @return void
 	 */
-	public function set_usage_data() {
+	public function register() {
 		add_filter( 'elementor/tracker/send_tracking_data_params', function ( array $params ) {
 			$params['usages']['import_export']['revert'] = $this->get_revert_usage_data();
 
@@ -37,7 +37,7 @@ class Usage {
 			$data[] = [
 				'kit_name' => $revert_session['kit_name'],
 				'source' => $revert_session['source'],
-				'revert_timestamp' => $revert_session['revert_timestamp'],
+				'revert_timestamp' => (int) $revert_session['revert_timestamp'],
 				'total_time' => ( (int) $revert_session['revert_timestamp'] - (int) $revert_session['import_timestamp'] ),
 			];
 		}
