@@ -1350,6 +1350,24 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Get Responsive Control Device Suffix
+	 *
+	 * @param array $control
+	 * @return string $device suffix
+	 */
+	protected function get_responsive_control_device_suffix( $control ) {
+		if ( ! empty( $control['responsive']['max'] ) ) {
+			$query_device = $control['responsive']['max'];
+		} elseif ( ! empty( $control['responsive']['min'] ) ) {
+			$query_device = $control['responsive']['min'];
+		} else {
+			return '';
+		}
+
+		return 'desktop' === $query_device ? '' : '_' . $query_device;
+	}
+
+	/**
 	 * Whether the control is visible or not.
 	 *
 	 * Used to determine whether the control is visible or not.
@@ -1375,6 +1393,8 @@ abstract class Controls_Stack extends Base_Object {
 			return true;
 		}
 
+		$controls = $this->get_controls();
+
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
 			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
 
@@ -1386,11 +1406,22 @@ abstract class Controls_Stack extends Base_Object {
 				return false;
 			}
 
-			$instance_value = $values[ $pure_condition_key ];
+			$are_control_and_condition_responsive = isset( $control['responsive'] ) && ! empty( $controls[ $pure_condition_key ]['responsive'] );
+			$condition_name_to_check = $pure_condition_key;
+
+			if ( $are_control_and_condition_responsive ) {
+				$device_suffix = $this->get_responsive_control_device_suffix( $control );
+
+				$condition_name_to_check = $pure_condition_key . $device_suffix;
+
+				// If the control is not desktop, take the value of the conditioning control of the corresponding device.
+				$instance_value = $values[ $pure_condition_key . $device_suffix ];
+			} else {
+				$instance_value = $values[ $pure_condition_key ];
+			}
 
 			if ( ! $instance_value ) {
-				$controls = $this->get_controls();
-				$parent = isset( $controls[ $pure_condition_key ]['parent'] ) ? $controls[ $pure_condition_key ]['parent'] : false;
+				$parent = isset( $controls[ $condition_name_to_check ]['parent'] ) ? $controls[ $condition_name_to_check ]['parent'] : false;
 
 				while ( $parent ) {
 					$instance_value = $values[ $parent ];
@@ -1984,11 +2015,29 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 *
 	 * @since 3.6.0
 	 * @access public
+	 *
+	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
 	 */
 	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
+
+		return $config;
+	}
+
+	/**
+	 * On import update dynamic content (e.g. post and term IDs).
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
+	 *
+	 * @return array Element data.
+	 */
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
 		return $config;
 	}
 

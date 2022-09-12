@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\App\Modules\ImportExport;
+namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Module as Import_Export_Module;
 use Elementor\Core\Base\Module as BaseModule;

@@ -35,7 +35,7 @@ export default function ImportContent() {
 			return (
 				<ImportContentFooter
 					hasPlugins={ ! ! plugins.length }
-					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
+					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts && Object.keys( uploadedData.conflicts ).length ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 					onResetProcess={ handleResetProcess }
 					onPreviousClick={ () => eventTracking( 'kit-library/go-back' ) }

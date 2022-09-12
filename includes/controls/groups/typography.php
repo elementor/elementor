@@ -211,10 +211,14 @@ class Group_Control_Typography extends Group_Control_Base {
 		$fields['letter_spacing'] = [
 			'label' => esc_html_x( 'Letter Spacing', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em' ],
 			'range' => [
 				'px' => [
 					'min' => -5,
 					'max' => 10,
+					'step' => 0.1,
+				],
+				'em' => [
 					'step' => 0.1,
 				],
 			],
