@@ -219,7 +219,7 @@ class WidgetBase {
 			await this.waitForServerRendered();
 		}
 
-		await this.editor.page.waitForTimeout( 200 );
+		await this.editor.page.waitForTimeout( 500 );
 	}
 
 	/**
