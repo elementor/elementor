@@ -18,10 +18,17 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 		const allSettings = $e.data.cache.storage.getItem( 'kits-elements-defaults' ) || {},
 			elementSettings = allSettings[ widgetType || elType ];
 
-		console.log( elementSettings );
+		if ( ! elementSettings ) {
+			return true;
+		}
 
-		// Get all the default settings of the element from the kit.
-		// and change the args.model to the new settings {...model, settings: { ...model.settings, ...defaults } }
+		args.model = {
+			...args.model,
+			settings: {
+				...args.model.settings,
+				...elementSettings,
+			},
+		};
 
 		return true;
 	}

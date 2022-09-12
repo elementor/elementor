@@ -75,7 +75,7 @@ class Controller extends Base_Controller {
 			$request->get_param( 'kit_id' )
 		);
 
-		return (object) Data_Provider::create( $kit )->all();
+		return (object) Data_Provider::create( $kit )->get();
 	}
 
 	public function create_item( $request ) {

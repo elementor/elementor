@@ -12,7 +12,7 @@ export default class Create extends $e.modules.CommandBase {
 	async apply( { container } ) {
 		$e.internal( 'panel/state-loading' );
 
-		const type = container.widgetType || container.elType;
+		const type = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
 
 		const settings = this.settingsExtractors.reduce( ( carry, extractor ) => {
 			return {
@@ -22,8 +22,16 @@ export default class Create extends $e.modules.CommandBase {
 		}, {} );
 
 		try {
+			const createAndRefetch = async () => {
+				await $e.data.create( 'kits-elements-defaults/index', { settings }, { type } );
+
+				$e.data.cache.storage.removeItem( 'kits-elements-defaults' );
+
+				await $e.data.get( 'kits-elements-defaults/index' );
+			};
+
 			await Promise.allSettled( [
-				$e.data.create( 'kits-elements-defaults/index', { settings }, { id: type } ),
+				createAndRefetch(),
 				new Promise( ( reslove ) => setTimeout( reslove, 800 ) ),
 			] );
 

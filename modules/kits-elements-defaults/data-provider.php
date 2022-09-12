@@ -49,23 +49,20 @@ class Data_Provider {
 	}
 
 	/**
-	 * @return Collection
-	 */
-	public function all() {
-		if ( ! $this->data ) {
-			$this->refresh();
-		}
-
-		return $this->data;
-	}
-
-	/**
 	 * @param $type
 	 *
 	 * @return array
 	 */
-	public function get( $type ) {
-		return $this->all()->get( $type, [] );
+	public function get( $type = null ) {
+		if ( ! $this->data ) {
+			$this->refresh();
+		}
+
+		if ( $type ) {
+			return $this->data->get( $type, [] );
+		}
+
+		return $this->data->all();
 	}
 
 	/**
@@ -75,8 +72,7 @@ class Data_Provider {
 	 * @return array
 	 */
 	public function store( $type, array $settings ) {
-		$data = $this->all();
-
+		$data = $this->get();
 		$data[ $type ] = $settings;
 
 		return $this->save( $data )->get( $type );
@@ -88,22 +84,21 @@ class Data_Provider {
 	 * @return array
 	 */
 	public function delete( $type ) {
-		$data = $this->all();
-
+		$data = $this->get();
 		unset( $data[ $type ] );
 
 		return $this->save( $data )->get( $type );
 	}
 
 	/**
-	 * @param Collection $data
+	 * @param array $data
 	 *
 	 * @return $this
 	 */
-	private function save( Collection $data ) {
+	private function save( array $data ) {
 		$this->kit->update_meta(
 			static::META_KEY,
-			wp_json_encode( $data->all() )
+			wp_json_encode( $data )
 		);
 
 		$this->refresh();
