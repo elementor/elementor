@@ -73,7 +73,7 @@ class Group_Control_Border extends Group_Control_Base {
 		];
 
 		$fields['width'] = [
-			'label' => _x( 'Width', 'Border Control', 'elementor' ),
+			'label' => _x( 'Border Width', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -85,7 +85,7 @@ class Group_Control_Border extends Group_Control_Base {
 		];
 
 		$fields['color'] = [
-			'label' => _x( 'Color', 'Border Control', 'elementor' ),
+			'label' => _x( 'Border Color', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
 			'selectors' => [
