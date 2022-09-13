@@ -109,7 +109,10 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	} else {
 		targetIsInner = target.model.get( 'isInner' );
 		sourceIsInner = source.model.get( 'isInner' );
-		// copiedContainer = UIHelper.copyPaste( source, target );
+
+		if ( 'document' !== targetElType ) {
+			copiedContainer = UIHelper.copyPaste( source, target );
+		}
 
 		// let sourceModel = {
 		// 	elType: sourceElType,
