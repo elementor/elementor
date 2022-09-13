@@ -109,7 +109,28 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	} else {
 		targetIsInner = target.model.get( 'isInner' );
 		sourceIsInner = source.model.get( 'isInner' );
-		copiedContainer = UIHelper.copyPaste( source, target );
+		// copiedContainer = UIHelper.copyPaste( source, target );
+
+		let sourceModel = {
+			elType: sourceElType,
+		};
+
+		const hasSourceModel = source.model ? true : false,
+			widgetType = hasSourceModel ? source.model.get( 'widgetType' ) : 'button',
+			targetContainer = elementor.getPreviewContainer();
+
+		if ( 'widget' === sourceElType ) {
+			let sourceModel = {
+				elType: sourceElType,
+				widgetType: widgetType,
+			};
+		}
+
+		copiedContainer = $e.run( 'document/elements/create', {
+			container: source,
+			target: targetContainer,
+			model: sourceModel,
+		} );
 
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
@@ -121,6 +142,8 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			source = source.children[ 0 ];
 			sourceElType = 'column';
 			isForce = true;
+		} else if ( 'container' === sourceElType ) {
+			sourceElType = 'container';
 		} else {
 			sourceElType = 'section';
 		}
@@ -132,6 +155,8 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			target = target.children[ 0 ];
 			targetElType = 'column';
 			isForce = true;
+		} else if ( 'container' === targetElType ) {
+			targetElType = 'container';
 		} else {
 			targetElType = 'section';
 		}
