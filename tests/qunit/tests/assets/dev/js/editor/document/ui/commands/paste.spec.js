@@ -130,26 +130,22 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	if ( copiedContainer ) {
 		switch ( targetElType ) {
 			case 'document': {
-				if ( elementorCommon.config.experimentalFeatures.container ) {
-					passed = true;
-				} else {
-					// Target is document.
-					// Find source at document.
-					let searchTarget = elementor.getPreviewContainer();
+				// Target is document.
+				// Find source at document.
+				let searchTarget = elementor.getPreviewContainer();
 
-					if ( 'column' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget );
+				if ( 'column' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget );
 
-						searchTarget = lastSection;
-					} else if ( 'widget' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection );
+					searchTarget = lastSection;
+				} else if ( 'widget' === sourceElType && ! elementorCommon.config.experimentalFeatures.container) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
 
-						searchTarget = lastColumn;
-					}
-
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
+					searchTarget = lastColumn;
 				}
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
 			break;
 
