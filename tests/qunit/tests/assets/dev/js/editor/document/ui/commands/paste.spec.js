@@ -134,22 +134,18 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( elementorCommon.config.experimentalFeatures.container && 'widget' === sourceElType ) {
-					passed = true;
-				} else {
-					if ( 'column' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget );
-	
-						searchTarget = lastSection;
-					} else if ( 'widget' === sourceElType ) {
-						const lastSection = lastChildrenContainer( searchTarget ),
-							lastColumn = lastChildrenContainer( lastSection );
-	
-						searchTarget = lastColumn;
-					}
-	
-					passed = !! findChildrenContainer( searchTarget, copiedContainer );
+				if ( 'column' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget );
+
+					searchTarget = lastSection;
+				} else if ( 'widget' === sourceElType ) {
+					const lastSection = lastChildrenContainer( searchTarget ),
+						lastColumn = lastChildrenContainer( lastSection );
+
+					searchTarget = lastColumn;
 				}
+
+				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
 			break;
 

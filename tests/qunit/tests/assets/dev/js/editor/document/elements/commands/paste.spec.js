@@ -147,12 +147,14 @@ export const Paste = () => {
 				// Check pasted elements existence.
 				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
-				let parentContainer = elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) );
+				let parentContainer = elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) ),
+					loopContinue = true;
 
-				while ( parentContainer.children.length ) {
+				while ( loopContinue ) {
 					if ( ! parentContainer.children[ 0 ].children.length ) {
 						const widgetType = parentContainer.children[ parentContainer.children.length - 1 ].model.get( 'widgetType' );
-						return;
+
+						loopContinue = false;
 					}
 
 					parentContainer = parentContainer.children[ 0 ];
