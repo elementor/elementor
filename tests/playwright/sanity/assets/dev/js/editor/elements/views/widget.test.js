@@ -1,5 +1,5 @@
-const { test, expect } = require('@playwright/test');
-const WpAdminPage = require('../../../../../../../pages/wp-admin-page');
+const { test, expect } = require( '@playwright/test' );
+const WpAdminPage = require( '../../../../../../../pages/wp-admin-page' );
 
 test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 	test( 'Check if the empty placeholder is displayed inside the Image Carousel', async ( { page }, testInfo ) => {
@@ -85,9 +85,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.useElementorCleanPost();
 
 		// Act.
-		await editor.addWidget( 'basic-gallery' );
+		await editor.addWidget( 'image-gallery' );
 
-		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-basic-gallery .elementor-widget-empty-icon' );
+		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
 
 		// Assert.
 		await expect( emptyViewPlaceholder ).toHaveCount( 1 );
@@ -117,7 +117,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Act.
 		await editor.addWidget( 'video' );
 		await page.selectOption( '.elementor-control-video_type >> select', 'hosted' );
-		
+
 		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-video .elementor-widget-empty-icon' );
 
 		// Assert.
