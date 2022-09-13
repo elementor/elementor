@@ -109,7 +109,12 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						// The 'default' case is widget.
 						let target;
 
-						if ( elementorCommon.config.experimentalFeatures.container ) {
+						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+							// On trying to paste widget on section, the paste should be at the first column.
+							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
+						} else if ( 'container' === targetContainer.model.get( 'elType' ) ) {
+							target = [ targetContainer ];
+						} else if ( elementorCommon.config.experimentalFeatures.container ) {
 							// If the container experiment is active, create a new wrapper container.
 							target = $e.run( 'document/elements/create', {
 								container: targetContainer,
@@ -119,9 +124,6 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 							} );
 
 							target = [ target ];
-						} else if ( 'section' === targetContainer.model.get( 'elType' ) ) {
-							// On trying to paste widget on section, the paste should be at the first column.
-							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
 						} else {
 							// Else, create section with one column for the element.
 							const section = $e.run( 'document/elements/create', {

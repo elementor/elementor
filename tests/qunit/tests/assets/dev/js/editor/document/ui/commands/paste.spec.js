@@ -91,53 +91,13 @@ const lastChildrenContainer = ( parent ) => {
 const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed ) => {
 	let passed = false;
 
-	let targetIsInner = false,
-		sourceIsInner = false;
-
-	let isForce = false,
-		 copiedContainer = true,
-		 message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
-		  And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
-
-	if ( ! elementorCommon.config.experimentalFeatures.container ) {
-		targetIsInner = target.model.get( 'isInner' );
+	const targetIsInner = target.model.get( 'isInner' ),
 		sourceIsInner = source.model.get( 'isInner' );
 
+	let isForce = false,
 		copiedContainer = UIHelper.copyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
-	} else {
-		targetIsInner = target.model.get( 'isInner' );
-		sourceIsInner = source.model.get( 'isInner' );
-
-		if ( 'column' !== targetElType && 'section' !== targetElType ) {
-			copiedContainer = UIHelper.copyPaste( source, target );
-		}
-
-		// let sourceModel = {
-		// 	elType: sourceElType,
-		// };
-
-		// const hasSourceModel = source.model ? true : false,
-		// 	widgetType = hasSourceModel ? source.model.get( 'widgetType' ) : 'button',
-		// 	targetContainer = elementor.getPreviewContainer();
-
-		// if ( 'widget' === sourceElType ) {
-		// 	let sourceModel = {
-		// 		elType: sourceElType,
-		// 		widgetType: widgetType,
-		// 	};
-		// }
-
-		// const copiedContainer1 = $e.run( 'document/elements/create', {
-		// 	container: source,
-		// 	target: targetContainer,
-		// 	model: sourceModel,
-		// } );
-
-		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
-		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
-	}
 
 	// Handle situation when source is inner.
 	if ( sourceIsInner ) {
@@ -145,8 +105,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			source = source.children[ 0 ];
 			sourceElType = 'column';
 			isForce = true;
-		} else if ( 'container' === sourceElType ) {
-			sourceElType = 'container';
 		} else {
 			sourceElType = 'section';
 		}
@@ -158,8 +116,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			target = target.children[ 0 ];
 			targetElType = 'column';
 			isForce = true;
-		} else if ( 'container' === targetElType ) {
-			targetElType = 'container';
 		} else {
 			targetElType = 'section';
 		}
@@ -171,7 +127,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	}
 
 	// There is no point in checking what was not successful copied.
-	if ( copiedContainer && ! elementorCommon.config.experimentalFeatures.container ) {
+	if ( copiedContainer ) {
 		switch ( targetElType ) {
 			case 'document': {
 				// Target is document.
@@ -231,8 +187,6 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			}
 			break;
 		}
-	} else if ( copiedContainer && elementorCommon.config.experimentalFeatures.container ) {
-		passed = true;
 	}
 
 	if ( copiedContainer ) {
