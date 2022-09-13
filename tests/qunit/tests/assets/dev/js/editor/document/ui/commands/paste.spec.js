@@ -111,26 +111,26 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		sourceIsInner = source.model.get( 'isInner' );
 		// copiedContainer = UIHelper.copyPaste( source, target );
 
-		let sourceModel = {
-			elType: sourceElType,
-		};
+		// let sourceModel = {
+		// 	elType: sourceElType,
+		// };
 
-		const hasSourceModel = source.model ? true : false,
-			widgetType = hasSourceModel ? source.model.get( 'widgetType' ) : 'button',
-			targetContainer = elementor.getPreviewContainer();
+		// const hasSourceModel = source.model ? true : false,
+		// 	widgetType = hasSourceModel ? source.model.get( 'widgetType' ) : 'button',
+		// 	targetContainer = elementor.getPreviewContainer();
 
-		if ( 'widget' === sourceElType ) {
-			let sourceModel = {
-				elType: sourceElType,
-				widgetType: widgetType,
-			};
-		}
+		// if ( 'widget' === sourceElType ) {
+		// 	let sourceModel = {
+		// 		elType: sourceElType,
+		// 		widgetType: widgetType,
+		// 	};
+		// }
 
-		const copiedContainer1 = $e.run( 'document/elements/create', {
-			container: source,
-			target: targetContainer,
-			model: sourceModel,
-		} );
+		// const copiedContainer1 = $e.run( 'document/elements/create', {
+		// 	container: source,
+		// 	target: targetContainer,
+		// 	model: sourceModel,
+		// } );
 
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
