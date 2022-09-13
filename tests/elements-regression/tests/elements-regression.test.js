@@ -4,6 +4,7 @@ const EditorPage = require( '../pages/editor-page' );
 const widgetsCache = require( '../assets/widgets-cache' );
 
 const {
+	Button,
 	Heading,
 	Divider,
 	TextEditor,
@@ -21,6 +22,7 @@ const {
 const { Registrar } = require( '../utils/registrar' );
 
 const widgetsRegistrar = new Registrar()
+	.register( Button )
 	.register( Heading )
 	.register( Divider )
 	.register( TextEditor )
@@ -56,6 +58,11 @@ test.describe( 'Elements regression', () => {
 	} );
 
 	for ( const widgetType of Object.keys( widgetsCache ) ) {
+		// TODO: Remove
+		if ( widgetType !== 'button' ) {
+			continue;
+		}
+
 		test( widgetType, async () => {
 			const WidgetClass = widgetsRegistrar.get( widgetType );
 

@@ -1702,4 +1702,2692 @@ module.exports = {
 			},
 		},
 	},
+	button: {
+    controls: {
+        section_button: {
+            name: 'section_button',
+            tab: 'content',
+            type: 'section',
+        },
+        button_type: {
+            name: 'button_type',
+            tab: 'content',
+            section: 'section_button',
+            type: 'select',
+            options: {
+                '': 'Default',
+                info: 'Info',
+                success: 'Success',
+                warning: 'Warning',
+                danger: 'Danger',
+            },
+            condition: [],
+        },
+        text: {
+            name: 'text',
+            tab: 'content',
+            section: 'section_button',
+            type: 'text',
+            condition: [],
+        },
+        link: {
+            name: 'link',
+            tab: 'content',
+            section: 'section_button',
+            type: 'url',
+            condition: [],
+        },
+        align: {
+            name: 'align',
+            tab: 'content',
+            section: 'section_button',
+            type: 'choose',
+            options: {
+                left: {
+                    title: 'Left',
+                    icon: 'eicon-text-align-left',
+                },
+                center: {
+                    title: 'Center',
+                    icon: 'eicon-text-align-center',
+                },
+                right: {
+                    title: 'Right',
+                    icon: 'eicon-text-align-right',
+                },
+                justify: {
+                    title: 'Justified',
+                    icon: 'eicon-text-align-justify',
+                },
+            },
+            condition: [],
+        },
+        align_widescreen: {
+            name: 'align_widescreen',
+            tab: 'content',
+            section: 'section_button',
+            type: 'choose',
+            options: {
+                left: {
+                    title: 'Left',
+                    icon: 'eicon-text-align-left',
+                },
+                center: {
+                    title: 'Center',
+                    icon: 'eicon-text-align-center',
+                },
+                right: {
+                    title: 'Right',
+                    icon: 'eicon-text-align-right',
+                },
+                justify: {
+                    title: 'Justified',
+                    icon: 'eicon-text-align-justify',
+                },
+            },
+            condition: [],
+        },
+        align_tablet_extra: {
+            name: 'align_tablet_extra',
+            tab: 'content',
+            section: 'section_button',
+            type: 'choose',
+            options: {
+                left: {
+                    title: 'Left',
+                    icon: 'eicon-text-align-left',
+                },
+                center: {
+                    title: 'Center',
+                    icon: 'eicon-text-align-center',
+                },
+                right: {
+                    title: 'Right',
+                    icon: 'eicon-text-align-right',
+                },
+                justify: {
+                    title: 'Justified',
+                    icon: 'eicon-text-align-justify',
+                },
+            },
+            condition: [],
+        },
+        size: {
+            name: 'size',
+            tab: 'content',
+            section: 'section_button',
+            type: 'select',
+            options: {
+                xs: 'Extra Small',
+                sm: 'Small',
+                md: 'Medium',
+                lg: 'Large',
+                xl: 'Extra Large',
+            },
+            condition: [],
+        },
+        selected_icon: {
+            name: 'selected_icon',
+            tab: 'content',
+            section: 'section_button',
+            type: 'icons',
+            condition: [],
+        },
+        icon_align: {
+            name: 'icon_align',
+            tab: 'content',
+            section: 'section_button',
+            type: 'select',
+            options: {
+                left: 'Before',
+                right: 'After',
+            },
+            condition: {
+                'selected_icon[value]!': '',
+            },
+        },
+        icon_indent: {
+            name: 'icon_indent',
+            tab: 'content',
+            section: 'section_button',
+            type: 'slider',
+            condition: [],
+            range: {
+                px: {
+                    max: 50,
+                },
+            },
+        },
+        view: {
+            name: 'view',
+            tab: 'content',
+            section: 'section_button',
+            type: 'hidden',
+            condition: [],
+        },
+        button_css_id: {
+            name: 'button_css_id',
+            tab: 'content',
+            section: 'section_button',
+            type: 'text',
+            condition: [],
+        },
+        section_style: {
+            name: 'section_style',
+            tab: 'style',
+            type: 'section',
+        },
+        typography_typography: {
+            name: 'typography_typography',
+            tab: 'style',
+            section: 'section_style',
+            type: 'popover_toggle',
+            render_type: 'ui',
+        },
+        typography_font_family: {
+            name: 'typography_font_family',
+            tab: 'style',
+            section: 'section_style',
+            type: 'font',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+        },
+        typography_font_size: {
+            name: 'typography_font_size',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                'rem',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 1,
+                    max: 200,
+                },
+                vw: {
+                    min: 0.1,
+                    max: 10,
+                    step: 0.1,
+                },
+            },
+        },
+        typography_font_size_widescreen: {
+            name: 'typography_font_size_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                'rem',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 1,
+                    max: 200,
+                },
+                vw: {
+                    min: 0.1,
+                    max: 10,
+                    step: 0.1,
+                },
+            },
+        },
+        typography_font_size_tablet_extra: {
+            name: 'typography_font_size_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                'rem',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 1,
+                    max: 200,
+                },
+                vw: {
+                    min: 0.1,
+                    max: 10,
+                    step: 0.1,
+                },
+            },
+        },
+        typography_font_weight: {
+            name: 'typography_font_weight',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                100: '100 (Thin)',
+                200: '200 (Extra Light)',
+                300: '300 (Light)',
+                400: '400 (Normal)',
+                500: '500 (Medium)',
+                600: '600 (Semi Bold)',
+                700: '700 (Bold)',
+                800: '800 (Extra Bold)',
+                900: '900 (Black)',
+                '': 'Default',
+                normal: 'Normal',
+                bold: 'Bold',
+            },
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+        },
+        typography_text_transform: {
+            name: 'typography_text_transform',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                uppercase: 'Uppercase',
+                lowercase: 'Lowercase',
+                capitalize: 'Capitalize',
+                none: 'Normal',
+            },
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+        },
+        typography_font_style: {
+            name: 'typography_font_style',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                normal: 'Normal',
+                italic: 'Italic',
+                oblique: 'Oblique',
+            },
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+        },
+        typography_text_decoration: {
+            name: 'typography_text_decoration',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                underline: 'Underline',
+                overline: 'Overline',
+                'line-through': 'Line Through',
+                none: 'None',
+            },
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+        },
+        typography_line_height: {
+            name: 'typography_line_height',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    min: 1,
+                },
+            },
+        },
+        typography_line_height_widescreen: {
+            name: 'typography_line_height_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    min: 1,
+                },
+            },
+        },
+        typography_line_height_tablet_extra: {
+            name: 'typography_line_height_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    min: 1,
+                },
+            },
+        },
+        typography_letter_spacing: {
+            name: 'typography_letter_spacing',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    min: -5,
+                    max: 10,
+                    step: 0.1,
+                },
+                em: {
+                    step: 0.1,
+                },
+            },
+        },
+        typography_letter_spacing_widescreen: {
+            name: 'typography_letter_spacing_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    min: -5,
+                    max: 10,
+                    step: 0.1,
+                },
+                em: {
+                    step: 0.1,
+                },
+            },
+        },
+        typography_letter_spacing_tablet_extra: {
+            name: 'typography_letter_spacing_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    min: -5,
+                    max: 10,
+                    step: 0.1,
+                },
+                em: {
+                    step: 0.1,
+                },
+            },
+        },
+        typography_word_spacing: {
+            name: 'typography_word_spacing',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    step: 1,
+                },
+                em: {
+                    step: 0.1,
+                },
+            },
+        },
+        typography_word_spacing_widescreen: {
+            name: 'typography_word_spacing_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    step: 1,
+                },
+                em: {
+                    step: 0.1,
+                },
+            },
+        },
+        typography_word_spacing_tablet_extra: {
+            name: 'typography_word_spacing_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            popover: true,
+            condition: {
+                'typography_typography!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+            ],
+            range: {
+                px: {
+                    step: 1,
+                },
+                em: {
+                    step: 0.1,
+                },
+            },
+        },
+        text_shadow_text_shadow_type: {
+            name: 'text_shadow_text_shadow_type',
+            tab: 'style',
+            section: 'section_style',
+            type: 'popover_toggle',
+            render_type: 'ui',
+        },
+        text_shadow_text_shadow: {
+            name: 'text_shadow_text_shadow',
+            tab: 'style',
+            section: 'section_style',
+            type: 'text_shadow',
+            popover: true,
+            condition: {
+                'text_shadow_text_shadow_type!': '',
+            },
+        },
+        tabs_button_style: {
+            name: 'tabs_button_style',
+            tab: 'style',
+            section: 'section_style',
+            type: 'tabs',
+            condition: [],
+        },
+        tab_button_normal: {
+            name: 'tab_button_normal',
+            tab: 'style',
+            section: 'section_style',
+            type: 'tab',
+            condition: [],
+        },
+        button_text_color: {
+            name: 'button_text_color',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            condition: [],
+        },
+        background_background: {
+            name: 'background_background',
+            tab: 'style',
+            section: 'section_style',
+            type: 'choose',
+            render_type: 'ui',
+            options: {
+                classic: {
+                    title: 'Classic',
+                    icon: 'eicon-paint-brush',
+                },
+                gradient: {
+                    title: 'Gradient',
+                    icon: 'eicon-barcode',
+                },
+            },
+        },
+        background_color: {
+            name: 'background_color',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            condition: {
+                background_background: [
+                    'classic',
+                    'gradient',
+                ],
+            },
+        },
+        background_color_stop: {
+            name: 'background_color_stop',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            render_type: 'ui',
+            condition: {
+                background_background: [
+                    'gradient',
+                ],
+            },
+            size_units: [
+                '%',
+            ],
+        },
+        background_color_b: {
+            name: 'background_color_b',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            render_type: 'ui',
+            condition: {
+                background_background: [
+                    'gradient',
+                ],
+            },
+        },
+        background_color_b_stop: {
+            name: 'background_color_b_stop',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            render_type: 'ui',
+            condition: {
+                background_background: [
+                    'gradient',
+                ],
+            },
+            size_units: [
+                '%',
+            ],
+        },
+        background_gradient_type: {
+            name: 'background_gradient_type',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            render_type: 'ui',
+            options: {
+                linear: 'Linear',
+                radial: 'Radial',
+            },
+            condition: {
+                background_background: [
+                    'gradient',
+                ],
+            },
+        },
+        background_gradient_angle: {
+            name: 'background_gradient_angle',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'gradient',
+                ],
+                background_gradient_type: 'linear',
+            },
+            size_units: [
+                'deg',
+            ],
+            range: {
+                deg: {
+                    step: 10,
+                },
+            },
+        },
+        background_gradient_position: {
+            name: 'background_gradient_position',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                background_background: [
+                    'gradient',
+                ],
+                background_gradient_type: 'radial',
+            },
+        },
+        background_position: {
+            name: 'background_position',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+                initial: 'Custom',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_position_widescreen: {
+            name: 'background_position_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+                initial: 'Custom',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_position_tablet_extra: {
+            name: 'background_position_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+                initial: 'Custom',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_xpos: {
+            name: 'background_xpos',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_position: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vw: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        background_xpos_widescreen: {
+            name: 'background_xpos_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_position: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vw: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        background_xpos_tablet_extra: {
+            name: 'background_xpos_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_position: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vw: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        background_ypos: {
+            name: 'background_ypos',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_position: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vh',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vh: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        background_ypos_widescreen: {
+            name: 'background_ypos_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_position: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vh',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vh: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        background_ypos_tablet_extra: {
+            name: 'background_ypos_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_position: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vh',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vh: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        background_attachment: {
+            name: 'background_attachment',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                scroll: 'Scroll',
+                fixed: 'Fixed',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_attachment_alert: {
+            name: 'background_attachment_alert',
+            tab: 'style',
+            section: 'section_style',
+            type: 'raw_html',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+                background_attachment: 'fixed',
+            },
+        },
+        background_repeat: {
+            name: 'background_repeat',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'no-repeat': 'No-repeat',
+                repeat: 'Repeat',
+                'repeat-x': 'Repeat-x',
+                'repeat-y': 'Repeat-y',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_repeat_widescreen: {
+            name: 'background_repeat_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'no-repeat': 'No-repeat',
+                repeat: 'Repeat',
+                'repeat-x': 'Repeat-x',
+                'repeat-y': 'Repeat-y',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_repeat_tablet_extra: {
+            name: 'background_repeat_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'no-repeat': 'No-repeat',
+                repeat: 'Repeat',
+                'repeat-x': 'Repeat-x',
+                'repeat-y': 'Repeat-y',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_size: {
+            name: 'background_size',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+                initial: 'Custom',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_size_widescreen: {
+            name: 'background_size_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+                initial: 'Custom',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_size_tablet_extra: {
+            name: 'background_size_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+                initial: 'Custom',
+            },
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                'background_image[url]!': '',
+            },
+        },
+        background_bg_width: {
+            name: 'background_bg_width',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_size: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 0,
+                    max: 1000,
+                },
+                '%': {
+                    min: 0,
+                    max: 100,
+                },
+                vw: {
+                    min: 0,
+                    max: 100,
+                },
+            },
+        },
+        background_bg_width_widescreen: {
+            name: 'background_bg_width_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_size: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 0,
+                    max: 1000,
+                },
+                '%': {
+                    min: 0,
+                    max: 100,
+                },
+                vw: {
+                    min: 0,
+                    max: 100,
+                },
+            },
+        },
+        background_bg_width_tablet_extra: {
+            name: 'background_bg_width_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                background_background: [
+                    'classic',
+                ],
+                background_size: [
+                    'initial',
+                ],
+                'background_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 0,
+                    max: 1000,
+                },
+                '%': {
+                    min: 0,
+                    max: 100,
+                },
+                vw: {
+                    min: 0,
+                    max: 100,
+                },
+            },
+        },
+        background_video_link: {
+            name: 'background_video_link',
+            tab: 'style',
+            section: 'section_style',
+            type: 'text',
+            condition: {
+                background_background: [
+                    'video',
+                ],
+            },
+        },
+        background_video_start: {
+            name: 'background_video_start',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                background_background: [
+                    'video',
+                ],
+            },
+        },
+        background_video_end: {
+            name: 'background_video_end',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                background_background: [
+                    'video',
+                ],
+            },
+        },
+        background_play_once: {
+            name: 'background_play_once',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                background_background: [
+                    'video',
+                ],
+            },
+        },
+        background_privacy_mode: {
+            name: 'background_privacy_mode',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                background_background: [
+                    'video',
+                ],
+            },
+        },
+        background_video_fallback: {
+            name: 'background_video_fallback',
+            tab: 'style',
+            section: 'section_style',
+            type: 'media',
+            condition: {
+                background_background: [
+                    'video',
+                ],
+            },
+        },
+        background_slideshow_gallery: {
+            name: 'background_slideshow_gallery',
+            tab: 'style',
+            section: 'section_style',
+            type: 'gallery',
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_loop: {
+            name: 'background_slideshow_loop',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_slide_duration: {
+            name: 'background_slideshow_slide_duration',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_slide_transition: {
+            name: 'background_slideshow_slide_transition',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                fade: 'Fade',
+                slide_right: 'Slide Right',
+                slide_left: 'Slide Left',
+                slide_up: 'Slide Up',
+                slide_down: 'Slide Down',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_transition_duration: {
+            name: 'background_slideshow_transition_duration',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_background_size: {
+            name: 'background_slideshow_background_size',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_background_size_widescreen: {
+            name: 'background_slideshow_background_size_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_background_size_tablet_extra: {
+            name: 'background_slideshow_background_size_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_background_position: {
+            name: 'background_slideshow_background_position',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_background_position_widescreen: {
+            name: 'background_slideshow_background_position_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_background_position_tablet_extra: {
+            name: 'background_slideshow_background_position_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_lazyload: {
+            name: 'background_slideshow_lazyload',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_ken_burns: {
+            name: 'background_slideshow_ken_burns',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        background_slideshow_ken_burns_zoom_direction: {
+            name: 'background_slideshow_ken_burns_zoom_direction',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                in: 'In',
+                out: 'Out',
+            },
+            condition: {
+                background_background: [
+                    'slideshow',
+                ],
+                'background_slideshow_ken_burns!': '',
+            },
+        },
+        tab_button_hover: {
+            name: 'tab_button_hover',
+            tab: 'style',
+            section: 'section_style',
+            type: 'tab',
+            condition: [],
+        },
+        hover_color: {
+            name: 'hover_color',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            condition: [],
+        },
+        button_background_hover_background: {
+            name: 'button_background_hover_background',
+            tab: 'style',
+            section: 'section_style',
+            type: 'choose',
+            render_type: 'ui',
+            options: {
+                classic: {
+                    title: 'Classic',
+                    icon: 'eicon-paint-brush',
+                },
+                gradient: {
+                    title: 'Gradient',
+                    icon: 'eicon-barcode',
+                },
+            },
+        },
+        button_background_hover_color: {
+            name: 'button_background_hover_color',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                    'gradient',
+                ],
+            },
+        },
+        button_background_hover_color_stop: {
+            name: 'button_background_hover_color_stop',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            render_type: 'ui',
+            condition: {
+                button_background_hover_background: [
+                    'gradient',
+                ],
+            },
+            size_units: [
+                '%',
+            ],
+        },
+        button_background_hover_color_b: {
+            name: 'button_background_hover_color_b',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            render_type: 'ui',
+            condition: {
+                button_background_hover_background: [
+                    'gradient',
+                ],
+            },
+        },
+        button_background_hover_color_b_stop: {
+            name: 'button_background_hover_color_b_stop',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            render_type: 'ui',
+            condition: {
+                button_background_hover_background: [
+                    'gradient',
+                ],
+            },
+            size_units: [
+                '%',
+            ],
+        },
+        button_background_hover_gradient_type: {
+            name: 'button_background_hover_gradient_type',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            render_type: 'ui',
+            options: {
+                linear: 'Linear',
+                radial: 'Radial',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'gradient',
+                ],
+            },
+        },
+        button_background_hover_gradient_angle: {
+            name: 'button_background_hover_gradient_angle',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'gradient',
+                ],
+                button_background_hover_gradient_type: 'linear',
+            },
+            size_units: [
+                'deg',
+            ],
+            range: {
+                deg: {
+                    step: 10,
+                },
+            },
+        },
+        button_background_hover_gradient_position: {
+            name: 'button_background_hover_gradient_position',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'gradient',
+                ],
+                button_background_hover_gradient_type: 'radial',
+            },
+        },
+        button_background_hover_position: {
+            name: 'button_background_hover_position',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+                initial: 'Custom',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_position_widescreen: {
+            name: 'button_background_hover_position_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+                initial: 'Custom',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_position_tablet_extra: {
+            name: 'button_background_hover_position_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+                initial: 'Custom',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_xpos: {
+            name: 'button_background_hover_xpos',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_position: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vw: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_xpos_widescreen: {
+            name: 'button_background_hover_xpos_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_position: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vw: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_xpos_tablet_extra: {
+            name: 'button_background_hover_xpos_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_position: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vw: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_ypos: {
+            name: 'button_background_hover_ypos',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_position: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vh',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vh: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_ypos_widescreen: {
+            name: 'button_background_hover_ypos_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_position: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vh',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vh: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_ypos_tablet_extra: {
+            name: 'button_background_hover_ypos_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_position: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vh',
+            ],
+            range: {
+                px: {
+                    min: -800,
+                    max: 800,
+                },
+                em: {
+                    min: -100,
+                    max: 100,
+                },
+                '%': {
+                    min: -100,
+                    max: 100,
+                },
+                vh: {
+                    min: -100,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_attachment: {
+            name: 'button_background_hover_attachment',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                scroll: 'Scroll',
+                fixed: 'Fixed',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_attachment_alert: {
+            name: 'button_background_hover_attachment_alert',
+            tab: 'style',
+            section: 'section_style',
+            type: 'raw_html',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+                button_background_hover_attachment: 'fixed',
+            },
+        },
+        button_background_hover_repeat: {
+            name: 'button_background_hover_repeat',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'no-repeat': 'No-repeat',
+                repeat: 'Repeat',
+                'repeat-x': 'Repeat-x',
+                'repeat-y': 'Repeat-y',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_repeat_widescreen: {
+            name: 'button_background_hover_repeat_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'no-repeat': 'No-repeat',
+                repeat: 'Repeat',
+                'repeat-x': 'Repeat-x',
+                'repeat-y': 'Repeat-y',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_repeat_tablet_extra: {
+            name: 'button_background_hover_repeat_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'no-repeat': 'No-repeat',
+                repeat: 'Repeat',
+                'repeat-x': 'Repeat-x',
+                'repeat-y': 'Repeat-y',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_size: {
+            name: 'button_background_hover_size',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+                initial: 'Custom',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_size_widescreen: {
+            name: 'button_background_hover_size_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+                initial: 'Custom',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_size_tablet_extra: {
+            name: 'button_background_hover_size_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+                initial: 'Custom',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+        },
+        button_background_hover_bg_width: {
+            name: 'button_background_hover_bg_width',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_size: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 0,
+                    max: 1000,
+                },
+                '%': {
+                    min: 0,
+                    max: 100,
+                },
+                vw: {
+                    min: 0,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_bg_width_widescreen: {
+            name: 'button_background_hover_bg_width_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_size: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 0,
+                    max: 1000,
+                },
+                '%': {
+                    min: 0,
+                    max: 100,
+                },
+                vw: {
+                    min: 0,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_bg_width_tablet_extra: {
+            name: 'button_background_hover_bg_width_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'slider',
+            condition: {
+                button_background_hover_background: [
+                    'classic',
+                ],
+                button_background_hover_size: [
+                    'initial',
+                ],
+                'button_background_hover_image[url]!': '',
+            },
+            size_units: [
+                'px',
+                'em',
+                '%',
+                'vw',
+            ],
+            range: {
+                px: {
+                    min: 0,
+                    max: 1000,
+                },
+                '%': {
+                    min: 0,
+                    max: 100,
+                },
+                vw: {
+                    min: 0,
+                    max: 100,
+                },
+            },
+        },
+        button_background_hover_video_link: {
+            name: 'button_background_hover_video_link',
+            tab: 'style',
+            section: 'section_style',
+            type: 'text',
+            condition: {
+                button_background_hover_background: [
+                    'video',
+                ],
+            },
+        },
+        button_background_hover_video_start: {
+            name: 'button_background_hover_video_start',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                button_background_hover_background: [
+                    'video',
+                ],
+            },
+        },
+        button_background_hover_video_end: {
+            name: 'button_background_hover_video_end',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                button_background_hover_background: [
+                    'video',
+                ],
+            },
+        },
+        button_background_hover_play_once: {
+            name: 'button_background_hover_play_once',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                button_background_hover_background: [
+                    'video',
+                ],
+            },
+        },
+        button_background_hover_privacy_mode: {
+            name: 'button_background_hover_privacy_mode',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                button_background_hover_background: [
+                    'video',
+                ],
+            },
+        },
+        button_background_hover_video_fallback: {
+            name: 'button_background_hover_video_fallback',
+            tab: 'style',
+            section: 'section_style',
+            type: 'media',
+            condition: {
+                button_background_hover_background: [
+                    'video',
+                ],
+            },
+        },
+        button_background_hover_slideshow_gallery: {
+            name: 'button_background_hover_slideshow_gallery',
+            tab: 'style',
+            section: 'section_style',
+            type: 'gallery',
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_loop: {
+            name: 'button_background_hover_slideshow_loop',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_slide_duration: {
+            name: 'button_background_hover_slideshow_slide_duration',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_slide_transition: {
+            name: 'button_background_hover_slideshow_slide_transition',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                fade: 'Fade',
+                slide_right: 'Slide Right',
+                slide_left: 'Slide Left',
+                slide_up: 'Slide Up',
+                slide_down: 'Slide Down',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_transition_duration: {
+            name: 'button_background_hover_slideshow_transition_duration',
+            tab: 'style',
+            section: 'section_style',
+            type: 'number',
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_background_size: {
+            name: 'button_background_hover_slideshow_background_size',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_background_size_widescreen: {
+            name: 'button_background_hover_slideshow_background_size_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_background_size_tablet_extra: {
+            name: 'button_background_hover_slideshow_background_size_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                auto: 'Auto',
+                cover: 'Cover',
+                contain: 'Contain',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_background_position: {
+            name: 'button_background_hover_slideshow_background_position',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_background_position_widescreen: {
+            name: 'button_background_hover_slideshow_background_position_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_background_position_tablet_extra: {
+            name: 'button_background_hover_slideshow_background_position_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'Default',
+                'center center': 'Center Center',
+                'center left': 'Center Left',
+                'center right': 'Center Right',
+                'top center': 'Top Center',
+                'top left': 'Top Left',
+                'top right': 'Top Right',
+                'bottom center': 'Bottom Center',
+                'bottom left': 'Bottom Left',
+                'bottom right': 'Bottom Right',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_lazyload: {
+            name: 'button_background_hover_slideshow_lazyload',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_ken_burns: {
+            name: 'button_background_hover_slideshow_ken_burns',
+            tab: 'style',
+            section: 'section_style',
+            type: 'switcher',
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+            },
+        },
+        button_background_hover_slideshow_ken_burns_zoom_direction: {
+            name: 'button_background_hover_slideshow_ken_burns_zoom_direction',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                in: 'In',
+                out: 'Out',
+            },
+            condition: {
+                button_background_hover_background: [
+                    'slideshow',
+                ],
+                'button_background_hover_slideshow_ken_burns!': '',
+            },
+        },
+        button_hover_border_color: {
+            name: 'button_hover_border_color',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            condition: [],
+        },
+        hover_animation: {
+            name: 'hover_animation',
+            tab: 'style',
+            section: 'section_style',
+            type: 'hover_animation',
+            condition: [],
+        },
+        border_border: {
+            name: 'border_border',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            options: {
+                '': 'None',
+                solid: 'Solid',
+                double: 'Double',
+                dotted: 'Dotted',
+                dashed: 'Dashed',
+                groove: 'Groove',
+            },
+        },
+        border_width: {
+            name: 'border_width',
+            tab: 'style',
+            section: 'section_style',
+            type: 'dimensions',
+            condition: {
+                'border_border!': '',
+            },
+        },
+        border_width_widescreen: {
+            name: 'border_width_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'dimensions',
+            condition: {
+                'border_border!': '',
+            },
+        },
+        border_width_tablet_extra: {
+            name: 'border_width_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'dimensions',
+            condition: {
+                'border_border!': '',
+            },
+        },
+        border_color: {
+            name: 'border_color',
+            tab: 'style',
+            section: 'section_style',
+            type: 'color',
+            condition: {
+                'border_border!': '',
+            },
+        },
+        border_radius: {
+            name: 'border_radius',
+            tab: 'style',
+            section: 'section_style',
+            type: 'dimensions',
+            condition: [],
+            size_units: [
+                'px',
+                '%',
+                'em',
+            ],
+        },
+        button_box_shadow_box_shadow_type: {
+            name: 'button_box_shadow_box_shadow_type',
+            tab: 'style',
+            section: 'section_style',
+            type: 'popover_toggle',
+            render_type: 'ui',
+        },
+        button_box_shadow_box_shadow: {
+            name: 'button_box_shadow_box_shadow',
+            tab: 'style',
+            section: 'section_style',
+            type: 'box_shadow',
+            popover: true,
+            condition: {
+                'button_box_shadow_box_shadow_type!': '',
+            },
+        },
+        button_box_shadow_box_shadow_position: {
+            name: 'button_box_shadow_box_shadow_position',
+            tab: 'style',
+            section: 'section_style',
+            type: 'select',
+            render_type: 'ui',
+            options: {
+                ' ': 'Outline',
+                inset: 'Inset',
+            },
+            popover: true,
+            condition: {
+                'button_box_shadow_box_shadow_type!': '',
+            },
+        },
+        text_padding: {
+            name: 'text_padding',
+            tab: 'style',
+            section: 'section_style',
+            type: 'dimensions',
+            condition: [],
+            size_units: [
+                'px',
+                'em',
+                '%',
+            ],
+        },
+        text_padding_widescreen: {
+            name: 'text_padding_widescreen',
+            tab: 'style',
+            section: 'section_style',
+            type: 'dimensions',
+            condition: [],
+            size_units: [
+                'px',
+                'em',
+                '%',
+            ],
+        },
+        text_padding_tablet_extra: {
+            name: 'text_padding_tablet_extra',
+            tab: 'style',
+            section: 'section_style',
+            type: 'dimensions',
+            condition: [],
+            size_units: [
+                'px',
+                'em',
+                '%',
+            ],
+        },
+    },
+},
 };
