@@ -16,36 +16,6 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await expect( emptyViewPlaceholder ).toHaveCount( 1 );
 	} );
 
-	test( 'Check if the empty placeholder is displayed inside the Portfolio widget', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
-
-		// Act.
-		await editor.addWidget( 'portfolio' );
-		await page.click( '.elementor-control-section_query' );
-		await page.selectOption( '.elementor-group-control-related-query >> select', 'by_id' );
-
-		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-portfolio .elementor-widget-empty-icon' );
-
-		// Assert.
-		await expect( emptyViewPlaceholder ).toHaveCount( 1 );
-	} );
-
-	test( 'Check if the empty placeholder is displayed inside the Nav Menu widget', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
-
-		// Act.
-		await editor.addWidget( 'nav-menu' );
-
-		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-nav-menu .elementor-widget-empty-icon' );
-
-		// Assert.
-		await expect( emptyViewPlaceholder ).toHaveCount( 1 );
-	} );
-
 	test( 'Check if the empty placeholder is displayed inside the Sidebar widget', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
@@ -88,22 +58,6 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await editor.addWidget( 'image-gallery' );
 
 		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
-
-		// Assert.
-		await expect( emptyViewPlaceholder ).toHaveCount( 1 );
-	} );
-
-	test( 'Check if the empty placeholder is displayed inside the Posts widget', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
-
-		// Act.
-		await editor.addWidget( 'posts' );
-		await page.click( '.elementor-control-section_query' );
-		await page.selectOption( '.elementor-group-control-related-query >> select', 'by_id' );
-
-		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-posts .elementor-widget-empty-icon' );
 
 		// Assert.
 		await expect( emptyViewPlaceholder ).toHaveCount( 1 );
