@@ -126,7 +126,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 			};
 		}
 
-		copiedContainer = $e.run( 'document/elements/create', {
+		const copiedContainer1 = $e.run( 'document/elements/create', {
 			container: source,
 			target: targetContainer,
 			model: sourceModel,
