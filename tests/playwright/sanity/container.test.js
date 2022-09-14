@@ -67,13 +67,8 @@ test.describe( 'Container tests', () => {
 			// toggle = await editor.addWidget( 'toggle', container ),
 			// video = await editor.addWidget( 'video', container );
 
-		// Assert.
-		// expect( await accordion.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70,
-		// } ) ).toMatchSnapshot( [ widgetType, 'accordion-row.jpeg' ] );
-
-		expect( await editor.getPreviewFrame().locator( '.elementor-widget-accordion' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-row.jpeg' );
+		// Assert
+		expect( await editor.getPreviewFrame().locator( '.elementor-accordion' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-row.jpeg' );
 
 		await wpAdmin.setExperiments( {
 			container: false,
