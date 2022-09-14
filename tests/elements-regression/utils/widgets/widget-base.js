@@ -22,7 +22,6 @@ class WidgetBase {
 	 * @type {{
 	 * 	widgetType: string,
 	 * 	controls: Object<string, Object>,
-	 * 	controlsTestConfig: import('../../assets/types/controls-test-config').ControlConfig,
 	 * }}
 	 */
 	config = null;
@@ -51,6 +50,15 @@ class WidgetBase {
 	}
 
 	/**
+	 * Exclude specific controls
+	 *
+	 * @return {string[]}
+	 */
+	getExcludedControls() {
+		return [];
+	}
+
+	/**
 	 * Create a widget instance.
 	 *
 	 * @return {Promise<string>}
@@ -64,14 +72,14 @@ class WidgetBase {
 	/**
 	 * Get the widget's locator in the page.
 	 *
-	 * @return {Promise<import('@playwright/test').Locator>}
+	 * @return {import('@playwright/test').Locator}
 	 */
 	async getElement() {
 		if ( ! this.id ) {
 			await this.create();
 		}
 
-		return await this.editor.getPreviewFrame().locator( `.elementor-element-${ this.id }` );
+		return this.editor.getPreviewFrame().locator( `.elementor-element-${ this.id }` );
 	}
 
 	/**
@@ -128,9 +136,10 @@ class WidgetBase {
 
 			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
 			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
-			const isSectionConditional = ( controlSection.condition || controlSection.conditions );
+			const isSectionConditional = ( controlSection?.condition || controlSection?.conditions );
+			const isControlExcluded = this.getExcludedControls().includes( controlConfig.name );
 
-			if ( isWidgetConditional || isSectionConditional ) {
+			if ( isWidgetConditional || isSectionConditional || isControlExcluded ) {
 				continue;
 			}
 
@@ -159,92 +168,66 @@ class WidgetBase {
 
 		await this.beforeControlTest( { control, controlId } );
 
-		await control.test( async ( currentControlValue ) => {
+		const initialValue = await control.getValue();
+
+		for ( const value of await control.getTestValues( initialValue ) ) {
 			// TODO: Find a better way to show debug information.
 			//  We must have this info because Playwright doesn't give any useful errors.
 			// eslint-disable-next-line no-console
-			console.log( { widget: this.config.widgetType, control: controlId, value: currentControlValue } );
+			console.log( { widget: this.config.widgetType, control: controlId, value } );
 
-			await this.beforeControlAssertions( { control, controlId, currentControlValue } );
+			await control.setValue( value );
 
-			await assertionsCallback( controlId, currentControlValue );
+			await this.waitAfterSettingValue( control );
 
-			await this.afterControlAssertions( { control, controlId, currentControlValue } );
-		} );
+			await assertionsCallback( controlId, control.generateSnapshotLabel( value ) );
+		}
 
 		await this.afterControlTest( { control, controlId } );
 
 		await control.teardown();
+
+		await this.resetSettings();
+
+		await this.waitAfterSettingValue( control );
 	}
 
-	/**
-	 * @param {Object}                                         args
-	 * @param {import('../controls/control-base').ControlBase} args.control
-	 * @param {string}                                         args.controlId
-	 *
-	 * @protected
-	 *
-	 * @return {Promise<void>}
-	 */
-	async beforeControlTest( { control, controlId } ) { // eslint-disable-line no-unused-vars
-		const { timeoutBeforeTest = 0 } = this.config.controlsTestConfig[ controlId ] || {};
-
-		if ( timeoutBeforeTest ) {
-			await this.editor.page.waitForTimeout( timeoutBeforeTest );
-		}
-	}
-
-	/**
-	 * @param {Object}                                         args
-	 * @param {import('../controls/control-base').ControlBase} args.control
-	 * @param {string}                                         args.controlId
-	 *
-	 * @protected
-	 *
-	 * @return {Promise<void>}
-	 */
 	async afterControlTest( { control, controlId } ) { // eslint-disable-line no-unused-vars
-		const { timeoutAfterTest = 0 } = this.config.controlsTestConfig[ controlId ] || {};
+		// Run before testing the control
+	}
 
-		if ( timeoutAfterTest ) {
-			await this.editor.page.waitForTimeout( timeoutAfterTest );
-		}
+	async beforeControlTest( { control, controlId } ) { // eslint-disable-line no-unused-vars
+		// Run after testing the control
 	}
 
 	/**
-	 * @param {Object}                                         args
-	 * @param {import('../controls/control-base').ControlBase} args.control
-	 * @param {string}                                         args.controlId
-	 * @param {any}                                            args.currentControlValue
-	 *
-	 * @protected
-	 *
 	 * @return {Promise<void>}
 	 */
-	async beforeControlAssertions( { control, controlId, currentControlValue } ) { // eslint-disable-line no-unused-vars
-		const { timeoutBeforeAssertions = 0 } = this.config.controlsTestConfig[ controlId ] || {};
+	async resetSettings() {
+		await this.editor.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/reset-settings', {
+				container: window.elementor.getContainer( id ),
+				options: {
+					external: true,
+				},
+			} );
+		}, { id: this.id } );
+	}
 
-		if ( timeoutBeforeAssertions ) {
-			await this.editor.page.waitForTimeout( timeoutBeforeAssertions );
+	async waitAfterSettingValue( control ) {
+		if ( control.isForcingServerRender() ) {
+			await this.waitForServerRendered();
 		}
+
+		await this.editor.page.waitForTimeout( 300 );
 	}
 
 	/**
-	 * @param {Object}                                         args
-	 * @param {import('../controls/control-base').ControlBase} args.control
-	 * @param {string}                                         args.controlId
-	 * @param {any}                                            args.currentControlValue
-	 *
-	 * @protected
-	 *
 	 * @return {Promise<void>}
 	 */
-	async afterControlAssertions( { control, controlId, currentControlValue } ) { // eslint-disable-line no-unused-vars
-		const { timeoutAfterAssertions = 0 } = this.config.controlsTestConfig[ controlId ] || {};
-
-		if ( timeoutAfterAssertions ) {
-			await this.editor.page.waitForTimeout( timeoutAfterAssertions );
-		}
+	async waitForServerRendered() {
+		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading` );
+		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading`, { state: 'detached' } );
 	}
 }
 

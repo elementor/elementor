@@ -170,18 +170,16 @@
 			border-bottom: 1px solid $editor-background;
 			font-weight: 500;
 
-			i {
-				color: $editor-light;
-			}
-
 			.eicon-pro-icon {
 				flex-grow: 1;
 				@include margin-start(10px);
 				font-size: 14px;
+				color: $editor-accent;
 			}
 
 			.eicon-close {
 				cursor: pointer;
+				color: $editor-light;
 			}
 		}
 
@@ -194,8 +192,7 @@
 		}
 
 		&-button {
-			width: 100%;
-			padding: 6.5px;
+			padding: 7px 25px;
 			font-size: 12px;
 
 			&::-moz-focus-inner {

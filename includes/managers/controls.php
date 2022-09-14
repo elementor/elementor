@@ -730,6 +730,20 @@ class Controls_Manager {
 	}
 
 	/**
+	 * Remove existing stack from the stacks cache
+	 *
+	 * Removes the stack of a passed instance from the Controls Manager's stacks cache.
+	 *
+	 * @param Controls_Stack $controls_stack
+	 * @return void
+	 */
+	public function delete_stack( Controls_Stack $controls_stack ) {
+		$stack_id = $controls_stack->get_unique_name();
+
+		unset( $this->stacks[ $stack_id ] );
+	}
+
+	/**
 	 * Add control to stack.
 	 *
 	 * This method adds a new control to the stack.
