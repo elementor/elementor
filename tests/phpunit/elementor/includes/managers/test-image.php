@@ -30,31 +30,38 @@ class Test_Image extends Elementor_Test_Base {
 		return $attachment_id;
 	}
 
+	public function delete_image( $attachment_id ) {
+		wp_delete_attachment( $attachment_id, true );
+	}
+
 	public function test_get_details__adds_metadata() {
 		// Arrange
 		$attachment_id = $this->create_image();
 
 		// Act
-		( new Images_Manager() )->get_details( $attachment_id, 'custom_100x100', false );
+		( new Images_Manager() )->get_details( $attachment_id, 'custom_100x', false );
 
 		// Assert
 		$new_metadata = wp_get_attachment_metadata( $attachment_id );
 
 		$this->assertTrue( is_array( $new_metadata['sizes'] ) );
 
-		$this->assertEquals( [
-				'file' => 'test-image.png',
-				'width' => '300',
-				'height' => '300',
-				'mime-type' => 'image/png',
+		$this->assertSame( [
+			'file' => 'test-image.png',
+			'width' => 300,
+			'height' => 300,
+			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['test_size'] );
 
-		$this->assertEquals( [
-				'file' => 'elementor/thumbs/mock-image.png',
-				'width' => '100',
-				'height' => '100',
-				'mime-type' => 'image/png',
-		], $new_metadata['sizes']['elementor_custom_100x100'] );
+		$this->assertSame( [
+			'file' => 'elementor/thumbs/mock-image.png',
+			'width' => 100,
+			'height' => 0,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_100x'] );
+
+		// Cleanup
+		$this->delete_image( $attachment_id );
 	}
 
 	public function test_delete_custom_images() {
@@ -94,5 +101,6 @@ class Test_Image extends Elementor_Test_Base {
 
 		// Cleanup
 		unlink( $base_full_path );
+		$this->delete_image( $attachment_id );
 	}
 }
