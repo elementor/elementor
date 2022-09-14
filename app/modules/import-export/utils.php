@@ -40,7 +40,7 @@ class Utils {
 		return $result;
 	}
 
-	public static function map_old_new_terms_ids( array $imported_data ) {
+	public static function map_old_new_term_ids( array $imported_data ) {
 		$result = [];
 
 		if ( ! isset( $imported_data['taxonomies'] ) ) {

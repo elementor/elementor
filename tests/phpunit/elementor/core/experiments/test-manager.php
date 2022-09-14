@@ -117,7 +117,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->add_test_feature( [
 			'name' => 'hidden-dependency',
 			'state' => Experiments_Manager::STATE_ACTIVE,
-			'hidden'=> true,
+			'hidden' => true,
 		] );
 
 		// Expect.
@@ -376,5 +376,25 @@ class Test_Manager extends Elementor_Test_Base {
 		}
 
 		return $this->experiments->add_feature( $test_feature_data );
+	}
+
+	public function test_on_state_change_callback() {
+		$test_feature_data = [
+			'name' => 'test_feature_callback',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'on_state_change' => function( $old_state, $new_state ) {
+				// Assert.
+				$this->assertEquals( Experiments_Manager::STATE_INACTIVE, $new_state );
+			},
+		];
+
+		$this->add_test_feature( $test_feature_data );
+
+		// Act.
+		update_option(
+			$this->experiments->get_feature_option_key( $test_feature_data['name'] ),
+			Experiments_Manager::STATE_INACTIVE
+		);
+
 	}
 }

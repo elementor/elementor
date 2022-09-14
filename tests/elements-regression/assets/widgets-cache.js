@@ -984,4 +984,722 @@ module.exports = {
 			},
 		},
 	},
+	divider: {
+		controls: {
+			section_divider: {
+				name: 'section_divider',
+				tab: 'content',
+				type: 'section',
+			},
+			style: {
+				name: 'style',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'select',
+				render_type: 'template',
+				groups: [
+					{
+						label: 'Line',
+						options: {
+							solid: 'Solid',
+							double: 'Double',
+							dotted: 'Dotted',
+							dashed: 'Dashed',
+							curly: 'Curly',
+							curved: 'Curved',
+							slashes: 'Slashes',
+							squared: 'Squared',
+							wavy: 'Wavy',
+							zigzag: 'Zigzag',
+						},
+					},
+					{
+						label: 'Pattern',
+						options: {
+							multiple: 'Multiple',
+							arrows: 'Arrows',
+							pluses: 'Pluses',
+							rhombus: 'Rhombus',
+							parallelogram: 'Parallelogram',
+							rectangles: 'Rectangles',
+						},
+					},
+					{
+						label: 'Tribal',
+						options: {
+							dots_tribal: 'Dots',
+							trees_2_tribal: 'Fir Tree',
+							rounds_tribal: 'Half Rounds',
+							leaves_tribal: 'Leaves',
+							stripes_tribal: 'Stripes',
+							squares_tribal: 'Squares',
+							trees_tribal: 'Trees',
+							planes_tribal: 'Tribal',
+							x_tribal: 'X',
+							zigzag_tribal: 'Zigzag',
+						},
+					},
+				],
+			},
+			separator_type: {
+				name: 'separator_type',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'hidden',
+				render_type: 'template',
+				condition: {
+					'style!': [
+						'',
+						'solid',
+						'double',
+						'dotted',
+						'dashed',
+					],
+				},
+			},
+			pattern_spacing_flag: {
+				name: 'pattern_spacing_flag',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'hidden',
+				render_type: 'template',
+				condition: {
+					style: [
+						'multiple',
+						'dots_tribal',
+						'trees_2_tribal',
+						'rounds_tribal',
+						'leaves_tribal',
+						'stripes_tribal',
+						'squares_tribal',
+						'trees_tribal',
+						'planes_tribal',
+						'x_tribal',
+						'zigzag_tribal',
+					],
+				},
+			},
+			pattern_round_flag: {
+				name: 'pattern_round_flag',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'hidden',
+				condition: {
+					style: [
+						'arrows',
+						'rectangles',
+					],
+				},
+			},
+			width: {
+				name: 'width',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'slider',
+				size_units: [
+					'%',
+					'px',
+				],
+				range: {
+					px: {
+						max: 1000,
+					},
+				},
+			},
+			align: {
+				name: 'align',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'choose',
+				options: {
+					left: {
+						title: 'Left',
+						icon: 'eicon-text-align-left',
+					},
+					center: {
+						title: 'Center',
+						icon: 'eicon-text-align-center',
+					},
+					right: {
+						title: 'Right',
+						icon: 'eicon-text-align-right',
+					},
+				},
+			},
+			look: {
+				name: 'look',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'choose',
+				render_type: 'template',
+				options: {
+					line: {
+						title: 'None',
+						icon: 'eicon-ban',
+					},
+					line_text: {
+						title: 'Text',
+						icon: 'eicon-t-letter-bold',
+					},
+					line_icon: {
+						title: 'Icon',
+						icon: 'eicon-star',
+					},
+				},
+			},
+			view: {
+				name: 'view',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'hidden',
+			},
+			text: {
+				name: 'text',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'text',
+				condition: {
+					look: 'line_text',
+				},
+			},
+			html_tag: {
+				name: 'html_tag',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'select',
+				options: {
+					h1: 'H1',
+					h2: 'H2',
+					h3: 'H3',
+					h4: 'H4',
+					h5: 'H5',
+					h6: 'H6',
+					div: 'div',
+					span: 'span',
+					p: 'p',
+				},
+				condition: {
+					look: 'line_text',
+				},
+			},
+			icon: {
+				name: 'icon',
+				tab: 'content',
+				section: 'section_divider',
+				type: 'icons',
+				condition: {
+					look: 'line_icon',
+				},
+			},
+			section_divider_style: {
+				name: 'section_divider_style',
+				tab: 'style',
+				type: 'section',
+				condition: {
+					'style!': 'none',
+				},
+			},
+			color: {
+				name: 'color',
+				tab: 'style',
+				section: 'section_divider_style',
+				type: 'color',
+				render_type: 'template',
+				condition: {
+					'style!': 'none',
+				},
+			},
+			weight: {
+				name: 'weight',
+				tab: 'style',
+				section: 'section_divider_style',
+				type: 'slider',
+				render_type: 'template',
+				condition: {
+					'style!': 'none',
+					style: [
+						'solid',
+						'double',
+						'dotted',
+						'dashed',
+						'curly',
+						'curved',
+						'slashes',
+						'squared',
+						'wavy',
+						'zigzag',
+					],
+				},
+				range: {
+					px: {
+						min: 1,
+						max: 10,
+						step: 0.1,
+					},
+				},
+			},
+			pattern_height: {
+				name: 'pattern_height',
+				tab: 'style',
+				section: 'section_divider_style',
+				type: 'slider',
+				condition: {
+					'style!': [
+						'',
+						'solid',
+						'double',
+						'dotted',
+						'dashed',
+					],
+				},
+				range: {
+					px: {
+						step: 0.1,
+					},
+				},
+			},
+			pattern_size: {
+				name: 'pattern_size',
+				tab: 'style',
+				section: 'section_divider_style',
+				type: 'slider',
+				condition: {
+					'style!': [
+						'multiple',
+						'dots_tribal',
+						'trees_2_tribal',
+						'rounds_tribal',
+						'leaves_tribal',
+						'stripes_tribal',
+						'squares_tribal',
+						'trees_tribal',
+						'planes_tribal',
+						'x_tribal',
+						'zigzag_tribal',
+						'',
+						'solid',
+						'double',
+						'dotted',
+						'dashed',
+					],
+				},
+				size_units: [
+					'%',
+					'px',
+				],
+				range: {
+					px: {
+						step: 0.1,
+					},
+					'%': {
+						step: 0.01,
+					},
+				},
+			},
+			gap: {
+				name: 'gap',
+				tab: 'style',
+				section: 'section_divider_style',
+				type: 'slider',
+				condition: {
+					'style!': 'none',
+				},
+				range: {
+					px: {
+						min: 2,
+						max: 50,
+					},
+				},
+			},
+			section_text_style: {
+				name: 'section_text_style',
+				tab: 'style',
+				type: 'section',
+				condition: {
+					look: 'line_text',
+				},
+			},
+			text_color: {
+				name: 'text_color',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'color',
+				condition: {
+					look: 'line_text',
+				},
+			},
+			typography_typography: {
+				name: 'typography_typography',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'popover_toggle',
+				render_type: 'ui',
+				condition: {
+					look: 'line_text',
+				},
+			},
+			typography_font_family: {
+				name: 'typography_font_family',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'font',
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+			},
+			typography_font_size: {
+				name: 'typography_font_size',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'slider',
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+					'rem',
+					'vw',
+				],
+				range: {
+					px: {
+						min: 1,
+						max: 200,
+					},
+					vw: {
+						min: 0.1,
+						max: 10,
+						step: 0.1,
+					},
+				},
+			},
+			typography_font_weight: {
+				name: 'typography_font_weight',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'select',
+				options: {
+					100: '100',
+					200: '200',
+					300: '300',
+					400: '400',
+					500: '500',
+					600: '600',
+					700: '700',
+					800: '800',
+					900: '900',
+					'': 'Default',
+					normal: 'Normal',
+					bold: 'Bold',
+				},
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+			},
+			typography_text_transform: {
+				name: 'typography_text_transform',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'select',
+				options: {
+					'': 'Default',
+					uppercase: 'Uppercase',
+					lowercase: 'Lowercase',
+					capitalize: 'Capitalize',
+					none: 'Normal',
+				},
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+			},
+			typography_font_style: {
+				name: 'typography_font_style',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'select',
+				options: {
+					'': 'Default',
+					normal: 'Normal',
+					italic: 'Italic',
+					oblique: 'Oblique',
+				},
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+			},
+			typography_text_decoration: {
+				name: 'typography_text_decoration',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'select',
+				options: {
+					'': 'Default',
+					underline: 'Underline',
+					overline: 'Overline',
+					'line-through': 'Line Through',
+					none: 'None',
+				},
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+			},
+			typography_line_height: {
+				name: 'typography_line_height',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'slider',
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						min: 1,
+					},
+				},
+			},
+			typography_letter_spacing: {
+				name: 'typography_letter_spacing',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'slider',
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+				range: {
+					px: {
+						min: -5,
+						max: 10,
+						step: 0.1,
+					},
+				},
+			},
+			typography_word_spacing: {
+				name: 'typography_word_spacing',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'slider',
+				popover: true,
+				condition: {
+					look: 'line_text',
+					'typography_typography!': '',
+				},
+				size_units: [
+					'px',
+					'em',
+				],
+				range: {
+					px: {
+						step: 1,
+					},
+					em: {
+						step: 0.1,
+					},
+				},
+			},
+			text_align: {
+				name: 'text_align',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'choose',
+				options: {
+					left: {
+						title: 'Left',
+						icon: 'eicon-h-align-left',
+					},
+					center: {
+						title: 'Center',
+						icon: 'eicon-h-align-center',
+					},
+					right: {
+						title: 'Right',
+						icon: 'eicon-h-align-right',
+					},
+				},
+				condition: {
+					look: 'line_text',
+				},
+			},
+			text_spacing: {
+				name: 'text_spacing',
+				tab: 'style',
+				section: 'section_text_style',
+				type: 'slider',
+				condition: {
+					look: 'line_text',
+				},
+				range: {
+					px: {
+						min: 0,
+						max: 50,
+					},
+				},
+			},
+			section_icon_style: {
+				name: 'section_icon_style',
+				tab: 'style',
+				type: 'section',
+				condition: {
+					look: 'line_icon',
+				},
+			},
+			icon_view: {
+				name: 'icon_view',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'select',
+				options: {
+					default: 'Default',
+					stacked: 'Stacked',
+					framed: 'Framed',
+				},
+				condition: {
+					look: 'line_icon',
+				},
+			},
+			icon_size: {
+				name: 'icon_size',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'slider',
+				condition: {
+					look: 'line_icon',
+				},
+				range: {
+					px: {
+						min: 6,
+						max: 300,
+					},
+				},
+			},
+			icon_padding: {
+				name: 'icon_padding',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'slider',
+				condition: {
+					look: 'line_icon',
+					'icon_view!': 'default',
+				},
+				range: {
+					em: {
+						min: 0,
+						max: 5,
+					},
+				},
+			},
+			primary_color: {
+				name: 'primary_color',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'color',
+				condition: {
+					look: 'line_icon',
+				},
+			},
+			secondary_color: {
+				name: 'secondary_color',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'color',
+				condition: {
+					look: 'line_icon',
+					'icon_view!': 'default',
+				},
+			},
+			icon_align: {
+				name: 'icon_align',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'choose',
+				options: {
+					left: {
+						title: 'Left',
+						icon: 'eicon-h-align-left',
+					},
+					center: {
+						title: 'Center',
+						icon: 'eicon-h-align-center',
+					},
+					right: {
+						title: 'Right',
+						icon: 'eicon-h-align-right',
+					},
+				},
+				condition: {
+					look: 'line_icon',
+				},
+			},
+			icon_spacing: {
+				name: 'icon_spacing',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'slider',
+				condition: {
+					look: 'line_icon',
+				},
+				range: {
+					px: {
+						min: 0,
+						max: 50,
+					},
+				},
+			},
+			rotate: {
+				name: 'rotate',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'slider',
+				condition: {
+					look: 'line_icon',
+				},
+				size_units: [
+					'deg',
+				],
+			},
+			icon_border_width: {
+				name: 'icon_border_width',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'slider',
+				condition: {
+					look: 'line_icon',
+					icon_view: 'framed',
+				},
+			},
+			border_radius: {
+				name: 'border_radius',
+				tab: 'style',
+				section: 'section_icon_style',
+				type: 'slider',
+				condition: {
+					look: 'line_icon',
+					'icon_view!': 'default',
+				},
+				size_units: [
+					'px',
+					'%',
+				],
+			},
+		},
+	},
 };

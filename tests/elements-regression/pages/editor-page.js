@@ -24,6 +24,17 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * @return {Promise<void>}
+	 */
+	async ensureNoticeBarClosed() {
+		const noticeBarCloseButton = await this.page.$( '#e-notice-bar__close' );
+
+		if ( noticeBarCloseButton ) {
+			await noticeBarCloseButton.click();
+		}
+	}
+
+	/**
 	 * Add element to the page using a model.
 	 *
 	 * @param {Object} model     - Model definition.
@@ -47,5 +58,25 @@ module.exports = class EditorPage extends BasePage {
 
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
+	}
+
+	/**
+	 * @param {import('../utils/widgets/widget-base').WidgetBase} widget
+	 * @return {Promise<Buffer>}
+	 */
+	async screenshotWidget( widget ) {
+		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
+		const elementRect = await ( await widget.getElement() ).boundingBox();
+
+		return await this.page.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+			clip: {
+				x: elementRect.x,
+				y: elementRect.y,
+				width: Math.min( elementRect.width, frameRect.width ),
+				height: Math.min( elementRect.height, frameRect.height ),
+			},
+		} );
 	}
 };

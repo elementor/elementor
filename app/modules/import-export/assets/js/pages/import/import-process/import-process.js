@@ -139,7 +139,7 @@ export default function ImportProcess() {
 				if ( kitState.data?.manifest?.plugins || importContext.data.uploadedData?.manifest.plugins ) {
 					importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'have' } );
 				}
-				if ( uploadedData.conflicts && ! isResolvedData ) {
+				if ( uploadedData.conflicts && Object.keys( uploadedData.conflicts ).length && ! isResolvedData ) {
 					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.

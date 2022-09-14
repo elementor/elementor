@@ -91,8 +91,30 @@ class Settings_Site_Identity extends Tab_Base {
 					'id' => $custom_logo_id,
 					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
 				],
-				'description' => esc_html__( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
+				'description' => sprintf(
+					/* translators: 1: Width number pixel, 2: Height number pixel. */
+					esc_html__( 'Suggested image dimensions: %1$s × %2$s pixels.', 'elementor' ),
+					'350',
+					'100'
+				),
 				'export' => false,
+			]
+		);
+
+		$this->add_control(
+			'custom_logo_promotion',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => '<p>' . esc_html__( 'Add a logo to display on your website. Don\'t have one yet? Create a professional logo with Fiverr\'s logo maker.', 'elementor' ) .
+					'</p>' .
+					sprintf(
+						'<a target="_blank" class="elementor-button e-logo-maker" href="https://go.elementor.com/site-settings-logo-maker/">%s</a>',
+						esc_html__( 'Create a Logo in Minutes', 'elementor' )
+					),
+				'condition' => [
+					'site_logo[url]' => '',
+				],
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-success',
 			]
 		);
 

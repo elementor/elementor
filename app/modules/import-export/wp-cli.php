@@ -50,9 +50,13 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		try {
-			$exporter = new Export( $export_settings );
-
-			$result = $exporter->run();
+			/**
+			 * Running the export process through the import-export module so the export property in the module will be available to use.
+			 *
+			 * @type  Module $import_export_module
+			 */
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$result = $import_export_module->export_kit( $export_settings );
 
 			rename( $result['file_name'], $args[0] );
 		} catch ( \Error $error ) {
@@ -155,6 +159,10 @@ class Wp_Cli extends \WP_CLI_Command {
 			 */
 			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
 
+			if ( ! $import_export_module ) {
+				\WP_CLI::error( 'Import Export module is not available.' );
+			}
+
 			$import = $import_export_module->import_kit( $zip_path, $import_settings );
 
 			$manifest_data = $import_export_module->import->get_manifest();
@@ -185,6 +193,28 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::error( $error->getMessage() );
 		}
+	}
+
+	/**
+	 * Revert last imported kit.
+	 */
+	public function revert() {
+		\WP_CLI::line( 'Kit revert started.' );
+
+		try {
+			/**
+			 * Running the revert process through the import-export module so the revert property in the module will be available to use.
+			 *
+			 * @type  Module $import_export_module
+			 */
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module->revert_last_imported_kit();
+
+		} catch ( \Error $error ) {
+			\WP_CLI::error( $error->getMessage() );
+		}
+
+		\WP_CLI::success( 'Kit reverted successfully.' );
 	}
 
 	/**
