@@ -383,7 +383,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'test_feature_callback',
 			'state' => Experiments_Manager::STATE_ACTIVE,
 			'on_state_change' => function( $old_state, $new_state ) {
-				// trow exception for assert
+				// Throw exception for assert
 				throw new \Exception( 'on_state_change_callback '. $new_state  );
 			},
 		];
