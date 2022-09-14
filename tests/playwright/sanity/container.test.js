@@ -46,156 +46,230 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test( 'Accordion test screenshot', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+		editor = await wpAdmin.useElementorCleanPost();
+	   
 		// Act.
-		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
-
-		// Add widgets.
-		await editor.addWidget( 'accordion', container );
-		await editor.addWidget( 'divider', container );
-		await editor.addWidget( 'spacer', container );
-		await editor.addWidget( 'toggle', container );
-		await editor.addWidget( 'video', container );
-
-		const accordion = editor.getPreviewFrame().locator( '.elementor-widget-accordion' );
-		const divider = editor.getPreviewFrame().locator( '.elementor-widget-divider' );
-		const spacer = editor.getPreviewFrame().locator( '.elementor-widget-spacer' );
-		const toggle = editor.getPreviewFrame().locator( '.elementor-widget-toggle' );
-		const video = editor.getPreviewFrame().locator( '.elementor-widget-video' );
-
-		// Assert
-		await expect( accordion ).toHaveCount( 1 );
-		expect( await accordion.screenshot( {
-			type: 'jpeg',
-			quality: 70,
-		} ) ).toMatchSnapshot( 'accordion-row.jpeg' );
-
-		// expect( await divider.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'divider-row.jpeg' );
-
-		// expect( await spacer.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'spacer-row.jpeg' );
-
-		// expect( await toggle.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'toggle-row.jpeg' );
-
-		// expect( await video.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'video-row.jpeg' );
-
-		// // Act
-		// // Set full content width
-		// await editor.selectOption( '.elementor-control-content_width >> select', 'full' );
-
-		// // Assert
-		// expect( await accordion.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'accordion-row-full.jpeg' );
-
-		// expect( await divider.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'divider-row-full.jpeg' );
-
-		// expect( await spacer.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'spacer-row-full.jpeg' );
-
-		// expect( await toggle.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'toggle-row-full.jpeg' );
-
-		// expect( await video.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'video-row-full.jpeg' );
-
-		// // Act
-		// // Flex-direction: column
-		// await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
-		// // Align items: flex-start
-		// await page.click( '.elementor-control-align_items i.eicon-align-start-v' );
-
-		// // Assert
-		// expect( await accordion.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'accordion-column-full-start.jpeg' );
-
-		// expect( await divider.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'divider-column-full-start.jpeg' );
-
-		// expect( await spacer.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'spacer-column-full-start.jpeg' );
-
-		// expect( await toggle.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'toggle-column-full-start.jpeg' );
-
-		// expect( await video.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'video-column-full-start.jpeg' );
-
-		// // Act
-		// // Content Width: boxed
-		// await editor.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-
-		// // Assert
-		// expect( await accordion.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'accordion-column-boxed-start.jpeg' );
-
-		// expect( await divider.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'divider-column-boxed-start.jpeg' );
-
-		// expect( await spacer.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'spacer-column-boxed-start.jpeg' );
-
-		// expect( await toggle.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'toggle-column-boxed-start.jpeg' );
-
-		// expect( await video.screenshot( {
-		// 	type: 'jpeg',
-		// 	quality: 70
-		// } ) ).toMatchSnapshot( 'video-column-boxed-start.jpeg' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		await editor.addWidget( 'accordion' );
+	   
+	   	// Assert
+		expect( await editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-test.jpeg' );
 	} );
 
+	// test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	// 	// Arrange.
+	// 	const wpAdmin = new WpAdminPage( page, testInfo );
+	// 	await wpAdmin.setExperiments( {
+	// 		container: true,
+	// 	} );
+
+	// 	const editor = await wpAdmin.useElementorCleanPost(),
+	// 		container = await editor.addElement( { elType: 'container' }, 'document' );
+
+	// 	// Act.
+	// 	// Set row direction.
+	// 	await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+	// 	// Add widgets.
+	// 	await editor.addWidget( 'accordion', container );
+	// 	await editor.addWidget( 'divider', container );
+	// 	await editor.addWidget( 'spacer', container );
+	// 	await editor.addWidget( 'toggle', container );
+	// 	await editor.addWidget( 'video', container );
+
+	// 	const accordion = editor.getPreviewFrame().locator( '.elementor-widget-accordion' );
+	// 	const divider = editor.getPreviewFrame().locator( '.elementor-widget-divider' );
+	// 	const spacer = editor.getPreviewFrame().locator( '.elementor-widget-spacer' );
+	// 	const toggle = editor.getPreviewFrame().locator( '.elementor-widget-toggle' );
+	// 	const video = editor.getPreviewFrame().locator( '.elementor-widget-video' );
+	// 	editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' )
+
+	// 	// Assert
+	// 	await expect( accordion ).toHaveCount( 1 );
+	// 	expect( await accordion.screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-container-row.jpeg' );
+	// 	expect( await accordion.screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion.jpeg' );
+
+	// 	// expect( await divider.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'divider-row.jpeg' );
+
+	// 	// expect( await spacer.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'spacer-row.jpeg' );
+
+	// 	// expect( await toggle.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'toggle-row.jpeg' );
+
+	// 	// expect( await video.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'video-row.jpeg' );
+
+	// 	// // Act
+	// 	// // Set full content width
+	// 	// await editor.selectOption( '.elementor-control-content_width >> select', 'full' );
+
+	// 	// // Assert
+	// 	// expect( await accordion.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'accordion-row-full.jpeg' );
+
+	// 	// expect( await divider.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'divider-row-full.jpeg' );
+
+	// 	// expect( await spacer.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'spacer-row-full.jpeg' );
+
+	// 	// expect( await toggle.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'toggle-row-full.jpeg' );
+
+	// 	// expect( await video.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'video-row-full.jpeg' );
+
+	// 	// // Act
+	// 	// // Flex-direction: column
+	// 	// await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+	// 	// // Align items: flex-start
+	// 	// await page.click( '.elementor-control-align_items i.eicon-align-start-v' );
+
+	// 	// // Assert
+	// 	// expect( await accordion.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'accordion-column-full-start.jpeg' );
+
+	// 	// expect( await divider.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'divider-column-full-start.jpeg' );
+
+	// 	// expect( await spacer.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'spacer-column-full-start.jpeg' );
+
+	// 	// expect( await toggle.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'toggle-column-full-start.jpeg' );
+
+	// 	// expect( await video.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'video-column-full-start.jpeg' );
+
+	// 	// // Act
+	// 	// // Content Width: boxed
+	// 	// await editor.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+
+	// 	// // Assert
+	// 	// expect( await accordion.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'accordion-column-boxed-start.jpeg' );
+
+	// 	// expect( await divider.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'divider-column-boxed-start.jpeg' );
+
+	// 	// expect( await spacer.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'spacer-column-boxed-start.jpeg' );
+
+	// 	// expect( await toggle.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'toggle-column-boxed-start.jpeg' );
+
+	// 	// expect( await video.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'video-column-boxed-start.jpeg' );
+
+	// 	await wpAdmin.setExperiments( {
+	// 		container: false,
+	// 	} );
+	// } );
+
+	// test( 'Test widgets inside the container using position absolute and fixed', async ( { page }, testInfo ) => {
+	// 	// Arrange.
+	// 	const wpAdmin = new WpAdminPage( page, testInfo );
+	// 	await wpAdmin.setExperiments( {
+	// 		container: true,
+	// 	} );
+	
+	// 	const editor = await wpAdmin.useElementorCleanPost(),
+	// 		container = await editor.addElement( { elType: 'container' }, 'document' );
+	
+	// 	// Act.
+	// 	// Add widget.
+	// 	await editor.addWidget( 'heading', container );
+	// 	const heading = editor.getPreviewFrame().locator( '.elementor-widget-heading' );
+	// 	// Set position absolute.
+	// 	await page.locator( '.elementor-tab-control-advanced' ).click();
+	// 	await page.selectOption( '.elementor-control-position >> select', 'absolute' );
+	// 	await page.locator( '.elementor-control-_offset_x input' ).fill( 50 );
+	// 	await page.locator( '.elementor-control-_offset_y input' ).fill( 50 );
+	
+	// 	// Assert
+	// 	await expect( heading.toHaveCount( 1 ) );
+	// 	// expect( await heading.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'heading-row.jpeg' );
+	
+	// 	// // Act
+	// 	// // Set full content width
+	// 	// await editor.selectOption( '.elementor-control-content_width >> select', 'full' );
+	
+	// 	// // Assert
+	// 	// expect( await heading.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'heading-row-full.jpeg' );
+	
+	// 	// // Act
+	// 	// // Flex-direction: column
+	// 	// await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+	// 	// // Align items: flex-start
+	// 	// await page.click( '.elementor-control-align_items i.eicon-align-start-v' );
+	
+	// 	// // Assert
+	// 	// expect( await heading.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'heading-column-full-start.jpeg' );
+	
+	// 	// // Act
+	// 	// // Content Width: boxed
+	// 	// await editor.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+	
+	// 	// // Assert
+	// 	// expect( await heading.screenshot( {
+	// 	// 	type: 'jpeg',
+	// 	// 	quality: 70
+	// 	// } ) ).toMatchSnapshot( 'heading-column-boxed-start.jpeg' );
+	
+	// 	// await wpAdmin.setExperiments( {
+	// 	// 	container: false,
+	// 	// } );
+	// } );
 
 } );
