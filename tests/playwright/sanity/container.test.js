@@ -46,16 +46,18 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Accordion test screenshot', async ( { page }, testInfo ) => {
+	test.only( 'Accordion test screenshot1', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
 	   
 		// Act.
 		await editor.addWidget( 'accordion' );
+		const accordion = editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' );
+		await expect( accordion ).toHaveCount( 1 );
 	   
 	   	// Assert
-		expect( await editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-test.jpeg' );
+		expect( await accordion.screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-test1.jpeg' );
 	} );
 
 	// test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
@@ -222,6 +224,7 @@ test.describe( 'Container tests', () => {
 	// 	// Add widget.
 	// 	await editor.addWidget( 'heading', container );
 	// 	const heading = editor.getPreviewFrame().locator( '.elementor-widget-heading' );
+	// 	const editorScreen = editor.getPreviewFrame().locator( 'body' );
 	// 	// Set position absolute.
 	// 	await page.locator( '.elementor-tab-control-advanced' ).click();
 	// 	await page.selectOption( '.elementor-control-position >> select', 'absolute' );
@@ -229,47 +232,47 @@ test.describe( 'Container tests', () => {
 	// 	await page.locator( '.elementor-control-_offset_y input' ).fill( 50 );
 	
 	// 	// Assert
-	// 	await expect( heading.toHaveCount( 1 ) );
-	// 	// expect( await heading.screenshot( {
-	// 	// 	type: 'jpeg',
-	// 	// 	quality: 70
-	// 	// } ) ).toMatchSnapshot( 'heading-row.jpeg' );
+	// 	await expect( editorScreen.toHaveCount( 1 ) );
+
+	// 	expect( await editorScreen.screenshot( {
+	// 		type: 'jpeg',
+	// 		quality: 70
+	// 	} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
 	
-	// 	// // Act
-	// 	// // Set full content width
-	// 	// await editor.selectOption( '.elementor-control-content_width >> select', 'full' );
+	// 	// Act
+	// 	// Set full content width
+	// 	await editor.selectOption( '.elementor-control-content_width >> select', 'full' );
 	
-	// 	// // Assert
-	// 	// expect( await heading.screenshot( {
-	// 	// 	type: 'jpeg',
-	// 	// 	quality: 70
-	// 	// } ) ).toMatchSnapshot( 'heading-row-full.jpeg' );
+	// 	// Assert
+	// 	expect( await heading.screenshot( {
+	// 		type: 'jpeg',
+	// 		quality: 70
+	// 	} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
+
+	// 	// Act
+	// 	// Set position fixed.
+	// 	await page.locator( '.elementor-tab-control-advanced' ).click();
+	// 	await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 	
-	// 	// // Act
-	// 	// // Flex-direction: column
-	// 	// await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
-	// 	// // Align items: flex-start
-	// 	// await page.click( '.elementor-control-align_items i.eicon-align-start-v' );
+	// 	// Assert
+	// 	expect( await heading.screenshot( {
+	// 		type: 'jpeg',
+	// 		quality: 70
+	// 	} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
+
+	// 	// Act
+	// 	// Set boxed content width
+	// 	await editor.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 	
-	// 	// // Assert
-	// 	// expect( await heading.screenshot( {
-	// 	// 	type: 'jpeg',
-	// 	// 	quality: 70
-	// 	// } ) ).toMatchSnapshot( 'heading-column-full-start.jpeg' );
-	
-	// 	// // Act
-	// 	// // Content Width: boxed
-	// 	// await editor.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-	
-	// 	// // Assert
-	// 	// expect( await heading.screenshot( {
-	// 	// 	type: 'jpeg',
-	// 	// 	quality: 70
-	// 	// } ) ).toMatchSnapshot( 'heading-column-boxed-start.jpeg' );
-	
-	// 	// await wpAdmin.setExperiments( {
-	// 	// 	container: false,
-	// 	// } );
+	// 	// Assert
+	// 	expect( await heading.screenshot( {
+	// 		type: 'jpeg',
+	// 		quality: 70
+	// 	} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
+
+	// 	await wpAdmin.setExperiments( {
+	// 		container: false,
+	// 	} );
 	// } );
 
 } );
