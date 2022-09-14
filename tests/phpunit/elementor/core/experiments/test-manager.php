@@ -379,7 +379,6 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_on_state_change_callback() {
-
 		$test_feature_data = [
 			'name' => 'test_feature_callback',
 			'state' => Experiments_Manager::STATE_ACTIVE,
