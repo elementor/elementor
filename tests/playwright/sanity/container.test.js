@@ -60,6 +60,7 @@ test.describe( 'Container tests', () => {
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
+		// Arrange
 		// Add widgets.
 		await editor.addWidget( 'accordion', container );
 		await editor.addWidget( 'divider', container );
@@ -73,37 +74,123 @@ test.describe( 'Container tests', () => {
 		const toggle = editor.getPreviewFrame().locator( '.elementor-widget-toggle' );
 		const video = editor.getPreviewFrame().locator( '.elementor-widget-video' );
 
-		// await expect( accordion ).toHaveCount( 1 );
-		// await expect( divider ).toHaveCount( 1 );
-		// await expect( spacer ).toHaveCount( 1 );
-		// await expect( toggle ).toHaveCount( 1 );
-		// await expect( video ).toHaveCount( 1 );
-
 		// Assert
-		await expect( accordion.screenshot( {
+		expect( await accordion.screenshot( {
 			type: 'jpeg',
 			quality: 70
 		} ) ).toMatchSnapshot( 'accordion-row.jpeg' );
 
-		await expect( divider.screenshot( {
+		expect( await divider.screenshot( {
 			type: 'jpeg',
 			quality: 70
 		} ) ).toMatchSnapshot( 'divider-row.jpeg' );
 
-		await expect( spacer.screenshot( {
+		expect( await spacer.screenshot( {
 			type: 'jpeg',
 			quality: 70
 		} ) ).toMatchSnapshot( 'spacer-row.jpeg' );
 
-		await expect( toggle.screenshot( {
+		expect( await toggle.screenshot( {
 			type: 'jpeg',
 			quality: 70
 		} ) ).toMatchSnapshot( 'toggle-row.jpeg' );
 
-		await expect( video.screenshot( {
+		expect( await video.screenshot( {
 			type: 'jpeg',
 			quality: 70
 		} ) ).toMatchSnapshot( 'video-row.jpeg' );
+
+		// Arrange
+		// Set full content width
+		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+
+		// Assert
+		expect( await accordion.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'accordion-row-full.jpeg' );
+
+		expect( await divider.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'divider-row-full.jpeg' );
+
+		expect( await spacer.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'spacer-row-full.jpeg' );
+
+		expect( await toggle.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'toggle-row-full.jpeg' );
+
+		expect( await video.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'video-row-full.jpeg' );
+
+		// Arrange
+		// Flex-direction: column
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+		// Align items: flex-start
+		await page.click( '.elementor-control-align_items i.eicon-align-start-v' );
+
+		// Assert
+		expect( await accordion.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'accordion-column-full-start.jpeg' );
+
+		expect( await divider.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'divider-column-full-start.jpeg' );
+
+		expect( await spacer.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'spacer-column-full-start.jpeg' );
+
+		expect( await toggle.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'toggle-column-full-start.jpeg' );
+
+		expect( await video.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'video-column-full-start.jpeg' );
+
+		// Arrange
+		// Content Width: boxed
+		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+
+		// Assert
+		expect( await accordion.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'accordion--column-boxed-start.jpeg' );
+
+		expect( await divider.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'divider--column-boxed-start.jpeg' );
+
+		expect( await spacer.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'spacer--column-boxed-start.jpeg' );
+
+		expect( await toggle.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'toggle--column-boxed-start.jpeg' );
+
+		expect( await video.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'video--column-boxed-start.jpeg' );
 
 		await wpAdmin.setExperiments( {
 			container: false,
