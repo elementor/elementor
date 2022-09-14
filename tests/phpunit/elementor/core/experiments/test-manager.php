@@ -379,16 +379,22 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_on_state_change_callback() {
+
+
 		$test_feature_data = [
 			'name' => 'test_feature_callback',
 			'state' => Experiments_Manager::STATE_ACTIVE,
 			'on_state_change' => function( $old_state, $new_state ) {
-				// Assert.
-				$this->assertEquals( Experiments_Manager::STATE_INACTIVE, $new_state );
+				// trow exception for assert
+				throw new \Exception( 'on_state_change_callback' );
 			},
 		];
 
 		$this->add_test_feature( $test_feature_data );
+
+		// Assert.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'on_state_change_callback' );
 
 		// Act.
 		update_option(
