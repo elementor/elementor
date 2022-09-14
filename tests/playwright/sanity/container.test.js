@@ -62,19 +62,48 @@ test.describe( 'Container tests', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'accordion', container );
-			// divider = await editor.addWidget( 'divider', container ),
-			// spacer = await editor.addWidget( 'spacer', container ),
-			// toggle = await editor.addWidget( 'toggle', container ),
-			// video = await editor.addWidget( 'video', container );
-		const accordion = editor.getPreviewFrame().locator( '.elementor-widget-accordion' );
+		await editor.addWidget( 'divider', container );
+		await editor.addWidget( 'spacer', container );
+		await editor.addWidget( 'toggle', container );
+		await editor.addWidget( 'video', container );
 
-		await expect( accordion ).toHaveCount( 1 );
+		const accordion = editor.getPreviewFrame().locator( '.elementor-widget-accordion' );
+		const divider = editor.getPreviewFrame().locator( '.elementor-widget-divider' );
+		const spacer = editor.getPreviewFrame().locator( '.elementor-widget-spacer' );
+		const toggle = editor.getPreviewFrame().locator( '.elementor-widget-toggle' );
+		const video = editor.getPreviewFrame().locator( '.elementor-widget-video' );
+
+		// await expect( accordion ).toHaveCount( 1 );
+		// await expect( divider ).toHaveCount( 1 );
+		// await expect( spacer ).toHaveCount( 1 );
+		// await expect( toggle ).toHaveCount( 1 );
+		// await expect( video ).toHaveCount( 1 );
 
 		// Assert
-		expect( accordion.screenshot( {
+		await expect( accordion.screenshot( {
 			type: 'jpeg',
 			quality: 70
 		} ) ).toMatchSnapshot( 'accordion-row.jpeg' );
+
+		await expect( divider.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'divider-row.jpeg' );
+
+		await expect( spacer.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'spacer-row.jpeg' );
+
+		await expect( toggle.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'toggle-row.jpeg' );
+
+		await expect( video.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'video-row.jpeg' );
 
 		await wpAdmin.setExperiments( {
 			container: false,
