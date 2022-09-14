@@ -130,7 +130,7 @@ class Manager extends Base_Object {
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
 				try {
-					$this->on_feature_state_change( $experimental_data, $new_state, $feature_option_key );
+					$this->on_feature_state_change( $experimental_data, $new_state, $old_state );
 				} catch ( Exceptions\Dependency_Exception $e ) {
 					$message = sprintf(
 						'<p>%s</p><p><a href="#" onclick="location.href=\'%s\'">%s</a></p>',
@@ -364,7 +364,7 @@ class Manager extends Base_Object {
 				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
 		] );
 	}
@@ -705,25 +705,17 @@ class Manager extends Base_Object {
 	 *
 	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
-	private function on_feature_state_change( array $old_feature_data, $new_state, $feature_option_key ) {
+	private function on_feature_state_change( array $old_feature_data, $new_state, $old_state ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
-
 		$this->validate_dependency( $new_feature_data, $new_state );
-
-		$actual_old_state = $this->get_feature_actual_state( $old_feature_data );
-
-		$actual_new_state = $this->get_feature_actual_state( $new_feature_data );
-
 		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
-
-		if ( $actual_old_state === $actual_new_state ) {
+		if ( $old_state === $new_state ) {
 			return;
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
-
 		if ( $new_feature_data['on_state_change'] ) {
-			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
+			$new_feature_data['on_state_change']( $old_state, $new_state );
 		}
 	}
 
