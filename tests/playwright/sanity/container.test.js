@@ -61,14 +61,20 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		// Add widgets.
-		const accordion = await editor.addWidget( 'accordion', container );
+		await editor.addWidget( 'accordion', container );
 			// divider = await editor.addWidget( 'divider', container ),
 			// spacer = await editor.addWidget( 'spacer', container ),
 			// toggle = await editor.addWidget( 'toggle', container ),
 			// video = await editor.addWidget( 'video', container );
+		const accordion = editor.getPreviewFrame().locator( '.elementor-widget-accordion' );
+
+		await expect( accordion ).toHaveCount( 1 );
 
 		// Assert
-		expect( await editor.getPreviewFrame().locator( '.elementor-accordion' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-row.jpeg' );
+		expect( accordion.screenshot( {
+			type: 'jpeg',
+			quality: 70
+		} ) ).toMatchSnapshot( 'accordion-row.jpeg' );
 
 		await wpAdmin.setExperiments( {
 			container: false,
