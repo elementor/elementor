@@ -49,6 +49,9 @@ test.describe( 'Container tests', () => {
 	test( 'Test widgets using container boxed-width and flex-direction row', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -71,5 +74,9 @@ test.describe( 'Container tests', () => {
 		// } ) ).toMatchSnapshot( [ widgetType, 'accordion-row.jpeg' ] );
 
 		expect( await editor.getPreviewFrame().locator( '.elementor-widget-accordion' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'accordion-row.jpeg' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 } );
