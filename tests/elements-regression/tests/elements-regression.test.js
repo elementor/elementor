@@ -58,11 +58,6 @@ test.describe( 'Elements regression', () => {
 	} );
 
 	for ( const widgetType of Object.keys( widgetsCache ) ) {
-		// TODO: Remove
-		if ( widgetType !== 'button' ) {
-			continue;
-		}
-
 		test( widgetType, async () => {
 			const WidgetClass = widgetsRegistrar.get( widgetType );
 
