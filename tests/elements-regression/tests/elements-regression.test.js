@@ -1,49 +1,27 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 const EditorPage = require( '../pages/editor-page' );
-const widgetsCache = require( '../assets/widgets-cache' );
-
-const {
-	Heading,
-	Divider,
-	TextEditor,
-	WidgetBase,
-} = require( '../utils/widgets' );
-
-const {
-	Choose,
-	Select,
-	Textarea,
-	Color,
-	Slider,
-} = require( '../utils/controls' );
-
+const elementsConfig = require( '../elements-config.json' );
+const widgetHandlers = require( '../utils/widgets' );
+const controlHandlers = require( '../utils/controls' );
 const { Registrar } = require( '../utils/registrar' );
+const { isWidgetIncluded, isWidgetExcluded } = require( '../utils/validation' );
 
-const widgetsRegistrar = new Registrar()
-	.register( Heading )
-	.register( Divider )
-	.register( TextEditor )
-	.register( WidgetBase );
-
-const controlsRegistrar = new Registrar()
-	.register( Choose )
-	.register( Select )
-	.register( Color )
-	.register( Slider )
-	.register( Textarea );
+const widgetsRegistrar = new Registrar().registerAll( Object.values( widgetHandlers ) );
+const controlsRegistrar = new Registrar().registerAll( Object.values( controlHandlers ) );
 
 test.describe( 'Elements regression', () => {
 	let editorPage,
 		wpAdminPage,
-		pageId;
+		pageId,
+		testedElements = {};
 
 	test.beforeEach( async ( { page }, testInfo ) => {
 		// Arrange.
-		wpAdminPage = new WpAdminPage( page, testInfo );
+		wpAdminPage = new WpAdminPage( page );
 		pageId = await wpAdminPage.createElementorPage();
 
-		editorPage = new EditorPage( wpAdminPage.page, testInfo );
+		editorPage = new EditorPage( wpAdminPage.page );
 
 		await editorPage.ensureLoaded();
 		await editorPage.ensureNavigatorClosed();
@@ -55,36 +33,53 @@ test.describe( 'Elements regression', () => {
 		await wpAdminPage.deletePermenantlyElementorPageFromTrash( pageId );
 	} );
 
-	for ( const widgetType of Object.keys( widgetsCache ) ) {
-		test( widgetType, async () => {
-			const WidgetClass = widgetsRegistrar.get( widgetType );
+	test.afterAll( async () => {
+		expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+	} );
 
-			/**
-			 * @type {WidgetBase}
-			 */
-			const widget = new WidgetClass(
-				editorPage,
-				controlsRegistrar,
-				{
-					widgetType,
-					controls: widgetsCache[ widgetType ].controls,
-				},
-			);
+	Object.entries( elementsConfig )
+		.filter( ( [ widgetType, widgetConfig ] ) =>
+			isWidgetIncluded( widgetType ) && ! isWidgetExcluded( widgetType ),
+		)
+		.forEach( ( [ widgetType, widgetConfig ] ) => {
+			// Here dynamic tests are created.
+			test( widgetType, async () => {
+				const WidgetClass = widgetsRegistrar.get( widgetType );
 
-			// Act.
-			await widget.create();
+				/**
+				 * @type {WidgetBase}
+				 */
+				const widget = new WidgetClass(
+					editorPage,
+					controlsRegistrar,
+					{
+						widgetType,
+						controls: widgetConfig.controls,
+					},
+				);
 
-			await editorPage.page.waitForTimeout( 500 );
+				// Act.
+				await widget.create();
 
-			// Assert - Match snapshot for default appearance.
-			expect( await editorPage.screenshotWidget( widget ) )
-				.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				await editorPage.page.waitForTimeout( 500 );
 
-			await widget.test( async ( controlId, currentControlValue ) => {
-				// Assert - Match snapshot for specific control.
+				// Assert - Match snapshot for default appearance.
 				expect( await editorPage.screenshotWidget( widget ) )
-					.toMatchSnapshot( [ widgetType, controlId, `${ currentControlValue }.jpeg` ] );
+					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+
+				testedElements[ widgetType ] = {};
+
+				await widget.test( async ( controlId, currentControlValue ) => {
+					// Assert - Match snapshot for specific control.
+					expect( await editorPage.screenshotWidget( widget ) )
+						.toMatchSnapshot( [ widgetType, controlId, `${ currentControlValue }.jpeg` ] );
+
+					if ( ! testedElements[ widgetType ][ controlId ] ) {
+						testedElements[ widgetType ][ controlId ] = [];
+					}
+
+					testedElements[ widgetType ][ controlId ].push( currentControlValue );
+				} );
 			} );
 		} );
-	}
 } );

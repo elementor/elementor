@@ -1,4 +1,3 @@
-const { addElement } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
 
 module.exports = class EditorPage extends BasePage {
@@ -43,7 +42,35 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<*>} Element ID
 	 */
 	async addElement( model, container = null ) {
-		return await this.page.evaluate( addElement, { model, container } );
+		return await this.page.evaluate( async ( { model, container = null } ) => {
+			let parent;
+
+			if ( container ) {
+				parent = elementor.getContainer( container );
+			} else {
+				// If a `container` isn't supplied - create a new Section.
+				const section = $e.run(
+					'document/elements/create',
+					{
+						model: { elType: 'section' },
+						columns: 1,
+						container: elementor.getContainer( 'document' ),
+					},
+				);
+
+				parent = section.children[ 0 ];
+			}
+
+			const element = $e.run(
+				'document/elements/create',
+				{
+					model,
+					container: parent,
+				},
+			);
+
+			return element.id;
+		}, { model, container } );
 	}
 
 	/**

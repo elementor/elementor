@@ -1,3 +1,5 @@
+const { isControlIncluded, isControlExcluded } = require( '../../utils/validation' );
+
 class WidgetBase {
 	/**
 	 * Widget's id.
@@ -47,15 +49,6 @@ class WidgetBase {
 	 */
 	static getType() {
 		return 'default';
-	}
-
-	/**
-	 * Exclude specific controls
-	 *
-	 * @return {string[]}
-	 */
-	getExcludedControls() {
-		return [];
 	}
 
 	/**
@@ -123,7 +116,13 @@ class WidgetBase {
 	async test( assertionsCallback ) {
 		await this.setup();
 
-		for ( const [ controlId, controlConfig ] of Object.entries( this.getControls() ) ) {
+		const controlsEntries = Object.entries( this.getControls() )
+			.filter( ( [ controlType ] ) =>
+				isControlIncluded( this.config.widgetType, controlType ) &&
+				! isControlExcluded( this.config.widgetType, controlType ),
+			);
+
+		for ( const [ controlId, controlConfig ] of controlsEntries ) {
 			const ControlClass = this.controlsRegistrar.get( controlConfig.type );
 
 			// TODO: Remove after all of the controls will have handlers.
@@ -137,9 +136,8 @@ class WidgetBase {
 			const isPopover = ( !! controlConfig.popover && 1 === Object.keys( controlConfig.condition ).length );
 			const isWidgetConditional = ! isPopover && ( controlConfig.condition || controlConfig.conditions );
 			const isSectionConditional = ( controlSection?.condition || controlSection?.conditions );
-			const isControlExcluded = this.getExcludedControls().includes( controlConfig.name );
 
-			if ( isWidgetConditional || isSectionConditional || isControlExcluded ) {
+			if ( isWidgetConditional || isSectionConditional ) {
 				continue;
 			}
 

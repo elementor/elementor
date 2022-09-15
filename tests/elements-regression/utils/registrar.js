@@ -3,6 +3,12 @@ class Registrar {
 		this.items = {};
 	}
 
+	registerAll( items ) {
+		items.forEach( ( ItemClass ) => this.register( ItemClass ) );
+
+		return this;
+	}
+
 	register( ItemClass ) {
 		this.items[ ItemClass.getType() ] = ItemClass;
 

@@ -1,6 +1,16 @@
 const BasePage = require( './base-page.js' );
 
 module.exports = class WpAdminPage extends BasePage {
+	async login( { username, password } ) {
+		await this.page.goto( `/wp-admin` );
+
+		await this.page.waitForSelector( 'text=Log In' );
+		await this.page.fill( 'input[name="log"]', username );
+		await this.page.fill( 'input[name="pwd"]', password );
+		await this.page.click( '#wp-submit' );
+		await this.page.waitForSelector( 'text=Dashboard' );
+	}
+
 	/**
 	 * @return {Promise<number>}
 	 */
