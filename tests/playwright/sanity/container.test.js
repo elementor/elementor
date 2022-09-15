@@ -28,9 +28,6 @@ test.describe( 'Container tests', () => {
 			getElementSelector( image ),
 		);
 
-		// Wait for the button to re-render.
-		await editor.previewFrame.waitForTimeout( 1000 );
-
 		const buttonEl = await editor.getElementHandle( button ),
 			headingEl = await editor.getElementHandle( heading );
 
@@ -54,7 +51,7 @@ test.describe( 'Container tests', () => {
 		} );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
 		await page.click( '#elementor-navigator__close' );
@@ -199,6 +196,26 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
+	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.getFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
+		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
+		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
+		await expect( editor.getPreviewFrame().locator( '.e-container--width-full ' ) ).toHaveCount( 1 );
 
 		await wpAdmin.setExperiments( {
 			container: false,
