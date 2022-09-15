@@ -108,6 +108,8 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
 		// Align items: flex-start
 		await page.click( '.elementor-control-flex_align_items i.eicon-align-start-v' );
+		// Set `min-height` to test if there are `flex-grow` issues.
+		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 
 		// Assert
 		expect( await container.screenshot( {
