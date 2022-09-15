@@ -240,6 +240,9 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.7.6 - 2022-09-15 =
+* Fix: Replaced link for better clarity in Site Settings ([#19817](https://github.com/elementor/elementor/issues/19817))
+
 = 3.7.5 - 2022-09-14 =
 * Tweak: Added an option to create a custom logo with AI Logo Maker by Fiverr in Site Settings
 * Fix: Background Image Custom Position and Size controls are not visible for Mobile and Tablet devices ([#19487](https://github.com/elementor/elementor/issues/19487), [#19669](https://github.com/elementor/elementor/issues/19669), [#19662](https://github.com/elementor/elementor/issues/19662))
