@@ -2,7 +2,7 @@ name: Build Packages
 on: [ push, pull_request ]
 
 jobs:
-  pr_name_lint:
+  build:
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
     steps:
