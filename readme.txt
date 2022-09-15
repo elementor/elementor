@@ -241,7 +241,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
 = 3.7.6 - 2022-09-15 =
-* Fix: Replaced link for better clarity in Site Settings ([#19817](https://github.com/elementor/elementor/issues/19817))
+* Fix: Replaced link for better clarity in Site Settings
 
 = 3.7.5 - 2022-09-14 =
 * Tweak: Added an option to create a custom logo with AI Logo Maker by Fiverr in Site Settings
