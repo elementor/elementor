@@ -1,13 +1,13 @@
 import HistoryEmpty from './HistoryEmpty';
 import HistoryListView from './HistoryListView';
 import React from "react";
-import { ApplyItem, Item } from "../types/Item";
+import { Item, OnItemClick } from '../types';
 import useTranslation from "../hooks/useTranslation";
 
 type Props = {
 	items: Item[],
 	currentItem: number,
-	applyItem: ApplyItem,
+	onItemClick: OnItemClick,
 };
 
 const HistoryPanel : React.VFC<Props> = ( props ) => {
@@ -21,7 +21,7 @@ const HistoryPanel : React.VFC<Props> = ( props ) => {
 					? <HistoryEmpty />
 					: <HistoryListView
 						items={ props.items }
-						onItemClick={ props.applyItem }
+						onItemClick={ props.onItemClick }
 						currentItem={ props.currentItem }
 					/>
 				}

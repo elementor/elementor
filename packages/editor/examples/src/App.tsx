@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import reactLogo from './assets/react.svg';
 import './App.css';
 import './assets/eicons/css/elementor-icons.css';
 import { HistoryPanel, Item } from 'history';
@@ -7,21 +6,21 @@ import { HistoryPanel, Item } from 'history';
 function App() {
 	const [ items, setItems ] = useState<Item[]>( [
 		{
-			id: '3',
+			id: 3,
 			title: 'Title 3',
 			subTitle: 'Sub Title 3',
 			action: 'Action 3',
 			status: 'applied',
 		},
 		{
-			id: '2',
+			id: 2,
 			title: 'Title 2',
 			subTitle: 'Sub Title 2',
 			action: 'Action 2',
 			status: 'not_applied',
 		},
 		{
-			id: '1',
+			id: 1,
 			title: 'Title 1',
 			subTitle: 'Sub Title 1',
 			action: 'Action 1',
@@ -31,7 +30,7 @@ function App() {
 
 	const [ currentItem, setCurrentItem ] = useState<number>( 1 );
 
-	const applyItem = ( id: Item['id'] ) => {
+	const onItemClick = ( id: Item['id'] ) => {
 		const itemIndex = items.findIndex( ( item ) => item.id === id );
 
 		setCurrentItem( itemIndex );
@@ -53,19 +52,19 @@ function App() {
 			<link rel="stylesheet" href="https://connect.elementor.cloud/wp-content/plugins/elementor/assets/css/editor.min.css?ver=3.8.0-cloud1" />
 			{/*<link rel="stylesheet" href="https://connect.elementor.cloud/wp-content/plugins/elementor/assets/css/editor-dark-mode.min.css?ver=3.8.0-cloud1" />*/}
 
+			<h1>Empty:</h1>
+			<HistoryPanel items={ [] } currentItem={ 0 } onItemClick={ () => {} } />
+
+			<div style={ { height: '100px' } } />
+
 			<h1>With Items:</h1>
-			<HistoryPanel items={ items } currentItem={ currentItem } applyItem={ ( e, args ) => {
+			<HistoryPanel items={ items } currentItem={ currentItem } onItemClick={ ( e, args ) => {
 				console.log( 'Apply item: ', {
 					id: args.id,
 				} );
 
-				applyItem( args.id );
+				onItemClick( args.id );
 			} } />
-
-			<div style={ { height: '100px' } } />
-
-			<h1>Empty:</h1>
-			<HistoryPanel items={ [] } currentItem={ 0 } applyItem={ () => {} } />
 		</div>
 	);
 }

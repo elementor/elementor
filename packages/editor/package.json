@@ -1,17 +1,16 @@
 {
   "name": "editor",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Elementor Team",
+  "license": "GPL-3.0-or-later",
   "workspaces": {
 	"packages": [
 	  "packages/*",
-	  "examples/*"
+	  "examples"
 	]
   }
 }
