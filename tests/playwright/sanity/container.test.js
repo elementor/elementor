@@ -146,7 +146,6 @@ test.describe( 'Container tests', () => {
 		// Act.
 		// Add widget.
 		await editor.addWidget( 'heading', container );
-		const heading = editor.getPreviewFrame().locator( '.elementor-widget-heading' );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
 		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
