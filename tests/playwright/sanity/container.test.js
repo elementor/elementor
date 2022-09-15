@@ -28,9 +28,6 @@ test.describe( 'Container tests', () => {
 			getElementSelector( image ),
 		);
 
-		// Wait for the button to re-render.
-		await editor.previewFrame.waitForTimeout( 1000 );
-
 		const buttonEl = await editor.getElementHandle( button ),
 			headingEl = await editor.getElementHandle( heading );
 
