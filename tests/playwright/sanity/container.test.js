@@ -51,7 +51,7 @@ test.describe( 'Container tests', () => {
 		} );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
 		await page.click( '#elementor-navigator__close' );
