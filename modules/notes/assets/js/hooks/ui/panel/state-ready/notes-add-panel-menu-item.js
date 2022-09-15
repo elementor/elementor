@@ -29,7 +29,7 @@ export class NotesAddPanelMenuItem extends $e.modules.hookUI.After {
 							: 'https://go.elementor.com/go-pro-notes/',
 						text: hasProAndNotConnected
 							? __( 'Connect & Activate', 'elementor' )
-							: __( 'See it in Action', 'elementor' ),
+							: __( 'Upgrade', 'elementor' ),
 					},
 				} );
 			},
