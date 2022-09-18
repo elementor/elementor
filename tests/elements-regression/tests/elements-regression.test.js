@@ -1,37 +1,16 @@
-const { test, expect } = require( '@playwright/test' );
-const WpAdminPage = require( '../pages/wp-admin-page.js' );
-const EditorPage = require( '../pages/editor-page' );
+const { expect } = require( '@playwright/test' );
+const test = require( '../lib/test' );
 const elementsConfig = require( '../elements-config.json' );
-const widgetHandlers = require( '../utils/widgets' );
-const controlHandlers = require( '../utils/controls' );
-const { Registrar } = require( '../utils/registrar' );
-const { isWidgetIncluded, isWidgetExcluded } = require( '../utils/validation' );
+const widgetHandlers = require( '../lib/widgets' );
+const controlHandlers = require( '../lib/controls' );
+const { Registrar } = require( '../lib/registrar' );
+const { isWidgetIncluded, isWidgetExcluded } = require( '../lib/validation' );
 
 const widgetsRegistrar = new Registrar().registerAll( Object.values( widgetHandlers ) );
 const controlsRegistrar = new Registrar().registerAll( Object.values( controlHandlers ) );
 
 test.describe( 'Elements regression', () => {
-	let editorPage,
-		wpAdminPage,
-		pageId,
-		testedElements = {};
-
-	test.beforeEach( async ( { page }, testInfo ) => {
-		// Arrange.
-		wpAdminPage = new WpAdminPage( page );
-		pageId = await wpAdminPage.createElementorPage();
-
-		editorPage = new EditorPage( wpAdminPage.page );
-
-		await editorPage.ensureLoaded();
-		await editorPage.ensureNavigatorClosed();
-		await editorPage.ensureNoticeBarClosed();
-	} );
-
-	test.afterEach( async () => {
-		await wpAdminPage.moveElementorPageToTrash( pageId );
-		await wpAdminPage.deletePermenantlyElementorPageFromTrash( pageId );
-	} );
+	const testedElements = {};
 
 	test.afterAll( async () => {
 		expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
@@ -43,7 +22,7 @@ test.describe( 'Elements regression', () => {
 		)
 		.forEach( ( [ widgetType, widgetConfig ] ) => {
 			// Here dynamic tests are created.
-			test( widgetType, async () => {
+			test( widgetType, async ( { editorPage } ) => {
 				const WidgetClass = widgetsRegistrar.get( widgetType );
 
 				/**

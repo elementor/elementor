@@ -1,4 +1,4 @@
-const { isControlIncluded, isControlExcluded } = require( '../../utils/validation' );
+const { isControlIncluded, isControlExcluded } = require( '../../lib/validation' );
 
 class WidgetBase {
 	/**
