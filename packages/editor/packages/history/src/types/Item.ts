@@ -1,5 +1,3 @@
-import React from 'react';
-
 export type ItemStatus = 'applied' | 'not_applied';
 
 export type Item = {

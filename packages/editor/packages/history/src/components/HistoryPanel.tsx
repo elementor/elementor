@@ -1,13 +1,13 @@
 import HistoryEmpty from './HistoryEmpty';
 import HistoryListView from './HistoryListView';
-import React from "react";
+import React from 'react';
 import { Item, OnItemClick } from '../types';
-import useTranslation from "../hooks/useTranslation";
+import useTranslation from '../hooks/useTranslation';
 
 type Props = {
 	items: Item[],
-	currentItem: number,
-	onItemClick: OnItemClick,
+	currentItem?: number,
+	onItemClick?: OnItemClick,
 };
 
 const HistoryPanel : React.VFC<Props> = ( props ) => {
@@ -20,9 +20,9 @@ const HistoryPanel : React.VFC<Props> = ( props ) => {
 				{ isEmpty
 					? <HistoryEmpty />
 					: <HistoryListView
-						items={ props.items }
-						onItemClick={ props.onItemClick }
-						currentItem={ props.currentItem }
+							items={ props.items }
+							onItemClick={ props.onItemClick }
+							currentItem={ props.currentItem }
 					/>
 				}
 			</div>
@@ -32,6 +32,6 @@ const HistoryPanel : React.VFC<Props> = ( props ) => {
 			</div>
 		</div>
 	);
-}
+};
 
 export default HistoryPanel;

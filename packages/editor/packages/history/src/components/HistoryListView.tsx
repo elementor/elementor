@@ -1,11 +1,11 @@
 import HistoryItem from './HistoryItem';
 import { Item, OnItemClick } from '../types';
-import React from "react";
+import React from 'react';
 
 type Props = {
 	items: Item[],
-	currentItem: number,
-	onItemClick: OnItemClick,
+	currentItem?: number,
+	onItemClick?: OnItemClick,
 };
 
 const HistoryListView : React.VFC<Props> = ( props ) => {
@@ -17,18 +17,16 @@ const HistoryListView : React.VFC<Props> = ( props ) => {
 						key={ item.id }
 						item={ item }
 						isCurrent={ i === props.currentItem }
-						onClick={ ( e ) => props.onItemClick( e, {
-							id: item.id,
-						} ) }
+						onClick={ ( e ) => {
+							props.onItemClick?.( e, {
+								id: item.id,
+							} );
+						} }
 					/>,
 				)
 			}
 		</>
 	);
-}
-
-HistoryListView.defaultProps = {
-	onItemClick: () => {},
 };
 
 export default HistoryListView;

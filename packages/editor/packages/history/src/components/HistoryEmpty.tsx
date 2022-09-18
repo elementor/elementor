@@ -7,7 +7,7 @@ export default function HistoryEmpty() {
 	return (
 		<div id="elementor-panel-history-no-items">
 
-			<img className="elementor-nerd-box-icon" src={ emptyIcon } />
+			<img className="elementor-nerd-box-icon" src={ emptyIcon } alt={ t( 'No history icon' ) } />
 
 			<div className="elementor-nerd-box-title">
 				{ t( 'No History Yet' ) }

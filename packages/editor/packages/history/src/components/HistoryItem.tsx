@@ -1,4 +1,4 @@
-import { Item, OnItemClick } from "../types";
+import { Item, OnItemClick } from '../types';
 
 type Props = {
 	item: Item,
@@ -8,6 +8,7 @@ type Props = {
 
 const HistoryItem : React.VFC<Props> = ( props ) => {
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
 			className={ `elementor-history-item elementor-history-item-${ props.item.status } ${ props.isCurrent ? 'elementor-history-item-current' : '' }` }
 			onClick={ ( e : React.MouseEvent<HTMLElement> ) => {
@@ -41,6 +42,6 @@ const HistoryItem : React.VFC<Props> = ( props ) => {
 			</div>
 		</div>
 	);
-}
+};
 
 export default HistoryItem;

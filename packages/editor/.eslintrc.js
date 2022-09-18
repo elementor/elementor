@@ -1,13 +1,15 @@
 module.exports = {
-	// Extends: [
-	// 	'plugin:@typescript-eslint/recommended',
-	// 	'plugin:react/recommended',
-	// 	'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
-	// ],
-	// plugins: [
-	// 	'react',
-	// 	'@typescript-eslint',
-	// ],
+	root: true,
+	extends: [
+		'plugin:@typescript-eslint/recommended',
+		'plugin:react/recommended',
+		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
+		'plugin:import/typescript',
+	],
+	plugins: [
+		'react',
+		'@typescript-eslint',
+	],
 	parser: '@typescript-eslint/parser',
 	rules: {
 		'computed-property-spacing': [ 'error', 'always' ],
@@ -19,6 +21,7 @@ module.exports = {
 		'no-mixed-operators': 'error',
 		'no-nested-ternary': 'error',
 		'no-cond-assign': 'error',
+		'no-unused-vars': 'off', // Using the @typescript-eslint/no-unused-vars rule instead.
 		indent: [ 'off', 'tab', { SwitchCase: 1 } ],
 		'padded-blocks': [ 'error', 'never' ],
 		'one-var-declaration-per-line': 'error',
@@ -33,8 +36,6 @@ module.exports = {
 		yoda: [ 'error', 'always', {
 			onlyEquality: true,
 		} ],
-		// 'react/react-in-jsx-scope': 'off',
-		'babel/semi': 1,
 		'capitalized-comments': [
 			'error',
 			'always',

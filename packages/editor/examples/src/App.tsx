@@ -45,20 +45,21 @@ function App() {
 				};
 			} );
 		} );
-	}
+	};
 
 	return (
 		<div className="App">
 			<link rel="stylesheet" href="https://connect.elementor.cloud/wp-content/plugins/elementor/assets/css/editor.min.css?ver=3.8.0-cloud1" />
-			{/*<link rel="stylesheet" href="https://connect.elementor.cloud/wp-content/plugins/elementor/assets/css/editor-dark-mode.min.css?ver=3.8.0-cloud1" />*/}
+			{ /* <link rel="stylesheet" href="https://connect.elementor.cloud/wp-content/plugins/elementor/assets/css/editor-dark-mode.min.css?ver=3.8.0-cloud1" />*/ }
 
 			<h1>Empty:</h1>
-			<HistoryPanel items={ [] } currentItem={ 0 } onItemClick={ () => {} } />
+			<HistoryPanel items={ [] } currentItem={ 0 } />
 
 			<div style={ { height: '100px' } } />
 
 			<h1>With Items:</h1>
 			<HistoryPanel items={ items } currentItem={ currentItem } onItemClick={ ( e, args ) => {
+				// eslint-disable-next-line no-console
 				console.log( 'Apply item: ', {
 					id: args.id,
 				} );
