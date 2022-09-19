@@ -4,7 +4,7 @@
 const config = {
 	timeout: 900000,
 	globalTimeout: 900000,
-	reporter: 'list',
+	reporter: process.env.CI ? 'github' : 'list',
 	testDir: './tests/',
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
