@@ -28,4 +28,4 @@ jobs:
       - name: Install Dependencies
         run: cd ./packages/editor && npm ci
       - name: Build Packages
-        run: npm run build --workspaces --if-present
+        run: cd ./packages/editor && npm run build --workspaces
