@@ -108,9 +108,9 @@ function getControlsForTests( widgetConfig ) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {any}                             config
- * @param {any}                             sectionConfig
- *
+ * @param {Object}                          options
+ * @param {Object}                          options.config
+ * @param {Object}                          options.sectionConfig
  * @return {null|import('../lib/controls/control-base').ControlBase}
  */
 function createControlHandler( page, { config, sectionConfig } ) {

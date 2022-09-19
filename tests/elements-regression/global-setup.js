@@ -18,9 +18,10 @@ module.exports = async ( config ) => {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {string}                          username
- * @param {string}                          password
- * @param {string}                          storageState
+ * @param {Object}                          config
+ * @param {string}                          config.username
+ * @param {string}                          config.password
+ * @param {string}                          config.storageState
  * @return {Promise<void>}
  */
 async function login( page, { username, password, storageState } ) {
