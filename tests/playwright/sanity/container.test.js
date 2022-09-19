@@ -73,6 +73,7 @@ test.describe( 'Container tests', () => {
 		await spacerEditButton.click();
 		// Set background colour.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
+		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
 		await page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
@@ -164,7 +165,6 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
-		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '-1' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
 
@@ -200,13 +200,9 @@ test.describe( 'Container tests', () => {
 
 		// Act
 		// Select container.
-		await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
-		await containerElement.hover();
-		await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
-		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		// Set boxed content width
 		await page.locator( '.elementor-tab-control-layout' ).click();
+		await page.waitForSelector( '.elementor-tab-control-layout.elementor-active' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 
 		// Assert
