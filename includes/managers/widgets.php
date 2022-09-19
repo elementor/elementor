@@ -240,12 +240,6 @@ class Widgets_Manager {
 	 */
 	public function register( Widget_Base $widget_instance ) {
 		if ( is_null( $this->_widget_types ) ) {
-			_doing_it_wrong(
-				__METHOD__,
-				esc_html__( 'Register widgets must running after `elementor/widgets/register` action.', 'elementor' ),
-				'3.8.0'
-			);
-
 			$this->init_widgets();
 		}
 
