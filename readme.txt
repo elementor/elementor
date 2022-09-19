@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 3.7.5
+Stable tag: 3.7.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,9 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.7.6 - 2022-09-15 =
+* Fix: Replaced link for better clarity in Site Settings
 
 = 3.7.5 - 2022-09-14 =
 * Tweak: Added an option to create a custom logo with AI Logo Maker by Fiverr in Site Settings
