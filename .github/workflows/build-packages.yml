@@ -27,5 +27,5 @@ jobs:
           node-version: 16.x
       - name: Install Dependencies
         run: cd ./packages/editor && npm ci
-      - name: Build History
-        run: cd ./packages/editor/packages/history && npm run build
+      - name: Build Packages
+        run: npm run build --workspaces --if-present
