@@ -1,3 +1,8 @@
+/**
+ * Script to get the widget-config.json:
+ * Object.fromEntries( Object.entries( elementor.widgetsCache ).map(([key, value]) => [key, {controls: value.controls}] ) )
+ */
+
 module.exports = {
 	elements: {
 		include: [ 'heading', 'text-editor', 'divider' ],
