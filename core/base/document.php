@@ -1176,8 +1176,6 @@ abstract class Document extends Controls_Stack {
 			}
 
 			if ( $element_instance->has_own_method( 'on_import_replace_dynamic_content' ) ) {
-				// on_import_replace_dynamic_content() is deprecated since 3.8.0
-				// Please note that the old on_import function 2nd parameter accepts only a "flat" array of post IDs.
 				// TODO: Remove this check in the future.
 				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $data['post_ids'] );
 			} else {
