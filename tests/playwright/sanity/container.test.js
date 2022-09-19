@@ -129,7 +129,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position absolute and fixed', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position absolute and fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -139,8 +139,11 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		// Close Navigator
+		// Close Navigator.
 		await page.click( '#elementor-navigator__close' );
+		// Set Canvas template.
+		await page.click( '#elementor-panel-footer-settings i' );
+		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 
 		// Act.
 		// Add widget.
