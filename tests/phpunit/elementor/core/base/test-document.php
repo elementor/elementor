@@ -77,7 +77,7 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals( $expected_document_settings, $document->get_db_document_settings() );
 	}
 
-	public function test_on_import_update_dynamic_content__using_on_import_replace() {
+	public function test_on_import_update_dynamic_content__using_on_import_replace_dynamic_content() {
 		// Arrange.
 		require_once __DIR__ . '/document.php';
 
