@@ -162,8 +162,9 @@ test.describe( 'Container tests', () => {
 		await containerEditButton.click();
 		// Set position absolute.
 		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
-		await page.locator( '.elementor-tab-control-advanced' ).click();
-		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
+		const advancedTabButton = await page.waitForSelector( '.elementor-tab-control-advanced' );
+		await advancedTabButton.click();
+		await page.waitForSelector( '.elementor-control-position' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
@@ -176,8 +177,13 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
 
 		// Act
+		await containerElement.hover();
+		await containerEditButton.click();
+		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		// Set full content width
-		await page.locator( '.elementor-tab-control-layout' ).click();
+		const layoutTabButton = await page.waitForSelector( '.elementor-tab-control-layout' );
+		await layoutTabButton.click();
+		await page.waitForSelector( '.elementor-control-content_width' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -221,8 +227,9 @@ test.describe( 'Container tests', () => {
 		await containerEditButton.click();
 		// Set position fixed.
 		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
-		await page.locator( '.elementor-tab-control-advanced' ).click();
-		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
+		const advancedTabButton = await page.waitForSelector( '.elementor-tab-control-advanced' );
+		await advancedTabButton.click();
+		await page.waitForSelector( '.elementor-control-position' );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
@@ -235,8 +242,13 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
 
 		// Act
+		await containerElement.hover();
+		await containerEditButton.click();
+		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		// Set full content width
-		await page.locator( '.elementor-tab-control-layout' ).click();
+		const layoutTabButton = await page.waitForSelector( '.elementor-tab-control-layout' );
+		await layoutTabButton.click();
+		await page.waitForSelector( '.elementor-tab-control-layout.elementor-active' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
