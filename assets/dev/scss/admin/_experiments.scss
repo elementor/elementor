@@ -5,6 +5,7 @@
 		display: flex;
 		align-items: flex-start;
 		flex-wrap: wrap;
+		flex-direction: column;
 
 		&__indicator {
 			position: absolute;
