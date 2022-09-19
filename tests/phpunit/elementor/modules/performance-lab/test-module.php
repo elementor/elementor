@@ -3,17 +3,18 @@ namespace Elementor\Testing\Modules\PerformanceLab;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\PerformanceLab\Module as PerformanceLab;
-require_once( __DIR__ . '/mock.php' );
+require_once __DIR__ . '/mock.php';
 class Elementor_Test_PerformanceLab extends Elementor_Test_Base {
 
 	public function test_performance_lab_get_webp_src() {
-		$image_id = $this->factory()->attachment->create_upload_object( __DIR__ . '/assets/pixel.jpg' );
+		$root_path = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) );
+		$image_id = $this->factory()->attachment->create_upload_object( $root_path . '/tests/phpunit/resources/pixel.jpg' );
 		$image_url = wp_get_attachment_url( $image_id );
 		$reflection = new \ReflectionClass( PerformanceLab::class );
 		$method = $reflection->getMethod( 'performance_lab_get_webp_src' );
 		$method->setAccessible( true );
 		$performance_lab = new PerformanceLab();
 		$webp_src = $method->invokeArgs( $performance_lab, [ $image_id, 'full', $image_url ] );
-		$this->assertNotEquals( '.jpg', substr( $webp_src, -4 ) );
+		$this->assertEquals( '.webp', substr( $webp_src, -5 ) );
 	}
 }
