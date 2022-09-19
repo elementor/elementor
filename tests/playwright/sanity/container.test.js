@@ -164,7 +164,7 @@ test.describe( 'Container tests', () => {
 		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		const advancedTabButton = await page.waitForSelector( '.elementor-tab-control-advanced' );
 		await advancedTabButton.click();
-		await page.waitForSelector( '.elementor-control-position' );
+		await page.waitForSelector( '.elementor-control-position >> select' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
