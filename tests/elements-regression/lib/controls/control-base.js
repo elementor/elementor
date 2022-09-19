@@ -173,8 +173,6 @@ class ControlBase {
 	 * @return {Promise<void>}
 	 */
 	async clickPopoverToggle() {
-		const popover = await this.getPopover();
-
 		const toggleControlName = Object.keys( this.config?.condition )[ 0 ].replace( '!', '' );
 
 		await this.page.click( `.elementor-control-${ toggleControlName } label.elementor-control-popover-toggle-toggle-label` );

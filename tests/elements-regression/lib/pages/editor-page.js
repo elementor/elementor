@@ -42,11 +42,11 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<*>} Element ID
 	 */
 	async addElement( model, container = null ) {
-		return await this.page.evaluate( async ( { model, container = null } ) => {
+		return await this.page.evaluate( async ( args ) => {
 			let parent;
 
-			if ( container ) {
-				parent = elementor.getContainer( container );
+			if ( args.container ) {
+				parent = elementor.getContainer( args.container );
 			} else {
 				// If a `container` isn't supplied - create a new Section.
 				const section = $e.run(
@@ -64,7 +64,7 @@ module.exports = class EditorPage extends BasePage {
 			const element = $e.run(
 				'document/elements/create',
 				{
-					model,
+					model: args.model,
 					container: parent,
 				},
 			);

@@ -1,6 +1,6 @@
 const elementsRegressionConfig = require( '../elements-regression.config.js' );
 
-const config = {
+const defaultConfig = {
 	elements: {
 		...elementsRegressionConfig.elements,
 	},
@@ -50,14 +50,14 @@ function isExcluded( config, type ) {
 }
 
 module.exports = {
-	isWidgetIncluded: ( widgetType ) => isIncluded( config.elements, widgetType ),
-	isWidgetExcluded: ( widgetType ) => isExcluded( config.elements, widgetType ),
+	isWidgetIncluded: ( widgetType ) => isIncluded( defaultConfig.elements, widgetType ),
+	isWidgetExcluded: ( widgetType ) => isExcluded( defaultConfig.elements, widgetType ),
 	isControlIncluded: ( widgetType, controlType ) => isIncluded(
-		merge( config.controls[ '*' ], config.controls[ widgetType ] || {} ),
+		merge( defaultConfig.controls[ '*' ], defaultConfig.controls[ widgetType ] || {} ),
 		controlType,
 	),
 	isControlExcluded: ( widgetType, controlType ) => isExcluded(
-		merge( config.controls[ '*' ], config.controls[ widgetType ] || {} ),
+		merge( defaultConfig.controls[ '*' ], defaultConfig.controls[ widgetType ] || {} ),
 		controlType,
 	),
 };

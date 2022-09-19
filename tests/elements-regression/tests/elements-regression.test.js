@@ -90,7 +90,7 @@ test.describe( 'Elements regression', () => {
  */
 function getWidgetForTests() {
 	return Object.entries( elementsConfig ).filter(
-		( [ widgetType, widgetConfig ] ) => isWidgetIncluded( widgetType ) && ! isWidgetExcluded( widgetType ),
+		( [ widgetType ] ) => isWidgetIncluded( widgetType ) && ! isWidgetExcluded( widgetType ),
 	);
 }
 
@@ -100,16 +100,16 @@ function getWidgetForTests() {
  */
 function getControlsForTests( widgetConfig ) {
 	return Object.entries( widgetConfig.controls )
-		.filter( ( [ controlType, controlConfig ] ) =>
+		.filter( ( [ controlType ] ) =>
 			isControlIncluded( widgetConfig.widgetType, controlType ) &&
 			! isControlExcluded( widgetConfig.widgetType, controlType ),
 		);
 }
 
 /**
- * @param {Object}                          config
  * @param {import('@playwright/test').Page} page
- * @param {Object}                          sectionConfig
+ * @param {any}                             config
+ * @param {any}                             sectionConfig
  *
  * @return {null|import('../lib/controls/control-base').ControlBase}
  */
