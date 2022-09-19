@@ -46,6 +46,7 @@ class Test_Server extends Elementor_Test_Base {
 			'no_permissions' => [
 				'permission_code' => 0000,
 				'expected' => [
+					'exists' => true,
 					'read' => false,
 					'write' => false,
 					'execute' => false,
@@ -54,6 +55,7 @@ class Test_Server extends Elementor_Test_Base {
 			'readable' => [
 				'permission_code' => 0400,
 				'expected' => [
+					'exists' => true,
 					'read' => true,
 					'write' => false,
 					'execute' => false,
@@ -62,6 +64,7 @@ class Test_Server extends Elementor_Test_Base {
 			'readable_writeable' => [
 				'permission_code' => 0600,
 				'expected' => [
+					'exists' => true,
 					'read' => true,
 					'write' => true,
 					'execute' => false,
@@ -70,6 +73,7 @@ class Test_Server extends Elementor_Test_Base {
 			'readable_writeable_executable' => [
 				'permission_code' => 0700,
 				'expected' => [
+					'exists' => true,
 					'read' => true,
 					'write' => true,
 					'execute' => true,

@@ -359,7 +359,7 @@ class Module extends BaseModule {
 		$permissions = $server->get_paths_permissions( $paths_to_check );
 
 		foreach ( $permissions as $permission ) {
-			if ( ! $permission['write'] ) {
+			if ( $permission['exists'] && ! $permission['write'] ) {
 				throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
 			}
 		}

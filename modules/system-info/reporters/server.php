@@ -330,7 +330,7 @@ class Server extends Base {
 		$write_problems = [];
 
 		foreach ( $paths_permissions as $key_path => $path_permissions ) {
-			if ( ! $path_permissions['write'] ) {
+			if ( $path_permissions['exists'] && ! $path_permissions['write'] ) {
 				$write_problems[] = $paths_messages[ $key_path ];
 			}
 		}
@@ -439,7 +439,7 @@ class Server extends Base {
 				return WP_CONTENT_DIR;
 
 			case static::KEY_PATH_HTACCESS_FILE:
-				return file_exists( ABSPATH . '/.htaccess' ) ? ABSPATH . '/.htaccess' : '';
+				return ABSPATH . '/.htaccess';
 
 			case static::KEY_PATH_UPLOADS_DIR:
 				return wp_upload_dir()['basedir'] ?? '';
@@ -459,8 +459,9 @@ class Server extends Base {
 	 * @return array{read: bool, write: bool, execute: bool}
 	 */
 	public function get_path_permissions( $path ) : array {
-		if ( empty( $path ) ) {
+		if ( empty( $path ) || ! file_exists( $path ) ) {
 			return [
+				'exists' => false,
 				'read' => false,
 				'write' => false,
 				'execute' => false,
@@ -468,6 +469,7 @@ class Server extends Base {
 		}
 
 		return [
+			'exists' => true,
 			'read' => is_readable( $path ),
 			'write' => is_writeable( $path ),
 			'execute' => is_executable( $path ),
