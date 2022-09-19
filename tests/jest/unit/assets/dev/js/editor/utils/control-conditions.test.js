@@ -92,6 +92,9 @@ describe( 'Control Conditions', () => {
 
 		const mockResponsiveControlDesktop = {
 			name: 'mock_control',
+			responsive: {
+				max: 'desktop',
+			},
 		};
 
 		// Act
