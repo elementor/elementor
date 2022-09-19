@@ -9,10 +9,6 @@ class Slider extends ControlBase {
 	 */
 	inputLocator;
 
-	static getType() {
-		return 'slider';
-	}
-
 	constructor( ...args ) {
 		super( ...args );
 
@@ -58,7 +54,7 @@ class Slider extends ControlBase {
 		await this.inputLocator.fill( `${ value }` );
 	}
 
-	async getTestValues( [ initialUnit, initialValue ] ) {
+	async getTestValues( [ initialUnit, initialValue ] = [] ) {
 		const units = this.hasUnits() ? this.config.size_units : [ this.constructor.NO_UNIT ];
 		const values = [];
 
@@ -78,7 +74,7 @@ class Slider extends ControlBase {
 	}
 
 	hasUnits() {
-		return this.config?.size_units?.length > 0;
+		return this.config?.size_units?.length > 1;
 	}
 
 	async getUnitRange( unit ) {

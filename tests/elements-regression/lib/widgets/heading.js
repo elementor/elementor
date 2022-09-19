@@ -1,10 +1,6 @@
-const { WidgetBase } = require( './widget-base' );
+const { Widget } = require( './widget' );
 
-class Heading extends WidgetBase {
-	static getType() {
-		return 'heading';
-	}
-
+class Heading extends Widget {
 	async beforeControlTest( { control, controlId } ) {
 		if ( 'blend_mode' === controlId ) {
 			// Set the parent section background to red in order to test controls such as "blend mode".

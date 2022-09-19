@@ -1,10 +1,6 @@
 const { ControlBase } = require( './control-base' );
 
 class Select extends ControlBase {
-	static getType() {
-		return 'select';
-	}
-
 	getSelector() {
 		return `select[data-setting="${ this.config.name }"]`;
 	}

@@ -101,8 +101,8 @@ module.exports = class EditorPage extends BasePage {
 			clip: {
 				x: elementRect.x,
 				y: elementRect.y,
-				width: Math.min( elementRect.width, frameRect.width ),
-				height: Math.min( elementRect.height, frameRect.height ),
+				width: Math.min( elementRect.width, frameRect.width ) || 1,
+				height: Math.min( elementRect.height, frameRect.height ) || 1,
 			},
 		} );
 	}

@@ -1,10 +1,6 @@
 const { ControlBase } = require( './control-base' );
 
 class Choose extends ControlBase {
-	static getType() {
-		return 'choose';
-	}
-
 	getSelector() {
 		return `.elementor-control-${ this.config.name } .elementor-choices`;
 	}

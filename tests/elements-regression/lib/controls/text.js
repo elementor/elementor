@@ -1,8 +1,8 @@
 const { ControlBase } = require( './control-base' );
 
-class Textarea extends ControlBase {
+class Text extends ControlBase {
 	getSelector() {
-		return `textarea[data-setting="${ this.config.name }"]`;
+		return `input[data-setting="${ this.config.name }"]`;
 	}
 
 	async getValue() {
@@ -19,5 +19,5 @@ class Textarea extends ControlBase {
 }
 
 module.exports = {
-	Textarea,
+	Text,
 };

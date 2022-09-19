@@ -11,10 +11,6 @@ class Color extends ControlBase {
 		this.localToggleButton = this.elementLocator.locator( '.pickr' );
 	}
 
-	static getType() {
-		return 'color';
-	}
-
 	getSelector() {
 		return `.elementor-control-${ this.config.name } .elementor-control-input-wrapper`;
 	}
@@ -41,7 +37,7 @@ class Color extends ControlBase {
 		await this.setLocalValue( value );
 	}
 
-	async getTestValues( [ initialType, initialColor ] ) {
+	async getTestValues( [ initialType, initialColor ] = [] ) {
 		const testValues = [
 			[ this.constructor.TYPE_LOCAL_COLOR, '#FF0000' ],
 			[ this.constructor.TYPE_LOCAL_COLOR, '#0000FF' ],

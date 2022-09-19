@@ -1,7 +1,7 @@
 const { Heading } = require( './heading' );
-const { WidgetBase } = require( './widget-base' );
+const { Widget } = require( './widget' );
 
 module.exports = {
-	Heading,
-	WidgetBase,
+	heading: Heading,
+	widget: Widget,
 };

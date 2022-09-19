@@ -1,3 +1,5 @@
+const { isObject } = require( '../utils' );
+
 class ControlBase {
 	/**
 	 * @protected
@@ -14,25 +16,24 @@ class ControlBase {
 	config = null;
 
 	/**
+	 * Section's config.
+	 *
+	 * @protected
+	 * @type {Object}
+	 */
+	sectionConfig = null;
+
+	/**
 	 * @protected
 	 * @type {import('@playwright/test').Locator}
 	 */
 	elementLocator = null;
 
-	constructor( page, config ) {
+	constructor( page, { config, sectionConfig } ) {
 		this.page = page;
 		this.config = config;
+		this.sectionConfig = sectionConfig;
 		this.elementLocator = page.locator( this.getSelector() );
-	}
-
-	// eslint-disable-next-line jsdoc/require-returns-check
-	/**
-	 * Retreive the control type.
-	 *
-	 * @return {string}
-	 */
-	static getType() {
-		throw this.constructor.name + '.getType() is not implemented!';
 	}
 
 	/**
@@ -72,7 +73,7 @@ class ControlBase {
 	 * @return {string}
 	 */
 	generateSnapshotLabel( value ) {
-		if ( '' === value ) {
+		if ( 'string' === typeof value && '' === value.trim() ) {
 			return 'empty';
 		}
 
@@ -112,7 +113,7 @@ class ControlBase {
 		await this.switchToView();
 
 		// Open popover.
-		if ( this.config.popover && ! await this.isPopoverOpen() ) {
+		if ( this.isInsidePopover() && ! await this.isPopoverOpen() ) {
 			await this.clickPopoverToggle();
 		}
 	}
@@ -125,7 +126,7 @@ class ControlBase {
 	 */
 	async teardown() {
 		// Close popover.
-		if ( this.config.popover && await this.isPopoverOpen() ) {
+		if ( this.isInsidePopover() && await this.isPopoverOpen() ) {
 			await this.clickPopoverToggle();
 		}
 	}
@@ -174,9 +175,9 @@ class ControlBase {
 	async clickPopoverToggle() {
 		const popover = await this.getPopover();
 
-		const popoverToggleId = await popover.evaluate( ( node ) => node.dataset.popoverToggle );
+		const toggleControlName = Object.keys( this.config?.condition )[ 0 ].replace( '!', '' );
 
-		await this.page.click( `label.elementor-control-popover-toggle-toggle-label[for="${ popoverToggleId }-custom"]` );
+		await this.page.click( `.elementor-control-${ toggleControlName } label.elementor-control-popover-toggle-toggle-label` );
 	}
 
 	/**
@@ -186,6 +187,46 @@ class ControlBase {
 	 */
 	async getPopover() {
 		return this.page.$( `.elementor-controls-popover:has(${ this.getSelector() })` );
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	hasConditions() {
+		return isObject( this.config.condition ) || isObject( this.config.conditions );
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	hasSectionConditions() {
+		return this.sectionConfig && (
+			isObject( this.sectionConfig?.condition ) ||
+			isObject( this.sectionConfig?.conditions )
+		);
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	isInsidePopover() {
+		// For now supporting only popover with one condition.
+		return !! this.config.popover && 1 === Object.keys( this.config.condition ).length;
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	canTestControl() {
+		const isResponsiveControl = /(tablet|mobile|laptop|mobile_extra|widescreen|tablet_extra)$/i.test( this.config.name );
+		const isHoverControl = /hover/i.test( this.config.name );
+		const isAdvancedControl = 'advanced' === this.config.tab;
+
+		return ! ( ! this.isInsidePopover() && this.hasConditions() ) &&
+			! this.hasSectionConditions() &&
+			! isResponsiveControl &&
+			! isHoverControl &&
+			! isAdvancedControl;
 	}
 }
 
