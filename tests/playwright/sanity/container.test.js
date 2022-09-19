@@ -140,7 +140,9 @@ test.describe( 'Container tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator.
-		await page.click( '#elementor-navigator__close' );
+		if ( await page.$( '#elementor-navigator' ) ) {
+			await page.click( '#elementor-navigator__close' );
+		}
 		// Set Canvas template.
 		await page.click( '#elementor-panel-footer-settings i' );
 		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
