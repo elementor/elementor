@@ -77,14 +77,12 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals( $expected_document_settings, $document->get_db_document_settings() );
 	}
 
-	public function test_on_import_update_dynamic_content() {
+	public function test_on_import_update_dynamic_content__using_on_import_replace() {
 		// Arrange.
 		require_once __DIR__ . '/document.php';
 
 		$this->act_as_admin();
 
-		Plugin::$instance->dynamic_tags->register( new Mock_Internal_URL() );
-		plugin::$instance->widgets_manager->register( new Mock_Template() );
 		plugin::$instance->widgets_manager->register( new Mock_Popup() );
 
 		$post = $this->factory()->create_and_get_default_post();
@@ -94,7 +92,55 @@ class Test_Document extends Elementor_Test_Base {
 		] );
 
 		$replace_data = [
-			'post_ids' => [ '35' => '36', '37' => '38', '39' => '40' ],
+			'post_ids' => [ '22' => '23' ],
+			'term_ids' => [ '41' => '42' ],
+		];
+
+		$config = self::$document_mock_default[ 'elements' ];
+
+		$widgets = [
+			[
+				'id' => '75431642',
+				'elType' => 'widget',
+				'settings' => [
+					'popup' => '22',
+				],
+				'elements' => [],
+				'widgetType' => 'popup',
+			],
+		];
+
+		// Act.
+
+		$config[0]['elements'][0]['elements'] = array_merge( $config[0]['elements'][0]['elements'], $widgets );
+
+		$updated_config = $document::on_import_update_dynamic_content( $config, $replace_data );
+
+		// Assert.
+
+		$this->assertEquals(
+			'23',
+			$updated_config[0][ 'elements' ][0][ 'elements' ][1][ 'settings' ][ 'popup' ]
+		);
+	}
+
+	public function test_on_import_update_dynamic_content() {
+		// Arrange.
+		require_once __DIR__ . '/document.php';
+
+		$this->act_as_admin();
+
+		Plugin::$instance->dynamic_tags->register( new Mock_Internal_URL() );
+		plugin::$instance->widgets_manager->register( new Mock_Template() );
+
+		$post = $this->factory()->create_and_get_default_post();
+
+		$document = new Document( [
+			'post_id' => $post->ID,
+		] );
+
+		$replace_data = [
+			'post_ids' => [ '35' => '36', '37' => '38' ],
 			'term_ids' => [ '42' => '43' ],
 		];
 
@@ -121,15 +167,6 @@ class Test_Document extends Elementor_Test_Base {
 				'elements' => [],
 				'widgetType' => 'template',
 			],
-			[
-				'id' => '75431642',
-				'elType' => 'widget',
-				'settings' => [
-					'popup' => '39',
-				],
-				'elements' => [],
-				'widgetType' => 'popup',
-			],
 		];
 
 		// Act.
@@ -148,11 +185,6 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals(
 			'38',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'template_id' ]
-		);
-
-		$this->assertEquals(
-			'40',
-			$updated_config[0][ 'elements' ][0][ 'elements' ][3][ 'settings' ][ 'popup' ]
 		);
 	}
 
