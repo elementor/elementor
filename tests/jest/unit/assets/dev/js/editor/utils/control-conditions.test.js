@@ -91,7 +91,7 @@ describe( 'Control Conditions', () => {
 		const conditions = new ControlConditions();
 
 		const mockResponsiveControlDesktop = {
-			name: 'mocK_control',
+			name: 'mock_control',
 		};
 
 		// Act
@@ -105,7 +105,7 @@ describe( 'Control Conditions', () => {
 		const conditions = new ControlConditions();
 
 		const mockResponsiveControlTablet = {
-			name: 'mocK_control_tablet',
+			name: 'mock_control_tablet',
 			responsive: {
 				max: 'tablet',
 			},
@@ -114,7 +114,7 @@ describe( 'Control Conditions', () => {
 		// Act
 		const deviceSuffix = conditions.getResponsiveControlDeviceSuffix( mockResponsiveControlTablet.responsive );
 
-		expect( deviceSuffix ).toEqual( 'tablet' );
+		expect( deviceSuffix ).toEqual( '_tablet' );
 	} );
 
 	test( 'getResponsiveControlDeviceSuffixMobileExtraMin', () => {
@@ -122,7 +122,7 @@ describe( 'Control Conditions', () => {
 		const conditions = new ControlConditions();
 
 		const mockResponsiveControlMobileExtra = {
-			name: 'mocK_control_mobile_extra',
+			name: 'mock_control_mobile_extra',
 			responsive: {
 				min: 'mobile_extra',
 			},
@@ -131,6 +131,6 @@ describe( 'Control Conditions', () => {
 		// Act
 		const deviceSuffix = conditions.getResponsiveControlDeviceSuffix( mockResponsiveControlMobileExtra.responsive );
 
-		expect( deviceSuffix ).toEqual( 'mobile_extra' );
+		expect( deviceSuffix ).toEqual( '_mobile_extra' );
 	} );
 } );

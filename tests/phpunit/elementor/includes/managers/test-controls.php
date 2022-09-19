@@ -35,7 +35,7 @@ class Test_Controls extends Elementor_Test_Base {
 	public function test_get_responsive_control_device_suffix_tablet() {
 		$device_suffix = Controls_Manager::get_responsive_control_device_suffix( static::$responsive_control_tablet_mock );
 
-		$this->assertEquals( 'tablet', $device_suffix );
+		$this->assertEquals( '_tablet', $device_suffix );
 	}
 
 	public function test_delete_stack() {
