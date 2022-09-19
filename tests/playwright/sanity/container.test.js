@@ -162,7 +162,7 @@ test.describe( 'Container tests', () => {
 		// Set position absolute.
 		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		await page.locator( '.elementor-tab-control-advanced' ).click();
-		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active" )' );
+		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '-1' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -189,7 +189,7 @@ test.describe( 'Container tests', () => {
 		// Act
 		// Set position fixed.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
-		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active" )' );
+		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 
 		// Assert
