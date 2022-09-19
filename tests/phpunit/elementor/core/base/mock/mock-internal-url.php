@@ -26,7 +26,7 @@ class Mock_Internal_URL extends Data_Tag {
 	}
 
 	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
-		if ( isset( $config['settings']['post_id'] ) ) {
+		if ( isset( $config['settings']['post_id'] ) && isset( $data['post_ids'] ) ) {
 			$config['settings']['post_id'] = $data['post_ids'][ $config['settings']['post_id'] ];
 		}
 

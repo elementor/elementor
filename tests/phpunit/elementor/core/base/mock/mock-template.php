@@ -14,7 +14,7 @@ class Mock_Template extends Widget_Base {
 	}
 
 	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
-        if ( isset( $config['settings']['template_id'] ) ) {
+        if ( isset( $config['settings']['template_id'] ) && isset( $data['post_ids'] ) ) {
             $config['settings']['template_id'] = $data['post_ids'][ $config['settings']['template_id'] ];
         }
 
