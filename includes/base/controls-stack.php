@@ -2015,18 +2015,6 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 * @since 3.6.0
-	 * @access public
-	 *
-	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
-	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
-
-		return $config;
-	}
-
-	/**
 	 * On import update dynamic content (e.g. post and term IDs).
 	 *
 	 * @since 3.8.0
