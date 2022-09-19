@@ -20,11 +20,7 @@ class Admin {
 	 * @access public
 	 */
 	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-
 		$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
-
-		// TODO: Find a way to get the hook name from the register.
-		add_action( 'load-elementor_page_' . static::PAGE_ID, [ $this, 'on_load_page' ] );
 	}
 
 	/**
@@ -64,5 +60,11 @@ class Admin {
 		self::$url = admin_url( 'admin.php?page=' . self::PAGE_ID );
 
 		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
+
+		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
+			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
+				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );
+			}
+		}, 10, 2 );
 	}
 }
