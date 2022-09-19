@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 3.7.4
+Stable tag: 3.7.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,18 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.7.6 - 2022-09-15 =
+* Fix: Replaced link for better clarity in Site Settings
+
+= 3.7.5 - 2022-09-14 =
+* Tweak: Added an option to create a custom logo with AI Logo Maker by Fiverr in Site Settings
+* Fix: Background Image Custom Position and Size controls are not visible for Mobile and Tablet devices ([#19487](https://github.com/elementor/elementor/issues/19487), [#19669](https://github.com/elementor/elementor/issues/19669), [#19662](https://github.com/elementor/elementor/issues/19662))
+* Fix: Custom Width on Tablet and Mobile devices generates wrong values when Desktop is set to default ([#19487](https://github.com/elementor/elementor/issues/19487), [#19669](https://github.com/elementor/elementor/issues/19669), [#19662](https://github.com/elementor/elementor/issues/19662), [#19528](https://github.com/elementor/elementor/issues/19528), [#19542](https://github.com/elementor/elementor/issues/19542))
+* Fix: Empty state placeholder is not displayed in various widgets ([#19446](https://github.com/elementor/elementor/issues/19446))
+* Fix: When pasting a widget on a page the widget is being pasted into a Section when the Container experiment is active ([#19452](https://github.com/elementor/elementor/issues/19452))
+* Fix: Custom Image Size generates a fatal error after updating to PHP 8+
+* Fix: `is_current_user_can_edit` not working correctly when `$post_id` missing
 
 = 3.7.4 - 2022-08-31 =
 * Tweak: Removed redundant code in various widgets that includes images ([#12268] (https://github.com/elementor/elementor/issues/12268), props [@ibndawood](https://github.com/ibndawood))
