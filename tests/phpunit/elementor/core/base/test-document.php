@@ -5,9 +5,11 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Testing\Core\Base\Mock\Mock_Template;
 use Elementor\Testing\Core\Base\Mock\Mock_Internal_URL;
+use Elementor\Testing\Core\Base\Mock\Mock_Popup;
 
 require_once 'mock/mock-internal-url.php';
 require_once 'mock/mock-template.php';
+require_once 'mock/mock-popup.php';
 
 class Test_Document extends Elementor_Test_Base {
 
@@ -76,13 +78,14 @@ class Test_Document extends Elementor_Test_Base {
 	}
 
 	public function test_on_import_update_dynamic_content() {
+		// Arrange.
 		require_once __DIR__ . '/document.php';
 
 		$this->act_as_admin();
 
 		Plugin::$instance->dynamic_tags->register( new Mock_Internal_URL() );
-
 		plugin::$instance->widgets_manager->register( new Mock_Template() );
+		plugin::$instance->widgets_manager->register( new Mock_Popup() );
 
 		$post = $this->factory()->create_and_get_default_post();
 
@@ -91,7 +94,7 @@ class Test_Document extends Elementor_Test_Base {
 		] );
 
 		$replace_data = [
-			'post_ids' => [ '35' => '36', '37' => '38' ],
+			'post_ids' => [ '35' => '36', '37' => '38', '39' => '40' ],
 			'term_ids' => [ '42' => '43' ],
 		];
 
@@ -118,11 +121,24 @@ class Test_Document extends Elementor_Test_Base {
 				'elements' => [],
 				'widgetType' => 'template',
 			],
+			[
+				'id' => '75431642',
+				'elType' => 'widget',
+				'settings' => [
+					'popup' => '39',
+				],
+				'elements' => [],
+				'widgetType' => 'popup',
+			],
 		];
+
+		// Act.
 
 		$config[0]['elements'][0]['elements'] = array_merge( $config[0]['elements'][0]['elements'], $widgets );
 
 		$updated_config = $document::on_import_update_dynamic_content( $config, $replace_data );
+
+		// Assert.
 
 		$this->assertEquals(
 			'[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2236%22%7D"]',
@@ -132,6 +148,11 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals(
 			'38',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'template_id' ]
+		);
+
+		$this->assertEquals(
+			'40',
+			$updated_config[0][ 'elements' ][0][ 'elements' ][3][ 'settings' ][ 'popup' ]
 		);
 	}
 
