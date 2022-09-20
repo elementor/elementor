@@ -1352,19 +1352,14 @@ abstract class Controls_Stack extends Base_Object {
 	/**
 	 * Get Responsive Control Device Suffix
 	 *
+	 * @deprecated 3.7.6
 	 * @param array $control
 	 * @return string $device suffix
 	 */
 	protected function get_responsive_control_device_suffix( $control ) {
-		if ( ! empty( $control['responsive']['max'] ) ) {
-			$query_device = $control['responsive']['max'];
-		} elseif ( ! empty( $control['responsive']['min'] ) ) {
-			$query_device = $control['responsive']['min'];
-		} else {
-			return '';
-		}
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.7.6', 'Elementor\Controls_Manager::get_responsive_control_device_suffix()' );
 
-		return 'desktop' === $query_device ? '' : '_' . $query_device;
+		return Controls_Manager::get_responsive_control_device_suffix( $control );
 	}
 
 	/**
@@ -1410,7 +1405,7 @@ abstract class Controls_Stack extends Base_Object {
 			$condition_name_to_check = $pure_condition_key;
 
 			if ( $are_control_and_condition_responsive ) {
-				$device_suffix = $this->get_responsive_control_device_suffix( $control );
+				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
 
 				$condition_name_to_check = $pure_condition_key . $device_suffix;
 
