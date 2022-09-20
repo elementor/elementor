@@ -154,7 +154,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
 		await containerElement.hover();
-		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-editor-element-edit' );
+		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
 		// Set position absolute.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
