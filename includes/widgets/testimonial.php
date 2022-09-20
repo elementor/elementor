@@ -279,7 +279,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'range' => [
 					'px' => [
 						'min' => 20,

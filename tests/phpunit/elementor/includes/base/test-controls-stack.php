@@ -2,7 +2,6 @@
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Plugin;
-use Elementor\Widget_Common;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
