@@ -2,7 +2,7 @@ const { spawn, exec } = require( 'child_process' );
 const packageJson = require( '../../../package.json' );
 
 function isDockerExist() {
-	return new Promise( ( resolve, reject ) => {
+	return new Promise( ( resolve ) => {
 		exec( 'docker -v', ( error ) => {
 			resolve( ! error );
 		} );
@@ -25,7 +25,7 @@ async function run( args ) {
 	const image = `mcr.microsoft.com/playwright:v${ playwrightVersion }-focal`;
 	const commandToRun = `/bin/bash -c "npm i && npm run test:elements-regression -- ${ args.join( ' ' ) }"`;
 
-	const dockerCommand = spawn( `${ command } ${ options.join( ' ' ) } ${ image } ${ commandToRun }`, {
+	spawn( `${ command } ${ options.join( ' ' ) } ${ image } ${ commandToRun }`, {
 		stdio: 'inherit',
 		stderr: 'inherit',
 		shell: true,
