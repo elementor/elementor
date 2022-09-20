@@ -1,14 +1,14 @@
 const { expect } = require( '@playwright/test' );
-const test = require( '../lib/test' );
+const test = require( '../src/test' );
 const elementsConfig = require( '../elements-config.json' );
-const widgetHandlers = require( '../lib/widgets' );
-const controlHandlers = require( '../lib/controls' );
+const widgetHandlers = require( '../src/widgets' );
+const controlHandlers = require( '../src/controls' );
 const {
 	isWidgetIncluded,
 	isWidgetExcluded,
 	isControlIncluded,
 	isControlExcluded,
-} = require( '../lib/validation' );
+} = require( '../src/validation' );
 
 test.describe( 'Elements regression', () => {
 	const testedElements = {};
@@ -111,7 +111,7 @@ function getControlsForTests( widgetConfig ) {
  * @param {Object}                          options
  * @param {Object}                          options.config
  * @param {Object}                          options.sectionConfig
- * @return {null|import('../lib/controls/control-base').ControlBase}
+ * @return {null|import('../src/controls/control-base').ControlBase}
  */
 function createControlHandler( page, { config, sectionConfig } ) {
 	const ControlClass = controlHandlers[ config.type ];
@@ -124,10 +124,10 @@ function createControlHandler( page, { config, sectionConfig } ) {
 }
 
 /**
- * @param {import('../lib/page').EditorPage} editorPage
+ * @param {import('../src/page').EditorPage} editorPage
  * @param {string}                           type
  * @param {Object}                           config
- * @return {import('../lib/widgets/widget').Widget}
+ * @return {import('../src/widgets/widget').Widget}
  */
 function createWidgetHandler( editorPage, type, config ) {
 	const WidgetClass = widgetHandlers[ type ] || widgetHandlers.widget;

@@ -1,5 +1,5 @@
 const { chromium } = require( '@playwright/test' );
-const WpAdminPage = require( './lib/pages/wp-admin-page.js' );
+const WpAdminPage = require( './src/pages/wp-admin-page.js' );
 
 module.exports = async ( config ) => {
 	config = config.projects[ 0 ].use;

@@ -1,15 +1,15 @@
 const { Choose } = require( './choose' );
-const { Select } = require( './select' );
-const { Textarea } = require( './textarea' );
 const { Color } = require( './color' );
+const { Select } = require( './select' );
 const { Slider } = require( './slider' );
 const { Text } = require( './text' );
+const { Textarea } = require( './textarea' );
 
 module.exports = {
 	choose: Choose,
-	select: Select,
-	textarea: Textarea,
 	color: Color,
+	select: Select,
 	slider: Slider,
 	text: Text,
+	textarea: Textarea,
 };

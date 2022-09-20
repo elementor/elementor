@@ -1,28 +1,51 @@
 // @ts-check
+const dotenv = require( 'dotenv' );
+const path = require( 'path' );
+
+/**
+ * Read environment variables from file.
+ * https://github.com/motdotla/dotenv
+ */
+dotenv.config( {
+	path: path.resolve( __dirname, './.env' ),
+} );
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-	timeout: 900000,
-	globalTimeout: 900000,
-	reporter: process.env.CI ? 'github' : 'list',
 	testDir: './tests/',
-	globalSetup: require.resolve( './global-setup' ),
-	retries: 1,
-	use: {
-		headless: true,
-		storageState: './tests/elements-regression/storage-state.json',
-		elementsConfig: './tests/elements-regression/elements-config.json',
-		baseURL: process.env.BASE_URL || 'http://localhost:8888',
-		viewport: { width: 1920, height: 1080 },
-		video: 'on',
-		trace: 'on-first-retry',
-		user: {
-			username: process.env.USERNAME || 'admin',
-			password: process.env.PASSWORD || 'password',
-		},
-		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
+	/* Maximum time one test can run for. */
+	timeout: 2 * 60 * 1000, // 2 minutes
+	globalSetup: path.resolve( __dirname, './global-setup.js' ),
+	expect: {
+		/**
+		 * Maximum time expect() should wait for the condition to be met.
+		 * For example in `await expect(locator).toHaveText();`
+		 */
+		timeout: 5 * 1000, // 5 seconds
 	},
-	workers: 1,
+	/* Fail the build on CI if you accidentally left test.only in the source code. */
+	forbidOnly: !! process.env.CI,
+	/* Retry on CI only */
+	retries: process.env.CI ? 2 : 0,
+	/* Retry on CI only */
+	workers: process.env.CI ? 1 : undefined,
+	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
+	reporter: process.env.CI ? 'github' : 'list',
+	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+	use: {
+		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
+		actionTimeout: 0,
+		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+		trace: 'on-first-retry',
+		video: process.env.VIDEO || process.env.CI ? 'on' : 'off',
+		viewport: { width: 1920, height: 1080 },
+		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8889',
+		storageState: path.resolve( __dirname, 'storage-state.json' ),
+		user: {
+			username: process.env.ELEMENTS_REGRESSION_WP_USERNAME || 'admin',
+			password: process.env.ELEMENTS_REGRESSION_WP_PASSWORD || 'password',
+		},
+	},
 };
 
 module.exports = config;

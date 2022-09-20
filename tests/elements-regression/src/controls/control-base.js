@@ -73,6 +73,8 @@ class ControlBase {
 	 * @return {string}
 	 */
 	generateSnapshotLabel( value ) {
+		// Some values are empty string and some are spaces in a string,
+		// in the final image name both of them are "empty" value.
 		if ( 'string' === typeof value && '' === value.trim() ) {
 			return 'empty';
 		}
@@ -173,6 +175,8 @@ class ControlBase {
 	 * @return {Promise<void>}
 	 */
 	async clickPopoverToggle() {
+		// Get the toggle control name from the condition of the current control.
+		// to open the popover.
 		const toggleControlName = Object.keys( this.config?.condition )[ 0 ].replace( '!', '' );
 
 		await this.page.click( `.elementor-control-${ toggleControlName } label.elementor-control-popover-toggle-toggle-label` );
@@ -191,6 +195,8 @@ class ControlBase {
 	 * @return {boolean}
 	 */
 	hasConditions() {
+		// There are 2 types of conditions, and sometime they exists in the config but empty.
+		// when checking for object we make sure that the "conditions"/"condition" are not empty.
 		return isObject( this.config.condition ) || isObject( this.config.conditions );
 	}
 
@@ -198,6 +204,8 @@ class ControlBase {
 	 * @return {boolean}
 	 */
 	hasSectionConditions() {
+		// There are 2 types of conditions, and sometime they exists in the config but empty.
+		// when checking for object we make sure that the "conditions"/"condition" are not empty.
 		return this.sectionConfig && (
 			isObject( this.sectionConfig?.condition ) ||
 			isObject( this.sectionConfig?.conditions )
