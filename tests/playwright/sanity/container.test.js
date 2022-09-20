@@ -187,6 +187,11 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
 
 		// Act
+		// Select container.
+		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		await containerElement.hover();
+		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		await containerEditButton.click();
 		// Set position fixed.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
@@ -198,6 +203,11 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
 
 		// Act
+		// Select container.
+		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		await containerElement.hover();
+		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		await containerEditButton.click();
 		// Set boxed content width
 		await page.locator( '.elementor-tab-control-layout' ).click();
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
