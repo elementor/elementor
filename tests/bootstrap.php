@@ -70,6 +70,14 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 	$experiments_manager->set_feature_default_state( $experimental_data['name'], $experiments_manager::STATE_ACTIVE );
 }, 10, 2 );
 
+/**
+ * Override shutdown function of the logger, to prevent logging errors during tests.
+ * core/logger/manager.php:266
+ */
+register_shutdown_function( function () {
+	exit();
+} );
+
 // Make sure the main class is running
 \Elementor\Plugin::instance();
 
@@ -87,13 +95,16 @@ do_action( 'plugins_loaded' );
  * @return void
  */
 function copy_language_files( $_tests_dir ) {
-	$tests_data_dir = $_tests_dir . '/data';
-	$tests_lang_dir = $tests_data_dir . '/languages';
+	$tests_lang_dir = "{$_tests_dir}/data/languages";
+	$tests_plugins_lang_dir = "{$tests_lang_dir}/plugins";
 
-	@mkdir( $tests_data_dir );
-	@mkdir( $tests_lang_dir );
-	@mkdir( $tests_lang_dir . '/plugins' );
+	if ( ! file_exists( $tests_plugins_lang_dir ) ) {
+		mkdir( $tests_plugins_lang_dir, 0777, true );
+	}
 
 	touch( $tests_lang_dir . '/he_IL.mo' );
-	copy( __DIR__ . '/phpunit/resources/languages/plugins/elementor-he_IL.mo', $tests_lang_dir . '/plugins/elementor-he_IL.mo' );
+	copy(
+		__DIR__ . '/phpunit/resources/languages/plugins/elementor-he_IL.mo',
+		"{$tests_plugins_lang_dir}/elementor-he_IL.mo"
+	);
 }
