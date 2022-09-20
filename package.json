@@ -15,7 +15,7 @@
         "test:playwright:local": "playwright test \"--config=tests/playwright/config/local.config.js\"",
         "test:playwright:debug": "npm run test:playwright -- --debug",
         "test:elements-regression": "playwright test \"--config=tests/elements-regression/playwright.config.js\"",
-        "test:elements-regression:update-snapshots": "bash ./bin/update-elements-reggression-snapshots.sh",
+        "test:elements-regression:linux": "node ./tests/elements-regression/scripts/run-on-linux.js",
         "dev:start": "npm install && composer install",
         "test:jest": "jest --config='./tests/jest/jest.config.js'",
         "scripts": "grunt scripts",
