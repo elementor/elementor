@@ -60,12 +60,15 @@ test.describe( 'Container tests', () => {
 		// Add widgets.
 		await editor.addWidget( 'accordion', containerId );
 		await editor.addWidget( 'divider', containerId );
-		const spacer = await editor.addWidget( 'spacer', containerId );
+		await editor.addWidget( 'spacer', containerId );
 		await editor.addWidget( 'toggle', containerId );
 		await editor.addWidget( 'video', containerId );
 
 		// Select spacer element.
-		await editor.selectElement( spacer );
+		const spacerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-widget-spacer' );
+		await spacerElement.hover();
+		const spacerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-widget-spacer .elementor-editor-element-edit' );
+		await spacerEditButton.click();
 		// Set background colour.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
@@ -74,7 +77,10 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#A81830' );
 		// Select container.
-		await editor.selectElement( containerId );
+		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + containerId );
+		await containerElement.hover();
+		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + containerId + ' .elementor-editor-element-edit' );
+		await containerEditButton.click();
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
@@ -146,7 +152,10 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		await editor.selectElement( container );
+		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		await containerElement.hover();
+		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-editor-element-edit' );
+		await containerEditButton.click();
 		// Set position absolute.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
