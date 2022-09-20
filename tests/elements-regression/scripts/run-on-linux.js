@@ -32,14 +32,12 @@ async function run( args ) {
 	} );
 }
 
-async function main() {
-  if ( ! await isDockerExist() ) {
-	console.error( 'Docker is not installed, please install it first.' );
+( async () => {
+	if ( ! await isDockerExist() ) {
+		console.error( 'Docker is not installed, please install it first.' );
 
-	process.exit( 1 );
-  }
+		process.exit( 1 );
+	}
 
-  await run( process.argv.slice( 2 ) );
-}
-
-main();
+	await run( process.argv.slice( 2 ) );
+} )();
