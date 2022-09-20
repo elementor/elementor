@@ -77,14 +77,14 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#A81830' );
 		// Select container.
-		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + containerId );
+		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + containerId );
 		await containerElement.hover();
-		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + containerId + ' .elementor-editor-element-edit' );
+		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + containerId + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
-		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
+		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -152,10 +152,11 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
 		await containerElement.hover();
-		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
+		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		// Set position absolute.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
@@ -172,10 +173,11 @@ test.describe( 'Container tests', () => {
 
 		// Act
 		// Select container.
-		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
 		await containerElement.hover();
-		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
+		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		// Set full content width
 		await page.locator( '.elementor-tab-control-layout' ).click();
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
@@ -213,10 +215,11 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
 		await containerElement.hover();
-		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
+		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		// Set position absolute.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
@@ -233,10 +236,11 @@ test.describe( 'Container tests', () => {
 
 		// Act
 		// Select container.
-		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
 		await containerElement.hover();
-		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
+		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
 		// Set full content width
 		await page.locator( '.elementor-tab-control-layout' ).click();
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
