@@ -22,6 +22,16 @@ module.exports = class EditorPage extends BasePage {
 		}
 	}
 
+	async closeNavigator() {
+		const isOpen = await this.previewFrame.evaluate( () =>
+			elementor.navigator.isOpen(),
+		);
+
+		if ( isOpen ) {
+			await this.page.click( '#elementor-navigator__close' );
+		}
+	}
+
 	/**
 	 * Reload the editor page.
 	 *
@@ -91,5 +101,19 @@ module.exports = class EditorPage extends BasePage {
 
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
+	}
+
+	/**
+	 * Select an element inside the editor by using `elementId`.
+	 *
+	 * @param {string} elementId
+	 * 
+	 * @return {Promise<void>}
+	 */
+	async selectElement( elementId ) {
+		const selectedElement = await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
+		await selectedElement.hover();
+		const elementEditButton = await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ' .elementor-editor-element-edit' );
+		await elementEditButton.click();
 	}
 };

@@ -54,27 +54,18 @@ test.describe( 'Container tests', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
-		if ( await page.$( '#elementor-navigator' ) ) {
-			await page.click( '#elementor-navigator__close' );
-		}
-
-		// Set Canvas template.
-		await page.click( '#elementor-panel-footer-settings i' );
-		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
+		await editor.closeNavigator();
 
 		// Act.
 		// Add widgets.
 		await editor.addWidget( 'accordion', containerId );
 		await editor.addWidget( 'divider', containerId );
-		await editor.addWidget( 'spacer', containerId );
+		const spacer = await editor.addWidget( 'spacer', containerId );
 		await editor.addWidget( 'toggle', containerId );
 		await editor.addWidget( 'video', containerId );
 
 		// Select spacer element.
-		const spacerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-widget-spacer' );
-		await spacerElement.hover();
-		const spacerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-widget-spacer .elementor-editor-element-edit' );
-		await spacerEditButton.click();
+		await editor.selectElement( spacer );
 		// Set background colour.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
@@ -83,10 +74,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#A81830' );
 		// Select container.
-		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + containerId );
-		await containerElement.hover();
-		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + containerId + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
+		await editor.selectElement( containerId );
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
@@ -147,19 +135,18 @@ test.describe( 'Container tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
-		if ( await page.$( '#elementor-navigator' ) ) {
-			await page.click( '#elementor-navigator__close' );
-		}
+		await editor.closeNavigator();
+
+		// Set Canvas template.
+		await page.click( '#elementor-panel-footer-settings' );
+		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 
 		// Act.
 		// Add widget.
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
-		await containerElement.hover();
-		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-editor-element-edit' );
-		await containerEditButton.click();
+		await editor.selectElement( container );
 		// Set position absolute.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
