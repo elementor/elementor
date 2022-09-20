@@ -50,9 +50,7 @@ export default class ControlConditions extends Conditions {
 
 		// If the conditioning control is responsive, get the appropriate device's value.
 		if ( !! controlResponsiveProp && controls[ conditionNameWithoutSubKey ]?.responsive ) {
-			const queryDevice = controlResponsiveProp.max || controlResponsiveProp.min;
-
-			const deviceSuffix = 'desktop' === queryDevice ? '' : '_' + queryDevice;
+			const deviceSuffix = this.getResponsiveControlDeviceSuffix( controlResponsiveProp );
 
 			conditionNameToCheck = conditionNameWithoutSubKey + deviceSuffix;
 
@@ -71,6 +69,18 @@ export default class ControlConditions extends Conditions {
 			operator: this.getOperator( conditionValue, isNegativeCondition, controlValue ),
 			value: conditionValue,
 		};
+	}
+
+	/**
+	 * Get Responsive Control Device Suffix
+	 *
+	 * @param {Object} controlResponsiveProp
+	 * @return {string|string}
+	 */
+	getResponsiveControlDeviceSuffix( controlResponsiveProp ) {
+		const queryDevice = controlResponsiveProp.max || controlResponsiveProp.min;
+
+		return 'desktop' === queryDevice ? '' : '_' + queryDevice;
 	}
 
 	/**
