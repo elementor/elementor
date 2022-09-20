@@ -11,7 +11,7 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
@@ -51,7 +51,7 @@ jobs:
       BASE_URL: 'http://localhost:8889'
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
