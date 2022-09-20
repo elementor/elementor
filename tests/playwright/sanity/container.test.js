@@ -130,7 +130,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test widgets inside the container using position absolute and fixed', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -186,37 +186,66 @@ test.describe( 'Container tests', () => {
 			quality: 70,
 		} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
 
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
+	test.only( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Close Navigator
+		await editor.closeNavigator();
+
+		// Set Canvas template.
+		await page.click( '#elementor-panel-footer-settings' );
+		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
+
+		// Act.
+		// Add widget.
+		await editor.addWidget( 'heading', container );
+		const pageView = editor.getPreviewFrame().locator( 'body' );
+		// Select container.
+		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		await containerElement.hover();
+		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		await containerEditButton.click();
+		// Set position absolute.
+		await page.locator( '.elementor-tab-control-advanced' ).click();
+		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
+		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
+		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
+		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
+
+		// Assert
+		// Take screenshot.
+		expect( await pageView.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
+
 		// Act
 		// Select container.
 		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
 		await containerElement.hover();
 		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
-		// Set position fixed.
-		await page.locator( '.elementor-tab-control-advanced' ).click();
-		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
+		// Set full content width
+		await page.locator( '.elementor-tab-control-layout' ).click();
+		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
 		expect( await pageView.screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
-
-		// Act
-		// Select container.
-		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
-		await containerElement.hover();
-		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
-		// Set boxed content width
-		await page.locator( '.elementor-tab-control-layout' ).click();
-		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-
-		// Assert
-		expect( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 70,
-		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
 
 		await wpAdmin.setExperiments( {
 			container: false,
