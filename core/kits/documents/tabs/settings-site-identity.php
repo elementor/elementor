@@ -102,24 +102,6 @@ class Settings_Site_Identity extends Tab_Base {
 		);
 
 		$this->add_control(
-			'custom_logo_promotion',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => '<p>' . esc_html__( 'Add a logo to display on your website. Don\'t have one yet? Create a professional logo with Fiverr\'s logo maker.', 'elementor' ) .
-					'</p>' .
-					sprintf(
-						'<a target="_blank" class="elementor-button e-logo-maker" href="%s">%s</a>',
-						'https://go.fiverr.com/visit/?bta=496327&brand=fiverrcpa&utm_campaign=SiteLogo&landingPage=https%3A%2F%2Fwww.fiverr.com%2Flogo-maker%2Felementor',
-						esc_html__( 'Create a Logo in Minutes', 'elementor' )
-					),
-				'condition' => [
-					'site_logo[url]' => '',
-				],
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-success',
-			]
-		);
-
-		$this->add_control(
 			'site_favicon',
 			[
 				'label' => esc_html__( 'Site Favicon', 'elementor' ),
