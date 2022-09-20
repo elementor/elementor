@@ -31,5 +31,3 @@ coverage/
 test-results/
 tests/playwright/config/storageState.json
 tests/playwright/config/local.config.js
-tests/elements-regression/config/storageState.json
-tests/elements-regression/config/local.config.js
