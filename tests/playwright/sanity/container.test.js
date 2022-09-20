@@ -152,13 +152,14 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
 		await containerElement.hover();
-		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
 		await containerEditButton.click();
 		// Set position absolute.
 		await page.locator( '.elementor-tab-control-advanced' ).click();
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
+		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
 
@@ -170,6 +171,11 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
 
 		// Act
+		// Select container.
+		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container );
+		await containerElement.hover();
+		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + container + ' .elementor-editor-element-edit' );
+		await containerEditButton.click();
 		// Set full content width
 		await page.locator( '.elementor-tab-control-layout' ).click();
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
