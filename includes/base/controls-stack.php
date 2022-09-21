@@ -1350,6 +1350,19 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Get Responsive Control Device Suffix
+	 *
+	 * @deprecated 3.7.6
+	 * @param array $control
+	 * @return string $device suffix
+	 */
+	protected function get_responsive_control_device_suffix( $control ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.7.6', 'Elementor\Controls_Manager::get_responsive_control_device_suffix()' );
+
+		return Controls_Manager::get_responsive_control_device_suffix( $control );
+	}
+
+	/**
 	 * Whether the control is visible or not.
 	 *
 	 * Used to determine whether the control is visible or not.
@@ -1375,6 +1388,8 @@ abstract class Controls_Stack extends Base_Object {
 			return true;
 		}
 
+		$controls = $this->get_controls();
+
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
 			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
 
@@ -1386,11 +1401,22 @@ abstract class Controls_Stack extends Base_Object {
 				return false;
 			}
 
-			$instance_value = $values[ $pure_condition_key ];
+			$are_control_and_condition_responsive = isset( $control['responsive'] ) && ! empty( $controls[ $pure_condition_key ]['responsive'] );
+			$condition_name_to_check = $pure_condition_key;
+
+			if ( $are_control_and_condition_responsive ) {
+				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
+
+				$condition_name_to_check = $pure_condition_key . $device_suffix;
+
+				// If the control is not desktop, take the value of the conditioning control of the corresponding device.
+				$instance_value = $values[ $pure_condition_key . $device_suffix ];
+			} else {
+				$instance_value = $values[ $pure_condition_key ];
+			}
 
 			if ( ! $instance_value ) {
-				$controls = $this->get_controls();
-				$parent = isset( $controls[ $pure_condition_key ]['parent'] ) ? $controls[ $pure_condition_key ]['parent'] : false;
+				$parent = isset( $controls[ $condition_name_to_check ]['parent'] ) ? $controls[ $condition_name_to_check ]['parent'] : false;
 
 				while ( $parent ) {
 					$instance_value = $values[ $parent ];
