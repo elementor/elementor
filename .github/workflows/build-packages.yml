@@ -2,7 +2,7 @@ name: Build Packages
 on: [ push, pull_request ]
 
 jobs:
-  lint:
+  Lint:
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
     steps:
@@ -12,11 +12,11 @@ jobs:
         with:
           node-version: 16.x
       - name: Install Dependencies
-        run: cd ./packages/editor && npm ci && npm run lint
+        run: cd ./packages/editor && npm ci
       - name: Lint
-        run: npm run lint
+        run: cd ./packages/editor && npm run lint
 
-  build:
+  Build:
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
     steps:
