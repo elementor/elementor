@@ -360,19 +360,19 @@ class Module extends BaseModule {
 
 		// WP Content dir has to be exists and writable.
 		if ( ! $permissions[ Server::KEY_PATH_WP_CONTENT_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_WP_CONTENT_DIR );
 		}
 
 		// WP Uploads dir has to be exists and writable.
 		if ( ! $permissions[ Server::KEY_PATH_UPLOADS_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_UPLOADS_DIR );
 		}
 
 		// Elementor uploads dir permissions is divided to 2 cases:
 		// 1. If the dir exists, it has to be writable.
 		// 2. If the dir doesn't exist, the parent dir has to be writable (wp uploads dir), so we can create it.
 		if ( $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['exists'] && ! $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 		}
 	}
 

@@ -81,4 +81,19 @@ class Test_Server extends Elementor_Test_Base {
 			],
 		];
 	}
+
+	public function test_get_path_permissions__empty_path() {
+		// Act
+		$permissions = ( new Server() )->get_path_permissions( '' );
+
+		// Assert
+		$expected_permissions = [
+			'exists' => false,
+			'read' => false,
+			'write' => false,
+			'execute' => false,
+		];
+
+		$this->assertEquals( $expected_permissions, $permissions );
+	}
 }
