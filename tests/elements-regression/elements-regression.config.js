@@ -5,7 +5,7 @@
 
 module.exports = {
 	elements: {
-		include: [ 'heading', 'text-editor', 'divider', 'button',  'image' ],
+		include: [ 'heading', 'text-editor', 'divider', 'button', 'image' ],
 	},
 	controls: {
 		heading: {
@@ -29,6 +29,11 @@ module.exports = {
 				'button_type', // Bug in the editor nothing changed.
 			],
 		},
-		image: {},
+		image: {
+			exclude: [
+				'link_to', // Affect the link, nothing visual.
+				'image_size', // Nothing changed.
+			],
+		},
 	},
 };
