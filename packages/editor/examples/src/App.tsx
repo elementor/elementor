@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import './assets/eicons/css/elementor-icons.css';
+// eslint-disable-next-line import/no-unresolved
 import { HistoryPanel, Item } from 'history';
 
 function App() {
