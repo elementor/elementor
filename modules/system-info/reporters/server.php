@@ -311,13 +311,6 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_write_permissions() : array {
-		$paths_messages = [
-			static::KEY_PATH_WP_ROOT_DIR => 'WordPress root directory',
-			static::KEY_PATH_HTACCESS_FILE => '.htaccess file',
-			static::KEY_PATH_UPLOADS_DIR => 'WordPress uploads directory',
-			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => 'Elementor uploads directory',
-		];
-
 		$paths_to_check = [
 			static::KEY_PATH_WP_ROOT_DIR => $this->get_system_path( static::KEY_PATH_WP_ROOT_DIR ),
 			static::KEY_PATH_HTACCESS_FILE => $this->get_system_path( static::KEY_PATH_HTACCESS_FILE ),
@@ -329,10 +322,20 @@ class Server extends Base {
 
 		$write_problems = [];
 
-		foreach ( $paths_permissions as $key_path => $path_permissions ) {
-			if ( $path_permissions['exists'] && ! $path_permissions['write'] ) {
-				$write_problems[] = $paths_messages[ $key_path ];
-			}
+		if ( ! $paths_permissions[ static::KEY_PATH_WP_ROOT_DIR ]['write'] ) {
+			$write_problems[] = 'WordPress root directory';
+		}
+
+		if ( ! $paths_permissions[ static::KEY_PATH_UPLOADS_DIR ]['write'] ) {
+			$write_problems[] = 'WordPress uploads directory';
+		}
+
+		if ( $paths_permissions[ self::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['exists'] && ! $paths_permissions[ self::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['write'] ) {
+			$write_problems[] = 'Elementor uploads directory';
+		}
+
+		if ( $paths_permissions[ self::KEY_PATH_HTACCESS_FILE ]['exists'] && ! $paths_permissions[ self::KEY_PATH_HTACCESS_FILE ]['write'] ) {
+			$write_problems[] = '.htaccess file';
 		}
 
 		if ( $write_problems ) {
@@ -439,7 +442,7 @@ class Server extends Base {
 				return WP_CONTENT_DIR;
 
 			case static::KEY_PATH_HTACCESS_FILE:
-				return file_exists( ABSPATH . '/.htaccess' ) ?? '';
+				return file_exists( ABSPATH . '/.htaccess' ) ? ABSPATH . '/.htaccess' : '';
 
 			case static::KEY_PATH_UPLOADS_DIR:
 				return wp_upload_dir()['basedir'] ?? '';
