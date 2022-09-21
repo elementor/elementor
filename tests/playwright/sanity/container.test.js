@@ -60,7 +60,7 @@ test.describe( 'Container tests', () => {
 		// Add widgets.
 		await editor.addWidget( 'accordion', containerId );
 		await editor.addWidget( 'divider', containerId );
-		await editor.addWidget( 'spacer', containerId );
+		const spacer = await editor.addWidget( 'spacer', containerId );
 		await editor.addWidget( 'toggle', containerId );
 		await editor.addWidget( 'video', containerId );
 
