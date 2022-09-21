@@ -119,14 +119,14 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Select an element inside the editor.
 	 *
-	 * @param {string} element - Element ID;
+	 * @param {string} elementId - Element ID;
 	 *
 	 * @return {Promise<void>}
 	 */
-	async selectElement( element ) {
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + element );
+	async selectElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.hover();
-		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + element + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 		await elementEditButton.click();
 	}
 };
