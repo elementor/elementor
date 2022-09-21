@@ -5,7 +5,7 @@
 
 module.exports = {
 	elements: {
-		include: [ 'heading', 'text-editor', 'divider' ],
+		include: [ 'heading', 'text-editor', 'divider', 'button' ],
 	},
 	controls: {
 		heading: {
@@ -21,6 +21,12 @@ module.exports = {
 		divider: {
 			exclude: [
 				'align', // Cannot be tested alone, need also some size.
+			],
+		},
+		button: {
+			exclude: [
+				'button_css_id', // Nothing changed
+				'button_type', // Bug in the editor nothing changed.
 			],
 		},
 	},
