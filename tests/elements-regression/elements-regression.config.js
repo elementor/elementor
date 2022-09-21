@@ -5,7 +5,7 @@
 
 module.exports = {
 	elements: {
-		include: [ 'heading', 'text-editor', 'divider' ],
+		include: [ 'heading', 'text-editor', 'divider', 'image' ],
 	},
 	controls: {
 		heading: {
@@ -23,5 +23,6 @@ module.exports = {
 				'align', // Cannot be tested alone, need also some size.
 			],
 		},
+		image: {},
 	},
 };
