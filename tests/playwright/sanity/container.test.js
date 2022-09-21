@@ -155,6 +155,7 @@ test.describe( 'Container tests', () => {
 		selectContainer( page, editor, container );
 		activatePanel( 'advanced', page );
 		// Set position absolute.
+		await page.waitForSelector( '.elementor-control-position >> select' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -263,12 +264,15 @@ test.describe( 'Container tests', () => {
 } );
 
 async function selectContainer( page, editor, container ) {
-	const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
+	await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
+	const containerElement = await editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 	await containerElement.hover();
-	const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	const containerEditButton = await editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await containerEditButton.click();
 }
 
 async function activatePanel( panelName, page ) {
-	await page.locator( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-' + panelName + ' a' ).click();
+	await page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+	await page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
 }
