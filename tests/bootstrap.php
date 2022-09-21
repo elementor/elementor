@@ -70,14 +70,6 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 	$experiments_manager->set_feature_default_state( $experimental_data['name'], $experiments_manager::STATE_ACTIVE );
 }, 10, 2 );
 
-/**
- * Override shutdown function of the logger, to prevent logging errors during tests.
- * core/logger/manager.php:266
- */
-register_shutdown_function( function () {
-	exit();
-} );
-
 // Make sure the main class is running
 \Elementor\Plugin::instance();
 
