@@ -88,4 +88,16 @@ module.exports = class WpAdminPage extends BasePage {
 
 		await this.page.click( '#submit' );
 	}
+
+	async selectContainer( editor, container ) {
+		const containerElement = await editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
+		await containerElement.hover();
+		const containerEditButton = await editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+		await containerEditButton.click();
+	}
+
+	async activatePanel( panelName ) {
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+	}
 };

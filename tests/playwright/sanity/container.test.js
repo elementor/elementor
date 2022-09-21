@@ -77,7 +77,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#A81830' );
 		// Select container.
-		selectContainer( page, editor, containerId );
+		await wpAdmin.selectContainer(  editor, containerId );
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
@@ -90,7 +90,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row.jpeg' );
 
 		// Act
-		selectContainer( page, editor, containerId );
+		await wpAdmin.selectContainer(  editor, containerId );
 		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
@@ -100,7 +100,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
 
 		// Act
-		selectContainer( page, editor, containerId );
+		await wpAdmin.selectContainer(  editor, containerId );
 		// Flex-direction: column
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
 		// Align items: flex-start
@@ -115,7 +115,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
 
 		// Act
-		selectContainer( page, editor, containerId );
+		await wpAdmin.selectContainer(  editor, containerId );
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 
@@ -136,6 +136,7 @@ test.describe( 'Container tests', () => {
 		await wpAdmin.setExperiments( {
 			container: true,
 		} );
+
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Close Navigator
@@ -144,7 +145,7 @@ test.describe( 'Container tests', () => {
 		// Set Canvas template.
 		await page.click( '#elementor-panel-footer-settings' );
 		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
-		page.waitForLoadState('networkidle');
+		await editor.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -153,9 +154,9 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		selectContainer( page, editor, container );
-		activatePanel( 'advanced', page );
+		await wpAdmin.selectContainer( editor, container );
 		// Set position absolute.
+		await wpAdmin.activatePanel( 'advanced', page );
 		await page.waitForSelector( '.elementor-control-position >> select' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
@@ -171,9 +172,9 @@ test.describe( 'Container tests', () => {
 
 		// Act
 		// Select container.
-		selectContainer( page, editor, container );
+		await wpAdmin.selectContainer(  editor, container );
 		// Set full content width
-		activatePanel( 'layout', page );
+		await wpAdmin.activatePanel( 'layout', page );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -194,8 +195,7 @@ test.describe( 'Container tests', () => {
 			container: true,
 		} );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Close Navigator
 		await editor.closeNavigator();
@@ -203,15 +203,18 @@ test.describe( 'Container tests', () => {
 		// Set Canvas template.
 		await page.click( '#elementor-panel-footer-settings' );
 		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
+
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Act.
 		// Add widget.
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		selectContainer( page, editor, container );
+		await wpAdmin.selectContainer( editor, container );
 		// Set position fixed.
-		activatePanel( 'advanced', page );
+		await wpAdmin.activatePanel( 'advanced', page );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -226,10 +229,10 @@ test.describe( 'Container tests', () => {
 
 		// Act
 		// Select container.
-		selectContainer( page, editor, container );
+		await wpAdmin.selectContainer(  editor, container );
 
 		// Set full content width
-		activatePanel( 'layout', page );
+		await wpAdmin.activatePanel( 'layout', page );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -263,17 +266,3 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 } );
-
-async function selectContainer( page, editor, container ) {
-	await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
-	const containerElement = await editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
-	await containerElement.hover();
-	await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-	const containerEditButton = await editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-	await containerEditButton.click();
-}
-
-async function activatePanel( panelName, page ) {
-	await page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
-	await page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
-}
