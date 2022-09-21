@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 3.7.6
+Stable tag: 3.7.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.7.7 - 2022-09-20 =
+* Tweak: Removed the option to create a custom logo in Site Settings ([#19823](https://github.com/elementor/elementor/issues/19823))
+* Fix: Custom X Position of background image doesn't work for non-desktop devices ([#19487](https://github.com/elementor/elementor/issues/19487), [#19662](https://github.com/elementor/elementor/issues/19662), [#19669](https://github.com/elementor/elementor/issues/19669), [#19527](https://github.com/elementor/elementor/issues/19527))
+* Fix: Connect & activate to Elementor account issue with various WordPress site languages
 
 = 3.7.6 - 2022-09-15 =
 * Fix: Replaced link for better clarity in Site Settings
