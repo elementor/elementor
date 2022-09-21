@@ -1,7 +1,7 @@
 import ItemView from './item-view';
 import EmptyView from './empty';
 
-module.exports = Marionette.CompositeView.extend( {
+export default Marionette.CompositeView.extend( {
 	id: 'elementor-panel-history',
 
 	template: '#tmpl-elementor-panel-history-tab',

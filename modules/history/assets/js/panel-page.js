@@ -1,5 +1,5 @@
-var TabHistoryView = require( './history/panel-tab' );
-
+import TabActionV2View from './actions-v2/actions-v2';
+import TabHistoryView from './history/panel-tab';
 import TabRevisionsLoadingView from './revisions/panel/loading';
 import TabRevisionsView from './revisions/panel/tab';
 import TabRevisionsEmptyView from './revisions/panel/empty';
@@ -37,6 +37,15 @@ export default Marionette.LayoutView.extend( {
 			actions: {
 				view: () => {
 					return TabHistoryView;
+				},
+				options: {
+					collection: historyItems,
+					history: this.document.history,
+				},
+			},
+			'actions-v2': {
+				view: () => {
+					return TabActionV2View;
 				},
 				options: {
 					collection: historyItems,

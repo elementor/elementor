@@ -19,15 +19,15 @@
     "vite-plugin-dts": "^1.5.0"
   },
   "files": [
-	"dist"
+    "dist"
   ],
   "main": "./dist/history.umd.js",
   "module": "./dist/history.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
-	".": {
-	  "import": "./dist/history.es.js",
-	  "require": "./dist/history.umd.js"
-	}
+    ".": {
+      "import": "./dist/history.es.js",
+      "require": "./dist/history.umd.js"
+    }
   }
 }

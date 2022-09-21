@@ -8,6 +8,11 @@
     "prev_stable_version": "3.1.4",
     "author": "Elementor Team",
     "homepage": "https://elementor.com/",
+    "workspaces": {
+        "packages": [
+            "packages/editor/packages/*"
+        ]
+    },
     "scripts": {
         "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
         "test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
@@ -32,7 +37,8 @@
         "@babel/plugin-transform-react-jsx": "~7.18.6",
         "@babel/plugin-transform-runtime": "~7.18.6",
         "@babel/preset-env": "~7.18.6",
-        "@babel/runtime-corejs3": "~7.18.6",
+	  	"@babel/runtime": "^7.13.10",
+	  	"@babel/runtime-corejs3": "~7.18.6",
         "@elementor/eslint-plugin-editor": "^0.4.0",
         "@playwright/test": "1.21.1",
         "@reach/router": "^1.3.3",
@@ -69,6 +75,7 @@
         "grunt-text-replace": "~0.4.0",
         "grunt-webpack": "^5.0.0",
         "grunt-wp-readme-to-markdown-with-extra": "~2.2.0",
+        "history": "*",
         "jest-environment-jsdom": "^28.1.3",
         "karma": "6.4.0",
         "karma-chrome-launcher": "3.1.1",
