@@ -144,6 +144,7 @@ test.describe( 'Container tests', () => {
 		// Set Canvas template.
 		await page.click( '#elementor-panel-footer-settings' );
 		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
+		page.waitForLoadState('networkidle');
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
