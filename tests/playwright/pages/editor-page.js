@@ -106,7 +106,7 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Use the Canvas post template.
 	 *
-	 * @param {String} templateName - The name of the template;
+	 * @param {string} templateName - The name of the template;
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -119,14 +119,14 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Select an element inside the editor.
 	 *
-	 * @param {String} element - Element ID;
+	 * @param {string} element - Element ID;
 	 *
 	 * @return {Promise<void>}
 	 */
-	 async selectElement( container ) {
-		const containerElement = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
-		await containerElement.hover();
-		const containerEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-		await containerEditButton.click();
+	async selectElement( element ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + element );
+		await element.hover();
+		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + element + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+		await elementEditButton.click();
 	}
 };

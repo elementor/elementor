@@ -92,12 +92,13 @@ module.exports = class WpAdminPage extends BasePage {
 	/**
 	 * Activate a tab inside the panel editor.
 	 *
-	 * @param {String} panelName - The name of the panel;
+	 * @param {string} panelName - The name of the panel;
 	 *
 	 * @return {Promise<void>}
 	 */
 	async activatePanel( panelName ) {
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
 		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
 };

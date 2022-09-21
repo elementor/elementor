@@ -65,13 +65,9 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'video', containerId );
 
 		// Select spacer element.
-		const spacerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-widget-spacer' );
-		await spacerElement.hover();
-		const spacerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-widget-spacer .elementor-editor-element-edit' );
-		await spacerEditButton.click();
+		await editor.selectElement( spacer );
 		// Set background colour.
-		await page.locator( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-advanced' ).click();
-		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
+		await wpAdmin.activatePanel( 'advanced' );
 		await page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
