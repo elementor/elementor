@@ -13,9 +13,13 @@ const {
 test.describe( 'Elements regression', () => {
 	const testedElements = {};
 
-	test.afterAll( async () => {
-		// TODO: If the user use "grep" it will always fail.
-		expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+	test.afterAll( async ( {}, testInfo ) => {
+		if (
+			'failed' !== testInfo.status && // There is no need to check if the tests already failed.
+			'on' === testInfo.project.use.validateAllPreviousCasesChecked
+		) {
+			expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+		}
 	} );
 
 	for ( const [ widgetType, widgetConfig ] of getWidgetForTests() ) {
