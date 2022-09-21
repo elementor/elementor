@@ -6,3 +6,4 @@ assets/js/*.js
 build/**
 tests/qunit/setup/tinymce.js
 /tmp/**
+/packages/editor
