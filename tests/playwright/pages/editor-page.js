@@ -110,12 +110,12 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	 async pageLayoutTemplate( templateName = 'canvas' ) {
+	async pageLayoutTemplate( templateName = 'canvas' ) {
 		await this.page.click( '#elementor-panel-footer-settings' );
 		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
 	}
-	
+
 	/**
 	 * Select an element inside the editor.
 	 *
