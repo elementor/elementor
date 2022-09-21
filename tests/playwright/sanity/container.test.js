@@ -153,7 +153,7 @@ test.describe( 'Container tests', () => {
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
 		selectContainer( page, editor, container );
-		activatePanel( 'advanced', page, editor, container );
+		activatePanel( 'advanced', page );
 		// Set position absolute.
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
@@ -171,7 +171,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		selectContainer( page, editor, container );
 		// Set full content width
-		activatePanel( 'layout', page, editor, container );
+		activatePanel( 'layout', page );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -209,7 +209,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		selectContainer( page, editor, container );
 		// Set position fixed.
-		activatePanel( 'advanced', page, editor, container );
+		activatePanel( 'advanced', page );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -227,7 +227,7 @@ test.describe( 'Container tests', () => {
 		selectContainer( page, editor, container );
 
 		// Set full content width
-		activatePanel( 'layout', page, editor, container );
+		activatePanel( 'layout', page );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -269,16 +269,6 @@ async function selectContainer( page, editor, container ) {
 	await containerEditButton.click();
 }
 
-async function activatePanel( panelName, page, editor, container ) {
-	let panelActive = false;
-
-	while( ! panelActive ) {
-		await page.locator( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-' + panelName + ' a' ).click();
-
-		if ( ! await page.$( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-' + panelName + '.elementor-active' ) ) {
-			selectContainer( page, editor, container );
-		} else {
-			panelActive = true;
-		}
-	}
+async function activatePanel( panelName, page ) {
+	await page.locator( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-' + panelName + ' a' ).click();
 }
