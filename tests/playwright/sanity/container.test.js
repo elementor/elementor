@@ -73,7 +73,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#A81830' );
 		// Select container.
-		await wpAdmin.selectElement(  editor, containerId );
+		await editor.selectElement( containerId );
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
@@ -86,7 +86,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row.jpeg' );
 
 		// Act
-		await wpAdmin.selectElement(  editor, containerId );
+		await editor.selectElement( containerId );
 		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
@@ -96,7 +96,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
 
 		// Act
-		await wpAdmin.selectElement(  editor, containerId );
+		await editor.selectElement( containerId );
 		// Flex-direction: column
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
 		// Align items: flex-start
@@ -111,7 +111,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
 
 		// Act
-		await wpAdmin.selectElement(  editor, containerId );
+		await editor.selectElement( containerId );
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 
