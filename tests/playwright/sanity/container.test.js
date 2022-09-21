@@ -70,17 +70,14 @@ test.describe( 'Container tests', () => {
 		const spacerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-widget-spacer .elementor-editor-element-edit' );
 		await spacerEditButton.click();
 		// Set background colour.
-		await page.locator( '.elementor-tab-control-advanced' ).click();
+		await page.locator( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-advanced' ).click();
 		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
 		await page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#A81830' );
 		// Select container.
-		const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + containerId );
-		await containerElement.hover();
-		const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + containerId + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
+		selectContainer( page, editor, containerId );
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
@@ -93,7 +90,8 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row.jpeg' );
 
 		// Act
-		// Set full content width
+		selectContainer( page, editor, containerId );
+		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		expect( await container.screenshot( {
@@ -102,6 +100,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
 
 		// Act
+		selectContainer( page, editor, containerId );
 		// Flex-direction: column
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
 		// Align items: flex-start
@@ -116,6 +115,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
 
 		// Act
+		selectContainer( page, editor, containerId );
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 
@@ -136,9 +136,7 @@ test.describe( 'Container tests', () => {
 		await wpAdmin.setExperiments( {
 			container: true,
 		} );
-
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Close Navigator
 		await editor.closeNavigator();
@@ -147,20 +145,16 @@ test.describe( 'Container tests', () => {
 		await page.click( '#elementor-panel-footer-settings' );
 		await page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
+
 		// Act.
 		// Add widget.
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
-		await containerElement.hover();
-		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
-		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
-		await page.waitForSelector( '.elementor-tab-control-advanced' );
+		selectContainer( page, editor, container );
+		activatePanel( 'advanced', page, editor, container );
 		// Set position absolute.
-		await page.locator( '.elementor-tab-control-advanced' ).click();
-		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -175,15 +169,9 @@ test.describe( 'Container tests', () => {
 
 		// Act
 		// Select container.
-		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
-		await containerElement.hover();
-		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
-		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
-		await page.waitForSelector( '.elementor-tab-control-advanced' );
+		selectContainer( page, editor, container );
 		// Set full content width
-		await page.locator( '.elementor-tab-control-layout' ).click();
-		await page.waitForSelector( '.elementor-tab-control-layout.elementor-active' );
+		activatePanel( 'layout', page, editor, container );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -219,15 +207,9 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'heading', container );
 		const pageView = editor.getPreviewFrame().locator( 'body' );
 		// Select container.
-		let containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
-		await containerElement.hover();
-		let containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
-		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
-		await page.waitForSelector( '.elementor-tab-control-advanced' );
+		selectContainer( page, editor, container );
 		// Set position fixed.
-		await page.locator( '.elementor-tab-control-advanced' ).click();
-		await page.waitForSelector( '.elementor-tab-control-advanced.elementor-active' );
+		activatePanel( 'advanced', page, editor, container );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -242,15 +224,10 @@ test.describe( 'Container tests', () => {
 
 		// Act
 		// Select container.
-		containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
-		await containerElement.hover();
-		containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' .elementor-editor-element-edit' );
-		await containerEditButton.click();
-		await page.waitForSelector( '#elementor-panel-header-title:has-text( "Edit Container" )' );
-		await page.waitForSelector( '.elementor-tab-control-advanced' );
+		selectContainer( page, editor, container );
+
 		// Set full content width
-		await page.locator( '.elementor-tab-control-layout' ).click();
-		await page.waitForSelector( '.elementor-tab-control-layout.elementor-active' );
+		activatePanel( 'layout', page, editor, container );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -284,3 +261,24 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 } );
+
+async function selectContainer( page, editor, container ) {
+	const containerElement = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container );
+	await containerElement.hover();
+	const containerEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	await containerEditButton.click();
+}
+
+async function activatePanel( panelName, page, editor, container ) {
+	let panelActive = false;
+
+	while( ! panelActive ) {
+		await page.locator( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-' + panelName + ' a' ).click();
+
+		if ( ! await page.$( '#elementor-panel-page-editor .elementor-panel-navigation .elementor-tab-control-' + panelName + '.elementor-active' ) ) {
+			selectContainer( page, editor, container );
+		} else {
+			panelActive = true;
+		}
+	}
+}
