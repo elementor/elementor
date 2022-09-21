@@ -102,4 +102,31 @@ module.exports = class EditorPage extends BasePage {
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
+
+	/**
+	 * Use the Canvas post template.
+	 *
+	 * @param {String} templateName - The name of the template;
+	 *
+	 * @return {Promise<void>}
+	 */
+	 async pageLayoutTemplate( templateName = 'canvas' ) {
+		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
+	}
+	
+	/**
+	 * Select an element inside the editor.
+	 *
+	 * @param {String} element - Element ID;
+	 *
+	 * @return {Promise<void>}
+	 */
+	 async selectElement( container ) {
+		const containerElement = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
+		await containerElement.hover();
+		const containerEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+		await containerEditButton.click();
+	}
 };
