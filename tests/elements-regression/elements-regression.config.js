@@ -30,9 +30,14 @@ module.exports = {
 			],
 		},
 		image: {
+			dependencies: {
+				'*': {
+					image: 'elementor.png',
+				},
+			},
 			exclude: [
+				'image', // Image is affected in each control.
 				'link_to', // Affect the link, nothing visual.
-				'image_size', // Nothing changed.
 			],
 		},
 	},

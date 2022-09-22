@@ -8,13 +8,13 @@ class Media extends ControlBase {
 	async getValue() {
 		await this.openMediaLibrary();
 
-		const element = await this.page.$( 'li[role="checkbox"].selected' );
+		const selectedMediaId = await this.getSelectedMediaId();
 
-		const value = element
+		const value = selectedMediaId
 			? Object.entries( process.env )
 				.find( ( [ key, value ] ) =>
 					key.startsWith( 'ELEMENTS_REGRESSION_MEDIA_IDS_' ) &&
-					value === mediaId,
+					value === selectedMediaId,
 				)
 				?.[ 0 ]
 				?.replace( 'ELEMENTS_REGRESSION_MEDIA_IDS_', '' )
@@ -34,8 +34,14 @@ class Media extends ControlBase {
 
 		await this.openMediaLibrary();
 
-		await this.page.locator( `li[role="checkbox"][data-id="${ id }"]` ).click();
-		await this.page.locator( `button.media-button:has-text("Select")` ).click();
+		const selectedMediaId = await this.getSelectedMediaId();
+
+		if ( selectedMediaId === id ) {
+			await this.closeMediaLibrary();
+		}
+
+		await this.page.locator( `.media-modal:visible li[role="checkbox"][data-id="${ id }"]` ).click();
+		await this.page.locator( `.media-modal:visible button.media-button:has-text("Select")` ).click();
 	}
 
 	async getTestValues() {
@@ -44,11 +50,17 @@ class Media extends ControlBase {
 
 	async openMediaLibrary() {
 		await this.elementLocator.locator( '.elementor-control-media-area' ).click();
-		await this.page.locator( 'h1:has-text("Insert Media")' ).waitFor();
+		await this.page.locator( '.media-modal:visible h1:has-text("Insert Media")' ).waitFor();
 	}
 
 	async closeMediaLibrary() {
-		await this.page.locator( '.media-modal button:has-text("Close dialog")' ).click();
+		await this.page.locator( '.media-modal:visible button:has-text("Close dialog")' ).click();
+	}
+
+	async getSelectedMediaId() {
+		const element = await this.page.$( '.media-modal:visible li[role="checkbox"].selected' );
+
+		return await element?.getAttribute( 'data-id' );
 	}
 }
 

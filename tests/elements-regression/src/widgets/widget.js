@@ -11,7 +11,7 @@ class Widget {
 	 * Editor instance from test context.
 	 *
 	 * @protected
-	 * @type {import('../../pages/editor-page')}
+	 * @type {import('../pages/editor-page')}
 	 */
 	editor = null;
 
@@ -78,7 +78,7 @@ class Widget {
 	}
 
 	async waitAfterSettingValue( control ) {
-		if ( control.isForcingServerRender() ) {
+		if ( control && control.isForcingServerRender() ) {
 			await this.waitForServerRendered();
 		}
 

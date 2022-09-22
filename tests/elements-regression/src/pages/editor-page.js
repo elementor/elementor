@@ -83,17 +83,22 @@ module.exports = class EditorPage extends BasePage {
 		return await this.addElement( { widgetType, elType: 'widget' }, container );
 	}
 
+	/**
+	 * @return {Frame}
+	 */
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
 	/**
-	 * @param {import('../utils/widgets/widget-base').WidgetBase} widget
+	 * @param {import('../widgets/widget').Widget} widget
 	 * @return {Promise<Buffer>}
 	 */
 	async screenshotWidget( widget ) {
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
 		const elementRect = await ( await widget.getElement() ).boundingBox();
+
+		// TODO: check here for loading.
 
 		return await this.page.screenshot( {
 			type: 'jpeg',

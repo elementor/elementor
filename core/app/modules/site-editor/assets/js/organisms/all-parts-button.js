@@ -5,7 +5,7 @@ export default function AllPartsButton( props ) {
 	const activePathname = '/site-editor/templates';
 
 	return (
-		<Match path={ activePathname }>
+		<Match path={ activePathname } >
 			{ ( { match } ) => {
 				const className = `eps-menu-item__link${ match || props.promotion ? ' eps-menu-item--active' : '' }`;
 

@@ -86,10 +86,12 @@ async function login( page, { username, password, storageState } ) {
  * @return {Promise<Function>} teardown function
  */
 async function createDefaultMedia( apiContext ) {
+	const imageName = 'elementor.png';
+
 	const response = await apiContext.post( '/index.php', {
 		params: { rest_route: '/wp/v2/media' },
 		multipart: {
-			file: fs.createReadStream( path.resolve( __dirname, './assets/images/elementor.png' ) ),
+			file: fs.createReadStream( path.resolve( __dirname, `./assets/images/${ imageName }` ) ),
 			title: 'Elementor image',
 			status: 'publish',
 			description: 'Elementor image description',
@@ -101,7 +103,7 @@ async function createDefaultMedia( apiContext ) {
 	const { id } = await response.json();
 
 	// Pass the id that was uploaded to the tests.
-	process.env[ 'ELEMENTS_REGRESSION_MEDIA_IDS_elementor.png' ] = id;
+	process.env[ `ELEMENTS_REGRESSION_MEDIA_IDS_${ imageName }` ] = id;
 
 	return async () => {
 		await apiContext.delete( `/index.php`, {
