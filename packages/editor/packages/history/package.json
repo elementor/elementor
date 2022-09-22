@@ -8,7 +8,7 @@
     "build:watch": "tsc && vite build --watch"
   },
   "peerDependencies": {
-    "react": "^18.2.0"
+    "react": "*"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
