@@ -328,7 +328,8 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		return $attributes;
+		// apply this filter to allow the attributes to be modified by different sources
+		return apply_filters( 'elementor/document/wrapper_attributes', $attributes, $this );
 	}
 
 	/**
@@ -1149,23 +1150,39 @@ abstract class Document extends Controls_Stack {
 		return $deleted && ! is_wp_error( $deleted );
 	}
 
+	public function force_delete() {
+		$deleted = wp_delete_post( $this->post->ID, true );
+
+		return $deleted && ! is_wp_error( $deleted );
+	}
+
 	/**
+	 * On import update dynamic content (e.g. post and term IDs).
 	 *
-	 * @since 3.6.0
+	 * @since 3.8.0
 	 *
-	 * @param array $config
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
 	 *
-	 * @param array $map_old_new_post_ids
+	 * @return array Element data.
 	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
-			if ( $element_instance ) {
-				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
-
-				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
+			if ( is_null( $element_instance ) ) {
+				continue;
 			}
+
+			if ( $element_instance->has_own_method( 'on_import_replace_dynamic_content' ) ) {
+				// TODO: Remove this check in the future.
+				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $data['post_ids'] );
+			} else {
+				$element_config = $element_instance::on_import_update_dynamic_content( $element_config, $data, $element_instance->get_controls() );
+			}
+
+			$element_config['elements'] = static::on_import_update_dynamic_content( $element_config['elements'], $data );
 		}
 
 		return $config;

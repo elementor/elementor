@@ -2010,11 +2010,17 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * On import update dynamic content (e.g. post and term IDs).
 	 *
-	 * @since 3.6.0
-	 * @access public
+	 * @since 3.8.0
+	 *
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
+	 *
+	 * @return array Element data.
 	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
 		return $config;
 	}
 
