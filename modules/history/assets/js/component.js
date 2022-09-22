@@ -8,6 +8,7 @@ export default class Component extends ComponentBase {
 	defaultTabs() {
 		return {
 			actions: { title: __( 'Actions', 'elementor' ) },
+			'actions-v2': { title: __( 'Actions', 'elementor' ) },
 			revisions: { title: __( 'Revisions', 'elementor' ) },
 		};
 	}

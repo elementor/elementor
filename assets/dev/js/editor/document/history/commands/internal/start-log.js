@@ -27,7 +27,24 @@ export class StartLog extends CommandHistoryInternalBase {
 			return null;
 		}
 
+		$e.store.dispatch(
+			this.component.store.actions.startLog( {
+				id: elementorCommon.helpers.getUniqueId(),
+				title: args.title,
+				subTitle: args.subTitle,
+				action: elementor.documents.getCurrent().history.getActionLabel( args ),
+				type: args.type,
+			} ),
+		);
+
 		return this.history.startItem( args );
+	}
+
+	static reducer( state, action ) {
+		return {
+			...state,
+			items: [ action.payload, ...state.items ],
+		};
 	}
 }
 

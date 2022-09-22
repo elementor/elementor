@@ -175,7 +175,7 @@ export default class HistoryManager {
 		if ( $e.routes.isPartOf( 'panel/editor' ) && editedElementView ) {
 			if ( editedElementView.isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				$e.route( 'panel/history/actions' );
+				$e.route( 'panel/history/actions-v2' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = editedElementView;
@@ -255,7 +255,7 @@ export default class HistoryManager {
 	}
 
 	updatePanelPageCurrentItem() {
-		if ( $e.routes.is( 'panel/history/actions' ) ) {
+		if ( $e.routes.is( 'panel/history/actions-v2' ) ) {
 			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
 	}

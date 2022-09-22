@@ -26,6 +26,25 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commandsInternal );
 	}
 
+	defaultStates() {
+		return {
+			'': {
+				initialState: {
+					items: [ {
+						status: 'not_applied',
+						title: __( 'Editing Started', 'elementor' ),
+						subTitle: '',
+						action: '',
+						editing_started: true,
+					} ],
+				},
+				reducers: {
+					startLog: this.commandsInternal[ 'start-log' ].reducer,
+				},
+			},
+		};
+	}
+
 	normalizeLogTitle( args ) {
 		const { containers = [ args.container ] } = args;
 

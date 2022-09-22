@@ -1,5 +1,5 @@
 /* global ReactDOM */
-import { HistoryPanel } from 'history';
+import { History } from './History';
 
 export default class extends Marionette.CompositeView {
 	id() {
@@ -12,7 +12,7 @@ export default class extends Marionette.CompositeView {
 
 	render() {
 		ReactDOM.render(
-			<HistoryPanel />,
+			<History />,
 			this.$el[ 0 ],
 		);
 	}

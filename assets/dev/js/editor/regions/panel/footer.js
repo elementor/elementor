@@ -134,7 +134,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onHistoryClick() {
-		$e.route( 'panel/history/actions' );
+		$e.route( 'panel/history/actions-v2' );
 	},
 
 	onNavigatorClick() {
