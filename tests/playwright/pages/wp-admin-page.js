@@ -96,7 +96,7 @@ module.exports = class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async activatePanel( panelName ) {
+	async activatePanelTab( panelName ) {
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
 		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );

@@ -22,7 +22,12 @@ module.exports = class EditorPage extends BasePage {
 		}
 	}
 
-	async closeNavigator() {
+	/**
+	 * Close the navigator if open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async closeNavigatorIfOpen() {
 		const isOpen = await this.previewFrame.evaluate( () =>
 			elementor.navigator.isOpen(),
 		);
@@ -106,11 +111,9 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Use the Canvas post template.
 	 *
-	 * @param {string} templateName - The name of the template;
-	 *
 	 * @return {Promise<void>}
 	 */
-	async pageLayoutTemplate( templateName = 'canvas' ) {
+	async pageLayoutTemplate() {
 		await this.page.click( '#elementor-panel-footer-settings' );
 		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );

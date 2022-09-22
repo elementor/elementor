@@ -54,7 +54,7 @@ test.describe( 'Container tests', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
-		await editor.closeNavigator();
+		await editor.closeNavigatorIfOpen();
 
 		// Act.
 		// Add widgets.
@@ -67,7 +67,7 @@ test.describe( 'Container tests', () => {
 		// Select spacer element.
 		await editor.selectElement( spacer );
 		// Set background colour.
-		await wpAdmin.activatePanel( 'advanced' );
+		await wpAdmin.activatePanelTab( 'advanced' );
 		await page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
@@ -140,10 +140,10 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Close Navigator
-		await editor.closeNavigator();
+		await editor.closeNavigatorIfOpen();
 
 		// Set Canvas template.
-		await editor.pageLayoutTemplate( 'canvas' );
+		await editor.pageLayoutTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
@@ -154,7 +154,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position absolute.
-		await wpAdmin.activatePanel( 'advanced' );
+		await wpAdmin.activatePanelTab( 'advanced' );
 		await page.waitForSelector( '.elementor-control-position >> select' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
@@ -172,7 +172,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set full content width
-		await wpAdmin.activatePanel( 'layout' );
+		await wpAdmin.activatePanelTab( 'layout' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
@@ -196,10 +196,10 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Close Navigator
-		await editor.closeNavigator();
+		await editor.closeNavigatorIfOpen();
 
 		// Set Canvas template.
-		await editor.pageLayoutTemplate( 'canvas' );
+		await editor.pageLayoutTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
@@ -210,7 +210,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position fixed.
-		await wpAdmin.activatePanel( 'advanced' );
+		await wpAdmin.activatePanelTab( 'advanced' );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -228,7 +228,7 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( container );
 
 		// Set full content width
-		await wpAdmin.activatePanel( 'layout' );
+		await wpAdmin.activatePanelTab( 'layout' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
