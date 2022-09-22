@@ -7,8 +7,7 @@ require_once __DIR__ . '/mock.php';
 class Elementor_Test_PerformanceLab extends Elementor_Test_Base {
 
 	public function test_performance_lab_get_webp_src() {
-		$root_path = dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) );
-		$image_id = $this->factory()->attachment->create_upload_object( $root_path . '/tests/phpunit/resources/pixel.jpg' );
+		$image_id = $this->factory()->attachment->create_upload_object( ELEMENTOR_PATH . '/tests/phpunit/resources/pixel.jpg' );
 		$image_url = wp_get_attachment_url( $image_id );
 		$reflection = new \ReflectionClass( PerformanceLab::class );
 		$method = $reflection->getMethod( 'performance_lab_get_webp_src' );

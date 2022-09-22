@@ -37,7 +37,7 @@ class Module extends BaseModule {
 		return $url;
 	}
 
-	private function apply_css_filter() {
+	private function add_css_filter() {
 		add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
 			if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
 				$value['url'] = $this->performance_lab_get_webp_src( $value['id'], 'full', $value['url'] );
@@ -51,7 +51,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( $this->is_performance_lab_is_active() ) {
-			$this->apply_css_filter();
+			$this->add_css_filter();
 		}
 
 		add_action( 'activated_plugin', function( $plugin ) {
