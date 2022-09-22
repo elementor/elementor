@@ -143,7 +143,7 @@ test.describe( 'Container tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Set Canvas template.
-		await editor.pageLayoutTemplate();
+		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
@@ -199,7 +199,7 @@ test.describe( 'Container tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Set Canvas template.
-		await editor.pageLayoutTemplate();
+		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
