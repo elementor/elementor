@@ -76,22 +76,6 @@ class Widget {
 			} );
 		}, { id: this.id } );
 	}
-
-	async waitAfterSettingValue( control ) {
-		if ( control && control.isForcingServerRender() ) {
-			await this.waitForServerRendered();
-		}
-
-		await this.editor.page.waitForTimeout( 300 );
-	}
-
-	/**
-	 * @return {Promise<void>}
-	 */
-	async waitForServerRendered() {
-		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading` );
-		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading`, { state: 'detached' } );
-	}
 }
 
 module.exports = { Widget };

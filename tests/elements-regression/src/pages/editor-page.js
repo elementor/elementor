@@ -95,10 +95,27 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<Buffer>}
 	 */
 	async screenshotWidget( widget ) {
+		let isLoading;
+
+		try {
+			await this.getPreviewFrame().waitForSelector( `.elementor-element-${ widget.id }.elementor-loading`, { timeout: 500 } );
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+		 	await this.getPreviewFrame().waitForSelector(
+				 `.elementor-element-${ widget.id }.elementor-loading`,
+				{ state: 'detached' },
+			);
+
+			await this.page.waitForTimeout( 400 );
+		}
+
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
 		const elementRect = await ( await widget.getElement() ).boundingBox();
-
-		// TODO: check here for loading.
 
 		return await this.page.screenshot( {
 			type: 'jpeg',

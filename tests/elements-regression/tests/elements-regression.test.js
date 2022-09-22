@@ -38,7 +38,6 @@ test.describe( 'Elements regression', () => {
 					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
 				await widget.resetSettings();
-				await widget.waitAfterSettingValue();
 
 				testedElements[ widgetType ] = {};
 			} );
@@ -77,8 +76,6 @@ test.describe( 'Elements regression', () => {
 						await test.step( valueLabel, async () => {
 							await control.setValue( value );
 
-							await widget.waitAfterSettingValue( control );
-
 							expect( await editorPage.screenshotWidget( widget ) )
 								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 
@@ -91,8 +88,6 @@ test.describe( 'Elements regression', () => {
 					await control.teardown();
 
 					await widget.resetSettings();
-
-					await widget.waitAfterSettingValue( control );
 				} );
 			}
 		} );
