@@ -255,7 +255,7 @@ export default class HistoryManager {
 	}
 
 	updatePanelPageCurrentItem() {
-		if ( $e.routes.is( 'panel/history/actions-v2' ) ) {
+		if ( $e.routes.is( 'panel/history/actions' ) ) {
 			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
 	}

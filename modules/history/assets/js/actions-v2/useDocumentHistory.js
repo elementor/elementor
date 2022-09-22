@@ -12,19 +12,16 @@ export const useDocumentHistory = () => {
     const [ items, setItems ] = useState( $e.store.getState( 'document/history' ).items ),
         currentItem = items.findIndex( ( item ) => STATUS_NOT_APPLIED === item.status );
 
-    // Sync the local state with the global history collection.
+    // Sync the local state with the global history state.
     useEffect( () => {
-        const unsubscribe = $e.store.subscribe( () => {
+        // Return the unsubscribe function.
+        return $e.store.subscribe( () => {
             setItems( $e.store.getState( 'document/history' ).items );
         } );
-
-        return () => {
-            unsubscribe();
-        };
     }, [] );
 
-    const applyItem = useCallback( ( index ) => {
-        $e.run( 'panel/history/actions/do', { index } );
+    const applyItem = useCallback( ( e, args ) => {
+        $e.run( 'panel/history/actions/do', { index: args.id } );
     }, [] );
 
     return {

@@ -8,7 +8,7 @@ export const History = () => {
 	<HistoryPanel
 		items={ items }
 		currentItem={ currentItem }
-		applyItem={ applyItem }
+		onItemClick={ applyItem }
         />
     );
 };

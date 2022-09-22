@@ -31,6 +31,7 @@ export default class Component extends ComponentBase {
 			'': {
 				initialState: {
 					items: [ {
+						id: 'editing-started',
 						status: 'not_applied',
 						title: __( 'Editing Started', 'elementor' ),
 						subTitle: '',

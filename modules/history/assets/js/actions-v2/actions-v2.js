@@ -1,4 +1,3 @@
-/* global ReactDOM */
 import { History } from './History';
 
 export default class extends Marionette.CompositeView {

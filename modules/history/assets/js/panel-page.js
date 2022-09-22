@@ -47,10 +47,6 @@ export default Marionette.LayoutView.extend( {
 				view: () => {
 					return TabActionV2View;
 				},
-				options: {
-					collection: historyItems,
-					history: this.document.history,
-				},
 			},
 			revisions: {
 				view: () => {
