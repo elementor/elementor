@@ -156,7 +156,7 @@
 	
 		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
 		& > .elementor-widget {
-			--flex-basis: var( --widget-width, 100% );
+			width: var( --widget-width, 100% );
 			max-width: 100%;
 		}
 	}
