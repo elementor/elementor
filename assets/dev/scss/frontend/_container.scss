@@ -155,7 +155,6 @@
 	&.e-container > .e-container__inner {
 	
 		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
-		// The `Min()` function has been added to enforce the `Advanced > Custom Width` value.
 		& > .elementor-widget {
 			--flex-basis: var( --widget-width, 100% );
 			max-width: 100%;

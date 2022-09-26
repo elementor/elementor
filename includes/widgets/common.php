@@ -231,7 +231,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
-					'{{WRAPPER}}' => '--widget-width: {{VALUE}}; --widget-width: {{VALUE}}',
+					'{{WRAPPER}}' => '--widget-width: {{VALUE}}',
 				],
 			]
 		);
