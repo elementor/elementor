@@ -1,47 +1,17 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import CommandHistory from './commands/base/command-history';
-import CommandHistoryDebounce from './commands/base/command-history-debounce';
 
 import * as components from './';
 import * as hooks from './hooks/';
 import * as uiStates from './ui-states';
 
 export default class Component extends ComponentBase {
-	static getModules() {
-		const modules = {
-			get CommandHistoryBase() {
-				elementorCommon.helpers.hardDeprecated(
-					'$e.modules.document.CommandHistoryBase',
-					'3.0.0',
-					'$e.modules.document.CommandHistory'
-				);
-
-				return this.CommandHistory;
-			},
-			get CommandHistoryDebounceBase() {
-				elementorCommon.helpers.hardDeprecated(
-					'$e.modules.document.CommandHistoryDebounceBase',
-					'3.0.0',
-					'$e.modules.document.CommandHistoryDebounce'
-				);
-
-				return this.CommandHistoryDebounce;
-			},
-
-			CommandHistory,
-			CommandHistoryDebounce,
-		};
-
-		return modules;
-	}
-
 	getNamespace() {
 		return 'document';
 	}
 
 	registerAPI() {
 		Object.values( components ).forEach( ( ComponentClass ) =>
-			$e.components.register( new ComponentClass )
+			$e.components.register( new ComponentClass ),
 		);
 
 		super.registerAPI();
@@ -49,7 +19,7 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return {
-			//example: ( args ) => ( new Commands.Example( args ).run() ),
+			// Example: ( args ) => ( new Commands.Example( args ).run() ),
 		};
 	}
 
@@ -93,7 +63,7 @@ export default class Component extends ComponentBase {
 					elementor.getPreviewView().children,
 					'id',
 					id,
-					false
+					false,
 				);
 
 				return elements ? elements[ 0 ] : false;

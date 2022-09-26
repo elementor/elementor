@@ -96,6 +96,7 @@ class Modules_Manager {
 			'admin-top-bar',
 			'container-converter',
 			'web-cli',
+			'promotions',
 		];
 	}
 

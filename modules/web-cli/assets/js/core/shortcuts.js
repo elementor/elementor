@@ -1,5 +1,5 @@
 import environment from 'elementor-api/utils/environment';
-import Helpers from 'elementor-api/utils/helpers';
+import Console from 'elementor-api/utils/console';
 
 export default class Shortcuts {
 	constructor( $window ) {
@@ -34,13 +34,13 @@ export default class Shortcuts {
 	}
 
 	/**
-	 * @param shortcuts
-	 * @param {{callback: (function(): boolean), scopes: [void]}} args
-	 * @param {callback} args.callback Required
-	 * @param {string} args.component Optional
-	 * @param {callback} args.dependency Optional
-	 * @param {array} args.exclude Optional
-	 * @param {bool} args.allowAltKey Optional
+	 * @param {string}   shortcuts
+	 * @param {Object}   args
+	 * @param {Function} args.callback    Required
+	 * @param {string}   args.component   Optional
+	 * @param {Function} args.dependency  Optional
+	 * @param {Array}    args.exclude     Optional
+	 * @param {boolean}  args.allowAltKey Optional
 	 */
 	register( shortcuts, args ) {
 		shortcuts.replace( ' ', '' ).split( ',' ).forEach( ( shortcut ) => {
@@ -95,7 +95,7 @@ export default class Shortcuts {
 		}
 
 		if ( 1 < filteredHandlers.length && elementorWebCliConfig.isDebug ) {
-			Helpers.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
+			Console.warn( 'Multiple handlers for shortcut.', filteredHandlers, event );
 		}
 
 		event.preventDefault();
@@ -140,8 +140,7 @@ export default class Shortcuts {
 			return false;
 		}
 
-		const namespace = component.getNamespace(),
-			namespaceRoot = component.getRootContainer();
+		const namespace = component.getNamespace();
 
 		const filteredByNamespace = scopes.some( ( scope ) => namespace === scope );
 
@@ -150,6 +149,7 @@ export default class Shortcuts {
 		}
 
 		// Else filter by namespaceRoot.
+		const namespaceRoot = component.getServiceName();
 		return scopes.some( ( scope ) => namespaceRoot === scope );
 	}
 

@@ -14,7 +14,7 @@ export default function OverviewContentGroup( props ) {
 			</Heading>
 			<CssGrid spacing={ 24 } colMinWidth={ 250 }>
 				{ props.contentType.documents.map( ( document ) => {
-					return <OverviewContentGroupItem key={ document.id } document={ document } kitId={ props.kitId }/>;
+					return <OverviewContentGroupItem key={ document.id } document={ document } kitId={ props.kitId } kitTitle={ props.kitTitle } groupData={ props.contentType } />;
 				} ) }
 			</CssGrid>
 		</div>
@@ -24,4 +24,5 @@ export default function OverviewContentGroup( props ) {
 OverviewContentGroup.propTypes = {
 	contentType: PropTypes.instanceOf( ContentType ),
 	kitId: PropTypes.string.isRequired,
+	kitTitle: PropTypes.string.isRequired,
 };

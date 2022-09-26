@@ -62,6 +62,8 @@ ModalProvider.propTypes = {
 	icon: PropTypes.string,
 	show: PropTypes.bool,
 	setShow: PropTypes.func,
+	onOpen: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 ModalProvider.defaultProps = {
@@ -79,17 +81,22 @@ export const Modal = ( props ) => {
 				closeNode = closeRef.current,
 				isInCloseNode = closeNode && closeNode.contains( e.target );
 
-			// ignore if click is inside the modal
+			// Ignore if click is inside the modal
 			if ( node && node.contains( e.target ) && ! isInCloseNode ) {
 				return;
 			}
 
 			props.hideModal();
+
+			if ( props.onClose ) {
+				props.onClose( e );
+			}
 		};
 
 	useEffect( () => {
 		if ( props.show ) {
 			document.addEventListener( 'mousedown', closeModal, false );
+			props.onOpen?.();
 		}
 
 		return () => document.removeEventListener( 'mousedown', closeModal, false );
@@ -100,11 +107,12 @@ export const Modal = ( props ) => {
 	}
 
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div className="eps-modal__overlay" onClick={ closeModal }>
 			<div className={ arrayToClassName( [ 'eps-modal', props.className ] ) } ref={ modalRef } >
 				<Grid container className="eps-modal__header" justify="space-between" alignItems="center">
 					<Grid item>
-						<Icon className={`eps-modal__icon ${ props.icon }`} />
+						<Icon className={ `eps-modal__icon ${ props.icon }` } />
 						<Text className="title" tag="span">{ props.title }</Text>
 					</Grid>
 					<Grid item>
@@ -131,6 +139,8 @@ Modal.propTypes = {
 	hideModal: PropTypes.func,
 	showModal: PropTypes.func,
 	closeModal: PropTypes.func,
+	onOpen: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 Modal.defaultProps = {

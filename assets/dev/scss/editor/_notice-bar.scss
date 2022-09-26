@@ -1,4 +1,4 @@
-#e-notice-bar {
+.e-notice-bar {
 	position: absolute;
 	width: 100%;
 	bottom: 0;
@@ -10,8 +10,6 @@
 	padding: 0 25px;
 
 	&__message {
-		@include padding-start(15px);
-
 		a {
 			text-decoration: underline;
 			color: #fff;
@@ -22,13 +20,12 @@
 		}
 	}
 
-	&__action {
-		@include padding-start(25px);
-		flex-grow: 1;
+	&__primary_action {
+		margin-inline: 12px;
 		text-transform: uppercase;
 
 		a {
-			background: white;
+			background: $white;
 			border-radius: 3px;
 			color: $editor-accent;
 			padding: 4px 10px;
@@ -41,8 +38,31 @@
 		}
 	}
 
+	&__secondary_message,
+	&__secondary_action {
+		font-size: 11px;
+	}
+
+	&__secondary_action {
+		margin-inline: 4px;
+
+		a {
+			color: $white;
+			text-decoration: underline;
+
+			&:hover {
+				color: $gray-lighter;
+			}
+		}
+	}
+
 	&__close {
 		cursor: pointer;
+		margin-inline-start: auto;
+	}
+
+	&__icon {
+		margin-inline-end: 8px;
 	}
 
 	i {

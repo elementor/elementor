@@ -7,7 +7,7 @@ export const Paste = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn );
+					eButton = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.copy( eButton );
 
@@ -25,7 +25,7 @@ export const Paste = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createButton( eColumn );
+					eWidget = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.copy( eWidget );
 
@@ -54,8 +54,8 @@ export const Paste = () => {
 				const eSection1 = ElementsHelper.createSection(),
 					eSection2 = ElementsHelper.createSection(),
 					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButton = ElementsHelper.createButton( eColumns[ 0 ] ),
-					eHeading = ElementsHelper.createHeading( eColumns[ 0 ] ),
+					eButton = ElementsHelper.createWidgetButton( eColumns[ 0 ] ),
+					eHeading = ElementsHelper.createWidgetHeading( eColumns[ 0 ] ),
 					toCopy = [ eButton, eHeading ];
 
 				ElementsHelper.multiCopy( toCopy.slice().reverse() );
@@ -70,7 +70,7 @@ export const Paste = () => {
 					assert.equal(
 						eColumns[ 1 ].model.get( 'elements' ).models[ i ].get( 'widgetType' ),
 						toCopy[ i ].model.get( 'widgetType' ),
-						`Element ${ i + 1 } preserved its order.`
+						`Element ${ i + 1 } preserved its order.`,
 					);
 				}
 			} );
@@ -84,9 +84,9 @@ export const Paste = () => {
 
 				// We want to create different widgets in different columns in order to check later whether the paste
 				// order is preserved using the `widgetType`.
-				ElementsHelper.createButton( eColumn1 );
+				ElementsHelper.createWidgetButton( eColumn1 );
 
-				ElementsHelper.createHeading( eColumn2 );
+				ElementsHelper.createWidgetHeading( eColumn2 );
 
 				ElementsHelper.multiCopy( toCopy.slice().reverse() );
 
@@ -100,7 +100,7 @@ export const Paste = () => {
 					assert.equal(
 						toCopy[ i ].children[ 0 ].model.get( 'widgetType' ),
 						eSection2.children[ i + 1 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						`Column ${ i + 1 } preserved its order.`
+						`Column ${ i + 1 } preserved its order.`,
 					);
 				}
 			} );
@@ -112,9 +112,9 @@ export const Paste = () => {
 					initialElementsCount = elementor.elements.length;
 				// We want to create different widgets in different sections in order to check later whether the paste
 				// order is preserved using the `widgetType`.
-				ElementsHelper.createButton( eSection1.children[ 0 ] );
+				ElementsHelper.createWidgetButton( eSection1.children[ 0 ] );
 
-				ElementsHelper.createHeading( eSection2.children[ 0 ] );
+				ElementsHelper.createWidgetHeading( eSection2.children[ 0 ] );
 
 				ElementsHelper.multiCopy( toCopy.slice().reverse() );
 
@@ -128,15 +128,15 @@ export const Paste = () => {
 					assert.equal(
 						toCopy[ i ].children[ 0 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
 						pasted[ i ].model.get( 'elements' ).models[ 0 ].get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						`Column ${ i + 1 } preserved its order.`
+						`Column ${ i + 1 } preserved its order.`,
 					);
 				}
 			} );
 
 			QUnit.test( 'On preview container', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn ),
-					eHeading = ElementsHelper.createHeading( eColumn ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
+					eHeading = ElementsHelper.createWidgetHeading( eColumn ),
 					toCopy = [ eButton, eHeading ];
 
 				ElementsHelper.multiCopy( toCopy );
@@ -150,15 +150,15 @@ export const Paste = () => {
 				// Check whether they preserved their order.
 				assert.equal(
 					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 0 ].children[ 0 ].model.get( 'widgetType' ),
+						.children[ 0 ].model.get( 'widgetType' ),
 					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-					'Elements preserved their position.'
+					'Elements preserved their position.',
 				);
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createButton( eColumn );
+					eWidget = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.copy( eWidget );
 

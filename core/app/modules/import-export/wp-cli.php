@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -154,6 +155,17 @@ class Wp_Cli extends \WP_CLI_Command {
 			$manifest_data = $this->get_manifest_data( $import_settings['session'] );
 			$manifest_data = $import->adapt_manifest_structure( $manifest_data );
 
+			/**
+			 * Import Export Manifest Data
+			 *
+			 * Allows 3rd parties to read and edit the kit's manifest before it is used.
+			 *
+			 * @since 3.7.0
+			 *
+			 * @param array $manifest_data The Kit's Manifest data
+			 */
+			$manifest_data = apply_filters( 'elementor/import-export/wp-cli/manifest_data', $manifest_data );
+
 			if ( isset( $manifest_data['plugins'] ) ) {
 				$successfully_imported_plugins = $this->import_plugins( $manifest_data['plugins'] );
 
@@ -235,7 +247,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return array
 	 */
 	private function get_manifest_data( $extraction_directory ) {
-		$manifest_file_content = file_get_contents( $extraction_directory . 'manifest.json', true );
+		$manifest_file_content = Utils::file_get_contents( $extraction_directory . 'manifest.json', true );
 
 		if ( ! $manifest_file_content ) {
 			\WP_CLI::error( 'Manifest not found' );
