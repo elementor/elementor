@@ -136,20 +136,6 @@
 		// Fix swiper-based widgets (ED-6716).
 		// Since the default is `min-width: auto` for flex items.
 		min-width: 0;
-
-		// Fix iframe-based widgets (ED-5338).
-		// TODO: Find a better solution.
-		&-video,
-		&-google_maps {
-			flex-basis: 100%;
-		}
-
-		// Fix swiper-based widgets broken (ED-6849).
-		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
-		&.e-widget-swiper {
-			max-width: 100%;
-			flex-basis: 100%;
-		}
 	}
 
 	&,
@@ -164,15 +150,15 @@
 		}
 	}
 
-	.elementor & {
-
-		&,
-		& > .e-container__inner {
-
-			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
-			& > .elementor-widget {
-				max-width: 100%;
-			}
+	// Hack with repeated classnames to increase the specificity.
+	.elementor.elementor &,
+	&.e-container > .e-container__inner {
+	
+		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+		// The `Min()` function has been added to enforce the `Advanced > Custom Width` value.
+		& > .elementor-widget {
+			--flex-basis: var( --widget-width, 100% );
+			max-width: 100%;
 		}
 	}
 }
