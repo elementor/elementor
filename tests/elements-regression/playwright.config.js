@@ -37,10 +37,11 @@ const config = {
 		actionTimeout: 0,
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: 'on-first-retry',
-		video: process.env.ELEMENTS_REGRESSION_VIDEO || process.env.CI ? 'on' : 'off',
+		video: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8889',
 		storageState: path.resolve( __dirname, 'storage-state.json' ),
+		validateAllPreviousCasesChecked: process.env.ELEMENTS_REGRESSION_VALIDATE_ALL_PREVIOUS_TEST_CASES || ( process.env.CI ? 'on' : 'off' ),
 		user: {
 			username: process.env.ELEMENTS_REGRESSION_WP_USERNAME || 'admin',
 			password: process.env.ELEMENTS_REGRESSION_WP_PASSWORD || 'password',
