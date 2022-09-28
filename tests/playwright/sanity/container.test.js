@@ -83,11 +83,13 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'google_maps', container );
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		await editor.addWidget( 'video', container );
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
 		await wpAdmin.setWidgetToFlewGrow();
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		await editor.addWidget( 'slides', container );
 		// Set widget custom width to 40%.

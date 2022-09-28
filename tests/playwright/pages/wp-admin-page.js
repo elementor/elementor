@@ -134,23 +134,23 @@ module.exports = class WpAdminPage extends BasePage {
 
 		// Open Media Library
 		await this.page.click( 'text=Media Library' );
-	  
+
 		// Upload the images to WP media library
 		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
 		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
 		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
 		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
 		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
-	  
+
 		// Create a new gallery
 		await this.page.locator( 'text=Create a new gallery' ).click();
-	  
+
 		// Insert gallery
 		await this.page.locator( 'text=Insert gallery' ).click();
-	  
+
 		// Open The Additional options Section
 		await this.page.click( '#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)' );
-	  
+
 		// Disable AutoPlay
 		await this.page.selectOption( 'select', 'no' );
 	}
