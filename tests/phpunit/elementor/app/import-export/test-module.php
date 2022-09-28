@@ -31,9 +31,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 
 		// Arrange
-		// Make sure that Elementor uploads directory is exists and writable.
-		Plugin::$instance->uploads_manager->get_temp_dir();
-
 		$elementor_uploads_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 
 		chmod( $elementor_uploads_dir, 0000 );
@@ -50,9 +47,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 
 		// Arrange
-		// Make sure that Elementor uploads directory is exists and writable.
-		Plugin::$instance->uploads_manager->get_temp_dir();
-
 		$elementor_uploads_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 
 		chmod( $elementor_uploads_dir, 0000 );
@@ -69,9 +63,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 
 		// Arrange
-		// Make sure that Elementor uploads directory is exists and writable.
-		Plugin::$instance->uploads_manager->get_temp_dir();
-
 		$elementor_uploads_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 
 		chmod( $elementor_uploads_dir, 0000 );
