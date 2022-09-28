@@ -100,8 +100,6 @@ async function createDefaultMedia( apiContext ) {
 		},
 	} );
 
-	console.log( await response.json() );
-
 	if ( ! response.ok() ) {
 		throw new Error( `
 			Failed to create default media: ${ response.status() }.
