@@ -120,7 +120,7 @@ module.exports = class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setWidgetToFlewGrow() {
+	async setWidgetToFlexGrow() {
 		await this.page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
 	}
 

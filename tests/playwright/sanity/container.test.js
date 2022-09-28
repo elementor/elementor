@@ -63,7 +63,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test.only( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -80,17 +80,6 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
 
 		// Act.
-		await editor.addWidget( 'google_maps', container );
-		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-		await page.waitForLoadState( 'domcontentloaded' );
-
-		await editor.addWidget( 'video', container );
-		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-		await wpAdmin.setWidgetToFlewGrow();
-		await page.waitForLoadState( 'domcontentloaded' );
-
 		await editor.addWidget( 'slides', container );
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
@@ -98,7 +87,7 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'reviews', container );
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
-		await wpAdmin.setWidgetToFlewGrow();
+		await wpAdmin.setWidgetToFlexGrow();
 
 		await editor.addWidget( 'testimonial-carousel', container );
 		// Set widget custom width to 40%.
@@ -107,12 +96,23 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'media-carousel', container );
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
-		await wpAdmin.setWidgetToFlewGrow();
+		await wpAdmin.setWidgetToFlexGrow();
 
 		await editor.addWidget( 'image-carousel', container );
 		await wpAdmin.populateImageCarousel();
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
+
+		await editor.addWidget( 'google_maps', container );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
+		await wpAdmin.setWidgetToFlexGrow();
+		await page.waitForLoadState( 'domcontentloaded' );
+
+		await editor.addWidget( 'video', container );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert.
 		expect( await containerElement.screenshot( {
