@@ -7,6 +7,10 @@
 
 .e-container {
 	--container-widget-width: 100%;
+}
+
+.e-container,
+.e-container__inner {
 
 	& > .elementor-widget-spacer {
 		width: var( --container-widget-width, var( --spacer-size ) );
