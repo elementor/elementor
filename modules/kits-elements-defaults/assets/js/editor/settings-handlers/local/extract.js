@@ -3,6 +3,7 @@ export default function( container ) {
 		settingsWithoutDefaults = container.settings.toJSON( { remove: [ 'default' ] } );
 
 	const entries = Object.entries( settingsWithoutDefaults )
+		// Explain.
 		.filter( ( [ settingName ] ) => controls[ settingName ] );
 
 	return Object.fromEntries( entries );

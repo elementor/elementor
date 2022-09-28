@@ -8,7 +8,7 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 	}
 
 	getConditions( args ) {
-		return args.model.elType || args.model.widgetType;
+		return args.model?.elType || args.model?.widgetType;
 	}
 
 	apply( args ) {

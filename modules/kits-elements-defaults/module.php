@@ -19,12 +19,12 @@ class Module extends BaseModule {
 		return [
 			'name' => 'kits-elements-defaults',
 			'title' => __( 'Kit Elements Defaults', 'elementor' ),
-			'description' => __( 'Set default values for all elements in a kit.', 'elementor' ),
+			'description' => __( 'Set default values for all the elements in a kit.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		];
 	}
 
-	public function enqueue_scripts() {
+	private function enqueue_scripts() {
 		wp_enqueue_script(
 			'elementor-kits-elements-defaults-editor',
 			$this->get_js_assets_url( 'kits-elements-defaults-editor' ),
@@ -37,7 +37,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', function () {
+			$this->enqueue_scripts();
+		} );
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
