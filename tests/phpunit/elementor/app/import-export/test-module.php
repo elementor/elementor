@@ -8,6 +8,23 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends Elementor_Test_Base {
 
+	private $elementor_upload_dir;
+	private $elementor_upload_dir_permission;
+
+	public function setUp() {
+		parent::setUp();
+
+		$this->elementor_upload_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
+		$this->elementor_upload_dir_permission = fileperms( $this->elementor_upload_dir );
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+
+		// Cleanup
+		chmod( $this->elementor_upload_dir, $this->elementor_upload_dir_permission );
+	}
+
 	public function test_export_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
 		// Expect
 		$this->expectException( \Error::class );
@@ -25,9 +42,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		( new Module() )->export_kit( [] );
-
-		// Cleanups
-		chmod( $elementor_uploads_dir, 0777 );
 	}
 
 	public function test_upload_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
@@ -47,9 +61,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		( new Module() )->upload_kit( '', '' );
-
-		// Cleanups
-		chmod( $elementor_uploads_dir, 0777 );
 	}
 
 	public function test_import_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
@@ -69,9 +80,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		( new Module() )->import_kit( '', [] );
-
-		// Cleanups
-		chmod( $elementor_uploads_dir, 0777 );
 	}
 
 	/**
