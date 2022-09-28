@@ -14,6 +14,7 @@ test.describe( 'Section tests', () => {
 
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert.
 		expect( await widgetElement.screenshot( {
