@@ -81,18 +81,38 @@ test.describe( 'Container tests', () => {
 
 		// Act.
 		await editor.addWidget( 'google_maps', container );
-		// Set widget custom width to 30%.
-		await wpAdmin.setWidgetCustomWidth( '30' );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
 
 		await editor.addWidget( 'video', container );
-		// Set widget custom width to 30%.
-		await wpAdmin.setWidgetCustomWidth( '30' );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
+		await wpAdmin.setWidgetToFlewGrow();
 
 		await editor.addWidget( 'slides', container );
-		// Set widget custom width to 30%.
-		await wpAdmin.setWidgetCustomWidth( '30' );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
 
-		// Assert.	
+		await editor.addWidget( 'reviews', container );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
+		await wpAdmin.setWidgetToFlewGrow();
+
+		await editor.addWidget( 'testimonial-carousel', container );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
+
+		await editor.addWidget( 'media-carousel', container );
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
+		await wpAdmin.setWidgetToFlewGrow();
+
+		await editor.addWidget( 'image-carousel', container );
+		await wpAdmin.populateImageCarousel();
+		// Set widget custom width to 40%.
+		await wpAdmin.setWidgetCustomWidth( '40' );
+
+		// Assert.
 		expect( await containerElement.screenshot( {
 			type: 'jpeg',
 			quality: 70,
