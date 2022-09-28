@@ -43,6 +43,8 @@ jobs:
           target_branch: develop
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
   bump-version:
+    permissions:
+      contents: none
     needs: merge-release-branch-to-develop
     runs-on: ubuntu-20.04
     outputs:

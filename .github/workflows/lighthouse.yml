@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: '0 10 * * 0' # run at 10 AM UTC on Sunday
 
+permissions:
+  contents: read
+
 jobs:
   build-plugin:
     name: Build plugin

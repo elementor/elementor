@@ -6,6 +6,9 @@ on:
       - 'develop'
       - 'release/*'
 
+permissions:
+  contents: read
+
 jobs:
   run:
     runs-on: ubuntu-20.04
