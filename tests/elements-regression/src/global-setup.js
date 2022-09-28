@@ -1,7 +1,7 @@
 const { chromium, request } = require( '@playwright/test' );
 const fs = require( 'fs' );
 const path = require( 'path' );
-const WpAdminPage = require( './src/pages/wp-admin-page.js' );
+const WpAdminPage = require( './pages/wp-admin-page.js' );
 
 module.exports = async ( { projects: [ { use: config } ] } ) => {
 	const { page, browser } = await createPage( {
@@ -91,7 +91,7 @@ async function createDefaultMedia( apiContext ) {
 	const response = await apiContext.post( '/index.php', {
 		params: { rest_route: '/wp/v2/media' },
 		multipart: {
-			file: fs.createReadStream( path.resolve( __dirname, `./assets/images/${ imageName }` ) ),
+			file: fs.createReadStream( path.resolve( __dirname, `../assets/images/${ imageName }` ) ),
 			title: 'Elementor image',
 			status: 'publish',
 			description: 'Elementor image description',
@@ -102,7 +102,7 @@ async function createDefaultMedia( apiContext ) {
 
 	if ( ! response.ok() ) {
 		throw new Error( `
-			Failed to create default media: ${ response.statusText() }.
+			Failed to create default media: ${ response.status() }.
 			${ await response.text() }
 		` );
 	}

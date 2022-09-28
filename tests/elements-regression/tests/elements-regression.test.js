@@ -14,7 +14,8 @@ test.describe( 'Elements regression', () => {
 	test.afterAll( async ( {}, testInfo ) => {
 		if (
 			! [ 'failed', 'timedOut' ].includes( testInfo.status ) && // There is no need to check if the tests already failed.
-			'on' === testInfo.project.use.validateAllPreviousCasesChecked
+			'on' === testInfo.project.use.validateAllPreviousCasesChecked &&
+			0 === testInfo.workerIndex // Only the first worker should check for now, if the worker index is not 0 it means that the test was failed.
 		) {
 			expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
 		}
