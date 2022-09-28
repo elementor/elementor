@@ -28,7 +28,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Cleanups
 		chmod( $elementor_uploads_dir, 0777 );
-		rmdir( $elementor_uploads_dir );
 	}
 
 	public function test_upload_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
@@ -51,7 +50,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Cleanups
 		chmod( $elementor_uploads_dir, 0777 );
-		rmdir( $elementor_uploads_dir );
 	}
 
 	public function test_import_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
@@ -74,7 +72,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Cleanups
 		chmod( $elementor_uploads_dir, 0777 );
-		rmdir( $elementor_uploads_dir );
 	}
 
 	/**
