@@ -28,9 +28,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen() {
-		const isOpen = await this.previewFrame.evaluate( () =>
-			elementor.navigator.isOpen(),
-		);
+		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
 			await this.page.click( '#elementor-navigator__close' );
