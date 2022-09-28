@@ -100,6 +100,13 @@ async function createDefaultMedia( apiContext ) {
 		},
 	} );
 
+	if ( ! response.ok() ) {
+		throw new Error( `
+			Failed to create default media: ${ response.statusText() }.
+			${ await response.text() }
+		` );
+	}
+
 	const { id } = await response.json();
 
 	// Pass the id that was uploaded to the tests.

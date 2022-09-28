@@ -13,7 +13,7 @@ test.describe( 'Elements regression', () => {
 
 	test.afterAll( async ( {}, testInfo ) => {
 		if (
-			'failed' !== testInfo.status && // There is no need to check if the tests already failed.
+			! [ 'failed', 'timedOut' ].includes( testInfo.status ) && // There is no need to check if the tests already failed.
 			'on' === testInfo.project.use.validateAllPreviousCasesChecked
 		) {
 			expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
