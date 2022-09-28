@@ -124,7 +124,9 @@
 	}
 }
 
-.elementor-widget-wrap, .e-container {
+.elementor-widget-wrap, 
+.e-container,
+.e-container__inner {
 
 	> .elementor-element.elementor-absolute {
 		position: absolute;
