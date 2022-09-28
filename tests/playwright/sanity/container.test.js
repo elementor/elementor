@@ -63,7 +63,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -84,7 +84,6 @@ test.describe( 'Container tests', () => {
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
 		await wpAdmin.setWidgetToFlexGrow();
-		await page.waitForLoadState( 'domcontentloaded' );
 
 		await editor.addWidget( 'video', container );
 		// Set widget custom width to 40%.
