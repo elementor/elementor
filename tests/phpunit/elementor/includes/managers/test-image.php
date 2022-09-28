@@ -9,11 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Image extends Elementor_Test_Base {
+	private function create_image() {
+		$file_name = __DIR__ . '/../../../resources/mock-image.png';
 
-	public function create_image() {
-		$attachment_id = $this->_make_attachment( [
-			'file' => __DIR__ . '/../../../resources/mock-image.png',
-			'url' => 'https://test.local/image.png',
+		$attachment_id = wp_insert_attachment( [
+			'post_title' => wp_basename( $file_name ),
+			'post_content' => '',
+			'post_type' => 'attachment',
+			'post_parent' => 0,
+			'post_mime_type' => wp_check_filetype( $file_name )['type'],
+			'guid' => 'https://test.local/mock-image.png',
 		] );
 
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
@@ -28,10 +33,6 @@ class Test_Image extends Elementor_Test_Base {
 		wp_update_attachment_metadata( $attachment_id, $image_meta );
 
 		return $attachment_id;
-	}
-
-	public function delete_image( $attachment_id ) {
-		wp_delete_attachment( $attachment_id, true );
 	}
 
 	public function test_get_details__adds_metadata() {
@@ -76,8 +77,6 @@ class Test_Image extends Elementor_Test_Base {
 			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['elementor_custom_x200'] );
 
-		// Cleanup
-		$this->delete_image( $attachment_id );
 	}
 
 	public function test_delete_custom_images() {
@@ -117,6 +116,5 @@ class Test_Image extends Elementor_Test_Base {
 
 		// Cleanup
 		unlink( $base_full_path );
-		$this->delete_image( $attachment_id );
 	}
 }

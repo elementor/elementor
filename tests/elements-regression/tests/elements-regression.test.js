@@ -1,90 +1,140 @@
-const { test, expect } = require( '@playwright/test' );
-const WpAdminPage = require( '../pages/wp-admin-page.js' );
-const EditorPage = require( '../pages/editor-page' );
-const widgetsCache = require( '../assets/widgets-cache' );
-
+const { expect } = require( '@playwright/test' );
+const test = require( '../src/test' );
+const elementsConfig = require( '../elements-config.json' );
+const widgetHandlers = require( '../src/widgets' );
+const controlHandlers = require( '../src/controls' );
 const {
-	Heading,
-	Divider,
-	TextEditor,
-	WidgetBase,
-} = require( '../utils/widgets' );
-
-const {
-	Choose,
-	Select,
-	Textarea,
-	Color,
-	Slider,
-} = require( '../utils/controls' );
-
-const { Registrar } = require( '../utils/registrar' );
-
-const widgetsRegistrar = new Registrar()
-	.register( Heading )
-	.register( Divider )
-	.register( TextEditor )
-	.register( WidgetBase );
-
-const controlsRegistrar = new Registrar()
-	.register( Choose )
-	.register( Select )
-	.register( Color )
-	.register( Slider )
-	.register( Textarea );
+	isWidgetIncluded,
+	isWidgetExcluded,
+	isControlIncluded,
+	isControlExcluded,
+} = require( '../src/validation' );
 
 test.describe( 'Elements regression', () => {
-	let editorPage,
-		wpAdminPage,
-		pageId;
+	const testedElements = {};
 
-	test.beforeEach( async ( { page }, testInfo ) => {
-		// Arrange.
-		wpAdminPage = new WpAdminPage( page, testInfo );
-		pageId = await wpAdminPage.createElementorPage();
-
-		editorPage = new EditorPage( wpAdminPage.page, testInfo );
-
-		await editorPage.ensureLoaded();
-		await editorPage.ensureNavigatorClosed();
-		await editorPage.ensureNoticeBarClosed();
+	test.afterAll( async ( {}, testInfo ) => {
+		if (
+			'failed' !== testInfo.status && // There is no need to check if the tests already failed.
+			'on' === testInfo.project.use.validateAllPreviousCasesChecked
+		) {
+			expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+		}
 	} );
 
-	test.afterEach( async () => {
-		await wpAdminPage.moveElementorPageToTrash( pageId );
-		await wpAdminPage.deletePermenantlyElementorPageFromTrash( pageId );
-	} );
-
-	for ( const widgetType of Object.keys( widgetsCache ) ) {
-		test( widgetType, async () => {
-			const WidgetClass = widgetsRegistrar.get( widgetType );
-
-			/**
-			 * @type {WidgetBase}
-			 */
-			const widget = new WidgetClass(
-				editorPage,
-				controlsRegistrar,
-				{
-					widgetType,
-					controls: widgetsCache[ widgetType ].controls,
-				},
-			);
-
-			// Act.
+	for ( const [ widgetType, widgetConfig ] of getWidgetForTests() ) {
+		// Here dynamic tests are created.
+		test( widgetType, async ( { editorPage } ) => {
+			const widget = createWidgetHandler( editorPage, widgetType, widgetConfig );
 			await widget.create();
 
 			await editorPage.page.waitForTimeout( 500 );
 
-			// Assert - Match snapshot for default appearance.
-			expect( await editorPage.screenshotWidget( widget ) )
-				.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
-
-			await widget.test( async ( controlId, currentControlValue ) => {
-				// Assert - Match snapshot for specific control.
+			await test.step( `default values`, async () => {
 				expect( await editorPage.screenshotWidget( widget ) )
-					.toMatchSnapshot( [ widgetType, controlId, `${ currentControlValue }.jpeg` ] );
+					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+
+				testedElements[ widgetType ] = {};
 			} );
+
+			for ( const [ controlId, controlConfig ] of getControlsForTests( widget.config ) ) {
+				const control = createControlHandler(
+					editorPage.page,
+					{
+						config: controlConfig,
+						sectionConfig: widget.config.controls[ controlConfig.section ],
+					},
+				);
+
+				if ( ! control || ! control.canTestControl() ) {
+					continue;
+				}
+
+				await test.step( controlId, async () => {
+					testedElements[ widgetType ][ controlId ] = [];
+
+					await control.setup();
+
+					await widget.beforeControlTest( { control, controlId } );
+
+					const initialValue = control.hasConditions() || control.hasSectionConditions()
+						? undefined
+						: await control.getValue();
+
+					for ( const value of await control.getTestValues( initialValue ) ) {
+						const valueLabel = control.generateSnapshotLabel( value );
+
+						await test.step( valueLabel, async () => {
+							await control.setValue( value );
+
+							await widget.waitAfterSettingValue( control );
+
+							expect( await editorPage.screenshotWidget( widget ) )
+								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+
+							testedElements[ widgetType ][ controlId ].push( valueLabel );
+						} );
+					}
+
+					await widget.afterControlTest( { control, controlId } );
+
+					await control.teardown();
+
+					await widget.resetSettings();
+
+					await widget.waitAfterSettingValue( control );
+				} );
+			}
 		} );
 	}
 } );
+
+/**
+ * @return {[string, Object][]}
+ */
+function getWidgetForTests() {
+	return Object.entries( elementsConfig ).filter(
+		( [ widgetType ] ) => isWidgetIncluded( widgetType ) && ! isWidgetExcluded( widgetType ),
+	);
+}
+
+/**
+ * @param {Object} widgetConfig
+ * @return {[string, Object][]}
+ */
+function getControlsForTests( widgetConfig ) {
+	return Object.entries( widgetConfig.controls )
+		.filter( ( [ controlType ] ) =>
+			isControlIncluded( widgetConfig.widgetType, controlType ) &&
+			! isControlExcluded( widgetConfig.widgetType, controlType ),
+		);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {Object}                          options
+ * @param {Object}                          options.config
+ * @param {Object}                          options.sectionConfig
+ * @return {null|import('../src/controls/control-base').ControlBase}
+ */
+function createControlHandler( page, { config, sectionConfig } ) {
+	const ControlClass = controlHandlers[ config.type ];
+
+	if ( ! ControlClass ) {
+		return null;
+	}
+
+	return new ControlClass( page, { config, sectionConfig } );
+}
+
+/**
+ * @param {import('../src/page').EditorPage} editorPage
+ * @param {string}                           type
+ * @param {Object}                           config
+ * @return {import('../src/widgets/widget').Widget}
+ */
+function createWidgetHandler( editorPage, type, config ) {
+	const WidgetClass = widgetHandlers[ type ] || widgetHandlers.widget;
+
+	return new WidgetClass( editorPage, { widgetType: type, ...config } );
+}
