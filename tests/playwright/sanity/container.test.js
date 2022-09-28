@@ -62,4 +62,44 @@ test.describe( 'Container tests', () => {
 			container: false,
 		} );
 	} );
+
+	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
+
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		// Set flex-wrap: wrap.
+		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
+
+		// Act.
+		await editor.addWidget( 'google_maps', container );
+		// Set widget custom width to 30%.
+		await wpAdmin.setWidgetCustomWidth( '30' );
+
+		await editor.addWidget( 'video', container );
+		// Set widget custom width to 30%.
+		await wpAdmin.setWidgetCustomWidth( '30' );
+
+		await editor.addWidget( 'slides', container );
+		// Set widget custom width to 30%.
+		await wpAdmin.setWidgetCustomWidth( '30' );
+
+		// Assert.	
+		expect( await containerElement.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
 } );

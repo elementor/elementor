@@ -88,4 +88,30 @@ module.exports = class WpAdminPage extends BasePage {
 
 		await this.page.click( '#submit' );
 	}
+
+	/**
+	 * Activate a tab inside the panel editor.
+	 *
+	 * @param {string} panelName - The name of the panel;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async activatePanelTab( panelName ) {
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
+	}
+
+	/**
+	 * Set a custom width value to the widget.
+	 *
+	 * @param {string} width - The custom percentage width value;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setWidgetCustomWidth( width = '100' ) {
+		await this.activatePanelTab( 'advanced' );
+		await this.page.selectOption( '.elementor-control-_element_width >> select', 'initial' );
+		await this.page.locator( '.elementor-control-_element_custom_width .elementor-control-input-wrapper input' ).fill( width );
+	}
 };
