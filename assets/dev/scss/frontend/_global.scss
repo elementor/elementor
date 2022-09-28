@@ -182,15 +182,6 @@
 	--order: initial;
 	--align-self: initial;
 
-	&:where( .elementor-section ) {
-
-		// Keep original specificity.
-		.elementor-element.elementor-widget {
-			width: var( --widget-width, 100% );
-			max-width: var( --widget-width, 100% );
-		}
-	}
-
 	&:where( .e-container--width-full, .elementor-widget ) {
 		// Flex container.
 		flex-direction: var( --flex-direction );
