@@ -3,7 +3,7 @@ const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Section tests', () => {
-	test.only( 'Display Google Map inside section at 40%', async ( { page }, testInfo ) => {
+	test( 'Display Google Map inside section at 40%', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
             editor = await wpAdmin.useElementorCleanPost();
@@ -22,7 +22,7 @@ test.describe( 'Section tests', () => {
 		} ) ).toMatchSnapshot( 'maps-40%.jpeg' );
 	} );
 
-    test.only( 'Display Video inside section at 40%', async ( { page }, testInfo ) => {
+    test( 'Display Video inside section at 40%', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
             editor = await wpAdmin.useElementorCleanPost();
