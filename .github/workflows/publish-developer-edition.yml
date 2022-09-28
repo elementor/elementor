@@ -2,8 +2,6 @@ name: Publish Developer Edition Version
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 1,15 * *' # Runs at 00:00 UTC on the 1 and 15th of every month.
   repository_dispatch:
     types: [new-release]
 
