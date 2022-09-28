@@ -113,11 +113,12 @@ async function createDefaultMedia( apiContext ) {
 	process.env[ `ELEMENTS_REGRESSION_MEDIA_IDS_${ imageName }` ] = id;
 
 	return async () => {
-		await apiContext.delete( `/index.php`, {
-			params: {
-				rest_route: `/wp/v2/media/${ id }`,
-				force: 1,
-			},
-		} );
+		//
+		// await apiContext.delete( `/index.php`, {
+		// 	params: {
+		// 		rest_route: `/wp/v2/media/${ id }`,
+		// 		force: 1,
+		// 	},
+		// } );
 	};
 }
