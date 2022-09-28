@@ -14,7 +14,7 @@ test.describe( 'Section tests', () => {
 
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert.
 		expect( await widgetElement.screenshot( {
@@ -34,7 +34,7 @@ test.describe( 'Section tests', () => {
 
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert.
 		expect( await widgetElement.screenshot( {
