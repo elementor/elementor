@@ -33,7 +33,7 @@ module.exports = async ( { projects: [ { use: config } ] } ) => {
  * @param {Object}  config
  * @param {boolean} config.headless
  * @param {string}  config.baseURL
- * @return {Promise<{browser: Browser, page: Page}>}
+ * @return {Promise<{browser: import('@playwright/test').Browser, page: import('@playwright/test').Page}>}
  */
 async function createPage( { headless, baseURL } ) {
 	const browser = await chromium.launch( { headless } ),
@@ -47,7 +47,7 @@ async function createPage( { headless, baseURL } ) {
  * @param {Object} config.storageStateObject
  * @param {string} config.wpRESTNonce
  * @param {string} config.baseURL
- * @return {Promise<APIRequestContext>}
+ * @return {Promise<import('@playwright/test').APIRequestContext>}
  */
 async function createApiContext( { storageStateObject, wpRESTNonce, baseURL } ) {
 	const context = await request.newContext( {
@@ -82,7 +82,7 @@ async function login( page, { username, password, storageState } ) {
 }
 
 /**
- * @param {APIRequestContext} apiContext
+ * @param {import('@playwright/test').APIRequestContext} apiContext
  * @return {Promise<Function>} teardown function
  */
 async function createDefaultMedia( apiContext ) {

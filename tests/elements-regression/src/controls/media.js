@@ -12,9 +12,9 @@ class Media extends ControlBase {
 
 		const value = selectedMediaId
 			? Object.entries( process.env )
-				.find( ( [ key, value ] ) =>
+				.find( ( [ key, id ] ) =>
 					key.startsWith( 'ELEMENTS_REGRESSION_MEDIA_IDS_' ) &&
-					value === selectedMediaId,
+					id === selectedMediaId,
 				)
 				?.[ 0 ]
 				?.replace( 'ELEMENTS_REGRESSION_MEDIA_IDS_', '' )

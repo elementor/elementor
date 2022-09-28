@@ -84,7 +84,7 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * @return {Frame}
+	 * @return {import('@playwright/test').Frame}
 	 */
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
@@ -109,8 +109,8 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isLoading ) {
-		 	await this.getPreviewFrame().waitForSelector(
-				 `.elementor-element-${ widget.id }.elementor-loading`,
+			await this.getPreviewFrame().waitForSelector(
+				`.elementor-element-${ widget.id }.elementor-loading`,
 				{ state: 'detached' },
 			);
 

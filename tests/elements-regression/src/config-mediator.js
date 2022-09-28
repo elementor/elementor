@@ -46,7 +46,7 @@ module.exports = class ConfigMediator {
 	/**
 	 * Get all the controls for specific widget type that should be tested.
 	 *
-	 * @param  widgetType
+	 * @param {string} widgetType
 	 * @return {{controlConfig: Object, sectionConfig: Object, controlId: string, widgetType: string}[]}
 	 */
 	getControlsForTests( widgetType ) {
@@ -70,6 +70,13 @@ module.exports = class ConfigMediator {
 			} );
 	}
 
+	/**
+	 * Get all the dependencies for specific widget type and control id
+	 *
+	 * @param {string}  widgetType
+	 * @param {string } controlId
+	 * @return {{controlConfig: Object, sectionConfig: Object, controlId: string, value: *, widgetType: string}[]}
+	 */
 	getControlDependecies( widgetType, controlId ) {
 		const currentConfig = this.#merge(
 			this.#userConfig.controls[ '*' ],
@@ -96,6 +103,11 @@ module.exports = class ConfigMediator {
 			} );
 	}
 
+	/**
+	 * @param {Object} config
+	 * @param {string} type
+	 * @return {boolean}
+	 */
 	#isIncluded( config, type ) {
 		if ( ! config.hasOwnProperty( 'include' ) ) {
 			return true;
@@ -104,6 +116,11 @@ module.exports = class ConfigMediator {
 		return config.include.some( ( term ) => this.#compare( term, type ) );
 	}
 
+	/**
+	 * @param {Object} config
+	 * @param {string} type
+	 * @return {boolean}
+	 */
 	#isExcluded( config, type ) {
 		if ( ! config.hasOwnProperty( 'exclude' ) ) {
 			return false;
@@ -112,6 +129,11 @@ module.exports = class ConfigMediator {
 		return config.exclude.some( ( term ) => this.#compare( term, type ) );
 	}
 
+	/**
+	 * @param {Object|undefined} source
+	 * @param {Object|undefined} target
+	 * @return {Object}
+	 */
 	#merge( source, target ) {
 		const result = {};
 
@@ -130,6 +152,11 @@ module.exports = class ConfigMediator {
 		return result;
 	}
 
+	/**
+	 * @param {Regex|string} term
+	 * @param {string}       type
+	 * @return {boolean}
+	 */
 	#compare( term, type ) {
 		if ( term instanceof RegExp ) {
 			return term.test( type );
@@ -138,6 +165,10 @@ module.exports = class ConfigMediator {
 		return term === type;
 	}
 
+	/**
+	 * @param {Object} config
+	 * @return {Object}
+	 */
 	#createUserConfig( config ) {
 		return {
 			elements: {
