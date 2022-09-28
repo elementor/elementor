@@ -153,8 +153,8 @@ module.exports = class ConfigMediator {
 	}
 
 	/**
-	 * @param {Regex|string} term
-	 * @param {string}       type
+	 * @param {RegExp|string} term
+	 * @param {string}        type
 	 * @return {boolean}
 	 */
 	#compare( term, type ) {
