@@ -80,29 +80,6 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
 
 		// Act.
-		await editor.addWidget( 'slides', container );
-		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-
-		await editor.addWidget( 'reviews', container );
-		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-		await wpAdmin.setWidgetToFlexGrow();
-
-		await editor.addWidget( 'testimonial-carousel', container );
-		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-
-		await editor.addWidget( 'media-carousel', container );
-		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-		await wpAdmin.setWidgetToFlexGrow();
-
-		await editor.addWidget( 'image-carousel', container );
-		await wpAdmin.populateImageCarousel();
-		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-
 		await editor.addWidget( 'google_maps', container );
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
