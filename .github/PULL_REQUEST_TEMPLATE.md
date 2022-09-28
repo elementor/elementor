@@ -40,6 +40,6 @@ This PR can be tested by following these steps:
 - [ ] I have added unittests to verify the code works as intended
 - [ ] Docs have been added / updated (for bug fixes / features)
 - [ ] This code does not break any APIs
-- [ ] I have tested this code against relevant plugins
+- [ ] I have tested this code against relevant 3rd party plugins
 
 Fixes #
