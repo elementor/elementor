@@ -133,6 +133,7 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.locator( '.elementor-control-_section_masking' ).click();
 		await this.page.locator( '.elementor-control-_mask_switch .elementor-control-input-wrapper .elementor-switch .elementor-switch-label' ).click();
 		await this.page.selectOption( '.elementor-control-_mask_size >> select', 'custom' );
-		await this.page.locator( '.elementor-control-_mask_size_scale .elementor-control-input-wrapper input' ).fill( '40' );
+		await this.page.locator( '.elementor-control-_mask_size_scale .elementor-control-input-wrapper input' ).fill( '30' );
+		await this.page.selectOption( '.elementor-control-_mask_position >> select', 'top right' );
 	}
 };
