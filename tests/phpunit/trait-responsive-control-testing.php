@@ -5,17 +5,17 @@ use Elementor\Plugin;
 
 trait Responsive_Control_Testing_Trait {
 
+	/**
+	 * Arrange
+	 *
+	 * The test case here is checking that the method works properly for CSS Generation, which requires
+	 * responsive control duplication in the back-end.
+	 *
+	 * Since the Common widget's controls stack could be added to the Controls Manager's stack cache before these tests
+	 * are run, we need to remove it from the stack cache,so it is re-registered with the Responsive Control Duplication
+	 * Mode set to 'on', in order for the common to be registered with all duplicated responsive controls.
+	 */
 	private function setup_responsive_control_condition_test() {
-		/**
-		 * Arrange
-		 *
-		 * The test case here is checking that the method works properly for CSS Generation, which requires
-		 * responsive control duplication in the back-end.
-		 *
-		 * Since the Common widget's controls stack is added to the Controls Manager's stack cache before this test is
-		 * run, we need to remove it from the stack cache,so it is re-registered with the Responsive Control Duplication
-		 * Mode set to 'on', in order for it to be registered with all responsive controls duplicated.
-		 */
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
 
 		Plugin::$instance->controls_manager->delete_stack( $this->get_common_widget_instance() );
@@ -25,7 +25,7 @@ trait Responsive_Control_Testing_Trait {
 	 * Cleanup - is_control_visible() test
 	 *
 	 * The Responsive Control Duplication Mode is reset to it's initial state.
-	 * The Common widget's control stack is removed from the Controls Manager stack cache so it will be re-initialized
+	 * The Common widget's control stack is removed from the Controls Manager stack cache, so it will be re-initialized
 	 * with the initial Responsive Control Duplication Mode whenever it is required in later-running tests.
 	 *
 	 * @param string $initial_duplication_mode
