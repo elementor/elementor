@@ -476,7 +476,7 @@ class Module extends BaseModule {
 
 		$import = $this->import_kit( $tmp_folder_id, $settings );
 
-		// get_settings_config() added manually because the frontend Ajax request doesn't trigger it.
+		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
 
 		wp_send_json_success( $import );
