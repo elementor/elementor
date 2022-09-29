@@ -23,6 +23,19 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Close the navigator if open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async closeNavigatorIfOpen() {
+		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
+
+		if ( isOpen ) {
+			await this.page.click( '#elementor-navigator__close' );
+		}
+	}
+
+	/**
 	 * Reload the editor page.
 	 *
 	 * @return {Promise<void>}
@@ -91,5 +104,30 @@ module.exports = class EditorPage extends BasePage {
 
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
+	}
+
+	/**
+	 * Use the Canvas post template.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async useCanvasTemplate() {
+		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
+	}
+
+	/**
+	 * Select an element inside the editor.
+	 *
+	 * @param {string} elementId - Element ID;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async selectElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.hover();
+		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+		await elementEditButton.click();
 	}
 };
