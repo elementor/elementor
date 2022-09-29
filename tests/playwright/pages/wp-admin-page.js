@@ -103,9 +103,9 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	/**
-	 * Set a custom width value to the widget.
+	 * Set a custom width value to a widget.
 	 *
-	 * @param {string} width - The custom percentage width value;
+	 * @param {string} width - The custom width value (as a percentage);
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -116,7 +116,7 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	/**
-	 * Set a current widget to `flew grow`.
+	 * Set a widget to `flew grow`.
 	 *
 	 * @return {Promise<void>}
 	 */

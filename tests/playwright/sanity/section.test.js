@@ -1,5 +1,4 @@
 const { test, expect } = require( '@playwright/test' );
-const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Section tests', () => {
@@ -14,7 +13,10 @@ test.describe( 'Section tests', () => {
 
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
-		await page.waitForLoadState( 'networkidle' );
+		await page.waitForLoadState( 'domcontentloaded' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
 
 		// Assert.
 		expect( await widgetElement.screenshot( {
@@ -34,7 +36,10 @@ test.describe( 'Section tests', () => {
 
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
-		await page.waitForLoadState( 'networkidle' );
+		await page.waitForLoadState( 'domcontentloaded' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
 
 		// Assert.
 		expect( await widgetElement.screenshot( {

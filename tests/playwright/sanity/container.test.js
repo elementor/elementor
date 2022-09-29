@@ -278,6 +278,9 @@ test.describe( 'Container tests', () => {
 		// Set flex-wrap: wrap.
 		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
 
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
 		// Act.
 		await editor.addWidget( 'google_maps', container );
 		// Set widget custom width to 40%.
