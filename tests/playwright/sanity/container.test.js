@@ -63,9 +63,6 @@ test.describe( 'Container tests', () => {
 		const spacer = await editor.addWidget( 'spacer', containerId );
 		await editor.addWidget( 'toggle', containerId );
 		await editor.addWidget( 'video', containerId );
-		// Set widget mask.
-		await wpAdmin.activatePanelTab( 'advanced' );
-		await wpAdmin.setWidgetMask();
 
 		// Select spacer element.
 		await editor.selectElement( spacer );
