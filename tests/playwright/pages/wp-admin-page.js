@@ -123,4 +123,16 @@ module.exports = class WpAdminPage extends BasePage {
 	async setWidgetToFlexGrow() {
 		await this.page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
 	}
+
+	/**
+	 * Set a widget mask.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setWidgetMask() {
+		await this.page.locator( '.elementor-control-_section_masking' ).click();
+		await this.page.locator( '.elementor-control-_mask_switch .elementor-control-type-switcher .elementor-switch-label' ).click();		
+		await this.page.selectOption( '.elementor-control-_mask_size >> select', 'custom' );
+		await this.page.locator( '.elementor-control-_mask_size_scale .elementor-control-input-wrapper input' ).fill( '20' );
+	}
 };

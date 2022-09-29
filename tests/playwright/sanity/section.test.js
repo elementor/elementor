@@ -13,6 +13,8 @@ test.describe( 'Section tests', () => {
 
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
+		// Set widget mask.
+		await wpAdmin.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Close Navigator
@@ -36,6 +38,8 @@ test.describe( 'Section tests', () => {
 
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
+		// Set widget mask.
+		await wpAdmin.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Close Navigator

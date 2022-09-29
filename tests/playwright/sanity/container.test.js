@@ -63,6 +63,9 @@ test.describe( 'Container tests', () => {
 		const spacer = await editor.addWidget( 'spacer', containerId );
 		await editor.addWidget( 'toggle', containerId );
 		await editor.addWidget( 'video', containerId );
+		// Set widget mask.
+		await wpAdmin.activatePanelTab( 'advanced' );
+		await wpAdmin.setWidgetMask();
 
 		// Select spacer element.
 		await editor.selectElement( spacer );
@@ -286,10 +289,14 @@ test.describe( 'Container tests', () => {
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
 		await wpAdmin.setWidgetToFlexGrow();
+		// Set widget mask.
+		await wpAdmin.setWidgetMask();
 
 		await editor.addWidget( 'video', container );
 		// Set widget custom width to 40%.
 		await wpAdmin.setWidgetCustomWidth( '40' );
+		// Set widget mask.
+		await wpAdmin.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert.
