@@ -260,6 +260,14 @@ class Test_Import extends Elementor_Test_Base {
 
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 		$this->assertEquals( [ 'taxonomies' => [] ], array_pop( $import_sessions_options )['runners'] );
+
+		// Test terms parent/child relationship.
+		$expected_parent_category_id = $result['taxonomies']['post']['category'][0]['new_id'];
+
+		$child_category_id = $result['taxonomies']['post']['category'][1]['new_id'];
+		$child_category = get_term( $child_category_id );
+
+		$this->assertEquals( $expected_parent_category_id, $child_category->parent );
 	}
 
 	public function test_run__import_taxonomies_with_register_custom_taxonomies() {
