@@ -4,13 +4,14 @@ namespace Elementor\Modules\KitsElementsDefaults\Data;
 use Elementor\Plugin;
 use Elementor\Data\V2\Base\Exceptions\Error_404;
 use Elementor\Data\V2\Base\Controller as Base_Controller;
-use Elementor\Modules\KitsElementsDefaults\Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Controller extends Base_Controller {
+	const META_KEY = '_elementor_elements_defaults_values';
+
 	public function get_name() {
 		return 'kits-elements-defaults';
 	}
@@ -75,7 +76,7 @@ class Controller extends Base_Controller {
 			$request->get_param( 'kit_id' )
 		);
 
-		return (object) Data_Provider::create( $kit )->get();
+		return (object) $kit->get_json_meta( static::META_KEY );
 	}
 
 	public function create_item( $request ) {
@@ -83,10 +84,16 @@ class Controller extends Base_Controller {
 			$request->get_param( 'kit_id' )
 		);
 
-		return (object) Data_Provider::create( $kit )->store(
-			$request->get_param( 'type' ),
-			$request->get_param( 'settings' )
+		$data = $kit->get_json_meta( static::META_KEY );
+
+		$data[ $request->get_param( 'type' ) ] = $request->get_param( 'settings' );
+
+		$kit->update_meta(
+			static::META_KEY,
+			wp_json_encode( $data )
 		);
+
+		return (object) [];
 	}
 
 	public function delete_item( $request ) {
@@ -94,15 +101,25 @@ class Controller extends Base_Controller {
 			$request->get_param( 'kit_id' )
 		);
 
-		return (object) Data_Provider::create( $kit )->delete(
-			$request->get_param( 'type' )
+		$data = $kit->get_json_meta( static::META_KEY );
+
+		unset( $data[ $request->get_param( 'type' ) ] );
+
+		$kit->update_meta(
+			static::META_KEY,
+			wp_json_encode( $data )
 		);
+
+		return (object) [];
 	}
 
 	public function get_items_permissions_check( $request ) {
 		return current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * TODO: Remove it and check in the infra why it is needed.
+	 */
 	public function get_item_permissions_check( $request ) {
 		return current_user_can( 'edit_posts' );
 	}

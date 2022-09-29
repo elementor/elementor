@@ -22,18 +22,13 @@ export default class Create extends $e.modules.CommandBase {
 		}, {} );
 
 		try {
-			const createAndRefetch = async () => {
-				await $e.data.create( 'kits-elements-defaults/index', { settings }, { type } );
+			await $e.data.create( 'kits-elements-defaults/index', { settings }, { type } );
 
-				$e.data.cache.storage.removeItem( 'kits-elements-defaults' );
-
-				await $e.data.get( 'kits-elements-defaults/index' );
-			};
-
-			await Promise.allSettled( [
-				createAndRefetch(),
-				new Promise( ( reslove ) => setTimeout( reslove, 800 ) ),
-			] );
+			// Refresh Cache.
+			// Cannot use {refresh: true} in `get()` because in the hooks there must be a way to get the data
+			// in sychronous way, and when using `refresh: true`, the data will not be available in syncronous way.
+			$e.data.cache.storage.removeItem( 'kits-elements-defaults' );
+			await $e.data.get( 'kits-elements-defaults/index' );
 
 			// Here we should open some toast
 		} catch ( e ) {
