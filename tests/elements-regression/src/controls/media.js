@@ -51,6 +51,7 @@ class Media extends ControlBase {
 	async openMediaLibrary() {
 		await this.elementLocator.locator( '.elementor-control-media-area' ).click();
 		await this.page.locator( '.media-modal:visible h1:has-text("Insert Media")' ).waitFor();
+		await this.page.locator( '.media-modal:visible button:has-text("Media Library")' ).click();
 	}
 
 	async closeMediaLibrary() {
