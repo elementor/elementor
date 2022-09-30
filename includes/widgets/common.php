@@ -231,7 +231,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}; --widget-width: {{VALUE}}',
+					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}};',
 				],
 			]
 		);
@@ -256,7 +256,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}; --widget-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [ '_element_width' => 'initial' ],
 			]
