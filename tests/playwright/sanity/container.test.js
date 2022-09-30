@@ -43,7 +43,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
