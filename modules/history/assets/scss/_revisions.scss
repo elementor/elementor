@@ -69,10 +69,7 @@
 }
 
 #elementor-panel-revisions-loading {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translateX(-50%) translateY(-50%);
+	@include absolute-center;
 
 	.eicon-loading {
 		font-size: 50px;

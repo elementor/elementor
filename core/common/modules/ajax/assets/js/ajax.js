@@ -56,14 +56,14 @@ export default class extends elementorModules.Module {
 						unique_id: options.data.unique_id + objectId,
 						data: jQuery.extend( { id: objectId }, options.data ),
 					} )
-					.done( ( data ) => dataCollection = jQuery.extend( dataCollection, data ) )
+					.done( ( data ) => dataCollection = jQuery.extend( dataCollection, data ) ),
 			);
 		} );
 
 		jQuery.when.apply( jQuery, deferredArray ).done( () => options.success( dataCollection ) );
 	}
 
-	load( request ) {
+	load( request, immediately ) {
 		if ( ! request.unique_id ) {
 			request.unique_id = request.action;
 		}
@@ -85,7 +85,7 @@ export default class extends elementorModules.Module {
 				data: request.data,
 				unique_id: request.unique_id,
 				success: ( data ) => this.cache[ cacheKey ] = data,
-			} ).done( request.success );
+			}, immediately ).done( request.success );
 		}
 
 		return deferred;
@@ -101,8 +101,8 @@ export default class extends elementorModules.Module {
 		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error ).always( options.complete );
 
 		const request = {
-			action: action,
-			options: options,
+			action,
+			options,
 		};
 
 		if ( immediately ) {
@@ -161,7 +161,7 @@ export default class extends elementorModules.Module {
 		} );
 	}
 
-	send( action, options ) {
+	prepareSend( action, options ) {
 		const settings = this.getSettings(),
 			ajaxParams = elementorCommon.helpers.cloneObject( settings.ajaxParams );
 
@@ -210,6 +210,20 @@ export default class extends elementorModules.Module {
 			}
 		}
 
-		return jQuery.ajax( ajaxParams );
+		return ajaxParams;
+	}
+
+	send( action, options ) {
+		return jQuery.ajax( this.prepareSend( action, options ) );
+	}
+
+	addRequestCache( request, data ) {
+		const cacheKey = this.getCacheKey( request );
+		this.cache[ cacheKey ] = data;
+	}
+
+	invalidateCache( request ) {
+		const cacheKey = this.getCacheKey( request );
+		delete this.cache[ cacheKey ];
 	}
 }

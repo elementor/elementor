@@ -1,6 +1,8 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
+import { SetDirectionMode } from 'elementor-document/hooks';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	__construct( args ) {
 		super.__construct( args );
 
@@ -14,72 +16,97 @@ export default class Component extends BaseComponent {
 
 	defaultTabs() {
 		return {
-			content: { title: elementor.translate( 'content' ) },
-			style: { title: elementor.translate( 'style' ) },
-			advanced: { title: elementor.translate( 'advanced' ) },
-			layout: { title: elementor.translate( 'layout' ) },
+			content: { title: __( 'Content', 'elementor' ) },
+			style: { title: __( 'Style', 'elementor' ) },
+			advanced: { title: __( 'Advanced', 'elementor' ) },
+			layout: { title: __( 'Layout', 'elementor' ) },
 		};
 	}
 
 	defaultCommands() {
-		return {
-			open: ( args ) => {
-				this.openEditor( args.model, args.view );
-
-				this.setDefaultTab( args );
-
-				$e.route( this.getDefaultRoute(), args );
-
-				// BC: Run hooks after the route render's the view.
-				const action = 'panel/open_editor/' + args.model.get( 'elType' );
-
-				// Example: panel/open_editor/widget
-				elementor.hooks.doAction( action, this.manager, args.model, args.view );
-
-				// Example: panel/open_editor/widget/heading
-				elementor.hooks.doAction( action + '/' + args.model.get( 'widgetType' ), this.manager, args.model, args.view );
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	getTabsWrapperSelector() {
 		return '.elementor-panel-navigation';
 	}
 
-	renderTab( tab ) {
-		this.manager.getCurrentPageView().activateTab( tab );
+	renderTab( tab, args ) {
+		const { model, view } = args,
+			/* Translators: %s: Element name. */
+			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
+
+		elementor.getPanelView().setPage( 'editor', title, {
+			tab,
+			model,
+			controls: elementor.getElementControls( model ),
+			editedElementView: view,
+		} );
 	}
 
-	activateTab( tab ) {
-		this.activeTabs[ this.manager.getCurrentPageView().model.id ] = tab;
+	activateTab( tab, args ) {
+		this.activeTabs[ args.model.id ] = tab;
 
-		super.activateTab( tab );
+		super.activateTab( tab, args );
 	}
 
 	setDefaultTab( args ) {
 		let defaultTab;
+
+		const editSettings = args.model.get( 'editSettings' );
+
 		if ( this.activeTabs[ args.model.id ] ) {
 			defaultTab = this.activeTabs[ args.model.id ];
-		} else {
-			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
+		} else if ( editSettings && editSettings.get( 'defaultEditRoute' ) ) {
+			defaultTab = editSettings.get( 'defaultEditRoute' );
 		}
 
-		// For unit test.
-		if ( ! defaultTab ) {
-			defaultTab = 'content';
+		if ( defaultTab ) {
+			// Ensure tab is exist.
+			const controlsTabs = elementor.getElementData( args.model ).tabs_controls;
+
+			// Fallback to first tab.
+			if ( ! controlsTabs[ defaultTab ] ) {
+				defaultTab = Object.keys( controlsTabs )[ 0 ];
+			}
+
+			this.setDefaultRoute( defaultTab );
+
+			return true;
 		}
 
-		this.setDefaultRoute( defaultTab );
+		return false;
 	}
 
-	openEditor( model, view ) {
-		const title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ),
-			editor = elementor.getPanelView().setPage( 'editor', title, {
-				model: model,
-				controls: elementor.getElementControls( model ),
-				editedElementView: view,
-			} );
+	/**
+	 * Callback on route open under the current namespace.
+	 *
+	 * @param {string} route - Route ID.
+	 *
+	 * @return {void}
+	 */
+	onRoute( route ) {
+		super.onRoute( route );
 
-		return editor;
+		const currentElement = elementor.getCurrentElement();
+
+		if ( ! currentElement ) {
+			return;
+		}
+
+		SetDirectionMode.set( currentElement.getContainer() );
+	}
+
+	/**
+	 * Callback on route close under the current namespace.
+	 *
+	 * @param {string } route - Route ID.
+	 *
+	 * @return {void}
+	 */
+	onCloseRoute( route ) {
+		super.onCloseRoute( route );
+
+		$e.uiStates.remove( 'document/direction-mode' );
 	}
 }

@@ -2,6 +2,7 @@
 namespace Elementor\Testing;
 
 use Elementor\Controls_Manager;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Controls extends Elementor_Test_Base {
 
@@ -38,17 +39,17 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 
 		$control_instance = new $control_class();
 
-		$this->elementor()->controls_manager->register_control( $control_id, new $control_instance() );
+		$this->elementor()->controls_manager->register( new $control_instance(), $control_id );
 
 		$control = $this->elementor()->controls_manager->get_control( $control_id );
 
 		$this->assertInstanceOf( $control_class, $control );
 
-		$this->assertTrue( $this->elementor()->controls_manager->unregister_control( $control_id ) );
-		$this->assertFalse( $this->elementor()->controls_manager->unregister_control( $control_id ) );
+		$this->assertTrue( $this->elementor()->controls_manager->unregister( $control_id ) );
+		$this->assertFalse( $this->elementor()->controls_manager->unregister( $control_id ) );
 
 		// Return the control for next tests..
-		$this->elementor()->controls_manager->register_control( $control_id, $control_instance );
+		$this->elementor()->controls_manager->register( $control_instance, $control_id );
 	}
 
 	public function test_groupControlsGetTypes() {
@@ -176,6 +177,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 				'url' => 'THE_LINK',
 				'is_external' => '',
 				'nofollow' => '',
+				'custom_attributes' => '',
 			], $url_control->get_value( $control_option, [ 'key' => [ 'is_external' => '' ] ] )
 		);
 

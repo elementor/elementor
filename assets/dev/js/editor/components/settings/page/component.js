@@ -1,15 +1,15 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'panel/page-settings';
 	}
 
 	defaultTabs() {
 		return {
-			settings: { title: elementor.translate( 'settings' ) },
-			style: { title: elementor.translate( 'style' ) },
-			advanced: { title: elementor.translate( 'advanced' ) },
+			settings: { title: __( 'Settings', 'elementor' ) },
+			style: { title: __( 'Style', 'elementor' ) },
+			advanced: { title: __( 'Advanced', 'elementor' ) },
 		};
 	}
 

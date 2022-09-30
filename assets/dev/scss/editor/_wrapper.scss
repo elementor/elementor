@@ -56,22 +56,7 @@ body {
 	}
 
 	&.elementor-editor-active {
-
-		#elementor-preview {
-
-			@media (max-width: $editor-screen-lg-max) {
-				@include start($panel-width);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include start($panel-xl-width);
-			}
-
-			@include end(0);
-		}
-
 		#elementor-mode-switcher-preview {
-
 			.eicon {
 				&:before {
 					content: getValueByDirection('\e89f', '\e89e');
@@ -81,15 +66,10 @@ body {
 	}
 
 	&.elementor-editor-preview {
-
-		#elementor-preview {
-			left: 0;
-		}
+		--e-preview-width: 100%;
 
 		#elementor-mode-switcher-preview {
-
 			.eicon {
-
 				&:before {
 					content: getValueByDirection('\e89e', '\e89f');
 				}
@@ -105,10 +85,16 @@ body {
 	}
 }
 
+#elementor-editor-wrapper {
+	display: flex;
+	width: 100%;
+	height: 100vh;
+}
+
 #elementor-panel,
 #elementor-preview {
 
 	&:not(.ui-resizable-resizing) {
-		transition: $start .5s, width 0.5s;
+		transition: margin .5s ease-in-out, width .5s ease-in-out;
 	}
 }

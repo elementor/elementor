@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+// TODO: Move this class to pro version for better architecture.
 class Canary_Deployment extends Module {
 
 	const CURRENT_VERSION = ELEMENTOR_VERSION;
@@ -84,7 +85,7 @@ class Canary_Deployment extends Module {
 	private function get_canary_deployment_info() {
 		global $pagenow;
 
-		$force = 'update-core.php' === $pagenow && isset( $_GET['force-check'] ); // WPCS: XSS ok.
+		$force = 'update-core.php' === $pagenow && isset( $_GET['force-check'] );
 
 		$canary_deployment = $this->get_canary_deployment_remote_info( $force );
 

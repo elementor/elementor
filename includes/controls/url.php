@@ -47,6 +47,7 @@ class Control_URL extends Control_Base_Multiple {
 			'url' => '',
 			'is_external' => '',
 			'nofollow' => '',
+			'custom_attributes' => '',
 		];
 	}
 
@@ -64,13 +65,15 @@ class Control_URL extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'show_external' => true,
-			'placeholder' => __( 'Paste URL or type', 'elementor' ),
+			'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
 			'autocomplete' => true,
+			'options' => [ 'is_external', 'nofollow', 'custom_attributes' ],
 			'dynamic' => [
 				'categories' => [ TagsModule::URL_CATEGORY ],
 				'property' => 'url',
 			],
+			'custom_attributes_description' => esc_html__( 'Set custom attributes for the link element. Separate attribute keys from values using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' )
+			. ' <a href="https://go.elementor.com/panel-link-custom-attributes/" target="_blank">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
 		];
 	}
 
@@ -85,35 +88,34 @@ class Control_URL extends Control_Base_Multiple {
 	 * @access public
 	 */
 	public function content_template() {
-		$control_uid = $this->get_control_uid();
-
-		$more_input_control_uid = $this->get_control_uid( 'more-input' );
-
-		$is_external_control_uid = $this->get_control_uid( 'is_external' );
-
-		$nofollow_control_uid = $this->get_control_uid( 'nofollow' );
 		?>
-		<div class="elementor-control-field elementor-control-url-external-{{{ data.show_external ? 'show' : 'hide' }}}">
-			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper">
+		<div class="elementor-control-field elementor-control-url-external-{{{ ( data.options.length || data.show_external ) ? 'show' : 'hide' }}}">
+			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper">
 				<i class="elementor-control-url-autocomplete-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
-				<input id="<?php echo $control_uid; ?>" class="elementor-control-tag-area elementor-input" data-setting="url" placeholder="{{ data.placeholder }}" />
-				<input id="_ajax_linking_nonce" type="hidden" value="<?php echo wp_create_nonce( 'internal-linking' ); ?>" />
-
-				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php echo __( 'Link Options', 'elementor' ); ?>">
+				<input id="<?php $this->print_control_uid(); ?>" class="elementor-control-tag-area elementor-input" data-setting="url" placeholder="{{ view.getControlPlaceholder() }}" />
+				<?php // PHPCS - Nonces don't require escaping. ?>
+				<input id="_ajax_linking_nonce" type="hidden" value="<?php echo wp_create_nonce( 'internal-linking' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
+				<div class="elementor-control-url-more tooltip-target elementor-control-unit-1" data-tooltip="<?php echo esc_html__( 'Link Options', 'elementor' ); ?>">
 					<i class="eicon-cog" aria-hidden="true"></i>
-				</label>
-				<input id="<?php echo $more_input_control_uid; ?>" type="checkbox" class="elementor-control-url-more-input">
-				<div class="elementor-control-url-more-options">
-					<div class="elementor-control-url-option check-wrapper">
-						<input id="<?php echo $is_external_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="is_external">
-						<label for="<?php echo $is_external_control_uid; ?>"><?php echo __( 'Open in new window', 'elementor' ); ?></label>
-					</div>
-					<div class="elementor-control-url-option check-wrapper">
-						<input id="<?php echo $nofollow_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
-						<label for="<?php echo $nofollow_control_uid; ?>"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
-					</div>
 				</div>
+			</div>
+			<div class="elementor-control-url-more-options">
+				<div class="elementor-control-url-option">
+					<input id="<?php $this->print_control_uid( 'is_external' ); ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="is_external">
+					<label for="<?php $this->print_control_uid( 'is_external' ); ?>"><?php echo esc_html__( 'Open in new window', 'elementor' ); ?></label>
+				</div>
+				<div class="elementor-control-url-option">
+					<input id="<?php $this->print_control_uid( 'nofollow' ); ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
+					<label for="<?php $this->print_control_uid( 'nofollow' ); ?>"><?php echo esc_html__( 'Add nofollow', 'elementor' ); ?></label>
+				</div>
+				<div class="elementor-control-url__custom-attributes">
+					<label for="<?php $this->print_control_uid( 'custom_attributes' ); ?>" class="elementor-control-url__custom-attributes-label"><?php echo esc_html__( 'Custom Attributes', 'elementor' ); ?></label>
+					<input type="text" id="<?php $this->print_control_uid( 'custom_attributes' ); ?>" class="elementor-control-unit-5" placeholder="key|value" data-setting="custom_attributes">
+				</div>
+				<# if ( ( data.options && -1 !== data.options.indexOf( 'custom_attributes' ) ) && data.custom_attributes_description ) { #>
+				<div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
+				<# } #>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

@@ -1,16 +1,13 @@
-import Base from '../../commands/base/base';
-import DocumentUtils from 'elementor-document/utils/helpers';
-
-export class Paste extends Base {
+export class Paste extends $e.modules.CommandBase {
 	initialize( args ) {
 		const { containers = [ args.container ] } = args;
 
 		super.initialize( args );
 
-		this.storage = elementorCommon.storage.get( 'clipboard' );
+		this.storage = elementorCommon.storage.get( 'clipboard' ) || [];
 
 		this.storage = this.storage.map( ( model ) =>
-			new Backbone.Model( model )
+			new Backbone.Model( model ),
 		);
 
 		if ( ! containers[ 0 ] ) {
@@ -21,19 +18,16 @@ export class Paste extends Base {
 		}
 	}
 
-	validateArgs( args ) {
-		this.requireArgumentType( 'storage', 'object', this );
-		//this.requireArgumentType( 'target', 'array', this );
-	}
-
 	apply( args ) {
-		if ( ! this.target ) {
+		if ( ! this.target || 0 === this.storage.length ) {
 			return false;
 		}
 
-		return this.target.some( ( /* Container */ container ) => {
+		const result = [];
+
+		this.target.forEach( ( /* Container */ container ) => {
 			const { options = {} } = args,
-				pasteOptions = DocumentUtils.getPasteOptions( this.storage[ 0 ], container );
+				pasteOptions = $e.components.get( 'document/elements' ).utils.getPasteOptions( this.storage[ 0 ], container );
 
 			if ( ! pasteOptions.isValidChild ) {
 				if ( pasteOptions.isSameElement ) {
@@ -57,11 +51,17 @@ export class Paste extends Base {
 					commandArgs.at = options.at;
 				}
 
-				return $e.run( 'document/elements/paste', commandArgs );
+				result.push( $e.run( 'document/elements/paste', commandArgs ) );
 			}
-
-			return false;
 		} );
+
+		if ( 0 === result.length ) {
+			return false;
+		} else if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }
 

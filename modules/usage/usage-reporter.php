@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\Usage;
 
-use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
+use Elementor\Modules\System_Info\Reporters\Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,30 +13,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor system report handler class responsible for generating a report for
  * the user.
  */
-class Usage_Reporter extends Base_Reporter {
+class Usage_Reporter extends Base {
 
 	const RECALC_ACTION = 'elementor_usage_recalc';
 
 	public function get_title() {
-		$title = 'Elements Usage';
-
-		if ( 'html' === $this->_properties['format'] && empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
-			$nonce = wp_create_nonce( self::RECALC_ACTION );
-			$url = add_query_arg( [
-				self::RECALC_ACTION => 1,
-				'_wpnonce' => $nonce,
-			] );
-
-			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="box-title-tool">Recalc</a>';
-		}
-
-		return $title;
+		return __( 'Elements Usage', 'elementor' );
 	}
 
 	public function get_fields() {
 		return [
 			'usage' => '',
 		];
+	}
+
+	public function print_html_label( $label ) {
+		$title = $this->get_title();
+
+		if ( empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not required here.
+			$nonce = wp_create_nonce( self::RECALC_ACTION );
+			$url = add_query_arg( [
+				self::RECALC_ACTION => 1,
+				'_wpnonce' => $nonce,
+			] );
+
+			$title .= '<a id="elementor-usage-recalc" href="' . esc_url( $url ) . '#elementor-usage-recalc" class="box-title-tool">Recalculate</a>';
+		} else {
+			$title .= $this->get_remove_recalc_query_string_script();
+		}
+
+		parent::print_html_label( $title );
 	}
 
 	public function get_usage() {
@@ -86,5 +92,31 @@ class Usage_Reporter extends Base_Reporter {
 		return [
 			'value' => $usage,
 		];
+	}
+
+	/**
+	 * Removes the "elementor_usage_recalc" param from the query string to avoid recalc every refresh.
+	 * When using a redirect header in place of this approach it throws an error because some components have already output some content.
+	 *
+	 * @return string
+	 */
+	private function get_remove_recalc_query_string_script() {
+		ob_start();
+		?>
+		<script>
+			// Origin file: modules/usage/usage-reporter.php - get_remove_recalc_query_string_script()
+			{
+				const url = new URL( window.location );
+
+				url.hash = '';
+				url.searchParams.delete( 'elementor_usage_recalc' );
+				url.searchParams.delete( '_wpnonce' );
+
+				history.replaceState( '', window.title, url.toString() );
+			}
+		</script>
+		<?php
+
+		return ob_get_clean();
 	}
 }

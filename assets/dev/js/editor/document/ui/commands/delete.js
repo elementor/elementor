@@ -1,12 +1,10 @@
-import Base from '../../commands/base/base';
+export class Delete extends $e.modules.CommandBase {
+	apply() {
+		const selectedElements = elementor.selection.getElements();
 
-export class Delete extends Base {
-	apply( args ) {
-		const selectedElement = elementor.getCurrentElement();
-
-		if ( selectedElement ) {
+		if ( selectedElements.length ) {
 			return $e.run( 'document/elements/delete', {
-				container: selectedElement.getContainer(),
+				containers: selectedElements,
 			} );
 		}
 

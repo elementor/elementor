@@ -1,0 +1,120 @@
+@import "./app-api";
+@import "../styles/base";
+
+.#{$eps-prefix}app {
+	display: flex;
+	height: 100vh;
+	flex-direction: column;
+	color: var(--body-color);
+	background-color: var(--app-background-color);
+	position: absolute;
+	border-radius: $app-radius;
+	box-shadow: $eps-box-shadow-3;
+	overflow: hidden;
+	font-family: $eps-font-family; // todo: we have body definition for font familiy,consider removing
+	width: 100%;
+	max-width: $app-max-width;
+
+	&__lightbox {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: fixed;
+		height: 100%;
+		width: 100%;
+		background-color: var(--app-lightbox-background-color);
+		z-index: $app-lightbox-z-index;
+		bottom: 0;
+		left: 0;
+	}
+
+	&__header {
+		flex-shrink: 0;
+		font-size: $app-header-font-size;
+		color: var(--app-header-color);
+		background-color: var(--app-header-background-color);
+		box-shadow: $app-header-box-shadow;
+		position: relative;
+		z-index: $app-header-z-index;
+		height: $app-header-height;
+		padding: $app-header-padding-y $spp-header-padding-x;
+	}
+
+	&__header-buttons {
+		display: flex;
+		align-items: center;
+		flex-direction: row-reverse;
+		font-size: $app-header-buttons-font-size;
+	}
+
+	&__header-btn {
+		--button-background-color: var(--app-header-buttons-color);
+		padding-inline-start: $app-header-btn-padding-x;
+		font-size: $app-header-btn-font-size;
+		line-height: $app-header-btn-line-height;
+
+		&:first-child {
+			border-inline-start: 1px solid var(--app-header-buttons-separator-color);
+		}
+
+		&:not(:first-child) {
+			padding-inline-end: $app-header-btn-padding-x;
+		}
+	}
+
+
+	&__logo-title-wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	//todo: consider refactoring as a stand alone block.
+	&__logo {
+		display: block;
+		width: $app-logo-size;
+		height: $app-logo-size;
+		line-height: $app-logo-size;
+		text-align: center;
+		font-size: $app-logo-font-size;
+		border-radius: $app-logo-radius;
+		color: $app-logo-color;
+		background-color: $app-logo-background-color;
+
+		&:not(:last-child) {
+			margin-inline-end: $app-logo-margin-end;
+		}
+	}
+
+	//todo: consider refactoring as logo element.
+	&__title {
+		font-size: $app-title-font-size;
+		font-weight: $app-title-font-weight;
+		text-transform: uppercase;
+		margin-bottom: 0;
+	}
+
+	&__main {
+		display: flex;
+		overflow: hidden;
+		flex-grow: 1;
+	}
+
+	&__sidebar {
+		background-color: var(--app-sidebar-background-color);
+		padding-top: $app-sidebar-padding-top;
+		width: $app-sidebar-width;
+		max-width: $app-sidebar-max-width;
+		flex-grow: 0;
+		overflow-y: auto;
+		box-shadow: $app-sidebar-box-shadow;
+		z-index: $app-sidebar-z-index;
+	}
+
+	&__content {
+		flex-grow: 1;
+		position: relative;
+		padding: $app-content-padding;
+		height: 100%;
+		overflow-y: auto;
+	}
+}

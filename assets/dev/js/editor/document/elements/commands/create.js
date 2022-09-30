@@ -1,6 +1,6 @@
-import History from '../../commands/base/history';
+import { addElementToDocumentState } from 'elementor-document/elements/utils';
 
-export class Create extends History {
+export class Create extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' ),
@@ -45,14 +45,6 @@ export class Create extends History {
 
 		let result = [];
 
-		// BC: Deprecated since 2.8.0 - use `$e.events`.
-		if ( ! options.trigger ) {
-			options.trigger = {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add',
-			};
-		}
-
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
@@ -65,7 +57,7 @@ export class Create extends History {
 			 * in getHistory().
 			 */
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/log-sub-item', {
+				$e.internal( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-add',
 					restore: this.constructor.restore,
@@ -76,6 +68,15 @@ export class Create extends History {
 					},
 				} );
 			}
+
+			$e.store.dispatch(
+				this.component.store.actions.create( {
+					documentId: elementor.documents.getCurrentId(),
+					parentId: container.id,
+					elements: [ createdContainer.model.toJSON() ],
+					index: options.at,
+				} ),
+			);
 		} );
 
 		if ( 1 === result.length ) {
@@ -85,8 +86,24 @@ export class Create extends History {
 		return result;
 	}
 
-	isDataChanged() {
-		return true;
+	static reducer( state, { payload } ) {
+		const { parentId, documentId, elements, index } = payload;
+
+		if ( ! state[ documentId ] ) {
+			state[ documentId ] = {
+				document: {
+					id: 'document',
+					elements: [],
+				},
+			};
+		}
+
+		addElementToDocumentState(
+			elements,
+			state[ documentId ],
+			parentId,
+			index,
+		);
 	}
 }
 

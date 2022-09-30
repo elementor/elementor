@@ -1,7 +1,5 @@
-import Base from '../../commands/base/base';
-
-export class PasteStyle extends Base {
-	apply( args ) {
+export class PasteStyle extends $e.modules.CommandBase {
+	apply() {
 		const selectedElement = elementor.getCurrentElement();
 
 		if ( selectedElement ) {

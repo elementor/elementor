@@ -1,0 +1,18 @@
+$e-context-colors: (
+	"primary": #0073aa,
+	"success": $editor-alert-success,
+	"info": $editor-alert-info,
+	"warning": $editor-alert-warning,
+	"error": $editor-alert-danger,
+	"cta": $brand-color-dark-pink,
+);
+
+:root {
+	--e-focus-color:  rgba(0, 115, 170, .4);
+	@each $context, $color in $e-context-colors {
+		--e-context-#{$context}-color: #{$color};
+		--e-context-#{$context}-color-dark: #{darken($color, 10%)};
+		--e-context-#{$context}-tint-4: #{rgba($color, .4)};
+		--e-context-#{$context}-tint-1: #{rgba($color, .04)};
+	}
+}

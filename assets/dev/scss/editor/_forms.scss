@@ -17,7 +17,10 @@ input, select, textarea, .elementor-input-style {
 	}
 
 	&:focus {
-		border-color: $editor-light;
+
+		&, + .elementor-control-dynamic-switcher {
+			border-color: $editor-light;
+		}
 	}
 
 	&::placeholder {
@@ -32,8 +35,14 @@ input, select, textarea, .elementor-input-style {
 	}
 }
 
+input {
+	// This fixes an issue in Firefox, in cases where a container with `display: flex` has a defined width,
+	// an input element inside this container cannot be given its own defined width.
+	min-width: 0;
+}
+
 input, textarea, .elementor-input-style {
-	padding: 5px 8px;
+	padding: 5px;
 }
 
 textarea, .elementor-input-style {
@@ -46,79 +55,6 @@ input[type="radio"] {
 	width: auto;
 }
 
-.check-wrapper {
-	display: flex;
-	align-items: center;
-
-	&:not(:last-child){
-		padding-bottom: 5px;
-	}
-	
-	input,
-	label {
-		cursor: pointer;
-	}
-
-	input {
-		&[type="checkbox"],
-		&[type="radio"] {
-			margin: 0;
-			padding: 0;
-			@include margin-end(5px);
-
-			//hidden the browser input style
-			-webkit-appearance: none;
-			-moz-appearance: none;
-			outline: none;
-			content: none;
-
-			//instead of the original style
-			height: 16px;
-			width: 16px;
-			border: 1px solid $editor-lightest;
-
-			//align the mark in the input
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-
-			&:checked  {
-				background: $editor-info;
-				border: none;
-
-				&:before  {
-					display: block;
-					content: "";
-				}
-			}
-		}
-
-		&[type="checkbox"] {
-			border-radius: 2px;
-
-			// check mark
-			&:checked:before {
-				width: 4px;
-				height: 7px;
-				border: solid white;
-				border-width: 0 2px 2px 0;
-				transform: rotate(45deg);
-			}
-		}
-
-		&[type="radio"] {
-			border-radius: 50%;
-
-			&:checked:before  {
-				width: 6px;
-				height: 6px;
-				border-radius: 50%;
-				background: white;
-			}
-		}
-	}
-}
-
 input[disabled] {
 	background-color: $editor-background;
 	cursor: not-allowed;
@@ -127,5 +63,5 @@ input[disabled] {
 
 select {
 	outline: none;
-	height: 27px;
+	height: $control-unit;
 }

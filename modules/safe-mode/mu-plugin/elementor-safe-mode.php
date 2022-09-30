@@ -31,9 +31,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Safe_Mode {
 
 	const OPTION_ENABLED = 'elementor_safe_mode';
+	const OPTION_TOKEN = self::OPTION_ENABLED . '_token';
 
 	public function is_enabled() {
 		return get_option( self::OPTION_ENABLED );
+	}
+
+	public function is_valid_token() {
+		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] ) ? $_COOKIE[ self::OPTION_TOKEN ] : null;
+
+		if ( $token && get_option( self::OPTION_TOKEN ) === $token ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function is_requested() {
@@ -49,7 +60,8 @@ class Safe_Mode {
 	}
 
 	public function is_editor_ajax() {
-		return is_admin() && isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'];
+		// PHPCS - There is already nonce verification in the Ajax Manager
+		return is_admin() && isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 
 	public function add_hooks() {
@@ -89,7 +101,7 @@ class Safe_Mode {
 	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
 		if ( basename( __FILE__ ) === $plugin_file ) {
 			$row_meta = [
-				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( __( 'Learn More', 'elementor' ) ) . '" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( esc_html__( 'Learn More', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );
@@ -103,7 +115,7 @@ class Safe_Mode {
 
 		$enabled_type = $this->is_enabled();
 
-		if ( ! $enabled_type ) {
+		if ( ! $enabled_type || ! $this->is_valid_token() ) {
 			return;
 		}
 

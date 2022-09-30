@@ -25,17 +25,38 @@ $orange:        #f0ad4e;
 $red:           #d9534f;
 $purple:		#9C7AC1;
 
+// Platform
+$platform-primary: #040080;
+$platform-secondary: #6A727C;
+$platform-text: #46F2B6;
+$platform-accent: #871A40;
+$platform-darkest-gray: #0C0D0E;
+$platform-darker-gray: #3A3F45;
+$platform-dark-gray: #525861;
+$platform-mid-gray: #69727D;
+$platform-gray-light: #9EA5AD;
+$platform-gray-lighter: #C2C7CC;
+$platform-gray-lightest: #D5D8DC;
+$platform-bg-light: #F9FAFA;
+$platform-danger-bg: #FDE8EC;
+$platform-danger-text: #B92136;
+$platform-success-bg: #ECF9F2;
+$platform-success-text: #117740;
+
 // Info Alert
 $info:			#5bc0de;
 $info-text:		#31708f;
 $info-bg:		#d9edf7;
 $info-border:	darken($info-bg, 7%);
+$info-wc-bg:	#F6F9FB;
+$info-wc-primary-text: #3f84b9;
 
 // Success Alert
 $success:		#5cb85c;
 $success-text:	#3c763d;
 $success-bg:	#dff0d8;
 $success-border:darken($success-bg, 7%);
+$success-wc-bg:	#FAFBF5;
 
 // Warning Alert
 $warning:		#f0ad4e;
@@ -48,6 +69,7 @@ $danger:		#d9534f;
 $danger-text:	#a94442;
 $danger-bg:		#f2dede;
 $danger-border:	darken($danger-bg, 7%);
+$danger-wc-bg:	#F9F2F5;
 
 // Progress Bar
 $progress-bg:	#eeeeee;
@@ -78,6 +100,7 @@ $jsfiddle:		#487AA2;
 $linkedin:		#0077b5;
 $medium:		#00ab6b;
 $meetup:		#ec1c40;
+$mix:			#f3782b;
 $mixcloud:		#273a4b;
 $odnoklassniki:	#F4731C;
 $pinterest:		#bd081c;
@@ -104,8 +127,8 @@ $twitter:		#1DA1F2;
 $viber:			#665cac;
 $vimeo:			#1ab7ea;
 $vk:			#45668e;
-$weibo:			#df2029;
-$weixin:		#7bb32e; //WeChat
+$weibo:			#DD2430;
+$weixin:		#31A918; //WeChat
 $whatsapp:		#25d366;
 $wordpress:		#21759b;
 $xing:			#026466;
@@ -117,6 +140,12 @@ $five-h-px:		#0099e5; //500px
 $wp-primary: #0085ba;
 $admin-font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
 
+//Brand Colors
+$brand-color-dark-pink: #93003c;
+$brand-color-royal-blue: #010150;
+$brand-color-dark: #434363;
+$brand-color-light: #93003c; //fallback (deprecated v3.0)
+
 // Editor colors
 $editor-darkest:#495157;
 $editor-darker: #556068;
@@ -126,7 +155,7 @@ $editor-light: #a4afb7;
 $editor-lighter: #c2cbd2;
 $editor-lightest: #d5dadf;
 
-$editor-accent: #D30C5C;
+$editor-accent: $brand-color-dark-pink;
 $editor-background: $gray-bg;
 $editor-background-light: #f1f3f5;
 $editor-background-lighter: #fcfcfc;
@@ -139,8 +168,11 @@ $editor-warning: #b01b1b;
 $editor-success: #39b54a;
 $editor-info: #71d7f7;
 
-$brand-color-light: #f2295b;
-$brand-color-dark: #434363;
+// Container element primary color.
+// TODO: Need a final color from the Design.
+$editor-container-primary: #0098c7;
+
+$editor-kit-accent: #4ab7f4;
 
 // Panel Alert
 $editor-alert-danger: $editor-danger;
@@ -152,6 +184,13 @@ $editor-alert-danger-bg: #fefbfc;
 $editor-alert-warning-bg: #fcfcfc;
 $editor-alert-info-bg: #f3fcff;
 $editor-alert-success-bg: #fcfffc;
+
+// WordPress colors
+$wp-warning: #ffb900;
+$wp-warning-text: #f56e28;
+
+$wp-success: #46b450;
+$wp-success-text: #79ba49;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
@@ -197,6 +236,8 @@ $column-sizes: (
 		100: 100%
 );
 
+$control-unit: 27px;
+
 // Panel
 $panel-width: 280px;
 $panel-xl-width: 300px;
@@ -209,3 +250,5 @@ $breakpoints: (
 		xl: 1440px, // Larger devices
 		xxl: 1600px // Largest devices
 );
+
+$devices: 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile';

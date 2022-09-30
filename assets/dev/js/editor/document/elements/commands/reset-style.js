@@ -1,6 +1,4 @@
-import History from '../../commands/base/history';
-
-export class ResetStyle extends History {
+export class ResetStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -19,7 +17,7 @@ export class ResetStyle extends History {
 
 		containers.forEach( ( container ) => {
 			const controls = container.settings.controls,
-				defaultValues = {};
+				settingsKeys = [];
 
 			container.view.allowRender = false;
 
@@ -28,19 +26,16 @@ export class ResetStyle extends History {
 					return;
 				}
 
-				defaultValues[ controlName ] = control.default;
+				settingsKeys.push( controlName );
 			} );
 
-			// BC: Deprecated since 2.8.0 - use `$e.events`.
-			elementor.channels.data.trigger( 'element:before:reset:style', container.model );
-
-			$e.run( 'document/elements/settings', {
+			$e.run( 'document/elements/reset-settings', {
 				container,
-				settings: defaultValues,
+				settings: settingsKeys,
+				options: {
+					external: true,
+				},
 			} );
-
-			// BC: Deprecated since 2.8.0 - use `$e.events`.
-			elementor.channels.data.trigger( 'element:after:reset:style', container.model );
 
 			container.view.allowRender = true;
 

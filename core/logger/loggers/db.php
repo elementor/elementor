@@ -38,10 +38,17 @@ class Db extends Base {
 		return $log;
 	}
 
-	protected function get_log() {
+	public function get_log() {
 		// Clear cache.
 		wp_cache_delete( self::LOG_NAME, 'options' );
 
-		return get_option( self::LOG_NAME, [] );
+		$log = get_option( self::LOG_NAME, [] );
+
+		// In case the DB log is corrupted.
+		if ( ! is_array( $log ) ) {
+			$log = [];
+		}
+
+		return $log;
 	}
 }

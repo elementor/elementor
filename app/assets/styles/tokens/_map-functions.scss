@@ -1,0 +1,38 @@
+// Tokens: map functions
+// - Simple 'get' mechanizm hardcoded to scoped maps.
+@function spacing($keys...) {
+	@return map-deep-get($eps-spacers, $keys...);
+}
+
+// Below functions can be duplicated and modified for Themes
+@function theme-colors($keys...) {
+	@return map-deep-get($eps-theme-colors, $keys...);
+}
+
+@function tints($keys...) {
+	@return map-deep-get($eps-tints, $keys...);
+}
+
+@function theme-elements-colors($keys...) {
+	@return map-deep-get($eps-theme-elements-colors, $keys...);
+}
+
+@function type($keys...) {
+	@return map-deep-get($eps-type-map, $keys...);
+}
+
+@function z-index($keys...) {
+	@return map-deep-get($eps-z-index-levels, $keys...);
+}
+
+@function opacity($keys...) {
+  @return map-deep-get($eps-opacity-map, $keys...);
+}
+
+@function shadow($keys...) {
+  @return map-deep-get($eps-shadow-map, $keys...);
+}
+
+@function atomizer($keys...){
+	@return map-deep-get($eps-atoms,$keys...);
+};

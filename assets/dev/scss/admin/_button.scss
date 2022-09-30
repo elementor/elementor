@@ -1,0 +1,124 @@
+:root {
+	--e-button-padding-y: #{pxToRem(7px)};
+	--e-button-padding-x: #{pxToRem(12px)};
+	--e-button-font-size: #{pxToRem(13px)};
+	--e-button-font-weight: 500;
+	--e-button-line-height: #{pxToRem(15px)};
+	--e-button-border-radius: 3px;
+	--e-button-context-color: var(--e-context-primary-color);
+	--e-button-context-color-dark: var(--e-context-primary-color-dark);
+	--e-button-context-tint: var(--e-context-primary-tint-1);
+}
+
+.e-button {
+	display: inline-block;
+	font-weight: var(--e-button-font-weight);
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	user-select: none;
+	color: $white;
+	border: 0;
+	text-decoration: none;
+	background: var(--e-button-context-color);
+	padding: var(--e-button-padding-y) var(--e-button-padding-x);
+	font-size: var(--e-button-font-size);
+	line-height: var(--e-button-line-height);
+	border-radius: var(--e-button-border-radius);
+	transition: background-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
+	&:active,
+	&:hover,
+	&:focus {
+		color: $white;
+		text-decoration: none;
+		background: var(--e-button-context-color-dark);
+	}
+
+	&:focus,
+	&.focus {
+		outline: 0;
+		box-shadow: 0 0 0 2px var(--e-focus-color);
+	}
+
+	// Disabled comes first so active can properly restyle
+	&.disabled,
+	&:disabled {
+		opacity: 0.5;
+		box-shadow: none;
+	}
+
+	// Opinionated: add "hand" cursor to non-disabled .e-button elements
+	&:not(:disabled):not(.disabled) {
+		cursor: pointer;
+	}
+
+	&:not(:disabled):not(.disabled):active,
+	&:not(:disabled):not(.disabled).active {
+		&:focus {
+			box-shadow: 0 0 0 2px var(--e-focus-color);
+		}
+	}
+
+	// Button context colors modifiers
+ 	@each $context, $color in $e-context-colors {
+		&--#{$context} {
+			--e-button-context-color: var(--e-context-#{$context}-color);
+			--e-button-context-color-dark: var(--e-context-#{$context}-color-dark);
+			--e-button-context-tint: var(--e-context-#{$context}-tint-1);
+			--e-focus-color: var(--e-context-#{$context}-tint-4);
+		}
+	}
+
+	// Outline variant
+	&.e-button--outline {
+		color: var(--e-button-context-color);
+		background: none;
+		border: 1px solid currentColor;
+
+		&:hover,
+		&:focus {
+			color: var(--e-button-context-color-dark);
+			background: var(--e-button-context-tint);
+		}
+
+		&.disabled,
+		&:disabled {
+			color: var(--e-button-context-color-dark);
+			background: $gray;
+		}
+	}
+
+	> i {
+		line-height: inherit;
+		height: var(--e-button-line-height);
+		width: min-content;
+	}
+
+	> * + * {
+		margin-inline-start: .5ch;
+	}
+
+	// Make a button look and behave like a link
+	&--link {
+		color: var(--e-button-context-color);
+		background-color: transparent;
+
+		&:hover,
+		&:focus {
+			color: var(--e-button-context-color-dark);
+			background: var(--e-button-context-tint);
+		}
+
+		&:disabled,
+		&.disabled {
+			color: $gray;
+		}
+	}
+}
+
+// Future-proof disabling of clicks on `<a>` elements
+a.e-button.disabled,
+fieldset:disabled a.e-button {
+	pointer-events: none;
+}

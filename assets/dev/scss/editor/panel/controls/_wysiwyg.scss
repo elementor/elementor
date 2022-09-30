@@ -1,26 +1,27 @@
 .elementor-control-type-wysiwyg {
 
-	&.elementor-rich-editing-disabled {
-
-		.wp-editor-container {
-			margin-top: 10px;
-		}
-	}
-
 	* {
 		box-sizing: content-box;
 	}
 
 	.wp-editor-container {
 		border: 1px solid $editor-background;
-		border-radius: 3px;
+	}
+
+	.wp-editor-tabs {
+		border: 1px solid $editor-lightest;
+		border-bottom: none;
+		border-radius: 3px 3px 0 0;
 	}
 
 	#insert-media-button {
 		height: initial;
 		line-height: 24px;
 		font-size: 10px;
+		color: $editor-dark;
+		border-color: $editor-lightest;
 		background-color: $editor-background;
+		min-height: initial;
 	}
 
 	.ed_button {
@@ -38,11 +39,17 @@
 	}
 
 	.wp-switch-editor {
+		position: static;
 		border: none;
+		margin: 0;
 		color: $editor-dark;
 		font-size: 10px;
 		padding: 3px 9px 4px;
-		border-radius: 3px 3px 0 0;
+	}
+
+	.switch-html {
+		border: solid $editor-lightest;
+		border-width: 0 1px;
 	}
 
 	.html-active {
@@ -103,5 +110,9 @@
 	.mce-path-item {
 		font-size: 12px;
 		color: $editor-dark;
+	}
+
+	.elementor-control-dynamic-switcher {
+		border: none;
 	}
 }

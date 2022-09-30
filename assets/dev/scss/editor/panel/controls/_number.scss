@@ -1,10 +1,14 @@
 .elementor-control-type-number {
 
-	.elementor-control-input-wrapper {
-		max-width: 25%;
-	}
+	&.elementor-control-dynamic {
 
-	&.elementor-control-dynamic-value .elementor-control-input-wrapper {
-		max-width: 100%;
+		input {
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			@include border-end(none);
+		}
+
+		.elementor-control-dynamic-switcher {
+			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+		}
 	}
 }

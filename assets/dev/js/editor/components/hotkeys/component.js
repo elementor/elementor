@@ -1,7 +1,7 @@
-import ComponentModal from 'elementor-common/components/component-modal';
+import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import ModalLayout from './modal-layout';
 
-export default class Component extends ComponentModal {
+export default class Component extends ComponentModalBase {
 	getNamespace() {
 		return 'shortcuts';
 	}
@@ -9,7 +9,8 @@ export default class Component extends ComponentModal {
 	defaultShortcuts() {
 		return {
 			'': {
-				keys: 'ctrl+?',
+				keys: 'ctrl+?, shift+?',
+				exclude: [ 'input' ],
 			},
 		};
 	}

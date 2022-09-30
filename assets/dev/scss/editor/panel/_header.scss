@@ -3,19 +3,17 @@
 //
 
 #elementor-panel-header {
-    display: table;
-    height: 40px;
-    width: 100%;
+	display: table;
+	height: 40px;
+	width: 100%;
 	background-color: $editor-accent;
 	color: #fff;
 
-    > * {
+	> * {
 		display: table-cell;
 		vertical-align: middle;
 		text-align: center;
-    }
-
-
+	}
 }
 
 .elementor-header-button {
@@ -43,6 +41,6 @@
 	font-size: 15px;
 
 	img {
-		width: 66px;
+		width: 90px;
 	}
 }

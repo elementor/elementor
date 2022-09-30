@@ -1,26 +1,48 @@
 /* global elementorFrontendConfig */
+import '../public-path';
 import DocumentsManager from './documents-manager';
-import Storage from '../../../../core/common/assets/js/utils/storage';
-import environment from '../../../../core/common/assets/js/utils/environment';
+import Storage from 'elementor-common/utils/storage';
+import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
+import BaseVideoLoader from './utils/video-api/base-loader';
+import URLActions from './utils/url-actions';
+import Swiper from './utils/swiper';
+import LightboxManager from './utils/lightbox/lightbox-manager';
+import AssetsLoader from './utils/assets-loader';
+import Breakpoints from 'elementor-utils/breakpoints';
+import Events from 'elementor-utils/events';
+
+import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
-	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
-	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
+	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
+	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
-class Frontend extends elementorModules.ViewModule {
+export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 
 		this.config = elementorFrontendConfig;
+
+		this.config.legacyMode = {
+			get elementWrappers() {
+				if ( elementorFrontend.isEditMode() ) {
+					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
+				}
+
+				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
+			},
+		};
+
+		this.populateActiveBreakpointsConfig();
 	}
 
 	// TODO: BC since 2.5.0
 	get Module() {
 		if ( this.isEditMode() ) {
-			parent.elementorCommon.helpers.hardDeprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
+			parent.elementorDevTools.deprecation.deprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
 		}
 
 		return elementorModules.frontend.handlers.Base;
@@ -32,15 +54,12 @@ class Frontend extends elementorModules.ViewModule {
 				elementor: '.elementor',
 				adminBar: '#wpadminbar',
 			},
-			classes: {
-				ie: 'elementor-msie',
-			},
 		};
 	}
 
 	getDefaultElements() {
 		const defaultElements = {
-			window: window,
+			window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
@@ -57,6 +76,7 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * @param {string} elementName
 	 * @deprecated 2.4.0 Use just `this.elements` instead
 	 */
 	getElements( elementName ) {
@@ -64,6 +84,7 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * @param {string} settingName
 	 * @deprecated 2.4.0 This method was never in use
 	 */
 	getPageSettings( settingName ) {
@@ -73,9 +94,16 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getGeneralSettings( settingName ) {
-		const settingsObject = this.isEditMode() ? elementor.settings.general.model.attributes : this.config.settings.general;
+		if ( this.isEditMode() ) {
+			parent.elementorDevTools.deprecation.deprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
+		}
 
-		return this.getItems( settingsObject, settingName );
+		return this.getKitSettings( `elementor_${ settingName }` );
+	}
+
+	getKitSettings( settingName ) {
+		// TODO: use Data API.
+		return this.getItems( this.config.kit, settingName );
 	}
 
 	getCurrentDeviceMode() {
@@ -83,7 +111,12 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getDeviceSetting( deviceMode, settings, settingKey ) {
-		const devices = [ 'desktop', 'tablet', 'mobile' ];
+		// Add specific handling for widescreen since it is larger than desktop.
+		if ( 'widescreen' === deviceMode ) {
+			return this.getWidescreenSetting( settings, settingKey );
+		}
+
+		const devices = elementorFrontend.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } );
 
 		let deviceIndex = devices.indexOf( deviceMode );
 
@@ -92,7 +125,8 @@ class Frontend extends elementorModules.ViewModule {
 				fullSettingKey = settingKey + '_' + currentDevice,
 				deviceValue = settings[ fullSettingKey ];
 
-			if ( deviceValue ) {
+			// Accept 0 as value.
+			if ( deviceValue || 0 === deviceValue ) {
 				return deviceValue;
 			}
 
@@ -100,6 +134,23 @@ class Frontend extends elementorModules.ViewModule {
 		}
 
 		return settings[ settingKey ];
+	}
+
+	getWidescreenSetting( settings, settingKey ) {
+		const deviceMode = 'widescreen',
+			widescreenSettingKey = settingKey + '_' + deviceMode;
+
+		let settingToReturn;
+
+		// If the device mode is 'widescreen', and the setting exists - return it.
+		if ( settings[ widescreenSettingKey ] ) {
+			settingToReturn = settings[ widescreenSettingKey ];
+		} else {
+			// Otherwise, return the desktop setting
+			settingToReturn = settings[ settingKey ];
+		}
+
+		return settingToReturn;
 	}
 
 	getCurrentDeviceSetting( settings, settingKey ) {
@@ -130,8 +181,17 @@ class Frontend extends elementorModules.ViewModule {
 		this.utils = {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
+			baseVideoLoader: new BaseVideoLoader(),
 			anchors: new AnchorsModule(),
-			lightbox: new LightboxModule(),
+			get lightbox() {
+				return LightboxManager.getLightbox();
+			},
+			urlActions: new URLActions(),
+			swiper: Swiper,
+			environment,
+			assetsLoader: new AssetsLoader(),
+			escapeHTML,
+			events: Events,
 		};
 
 		// TODO: BC since 2.4.0
@@ -140,30 +200,25 @@ class Frontend extends elementorModules.ViewModule {
 			Masonry: elementorModules.utils.Masonry,
 		};
 
-		this.elementsHandler = new ElementsHandler( jQuery );
+		this.elementsHandler.init();
 
-		this.documentsManager = new DocumentsManager();
-
-		this.trigger( 'components:init' );
+		if ( this.isEditMode() ) {
+			elementor.once( 'document:loaded', () => this.onDocumentLoaded() );
+		} else {
+			this.onDocumentLoaded();
+		}
 	}
 
 	initOnReadyElements() {
 		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
 	}
 
-	addIeCompatibility() {
-		const el = document.createElement( 'div' ),
-			supportsGrid = 'string' === typeof el.style.grid;
-
-		if ( ! environment.ie && supportsGrid ) {
-			return;
+	addUserAgentClasses() {
+		for ( const [ key, value ] of Object.entries( environment ) ) {
+			if ( value ) {
+				this.elements.$body.addClass( 'e--ua-' + key );
+			}
 		}
-
-		this.elements.$body.addClass( this.getSettings( 'classes.ie' ) );
-
-		const msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + this.config.urls.assets + 'css/frontend-msie.min.css?' + this.config.version + '" type="text/css" />';
-
-		this.elements.$body.append( msieCss );
 	}
 
 	setDeviceModeData() {
@@ -261,12 +316,47 @@ class Frontend extends elementorModules.ViewModule {
 		jQuery.migrateTrace = false;
 	}
 
+	/**
+	 * Initialize the modules' widgets handlers.
+	 */
+	initModules() {
+		const handlers = {
+			shapes: Shapes,
+		};
+
+		// TODO: BC - Deprecated since 3.5.0
+		elementorFrontend.trigger( 'elementor/modules/init:before' );
+
+		// TODO: Use this instead.
+		elementorFrontend.trigger( 'elementor/modules/init/before' );
+
+		Object.entries( handlers ).forEach( ( [ moduleName, ModuleClass ] ) => {
+			this.modulesHandlers[ moduleName ] = new ModuleClass();
+		} );
+	}
+
+	populateActiveBreakpointsConfig() {
+		this.config.responsive.activeBreakpoints = {};
+
+		Object.entries( this.config.responsive.breakpoints ).forEach( ( [ breakpointKey, breakpointData ] ) => {
+			if ( breakpointData.is_enabled ) {
+				this.config.responsive.activeBreakpoints[ breakpointKey ] = breakpointData;
+			}
+		} );
+	}
+
 	init() {
 		this.hooks = new EventManager();
 
+		this.breakpoints = new Breakpoints( this.config.responsive );
+
 		this.storage = new Storage();
 
-		this.addIeCompatibility();
+		this.elementsHandler = new ElementsHandler( jQuery );
+
+		this.modulesHandlers = {};
+
+		this.addUserAgentClasses();
 
 		this.setDeviceModeData();
 
@@ -277,11 +367,21 @@ class Frontend extends elementorModules.ViewModule {
 		}
 
 		// Keep this line before `initOnReadyComponents` call
-		this.elements.$window.trigger( 'elementor/frontend/init' );
+		Events.dispatch( this.elements.$window, 'elementor/frontend/init' );
+
+		this.initModules();
 
 		this.initOnReadyElements();
 
 		this.initOnReadyComponents();
+	}
+
+	onDocumentLoaded() {
+		this.documentsManager = new DocumentsManager();
+
+		this.trigger( 'components:init' );
+
+		new LightboxManager();
 	}
 }
 

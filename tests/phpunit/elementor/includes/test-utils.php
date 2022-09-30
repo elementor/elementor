@@ -3,14 +3,14 @@ namespace Elementor\Testing\Includes;
 
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
 	public function test_should_return_elementor_pro_link() {
-		$this->assertSame( self::BASE_LINK . '&utm_term=twentysixteen', Utils::get_pro_link( self::BASE_LINK ) );
+		$this->assertSame( self::BASE_LINK . '&utm_term=twentytwenty-one', Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
 	public function test_should_return_source_of_placeholder_image() {
@@ -64,7 +64,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be different
+	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be different
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
@@ -74,7 +74,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be valid URL's
+	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be valid URL&#039;s
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
@@ -87,7 +87,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$this->assertNull( Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url() );
 	}
-
 
 	public function test_should_get_updated_timezone_string() {
 		for ( $time_offset = 0; $time_offset < 13; $time_offset++ ) {
@@ -119,12 +118,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( $posts['child_id'], Utils::get_post_autosave( $posts['parent_id'], $posts['user_id'] )->ID );
 	}
 
-	public function test_should_create_and_get_new_post_url() {
-		$new_post_url = esc_url( Utils::get_create_new_post_url() );
-		$this->assertContains( 'edit.php?action=elementor_new_post&#038;post_type=', $new_post_url );
-		$this->assertContains( '&#038;_wpnonce=', $new_post_url );
-	}
-
 	public function test_getYoutubeId() {
 		$youtube_id = '9uOETcuFjbE';
 		$youtube_urls = [
@@ -140,5 +133,67 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		}
 
 		$this->assertNull( \Elementor\Embed::get_video_properties( 'https://www.youtube.com/' ) );
+	}
+
+	/**
+	 * Test Should Receive a string with HTML entities and return the string with the HTML Entities decoded
+	 *
+	 * This tests the urlencode_html_entities() utility method, to see that it properly decodes HTML Entities and then correctly URL-encodes them to be used in URLs, such as social media sharing
+	 */
+	public function test_should_return_decoded_string() {
+		// This is a filter from the WordPress core wp_get_document_title() function.
+		// The filter is used here to make the wp_get_document_title() function return our test title.
+		add_filter( 'document_title_parts', function () {
+			return [
+				'title' => '"This is a string" with a variety of ‘HTML entities’. \'What?\' & (more) #stupid “things”'
+			];
+		} );
+
+		$before_encoding = wp_get_document_title();
+
+		$valid_encoding = '%22This%20is%20a%20string%22%20with%20a%20variety%20of%20%E2%80%98HTML%20entities%E2%80%99.%20%27What%3F%27%20%26%20%28more%29%20%23stupid%20%E2%80%9Cthings%E2%80%9D';
+		$after_encoding = Utils::urlencode_html_entities( $before_encoding );
+
+		$this->assertSame( $valid_encoding, $after_encoding );
+	}
+
+	public function test_is_empty() {
+		$this->assertEquals( false, Utils::is_empty('0' ),
+			"'0' is not empty" );
+
+		$this->assertEquals( true, Utils::is_empty('' ),
+			"'' is empty" );
+
+		$this->assertEquals( true, Utils::is_empty( [], 'key' ),
+			"[] with undefined key, is empty" );
+
+		$this->assertEquals( true, Utils::is_empty( [ 'key' => '' ], 'key' ),
+			"[ 'key' => '' ] is empty" );
+
+		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
+			"[ 'key' => '0' ] is empty" );
+	}
+
+	public function test_file_get_contents() {
+		// Arrange
+		$file_name = __DIR__ . '/mock/mock-file.txt';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertEquals( "test.\n", $content );
+	}
+
+	public function test_file_get_contents__non_file() {
+		// Arrange
+		// Elementor Logo
+		$file_name = 'https://avatars.githubusercontent.com/u/47606894';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertFalse( $content );
 	}
 }

@@ -1,14 +1,14 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'panel/history';
 	}
 
 	defaultTabs() {
 		return {
-			actions: { title: elementor.translate( 'actions' ) },
-			revisions: { title: elementor.translate( 'revisions' ) },
+			actions: { title: __( 'Actions', 'elementor' ) },
+			revisions: { title: __( 'Revisions', 'elementor' ) },
 		};
 	}
 

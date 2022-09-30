@@ -1,43 +1,99 @@
-import BaseComponent from 'elementor-common/components/component';
-import * as Commands from './commands/';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
+import * as commandsInternal from './commands-internal/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'document/elements';
 	}
 
 	defaultCommands() {
-		const commands = {};
-
-		// Convert `Commands` to `BaseComponent` workable format.
-		Object.entries( Commands ).forEach( ( [ command, classReference ] ) => {
-			command = this.normalizeCommand( command );
-			commands[ command ] = ( args ) => ( new classReference( args ) ).run();
-		} );
-
-		return commands;
+		return this.importCommands( commands );
 	}
 
-	normalizeCommand( command ) {
-		let temp = '';
+	defaultCommandsInternal() {
+		return this.importCommands( commandsInternal );
+	}
 
-		// First character should be lowercase.
-		command = command.charAt( 0 ).toLowerCase() + command.slice( 1 );
+	defaultStates() {
+		return {
+			'': {
+				initialState: {},
+				reducers: {
+					create: this.commands.create.reducer,
+					delete: this.commands.delete.reducer,
+					empty: this.commands.empty.reducer,
+					populate: this.commandsInternal.populate.reducer,
+					settings: this.commandsInternal[ 'set-settings' ].reducer,
+				},
+			},
+		};
+	}
 
-		/**
-		 * If command includes uppercase character convert it to lowercase and add `-`.
-		 * e.g: `CopyAll` is converted to `copy-all`.
-		 */
-		for ( let i = 0; i < command.length; i++ ) {
-			const part = command[ i ];
-			if ( part === part.toUpperCase() ) {
-				temp += '-' + part.toLowerCase();
-				continue;
-			}
+	defaultUtils() {
+		return {
+			isValidChild: ( childModel, parentModel ) => parentModel.isValidChild( childModel ),
+			isValidGrandChild: ( childModel, targetContainer ) => {
+				let result;
 
-			temp += command[ i ];
-		}
+				const childElType = childModel.get( 'elType' );
 
-		return temp;
+				switch ( targetContainer.model.get( 'elType' ) ) {
+					case 'document':
+						result = true;
+						break;
+
+					case 'section':
+						result = 'widget' === childElType;
+						break;
+
+					default:
+						result = false;
+				}
+
+				return result;
+			},
+			isSameElement: ( sourceModel, targetContainer ) => {
+				const targetElType = targetContainer.model.get( 'elType' ),
+					sourceElType = sourceModel.get( 'elType' );
+
+				if ( targetElType !== sourceElType ) {
+					return false;
+				}
+
+				if ( 'column' === targetElType && 'column' === sourceElType ) {
+					return true;
+				}
+
+				return targetContainer.model.get( 'isInner' ) === sourceModel.get( 'isInner' );
+			},
+			getPasteOptions: ( sourceModel, targetContainer ) => {
+				const result = {};
+
+				result.isValidChild = targetContainer.model.isValidChild( sourceModel );
+				result.isSameElement = this.utils.isSameElement( sourceModel, targetContainer );
+				result.isValidGrandChild = this.utils.isValidGrandChild( sourceModel, targetContainer );
+
+				return result;
+			},
+			isPasteEnabled: ( targetContainer ) => {
+				const storage = elementorCommon.storage.get( 'clipboard' );
+
+				// No storage? no paste.
+				if ( ! storage || ! storage[ 0 ] ) {
+					return false;
+				}
+
+				if ( ! ( storage[ 0 ] instanceof Backbone.Model ) ) {
+					storage[ 0 ] = new Backbone.Model( storage[ 0 ] );
+				}
+
+				const pasteOptions = this.utils.getPasteOptions( storage[ 0 ], targetContainer );
+
+				return Object.values( pasteOptions ).some(
+					( opt ) => !! opt,
+				);
+			},
+		};
 	}
 }

@@ -1,68 +1,151 @@
 .elementor-control-type-url {
 
-	.elementor-control-url-external-hide {
+	&.elementor-control-dynamic {
 
-		.elementor-control-url-more {
-			display: none;
+		.elementor-input {
+			border-radius: 3px 0 0 3px;
 		}
 	}
 
-	.elementor-control-url-external-show {
+	.elementor-control-field {
+		position: relative;
+	}
 
-		.elementor-input,
-		.elementor-input-style {
-			padding-right: 46px;
+	&:not(.elementor-control-dynamic),
+	&.elementor-control-dynamic-value {
+
+		.elementor-control-url-more {
+			border-radius: 0 3px 3px 0;
 		}
 	}
 
 	.elementor-control-input-wrapper {
-		position: relative;
+		display: flex;
+		flex-direction: getValueByDirection(row, row-reverse);
 	}
 
 	.elementor-control-url {
 
 		&-more {
-			position: absolute;
-			top: 0;
-			right: 0;
-			height: 27px;
-			width: 40px;
-			border-left: 1px solid $editor-lightest;
-			cursor: pointer;
-			font-size: 10px;
-			border-radius: 0 3px 3px 0;
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			flex-shrink: 0;
+			border: 1px solid $editor-lightest;
+			border-left: none;
+			cursor: pointer;
 
 			i {
-				font-size: 13px;
+				font-size: 12px;
+			}
+
+			&-options {
+				display: none;
+				padding-top: 10px;
+
+				.elementor-control-field-description {
+					margin-top: 10px;
+				}
+			}
+		}
+
+		&-option {
+			display: flex;
+			align-items: center;
+
+			&:not(:last-child){
+				padding-bottom: 10px;
+			}
+
+			input,
+			label {
+				cursor: pointer;
 			}
 
 			&-input {
-				display: none;
+				margin: 0;
+				padding: 0;
+				border-radius: 2px;
+				@include margin-end(5px);
 
-				&:not(:checked) {
+				//hid the browser input style
+				-webkit-appearance: none;
+				-moz-appearance: none;
+				outline: none;
+				content: none;
 
-					+ .elementor-control-url-more-options {
-						display: none;
+				//instead of the original style
+				height: 15px;
+				width: 15px;
+				border: 1px solid $editor-lightest;
+
+				//align the mark in the input
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+
+				&:checked  {
+					background: $editor-info;
+					border: none;
+
+					&:before  {
+						display: block;
+						content: "";
+						width: 4px;
+						height: 7px;
+						border: solid white;
+						border-width: 0 2px 2px 0;
+						transform: rotate(45deg);
 					}
 				}
 			}
 
-			&-options {
-				padding-top: 10px;
+			label {
+				font-size: 12px;
 			}
 		}
-	}
 
-	.elementor-control-url-autocomplete-spinner {
-		display: none;
-		position: absolute;
-		width: 12px;
-		height: 12px;
-		top: 7px;
-		@include start(44px);
+		&-external {
+
+			&-hide {
+
+				.elementor-control-url-more {
+					display: none;
+				}
+			}
+
+			&-show {
+
+				.elementor-input,
+				.elementor-dynamic-cover {
+					border-radius: 3px 0 0 3px;
+				}
+			}
+		}
+
+		&-autocomplete-spinner {
+			display: none;
+			position: absolute;
+			top: 5px;
+			right: 0px;
+			width: 10px;
+			height: 10px;
+			font-size: 10px;
+			color: $gray-light;
+		}
+
+		&__custom-attributes {
+			margin-top: 5px;
+
+			label {
+				font-size: 12px;
+			}
+
+			input {
+				width: 100%;
+				margin-top: 10px;
+			}
+		}
 	}
 
 	.elementor-input {
@@ -77,10 +160,15 @@
 
 		&:focus {
 
-			+ .elementor-control-url-more {
+			~ div {
 				border-color: $editor-light;
 			}
 		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		border-left: none;
+		border-radius: 0 3px 3px 0;
 	}
 }
 

@@ -8,15 +8,14 @@ export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		$e.components.register( new Component( { manager: this } ) );
+		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
-
-		this.opened = false;
+		this.setSize();
 
 		this.indicators = {
 			customPosition: {
-				title: elementor.translate( 'custom_positioning' ),
+				title: __( 'Custom Positioning', 'elementor' ),
 				icon: 'cursor-move',
 				settingKeys: [ '_position', '_element_width' ],
 				section: '_section_position',
@@ -27,11 +26,9 @@ export default class extends BaseRegion {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		elementor.on( 'navigator:init', () => {
-			if ( this.storage.visible ) {
-				$e.route( 'navigator' );
-			}
-		} );
+		// TODO: Move to hook on 'editor/documents/load'.
+		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
 	}
 
 	getStorageKey() {
@@ -40,7 +37,7 @@ export default class extends BaseRegion {
 
 	getDefaultStorage() {
 		return {
-			visible: false,
+			visible: true,
 			size: {
 				width: '',
 				height: '',
@@ -86,32 +83,26 @@ export default class extends BaseRegion {
 					this.saveSize();
 				}
 			},
+			resize: ( event, ui ) => {
+				this.setSize( ui.size.width + 'px' );
+			},
 		};
 	}
 
-	beforeFirstOpen() {
+	initLayout() {
 		this.show( new NavigatorLayout() );
 
 		this.$el.draggable( this.getDraggableOptions() );
-
 		this.$el.resizable( this.getResizableOptions() );
 	}
 
 	open( model ) {
-		if ( ! this.opened ) {
-			this.beforeFirstOpen();
-
-			this.opened = true;
-		}
-
 		this.$el.show();
+
+		this.setSize();
 
 		if ( this.storage.docked ) {
 			this.dock();
-
-			this.setDockedSize();
-		} else {
-			this.setSize();
 		}
 
 		if ( model ) {
@@ -136,6 +127,10 @@ export default class extends BaseRegion {
 			this.saveStorage( 'visible', false );
 		}
 
+		if ( this.$el.resizable( 'instance' ) ) {
+			this.$el.resizable( 'destroy' );
+		}
+
 		elementorCommon.elements.$window.off( 'resize', this.ensurePosition );
 	}
 
@@ -145,9 +140,9 @@ export default class extends BaseRegion {
 
 	dock() {
 		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
+		this.setSize();
 
-		const side = elementorCommon.config.isRTL ? 'left' : 'right',
-			resizableOptions = this.getResizableOptions();
+		const resizableOptions = this.getResizableOptions();
 
 		this.$el.css( {
 			height: '',
@@ -157,15 +152,11 @@ export default class extends BaseRegion {
 			right: '',
 		} );
 
-		elementor.$previewWrapper.css( side, this.storage.size.width );
-
-		this.$el.resizable( 'destroy' );
+		if ( this.$el.resizable( 'instance' ) ) {
+			this.$el.resizable( 'destroy' );
+		}
 
 		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
-
-		resizableOptions.resize = ( event, ui ) => {
-			elementor.$previewWrapper.css( side, ui.size.width );
-		};
 
 		this.$el.resizable( resizableOptions );
 
@@ -176,14 +167,15 @@ export default class extends BaseRegion {
 
 	undock( silent ) {
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
+		this.setSize();
 
 		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 
-		this.setSize();
+		if ( this.$el.resizable( 'instance' ) ) {
+			this.$el.resizable( 'destroy' );
 
-		this.$el.resizable( 'destroy' );
-
-		this.$el.resizable( this.getResizableOptions() );
+			this.$el.resizable( this.getResizableOptions() );
+		}
 
 		this.isDocked = false;
 
@@ -192,14 +184,21 @@ export default class extends BaseRegion {
 		}
 	}
 
-	setSize() {
-		if ( this.storage.size ) {
-			this.$el.css( this.storage.size );
+	/**
+	 * Set the navigator size to a specific value or default to the storage-saved value.
+	 *
+	 * @param {string} size A specific new size.
+	 */
+	setSize( size = null ) {
+		if ( size ) {
+			this.storage.size.width = size;
+		} else {
+			this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
 		}
-	}
 
-	setDockedSize() {
-		this.$el.css( 'width', this.storage.size.width );
+		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
+		elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
+		this.$el.css( 'width', '' );
 	}
 
 	ensurePosition() {
@@ -272,10 +271,32 @@ export default class extends BaseRegion {
 	}
 
 	onEditModeSwitched( activeMode ) {
-		if ( 'edit' === activeMode && this.storage.visible ) {
+		// Determine when the navigator should be visible.
+		const visibleModes = [
+			'edit',
+			'picker',
+		];
+
+		if ( visibleModes.includes( activeMode ) && this.storage.visible ) {
 			this.open();
 		} else {
 			this.close( true );
+		}
+	}
+
+	onDocumentLoaded( document ) {
+		if ( document.config.panel.has_elements ) {
+			this.initLayout();
+
+			if ( false !== this.storage.visible ) {
+				$e.route( 'navigator' );
+			}
+		}
+	}
+
+	onDocumentUnloaded() {
+		if ( this.component.isOpen ) {
+			this.component.close( true );
 		}
 	}
 }

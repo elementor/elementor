@@ -1,0 +1,14 @@
+{
+    "core": null,
+    "phpVersion": "7.4",
+    "plugins": [
+        "./build"
+    ],
+    "themes": [
+        "https://downloads.wordpress.org/theme/hello-elementor.zip"
+    ],
+    "mappings": {
+        "elementor-templates": "./tests/lighthouse/templates",
+        "elementor-config": "./tests/wp-env/config"
+    }
+}

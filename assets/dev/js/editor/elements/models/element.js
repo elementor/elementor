@@ -1,13 +1,20 @@
+import BaseElementModel from './base-element-model';
+
 var ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
 	ElementModel;
 
-ElementModel = Backbone.Model.extend( {
+/**
+ * @name ElementModel
+ */
+ElementModel = BaseElementModel.extend( {
 	defaults: {
 		id: '',
 		elType: '',
 		isInner: false,
 		settings: {},
-		defaultEditSettings: {},
+		defaultEditSettings: {
+			defaultEditRoute: 'content',
+		},
 	},
 
 	remoteRender: false,
@@ -15,7 +22,7 @@ ElementModel = Backbone.Model.extend( {
 	_jqueryXhr: null,
 	renderOnLeave: false,
 
-	initialize: function( options ) {
+	initialize( options ) {
 		var elType = this.get( 'elType' ),
 			elements = this.get( 'elements' );
 
@@ -46,7 +53,7 @@ ElementModel = Backbone.Model.extend( {
 		} );
 	},
 
-	initSettings: function() {
+	initSettings() {
 		var elType = this.get( 'elType' ),
 			settings = this.get( 'settings' ),
 			settingModels = {
@@ -65,6 +72,13 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
+		// Allow passing custom `_title` from model.
+		const customTitle = this.get( '_title' );
+
+		if ( customTitle ) {
+			settings._title = customTitle;
+		}
+
 		settings = new SettingsModel( settings, {
 			controls: elementor.getElementControls( this ),
 		} );
@@ -74,7 +88,7 @@ ElementModel = Backbone.Model.extend( {
 		elementorFrontend.config.elements.data[ this.cid ] = settings;
 	},
 
-	initEditSettings: function() {
+	initEditSettings() {
 		var editSettings = new Backbone.Model( this.get( 'defaultEditSettings' ) );
 
 		this.set( 'editSettings', editSettings );
@@ -82,7 +96,7 @@ ElementModel = Backbone.Model.extend( {
 		elementorFrontend.config.elements.editSettings[ this.cid ] = editSettings;
 	},
 
-	setSetting: function( key, value ) {
+	setSetting( key, value ) {
 		var settings = this.get( 'settings' );
 
 		if ( 'object' !== typeof key ) {
@@ -101,7 +115,7 @@ ElementModel = Backbone.Model.extend( {
 		settings.setExternalChange( key, value );
 	},
 
-	getSetting: function( key ) {
+	getSetting( key ) {
 		var keyParts = key.split( '.' ),
 			isRepeaterKey = 3 === keyParts.length,
 			settings = this.get( 'settings' );
@@ -121,19 +135,19 @@ ElementModel = Backbone.Model.extend( {
 		return value;
 	},
 
-	setHtmlCache: function( htmlCache ) {
+	setHtmlCache( htmlCache ) {
 		this._htmlCache = htmlCache;
 	},
 
-	getHtmlCache: function() {
+	getHtmlCache() {
 		return this._htmlCache;
 	},
 
-	getDefaultTitle: function() {
+	getDefaultTitle() {
 		return elementor.getElementData( this ).title;
 	},
 
-	getTitle: function() {
+	getTitle() {
 		let title = this.getSetting( '_title' );
 
 		if ( ! title ) {
@@ -143,23 +157,23 @@ ElementModel = Backbone.Model.extend( {
 		return title;
 	},
 
-	getIcon: function() {
+	getIcon() {
 		return elementor.getElementData( this ).icon;
 	},
 
-	createRemoteRenderRequest: function() {
+	createRemoteRenderRequest() {
 		var data = this.toJSON();
 
 		return elementorCommon.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
-				data: data,
+				data,
 			},
 			success: this.onRemoteGetHtml.bind( this ),
 		}, true ).jqXhr;
 	},
 
-	renderRemoteServer: function() {
+	renderRemoteServer() {
 		if ( ! this.remoteRender ) {
 			return;
 		}
@@ -175,19 +189,19 @@ ElementModel = Backbone.Model.extend( {
 		this._jqueryXhr = this.createRemoteRenderRequest();
 	},
 
-	isRemoteRequestActive: function() {
+	isRemoteRequestActive() {
 		return this._jqueryXhr && 4 !== this._jqueryXhr.readyState;
 	},
 
-	onRemoteGetHtml: function( data ) {
+	onRemoteGetHtml( data ) {
 		this.setHtmlCache( data.render );
 		this.trigger( 'remote:render' );
 	},
 
-	clone: function() {
+	clone() {
 		var newModel = new this.constructor( elementorCommon.helpers.cloneObject( this.attributes ) );
 
-		newModel.set( 'id', elementor.helpers.getUniqueID() );
+		newModel.set( 'id', elementorCommon.helpers.getUniqueId() );
 
 		newModel.setHtmlCache( this.getHtmlCache() );
 
@@ -200,7 +214,7 @@ ElementModel = Backbone.Model.extend( {
 		return newModel;
 	},
 
-	toJSON: function( options ) {
+	toJSON( options ) {
 		options = options || {};
 
 		// Call parent's toJSON method
@@ -225,13 +239,13 @@ ElementModel = Backbone.Model.extend( {
 		return data;
 	},
 
-	onCloseEditor: function() {
+	onCloseEditor() {
 		if ( this.renderOnLeave ) {
 			this.renderRemoteServer();
 		}
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		// Clean the memory for all use instances
 		var settings = this.get( 'settings' ),
 			elements = this.get( 'elements' );

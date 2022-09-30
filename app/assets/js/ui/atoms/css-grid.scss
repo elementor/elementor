@@ -1,0 +1,8 @@
+$eps-grid-gap: var(--eps-grid-spacing);
+$eps-grid-columns: repeat(var(--eps-grid-columns, auto-fill), minmax(var(--eps-grid-col-min-width, 1fr), var(--eps-grid-col-max-width, 1fr)));
+
+.#{$eps-prefix}css-grid {
+	display: grid;
+	grid-template-columns: $eps-grid-columns;
+	grid-gap: $eps-grid-gap;
+}

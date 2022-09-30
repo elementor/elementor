@@ -1,10 +1,12 @@
 <?php
 namespace Elementor\Core\Files;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\Svg\Svg_Handler;
+use Elementor\Core\Page_Assets\Data_Managers\Base as Page_Assets_Data_Manager;
 use Elementor\Core\Responsive\Files\Frontend;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,18 +104,19 @@ class Manager {
 	 * @access public
 	 */
 	public function clear_cache() {
-		delete_post_meta_by_key( Post_CSS::META_KEY );
-
-		delete_option( Global_CSS::META_KEY );
-
-		delete_option( Frontend::META_KEY );
-
 		// Delete files.
 		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
 		foreach ( glob( $path ) as $file_path ) {
 			unlink( $file_path );
 		}
+
+		delete_post_meta_by_key( Post_CSS::META_KEY );
+
+		delete_option( Global_CSS::META_KEY );
+		delete_option( Frontend::META_KEY );
+
+		$this->reset_assets_data();
 
 		/**
 		 * Elementor clear files.
@@ -126,6 +129,34 @@ class Manager {
 	}
 
 	/**
+	 * Register Ajax Actions
+	 *
+	 * Deprecated - use the Uploads Manager instead.
+	 *
+	 * @deprecated 3.5.0
+	 *
+	 * @param Ajax $ajax
+	 */
+	public function register_ajax_actions( Ajax $ajax ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
+		Plugin::$instance->uploads_manager->register_ajax_actions( $ajax );
+	}
+
+	/**
+	 * Ajax Unfiltered Files Upload
+	 *
+	 * Deprecated - use the Uploads Manager instead.
+	 *
+	 * @deprecated 3.5.0
+	 */
+	public function ajax_unfiltered_files_upload() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
+		Plugin::$instance->uploads_manager->enable_unfiltered_files_upload();
+	}
+
+	/**
 	 * Register actions.
 	 *
 	 * Register filters and actions for the files manager.
@@ -135,6 +166,27 @@ class Manager {
 	 */
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
+
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
+
+		add_action( 'update_option_home', function () {
+			$this->reset_assets_data();
+		} );
+
+		add_action( 'update_option_siteurl', function () {
+			$this->reset_assets_data();
+		} );
+	}
+
+	/**
+	 * Reset Assets Data.
+	 *
+	 * Reset the page assets data.
+	 *
+	 * @since 3.3.0
+	 * @access private
+	 */
+	private function reset_assets_data() {
+		delete_option( Page_Assets_Data_Manager::ASSETS_DATA_KEY );
 	}
 }

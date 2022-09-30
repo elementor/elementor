@@ -1,7 +1,10 @@
+$finder-z-index: 99999; // Above Theme Builder Modal
+
 #elementor-finder {
 
 	&__modal {
 		background: none;
+		z-index: $finder-z-index;
 
 		.dialog-widget-content {
 			$modal-width: 650px;
@@ -41,6 +44,7 @@
 			flex-grow: 1;
 			font-size: 14px;
 			color: $editor-darkest;
+			box-shadow: none;
 
 			&::placeholder {
 				color: $editor-light;
@@ -59,6 +63,10 @@
 		display: none;
 		padding: 20px;
 		color: $editor-light;
+	}
+
+	&__lock-dialog {
+		z-index: $finder-z-index + 1;
 	}
 }
 
@@ -143,6 +151,18 @@
 			@include margin-start(5px);
 			color: $editor-light;
 			font-style: italic;
+		}
+
+		&__badge {
+			text-transform: uppercase;
+			position: absolute;
+			inset-inline-end: 16px;
+			color: $editor-darker;
+			font-size: 8px;
+			font-weight: 500;
+			display: flex;
+			align-items: center;
+			gap: 4px;
 		}
 
 		&__actions {

@@ -1,0 +1,55 @@
+{
+	"editorPreferences": {
+		"name": "editorPreferences",
+		"panelPage": {
+			"title": "User Preferences"
+		},
+		"controls": {
+			"preferences": {
+				"type": "section",
+				"tab": "settings",
+				"label": "Preferences",
+				"name": "preferences"
+			},
+			"ui_theme": {
+				"type": "select",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "UI Theme",
+				"description": "Set light or dark mode, or use Auto Detect to sync it with your OS setting.",
+				"default": "auto",
+				"options": {
+					"auto": "Auto Detect",
+					"light": "Light",
+					"dark": "Dark"
+				},
+				"name": "ui_theme"
+			},
+			"edit_buttons": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Editing Handles",
+				"description": "Show editing handles when hovering over the element edit button.",
+				"name": "edit_buttons",
+				"default": ""
+			},
+			"lightbox_in_editor": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Enable Lightbox In Editor",
+				"default": "yes",
+				"name": "lightbox_in_editor"
+			}
+		},
+		"tabs": {
+			"settings": "Settings"
+		},
+		"settings": {
+			"ui_theme": "dark",
+			"edit_buttons": "",
+			"lightbox_in_editor": "yes"
+		}
+	}
+}

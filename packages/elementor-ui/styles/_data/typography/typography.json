@@ -1,0 +1,45 @@
+{
+  "font-size-base": "1rem",
+
+  "font-size-10": "0.625rem",
+  "font-size-11": "0.6875rem",
+  "font-size-12": "0.75rem",
+  "font-size-13": "0.8125rem",
+  "font-size-14": "0.875rem",
+  "font-size-15": "0.9375rem",
+  "font-size-18": "1.125rem",
+  "font-size-20": "1.25rem",
+  "font-size-26": "1.625rem",
+  "font-size-30": "1.85rem",
+
+  "line-height-2": 2,
+
+  "line-height-flat": 1,
+  "line-height-base": 1.5,
+  "line-height-sm": 1.2,
+  "line-height-lg": 1.8,
+
+  "display-font-size": "1.85rem",
+
+  "h-1-font-size": "1.625rem",
+  "h-2-font-size": "1.25rem",
+  "h-3-font-size": "1rem",
+  "h-4-font-size": "0.9375rem",
+  "h-5-font-size": "0.875rem",
+  "h-6-font-size": "0.875rem",
+
+  "text-xl-font-size": "1rem",
+  "text-lg-font-size": "0.9375rem",
+  "text-md-font-size": "0.875rem",
+  "text-sm-font-size": "0.8125rem",
+  "text-xs-font-size": "0.75rem",
+  "text-xxs-font-size": "0.6875rem",
+  "font-size-micro": "0.625rem",
+
+  "body-font-size": "0.875rem",
+  "font-size-caption": "0.75rem",
+
+  "small-font-size": "80%",
+  "paragraph-margin-bottom": "",
+  "headings-margin-bottom": ""
+}

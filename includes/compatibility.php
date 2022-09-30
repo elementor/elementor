@@ -40,33 +40,6 @@ class Compatibility {
 		}
 
 		add_action( 'elementor/maintenance_mode/mode_changed', [ __CLASS__, 'clear_3rd_party_cache' ] );
-
-		add_action( 'elementor/element/before_section_start', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
-		add_action( 'elementor/element/after_section_start', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
-		add_action( 'elementor/element/before_section_end', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
-		add_action( 'elementor/element/after_section_end', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
-	}
-
-	public static function document_post_deprecated_hooks( $instance, $section_id, $args ) {
-		if ( ! $instance instanceof PageBase ) {
-			return;
-		}
-
-		$current_action = current_action();
-		$current_action = explode( '/', $current_action );
-		$current_sub_action = $current_action[2];
-
-		$deprecated_action = "elementor/element/post/{$section_id}/{$current_sub_action}";
-
-		if ( ! has_action( $deprecated_action ) ) {
-			return;
-		}
-
-		// TODO: Hard deprecation on 3.1.0.
-		// $replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
-		// _deprecated_hook( $deprecated_action, '2.7.0', $replacement );
-
-		do_action( $deprecated_action, $instance, $section_id, $args );
 	}
 
 	public static function clear_3rd_party_cache() {
@@ -122,7 +95,7 @@ class Compatibility {
 					return;
 				}
 
-				var url = '<?php echo esc_url( Utils::get_create_new_post_url( $typenow ) ); ?>';
+				var url = '<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $typenow ) ); ?>';
 
 				dropdown.insertAdjacentHTML( 'afterbegin', '<a href="' + url + '">Elementor</a>' );
 			} );
@@ -175,7 +148,7 @@ class Compatibility {
 				$post = get_post();
 				if ( empty( $post->post_content ) ) {
 					$tabs['description'] = [
-						'title' => __( 'Description', 'elementor' ),
+						'title' => esc_html__( 'Description', 'elementor' ),
 						'priority' => 10,
 						'callback' => 'woocommerce_product_description_tab',
 					];
@@ -265,26 +238,6 @@ class Compatibility {
 	 * @static
 	 */
 	private static function polylang_compatibility() {
-		// Fix language if the `get_user_locale` is difference from the `get_locale
-		if ( isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
-			add_action( 'set_current_user', function() {
-				global $current_user;
-				$current_user->locale = get_locale();
-			} );
-
-			// Fix for Polylang
-			define( 'PLL_AJAX_ON_FRONT', true );
-
-			add_action( 'pll_pre_init', function( $polylang ) {
-				if ( isset( $_REQUEST['post'] ) ) {
-					$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
-					if ( ! empty( $post_language ) ) {
-						$_REQUEST['lang'] = $post_language->locale;
-					}
-				}
-			} );
-		}
-
 		// Copy elementor data while polylang creates a translation copy
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
 	}
@@ -333,14 +286,39 @@ class Compatibility {
 	 * @return array Updated post meta.
 	 */
 	public static function on_wp_import_post_meta( $post_meta ) {
-		foreach ( $post_meta as &$meta ) {
-			if ( '_elementor_data' === $meta['key'] ) {
-				$meta['value'] = wp_slash( $meta['value'] );
-				break;
+		$is_wp_importer_before_0_7 = self::is_wp_importer_before_0_7();
+
+		if ( $is_wp_importer_before_0_7 ) {
+			foreach ( $post_meta as &$meta ) {
+				if ( '_elementor_data' === $meta['key'] ) {
+					$meta['value'] = wp_slash( $meta['value'] );
+					break;
+				}
 			}
 		}
 
 		return $post_meta;
+	}
+
+	/**
+	 * Is WP Importer Before 0.7
+	 *
+	 * Checks if WP Importer is installed, and whether its version is older than 0.7.
+	 *
+	 * @return bool
+	 */
+	public static function is_wp_importer_before_0_7() {
+		$wp_importer = get_plugins( '/wordpress-importer' );
+
+		if ( ! empty( $wp_importer ) ) {
+			$wp_importer_version = $wp_importer['wordpress-importer.php']['Version'];
+
+			if ( version_compare( $wp_importer_version, '0.7', '<' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -360,8 +338,12 @@ class Compatibility {
 	 * @return array Updated post meta.
 	 */
 	public static function on_wxr_importer_pre_process_post_meta( $post_meta ) {
-		if ( '_elementor_data' === $post_meta['key'] ) {
-			$post_meta['value'] = wp_slash( $post_meta['value'] );
+		$is_wp_importer_before_0_7 = self::is_wp_importer_before_0_7();
+
+		if ( $is_wp_importer_before_0_7 ) {
+			if ( '_elementor_data' === $post_meta['key'] ) {
+				$post_meta['value'] = wp_slash( $post_meta['value'] );
+			}
 		}
 
 		return $post_meta;

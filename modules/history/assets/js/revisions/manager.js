@@ -1,95 +1,97 @@
-import Component from './component';
+const RevisionsCollection = require( './collection' );
 
-var RevisionsCollection = require( './collection' ),
-	RevisionsManager;
+/**
+ * TODO: consider refactor this class.
+ * TODO: Rename to RevisionsModule.
+ */
+export default class RevisionsManager {
+	document;
+	revisions;
 
-RevisionsManager = function() {
-	const self = this;
+	constructor( document ) {
+		this.document = document;
+	}
 
-	let revisions;
+	getItems() {
+		return this.revisions;
+	}
 
-	const onEditorSaved = function( data ) {
-		if ( data.latest_revisions ) {
-			self.addRevisions( data.latest_revisions );
-		}
-
-		self.requestRevisions( () => {
-			if ( data.revisions_ids ) {
-				var revisionsToKeep = revisions.filter( function( revision ) {
-					return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
-				} );
-
-				revisions.reset( revisionsToKeep );
-			}
-		} );
-	};
-
-	const attachEvents = function() {
-		elementor.channels.editor.on( 'saved', onEditorSaved );
-	};
-
-	this.getItems = function() {
-		return revisions;
-	};
-
-	this.requestRevisions = function( callback ) {
-		if ( revisions ) {
-			callback( revisions );
+	requestRevisions( callback ) {
+		if ( this.revisions ) {
+			callback( this.revisions );
 
 			return;
 		}
 
 		elementorCommon.ajax.addRequest( 'get_revisions', {
 			success: ( data ) => {
-				revisions = new RevisionsCollection( data );
+				this.revisions = new RevisionsCollection( data );
 
-				callback( revisions );
+				this.revisions.on( 'update', this.onRevisionsUpdate.bind( this ) );
+
+				callback( this.revisions );
 			},
 		} );
-	};
+	}
 
-	this.setEditorData = function( data ) {
-		var collection = elementor.getRegion( 'sections' ).currentView.collection;
+	setEditorData( data ) {
+		const collection = elementor.getPreviewView().collection;
 
-		// Don't track in history.
-		elementor.history.history.setActive( false );
 		collection.reset( data );
-		elementor.history.history.setActive( true );
-	};
+	}
 
-	this.getRevisionDataAsync = function( id, options ) {
+	getRevisionDataAsync( id, options ) {
 		_.extend( options, {
 			data: {
-				id: id,
+				id,
 			},
 		} );
 
 		return elementorCommon.ajax.addRequest( 'get_revision_data', options );
-	};
+	}
 
-	this.addRevisions = function( items ) {
+	addRevisions( items ) {
 		this.requestRevisions( () => {
-			items.forEach( function( item ) {
-				var existedModel = revisions.findWhere( {
+			items.forEach( ( item ) => {
+				const existedModel = this.revisions.findWhere( {
 					id: item.id,
 				} );
 
 				if ( existedModel ) {
-					revisions.remove( existedModel, { silent: true } );
+					this.revisions.remove( existedModel, { silent: true } );
 				}
 
-				revisions.add( item, { silent: true } );
+				this.revisions.add( item, { silent: true } );
 			} );
 
-			revisions.trigger( 'update' );
+			this.revisions.trigger( 'update' );
 		} );
-	};
+	}
 
-	this.init = function() {
-		attachEvents();
+	deleteRevision( revisionModel, options ) {
+		const params = {
+			data: {
+				id: revisionModel.get( 'id' ),
+			},
+			success: () => {
+				if ( options.success ) {
+					options.success();
+				}
 
-		$e.components.register( new Component( { manager: self } ) );
-	};
-};
+				revisionModel.destroy();
+			},
+		};
 
-module.exports = new RevisionsManager();
+		if ( options.error ) {
+			params.error = options.error;
+		}
+
+		elementorCommon.ajax.addRequest( 'delete_revision', params );
+	}
+
+	onRevisionsUpdate() {
+		if ( $e.routes.is( 'panel/history/revisions' ) ) {
+			$e.routes.refreshContainer( 'panel' );
+		}
+	}
+}

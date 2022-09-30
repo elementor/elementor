@@ -9,10 +9,19 @@
 
 		&-gallery-status {
 			font-size: 12px;
-			padding: 7px 10px;
+			height: 27px;
+			@include padding-start(10px);
 			border-bottom: 1px solid $editor-lightest;
 			display: flex;
-			justify-content: space-between;
+
+			> * {
+				display: flex;
+				align-items: center;
+			}
+
+			&-title {
+				flex-grow: 1;
+			}
 		}
 
 		&-gallery-content {
@@ -88,6 +97,7 @@
 
 			i {
 				margin: 0;
+				color: $editor-light;
 			}
 		}
 	}
@@ -112,11 +122,26 @@
 		}
 	}
 
+	&.elementor-control-dynamic {
+
+		.elementor-control-gallery-clear {
+			@include border-start(1px solid $editor-lightest);
+		}
+	}
+
 	.elementor-control-gallery-clear {
 		cursor: pointer;
+		justify-content: center;
 
 		&:hover {
 			color: $editor-warning;
 		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		border: none;
+		border-bottom: 1px solid $editor-lightest;
+		@include border-start(1px solid $editor-lightest);
+		border-radius: getValueByDirection(0 3px 0 0, 3px 0 0 0);
 	}
 }

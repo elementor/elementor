@@ -20,7 +20,7 @@
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	top: 0;
+	bottom: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.8);
 	z-index: 9999;
@@ -92,8 +92,8 @@
 .dialog-close-button {
 	cursor: pointer;
 	position: absolute;
-	top: 30px;
-	@include end(30px);
+	margin-top: 15px;
+	@include end(15px);
 	font-size: 15px;
 	line-height: 1;
 
@@ -122,22 +122,52 @@
 	}
 }
 
+#elementor-change-exit-preference-dialog {
+
+	.dialog-message {
+
+		a {
+			cursor: pointer;
+		}
+
+		& > div {
+			margin-bottom: 10px;
+		}
+	}
+	.dialog-ok {
+		color: $editor-success;
+	}
+}
+
+#e-experiments-dependency-dialog {
+	.dialog-confirm-header {
+		font-weight: 600;
+	}
+
+	.dialog-ok {
+		color: $editor-success;
+	}
+}
+
+
 .dialog-prevent-scroll {
 	overflow: hidden;
 	max-height: 100vh;
 }
 
-@media (max-width: $editor-screen-sm-max) {
-
-	.dialog-close-button {
-		top: 15px;
-		right: 15px;
-	}
-
+@media (min-width: $editor-screen-md-max) {
 	body.admin-bar {
+		.dialog-lightbox-widget {
+			height: calc(100vh - 32px);
+		}
+	}
+}
 
-		.dialog-close-button {
-			top: 40px;
+@media (max-width: $editor-screen-md-max) {
+	body.admin-bar {
+		.dialog-type-lightbox {
+			position: sticky;
+			height: 100vh;
 		}
 	}
 }

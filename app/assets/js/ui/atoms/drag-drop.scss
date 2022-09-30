@@ -1,0 +1,27 @@
+$e-app-drag-drop-background-color: theme-colors(light);
+$e-app-drag-drop-dark-background-color: dark-tints(600);
+$e-app-drag-drop-outline-color: tints(300);
+$e-app-drag-drop-dark-outline-color: dark-tints(300);
+
+:root {
+	--e-app-drag-drop-background-color: #{$e-app-drag-drop-background-color};
+	--e-app-drag-drop-outline-color: #{$e-app-drag-drop-outline-color};
+}
+
+.eps-theme-dark {
+	--e-app-drag-drop-background-color: #{$e-app-drag-drop-dark-background-color};
+	--e-app-drag-drop-outline-color: #{$e-app-drag-drop-dark-outline-color};
+}
+
+.e-app-drag-drop {
+	background-color: var(--e-app-drag-drop-background-color);
+	outline: 2px dashed var(--e-app-drag-drop-outline-color);
+	outline-offset: spacing(12) * -1;
+	margin-bottom: spacing(24);
+	padding: 1.5 * spacing(44);
+	text-align: center;
+
+	&--drag-over {
+		outline-color: theme-colors(info);
+	}
+}

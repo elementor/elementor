@@ -1,0 +1,23 @@
+// Base: Custom properties
+// - Generated via loops from relevant maps.
+
+// Custom variable values only support SassScript inside `#{}`.
+.eps-theme-dark {
+	@each $color, $value in $eps-dark-theme-colors {
+		@if map-get($eps-dark-theme-colors, $color) {
+			--#{$color}: #{$value};
+		}
+	}
+
+	@each $color, $value in $eps-dark-theme-elements-colors {
+		@if map-get($eps-dark-theme-elements-colors, $color) {
+			--#{$color}: #{$value};
+		}
+	}
+
+	@each $color, $value in $eps-dark-tints {
+		@if map-get($eps-dark-tints, $color) {
+			--gray-#{$color}: #{$value};
+		}
+	}
+}

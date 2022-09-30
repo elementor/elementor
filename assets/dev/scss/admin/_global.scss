@@ -13,9 +13,7 @@
 
 		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
-			color:  lighten($editor-accent, 10%);
 			font-weight: 700;
-			text-shadow: 1px 1px 1px #000;
 
 			&:hover {
 				color: lighten($editor-accent, 15%);
@@ -40,26 +38,29 @@
 	}
 }
 
+#e-admin-menu__kit-library {
+	color: $success;
+}
+
+body.admin-color-fresh {
+
+	#adminmenu {
+
+		#toplevel_page_elementor {
+
+			// Menu Go Pro
+			a[href="admin.php?page=go_elementor_pro"] {
+				color: lighten($editor-accent, 10%);
+			}
+		}
+	}
+}
+
 .elementor-plugins-gopro {
 	color: $editor-accent;
 	text-shadow: 1px 1px 1px #eee;
 	font-weight: bold;
 }
-
-
-.e-logo-wrapper {
-	display: inline-block;
-	padding: .75em;
-	background-image: linear-gradient(-135deg, #EF295A, #434363);
-	border-radius: 7.5%;
-	line-height: 1;
-
-	i {
-		color: #ffffff;
-		font-size: 1em;
-	}
-}
-
 
 // Switcher Editor
 #elementor-switch-mode {
@@ -108,7 +109,8 @@ body {
 		}
 
 		// Gutenberg Support
-		.editor-block-list__layout {
+		.editor-block-list__layout, // TODO: Remove after drop WP < 5.3
+		.block-editor-block-list__layout {
 			display: none;
 		}
 	}
@@ -250,17 +252,18 @@ body {
 	max-width: 520px;
 	text-align: center;
 	color: $editor-dark;
+	font-family: Roboto, sans-serif;
 
 	i {
 		font-size: 50px;
 		color: $editor-light;
 	}
 
-	h2 {
+	h3 {
 		font-size: 32px;
 		font-weight: 300;
 		color: inherit;
-		margin: 50px 0 35px;
+		margin: 40px 0 10px;
 		line-height: 1.2;
 	}
 
@@ -307,6 +310,73 @@ body {
 	&.post-type-attachment {
 		table.media .column-title .media-icon img[src$=".svg"] {
 			width: 100%;
+		}
+	}
+}
+
+.e-major-update-warning {
+	margin-bottom: 5px;
+	max-width: 1000px;
+	display: flex;
+
+	&__separator {
+		margin: 15px -12px;
+	}
+
+	&__icon {
+		font-size: 17px;
+		@include margin-end(9px);
+		@include margin-start(2px);
+	}
+
+	&__title {
+		font-weight: 600;
+		margin-bottom: 10px;
+	}
+
+	+ p {
+		display: none;
+	}
+}
+
+.notice-success .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-success;
+	}
+
+	&__icon {
+		color: $wp-success-text;
+	}
+}
+
+.notice-warning .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-warning;
+	}
+
+	&__icon {
+		color: $wp-warning-text;
+	}
+}
+
+.plugins table.e-compatibility-update-table {
+	tr {
+		background: transparent;
+
+		th {
+			font-weight: 600;
+		}
+
+		th, td {
+			min-width: 250px;
+			font-size: 13px;
+			background: transparent;
+			box-shadow: none;
+			border: none;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			@include padding-end(15px);
+			@include padding-start(0);
 		}
 	}
 }

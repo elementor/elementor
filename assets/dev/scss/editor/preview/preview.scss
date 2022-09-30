@@ -1,64 +1,76 @@
 @import "../../helpers/variables";
 @import "../../helpers/mixins";
+@import "../../helpers/direction";
 
+@import "../container";
+
+@import "../units";
 @import "../breakpoints";
 @import "../dynamic-tags";
 @import "../panel/global";
-@import "../panel/control";
+@import "../panel/controls";
 @import "../resizable";
 
 @import "animations";
 @import "compatibility";
 @import "inline-editor";
 
+//Eyedropper Experiment
+@import "../../../../../modules/elements-color-picker/assets/scss/elements-color-picker";
+
+@import "../_flex-icons.scss";
+
 // Hidden WP Admin Bar
 html.elementor-html {
 	margin-top: 0 !important;
 }
 
-#elementor {
+.elementor-edit-area {
 	position: relative;
 }
 
-.elementor-editor-active {
+.elementor {
 
-	.elementor.elementor-edit-area-active {
+	&.loading {
+		opacity: 0.5;
+	}
+}
 
-		.elementor-top-section {
+.elementor-edit-area-active {
 
-			> .elementor-container {
+	--primary-color: #{ $editor-info };
+	--secondary-color: #{ darken($editor-info, 20%) };
+	--outline-color: var( --primary-color );
 
-				> .elementor-row {
-					min-height: 40px;
-				}
-			}
-		}
+	.e-container {
+		--primary-color: #{ $editor-container-primary };
+		--secondary-color: #{ darken( $editor-container-primary, 10% ) };
+		--outline-color: var( --primary-color );
 
-		.elementor-inner-section {
-
-			&:first-child {
-				margin-top: 15px;
-			}
-
-			> .elementor-container {
-
-				> .elementor-row {
-					min-height: 40px;
-				}
-			}
+		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
+		// between Containers.
+		&.e-dragging-over,
+		&.elementor-dragging-on-child,
+		&.e-container--width-boxed.elementor-html5dnd-current-element {
+			outline: 1px solid var( --outline-color );
 		}
 	}
 
-	.elementor-column-wrap {
+	.elementor-inner-section {
+
+		&:first-child {
+			margin-top: 15px;
+		}
+	}
+
+	.elementor-widget-wrap {
 
 		&.elementor-element-empty {
 
-			.elementor-widget-wrap {
-				min-height: 30px; // In case of section with non-default content position
+			min-height: 30px; // In case of section with non-default content position
 
-				@media (min-width: $editor-screen-md-min) {
-					margin: 10px;
-				}
+			@media (min-width: $editor-screen-md-min) {
+				margin: 10px;
 			}
 		}
 	}
@@ -108,16 +120,23 @@ html.elementor-html {
 		transition: margin .3s, width .3s, font .3s;
 	}
 
-	.handle {
-		display: none; //TEMP
-	}
-
 	.elementor-inline-editing {
 		min-height: 15px;
 	}
 
 	.elementor-edit-hidden {
 		display: none;
+	}
+}
+
+.elementor-section-wrap {
+	&:empty {
+		min-height: 25px;
+	}
+
+	// Make the first child's overlay higher than the others to fix bug ED-5010 where the overlays overlap each other.
+	> :first-child > .elementor-element-overlay {
+		z-index: $editor-layer;
 	}
 }
 
@@ -224,8 +243,9 @@ html.elementor-html {
 	}
 }
 
-// Section
-.elementor-section {
+// Section & Container
+.elementor-section,
+.e-container {
 
 	> .elementor-element-overlay {
 		@include start(0);
@@ -237,7 +257,7 @@ html.elementor-html {
 			right: 2px;
 			top: 2px;
 			bottom: 2px;
-			outline: 2px solid $editor-info;
+			outline: 2px solid var( --outline-color );
 			animation: section-outline .75s;
 		}
 	}
@@ -351,15 +371,6 @@ html.elementor-html {
 	pointer-events: all;
 }
 
-.elementor-editor-element-setting {
-
-	// Avoid conflict between v2.1+ & Pro 2.1-
-	// TODO: Remove this in v2.4
-	&.elementor-editor-element-save {
-		display: none;
-	}
-}
-
 .elementor-editor-element-edit {
 
 	@media(min-width: $editor-screen-lg-min) {
@@ -367,13 +378,14 @@ html.elementor-html {
 	}
 }
 
-// Section - Overlay Settings
-.elementor-editor-section-settings {
+// Section & Container - Overlay Settings
+.elementor-editor-section-settings,
+.elementor-editor-container-settings {
 	height: 24px;
 	top: 1px;
 	@include start(50%);
 	transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
-	background-color: $editor-info;
+	background-color: var( --primary-color );
 	border-radius: 5px 5px 0 0;
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
 
@@ -384,7 +396,7 @@ html.elementor-html {
 	.elementor-editor-element-setting {
 
 		&:hover {
-			background-color: darken($editor-info, 20%);
+			background-color: var( --secondary-color );
 		}
 
 		&:first-child {
@@ -395,7 +407,7 @@ html.elementor-html {
 				position: absolute;
 				border: solid transparent;
 				top: 2px;
-				@include border-end-property(color, $editor-info);
+				@include border-end-property(color, var( --primary-color ));
 				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
 				@include end(calc(100% - 1px));
 			}
@@ -403,7 +415,7 @@ html.elementor-html {
 			&:hover {
 
 				&:before {
-					@include border-end-property(color, darken($editor-info, 20%));
+					@include border-end-property(color, var( --secondary-color ));
 				}
 			}
 		}
@@ -416,7 +428,7 @@ html.elementor-html {
 				position: absolute;
 				border: solid transparent;
 				top: 2px;
-				@include border-start-property(color, $editor-info);
+				@include border-start-property(color, var( --primary-color ));
 				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
 				@include start(calc(100% - 1px));
 			}
@@ -424,22 +436,22 @@ html.elementor-html {
 			&:hover {
 
 				&:after {
-					@include border-start-property(color, darken($editor-info, 20%));
+					@include border-start-property(color, var( --secondary-color ));
 				}
 			}
 		}
 	}
 }
 
-// Top Section (Handles inside)
+// Top Section / Container (Handles inside)
+.e-handles-inside,
 .elementor-section--handles-inside {
 
-	.elementor-editor-section-settings {
+	> .elementor-element-overlay > .elementor-editor-element-settings {
 		transform: translateX(-50%);
 		border-radius: 0 0 5px 5px;
 
 		.elementor-editor-element-setting {
-
 			&:first-child {
 				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
 
@@ -509,6 +521,8 @@ html.elementor-html {
 	border: 1px dashed $editor-lightest;
 	display: flex;
 	height: 100%;
+	width: 100%;
+	position: absolute;
 	align-items: center;
 	justify-content: center;
 
@@ -620,6 +634,16 @@ html.elementor-html {
 		opacity: .9;
 		width: 100%;
 		align-self: stretch;
+
+		// Make the placeholder centered in container element, like in other places.
+		.e-container .elementor-first-add & {
+			align-self: center;
+		}
+
+		// Hide the placeholder, since swappable containers don't need one.
+		.e-swappable--active > & {
+			display: none;
+		}
 	}
 }
 
@@ -665,6 +689,11 @@ html.elementor-html {
 		height: $widget-placeholder-size;
 		animation: placeholder-widget 500ms;
 		width: 100%;
+
+		.e-container & {
+			// Fix for multiple dragging placeholders in container element.
+			display: none;
+		}
 	}
 
 	.elementor-icon {
@@ -684,8 +713,12 @@ html.elementor-html {
 
 // Add new Section
 .elementor-add-section {
+	// Avoid theme conflicts.
+	all: initial;
+	display: flex;
 	max-width: 1160px;
 	position: relative;
+	margin-inline: auto;
 
 	&:not(.elementor-dragging-on-child) {
 
@@ -704,14 +737,21 @@ html.elementor-html {
 
 	&[data-view="choose-action"] {
 
-		.elementor-select-preset {
+		.e-view:not( .elementor-add-new-section ) {
 			display: none;
 		}
 	}
 
 	&[data-view="select-preset"] {
 
-		.elementor-add-new-section {
+		.e-view:not( .elementor-select-preset ) {
+			display: none;
+		}
+	}
+
+	&[data-view="select-container-preset"] {
+
+		.e-view:not( .e-container-select-preset ) {
 			display: none;
 		}
 	}
@@ -721,12 +761,13 @@ html.elementor-html {
 	text-align: center;
 	margin: 20px;
 	padding: 40px 0;
+	flex-grow: 1;
 }
 
 .elementor-add-new-section {
 	display: inline-block; // For smooth dragging above
 
-	.elementor-add-section-area-button  {
+	.elementor-add-section-area-button {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -750,6 +791,7 @@ html.elementor-html {
 
 	.elementor-add-section-button {
 		background-color: $editor-accent;
+		margin-inline-start: 5px;
 	}
 
 	.elementor-add-template-button {
@@ -771,7 +813,7 @@ html.elementor-html {
 .elementor-add-section-close {
 	position: absolute;
 	right: 40px;
-	top: 20px;
+	top: 40px;
 	font-size: 20px;
 	cursor: pointer;
 	line-height: 1;
@@ -807,15 +849,34 @@ html.elementor-html {
 
 		&:hover {
 
-			path {
+			path,
+			rect {
 				fill: $editor-dark;
 			}
 		}
 
 		&:not(:hover) {
 
-			path {
+			path,
+			rect {
 				fill: $editor-lightest;
+			}
+		}
+
+		.e-preset--container {
+			position: relative;
+			display: flex;
+
+			&::before {
+				content: var( --text );
+				font-family: $admin-font-family;
+				font-size: 13px;
+				font-weight: 500;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				color: $white;
+				transform: translate( -50%, -50% );
 			}
 		}
 
@@ -843,11 +904,13 @@ html.elementor-html {
 
 .elementor-add-section-inline {
 	margin: 10px auto;
+	width: 100%;
 }
 
 .elementor-column-percents-tooltip {
 	position: absolute;
 	display: none;
+	pointer-events: none;
 	top: 50%;
 	transform: translateY(-50%);
 	color: #fff;
@@ -862,8 +925,8 @@ html.elementor-html {
 	&:after {
 		content: '';
 		position: absolute;
-		width:0;
-		height:0;
+		width: 0;
+		height: 0;
 		border: 8.5px solid transparent;
 		top: 0;
 	}
@@ -897,19 +960,27 @@ html.elementor-html {
 	.elementor-element-overlay,
 	.elementor-empty,
 	.elementor-add-section,
-	.elementor-element-empty,
+	.elementor-add-section-inline,
+	.elementor-empty-view,
 	.elementor-widget-empty {
 		display: none;
 	}
 }
 
 // Muted elements in the editor
-[data-elementor-device-mode="desktop"] .elementor-hidden-desktop,
-[data-elementor-device-mode="tablet"] .elementor-hidden-tablet,
-[data-elementor-device-mode="mobile"] .elementor-hidden-phone {
-	background-color: fade_out($editor-lightest, .2);
+.e-preview--show-hidden-elements[data-elementor-device-mode="widescreen"] .elementor-edit-area-active .elementor-hidden-widescreen,
+.e-preview--show-hidden-elements[data-elementor-device-mode="desktop"] .elementor-edit-area-active .elementor-hidden-desktop,
+.e-preview--show-hidden-elements[data-elementor-device-mode="laptop"] .elementor-edit-area-active .elementor-hidden-laptop,
+.e-preview--show-hidden-elements[data-elementor-device-mode="tablet_extra"] .elementor-edit-area-active .elementor-hidden-tablet_extra,
+.e-preview--show-hidden-elements[data-elementor-device-mode="tablet"] .elementor-edit-area-active .elementor-hidden-tablet,
+.e-preview--show-hidden-elements[data-elementor-device-mode="mobile_extra"] .elementor-edit-area-active .elementor-hidden-mobile_extra,
+.e-preview--show-hidden-elements[data-elementor-device-mode="mobile"] .elementor-edit-area-active .elementor-hidden-mobile {
+	display: inherit; //to overcome the display:none;
+	background: repeating-linear-gradient(125deg,rgba(0, 0, 0, 0.05),rgba(0, 0, 0, 0.05) 1px,transparent 2px,transparent 9px);
+	border: 1px solid rgba(0, 0, 0, 0.02);
 
-	&.elementor-section {
+	&.elementor-section,
+	&.e-container {
 
 		> .elementor-element-overlay {
 			background-color: $editor-lightest;
@@ -929,7 +1000,109 @@ html.elementor-html {
 		}
 	}
 
-	> .elementor-widget-container, > .elementor-column-wrap {
-		filter: alpha(0.4) saturate(0);
+	&.e-container {
+		// Containers inherit "display: block" from `elementor-hidden-{device}`'s `display: inherit` above.
+		// This line makes sure containers maintain their intended display mode.
+		display: var( --display );
+	}
+
+	&.elementor-inner-section {
+
+		.elementor-container {
+			width: 100%;//to handle with display: inherit; > issues#12376
+		}
+	}
+
+	> .elementor-widget-container, > .elementor-widget-wrap {
+		filter: opacity(0.4) saturate(0);
+	}
+
+	//Compatibility for hidden element by the navigator
+	&.elementor-edit-hidden {
+		display: none;
+	}
+}
+
+.e-container {
+
+	// Container presets.
+	&-select-preset {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 25px;
+
+		// Views.
+		&[data-view="choose-preset"] > *:not( &__inner ) {
+			display: none;
+		}
+
+		&[data-view="drop-area"] > *:not( .elementor-first-add ) {
+			display: none;
+		}
+
+		&__title {
+			font-family: $admin-font-family;
+			font-size: 13px;
+			font-weight: 500;
+			text-transform: uppercase;
+			color: $editor-darker;
+		}
+
+		&__list {
+			display: flex;
+			gap: 20px;
+			align-items: center;
+			justify-content: center;
+			flex-wrap: wrap;
+			max-width: 650px;
+
+			.e-container-preset {
+				cursor: pointer;
+				flex-basis: 90px;
+
+				svg {
+					width: 100%;
+					height: auto;
+				}
+
+				path {
+					fill: $white;
+				}
+
+				rect {
+					fill: $editor-lightest;
+					transition: .3s all;
+				}
+
+				&:hover {
+					rect {
+						fill: $editor-dark;
+					}
+				}
+
+				&[data-preset="r100"] {
+					@if 'rtl' == $direction {
+						transform: scaleX(-1);
+					}
+				}
+			}
+		}
+	}
+
+	// To avoid horizontal scroll in `flex-direction: column`
+	&.e-container--column {
+
+		.ui-resizable {
+
+			&-e {
+				right: 0;
+			}
+
+			&-w {
+				left: 0;
+			}
+		}
 	}
 }

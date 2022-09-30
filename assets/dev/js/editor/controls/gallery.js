@@ -1,8 +1,10 @@
+import FilesUploadHandler from '../utils/files-upload-handler';
+
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlMediaItemView;
 
 ControlMediaItemView = ControlBaseDataView.extend( {
-	ui: function() {
+	ui() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.addImages = '.elementor-control-gallery-add';
@@ -13,7 +15,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	events: function() {
+	events() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'click @ui.addImages': 'onAddImagesClick',
 			'click @ui.clearGallery': 'onClearGalleryClick',
@@ -21,11 +23,11 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	onReady: function() {
+	onReady() {
 		this.initRemoveDialog();
 	},
 
-	applySavedValue: function() {
+	applySavedValue() {
 		var images = this.getControlValue(),
 			imagesCount = images.length,
 			hasImages = !! imagesCount;
@@ -38,7 +40,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		$galleryThumbnails.empty();
 
-		this.ui.status.text( elementor.translate( hasImages ? 'gallery_images_selected' : 'gallery_no_images_selected', [ imagesCount ] ) );
+		/* Translators: %s: Selected images count. */
+		this.ui.status.text( hasImages ? sprintf( __( '%s Images Selected', 'elementor' ), imagesCount ) : __( 'No Images Selected', 'elementor' ) );
 
 		if ( ! hasImages ) {
 			return;
@@ -53,17 +56,22 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	hasImages: function() {
+	hasImages() {
 		return !! this.getControlValue().length;
 	},
 
-	openFrame: function( action ) {
+	openFrame( action ) {
 		this.initFrame( action );
 
 		this.frame.open();
+
+		// Set params to trigger sanitizer
+		if ( FilesUploadHandler.isUploadEnabled( 'svg' ) ) {
+			FilesUploadHandler.setUploadTypeCaller( this.frame );
+		}
 	},
 
-	initFrame: function( action ) {
+	initFrame( action ) {
 		var frameStates = {
 			create: 'gallery',
 			add: 'gallery-library',
@@ -75,7 +83,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			multiple: true,
 			state: frameStates[ action ],
 			button: {
-				text: elementor.translate( 'insert_media' ),
+				text: __( 'Insert Media', 'elementor' ),
 			},
 		};
 
@@ -85,6 +93,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.frame = wp.media( options );
 
+		this.addSvgMimeType();
+
 		// When a file is selected, run a callback.
 		this.frame.on( {
 			update: this.select,
@@ -93,18 +103,35 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		}, this );
 	},
 
-	menuRender: function( view ) {
+	addSvgMimeType() {
+		if ( ! FilesUploadHandler.isUploadEnabled( 'svg' ) ) {
+			return;
+		}
+
+		// Add the SVG to the currently allowed extensions
+		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+		this.frame.on( 'ready', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions + ',svg';
+		} );
+
+		// Restore allowed upload extensions
+		this.frame.on( 'close', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+		} );
+	},
+
+	menuRender( view ) {
 		view.unset( 'insert' );
 		view.unset( 'featured-image' );
 	},
 
-	gallerySettings: function( browser ) {
+	gallerySettings( browser ) {
 		browser.sidebar.on( 'ready', function() {
 			browser.sidebar.unset( 'gallery' );
 		} );
 	},
 
-	fetchSelection: function() {
+	fetchSelection() {
 		var attachments = wp.media.query( {
 			orderby: 'post__in',
 			order: 'ASC',
@@ -122,8 +149,10 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	/**
 	 * Callback handler for when an attachment is selected in the media modal.
 	 * Gets the selected image information, and sets it within the control.
+	 *
+	 * @param {Array<*>} selection
 	 */
-	select: function( selection ) {
+	select( selection ) {
 		var images = [];
 
 		selection.each( function( image ) {
@@ -138,7 +167,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.applySavedValue();
 	},
 
-	onBeforeDestroy: function() {
+	onBeforeDestroy() {
 		if ( this.frame ) {
 			this.frame.off();
 		}
@@ -146,23 +175,23 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.$el.remove();
 	},
 
-	resetGallery: function() {
+	resetGallery() {
 		this.setValue( [] );
 
 		this.applySavedValue();
 	},
 
-	initRemoveDialog: function() {
+	initRemoveDialog() {
 		var removeDialog;
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
 				removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_gallery_delete' ),
-					headerMessage: elementor.translate( 'delete_gallery' ),
+					message: __( 'Are you sure you want to reset this gallery?', 'elementor' ),
+					headerMessage: __( 'Reset Gallery', 'elementor' ),
 					strings: {
-						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' ),
+						confirm: __( 'Delete', 'elementor' ),
+						cancel: __( 'Cancel', 'elementor' ),
 					},
 					defaultOption: 'confirm',
 					onConfirm: this.resetGallery.bind( this ),
@@ -173,15 +202,15 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	onAddImagesClick: function() {
+	onAddImagesClick() {
 		this.openFrame( this.hasImages() ? 'add' : 'create' );
 	},
 
-	onClearGalleryClick: function() {
+	onClearGalleryClick() {
 		this.getRemoveDialog().show();
 	},
 
-	onGalleryThumbnailsClick: function() {
+	onGalleryThumbnailsClick() {
 		this.openFrame( 'edit' );
 	},
 } );

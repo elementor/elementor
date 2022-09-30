@@ -1,4 +1,4 @@
-class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
+export default class ImageCarousel extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -12,52 +12,52 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		const elements = {
-			$carousel: this.$element.find( selectors.carousel ),
+			$swiperContainer: this.$element.find( selectors.carousel ),
 		};
 
-		elements.$swiperSlides = elements.$carousel.find( selectors.slideContent );
+		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
 
 		return elements;
-	}
-
-	getSlidesCount() {
-		return this.elements.$swiperSlides.length;
 	}
 
 	getSwiperSettings() {
 		const elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
 			isSingleSlide = 1 === slidesToShow,
-			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
-			elementorBreakpoints = elementorFrontend.config.breakpoints;
+			elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
+			defaultSlidesToShowMap = {
+				mobile: 1,
+				tablet: isSingleSlide ? 1 : 2,
+			};
 
 		const swiperOptions = {
 			slidesPerView: slidesToShow,
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
+			handleElementorBreakpoints: true,
 		};
 
 		swiperOptions.breakpoints = {};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.md ] = {
-			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
-			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
-		};
+		let lastBreakpointSlidesToShowValue = slidesToShow;
 
-		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
-			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
-			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
-		};
+		Object.keys( elementorBreakpoints ).reverse().forEach( ( breakpointName ) => {
+			// Tablet has a specific default `slides_to_show`.
+			const defaultSlidesToShow = defaultSlidesToShowMap[ breakpointName ] ? defaultSlidesToShowMap[ breakpointName ] : lastBreakpointSlidesToShowValue;
 
-		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
+			swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ] = {
+				slidesPerView: +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow,
+				slidesPerGroup: +elementSettings[ 'slides_to_scroll_' + breakpointName ] || 1,
+			};
+
+			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
+		} );
+
+		if ( 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
-				disableOnInteraction: !! elementSettings.pause_on_interaction,
+				disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
 			};
-		}
-
-		if ( true === swiperOptions.loop ) {
-			swiperOptions.loopedSlides = this.getSlidesCount();
 		}
 
 		if ( isSingleSlide ) {
@@ -92,43 +92,81 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			};
 		}
 
+		if ( 'yes' === elementSettings.lazyload ) {
+			swiperOptions.lazy = {
+				loadPrevNext: true,
+				loadPrevNextAmount: 1,
+			};
+		}
+
 		return swiperOptions;
 	}
 
-	updateSpaceBetween() {
-		this.swiper.params.spaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
+	async onInit( ...args ) {
+		super.onInit( ...args );
+
+		if ( ! this.elements.$swiperContainer.length || 2 > this.elements.$slides.length ) {
+			return;
+		}
+
+		const Swiper = elementorFrontend.utils.swiper;
+
+		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
+
+		// Expose the swiper instance in the frontend
+		this.elements.$swiperContainer.data( 'swiper', this.swiper );
+
+		const elementSettings = this.getElementSettings();
+		if ( 'yes' === elementSettings.pause_on_hover ) {
+			this.togglePauseOnHover( true );
+		}
+	}
+
+	updateSwiperOption( propertyName ) {
+		const elementSettings = this.getElementSettings(),
+			newSettingValue = elementSettings[ propertyName ],
+			params = this.swiper.params;
+
+		// Handle special cases where the value to update is not the value that the Swiper library accepts.
+		switch ( propertyName ) {
+			case 'image_spacing_custom':
+				params.spaceBetween = newSettingValue.size || 0;
+
+				break;
+			case 'autoplay_speed':
+				params.autoplay.delay = newSettingValue;
+
+				break;
+			case 'speed':
+				params.speed = newSettingValue;
+
+				break;
+		}
 
 		this.swiper.update();
 	}
 
-	onInit( ...args ) {
-		super.onInit( ...args );
-
-		const elementSettings = this.getElementSettings();
-
-		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
-			return;
-		}
-
-		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
-
-		if ( elementSettings.pause_on_hover ) {
-			this.elements.$carousel.on( {
-				mouseenter: () => {
-					this.swiper.autoplay.stop();
-				},
-				mouseleave: () => {
-					this.swiper.autoplay.start();
-				},
-			} );
-		}
+	getChangeableProperties() {
+		return {
+			pause_on_hover: 'pauseOnHover',
+			autoplay_speed: 'delay',
+			speed: 'speed',
+			image_spacing_custom: 'spaceBetween',
+		};
 	}
 
 	onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
-			this.updateSpaceBetween();
-		} else if ( 'arrows_position' === propertyName ) {
-			this.swiper.update();
+		const changeableProperties = this.getChangeableProperties();
+
+		if ( changeableProperties[ propertyName ] ) {
+			// 'pause_on_hover' is implemented by the handler with event listeners, not the Swiper library.
+			if ( 'pause_on_hover' === propertyName ) {
+				const newSettingValue = this.getElementSettings( 'pause_on_hover' );
+
+				this.togglePauseOnHover( 'yes' === newSettingValue );
+			} else {
+				this.updateSwiperOption( propertyName );
+			}
 		}
 	}
 
@@ -138,7 +176,3 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		}
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
-};

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Testing;
 
+use ElementorEditorTesting\Elementor_Test_Base;
+
 class Elementor_Test_Heartbeat extends Elementor_Test_Base {
 
 	protected $user_own_post;

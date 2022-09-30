@@ -1,7 +1,55 @@
+//Dashboard Widgets
+#dashboard-widgets {
 
-//Dashboard Widget
+	.e-dashboard-widget {
 
-//Overview
+		h3.e-heading {
+			font-weight: 600;
+			margin-bottom: 13px;
+		}
+
+		.e-divider_bottom {
+			border-bottom: 1px solid #eee;
+			margin: 0 -12px;
+			padding: 6px 12px;
+		}
+
+		.e-divider_top {
+			border-top: 1px solid #eee;
+			margin: 0 -12px;
+			padding: 6px 12px;
+		}
+
+		.e-quick-actions-wrap,
+		.e-news-feed-wrap {
+
+			.e-divider_top {
+				padding-top: 18px;
+				margin-top: 18px;
+			}
+		}
+	}
+}
+
+.e-dashboard-widget {
+
+	.dashicons {
+		color: #606a73;
+	}
+
+	ul.e-action-list {
+
+		li {
+			margin-top: 14px;
+
+			a {
+				@include margin-start(5px);
+			}
+		}
+	}
+}
+
+//Overview Widget
 #e-dashboard-overview {
 
 	.dashicons {
@@ -44,6 +92,11 @@
 			text-align: $end;
 		}
 
+		&__feed {
+			font-size: 14px;
+			font-weight: 500;
+		}
+
 		&__post {
 			margin-top: 10px;
 		}
@@ -72,30 +125,12 @@
 			}
 		}
 
-		&__feed {
-			font-size: 14px;
-			font-weight: 500;
+		&__footer {
 
-			.e-overview__post-link {
-				padding-bottom: 5px;
+			&.e-divider_top {
+				padding-top: 12px;
+				padding-bottom: 0;
 			}
-		}
-
-		&__recently-edited,
-		&__feed {
-
-			.e-overview__heading {
-				font-weight: 700;
-				border-bottom: 1px solid #eee;
-				margin: 0 -12px;
-				padding: 6px 12px;
-			}
-		}
-
-		&__footer{
-			margin: 0 -12px -12px;
-			padding: 12px;
-			border-top: 1px solid #eee;
 
 			ul {
 				display: flex;

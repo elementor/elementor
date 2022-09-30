@@ -1,15 +1,12 @@
 import Helpers from './utils/helpers';
 import Storage from './utils/storage';
-import Ajax from '../../modules/ajax/assets/js/ajax';
-import Finder from '../../modules/finder/assets/js/finder';
-import Connect from '../../modules/connect/assets/js/connect';
-import Components from './components/components';
-import Hooks from './components/hooks';
-import Events from './components/events';
-import Commands from './components/commands';
-import Routes from './components/routes';
-import Shortcuts from './components/shortcuts';
-import BackwardsCompatibility from './components/backwards-compatibility';
+import Debug from './utils/debug';
+import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
+import Finder from 'elementor-common-modules/finder/assets/js/finder';
+import Connect from 'elementor-common-modules/connect/assets/js/connect';
+import WordpressComponent from './components/wordpress/component';
+import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
+import Events from 'elementor-common-modules/event-tracker/assets/js/events';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -33,29 +30,23 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 	}
 
 	initComponents() {
+		this.events = new Events();
+
+		this.debug = new Debug();
+
 		this.helpers = new Helpers();
 
 		this.storage = new Storage();
 
-		window.$e = {
-			components: new Components(),
-			hooks: new Hooks(),
-			events: new Events(),
-			commands: new Commands(),
-			routes: new Routes(),
-			shortcuts: new Shortcuts( jQuery( window ) ),
-			bc: new BackwardsCompatibility(),
-
-			run: ( ...args ) => {
-				return $e.commands.run.apply( $e.commands, args );
-			},
-
-			route: ( ...args ) => {
-				return $e.routes.to.apply( $e.routes, args );
-			},
-		};
-
 		this.dialogsManager = new DialogsManager.Instance();
+
+		this.api = window.$e;
+
+		$e.components.register( new EventsDispatcherComponent() );
+
+		elementorCommon.elements.$window.on( 'elementor:init-components', () => {
+			$e.components.register( new WordpressComponent() );
+		} );
 
 		this.initModules();
 	}

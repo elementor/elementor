@@ -1,0 +1,53 @@
+$root: e-kit-library__tags-filter;
+
+.#{$root} {
+	--e-kit-library-tags-filter-list-search-background-color: #{theme-colors('light')};
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-kit-library-tags-filter-list-search-background-color: #{dark-tints( 600 )};
+	}
+}
+
+.e-kit-library__tags-filter {
+	margin-top: spacing(44);
+
+	&-list {
+		margin-bottom: spacing(44);
+
+		.eps-collapse__title {
+			padding-right: spacing(30);
+			padding-left: spacing(30);
+			text-transform: uppercase;
+		}
+
+		.eps-collapse__content {
+			margin: spacing(5) spacing(30);
+		}
+	}
+
+	&-list-container {
+		max-height: 250px;
+		overflow: auto;
+	}
+
+	&-list-search {
+		margin-bottom: spacing(10);
+
+		.eps-search-input {
+			background: var(--e-kit-library-tags-filter-list-search-background-color);
+		}
+	}
+
+	&-list-item {
+		padding: spacing(10) 0;
+		display: flex;
+		align-items: center;
+		font-weight: 500;
+
+		input {
+			@include margin-end(spacing(5))
+		}
+	}
+}

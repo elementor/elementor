@@ -14,7 +14,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentItem: null,
 
-	updateCurrentItem: function() {
+	updateCurrentItem() {
 		if ( this.children.length <= 1 ) {
 			return;
 		}
@@ -42,22 +42,22 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.updateCurrentItem();
 	},
 
-	onRenderEmpty: function() {
+	onRenderEmpty() {
 		this.$el.addClass( 'elementor-empty' );
 	},
 
-	onChildviewClick: function( childView, event ) {
+	onChildviewClick( childView, event ) {
 		if ( childView.$el === this.currentItem ) {
 			return;
 		}
 
-		var collection = event.model.collection,
-			itemIndex = collection.findIndex( event.model );
+		const collection = event.model.collection,
+			index = collection.findIndex( event.model );
 
-		elementor.history.history.doItem( itemIndex );
+		$e.run( 'panel/history/actions/do', { index } );
 	},
 } );

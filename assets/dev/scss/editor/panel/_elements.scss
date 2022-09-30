@@ -1,13 +1,6 @@
 //
 // Panel Elements
 //
-#elementor-panel-page-elements {
-
-	body:not(.elementor-controls-ready) & {
-		height: 100%;
-		overflow: hidden;
-	}
-}
 
 #elementor-panel-elements-navigation {
 
@@ -22,23 +15,22 @@
 
 #elementor-panel-elements {
 	overflow: hidden;
-	padding: 0 5px;
 }
 
-#elementor-panel-elements-loading {
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 100%;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: rgba(255, 255, 255, 0.5);
-	z-index: 1;
+#elementor-panel-state-loading {
+	display: none;
 
-	body.elementor-controls-ready & {
-		display: none;
+	body.elementor-panel-loading & {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: rgba(255, 255, 255, 0.5);
+		z-index: $second-layer;
 	}
 
 	.eicon-loading {
@@ -47,54 +39,16 @@
 	}
 }
 
-.elementor-element-wrapper {
-	float: $start;
-	width: 50%;
-	padding: 5px;
-	text-align: center;
-	box-sizing: border-box;
-}
-
-.elementor-element {
-	border-radius: 3px;
-	background-color: #fff;
-	cursor: move;
-	
-	.icon,
-	.title {
-		color: $editor-darker;
-		transition: $transition-hover;
-	}
-
-	&:hover {
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-
-		.icon, .title {
-			color: $editor-accent;
-		}
-	}
-
-	.icon {
-		font-size: 28px;
-		padding-top: 15px;
-	}
-
-	.elementor-element-title-wrapper {
-		display: table;
-		width: 100%;
-	}
-
-	.title {
-		font-size: 11px;
-		display: table-cell;
-		vertical-align: middle;
-		height: 40px;
-	}
+#elementor-panel-elements-search-area {
+	position: sticky;
+	top: 0;
+	padding: 10px;
+	background-color: $editor-background;
+	z-index: $first-layer;
 }
 
 #elementor-panel-elements-search-wrapper {
 	position: relative;
-	margin: 10px 10px 5px;
 }
 
 #elementor-panel-elements-search-input {
@@ -121,5 +75,129 @@
 	&:focus {
 		background-color: rgba(255,255,255,1);
 		@include padding-end(15px);
+	}
+}
+
+.elementor-panel {
+
+	.elementor-element {
+		border-radius: 3px;
+		background-color: #fff;
+		cursor: move;
+		position: relative;
+
+		&-wrapper {
+			text-align: center;
+			box-sizing: border-box;
+		}
+
+		&--promotion {
+
+			.elementor-element {
+				cursor: pointer;
+				user-select: none;
+			}
+		}
+
+		.icon,
+		.title {
+			color: $editor-darker;
+			transition: $transition-hover;
+		}
+
+		&:hover {
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+			.icon, .title {
+				color: $editor-accent;
+			}
+		}
+
+		.icon {
+			font-size: 28px;
+			padding-top: 15px;
+		}
+
+		.elementor-element-title-wrapper {
+			display: table;
+			width: 100%;
+		}
+
+		.title {
+			font-size: 11px;
+			display: table-cell;
+			vertical-align: middle;
+			height: 40px;
+		}
+
+		> .eicon-lock {
+			position: absolute;
+			top: 5px;
+			@include end(5px);
+			color: $editor-background;
+		}
+	}
+}
+
+#elementor-element--promotion__dialog {
+	position: absolute;
+	width: 300px;
+	z-index: 1;
+	background-color: #fff;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+
+	&:after {
+		content: '';
+		position: absolute;
+		top: 15px;
+		@include end(100%);
+		transform: scaleY(0.7);
+		border: 10px solid transparent;
+		@include border-end-property(color, #fff);
+	}
+
+	&__title {
+		font-size: 14px;
+	}
+
+	.dialog {
+
+		&-header {
+			display: flex;
+			padding: 20px;
+			color: $editor-darkest;
+			border-bottom: 1px solid $editor-background;
+			font-weight: 500;
+
+			.eicon-pro-icon {
+				flex-grow: 1;
+				@include margin-start(10px);
+				font-size: 14px;
+				color: $editor-accent;
+			}
+
+			.eicon-close {
+				cursor: pointer;
+				color: $editor-light;
+			}
+		}
+
+		&-message {
+			padding: 20px;
+		}
+
+		&-buttons-wrapper {
+			padding: 0 20px 20px 20px;
+		}
+
+		&-button {
+			padding: 7px 25px;
+			font-size: 12px;
+
+			&::-moz-focus-inner {
+				border: 0;
+			}
+		}
 	}
 }

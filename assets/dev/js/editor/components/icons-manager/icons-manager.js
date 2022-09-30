@@ -23,7 +23,7 @@ export default class extends elementorModules.Module {
 
 			layoutModal.addButton( {
 				name: 'insert_icon',
-				text: elementor.translate( 'Insert' ),
+				text: __( 'Insert', 'elementor' ),
 				classes: 'elementor-button elementor-button-success',
 				callback: () => {
 					this.updateControlValue();
@@ -125,13 +125,13 @@ export default class extends elementorModules.Module {
 			activeTab = icons[ 0 ].name;
 		}
 
-		// selected Library exists
+		// Selected Library exists
 		if ( ! Object.keys( icons ).some( ( library ) => library === activeTab ) ) {
 			activeTab = icons[ 0 ].name;
 		}
 
 		// Show recommended tab if selected from it
-		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && iconManagerConfig.recommended.hasOwnProperty( selected.library ) ) {
+		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && Object.prototype.hasOwnProperty.call( iconManagerConfig.recommended, selected.library ) ) {
 			const iconLibrary = icons.filter( ( library ) => selected.library === library.name );
 			const selectedIconName = selected.value.replace( iconLibrary[ 0 ].displayPrefix + ' ' + iconLibrary[ 0 ].prefix, '' );
 			if ( iconManagerConfig.recommended[ selected.library ].some( ( icon ) => -1 < icon.indexOf( selectedIconName ) ) ) {

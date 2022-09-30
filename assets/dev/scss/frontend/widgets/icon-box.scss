@@ -1,48 +1,82 @@
 //
 // Icon Box
 //
-.elementor-widget-icon-box {
 
-	@media (min-width: $screen-md-min) {
+@mixin icon-position($device) {
+	&.elementor#{$device}-position- {
 
-		&.elementor-position- {
+		&left,
+		&right {
 
-			&left,
-			&right {
-
-				.elementor-icon-box-wrapper {
-					display: flex;
-				}
-
-				.elementor-icon-box-icon {
-					display: inline-flex;
-					flex: 0 0 auto; // Hack for Safari
-				}
+			.elementor-icon-box-wrapper	 {
+				display: flex;
 			}
 
-			&right {
-
-				.elementor-icon-box-wrapper {
-					text-align: $end;
-					flex-direction: getValueByDirection(row-reverse, row);
-				}
-			}
-
-			&left {
-
-				.elementor-icon-box-wrapper {
-					text-align: $start;
-					flex-direction: getValueByDirection(row, row-reverse);
-				}
-			}
-
-			&top {
-
-				.elementor-icon-box-img {
-					margin: auto;
-				}
+			.elementor-icon-box-icon {
+				display: inline-flex;
+				flex: 0 0 auto; // Hack for Safari
 			}
 		}
+
+		&right {
+
+			.elementor-icon-box-wrapper {
+				text-align: $end;
+				flex-direction: getValueByDirection(row-reverse, row);
+			}
+
+			.elementor-icon-box-icon {
+				margin-left: var(--icon-box-icon-margin, 15px);
+				margin-right: 0;
+				margin-bottom: unset;
+			}
+		}
+
+		&left {
+
+			.elementor-icon-box-wrapper {
+				text-align: $start;
+				flex-direction: getValueByDirection(row, row-reverse);
+			}
+
+			.elementor-icon-box-icon {
+				margin-right: var(--icon-box-icon-margin, 15px);
+				margin-left: 0;
+				margin-bottom: unset;
+			}
+		}
+
+		&top {
+
+			.elementor-icon-box-wrapper {
+				display: block;
+				text-align: center;
+				flex-direction: unset;
+			}
+
+			.elementor-icon-box-icon {
+				margin-bottom: var(--icon-box-icon-margin, 15px);
+				margin-right: auto;
+				margin-left: auto;
+			}
+		}
+	}
+}
+
+.elementor-widget-icon-box {
+
+	.elementor-icon-box-wrapper {
+		display: block;
+		text-align: center;
+	}
+
+	.elementor-icon-box-icon {
+		margin-bottom: var(--icon-box-icon-margin, 15px);
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+	@media (min-width: $screen-mobile-next) {
 
 		&.elementor-vertical-align- {
 
@@ -69,18 +103,42 @@
 		}
 	}
 
-	@media (max-width: $screen-sm-max) {
+	@include icon-position('');
 
-		// TEMP code to override the icon spacing
-		.elementor-icon-box-icon {
-			margin-left: auto !important;
-			margin-right: auto !important;
-			margin-bottom: 15px;
-		}
+	@media (min-width: $screen-widescreen-min) {
+		@include icon-position(-widescreen);
 	}
 
-	.elementor-icon-box-wrapper {
-		text-align: center;
+	@media (max-width: $screen-laptop-max) {
+		@include icon-position(-laptop);
+	}
+
+	@media (max-width: $screen-tablet-extra-max) {
+		@include icon-position(-tablet_extra);
+	}
+
+	@media (max-width: $screen-tablet-max) {
+		@include icon-position(-tablet);
+	}
+
+	@media (max-width: $screen-mobile-extra-max) {
+		@include icon-position(-mobile_extra);
+	}
+
+	@media (max-width: $screen-mobile-max ) {
+		@include icon-position(-mobile);
+
+		&.elementor-position- {
+
+			&left,
+			&right {
+
+				.elementor-icon-box-icon {
+					display: block;
+					flex: unset;
+				}
+			}
+		}
 	}
 
 	.elementor-icon-box-title {

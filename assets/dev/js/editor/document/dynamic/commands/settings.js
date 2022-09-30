@@ -1,12 +1,11 @@
-import Debounce from '../../commands/base/history/debounce';
-import ElementsSettings from '../../elements/commands/settings';
+import ElementsSettings from 'elementor-document/elements/commands/settings';
 
 /**
  * The difference between 'document/elements/settings` and `document/dynamic/settings` is:
  * that `document/elements/settings` apply settings to `container.settings` and `document/dynamic/settings` affect
  * `container.settings.__dynamic__`, also clearing the dynamic if `args.settings` is empty.
  */
-export class Settings extends Debounce {
+export class Settings extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -68,9 +67,12 @@ export class Settings extends Debounce {
 				container.dynamic.set( settings );
 			}
 
-			container.settings.set( '__dynamic__', container.dynamic.toJSON() );
-
-			container.render();
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				settings: {
+					__dynamic__: container.dynamic.toJSON(),
+				},
+			} );
 		} );
 	}
 }

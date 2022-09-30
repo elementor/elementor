@@ -1,25 +1,82 @@
-import BaseComponent from 'elementor-common/components/component';
-import BackwardsCompatibility from './backwards-compatibility.js';
-import * as Hooks from './callback/hooks/';
-import * as Events from './callback/events/';
+import ComponentBase from 'elementor-api/modules/component-base';
 
-export default class Component extends BaseComponent {
+import * as components from './';
+import * as hooks from './hooks/';
+import * as uiStates from './ui-states';
+
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'document';
 	}
 
-	onInit() {
-		new BackwardsCompatibility();
+	registerAPI() {
+		Object.values( components ).forEach( ( ComponentClass ) =>
+			$e.components.register( new ComponentClass ),
+		);
 
-		super.onInit();
-
-		Object.values( Hooks ).forEach( ( hook ) => new hook() );
-		Object.values( Events ).forEach( ( event ) => new event() );
+		super.registerAPI();
 	}
 
 	defaultCommands() {
 		return {
-			//example: ( args ) => ( new Commands.Example( args ).run() ),
+			// Example: ( args ) => ( new Commands.Example( args ).run() ),
+		};
+	}
+
+	defaultHooks() {
+		return this.importHooks( hooks );
+	}
+
+	defaultUiStates() {
+		return this.importUiStates( uiStates );
+	}
+
+	defaultUtils() {
+		return {
+			findViewRecursive: ( parent, key, value, multiple = true ) => {
+				let found = [];
+				for ( const x in parent._views ) {
+					const view = parent._views[ x ];
+
+					if ( value === view.model.get( key ) ) {
+						found.push( view );
+						if ( ! multiple ) {
+							return found;
+						}
+					}
+
+					if ( view.children ) {
+						const views = this.utils.findViewRecursive( view.children, key, value, multiple );
+						if ( views.length ) {
+							found = found.concat( views );
+							if ( ! multiple ) {
+								return found;
+							}
+						}
+					}
+				}
+
+				return found;
+			},
+			findViewById: ( id ) => {
+				const elements = this.utils.findViewRecursive(
+					elementor.getPreviewView().children,
+					'id',
+					id,
+					false,
+				);
+
+				return elements ? elements[ 0 ] : false;
+			},
+			findContainerById: ( id ) => {
+				let result = this.utils.findViewById( id );
+
+				if ( result ) {
+					result = result.getContainer();
+				}
+
+				return result;
+			},
 		};
 	}
 }

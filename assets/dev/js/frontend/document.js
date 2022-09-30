@@ -38,7 +38,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	runElementsHandlers() {
-		this.elements.$elements.each( ( index, element ) => elementorFrontend.elementsHandler.runReadyTrigger( element ) );
+		this.elements.$elements.each( ( index, element ) => setTimeout( () => elementorFrontend.elementsHandler.runReadyTrigger( element ) ) );
 	}
 
 	onInit() {
@@ -49,7 +49,9 @@ export default class extends elementorModules.ViewModule {
 		this.isEdit = this.$element.hasClass( this.getSettings( 'classes.editMode' ) );
 
 		if ( this.isEdit ) {
-			elementor.settings.page.model.on( 'change', this.onSettingsChange.bind( this ) );
+			elementor.on( 'document:loaded', () => {
+				elementor.settings.page.model.on( 'change', this.onSettingsChange.bind( this ) );
+			} );
 		} else {
 			this.runElementsHandlers();
 		}

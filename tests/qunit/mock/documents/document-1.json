@@ -1,0 +1,61 @@
+{
+  "id": 1,
+  "type": "wp-post",
+  "version": "2.8.2",
+  "revisions": {
+	"current_id": 1
+  },
+  "last_edited": "",
+  "elements": [],
+  "settings": {
+	"settings": {
+		"post_status": "draft"
+	},
+	"name": "page",
+	"panelPage": {
+	  "title": "Post Settings"
+	},
+	"controls": {
+	  "post_title": {
+		"name": "post_title",
+		"label": "Title",
+		"description": "",
+		"show_label": true,
+		"label_block": true,
+		"separator": "none",
+		"input_type": "text",
+		"placeholder": "",
+		"type": "text",
+		"tab": "settings",
+		"section": "document_settings"
+	  }
+	}
+  },
+  "remoteLibrary": {
+	"type": "page",
+	"category": ""
+  },
+  "panel": {
+	"title": "Post",
+	"default_route": "panel/elements/categories",
+	"has_elements": true,
+	"widgets_settings": [],
+	"elements_categories": {},
+	"messages": {
+	  "publish_notification": "Hurray! Your Post is live."
+	},
+	"support_kit": true
+  },
+  "container": "body",
+  "urls": {
+	"exit_to_dashboard": "http: //localhost/elementor/wp-admin/post.php?post=1&action=edit",
+	"preview": "",
+	"wp_preview": "http://localhost/elementor/?p=1&preview_id=1&preview_nonce=d50fde90b&preview=true",
+	"permalink": "http://localhost/elementor/?p=1",
+	"screenshot": "http://localhost/elementor/?p=1&elementor-screenshot=1&ver=123&&nonce=testnonce"
+  },
+  "debounceDelay": 0,
+  "user": {
+	"can_publish": true
+  }
+}

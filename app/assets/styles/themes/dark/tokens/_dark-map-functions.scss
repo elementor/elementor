@@ -1,0 +1,14 @@
+// Theme: Dark | Tokens: map functions
+// - Theme specific map based functions
+// Below functions can be duplicated and modified for Themes
+@function dark-theme-colors($keys...) {
+	@return map-deep-get($eps-dark-theme-colors, $keys...);
+}
+
+@function dark-theme-elements-colors($keys...) {
+	@return map-deep-get($eps-dark-theme-elements-colors, $keys...);
+}
+
+@function dark-tints($keys...) {
+	@return map-deep-get($eps-dark-tints, $keys...);
+}
