@@ -54,17 +54,18 @@ class Module extends BaseModule {
 			$this->add_css_filter();
 		}
 
-		add_action( 'activated_plugin', function( $plugin ) {
-			if ( 'performance-lab/load.php' === $plugin ) {
-				Plugin::$instance->files_manager->clear_cache();
-			}
-		} );
+		if ( is_admin() ) {
+			add_action( 'activated_plugin', function( $plugin ) {
+				if ( 'performance-lab/load.php' === $plugin ) {
+					Plugin::$instance->files_manager->clear_cache();
+				}
+			} );
 
-		add_action( 'deactivated_plugin', function( $plugin ) {
-			if ( 'performance-lab/load.php' === $plugin ) {
-				Plugin::$instance->files_manager->clear_cache();
-			}
-		} );
-
+			add_action( 'deactivated_plugin', function( $plugin ) {
+				if ( 'performance-lab/load.php' === $plugin ) {
+					Plugin::$instance->files_manager->clear_cache();
+				}
+			} );
+		}
 	}
 }
