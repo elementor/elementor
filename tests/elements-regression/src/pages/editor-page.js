@@ -100,7 +100,7 @@ module.exports = class EditorPage extends BasePage {
 		try {
 			await this.getPreviewFrame().waitForSelector(
 				`.elementor-element-${ widget.id }.elementor-loading`,
-				{ timeout: 500 },
+				{ timeout: 600 },
 			);
 
 			isLoading = true;
