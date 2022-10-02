@@ -98,6 +98,7 @@ class Modules_Manager {
 			'web-cli',
 			'promotions',
 			'notes',
+			'kit-elements-defaults',
 		];
 	}
 
