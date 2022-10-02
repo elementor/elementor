@@ -343,7 +343,7 @@ abstract class Base extends Base_File {
 
 						$parsed_value = '';
 
-						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches );
+						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
 
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
