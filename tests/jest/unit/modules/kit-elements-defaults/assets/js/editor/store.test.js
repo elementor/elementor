@@ -32,10 +32,15 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 
 		// Assert.
 		const section = store.get( 'section' );
+		const button = store.get( 'button' );
 
 		expect( section ).toStrictEqual( {
 			color: 'red',
 			background_color: '#F00',
+		} );
+
+		expect( button ).toStrictEqual( {
+			type: 'info',
 		} );
 	} );
 
