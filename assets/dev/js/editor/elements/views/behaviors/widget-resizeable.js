@@ -159,7 +159,7 @@ export default class extends Marionette.Behavior {
 
 		const settingToChange = {
 			...( this.isContainerActive() ? { _flex_size: 'none' } : {} ),
-			...( this.isContainer() ? { content_width: 'full' } : {} ),
+			...( this.isContainer() ? { content_width: 'full-width' } : {} ),
 			[ elementWidthSettingKey ]: 'initial',
 			[ widthSettingKey ]: {
 				unit,

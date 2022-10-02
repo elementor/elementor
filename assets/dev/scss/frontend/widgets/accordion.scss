@@ -89,8 +89,8 @@
 	}
 }
 
-.e-container,
-.e-container__inner {
+.e-con,
+.e-con-inner {
 
 	> .elementor-widget-accordion {
 		// Fix - Accordion widget disappears because the 'flex column' setting causes an undefined width inside the flex container (ED-7524).

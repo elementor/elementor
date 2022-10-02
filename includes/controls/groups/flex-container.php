@@ -62,7 +62,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		];
 
 		// Only use the flex direction prefix class inside the editor.
-		$flex_direction_prefix_class = Plugin::$instance->editor->is_edit_mode() ? [ 'prefix_class' => 'e-container--' ] : [];
+		$flex_direction_prefix_class = Plugin::$instance->editor->is_edit_mode() ? [ 'prefix_class' => 'e-con--' ] : [];
 
 		$fields['_is_row'] = array_merge( $flex_direction_prefix_class, [
 			'type' => Controls_Manager::HIDDEN,
