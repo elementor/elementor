@@ -369,7 +369,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'content_width' => 'full',
+					'content_width' => 'full-width',
 				],
 				'device_args' => [
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [

@@ -220,7 +220,7 @@ const ContainerView = BaseElementView.extend( {
 			model: {
 				elType: 'container',
 				settings: {
-					content_width: 'full',
+					content_width: 'full-width',
 				},
 			},
 			container: targetContainer,

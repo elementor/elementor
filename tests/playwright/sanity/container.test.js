@@ -89,7 +89,7 @@ test.describe( 'Container tests', () => {
 		// Act
 		await editor.selectElement( containerId );
 		// Set full content width.
-		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		expect( await container.screenshot( {
@@ -173,7 +173,7 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( container );
 		// Set full content width
 		await wpAdmin.activatePanelTab( 'layout' );
-		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 
 		// Assert
 		expect( await pageView.screenshot( {
@@ -229,7 +229,7 @@ test.describe( 'Container tests', () => {
 
 		// Set full content width
 		await wpAdmin.activatePanelTab( 'layout' );
-		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 
 		// Assert
 		expect( await pageView.screenshot( {
