@@ -1352,19 +1352,14 @@ abstract class Controls_Stack extends Base_Object {
 	/**
 	 * Get Responsive Control Device Suffix
 	 *
+	 * @deprecated 3.7.6
 	 * @param array $control
 	 * @return string $device suffix
 	 */
 	protected function get_responsive_control_device_suffix( $control ) {
-		if ( ! empty( $control['responsive']['max'] ) ) {
-			$query_device = $control['responsive']['max'];
-		} elseif ( ! empty( $control['responsive']['min'] ) ) {
-			$query_device = $control['responsive']['min'];
-		} else {
-			return '';
-		}
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.7.6', 'Elementor\Controls_Manager::get_responsive_control_device_suffix()' );
 
-		return 'desktop' === $query_device ? '' : '_' . $query_device;
+		return Controls_Manager::get_responsive_control_device_suffix( $control );
 	}
 
 	/**
@@ -1410,12 +1405,12 @@ abstract class Controls_Stack extends Base_Object {
 			$condition_name_to_check = $pure_condition_key;
 
 			if ( $are_control_and_condition_responsive ) {
-				$device_suffix = $this->get_responsive_control_device_suffix( $control );
+				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
 
 				$condition_name_to_check = $pure_condition_key . $device_suffix;
 
-				// If the control is not desktop, take the value of the conditioning control of the corresponding device.
-				$instance_value = $values[ $pure_condition_key . $device_suffix ];
+				// If the control is not desktop, and a conditioning control for the corresponding device exists, use it.
+				$instance_value = $values[ $pure_condition_key . $device_suffix ] ?? $values[ $pure_condition_key ];
 			} else {
 				$instance_value = $values[ $pure_condition_key ];
 			}
@@ -2012,18 +2007,6 @@ abstract class Controls_Stack extends Base_Object {
 			<?php $this->print_template_content( $template_content ); ?>
 		</script>
 		<?php
-	}
-
-	/**
-	 * @since 3.6.0
-	 * @access public
-	 *
-	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
-	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
-
-		return $config;
 	}
 
 	/**

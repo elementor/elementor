@@ -1079,6 +1079,24 @@ class Controls_Manager {
 	}
 
 	/**
+	 * Get Responsive Control Device Suffix
+	 *
+	 * @param array $control
+	 * @return string $device suffix
+	 */
+	public static function get_responsive_control_device_suffix( array $control ): string {
+		if ( ! empty( $control['responsive']['max'] ) ) {
+			$query_device = $control['responsive']['max'];
+		} elseif ( ! empty( $control['responsive']['min'] ) ) {
+			$query_device = $control['responsive']['min'];
+		} else {
+			return '';
+		}
+
+		return 'desktop' === $query_device ? '' : '_' . $query_device;
+	}
+
+	/**
 	 * Add custom attributes controls.
 	 *
 	 * This method adds a new control for the "Custom Attributes" feature. The free
