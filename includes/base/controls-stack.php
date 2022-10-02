@@ -1409,8 +1409,8 @@ abstract class Controls_Stack extends Base_Object {
 
 				$condition_name_to_check = $pure_condition_key . $device_suffix;
 
-				// If the control is not desktop, take the value of the conditioning control of the corresponding device.
-				$instance_value = $values[ $pure_condition_key . $device_suffix ];
+				// If the control is not desktop, and a conditioning control for the corresponding device exists, use it.
+				$instance_value = $values[ $pure_condition_key . $device_suffix ] ?? $values[ $pure_condition_key ];
 			} else {
 				$instance_value = $values[ $pure_condition_key ];
 			}
