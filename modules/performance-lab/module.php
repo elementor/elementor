@@ -48,7 +48,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( $this->is_performance_lab_is_active() ) {
-			add_filter('elementor/files/css/property', function( $value, $css_property, $matches ) {
+			add_filter( 'elementor/files/css/property', function( $value, $css_property, $matches ) {
 				return $this->replace_css_with_webp( $value, $css_property, $matches );
 			}, 10, 3 );
 		}
