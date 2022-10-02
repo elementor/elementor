@@ -48,7 +48,7 @@
 	transition: var( --transition );
 	isolation: isolate;
 
-	&--width-full,
+	&-full-width,
 	& > .e-con-inner {
 		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
@@ -62,7 +62,7 @@
 	}
 
 	// Set default values to the outer div of the boxed container.
-	&--width-boxed {
+	&-boxed {
 		flex-direction: column;
 		text-align: initial;
 		flex-wrap: initial;
