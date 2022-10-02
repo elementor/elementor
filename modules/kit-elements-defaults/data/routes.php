@@ -95,7 +95,11 @@ class Routes {
 		$element_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
 		$widget_types = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
 
-		return in_array( $param, $element_types + $widget_types, true );
+		return in_array(
+			$param,
+			array_merge( $element_types, $widget_types ),
+			true
+		);
 	}
 
 	/**

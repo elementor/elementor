@@ -46,14 +46,10 @@ class Controller {
 
 		$data[ $request->get_param( 'type' ) ] = $sanitized_settings;
 
-		$has_updated = $kit->update_meta(
+		$kit->update_meta(
 			static::META_KEY,
 			wp_json_encode( $data )
 		);
-
-		if ( ! $has_updated ) {
-			return new \WP_Error( 'Failed to update element defaults.' );
-		}
 
 		return new \WP_REST_Response( [], 201 );
 	}
@@ -68,14 +64,10 @@ class Controller {
 
 		unset( $data[ $request->get_param( 'type' ) ] );
 
-		$has_updated = $kit->update_meta(
+		$kit->update_meta(
 			static::META_KEY,
 			wp_json_encode( $data )
 		);
-
-		if ( ! $has_updated ) {
-			return new \WP_Error( 'Failed to delete element defaults.' );
-		}
 
 		return new \WP_REST_Response( [], 204 );
 	}
