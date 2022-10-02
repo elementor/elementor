@@ -201,12 +201,12 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
+		$this->delete( 'state' );
+		$this->set( (array) $response );
+
 		if ( ! empty( $response->data_share_opted_in ) && current_user_can( 'manage_options' ) ) {
 			Tracker::set_opt_in( true );
 		}
-
-		$this->delete( 'state' );
-		$this->set( (array) $response );
 
 		$this->after_connect();
 
