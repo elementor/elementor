@@ -64,6 +64,5 @@ class Module extends BaseModule {
 				Plugin::$instance->files_manager->clear_cache();
 			}
 		} );
-
 	}
 }
