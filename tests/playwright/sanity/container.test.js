@@ -255,7 +255,7 @@ test.describe( 'Container tests', () => {
 		await editor.getFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
 		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
-		await expect( editor.getPreviewFrame().locator( '.e-container--width-full ' ) ).toHaveCount( 1 );
+		await expect( editor.getPreviewFrame().locator( '.e-con-full-width ' ) ).toHaveCount( 1 );
 
 		await wpAdmin.setExperiments( {
 			container: false,
