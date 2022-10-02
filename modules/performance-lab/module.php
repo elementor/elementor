@@ -37,20 +37,20 @@ class Module extends BaseModule {
 		return $url;
 	}
 
-	private function add_css_filter( $value, $css_property, $matches, $control ) {
+	private function replace_css_with_webp( $value, $css_property, $matches ) {
 		if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
 			$value['url'] = $this->performance_lab_get_webp_src( $value['id'], 'full', $value['url'] );
 		}
-			return $value;
+		return $value;
 	}
 
 	public function __construct() {
 		parent::__construct();
 
 		if ( $this->is_performance_lab_is_active() ) {
-			add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
-				return $this->add_css_filter( $value, $css_property, $matches, $control );
-			}, 10, 4 );
+			add_filter('elementor/files/css/property', function( $value, $css_property, $matches ) {
+				return $this->replace_css_with_webp( $value, $css_property, $matches );
+			}, 10, 3 );
 		}
 
 		if ( is_admin() ) {
