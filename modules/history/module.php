@@ -70,10 +70,10 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_action( 'elementor/editor/init', [ $this, 'add_templates' ] );
 
-        if ( ! Plugin::$instance->experiments->is_feature_active( 'editor-v2' ) ) {
-            add_action( 'elementor/editor/init', function () {
-                Plugin::$instance->common->add_template( __DIR__ . '/views/history-panel-template.php' );
-            } );
-        }
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'editor-v2' ) ) {
+			add_action( 'elementor/editor/init', function () {
+				Plugin::$instance->common->add_template( __DIR__ . '/views/history-panel-template.php' );
+			} );
+		}
 	}
 }
