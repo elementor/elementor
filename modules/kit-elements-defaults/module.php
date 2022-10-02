@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\Modules\KitsElementsDefaults;
+namespace Elementor\Modules\KitElementsDefaults;
 
 use Elementor\Plugin;
-use Elementor\Modules\KitsElementsDefaults\Data\Controller;
+use Elementor\Modules\KitElementsDefaults\Data\Controller;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	public function get_name() {
-		return 'kits-elements-defaults';
+		return 'kit-elements-defaults';
 	}
 
 	public static function get_experimental_data() {
 		return [
-			'name' => 'kits-elements-defaults',
+			'name' => 'kit-elements-defaults',
 			'title' => __( 'Kit Elements Defaults', 'elementor' ),
 			'description' => __( 'Set default values for all the elements in a kit.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -26,8 +26,8 @@ class Module extends BaseModule {
 
 	private function enqueue_scripts() {
 		wp_enqueue_script(
-			'elementor-kits-elements-defaults-editor',
-			$this->get_js_assets_url( 'kits-elements-defaults-editor' ),
+			'elementor-kit-elements-defaults-editor',
+			$this->get_js_assets_url( 'kit-elements-defaults-editor' ),
 			[],
 			ELEMENTOR_VERSION,
 			true

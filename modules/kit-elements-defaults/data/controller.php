@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\KitsElementsDefaults\Data;
+namespace Elementor\Modules\KitElementsDefaults\Data;
 
 use Elementor\Plugin;
 use Elementor\Data\V2\Base\Exceptions\Error_404;
@@ -13,7 +13,7 @@ class Controller extends Base_Controller {
 	const META_KEY = '_elementor_elements_defaults_values';
 
 	public function get_name() {
-		return 'kits-elements-defaults';
+		return 'kit-elements-defaults';
 	}
 
 	public function register_endpoints() {
