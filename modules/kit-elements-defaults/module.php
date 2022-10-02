@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Modules\KitsElementsDefaults;
+namespace Elementor\Modules\KitElementsDefaults;
 
-use Elementor\Modules\KitsElementsDefaults\Data\Routes;
+use Elementor\Modules\KitElementsDefaults\Data\Routes;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -25,8 +25,8 @@ class Module extends BaseModule {
 
 	private function enqueue_scripts() {
 		wp_enqueue_script(
-			'elementor-kits-elements-defaults-editor',
-			$this->get_js_assets_url( 'kits-elements-defaults-editor' ),
+			'elementor-kit-elements-defaults-editor',
+			$this->get_js_assets_url( 'kit-elements-defaults-editor' ),
 			[],
 			ELEMENTOR_VERSION,
 			true

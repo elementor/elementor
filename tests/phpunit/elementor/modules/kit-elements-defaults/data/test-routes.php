@@ -2,8 +2,8 @@
 
 namespace Elementor\Testing\Modules\KitElementsDefaults\Data;
 
-use Elementor\Modules\KitsElementsDefaults\Data\Controller;
-use Elementor\Modules\KitsElementsDefaults\Data\Routes;
+use Elementor\Modules\KitElementsDefaults\Data\Controller;
+use Elementor\Modules\KitElementsDefaults\Data\Routes;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -280,7 +280,7 @@ class Test_Routes extends Elementor_Test_Base {
 		( new Routes() )->register();
 
 		// Act.
-		$response = $this->send_request( $method, $endpoint, $data );
+		$response = $this->send_request( $method, $endpoint . '/invalid_element_type', $data );
 
 		// Assert.
 		$this->assertEquals( 400, $response->get_status() );

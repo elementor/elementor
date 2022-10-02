@@ -4,7 +4,7 @@ import * as commands from './commands/';
 
 export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
-		return 'kits-elements-defaults';
+		return 'kit-elements-defaults';
 	}
 
 	defaultHooks() {

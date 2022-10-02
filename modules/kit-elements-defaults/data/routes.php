@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\KitsElementsDefaults\Data;
+namespace Elementor\Modules\KitElementsDefaults\Data;
 
 use Elementor\Plugin;
 
