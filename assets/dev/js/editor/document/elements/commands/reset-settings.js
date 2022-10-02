@@ -34,6 +34,7 @@ export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase
 	}
 
 	#updateLocalSettings( { container, options, settings } ) {
+		const containerGlobalSettings = container.settings.get( '__globals__' ) || {};
 		const localSettings = Object.entries( settings )
 			.filter( ( [ controlName ] ) => '__globals__' !== controlName );
 
@@ -42,17 +43,38 @@ export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase
 			options,
 			settings: Object.fromEntries( localSettings ),
 		} );
+
+		const globalSettingsToDisable = localSettings
+			.filter( ( [ controlName, value ] ) => value && containerGlobalSettings[ controlName ] )
+			.map( ( [ controlName, value ] ) => [ controlName, '' ] );
+
+		$e.run( 'document/globals/disable', {
+			container,
+			settings: Object.fromEntries( globalSettingsToDisable ),
+		} );
 	}
 
 	#updateGlobalSettings( { container, options, settings } ) {
-		Object.entries( settings.__globals__ || {} ).forEach( ( [ controlName, globalValue ] ) => {
-			const isGlobalActive = container.settings.get( '__globals__' )?.[ controlName ];
+		const globalSettings = Object.entries( settings.__globals__ || {} )
+			.reduce( ( carry, [ controlName, globalValue ] ) => {
+				const isGlobalActive = container.settings.get( '__globals__' )?.[ controlName ];
 
-			$e.run( isGlobalActive ? 'document/globals/settings' : 'document/globals/enable', {
-				container,
-				settings: { [ controlName ]: globalValue },
-			} );
-		} );
+				if ( isGlobalActive ) {
+					carry.settings[ controlName ] = globalValue;
+				} else {
+					carry.enable[ controlName ] = globalValue;
+				}
+
+				return carry;
+			}, { enable: {}, settings: {} } );
+
+		if ( Object.keys( globalSettings.enable ).length ) {
+			$e.run( 'document/globals/enable', { container, settings: globalSettings.enable } );
+		}
+
+		if ( Object.keys( globalSettings.settings ).length ) {
+			$e.run( 'document/globals/settings', { container, settings: globalSettings.settings } );
+		}
 	}
 
 	#getDefaultValues( controls, only = [] ) {
@@ -61,16 +83,22 @@ export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase
 				0 === only.length || only.includes( controlName ),
 			)
 			.reduce( ( carry, [ controlName, control ] ) => {
-				const values = { [ controlName ]: control.default };
+				const isGlobalDefault = control.global?.default && ! control.default;
 
-				if ( control?.global?.default ) {
-					values.__globals__ = {
-						...( carry.__globals__ || {} ),
-						[ controlName ]: control.global.default,
+				if ( isGlobalDefault ) {
+					return {
+						...carry,
+						__globals__: {
+							...( carry.__globals__ || {} ),
+							[ controlName ]: control.global?.default,
+						},
 					};
 				}
 
-				return { ...carry, ...values };
+				return {
+					...carry,
+					[ controlName ]: control.default,
+				};
 			}, {} );
 	}
 }
