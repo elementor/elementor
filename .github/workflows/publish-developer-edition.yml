@@ -2,8 +2,6 @@ name: Publish Developer Edition Version
 
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types: [new-release]
 
 jobs:
   bump-version:
