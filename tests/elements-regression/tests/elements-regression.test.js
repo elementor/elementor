@@ -12,12 +12,10 @@ test.describe( 'Elements regression', () => {
 	const testedElements = {};
 
 	test.afterAll( async ( {}, testInfo ) => {
-		if (
-			! [ 'failed', 'timedOut' ].includes( testInfo.status ) && // There is no need to check if the tests already failed.
-			'on' === testInfo.project.use.validateAllPreviousCasesChecked &&
-			0 === testInfo.workerIndex // Only the first worker should check for now, if the worker index is not 0 it means that the test was failed.
-		) {
-			expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+		// TODO: Need to find a better solution for now this is not working well.
+
+		if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
+			expect( JSON.stringify( testedElements, null, '\t' ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
 		}
 	} );
 
@@ -59,7 +57,7 @@ test.describe( 'Elements regression', () => {
 				}
 
 				await test.step( controlId, async () => {
-					testedElements[ widgetType ][ controlId ] = [];
+					const testedValues = [];
 
 					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
 
@@ -80,9 +78,11 @@ test.describe( 'Elements regression', () => {
 							expect( await editorPage.screenshotWidget( widget ) )
 								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 
-							testedElements[ widgetType ][ controlId ].push( valueLabel );
+							testedValues.push( valueLabel );
 						} );
 					}
+
+					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
 
 					await widget.afterControlTest( { control, controlId } );
 
