@@ -47,7 +47,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-
 		parent::__construct();
 
 		if ( $this->is_performance_lab_is_active() ) {
