@@ -1,8 +1,7 @@
 <?php
 namespace Elementor\Modules\KitsElementsDefaults;
 
-use Elementor\Plugin;
-use Elementor\Modules\KitsElementsDefaults\Data\Controller;
+use Elementor\Modules\KitsElementsDefaults\Data\Routes;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -12,12 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	public function get_name() {
-		return 'kits-elements-defaults';
+		return 'kit-elements-defaults';
 	}
 
 	public static function get_experimental_data() {
 		return [
-			'name' => 'kits-elements-defaults',
+			'name' => 'kit-elements-defaults',
 			'title' => __( 'Kit Elements Defaults', 'elementor' ),
 			'description' => __( 'Set default values for all the elements in a kit.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -41,6 +40,6 @@ class Module extends BaseModule {
 			$this->enqueue_scripts();
 		} );
 
-		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+		( new Routes() )->register();
 	}
 }
