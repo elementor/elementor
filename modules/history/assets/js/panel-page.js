@@ -31,21 +31,17 @@ export default Marionette.LayoutView.extend( {
 	},
 
 	initRegionViews() {
-		const historyItems = this.document.history.getItems();
+		const historyItems = this.document.history.getItems(),
+			useEditorV2 = elementor.config.experimentalFeatures[ 'editor-v2' ];
 
 		this.regionViews = {
 			actions: {
 				view: () => {
-					return TabHistoryView;
+					return useEditorV2 ? TabActionV2View : TabHistoryView;
 				},
 				options: {
 					collection: historyItems,
 					history: this.document.history,
-				},
-			},
-			'actions-v2': {
-				view: () => {
-					return TabActionV2View;
 				},
 			},
 			revisions: {
