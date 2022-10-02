@@ -98,7 +98,7 @@ class Modules_Manager {
 			'web-cli',
 			'promotions',
 			'notes',
-            'editor-v2',
+			'editor-v2',
 		];
 	}
 
