@@ -73,9 +73,7 @@ class Module extends BaseModule {
         if ( ! Plugin::$instance->experiments->is_feature_active( 'editor-v2' ) ) {
             add_action( 'elementor/editor/init', function () {
                 Plugin::$instance->common->add_template( __DIR__ . '/views/history-panel-template.php' );
-
             } );
         }
-
 	}
 }
