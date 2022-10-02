@@ -1,5 +1,5 @@
 import localSettingsExtractor from '../settings-handlers/local/extract';
-import loadDefaultValues from '../load-default-values';
+import store from '../store';
 
 export default class Create extends $e.modules.CommandBase {
 	settingsExtractors = [
@@ -23,16 +23,12 @@ export default class Create extends $e.modules.CommandBase {
 		}, {} );
 
 		try {
-			await $e.data.create( 'kit-elements-defaults/index', { settings }, { type } );
+			await store.upsert( type, settings );
 
-			// Refresh Cache.
-			// Cannot use {refresh: true} in `get()` because in the hooks there must be a way to get the data
-			// in sychronous way, and when using `refresh: true`, the data will not be available in syncronous way.
-			loadDefaultValues();
-
-			// Here we should open some toast
+			// TODO: Show success toast.
 		} catch ( e ) {
-			// Show some error.
+			// TODO: Show error toast.
+			console.error( e );
 		} finally {
 			$e.internal( 'panel/state-ready' );
 		}

@@ -1,3 +1,5 @@
+import store from '../../store';
+
 export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 	getCommand() {
 		return 'preview/drop';
@@ -15,8 +17,7 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 		const { model } = args,
 			{ elType, widgetType } = model;
 
-		const allSettings = $e.data.cache.storage.getItem( 'kit-elements-defaults' ) || {},
-			elementSettings = allSettings[ widgetType || elType ];
+		const elementSettings = store.get( widgetType || elType );
 
 		if ( ! elementSettings ) {
 			return true;
