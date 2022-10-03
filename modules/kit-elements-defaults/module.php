@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults;
 
-use Elementor\Modules\KitElementsDefaults\Data\Routes;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -40,6 +39,6 @@ class Module extends BaseModule {
 			$this->enqueue_scripts();
 		} );
 
-		( new Routes() )->register();
+		( new Controller() )->register();
 	}
 }

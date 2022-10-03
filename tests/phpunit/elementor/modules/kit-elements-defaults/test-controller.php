@@ -1,13 +1,15 @@
 <?php
 
-namespace Elementor\Testing\Modules\KitElementsDefaults\Data;
+namespace Elementor\Testing\Modules\KitElementsDefaults;
 
-use Elementor\Modules\KitElementsDefaults\Data\Controller;
-use Elementor\Modules\KitElementsDefaults\Data\Routes;
+use Elementor\Modules\KitElementsDefaults\Controller;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\KitElementsDefaults\Mock\Mock_Widget;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Test_Routes extends Elementor_Test_Base {
+require_once __DIR__ . '/mock/mock-widget.php';
+
+class Test_Controller extends Elementor_Test_Base {
 
 	private $kit;
 
@@ -15,6 +17,14 @@ class Test_Routes extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		Plugin::$instance->widgets_manager->register( new Mock_Widget() );
+	}
+
+	public function tearDown() {
+		Plugin::$instance->widgets_manager->unregister( 'mock-widget' );
+
+		parent::tearDown();
 	}
 
 	/**
@@ -145,6 +155,28 @@ class Test_Routes extends Elementor_Test_Base {
 		$this->assertEquals( [
 			'button' => [
 				'button_type' => 'info',
+			],
+		], $this->kit->get_json_meta( Controller::META_KEY ) );
+	}
+
+	public function test_update__removes_secrets_from_settings() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$response = $this->send_request( 'PUT', '/kit-elements-defaults/mock-widget', [
+			'settings' => [
+				'secret_control' => 'secret_value',
+				'regular_control' => 'non_secret_value',
+			],
+		] );
+
+		// Assert.
+		$this->assertEquals( 201, $response->get_status() );
+
+		$this->assertEquals( [
+			'mock-widget' => [
+				'regular_control' => 'non_secret_value',
 			],
 		], $this->kit->get_json_meta( Controller::META_KEY ) );
 	}
