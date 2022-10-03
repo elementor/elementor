@@ -24,8 +24,8 @@ module.exports = class ConfigMediator {
 	 * @param {Object} args.elementsConfig
 	 * @param {Object} args.userConfig
 	 */
-	static create( { elementsConfig, userConfig } ) {
-		return new ConfigMediator( { elementsConfig, userConfig } );
+	static make( { elementsConfig, userConfig } ) {
+		return new this( { elementsConfig, userConfig } );
 	}
 
 	/**
@@ -33,7 +33,7 @@ module.exports = class ConfigMediator {
 	 *
 	 * @return {{widgetType: string, widgetConfig: Object}[]}
 	 */
-	getWidgetForTests() {
+	getWidgetsTypes() {
 		return Object.entries( this.#elementsConfig ).filter(
 			( [ widgetType ] ) =>
 				this.#isIncluded( this.#userConfig.elements, widgetType ) &&
@@ -77,7 +77,7 @@ module.exports = class ConfigMediator {
 	 * @param {string } controlId
 	 * @return {{controlConfig: Object, sectionConfig: Object, controlId: string, value: *, widgetType: string}[]}
 	 */
-	getControlDependecies( widgetType, controlId ) {
+	getControlDependencies( widgetType, controlId ) {
 		const currentConfig = this.#merge(
 			this.#userConfig.controls[ '*' ],
 			this.#userConfig.controls[ widgetType ],
@@ -88,7 +88,7 @@ module.exports = class ConfigMediator {
 			...( currentConfig.dependencies?.[ controlId ] || {} ),
 		};
 
-		return Object.entries( deps || {} )
+		return Object.entries( deps )
 			.map( ( [ depControlId, value ] ) => {
 				const controlConfig = this.#elementsConfig[ widgetType ].controls[ depControlId ];
 				const sectionConfig = this.#elementsConfig[ widgetType ].controls[ controlConfig.section ];

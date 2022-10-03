@@ -90,16 +90,12 @@ module.exports = class EditorPage extends BasePage {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
-	/**
-	 * @param {import('../widgets/widget').Widget} widget
-	 * @return {Promise<Buffer>}
-	 */
-	async screenshotWidget( widget ) {
+	async waitForElementRender( id ) {
 		let isLoading;
 
 		try {
 			await this.getPreviewFrame().waitForSelector(
-				`.elementor-element-${ widget.id }.elementor-loading`,
+				`.elementor-element-${ id }.elementor-loading`,
 				{ timeout: 500 },
 			);
 
@@ -110,12 +106,20 @@ module.exports = class EditorPage extends BasePage {
 
 		if ( isLoading ) {
 			await this.getPreviewFrame().waitForSelector(
-				`.elementor-element-${ widget.id }.elementor-loading`,
+				`.elementor-element-${ id }.elementor-loading`,
 				{ state: 'detached' },
 			);
 
 			await this.page.waitForTimeout( 400 );
 		}
+	}
+
+	/**
+	 * @param {import('../widgets/widget').Widget} widget
+	 * @return {Promise<Buffer>}
+	 */
+	async screenshotWidget( widget ) {
+		await this.waitForElementRender( widget.id );
 
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
 		const elementRect = await ( await widget.getElement() ).boundingBox();

@@ -6,7 +6,7 @@ const ConfigMediator = require( '../src/config-mediator' );
 const widgetHandlers = require( '../src/widgets' );
 const controlHandlers = require( '../src/controls' );
 
-const configMediator = ConfigMediator.create( { elementsConfig, userConfig } );
+const configMediator = ConfigMediator.make( { elementsConfig, userConfig } );
 
 test.describe( 'Elements regression', () => {
 	const testedElements = {};
@@ -19,10 +19,7 @@ test.describe( 'Elements regression', () => {
 		}
 	} );
 
-	for ( const {
-		widgetType,
-		widgetConfig,
-	} of configMediator.getWidgetForTests() ) {
+	for ( const { widgetType, widgetConfig } of configMediator.getWidgetsTypes() ) {
 		// Dynamic widget test creation.
 		test( widgetType, async ( { editorPage } ) => {
 			const widget = createWidgetHandler( editorPage, widgetType, widgetConfig );
@@ -125,7 +122,7 @@ function createWidgetHandler( editorPage, type, config ) {
 }
 
 async function assignValuesToControlDependencies( editorPage, widgetType, controlId ) {
-	const controlDependencies = configMediator.getControlDependecies( widgetType, controlId );
+	const controlDependencies = configMediator.getControlDependencies( widgetType, controlId );
 
 	for ( const {
 		controlConfig,

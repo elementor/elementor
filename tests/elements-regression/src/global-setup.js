@@ -2,6 +2,7 @@ const { chromium, request } = require( '@playwright/test' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const WpAdminPage = require( './pages/wp-admin-page.js' );
+const media = require( './media' );
 
 module.exports = async ( { projects: [ { use: config } ] } ) => {
 	const { page, browser } = await createPage( {
@@ -16,7 +17,9 @@ module.exports = async ( { projects: [ { use: config } ] } ) => {
 	} );
 
 	const apiContext = await createApiContext( {
-		storageStateObject, wpRESTNonce, baseURL: config.baseURL,
+		storageStateObject,
+		wpRESTNonce,
+		baseURL: config.baseURL,
 	} );
 
 	const removeDefaultMedia = await createDefaultMedia( apiContext );
@@ -110,7 +113,7 @@ async function createDefaultMedia( apiContext ) {
 	const { id } = await response.json();
 
 	// Pass the id that was uploaded to the tests.
-	process.env[ `ELEMENTS_REGRESSION_MEDIA_IDS_${ imageName }` ] = id;
+	media.set( imageName, id );
 
 	return async () => {
 		await apiContext.delete( `/index.php`, {

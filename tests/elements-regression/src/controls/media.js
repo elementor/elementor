@@ -1,4 +1,5 @@
 const { ControlBase } = require( './control-base' );
+const media = require( '../media' );
 
 class Media extends ControlBase {
 	getSelector() {
@@ -10,15 +11,7 @@ class Media extends ControlBase {
 
 		const selectedMediaId = await this.getSelectedMediaId();
 
-		const value = selectedMediaId
-			? Object.entries( process.env )
-				.find( ( [ key, id ] ) =>
-					key.startsWith( 'ELEMENTS_REGRESSION_MEDIA_IDS_' ) &&
-					id === selectedMediaId,
-				)
-				?.[ 0 ]
-				?.replace( 'ELEMENTS_REGRESSION_MEDIA_IDS_', '' )
-			: null;
+		const value = media.getNameFromId( selectedMediaId );
 
 		await this.closeMediaLibrary();
 
@@ -26,7 +19,7 @@ class Media extends ControlBase {
 	}
 
 	async setValue( newValue ) {
-		const id = process.env?.[ `ELEMENTS_REGRESSION_MEDIA_IDS_${ newValue }` ];
+		const id = media.getIdFromName( newValue );
 
 		if ( ! id ) {
 			throw new Error( `Media file with name '${ newValue }' was not found.` );
