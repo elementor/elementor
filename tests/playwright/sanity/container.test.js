@@ -67,7 +67,7 @@ test.describe( 'Container tests', () => {
 		// Select spacer element.
 		await editor.selectElement( spacer );
 		// Set background colour.
-		await wpAdmin.activatePanelTab( 'advanced' );
+		await editor.activatePanelTab( 'advanced' );
 		await page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
@@ -154,7 +154,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position absolute.
-		await wpAdmin.activatePanelTab( 'advanced' );
+		await editor.activatePanelTab( 'advanced' );
 		await page.waitForSelector( '.elementor-control-position >> select' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
@@ -172,7 +172,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set full content width
-		await wpAdmin.activatePanelTab( 'layout' );
+		await editor.activatePanelTab( 'layout' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 
 		// Assert
@@ -210,7 +210,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position fixed.
-		await wpAdmin.activatePanelTab( 'advanced' );
+		await editor.activatePanelTab( 'advanced' );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -228,7 +228,7 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( container );
 
 		// Set full content width
-		await wpAdmin.activatePanelTab( 'layout' );
+		await editor.activatePanelTab( 'layout' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 
 		// Assert
@@ -284,16 +284,16 @@ test.describe( 'Container tests', () => {
 		// Act.
 		await editor.addWidget( 'google_maps', container );
 		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
-		await wpAdmin.setWidgetToFlexGrow();
+		await editor.setWidgetCustomWidth( '40' );
+		await editor.setWidgetToFlexGrow();
 		// Set widget mask.
-		await wpAdmin.setWidgetMask();
+		await editor.setWidgetMask();
 
 		await editor.addWidget( 'video', container );
 		// Set widget custom width to 40%.
-		await wpAdmin.setWidgetCustomWidth( '40' );
+		await editor.setWidgetCustomWidth( '40' );
 		// Set widget mask.
-		await wpAdmin.setWidgetMask();
+		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert.
