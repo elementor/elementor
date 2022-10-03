@@ -1,31 +1,31 @@
 import store from 'elementor/modules/kit-elements-defaults/assets/js/editor/store';
+import { mockFetch } from './utils';
+
+const wpApiSettings = {
+	root: 'http://example.com/wp-json/',
+	nonce: '123456',
+};
+
+const BASE_URL = wpApiSettings.root + 'elementor/v1/kit-elements-defaults';
 
 describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 	beforeEach( () => {
-		window.wpApiSettings = {
-			root: 'http://example.com/wp-json/',
-			nonce: '123456',
-		};
+		window.wpApiSettings = wpApiSettings;
 	} );
 
 	it( 'Should load items to cache', async () => {
 		// Arrange.
-		mockFetch( {
-			method: 'GET',
-			endpoint: '/',
-			response: {
-				status: 200,
-				body: {
-					section: {
-						color: 'red',
-						background_color: '#F00',
-					},
-					button: {
-						type: 'info',
-					},
+		mockFetch( BASE_URL )
+			.get( '/' )
+			.reply( {
+				section: {
+					color: 'red',
+					background_color: '#F00',
 				},
-			},
-		} );
+				button: {
+					type: 'info',
+				},
+			} );
 
 		// Act.
 		await store.load();
@@ -52,28 +52,15 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		mockFetch( [
-			{
-				method: 'PUT',
-				endpoint: '/section',
-				response: {
-					status: 201,
-					body: '',
+		mockFetch( BASE_URL )
+			.put( '/section' )
+			.reply( '', 201 )
+			.get( '/' )
+			.reply( {
+				section: {
+					new_control: 'new_value',
 				},
-			},
-			{
-				method: 'GET',
-				endpoint: '/',
-				response: {
-					status: 200,
-					body: {
-						section: {
-							new_control: 'new_value',
-						},
-					},
-				},
-			},
-		] );
+			} );
 
 		// Act.
 		await store.upsert( 'section', {
@@ -96,24 +83,11 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		mockFetch( [
-			{
-				method: 'DELETE',
-				endpoint: '/section',
-				response: {
-					status: 204,
-					body: '',
-				},
-			},
-			{
-				method: 'GET',
-				endpoint: '/',
-				response: {
-					status: 200,
-					body: {},
-				},
-			},
-		] );
+		mockFetch( BASE_URL )
+			.delete( '/section' )
+			.reply( '', 204 )
+			.get( '/' )
+			.reply( {} );
 
 		// Act.
 		await store.delete( 'section' );
@@ -150,14 +124,9 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 
 	it( 'Should throw for invalid response', async () => {
 		// Arrange.
-		mockFetch( {
-			method: 'GET',
-			endpoint: '/',
-			response: {
-				status: 500,
-				body: '',
-			},
-		} );
+		mockFetch( BASE_URL )
+			.get( '/' )
+			.reply( '', 500 );
 
 		// Act & Assert.
 		await expect( store.load() ).rejects.toStrictEqual( {
@@ -167,29 +136,3 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 		} );
 	} );
 } );
-
-function mockFetch( mocks ) {
-	if ( ! Array.isArray( mocks ) ) {
-		mocks = [ mocks ];
-	}
-
-	const BASE_URL = wpApiSettings.root + 'elementor/v1/kit-elements-defaults';
-
-	window.fetch = jest.fn( ( reqURL, reqOptions ) => {
-		const match = mocks.find( ( res ) => (
-			res.method === reqOptions.method && BASE_URL + res.endpoint === reqURL
-		) );
-
-		if ( ! match ) {
-			return Promise.reject( 'No matching response found' );
-		}
-
-		const { status, body } = match.response;
-
-		return Promise.resolve( {
-			ok: status >= 200 && status < 300,
-			status,
-			text: () => Promise.resolve( JSON.stringify( body ) ),
-		} );
-	} );
-}
