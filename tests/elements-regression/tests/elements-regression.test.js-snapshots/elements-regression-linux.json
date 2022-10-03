@@ -17,7 +17,6 @@
 		"blend_mode": "multiply, screen, overlay, darken, lighten, color-dodge, saturation, color, difference, exclusion, hue, luminosity"
 	},
 	"image": {
-		"image_size": "thumbnail, medium, medium_large, 1536x1536, 2048x2048, full, custom",
 		"align": "left, center, right",
 		"caption_source": "attachment, custom",
 		"width": "percentage-1, percentage-50.5, percentage-100, px-1, px-500.5, px-1000, vw-1, vw-50.5, vw-100",
