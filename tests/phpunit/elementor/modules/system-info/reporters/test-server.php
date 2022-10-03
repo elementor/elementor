@@ -46,6 +46,7 @@ class Test_Server extends Elementor_Test_Base {
 			'no_permissions' => [
 				'permission_code' => 0000,
 				'expected' => [
+					'exists' => true,
 					'read' => false,
 					'write' => false,
 					'execute' => false,
@@ -54,6 +55,7 @@ class Test_Server extends Elementor_Test_Base {
 			'readable' => [
 				'permission_code' => 0400,
 				'expected' => [
+					'exists' => true,
 					'read' => true,
 					'write' => false,
 					'execute' => false,
@@ -62,6 +64,7 @@ class Test_Server extends Elementor_Test_Base {
 			'readable_writeable' => [
 				'permission_code' => 0600,
 				'expected' => [
+					'exists' => true,
 					'read' => true,
 					'write' => true,
 					'execute' => false,
@@ -70,11 +73,27 @@ class Test_Server extends Elementor_Test_Base {
 			'readable_writeable_executable' => [
 				'permission_code' => 0700,
 				'expected' => [
+					'exists' => true,
 					'read' => true,
 					'write' => true,
 					'execute' => true,
 				],
 			],
 		];
+	}
+
+	public function test_get_path_permissions__empty_path() {
+		// Act
+		$permissions = ( new Server() )->get_path_permissions( '' );
+
+		// Assert
+		$expected_permissions = [
+			'exists' => false,
+			'read' => false,
+			'write' => false,
+			'execute' => false,
+		];
+
+		$this->assertEquals( $expected_permissions, $permissions );
 	}
 }
