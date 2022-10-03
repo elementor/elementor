@@ -108,7 +108,7 @@
 	// Inner Container handle.
 	// TODO: Find a better solution.
 	& > &,
-	&__inner > &,
+	&-inner > &,
 	.elementor-widget & {
 
 		> .elementor-element-overlay {

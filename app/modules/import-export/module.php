@@ -47,7 +47,6 @@ class Module extends BaseModule {
 
 	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
 
-
 	/**
 	 * Assigning the export process to a property, so we can use the process from outside the class.
 	 *
@@ -487,6 +486,9 @@ class Module extends BaseModule {
 		$tmp_folder_id = $settings['session'];
 
 		$import = $this->import_kit( $tmp_folder_id, $settings );
+
+		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
+		$import['configData'] = $this->get_config_data();
 
 		wp_send_json_success( $import );
 	}
