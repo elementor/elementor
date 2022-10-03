@@ -163,25 +163,13 @@
 		}
 	}
 
-<<<<<<< HEAD
 	// Hack with repeated classnames to increase the specificity.
 	.elementor.elementor &,
-	&.e-container > .e-container__inner {
+	&.e-con > .e-con-inner {
 	
 		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
 		& > .elementor-widget {
 			max-width: 100%;
-=======
-	.elementor & {
-
-		&,
-		& > .e-con-inner {
-
-			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
-			& > .elementor-widget {
-				max-width: 100%;
-			}
->>>>>>> 5d2ce6b106904d061a2618cc34d6603e8d68308b
 		}
 	}
 }
