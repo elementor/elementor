@@ -45,6 +45,7 @@ const octokit = new Octokit({ auth: TOKEN });
 			// A Dev Edition version must include some Change Log lines. so, validate that there are commits that are not "Internal" and contain a Squash commiit pattern
 			const prAndVerifiedCommits = getPrCommits(res.data);
 			if (prAndVerifiedCommits.length > 0) {
+				console.log(`No public commits, exit = 1`);
 				process.exit(1);
 			}
 		}
