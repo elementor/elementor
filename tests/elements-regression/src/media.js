@@ -45,7 +45,7 @@ module.exports = {
 		const store = getStore();
 
 		const name = Object.keys( store )
-			.find( ( key ) => store[ key ] === id );
+			.find( ( name ) => store[ name ] === id );
 
 		return name || null;
 	},
