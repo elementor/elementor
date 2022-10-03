@@ -49,6 +49,7 @@ const octokit = new Octokit({ auth: TOKEN });
 				process.exit(1);
 			}
 		}
+		console.log(`exit = 0`);
 	} catch (err) {
 		console.error(`Failed to compare tag: ${BASE_TAG_NAME} to branch: ${HEAD_BRANCH_NAME} error: ${err.message}`);
 		process.exit(1);
