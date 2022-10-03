@@ -45,7 +45,7 @@ module.exports = {
 		const store = getStore();
 
 		const name = Object.keys( store )
-			.find( ( name ) => store[ name ] === id );
+			.find( ( imageName ) => store[ imageName ] === id );
 
 		return name || null;
 	},
