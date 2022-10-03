@@ -2,7 +2,7 @@
 export default class Shapes extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		const contentWidth = this.getElementSettings( 'content_width' ),
-			container = 'boxed' === contentWidth ? '> .e-container__inner > .elementor-shape-%s' : '> .elementor-shape-%s';
+			container = 'boxed' === contentWidth ? '> .e-con-inner > .elementor-shape-%s' : '> .elementor-shape-%s';
 
 		return {
 			selectors: {
