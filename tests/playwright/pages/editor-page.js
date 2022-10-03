@@ -130,7 +130,7 @@ module.exports = class EditorPage extends BasePage {
 		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 		await elementEditButton.click();
 	}
-	
+
 	/**
 	 * Activate a tab inside the panel editor.
 	 *
@@ -138,7 +138,7 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	 async activatePanelTab( panelName ) {
+	async activatePanelTab( panelName ) {
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
 		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
