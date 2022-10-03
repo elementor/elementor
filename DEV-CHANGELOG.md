@@ -1,5 +1,25 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.9.0-dev2 - 2022-10-03
+* Fix: Error on connect with `WP_DEBUG` = true [ED-8252] (#19862)
+* Fix: Error after connecting from a promotion page and refreshing the page [ED-8259] (#19863)
+* Fix: Template Library - Empty view jumps when searching [ED-8288] (#19859)
+* Tweak: Button widget - responsive control for border radius [ED-7544] (#19884)
+* Tweak: Add responsive option for caption to images widgets (#19852)
+* Fix: Container - Apply inner container class to widgets inside the container [ED-8137] (#19686)
+* Tweak: Add responsive capability to BG image opacity [ED-8344] (#19940)
+* Fix: Import/Export - Not importing the relations between terms [ED-8265] (#19875)
+* Tweak: Add responsive capability to BG image hover opacity [ED-8344] (#19947)
+* Fix: Import/Export - Can't import on a new site [ED-8240] (#19850)
+* Fix: Control Conditions - Using respon. values in selector placeholders causes fatal error [ED-8355] (#19934)
+* Fix: Core - Loop template does not change live when editing the design in-place [ED-8371] (#19951)
+* Tweak: Make Elementor compatible to WebP [ED-7895] (#19558)
+* Tweak: Changed container class names to shorter names (markup changes!) [ED-8347] (#19962)
+* Fix: See-it-live button missing on import kit summery [ED-8258] (#19937)
+* Fix: Container - apply new inner container class [ED-8392] (#19970)
+* Revert "Tweak: Changed container class names to shorter names (markup changes!) [ED-8347]" (#19972)
+* Revert "Fix: Container - apply new inner container class [ED-8392]" (#19971)
+
 #### 3.9.0-dev1 - 2022-09-20
 * Fix: Page is not loading due to errors in the deprecation module (#19390, #19562) [ED-8031] (#19571)
 * Tweak: Update pro promotion button in plugin Core onboarding [ED-7959] (#19507)
@@ -405,37 +425,3 @@
 * Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16941)
 * Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16944)
 * Fix: Some fields don't show placeholder values properly (closes #16608) [ED-4677] (#16948)
-
-#### 3.6.0-dev3 - 2021-11-12
-* Fix: Lightbox tweaks [ED-5532] (#16906)
-* Fix: Empty state background is missing in Media controls [ED-5312] (#16768)
-
-#### 3.6.0-dev2 - 2021-11-09
-* Fix: Only one JSON browser-import is possible [ED-5443] (#16844)
-* Fix: CSS Print method has wrong default value [ED-5883] (#16833)
-* Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16839)
-* Fix: Additional Breakpoints - Conditional respon. controls disappear if exper. is active [ED-5362] (#16775)
-* Fix: Template name changed if a dash mark was used in the import process [ED-4923] (#16788)
-* Fix: The Top bar is disappearing from some pages [ED-5314] (#16835)
-* Fix: data attributes are being printed to DOM when not needed in CSS Transform [ED-5419] (#16850)
-* Fix: Activate and Deactivate all experiments buttons didn't work (#16802)
-* Fix: Inner section cannot be added to the page [ED-5460] (#16863)
-* Fix: 3.5.0 Core Beta - Skip SVG in Import Kit flow doesn't work properly [ED-5437] (#16837)
-* Fix: CLI `library import` deletes the original imported file [ED-5203] (#16799)
-* Fix: Drag from Desktop doesn’t work with SVG and JSON [ED-5454] (#16849)
-* Fix: Nav menu not scrolling to the appropriate CSS ID if Scroll Snap is enabled [ED-5439] (#16808)
-* Fix: Missing typography control in Text Path widget [ED-5455] (#16838)
-* New: Added Container element [ED-2609] (#16105)
-
-#### 3.6.0-dev1 - 2021-11-08
-* Fix: Cannot open context menu in the 'Add New Section' area in the preview [ED-5453] (#16836)
-* Fix: JSON browser-imports appear to be inserted at the top of the document [ED-5442] (#16845)
-* Tweak: Statuses and experiments description changed in the new Experiments UI [ED-5316] (#16738)
-* Fix: After downgrading from a version with Container - a PHP error is thrown [ED-5425] (#16842)
-
-#### 3.5.0-dev51 - 2021-11-05
-* Tweak: Delete deprecated 'Editor' class alias [ED-5429] (#16797)
-* New: Drag files from desktop [ED-3817] (#16809)
-
-#### 3.5.0-dev50 - 2021-11-04
-* Fix: Can't upload JPG/JPEG files via Elementor Editor's WP media control (#16786) [ED-5406] (#16801)
