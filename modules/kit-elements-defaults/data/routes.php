@@ -17,7 +17,7 @@ class Routes {
 		add_action( 'rest_api_init', function () {
 			$this->register_index();
 
-			$this->register_store();
+			$this->register_update();
 
 			$this->register_destroy();
 		} );
@@ -37,7 +37,7 @@ class Routes {
 		] );
 	}
 
-	private function register_store() {
+	private function register_update() {
 		register_rest_route( static::NAMESPACE, static::BASE_URL . '/(?P<type>[\w\-_]+)', [
 			[
 				'methods' => 'PUT',
@@ -57,7 +57,7 @@ class Routes {
 					],
 				],
 				'callback' => $this->wrap_callback( function ( \WP_REST_Request $request ) {
-					return ( new Controller() )->store( $request );
+					return ( new Controller() )->update( $request );
 				} ),
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );

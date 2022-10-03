@@ -23,7 +23,7 @@ class Controller {
 	/**
 	 * PUT '/kit-elements-defaults/{type}'
 	 */
-	public function store( \WP_REST_Request $request ) {
+	public function update( \WP_REST_Request $request ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$element = $this->get_element_instance( $request->get_param( 'type' ) );
@@ -72,24 +72,23 @@ class Controller {
 		return new \WP_REST_Response( [], 204 );
 	}
 
-	private function is_element( $type ) {
-		$element_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
-
-		return in_array( $type, $element_types, true );
-	}
-
 	private function get_element_instance( $type ) {
-		$args = $this->is_element( $type )
+		$args = $this->is_widget( $type )
 			? [
-				'elType' => $type,
-				'id' => '0',
-			]
-			: [
 				'elType' => 'widget',
 				'widgetType' => $type,
+				'id' => '0',
+			] : [
+				'elType' => $type,
 				'id' => '0',
 			];
 
 		return Plugin::$instance->elements_manager->create_element_instance( $args );
+	}
+
+	private function is_widget( $type ) {
+		$widget_types = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
+
+		return in_array( $type, $widget_types, true );
 	}
 }

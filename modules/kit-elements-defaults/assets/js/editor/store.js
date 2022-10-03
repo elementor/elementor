@@ -1,20 +1,50 @@
+/**
+ * Store for kit elements defaults.
+ */
 export default {
 	items: {},
 
+	/**
+	 * Get element default settings by elType / widgetType.
+	 *
+	 * @param {string} type
+	 *
+	 * @return {Object}
+	 */
 	get( type ) {
 		return this.items[ type ] || {};
 	},
 
+	/**
+	 * Load all elements defaults from server into the local cache.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async load() {
 		this.items = await apiRequest( 'GET', '/' );
 	},
 
+	/**
+	 * Insert element default settings to the store.
+	 *
+	 * @param {string} type
+	 * @param {Object} settings
+	 *
+	 * @return {Promise<void>}
+	 */
 	async upsert( type, settings ) {
 		await apiRequest( 'PUT', `/${ type }`, { settings } );
 
 		await this.load();
 	},
 
+	/**
+	 * Delete element default settings from the store.
+	 *
+	 * @param {string} type
+	 *
+	 * @return {Promise<void>}
+	 */
 	async delete( type ) {
 		await apiRequest( 'DELETE', `/${ type }` );
 

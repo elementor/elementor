@@ -24,8 +24,6 @@ class Test_Routes extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_subscriber();
 
-		( new Routes() )->register();
-
 		// Act.
 		$response = $this->send_request( 'GET', '/kit-elements-defaults' );
 
@@ -33,11 +31,21 @@ class Test_Routes extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_index() {
+	public function test_index__empty_kit_default_meta() {
 		// Arrange.
 		$this->act_as_editor();
 
-		( new Routes() )->register();
+		// Act.
+		$response = $this->send_request( 'GET', '/kit-elements-defaults' );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [], $response->get_data() );
+	}
+
+	public function test_index() {
+		// Arrange.
+		$this->act_as_editor();
 
 		// Mock elements defaults.
 		$this->kit->update_meta( Controller::META_KEY, json_encode( [
@@ -76,11 +84,9 @@ class Test_Routes extends Elementor_Test_Base {
 	/**
 	 * PUT '/kit-elements-defaults/{type}'
 	 */
-	public function test_store__only_allowed_users_can_create_defaults() {
+	public function test_update__only_allowed_users_can_create_defaults() {
 		// Arrange.
 		$this->act_as_editor();
-
-		( new Routes() )->register();
 
 		// Act.
 		$response = $this->send_request( 'PUT', '/kit-elements-defaults/section', [
@@ -94,11 +100,9 @@ class Test_Routes extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_store__missing_settings_returns_400() {
+	public function test_update__missing_settings_returns_400() {
 		// Arrange.
 		$this->act_as_admin();
-
-		( new Routes() )->register();
 
 		// Act.
 		$response = $this->send_request( 'PUT', '/kit-elements-defaults/section' );
@@ -109,11 +113,9 @@ class Test_Routes extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'settings' ], $response->get_data()['data']['params'] );
 	}
 
-	public function test_store__invalid_settings_returns_400() {
+	public function test_update__invalid_settings_returns_400() {
 		// Arrange.
 		$this->act_as_admin();
-
-		( new Routes() )->register();
 
 		// Act.
 		$response = $this->send_request( 'PUT', '/kit-elements-defaults/section', [
@@ -126,11 +128,9 @@ class Test_Routes extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'settings', $response->get_data()['data']['params'] );
 	}
 
-	public function test_store__widget_returns_201() {
+	public function test_update__widget_returns_201() {
 		// Arrange.
 		$this->act_as_admin();
-
-		( new Routes() )->register();
 
 		// Act.
 		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
@@ -149,11 +149,9 @@ class Test_Routes extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Controller::META_KEY ) );
 	}
 
-	public function test_store() {
+	public function test_update() {
 		// Arrange.
 		$this->act_as_admin();
-
-		( new Routes() )->register();
 
 		// Mock elements defaults.
 		$this->kit->update_meta( Controller::META_KEY, json_encode( [
@@ -201,8 +199,6 @@ class Test_Routes extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_editor();
 
-		( new Routes() )->register();
-
 		// Act.
 		$response = $this->send_request( 'DELETE', '/kit-elements-defaults/section' );
 
@@ -213,8 +209,6 @@ class Test_Routes extends Elementor_Test_Base {
 	public function test_destroy() {
 		// Arrange.
 		$this->act_as_admin();
-
-		( new Routes() )->register();
 
 		// Mock elements defaults.
 		$this->kit->update_meta( Controller::META_KEY, json_encode( [
@@ -257,8 +251,6 @@ class Test_Routes extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_admin();
 
-		( new Routes() )->register();
-
 		$_GET['force_delete_kit'] = 1;
 
 		$this->kit->force_delete();
@@ -276,8 +268,6 @@ class Test_Routes extends Elementor_Test_Base {
 	public function test_validation__invalid_element_type_returns_400( $method, $endpoint, $data ) {
 		// Arrange.
 		$this->act_as_editor();
-
-		( new Routes() )->register();
 
 		// Act.
 		$response = $this->send_request( $method, $endpoint . '/invalid_element_type', $data );
@@ -300,7 +290,7 @@ class Test_Routes extends Elementor_Test_Base {
 				[],
 			],
 
-			'store' => [
+			'update' => [
 				'PUT',
 				'/kit-elements-defaults/section',
 				[
@@ -321,7 +311,7 @@ class Test_Routes extends Elementor_Test_Base {
 
 	public function invalid_element_type_data_provider() {
 		return [
-			'store' => [
+			'update' => [
 				'PUT',
 				'/kit-elements-defaults',
 				[

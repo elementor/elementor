@@ -28,8 +28,6 @@ export default class Create extends $e.modules.CommandBase {
 			// TODO: Show success toast.
 		} catch ( e ) {
 			// TODO: Show error toast.
-			// eslint-disable-next-line no-console
-			console.error( e );
 		} finally {
 			$e.internal( 'panel/state-ready' );
 		}
