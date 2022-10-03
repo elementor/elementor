@@ -77,8 +77,6 @@ class Test_Image extends Elementor_Test_Base {
 			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['elementor_custom_x200'] );
 
-		// Cleanup
-		$this->delete_image( $attachment_id );
 	}
 
 	public function test_delete_custom_images() {
