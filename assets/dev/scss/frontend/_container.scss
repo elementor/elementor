@@ -1,4 +1,4 @@
-.e-con {
+.e-container {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--display: flex;
@@ -48,8 +48,8 @@
 	transition: var( --transition );
 	isolation: isolate;
 
-	&-full-width,
-	& > .e-con-inner {
+	&--width-full,
+	& > .e-container__inner {
 		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
 		padding-top: var( --padding-top );
@@ -57,12 +57,12 @@
 	}
 
 	&,
-	& > .e-con-inner {
+	& > .e-container__inner {
 		display: var( --display );
 	}
 
 	// Set default values to the outer div of the boxed container.
-	&-boxed {
+	&--width-boxed {
 		flex-direction: column;
 		text-align: initial;
 		flex-wrap: initial;
@@ -72,7 +72,7 @@
 		gap: initial;
 	}
 
-	& > .e-con-inner {
+	& > .e-container__inner {
 		flex-wrap: var( --flex-wrap );
 		justify-content: var( --justify-content );
 		align-items: var( --align-items );
@@ -82,7 +82,7 @@
 		max-width: var( --content-width );
 		margin: 0 auto;
 		padding-inline: 0;
-		height: 100%;
+		height: 100%;	
 
 		// Set default values to the inner div of the boxed container.
 		flex-basis: initial;
@@ -152,7 +152,7 @@
 	}
 
 	&,
-	& > .e-con-inner {
+	& > .e-container__inner {
 
 		& > .elementor-widget {
 
@@ -165,7 +165,7 @@
 
 	// Hack with repeated classnames to increase the specificity.
 	.elementor.elementor &,
-	&.e-con > .e-con-inner {
+	&.e-container > .e-container__inner {
 	
 		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
 		& > .elementor-widget {
@@ -175,7 +175,7 @@
 }
 
 @media ( max-width: $editor-screen-sm-max ) {
-	.e-con {
+	.e-container {
 		--width: 100%;
 		--flex-wrap: wrap;
 	}

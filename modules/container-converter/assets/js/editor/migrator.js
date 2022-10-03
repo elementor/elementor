@@ -17,14 +17,14 @@ export default class Migrator {
 				flex_align_items: settings.flex_align_items || 'stretch',
 				flex_gap: settings.flex_gap || { size: 10, unit: 'px' },
 				// Inner section overrides:
-				...( isInner ? { content_width: 'full-width' } : {} ),
+				...( isInner ? { content_width: 'full' } : {} ),
 			} ),
 		},
 		column: {
 			legacyControlsMapping: columnMaps,
 			normalizeSettings: ( settings ) => ( {
 				...settings,
-				content_width: 'full-width',
+				content_width: 'full',
 			} ),
 		},
 	};
