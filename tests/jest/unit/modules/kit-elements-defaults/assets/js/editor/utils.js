@@ -1,10 +1,27 @@
-export function mockFetch( baseURL ) {
-	const mocks = [];
+export class MockFetch {
+	constructor( baseURL ) {
+		this.baseURL = baseURL;
+		this.mocks = [];
 
-	const addMock = ( method, endpoint ) => {
+		window.fetch = this.#makeFetchInstance();
+	}
+
+	get( endpoint ) {
+		return this.#addMock( 'GET', endpoint );
+	}
+
+	put( endpoint ) {
+		return this.#addMock( 'PUT', endpoint );
+	}
+
+	delete( endpoint ) {
+		return this.#addMock( 'DELETE', endpoint );
+	}
+
+	#addMock( method, endpoint ) {
 		return {
-			reply: ( body, status = 200 ) => {
-				mocks.push( {
+			reply: ( status, body ) => {
+				this.mocks.push( {
 					method,
 					endpoint,
 					response: {
@@ -13,39 +30,35 @@ export function mockFetch( baseURL ) {
 					},
 				} );
 
-				return methods;
+				return this;
 			},
 		};
-	};
+	}
 
-	const methods = {
-		get: ( endpoint ) => addMock( 'GET', endpoint ),
-		post: ( endpoint ) => addMock( 'POST', endpoint ),
-		put: ( endpoint ) => addMock( 'PUT', endpoint ),
-		delete: ( endpoint ) => addMock( 'DELETE', endpoint ),
-	};
+	#makeFetchInstance() {
+		return jest.fn( ( reqURL, reqOptions ) => {
+			const match = this.mocks.find( ( res ) => {
+				const isSameMethod = res.method === reqOptions.method;
+				const isSameEndpoint = this.#trimURL( this.baseURL + res.endpoint ) === this.#trimURL( reqURL );
 
-	window.fetch = makeFetchInstance( baseURL, mocks );
+				return isSameMethod && isSameEndpoint;
+			} );
 
-	return methods;
-}
+			if ( ! match ) {
+				return Promise.reject( 'No matching response found' );
+			}
 
-function makeFetchInstance( baseURL, mocks ) {
-	return jest.fn( ( reqURL, reqOptions ) => {
-		const match = mocks.find( ( res ) => (
-			res.method === reqOptions.method && baseURL + res.endpoint === reqURL
-		) );
+			const { status, body } = match.response;
 
-		if ( ! match ) {
-			return Promise.reject( 'No matching response found' );
-		}
-
-		const { status, body } = match.response;
-
-		return Promise.resolve( {
-			ok: status >= 200 && status < 300,
-			status,
-			text: () => Promise.resolve( JSON.stringify( body ) ),
+			return Promise.resolve( {
+				ok: status >= 200 && status < 300,
+				status,
+				text: () => Promise.resolve( JSON.stringify( body ) ),
+			} );
 		} );
-	} );
+	}
+
+	#trimURL( url ) {
+		return url.replace( /\/$/i, '' );
+	}
 }

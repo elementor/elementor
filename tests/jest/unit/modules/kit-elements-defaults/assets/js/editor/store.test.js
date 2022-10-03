@@ -1,23 +1,29 @@
 import store from 'elementor/modules/kit-elements-defaults/assets/js/editor/store';
-import { mockFetch } from './utils';
+import { MockFetch } from './utils';
 
 const wpApiSettings = {
 	root: 'http://example.com/wp-json/',
 	nonce: '123456',
 };
 
-const BASE_URL = wpApiSettings.root + 'elementor/v1/kit-elements-defaults';
-
 describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
+	let fock;
+
 	beforeEach( () => {
 		window.wpApiSettings = wpApiSettings;
+
+		fock = new MockFetch( wpApiSettings.root + 'elementor/v1' );
+	} );
+
+	it( 'Should return empty object for non-existing type', () => {
+		// Act & Assert.
+		expect( store.get( 'non-existing-element' ) ).toStrictEqual( {} );
 	} );
 
 	it( 'Should load items to cache', async () => {
 		// Arrange.
-		mockFetch( BASE_URL )
-			.get( '/' )
-			.reply( {
+		fock.get( '/kit-elements-defaults' )
+			.reply( 200, {
 				section: {
 					color: 'red',
 					background_color: '#F00',
@@ -52,11 +58,11 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		mockFetch( BASE_URL )
-			.put( '/section' )
-			.reply( '', 201 )
-			.get( '/' )
-			.reply( {
+		fock.put( '/kit-elements-defaults/section' )
+			.reply( 201, null );
+
+		fock.get( '/kit-elements-defaults' )
+			.reply( 200, {
 				section: {
 					new_control: 'new_value',
 				},
@@ -83,11 +89,11 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		mockFetch( BASE_URL )
-			.delete( '/section' )
-			.reply( '', 204 )
-			.get( '/' )
-			.reply( {} );
+		fock.delete( '/kit-elements-defaults/section' )
+			.reply( 204, '' );
+
+		fock.get( '/kit-elements-defaults' )
+			.reply( 200, {} );
 
 		// Act.
 		await store.delete( 'section' );
@@ -124,9 +130,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 
 	it( 'Should throw for invalid response', async () => {
 		// Arrange.
-		mockFetch( BASE_URL )
-			.get( '/' )
-			.reply( '', 500 );
+		fock.get( '/kit-elements-defaults' ).reply( 500, null );
 
 		// Act & Assert.
 		await expect( store.load() ).rejects.toStrictEqual( {
