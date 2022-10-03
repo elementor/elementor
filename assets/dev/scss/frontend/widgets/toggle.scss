@@ -79,8 +79,8 @@
 	}
 }
 
-.e-con,
-.e-con-inner {
+.e-container,
+.e-container__inner {
 
 	> .elementor-widget-toggle {
 		// Fix - Toggle widget disappears because the 'flex column' setting causes an undefined width inside the flex container (ED-7524).
