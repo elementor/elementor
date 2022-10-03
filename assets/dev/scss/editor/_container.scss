@@ -28,7 +28,7 @@
 	&.e-container--row {
 
 		&,
-		& > .e-container__inner {
+		& > .e-con-inner {
 
 			> .elementor-widget-placeholder {
 				position: relative;
@@ -47,7 +47,7 @@
 		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
 
 			&,
-			& > .e-container__inner {
+			& > .e-con-inner {
 
 				// Any placeholder which is not on first widget.
 				> .elementor-widget-placeholder {
@@ -67,7 +67,7 @@
 	&.e-container--column {
 
 		&,
-		& > .e-container__inner {
+		& > .e-con-inner {
 
 			> .elementor-widget-placeholder {
 				height: var( --size );
@@ -87,7 +87,7 @@
 			}
 		}
 
-		& > .e-container__inner {
+		& > .e-con-inner {
 
 			> .elementor-widget-placeholder {
 
@@ -108,7 +108,7 @@
 	// Inner Container handle.
 	// TODO: Find a better solution.
 	& > &,
-	&__inner > &,
+	&-inner > &,
 	.elementor-widget & {
 
 		> .elementor-element-overlay {
