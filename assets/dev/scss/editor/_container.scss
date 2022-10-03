@@ -1,4 +1,4 @@
-.e-container {
+.e-con {
 
 	.elementor-empty-view {
 		position: relative;
@@ -25,7 +25,7 @@
 		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
-	&.e-container--row {
+	&.e-con--row {
 
 		&,
 		& > .e-con-inner {
@@ -54,7 +54,7 @@
 					margin-inline-end: 0;
 					margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
 				}
-	
+
 				// Placeholder on first widget.
 				> :not( .elementor-element ) + .elementor-widget-placeholder {
 					margin-inline-end: var( --margin-end );
@@ -64,7 +64,7 @@
 		}
 	}
 
-	&.e-container--column {
+	&.e-con--column {
 
 		&,
 		& > .e-con-inner {
