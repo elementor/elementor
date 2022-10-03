@@ -44,7 +44,7 @@ export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase
 		} );
 
 		const globalSettingsToDisable = localSettings
-			.filter( ( [ controlName, value ] ) => value && container?.globals?.get?.( controlName ) )
+			.filter( ( [ controlName, value ] ) => value && container.isGlobalApplied( controlName ) )
 			.map( ( [ controlName, value ] ) => [ controlName, '' ] );
 
 		$e.run( 'document/globals/disable', {
@@ -56,9 +56,7 @@ export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase
 	#updateGlobalSettings( { container, options, settings } ) {
 		const globalSettings = Object.entries( settings.__globals__ || {} )
 			.reduce( ( carry, [ controlName, globalValue ] ) => {
-				const isGlobalActive = container?.globals?.get?.( controlName );
-
-				if ( isGlobalActive ) {
+				if ( container.isGlobalApplied( controlName ) ) {
 					carry.settings[ controlName ] = globalValue;
 				} else {
 					carry.enable[ controlName ] = globalValue;

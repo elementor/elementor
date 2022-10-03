@@ -614,6 +614,10 @@ export default class Container extends ArgsObject {
 			if ( 'color' === controlType ) {
 				controlType = 'colors';
 			}
+
+			if ( 'popover_toggle' === controlType ) {
+				controlType = this.controls[ controlName ].groupType;
+			}
 			// End temp fix
 
 			// If the control is a color/typography control and default colors/typography are disabled, don't return the global value.
