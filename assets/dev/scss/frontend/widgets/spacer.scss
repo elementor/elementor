@@ -5,12 +5,12 @@
 	}
 }
 
-.e-container {
+.e-con {
 	--container-widget-width: 100%;
 }
 
-.e-container,
-.e-container__inner {
+.e-con,
+.e-con-inner {
 
 	& > .elementor-widget-spacer {
 		width: var( --container-widget-width, var( --spacer-size ) );
