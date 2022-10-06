@@ -282,6 +282,10 @@ test.describe( 'Container tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Act.
+		await editor.addWidget( 'divider', container );
+		// Set widget custom width to 80%.
+		await editor.setWidgetCustomWidth( '80' );
+
 		await editor.addWidget( 'google_maps', container );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
