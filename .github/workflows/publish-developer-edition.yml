@@ -54,6 +54,7 @@ jobs:
           export BASE_TAG_NAME="v${LAST_DEV_TAG_NAME}"
           node ./.github/scripts/compare-tag-to-branch.js
           if [ $? -eq 0 ]; then
+            echo $?
             echo "::set-output name=cancel_workflow::1"
             echo "CANCEL_WORKFLOW=1" >> $GITHUB_ENV
           fi
