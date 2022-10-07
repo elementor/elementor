@@ -6,6 +6,8 @@
 	border-left: 5px solid transparent;
 	position: relative;
 	text-align: $start;
+	transition: all var(--alert-hover-transition, 0.3s);
+
 
 	.elementor-alert-title {
 		display: block;
