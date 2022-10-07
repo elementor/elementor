@@ -780,6 +780,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.0.0
 	 * @access protected
+	 * @deprecated 3.1.0
 	 */
 	protected function _print_content() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::print_content()' );

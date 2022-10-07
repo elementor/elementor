@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 3.7.7
+Stable tag: 3.7.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.7.8 - 2022-10-02 =
+* Fix: Using responsive control values in selectors and selector values causes a fatal error ([#19894](https://github.com/elementor/elementor/issues/19894))
+* Fix: Error message appears after connecting account and refreshing in a promotion screen
+* Fix: UI glitch when searching for non-existing terms in Template Library
 
 = 3.7.7 - 2022-09-20 =
 * Tweak: Removed the option to create a custom logo in Site Settings ([#19823](https://github.com/elementor/elementor/issues/19823))
