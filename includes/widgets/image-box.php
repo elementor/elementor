@@ -224,7 +224,6 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'default' => [
 					'size' => 15,
 				],
@@ -285,7 +284,7 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%' ],
 				'separator' => 'after',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{SIZE}}{{UNIT}};',
@@ -338,7 +337,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'image_box_shadow',
+				'name' => 'image_shadow',
 				'selector' => '{{WRAPPER}} .elementor-image-box-img img',
 			]
 		);
@@ -358,7 +357,7 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}}' => '--image-box-hover-transition: {{SIZE}}s',
 				],
 			]
 		);
@@ -400,8 +399,8 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'image_box_shadow',
-				'selector' => '{{WRAPPER}}:hover .elementor-image-box-img img',
+				'name' => 'image_shadow_hover',
+				'selector' => '{{WRAPPER}} .elementor-image-box-img:hover img',
 			]
 		);
 
@@ -516,14 +515,6 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Text_Stroke::get_type(),
-			[
-				'name' => 'title_stroke',
-				'selector' => '{{WRAPPER}} .elementor-image-box-title',
-			]
-		);
-
-		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_shadow',
@@ -597,6 +588,13 @@ class Widget_Image_Box extends Widget_Base {
 		}
 
 		if ( ! empty( $settings['image']['url'] ) ) {
+			$this->add_render_attribute( 'image', 'src', $settings['image']['url'] );
+			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $settings['image'] ) );
+			$this->add_render_attribute( 'image', 'title', Control_Media::get_image_title( $settings['image'] ) );
+
+			if ( $settings['hover_animation'] ) {
+				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $settings['hover_animation'] );
+			}
 
 			$image_html = wp_kses_post( Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' ) );
 
