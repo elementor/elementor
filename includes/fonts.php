@@ -523,6 +523,7 @@ class Fonts {
 			'Fraunces' => self::GOOGLE,
 			'Freckle Face' => self::GOOGLE,
 			'Fredericka the Great' => self::GOOGLE,
+			'Fredoka' => self::GOOGLE,
 			'Fredoka One' => self::GOOGLE,
 			'Freehand' => self::GOOGLE,
 			'Fresca' => self::GOOGLE,
