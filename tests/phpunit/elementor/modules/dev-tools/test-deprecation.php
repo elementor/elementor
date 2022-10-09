@@ -226,7 +226,11 @@ class Test_Deprecation extends Elementor_Test_Base {
 			echo 'Testing Do Deprecated Action';
 		} );
 
+		ob_start();
+
 		$this->deprecation->do_deprecated_action( 'elementor/test/deprecated_action_soft', [], '0.0.0', '', '0.4.0' );
+
+		ob_get_clean();
 
 		$settings = $this->deprecation->get_settings();
 

@@ -440,7 +440,7 @@ abstract class Base extends Base_File {
 			if ( ! empty( $control['responsive'] ) && ! empty( $controls_stack[ $parser_control_name ]['responsive'] ) ) {
 				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
 
-				$control = $controls_stack[ $parser_control_name . $device_suffix ];
+				$control = $controls_stack[ $parser_control_name . $device_suffix ] ?? $controls_stack[ $parser_control_name ];
 			} else {
 				$control = $controls_stack[ $parser_control_name ];
 			}
