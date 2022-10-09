@@ -1196,6 +1196,15 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ '_background_image', 'url' ],
+							'bg-selector' => '.elementor-widget-container',
+						],
+					],
+				],
 			]
 		);
 
