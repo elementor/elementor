@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eox pipefail
 
-# wp theme activate hello-elementor
+wp theme activate hello-elementor
 
 wp --user=admin elementor library import-dir /var/www/html/elementor-templates
 
