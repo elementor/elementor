@@ -211,7 +211,13 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {
 		if ( parserControlName ) {
-			control = _.findWhere( controls, { name: parserControlName } );
+			if ( control.responsive && controls[ parserControlName ] ) {
+				const deviceSuffix = elementor.conditions.getResponsiveControlDeviceSuffix( control.responsive );
+
+				control = _.findWhere( controls, { name: parserControlName + deviceSuffix } );
+			} else {
+				control = _.findWhere( controls, { name: parserControlName } );
+			}
 
 			value = this.getStyleControlValue( control, values );
 		}
@@ -224,7 +230,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			isGlobalApplied = container?.isGlobalApplied( control.name ),
 			globalKey = values.__globals__?.[ control.name ] || control.global?.default;
 
-		// Set a global value only if it's is applied.
+		// Set a global value only if it is applied.
 		if ( isGlobalApplied && globalKey ) {
 			// When the control itself has no global value, but it refers to another control global value
 			return this.getSelectorGlobalValue( control, globalKey );
@@ -255,7 +261,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		let value;
 
-		// it's a global settings with additional controls in group.
+		// It's a global settings with additional controls in group.
 		if ( control.groupType ) {
 			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
 			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();

@@ -219,6 +219,10 @@ class Manager {
 	public function get_library_data( array $args ) {
 		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
 
+		if ( empty( $library_data ) ) {
+			return $library_data;
+		}
+
 		// Ensure all document are registered.
 		Plugin::$instance->documents->get_document_types();
 
@@ -676,7 +680,7 @@ class Manager {
 	 * @return \WP_Error|true True on success, 'WP_Error' otherwise.
 	 */
 	private function ensure_args( array $required_args, array $specified_args ) {
-		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
+		$not_specified_args = array_diff( $required_args, array_keys( $specified_args ) );
 
 		if ( $not_specified_args ) {
 			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) "%s" not specified.', implode( ', ', $not_specified_args ) ) );

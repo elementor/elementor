@@ -27,6 +27,7 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/sync-developer-edition-branch.sh"
       - name: Sync feature branches into developer-edition branch
+        if: ${{ false }} # Disabled for now
         env:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}

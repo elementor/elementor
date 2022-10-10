@@ -1,4 +1,3 @@
-// playwright.config.js
 // @ts-check
 const base = require( './sanity.config.js' );
 

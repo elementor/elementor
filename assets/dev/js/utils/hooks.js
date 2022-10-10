@@ -170,7 +170,7 @@ var EventManager = function() {
 	 * Performs an action if it exists. You can pass as many arguments as you want to this function; the only rule is
 	 * that the first argument must always be the action.
 	 */
-	function doAction( /* action, arg1, arg2, ... */ ) {
+	function doAction( /* Action, arg1, arg2, ... */ ) {
 		var args = slice.call( arguments );
 		var action = args.shift();
 
@@ -216,7 +216,7 @@ var EventManager = function() {
 	 * Performs a filter if it exists. You should only ever pass 1 argument to be filtered. The only rule is that
 	 * the first argument must always be the filter.
 	 */
-	function applyFilters( /* filter, filtered arg, arg2, ... */ ) {
+	function applyFilters( /* Filter, filtered arg, arg2, ... */ ) {
 		var args = slice.call( arguments );
 		var filter = args.shift();
 
@@ -253,7 +253,7 @@ var EventManager = function() {
 		addAction,
 	};
 
-	// return all of the publicly available methods
+	// Return all of the publicly available methods
 	return MethodsAvailable;
 };
 

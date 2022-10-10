@@ -149,6 +149,19 @@ const ContainerView = BaseElementView.extend( {
 
 				// User is sorting inside a Container.
 				if ( draggedView ) {
+					// Prevent the user from dragging a parent container into its own child container
+					const draggedId = draggedView.getContainer().id;
+
+					let currentTargetParentContainer = this.container;
+
+					while ( currentTargetParentContainer ) {
+						if ( currentTargetParentContainer.id === draggedId ) {
+							return;
+						}
+
+						currentTargetParentContainer = currentTargetParentContainer.parent;
+					}
+
 					// Reset the dragged element cache.
 					elementor.channels.editor.reply( 'element:dragged', null );
 
@@ -181,6 +194,26 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
+	 * Insert a new container inside an existing container.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return {void}
+	 */
+	addNewContainer() {
+		/* Check if the current container has a parent container */
+		const containerAncestry = this.getContainer().getParentAncestry(),
+			targetContainer = ( 'container' !== containerAncestry[ 1 ].type ) ? this.getContainer() : this.getContainer().parent;
+
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'container',
+			},
+			container: targetContainer,
+		} );
+	},
+
+	/**
 	 * Add a `Save as Template` button to the context menu.
 	 *
 	 * @return {Object} groups
@@ -188,15 +221,28 @@ const ContainerView = BaseElementView.extend( {
 	 */
 	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) ),
+			transferGroupGeneralIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
 
-		groups.splice( transferGroupIndex + 1, 0, {
+		groups.splice( transferGroupClipboardIndex + 1, 0, {
 			name: 'save',
 			actions: [
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
 					callback: this.saveAsTemplate.bind( this ),
+				},
+			],
+		} );
+
+		groups.splice( transferGroupGeneralIndex + 1, 0, {
+			name: 'newContainerGroup',
+			actions: [
+				{
+					name: 'newContainer',
+					icon: 'eicon-plus',
+					title: __( 'Add New Container', 'elementor' ),
+					callback: this.addNewContainer.bind( this ),
 				},
 			],
 		} );
@@ -235,27 +281,27 @@ const ContainerView = BaseElementView.extend( {
 			editTools = {};
 
 		editTools.add = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 			icon: 'plus',
 		};
 
 		editTools.edit = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'handle',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element Name. */
+				/* Translators: %s: Element Name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 		}
 
 		editTools.remove = {
-			/* translators: %s: Element Name. */
+			/* Translators: %s: Element Name. */
 			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
 			icon: 'close',
 		};
@@ -313,7 +359,7 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		// Re-initialize the droppable in order to make sure the axis works properly.
-		if ( !! settings.changed.flex_direction ) {
+		if ( settings.changed.flex_direction ) {
 			this.$el.html5Droppable( 'destroy' );
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		}

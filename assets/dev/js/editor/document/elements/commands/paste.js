@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Paste extends CommandHistory {
+export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -51,7 +49,12 @@ export class Paste extends CommandHistory {
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
-					case 'container':
+					case 'container': {
+						// Push the cloned container to the 'document'.
+						result.push( this.pasteTo( [ targetContainer ], [ model ] ) );
+					}
+						break;
+
 					case 'section': {
 						// If is inner create section for `inner-section`.
 						if ( model.isInner ) {
@@ -91,7 +94,7 @@ export class Paste extends CommandHistory {
 							model: {
 								elType: 'section',
 							},
-							columns: 0, // section with no columns.
+							columns: 0, // Section with no columns.
 							options: {
 								at: ++index,
 								edit: false,
@@ -102,15 +105,27 @@ export class Paste extends CommandHistory {
 					}
 						break;
 
-					default:
-						// In case it widget:
+					default: {
+						// The 'default' case is widget.
 						let target;
 
-						// If you trying to paste widget on section, then paste should be at the first column.
 						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+							// On trying to paste widget on section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
+						} else if ( 'container' === targetContainer.model.get( 'elType' ) ) {
+							target = [ targetContainer ];
+						} else if ( elementorCommon.config.experimentalFeatures.container ) {
+							// If the container experiment is active, create a new wrapper container.
+							target = $e.run( 'document/elements/create', {
+								container: targetContainer,
+								model: {
+									elType: 'container',
+								},
+							} );
+
+							target = [ target ];
 						} else {
-							// Else, create section with one column for element.
+							// Else, create section with one column for the element.
 							const section = $e.run( 'document/elements/create', {
 								container: targetContainer,
 								model: {
@@ -122,11 +137,12 @@ export class Paste extends CommandHistory {
 								},
 							} );
 
-							// Create the element in the column that just was created.
+							// Create the element inside the column that just was created.
 							target = [ section.view.children.first().getContainer() ];
 						}
 
 						result.push( this.pasteTo( target, [ model ] ) );
+					}
 				}
 			} );
 		} );

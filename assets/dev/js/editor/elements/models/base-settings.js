@@ -1,5 +1,8 @@
 var BaseSettingsModel;
 
+/**
+ * @name BaseSettingsModel
+ */
 BaseSettingsModel = Backbone.Model.extend( {
 	options: {},
 
@@ -408,4 +411,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 } );
 
+/**
+ * @name BaseSettingsModel
+ */
 module.exports = BaseSettingsModel;

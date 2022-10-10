@@ -16,7 +16,7 @@ module.exports = ControlSelect2View.extend( {
 		this.ui.select.select2( this.getSelect2Options() );
 		this.ui.select.on( 'select2:open', function() {
 			self.$previewContainer = jQuery( '.select2-results__options[role="tree"]:visible' );
-			// load initial?
+			// Load initial?
 			setTimeout( function() {
 				self.enqueueFontsInView();
 			}, 100 );
