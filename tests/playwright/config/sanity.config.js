@@ -11,7 +11,7 @@ const config = {
 	use: {
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
-		baseURL: process.env.BASE_URL || 'http://localhost:8888',
+		baseURL: process.env.BASE_URL || 'http://localhost:8889',
 		viewport: { width: 1920, height: 1080 },
 		video: 'on',
 		trace: 'on-first-retry',
