@@ -228,7 +228,7 @@ abstract class Base extends Base_File {
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
-		 * @since 3.6.8
+		 * @since 3.8.0
 		 *
 		 * @param Base $this The current CSS file.
 		 */
