@@ -46,7 +46,6 @@
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: var( --transition );
-	isolation: isolate;
 
 	&--width-full,
 	& > .e-container__inner {
@@ -116,7 +115,7 @@
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;
-		z-index: $under-layer;
+		z-index: $ground-layer;
 		width: 100%;
 		height: 100%;
 		left: 0;
@@ -129,7 +128,7 @@
 
 	.elementor-background-video-container,
 	.elementor-background-slideshow {
-		z-index: calc( $under-layer - 1 );
+		z-index: $under-layer;
 	}
 
 	.elementor-widget {
