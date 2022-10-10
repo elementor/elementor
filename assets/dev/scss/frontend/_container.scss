@@ -109,13 +109,16 @@
 	}
 
 	// Background overlay.
-	&::before {
+	&::before,
+	> .elementor-background-video-container::before,
+	> .e-container__inner > .elementor-background-video-container::before,
+	> .elementor-background-slideshow:before,
+	> .e-container__inner > .elementor-background-slideshow:before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;
-		z-index: $ground-layer;
 		width: 100%;
 		height: 100%;
 		left: 0;
@@ -126,9 +129,14 @@
 		border-radius: var( --border-radius );
 	}
 
-	.elementor-background-video-container,
-	.elementor-background-slideshow {
-		z-index: $under-layer;
+	> .elementor-background-video-container:before,
+	> .e-container__inner > .elementor-background-video-container:before {
+		z-index: $first-layer;
+	}
+
+	> .elementor-background-slideshow:before,
+	> .e-container__inner > .elementor-background-slideshow:before {
+		z-index: $second-layer;
 	}
 
 	.elementor-widget {
