@@ -118,24 +118,35 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
+	convertFieldsToControlsObj( fields ) {
+		const controls = {};
+
+		Object.values( fields ).forEach( ( field ) => controls[ field.name ] = field );
+
+		return controls;
+	},
+
 	getStyleControls( controls, attributes ) {
-		var self = this;
+		const self = this;
 
 		controls = elementorCommon.helpers.cloneObject( self.getActiveControls( controls, attributes ) );
 
-		var styleControls = [];
+		const styleControls = [];
 
 		jQuery.each( controls, function() {
-			var control = this,
-				controlDefaultSettings = elementor.config.controls[ control.type ];
+			let control = this;
+
+			const controlDefaultSettings = elementor.config.controls[ control.type ];
 
 			control = jQuery.extend( {}, controlDefaultSettings, control );
 
 			if ( control.fields ) {
-				var styleFields = [];
+				const styleFields = [];
+
+				const fieldsControlsObj = self.convertFieldsToControlsObj( control.fields );
 
 				self.attributes[ control.name ].each( function( item ) {
-					styleFields.push( self.getStyleControls( control.fields, item.attributes ) );
+					styleFields.push( self.getStyleControls( fieldsControlsObj, item.attributes ) );
 				} );
 
 				control.styleFields = styleFields;
