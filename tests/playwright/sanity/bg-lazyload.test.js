@@ -26,19 +26,13 @@ test( 'Background lazy load sanity test', async ( { page } ) => {
 		lazyloadElement.scrollIntoView();
 	}, lazyloadSelector );
 
-	await page.waitForTimeout( 1000 );
+	await page.waitForTimeout( 1500 );
 
 	const cssVariable = await page.$eval( lazyloadSelector, ( el ) => {
 		return window.getComputedStyle( el ).getPropertyValue( '--e-bg-lazyload' );
 	} );
 	expect( cssVariable ).not.toBe( '' );
-
-	// Const afterURL = await page.$eval( lazyloadSelector, ( el ) => {
-	// 	const property = window.getComputedStyle( el ).getPropertyValue( 'background-image' );
-	// 	return property.match( /url\((.*?)\)/ )[ 1 ].replace( /"/g, '' );
-	// } );
-
-	// expect( afterURL ).not.toBe( beforeURL );
+	expect( cssVariable ).not.toContain( '150x150.png' );
 } );
 
 test( 'Turn off bg lazyload', async ( { page }, testInfo ) => {
