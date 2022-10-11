@@ -74,7 +74,7 @@ jobs:
           sudo chown 33:33 -R ~/wp-env/
           npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
           npx wp-env run cli "wp --user=admin elementor library import-dir elementor-config/templates"
-          npx wp-env run cli "WP_CLI_CONFIG_PATH=elementor-config/wp-cli.yml wp rewrite structure \"/%postname%/\" --hard"
+          npx wp-env run cli "wp rewrite structure \"/%postname%/\" --hard"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
