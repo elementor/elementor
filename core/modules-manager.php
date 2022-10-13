@@ -97,6 +97,8 @@ class Modules_Manager {
 			'container-converter',
 			'web-cli',
 			'promotions',
+			'notes',
+			'performance-lab',
 		];
 	}
 
