@@ -317,7 +317,7 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( carouselOneId );
 		await editor.setBackgroundColor( '#CCCCCC' );
 		// Move test elements out of focus.
-		await editor.removeFocus();
+		await editor.removeFocus( 'container' );
 
 		// Assert.
 		expect( await containerElement.screenshot( {

@@ -239,9 +239,7 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async removeFocus() {
-		const elementType = elementorFrontend.config.experimentalFeatures.container ? 'container' : 'section';
-
+	async removeFocus( elementType = 'section' ) {
 		await this.addElement( { elType: elementType }, 'document' );
 		await this.addElement( { elType: elementType }, 'document' );
 	}
