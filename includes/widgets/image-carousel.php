@@ -534,7 +534,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'arrows_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
@@ -598,7 +598,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'dots_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
