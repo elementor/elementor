@@ -235,12 +235,14 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Remove the focus from the test elements by creating two new containers.
+	 * Remove the focus from the test elements by creating two new elements.
 	 *
 	 * @return {Promise<void>}
 	 */
 	async removeFocus() {
-		await this.addElement( { elType: 'container' }, 'document' );
-		await this.addElement( { elType: 'container' }, 'document' );
+		const elementType = elementorCommon.config.experimentalFeatures.container ? 'container' : 'section';
+
+		await this.addElement( { elType: elementType }, 'document' );
+		await this.addElement( { elType: elementType }, 'document' );
 	}
 };
