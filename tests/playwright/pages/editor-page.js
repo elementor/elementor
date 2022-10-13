@@ -209,4 +209,28 @@ module.exports = class EditorPage extends BasePage {
 		// Disable AutoPlay
 		await this.page.selectOption( 'select', 'no' );
 	}
+
+	/**
+	 * Set a background color to an element.
+	 * 
+	 * @param {string} color - The background color code;
+	 * @param {string} elementType - The element types are `widget` and `container`;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setBackgroundColor( color = '#A81830', elementType = 'widget' ) {
+		const panelTab = 'container' === elementType ? 'style' : 'advanced',
+			backgroundSelector = 'container' === elementType ? '.elementor-control-background_background ' : '.elementor-control-_background_background ',
+			backgroundColorSelector = 'container' === elementType ? '.elementor-control-background_color ' : '.elementor-control-_background_color ';
+
+		await this.activatePanelTab( panelTab );
+
+		if ( 'widget' === elementType ) {
+			await this.page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
+		}
+		
+		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
+		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+	}
 };

@@ -306,6 +306,18 @@ test.describe( 'Container tests', () => {
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.setWidgetToFlexGrow();
 
+		await editor.addWidget( 'image-carousel', container );
+		await editor.populateImageCarousel();
+		// Set widget custom width to 40%.
+		await editor.setWidgetCustomWidth( '40' );
+		await editor.setBackgroundColor( '#CCCCCC' );
+
+		await editor.addWidget( 'image-carousel', container );
+		await editor.populateImageCarousel();
+		// Set widget custom width to 40%.
+		await editor.setWidgetCustomWidth( '40' );
+		await editor.setWidgetToFlexGrow();
+
 		// Assert.
 		expect( await containerElement.screenshot( {
 			type: 'jpeg',
