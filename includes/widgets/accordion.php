@@ -244,10 +244,15 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 10,
+						'max' => 20,
+					],
+					'em' => [
+						'max' => 2,
+						'step' => 0.1,
 					],
 				],
 				'selectors' => [
