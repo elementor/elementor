@@ -235,11 +235,12 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Remove the focus from the test elements by creating a new container.
+	 * Remove the focus from the test elements by creating two new containers.
 	 *
 	 * @return {Promise<void>}
 	 */
 	async removeFocus() {
+		await this.addElement( { elType: 'container' }, 'document' );
 		await this.addElement( { elType: 'container' }, 'document' );
 	}
 };
