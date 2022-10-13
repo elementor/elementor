@@ -212,7 +212,7 @@ module.exports = class EditorPage extends BasePage {
 
 	/**
 	 * Set a background color to an element.
-	 * 
+	 *
 	 * @param {string} color - The background color code;
 	 * @param {string} elementType - The element types are `widget` and `container`;
 	 *
@@ -228,7 +228,7 @@ module.exports = class EditorPage extends BasePage {
 		if ( 'widget' === elementType ) {
 			await this.page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		}
-		
+
 		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
 		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
