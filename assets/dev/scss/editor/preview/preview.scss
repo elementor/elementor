@@ -449,9 +449,6 @@ html.elementor-html {
 
 	> .elementor-element-overlay > .elementor-editor-element-settings {
 		transform: translateX(-50%);
-	  	@if 'rtl' == $direction {
-		  transform: translateX(50%);
-	  	}
 		border-radius: 0 0 5px 5px;
 
 		.elementor-editor-element-setting {

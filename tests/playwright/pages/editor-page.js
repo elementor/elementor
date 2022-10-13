@@ -130,15 +130,4 @@ module.exports = class EditorPage extends BasePage {
 		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 		await elementEditButton.click();
 	}
-
-	async addContainer( containerType ) {
-		await this.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
-		await this.getPreviewFrame().locator( '[data-preset="' + containerType + '"]' ).click();
-	}
-
-	async changeEditorLayout( layout ) {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
-		await this.page.selectOption( '[data-setting=template]', layout );
-	}
 };
-

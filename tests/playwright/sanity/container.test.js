@@ -261,32 +261,4 @@ test.describe( 'Container tests', () => {
 			container: false,
 		} );
 	} );
-
-	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-		try {
-			await wpAdmin.setLanguage( 'he_IL' );
-			expect( await getHandleTransformValue( wpAdmin ) ).toBe( 'matrix(1, 0, 0, 1, 37.5, -24)' );
-		} finally {
-			await wpAdmin.setLanguage( '' );
-		}
-
-		expect( await getHandleTransformValue( wpAdmin ) ).toBe( 'matrix(1, 0, 0, 1, -37.5, -24)' );
-	} );
 } );
-
-async function getHandleTransformValue( wpAdmin ) {
-	const editorPage = await wpAdmin.openNewPage();
-	await editorPage.page.waitForLoadState( 'networkidle' );
-	await editorPage.changeEditorLayout( 'elementor_canvas' );
-	await editorPage.page.waitForLoadState( 'networkidle' );
-	await editorPage.addContainer( 'r100' );
-
-	const containerHandleRtl = await editorPage.getPreviewFrame().waitForSelector( '.elementor-editor-container-settings' );
-	return await containerHandleRtl.evaluate( ( el ) => {
-		return window.getComputedStyle( el ).getPropertyValue( 'transform' );
-	} );
-}
