@@ -343,6 +343,8 @@ abstract class Base extends Base_File {
 
 						$parsed_value = '';
 
+						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
+
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}
@@ -440,7 +442,7 @@ abstract class Base extends Base_File {
 			if ( ! empty( $control['responsive'] ) && ! empty( $controls_stack[ $parser_control_name ]['responsive'] ) ) {
 				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
 
-				$control = $controls_stack[ $parser_control_name . $device_suffix ];
+				$control = $controls_stack[ $parser_control_name . $device_suffix ] ?? $controls_stack[ $parser_control_name ];
 			} else {
 				$control = $controls_stack[ $parser_control_name ];
 			}
