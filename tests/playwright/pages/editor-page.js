@@ -233,4 +233,13 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
 	}
+
+	/**
+	 * Remove the focus from the test elements by creating a new container.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async removeFocus() {
+		await this.addElement( { elType: 'container' }, 'document' );
+	}
 };

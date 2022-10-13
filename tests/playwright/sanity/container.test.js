@@ -300,23 +300,24 @@ test.describe( 'Container tests', () => {
 		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 
-		await editor.addWidget( 'image-carousel', container );
+		// Add image carousel widget.
+		const carouselOneId = await editor.addWidget( 'image-carousel', container );
 		await editor.populateImageCarousel();
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
+		// Duplicate carousel widget.
+		await editor.selectElement( carouselOneId );
+		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId + ' .elementor-editor-element-edit' ).click( { button: 'right' } );
+		await expect( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
+		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
+		// Add flex grow effect.
+		await editor.activatePanelTab( 'advanced' );
 		await editor.setWidgetToFlexGrow();
-
-		await editor.addWidget( 'image-carousel', container );
-		await editor.populateImageCarousel();
-		// Set widget custom width to 40%.
-		await editor.setWidgetCustomWidth( '40' );
+		// Add background color.
+		await editor.selectElement( carouselOneId );
 		await editor.setBackgroundColor( '#CCCCCC' );
-
-		await editor.addWidget( 'image-carousel', container );
-		await editor.populateImageCarousel();
-		// Set widget custom width to 40%.
-		await editor.setWidgetCustomWidth( '40' );
-		await editor.setWidgetToFlexGrow();
+		// Move test elements out of focus.
+		await editor.removeFocus();
 
 		// Assert.
 		expect( await containerElement.screenshot( {
