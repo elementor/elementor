@@ -453,15 +453,21 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'size' => 0.3,
 					'unit' => 's',
+					'size' => 0.3,
 				],
 				'range' => [
 					's' => [
 						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
+					],
+					'ms' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
 					],
 				],
 				'selectors' => [
@@ -627,15 +633,21 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'size' => 0.3,
 					'unit' => 's',
+					'size' => 0.3,
 				],
 				'range' => [
 					's' => [
 						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
+					],
+					'ms' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
 					],
 				],
 				'selectors' => [

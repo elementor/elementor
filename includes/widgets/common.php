@@ -1062,16 +1062,26 @@ class Widget_Common extends Widget_Base {
 				$this->add_control(
 					'_transform_transition_hover',
 					[
-						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
+						'label' => esc_html__( 'Transition Duration', 'elementor' ),
 						'type' => Controls_Manager::SLIDER,
+						'size_units' => [ 's', 'ms' ],
+						'default' => [
+							'unit' => 'ms',
+						],
 						'range' => [
-							'px' => [
-								'min' => 100,
+							's' => [
+								'min' => 0,
+								'max' => 10,
+								'step' => 0.1,
+							],
+							'ms' => [
+								'min' => 0,
 								'max' => 10000,
+								'step' => 100,
 							],
 						],
 						'selectors' => [
-							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
+							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}{{UNIT}}',
 						],
 					]
 				);
@@ -1221,16 +1231,26 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
+				],
 				'range' => [
-					'px' => [
+					's' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
+					],
+					'ms' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
 					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container' => 'transition: background {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-widget-container' => 'transition: background {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -1336,14 +1356,24 @@ class Widget_Common extends Widget_Base {
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
+				],
 				'range' => [
-					'px' => [
+					's' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
+					'ms' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
+					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}{{_background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
