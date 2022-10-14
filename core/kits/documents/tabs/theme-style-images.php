@@ -200,16 +200,26 @@ class Theme_Style_Images extends Tab_Base {
 		$this->add_control(
 			'image_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's'
+				],
 				'range' => [
-					'px' => [
+					's' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
+					'ms' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
+					],
 				],
 				'selectors' => [
-					$image_selectors => 'transition-duration: {{SIZE}}s',
+					$image_selectors => 'transition-duration: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);

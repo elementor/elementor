@@ -339,17 +339,25 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
+					'unit' => 's',
 					'size' => 0.3,
 				],
 				'range' => [
-					'px' => [
+					's' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
+					'ms' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
+					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);

@@ -426,14 +426,24 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
 				],
 				'range' => [
-					'px' => [
+					's' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
+					'ms' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
