@@ -261,4 +261,52 @@ test.describe( 'Container tests', () => {
 			container: false,
 		} );
 	} );
+
+	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		await page.goto( '/wp-admin/media-new.php' );
+
+		if ( await page.locator( 'text=browser uploader' ).nth( 1 ).isVisible() ) {
+			await page.locator( 'text=browser uploader' ).nth( 1 ).click();
+		}
+
+		await page.setInputFiles( 'input[name="async-upload"]', './tests/playwright/resources/video.webm' );
+		await page.locator( '#html-upload' ).click();
+		await page.waitForSelector( '.attachments-wrapper' );
+		await page.locator( 'ul.attachments li' ).nth( 0 ).click();
+		await page.waitForSelector( '.attachment-details-copy-link' );
+		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue();
+
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		await wpAdmin.activatePanelTab( 'style' );
+		await page.locator( '[data-tooltip="Video"]' ).click();
+		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
+		await page.locator( '.eicon-plus-circle' ).nth( 3 ).click();
+		await page.locator( 'text=Media Library' ).click();
+		await page.waitForSelector( 'text=Insert Media' );
+		await page.waitForTimeout( 1000 );
+		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
+		await page.waitForSelector( 'text=Showing 1 of 1 media items' );
+		await page.click( '.button.media-button' );
+		await page.locator( '.elementor-control-section_background_overlay' ).click();
+		await page.locator( '[data-tooltip="Classic"]' ).nth( 0 ).click();
+		await page.locator( '.pcr-button' ).nth( 0 ).click();
+		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
+
+		expect( await editor.getPreviewFrame().locator( 'body' ).screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-background.jpeg' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
 } );
