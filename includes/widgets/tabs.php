@@ -266,12 +266,10 @@ class Widget_Tabs extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 20,
 					],
 					'em' => [
 						'max' => 2,
-						'step' => 0.1,
 					],
 				],
 				'selectors' => [

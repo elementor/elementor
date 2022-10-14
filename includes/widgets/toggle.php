@@ -251,12 +251,10 @@ class Widget_Toggle extends Widget_Base {
 				'size_units' => [ 'px', '%', 'em' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 20,
 					],
 					'em' => [
 						'max' => 2,
-						'step' => 0.1,
 					],
 				],
 				'selectors' => [
