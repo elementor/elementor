@@ -293,7 +293,7 @@ test.describe( 'Container tests', () => {
 		await page.waitForSelector( 'text=Insert Media' );
 		await page.waitForTimeout( 1000 );
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
-		await page.waitForSelector( 'text=Showing 1 of 1 media items' );
+		await page.waitForLoadState( 'networkidle' );
 		await page.click( '.button.media-button' );
 		await page.locator( '.elementor-control-section_background_overlay' ).click();
 		await page.locator( '[data-tooltip="Classic"]' ).nth( 0 ).click();
