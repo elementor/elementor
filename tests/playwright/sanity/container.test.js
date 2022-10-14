@@ -300,6 +300,8 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.pcr-button' ).nth( 0 ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
 
+		await editor.closeNavigatorIfOpen();
+
 		expect( await editor.getPreviewFrame().locator( 'body' ).screenshot( {
 			type: 'jpeg',
 			quality: 70,
