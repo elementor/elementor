@@ -283,7 +283,7 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await wpAdmin.activatePanelTab( 'style' );
 		await page.locator( '[data-tooltip="Video"]' ).click();
@@ -301,6 +301,8 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
 
 		await editor.closeNavigatorIfOpen();
+
+		const container = editor.getFrame().locator( '.elementor-element-' + containerId );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
