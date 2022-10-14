@@ -131,11 +131,6 @@ module.exports = class EditorPage extends BasePage {
 		await elementEditButton.click();
 	}
 
-	async addContainer( containerType ) {
-		await this.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
-		await this.getPreviewFrame().locator( '[data-preset="' + containerType + '"]' ).click();
-	}
-
 	async changeEditorLayout( layout ) {
 		await this.page.locator( '#elementor-panel-footer-settings' ).click();
 		await this.page.selectOption( '[data-setting=template]', layout );

@@ -283,7 +283,7 @@ async function getHandleTransformValue( wpAdmin ) {
 	await editorPage.page.waitForLoadState( 'networkidle' );
 	await editorPage.changeEditorLayout( 'elementor_canvas' );
 	await editorPage.page.waitForLoadState( 'networkidle' );
-	await editorPage.addContainer( 'r100' );
+	await editorPage.addElement( { elType: 'container' }, 'document' );
 
 	const containerHandleRtl = await editorPage.getPreviewFrame().waitForSelector( '.elementor-editor-container-settings' );
 	return await containerHandleRtl.evaluate( ( el ) => {
