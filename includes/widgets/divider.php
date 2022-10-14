@@ -730,6 +730,14 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'text_stroke',
+				'selector' => '{{WRAPPER}} .elementor-divider__text',
+			]
+		);
+
 		$this->add_control(
 			'text_align',
 			[
@@ -952,7 +960,7 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{SIZE}}{{UNIT}}',
 				],
