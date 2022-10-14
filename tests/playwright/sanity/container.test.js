@@ -283,7 +283,7 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		await editor.addElement( { elType: 'container' }, 'document' );
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await wpAdmin.activatePanelTab( 'style' );
 		await page.locator( '[data-tooltip="Video"]' ).click();
@@ -302,7 +302,7 @@ test.describe( 'Container tests', () => {
 
 		await editor.closeNavigatorIfOpen();
 
-		expect( await editor.getPreviewFrame().locator( 'body' ).screenshot( {
+		expect( await container.screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'container-background.jpeg' );
