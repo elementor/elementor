@@ -325,18 +325,6 @@ class Element_Column extends Element_Base {
 					'unit' => 's',
 					'size' => 0.3,
 				],
-				'range' => [
-					's' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 			]
@@ -492,18 +480,6 @@ class Element_Column extends Element_Base {
 					'unit' => 's',
 					'size' => 0.3,
 				],
-				'range' => [
-					's' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 			]
@@ -607,18 +583,6 @@ class Element_Column extends Element_Base {
 				'default' => [
 					'unit' => 's',
 					'size' => 0.3,
-				],
-				'range' => [
-					's' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
 				],
 				'conditions' => [
 					'relation' => 'or',

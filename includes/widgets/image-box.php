@@ -345,18 +345,6 @@ class Widget_Image_Box extends Widget_Base {
 					'unit' => 's',
 					'size' => 0.3,
 				],
-				'range' => [
-					's' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}{{UNIT}}',
 				],

@@ -1070,14 +1070,10 @@ class Widget_Common extends Widget_Base {
 						],
 						'range' => [
 							's' => [
-								'min' => 0,
 								'max' => 10,
-								'step' => 0.1,
 							],
 							'ms' => [
-								'min' => 0,
 								'max' => 10000,
-								'step' => 100,
 							],
 						],
 						'selectors' => [
@@ -1235,18 +1231,6 @@ class Widget_Common extends Widget_Base {
 				'default' => [
 					'unit' => 's',
 				],
-				'range' => [
-					's' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
@@ -1359,18 +1343,6 @@ class Widget_Common extends Widget_Base {
 				'size_units' => [ 's', 'ms' ],
 				'default' => [
 					'unit' => 's',
-				],
-				'range' => [
-					's' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}{{_background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',

@@ -142,18 +142,6 @@ class Theme_Style_Form_Fields extends Tab_Base {
 				'default' => [
 					'unit' => 'ms'
 				],
-				'range' => [
-					's' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
 				'selectors' => [
 					$input_selector => 'transition: {{SIZE}}{{UNIT}}',
 				],
