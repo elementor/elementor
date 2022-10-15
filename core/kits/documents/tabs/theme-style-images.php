@@ -204,7 +204,7 @@ class Theme_Style_Images extends Tab_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's'
+					'unit' => 's',
 				],
 				'selectors' => [
 					$image_selectors => 'transition-duration: {{SIZE}}{{UNIT}}',

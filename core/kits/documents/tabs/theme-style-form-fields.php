@@ -140,7 +140,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 'ms'
+					'unit' => 'ms',
 				],
 				'selectors' => [
 					$input_selector => 'transition: {{SIZE}}{{UNIT}}',
