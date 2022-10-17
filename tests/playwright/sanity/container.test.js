@@ -270,8 +270,8 @@ test.describe( 'Container tests', () => {
 
 		await page.goto( '/wp-admin/media-new.php' );
 
-		if ( await page.locator( 'text=browser uploader' ).nth( 1 ).isVisible() ) {
-			await page.locator( 'text=browser uploader' ).nth( 1 ).click();
+		if ( await page.locator( '.upload-flash-bypass a' ).isVisible() ) {
+			await page.locator( '.upload-flash-bypass a' ).click();
 		}
 
 		await page.setInputFiles( 'input[name="async-upload"]', './tests/playwright/resources/video.webm' );
@@ -288,16 +288,14 @@ test.describe( 'Container tests', () => {
 		await wpAdmin.activatePanelTab( 'style' );
 		await page.locator( '[data-tooltip="Video"]' ).click();
 		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
-		await page.locator( '.eicon-plus-circle' ).nth( 3 ).click();
-		await page.locator( 'text=Media Library' ).click();
-		await page.waitForSelector( 'text=Insert Media' );
-		await page.waitForTimeout( 1000 );
+		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
+		await page.locator( '#menu-item-browse' ).click();
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
 		await page.waitForLoadState( 'networkidle' );
 		await page.click( '.button.media-button' );
 		await page.locator( '.elementor-control-section_background_overlay' ).click();
-		await page.locator( '[data-tooltip="Classic"]' ).nth( 0 ).click();
-		await page.locator( '.pcr-button' ).nth( 0 ).click();
+		await page.locator( '.elementor-control-background_overlay_background [data-tooltip="Classic"]' ).click();
+		await page.locator( '.elementor-control-background_overlay_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
 
 		await editor.closeNavigatorIfOpen();
