@@ -123,6 +123,6 @@ class Module extends BaseModule {
 			$this->enqueue_styles();
 			$this->enqueue_scripts();
 		} );
-		
+
 	}
 }
