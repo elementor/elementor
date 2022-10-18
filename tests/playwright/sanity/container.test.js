@@ -263,6 +263,11 @@ test.describe( 'Container tests', () => {
 	} );
 
 	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -344,7 +349,7 @@ test.describe( 'Container tests', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			container = editor.getFrame().locator( '.elementor-element-' + containerId );
 
-		await wpAdmin.activatePanelTab( 'style' );
+		await editor.activatePanelTab( 'style' );
 		await page.locator( '[data-tooltip="Video"]' ).click();
 		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
 		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
