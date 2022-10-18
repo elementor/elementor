@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults;
 
+use Elementor\Modules\KitElementsDefaults\Utils\Sanitizer;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,43 +18,23 @@ class Controller {
 
 	public function register() {
 		add_action( 'rest_api_init', function () {
-			$this->register_index();
-
-			$this->register_update();
-
-			$this->register_destroy();
+			$this->register_routes();
 		} );
 	}
 
-
-	/**
-	 * GET '/kit-elements-defaults'
-	 */
-	private function register_index() {
+	private function register_routes() {
 		register_rest_route( static::NAMESPACE, static::BASE_URL, [
 			[
 				'methods' => 'GET',
 				'permission_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
-				'callback' => Utils::wrap_callback( function () {
+				'callback' => $this->wrap_callback( function () {
 					return $this->index();
 				} ),
 			],
 		] );
-	}
 
-	private function index() {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		return new \WP_REST_Response( $kit->get_json_meta( static::META_KEY ) );
-	}
-
-
-	/**
-	 * PUT '/kit-elements-defaults/{type}'
-	 */
-	private function register_update() {
 		register_rest_route( static::NAMESPACE, static::BASE_URL . '/(?P<type>[\w\-_]+)', [
 			[
 				'methods' => 'PUT',
@@ -63,7 +44,7 @@ class Controller {
 						'description' => 'The type of the element.',
 						'required' => true,
 						'validate_callback' => function( $param ) {
-							return Utils::validate_type( $param );
+							return $this->validate_type( $param );
 						},
 					],
 					'settings' => [
@@ -74,11 +55,11 @@ class Controller {
 							return is_array( $param );
 						},
 						'sanitize_callback' => function( $param, \WP_REST_Request $request ) {
-							return Utils::sanitize_settings( $param, $request );
+							return $this->make_sanitizer()->sanitize_settings( $param, $request );
 						},
 					],
 				],
-				'callback' => Utils::wrap_callback( function ( \WP_REST_Request $request ) {
+				'callback' => $this->wrap_callback( function ( \WP_REST_Request $request ) {
 					return $this->update( $request );
 				} ),
 				'permission_callback' => function () {
@@ -86,6 +67,34 @@ class Controller {
 				},
 			],
 		] );
+
+		register_rest_route( static::NAMESPACE, static::BASE_URL . '/(?P<type>[\w\-_]+)', [
+			[
+				'methods' => 'DELETE',
+				'args' => [
+					'type' => [
+						'type' => 'string',
+						'description' => 'The type of the element.',
+						'required' => true,
+						'validate_callback' => function( $param ) {
+							return $this->validate_type( $param );
+						},
+					],
+				],
+				'callback' => $this->wrap_callback( function ( \WP_REST_Request $request ) {
+					return $this->destroy( $request );
+				} ),
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			],
+		] );
+	}
+
+	private function index() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		return new \WP_REST_Response( $kit->get_json_meta( static::META_KEY ) );
 	}
 
 	private function update( \WP_REST_Request $request ) {
@@ -103,34 +112,6 @@ class Controller {
 		return new \WP_REST_Response( [], 201 );
 	}
 
-
-	/**
-	 * DELETE '/kit-elements-defaults/{type}'
-	 */
-	private function register_destroy() {
-		register_rest_route( static::NAMESPACE, static::BASE_URL . '/(?P<type>[\w\-_]+)', [
-			[
-				'methods' => 'DELETE',
-				'args' => [
-					'type' => [
-						'type' => 'string',
-						'description' => 'The type of the element.',
-						'required' => true,
-						'validate_callback' => function( $param ) {
-							return Utils::validate_type( $param );
-						},
-					],
-				],
-				'callback' => Utils::wrap_callback( function ( \WP_REST_Request $request ) {
-					return $this->destroy( $request );
-				} ),
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
-				},
-			],
-		] );
-	}
-
 	private function destroy( \WP_REST_Request $request ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
@@ -144,5 +125,46 @@ class Controller {
 		);
 
 		return new \WP_REST_Response( [], 204 );
+	}
+
+	/**
+	 * Wrapper to validate that the kit is valid.
+	 * Essentially behaves as a middleware.
+	 *
+	 * @param $callback
+	 *
+	 * @return \Closure
+	 */
+	private function wrap_callback( $callback ) {
+		return function ( \WP_REST_Request $request ) use ( $callback ) {
+			$kit = Plugin::$instance->kits_manager->get_active_kit();
+			$is_valid_kit = $kit && $kit->get_main_id();
+
+			if ( ! $is_valid_kit ) {
+				return new \WP_Error( 'invalid_kit', 'Kit doesn\'t exist.', [
+					'status' => 404,
+				] );
+			}
+
+			return $callback( $request );
+		};
+	}
+
+	private function validate_type( $param ) {
+		$element_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+		$widget_types  = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
+
+		return in_array(
+			$param,
+			array_merge( $element_types, $widget_types ),
+			true
+		);
+	}
+
+	private function make_sanitizer() {
+		$elements_manager = Plugin::$instance->elements_manager;
+		$widget_types = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
+
+		return new Sanitizer( $elements_manager, $widget_types );
 	}
 }
