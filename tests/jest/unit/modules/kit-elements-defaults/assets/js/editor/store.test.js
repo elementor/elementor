@@ -7,12 +7,22 @@ const wpApiSettings = {
 };
 
 describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
-	let fock;
+	let fock, originalFetch;
 
 	beforeEach( () => {
 		window.wpApiSettings = wpApiSettings;
 
 		fock = new MockFetch( wpApiSettings.root + 'elementor/v1' );
+
+		originalFetch = window.fetch;
+
+		window.fetch = fock.getFetchMock();
+	} );
+
+	afterEach( () => {
+		window.fetch = originalFetch;
+
+		delete window.wpApiSettings;
 	} );
 
 	it( 'Should return empty object for non-existing type', () => {

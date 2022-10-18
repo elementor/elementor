@@ -1,9 +1,15 @@
 export class MockFetch {
+	#fetchMock;
+
 	constructor( baseURL ) {
 		this.baseURL = baseURL;
 		this.mocks = [];
 
-		window.fetch = this.#makeFetchInstance();
+		this.#fetchMock = this.#makeFetchInstance();
+	}
+
+	getFetchMock() {
+		return this.#fetchMock;
 	}
 
 	get( endpoint ) {
