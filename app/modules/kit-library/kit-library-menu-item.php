@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\App\AdminMenuItems;
+namespace Elementor\App\Modules\KitLibrary;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\TemplateLibrary\Source_Local;
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Theme_Builder_Menu_Item implements Admin_Menu_Item {
+class Kit_Library_Menu_Item implements Admin_Menu_Item {
 
 	public function is_visible() {
 		return true;
@@ -19,7 +19,7 @@ class Theme_Builder_Menu_Item implements Admin_Menu_Item {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Theme Builder', 'elementor' );
+		return esc_html__( 'Kit Library', 'elementor' );
 	}
 
 	public function get_capability() {

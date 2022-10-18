@@ -97,6 +97,16 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 					'max' => 100,
 					'step' => 1,
 				],
+				's' => [
+					'min' => 0,
+					'max' => 3,
+					'step' => 0.1,
+				],
+				'ms' => [
+					'min' => 0,
+					'max' => 3000,
+					'step' => 100,
+				],
 			],
 		];
 	}

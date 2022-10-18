@@ -681,16 +681,18 @@ class Container extends Element_Base {
 			]
 		);
 
+		$background_overlay_selector = '{{WRAPPER}}::before, {{WRAPPER}} > .elementor-background-video-container::before, {{WRAPPER}} > .e-container__inner > .elementor-background-video-container::before, {{WRAPPER}} > .elementor-background-slideshow::before, {{WRAPPER}} > .e-container__inner > .elementor-background-slideshow::before';
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'selector' => '{{WRAPPER}}::before',
+				'selector' => $background_overlay_selector,
 				'fields_options' => [
 					'background' => [
 						'selectors' => [
 							// Hack to set the `::before` content in order to render it only when there is a background overlay.
-							'{{WRAPPER}}::before' => '--background-overlay: \'\';',
+							$background_overlay_selector => '--background-overlay: \'\';',
 						],
 					],
 				],
@@ -793,16 +795,18 @@ class Container extends Element_Base {
 			]
 		);
 
+		$background_overlay_hover_selector = '{{WRAPPER}}:hover::before, {{WRAPPER}}:hover > .elementor-background-video-container::before, {{WRAPPER}}:hover > .e-container__inner > .elementor-background-video-container::before, {{WRAPPER}} > .elementor-background-slideshow:hover::before, {{WRAPPER}} > .e-container__inner > .elementor-background-slideshow:hover::before';
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
-				'selector' => '{{WRAPPER}}:hover::before',
+				'selector' => $background_overlay_hover_selector,
 				'fields_options' => [
 					'background' => [
 						'selectors' => [
 							// Hack to set the `::before` content in order to render it only when there is a background overlay.
-							'{{WRAPPER}}:hover::before' => '--background-overlay: \'\';',
+							$background_overlay_hover_selector => '--background-overlay: \'\';',
 						],
 					],
 				],
