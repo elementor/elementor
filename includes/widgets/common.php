@@ -704,14 +704,27 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
+						],
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}{{UNIT}};',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
@@ -741,10 +754,23 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
@@ -752,7 +778,7 @@ class Widget_Common extends Widget_Base {
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -763,10 +789,23 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
@@ -774,7 +813,7 @@ class Widget_Common extends Widget_Base {
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -981,17 +1020,30 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Skew X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1002,17 +1054,30 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Skew Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
