@@ -241,8 +241,7 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async removeFocus( elementType = 'section' ) {
-		await this.addElement( { elType: elementType }, 'document' );
-		await this.addElement( { elType: elementType }, 'document' );
+	async removeFocus() {
+		await this.page.locator( '#elementor-preview-responsive-wrapper' ).click();
 	}
 };
