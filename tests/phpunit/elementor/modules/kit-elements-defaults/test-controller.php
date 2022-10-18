@@ -148,6 +148,27 @@ class Test_Controller extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Controller::META_KEY ) );
 	}
 
+	public function test_update__keeps_quotes() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$response = $this->send_request( 'PUT', '/kit-elements-defaults/section', [
+			'settings' => [
+				'heading_color' => 'text with "double" and \'single\' quotes',
+			],
+		] );
+
+		// Assert.
+		$this->assertEquals( 201, $response->get_status() );
+
+		$this->assertEquals( [
+			'section' => [
+				'heading_color' => 'text with "double" and \'single\' quotes',
+			],
+		], $this->kit->get_json_meta( Controller::META_KEY ) );
+	}
+
 	public function test_update() {
 		// Arrange.
 		$this->act_as_admin();
