@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'e_bg_lazyload';
+	const EXPERIMENT_NAME = 'e_lazyload';
 
 	public function get_name() {
 		return 'lazyload';
@@ -29,7 +29,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	public function enqueue_scripts() {
+	private function enqueue_scripts() {
 		wp_enqueue_script(
 			'elementor-lazyload',
 			$this->get_js_assets_url( 'lazyload' ),
@@ -39,7 +39,7 @@ class Module extends BaseModule {
 		);
 	}
 
-	public function enqueue_styles() {
+	private function enqueue_styles() {
 		wp_enqueue_style(
 			'elementor-lazyload',
 			$this->get_css_assets_url( 'modules/lazyload/frontend' ),
@@ -65,7 +65,7 @@ class Module extends BaseModule {
 		if ( $keys ) {
 			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
 			if ( $background_image_url ) {
-				$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'bg-selector' ] ) ?? '';
+				$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
 				$element->add_render_attribute( '_wrapper', [
 					'data-e-bg-lazyload' => $bg_selector,
 				] );
@@ -119,8 +119,10 @@ class Module extends BaseModule {
 			return $classes;
 		} );
 
-		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
-
+		add_action( 'wp_enqueue_scripts', function() {
+			$this->enqueue_styles();
+			$this->enqueue_scripts();
+		} );
+		
 	}
 }

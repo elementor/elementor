@@ -1,12 +1,11 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'Turn on bg lazyload', async ( { page }, testInfo ) => {
+test.beforeEach( async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.setExperiments( {
-		e_bg_lazyload: true,
+		e_lazyload: true,
 	} );
-	expect( true ).toBe( true );
 } );
 
 test( 'Background lazy load sanity test', async ( { page } ) => {
@@ -19,7 +18,7 @@ test( 'Background lazy load sanity test', async ( { page } ) => {
 		const property = window.getComputedStyle( el ).getPropertyValue( 'background-image' );
 		return property.match( /url\((.*?)\)/ )[ 1 ].replace( /"/g, '' );
 	} );
-	expect( beforeURL ).toContain( '150x150.png' );
+	expect( beforeURL ).toContain( 'Quote-About-Copy-1-150x150.png' );
 
 	await page.evaluate( ( lazyloadSelectorScrollTo ) => {
 		const lazyloadElement = document.querySelector( lazyloadSelectorScrollTo );
@@ -31,14 +30,13 @@ test( 'Background lazy load sanity test', async ( { page } ) => {
 	const cssVariable = await page.$eval( lazyloadSelector, ( el ) => {
 		return window.getComputedStyle( el ).getPropertyValue( '--e-bg-lazyload' );
 	} );
-	expect( cssVariable ).not.toBe( '' );
-	expect( cssVariable ).not.toContain( '150x150.png' );
+	expect( cssVariable ).toContain( 'Quote-About-Copy-1.png' );
 } );
 
-test( 'Turn off bg lazyload', async ( { page }, testInfo ) => {
+// AfterEach
+test.afterEach( async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.setExperiments( {
-		e_bg_lazyload: false,
+		e_lazyload: false,
 	} );
-	expect( true ).toBe( true );
 } );
