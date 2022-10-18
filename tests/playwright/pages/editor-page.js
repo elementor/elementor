@@ -240,6 +240,6 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async removeFocus() {
-		await this.getPreviewFrame().locator( 'header' ).dblclick();
+		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
 	}
 };
