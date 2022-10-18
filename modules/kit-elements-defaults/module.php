@@ -14,11 +14,14 @@ class Module extends BaseModule {
 	}
 
 	public static function get_experimental_data() {
+		$is_debug = defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
+
 		return [
 			'name' => 'kit-elements-defaults',
 			'title' => __( 'Kit Elements Defaults', 'elementor' ),
 			'description' => __( 'Set default values for all the elements in a kit.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'hidden' => ! $is_debug,
 		];
 	}
 
