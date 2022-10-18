@@ -237,8 +237,6 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Remove the focus from the test elements by creating two new elements.
 	 *
-	 * @param {string} elementType - The element types are `section` and `container`;
-	 *
 	 * @return {Promise<void>}
 	 */
 	async removeFocus() {
