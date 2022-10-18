@@ -264,11 +264,6 @@ test.describe( 'Container tests', () => {
 
 	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
@@ -324,6 +319,50 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
+	} );
+
+	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		await page.goto( '/wp-admin/media-new.php' );
+
+		if ( await page.locator( '.upload-flash-bypass a' ).isVisible() ) {
+			await page.locator( '.upload-flash-bypass a' ).click();
+		}
+
+		await page.setInputFiles( 'input[name="async-upload"]', './tests/playwright/resources/video.webm' );
+		await page.locator( '#html-upload' ).click();
+		await page.waitForSelector( '.attachments-wrapper' );
+		await page.locator( 'ul.attachments li' ).nth( 0 ).click();
+		await page.waitForSelector( '.attachment-details-copy-link' );
+
+		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
+			editor = await wpAdmin.useElementorCleanPost(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
+			container = editor.getFrame().locator( '.elementor-element-' + containerId );
+
+		await wpAdmin.activatePanelTab( 'style' );
+		await page.locator( '[data-tooltip="Video"]' ).click();
+		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
+		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
+		await page.locator( '#menu-item-browse' ).click();
+		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
+		await page.waitForLoadState( 'networkidle' );
+		await page.click( '.button.media-button' );
+		await page.locator( '.elementor-control-section_background_overlay' ).click();
+		await page.locator( '.elementor-control-background_overlay_background [data-tooltip="Classic"]' ).click();
+		await page.locator( '.elementor-control-background_overlay_color .pcr-button' ).click();
+		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
+
+		await editor.closeNavigatorIfOpen();
+
+		expect( await container.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-background.jpeg' );
 
 		await wpAdmin.setExperiments( {
 			container: false,
