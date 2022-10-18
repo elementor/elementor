@@ -90,7 +90,8 @@ class Controller extends Base_Controller {
 
 		$kit->update_meta(
 			static::META_KEY,
-			wp_json_encode( $data )
+			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			wp_slash( wp_json_encode( $data ) )
 		);
 
 		return (object) [];
