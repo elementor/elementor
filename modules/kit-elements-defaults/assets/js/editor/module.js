@@ -1,9 +1,9 @@
 import Component from './component';
-import loadDefaultValues from './load-default-values';
+import store from './store';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		loadDefaultValues();
+		store.load();
 		this.#addContextMenuItem();
 	}
 

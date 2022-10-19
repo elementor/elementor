@@ -1,7 +1,8 @@
-import loadDefaultValues from '../load-default-values';
+import localSettingsExtractor from '../settings-handlers/local/extract';
+import store from '../store';
 
 export default class Create extends $e.modules.CommandBase {
-	validateArgs( args = {} ) {
+	validateArgs() {
 		this.requireContainer();
 	}
 
@@ -17,12 +18,7 @@ export default class Create extends $e.modules.CommandBase {
 		};
 
 		try {
-			await $e.data.create( 'kit-elements-defaults/index', { settings }, { type } );
-
-			// Refresh Cache.
-			// Cannot use {refresh: true} in `get()` because in the hooks there must be a way to get the data
-			// in sychronous way, and when using `refresh: true`, the data will not be available in syncronous way.
-			loadDefaultValues();
+			await store.upsert( type, settings );
 
 			elementor.notifications.showToast( {
 				message: __( 'Default values saved successfully. Please make sure to avoid saving sensetive data like passwords and api keys.', 'elementor' ),

@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults;
 
-use Elementor\Plugin;
-use Elementor\Modules\KitElementsDefaults\Data\Controller;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -11,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	const META_KEY = '_elementor_elements_defaults_values';
+
 	public function get_name() {
 		return 'kit-elements-defaults';
 	}
@@ -44,6 +45,6 @@ class Module extends BaseModule {
 			$this->enqueue_scripts();
 		} );
 
-		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+		( new Controller() )->register();
 	}
 }
