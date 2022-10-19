@@ -1,33 +1,33 @@
-export class MockFetch {
-	#fetchMock;
+export class FetchMock {
+	#mock;
 
 	constructor( baseURL ) {
 		this.baseURL = baseURL;
-		this.mocks = [];
+		this.interceptors = [];
 
-		this.#fetchMock = this.#makeFetchInstance();
+		this.#mock = this.#makeFetchInstance();
 	}
 
-	getFetchMock() {
-		return this.#fetchMock;
+	getMock() {
+		return this.#mock;
 	}
 
 	get( endpoint ) {
-		return this.#addMock( 'GET', endpoint );
+		return this.#addInterceptor( 'GET', endpoint );
 	}
 
 	put( endpoint ) {
-		return this.#addMock( 'PUT', endpoint );
+		return this.#addInterceptor( 'PUT', endpoint );
 	}
 
 	delete( endpoint ) {
-		return this.#addMock( 'DELETE', endpoint );
+		return this.#addInterceptor( 'DELETE', endpoint );
 	}
 
-	#addMock( method, endpoint ) {
+	#addInterceptor( method, endpoint ) {
 		return {
 			reply: ( status, body ) => {
-				this.mocks.push( {
+				this.interceptors.push( {
 					method,
 					endpoint,
 					response: {
@@ -43,7 +43,7 @@ export class MockFetch {
 
 	#makeFetchInstance() {
 		return jest.fn( ( reqURL, reqOptions ) => {
-			const match = this.mocks.find( ( res ) => {
+			const match = this.interceptors.find( ( res ) => {
 				const isSameMethod = res.method === reqOptions.method;
 				const isSameEndpoint = this.#trimURL( this.baseURL + res.endpoint ) === this.#trimURL( reqURL );
 

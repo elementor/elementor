@@ -226,6 +226,36 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
+	public function test_destroy__keeps_quotes() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Mock elements defaults.
+		$this->kit->update_meta( Controller::META_KEY, wp_slash( json_encode( [
+			'section' => [
+				'heading_color' => 'text with "double" and \'single\' quotes',
+			],
+			'column' => [
+				'width' => [
+					'size' => 50,
+					'unit' => '%',
+				],
+			],
+		] ) ) );
+
+		// Act.
+		$response = $this->send_request( 'DELETE', '/kit-elements-defaults/column' );
+
+		// Assert.
+		$this->assertEquals( 204, $response->get_status() );
+
+		$this->assertEquals( [
+			'section' => [
+				'heading_color' => 'text with "double" and \'single\' quotes',
+			],
+		], $this->kit->get_json_meta( Controller::META_KEY ) );
+	}
+
 	public function test_destroy() {
 		// Arrange.
 		$this->act_as_admin();

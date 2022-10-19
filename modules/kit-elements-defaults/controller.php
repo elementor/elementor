@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults;
 
-use Elementor\Modules\KitElementsDefaults\Utils\Sanitizer;
+use Elementor\Modules\KitElementsDefaults\Utils\Settings_Sanitizer;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,19 +43,21 @@ class Controller {
 						'type' => 'string',
 						'description' => 'The type of the element.',
 						'required' => true,
-						'validate_callback' => function( $param ) {
-							return $this->validate_type( $param );
+						'validate_callback' => function( $type ) {
+							return $this->validate_type( $type );
 						},
 					],
 					'settings' => [
 						'description' => 'All the default values for the requested type',
 						'required' => true,
 						'type' => 'object',
-						'validate_callback' => function( $param ) {
-							return is_array( $param );
+						'validate_callback' => function( $settings ) {
+							return is_array( $settings );
 						},
-						'sanitize_callback' => function( $param, \WP_REST_Request $request ) {
-							return $this->make_sanitizer()->sanitize_settings( $param, $request );
+						'sanitize_callback' => function( $settings, \WP_REST_Request $request ) {
+							return $this
+								->make_settings_sanitizer()
+								->sanitize( $settings, $request->get_param( 'type' ) );
 						},
 					],
 				],
@@ -76,8 +78,8 @@ class Controller {
 						'type' => 'string',
 						'description' => 'The type of the element.',
 						'required' => true,
-						'validate_callback' => function( $param ) {
-							return $this->validate_type( $param );
+						'validate_callback' => function( $type ) {
+							return $this->validate_type( $type );
 						},
 					],
 				],
@@ -122,7 +124,8 @@ class Controller {
 
 		$kit->update_meta(
 			static::META_KEY,
-			wp_json_encode( $data )
+			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			wp_slash( wp_json_encode( $data ) )
 		);
 
 		return new \WP_REST_Response( [], 204 );
@@ -162,10 +165,10 @@ class Controller {
 		);
 	}
 
-	private function make_sanitizer() {
+	private function make_settings_sanitizer() {
 		$elements_manager = Plugin::$instance->elements_manager;
 		$widget_types = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
 
-		return new Sanitizer( $elements_manager, $widget_types );
+		return new Settings_Sanitizer( $elements_manager, $widget_types );
 	}
 }

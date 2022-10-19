@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Sanitizer {
+class Settings_Sanitizer {
 
 	private $elements_manager;
 
@@ -19,14 +19,14 @@ class Sanitizer {
 		$this->widget_types = $widget_types;
 	}
 
-	public function sanitize_settings( $param, \WP_REST_Request $request ) {
-		$element = static::get_element_instance( $request->get_param( 'type' ) );
+	public function sanitize( $settings, $type ) {
+		$element = $this->get_element_instance( $type );
 
 		if ( ! $element ) {
 			return [];
 		}
 
-		return static::remove_invalid_settings( $element, $param );
+		return $this->remove_invalid_settings( $element, $settings );
 	}
 
 	private function remove_invalid_settings( Element_Base $element, $settings ) {
@@ -44,7 +44,7 @@ class Sanitizer {
 	}
 
 	private function get_element_instance( $type ) {
-		$args = static::is_widget( $type )
+		$args = $this->is_widget( $type )
 			? [
 				'elType' => 'widget',
 				'widgetType' => $type,

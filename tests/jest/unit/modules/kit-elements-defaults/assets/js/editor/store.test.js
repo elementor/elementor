@@ -1,5 +1,5 @@
 import store from 'elementor/modules/kit-elements-defaults/assets/js/editor/store';
-import { MockFetch } from './utils';
+import { FetchMock } from './fetch-mock';
 
 const wpApiSettings = {
 	root: 'http://example.com/wp-json/',
@@ -7,16 +7,16 @@ const wpApiSettings = {
 };
 
 describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
-	let fock, originalFetch;
+	let originalFetch, fetchMock;
 
 	beforeEach( () => {
-		window.wpApiSettings = wpApiSettings;
-
-		fock = new MockFetch( wpApiSettings.root + 'elementor/v1' );
-
 		originalFetch = window.fetch;
 
-		window.fetch = fock.getFetchMock();
+		window.wpApiSettings = wpApiSettings;
+
+		fetchMock = new FetchMock( wpApiSettings.root + 'elementor/v1' );
+
+		window.fetch = fetchMock.getMock();
 	} );
 
 	afterEach( () => {
@@ -32,7 +32,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 
 	it( 'Should load items to cache', async () => {
 		// Arrange.
-		fock.get( '/kit-elements-defaults' )
+		fetchMock.get( '/kit-elements-defaults' )
 			.reply( 200, {
 				section: {
 					color: 'red',
@@ -68,10 +68,10 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		fock.put( '/kit-elements-defaults/section' )
+		fetchMock.put( '/kit-elements-defaults/section' )
 			.reply( 201, null );
 
-		fock.get( '/kit-elements-defaults' )
+		fetchMock.get( '/kit-elements-defaults' )
 			.reply( 200, {
 				section: {
 					new_control: 'new_value',
@@ -99,10 +99,10 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		fock.delete( '/kit-elements-defaults/section' )
+		fetchMock.delete( '/kit-elements-defaults/section' )
 			.reply( 204, '' );
 
-		fock.get( '/kit-elements-defaults' )
+		fetchMock.get( '/kit-elements-defaults' )
 			.reply( 200, {} );
 
 		// Act.
@@ -140,7 +140,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 
 	it( 'Should throw for invalid response', async () => {
 		// Arrange.
-		fock.get( '/kit-elements-defaults' ).reply( 500, null );
+		fetchMock.get( '/kit-elements-defaults' ).reply( 500, null );
 
 		// Act & Assert.
 		await expect( store.load() ).rejects.toStrictEqual( {
