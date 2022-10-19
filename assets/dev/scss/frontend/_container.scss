@@ -111,9 +111,9 @@
 	// Background overlay.
 	&::before,
 	> .elementor-background-video-container::before,
-	> .e-container__inner > .elementor-background-video-container::before,
+	> .e-con-inner > .elementor-background-video-container::before,
 	> .elementor-background-slideshow:before,
-	> .e-container__inner > .elementor-background-slideshow:before {
+	> .e-con-inner > .elementor-background-slideshow:before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
@@ -130,12 +130,12 @@
 	}
 
 	> .elementor-background-video-container:before,
-	> .e-container__inner > .elementor-background-video-container:before {
+	> .e-con-inner > .elementor-background-video-container:before {
 		z-index: $first-layer;
 	}
 
 	> .elementor-background-slideshow:before,
-	> .e-container__inner > .elementor-background-slideshow:before {
+	> .e-con-inner > .elementor-background-slideshow:before {
 		z-index: $second-layer;
 	}
 
