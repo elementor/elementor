@@ -8,7 +8,7 @@ export default class Create extends $e.modules.CommandBase {
 	async apply( { container } ) {
 		$e.internal( 'panel/state-loading' );
 
-		const type = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
+		const elementType = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
 
 		const settings = this.extractLocalSettings( container );
 
@@ -23,7 +23,7 @@ export default class Create extends $e.modules.CommandBase {
 		} );
 
 		try {
-			await store.upsert( type, settings );
+			await store.upsert( elementType, settings );
 
 			elementor.notifications.showToast( {
 				message: __( 'Default values saved successfully. Please avoid saving sensetive data like passwords and api keys.', 'elementor' ),
