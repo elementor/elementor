@@ -14,8 +14,6 @@ class Controller {
 
 	const BASE_URL = '/kit-elements-defaults';
 
-	const META_KEY = '_elementor_elements_defaults_values';
-
 	public function register() {
 		add_action( 'rest_api_init', function () {
 			$this->register_routes();
@@ -96,18 +94,18 @@ class Controller {
 	private function index() {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		return new \WP_REST_Response( $kit->get_json_meta( static::META_KEY ) );
+		return new \WP_REST_Response( $kit->get_json_meta( Module::META_KEY ) );
 	}
 
 	private function update( \WP_REST_Request $request ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$data = $kit->get_json_meta( static::META_KEY );
+		$data = $kit->get_json_meta( Module::META_KEY );
 
 		$data[ $request->get_param( 'type' ) ] = $request->get_param( 'settings' );
 
 		$kit->update_meta(
-			static::META_KEY,
+			Module::META_KEY,
 			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 			wp_slash( wp_json_encode( $data ) )
 		);
@@ -118,12 +116,12 @@ class Controller {
 	private function destroy( \WP_REST_Request $request ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$data = $kit->get_json_meta( static::META_KEY );
+		$data = $kit->get_json_meta( Module::META_KEY );
 
 		unset( $data[ $request->get_param( 'type' ) ] );
 
 		$kit->update_meta(
-			static::META_KEY,
+			Module::META_KEY,
 			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 			wp_slash( wp_json_encode( $data ) )
 		);

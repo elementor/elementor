@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	const META_KEY = '_elementor_elements_defaults_values';
+
 	public function get_name() {
 		return 'kit-elements-defaults';
 	}

@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\KitElementsDefaults;
 
-use Elementor\Modules\KitElementsDefaults\Controller;
+use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -47,7 +47,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_editor();
 
 		// Mock elements defaults.
-		$this->kit->update_meta( Controller::META_KEY, json_encode( [
+		$this->kit->update_meta( Module::META_KEY, json_encode( [
 			'section' => [
 				'color' => '#FFF',
 				'background_color' => 'red',
@@ -145,7 +145,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'button' => [
 				'button_type' => 'info',
 			],
-		], $this->kit->get_json_meta( Controller::META_KEY ) );
+		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
 	public function test_update__keeps_quotes() {
@@ -166,7 +166,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'section' => [
 				'heading_color' => 'text with "double" and \'single\' quotes',
 			],
-		], $this->kit->get_json_meta( Controller::META_KEY ) );
+		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
 	public function test_update() {
@@ -174,7 +174,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Mock elements defaults.
-		$this->kit->update_meta( Controller::META_KEY, json_encode( [
+		$this->kit->update_meta( Module::META_KEY, json_encode( [
 			'section' => [
 				'old_control' => 'that_should_be_removed',
 			],
@@ -209,7 +209,7 @@ class Test_Controller extends Elementor_Test_Base {
 					'unit' => '%',
 				],
 			],
-		], $this->kit->get_json_meta( Controller::META_KEY ) );
+		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
 	/**
@@ -231,7 +231,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Mock elements defaults.
-		$this->kit->update_meta( Controller::META_KEY, wp_slash( json_encode( [
+		$this->kit->update_meta( Module::META_KEY, wp_slash( json_encode( [
 			'section' => [
 				'heading_color' => 'text with "double" and \'single\' quotes',
 			],
@@ -253,7 +253,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'section' => [
 				'heading_color' => 'text with "double" and \'single\' quotes',
 			],
-		], $this->kit->get_json_meta( Controller::META_KEY ) );
+		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
 	public function test_destroy() {
@@ -261,7 +261,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Mock elements defaults.
-		$this->kit->update_meta( Controller::META_KEY, json_encode( [
+		$this->kit->update_meta( Module::META_KEY, json_encode( [
 			'section' => [
 				'heading_color' => 'red',
 				'color_text' => '#FFF',
@@ -287,7 +287,7 @@ class Test_Controller extends Elementor_Test_Base {
 					'unit' => '%',
 				],
 			],
-		], $this->kit->get_json_meta( Controller::META_KEY ) );
+		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
 	/**
