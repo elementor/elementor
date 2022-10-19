@@ -103,7 +103,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
-				$this->update_element_attributes( $element );
+			$this->update_element_attributes( $element );
 		} );
 
 		add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
