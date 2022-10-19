@@ -99,6 +99,7 @@ const entry = {
 	'app': path.resolve( __dirname, '../app/assets/js/index.js' ),
 	'app-loader': path.resolve( __dirname, '../app/assets/js/app-loader' ),
 	'app-packages': path.resolve( __dirname, '../app/assets/js/app-packages' ),
+	'app-services': path.resolve( __dirname, '../app/assets/js/app-services' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
