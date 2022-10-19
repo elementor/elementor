@@ -1,4 +1,3 @@
-import localSettingsExtractor from '../settings-handlers/local/extract';
 import store from '../store';
 
 export default class Create extends $e.modules.CommandBase {
@@ -11,17 +10,23 @@ export default class Create extends $e.modules.CommandBase {
 
 		const type = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
 
-		const settings = {
-			...this.extractLocalSettings( container ),
-			...this.extractSpecialSettings( '__globals__', container ),
-			...this.extractSpecialSettings( '__dynamic__', container ),
-		};
+		const settings = this.extractLocalSettings( container );
+
+		[ '__dynamic__', '__globals__' ].forEach( ( type ) => {
+			const specialSettings = this.extractSpecialSettings( type, container );
+
+			if ( ! Object.keys( specialSettings ).length ) {
+				return;
+			}
+
+			settings[ type ] = specialSettings;
+		} );
 
 		try {
 			await store.upsert( type, settings );
 
 			elementor.notifications.showToast( {
-				message: __( 'Default values saved successfully. Please make sure to avoid saving sensetive data like passwords and api keys.', 'elementor' ),
+				message: __( 'Default values saved successfully. Please avoid saving sensetive data like passwords and api keys.', 'elementor' ),
 			} );
 		} catch ( error ) {
 			elementor.notifications.showToast( {
@@ -56,8 +61,6 @@ export default class Create extends $e.modules.CommandBase {
 			// Remove controls that are not exist.
 			.filter( ( [ settingName ] ) => !! controls[ settingName ] );
 
-		return {
-			[ type ]: Object.fromEntries( entries ),
-		};
+		return Object.fromEntries( entries );
 	}
 }

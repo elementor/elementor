@@ -19,22 +19,30 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 
 		const elementSettings = store.get( widgetType || elType );
 
-		if ( ! elementSettings ) {
+		if (
+			! elementSettings ||
+			'object' !== typeof elementSettings ||
+			! Object.keys( elementSettings ).length
+		) {
 			return true;
 		}
 
-		const settings = {
-			...( args.model.settings || {} ),
-			...elementSettings,
-			__globals__: {
-				...( args.model.settings?.__globals__ || {} ),
-				...( elementSettings.__globals__ || {} ),
-			},
-			__dynamic__: {
-				...( args.model.settings?.__dynamic__ || {} ),
-				...( elementSettings.__dynamic__ || {} ),
-			},
-		};
+		const settings = { ...( args.model.settings || {} ), ...elementSettings };
+
+		[ '__dynamic__', '__globals__' ].forEach( ( type ) => {
+			if (
+				! elementSettings[ type ] ||
+				typeof elementSettings[ type ] !== 'object' ||
+				! Object.keys( elementSettings.__globals__ ).length
+			) {
+				return;
+			}
+
+			settings[ type ] = {
+				...( args.model.settings?.[ type ] || {} ),
+				...( elementSettings[ type ] || {} ),
+			};
+		} );
 
 		args.model = {
 			...args.model,
