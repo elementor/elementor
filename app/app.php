@@ -202,8 +202,6 @@ class App extends BaseApp {
 			'elementor-app-packages',
 			$this->get_js_assets_url( 'app-packages' ),
 			[
-				'wp-i18n',
-				'react',
 				'elementor-app-services',
 			],
 			ELEMENTOR_VERSION,
