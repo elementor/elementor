@@ -90,19 +90,6 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.click( '#submit' );
 	}
 
-	/**
-	 * Activate a tab inside the panel editor.
-	 *
-	 * @param {string} panelName - The name of the panel;
-	 *
-	 * @return {Promise<void>}
-	 */
-	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
-	}
-
 	async setLanguage( language ) {
 		await this.page.goto( '/wp-admin/options-general.php' );
 		await this.page.selectOption( '#WPLANG', language );
