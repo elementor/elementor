@@ -21,7 +21,7 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	async load() {
-		this.items = await $e.api.get( '/kit-elements-defaults' );
+		this.items = ( await $e.api.get( '/kit-elements-defaults' ) ).data;
 	},
 
 	/**

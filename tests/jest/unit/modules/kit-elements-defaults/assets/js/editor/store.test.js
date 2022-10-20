@@ -23,12 +23,14 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 	it( 'Should load items to cache', async () => {
 		// Arrange.
 		$e.api.get.mockImplementation( () => ( {
-			section: {
-				color: 'red',
-				background_color: '#F00',
-			},
-			button: {
-				type: 'info',
+			data: {
+				section: {
+					color: 'red',
+					background_color: '#F00',
+				},
+				button: {
+					type: 'info',
+				},
 			},
 		} ) );
 
@@ -57,11 +59,13 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		$e.api.put.mockImplementation( () => null );
+		$e.api.put.mockImplementation( () => ( { data: null } ) );
 
 		$e.api.get.mockImplementation( () => ( {
-			section: {
-				new_control: 'new_value',
+			data: {
+				section: {
+					new_control: 'new_value',
+				},
 			},
 		} ) );
 
@@ -86,8 +90,13 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		$e.api.delete.mockImplementation( () => '' );
-		$e.api.get.mockImplementation( () => ( {} ) );
+		$e.api.delete.mockImplementation( () => ( {
+			data: '',
+		} ) );
+
+		$e.api.get.mockImplementation( () => ( {
+			data: {},
+		} ) );
 
 		// Act.
 		await store.delete( 'section' );
