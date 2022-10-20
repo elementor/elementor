@@ -27,7 +27,7 @@ export default class Create extends $e.modules.CommandBase {
 			await store.upsert( elementType, settings );
 
 			elementor.notifications.showToast( {
-				message: __( 'Default values changed. Please avoid saving sensitive data such as passwords and API keys.', 'elementor' ),
+				message: __( 'Default settings changed. Please avoid saving sensitive data such as passwords and API keys.', 'elementor' ),
 			} );
 		} catch ( error ) {
 			elementor.notifications.showToast( {
