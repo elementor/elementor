@@ -39,6 +39,19 @@ export default class API {
 		this.store = new Store();
 		this.uiStates = new UiStates();
 
+		this.api = null;
+
+		( async () => {
+			const axios = ( await import( 'axios' ) ).default;
+
+			this.api = axios.create( {
+				baseURL: `${ elementorWebCliConfig.urls.rest }elementor/v1`,
+				headers: {
+					'X-WP-Nonce': elementorWebCliConfig.nonce,
+				},
+			} );
+		} )();
+
 		this.modules = {
 			CommandBase,
 			CommandInternalBase,

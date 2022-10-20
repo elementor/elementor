@@ -21,7 +21,7 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	async load() {
-		this.items = await apiRequest( 'GET', '/' );
+		this.items = await $e.api.get( '/kit-elements-defaults' );
 	},
 
 	/**
@@ -33,7 +33,7 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	async upsert( type, settings ) {
-		await apiRequest( 'PUT', `/${ type }`, { settings } );
+		await $e.api.put( `/kit-elements-defaults/${ type }`, { settings } );
 
 		await this.load();
 	},
@@ -46,36 +46,8 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	async delete( type ) {
-		await apiRequest( 'DELETE', `/${ type }` );
+		await $e.api.delete( `/kit-elements-defaults/${ type }` );
 
 		await this.load();
 	},
 };
-
-async function apiRequest( method, endpoint, data = {} ) {
-	const headers = {
-		'Content-Type': 'application/json',
-		'X-WP-Nonce': wpApiSettings.nonce,
-	};
-
-	const BASE_URL = wpApiSettings.root + 'elementor/v1/kit-elements-defaults';
-
-	const options = {
-		method,
-		headers,
-	};
-
-	if ( ! [ 'GET', 'HEAD' ].includes( method ) ) {
-		options.body = JSON.stringify( data );
-	}
-
-	const res = await fetch( BASE_URL + endpoint, options );
-
-	if ( ! res.ok ) {
-		return Promise.reject( res );
-	}
-
-	const body = await res.text();
-
-	return body ? JSON.parse( body ) : {};
-}
