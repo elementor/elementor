@@ -67,7 +67,7 @@ test.describe( 'Container tests', () => {
 		// Select spacer element.
 		await editor.selectElement( spacer );
 		// Set background colour.
-		await wpAdmin.activatePanelTab( 'advanced' );
+		await editor.activatePanelTab( 'advanced' );
 		await page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
 		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
@@ -89,7 +89,7 @@ test.describe( 'Container tests', () => {
 		// Act
 		await editor.selectElement( containerId );
 		// Set full content width.
-		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		expect( await container.screenshot( {
@@ -154,7 +154,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position absolute.
-		await wpAdmin.activatePanelTab( 'advanced' );
+		await editor.activatePanelTab( 'advanced' );
 		await page.waitForSelector( '.elementor-control-position >> select' );
 		await page.selectOption( '.elementor-control-position >> select', 'absolute' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
@@ -172,8 +172,8 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set full content width
-		await wpAdmin.activatePanelTab( 'layout' );
-		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+		await editor.activatePanelTab( 'layout' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 
 		// Assert
 		expect( await pageView.screenshot( {
@@ -210,7 +210,7 @@ test.describe( 'Container tests', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position fixed.
-		await wpAdmin.activatePanelTab( 'advanced' );
+		await editor.activatePanelTab( 'advanced' );
 		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
@@ -228,8 +228,8 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( container );
 
 		// Set full content width
-		await wpAdmin.activatePanelTab( 'layout' );
-		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+		await editor.activatePanelTab( 'layout' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
 
 		// Assert
 		expect( await pageView.screenshot( {
@@ -255,11 +255,75 @@ test.describe( 'Container tests', () => {
 		await editor.getFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
 		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
-		await expect( editor.getPreviewFrame().locator( '.e-container--width-full ' ) ).toHaveCount( 1 );
+		await expect( editor.getPreviewFrame().locator( '.e-con-full-width ' ) ).toHaveCount( 1 );
 
 		await wpAdmin.setExperiments( {
 			container: false,
 		} );
+	} );
+
+	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		// Arrange.
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
+
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		// Set flex-wrap: wrap.
+		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
+		// Act.
+		await editor.addWidget( 'divider', container );
+		// Set widget custom width to 80%.
+		await editor.setWidgetCustomWidth( '80' );
+
+		await editor.addWidget( 'google_maps', container );
+		// Set widget custom width to 40%.
+		await editor.setWidgetCustomWidth( '40' );
+		await editor.setWidgetToFlexGrow();
+		// Set widget mask.
+		await editor.setWidgetMask();
+
+		await editor.addWidget( 'video', container );
+		// Set widget custom width to 40%.
+		await editor.setWidgetCustomWidth( '40' );
+		// Set widget mask.
+		await editor.setWidgetMask();
+		await page.waitForLoadState( 'domcontentloaded' );
+
+		// Add image carousel widget.
+		const carouselOneId = await editor.addWidget( 'image-carousel', container );
+		await editor.populateImageCarousel();
+		// Set widget custom width to 40%.
+		await editor.setWidgetCustomWidth( '40' );
+		// Duplicate carousel widget.
+		await editor.selectElement( carouselOneId );
+		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId + ' .elementor-editor-element-edit' ).click( { button: 'right' } );
+		await expect( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
+		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
+		// Add flex grow effect.
+		await editor.activatePanelTab( 'advanced' );
+		await editor.setWidgetToFlexGrow();
+		// Add background color.
+		await editor.selectElement( carouselOneId );
+		await editor.setBackgroundColor( '#CCCCCC' );
+		// Move test elements out of focus.
+		await editor.removeFocus( 'container' );
+
+		// Assert.
+		expect( await containerElement.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
 	} );
 
 	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
@@ -279,13 +343,13 @@ test.describe( 'Container tests', () => {
 		await page.waitForSelector( '.attachments-wrapper' );
 		await page.locator( 'ul.attachments li' ).nth( 0 ).click();
 		await page.waitForSelector( '.attachment-details-copy-link' );
-		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue();
 
-		const editor = await wpAdmin.useElementorCleanPost();
+		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
+			editor = await wpAdmin.useElementorCleanPost(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
+			container = editor.getFrame().locator( '.elementor-element-' + containerId );
 
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-
-		await wpAdmin.activatePanelTab( 'style' );
+		await editor.activatePanelTab( 'style' );
 		await page.locator( '[data-tooltip="Video"]' ).click();
 		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
 		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
@@ -299,8 +363,6 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
 
 		await editor.closeNavigatorIfOpen();
-
-		const container = editor.getFrame().locator( '.elementor-element-' + containerId );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
