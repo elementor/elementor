@@ -5,12 +5,15 @@ use Elementor\Plugin;
 use Elementor\Modules\KitElementsDefaults\Data\Controller;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends BaseModule {
+	const META_KEY = '_elementor_elements_default_values';
+
 	public function get_name() {
 		return 'kit-elements-defaults';
 	}
@@ -43,6 +46,8 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$this->enqueue_scripts();
 		} );
+
+		( new Import_Export() )->register();
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}

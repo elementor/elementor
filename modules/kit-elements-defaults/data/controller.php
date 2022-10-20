@@ -3,6 +3,7 @@ namespace Elementor\Modules\KitElementsDefaults\Data;
 
 use Elementor\Plugin;
 use Elementor\Data\V2\Base\Exceptions\Error_404;
+use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Data\V2\Base\Controller as Base_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Controller extends Base_Controller {
-	const META_KEY = '_elementor_elements_defaults_values';
-
 	public function get_name() {
 		return 'kit-elements-defaults';
 	}
@@ -76,7 +75,7 @@ class Controller extends Base_Controller {
 			$request->get_param( 'kit_id' )
 		);
 
-		return (object) $kit->get_json_meta( static::META_KEY );
+		return (object) $kit->get_json_meta( Module::META_KEY );
 	}
 
 	public function create_item( $request ) {
@@ -84,12 +83,12 @@ class Controller extends Base_Controller {
 			$request->get_param( 'kit_id' )
 		);
 
-		$data = $kit->get_json_meta( static::META_KEY );
+		$data = $kit->get_json_meta( Module::META_KEY );
 
 		$data[ $request->get_param( 'type' ) ] = $request->get_param( 'settings' );
 
 		$kit->update_meta(
-			static::META_KEY,
+			Module::META_KEY,
 			wp_json_encode( $data )
 		);
 
@@ -101,12 +100,12 @@ class Controller extends Base_Controller {
 			$request->get_param( 'kit_id' )
 		);
 
-		$data = $kit->get_json_meta( static::META_KEY );
+		$data = $kit->get_json_meta( Module::META_KEY );
 
 		unset( $data[ $request->get_param( 'type' ) ] );
 
 		$kit->update_meta(
-			static::META_KEY,
+			Module::META_KEY,
 			wp_json_encode( $data )
 		);
 
