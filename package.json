@@ -57,6 +57,7 @@
         "grunt-bumpup": "~0.6.3",
         "grunt-checktextdomain": "~1.0.1",
         "grunt-contrib-clean": "~2.0.1",
+        "grunt-contrib-compress": "~2.0.0",
         "grunt-contrib-copy": "~1.0.0",
         "grunt-contrib-qunit": "^6.2.0",
         "grunt-contrib-sass": "~2.0.0",
