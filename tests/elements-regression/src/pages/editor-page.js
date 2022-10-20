@@ -115,6 +115,10 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * We are using custom page screenshot because:
+	 * 1. Screenshot should be taken after the element is loaded.
+	 * 2. Screenshot should be taken of element boundries but the maximum size is the viewport size.
+	 *
 	 * @param {import('../widgets/widget').Widget} widget
 	 * @return {Promise<Buffer>}
 	 */

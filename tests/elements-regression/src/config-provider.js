@@ -1,4 +1,4 @@
-module.exports = class ConfigMediator {
+module.exports = class ConfigProvider {
 	/**
 	 * @type {Object}
 	 */
@@ -7,25 +7,26 @@ module.exports = class ConfigMediator {
 	/**
 	 * @type {Object}
 	 */
-	#userConfig;
+	#testConfig;
 
 	/**
 	 * @param {Object} args
 	 * @param {Object} args.elementsConfig
-	 * @param {Object} args.userConfig
+	 * @param {Object} args.testConfig
+	 * @param          args.testConfig
 	 */
-	constructor( { elementsConfig, userConfig } ) {
+	constructor( { elementsConfig, testConfig } ) {
 		this.#elementsConfig = elementsConfig;
-		this.#userConfig = this.#createUserConfig( userConfig );
+		this.#testConfig = this.#createTestConfig( testConfig );
 	}
 
 	/**
 	 * @param {Object} args
 	 * @param {Object} args.elementsConfig
-	 * @param {Object} args.userConfig
+	 * @param {Object} args.testConfig
 	 */
-	static make( { elementsConfig, userConfig } ) {
-		return new this( { elementsConfig, userConfig } );
+	static make( { elementsConfig, testConfig } ) {
+		return new this( { elementsConfig, testConfig } );
 	}
 
 	/**
@@ -36,8 +37,8 @@ module.exports = class ConfigMediator {
 	getWidgetsTypes() {
 		return Object.entries( this.#elementsConfig ).filter(
 			( [ widgetType ] ) =>
-				this.#isIncluded( this.#userConfig.elements, widgetType ) &&
-				! this.#isExcluded( this.#userConfig.elements, widgetType ),
+				this.#isIncluded( this.#testConfig.elements, widgetType ) &&
+				! this.#isExcluded( this.#testConfig.elements, widgetType ),
 		).map( ( [ widgetType, widgetConfig ] ) => {
 			return { widgetType, widgetConfig };
 		} );
@@ -51,8 +52,8 @@ module.exports = class ConfigMediator {
 	 */
 	getControlsForTests( widgetType ) {
 		const currentConfig = this.#merge(
-			this.#userConfig.controls[ '*' ],
-			this.#userConfig.controls[ widgetType ],
+			this.#testConfig.controls[ '*' ],
+			this.#testConfig.controls[ widgetType ],
 		);
 
 		return Object.entries( this.#elementsConfig[ widgetType ].controls || {} )
@@ -79,8 +80,8 @@ module.exports = class ConfigMediator {
 	 */
 	getControlDependencies( widgetType, controlId ) {
 		const currentConfig = this.#merge(
-			this.#userConfig.controls[ '*' ],
-			this.#userConfig.controls[ widgetType ],
+			this.#testConfig.controls[ '*' ],
+			this.#testConfig.controls[ widgetType ],
 		);
 
 		const deps = {
@@ -169,7 +170,7 @@ module.exports = class ConfigMediator {
 	 * @param {Object} config
 	 * @return {Object}
 	 */
-	#createUserConfig( config ) {
+	#createTestConfig( config ) {
 		return {
 			elements: {
 				...( config.elements || {} ),

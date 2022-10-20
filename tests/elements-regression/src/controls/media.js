@@ -1,5 +1,5 @@
 const { ControlBase } = require( './control-base' );
-const media = require( '../media' );
+const mediaStore = require( '../media-store' );
 
 class Media extends ControlBase {
 	getSelector() {
@@ -11,7 +11,7 @@ class Media extends ControlBase {
 
 		const selectedMediaId = await this.getSelectedMediaId();
 
-		const value = media.getNameFromId( selectedMediaId );
+		const value = mediaStore.getNameFromId( selectedMediaId );
 
 		await this.closeMediaLibrary();
 
@@ -19,7 +19,7 @@ class Media extends ControlBase {
 	}
 
 	async setValue( newValue ) {
-		const id = media.getIdFromName( newValue );
+		const id = mediaStore.getIdFromName( newValue );
 
 		if ( ! id ) {
 			throw new Error( `Media file with name '${ newValue }' was not found.` );

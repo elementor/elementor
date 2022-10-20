@@ -2,7 +2,7 @@ const { chromium, request } = require( '@playwright/test' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const WpAdminPage = require( './pages/wp-admin-page.js' );
-const media = require( './media' );
+const mediaStore = require( './media-store' );
 
 module.exports = async ( { projects: [ { use: config } ] } ) => {
 	const { page, browser } = await createPage( {
@@ -113,7 +113,7 @@ async function createDefaultMedia( apiContext ) {
 	const { id } = await response.json();
 
 	// Pass the id that was uploaded to the tests.
-	media.set( imageName, id );
+	mediaStore.set( imageName, id );
 
 	return async () => {
 		await apiContext.delete( `/index.php`, {

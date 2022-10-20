@@ -1,12 +1,12 @@
 const { expect } = require( '@playwright/test' );
 const test = require( '../src/test' );
 const elementsConfig = require( '../elements-config.json' );
-const userConfig = require( '../elements-regression.config' );
-const ConfigMediator = require( '../src/config-mediator' );
+const testConfig = require( '../test.config' );
+const ConfigProvider = require( '../src/config-provider' );
 const widgetHandlers = require( '../src/widgets' );
 const controlHandlers = require( '../src/controls' );
 
-const configMediator = ConfigMediator.make( { elementsConfig, userConfig } );
+const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
 
 test.describe( 'Elements regression', () => {
 	const testedElements = {};
