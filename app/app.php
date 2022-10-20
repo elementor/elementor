@@ -192,6 +192,7 @@ class App extends BaseApp {
 			[
 				'wp-i18n',
 				'react',
+				'elementor-common',
 			],
 			ELEMENTOR_VERSION,
 			true
