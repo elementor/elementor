@@ -1,8 +1,6 @@
 import store from 'elementor/modules/kit-elements-defaults/assets/js/editor/store';
 
 describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
-	let originalFetch, fetchMock;
-
 	beforeEach( () => {
 		window.$e = {
 			api: {
