@@ -13,7 +13,6 @@ module.exports = class ConfigProvider {
 	 * @param {Object} args
 	 * @param {Object} args.elementsConfig
 	 * @param {Object} args.testConfig
-	 * @param          args.testConfig
 	 */
 	constructor( { elementsConfig, testConfig } ) {
 		this.#elementsConfig = elementsConfig;
