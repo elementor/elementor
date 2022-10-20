@@ -7,7 +7,7 @@ jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/store', () 
 	},
 } ) );
 
-describe( '$e.run("preview/drop") - Hook: FillDefaultsOnDrop', () => {
+describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 	let CommandHook;
 
 	beforeEach( async () => {
@@ -55,6 +55,9 @@ describe( '$e.run("preview/drop") - Hook: FillDefaultsOnDrop', () => {
 				button_text_color: 'globals/colors?id=9182bce',
 				background_color: 'globals/colors?id=secondary',
 			},
+			__dynamic__: {
+				link: "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
+			},
 		} );
 
 		// Act
@@ -76,6 +79,49 @@ describe( '$e.run("preview/drop") - Hook: FillDefaultsOnDrop', () => {
 						test_global_setting: 'test',
 						button_text_color: 'globals/colors?id=9182bce',
 						background_color: 'globals/colors?id=secondary',
+					},
+					__dynamic__: {
+						link: "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
+					},
+				},
+			},
+		} );
+	} );
+
+	it( 'should do nothing if there is no defaults', () => {
+		// Arrange
+// Arrange
+		const hook = new CommandHook();
+
+		const args = {
+			test: 'test',
+			model: {
+				elType: 'widget',
+				widgetType: 'button',
+				settings: {
+					test_setting: 'test',
+					__globals__: {
+						test_global_setting: 'test',
+					},
+				},
+			},
+		};
+
+		store.get.mockReturnValue( {} );
+
+		// Act
+		hook.apply( args );
+
+		// Assert
+		expect( args ).toEqual( {
+			test: 'test',
+			model: {
+				elType: 'widget',
+				widgetType: 'button',
+				settings: {
+					test_setting: 'test',
+					__globals__: {
+						test_global_setting: 'test',
 					},
 				},
 			},

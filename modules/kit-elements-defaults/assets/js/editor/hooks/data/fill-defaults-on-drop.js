@@ -1,4 +1,5 @@
 import store from '../../store';
+import { isPopulatedObject } from '../../utils';
 
 export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 	getCommand() {
@@ -19,22 +20,14 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 
 		const elementSettings = store.get( widgetType || elType );
 
-		if (
-			! elementSettings ||
-			'object' !== typeof elementSettings ||
-			! Object.keys( elementSettings ).length
-		) {
+		if ( ! isPopulatedObject( elementSettings ) ) {
 			return true;
 		}
 
 		const settings = { ...( args.model.settings || {} ), ...elementSettings };
 
 		[ '__dynamic__', '__globals__' ].forEach( ( type ) => {
-			if (
-				! elementSettings[ type ] ||
-				typeof elementSettings[ type ] !== 'object' ||
-				! Object.keys( elementSettings.__globals__ ).length
-			) {
+			if ( ! isPopulatedObject( elementSettings[ type ] ) ) {
 				return;
 			}
 

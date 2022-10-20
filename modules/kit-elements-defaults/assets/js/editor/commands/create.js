@@ -1,4 +1,5 @@
 import store from '../store';
+import { isPopulatedObject } from '../utils';
 
 export default class Create extends $e.modules.CommandBase {
 	validateArgs() {
@@ -15,7 +16,7 @@ export default class Create extends $e.modules.CommandBase {
 		[ '__dynamic__', '__globals__' ].forEach( ( type ) => {
 			const specialSettings = this.extractSpecialSettings( type, container );
 
-			if ( ! Object.keys( specialSettings ).length ) {
+			if ( ! isPopulatedObject( specialSettings ) ) {
 				return;
 			}
 
@@ -26,7 +27,7 @@ export default class Create extends $e.modules.CommandBase {
 			await store.upsert( elementType, settings );
 
 			elementor.notifications.showToast( {
-				message: __( 'Default values saved successfully. Please avoid saving sensetive data like passwords and api keys.', 'elementor' ),
+				message: __( 'Default values changed. Please avoid saving sensitive data such as passwords and API keys.', 'elementor' ),
 			} );
 		} catch ( error ) {
 			elementor.notifications.showToast( {
@@ -40,26 +41,26 @@ export default class Create extends $e.modules.CommandBase {
 	}
 
 	extractLocalSettings( container ) {
-		const controls = container.settings.controls,
-			settingsWithoutDefaults = container.settings.toJSON( { remove: [ 'default' ] } );
+		const { settings } = container,
+			settingsWithoutDefaults = settings.toJSON( { remove: [ 'default' ] } );
 
 		const entries = Object.entries( settingsWithoutDefaults )
 			// Remove controls that are not exist.
-			.filter( ( [ settingName ] ) => !! controls[ settingName ] );
+			.filter( ( [ settingName ] ) => !! settings.controls[ settingName ] );
 
 		return Object.fromEntries( entries );
 	}
 
 	extractSpecialSettings( type, container ) {
-		const controls = container.settings.controls,
-			localSettings = container.settings.toJSON( { remove: [ 'default' ] } ),
+		const { settings } = container,
+			localSettings = settings.toJSON( { remove: [ 'default' ] } ),
 			specialSettings = localSettings?.[ type ] || {};
 
 		const entries = Object.entries( specialSettings )
 			// Remove controls that have local value.
-			.filter( ( [ settingsName ] ) => ! Object.hasOwn( localSettings, settingsName ) )
+			.filter( ( [ settingsName ] ) => ! Object.prototype.hasOwnProperty.call( localSettings, settingsName ) )
 			// Remove controls that are not exist.
-			.filter( ( [ settingName ] ) => !! controls[ settingName ] );
+			.filter( ( [ settingName ] ) => !! settings.controls[ settingName ] );
 
 		return Object.fromEntries( entries );
 	}
