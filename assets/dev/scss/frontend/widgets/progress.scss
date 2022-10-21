@@ -10,6 +10,7 @@
 	position: relative;
 	background-color: $progress-bg;
 	color: $progress-text;
+	height: 100%;
 	border-radius: 2px;
 }
 
@@ -76,5 +77,13 @@
 
 	.elementor-progress-text {
 		@include padding-start(10px);
+	}
+}
+
+.e-con,
+.e-con-inner {
+
+	.elementor-progress-wrapper {
+		height: initial;
 	}
 }
