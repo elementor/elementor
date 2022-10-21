@@ -1406,7 +1406,7 @@ class Widget_Common extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{URL}} );' ),
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{URL}} ) !important;' ),
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_shape' => 'custom',
