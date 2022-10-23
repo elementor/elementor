@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Testing\Modules\KitElementsDefaults;
+namespace Elementor\Testing\Modules\KitElementsDefaults\Data;
 
 use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Plugin;
@@ -19,7 +19,7 @@ class Test_Controller extends Elementor_Test_Base {
 	/**
 	 * GET '/kit-elements-defaults'
 	 */
-	public function test_index__only_allowed_users_can_read_defaults() {
+	public function test_get_items__only_allowed_users_can_read_defaults() {
 		// Arrange.
 		$this->act_as_subscriber();
 
@@ -30,7 +30,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_index__empty_kit_default_meta() {
+	public function test_get_items__empty_kit_default_meta() {
 		// Arrange.
 		$this->act_as_editor();
 
@@ -39,10 +39,10 @@ class Test_Controller extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( [], $response->get_data() );
+		$this->assertEquals( (object) [], $response->get_data() );
 	}
 
-	public function test_index() {
+	public function test_get_items() {
 		// Arrange.
 		$this->act_as_editor();
 
@@ -66,7 +66,7 @@ class Test_Controller extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
-		$this->assertEquals( [
+		$this->assertEquals( (object) [
 			'section' => [
 				'color' => '#FFF',
 				'background_color' => 'red',
@@ -83,7 +83,7 @@ class Test_Controller extends Elementor_Test_Base {
 	/**
 	 * PUT '/kit-elements-defaults/{type}'
 	 */
-	public function test_update__only_allowed_users_can_create_defaults() {
+	public function test_update_item__only_allowed_users_can_create_defaults() {
 		// Arrange.
 		$this->act_as_editor();
 
@@ -99,7 +99,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_update__missing_settings_returns_400() {
+	public function test_update_item__missing_settings_returns_400() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -112,7 +112,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'settings' ], $response->get_data()['data']['params'] );
 	}
 
-	public function test_update__invalid_settings_returns_400() {
+	public function test_update_item__invalid_settings_returns_400() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -127,7 +127,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'settings', $response->get_data()['data']['params'] );
 	}
 
-	public function test_update__widget_returns_201() {
+	public function test_update_item__widget_returns_200() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -139,7 +139,7 @@ class Test_Controller extends Elementor_Test_Base {
 		] );
 
 		// Assert.
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 
 		$this->assertEquals( [
 			'button' => [
@@ -148,7 +148,7 @@ class Test_Controller extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
-	public function test_update__sanitizes_globals_and_dynamics() {
+	public function test_update_item__sanitizes_globals_and_dynamics() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -168,7 +168,7 @@ class Test_Controller extends Elementor_Test_Base {
 		] );
 
 		// Assert.
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 
 		$this->assertEquals( [
 			'button' => [
@@ -183,7 +183,7 @@ class Test_Controller extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
-	public function test_update__keeps_quotes() {
+	public function test_update_item__keeps_quotes() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -195,7 +195,7 @@ class Test_Controller extends Elementor_Test_Base {
 		] );
 
 		// Assert.
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 
 		$this->assertEquals( [
 			'section' => [
@@ -204,7 +204,7 @@ class Test_Controller extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
-	public function test_update() {
+	public function test_update_item() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -231,7 +231,7 @@ class Test_Controller extends Elementor_Test_Base {
 		] );
 
 		// Assert.
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 
 		$this->assertEquals( [
 			'section' => [
@@ -250,7 +250,7 @@ class Test_Controller extends Elementor_Test_Base {
 	/**
 	 * DELETE '/kit-elements-defaults/{type}'
 	 */
-	public function test_destroy__only_allowed_users_can_delete_defaults() {
+	public function test_delete_item__only_allowed_users_can_delete_defaults() {
 		// Arrange.
 		$this->act_as_editor();
 
@@ -261,7 +261,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_destroy__keeps_quotes() {
+	public function test_delete_item__keeps_quotes() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -282,7 +282,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'DELETE', '/kit-elements-defaults/column' );
 
 		// Assert.
-		$this->assertEquals( 204, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 
 		$this->assertEquals( [
 			'section' => [
@@ -291,7 +291,7 @@ class Test_Controller extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
-	public function test_destroy() {
+	public function test_delete_item() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -313,7 +313,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'DELETE', '/kit-elements-defaults/section' );
 
 		// Assert.
-		$this->assertEquals( 204, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 
 		$this->assertEquals( [
 			'column' => [

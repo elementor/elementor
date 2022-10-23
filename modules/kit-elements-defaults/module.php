@@ -3,6 +3,8 @@ namespace Elementor\Modules\KitElementsDefaults;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\KitElementsDefaults\Data\Controller;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -45,6 +47,6 @@ class Module extends BaseModule {
 			$this->enqueue_scripts();
 		} );
 
-		( new Controller() )->register();
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
 }

@@ -1,4 +1,4 @@
-import store from '../../store';
+import { getElementDefaults } from '../../api';
 
 export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 	getCommand() {
@@ -17,7 +17,7 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 		const { model } = args,
 			{ elType, widgetType } = model;
 
-		const elementSettings = store.get( widgetType || elType );
+		const elementSettings = getElementDefaults( widgetType || elType );
 
 		if ( ! elementSettings ) {
 			return true;

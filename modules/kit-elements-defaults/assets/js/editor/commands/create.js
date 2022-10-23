@@ -1,5 +1,5 @@
 import localSettingsExtractor from '../settings-handlers/local/extract';
-import store from '../store';
+import { updateElementDefaults } from '../api';
 
 export default class Create extends $e.modules.CommandBase {
 	settingsExtractors = [
@@ -23,7 +23,7 @@ export default class Create extends $e.modules.CommandBase {
 		}, {} );
 
 		try {
-			await store.put( type, settings );
+			await updateElementDefaults( type, settings );
 
 			// TODO: Show success toast.
 		} catch ( e ) {
