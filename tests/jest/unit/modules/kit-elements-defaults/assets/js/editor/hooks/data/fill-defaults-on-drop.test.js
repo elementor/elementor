@@ -1,10 +1,8 @@
-import store from 'elementor/modules/kit-elements-defaults/assets/js/editor/store';
+import { getElementDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
 
-jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/store', () => ( {
+jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/api', () => ( {
 	__esModule: true,
-	default: {
-		get: jest.fn(),
-	},
+	getElementDefaults: jest.fn(),
 } ) );
 
 describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
@@ -46,7 +44,7 @@ describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 			},
 		};
 
-		store.get.mockReturnValue( {
+		getElementDefaults.mockReturnValue( {
 			text_shadow_text_shadow: { horizontal: 0, vertical: 0, blur: 0, color: 'rgba(0,0,0,0.3)' },
 			border_border: 'solid',
 			border_color: '#FF0000',
@@ -107,7 +105,7 @@ describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 			},
 		};
 
-		store.get.mockReturnValue( {} );
+		getElementDefaults.mockReturnValue( {} );
 
 		// Act
 		hook.apply( args );

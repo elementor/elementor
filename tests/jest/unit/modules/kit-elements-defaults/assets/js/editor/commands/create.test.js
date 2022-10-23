@@ -1,10 +1,8 @@
-import store from 'elementor/modules/kit-elements-defaults/assets/js/editor/store';
+import { updateElementDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
 
-jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/store', () => ( {
+jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/api', () => ( {
 	__esModule: true,
-	default: {
-		upsert: jest.fn(),
-	},
+	updateElementDefaults: jest.fn(),
 } ) );
 
 describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
@@ -14,7 +12,9 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		global.$e = {
 			internal: jest.fn(),
 			modules: {
-				CommandBase: class {},
+				editor: {
+					CommandContainerBase: class {},
+				},
 			},
 		};
 
@@ -25,7 +25,7 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		CreateCommand = ( await import( 'elementor/modules/kit-elements-defaults/assets/js/editor/commands' ) ).Create;
+		CreateCommand = ( await import( 'elementor/modules/kit-elements-defaults/assets/js/editor/commands/create' ) ).default;
 	} );
 
 	afterEach( () => {
@@ -75,7 +75,7 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		command.apply( { container } );
 
 		// Assert
-		expect( store.upsert ).toHaveBeenCalledWith( 'button', {
+		expect( updateElementDefaults ).toHaveBeenCalledWith( 'button', {
 			text_shadow_text_shadow: { horizontal: 33, vertical: 0, blur: 10, color: 'rgba(0,0,0,0.3)' },
 			border_border: 'solid',
 			border_color: '#FF0000',
@@ -109,7 +109,7 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		command.apply( { container } );
 
 		// Assert
-		expect( store.upsert ).toHaveBeenCalledWith( 'section', { width: '100px' } );
+		expect( updateElementDefaults ).toHaveBeenCalledWith( 'section', { width: '100px' } );
 	} );
 
 	it( 'should throw an error if upsert fails', () => {
@@ -127,7 +127,7 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 			},
 		} );
 
-		store.upsert.mockImplementation( () => {
+		updateElementDefaults.mockImplementation( () => {
 			throw new Error( 'Failed to upsert' );
 		} );
 

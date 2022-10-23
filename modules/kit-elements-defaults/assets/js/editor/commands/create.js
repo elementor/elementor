@@ -1,4 +1,4 @@
-import store from '../store';
+import { updateElementDefaults } from '../api';
 import { isPopulatedObject } from '../utils';
 
 export default class Create extends $e.modules.editor.CommandContainerBase {
@@ -24,7 +24,7 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 		} );
 
 		try {
-			await updateElementDefaults( type, settings );
+			await updateElementDefaults( elementType, settings );
 
 			elementor.notifications.showToast( {
 				message: __( 'Default settings changed.', 'elementor' ),
