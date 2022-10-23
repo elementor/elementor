@@ -1,4 +1,4 @@
-.e-container {
+.e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--display: flex;
@@ -47,8 +47,8 @@
 	overflow: var( --overflow );
 	transition: var( --transition );
 
-	&--width-full,
-	& > .e-container__inner {
+	&-full-width,
+	& > .e-con-inner {
 		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
 		padding-top: var( --padding-top );
@@ -56,12 +56,12 @@
 	}
 
 	&,
-	& > .e-container__inner {
+	& > .e-con-inner {
 		display: var( --display );
 	}
 
 	// Set default values to the outer div of the boxed container.
-	&--width-boxed {
+	&-boxed {
 		flex-direction: column;
 		text-align: initial;
 		flex-wrap: initial;
@@ -71,7 +71,7 @@
 		gap: initial;
 	}
 
-	& > .e-container__inner {
+	& > .e-con-inner {
 		flex-wrap: var( --flex-wrap );
 		justify-content: var( --justify-content );
 		align-items: var( --align-items );
@@ -81,7 +81,7 @@
 		max-width: var( --content-width );
 		margin: 0 auto;
 		padding-inline: 0;
-		height: 100%;	
+		height: 100%;
 
 		// Set default values to the inner div of the boxed container.
 		flex-basis: initial;
@@ -111,9 +111,9 @@
 	// Background overlay.
 	&::before,
 	> .elementor-background-video-container::before,
-	> .e-container__inner > .elementor-background-video-container::before,
+	> .e-con-inner > .elementor-background-video-container::before,
 	> .elementor-background-slideshow:before,
-	> .e-container__inner > .elementor-background-slideshow:before {
+	> .e-con-inner > .elementor-background-slideshow:before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
@@ -130,12 +130,12 @@
 	}
 
 	> .elementor-background-video-container:before,
-	> .e-container__inner > .elementor-background-video-container:before {
+	> .e-con-inner > .elementor-background-video-container:before {
 		z-index: $first-layer;
 	}
 
 	> .elementor-background-slideshow:before,
-	> .e-container__inner > .elementor-background-slideshow:before {
+	> .e-con-inner > .elementor-background-slideshow:before {
 		z-index: $second-layer;
 	}
 
@@ -144,23 +144,22 @@
 		// Since the default is `min-width: auto` for flex items.
 		min-width: 0;
 
-		// Fix iframe-based widgets (ED-5338).
-		// TODO: Find a better solution.
+		// Fix iframe-based widgets (ED-5338) & widget with empty placeholder.
 		&-video,
-		&-google_maps {
-			flex-basis: 100%;
+		&-google_maps,
+		&-empty {
+			width: 100%;
 		}
 
 		// Fix swiper-based widgets broken (ED-6849).
 		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
 		&.e-widget-swiper {
-			max-width: 100%;
-			flex-basis: 100%;
+			width: 100%;
 		}
 	}
 
 	&,
-	& > .e-container__inner {
+	& > .e-con-inner {
 
 		& > .elementor-widget {
 
@@ -171,21 +170,19 @@
 		}
 	}
 
-	.elementor & {
+	// Hack with repeated classnames to increase the specificity.
+	.elementor.elementor &,
+	&.e-con > .e-con-inner {
 
-		&,
-		& > .e-container__inner {
-
-			// This was done to make sure that the widgets inside containers do not exceed the container's max width.
-			& > .elementor-widget {
-				max-width: 100%;
-			}
+		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+		& > .elementor-widget {
+			max-width: 100%;
 		}
 	}
 }
 
 @media ( max-width: $editor-screen-sm-max ) {
-	.e-container {
+	.e-con {
 		--width: 100%;
 		--flex-wrap: wrap;
 	}
