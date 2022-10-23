@@ -422,7 +422,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 				size: 200,
 				unit: 'px',
 			},
-			content_width: 'full',
+			content_width: 'full-width',
 		};
 
 		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
@@ -491,7 +491,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 				size: 30,
 				unit: 'px',
 			},
-			content_width: 'full', // Default setting.
+			content_width: 'full-width', // Default setting.
 		};
 
 		expect( document.children[ 1 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );

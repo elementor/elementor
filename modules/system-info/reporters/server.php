@@ -311,13 +311,6 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_write_permissions() : array {
-		$paths_messages = [
-			static::KEY_PATH_WP_ROOT_DIR => 'WordPress root directory',
-			static::KEY_PATH_HTACCESS_FILE => '.htaccess file',
-			static::KEY_PATH_UPLOADS_DIR => 'WordPress uploads directory',
-			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => 'Elementor uploads directory',
-		];
-
 		$paths_to_check = [
 			static::KEY_PATH_WP_ROOT_DIR => $this->get_system_path( static::KEY_PATH_WP_ROOT_DIR ),
 			static::KEY_PATH_HTACCESS_FILE => $this->get_system_path( static::KEY_PATH_HTACCESS_FILE ),
@@ -329,10 +322,20 @@ class Server extends Base {
 
 		$write_problems = [];
 
-		foreach ( $paths_permissions as $key_path => $path_permissions ) {
-			if ( ! $path_permissions['write'] ) {
-				$write_problems[] = $paths_messages[ $key_path ];
-			}
+		if ( ! $paths_permissions[ static::KEY_PATH_WP_ROOT_DIR ]['write'] ) {
+			$write_problems[] = 'WordPress root directory';
+		}
+
+		if ( ! $paths_permissions[ static::KEY_PATH_UPLOADS_DIR ]['write'] ) {
+			$write_problems[] = 'WordPress uploads directory';
+		}
+
+		if ( $paths_permissions[ self::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['exists'] && ! $paths_permissions[ self::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['write'] ) {
+			$write_problems[] = 'Elementor uploads directory';
+		}
+
+		if ( $paths_permissions[ self::KEY_PATH_HTACCESS_FILE ]['exists'] && ! $paths_permissions[ self::KEY_PATH_HTACCESS_FILE ]['write'] ) {
+			$write_problems[] = '.htaccess file';
 		}
 
 		if ( $write_problems ) {
@@ -412,7 +415,7 @@ class Server extends Base {
 
 	/**
 	 * @param $paths [] Paths to check permissions.
-	 * @return array []{read: bool, write: bool, execute: bool}
+	 * @return array []{exists: bool, read: bool, write: bool, execute: bool}
 	 */
 	public function get_paths_permissions( $paths ) : array {
 		$permissions = [];
@@ -445,7 +448,13 @@ class Server extends Base {
 				return wp_upload_dir()['basedir'] ?? '';
 
 			case static::KEY_PATH_ELEMENTOR_UPLOADS_DIR:
-				return ! empty( wp_upload_dir()['basedir'] ) ? wp_upload_dir()['basedir'] . '/elementor' : '';
+				if ( empty( wp_upload_dir()['basedir'] ) ) {
+					return '';
+				}
+
+				$elementor_uploads_dir = wp_upload_dir()['basedir'] . '/elementor';
+
+				return is_dir( $elementor_uploads_dir ) ? $elementor_uploads_dir : '';
 
 			default:
 				return '';
@@ -456,11 +465,12 @@ class Server extends Base {
 	 * Check the permissions of a path.
 	 *
 	 * @param $path
-	 * @return array{read: bool, write: bool, execute: bool}
+	 * @return array{exists: bool, read: bool, write: bool, execute: bool}
 	 */
 	public function get_path_permissions( $path ) : array {
 		if ( empty( $path ) ) {
 			return [
+				'exists' => false,
 				'read' => false,
 				'write' => false,
 				'execute' => false,
@@ -468,6 +478,7 @@ class Server extends Base {
 		}
 
 		return [
+			'exists' => true,
 			'read' => is_readable( $path ),
 			'write' => is_writeable( $path ),
 			'execute' => is_executable( $path ),

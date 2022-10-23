@@ -99,7 +99,7 @@ class Migrator {
 			legacyControlsMapping: myMap,
 			normalizeSettings: ( settings ) => ( {
 				...settings, // The settings object after the migration.
-				content_width: 'full',
+				content_width: 'full-width',
 			} ),
 		},
 	};

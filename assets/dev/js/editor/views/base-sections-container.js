@@ -33,7 +33,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	getSortableOptions() {
 		return {
 			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
-			items: '> .elementor-section, > .e-container',
+			items: '> .elementor-section, > .e-con',
 		};
 	},
 
