@@ -49,7 +49,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
 		expect( $e.data.cache.storage.getItem ).toHaveBeenCalledWith( 'kit-elements-defaults' );
 	} );
 
-	it( 'Should update element defaults', async () => {
+	it( 'Should update element defaults and reload cache', async () => {
 		// Act.
 		await updateElementDefaults( 'section', {
 			new_control: 'new_value',
@@ -62,9 +62,15 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
 			{ settings: { new_control: 'new_value' } },
 			{ type: 'section' },
 		);
+
+		expect( $e.data.cache.storage.removeItem ).toHaveBeenCalledTimes( 1 );
+		expect( $e.data.cache.storage.removeItem ).toHaveBeenCalledWith( 'kit-elements-defaults' );
+
+		expect( $e.data.get ).toHaveBeenCalledTimes( 1 );
+		expect( $e.data.get ).toHaveBeenCalledWith( 'kit-elements-defaults/index' );
 	} );
 
-	it( 'Should delete element defaults', async () => {
+	it( 'Should delete element defaults and reload cache', async () => {
 		// Act.
 		await deleteElementDefault( 'section' );
 
@@ -74,5 +80,11 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
 			'kit-elements-defaults/index',
 			{ type: 'section' },
 		);
+
+		expect( $e.data.cache.storage.removeItem ).toHaveBeenCalledTimes( 1 );
+		expect( $e.data.cache.storage.removeItem ).toHaveBeenCalledWith( 'kit-elements-defaults' );
+
+		expect( $e.data.get ).toHaveBeenCalledTimes( 1 );
+		expect( $e.data.get ).toHaveBeenCalledWith( 'kit-elements-defaults/index' );
 	} );
 } );

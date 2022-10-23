@@ -13,9 +13,11 @@ export function getElementDefaults( type ) {
 }
 
 export async function updateElementDefaults( type, settings ) {
-	return $e.data.update( `${ NAMESPACE }/index`, { settings }, { type } );
+	await $e.data.update( `${ NAMESPACE }/index`, { settings }, { type } );
+	await loadElementsDefaults();
 }
 
 export async function deleteElementDefault( type ) {
-	return $e.data.delete( `${ NAMESPACE }/index`, { type } );
+	await $e.data.delete( `${ NAMESPACE }/index`, { type } );
+	await loadElementsDefaults();
 }
