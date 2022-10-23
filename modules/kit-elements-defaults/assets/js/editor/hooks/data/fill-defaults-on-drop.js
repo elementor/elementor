@@ -1,4 +1,4 @@
-import store from '../../store';
+import { getElementDefaults } from '../../api';
 import { isPopulatedObject } from '../../utils';
 
 export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
@@ -18,7 +18,7 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 		const { model } = args,
 			{ elType, widgetType } = model;
 
-		const elementSettings = store.get( widgetType || elType );
+		const elementSettings = getElementDefaults( widgetType || elType );
 
 		if ( ! isPopulatedObject( elementSettings ) ) {
 			return true;

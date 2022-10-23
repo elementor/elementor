@@ -24,7 +24,7 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 		} );
 
 		try {
-			await store.upsert( elementType, settings );
+			await updateElementDefaults( type, settings );
 
 			elementor.notifications.showToast( {
 				message: __( 'Default settings changed.', 'elementor' ),
