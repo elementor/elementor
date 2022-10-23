@@ -1,13 +1,17 @@
 export default class AppsLicenseService extends $e.modules.ComponentBase {
 	getNamespace() {
-		return 'apps/license';
+		return 'app/services/license';
 	}
 
 	isActive() {
-		return false;
+		return Promise.resolve( false );
 	}
 
 	isExpired() {
-		return false;
+		return Promise.resolve( false );
+	}
+
+	isValid() {
+		return Promise.resolve( false );
 	}
 }
