@@ -29,6 +29,7 @@ module.exports = function( grunt ) {
 		release: require( './.grunt-config/release' ),
 		copy: require( './.grunt-config/copy' ),
 		clean: require( './.grunt-config/clean' ),
+		compress: require( './.grunt-config/compress' ),
 		webpack: require( './.grunt-config/webpack' ),
 		karma: require( './.grunt-config/karma' ),
 	} );
@@ -134,6 +135,7 @@ module.exports = function( grunt ) {
 		'usebanner',
 		'clean',
 		'copy',
+		'compress',
 		'default', // Remove banners for GitHub
 	] );
 
