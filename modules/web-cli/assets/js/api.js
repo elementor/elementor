@@ -39,12 +39,12 @@ export default class API {
 		this.store = new Store();
 		this.uiStates = new UiStates();
 
-		this.api = null;
+		this.server = null;
 
 		( async () => {
 			const axios = ( await import( 'axios' ) ).default;
 
-			this.api = axios.create( {
+			this.server = axios.create( {
 				baseURL: `${ elementorWebCliConfig.urls.rest }elementor/v1`,
 				headers: {
 					'X-WP-Nonce': elementorWebCliConfig.nonce,

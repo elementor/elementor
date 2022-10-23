@@ -21,7 +21,7 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	async load() {
-		this.items = ( await $e.api.get( '/kit-elements-defaults' ) ).data;
+		this.items = ( await $e.server.get( '/kit-elements-defaults' ) ).data;
 	},
 
 	/**
@@ -32,8 +32,8 @@ export default {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async upsert( type, settings ) {
-		await $e.api.put( `/kit-elements-defaults/${ type }`, { settings } );
+	async put( type, settings ) {
+		await $e.server.put( `/kit-elements-defaults/${ type }`, { settings } );
 
 		await this.load();
 	},
@@ -46,7 +46,7 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	async delete( type ) {
-		await $e.api.delete( `/kit-elements-defaults/${ type }` );
+		await $e.server.delete( `/kit-elements-defaults/${ type }` );
 
 		await this.load();
 	},

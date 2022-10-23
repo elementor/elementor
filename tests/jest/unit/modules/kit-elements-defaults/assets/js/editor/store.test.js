@@ -3,7 +3,7 @@ import store from 'elementor/modules/kit-elements-defaults/assets/js/editor/stor
 describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 	beforeEach( () => {
 		window.$e = {
-			api: {
+			server: {
 				get: jest.fn(),
 				put: jest.fn(),
 				delete: jest.fn(),
@@ -22,7 +22,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 
 	it( 'Should load items to cache', async () => {
 		// Arrange.
-		$e.api.get.mockImplementation( () => ( {
+		$e.server.get.mockImplementation( () => ( {
 			data: {
 				section: {
 					color: 'red',
@@ -59,9 +59,9 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		$e.api.put.mockImplementation( () => ( { data: null } ) );
+		$e.server.put.mockImplementation( () => ( { data: null } ) );
 
-		$e.api.get.mockImplementation( () => ( {
+		$e.server.get.mockImplementation( () => ( {
 			data: {
 				section: {
 					new_control: 'new_value',
@@ -70,7 +70,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 		} ) );
 
 		// Act.
-		await store.upsert( 'section', {
+		await store.put( 'section', {
 			new_control: 'new_value',
 		} );
 
@@ -90,11 +90,11 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/store.js', () => {
 			},
 		};
 
-		$e.api.delete.mockImplementation( () => ( {
+		$e.server.delete.mockImplementation( () => ( {
 			data: '',
 		} ) );
 
-		$e.api.get.mockImplementation( () => ( {
+		$e.server.get.mockImplementation( () => ( {
 			data: {},
 		} ) );
 

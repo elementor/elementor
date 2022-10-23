@@ -27,7 +27,7 @@ class Controller {
 				'permission_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
-				'callback' => $this->wrap_callback( function () {
+				'callback' => $this->validate_kit_middleware( function () {
 					return $this->index();
 				} ),
 			],
@@ -59,7 +59,7 @@ class Controller {
 						},
 					],
 				],
-				'callback' => $this->wrap_callback( function ( \WP_REST_Request $request ) {
+				'callback' => $this->validate_kit_middleware( function ( \WP_REST_Request $request ) {
 					return $this->update( $request );
 				} ),
 				'permission_callback' => function () {
@@ -81,7 +81,7 @@ class Controller {
 						},
 					],
 				],
-				'callback' => $this->wrap_callback( function ( \WP_REST_Request $request ) {
+				'callback' => $this->validate_kit_middleware( function ( \WP_REST_Request $request ) {
 					return $this->destroy( $request );
 				} ),
 				'permission_callback' => function () {
@@ -104,11 +104,7 @@ class Controller {
 
 		$data[ $request->get_param( 'type' ) ] = $request->get_param( 'settings' );
 
-		$kit->update_meta(
-			Module::META_KEY,
-			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
-			wp_slash( wp_json_encode( $data ) )
-		);
+		$kit->update_json_meta( Module::META_KEY, $data );
 
 		return new \WP_REST_Response( [], 201 );
 	}
@@ -120,24 +116,12 @@ class Controller {
 
 		unset( $data[ $request->get_param( 'type' ) ] );
 
-		$kit->update_meta(
-			Module::META_KEY,
-			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
-			wp_slash( wp_json_encode( $data ) )
-		);
+		$kit->update_json_meta( Module::META_KEY, $data );
 
 		return new \WP_REST_Response( [], 204 );
 	}
 
-	/**
-	 * Wrapper to validate that the kit is valid.
-	 * Essentially behaves as a middleware.
-	 *
-	 * @param $callback
-	 *
-	 * @return \Closure
-	 */
-	private function wrap_callback( $callback ) {
+	private function validate_kit_middleware( $callback ) {
 		return function ( \WP_REST_Request $request ) use ( $callback ) {
 			$kit = Plugin::$instance->kits_manager->get_active_kit();
 			$is_valid_kit = $kit && $kit->get_main_id();

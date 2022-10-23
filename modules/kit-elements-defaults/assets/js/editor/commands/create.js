@@ -23,7 +23,7 @@ export default class Create extends $e.modules.CommandBase {
 		}, {} );
 
 		try {
-			await store.upsert( type, settings );
+			await store.put( type, settings );
 
 			// TODO: Show success toast.
 		} catch ( e ) {
