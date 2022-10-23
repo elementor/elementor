@@ -19,14 +19,14 @@ class Module extends BaseModule {
 	}
 
 	public static function get_experimental_data() {
-		$is_debug = defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
-
 		return [
 			'name' => 'kit-elements-defaults',
-			'title' => __( 'Kit Elements Defaults', 'elementor' ),
-			'description' => __( 'Set default values for all the elements in a kit.', 'elementor' ),
+			'title' => __( 'Save as Default', 'elementor' ),
+			'description' => __(
+				'Maintain consistency across your site by saving the changes to a widget as the default setting for future use. These settings will automatically apply to the widget every time you place it. Note: This feature doesn't affect existing widgets.',
+				'elementor'
+			) . ' <a href="https://go.elementor.com/wp-dash-save-as-default" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'hidden' => ! $is_debug,
 		];
 	}
 
