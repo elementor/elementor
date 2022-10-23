@@ -13,13 +13,9 @@ export function getElementDefaults( type ) {
 }
 
 export async function updateElementDefaults( type, settings ) {
-	await $e.data.update( `${ NAMESPACE }/index`, { settings }, { type } );
-
-	await this.load();
+	return $e.data.update( `${ NAMESPACE }/index`, { settings }, { type } );
 }
 
 export async function deleteElementDefault( type ) {
-	await $e.data.delete( `${ NAMESPACE }/index`, { type } );
-
-	await this.load();
+	return $e.data.delete( `${ NAMESPACE }/index`, { type } );
 }
