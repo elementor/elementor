@@ -148,6 +148,41 @@ class Test_Controller extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
+	public function test_update__sanitizes_globals_and_dynamics() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
+			'settings' => [
+				'button_type' => 'info',
+				'__globals__' => [
+					'border_color' => 'globals/colors?id=secondary',
+					'invalid_control1' => 'invalid',
+				],
+				'__dynamic__' => [
+					'link' => "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
+					'invalid_control2' => 'invalid',
+				],
+			],
+		] );
+
+		// Assert.
+		$this->assertEquals( 201, $response->get_status() );
+
+		$this->assertEquals( [
+			'button' => [
+				'button_type' => 'info',
+				'__globals__' => [
+					'border_color' => 'globals/colors?id=secondary',
+				],
+				'__dynamic__' => [
+					'link' => "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
+				],
+			],
+		], $this->kit->get_json_meta( Module::META_KEY ) );
+	}
+
 	public function test_update__keeps_quotes() {
 		// Arrange.
 		$this->act_as_admin();

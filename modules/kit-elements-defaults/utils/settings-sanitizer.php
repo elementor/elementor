@@ -10,6 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings_Sanitizer {
 
+	const SPECIAL_SETTINGS = [
+		'__dynamic__',
+		'__globals__',
+	];
+
 	private $elements_manager;
 
 	private $widget_types;
@@ -26,7 +31,10 @@ class Settings_Sanitizer {
 			return [];
 		}
 
-		return $this->remove_invalid_settings( $element, $settings );
+		$regular_settings = $this->remove_invalid_settings( $element, $settings );
+		$special_settings = $this->remove_invalid_special_settings( $element, $settings );
+
+		return array_merge( $regular_settings, $special_settings );
 	}
 
 	private function remove_invalid_settings( Element_Base $element, $settings ) {
@@ -37,6 +45,24 @@ class Settings_Sanitizer {
 			$settings,
 			$valid_element_controls
 		);
+	}
+
+	private function remove_invalid_special_settings( Element_Base $element, $settings ) {
+		$valid_settings = [];
+
+		foreach ( static::SPECIAL_SETTINGS as $setting_key ) {
+			if ( empty( $settings[ $setting_key ] ) ) {
+				continue;
+			}
+
+			$sanitized_special_settings = $this->remove_invalid_settings( $element, $settings[ $setting_key ] );
+
+			if ( ! empty( $sanitized_special_settings ) ) {
+				$valid_settings[ $setting_key ] = $sanitized_special_settings;
+			}
+		}
+
+		return $valid_settings;
 	}
 
 	private function is_widget( $type ) {
