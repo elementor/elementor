@@ -86,17 +86,30 @@ class Module extends BaseModule {
 		return $value;
 	}
 
-	private function append_lazyload_selector( $control, $value ) {
-		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
-			foreach ( $control['selectors'] as $selector => $css_property ) {
-				if ( 0 === strpos( $css_property, 'background-image' ) ) {
-					if ( ! empty( $value['url'] ) ) {
-						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
-					}
-				}
-			}
+	private function append_lazyload_selector( $css_file, $element ) {
+		$element_settings = $element->get_settings();
+		$background_image = Utils::get_array_value_by_keys( $element_settings, [ 'background_image', 'url' ] );
+
+		if ( $background_image ) {
+			$css_file->add_controls_stack_style_rules( $element,
+				[
+					'--e-bg-lazyload' => 'url("' . $background_image . '")',
+				],
+			$element_settings, [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $css_file->get_element_unique_selector( $element ) ] );
+
 		}
-		return $control;
+
+		return $css_file;
+		// if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
+		// 	foreach ( $control['selectors'] as $selector => $css_property ) {
+		// 		if ( 0 === strpos( $css_property, 'background-image' ) ) {
+		// 			if ( ! empty( $value['url'] ) ) {
+		// 				$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// return $control;
 	}
 
 	public function __construct() {
@@ -110,8 +123,12 @@ class Module extends BaseModule {
 			return $this->reduce_background_image_size( $value, $css_property, $matches, $control );
 		}, 10, 4 );
 
-		add_filter('elementor/files/css/selectors', function( $control, $value ) {
-			return $this->append_lazyload_selector( $control, $value );
+		// add_filter('elementor/files/css/selectors', function( $control, $value ) {
+		// 	return $this->append_lazyload_selector( $control, $value );
+		// }, 10, 2 );
+
+		add_action( 'elementor/element/parse_css', function( $css_file, $element ) {
+			return $this->append_lazyload_selector( $css_file, $element );
 		}, 10, 2 );
 
 		add_filter( 'body_class', function( $classes ) {
