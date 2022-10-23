@@ -1,4 +1,5 @@
 import * as hooks from './hooks';
+import * as dataCommands from './data-commands/';
 import * as commands from './commands/';
 
 export default class Component extends $e.modules.ComponentBase {
@@ -8,6 +9,10 @@ export default class Component extends $e.modules.ComponentBase {
 
 	defaultHooks() {
 		return this.importHooks( hooks );
+	}
+
+	defaultData() {
+		return this.importCommands( dataCommands );
 	}
 
 	defaultCommands() {
