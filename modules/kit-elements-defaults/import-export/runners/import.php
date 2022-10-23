@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Import extends Import_Runner_Base {
 	public static function get_name() : string {
-		return 'kit-elements-defaults';
+		return 'elements-default-values';
 	}
 
 	public function should_import( array $data ) {
@@ -25,8 +25,9 @@ class Import extends Import_Runner_Base {
 		);
 	}
 
-	public function import( array $data ) {
+	public function import( array $data, array $imported_data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
 		$data = ImportExportUtils::read_json_file( $data['extracted_directory_path'] . '/kit-elements-defaults.json' );
 
 		if ( ! $kit || ! $data ) {

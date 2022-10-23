@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Export extends Export_Runner_Base {
 	public static function get_name() : string {
-		return 'kit-elements-defaults';
+		return 'elements-default-values';
 	}
 
 	public function should_export( array $data ) {
