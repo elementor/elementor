@@ -1,16 +1,19 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults;
 
-use Elementor\Plugin;
-use Elementor\Modules\KitElementsDefaults\Data\Controller;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\KitElementsDefaults\Data\Controller;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends BaseModule {
+
+	const META_KEY = '_elementor_elements_default_values';
+
 	public function get_name() {
 		return 'kit-elements-defaults';
 	}
