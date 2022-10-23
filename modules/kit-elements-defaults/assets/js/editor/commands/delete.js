@@ -1,11 +1,11 @@
-import { deleteElementDefault } from '../api';
+import { deleteElementDefaults } from '../api';
 
 export default class Delete extends $e.modules.CommandBase {
 	async apply( { type } ) {
 		$e.internal( 'panel/state-loading' );
 
 		try {
-			await deleteElementDefault( type );
+			await deleteElementDefaults( type );
 		} catch ( e ) {
 			// TODO: Show error toast.
 		} finally {

@@ -1,4 +1,4 @@
-import { getElementDefaults, deleteElementDefault, updateElementDefaults, loadElementsDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
+import { getElementDefaults, deleteElementDefaults, updateElementDefaults, loadElementsDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
 
 describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
 	const items = null;
@@ -72,7 +72,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
 
 	it( 'Should delete element defaults and reload cache', async () => {
 		// Act.
-		await deleteElementDefault( 'section' );
+		await deleteElementDefaults( 'section' );
 
 		// Assert.
 		expect( $e.data.delete ).toHaveBeenCalledTimes( 1 );

@@ -17,7 +17,7 @@ export async function updateElementDefaults( type, settings ) {
 	await loadElementsDefaults();
 }
 
-export async function deleteElementDefault( type ) {
+export async function deleteElementDefaults( type ) {
 	await $e.data.delete( `${ NAMESPACE }/index`, { type } );
 	await loadElementsDefaults();
 }
