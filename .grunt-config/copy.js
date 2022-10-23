@@ -58,10 +58,19 @@ const copy = {
 		expand: true,
 		dest: 'build/'
 	},
-	secondary: {
-		src: getBuildFiles,
-		expand: true,
-		dest: '/tmp/elementor-builds/<%= pkg.version %>/'
+	final_release: {
+		files: [
+			{
+				flatten: true,
+				expand: true,
+				dot: true,
+				filter: 'isFile',
+				src: [
+					'build/<%= pkg.name %>-<%= pkg.version %>.zip'
+				],
+				dest: '/tmp/elementor-releases/'
+			}
+		]
 	}
 };
 

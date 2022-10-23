@@ -1,9 +1,9 @@
 import Component from './component';
-import loadDefaultValues from './load-default-values';
+import { loadElementsDefaults } from './api';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		loadDefaultValues();
+		loadElementsDefaults();
 		this.#addContextMenuItem();
 	}
 
