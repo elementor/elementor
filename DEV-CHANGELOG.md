@@ -1,5 +1,19 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.9.0-dev3 - 2022-10-23
+* Tweak: Add `rem` to gap between elements control [ED-8343] (#20008)
+* Fix: Change all browser behavior by dark mode [ED-8212] (#20013)
+* Tweak: Background video should have a background color [ED-8437] (#9885)
+* Tweak: Consistent border radius units [ED-8436] (#20033)
+* Fix: Container isolation: isolate issues (#19834, #19845, #19705) [ED-8353] (#20014)
+* Fix: Kit Library order on WP dashboard menu was changed [ED-8221] (#19969)
+* Tweak: Add `s` & `ms` units to transition-duration controls [ED-8427] (#20042)
+* Fix: Swiper functionality is not working as expected [...] (#19891) [ED-7916] (#19919)
+* Fix: Custom background position not inherited on mobile and front end [ED-8329] (#19883)
+* Fix: Page should scroll to the loop area and not to the top of the page [ED-8447] (#20075)
+* Tweak: Changed container class names to shorter names (markup changes!) [ED-8392] (#20073)
+* Tweak: Upgrade the autoprefixer package to better minify CSS files [ED-8404] (#20000)
+
 #### 3.9.0-dev2 - 2022-10-03
 * Fix: Error on connect with `WP_DEBUG` = true [ED-8252] (#19862)
 * Fix: Error after connecting from a promotion page and refreshing the page [ED-8259] (#19863)
@@ -412,16 +426,3 @@
 #### 3.6.0-dev6 - 2021-11-18
 * Tweak: Removing redundant code that was needed in the past for the eicons and no longer needed due to the new inline-font experiment. (#16957)
 * Fix: Widget > Advanced > Positioning Vertical align control isn't responsive [ED-5528] (#16927)
-
-#### 3.6.0-dev5 - 2021-11-17
-* Tweak: Updated changelog to v3.4.8 (#16951)
-* Revert "Tweak: Added shortkey to panel tooltips [ED-4220] (#16478)" (#16889)
-* Fix: Column padding affects absolute positioned elements [ED-5428] (#16930)
-* Fix: Kit Library - Apply Kit throws an error with PHP 8 [ED-4974] (#16928)
-* Fix: Text in beta users "Get beta updates" modal [ED-5446] (#16929)
-
-#### 3.6.0-dev4 - 2021-11-16
-* Fix: Sticky option throws an error and cause the editor not to work [ED-5539] (#16933)
-* Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16941)
-* Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16944)
-* Fix: Some fields don't show placeholder values properly (closes #16608) [ED-4677] (#16948)
