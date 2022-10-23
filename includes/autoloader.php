@@ -194,6 +194,33 @@ class Autoloader {
 		return ucwords( str_replace( '-', '_', $string ), $delimiter );
 	}
 
+	/**
+	 * Init classes aliases.
+	 *
+	 * When Elementor classes renamed or moved to different folders, developers
+	 * can still use the old names by setting an aliase.
+	 *
+	 * While in deprecation period both classes will work. When the deprecation
+	 * period ends, the alies should be removed from the list of aliases.
+	 *
+	 * Usage:
+	 *
+	 *  self::$classes_aliases = [
+	 *    'Namespace\OldClassName' => [
+	 *      'replacement' => 'Namespace\NewClassName',
+	 *      'version' => '3.0.0',
+	 *    ],
+	 *    'Namespace\OldModule\ClassName' => [
+	 *      'replacement' => 'Namespace\NewModule\ClassName',
+	 *      'version' => '3.5.0',
+	 *    ],
+	 *  ];
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @return void
+	 */
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
 			'System_Info\Main' => [

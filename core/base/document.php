@@ -1165,30 +1165,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 3.6.0
-	 *
-	 * @param array $config
-	 * @param array $map_old_new_post_ids
-	 *
-	 * @deprecated 3.8.0 Use `::on_import_update_dynamic_content()` instead.
-	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0', __CLASS__ . '::on_import_update_dynamic_content()' );
-
-		foreach ( $config as &$element_config ) {
-			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
-
-			if ( $element_instance ) {
-				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
-
-				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
-			}
-		}
-
-		return $config;
-	}
-
-	/**
 	 * On import update dynamic content (e.g. post and term IDs).
 	 *
 	 * @since 3.8.0
@@ -1203,11 +1179,17 @@ abstract class Document extends Controls_Stack {
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
-			if ( ! $element_instance ) {
+			if ( is_null( $element_instance ) ) {
 				continue;
 			}
 
-			$element_config = $element_instance::on_import_update_dynamic_content( $element_config, $data, $element_instance->get_controls() );
+			if ( $element_instance->has_own_method( 'on_import_replace_dynamic_content' ) ) {
+				// TODO: Remove this check in the future.
+				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $data['post_ids'] );
+			} else {
+				$element_config = $element_instance::on_import_update_dynamic_content( $element_config, $data, $element_instance->get_controls() );
+			}
+
 			$element_config['elements'] = static::on_import_update_dynamic_content( $element_config['elements'], $data );
 		}
 

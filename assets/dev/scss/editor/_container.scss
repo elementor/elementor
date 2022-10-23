@@ -1,4 +1,4 @@
-.e-container {
+.e-con {
 
 	.elementor-empty-view {
 		position: relative;
@@ -25,10 +25,10 @@
 		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
-	&.e-container--row {
+	&.e-con--row {
 
 		&,
-		& > .e-container__inner {
+		& > .e-con-inner {
 
 			> .elementor-widget-placeholder {
 				position: relative;
@@ -47,14 +47,14 @@
 		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
 
 			&,
-			& > .e-container__inner {
+			& > .e-con-inner {
 
 				// Any placeholder which is not on first widget.
 				> .elementor-widget-placeholder {
 					margin-inline-end: 0;
 					margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
 				}
-	
+
 				// Placeholder on first widget.
 				> :not( .elementor-element ) + .elementor-widget-placeholder {
 					margin-inline-end: var( --margin-end );
@@ -64,10 +64,10 @@
 		}
 	}
 
-	&.e-container--column {
+	&.e-con--column {
 
 		&,
-		& > .e-container__inner {
+		& > .e-con-inner {
 
 			> .elementor-widget-placeholder {
 				height: var( --size );
@@ -87,7 +87,7 @@
 			}
 		}
 
-		& > .e-container__inner {
+		& > .e-con-inner {
 
 			> .elementor-widget-placeholder {
 
@@ -108,7 +108,7 @@
 	// Inner Container handle.
 	// TODO: Find a better solution.
 	& > &,
-	&__inner > &,
+	&-inner > &,
 	.elementor-widget & {
 
 		> .elementor-element-overlay {
