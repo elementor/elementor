@@ -16,8 +16,8 @@ export default class AccountService {
 				resolve( { data, error: null } );
 			};
 
-			const error = ( e, errorMsg ) => {
-				resolve( { data: null, error: errorMsg } );
+			const error = () => {
+				resolve( { data: null, error: 'Unable to connect' } );
 			};
 
 			jQuery( buttonRef ).elementorConnect( {
