@@ -381,7 +381,7 @@ test.describe( 'Container tests', () => {
 		} );
 		try {
 			await wpAdmin.setUserLanguage( 1, 'site-default' );
-			await wpAdmin.setLanguage('he_IL' );
+			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await creatCanvasPage( wpAdmin );
 			const container = await addContainerAndHover( editor );
 
@@ -391,7 +391,7 @@ test.describe( 'Container tests', () => {
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setUserLanguage( 1, '' );
-			await wpAdmin.setLanguage('' );
+			await wpAdmin.setLanguage( '' );
 		}
 
 		const editor = await creatCanvasPage( wpAdmin );
