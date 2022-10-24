@@ -24,7 +24,10 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 			return true;
 		}
 
-		const settings = { ...( args.model.settings || {} ), ...elementSettings };
+		const settings = {
+			...( args.model.settings || {} ),
+			...elementSettings,
+		};
 
 		[ '__dynamic__', '__globals__' ].forEach( ( type ) => {
 			if ( ! isPopulatedObject( elementSettings[ type ] ) ) {

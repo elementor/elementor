@@ -1,4 +1,4 @@
-export default class ConfirmCreation extends $e.modules.CommandBase {
+export default class ConfirmCreation extends $e.modules.editor.CommandContainerBase {
 	static #introductionModal;
 
 	validateArgs() {
@@ -23,17 +23,18 @@ export default class ConfirmCreation extends $e.modules.CommandBase {
 
 	createIntroductionModal( { onConfirm } ) {
 		const introductionKey = 'kit_elements_defaults_create_dialog';
+		const dialogId = 'e-kit-elements-defaults-create-dialog';
+		const checkboxId = `${ dialogId }-dont-show-again`;
 
 		const introductionModal = new elementorModules.editor.utils.Introduction( {
 			introductionKey,
 			dialogType: 'confirm',
 			dialogOptions: {
-				id: 'e-kit-elements-defaults-create-dialog',
+				id: dialogId,
 				headerMessage: __( 'Sure you want to change default settings?', 'elementor' ),
-				message: __(
-					'Your changes will automatically apply to all future use of this widget. %s Note: Your new default settings can include sensitive information such as API key, CSS ID, and more. ',
-					'elementor',
-				).replace( '%s', '<br/><br/>' ),
+				message: __( 'Your changes will automatically apply to all future use of this widget.', 'elementor' ) +
+					'<br/><br/>' +
+					__( 'Note: Your new default settings can include sensitive information such as API key, CSS ID, and more.', 'elementor' ),
 				effects: {
 					show: 'fadeIn',
 					hide: 'fadeOut',
@@ -57,15 +58,14 @@ export default class ConfirmCreation extends $e.modules.CommandBase {
 
 		const $checkbox = jQuery( '<input />', {
 			type: 'checkbox',
-			name: 'e-kit-elements-defaults-create-dialog-do-not-show-again',
-			id: 'e-kit-elements-defaults-create-dialog-do-not-show-again',
+			name: checkboxId,
+			id: checkboxId,
 			checked: true,
 		} );
 
 		const $label = jQuery( '<label />', {
-			for: 'e-kit-elements-defaults-create-dialog-do-not-show-again',
+			for: checkboxId,
 			text: __( 'Do not show this message again', 'elementor' ),
-			style: 'display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px;',
 		} ).prepend( $checkbox );
 
 		introductionModal.getDialog().addElement( 'checkbox-dont-show-again', $checkbox );

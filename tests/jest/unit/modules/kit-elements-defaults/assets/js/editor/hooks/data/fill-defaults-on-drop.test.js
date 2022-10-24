@@ -86,9 +86,8 @@ describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 		} );
 	} );
 
-	it( 'should do nothing if there is no defaults', () => {
+	it( 'should do nothing if there are no defaults', () => {
 		// Arrange
-// Arrange
 		const hook = new CommandHook();
 
 		const args = {
