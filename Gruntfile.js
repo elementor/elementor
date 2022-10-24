@@ -134,8 +134,9 @@ module.exports = function( grunt ) {
 		'default',
 		'usebanner',
 		'clean',
+		'copy:main',
 		'compress',
-		'copy',
+		'copy:final_release',
 		'default', // Remove banners for GitHub
 	] );
 
