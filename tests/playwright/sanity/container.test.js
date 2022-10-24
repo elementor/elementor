@@ -381,59 +381,38 @@ test.describe( 'Container tests', () => {
 		} );
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
-			let editor = await wpAdmin.openNewPage();
-			await editor.page.waitForLoadState( 'networkidle' );
-			await editor.changeEditorLayout( 'elementor_canvas' );
-			await editor.page.waitForLoadState( 'networkidle' );
+			const editor = await creatCanvasPage( wpAdmin );
 
-			let containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-			// Const containerHandleR = await editorPage.getPreviewFrame().waitForSelector( '.elementor-editor-container-settings' );
+			const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
-			await page.screenshot( { path: 'container-rtl-centered.jpeg' } );
-
-			await wpAdmin.setLanguage( '' );
-			editor = await wpAdmin.openNewPage();
-			await editor.page.waitForLoadState( 'networkidle' );
-			await editor.changeEditorLayout( 'elementor_canvas' );
-			await editor.page.waitForLoadState( 'networkidle' );
-
-			containerId = await editor.addElement( { elType: 'container' }, 'document' );
-
-			// Const containerHandleR = await editorPage.getPreviewFrame().waitForSelector( '.elementor-editor-container-settings' );
-
-			await page.screenshot( { path: 'container-ltr-centered.jpeg' } );
-
-			// Const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
-			//
-			// expect( await container.screenshot( {
-			// 	type: 'jpeg',
-			// 	quality: 70,
-			// } ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
-
-			// Ltr
-			// expect( await container.screenshot( {
-			// 	type: 'jpeg',
-			// 	quality: 70,
-			// } ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
-
-			// Const transform = containerHandleR.evaluate( ( el ) => {
-			// 	return window.getComputedStyle( el ).getPropertyValue( 'transform' );
-			// } );
-			// const left = containerHandleR.evaluate( ( el ) => {
-			// 	return window.getComputedStyle( el ).getPropertyValue( 'left' );
-			// } );
-
-			// expect( transform ).toBe( 'matrix(1, 0, 0, 1, 37.5, -24)' );
-			// expect( left ).toBe( '50%' );
+			expect( await container.screenshot( {
+				type: 'jpeg',
+				quality: 70,
+			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
 
-		// Expect( await getHandleTransformValue( wpAdmin ) ).toBe( 'matrix(1, 0, 0, 1, 37.5, -24)' );
+		const editor = await creatCanvasPage( wpAdmin );
+
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
+
+		expect( await container.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
 	} );
 } );
 
-async function getHandleTransformValue( wpAdmin ) {
-
+async function creatCanvasPage( wpAdmin ) {
+	const editor = await wpAdmin.openNewPage();
+	await editor.page.waitForLoadState( 'networkidle' );
+	await editor.changeEditorLayout( 'elementor_canvas' );
+	await editor.page.waitForLoadState( 'networkidle' );
+	return edit;
 }
+
