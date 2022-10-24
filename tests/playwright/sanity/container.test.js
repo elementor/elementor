@@ -380,26 +380,20 @@ test.describe( 'Container tests', () => {
 			container: true,
 		} );
 		try {
-			await wpAdmin.setLanguage( 'he_IL' );
+			await wpAdmin.setUserLanguage( 1, 'he_IL' );
 			const editor = await creatCanvasPage( wpAdmin );
-			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-			const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
-			const container = editor.getPreviewFrame().locator( containerSelector );
-			editor.getPreviewFrame().hover( containerSelector );
+			const container = await addContainerAndHover( editor );
 
 			expect( await container.screenshot( {
 				type: 'jpeg',
 				quality: 70,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setUserLanguage( 1, '' );
 		}
 
 		const editor = await creatCanvasPage( wpAdmin );
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
-		const container = editor.getPreviewFrame().locator( containerSelector );
-		editor.getPreviewFrame().hover( containerSelector );
+		const container = await addContainerAndHover( editor );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
@@ -416,3 +410,10 @@ async function creatCanvasPage( wpAdmin ) {
 	return editor;
 }
 
+async function addContainerAndHover( editor ) {
+	const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+	const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+	const container = editor.getPreviewFrame().locator( containerSelector );
+	editor.getPreviewFrame().hover( containerSelector );
+	return container;
+}
