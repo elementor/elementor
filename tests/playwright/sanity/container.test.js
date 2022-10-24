@@ -413,6 +413,6 @@ async function creatCanvasPage( wpAdmin ) {
 	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.changeEditorLayout( 'elementor_canvas' );
 	await editor.page.waitForLoadState( 'networkidle' );
-	return edit;
+	return editor;
 }
 
