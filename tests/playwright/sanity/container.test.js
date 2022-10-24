@@ -408,8 +408,7 @@ async function creatCanvasPage( wpAdmin ) {
 	const editor = await wpAdmin.openNewPage();
 	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.changeEditorLayout( 'elementor_canvas' );
-	await editor.page.waitForLoadState( 'networkidle' );
-	await this.page.waitForTimeout( 2000 ); // I could not find another way
+	await editor.page.getPreviewFrame().waitForLoadState( 'networkidle' );
 	return editor;
 }
 
