@@ -5,11 +5,11 @@ on:
     branches:
       - 'develop'
       - 'release/*'
-      - 'master'
+
 jobs:
   run:
     runs-on: ubuntu-20.04
-    if: startsWith( github.repository, 'maork-elementor/' )
+    if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
