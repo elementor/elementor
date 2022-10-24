@@ -5,6 +5,7 @@ on:
     branches:
       - 'develop'
       - 'release/*'
+
 jobs:
   run:
     runs-on: ubuntu-20.04
@@ -45,11 +46,10 @@ jobs:
             | awk -F: '{ print $2 }' \
             | sed 's/[",]//g' \
             | tr -d '[[:space:]]')
-          sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" elementor.php
-          sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" elementor.php
           bash "${GITHUB_WORKSPACE}/.github/scripts/build-zip.sh"
-      - name: Publish zip on push to release or develop
-        run: curl --fail -F "package=@${{ env.PLUGIN_ZIP_FILENAME }}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=core"
+          sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
+          sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
+          curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT}}&type=core"
       - uses: actions/upload-artifact@master
         with:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
