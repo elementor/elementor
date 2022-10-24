@@ -22,7 +22,8 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 
 		const dialog = introduction.getDialog();
 
-		// Need the replace the confirm callback, because the introduction modal is a singleton and each run we have diffrent container.
+		// Set the confirm callback from outside because the introduction modal is a singleton,
+		// and each run it should reference to diffrent container.
 		dialog.onConfirm = () => {
 			// `getElements` return JQuery object.
 			if ( dialog.getElements( 'checkbox-dont-show-again' ).prop( 'checked' ) ) {

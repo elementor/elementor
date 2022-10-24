@@ -37,8 +37,10 @@ describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 				widgetType: 'button',
 				settings: {
 					test_setting: 'test',
+					should_not_be_changed: 'test',
 					__globals__: {
 						test_global_setting: 'test',
+						should_not_be_changed: 'test',
 					},
 				},
 			},
@@ -49,9 +51,11 @@ describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 			border_border: 'solid',
 			border_color: '#FF0000',
 			text: 'Click me',
+			should_not_be_changed: 'invalid_value',
 			__globals__: {
 				button_text_color: 'globals/colors?id=9182bce',
 				background_color: 'globals/colors?id=secondary',
+				should_not_be_changed: 'invalid_value',
 			},
 			__dynamic__: {
 				link: "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
@@ -73,10 +77,12 @@ describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 					border_border: 'solid',
 					border_color: '#FF0000',
 					text: 'Click me',
+					should_not_be_changed: 'test',
 					__globals__: {
 						test_global_setting: 'test',
 						button_text_color: 'globals/colors?id=9182bce',
 						background_color: 'globals/colors?id=secondary',
+						should_not_be_changed: 'test',
 					},
 					__dynamic__: {
 						link: "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
