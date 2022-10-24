@@ -374,7 +374,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -382,29 +382,25 @@ test.describe( 'Container tests', () => {
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await creatCanvasPage( wpAdmin );
-
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-
 			const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
 			expect( await container.screenshot( {
 				type: 'jpeg',
 				quality: 70,
-			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
+			} ) ).toMatchSnapshot( 'container-rtl-centered-linux.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
 
 		const editor = await creatCanvasPage( wpAdmin );
-
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
+		} ) ).toMatchSnapshot( 'container-ltr-centered-linux.jpeg' );
 	} );
 } );
 
