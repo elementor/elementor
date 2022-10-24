@@ -118,7 +118,7 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-		? '> .elementor-widget, > .e-con-full-width, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
+		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
@@ -220,7 +220,7 @@ const ContainerView = BaseElementView.extend( {
 			model: {
 				elType: 'container',
 				settings: {
-					content_width: 'full-width',
+					content_width: 'full',
 				},
 			},
 			container: targetContainer,
