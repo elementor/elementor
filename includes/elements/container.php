@@ -323,7 +323,7 @@ class Container extends Element_Base {
 				'default' => 'boxed',
 				'options' => [
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
-					'full-width' => esc_html__( 'Full Width', 'elementor' ),
+					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
 				'render_type' => 'template',
 				'prefix_class' => 'e-con-',
@@ -369,7 +369,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'content_width' => 'full-width',
+					'content_width' => 'full',
 				],
 				'device_args' => [
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
