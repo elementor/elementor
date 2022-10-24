@@ -1,33 +1,43 @@
 export default class ConfirmCreation extends $e.modules.editor.CommandContainerBase {
-	static #introductionModal;
+	static #introduction;
+	static #introductionKey = 'kit_elements_defaults_create_dialog';
 
 	validateArgs() {
 		this.requireContainer();
 	}
 
 	async apply( { container } ) {
-		if ( ! this.constructor.#introductionModal ) {
-			this.constructor.#introductionModal = this.createIntroductionModal( {
-				onConfirm: () => $e.run( 'kit-elements-defaults/create', { container } ),
-			} );
+		if ( ! this.constructor.#introduction ) {
+			this.constructor.#introduction = this.createIntroduction();
 		}
 
-		if ( this.constructor.#introductionModal.introductionViewed ) {
+		const introduction = this.constructor.#introduction;
+		const dialog = introduction.getDialog();
+
+		if ( introduction.introductionViewed ) {
 			$e.run( 'kit-elements-defaults/create', { container } );
 
 			return;
 		}
 
-		this.constructor.#introductionModal.show();
+		// Need the replace the confirm callback, because the introduction modal is a singleton and each run we have diffrent container.
+		dialog.onConfirm = () => {
+			if ( dialog.getElements( 'checkbox-dont-show-again' ).prop( 'checked' ) ) {
+				introduction.setViewed();
+			}
+
+			$e.run( 'kit-elements-defaults/create', { container } );
+		};
+
+		introduction.show();
 	}
 
-	createIntroductionModal( { onConfirm } ) {
-		const introductionKey = 'kit_elements_defaults_create_dialog';
+	createIntroduction() {
 		const dialogId = 'e-kit-elements-defaults-create-dialog';
 		const checkboxId = `${ dialogId }-dont-show-again`;
 
-		const introductionModal = new elementorModules.editor.utils.Introduction( {
-			introductionKey,
+		const introduction = new elementorModules.editor.utils.Introduction( {
+			introductionKey: this.constructor.#introductionKey,
 			dialogType: 'confirm',
 			dialogOptions: {
 				id: dialogId,
@@ -46,13 +56,6 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 					confirm: __( 'Save', 'elementor' ),
 					cancel: __( 'Cancel', 'elementor' ),
 				},
-				onConfirm() {
-					if ( this.getElements( 'checkbox-dont-show-again' ).prop( 'checked' ) ) {
-						introductionModal.setViewed();
-					}
-
-					onConfirm();
-				},
 			},
 		} );
 
@@ -68,11 +71,11 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 			text: __( 'Do not show this message again', 'elementor' ),
 		} ).prepend( $checkbox );
 
-		introductionModal.getDialog().addElement( 'checkbox-dont-show-again', $checkbox );
-		introductionModal.getDialog().getElements( 'message' )?.append?.( $label );
+		introduction.getDialog().addElement( 'checkbox-dont-show-again', $checkbox );
+		introduction.getDialog().getElements( 'message' )?.append?.( $label );
 
-		introductionModal.introductionViewed = elementor.config.user.introduction?.[ introductionKey ] || false;
+		introduction.introductionViewed = elementor.config.user.introduction?.[ this.constructor.#introductionKey ] || false;
 
-		return introductionModal;
+		return introduction;
 	}
 }
