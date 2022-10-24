@@ -390,7 +390,7 @@ test.describe( 'Container tests', () => {
 			expect( await container.screenshot( {
 				type: 'jpeg',
 				quality: 70,
-			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
+			} ) ).toMatchSnapshot( 'container-rtl-centered-linux.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
@@ -404,7 +404,7 @@ test.describe( 'Container tests', () => {
 		expect( await container.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
+		} ) ).toMatchSnapshot( 'container-ltr-centered-linux.jpeg' );
 	} );
 } );
 
