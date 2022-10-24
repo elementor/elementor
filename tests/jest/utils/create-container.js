@@ -1,9 +1,9 @@
 export default function createContainer( {
-	 elType,
-	 widgetType,
-	 id,
-	 settings = {},
-	 controls = {},
+	elType,
+	widgetType,
+	id,
+	settings = {},
+	controls = {},
  } = {} ) {
 	return {
 		id,

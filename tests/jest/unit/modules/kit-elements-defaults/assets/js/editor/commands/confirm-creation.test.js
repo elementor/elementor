@@ -1,10 +1,4 @@
-import { updateElementDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
 import createContainer from 'elementor/tests/jest/utils/create-container';
-
-jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/api', () => ( {
-	__esModule: true,
-	updateElementDefaults: jest.fn(),
-} ) );
 
 describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 	let ConfirmCreationCommand;
@@ -29,7 +23,6 @@ describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 							addElement: jest.fn(),
 							getElements: jest.fn( () => this.checkboxElement ),
 						};
-						setViewed = jest.fn();
 						getDialog = jest.fn( () => this.dialog );
 						show = jest.fn();
 						setViewed = jest.fn();
