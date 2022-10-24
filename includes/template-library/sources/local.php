@@ -13,6 +13,7 @@ use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Saved_Templates_Me
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categories_Menu_Item;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
+use Elementor\App\Services\License\License_Service;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1341,14 +1342,22 @@ class Source_Local extends Source_Base {
 					?>
 				</h3>
 				<p><?php echo wp_kses_post( $description ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
-					<?php
-					/* translators: %s: Template type label. */
-					printf( esc_html__( 'Add New %s', 'elementor' ), esc_html( $current_type_label ) );
-					?>
-				</a>
+				<?php if ( $this->is_license_valid() ) { ?>
+					<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
+						<?php
+						/* translators: %s: Template type label. */
+						printf( esc_html__( 'Add New %s', 'elementor' ), esc_html( $current_type_label ) );
+						?>
+					</a>
+				<?php } else {
+					// TODO: Connect & Activate has to be here
+				} ?>
 			</div>
 		<?php
+	}
+
+	private function is_license_valid() {
+		return ( new License_Service )->is_valid();
 	}
 
 	public function add_filter_by_category( $post_type ) {
