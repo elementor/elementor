@@ -95,10 +95,4 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
 	}
-
-	async setUserLanguage( userId, language ) {
-		await this.page.goto( 'http://localhost:8888/wp-admin/user-edit.php?user_id=' + userId + '&wp_http_referer=%2Fwp-admin%2Fusers.php' );
-		await this.page.selectOption( '#locale', language );
-		await this.page.locator( '#submit' ).click();
-	}
 };
