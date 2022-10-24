@@ -13,13 +13,14 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 		}
 
 		const introduction = this.constructor.introduction;
-		const dialog = introduction.getDialog();
 
 		if ( introduction.introductionViewed ) {
 			$e.run( 'kit-elements-defaults/create', { container } );
 
 			return;
 		}
+
+		const dialog = introduction.getDialog();
 
 		// Need the replace the confirm callback, because the introduction modal is a singleton and each run we have diffrent container.
 		dialog.onConfirm = () => {
