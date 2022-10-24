@@ -1,5 +1,5 @@
 export default class ConfirmCreation extends $e.modules.editor.CommandContainerBase {
-	static #introduction;
+	static introduction;
 	static #introductionKey = 'kit_elements_defaults_create_dialog';
 
 	validateArgs() {
@@ -7,11 +7,12 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 	}
 
 	async apply( { container } ) {
-		if ( ! this.constructor.#introduction ) {
-			this.constructor.#introduction = this.createIntroduction();
+		if ( ! this.constructor.introduction ) {
+			this.constructor.introduction = this.#createIntroduction();
+			this.constructor.introduction.introductionViewed = !! elementor.config.user.introduction?.[ this.constructor.#introductionKey ];
 		}
 
-		const introduction = this.constructor.#introduction;
+		const introduction = this.constructor.introduction;
 		const dialog = introduction.getDialog();
 
 		if ( introduction.introductionViewed ) {
@@ -22,6 +23,7 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 
 		// Need the replace the confirm callback, because the introduction modal is a singleton and each run we have diffrent container.
 		dialog.onConfirm = () => {
+			// `getElements` return JQuery object.
 			if ( dialog.getElements( 'checkbox-dont-show-again' ).prop( 'checked' ) ) {
 				introduction.setViewed();
 			}
@@ -32,9 +34,8 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 		introduction.show();
 	}
 
-	createIntroduction() {
+	#createIntroduction() {
 		const dialogId = 'e-kit-elements-defaults-create-dialog';
-		const checkboxId = `${ dialogId }-dont-show-again`;
 
 		const introduction = new elementorModules.editor.utils.Introduction( {
 			introductionKey: this.constructor.#introductionKey,
@@ -59,23 +60,29 @@ export default class ConfirmCreation extends $e.modules.editor.CommandContainerB
 			},
 		} );
 
-		const $checkbox = jQuery( '<input />', {
-			type: 'checkbox',
-			name: checkboxId,
-			id: checkboxId,
-			checked: true,
-		} );
-
-		const $label = jQuery( '<label />', {
-			for: checkboxId,
-			text: __( 'Do not show this message again', 'elementor' ),
-		} ).prepend( $checkbox );
-
-		introduction.getDialog().addElement( 'checkbox-dont-show-again', $checkbox );
-		introduction.getDialog().getElements( 'message' )?.append?.( $label );
-
-		introduction.introductionViewed = elementor.config.user.introduction?.[ this.constructor.#introductionKey ] || false;
+		const { checkbox, label } = this.#createCheckboxAndLabel( dialogId );
+		introduction.getDialog().addElement( 'checkbox-dont-show-again', checkbox );
+		introduction.getDialog().getElements( 'message' )?.append?.( label ); // `getElements` return JQuery object.
 
 		return introduction;
+	}
+
+	#createCheckboxAndLabel( dialogId ) {
+		const checkboxId = `${ dialogId }-dont-show-again`;
+
+		const checkbox = document.createElement( 'input' );
+
+		checkbox.type = 'checkbox';
+		checkbox.name = checkboxId;
+		checkbox.id = checkboxId;
+		checkbox.checked = true;
+
+		const label = document.createElement( 'label' );
+
+		label.htmlFor = checkboxId;
+		label.textContent = __( 'Do not show this message again', 'elementor' );
+		label.prepend( checkbox );
+
+		return { checkbox, label };
 	}
 }

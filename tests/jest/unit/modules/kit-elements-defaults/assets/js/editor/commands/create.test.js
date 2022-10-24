@@ -1,4 +1,5 @@
 import { updateElementDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
+import createContainer from 'elementor/tests/jest/utils/create-container';
 
 jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/api', () => ( {
 	__esModule: true,
@@ -135,33 +136,3 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		expect( () => command.apply( { container } ) ).rejects.toThrow( 'Failed to upsert' );
 	} );
 } );
-
-function createContainer( {
-	elType,
-	widgetType,
-	id,
-	settings = {},
-	controls = {},
-} = {} ) {
-	const container = {
-		id,
-		settings: {
-			controls,
-			toJSON: () => ( {
-				...settings,
-			} ),
-		},
-		model: {
-			get: ( key ) => {
-				const map = {
-					elType,
-					widgetType,
-				};
-
-				return map[ key ];
-			},
-		},
-	};
-
-	return container;
-}
