@@ -406,7 +406,7 @@ async function creatCanvasPage( wpAdmin ) {
 	const editor = await wpAdmin.openNewPage();
 	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.changeEditorLayout( 'elementor_canvas' );
-	await editor.page.waitForSelector( 'site-header', { state: 'detached' } );
+	await editor.page.waitForTimeout( '#site-footer', { state: 'detached' } );
 	return editor;
 }
 
