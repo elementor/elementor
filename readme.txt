@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 3.7.4
+Stable tag: 3.7.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -240,9 +240,31 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.7.8 - 2022-10-02 =
+* Fix: Using responsive control values in selectors and selector values causes a fatal error ([#19894](https://github.com/elementor/elementor/issues/19894))
+* Fix: Error message appears after connecting account and refreshing in a promotion screen
+* Fix: UI glitch when searching for non-existing terms in Template Library
+
+= 3.7.7 - 2022-09-20 =
+* Tweak: Removed the option to create a custom logo in Site Settings ([#19823](https://github.com/elementor/elementor/issues/19823))
+* Fix: Custom X Position of background image doesn't work for non-desktop devices ([#19487](https://github.com/elementor/elementor/issues/19487), [#19662](https://github.com/elementor/elementor/issues/19662), [#19669](https://github.com/elementor/elementor/issues/19669), [#19527](https://github.com/elementor/elementor/issues/19527))
+* Fix: Connect & activate to Elementor account issue with various WordPress site languages
+
+= 3.7.6 - 2022-09-15 =
+* Fix: Replaced link for better clarity in Site Settings
+
+= 3.7.5 - 2022-09-14 =
+* Tweak: Added an option to create a custom logo with AI Logo Maker by Fiverr in Site Settings
+* Fix: Background Image Custom Position and Size controls are not visible for Mobile and Tablet devices ([#19487](https://github.com/elementor/elementor/issues/19487), [#19669](https://github.com/elementor/elementor/issues/19669), [#19662](https://github.com/elementor/elementor/issues/19662))
+* Fix: Custom Width on Tablet and Mobile devices generates wrong values when Desktop is set to default ([#19487](https://github.com/elementor/elementor/issues/19487), [#19669](https://github.com/elementor/elementor/issues/19669), [#19662](https://github.com/elementor/elementor/issues/19662), [#19528](https://github.com/elementor/elementor/issues/19528), [#19542](https://github.com/elementor/elementor/issues/19542))
+* Fix: Empty state placeholder is not displayed in various widgets ([#19446](https://github.com/elementor/elementor/issues/19446))
+* Fix: When pasting a widget on a page the widget is being pasted into a Section when the Container experiment is active ([#19452](https://github.com/elementor/elementor/issues/19452))
+* Fix: Custom Image Size generates a fatal error after updating to PHP 8+
+* Fix: `is_current_user_can_edit` not working correctly when `$post_id` missing
+
 = 3.7.4 - 2022-08-31 =
-* Tweak: Removed redundant code in various widgets that includes images ([#12268] (https://github.com/elementor/elementor/issues/12268), props [@ibndawood](https://github.com/ibndawood))
-* Fix: Error message appears on front if WooCommerce is activated ([#19553] (https://github.com/elementor/elementor/issues/19553))
+* Tweak: Removed redundant code in various widgets that includes images ([#12268](https://github.com/elementor/elementor/issues/12268), props [@ibndawood](https://github.com/ibndawood))
+* Fix: Error message appears on front if WooCommerce is activated ([#19553](https://github.com/elementor/elementor/issues/19553))
 * Fix: Web CLI requires jQuery to avoid errors when jQuery is loaded in the footer (props [@nicomollet](https://github.com/nicomollet))
 
 = 3.7.3 - 2022-08-29 =
@@ -267,7 +289,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: Breakpoints manager shouldn't run deprecated hook
 
 = 3.7.0 - 2022-08-08 =
-* New: Use the user language in the Elementor Editor regardless of the Site's language ([#5148](https://github.com/elementor/elementor/issues/#5148))
+* New: Use the user language in the Elementor Editor regardless of the Site's language ([#5148](https://github.com/elementor/elementor/issues/5148))
 * New: "Exit To…" location setting when exiting the Editor
 * Tweak: Added filters to allow modifying upload temp paths in Uploads Manager ([#18565](https://github.com/elementor/elementor/issues/18565), props [@patrick-leb](https://github.com/patrick-leb))
 * Tweak: Added `EM` unit for border-radius controls in some widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))

@@ -29,6 +29,7 @@ module.exports = function( grunt ) {
 		release: require( './.grunt-config/release' ),
 		copy: require( './.grunt-config/copy' ),
 		clean: require( './.grunt-config/clean' ),
+		compress: require( './.grunt-config/compress' ),
 		webpack: require( './.grunt-config/webpack' ),
 		karma: require( './.grunt-config/karma' ),
 	} );
@@ -64,6 +65,10 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'watch_scripts', () => {
 		grunt.task.run( 'webpack:development' );
+	} );
+
+	grunt.registerTask( 'watch_scripts:production', () => {
+		grunt.task.run( 'webpack:productionWatch' );
 	} );
 
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
@@ -129,7 +134,9 @@ module.exports = function( grunt ) {
 		'default',
 		'usebanner',
 		'clean',
-		'copy',
+		'copy:main',
+		'compress',
+		'copy:final_release',
 		'default', // Remove banners for GitHub
 	] );
 

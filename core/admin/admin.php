@@ -4,9 +4,10 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
+use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -561,8 +562,6 @@ class Admin extends App {
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
 
-		$meta = [];
-
 		/**
 		 * Create new post meta data.
 		 *
@@ -572,6 +571,12 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
+		$meta = [];
+
+		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
+			$meta = array_map( 'sanitize_text_field', $_GET['meta'] );
+		}
+
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
 		$post_data['post_type'] = $post_type;
@@ -758,6 +763,7 @@ class Admin extends App {
 				'option_enabled' => 'no' !== $elementor_beta,
 				'signup_dismissed' => $beta_tester_signup_dismissed,
 			],
+			'experiments' => $this->get_experiments(),
 		];
 
 		/**
@@ -777,6 +783,26 @@ class Admin extends App {
 		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
 
 		return $settings;
+	}
+
+	private function get_experiments() {
+		return ( new Collection( Plugin::$instance->experiments->get_features() ) )
+			->map( function ( $experiment_data ) {
+				$dependencies = $experiment_data['dependencies'] ?? [];
+
+				$dependencies = ( new Collection( $dependencies ) )
+					->map( function ( $dependency ) {
+						return $dependency->get_name();
+					} )->all();
+
+				return [
+					'name' => $experiment_data['name'],
+					'title' => $experiment_data['title'] ?? $experiment_data['name'],
+					'state' => $experiment_data['state'],
+					'default' => $experiment_data['default'],
+					'dependencies' => $dependencies,
+				];
+			} )->all();
 	}
 
 	private function register_menu() {
