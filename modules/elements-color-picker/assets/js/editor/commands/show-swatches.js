@@ -1,4 +1,4 @@
-import { rgbToHex } from 'elementor/core/app/assets/js/utils/utils';
+import { rgbToHex } from 'elementor-app/utils/utils';
 
 /**
  * @typedef {import('../../../../../../assets/dev/js/editor/container/container')} Container
