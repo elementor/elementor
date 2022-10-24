@@ -383,7 +383,9 @@ test.describe( 'Container tests', () => {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await creatCanvasPage( wpAdmin );
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-			const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
+			const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+			const container = editor.getPreviewFrame().locator( containerSelector );
+			editor.getPreviewFrame().hover( containerSelector );
 
 			expect( await container.screenshot( {
 				type: 'jpeg',
@@ -395,7 +397,9 @@ test.describe( 'Container tests', () => {
 
 		const editor = await creatCanvasPage( wpAdmin );
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
+		const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+		const container = editor.getPreviewFrame().locator( containerSelector );
+		editor.getPreviewFrame().hover( containerSelector );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
@@ -408,7 +412,7 @@ async function creatCanvasPage( wpAdmin ) {
 	const editor = await wpAdmin.openNewPage();
 	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.changeEditorLayout( 'elementor_canvas' );
-	await editor.getPreviewFrame().waitForLoadState( 'networkidle' );
+	await editor.getPreviewFrame().waitForTimeout( 5000 )
 	return editor;
 }
 
