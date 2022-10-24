@@ -23,7 +23,7 @@ class Module extends BaseModule {
 			'name' => 'kit-elements-defaults',
 			'title' => __( 'Save as Default', 'elementor' ),
 			'description' => __(
-				'Maintain consistency across your site by saving the changes to a widget as the default setting for future use. These settings will automatically apply to the widget every time you place it. Note: This feature doesn't affect existing widgets.',
+				'Maintain consistency across your site by saving the changes to a widget as the default setting for future use. These settings will automatically apply to the widget every time you place it. Note: This feature doesn\'t affect existing widgets.',
 				'elementor'
 			) . ' <a href="https://go.elementor.com/wp-dash-save-as-default" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -34,7 +34,10 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-kit-elements-defaults-editor',
 			$this->get_js_assets_url( 'kit-elements-defaults-editor' ),
-			[],
+			[
+				'elementor-common',
+				'elementor-editor-modules',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
