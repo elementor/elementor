@@ -2,7 +2,9 @@
 namespace Elementor\Modules\KitElementsDefaults\ImportExport\Runners;
 
 use Elementor\Plugin;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\KitElementsDefaults\Module;
+use Elementor\Modules\KitElementsDefaults\Utils\Settings_Sanitizer;
 use Elementor\App\Modules\ImportExport\Runners\Export\Export_Runner_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -41,7 +43,20 @@ class Export extends Export_Runner_Base {
 			];
 		}
 
-		// TODO: Here should sanitize the data.
+		$sanitizer = new Settings_Sanitizer(
+			Plugin::$instance->elements_manager,
+			array_keys( Plugin::$instance->widgets_manager->get_widget_types() )
+		);
+
+		$default_values = ( new Collection( $default_values ) )
+			->map(function ( $settings, $type ) use ( $sanitizer, $kit ) {
+				return $sanitizer
+					->for( $type, $settings )
+					->remove_unsupported_keys()
+					->prepare_for_export( $kit )
+					->get();
+			})
+			->all();
 
 		return [
 			'files' => [

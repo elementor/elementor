@@ -2,8 +2,10 @@
 namespace Elementor\Modules\KitElementsDefaults\ImportExport\Runners;
 
 use Elementor\Plugin;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Modules\KitElementsDefaults\Utils\Settings_Sanitizer;
 use Elementor\App\Modules\ImportExport\Runners\Import\Import_Runner_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,20 +30,29 @@ class Import extends Import_Runner_Base {
 	public function import( array $data, array $imported_data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$data = ImportExportUtils::read_json_file( $data['extracted_directory_path'] . '/kit-elements-defaults.json' );
+		$default_values = ImportExportUtils::read_json_file( $data['extracted_directory_path'] . '/kit-elements-defaults.json' );
 
-		if ( ! $kit || ! $data ) {
+		if ( ! $kit || ! $default_values ) {
 			return [];
 		}
 
-		// TODO: Here should sanitize the data.
-		// TODO: Maybe merge to the old kit?
-
-		$kit->update_meta(
-			Module::META_KEY,
-			wp_slash( wp_json_encode( $data ) )
+		$sanitizer = new Settings_Sanitizer(
+			Plugin::$instance->elements_manager,
+			array_keys( Plugin::$instance->widgets_manager->get_widget_types() )
 		);
 
-		return $data;
+		$default_values = ( new Collection( $default_values ) )
+			->map(function ( $settings, $type ) use ( $sanitizer, $kit ) {
+				return $sanitizer
+					->for( $type, $settings )
+					->remove_unsupported_keys()
+					->prepare_for_import( $kit )
+					->get();
+			})
+			->all();
+
+		$kit->update_json_meta( Module::META_KEY, $default_values );
+
+		return $default_values;
 	}
 }
