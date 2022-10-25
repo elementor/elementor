@@ -94,7 +94,8 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 	}
 
 	prepareVimeoVideo( Vimeo, videoLink ) {
-		const elementSettings = this.getElementSettings(),
+		const additionParameters = new URLSearchParams( videoLink.split('?')[1] ),
+			elementSettings = this.getElementSettings(),
 			videoSize = this.elements.$backgroundVideoContainer.outerWidth(),
 			vimeoOptions = {
 				url: videoLink,
@@ -105,6 +106,11 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				background: true,
 				muted: true,
 			};
+
+		const dntParam = additionParameters.get( 'dnt' );
+		if ( 'true' === dntParam || '1' === dntParam ) {
+			vimeoOptions.dnt = true;
+		}
 
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
 
