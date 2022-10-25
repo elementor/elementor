@@ -101,7 +101,7 @@ describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 		expect( ConfirmCreationCommand.introduction.setViewed ).toHaveBeenCalled();
 	} );
 
-	it( 'should replace the container when calling `onConfirm`', () => {
+	it( 'should use a fresh container for each `onConfirm` call', () => {
 		// Arrange
 		const command = new ConfirmCreationCommand();
 
