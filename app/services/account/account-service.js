@@ -28,14 +28,4 @@ export default class AccountService {
 			} );
 		} );
 	}
-
-	/**
-	 * Check if the user is connected to the Elementor library.
-	 *
-	 * @since 3.9.0
-	 * @param {string} app
-	 */
-	isConnected( app ) {
-		return elementorAppConfig[ app ].is_library_connected ?? false;
-	}
 }

@@ -2,7 +2,6 @@
 
 namespace Elementor\App\Services;
 
-use Elementor\App\Services\Account\Account_Service;
 use Elementor\App\Services\License\License_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,11 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Services {
-	/**
-	 * @var Account_Service
-	 */
-	public $account;
-
 	/**
 	 * @var License_Service
 	 */
@@ -27,7 +21,6 @@ class Services {
 	}
 
 	private function register_services() {
-		$this->account = ( new Account_Service() )->register();
 		$this->license = ( new License_Service() )->register();
 
 		do_action( 'elementor/app/services/register', $this );
