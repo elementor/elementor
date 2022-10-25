@@ -125,8 +125,13 @@ class Taxonomies extends Import_Runner_Base {
 
 	private function get_term_parent( $term, array $imported_terms ) {
 		$parent = $term['parent'];
-		if ( 0 !== $parent && ! empty( $imported_terms[ $parent ] ) ) {
-			$parent_term = term_exists( $term[ $imported_terms[ $parent ]['new_id'] ], $term['taxonomy'] );
+		if ( 0 !== $parent && ! empty( $imported_terms ) ) {
+			foreach ( $imported_terms as $imported_term ) {
+				if ( $parent === $imported_term['old_id'] ) {
+					$parent_term = term_exists( $imported_term['new_id'], $term['taxonomy'] );
+					break;
+				}
+			}
 
 			if ( isset( $parent_term['term_id'] ) ) {
 				return $parent_term['term_id'];

@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults;
 
-use Elementor\Plugin;
-use Elementor\Modules\KitElementsDefaults\Data\Controller;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\KitElementsDefaults\Data\Controller;
+use Elementor\Plugin;
 use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
 	const META_KEY = '_elementor_elements_default_values';
 
 	public function get_name() {
@@ -19,14 +20,14 @@ class Module extends BaseModule {
 	}
 
 	public static function get_experimental_data() {
-		$is_debug = defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
-
 		return [
 			'name' => 'kit-elements-defaults',
-			'title' => __( 'Kit Elements Defaults', 'elementor' ),
-			'description' => __( 'Set default values for all the elements in a kit.', 'elementor' ),
+			'title' => __( 'Save as Default', 'elementor' ),
+			'description' => __(
+				'Maintain consistency across your site by saving the changes to a widget as the default setting for future use. These settings will automatically apply to the widget every time you place it. Note: This feature doesn\'t affect existing widgets.',
+				'elementor'
+			) . ' <a href="https://go.elementor.com/wp-dash-save-as-default" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'hidden' => ! $is_debug,
 		];
 	}
 
@@ -47,8 +48,9 @@ class Module extends BaseModule {
 			$this->enqueue_scripts();
 		} );
 
-		( new Import_Export() )->register();
-
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+
+		( new Import_Export() )->register();
+		( new Usage() )->register();
 	}
 }

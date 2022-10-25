@@ -279,10 +279,15 @@ const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
 } );
 
+const productionWatchConfig = webpackProductionConfig.map( ( config ) => {
+	return { ...config, watch: true };
+} );
+
 const gruntWebpackConfig = {
 	development: webpackConfig,
 	developmentNoWatch: developmentNoWatchConfig,
-	production: webpackProductionConfig
+	production: webpackProductionConfig,
+	productionWatch: productionWatchConfig,
 };
 
 module.exports = gruntWebpackConfig;

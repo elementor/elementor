@@ -28,7 +28,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
-			containerPresets: '.e-container-preset',
+			containerPresets: '.e-con-preset',
 		};
 	}
 
