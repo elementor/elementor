@@ -1334,12 +1334,12 @@ class Source_Local extends Source_Base {
 		?>
 			<div class="elementor-blank_state">
 				<i class="eicon-folder"></i>
-				<h2>
+				<h3>
 					<?php
 					/* translators: %s: Template type label. */
 					printf( esc_html__( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) );
 					?>
-				</h2>
+				</h3>
 				<p><?php echo wp_kses_post( $description ); ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
 					<?php
