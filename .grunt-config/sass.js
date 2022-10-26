@@ -28,6 +28,13 @@ const sass = {
 				dest: 'assets/css/modules/notes',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/lazyload/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/lazyload',
+				ext: '.css',
+			}
 		]
 	}
 };
