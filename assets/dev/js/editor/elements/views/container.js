@@ -13,14 +13,14 @@ const ContainerView = BaseElementView.extend( {
 
 	getChildViewContainer() {
 		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
-			? '> .e-container__inner'
+			? '> .e-con-inner'
 			: '';
 
 		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
 	},
 
 	tagName() {
@@ -118,7 +118,7 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-		? '> .elementor-widget, > .e-container--width-full, > .e-container > .e-container__inner, > .elementor-empty-view > .elementor-first-add'
+		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
@@ -139,7 +139,7 @@ const ContainerView = BaseElementView.extend( {
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggingInSameParent = ( draggedView?.parent === this ),
-					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-container__inner' ),
+					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-con-inner' ),
 					containerSelector = hasInnerContainer ? event.currentTarget.parentElement.parentElement : event.currentTarget.parentElement;
 
 				let $elements = jQuery( containerSelector ).find( '> .elementor-element' );
@@ -434,12 +434,12 @@ const ContainerView = BaseElementView.extend( {
 
 	droppableDestroy() {
 		this.$el.html5Droppable( 'destroy' );
-		this.$el.find( '> .e-container__inner' ).html5Droppable( 'destroy' );
+		this.$el.find( '> .e-con-inner' ).html5Droppable( 'destroy' );
 	},
 
 	droppableInitialize( settings ) {
 		if ( 'boxed' === settings.get( 'content_width' ) ) {
-			this.$el.find( '> .e-container__inner' ).html5Droppable( this.getDroppableOptions() );
+			this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
 		} else {
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		}

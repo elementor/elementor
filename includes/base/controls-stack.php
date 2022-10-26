@@ -1415,6 +1415,14 @@ abstract class Controls_Stack extends Base_Object {
 				$instance_value = $values[ $pure_condition_key ];
 			}
 
+			if ( $condition_sub_key && is_array( $instance_value ) ) {
+				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
+					return false;
+				}
+
+				$instance_value = $instance_value[ $condition_sub_key ];
+			}
+
 			if ( ! $instance_value ) {
 				$parent = isset( $controls[ $condition_name_to_check ]['parent'] ) ? $controls[ $condition_name_to_check ]['parent'] : false;
 
@@ -1422,18 +1430,21 @@ abstract class Controls_Stack extends Base_Object {
 					$instance_value = $values[ $parent ];
 
 					if ( $instance_value ) {
-						break;
+						if ( ! is_array( $instance_value ) ) {
+							break;
+						}
+
+						if ( $condition_sub_key && isset( $instance_value[ $condition_sub_key ] ) ) {
+							$instance_value = $instance_value[ $condition_sub_key ];
+
+							if ( '' !== $instance_value ) {
+								break;
+							}
+						}
 					}
+
 					$parent = isset( $controls[ $parent ]['parent'] ) ? $controls[ $parent ]['parent'] : false;
 				}
-			}
-
-			if ( $condition_sub_key && is_array( $instance_value ) ) {
-				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
-					return false;
-				}
-
-				$instance_value = $instance_value[ $condition_sub_key ];
 			}
 
 			/**

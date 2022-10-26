@@ -124,9 +124,9 @@
 	}
 }
 
-.elementor-widget-wrap, 
-.e-container,
-.e-container__inner {
+.elementor-widget-wrap,
+.e-con,
+.e-con-inner {
 
 	> .elementor-element.elementor-absolute {
 		position: absolute;
@@ -184,7 +184,7 @@
 	--order: initial;
 	--align-self: initial;
 
-	&:where( .e-container--width-full, .elementor-widget ) {
+	&:where( .e-con-full, .elementor-widget ) {
 		// Flex container.
 		flex-direction: var( --flex-direction );
 		flex-wrap: var( --flex-wrap );
