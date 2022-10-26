@@ -44,7 +44,7 @@ class Controller extends Base_Controller {
 
 					return $sanitizer
 						->for( $request->get_param( 'type' ), $settings )
-						->remove_unsupported_keys()
+						->remove_invalid_settings()
 						->get();
 				},
 			],

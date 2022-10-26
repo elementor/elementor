@@ -29,7 +29,6 @@ class Import extends Import_Runner_Base {
 
 	public function import( array $data, array $imported_data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
 		$default_values = ImportExportUtils::read_json_file( $data['extracted_directory_path'] . '/kit-elements-defaults.json' );
 
 		if ( ! $kit || ! $default_values ) {
@@ -45,7 +44,7 @@ class Import extends Import_Runner_Base {
 			->map(function ( $settings, $type ) use ( $sanitizer, $kit ) {
 				return $sanitizer
 					->for( $type, $settings )
-					->remove_unsupported_keys()
+					->remove_invalid_settings()
 					->prepare_for_import( $kit )
 					->get();
 			})

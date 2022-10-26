@@ -52,7 +52,7 @@ class Export extends Export_Runner_Base {
 			->map(function ( $settings, $type ) use ( $sanitizer, $kit ) {
 				return $sanitizer
 					->for( $type, $settings )
-					->remove_unsupported_keys()
+					->remove_invalid_settings()
 					->prepare_for_export( $kit )
 					->get();
 			})

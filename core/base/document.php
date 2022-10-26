@@ -1570,8 +1570,10 @@ abstract class Document extends Controls_Stack {
 		}
 	}
 
-	public function process_element_import_export( Controls_Stack $element, $method ) {
-		$element_data = $element->get_data();
+	public function process_element_import_export( Controls_Stack $element, $method, $element_data = null ) {
+		if ( null === $element_data ) {
+			$element_data = $element->get_data();
+		}
 
 		if ( method_exists( $element, $method ) ) {
 			// TODO: Use the internal element data without parameters.

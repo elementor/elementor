@@ -79,7 +79,7 @@ class Settings_Sanitizer {
 	/**
 	 * @return $this
 	 */
-	public function remove_unsupported_keys() {
+	public function remove_invalid_settings() {
 		if ( ! $this->is_pending() ) {
 			return $this;
 		}
@@ -106,14 +106,7 @@ class Settings_Sanitizer {
 	 * @return $this
 	 */
 	public function prepare_for_export( Document $document ) {
-		if ( ! $this->is_pending() ) {
-			return $this;
-		}
-
-		$this->pending_settings = $document
-			->process_element_import_export( $this->pending_element, 'on_export' );
-
-		return $this;
+		return $this->run_inmport_export_sanitize_proccess( $document, 'on_export' );
 	}
 
 	/**
@@ -122,14 +115,7 @@ class Settings_Sanitizer {
 	 * @return $this
 	 */
 	public function prepare_for_import( Document $document ) {
-		if ( ! $this->is_pending() ) {
-			return $this;
-		}
-
-		$this->pending_settings = $document
-			->process_element_import_export( $this->pending_element, 'on_import' );
-
-		return $this;
+		return $this->run_inmport_export_sanitize_proccess( $document, 'on_import' );
 	}
 
 	/**
@@ -167,5 +153,31 @@ class Settings_Sanitizer {
 			];
 
 		return $this->elements_manager->create_element_instance( $args );
+	}
+
+	/**
+	 * @param Document $document
+	 * @param          $process_type
+	 *
+	 * @return $this
+	 */
+	private function run_inmport_export_sanitize_proccess( Document $document, $process_type ) {
+		if ( ! $this->is_pending() ) {
+			return $this;
+		}
+
+		$result = $document->process_element_import_export(
+			$this->pending_element,
+			$process_type,
+			[ 'settings' => $this->pending_settings ]
+		);
+
+		if ( empty( $result['settings'] ) ) {
+			return $this;
+		}
+
+		$this->pending_settings = $result['settings'];
+
+		return $this;
 	}
 }
