@@ -242,4 +242,16 @@ module.exports = class EditorPage extends BasePage {
 	async removeFocus() {
 		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
 	}
+
+	/**
+	 * Hide all editor elements from the screenshots.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async hideEditorElements() {
+		const css = '<style>.elementor-element-overlay,.elementor-empty-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
+
+		await this.addWidget( 'html' );
+		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
+	}
 };

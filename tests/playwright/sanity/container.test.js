@@ -373,4 +373,43 @@ test.describe( 'Container tests', () => {
 			container: false,
 		} );
 	} );
+
+	test.only( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+		// Hide editor elements from the screenshots.
+		await editor.hideEditorElements();
+
+		// Act.
+		// Add widgets.
+		await editor.addWidget( 'spacer', containerId );
+		// Set background colour and custom width.
+		await editor.activatePanelTab( 'advanced' );
+		await editor.setWidgetCustomWidth( '20' );
+		await editor.setBackgroundColor( '#A81830' );
+		// Set container `align-items: center`.
+		await editor.selectElement( containerId );
+		await page.click( '.elementor-control-flex_align_items .eicon-align-center-v' );
+
+		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
+
+		// Assert
+		expect( await container.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
 } );
