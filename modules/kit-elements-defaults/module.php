@@ -37,6 +37,7 @@ class Module extends BaseModule {
 			[
 				'elementor-common',
 				'elementor-editor-modules',
+				'elementor-editor-document',
 			],
 			ELEMENTOR_VERSION,
 			true
