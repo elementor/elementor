@@ -69,13 +69,17 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			],
 		] );
 
-		Plugin::$instance->files_manager->clear_cache();
+		$this->clear_cache();
 
 		$this->update_db_version();
 
 		if ( $did_tasks ) {
 			$this->add_flag( 'completed' );
 		}
+	}
+
+	protected function clear_cache() {
+		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	public function admin_notice_start_upgrade() {
@@ -222,6 +226,8 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		if ( ! $this->should_upgrade() ) {
 			return;
 		}
+
+		$this->clear_cache();
 
 		$updater = $this->get_task_runner();
 
