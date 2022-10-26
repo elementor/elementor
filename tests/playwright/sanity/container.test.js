@@ -374,7 +374,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
+	test( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
