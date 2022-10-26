@@ -323,7 +323,7 @@ class Container extends Element_Base {
 				'default' => 'boxed',
 				'options' => [
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
-					'full-width' => esc_html__( 'Full Width', 'elementor' ),
+					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
 				'render_type' => 'template',
 				'prefix_class' => 'e-con-',
@@ -369,7 +369,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
-					'content_width' => 'full-width',
+					'content_width' => 'full',
 				],
 				'device_args' => [
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
@@ -982,8 +982,8 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}};
-						--overlay-transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
+					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
 				],
 			]
 		);

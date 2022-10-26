@@ -69,7 +69,7 @@ const TaxonomiesFilterList = ( props ) => {
 				{ 0 === taxonomies.length && <Text>{ __( 'No Results Found', 'elementor' ) }</Text> }
 				{
 					taxonomies.map( ( taxonomy ) => (
-						// eslint-disable-next-line jsx-a11y/label-has-for
+						// eslint-disable-next-line jsx-a11y/label-has-associated-control
 						<label key={ taxonomy.text } className="e-kit-library__tags-filter-list-item">
 							<Checkbox
 								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
