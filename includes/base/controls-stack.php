@@ -1437,7 +1437,9 @@ abstract class Controls_Stack extends Base_Object {
 						if ( $condition_sub_key && isset( $instance_value[ $condition_sub_key ] ) ) {
 							$instance_value = $instance_value[ $condition_sub_key ];
 
-							break;
+							if ( '' !== $instance_value ) {
+								break;
+							}
 						}
 					}
 
