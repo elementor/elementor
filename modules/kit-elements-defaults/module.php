@@ -34,7 +34,11 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-kit-elements-defaults-editor',
 			$this->get_js_assets_url( 'kit-elements-defaults-editor' ),
-			[],
+			[
+				'elementor-common',
+				'elementor-editor-modules',
+				'elementor-editor-document',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
