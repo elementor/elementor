@@ -1,4 +1,5 @@
 import createContainer from 'elementor/tests/jest/utils/create-container';
+import { introductionManager, removeConfirmCreationDialog } from 'elementor/modules/kit-elements-defaults/assets/js/editor/confirm-creation-dialog';
 
 describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 	let ConfirmCreationCommand;
@@ -48,7 +49,7 @@ describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 		delete global.elementorModules;
 		delete global.elementor;
 
-		ConfirmCreationCommand.introduction = null;
+		removeConfirmCreationDialog();
 
 		jest.resetAllMocks();
 	} );
@@ -65,7 +66,7 @@ describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 
 		// Assert
 		expect( global.$e.run ).toHaveBeenCalledWith( 'kit-elements-defaults/create', { container } );
-		expect( ConfirmCreationCommand.introduction.show ).not.toHaveBeenCalled();
+		expect( introductionManager.show ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should show dialog before `create` and when confirm it calls `create`', () => {
@@ -75,30 +76,30 @@ describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 
 		// Act
 		command.apply( { container } );
-		ConfirmCreationCommand.introduction.dialog.onConfirm();
+		introductionManager.dialog.onConfirm();
 
 		// Assert
-		expect( ConfirmCreationCommand.introduction.show ).toHaveBeenCalledTimes( 1 );
+		expect( introductionManager.show ).toHaveBeenCalledTimes( 1 );
 		expect( global.$e.run ).toHaveBeenCalledTimes( 1 );
 		expect( global.$e.run ).toHaveBeenCalledWith( 'kit-elements-defaults/create', { container } );
-		expect( ConfirmCreationCommand.introduction.setViewed ).not.toHaveBeenCalled();
+		expect( introductionManager.setViewed ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should show the dialog on the fisrt time and after checking the checkbox it should not be shown', () => {
+	it( 'should show the dialog on the first time and after checking the checkbox it should not be shown', () => {
 		// Arrange
 		const container = createContainer();
 		const command = new ConfirmCreationCommand();
 
 		// Act
 		command.apply( { container } );
-		ConfirmCreationCommand.introduction.dialog.getElements().prop.mockReturnValueOnce( true );
-		ConfirmCreationCommand.introduction.dialog.onConfirm();
+		introductionManager.dialog.getElements().prop.mockReturnValueOnce( true );
+		introductionManager.dialog.onConfirm();
 
 		// Assert
-		expect( ConfirmCreationCommand.introduction.show ).toHaveBeenCalledTimes( 1 );
+		expect( introductionManager.show ).toHaveBeenCalledTimes( 1 );
 		expect( global.$e.run ).toHaveBeenCalledTimes( 1 );
 		expect( global.$e.run ).toHaveBeenCalledWith( 'kit-elements-defaults/create', { container } );
-		expect( ConfirmCreationCommand.introduction.setViewed ).toHaveBeenCalled();
+		expect( introductionManager.setViewed ).toHaveBeenCalled();
 	} );
 
 	it( 'should use a fresh container for each `onConfirm` call', () => {
@@ -110,13 +111,13 @@ describe( `$e.run( 'kit-elements-defaults/confirm-creation' )`, () => {
 
 		// Act
 		command.apply( { container: container1 } );
-		ConfirmCreationCommand.introduction.dialog.onConfirm();
+		introductionManager.dialog.onConfirm();
 
 		command.apply( { container: container2 } );
-		ConfirmCreationCommand.introduction.dialog.onConfirm();
+		introductionManager.dialog.onConfirm();
 
 		// Assert
-		expect( ConfirmCreationCommand.introduction.show ).toHaveBeenCalledTimes( 2 );
+		expect( introductionManager.show ).toHaveBeenCalledTimes( 2 );
 		expect( global.$e.run ).toHaveBeenNthCalledWith( 1, 'kit-elements-defaults/create', { container: container1 } );
 		expect( global.$e.run ).toHaveBeenNthCalledWith( 2, 'kit-elements-defaults/create', { container: container2 } );
 	} );
