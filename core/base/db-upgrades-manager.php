@@ -160,6 +160,8 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			return;
 		}
 
+		$this->clear_cache();
+
 		foreach ( $upgrade_callbacks as $callback ) {
 			$updater->push_to_queue( [
 				'callback' => $callback,
@@ -226,8 +228,6 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		if ( ! $this->should_upgrade() ) {
 			return;
 		}
-
-		$this->clear_cache();
 
 		$updater = $this->get_task_runner();
 
