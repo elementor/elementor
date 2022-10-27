@@ -13,7 +13,7 @@ const config = {
 	},
 	use: {
 		actionTimeout: 4 * 1000, // 4 seconds
-		navigationTimeout: 5 * 1000, // 5 seconds
+		navigationTimeout: 10 * 1000, // 10 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
