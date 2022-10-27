@@ -75,10 +75,10 @@ jobs:
     # needs: bump-version
     runs-on: ubuntu-20.04
     steps:
-      # - name: Checkout branch
-      #   uses: actions/checkout@v3
-      #   with:
-      #     token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       # - name: Install Node.js 16.x
       #   uses: actions/setup-node@v2
       #   with:
