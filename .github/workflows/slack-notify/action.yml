@@ -6,7 +6,7 @@ inputs:
     required: true
   SLACK_TOKEN:
     required: true
-  SLACK_CHANNEL:
+  SLACK_CHANNELS:
     required: true
 
 runs:
@@ -14,7 +14,7 @@ runs:
   steps:
     - shell: bash
       run: |
-            SLACK_CHANNELS_ARRAY=(`echo ${{ inputs.SLACK_CHANNEL }} | sed 's/,/\n/g'`)
+            SLACK_CHANNELS_ARRAY=(`echo ${{ inputs.SLACK_CHANNELS }} | sed 's/,/\n/g'`)
             SLACK_BOT_NAME="ElementorBot"
             for CHANNEL in "${SLACK_CHANNELS_ARRAY[@]}"
             do
