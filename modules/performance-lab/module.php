@@ -28,7 +28,7 @@ class Module extends BaseModule {
 		return false;
 	}
 
-	private function performance_lab_get_webp_src( $attachment_id, $size = 'full', $url ) {
+	private function performance_lab_get_webp_src( $attachment_id, $url, $size = 'full' ) {
 		$image_object = wp_get_attachment_image_src( $attachment_id, $size );
 		$image_src = call_user_func( self::PERFORMANCE_LAB_FUNCTION_NAME, $image_object[0], 'webp', $attachment_id );
 		if ( ! empty( $image_src ) ) {
@@ -39,7 +39,7 @@ class Module extends BaseModule {
 
 	private function replace_css_with_webp( $value, $css_property, $matches ) {
 		if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
-			$value['url'] = $this->performance_lab_get_webp_src( $value['id'], 'full', $value['url'] );
+			$value['url'] = $this->performance_lab_get_webp_src( $value['id'], $value['url'] );
 		}
 		return $value;
 	}
