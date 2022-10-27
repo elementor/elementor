@@ -6,8 +6,8 @@ export let introductionManager = null;
  * + has specific logic for the "Do not show this message again" checkbox,
  * + the content for "save as default" feature.
  *
- * @param  onConfirm.onConfirm
- * @param  onConfirm
+ * @param {Object}   config
+ * @param {Function} config.onConfirm
  * @return {{show: (function(): *), doNotShowAgain: (boolean)}}
  */
 export function getConfirmCreationDialog( { onConfirm } ) {
