@@ -7,10 +7,10 @@ export function getQueryParam( name ) {
 export function setQueryParam( name, value ) {
 	const url = new URL( window.location.href );
 
-	if ( value ) {
-		url.searchParams.set( name, value );
-	} else {
+	if ( null === value ) {
 		url.searchParams.delete( name );
+	} else {
+		url.searchParams.set( name, value );
 	}
 
 	history.replaceState( {}, '', url );

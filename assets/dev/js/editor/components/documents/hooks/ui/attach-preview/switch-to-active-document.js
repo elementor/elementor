@@ -9,13 +9,27 @@ export class SwitchToActiveDocument extends $e.modules.hookUI.After {
 		return 'switch-to-active-document';
 	}
 
+	getValidDocumentIDs() {
+		// TODO: Fix this!
+		const elements = elementor.$previewContents[ 0 ].querySelectorAll( '[data-elementor-id]' ),
+			IDs = [ ...elements ].map( ( el ) => parseInt( el.dataset.elementorId ) );
+
+		return new Set( IDs );
+	}
+
+	getActiveDocument() {
+		return parseInt( getQueryParam( 'active-document' ) );
+	}
+
 	getConditions( args ) {
-		// Run only on initial document attach.
-		return elementor.documents.getCurrentId() === elementor.config.initial_document.id;
+		const isInitialDocument = ( elementor.documents.getCurrentId() === elementor.config.initial_document.id ),
+			isValidDocument = this.getValidDocumentIDs().has( this.getActiveDocument() );
+
+		return isInitialDocument;
 	}
 
 	apply() {
-		const activeDocumentId = parseInt( getQueryParam( 'active-document' ) );
+		const activeDocumentId = this.getActiveDocument();
 
 		if ( activeDocumentId && activeDocumentId !== elementor.documents.getCurrentId() ) {
 			$e.run( 'editor/documents/switch', {

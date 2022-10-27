@@ -13,7 +13,7 @@ export class RemoveActiveDocumentQueryParam extends $e.modules.hookUI.After {
 		const activeDocumentId = parseInt( getQueryParam( 'active-document' ) ),
 			closedDocumentId = parseInt( args.id );
 
-		if ( activeDocument === args.id ) {
+		if ( activeDocumentId === args.id ) {
 			removeQueryParam( 'active-document' );
 		}
 	}
