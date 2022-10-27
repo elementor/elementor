@@ -1190,19 +1190,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* IsFirst */ );
 
-		$e.internal( 'editor/documents/attach-preview' ).then( () => {
-			jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
-
-			const queryParams = new URLSearchParams( window.location.search ),
-				activeDocumentId = parseInt( queryParams.get( 'active-document' ) );
-
-			if ( activeDocumentId && activeDocumentId !== elementor.documents.getCurrentId() ) {
-				$e.run( 'editor/documents/switch', {
-					id: activeDocumentId,
-					mode: 'autosave',
-				} );
-			}
-		} );
+		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
 
 		this.loaded = true;
 	}
