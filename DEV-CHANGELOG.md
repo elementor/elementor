@@ -1,5 +1,20 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.9.0-dev4 - 2022-10-27
+* Tweak: Remove duplicate queries on admin page [ED-8346] (#20098)
+* Fix: Container Full Width values are disappearing after latest version update [ED-8468] (#20111)
+* Fix: Responsive controls with responsive conditions don't always apply in the front end [ED-8471] (#20112)
+* Tweak: Make responsive all instances for border radius (#19896)
+* Fix: Transitions functionality is not working as expected in Container (#19913) [ED-8387] (#20127)
+* Fix: Build action not working [ED-8492] (#20128)
+* Fix: Progress Bar layout is breaking when the direction is set to row in a container [ED-8167] (#20126)
+* Fix: Broken site layout on plugin upgrade [ED-8202] (#19974)
+* Revert "Fix: Broken site layout on plugin upgrade [ED-8202]" (#20136)
+* Fix: Broken site layout on plugin upgrade [ED-8202] (#20137)
+* Tweak: Added `dnt` param to Vimeo embed background and Video widget [ED-8191] (#20133)
+* New: Introducing Background images lazy load experiment [ED-7846] (#19706)
+* Fix: Pasting an element into the Preview Container throws a JS error [ED-8181] (#20118)
+
 #### 3.9.0-dev3 - 2022-10-23
 * Tweak: Add `rem` to gap between elements control [ED-8343] (#20008)
 * Fix: Change all browser behavior by dark mode [ED-8212] (#20013)
@@ -414,15 +429,3 @@
 * Fix: Z-index control override negative values (#17016)
 * Fix: Text path widget is not optimized and makes redundant file system calls [ED-5420] (#16952)
 * Fix: Conflict with JetEngine plugin in v3.5.0 [ED-5603] (#17021)
-
-#### 3.6.0-dev8 - 2021-11-22
-* Tweak: The maximum Offest values changes to 1000px in Advanced > Transform [ED-5600] (#17002)
-* Fix: D&D issues with right and left positioned elements [ED-5494] (#16959)
-
-#### 3.6.0-dev7 - 2021-11-19
-* Fix: Default values in rotate 3D weren't apply in CSS Transfrom [ED-5568] (#16978)
-* Tweak: Adjusting the widgets inline-CSS experiment to support custom-breakpoints [ED-5536] (#16922)
-
-#### 3.6.0-dev6 - 2021-11-18
-* Tweak: Removing redundant code that was needed in the past for the eicons and no longer needed due to the new inline-font experiment. (#16957)
-* Fix: Widget > Advanced > Positioning Vertical align control isn't responsive [ED-5528] (#16927)
