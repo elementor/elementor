@@ -1,4 +1,5 @@
 import { getElementDefaults } from '../../api';
+import { isPopulatedObject } from '../../utils';
 
 export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 	getCommand() {
@@ -17,18 +18,31 @@ export default class FillDefaultsOnDrop extends $e.modules.hookData.Dependency {
 		const { model } = args,
 			{ elType, widgetType } = model;
 
-		const elementSettings = getElementDefaults( widgetType || elType );
+		const elementDefaultSettings = getElementDefaults( widgetType || elType );
 
-		if ( ! elementSettings ) {
+		if ( ! isPopulatedObject( elementDefaultSettings ) ) {
 			return true;
 		}
 
+		const settings = {
+			...elementDefaultSettings,
+			...( args.model.settings || {} ),
+		};
+
+		[ '__dynamic__', '__globals__' ].forEach( ( type ) => {
+			if ( ! isPopulatedObject( elementDefaultSettings[ type ] ) ) {
+				return;
+			}
+
+			settings[ type ] = {
+				...( elementDefaultSettings[ type ] || {} ),
+				...( args.model.settings?.[ type ] || {} ),
+			};
+		} );
+
 		args.model = {
 			...args.model,
-			settings: {
-				...args.model.settings,
-				...elementSettings,
-			},
+			settings,
 		};
 
 		return true;

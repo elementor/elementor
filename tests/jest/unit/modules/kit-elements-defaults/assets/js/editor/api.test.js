@@ -1,8 +1,6 @@
 import { getElementDefaults, deleteElementDefaults, updateElementDefaults, loadElementsDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
 
 describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
-	const items = null;
-
 	beforeEach( () => {
 		window.$e = {
 			data: {
@@ -20,6 +18,7 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
 	} );
 
 	afterEach( () => {
+		jest.clearAllMocks();
 		delete window.$e;
 	} );
 
@@ -36,17 +35,27 @@ describe( 'modules/kit-elements-defaults/assets/js/editor/api.js', () => {
 	} );
 
 	it( 'Should return empty object for non-existing type', () => {
+		// Arrange.
+		$e.data.cache.storage.getItem.mockReturnValue( {
+			'existing-element': { some: 'settings' },
+		} );
+
 		// Act & Assert.
 		expect( getElementDefaults( 'non-existing-element' ) ).toStrictEqual( {} );
 	} );
 
 	it( 'Should read element defaults from cache', () => {
+		// Arrange.
+		$e.data.cache.storage.getItem.mockReturnValue( {
+			'existing-element': { some: 'settings' },
+			'existing-element2': { some: 'settings2' },
+		} );
+
 		// Act.
-		getElementDefaults( 'non-existing-element' );
+		const result = getElementDefaults( 'existing-element' );
 
 		// Assert.
-		expect( $e.data.cache.storage.getItem ).toHaveBeenCalledTimes( 1 );
-		expect( $e.data.cache.storage.getItem ).toHaveBeenCalledWith( 'kit-elements-defaults' );
+		expect( result ).toEqual( { some: 'settings' } );
 	} );
 
 	it( 'Should update element defaults and reload cache', async () => {
