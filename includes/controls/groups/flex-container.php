@@ -59,7 +59,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '{{VALUE}};',
 			],
 			'responsive' => true,
-			'render_type' => 'template',
 		];
 
 		// Only use the flex direction prefix class inside the editor.
