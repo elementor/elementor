@@ -134,7 +134,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( 'column' === sourceElType ) {
+				if ( 'column' === sourceElType || ( elementorCommon.config.experimentalFeatures.container && 'widget' === sourceElType ) ) {
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;

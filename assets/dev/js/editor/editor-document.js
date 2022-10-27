@@ -16,20 +16,20 @@ $e.modules.editor = {
 // TODO: Remove, BC.
 $e.modules.document = {
 	get CommandHistory() {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'$e.modules.document.CommandHistory',
 			'3.7.0',
-			'$e.modules.editor.document.CommandHistoryBase'
+			'$e.modules.editor.document.CommandHistoryBase',
 		);
 
 		return $e.modules.editor.document.CommandHistoryBase;
 	},
 
 	get CommandHistoryDebounce() {
-		elementorCommon.helpers.softDeprecated(
+		elementorDevTools.deprecation.deprecated(
 			'$e.modules.CommandHistoryDebounce',
 			'3.7.0',
-			'$e.modules.editor.document.CommandHistoryDebounceBase'
+			'$e.modules.editor.document.CommandHistoryDebounceBase',
 		);
 
 		return $e.modules.editor.document.CommandHistoryDebounceBase;

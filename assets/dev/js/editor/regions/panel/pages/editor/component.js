@@ -33,12 +33,12 @@ export default class Component extends ComponentBase {
 
 	renderTab( tab, args ) {
 		const { model, view } = args,
-			/* translators: %s: Element name. */
+			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
 		elementor.getPanelView().setPage( 'editor', title, {
 			tab,
-			model: model,
+			model,
 			controls: elementor.getElementControls( model ),
 			editedElementView: view,
 		} );
@@ -81,20 +81,21 @@ export default class Component extends ComponentBase {
 	/**
 	 * Callback on route open under the current namespace.
 	 *
-	 * @param {string} route - Route ID.
+	 * @param {string} route
+	 * @param {Object} routeArgs
 	 *
 	 * @return {void}
 	 */
-	onRoute( route ) {
+	onRoute( route, routeArgs = {} ) {
 		super.onRoute( route );
 
-		const currentElement = elementor.getCurrentElement();
+		const { view } = routeArgs;
 
-		if ( ! currentElement ) {
+		if ( ! view?.getContainer() ) {
 			return;
 		}
 
-		SetDirectionMode.set( currentElement.getContainer() );
+		SetDirectionMode.set( view.getContainer() );
 	}
 
 	/**

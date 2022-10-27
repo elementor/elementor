@@ -23,7 +23,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 		this.requireContainer( args );
 
 		this.requireArgumentType( 'name', 'string', args );
-		this.requireArgument( 'index', args ); // sometimes null.
+		this.requireArgument( 'index', args ); // Sometimes null.
 	}
 
 	getHistory( args ) {

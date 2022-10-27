@@ -1,0 +1,22 @@
+name: Create Git Tag
+description: Generate a new Git version and push it to the remote repository.
+
+inputs:
+  MAINTAIN_USERNAME:
+    required: true
+  MAINTAIN_EMAIL:
+    required: true
+  PACKAGE_VERSION:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash 
+      run: |
+            git config user.name ${{ inputs.MAINTAIN_USERNAME }}
+            git config user.email ${{ inputs.MAINTAIN_EMAIL }}
+            echo "Create tag v${PACKAGE_VERSION}"
+            git tag "v${PACKAGE_VERSION}"
+            git push origin "v${PACKAGE_VERSION}"
+      

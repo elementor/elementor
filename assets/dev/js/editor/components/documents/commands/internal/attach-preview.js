@@ -1,12 +1,22 @@
 export class AttachPreview extends $e.modules.CommandInternalBase {
-	apply() {
+	validateArgs( args = {} ) {
+		if ( args.selector ) {
+			this.requireArgumentType( 'selector', 'string' );
+
+			if ( 0 === elementor.$previewContents.find( args.selector ).length ) {
+				throw new Error( 'Invalid argument. The `selector` argument must be existed selector.' );
+			}
+		}
+	}
+
+	apply( args ) {
 		const document = elementor.documents.getCurrent();
 
 		return $e.data.get( 'globals/index' )
 			.then( () => {
 				elementor.trigger( 'globals:loaded' );
 
-				return this.attachDocumentToPreview( document );
+				return this.attachDocumentToPreview( document, args );
 			} )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
@@ -23,7 +33,9 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 		} );
 	}
 
-	attachDocumentToPreview( document ) {
+	attachDocumentToPreview( document, args ) {
+		const { selector = '.elementor-' + document.id, shouldScroll = true } = args;
+
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
 			if ( ! document ) {
@@ -34,7 +46,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				return resolve();
 			}
 
-			document.$element = elementor.$previewContents.find( '.elementor-' + document.id );
+			document.$element = elementor.$previewContents.find( selector );
 
 			if ( ! document.$element.length ) {
 				elementor.onPreviewElNotFound();
@@ -49,14 +61,19 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 
-			elementor.initElements();
+			$e.internal( 'document/elements/populate', {
+				document,
+				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
+			} );
 
 			elementor.initPreviewView( document );
 
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;
 
-			elementor.helpers.scrollToView( document.$element );
+			if ( shouldScroll ) {
+				elementor.helpers.scrollToView( document.$element );
+			}
 
 			document.$element
 				.addClass( 'elementor-edit-area-active' )

@@ -1,0 +1,37 @@
+// CHECKBOX: API
+$eps-checkbox-size: 15px;
+$eps-checkbox-border-color: tints(300);
+$eps-checkbox-hover-border-color: darken(tints(300), $eps-hover-state-operator);
+$eps-checkbox-active-border-color: lighten(tints(300), $eps-active-state-operator);
+$eps-checkbox-border-radius: $eps-radius;
+$eps-checkbox-background-color: theme-colors(light);
+$eps-checkbox-checked-background-color: theme-colors(success);
+$eps-checkbox-checked-hover-background-color: darken($eps-checkbox-checked-background-color, $eps-hover-state-operator);
+$eps-checkbox-checked-active-background-color: lighten($eps-checkbox-checked-background-color, $eps-active-state-operator);
+$eps-checkbox-checked-disabled-background-color: theme-colors(disabled);
+$eps-checkbox-indicator-color: theme-colors(light);
+$eps-checkbox-indicator-border-width: 1px;
+$eps-checkbox-indicator-scale-unit: calc(1/4);
+$eps-checkbox-indicator-size-unit: ceil($eps-checkbox-indicator-scale-unit * $eps-checkbox-size) - $eps-checkbox-indicator-border-width;
+$eps-checkbox-indeterminate-indicator-size-unit: 7px;
+$eps-checkbox-error-background-color: theme-colors(danger);
+
+:root {
+	--checkbox-border-color: #{$eps-checkbox-border-color};
+	--checkbox-hover-border-color: #{$eps-checkbox-hover-border-color};
+	--checkbox-active-border-color: #{$eps-checkbox-active-border-color};
+	--checkbox-background-color: #{$eps-checkbox-background-color};
+	--checkbox-checked-background-color: #{$eps-checkbox-checked-background-color};
+	--checkbox-checked-hover-background-color: #{$eps-checkbox-checked-hover-background-color};
+	--checkbox-checked-active-background-color: #{$eps-checkbox-checked-active-background-color};
+	--checkbox-checked-disabled-background-color: #{$eps-checkbox-checked-disabled-background-color};
+	--checkbox-indicator-color: #{$eps-checkbox-indicator-color};
+	--checkbox-error-background-color: #{$eps-checkbox-error-background-color};
+}
+
+.eps-theme-dark {
+	--checkbox-background-color: transparent;
+}
+
+// Theming:
+// no dark theme detected

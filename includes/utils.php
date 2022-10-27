@@ -745,11 +745,9 @@ class Utils {
 
 	public static function print_wp_kses_extended( $string, array $tags ) {
 		$allowed_html = wp_kses_allowed_html( 'post' );
-		// Since PHP 5.6 cannot use isset() on the result of an expression.
-		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
 
 		foreach ( $tags as $tag ) {
-			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
+			if ( isset( self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] ) ) {
 				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
 				$allowed_html = array_replace_recursive( $allowed_html, $extended_tags );
 			}
@@ -779,4 +777,36 @@ class Utils {
 				return false !== strpos( $path, $p );
 			} );
 	}
+
+	/**
+	 * @param $file
+	 * @param mixed ...$args
+	 * @return false|string
+	 */
+	public static function file_get_contents( $file, ...$args ) {
+		if ( ! is_file( $file ) || ! is_readable( $file ) ) {
+			return false;
+		}
+
+		return file_get_contents( $file, ...$args );
+	}
+
+	/**
+	 * Return specific object property value if exist from array of keys.
+	 *
+	 * @param $array
+	 * @param $keys
+	 * @return key|false
+	 */
+	public static function get_array_value_by_keys( $array, $keys ) {
+		$keys = (array) $keys;
+		foreach ( $keys as $key ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				return null;
+			}
+			$array = $array[ $key ];
+		}
+		return $array;
+	}
+
 }
