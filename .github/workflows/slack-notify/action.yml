@@ -14,6 +14,10 @@ runs:
   steps:
     - shell: bash
       run: |
+            SLACK_CHANNELS_ARRAY=(`echo ${{ inputs.SLACK_CHANNEL }} | sed 's/,/\n/g'`)
             SLACK_BOT_NAME="ElementorBot"
-            curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${{ inputs.SLACK_TOKEN }}&channel=${{ inputs.SLACK_CHANNEL }}&text=${{ inputs.MESSAGE }}&link_names=true"
+            for CHANNEL in "${SLACK_CHANNELS_ARRAY[@]}"
+            do
+              curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${{ inputs.SLACK_TOKEN }}&channel=${CHANNEL}&text=${{ inputs.MESSAGE }}&link_names=true"
+            done
       
