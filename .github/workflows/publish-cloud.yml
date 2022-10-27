@@ -136,4 +136,4 @@ jobs:
         with:
           MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+          SLACK_CHANNELS: "C03PMU9HK24,C03PMU9HK24" #${{ secrets.SLACK_CHANNELS }}
