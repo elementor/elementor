@@ -39,7 +39,14 @@ class Mock_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
-			'removed_because_removed_using_on_export_method',
+			'removed_on_import_and_on_export_method',
+			[
+				'label' => esc_html__( 'Text', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'another_setting',
 			[
 				'label' => esc_html__( 'Text', 'elementor' ),
 			]
@@ -49,7 +56,13 @@ class Mock_Widget extends Widget_Base {
 	}
 
 	public function on_export( $element_data ) {
-		unset( $element_data['settings']['removed_because_removed_using_on_export_method'] );
+		unset( $element_data['settings']['removed_on_import_and_on_export_method'] );
+
+		return $element_data;
+	}
+
+	public function on_import( $element_data ) {
+		unset( $element_data['settings']['removed_on_import_and_on_export_method'] );
 
 		return $element_data;
 	}

@@ -35,12 +35,20 @@ class Import extends Import_Runner_Base {
 			return [];
 		}
 
+		$element_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+		$widget_types  = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
+
+		$types = array_merge( $element_types, $widget_types );
+
 		$sanitizer = new Settings_Sanitizer(
 			Plugin::$instance->elements_manager,
-			array_keys( Plugin::$instance->widgets_manager->get_widget_types() )
+			$widget_types
 		);
 
 		$default_values = ( new Collection( $default_values ) )
+			->filter( function ( $settings, $type ) use ( $types ) {
+				return in_array( $type, $types, true );
+			} )
 			->map(function ( $settings, $type ) use ( $sanitizer, $kit ) {
 				return $sanitizer
 					->for( $type, $settings )
