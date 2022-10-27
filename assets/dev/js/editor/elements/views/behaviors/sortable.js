@@ -27,9 +27,9 @@ var SortableBehavior;
 		this.onToggleSortMode( 'edit' === activeMode );
 	},
 
-	 refresh() {
-		 this.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
-	 },
+	refresh() {
+		this.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
+	},
 
 	onRender() {
 		this.view.collection.on( 'update', () => this.refresh() );
