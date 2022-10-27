@@ -13,8 +13,12 @@ export class Open extends $e.modules.CommandBase {
 		}
 
 		// TODO: move to $e.hooks.ui.
-		if ( elementor.loaded ) {
+		const isFirstLoad = ! elementor.loaded;
+
+		if ( ! isFirstLoad ) {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
+
+			this.setQueryParam( 'active-document', id );
 		}
 
 		return elementor.documents.request( id )
@@ -30,6 +34,18 @@ export class Open extends $e.modules.CommandBase {
 					elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
 				}
 			} );
+	}
+
+	setQueryParam( param, value ) {
+		const url = new URL( window.location.href );
+
+		if ( value ) {
+			url.searchParams.set( param, value );
+		} else {
+			url.searchParams.delete( param );
+		}
+
+		history.replaceState( {}, '', url );
 	}
 }
 
