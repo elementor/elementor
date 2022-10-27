@@ -105,7 +105,18 @@ class Group_Control_Image_Size extends Group_Control_Base {
 				'class' => trim( $image_class ),
 			];
 
+			$remove_width_height = function ( $image ) {
+				$image[1] = null; // width.
+				$image[2] = null; // height.
+
+				return $image;
+			};
+
+			add_filter( 'wp_get_attachment_image_src', $remove_width_height );
+
 			$html .= wp_get_attachment_image( $image['id'], $size, false, $image_attr );
+
+			remove_filter( 'wp_get_attachment_image_src', $remove_width_height );
 		} else {
 			$image_src = self::get_attachment_image_src( $image['id'], $image_size_key, $settings );
 

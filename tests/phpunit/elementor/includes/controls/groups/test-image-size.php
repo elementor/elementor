@@ -31,10 +31,11 @@ class Test_Image_Size extends Elementor_Test_Base {
 		$html = ob_get_clean();
 
 		// Assert
-		$this->assertEquals(
-			wp_get_attachment_image( $attachment_id, 'large',false, [ 'class' => "attachment-large size-large wp-image-{$attachment_id}" ] ),
-			$html
-		);
+		$expected = wp_get_attachment_image( $attachment_id, 'large',false, [ 'class' => "attachment-large size-large wp-image-{$attachment_id}" ] );
+		$expected = preg_replace( '/(width|height)="\d+"/', '', $expected );
+		$expected = preg_replace( '/\s+/', ' ', $expected );
+
+		$this->assertEquals( $expected, $html );
 
 		// Clean up
 		wp_delete_attachment( $attachment_id, true );
