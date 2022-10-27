@@ -3,7 +3,7 @@ const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Container tests', () => {
-	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+	test.only( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -43,7 +43,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -64,6 +64,9 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( 'toggle', containerId );
 		await editor.addWidget( 'video', containerId );
 
+		// Hide video button.
+		await editor.hideVideoControls();
+
 		// Select spacer element.
 		await editor.selectElement( spacer );
 		// Set background colour.
@@ -79,6 +82,7 @@ test.describe( 'Container tests', () => {
 
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 		await page.waitForLoadState( 'domcontentloaded' );
+		await editor.hideVideoControls();
 
 		// Assert
 		expect( await container.screenshot( {
@@ -91,6 +95,7 @@ test.describe( 'Container tests', () => {
 		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await page.waitForLoadState( 'domcontentloaded' );
+		await editor.hideVideoControls();
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
@@ -106,6 +111,7 @@ test.describe( 'Container tests', () => {
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await page.waitForLoadState( 'domcontentloaded' );
+		await editor.hideVideoControls();
 
 		// Assert
 		expect( await container.screenshot( {
@@ -118,6 +124,7 @@ test.describe( 'Container tests', () => {
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await page.waitForLoadState( 'domcontentloaded' );
+		await editor.hideVideoControls();
 
 		// Assert
 		expect( await container.screenshot( {
@@ -130,7 +137,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -141,6 +148,8 @@ test.describe( 'Container tests', () => {
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
+		// Hide all editor elements from the screenshots.
+		await editor.hideEditorElements();
 
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
@@ -186,7 +195,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -197,6 +206,8 @@ test.describe( 'Container tests', () => {
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
+		// Hide all editor elements from the screenshots.
+		await editor.hideEditorElements();
 
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
@@ -242,7 +253,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
+	test.only( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -262,7 +273,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test.only( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -294,6 +305,7 @@ test.describe( 'Container tests', () => {
 		await editor.setWidgetMask();
 
 		await editor.addWidget( 'video', container );
+		await editor.hideVideoControls();
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Set widget mask.
@@ -326,7 +338,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
 	} );
 
-	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+	test.only( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,

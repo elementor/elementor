@@ -213,7 +213,7 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a background color to an element.
 	 *
-	 * @param {string} color - The background color code;
+	 * @param {string} color       - The background color code;
 	 * @param {string} elementType - The element types are `widget` and `container`;
 	 *
 	 * @return {Promise<void>}
@@ -241,5 +241,32 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async removeFocus() {
 		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
+	}
+
+	/**
+	 * Hide all editor elements from the screenshots.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async hideEditorElements() {
+		const css = '<style>.elementor-element-overlay,.elementor-empty-view,#elementor-add-new-section{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
+
+		await this.addWidget( 'html' );
+		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
+	}
+
+	async hideVideoControls() {
+		await this.getPreviewFrame().waitForSelector( '.elementor-video' );
+
+		const videoFrame = this.getPreviewFrame().frameLocator( '.elementor-video' ),
+			videoButton = videoFrame.locator( 'button.ytp-large-play-button.ytp-button.ytp-large-play-button-red-bg' ),
+			videoGradient = videoFrame.locator( '.ytp-gradient-top' ),
+			videoTitle = videoFrame.locator( '.ytp-show-cards-title' ),
+			videoBottom = videoFrame.locator( '.ytp-impression-link' );
+
+		await videoButton.evaluate( ( element ) => element.style.opacity = 0 );
+		await videoGradient.evaluate( ( element ) => element.style.opacity = 0 );
+		await videoTitle.evaluate( ( element ) => element.style.opacity = 0 );
+		await videoBottom.evaluate( ( element ) => element.style.opacity = 0 );
 	}
 };
