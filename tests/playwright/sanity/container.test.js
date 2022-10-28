@@ -81,6 +81,7 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
+
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 

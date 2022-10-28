@@ -249,7 +249,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async hideEditorElements() {
-		const css = '<style>.elementor-element-overlay,.elementor-empty-view,#elementor-add-new-section{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
+		const css = '<style>.elementor-element-overlay,.elementor-empty-view,.elementor-widget-empty-icon{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}.elementor-add-section-inner {border: none !important;background-color: #cccccc !important;}</style>';
 
 		await this.addWidget( 'html' );
 		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
