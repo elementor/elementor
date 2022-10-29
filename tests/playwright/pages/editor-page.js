@@ -135,6 +135,7 @@ module.exports = class EditorPage extends BasePage {
 		await element.hover();
 		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 		await elementEditButton.click();
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
 	}
 
 	/**
@@ -197,6 +198,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async populateImageCarousel() {
+		await this.activatePanelTab( 'layout' );
 		await this.page.locator( '[aria-label="Add Images"]' ).click();
 
 		// Open Media Library
@@ -266,6 +268,7 @@ module.exports = class EditorPage extends BasePage {
 		const css = '<style>.elementor-element-overlay,.elementor-empty-view,.elementor-widget-empty,.e-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}.elementor-add-section-inner {border: none !important;background-color: #cccccc !important;}</style>';
 
 		await this.addWidget( 'html' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-widget-html' );
 		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
 	}
 

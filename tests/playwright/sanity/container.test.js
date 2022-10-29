@@ -311,10 +311,10 @@ test.describe( 'Container tests', () => {
 		// Hide carousel navigation.
 		const carouselOneId = await editor.addWidget( 'image-carousel', container );
 		await page.selectOption( '.elementor-control-navigation >> select', 'none' );
-		// Add image carousel widget.
-		await editor.populateImageCarousel();
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
+		// Add images.
+		await editor.populateImageCarousel();
 		// Duplicate carousel widget.
 		await editor.selectElement( carouselOneId );
 		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId + ' .elementor-editor-element-edit' ).click( { button: 'right' } );
@@ -370,6 +370,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
 
 		await editor.closeNavigatorIfOpen();
+		await editor.hideEditorElements();
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
