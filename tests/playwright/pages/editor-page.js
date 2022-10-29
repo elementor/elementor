@@ -198,7 +198,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async populateImageCarousel() {
-		await this.activatePanelTab( 'layout' );
+		await this.activatePanelTab( 'content' );
 		await this.page.locator( '[aria-label="Add Images"]' ).click();
 
 		// Open Media Library

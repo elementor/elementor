@@ -316,8 +316,7 @@ test.describe( 'Container tests', () => {
 		// Add images.
 		await editor.populateImageCarousel();
 		// Duplicate carousel widget.
-		await editor.selectElement( carouselOneId );
-		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId + ' .elementor-editor-element-edit' ).click( { button: 'right' } );
+		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId ).click( { button: 'right' } );
 		await expect( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
 		// Add flex grow effect.
