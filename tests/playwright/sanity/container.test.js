@@ -67,14 +67,8 @@ test.describe( 'Container tests', () => {
 		// Hide video button.
 		await editor.hideVideoControls();
 
-		// Select spacer element.
-		await editor.selectElement( spacer );
-		// Set background colour.
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
-		await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
-		await page.locator( '.elementor-control-_background_color .pcr-button' ).click();
-		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#A81830' );
+		// Set background colour to spacer.
+		await editor.setBackgroundColor( '#A81830', spacer );
 		// Select container.
 		await editor.selectElement( containerId );
 		// Set row direction.
@@ -147,16 +141,16 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
-		await editor.closeNavigatorIfOpen();
-		// Hide all editor elements from the screenshots.
-		await editor.hideEditorElements();
-
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+		// Hide all editor elements from the screenshots.
+		await editor.hideEditorElements();
 
 		// Act.
 		// Add widget.
@@ -205,16 +199,16 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
-		await editor.closeNavigatorIfOpen();
-		// Hide all editor elements from the screenshots.
-		await editor.hideEditorElements();
-
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+		// Hide all editor elements from the screenshots.
+		await editor.hideEditorElements();
 
 		// Act.
 		// Add widget.
@@ -316,6 +310,8 @@ test.describe( 'Container tests', () => {
 		// Add image carousel widget.
 		const carouselOneId = await editor.addWidget( 'image-carousel', container );
 		await editor.populateImageCarousel();
+		// Hide carousel navigation.
+		await page.selectOption( '.elementor-control-navigation >> select', 'none' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Duplicate carousel widget.
@@ -326,11 +322,8 @@ test.describe( 'Container tests', () => {
 		// Add flex grow effect.
 		await editor.activatePanelTab( 'advanced' );
 		await editor.setWidgetToFlexGrow();
-		// Add background color.
-		await editor.selectElement( carouselOneId );
-		await editor.setBackgroundColor( '#CCCCCC' );
 		// Move test elements out of focus.
-		await editor.removeFocus( 'container' );
+		await editor.hideMapControls();
 
 		// Assert.
 		expect( await containerElement.screenshot( {

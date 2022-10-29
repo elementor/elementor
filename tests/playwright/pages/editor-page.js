@@ -125,6 +125,12 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async selectElement( elementId ) {
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
+
+		if ( await this.getPreviewFrame().$( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' ) ) {
+			return;
+		}
+
 		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.hover();
 		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
@@ -140,6 +146,12 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async activatePanelTab( panelName ) {
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+
+		// Check if panel has been activated already.
+		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
+			return;
+		}
+
 		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
@@ -213,19 +225,21 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a background color to an element.
 	 *
-	 * @param {string} color       - The background color code;
-	 * @param {string} elementType - The element types are `widget` and `container`;
+	 * @param {string}  color     - The background color code;
+	 * @param {string}  elementId - The ID of targeted element;
+	 * @param {boolean} isWidget  - Indicate whether the element is a widget or not; the default value is 'widget';
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setBackgroundColor( color = '#A81830', elementType = 'widget' ) {
-		const panelTab = 'container' === elementType ? 'style' : 'advanced',
-			backgroundSelector = 'container' === elementType ? '.elementor-control-background_background ' : '.elementor-control-_background_background ',
-			backgroundColorSelector = 'container' === elementType ? '.elementor-control-background_color ' : '.elementor-control-_background_color ';
+	async setBackgroundColor( color, elementId, isWidget = true ) {
+		const panelTab = isWidget ? 'advanced' : 'style',
+			backgroundSelector = isWidget ? '.elementor-control-_background_background ' : '.elementor-control-background_background ',
+			backgroundColorSelector = isWidget ? '.elementor-control-_background_color ' : '.elementor-control-background_color ';
 
+		await this.selectElement( elementId );
 		await this.activatePanelTab( panelTab );
 
-		if ( 'widget' === elementType ) {
+		if ( isWidget ) {
 			await this.page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		}
 
@@ -249,12 +263,17 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async hideEditorElements() {
-		const css = '<style>.elementor-element-overlay,.elementor-empty-view,.elementor-widget-empty-icon{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}.elementor-add-section-inner {border: none !important;background-color: #cccccc !important;}</style>';
+		const css = '<style>.elementor-element-overlay,.elementor-empty-view,.elementor-widget-empty,.e-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}.elementor-add-section-inner {border: none !important;background-color: #cccccc !important;}</style>';
 
 		await this.addWidget( 'html' );
 		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
 	}
 
+	/**
+	 * Hide controls from the video widgets.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async hideVideoControls() {
 		await this.getPreviewFrame().waitForSelector( '.elementor-video' );
 
@@ -268,5 +287,23 @@ module.exports = class EditorPage extends BasePage {
 		await videoGradient.evaluate( ( element ) => element.style.opacity = 0 );
 		await videoTitle.evaluate( ( element ) => element.style.opacity = 0 );
 		await videoBottom.evaluate( ( element ) => element.style.opacity = 0 );
+	}
+
+	/**
+	 * Hide controls and overlays on map widgets.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async hideMapControls() {
+		await this.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
+
+		const mapFrame = this.getPreviewFrame().frameLocator( '.elementor-widget-google_maps iframe' ),
+			mapText = mapFrame.locator( '.gm-style iframe + div + div' ),
+			mapInset = mapFrame.locator( 'button.gm-inset-map.gm-inset-light' ),
+			mapControls = mapFrame.locator( '.gmnoprint.gm-bundled-control.gm-bundled-control-on-bottom' );
+
+		await mapText.evaluate( ( element ) => element.style.opacity = 0 );
+		await mapInset.evaluate( ( element ) => element.style.opacity = 0 );
+		await mapControls.evaluate( ( element ) => element.style.opacity = 0 );
 	}
 };
