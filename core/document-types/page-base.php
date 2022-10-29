@@ -127,6 +127,18 @@ abstract class PageBase extends Document {
 		);
 
 		$document->add_responsive_control(
+			'margin',
+			[
+				'label' => esc_html__( 'Margin', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}}' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
+				],
+			]
+		);
+
+		$document->add_responsive_control(
 			'padding',
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
