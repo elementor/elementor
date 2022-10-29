@@ -208,6 +208,7 @@ test.describe( 'Container tests', () => {
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
 		// Hide all editor elements from the screenshots.
+		await editor.selectElement( container );
 		await editor.hideEditorElements();
 
 		// Act.
@@ -307,11 +308,11 @@ test.describe( 'Container tests', () => {
 		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 
-		// Add image carousel widget.
-		const carouselOneId = await editor.addWidget( 'image-carousel', container );
-		await editor.populateImageCarousel();
 		// Hide carousel navigation.
+		const carouselOneId = await editor.addWidget( 'image-carousel', container );
 		await page.selectOption( '.elementor-control-navigation >> select', 'none' );
+		// Add image carousel widget.
+		await editor.populateImageCarousel();
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Duplicate carousel widget.
