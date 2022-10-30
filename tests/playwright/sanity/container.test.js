@@ -129,7 +129,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -190,7 +190,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
