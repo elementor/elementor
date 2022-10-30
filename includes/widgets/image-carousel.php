@@ -856,6 +856,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'default' => [
+					'unit' => 'px',
+					'size' => 20,
+				],
 				'range' => [
 					'px' => [
 						'min' => 1,
@@ -863,7 +868,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					],
 					'%' => [
 						'min' => 1,
-						'max' => 500,
+						'max' => 100,
 					],
 					'vw' => [
 						'min' => 1,
@@ -874,7 +879,6 @@ class Widget_Image_Carousel extends Widget_Base {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ 'px', '%', 'vw', 'vh' ],
 				'show_label' => false,
 				'condition' => [
 					'image_spacing' => 'custom',
