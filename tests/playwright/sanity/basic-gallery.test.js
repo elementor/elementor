@@ -7,7 +7,7 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 		editor = await wpAdmin.useElementorCleanPost();
 
 	// Close Navigator
-	await page.click( '#elementor-navigator__close' );
+	await editor.closeNavigatorIfOpen();
 
 	// Act.
 	await editor.addWidget( 'image-gallery' );

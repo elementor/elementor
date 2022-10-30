@@ -1,23 +1,25 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'Image Carousel', async ( { page }, testInfo ) => {
+test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
 
   // Close Navigator
-  await page.click( '#elementor-navigator__close' );
+  await editor.closeNavigatorIfOpen();
+  // Set Canvas template.
+  await editor.useCanvasTemplate();
 
 	// Act.
 	await editor.addWidget( 'image-carousel' );
 
-  await page.locator( '[aria-label="Add Images"]' ).click();
-
-  // Open Media Library
-  await page.click( 'text=Media Library' );
+  // Hide slider navigation.
+  await page.selectOption( '.elementor-control-navigation >> select', 'none' );
 
   // Upload the images to WP media library
+  await page.locator( '[aria-label="Add Images"]' ).click();
+  await page.click( 'text=Media Library' );
   await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
   await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
   await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
@@ -35,5 +37,6 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 
   // Disable AutoPlay
   await page.selectOption( 'select', 'no' );
+
   expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
 } );
