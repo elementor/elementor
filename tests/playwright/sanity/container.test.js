@@ -150,7 +150,6 @@ test.describe( 'Container tests', () => {
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
 
-
 		// Act.
 		// Add widget.
 		await editor.addWidget( 'heading', container );
