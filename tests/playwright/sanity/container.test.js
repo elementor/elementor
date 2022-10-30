@@ -129,7 +129,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -141,14 +141,15 @@ test.describe( 'Container tests', () => {
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
 
+		// Hide all editor elements from the screenshots.
+		await editor.hideEditorElements();
+
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
 
-		// Hide all editor elements from the screenshots.
-		await editor.hideEditorElements();
 
 		// Act.
 		// Add widget.
@@ -191,7 +192,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -205,6 +206,9 @@ test.describe( 'Container tests', () => {
 
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
+
+		// Hide all editor elements from the screenshots.
+		await editor.hideEditorElements();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
@@ -220,9 +224,6 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
-
-		// Hide all editor elements from the screenshots.
-		await editor.hideEditorElements();
 
 		// Assert
 		// Take screenshot.
