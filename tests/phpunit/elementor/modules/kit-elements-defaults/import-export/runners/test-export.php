@@ -21,13 +21,13 @@ class Test_Export extends Elementor_Test_Base {
 		Plugin::$instance->widgets_manager->unregister( Mock_Widget::NAME );
 	}
 
-	public function test_export() {
+	public function test_export1() {
 		// Arrange
 		$runner = new Export();
 
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Module::META_KEY, [
 			'mock-widget' => [
-				'text' => 'value',
+				'text' => '<script>Test</script> value',
 				'remove_because_has_export_false' => 'some value',
 				'invalid_control' => 'some value',
 				'removed_on_import_and_on_export_method' => 'some value',
@@ -50,7 +50,7 @@ class Test_Export extends Elementor_Test_Base {
 				'path' => 'kit-elements-defaults',
 				'data' => [
 					'mock-widget' => [
-						'text' => 'value',
+						'text' => 'Test value',
 						'__globals__' => [
 							'color' => 'global-color',
 						],

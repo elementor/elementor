@@ -53,6 +53,7 @@ class Import extends Import_Runner_Base {
 				return $sanitizer
 					->for( $type, $settings )
 					->remove_invalid_settings()
+					->kses_deep()
 					->prepare_for_import( $kit )
 					->get();
 			})

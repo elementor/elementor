@@ -53,6 +53,7 @@ class Export extends Export_Runner_Base {
 				return $sanitizer
 					->for( $type, $settings )
 					->remove_invalid_settings()
+					->kses_deep()
 					->prepare_for_export( $kit )
 					->get();
 			})

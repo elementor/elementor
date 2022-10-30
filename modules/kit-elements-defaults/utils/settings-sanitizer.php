@@ -100,6 +100,16 @@ class Settings_Sanitizer {
 		return $this;
 	}
 
+	public function kses_deep() {
+		if ( ! $this->is_pending() ) {
+			return $this;
+		}
+
+		$this->pending_settings = wp_kses_post_deep( $this->pending_settings );
+
+		return $this;
+	}
+
 	/**
 	 * @param Document $document
 	 *
