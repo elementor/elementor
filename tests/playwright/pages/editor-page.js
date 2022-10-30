@@ -122,6 +122,21 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Use the Default post template.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async useDefaultTemplate() {
+		if ( await this.getPreviewFrame().$( '.elementor-default' ) ) {
+			return;
+		}
+
+		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.page.selectOption( '.elementor-control-template >> select', 'default' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
+	}
+
+	/**
 	 * Select an element inside the editor.
 	 *
 	 * @param {string} elementId - Element ID;

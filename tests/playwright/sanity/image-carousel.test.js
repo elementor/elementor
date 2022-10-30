@@ -39,4 +39,7 @@ test.only( 'Image Carousel', async ( { page }, testInfo ) => {
   await page.selectOption( 'select', 'no' );
 
   expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+
+  // Reset the Default template.
+  await editor.useDefaultTemplate();
 } );

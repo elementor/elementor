@@ -182,6 +182,9 @@ test.describe( 'Container tests', () => {
 			quality: 70,
 		} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
 
+		// Reset the Default template.
+		await editor.useDefaultTemplate();
+
 		await wpAdmin.setExperiments( {
 			container: false,
 		} );
@@ -239,6 +242,9 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
+
+		// Reset the Default template.
+		await editor.useDefaultTemplate();
 
 		await wpAdmin.setExperiments( {
 			container: false,
@@ -334,6 +340,9 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
+
+		// Reset the Default template.
+		await editor.useDefaultTemplate();
 	} );
 
 	test.only( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
@@ -384,6 +393,9 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'container-background.jpeg' );
+
+		// Reset the Default template.
+		await editor.useDefaultTemplate();
 
 		await wpAdmin.setExperiments( {
 			container: false,
