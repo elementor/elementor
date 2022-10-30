@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../../../../../../../pages/wp-admin-page' );
 
-test.only( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom selector`, async ( { page }, testInfo ) => {
+test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom selector`, async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
@@ -18,9 +18,10 @@ test.only( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custo
 	} );
 
 	// Assert - Ensure the tabs are duplicated.
-	const tabs = editor.getPreviewFrame().locator( '.elementor-tab-content .elementor-tab-title' );
+	await expect( editor.getPreviewFrame().locator( '.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active' ) ).toBeVisible();
+	const tabsCount = await editor.getPreviewFrame().locator( '.elementor-tab-title' ).count();
 
-	// Check if the duplicated content exist.
-	expect( tabs ).toBeTruthy();
+	// It will be duplicated since, the same widget tabs gonna be inside the first tab content.
+	expect( tabsCount ).toBe( 8 ); // 8 Since there is hidden titles for the mobile version.
 } );
 

@@ -266,7 +266,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async hideEditorElements() {
 		const css = '<style>.elementor-element-overlay,.elementor-empty-view,.elementor-widget-empty,.e-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}.elementor-add-section-inner {border: none !important;background-color: #cccccc !important;}</style>',
-			widgetContainer = await editor.addElement( { elType: 'container' }, 'document' ),
+			widgetContainer = await this.addElement( { elType: 'container' }, 'document' ),
 			htmlWidget = await this.addWidget( 'html', widgetContainer );
 
 		await this.getPreviewFrame().waitForSelector( '.elementor-widget-html' );
