@@ -652,8 +652,8 @@ class Widget_Image_Carousel extends Widget_Base {
 			'bottom_space',
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
-				'size_units' => [ 'px', '%', 'vw' ],
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -689,6 +689,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px', 'vw' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -698,7 +699,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'mobile_default' => [
 					'unit' => '%',
 				],
-				'size_units' => [ '%', 'px', 'vw' ],
 				'range' => [
 					'%' => [
 						'min' => 1,
@@ -724,6 +724,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Max Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px', 'vw' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -733,7 +734,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'mobile_default' => [
 					'unit' => '%',
 				],
-				'size_units' => [ '%', 'px', 'vw' ],
 				'range' => [
 					'%' => [
 						'min' => 1,
@@ -759,6 +759,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'vh' ],
 				'default' => [
 					'unit' => 'px',
 				],
@@ -768,7 +769,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'mobile_default' => [
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px', 'vh' ],
 				'range' => [
 					'px' => [
 						'min' => 1,
