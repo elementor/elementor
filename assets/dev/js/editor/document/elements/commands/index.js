@@ -4,6 +4,7 @@
 export { Copy } from './copy';
 export { CopyAll } from './copy-all';
 export { Create } from './create';
+export { CreateFromPreset } from './create-from-preset';
 export { Delete } from './delete';
 export { Deselect } from './deselect';
 export { DeselectAll } from './deselect-all';

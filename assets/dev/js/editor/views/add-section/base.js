@@ -175,11 +175,18 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 	onContainerPresetSelected( e ) {
 		this.closeSelectPresets();
 
-		return ContainerHelper.createContainerFromPreset(
-			e.currentTarget.dataset.preset,
-			elementor.getPreviewContainer(),
-			this.options,
-		);
+		$e.run( 'document/elements/create-from-preset', {
+			container: elementor.getPreviewContainer(),
+			preset: e.currentTarget.dataset.preset,
+		} );
+
+		//
+		//
+		// return ContainerHelper.createContainerFromPreset(
+		// 	e.currentTarget.dataset.preset,
+		// 	elementor.getPreviewContainer(),
+		// 	this.options,
+		// );
 	}
 
 	onDropping() {
