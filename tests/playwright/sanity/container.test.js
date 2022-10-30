@@ -138,14 +138,15 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
 
-		// Close Navigator
-		await editor.closeNavigatorIfOpen();
 		// Hide all editor elements from the screenshots.
 		await editor.hideEditorElements();
 
@@ -199,14 +200,14 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.getPreviewFrame().locator( 'body' );
-
-		// Close Navigator
-		await editor.closeNavigatorIfOpen();
 
 		// Act.
 		// Add widget.
@@ -219,6 +220,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
 		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
+
 		// Hide all editor elements from the screenshots.
 		await editor.hideEditorElements();
 
@@ -331,7 +333,8 @@ test.describe( 'Container tests', () => {
 		// Add flex grow effect.
 		await editor.activatePanelTab( 'advanced' );
 		await editor.setWidgetToFlexGrow();
-		// Move test elements out of focus.
+
+		// Hide editor and map controls.
 		await editor.hideMapControls();
 		await editor.hideEditorElements();
 

@@ -8,11 +8,12 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 
   // Close Navigator
   await editor.closeNavigatorIfOpen();
+
   // Set Canvas template.
   await editor.useCanvasTemplate();
 
-	// Act.
-	await editor.addWidget( 'image-carousel' );
+  // Act.
+  await editor.addWidget( 'image-carousel' );
 
   // Hide slider navigation.
   await page.selectOption( '.elementor-control-navigation >> select', 'none' );
