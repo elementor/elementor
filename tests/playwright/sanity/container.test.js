@@ -3,7 +3,7 @@ const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Container tests', () => {
-	test.only( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -43,7 +43,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -129,7 +129,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -190,7 +190,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -251,7 +251,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
+	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -271,7 +271,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -345,7 +345,7 @@ test.describe( 'Container tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test.only( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
