@@ -27,12 +27,14 @@ var SortableBehavior;
 		this.onToggleSortMode( 'edit' === activeMode );
 	},
 
-	onRender() {
-		var self = this;
+	refresh() {
+		this.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
+	},
 
-		_.defer( function() {
-			self.onEditModeSwitched( elementor.channels.dataEditMode.request( 'activeMode' ) );
-		} );
+	onRender() {
+		this.view.collection.on( 'update', () => this.refresh() );
+
+		_.defer( () => this.refresh() );
 	},
 
 	onDestroy() {
