@@ -3,7 +3,7 @@ const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Container tests', () => {
-	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+	test.only( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -43,7 +43,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -63,9 +63,6 @@ test.describe( 'Container tests', () => {
 		const spacer = await editor.addWidget( 'spacer', containerId );
 		await editor.addWidget( 'toggle', containerId );
 		await editor.addWidget( 'video', containerId );
-
-		// Hide video button.
-		await editor.hideVideoControls();
 
 		// Set background colour to spacer.
 		await editor.setBackgroundColor( '#A81830', spacer );
@@ -132,7 +129,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -190,7 +187,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -248,7 +245,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
+	test.only( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -268,7 +265,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test.only( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -294,7 +291,7 @@ test.describe( 'Container tests', () => {
 
 		await editor.addWidget( 'google_maps', container );
 		await page.waitForLoadState( 'domcontentloaded' );
-		await this.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.setWidgetToFlexGrow();
@@ -302,12 +299,12 @@ test.describe( 'Container tests', () => {
 		await editor.setWidgetMask();
 
 		await editor.addWidget( 'video', container );
-		await editor.hideVideoControls();
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Set widget mask.
 		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
+		await editor.hideVideoControls();
 
 		// Hide carousel navigation.
 		const carouselOneId = await editor.addWidget( 'image-carousel', container );
@@ -334,7 +331,7 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
 	} );
 
-	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+	test.only( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -355,11 +352,18 @@ test.describe( 'Container tests', () => {
 		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
 			editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			container = editor.getFrame().locator( '.elementor-element-' + containerId );
+			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
+		// Set Canvas template.
+		await editor.useCanvasTemplate();
+
+		await page.waitForLoadState( 'domcontentloaded' );
+		await editor.selectElement( containerId );
 		await editor.activatePanelTab( 'style' );
-		await page.locator( '[data-tooltip="Video"]' ).click();
-		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
+		await page.waitForSelector( '.elementor-control-background_background [data-tooltip="Video"]' );
+		await page.locator( '.elementor-control-background_background [data-tooltip="Video"]' ).click();
+		await page.waitForSelector( '.elementor-control-background_video_link [data-setting="background_video_link"]' );
+		await page.locator( '.elementor-control-background_video_link [data-setting="background_video_link"]' ).fill( videoURL );
 		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
 		await page.locator( '#menu-item-browse' ).click();
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
