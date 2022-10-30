@@ -374,7 +374,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
