@@ -374,7 +374,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test.only( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -406,7 +406,6 @@ async function creatCanvasPage( wpAdmin ) {
 	const editor = await wpAdmin.openNewPage();
 	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.changeEditorLayout( 'elementor_canvas' );
-	await editor.page.waitForTimeout( 5000 );
 	return editor;
 }
 

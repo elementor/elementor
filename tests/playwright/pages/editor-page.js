@@ -246,6 +246,12 @@ module.exports = class EditorPage extends BasePage {
 	async changeEditorLayout( layout ) {
 		await this.page.locator( '#elementor-panel-footer-settings' ).click();
 		await this.page.selectOption( '[data-setting=template]', layout );
+		await this.ensurePreviewReload();
+	}
+
+	async ensurePreviewReload() {
+		await this.page.waitForSelector( '#elementor-preview-loading' );
+		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
 	}
 };
 
