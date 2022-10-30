@@ -235,7 +235,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
@@ -273,7 +273,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),

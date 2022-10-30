@@ -100,7 +100,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		// On static mode don't use WP responsive images.
 		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! $is_static_render_mode ) {
-			$image_class .= " attachment-$size size-$size";
+			$image_class .= " attachment-$size size-$size wp-image-{$image['id']}";
 			$image_attr = [
 				'class' => trim( $image_class ),
 			];
