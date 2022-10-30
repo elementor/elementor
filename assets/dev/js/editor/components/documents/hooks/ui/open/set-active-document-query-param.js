@@ -11,7 +11,7 @@ export class SetActiveDocumentQueryParam extends $e.modules.hookUI.After {
 
 	getConditions( args ) {
 		// Don't run for the main document.
-		return elementor.documents.getCurrentId() !== elementor.config.initial_document.id;
+		return parseInt( args.id ) !== parseInt( elementor.config.initial_document.id );
 	}
 
 	apply( args ) {
