@@ -129,7 +129,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -231,13 +231,52 @@ test.describe( 'Container tests', () => {
 			quality: 70,
 		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
 
-		// Act
-		// Select container.
-		await editor.selectElement( container );
+		// Reset the Default template.
+		await editor.useDefaultTemplate();
 
-		// Set full content width
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
+	test.only( 'Container full width and position fixed', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
+		// Set Canvas template.
+		await editor.useCanvasTemplate();
+
+		// Hide all editor elements from the screenshots.
+		await editor.hideEditorElements();
+
+		const container = await editor.addElement( { elType: 'container' }, 'document' ),
+			pageView = editor.getPreviewFrame().locator( 'body' );
+
+		// Act
+		// Set container content full content width.
+		await editor.selectElement( container );
 		await editor.activatePanelTab( 'layout' );
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+
+		// Act.
+		// Add widget.
+		await editor.addWidget( 'heading', container );
+		// Select container.
+		await editor.selectElement( container );
+		// Set position fixed.
+		await editor.activatePanelTab( 'advanced' );
+		await page.selectOption( '.elementor-control-position >> select', 'fixed' );
+		await page.locator( '.elementor-control-z_index .elementor-control-input-wrapper input' ).fill( '50' );
+		await page.locator( '.elementor-control-_offset_x .elementor-control-input-wrapper input' ).fill( '50' );
+		await page.locator( '.elementor-control-_offset_y .elementor-control-input-wrapper input' ).fill( '50' );
 
 		// Assert
 		expect( await pageView.screenshot( {
