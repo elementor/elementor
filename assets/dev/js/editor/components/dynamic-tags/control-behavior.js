@@ -214,7 +214,7 @@ module.exports = Marionette.Behavior.extend( {
 							: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
 						text: hasProAndNotConnected
 							? __( 'Connect & Activate', 'elementor' )
-							: __( 'See it in Action', 'elementor' ),
+							: __( 'Upgrade', 'elementor' ),
 					},
 				};
 

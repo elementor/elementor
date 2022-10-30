@@ -2,13 +2,18 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-	timeout: 90000,
-	globalTimeout: 900000,
+	timeout: 40 * 1000, // 40 seconds
+	globalTimeout: 60 * 10 * 1000, // 10 minutes
 	reporter: 'list',
 	testDir: '../sanity/',
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
+	expect: {
+		timeout: 5 * 1000, // 5 seconds
+	},
 	use: {
+		actionTimeout: 4 * 1000, // 4 seconds
+		navigationTimeout: 10 * 1000, // 10 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
