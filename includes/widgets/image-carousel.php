@@ -638,11 +638,38 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'separator' => 'after',
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}};',
 				],
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'bottom_space',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'size_units' => [ 'px', '%', 'vw' ],
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -654,6 +681,128 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'width',
+			[
+				'label' => esc_html__( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
+					'unit' => '%',
+				],
+				'size_units' => [ '%', 'px', 'vw' ],
+				'range' => [
+					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 1,
+						'max' => 1000,
+					],
+					'vw' => [
+						'min' => 1,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel img' => 'width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'max_width',
+			[
+				'label' => esc_html__( 'Max Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
+					'unit' => '%',
+				],
+				'size_units' => [ '%', 'px', 'vw' ],
+				'range' => [
+					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 1,
+						'max' => 1000,
+					],
+					'vw' => [
+						'min' => 1,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel img' => 'max-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'height',
+			[
+				'label' => esc_html__( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => 'px',
+				],
+				'tablet_default' => [
+					'unit' => 'px',
+				],
+				'mobile_default' => [
+					'unit' => 'px',
+				],
+				'size_units' => [ 'px', 'vh' ],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 1000,
+					],
+					'vh' => [
+						'min' => 1,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel img' => 'height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'object_fit',
+			[
+				'label' => esc_html__( 'Object Fit', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'condition' => [
+					'height[size]!' => '',
+				],
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'fill' => esc_html__( 'Fill', 'elementor' ),
+					'cover' => esc_html__( 'Cover', 'elementor' ),
+					'contain' => esc_html__( 'Contain', 'elementor' ),
+				],
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel img' => 'object-fit: {{VALUE}};',
+				],
 			]
 		);
 
@@ -679,6 +828,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'slides_to_show!' => '1',
 				],
+				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}} .swiper-wrapper' => 'display: flex; align-items: {{VALUE}};',
 				],
@@ -708,12 +858,23 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 1,
+						'max' => 1000,
+					],
+					'%' => [
+						'min' => 1,
+						'max' => 500,
+					],
+					'vw' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'vh' => [
+						'min' => 1,
 						'max' => 100,
 					],
 				],
-				'default' => [
-					'size' => 20,
-				],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
 				'show_label' => false,
 				'condition' => [
 					'image_spacing' => 'custom',
@@ -725,6 +886,33 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'opacity',
+			[
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-image-carousel img',
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
@@ -733,7 +921,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'image_border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
@@ -742,6 +930,14 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .swiper-slide-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-image-carousel img',
 			]
 		);
 
@@ -784,6 +980,18 @@ class Widget_Image_Carousel extends Widget_Base {
 				'default' => 'center',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-caption' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'caption_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-caption' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
