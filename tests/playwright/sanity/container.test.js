@@ -276,7 +276,12 @@ test.describe( 'Container tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 
+		// Set Canvas template.
+		await editor.useCanvasTemplate();
+		await page.waitForLoadState( 'domcontentloaded' );
+
 		// Set row direction.
+		await editor.selectElement( container );
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 		// Set flex-wrap: wrap.
 		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
@@ -352,7 +357,7 @@ test.describe( 'Container tests', () => {
 		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
 			editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
+			container = editor.getFrame().locator( '.elementor-element-' + containerId );
 
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
@@ -360,10 +365,8 @@ test.describe( 'Container tests', () => {
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.selectElement( containerId );
 		await editor.activatePanelTab( 'style' );
-		await page.waitForSelector( '.elementor-control-background_background [data-tooltip="Video"]' );
-		await page.locator( '.elementor-control-background_background [data-tooltip="Video"]' ).click();
-		await page.waitForSelector( '.elementor-control-background_video_link [data-setting="background_video_link"]' );
-		await page.locator( '.elementor-control-background_video_link [data-setting="background_video_link"]' ).fill( videoURL );
+		await page.locator( '[data-tooltip="Video"]' ).click();
+		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
 		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
 		await page.locator( '#menu-item-browse' ).click();
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
