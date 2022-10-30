@@ -183,6 +183,27 @@ class Test_Controller extends Elementor_Test_Base {
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
 
+	public function test_update_item__sanitizes_invalid_html_elements() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
+			'settings' => [
+				'text' => '<script>alert("error")</script> Some text after',
+			],
+		] );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		$this->assertEquals( [
+			'button' => [
+				'text' => 'alert("error") Some text after',
+			],
+		], $this->kit->get_json_meta( Module::META_KEY ) );
+	}
+
 	public function test_update_item__keeps_quotes() {
 		// Arrange.
 		$this->act_as_admin();

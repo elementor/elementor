@@ -1,5 +1,6 @@
 import { updateElementDefaults } from '../api';
 import { isPopulatedObject } from '../utils';
+import extractContainerSettings from '../extract-container-settings';
 
 export default class Create extends $e.modules.editor.CommandContainerBase {
 	validateArgs() {
@@ -11,17 +12,7 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 
 		const elementType = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
 
-		const settings = this.extractLocalSettings( container );
-
-		[ '__dynamic__', '__globals__' ].forEach( ( type ) => {
-			const specialSettings = this.extractSpecialSettings( type, container );
-
-			if ( ! isPopulatedObject( specialSettings ) ) {
-				return;
-			}
-
-			settings[ type ] = specialSettings;
-		} );
+		const settings = extractContainerSettings( container );
 
 		try {
 			await updateElementDefaults( elementType, settings );
@@ -38,30 +29,5 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 		} finally {
 			$e.internal( 'panel/state-ready' );
 		}
-	}
-
-	extractLocalSettings( container ) {
-		const { settings } = container,
-			settingsWithoutDefaults = settings.toJSON( { remove: [ 'default' ] } );
-
-		const entries = Object.entries( settingsWithoutDefaults )
-			// Remove controls that are not exist.
-			.filter( ( [ settingName ] ) => !! settings.controls[ settingName ] );
-
-		return Object.fromEntries( entries );
-	}
-
-	extractSpecialSettings( type, container ) {
-		const { settings } = container,
-			localSettings = settings.toJSON( { remove: [ 'default' ] } ),
-			specialSettings = localSettings?.[ type ] || {};
-
-		const entries = Object.entries( specialSettings )
-			// Remove controls that have local value.
-			.filter( ( [ settingsName ] ) => ! Object.prototype.hasOwnProperty.call( localSettings, settingsName ) )
-			// Remove controls that are not exist.
-			.filter( ( [ settingName ] ) => !! settings.controls[ settingName ] );
-
-		return Object.fromEntries( entries );
 	}
 }
