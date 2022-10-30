@@ -293,6 +293,7 @@ test.describe( 'Container tests', () => {
 		await editor.setWidgetCustomWidth( '80' );
 
 		await editor.addWidget( 'google_maps', container );
+		await page.waitForLoadState( 'domcontentloaded' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
