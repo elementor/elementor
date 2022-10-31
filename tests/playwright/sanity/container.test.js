@@ -374,6 +374,24 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
+	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
+		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
+
+		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
 	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
