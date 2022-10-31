@@ -21,7 +21,7 @@ class Test_Export extends Elementor_Test_Base {
 		Plugin::$instance->widgets_manager->unregister( Mock_Widget::NAME );
 	}
 
-	public function test_export1() {
+	public function test_export() {
 		// Arrange
 		$runner = new Export();
 
