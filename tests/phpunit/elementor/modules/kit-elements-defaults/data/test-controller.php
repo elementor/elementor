@@ -190,7 +190,7 @@ class Test_Controller extends Elementor_Test_Base {
 		// Act.
 		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
 			'settings' => [
-				'text' => '<script>alert("error")</script> Some text after',
+				'text' => 'Text before <script>alert("error")</script> Some text after',
 			],
 		] );
 
@@ -199,7 +199,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$this->assertEquals( [
 			'button' => [
-				'text' => 'alert("error") Some text after',
+				'text' => 'Text before alert("error") Some text after',
 			],
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
