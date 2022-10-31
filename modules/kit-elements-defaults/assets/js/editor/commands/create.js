@@ -1,5 +1,4 @@
 import { updateElementDefaults } from '../api';
-import { isPopulatedObject } from '../utils';
 import extractContainerSettings from '../extract-container-settings';
 
 export default class Create extends $e.modules.editor.CommandContainerBase {

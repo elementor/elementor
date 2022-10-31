@@ -43,4 +43,3 @@ function extractSpecialSettings( settings, controls, localSettings ) {
 		};
 	}, {} );
 }
-
