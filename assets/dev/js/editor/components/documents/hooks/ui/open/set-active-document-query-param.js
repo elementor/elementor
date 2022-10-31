@@ -10,12 +10,16 @@ export class SetActiveDocumentQueryParam extends $e.modules.hookUI.After {
 	}
 
 	getConditions( args ) {
-		// Don't run for the main document.
+		// Don't run for the initial/default document because it's redundant.
 		return parseInt( args.id ) !== parseInt( elementor.config.initial_document.id );
 	}
 
 	apply( args ) {
-		setQueryParam( 'active-document', args.id );
+		const id = parseInt( args.id );
+
+		if ( ! isNaN( id ) ) {
+			setQueryParam( 'active-document', args.id );
+		}
 	}
 }
 

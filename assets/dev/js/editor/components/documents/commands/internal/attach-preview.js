@@ -59,7 +59,6 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 
 			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
 
-			// If not the same document.
 			if ( ! isInitialDocument ) {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}

@@ -38,7 +38,18 @@ describe( `$e.run( 'editor/documents/open' ) -- SetActiveDocumentQueryParam`, ()
 		expect( window.location.href ).toBe( 'http://localhost/?some-param=test' );
 	} );
 
-	it( 'Should set the `active-document` query arg to the currently opened document id', async () => {
+	it( 'Should not change the query param when `args.id` is not a number', async () => {
+		// Arrange.
+		window.location = new URL( 'http://localhost/?some-param=test' );
+
+		// Act.
+		runHook( SetActiveDocumentQueryParam, { id: 'test' } );
+
+		// Assert.
+		expect( window.location.href ).toBe( 'http://localhost/?some-param=test' );
+	} );
+
+	it( 'Should set the `active-document` query param to the currently opened document id', async () => {
 		// Arrange.
 		window.location = new URL( 'http://localhost/?some-param=test' );
 
@@ -49,7 +60,7 @@ describe( `$e.run( 'editor/documents/open' ) -- SetActiveDocumentQueryParam`, ()
 		expect( window.location.href ).toBe( 'http://localhost/?some-param=test&active-document=2' );
 	} );
 
-	it( 'Should override the `active-document` query arg if it already exists', async () => {
+	it( 'Should override the `active-document` query param if it already exists', async () => {
 		// Arrange.
 		window.location = new URL( 'http://localhost/?active-document=3' );
 
