@@ -34,6 +34,13 @@ const sass = {
 				src: 'frontend.scss',
 				dest: 'assets/css/modules/lazyload',
 				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/rating/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/rating',
+				ext: '.css',
 			}
 		]
 	}

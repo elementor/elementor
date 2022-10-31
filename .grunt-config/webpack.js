@@ -111,6 +111,7 @@ const entry = {
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'lazyload': path.resolve( __dirname, '../modules/lazyload/assets/js/frontend.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
+	'rating': path.resolve( __dirname, '../modules/rating/assets/js/frontend.js' ),
 };
 
 const frontendEntries = {

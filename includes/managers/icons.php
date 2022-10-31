@@ -242,7 +242,7 @@ class Icons_Manager {
 	 *
 	 * @return bool|mixed|string
 	 */
-	public static function get_font_icon_svg( $icon, $attributes = [] ) {
+	public static function get_font_icon_svg( $icon, $attributes = [], $svg_offsets = [] ) {
 		// Load the SVG from the database.
 		$icon_data = self::get_icon_svg_data( $icon );
 
@@ -259,9 +259,22 @@ class Icons_Manager {
 		$attributes['viewBox'] = '0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'];
 		$attributes['xmlns'] = 'http://www.w3.org/2000/svg';
 
+		$svg_defs = '';
+		if ( ! empty( $svg_offsets ) ) {
+			$uniqid = uniqid();
+			$svg_defs = '<defs><linearGradient id="' . $uniqid . '">';
+			foreach ( $svg_offsets as $key => $value ) {
+				if ( $value['offset'] > 0 ) {
+					$svg_defs .= '<stop offset="' . $value['offset'] . '%" stop-color="' . $value['color'] . '"/>';
+				}
+			}
+			$svg_defs .= '</linearGradient></defs>';
+		}
+
 		return (
 			'<svg ' . Utils::render_html_attributes( $attributes ) . '>' .
-				'<path d="' . esc_attr( $icon_data['path'] ) . '"></path>' .
+				$svg_defs .
+				'<path fill="url(#' . $uniqid . ')" d="' . esc_attr( $icon_data['path'] ) . '"></path>' .
 			'</svg>'
 		);
 	}
@@ -274,7 +287,7 @@ class Icons_Manager {
 		return Svg::get_inline_svg( $value['id'] );
 	}
 
-	public static function render_font_icon( $icon, $attributes = [], $tag = 'i' ) {
+	public static function render_font_icon( $icon, $attributes = [], $tag = 'i', $svg_offsets = [] ) {
 		$icon_types = self::get_icon_manager_tabs();
 
 		if ( isset( $icon_types[ $icon['library'] ]['render_callback'] ) && is_callable( $icon_types[ $icon['library'] ]['render_callback'] ) ) {
@@ -288,7 +301,7 @@ class Icons_Manager {
 		if ( $font_icon_svg_family ) {
 			$icon['font_family'] = $font_icon_svg_family;
 
-			$content = self::get_font_icon_svg( $icon, $attributes );
+			$content = self::get_font_icon_svg( $icon, $attributes, $svg_offsets );
 
 			if ( $content ) {
 				return $content;
@@ -320,7 +333,7 @@ class Icons_Manager {
 	 *
 	 * @return mixed|string
 	 */
-	public static function render_icon( $icon, $attributes = [], $tag = 'i' ) {
+	public static function render_icon( $icon, $attributes = [], $tag = 'i', $svg_offsets = [] ) {
 		if ( empty( $icon['library'] ) ) {
 			return false;
 		}
@@ -334,7 +347,7 @@ class Icons_Manager {
 		if ( 'svg' === $icon['library'] ) {
 			$output = self::render_uploaded_svg_icon( $icon['value'] );
 		} else {
-			$output = self::render_font_icon( $icon, $attributes, $tag );
+			$output = self::render_font_icon( $icon, $attributes, $tag, $svg_offsets );
 		}
 
 		Utils::print_unescaped_internal_string( $output );
@@ -546,7 +559,7 @@ class Icons_Manager {
 			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );
 			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
 				self::enqueue_shim();
-			} else if ( 'yes' === $load_shim ) {
+			} elseif ( 'yes' === $load_shim ) {
 				self::enqueue_shim();
 			}
 		}

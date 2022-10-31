@@ -100,6 +100,7 @@ class Modules_Manager {
 			'notes',
 			'performance-lab',
 			'lazyload',
+			'rating',
 		];
 	}
 

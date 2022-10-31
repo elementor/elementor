@@ -1,0 +1,41 @@
+.elementor-star-rating__wrapper i {
+	display: inline-block;
+	color: #e5e5e5;
+	position: relative;
+	width: 16px;
+	height: 16px;
+
+	&::after {
+		position: absolute;
+		left: 0;
+		width: var(--fill);
+		top: 0;
+		overflow: hidden;
+		color: #f1c40f;
+	}
+}
+
+.elementor-star-rating__wrapper .fa-star {
+
+	&::after {
+		font-family: 'Font Awesome 5 Free';
+		content: "\f005";
+		font-weight: 900;
+	}
+}
+
+.elementor-star-rating__wrapper .eicon-star,
+.elementor-star-rating__wrapper .eicon-star-o {
+	font-size: 17px;
+
+	&::after {
+		font-family: 'eicons';
+		content: '\e934';
+	} 
+}
+
+.elementor-star-rating__wrapper svg {
+	width: 16px; 
+	height: 16px; 
+}
+
