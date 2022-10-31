@@ -254,7 +254,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px', 'vw' ],
+				'size_units' => [ 'px', '%', 'vw' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -265,13 +265,13 @@ class Widget_Image extends Widget_Base {
 					'unit' => '%',
 				],
 				'range' => [
-					'%' => [
-						'min' => 1,
-						'max' => 100,
-					],
 					'px' => [
 						'min' => 1,
 						'max' => 1000,
+					],
+					'%' => [
+						'min' => 1,
+						'max' => 100,
 					],
 					'vw' => [
 						'min' => 1,
@@ -289,7 +289,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Max Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px', 'vw' ],
+				'size_units' => [ 'px', '%', 'vw' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -300,13 +300,13 @@ class Widget_Image extends Widget_Base {
 					'unit' => '%',
 				],
 				'range' => [
-					'%' => [
-						'min' => 1,
-						'max' => 100,
-					],
 					'px' => [
 						'min' => 1,
 						'max' => 1000,
+					],
+					'%' => [
+						'min' => 1,
+						'max' => 100,
 					],
 					'vw' => [
 						'min' => 1,
