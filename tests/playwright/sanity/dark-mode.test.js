@@ -4,7 +4,7 @@ const WpAdminPage = require( '../pages/wp-admin-page.js' );
 test.only( 'navigator empty placeholder should be in dark mode', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage();
+		editor = await wpAdmin.useElementorCleanPost();
 
 	// Act.
 	await editor.addElement( { elType: 'container' }, 'document' );
