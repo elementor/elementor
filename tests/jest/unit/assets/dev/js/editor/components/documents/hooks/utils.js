@@ -1,4 +1,4 @@
-export function runHook( HookInstance, args ) {
+export function runHook( HookInstance, args = {} ) {
 	if ( HookInstance.getConditions && ! HookInstance.getConditions( args ) ) {
 		return;
 	}
