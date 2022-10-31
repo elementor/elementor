@@ -30,11 +30,12 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async openNewPage() {
-		if ( ! await this.page.$( '"text=Create New Page"' ) ) {
+		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
 
-		await this.page.click( 'text="Create New Page"' );
+		await this.page.click( '.e-overview__create > a' );
+		await this.page.waitForLoadState( 'networkidle' );
 		await this.waitForPanel();
 
 		return new EditorPage( this.page, this.testInfo );
@@ -89,16 +90,9 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.click( '#submit' );
 	}
 
-	/**
-	 * Activate a tab inside the panel editor.
-	 *
-	 * @param {string} panelName - The name of the panel;
-	 *
-	 * @return {Promise<void>}
-	 */
-	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
+	async setLanguage( language ) {
+		await this.page.goto( '/wp-admin/options-general.php' );
+		await this.page.selectOption( '#WPLANG', language );
+		await this.page.locator( '#submit' ).click();
 	}
 };

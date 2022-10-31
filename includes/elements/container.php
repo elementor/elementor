@@ -86,7 +86,7 @@ class Container extends Element_Base {
 
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
-				'e-container',
+				'e-con',
 			],
 		] );
 	}
@@ -115,7 +115,7 @@ class Container extends Element_Base {
 	protected function content_template() {
 		?>
 		<# if ( 'boxed' === settings.content_width ) { #>
-			<div class="e-container__inner">
+			<div class="e-con-inner">
 		<#
 		}
 		if ( settings.background_video_link ) {
@@ -246,7 +246,7 @@ class Container extends Element_Base {
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 		if ( $this->is_boxed_container( $settings ) ) { ?>
-			<div class="e-container__inner">
+			<div class="e-con-inner">
 		<?php }
 
 		$this->render_video_background();
@@ -326,7 +326,7 @@ class Container extends Element_Base {
 					'full' => esc_html__( 'Full Width', 'elementor' ),
 				],
 				'render_type' => 'template',
-				'prefix_class' => 'e-container--width-',
+				'prefix_class' => 'e-con-',
 				'frontend_available' => true,
 			]
 		);
@@ -597,6 +597,12 @@ class Container extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_image', 'url' ],
+						],
+					],
 				],
 			]
 		);
@@ -626,14 +632,10 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
+					'unit' => 's',
 					'size' => 0.3,
-				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
@@ -673,16 +675,18 @@ class Container extends Element_Base {
 			]
 		);
 
+		$background_overlay_selector = '{{WRAPPER}}::before, {{WRAPPER}} > .elementor-background-video-container::before, {{WRAPPER}} > .e-con-inner > .elementor-background-video-container::before, {{WRAPPER}} > .elementor-background-slideshow::before, {{WRAPPER}} > .e-con-inner > .elementor-background-slideshow::before';
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'selector' => '{{WRAPPER}}::before',
+				'selector' => $background_overlay_selector,
 				'fields_options' => [
 					'background' => [
 						'selectors' => [
 							// Hack to set the `::before` content in order to render it only when there is a background overlay.
-							'{{WRAPPER}}::before' => '--background-overlay: \'\';',
+							$background_overlay_selector => '--background-overlay: \'\';',
 						],
 					],
 				],
@@ -785,16 +789,18 @@ class Container extends Element_Base {
 			]
 		);
 
+		$background_overlay_hover_selector = '{{WRAPPER}}:hover::before, {{WRAPPER}}:hover > .elementor-background-video-container::before, {{WRAPPER}}:hover > .e-con-inner > .elementor-background-video-container::before, {{WRAPPER}} > .elementor-background-slideshow:hover::before, {{WRAPPER}} > .e-con-inner > .elementor-background-slideshow:hover::before';
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
-				'selector' => '{{WRAPPER}}:hover::before',
+				'selector' => $background_overlay_hover_selector,
 				'fields_options' => [
 					'background' => [
 						'selectors' => [
 							// Hack to set the `::before` content in order to render it only when there is a background overlay.
-							'{{WRAPPER}}:hover::before' => '--background-overlay: \'\';',
+							$background_overlay_hover_selector => '--background-overlay: \'\';',
 						],
 					],
 				],
@@ -837,16 +843,15 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
+					'size' => 0.3,
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}s;',
+					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -956,14 +961,10 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
+					'unit' => 's',
 					'size' => 0.3,
-				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
 				],
 				'conditions' => [
 					'relation' => 'or',
@@ -981,8 +982,8 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s;
-						--overlay-transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
+					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
 				],
 			]
 		);
@@ -1052,7 +1053,7 @@ class Container extends Element_Base {
 						"shape_divider_$side!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill, {{WRAPPER}} > .e-con-inner > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
 					],
 				]
 			);
@@ -1081,7 +1082,7 @@ class Container extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-con-inner > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
 					],
 				]
 			);
@@ -1100,7 +1101,7 @@ class Container extends Element_Base {
 						"shape_divider_$side!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-con-inner > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
 					],
 				]
 			);
@@ -1114,7 +1115,7 @@ class Container extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
+						"{{WRAPPER}} > .elementor-shape-$side svg, {{WRAPPER}} > .e-con-inner > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
 					],
 				]
 			);
@@ -1138,7 +1139,7 @@ class Container extends Element_Base {
 					'label' => esc_html__( 'Bring to Front', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side, {{WRAPPER}} > .e-container__inner > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
+						"{{WRAPPER}} > .elementor-shape-$side, {{WRAPPER}} > .e-con-inner > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
 					],
 					'condition' => [
 						"shape_divider_$side!" => '',
@@ -1218,7 +1219,7 @@ class Container extends Element_Base {
 					'grow',
 					'shrink',
 				],
-				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
+				'selector' => '{{WRAPPER}}.e-con', // Hack to increase specificity.
 				'separator' => 'before',
 			]
 		);

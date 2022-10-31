@@ -42,7 +42,7 @@ html.elementor-html {
 	--secondary-color: #{ darken($editor-info, 20%) };
 	--outline-color: var( --primary-color );
 
-	.e-container {
+	.e-con {
 		--primary-color: #{ $editor-container-primary };
 		--secondary-color: #{ darken( $editor-container-primary, 10% ) };
 		--outline-color: var( --primary-color );
@@ -51,7 +51,7 @@ html.elementor-html {
 		// between Containers.
 		&.e-dragging-over,
 		&.elementor-dragging-on-child,
-		&.e-container--width-boxed.elementor-html5dnd-current-element {
+		&.e-con-boxed.elementor-html5dnd-current-element {
 			outline: 1px solid var( --outline-color );
 		}
 	}
@@ -245,7 +245,7 @@ html.elementor-html {
 
 // Section & Container
 .elementor-section,
-.e-container {
+.e-con {
 
 	> .elementor-element-overlay {
 		@include start(0);
@@ -383,8 +383,8 @@ html.elementor-html {
 .elementor-editor-container-settings {
 	height: 24px;
 	top: 1px;
-	@include start(50%);
-	transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
+  	left: 50%;
+  	transform: translateX( -50% ) translateY( -100% );
 	background-color: var( --primary-color );
 	border-radius: 5px 5px 0 0;
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
@@ -636,7 +636,7 @@ html.elementor-html {
 		align-self: stretch;
 
 		// Make the placeholder centered in container element, like in other places.
-		.e-container .elementor-first-add & {
+		.e-con .elementor-first-add & {
 			align-self: center;
 		}
 
@@ -690,7 +690,7 @@ html.elementor-html {
 		animation: placeholder-widget 500ms;
 		width: 100%;
 
-		.e-container & {
+		.e-con & {
 			// Fix for multiple dragging placeholders in container element.
 			display: none;
 		}
@@ -751,7 +751,7 @@ html.elementor-html {
 
 	&[data-view="select-container-preset"] {
 
-		.e-view:not( .e-container-select-preset ) {
+		.e-view:not( .e-con-select-preset ) {
 			display: none;
 		}
 	}
@@ -980,7 +980,7 @@ html.elementor-html {
 	border: 1px solid rgba(0, 0, 0, 0.02);
 
 	&.elementor-section,
-	&.e-container {
+	&.e-con {
 
 		> .elementor-element-overlay {
 			background-color: $editor-lightest;
@@ -1000,7 +1000,7 @@ html.elementor-html {
 		}
 	}
 
-	&.e-container {
+	&.e-con {
 		// Containers inherit "display: block" from `elementor-hidden-{device}`'s `display: inherit` above.
 		// This line makes sure containers maintain their intended display mode.
 		display: var( --display );
@@ -1023,7 +1023,7 @@ html.elementor-html {
 	}
 }
 
-.e-container {
+.e-con {
 
 	// Container presets.
 	&-select-preset {
@@ -1058,7 +1058,7 @@ html.elementor-html {
 			flex-wrap: wrap;
 			max-width: 650px;
 
-			.e-container-preset {
+			.e-con-preset {
 				cursor: pointer;
 				flex-basis: 90px;
 
@@ -1092,7 +1092,7 @@ html.elementor-html {
 	}
 
 	// To avoid horizontal scroll in `flex-direction: column`
-	&.e-container--column {
+	&.e-con--column {
 
 		.ui-resizable {
 

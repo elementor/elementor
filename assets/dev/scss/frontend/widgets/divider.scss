@@ -137,13 +137,11 @@
 	direction: rtl;
 }
 
-.e-container,
-.e-container__inner {
+.e-con,
+.e-con-inner {
 
 	& > .elementor-widget-divider {
 		// Fix - Divider widget has undefined width and height issues inside the flex container (ED-7722).
 		width: var( --container-widget-width, 100% );
-		// Fix - Set default `--flex-grow` values for the seperate `flex-direction` options (ED-7869).
-		--flex-grow: var(--container-widget-flex-grow, 0);
 	}
 }
