@@ -138,7 +138,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'{{SELECTOR}}' => 'background-color: {{VALUE}};',
 			],
 			'condition' => [
-				'background' => [ 'classic', 'gradient' ],
+				'background' => [ 'classic', 'gradient', 'video' ],
 			],
 		];
 
@@ -562,7 +562,6 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['privacy_mode'] = [
 			'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'description' => esc_html__( 'Only works for YouTube videos.', 'elementor' ),
 			'condition' => [
 				'background' => [ 'video' ],
 			],
