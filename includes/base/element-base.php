@@ -725,7 +725,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Previously registered under the Widget_Common class, but registered a more fundamental level now to enable access from other widgets.
 	 *
-	 * @since 3.7.0
+	 * @since 3.9.0
 	 * @access protected
 	 * @return void
 	 */
@@ -746,8 +746,8 @@ abstract class Element_Base extends Controls_Stack {
 		$transform_css_modifier = '';
 
 		if ( 'container' === $element_selector ) {
-			$transform_selector_class = '.e-' . $element_selector;
-			$transform_css_modifier = $element_selector . '-';
+			$transform_selector_class = '.e-con';
+			$transform_css_modifier = 'con-';
 		}
 
 		foreach ( [ '', '_hover' ] as $tab ) {
