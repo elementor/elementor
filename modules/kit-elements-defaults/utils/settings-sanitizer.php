@@ -34,7 +34,9 @@ class Settings_Sanitizer {
 		$regular_settings = $this->remove_invalid_settings( $element, $settings );
 		$special_settings = $this->remove_invalid_special_settings( $element, $settings );
 
-		return array_merge( $regular_settings, $special_settings );
+		return wp_kses_post_deep(
+			array_merge( $regular_settings, $special_settings )
+		);
 	}
 
 	private function remove_invalid_settings( Element_Base $element, $settings ) {
