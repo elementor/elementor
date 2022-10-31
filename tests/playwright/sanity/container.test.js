@@ -398,7 +398,7 @@ test.describe( 'Container tests', () => {
 		expect( await container.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' , { maxDiffPixels: 100 });
+		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg', { maxDiffPixels: 100 } );
 	} );
 } );
 
