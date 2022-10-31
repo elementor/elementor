@@ -249,3 +249,4 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
 	}
 };
+
