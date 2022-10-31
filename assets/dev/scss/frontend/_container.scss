@@ -47,7 +47,7 @@
 	overflow: var( --overflow );
 	transition: var( --transition );
 
-	&-full-width,
+	&-full,
 	& > .e-con-inner {
 		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
