@@ -730,6 +730,20 @@ class Controls_Manager {
 	}
 
 	/**
+	 * Remove existing stack from the stacks cache
+	 *
+	 * Removes the stack of a passed instance from the Controls Manager's stacks cache.
+	 *
+	 * @param Controls_Stack $controls_stack
+	 * @return void
+	 */
+	public function delete_stack( Controls_Stack $controls_stack ) {
+		$stack_id = $controls_stack->get_unique_name();
+
+		unset( $this->stacks[ $stack_id ] );
+	}
+
+	/**
 	 * Add control to stack.
 	 *
 	 * This method adds a new control to the stack.
@@ -989,7 +1003,7 @@ class Controls_Manager {
 				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Our Custom CSS', 'elementor' ),
 					'messages' => $messages,
-					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash',
+					'link' => 'https://go.elementor.com/go-pro-custom-css/',
 				] ),
 			]
 		);
@@ -1034,7 +1048,7 @@ class Controls_Manager {
 				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Page Transitions', 'elementor' ),
 					'messages' => $messages,
-					'link' => 'https://elementor.com/pro/?utm_source=panel-page-transitions&utm_campaign=gopro&utm_medium=wp-dash',
+					'link' => 'https://go.elementor.com/go-pro-page-transitions/',
 				] ),
 			]
 		);
@@ -1054,14 +1068,32 @@ class Controls_Manager {
 
 			// Show a `Go Pro` button only if the user doesn't have Pro.
 			if ( $texts['link'] && ! Utils::has_pro() ) { ?>
-				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( Utils::get_pro_link( $texts['link'] ) ); ?>" target="_blank">
-					<?php echo esc_html__( 'Go Pro', 'elementor' ); ?>
+				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( ( $texts['link'] ) ); ?>" target="_blank">
+					<?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?>
 				</a>
 			<?php } ?>
 		</div>
 		<?php
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get Responsive Control Device Suffix
+	 *
+	 * @param array $control
+	 * @return string $device suffix
+	 */
+	public static function get_responsive_control_device_suffix( array $control ): string {
+		if ( ! empty( $control['responsive']['max'] ) ) {
+			$query_device = $control['responsive']['max'];
+		} elseif ( ! empty( $control['responsive']['min'] ) ) {
+			$query_device = $control['responsive']['min'];
+		} else {
+			return '';
+		}
+
+		return 'desktop' === $query_device ? '' : '_' . $query_device;
 	}
 
 	/**
@@ -1094,7 +1126,7 @@ class Controls_Manager {
 					'messages' => [
 						esc_html__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
 					],
-					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash',
+					'link' => 'https://go.elementor.com/go-pro-custom-attributes/',
 				] ),
 			]
 		);

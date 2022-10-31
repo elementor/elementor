@@ -4,10 +4,10 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\Core\Admin\Notices\Update_Php_Notice;
-use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
+use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -299,7 +299,7 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash' ), esc_html__( 'Go Pro', 'elementor' ) );
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Go Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -502,14 +502,14 @@ class Admin extends App {
 		$additions_actions = [
 			'go-pro' => [
 				'title' => esc_html__( 'Upgrade', 'elementor' ),
-				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget',
+				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 			],
 		];
 
 		// Visible to all core users when Elementor Pro is not installed.
 		$additions_actions['find_an_expert'] = [
 			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
 		];
 
 		/**
@@ -562,8 +562,6 @@ class Admin extends App {
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
 
-		$meta = [];
-
 		/**
 		 * Create new post meta data.
 		 *
@@ -573,6 +571,12 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
+		$meta = [];
+
+		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
+			$meta = array_map( 'sanitize_text_field', $_GET['meta'] );
+		}
+
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
 		$post_data['post_type'] = $post_type;
@@ -701,7 +705,6 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
-		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
@@ -736,12 +739,6 @@ class Admin extends App {
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
 		} );
-
-		add_filter( 'elementor/core/admin/notices', function( $notices ) {
-			$notices[] = new Update_Php_Notice();
-
-			return $notices;
-		} );
 	}
 
 	/**
@@ -766,6 +763,7 @@ class Admin extends App {
 				'option_enabled' => 'no' !== $elementor_beta,
 				'signup_dismissed' => $beta_tester_signup_dismissed,
 			],
+			'experiments' => $this->get_experiments(),
 		];
 
 		/**
@@ -785,6 +783,26 @@ class Admin extends App {
 		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
 
 		return $settings;
+	}
+
+	private function get_experiments() {
+		return ( new Collection( Plugin::$instance->experiments->get_features() ) )
+			->map( function ( $experiment_data ) {
+				$dependencies = $experiment_data['dependencies'] ?? [];
+
+				$dependencies = ( new Collection( $dependencies ) )
+					->map( function ( $dependency ) {
+						return $dependency->get_name();
+					} )->all();
+
+				return [
+					'name' => $experiment_data['name'],
+					'title' => $experiment_data['title'] ?? $experiment_data['name'],
+					'state' => $experiment_data['state'],
+					'default' => $experiment_data['default'],
+					'dependencies' => $dependencies,
+				];
+			} )->all();
 	}
 
 	private function register_menu() {

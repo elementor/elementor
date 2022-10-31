@@ -14,20 +14,21 @@ jobs:
         uses: actions/checkout@v2
       - name: Check PHP files diff
         id: php_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.php
+            composer.json
 
   test:
-    runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7 and 5.6.
+    runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     strategy:
       fail-fast: false
       matrix:
         wordpress_versions: ['latest', '5.8', '5.7']
-        php_versions: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+        php_versions: ['7.0', '7.1', '7.2', '7.3', '7.4']
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib

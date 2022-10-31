@@ -12,10 +12,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -50,10 +50,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Restore build from cache
         uses: actions/cache@v2
         id: restore-build
@@ -73,6 +73,8 @@ jobs:
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
           npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+          npx wp-env run cli "wp --user=admin elementor library import-dir elementor-playwright-templates"
+          npx wp-env run cli "wp rewrite structure \"/%postname%/\" --hard"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
@@ -80,7 +82,7 @@ jobs:
       - name: Install playwright/test
         run: |
           npm ci
-          npx playwright@1.21.1 install-deps chromium
+          npx playwright install chromium
       - name: Run Playwright tests
         run: |
           npm run test:playwright

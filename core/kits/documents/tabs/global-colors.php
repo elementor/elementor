@@ -33,7 +33,7 @@ class Global_Colors extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-colors';
+		return 'https://go.elementor.com/global-colors/';
 	}
 
 	protected function register_tab_controls() {
@@ -62,7 +62,6 @@ class Global_Colors extends Tab_Base {
 			[
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
-				'dynamic' => [],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
 				],

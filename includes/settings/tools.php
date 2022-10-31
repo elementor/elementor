@@ -1,8 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
+use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,27 +33,6 @@ class Tools extends Settings_Page {
 			'function' => [ $this, 'display_settings_page' ],
 			'index' => 50,
 		] );
-	}
-
-	/**
-	 * Register admin menu legacy.
-	 *
-	 * Add new Elementor Tools admin menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function register_admin_menu_legacy() {
-		add_submenu_page(
-			Settings::PAGE_ID,
-			esc_html__( 'Tools', 'elementor' ),
-			esc_html__( 'Tools', 'elementor' ),
-			'manage_options',
-			self::PAGE_ID,
-			[ $this, 'display_settings_page' ]
-		);
 	}
 
 	/**
@@ -186,9 +167,9 @@ class Tools extends Settings_Page {
 				$this->register_admin_menu( $menu );
 			} );
 		} else {
-			add_action( 'admin_menu', function() {
-				$this->register_admin_menu_legacy();
-			}, 205 );
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+			}, Settings::ADMIN_MENU_PRIORITY + 20 );
 		}
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
@@ -323,7 +304,7 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Update Site Address (URL)', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
+									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="large-text"><input type="text" name="to" placeholder="http://new-url.com" class="large-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
 									'desc' => esc_html__( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 								],
 							],

@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * list of icons.
  *
  * @since 1.0.0
+ * @deprecated 2.6.0 use `Control_Icons` instead.
  */
 class Control_Icon extends Base_Data_Control {
 

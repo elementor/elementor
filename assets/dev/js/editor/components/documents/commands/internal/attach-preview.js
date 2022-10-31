@@ -34,7 +34,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 	}
 
 	attachDocumentToPreview( document, args ) {
-		const { selector = '.elementor-' + document.id } = args;
+		const { selector = '.elementor-' + document.id, shouldScroll = true } = args;
 
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
@@ -61,14 +61,19 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 
-			elementor.initElements();
+			$e.internal( 'document/elements/populate', {
+				document,
+				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
+			} );
 
 			elementor.initPreviewView( document );
 
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;
 
-			elementor.helpers.scrollToView( document.$element );
+			if ( shouldScroll ) {
+				elementor.helpers.scrollToView( document.$element );
+			}
 
 			document.$element
 				.addClass( 'elementor-edit-area-active' )

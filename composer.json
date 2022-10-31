@@ -5,7 +5,7 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=5.6"
+		"php": ">=7.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
@@ -24,6 +24,11 @@
 	  "coverage": "composer run coverage:test && composer run coverage:check",
 	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
 	  "coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	},
 	"authors": [
 		{

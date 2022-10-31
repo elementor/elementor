@@ -452,14 +452,12 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -490,7 +488,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -521,7 +519,7 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'caption_align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),

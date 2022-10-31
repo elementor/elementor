@@ -1,0 +1,13 @@
+// Ratio
+
+$ratio-portrait: 0.956 * 100%;
+$eps-ratio-16-9: calc( 100% / 16 ) * 9;
+
+$embed-responsive-aspect-ratios: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$embed-responsive-aspect-ratios: join( (
+	(21 9),
+	(16 9),
+	(4 3),
+	(1 1),
+), $embed-responsive-aspect-ratios );
