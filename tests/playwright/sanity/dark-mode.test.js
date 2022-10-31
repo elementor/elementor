@@ -1,7 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'navigator empty placeholder should be in dark mode', async ( { page }, testInfo ) => {
+test.beforeAll()
+
+test.only( 'navigator empty placeholder should be in dark mode', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.setExperiments( {
@@ -20,5 +22,5 @@ test( 'navigator empty placeholder should be in dark mode', async ( { page }, te
 	expect( await navigator.screenshot( {
 		type: 'jpeg',
 		quality: 70,
-	} ) ).toMatchSnapshot( 'navigator-empty-dark-mode.png' );
+	} ) ).toMatchSnapshot( 'navigator-empty-dark-mode.jpg' );
 } );
