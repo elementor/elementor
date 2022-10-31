@@ -60,7 +60,8 @@ class Group_Control_Border extends Group_Control_Base {
 			'label' => _x( 'Border Type', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
-				'' => esc_html__( 'None', 'elementor' ),
+				'' => esc_html__( 'Default', 'elementor' ),
+				'none' => esc_html__( 'None', 'elementor' ),
 				'solid' => _x( 'Solid', 'Border Control', 'elementor' ),
 				'double' => _x( 'Double', 'Border Control', 'elementor' ),
 				'dotted' => _x( 'Dotted', 'Border Control', 'elementor' ),
@@ -79,7 +80,7 @@ class Group_Control_Border extends Group_Control_Base {
 				'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 			],
 			'condition' => [
-				'border!' => '',
+				'border!' => [ '', 'none' ],
 			],
 			'responsive' => true,
 		];
@@ -92,7 +93,7 @@ class Group_Control_Border extends Group_Control_Base {
 				'{{SELECTOR}}' => 'border-color: {{VALUE}};',
 			],
 			'condition' => [
-				'border!' => '',
+				'border!' => [ '', 'none' ],
 			],
 		];
 

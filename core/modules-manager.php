@@ -99,6 +99,8 @@ class Modules_Manager {
 			'promotions',
 			'notes',
 			'performance-lab',
+			'lazyload',
+			'kit-elements-defaults',
 		];
 	}
 

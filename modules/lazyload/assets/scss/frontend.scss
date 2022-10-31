@@ -1,0 +1,7 @@
+body.e-lazyload [data-e-bg-lazyload]:not(.lazyloaded)>div {
+    backdrop-filter: blur(50px);
+}
+
+.lazyloaded {
+    background-image: var(--e-bg-lazyload) !important;
+}
