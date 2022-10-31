@@ -1,11 +1,7 @@
-import localSettingsExtractor from '../settings-handlers/local/extract';
 import { updateElementDefaults } from '../api';
+import extractContainerSettings from '../extract-container-settings';
 
-export default class Create extends $e.modules.CommandBase {
-	settingsExtractors = [
-		localSettingsExtractor,
-	];
-
+export default class Create extends $e.modules.editor.CommandContainerBase {
 	validateArgs() {
 		this.requireContainer();
 	}
@@ -13,21 +9,22 @@ export default class Create extends $e.modules.CommandBase {
 	async apply( { container } ) {
 		$e.internal( 'panel/state-loading' );
 
-		const type = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
+		const elementType = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
 
-		const settings = this.settingsExtractors.reduce( ( carry, extractor ) => {
-			return {
-				...carry,
-				...extractor( container ),
-			};
-		}, {} );
+		const settings = extractContainerSettings( container );
 
 		try {
-			await updateElementDefaults( type, settings );
+			await updateElementDefaults( elementType, settings );
 
-			// TODO: Show success toast.
-		} catch ( e ) {
-			// TODO: Show error toast.
+			elementor.notifications.showToast( {
+				message: __( 'Default settings changed.', 'elementor' ),
+			} );
+		} catch ( error ) {
+			elementor.notifications.showToast( {
+				message: __( 'An error occurred.', 'elementor' ),
+			} );
+
+			throw error;
 		} finally {
 			$e.internal( 'panel/state-ready' );
 		}

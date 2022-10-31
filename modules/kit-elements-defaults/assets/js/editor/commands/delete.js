@@ -6,8 +6,16 @@ export default class Delete extends $e.modules.CommandBase {
 
 		try {
 			await deleteElementDefaults( type );
+
+			elementor.notifications.showToast( {
+				message: __( 'Default settings has been reset.', 'elementor' ),
+			} );
 		} catch ( e ) {
-			// TODO: Show error toast.
+			elementor.notifications.showToast( {
+				message: __( 'An error occurred.', 'elementor' ),
+			} );
+
+			throw error;
 		} finally {
 			$e.internal( 'panel/state-ready' );
 		}
