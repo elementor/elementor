@@ -391,4 +391,46 @@ test.describe( 'Container tests', () => {
 			container: false,
 		} );
 	} );
+
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+		try {
+			await wpAdmin.setLanguage( 'he_IL' );
+			const editor = await creatCanvasPage( wpAdmin );
+			const container = await addContainerAndHover( editor );
+
+			expect( await container.screenshot( {
+				type: 'jpeg',
+				quality: 70,
+			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg', { maxDiffPixels: 100 } );
+		} finally {
+			await wpAdmin.setLanguage( '' );
+		}
+
+		const editor = await creatCanvasPage( wpAdmin );
+		const container = await addContainerAndHover( editor );
+
+		expect( await container.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg', { maxDiffPixels: 100 } );
+	} );
 } );
+
+async function creatCanvasPage( wpAdmin ) {
+	const editor = await wpAdmin.openNewPage();
+	await editor.page.waitForLoadState( 'networkidle' );
+	await editor.useCanvasTemplate();
+	return editor;
+}
+
+async function addContainerAndHover( editor ) {
+	const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+	const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+	const container = editor.getPreviewFrame().locator( containerSelector );
+	editor.getPreviewFrame().hover( containerSelector );
+	return container;
+}
