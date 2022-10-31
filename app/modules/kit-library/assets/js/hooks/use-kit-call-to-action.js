@@ -5,11 +5,16 @@ export const TYPE_CONNECT = 'connect';
 export const TYPE_PROMOTION = 'promotion';
 export const TYPE_APPLY = 'apply';
 
-export default function useKitCallToAction( kitAccessLevel ) {
+export default function useKitCallToAction( kitAccessLevel, kitTitle, kitId ) {
 	const { settings } = useSettingsContext();
 
 	// SubscriptionPlan can be null when the context is not filled (can be happened when using back button in the browser.)
 	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessLevel ], [ settings, kitAccessLevel ] );
+
+	// const updatePromotionUrl = () => {
+	// 	const cleanTitle = kitTitle.replace( /\s/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
+	// 	return subscriptionPlan.promotion_url += `&utm_term=${ cleanTitle }&utm_content=${ kitId }`;
+	// };
 
 	const type = useMemo( () => {
 		// The user can apply this kit (the user access level is equal or greater then the kit access level).
