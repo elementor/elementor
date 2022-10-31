@@ -166,7 +166,7 @@ class Server extends Base {
 		if ( $memory_limit_bytes < $min_recommended_bytes ) {
 			$result['recommendation'] = sprintf(
 				/* translators: 1: Minimum recommended_memory, 2: Preferred memory, 3: WordPress wp-config memory documentation. */
-				esc_html_x( 'We recommend setting memory to at least %1$s. (%2$sMB or higher is preferred) For more information, read about <a href="%3$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+				_x( 'We recommend setting memory to at least %1$s. (%2$sMB or higher is preferred) For more information, read about <a href="%3$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
 				$min_recommended_memory,
 				$preferred_memory,
 				'https://go.elementor.com/wordpress-wp-config-memory/'
