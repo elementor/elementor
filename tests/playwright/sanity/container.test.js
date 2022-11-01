@@ -145,7 +145,7 @@ test.describe( 'Container tests', () => {
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = editor.getPreviewFrame().locator( 'body' );
+			pageView = page.locator( 'body' );
 
 		// Act.
 		// Add widget.
@@ -211,7 +211,7 @@ test.describe( 'Container tests', () => {
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = editor.getPreviewFrame().locator( 'body' );
+			pageView = page.locator( 'body' );
 
 		// Act.
 		// Add widget.
@@ -259,7 +259,7 @@ test.describe( 'Container tests', () => {
 		await editor.useDefaultTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = editor.getPreviewFrame().locator( 'body' );
+			pageView = page.locator( 'body' );
 
 		// Act
 		// Set container content full content width.
