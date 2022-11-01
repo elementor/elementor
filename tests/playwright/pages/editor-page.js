@@ -324,10 +324,10 @@ module.exports = class EditorPage extends BasePage {
 	async togglePreviewMode() {
 		if ( await this.getPreviewFrame().$( '#elementor-mode-switcher' ) ) {
 			await this.page.locator( '#elementor-mode-switcher' ).click();
-			await this.page.waitForSelector( '#elementor-mode-switcher-preview' );
+			await expect( this.page.locator( '#elementor-mode-switcher' ) ).not().toBeVisible();
 		} else {
 			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
-			await this.page.waitForSelector( '#elementor-mode-switcher' );
+			await expect( this.page.locator( '#elementor-mode-switcher-preview' ) ).not().toBeVisible();
 		}
 	}
 
