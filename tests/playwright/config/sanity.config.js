@@ -12,7 +12,7 @@ const config = {
 		timeout: 5 * 1000, // 5 seconds
 	},
 	use: {
-		actionTimeout: 4 * 1000, // 4 seconds
+		actionTimeout: 8 * 1000, // 4 seconds
 		navigationTimeout: 10 * 1000, // 10 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
