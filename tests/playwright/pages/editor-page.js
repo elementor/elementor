@@ -330,4 +330,17 @@ module.exports = class EditorPage extends BasePage {
 		await mapInset.evaluate( ( element ) => element.style.opacity = 0 );
 		await mapControls.evaluate( ( element ) => element.style.opacity = 0 );
 	}
+
+	/**
+	 * Open the page in the Preview mode.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async togglePreviewMode() {
+		if ( await this.getPreviewFrame().$( '#elementor-mode-switcher' ) ) {
+			await this.page.locator( '#elementor-mode-switcher' ).click();
+		} else {
+			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
+		}
+	}
 };
