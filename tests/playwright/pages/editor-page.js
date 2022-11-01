@@ -279,21 +279,6 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Hide all editor elements from the screenshots.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async hideEditorElements() {
-		const css = '<style>.elementor-element-overlay,.elementor-empty-view,.elementor-widget-empty,.e-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}.elementor-add-section-inner {border: none !important;background-color: #cccccc !important;}</style>',
-			widgetContainer = await this.addElement( { elType: 'container' }, 'document' ),
-			htmlWidget = await this.addWidget( 'html', widgetContainer );
-
-		await this.getPreviewFrame().waitForSelector( '.elementor-widget-html' );
-		await this.selectElement( htmlWidget );
-		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
-	}
-
-	/**
 	 * Hide controls from the video widgets.
 	 *
 	 * @return {Promise<void>}
