@@ -246,14 +246,9 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a background color to an element.
 	 *
-<<<<<<< HEAD
 	 * @param {string}  color     - The background color code;
 	 * @param {string}  elementId - The ID of targeted element;
 	 * @param {boolean} isWidget  - Indicate whether the element is a widget or not; the default value is 'widget';
-=======
-	 * @param {string} color       - The background color code;
-	 * @param {string} elementType - The element types are `widget` and `container`;
->>>>>>> 14d3f7f1e380f167b260aa2e4d73a3ced0c48f9d
 	 *
 	 * @return {Promise<void>}
 	 */
