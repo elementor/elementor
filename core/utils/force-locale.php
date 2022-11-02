@@ -92,6 +92,10 @@ class Force_Locale {
 	}
 
 	private function reset_textdomain_registry() {
+		if ( ! class_exists( '\WP_Textdomain_Registry' ) ) {
+			return;
+		}
+
 		/** @var \WP_Textdomain_Registry $wp_textdomain_registry */
 		global $wp_textdomain_registry;
 
@@ -101,6 +105,10 @@ class Force_Locale {
 	}
 
 	private function restore_textdomain_registry() {
+		if ( ! $this->original_textdomain_registry ) {
+			return;
+		}
+
 		/** @var \WP_Textdomain_Registry $wp_textdomain_registry */
 		global $wp_textdomain_registry;
 
