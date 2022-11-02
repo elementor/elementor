@@ -465,7 +465,7 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),

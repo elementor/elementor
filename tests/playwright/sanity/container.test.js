@@ -89,7 +89,7 @@ test.describe( 'Container tests', () => {
 		// Act
 		await editor.selectElement( containerId );
 		// Set full content width.
-		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		expect( await container.screenshot( {
@@ -173,7 +173,7 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( container );
 		// Set full content width
 		await editor.activatePanelTab( 'layout' );
-		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
 		expect( await pageView.screenshot( {
@@ -229,7 +229,7 @@ test.describe( 'Container tests', () => {
 
 		// Set full content width
 		await editor.activatePanelTab( 'layout' );
-		await page.selectOption( '.elementor-control-content_width >> select', 'full-width' );
+		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 
 		// Assert
 		expect( await pageView.screenshot( {
@@ -255,7 +255,7 @@ test.describe( 'Container tests', () => {
 		await editor.getFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
 		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
-		await expect( editor.getPreviewFrame().locator( '.e-con-full-width ' ) ).toHaveCount( 1 );
+		await expect( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
 
 		await wpAdmin.setExperiments( {
 			container: false,
@@ -373,4 +373,64 @@ test.describe( 'Container tests', () => {
 			container: false,
 		} );
 	} );
+
+	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
+		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
+
+		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+		try {
+			await wpAdmin.setLanguage( 'he_IL' );
+			const editor = await creatCanvasPage( wpAdmin );
+			const container = await addContainerAndHover( editor );
+
+			expect( await container.screenshot( {
+				type: 'jpeg',
+				quality: 70,
+			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg', { maxDiffPixels: 100 } );
+		} finally {
+			await wpAdmin.setLanguage( '' );
+		}
+
+		const editor = await creatCanvasPage( wpAdmin );
+		const container = await addContainerAndHover( editor );
+
+		expect( await container.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg', { maxDiffPixels: 100 } );
+	} );
 } );
+
+async function creatCanvasPage( wpAdmin ) {
+	const editor = await wpAdmin.openNewPage();
+	await editor.page.waitForLoadState( 'networkidle' );
+	await editor.useCanvasTemplate();
+	return editor;
+}
+
+async function addContainerAndHover( editor ) {
+	const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+	const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+	const container = editor.getPreviewFrame().locator( containerSelector );
+	editor.getPreviewFrame().hover( containerSelector );
+	return container;
+}

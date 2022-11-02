@@ -73,6 +73,8 @@ jobs:
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
           npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+          npx wp-env run cli "wp --user=admin elementor library import-dir elementor-playwright-templates"
+          npx wp-env run cli "wp rewrite structure \"/%postname%/\" --hard"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
