@@ -18,9 +18,8 @@ export default class RatingHandler extends elementorModules.frontend.handlers.Ba
 	}
 
 	onInit() {
-		console.log( 'RatingHandler.onInit()' );
 		this.elements = this.getDefaultElements();
-		[ ...this.elements.icons ].forEach( ( icon, index ) => {
+		[ ...this.elements.icons ].forEach( ( icon ) => {
 			const iconContent = window.getComputedStyle( icon, ':before' ).getPropertyValue( 'content' );
 			const iconContentValue = iconContent.replace( /['"]+/g, '' );
 			icon.setAttribute( 'data-content', iconContentValue );

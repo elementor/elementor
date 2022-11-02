@@ -263,14 +263,15 @@ class Rating extends \Elementor\Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 100,
+						'min' => 1,
+						'max' => 10,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--rating-icon-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--rating-icon-size: {{SIZE}}',
 				],
 			]
 		);
@@ -287,8 +288,7 @@ class Rating extends \Elementor\Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}} .elementor-rating i:not(:last-of-type)' => 'margin-right: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}} .elementor-rating i:not(:last-of-type)' => 'margin-left: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--rating-icon-spacing: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -298,8 +298,9 @@ class Rating extends \Elementor\Widget_Base {
 			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'default' => '#f6c343',
 				'selectors' => [
-					'{{WRAPPER}}' => '--star-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--rating-color: {{VALUE}}',
 				],
 				'separator' => 'before',
 			]
@@ -310,8 +311,9 @@ class Rating extends \Elementor\Widget_Base {
 			[
 				'label' => esc_html__( 'Unmarked Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'default' => '#e5e5e5',
 				'selectors' => [
-					'{{WRAPPER}}' => '--star-unmarked-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--rating-unmarked-color: {{VALUE}}',
 				],
 			]
 		);

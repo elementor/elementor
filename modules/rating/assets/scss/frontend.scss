@@ -1,10 +1,11 @@
 .elementor-rating__wrapper i {
+	zoom: var(--rating-icon-size, 1);
+	margin-left : var(--rating-icon-spacing, 0);
+	color: var(--rating-unmarked-color);
 	display: inline-block;
-	color: var(--star-unmarked-color);
 	position: relative;
 	width: 16px;
 	height: 16px;
-	font-size: var(--rating-icon-size);
 
 	&::after {
 		position: absolute;
@@ -12,7 +13,7 @@
 		width: var(--fill);
 		top: 0;
 		overflow: hidden;
-		color: var(--star-color);
+		color: var(--rating-color);
 	}
 }
 
