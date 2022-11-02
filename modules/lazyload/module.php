@@ -121,6 +121,9 @@ class Module extends BaseModule {
 
 		add_action( 'wp_enqueue_scripts', function() {
 			$this->enqueue_styles();
+		} );
+
+		add_action( 'wp_footer', function() {
 			$this->enqueue_scripts();
 		} );
 
