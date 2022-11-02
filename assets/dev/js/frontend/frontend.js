@@ -14,6 +14,7 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+import Rating from 'elementor/modules/rating/assets/js/frontend/frontend';
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
@@ -194,6 +195,13 @@ export default class Frontend extends elementorModules.ViewModule {
 			events: Events,
 		};
 
+		const interval = setInterval( () => {
+			if ( ! elementorModules.frontend?.tools ) {
+				return;
+			}
+			clearInterval( interval );
+		}, 100 );
+
 		// TODO: BC since 2.4.0
 		this.modules = {
 			StretchElement: elementorModules.frontend.tools.StretchElement,
@@ -322,6 +330,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	initModules() {
 		const handlers = {
 			shapes: Shapes,
+			rating: Rating,
 		};
 
 		// TODO: BC - Deprecated since 3.5.0

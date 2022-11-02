@@ -431,7 +431,7 @@ class Rating extends \Elementor\Widget_Base {
 		] );
 		?>
 
-		<div class="elementor-star-rating__wrapper">
+		<div class="elementor-rating__wrapper">
 
 		<div <?php echo esc_html( $this->get_render_attribute_string( 'icon_wrapper' ) ); ?>>
 			<?php if ( ! Utils::is_empty( $settings['title'] ) ) : ?>

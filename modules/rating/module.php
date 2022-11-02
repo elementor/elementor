@@ -14,16 +14,6 @@ class Module extends BaseModule {
 		return 'rating';
 	}
 
-	private function enqueue_scripts() {
-		wp_enqueue_script(
-			'elementor-rating',
-			$this->get_js_assets_url( 'rating' ),
-			[ 'elementor-frontend' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-	}
-
 	private function enqueue_styles() {
 		wp_enqueue_style(
 			'elementor-rating',
@@ -45,7 +35,6 @@ class Module extends BaseModule {
 
 		add_action( 'wp_enqueue_scripts', function() {
 			$this->enqueue_styles();
-			$this->enqueue_scripts();
 		} );
 
 	}

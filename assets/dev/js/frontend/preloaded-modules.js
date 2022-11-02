@@ -7,6 +7,7 @@ import Toggle from './handlers/toggle';
 import Video from './handlers/video';
 import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
+import Rating from '../../../../modules/rating/assets/js/frontend/handlers/rating';
 
 import LightboxModule from 'elementor-frontend/utils/lightbox/lightbox';
 
@@ -21,6 +22,8 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'video.default': Video,
 		'image-carousel.default': ImageCarousel,
 		'text-editor.default': TextEditor,
+		'rating.default': Rating,
+
 	};
 
 	elementorFrontend.on( 'components:init', () => {

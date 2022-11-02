@@ -1,4 +1,4 @@
-.elementor-star-rating__wrapper i {
+.elementor-rating__wrapper i {
 	display: inline-block;
 	color: #e5e5e5;
 	position: relative;
@@ -15,26 +15,16 @@
 	}
 }
 
-.elementor-star-rating__wrapper .fa-star {
-
+.elementor-rating__wrapper i {
 	&::after {
 		font-family: 'Font Awesome 5 Free';
-		content: "\f005";
+		content: attr(data-content);
 		font-weight: 900;
+		transition: width 0.5s ease-in-out;
 	}
 }
 
-.elementor-star-rating__wrapper .eicon-star,
-.elementor-star-rating__wrapper .eicon-star-o {
-	font-size: 17px;
-
-	&::after {
-		font-family: 'eicons';
-		content: '\e934';
-	} 
-}
-
-.elementor-star-rating__wrapper svg {
+.elementor-rating__wrapper svg {
 	width: 16px; 
 	height: 16px; 
 }
