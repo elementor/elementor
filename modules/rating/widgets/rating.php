@@ -142,29 +142,6 @@ class Rating extends \Elementor\Widget_Base {
 			]
 		);
 
-		// $this->add_control(
-		// 	'icon_font_size',
-		// 	[
-		// 		'label' => esc_html__( 'Size', 'elementor' ),
-		// 		'type' => Controls_Manager::SLIDER,
-		// 		'range' => [
-		// 			'px' => [
-		// 				'min' => 0,
-		// 				'max' => 100,
-		// 			],
-		// 		],
-		// 		'selectors' => [
-		// 			'{{WRAPPER}} .elementor-star-rating__wrapper i' => 'margin-left: {{SIZE}}px',
-		// 			'{{WRAPPER}} .elementor-star-rating__wrapper i::before' => 'margin-left: {{SIZE}}px',
-		// 			'{{WRAPPER}} .elementor-star-rating__wrapper i::after' => 'margin-left: {{SIZE}}px',
-		// 			'{{WRAPPER}} .elementor-star-rating__wrapper i' => 'font-size: {{SIZE}}px',
-		// 			'{{WRAPPER}} .elementor-star-rating__wrapper svg' => 'width: {{SIZE}}px; height: {{SIZE}}px',
-		// 			'{{WRAPPER}} .elementor-star-rating__wrapper i::before' => 'font-size: {{SIZE}}px',
-		// 			'{{WRAPPER}} .elementor-star-rating__wrapper i::after' => 'font-size: {{SIZE}}px',
-		// 		],
-		// 	]
-		// );
-
 		$this->add_control(
 			'title',
 			[
@@ -200,7 +177,7 @@ class Rating extends \Elementor\Widget_Base {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'prefix_class' => 'elementor-star-rating%s--align-',
+				'prefix_class' => 'elementor-rating%s--align-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}}',
 				],
@@ -229,7 +206,7 @@ class Rating extends \Elementor\Widget_Base {
 					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating__title' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .elementor-rating__title' => 'color: {{VALUE}}',
 				],
 			]
 		);
@@ -238,7 +215,7 @@ class Rating extends \Elementor\Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
+				'selector' => '{{WRAPPER}} .elementor-rating__title',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
@@ -249,7 +226,7 @@ class Rating extends \Elementor\Widget_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_shadow',
-				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
+				'selector' => '{{WRAPPER}} .elementor-rating__title',
 			]
 		);
 
@@ -265,8 +242,8 @@ class Rating extends \Elementor\Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-right: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-left: {{SIZE}}{{UNIT}}',
+					'body:not(.rtl) {{WRAPPER}}:not(.elementor-rating--align-justify) .elementor-rating__title' => 'margin-right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}:not(.elementor-rating--align-justify) .elementor-rating__title' => 'margin-left: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -293,7 +270,7 @@ class Rating extends \Elementor\Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating' => 'font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--rating-icon-size: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -310,8 +287,8 @@ class Rating extends \Elementor\Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-right: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-left: {{SIZE}}{{UNIT}}',
+					'body:not(.rtl) {{WRAPPER}} .elementor-rating i:not(:last-of-type)' => 'margin-right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}} .elementor-rating i:not(:last-of-type)' => 'margin-left: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -322,7 +299,7 @@ class Rating extends \Elementor\Widget_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating i:before' => 'color: {{VALUE}}',
+					'{{WRAPPER}}' => '--star-color: {{VALUE}}',
 				],
 				'separator' => 'before',
 			]
@@ -334,7 +311,7 @@ class Rating extends \Elementor\Widget_Base {
 				'label' => esc_html__( 'Unmarked Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating i' => 'color: {{VALUE}}',
+					'{{WRAPPER}}' => '--star-unmarked-color: {{VALUE}}',
 				],
 			]
 		);
@@ -397,11 +374,11 @@ class Rating extends \Elementor\Widget_Base {
 			$svg_offsets = [
 				[
 					'offset' => $fill,
-					'color' => '#f0ad4e',
+					'color' => 'var(--star-color)',
 				],
 				[
 					'offset' => 100 - $fill,
-					'color' => '#CCD6DF',
+					'color' => 'var(--star-unmarked-color)',
 				],
 			];
 
@@ -423,7 +400,7 @@ class Rating extends \Elementor\Widget_Base {
 		$rating_data = $this->get_rating();
 		$textual_rating = $rating_data[0] . '/' . $rating_data[1];
 		$this->add_render_attribute( 'icon_wrapper', [
-			'class' => 'elementor-star-rating',
+			'class' => 'elementor-rating',
 			'title' => $textual_rating,
 			'itemtype' => 'http://schema.org/Rating',
 			'itemscope' => null,
@@ -435,7 +412,7 @@ class Rating extends \Elementor\Widget_Base {
 
 		<div <?php echo esc_html( $this->get_render_attribute_string( 'icon_wrapper' ) ); ?>>
 			<?php if ( ! Utils::is_empty( $settings['title'] ) ) : ?>
-				<div class="elementor-star-rating__title"><?php echo esc_html( $settings['title'] ); ?></div>
+				<div class="elementor-rating__title"><?php echo esc_html( $settings['title'] ); ?></div>
 			<?php endif;
 			echo esc_html( $this->render_stars( $settings ) );
 			?>

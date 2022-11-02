@@ -13,14 +13,14 @@ export default class RatingHandler extends elementorModules.frontend.handlers.Ba
 		const element = this.$element[ 0 ];
 
 		return {
-			icons: element.querySelector( selectors.icons ),
+			icons: element.querySelectorAll( selectors.icons ),
 		};
 	}
 
 	onInit() {
 		console.log( 'RatingHandler.onInit()' );
 		this.elements = this.getDefaultElements();
-		this.elements.icons.each( ( index, icon ) => {
+		[ ...this.elements.icons ].forEach( ( icon, index ) => {
 			const iconContent = window.getComputedStyle( icon, ':before' ).getPropertyValue( 'content' );
 			const iconContentValue = iconContent.replace( /['"]+/g, '' );
 			icon.setAttribute( 'data-content', iconContentValue );

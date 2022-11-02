@@ -1,9 +1,10 @@
 .elementor-rating__wrapper i {
 	display: inline-block;
-	color: #e5e5e5;
+	color: var(--star-unmarked-color);
 	position: relative;
 	width: 16px;
 	height: 16px;
+	font-size: var(--rating-icon-size);
 
 	&::after {
 		position: absolute;
@@ -11,7 +12,7 @@
 		width: var(--fill);
 		top: 0;
 		overflow: hidden;
-		color: #f1c40f;
+		color: var(--star-color);
 	}
 }
 
@@ -19,8 +20,7 @@
 	&::after {
 		font-family: 'Font Awesome 5 Free';
 		content: attr(data-content);
-		font-weight: 900;
-		transition: width 0.5s ease-in-out;
+		font-weight: 900; 
 	}
 }
 
