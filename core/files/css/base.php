@@ -347,6 +347,15 @@ abstract class Base extends Base_File {
 
 						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
 
+						//if $css_property contaians animation
+						if ( false !== strpos( $css_property, 'transition' ) ) {
+							//if $value is empty
+							if ( empty( $value ) ) {
+								//return empty string
+								return '';
+							}
+						}
+
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}
