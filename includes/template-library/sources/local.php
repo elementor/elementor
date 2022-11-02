@@ -224,25 +224,25 @@ class Source_Local extends Source_Base {
 		$admin_menu_rearrangement_active = Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' );
 
 		if ( $admin_menu_rearrangement_active ) {
-			$name = _x( 'Templates', 'Template Library', 'elementor' );
+			$name = esc_html_x( 'Templates', 'Template Library', 'elementor' );
 		} else {
-			$name = _x( 'My Templates', 'Template Library', 'elementor' );
+			$name = esc_html_x( 'My Templates', 'Template Library', 'elementor' );
 		}
 
 		$labels = [
 			'name' => $name,
-			'singular_name' => _x( 'Template', 'Template Library', 'elementor' ),
-			'add_new' => _x( 'Add New', 'Template Library', 'elementor' ),
-			'add_new_item' => _x( 'Add New Template', 'Template Library', 'elementor' ),
-			'edit_item' => _x( 'Edit Template', 'Template Library', 'elementor' ),
-			'new_item' => _x( 'New Template', 'Template Library', 'elementor' ),
-			'all_items' => _x( 'All Templates', 'Template Library', 'elementor' ),
-			'view_item' => _x( 'View Template', 'Template Library', 'elementor' ),
-			'search_items' => _x( 'Search Template', 'Template Library', 'elementor' ),
-			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
-			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
+			'singular_name' => esc_html_x( 'Template', 'Template Library', 'elementor' ),
+			'add_new' => esc_html_x( 'Add New', 'Template Library', 'elementor' ),
+			'add_new_item' => esc_html_x( 'Add New Template', 'Template Library', 'elementor' ),
+			'edit_item' => esc_html_x( 'Edit Template', 'Template Library', 'elementor' ),
+			'new_item' => esc_html_x( 'New Template', 'Template Library', 'elementor' ),
+			'all_items' => esc_html_x( 'All Templates', 'Template Library', 'elementor' ),
+			'view_item' => esc_html_x( 'View Template', 'Template Library', 'elementor' ),
+			'search_items' => esc_html_x( 'Search Template', 'Template Library', 'elementor' ),
+			'not_found' => esc_html_x( 'No Templates found', 'Template Library', 'elementor' ),
+			'not_found_in_trash' => esc_html_x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => _x( 'Templates', 'Template Library', 'elementor' ),
+			'menu_name' => esc_html_x( 'Templates', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
@@ -280,7 +280,7 @@ class Source_Local extends Source_Base {
 			'query_var' => is_admin(),
 			'rewrite' => false,
 			'public' => false,
-			'label' => _x( 'Type', 'Template Library', 'elementor' ),
+			'label' => esc_html_x( 'Type', 'Template Library', 'elementor' ),
 		];
 
 		/**
@@ -321,9 +321,9 @@ class Source_Local extends Source_Base {
 			'rewrite' => false,
 			'public' => false,
 			'labels' => [
-				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
-				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items' => _x( 'All Categories', 'Template Library', 'elementor' ),
+				'name' => esc_html_x( 'Categories', 'Template Library', 'elementor' ),
+				'singular_name' => esc_html_x( 'Category', 'Template Library', 'elementor' ),
+				'all_items' => esc_html_x( 'All Categories', 'Template Library', 'elementor' ),
 			],
 		];
 
