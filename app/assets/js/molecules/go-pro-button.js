@@ -27,5 +27,5 @@ GoProButton.defaultProps = {
 	color: 'cta',
 	target: '_blank',
 	rel: 'noopener noreferrer',
-	text: __( 'Go Pro', 'elementor' ),
+	text: __( 'Upgrade Now', 'elementor' ),
 };

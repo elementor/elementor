@@ -915,6 +915,14 @@ abstract class Document extends Controls_Stack {
 		return $meta;
 	}
 
+	public function update_json_meta( $key, $value ) {
+		$this->update_meta(
+			$key,
+			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			wp_slash( wp_json_encode( $value ) )
+		);
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
