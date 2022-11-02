@@ -32,7 +32,7 @@ class Test_Image_Size extends Elementor_Test_Base {
 
 		$wp_attachment = wp_get_attachment_image( $attachment_id, 'large', false, [ 'class' => 'attachment-large size-large' ] );
 		
-		// Wordpress 6.1 add new attributes to the image tag, so we need to remove them to support all versions.
+		// WordPress 6.1 removed the `decoding` attribute, so we need to remove it  to support all versions.
 		if ( version_compare( get_bloginfo( 'version' ), '6.1', '>=' ) ) {
 			$wp_attachment = str_replace( ' decoding="async"', '', $wp_attachment );
 		}
