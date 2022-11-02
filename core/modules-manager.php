@@ -101,6 +101,7 @@ class Modules_Manager {
 			'performance-lab',
 			'lazyload',
 			'rating',
+			'kit-elements-defaults',
 		];
 	}
 
