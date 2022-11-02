@@ -43,7 +43,8 @@ class Controller extends Base_Controller {
 					);
 
 					return $sanitizer
-						->for( $request->get_param( 'type' ), $settings )
+						->for( $request->get_param( 'type' ) )
+						->using( $settings )
 						->remove_invalid_settings()
 						->kses_deep()
 						->get();

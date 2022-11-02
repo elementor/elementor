@@ -41,19 +41,28 @@ class Settings_Sanitizer {
 	 * @param Elements_Manager $elements_manager
 	 * @param array $widget_types
 	 */
-	public function __construct( Elements_Manager $elements_manager, $widget_types = [] ) {
+	public function __construct( Elements_Manager $elements_manager, array $widget_types = [] ) {
 		$this->elements_manager = $elements_manager;
 		$this->widget_types = $widget_types;
 	}
 
 	/**
 	 * @param $type
+	 *
+	 * @return $this
+	 */
+	public function for( $type ) {
+		$this->pending_element = $this->create_element( $type );
+
+		return $this;
+	}
+
+	/**
 	 * @param $settings
 	 *
 	 * @return $this
 	 */
-	public function for( $type, $settings ) {
-		$this->pending_element = $this->create_element( $type );
+	public function using( $settings ) {
 		$this->pending_settings = $settings;
 
 		return $this;
@@ -73,7 +82,7 @@ class Settings_Sanitizer {
 	 * @return bool
 	 */
 	public function is_pending() {
-		return $this->pending_element && $this->pending_settings;
+		return $this->pending_element && is_array( $this->pending_settings );
 	}
 
 	/**
@@ -116,7 +125,7 @@ class Settings_Sanitizer {
 	 * @return $this
 	 */
 	public function prepare_for_export( Document $document ) {
-		return $this->run_inmport_export_sanitize_proccess( $document, 'on_export' );
+		return $this->run_import_export_sanitize_process( $document, 'on_export' );
 	}
 
 	/**
@@ -125,15 +134,16 @@ class Settings_Sanitizer {
 	 * @return $this
 	 */
 	public function prepare_for_import( Document $document ) {
-		return $this->run_inmport_export_sanitize_proccess( $document, 'on_import' );
+		return $this->run_import_export_sanitize_process( $document, 'on_import' );
 	}
 
 	/**
-	 * @return array
+	 * @return array|null
+	 * @throws \Exception
 	 */
 	public function get() {
 		if ( ! $this->is_pending() ) {
-			return [];
+			throw new \Exception( 'Should call `for` and `using` methods before `get` method' );
 		}
 
 		$settings = $this->pending_settings;
@@ -171,7 +181,7 @@ class Settings_Sanitizer {
 	 *
 	 * @return $this
 	 */
-	private function run_inmport_export_sanitize_proccess( Document $document, $process_type ) {
+	private function run_import_export_sanitize_process( Document $document, $process_type ) {
 		if ( ! $this->is_pending() ) {
 			return $this;
 		}

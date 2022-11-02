@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults\ImportExport\Runners;
 
+use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\KitElementsDefaults\Module;
@@ -29,7 +30,8 @@ class Import extends Import_Runner_Base {
 
 	public function import( array $data, array $imported_data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$default_values = ImportExportUtils::read_json_file( $data['extracted_directory_path'] . '/kit-elements-defaults.json' );
+		$file_name = Import_Export::FILE_NAME;
+		$default_values = ImportExportUtils::read_json_file( "{$data['extracted_directory_path']}/{$file_name}.json" );
 
 		if ( ! $kit || ! $default_values ) {
 			return [];
@@ -49,14 +51,15 @@ class Import extends Import_Runner_Base {
 			->filter( function ( $settings, $type ) use ( $types ) {
 				return in_array( $type, $types, true );
 			} )
-			->map(function ( $settings, $type ) use ( $sanitizer, $kit ) {
+			->map( function ( $settings, $type ) use ( $sanitizer, $kit ) {
 				return $sanitizer
-					->for( $type, $settings )
+					->for( $type )
+					->using( $settings )
 					->remove_invalid_settings()
 					->kses_deep()
 					->prepare_for_import( $kit )
 					->get();
-			})
+			} )
 			->all();
 
 		$kit->update_json_meta( Module::META_KEY, $default_values );

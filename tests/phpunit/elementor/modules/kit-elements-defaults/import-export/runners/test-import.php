@@ -31,7 +31,7 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( [
 			'mock-widget' => [
-				'text' => 'Test value',
+				'text' => 'value Test value',
 				'__globals__' => [
 					'color' => 'global-color',
 				],

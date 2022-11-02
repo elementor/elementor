@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults\ImportExport\Runners;
 
+use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\KitElementsDefaults\Module;
@@ -49,19 +50,20 @@ class Export extends Export_Runner_Base {
 		);
 
 		$default_values = ( new Collection( $default_values ) )
-			->map(function ( $settings, $type ) use ( $sanitizer, $kit ) {
+			->map( function ( $settings, $type ) use ( $sanitizer, $kit ) {
 				return $sanitizer
-					->for( $type, $settings )
+					->for( $type )
+					->using( $settings )
 					->remove_invalid_settings()
 					->kses_deep()
 					->prepare_for_export( $kit )
 					->get();
-			})
+			} )
 			->all();
 
 		return [
 			'files' => [
-				'path' => 'kit-elements-defaults',
+				'path' => Import_Export::FILE_NAME,
 				'data' => $default_values,
 			],
 		];

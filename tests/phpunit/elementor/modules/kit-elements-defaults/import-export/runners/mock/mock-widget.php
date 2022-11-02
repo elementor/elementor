@@ -31,6 +31,14 @@ class Mock_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+			]
+		);
+
+		$this->add_control(
 			'remove_because_has_export_false',
 			[
 				'label' => esc_html__( 'Text', 'elementor' ),
