@@ -322,12 +322,12 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async togglePreviewMode() {
-		if ( await this.getPreviewFrame().$( '#elementor-mode-switcher' ) ) {
+		if ( ! await this.page.$( 'body.elementor-editor-preview' ) ) {
 			await this.page.locator( '#elementor-mode-switcher' ).click();
-			await expect( this.page.locator( '#elementor-mode-switcher' ) ).not().toBeVisible();
+			await this.page.waitForSelector( 'body.elementor-editor-preview' );
 		} else {
 			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
-			await expect( this.page.locator( '#elementor-mode-switcher-preview' ) ).not().toBeVisible();
+			await this.page.waitForSelector( 'body.elementor-editor-active' );
 		}
 	}
 
@@ -342,4 +342,3 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
 	}
 };
-
