@@ -195,13 +195,6 @@ export default class Frontend extends elementorModules.ViewModule {
 			events: Events,
 		};
 
-		const interval = setInterval( () => {
-			if ( ! elementorModules.frontend?.tools ) {
-				return;
-			}
-			clearInterval( interval );
-		}, 100 );
-
 		// TODO: BC since 2.4.0
 		this.modules = {
 			StretchElement: elementorModules.frontend.tools.StretchElement,
