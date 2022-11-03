@@ -40,7 +40,10 @@ jobs:
 
   Playwright:
     name: Playwright test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.21.1-focal
+
     needs: [build-plugin]
     strategy:
       matrix:
@@ -82,7 +85,6 @@ jobs:
       - name: Install playwright/test
         run: |
           npm ci
-          npx playwright install chromium
       - name: Run Playwright tests
         run: |
           npm run test:elements-regression
