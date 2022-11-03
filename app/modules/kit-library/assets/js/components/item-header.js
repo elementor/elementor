@@ -5,7 +5,7 @@ import HeaderBackButton from './layout/header-back-button';
 import Kit from '../models/kit';
 import useDownloadLinkMutation from '../hooks/use-download-link-mutation';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
-import useKitCallToActionUpdatedUrl from '../hooks/use-kit-call-to-action-updated-url';
+import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
 import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
@@ -26,7 +26,7 @@ import './item-header.scss';
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
-	const updatedPromotionUrl = useKitCallToActionUpdatedUrl( subscriptionPlan.promotion_url, model.id, model.title );
+	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, model.id, model.title );
 
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -54,7 +54,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 				variant: 'contained',
 				color: 'cta',
 				size: 'sm',
-				url: updatedPromotionUrl,
+				url: promotionUrl,
 				target: '_blank',
 				includeHeaderBtnClass: false,
 			};
