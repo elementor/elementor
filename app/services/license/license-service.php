@@ -10,6 +10,6 @@ class License_Service extends Base_Service {
 	}
 
 	public function is_valid() {
-		return false;
+		return true;
 	}
 }
