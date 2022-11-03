@@ -81,7 +81,7 @@ class Settings_Sanitizer {
 	/**
 	 * @return bool
 	 */
-	public function is_pending() {
+	public function is_prepared() {
 		return $this->pending_element && is_array( $this->pending_settings );
 	}
 
@@ -89,7 +89,7 @@ class Settings_Sanitizer {
 	 * @return $this
 	 */
 	public function remove_invalid_settings() {
-		if ( ! $this->is_pending() ) {
+		if ( ! $this->is_prepared() ) {
 			return $this;
 		}
 
@@ -110,7 +110,7 @@ class Settings_Sanitizer {
 	}
 
 	public function kses_deep() {
-		if ( ! $this->is_pending() ) {
+		if ( ! $this->is_prepared() ) {
 			return $this;
 		}
 
@@ -138,12 +138,11 @@ class Settings_Sanitizer {
 	}
 
 	/**
-	 * @return array|null
-	 * @throws \Exception
+	 * @return array
 	 */
 	public function get() {
-		if ( ! $this->is_pending() ) {
-			throw new \Exception( 'Should call `for` and `using` methods before `get` method' );
+		if ( ! $this->is_prepared() ) {
+			return [];
 		}
 
 		$settings = $this->pending_settings;
@@ -182,7 +181,7 @@ class Settings_Sanitizer {
 	 * @return $this
 	 */
 	private function run_import_export_sanitize_process( Document $document, $process_type ) {
-		if ( ! $this->is_pending() ) {
+		if ( ! $this->is_prepared() ) {
 			return $this;
 		}
 
