@@ -9,7 +9,7 @@ const config = {
 	/**
 	 * Set WP params for settings
 	 */
-	wp_version: 'latest',
+	wp_version: '6.0',
 	wp_locale: 'en_US',
 	wp_user: 'test',
 	wp_user_pass: 'test',
