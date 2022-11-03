@@ -1,3 +1,4 @@
+const { expect } = require( '@playwright/test' );
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
 
@@ -324,7 +325,8 @@ module.exports = class EditorPage extends BasePage {
 	async togglePreviewMode() {
 		if ( ! await this.page.$( 'body.elementor-editor-preview' ) ) {
 			await this.page.locator( '#elementor-mode-switcher' ).click();
-			await this.page.waitForSelector( 'body.elementor-editor-preview' );
+			await this.page.waitForSelector( '#elementor-mode-switcher-preview' );
+			await expect( this.page.locator( '#elementor-panel .ui-resizable-handle' ) ).not.toBeVisible();
 		} else {
 			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
 			await this.page.waitForSelector( 'body.elementor-editor-active' );
