@@ -1,5 +1,6 @@
 <?php
 namespace Elementor\Modules\Library\Documents;
+use ElementorPro\Base\MarkerInterfaces\Template_With_Post_Content_interface;
 
 use Elementor\Core\DocumentTypes\Post;
 
@@ -15,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.0.0
  */
-class Page extends Library_Document {
+class Page extends Library_Document implements Template_With_Post_Content_interface {
 
 	/**
 	 * Get document properties.

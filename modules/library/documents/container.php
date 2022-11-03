@@ -1,5 +1,6 @@
 <?php
 namespace Elementor\Modules\Library\Documents;
+use ElementorPro\Base\MarkerInterfaces\Template_With_Post_Content_interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -13,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.0.0
  */
-class Container extends Library_Document {
+class Container extends Library_Document implements Template_With_Post_Content_interface {
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
