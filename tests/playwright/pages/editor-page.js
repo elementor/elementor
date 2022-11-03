@@ -326,7 +326,7 @@ module.exports = class EditorPage extends BasePage {
 		if ( ! await this.page.$( 'body.elementor-editor-preview' ) ) {
 			await this.page.locator( '#elementor-mode-switcher' ).click();
 			await this.page.waitForSelector( '#elementor-mode-switcher-preview' );
-			await expect( this.page.locator( '.elementor-panel .elementor-header-button .elementor-icon' ) ).not.toBeVisible();
+			await expect( this.page.locator( '#elementor-panel-header-add-button' ) ).not.toBeVisible();
 		} else {
 			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
 			await this.page.waitForSelector( 'body.elementor-editor-active' );
