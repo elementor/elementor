@@ -28,7 +28,7 @@ class Settings extends Settings_Page {
 	const PAGE_ID = 'elementor';
 
 	/**
-	 * Go Pro menu priority.
+	 * Upgrade menu priority.
 	 */
 	const MENU_PRIORITY_GO_PRO = 502;
 
