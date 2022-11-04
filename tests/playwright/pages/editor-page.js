@@ -343,4 +343,10 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.waitForSelector( '#elementor-preview-loading' );
 		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
 	}
+
+	async changeUiTheme( uiMode ) {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
+		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
+	}
 };
