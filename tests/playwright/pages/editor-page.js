@@ -1,4 +1,3 @@
-const { expect } = require( '@playwright/test' );
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
 
@@ -277,6 +276,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async removeFocus() {
 		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
+		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click();
 	}
 
 	/**

@@ -71,30 +71,34 @@ test.describe( 'Container tests', () => {
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
-		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
+		const container = page.locator( '.elementor-element-' + containerId );
 
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		// Assert
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-row.jpeg' );
 
 		// Act
+		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
 
 		// Act
+		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Flex-direction: column
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
@@ -104,24 +108,27 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		// Assert
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
 
 		// Act
+		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		// Assert
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-boxed-start.jpeg' );
 
 		await wpAdmin.setExperiments( {
@@ -166,7 +173,7 @@ test.describe( 'Container tests', () => {
 		// Take screenshot.
 		expect( await pageView.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
 
 		await editor.togglePreviewMode();
@@ -183,7 +190,7 @@ test.describe( 'Container tests', () => {
 		// Assert
 		expect( await pageView.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
 
 		// Reset the Default template.
@@ -231,7 +238,7 @@ test.describe( 'Container tests', () => {
 		// Take screenshot.
 		expect( await pageView.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
 
 		// Reset the Default template.
@@ -284,7 +291,7 @@ test.describe( 'Container tests', () => {
 		// Assert
 		expect( await pageView.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
 
 		await wpAdmin.setExperiments( {
@@ -380,7 +387,7 @@ test.describe( 'Container tests', () => {
 		// Assert.
 		expect( await containerElement.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
 
 		await editor.togglePreviewMode();
@@ -436,7 +443,7 @@ test.describe( 'Container tests', () => {
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-background.jpeg' );
 
 		// Reset to the Default template.
@@ -466,7 +473,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test.only( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -478,7 +485,7 @@ test.describe( 'Container tests', () => {
 
 			expect( await container.screenshot( {
 				type: 'jpeg',
-				quality: 70,
+				quality: 90,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg', { maxDiffPixels: 100 } );
 		} finally {
 			await wpAdmin.setLanguage( '' );
@@ -489,7 +496,7 @@ test.describe( 'Container tests', () => {
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg', { maxDiffPixels: 100 } );
 	} );
 } );
