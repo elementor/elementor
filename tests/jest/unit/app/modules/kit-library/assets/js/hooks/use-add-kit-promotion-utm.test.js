@@ -1,6 +1,6 @@
-import useKitCallToActionUpdatedUrl from 'elementor/app/modules/kit-library/assets/js/hooks/use-add-kit-promotion-utm.js';
+import useAddKitPromotionUtm from 'elementor/app/modules/kit-library/assets/js/hooks/use-add-kit-promotion-utm.js';
 
-describe( 'useKitCallToActionUpdatedUrl', () => {
+describe( 'useAddKitPromotionUtm', () => {
 	test( 'should return the url with utm_term and utm_content', () => {
 		// Arrange
 		const url = 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=gopro';
@@ -9,7 +9,7 @@ describe( 'useKitCallToActionUpdatedUrl', () => {
 		const expectedUrl = 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=gopro&utm_term=digital-marketing-studio&utm_content=6242d5f21475e1001dc794ae';
 
 		// Act
-		const updatedUrl = useKitCallToActionUpdatedUrl( url, kitId, kitTitle );
+		const updatedUrl = useAddKitPromotionUtm( url, kitId, kitTitle );
 
 		// Assert
 		expect( updatedUrl ).toBe( expectedUrl );
@@ -23,7 +23,7 @@ describe( 'useKitCallToActionUpdatedUrl', () => {
 		const expectedUrl = 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=gopro&utm_term=digital---marketing-studio-2&utm_content=6242d5f21475e1001dc794ae';
 
 		// Act
-		const updatedUrl = useKitCallToActionUpdatedUrl( url, kitId, kitTitle );
+		const updatedUrl = useAddKitPromotionUtm( url, kitId, kitTitle );
 
 		// Assert
 		expect( updatedUrl ).toBe( expectedUrl );
@@ -37,7 +37,7 @@ describe( 'useKitCallToActionUpdatedUrl', () => {
 		const expectedUrl = 'https://elementor.com/pro/?utm_term=digital-marketing-studio&utm_content=6242d5f21475e1001dc794ae';
 
 		// Act
-		const updatedUrl = useKitCallToActionUpdatedUrl( url, kitId, kitTitle );
+		const updatedUrl = useAddKitPromotionUtm( url, kitId, kitTitle );
 
 		// Assert
 		expect( updatedUrl ).toBe( expectedUrl );
@@ -51,7 +51,7 @@ describe( 'useKitCallToActionUpdatedUrl', () => {
 		const expectedUrl = 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=gopro&utm_term=digital-marketing-studio&utm_content=6242d5f21475e1001dc794ae';
 
 		// Act
-		const updatedUrl = useKitCallToActionUpdatedUrl( url, kitId, kitTitle );
+		const updatedUrl = useAddKitPromotionUtm( url, kitId, kitTitle );
 
 		// Assert
 		expect( updatedUrl ).toBe( expectedUrl );
