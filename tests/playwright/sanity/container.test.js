@@ -439,7 +439,7 @@ test.describe( 'Container tests', () => {
 			quality: 70,
 		} ) ).toMatchSnapshot( 'container-background.jpeg' );
 
-		// Reset the Default template.
+		// Reset to the Default template.
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
 
