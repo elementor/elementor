@@ -417,6 +417,7 @@ test.describe( 'Container tests', () => {
 
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.selectElement( containerId );
+		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '200' );
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '[data-tooltip="Video"]' ).click();
 		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
