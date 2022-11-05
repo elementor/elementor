@@ -30,5 +30,6 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 	// Insert gallery
 	await page.locator( 'text=Insert gallery' ).click();
 
-	expect( await editor.getPreviewFrame().locator( 'div#gallery-1' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'gallery.jpeg' );
+	await editor.togglePreviewMode();
+	expect( await editor.getPreviewFrame().locator( 'div#gallery-1' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'gallery.jpeg' );
 } );
