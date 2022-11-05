@@ -71,11 +71,11 @@ test.describe( 'Container tests', () => {
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
-		const container = page.locator( '.elementor-element-' + containerId );
+		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -88,9 +88,9 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( containerId );
 		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
@@ -106,9 +106,9 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_align_items i.eicon-align-start-v' );
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -121,9 +121,9 @@ test.describe( 'Container tests', () => {
 		await editor.selectElement( containerId );
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -262,8 +262,8 @@ test.describe( 'Container tests', () => {
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
 
-		// Set Default template.
-		await editor.useDefaultTemplate();
+		// Use the Canvas template.
+		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = page.locator( 'body' );
