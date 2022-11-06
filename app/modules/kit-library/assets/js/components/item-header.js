@@ -5,6 +5,7 @@ import HeaderBackButton from './layout/header-back-button';
 import Kit from '../models/kit';
 import useDownloadLinkMutation from '../hooks/use-download-link-mutation';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
+import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
 import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
@@ -25,6 +26,7 @@ import './item-header.scss';
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
+	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, model.id, model.title );
 
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -44,22 +46,6 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 		}
 
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
-			const getButtonURL = () => {
-				let url = subscriptionPlan.promotion_url;
-
-				if ( model.title ) {
-					// Remove special characters, replace spaces with '-' and convert url kit name to lowercase.
-					const cleanTitle = model.title.replace( /\s/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
-					url += `&utm_term=${ cleanTitle }`;
-				}
-
-				if ( model.id ) {
-					url += `&utm_content=${ model.id }`;
-				}
-
-				return url;
-			};
-
 			return {
 				id: 'promotion',
 				// Translators: %s is the subscription plan name.
@@ -68,7 +54,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 				variant: 'contained',
 				color: 'cta',
 				size: 'sm',
-				url: getButtonURL(),
+				url: promotionUrl,
 				target: '_blank',
 				includeHeaderBtnClass: false,
 			};
