@@ -1338,7 +1338,8 @@ label.elementor-template-library-order-label,
 		background-color: transparent;
 	}
 
-	&__item {
+	&__item,
+	&__elements {
 		background-color: $theme-dark-gray-dark;
 		border-color: $theme-dark-gray-darkest;
 
