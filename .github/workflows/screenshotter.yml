@@ -41,6 +41,7 @@ jobs:
           cd /tmp/wordpress
           wp elementor experiments activate container
           wp option update elementor_unfiltered_files_upload 1
+          wp option update blogdescription 'Just another WordPress site' # WP >= 6.1
       - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true

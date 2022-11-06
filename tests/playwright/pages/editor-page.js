@@ -243,15 +243,10 @@ module.exports = class EditorPage extends BasePage {
 		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
 	}
 
-	async changeEditorLayout( layout ) {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
-		await this.page.selectOption( '[data-setting=template]', layout );
-		await this.ensurePreviewReload();
-	}
-
-	async ensurePreviewReload() {
-		await this.page.waitForSelector( '#elementor-preview-loading' );
-		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
+	async changeUiTheme( uiMode ) {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
+		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
 	}
 };
 

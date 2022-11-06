@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['latest', '5.8', '5.7']
+        wordpress_versions: ['nightly', 'latest', '5.8', '5.7']
         php_versions: ['7.0', '7.1', '7.2', '7.3', '7.4']
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:

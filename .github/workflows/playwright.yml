@@ -75,6 +75,7 @@ jobs:
           npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
           npx wp-env run cli "wp --user=admin elementor library import-dir elementor-playwright-templates"
           npx wp-env run cli "wp rewrite structure \"/%postname%/\" --hard"
+          npx wp-env run cli "wp theme activate twentytwentytwo"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
