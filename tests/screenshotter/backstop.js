@@ -7,7 +7,7 @@ const getDelay = ( pathname ) => {
 		case 'image-gallery':
 			return 3000;
 		default:
-			return 1000;
+			return 2000;
 	}
 };
 
