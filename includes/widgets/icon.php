@@ -336,9 +336,8 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'deg' ],
+				'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 				'default' => [
-					'size' => 0,
 					'unit' => 'deg',
 				],
 				'tablet_default' => [
