@@ -2,7 +2,7 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-	timeout: 50 * 1000, // 50 seconds
+	timeout: 90 * 1000, // 90 seconds
 	globalTimeout: 60 * 15 * 1000, // 15 minutes
 	reporter: 'list',
 	testDir: '../sanity/',
