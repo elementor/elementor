@@ -5,7 +5,7 @@
 
 module.exports = {
 	elements: {
-		include: [ 'heading', 'text-editor', 'divider', 'button' ],
+		include: [ 'heading', 'text-editor', 'divider', 'button', 'image' ],
 	},
 	controls: {
 		heading: {
@@ -27,6 +27,19 @@ module.exports = {
 			exclude: [
 				'button_css_id', // Nothing changed
 				'button_type', // Bug in the editor nothing changed.
+			],
+		},
+		image: {
+			dependencies: {
+				'*': {
+					image: 'elementor.png',
+				},
+			},
+			exclude: [
+				'image', // Image is affected in each control.
+				'link_to', // Affect the link, nothing visual.
+				'height', // Some bug in the CI, seems like this is a bug in the editor.
+				'image_size', // Nothing visual.
 			],
 		},
 	},
