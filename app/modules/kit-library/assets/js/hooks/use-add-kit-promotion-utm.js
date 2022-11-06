@@ -1,20 +1,22 @@
 export default function useAddKitPromotionUTM( promotionUrl, kitId, kitTitle ) {
-	// If the kit is a free kit the promotionUrl doesn't exist and therefore we do not need to create a promotional URL.
 	if ( ! promotionUrl ) {
-		return;
+		return '';
 	}
 
-	const url = new URL( promotionUrl );
-	const params = new URLSearchParams( url.search );
+	let url;
 
-	if ( kitTitle ) {
-		const cleanTitle = kitTitle.replace( /\s/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
-		params.set( 'utm_term', cleanTitle );
+	try {
+		url = new URL( promotionUrl );
+	} catch ( e ) {
+		return '';
 	}
 
-	if ( kitId ) {
-		params.set( 'utm_content', kitId );
+	if ( kitTitle && 'string' === typeof kitTitle ) {
+		const cleanTitle = kitTitle.replace( /\s+/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
+		url.searchParams.set( 'utm_term', cleanTitle );
 	}
-
-	return `${ url.protocol }//${ url.host }${ url.pathname }?${ params.toString() }`;
+	if ( kitId && 'string' === typeof kitId ) {
+		url.searchParams.set( 'utm_content', kitId );
+	}
+	return url.toString();
 }
