@@ -1,29 +1,26 @@
 const { expect } = require( '@playwright/test' );
 const test = require( '../src/test' );
 const elementsConfig = require( '../elements-config.json' );
+const testConfig = require( '../test.config' );
+const ConfigProvider = require( '../src/config-provider' );
 const widgetHandlers = require( '../src/widgets' );
 const controlHandlers = require( '../src/controls' );
-const {
-	isWidgetIncluded,
-	isWidgetExcluded,
-	isControlIncluded,
-	isControlExcluded,
-} = require( '../src/validation' );
+
+const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
 
 test.describe( 'Elements regression', () => {
 	const testedElements = {};
 
 	test.afterAll( async ( {}, testInfo ) => {
-		if (
-			'failed' !== testInfo.status && // There is no need to check if the tests already failed.
-			'on' === testInfo.project.use.validateAllPreviousCasesChecked
-		) {
-			expect( JSON.stringify( testedElements ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+		// TODO: Need to find a better solution for now this is not working well.
+
+		if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
+			expect( JSON.stringify( testedElements, null, '\t' ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
 		}
 	} );
 
-	for ( const [ widgetType, widgetConfig ] of getWidgetForTests() ) {
-		// Here dynamic tests are created.
+	for ( const { widgetType, widgetConfig } of configMediator.getWidgetsTypes() ) {
+		// Dynamic widget test creation.
 		test( widgetType, async ( { editorPage } ) => {
 			const widget = createWidgetHandler( editorPage, widgetType, widgetConfig );
 			await widget.create();
@@ -31,19 +28,25 @@ test.describe( 'Elements regression', () => {
 			await editorPage.page.waitForTimeout( 500 );
 
 			await test.step( `default values`, async () => {
+				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
+
 				expect( await editorPage.screenshotWidget( widget ) )
 					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+
+				await widget.resetSettings();
 
 				testedElements[ widgetType ] = {};
 			} );
 
-			for ( const [ controlId, controlConfig ] of getControlsForTests( widget.config ) ) {
+			for ( const {
+				controlId,
+				controlConfig,
+				sectionConfig,
+			} of configMediator.getControlsForTests( widgetType ) ) {
+				// Dynamic control test step creation.
 				const control = createControlHandler(
 					editorPage.page,
-					{
-						config: controlConfig,
-						sectionConfig: widget.config.controls[ controlConfig.section ],
-					},
+					{ config: controlConfig, sectionConfig },
 				);
 
 				if ( ! control || ! control.canTestControl() ) {
@@ -51,7 +54,9 @@ test.describe( 'Elements regression', () => {
 				}
 
 				await test.step( controlId, async () => {
-					testedElements[ widgetType ][ controlId ] = [];
+					const testedValues = [];
+
+					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
 
 					await control.setup();
 
@@ -67,48 +72,25 @@ test.describe( 'Elements regression', () => {
 						await test.step( valueLabel, async () => {
 							await control.setValue( value );
 
-							await widget.waitAfterSettingValue( control );
-
 							expect( await editorPage.screenshotWidget( widget ) )
 								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 
-							testedElements[ widgetType ][ controlId ].push( valueLabel );
+							testedValues.push( valueLabel );
 						} );
 					}
+
+					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
 
 					await widget.afterControlTest( { control, controlId } );
 
 					await control.teardown();
 
 					await widget.resetSettings();
-
-					await widget.waitAfterSettingValue( control );
 				} );
 			}
 		} );
 	}
 } );
-
-/**
- * @return {[string, Object][]}
- */
-function getWidgetForTests() {
-	return Object.entries( elementsConfig ).filter(
-		( [ widgetType ] ) => isWidgetIncluded( widgetType ) && ! isWidgetExcluded( widgetType ),
-	);
-}
-
-/**
- * @param {Object} widgetConfig
- * @return {[string, Object][]}
- */
-function getControlsForTests( widgetConfig ) {
-	return Object.entries( widgetConfig.controls )
-		.filter( ( [ controlType ] ) =>
-			isControlIncluded( widgetConfig.widgetType, controlType ) &&
-			! isControlExcluded( widgetConfig.widgetType, controlType ),
-		);
-}
 
 /**
  * @param {import('@playwright/test').Page} page
@@ -137,4 +119,23 @@ function createWidgetHandler( editorPage, type, config ) {
 	const WidgetClass = widgetHandlers[ type ] || widgetHandlers.widget;
 
 	return new WidgetClass( editorPage, { widgetType: type, ...config } );
+}
+
+async function assignValuesToControlDependencies( editorPage, widgetType, controlId ) {
+	const controlDependencies = configMediator.getControlDependencies( widgetType, controlId );
+
+	for ( const {
+		controlConfig,
+		sectionConfig,
+		value,
+	} of controlDependencies ) {
+		const control = createControlHandler(
+			editorPage.page,
+			{ config: controlConfig, sectionConfig },
+		);
+
+		await control.setup();
+		await control.setValue( value );
+		await control.teardown();
+	}
 }

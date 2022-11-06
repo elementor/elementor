@@ -46,9 +46,10 @@ function createIntroductionManager() {
 		dialogOptions: {
 			id: dialogId,
 			headerMessage: __( 'Sure you want to change default settings?', 'elementor' ),
-			message: __( 'Your changes will automatically apply to all future use of this widget.', 'elementor' ) +
-				'<br/><br/>' +
-				__( 'Note: Saving new default settings will include sensitive information like API keys and CSS ID if they’re stored on the widget before saving.', 'elementor' ),
+			// Translators: %1$s: Opening strong tag, %2$s: Closing strong tag.
+			message: __( 'Your changes will automatically be saved for future uses of this element. %1$sNote:%2$s This includes sensitive information like emails, API keys, etc.', 'elementor' )
+				.replace( '%1$s', '<strong>' )
+				.replace( '%2$s', '</strong>' ),
 			effects: {
 				show: 'fadeIn',
 				hide: 'fadeOut',
