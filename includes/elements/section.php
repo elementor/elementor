@@ -573,6 +573,12 @@ class Element_Section extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_image', 'url' ],
+						],
+					],
 				],
 			]
 		);
@@ -1147,7 +1153,7 @@ class Element_Section extends Element_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
+						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],

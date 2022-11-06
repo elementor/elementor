@@ -254,4 +254,11 @@ module.exports = class EditorPage extends BasePage {
 		await this.addWidget( 'html' );
 		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
 	}
+
+	async changeUiTheme( uiMode ) {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
+		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
+	}
 };
+
