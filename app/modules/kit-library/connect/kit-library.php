@@ -13,7 +13,7 @@ class Kit_Library extends Library {
 	const FALLBACK_BASE_ENDPOINT = 'https://ms-8874.elementor.com/api/v1/kits-library';
 
 	public function get_title() {
-		return __( 'Kit Library', 'elementor' );
+		return esc_html__( 'Kit Library', 'elementor' );
 	}
 
 	public function get_all() {

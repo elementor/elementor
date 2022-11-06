@@ -53,7 +53,7 @@ class Library extends Common_App {
 
 		if ( is_wp_error( $template_content ) && 401 === $template_content->get_error_code() ) {
 			// Normalize 401 message
-			return new \WP_Error( 401, __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
+			return new \WP_Error( 401, esc_html__( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
 		}
 
 		return $template_content;
