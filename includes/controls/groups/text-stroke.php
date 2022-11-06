@@ -110,7 +110,7 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 	protected function get_default_options() {
 		return [
 			'popover' => [
-				'starter_title' => _x( 'Text Stroke', 'Text Stroke Control', 'elementor' ),
+				'starter_title' => esc_html_x( 'Text Stroke', 'Text Stroke Control', 'elementor' ),
 				'starter_name' => 'text_stroke_type',
 				'starter_value' => 'yes',
 				'settings' => [
