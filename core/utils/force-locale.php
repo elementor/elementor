@@ -24,6 +24,11 @@ class Force_Locale {
 	private $original_locale;
 
 	/**
+	 * @var \WP_Textdomain_Registry
+	 */
+	private $original_textdomain_registry;
+
+	/**
 	 * @var \Closure Filter reference `pre_determine_locale`.
 	 */
 	private $filter;
@@ -45,6 +50,14 @@ class Force_Locale {
 	 */
 	public function force() {
 		switch_to_locale( $this->new_locale );
+
+		/**
+		 * Reset the \WP_Textdomain_Registry instance to clear its cache.
+		 *
+		 * @see https://github.com/WordPress/wordpress-develop/blob/799d7dc86f5b07b17f7a418948fc851bd2fc334b/src/wp-includes/class-wp-textdomain-registry.php#L179-L187
+		 * @see https://github.com/WordPress/wordpress-develop/blob/799d7dc86f5b07b17f7a418948fc851bd2fc334b/tests/phpunit/tests/l10n/wpLocaleSwitcher.php#L19-L31
+		 */
+		$this->reset_textdomain_registry();
 
 		/**
 		 * Reset l10n in order to clear the translations cache.
@@ -69,11 +82,37 @@ class Force_Locale {
 	 * @return void
 	 */
 	public function restore() {
+		$this->restore_textdomain_registry();
+
 		$this->reset_l10n();
 
 		switch_to_locale( $this->original_locale );
 
 		remove_filter( 'pre_determine_locale', $this->filter );
+	}
+
+	private function reset_textdomain_registry() {
+		if ( ! class_exists( '\WP_Textdomain_Registry' ) ) {
+			return;
+		}
+
+		/** @var \WP_Textdomain_Registry $wp_textdomain_registry */
+		global $wp_textdomain_registry;
+
+		$this->original_textdomain_registry = $wp_textdomain_registry;
+
+		$wp_textdomain_registry = new \WP_Textdomain_Registry();
+	}
+
+	private function restore_textdomain_registry() {
+		if ( ! $this->original_textdomain_registry ) {
+			return;
+		}
+
+		/** @var \WP_Textdomain_Registry $wp_textdomain_registry */
+		global $wp_textdomain_registry;
+
+		$wp_textdomain_registry = $this->original_textdomain_registry;
 	}
 
 	/**
