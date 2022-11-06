@@ -4,7 +4,7 @@
 	&__title {
 		display: flex;
 		align-items: flex-start;
-		flex-wrap: wrap;
+		flex-direction: column;
 
 		&__indicator {
 			position: absolute;
@@ -42,8 +42,10 @@
 		margin:30px 0;
 	}
 
-	&__status {
+	&__dependency, &__status {
+		margin-top: 4px;
 		font-size: 0.9em;
+		line-height: 18px;
 		font-weight: bold;
 		font-style: italic;
 	}
@@ -53,20 +55,10 @@
 	}
 
 	&__dependency {
+		color: $wordpress;
 
 		&__title {
-			color: $editor-darkest;
-
-		}
-
-		&__item {
-			margin: 0 1px;
-			border: 1px solid;
-			padding: 2px;
-			font-size: 13px;
-			color: $editor-dark;
-			font-weight: bold;
-			background: $editor-background-light;
+			font-weight: inherit;
 		}
 	}
 }

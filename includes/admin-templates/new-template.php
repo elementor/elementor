@@ -2,11 +2,12 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Document;
+use Elementor\TemplateLibrary\Forms\New_Template_Form;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-
+$new_template_control_form = new New_Template_Form( [ 'id' => 'form' ] );
 $document_types = Plugin::$instance->documents->get_document_types();
 
 $types = [];
@@ -40,6 +41,8 @@ foreach ( $document_types as $document_type ) {
  * @param Document $document_types Document types.
  */
 $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $types, $document_types );
+ksort( $types );
+
 ?>
 <script type="text/template" id="tmpl-elementor-new-template">
 	<div id="elementor-new-template__description">
@@ -52,14 +55,6 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 			);
 			?></div>
 		<div id="elementor-new-template__description__content"><?php echo esc_html__( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
-		<?php
-		/*
-		<div id="elementor-new-template__take_a_tour">
-			<i class="eicon-play-o"></i>
-			<a href="#"><?php echo esc_html__( 'Take The Video Tour', 'elementor\' ); ?></a>
-		</div>
-		*/
-		?>
 	</div>
 	<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 		<input type="hidden" name="post_type" value="elementor_library">
@@ -100,7 +95,13 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		 *
 		 * @since 2.0.0
 		 */
-		do_action( 'elementor/template-library/create_new_dialog_fields' );
+		do_action( 'elementor/template-library/create_new_dialog_fields', $new_template_control_form );
+
+		$additional_controls = $new_template_control_form->get_controls();
+		if ( $additional_controls ) {
+			wp_add_inline_script( 'elementor-admin', 'const elementor_new_template_form_controls = ' . wp_json_encode( $additional_controls ) . ';' );
+			$new_template_control_form->render();
+		}
 		?>
 
 		<div id="elementor-new-template__form__post-title__wrapper" class="elementor-form-field">

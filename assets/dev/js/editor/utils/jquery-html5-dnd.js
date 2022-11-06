@@ -205,14 +205,20 @@
 				return;
 			}
 
-			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
-				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
+				isRowContainer = $currentElement.parents( '.e-con--row' ).length,
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' ),
+				isInnerContainer = $currentElement.hasClass( 'e-con-inner' ),
+				$parentContainer = $currentElement.closest( '.e-con' ).parent().closest( '.e-con' );
 
+			// Make sure that the previous placeholder is removed before inserting a new one.
+			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
+
+			// Fix placeholder placement for Container with `flex-direction: row`.
 			if ( isRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				$currentElement[ insertMethod ]( elementsCache.$placeholder );
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
+					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
+				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
 
 				return;
 			}
@@ -442,6 +448,9 @@
 						$.removeData( this, pluginName );
 					}
 
+					return;
+				} else if ( 'destroy' === options ) {
+					// Escape the loop when an element is destroyed before initialisation.
 					return;
 				}
 
