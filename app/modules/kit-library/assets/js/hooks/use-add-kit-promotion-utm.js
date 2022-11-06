@@ -12,7 +12,7 @@ export default function useAddKitPromotionUTM( promotionUrl, kitId, kitTitle ) {
 	}
 
 	if ( kitTitle && 'string' === typeof kitTitle ) {
-		const cleanTitle = kitTitle.replace( /\s+/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
+		const cleanTitle = kitTitle.trim().replace( /\s+/g, '-' ).replace( /[^\w-]/g, '' ).toLowerCase();
 		url.searchParams.set( 'utm_term', cleanTitle );
 	}
 	if ( kitId && 'string' === typeof kitId ) {
