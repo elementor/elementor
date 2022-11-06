@@ -124,11 +124,11 @@ class Server extends Base {
 			'value' => PHP_VERSION,
 		];
 
-		if ( version_compare( $result['value'], '7.0', '<' ) ) {
+		if ( version_compare( $result['value'], '7.4', '<' ) ) {
 			$result['recommendation'] = sprintf(
 				/* translators: %s: Recommended PHP version. */
 				esc_html_x( 'We recommend using PHP version %s or higher.', 'System Info', 'elementor' ),
-				'7.0'
+				'7.4'
 			);
 
 			$result['warning'] = true;
