@@ -270,25 +270,15 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'deg' ],
-				'range' => [
-					'deg' => [
-						'min' => 0,
-						'max' => 360,
-						'step' => 1,
-					],
-				],
+				'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 				'default' => [
 					'unit' => 'deg',
-					'size' => '',
 				],
 				'tablet_default' => [
 					'unit' => 'deg',
-					'size' => '',
 				],
 				'mobile_default' => [
 					'unit' => 'deg',
-					'size' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--rotate: {{SIZE}}{{UNIT}};',

@@ -201,15 +201,10 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['gradient_angle'] = [
 			'label' => esc_html_x( 'Angle', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'deg' ],
+			'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 			'default' => [
 				'unit' => 'deg',
 				'size' => 180,
-			],
-			'range' => [
-				'deg' => [
-					'step' => 10,
-				],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
