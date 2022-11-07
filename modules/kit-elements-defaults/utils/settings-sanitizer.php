@@ -209,30 +209,4 @@ class Settings_Sanitizer {
 
 		return $this;
 	}
-
-	/**
-	 * @param Document $document
-	 * @param          $process_type
-	 *
-	 * @return $this
-	 */
-	private function run_import_export_sanitize_process( Document $document, $process_type ) {
-		if ( ! $this->is_prepared() ) {
-			return $this;
-		}
-
-		$result = $document->process_element_import_export(
-			$this->pending_element,
-			$process_type,
-			[ 'settings' => $this->pending_settings ]
-		);
-
-		if ( empty( $result['settings'] ) ) {
-			return $this;
-		}
-
-		$this->pending_settings = $result['settings'];
-
-		return $this;
-	}
 }
