@@ -11,7 +11,7 @@ class Widget {
 	 * Editor instance from test context.
 	 *
 	 * @protected
-	 * @type {import('../../pages/editor-page')}
+	 * @type {import('../pages/editor-page')}
 	 */
 	editor = null;
 
@@ -75,22 +75,6 @@ class Widget {
 				},
 			} );
 		}, { id: this.id } );
-	}
-
-	async waitAfterSettingValue( control ) {
-		if ( control.isForcingServerRender() ) {
-			await this.waitForServerRendered();
-		}
-
-		await this.editor.page.waitForTimeout( 300 );
-	}
-
-	/**
-	 * @return {Promise<void>}
-	 */
-	async waitForServerRendered() {
-		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading` );
-		await this.editor.getPreviewFrame().waitForSelector( `.elementor-element-${ this.id }.elementor-loading`, { state: 'detached' } );
 	}
 }
 
