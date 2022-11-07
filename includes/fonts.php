@@ -734,6 +734,7 @@ class Fonts {
 			'Lateef' => self::GOOGLE,
 			'Lato' => self::GOOGLE,
 			'League Script' => self::GOOGLE,
+			'League Spartan' => self::GOOGLE,
 			'Leckerli One' => self::GOOGLE,
 			'Ledger' => self::GOOGLE,
 			'Lekton' => self::GOOGLE,
