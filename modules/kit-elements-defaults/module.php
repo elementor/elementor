@@ -54,10 +54,10 @@ class Module extends BaseModule {
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
-		( new Import_Export() )->register();
 		( new Usage() )->register();
 
 		if ( is_admin() ) {
+			( new Import_Export() )->register();
 			( new Import_Export() )->register();
 		}
 	}
