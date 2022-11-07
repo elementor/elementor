@@ -2,6 +2,7 @@ import Badge from './badge';
 import FavoritesActions from '../components/favorites-actions';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
+import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
@@ -9,6 +10,7 @@ import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
+	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
 
 	const eventTracking = ( command ) => {
 		appsEventTrackingDispatch(
@@ -68,7 +70,7 @@ const KitListItem = ( props ) => {
 									className="e-kit-library__kit-item-overlay-promotion-button"
 									text={ `Go ${ subscriptionPlan.label }` }
 									icon="eicon-external-link-square"
-									url={ subscriptionPlan.promotion_url }
+									url={ promotionUrl }
 									target="_blank"
 								/>
 							}
