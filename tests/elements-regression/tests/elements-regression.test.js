@@ -3,7 +3,6 @@ const test = require( '../src/test' );
 const elementsConfig = require( '../elements-config.json' );
 const testConfig = require( '../test.config' );
 const ConfigProvider = require( '../src/config-provider' );
-const widgetHandlers = require( '../src/widgets' );
 const controlHandlers = require( '../src/controls' );
 
 const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
@@ -19,21 +18,20 @@ test.describe( 'Elements regression', () => {
 		}
 	} );
 
-	for ( const { widgetType, widgetConfig } of configMediator.getWidgetsTypes() ) {
+	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
 		// Dynamic widget test creation.
 		test( widgetType, async ( { editorPage } ) => {
-			const widget = createWidgetHandler( editorPage, widgetType, widgetConfig );
-			await widget.create();
+			const elementId = await editorPage.addWidget( widgetType );
 
 			await editorPage.page.waitForTimeout( 500 );
 
 			await test.step( `default values`, async () => {
 				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
-				expect( await editorPage.screenshotWidget( widget ) )
+				expect( await editorPage.screenshotElement( elementId ) )
 					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
-				await widget.resetSettings();
+				await editorPage.resetElementSettings( elementId );
 
 				testedElements[ widgetType ] = {};
 			} );
@@ -60,8 +58,6 @@ test.describe( 'Elements regression', () => {
 
 					await control.setup();
 
-					await widget.beforeControlTest( { control, controlId } );
-
 					const initialValue = control.hasConditions() || control.hasSectionConditions()
 						? undefined
 						: await control.getValue();
@@ -72,7 +68,7 @@ test.describe( 'Elements regression', () => {
 						await test.step( valueLabel, async () => {
 							await control.setValue( value );
 
-							expect( await editorPage.screenshotWidget( widget ) )
+							expect( await editorPage.screenshotElement( elementId ) )
 								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 
 							testedValues.push( valueLabel );
@@ -81,11 +77,9 @@ test.describe( 'Elements regression', () => {
 
 					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
 
-					await widget.afterControlTest( { control, controlId } );
-
 					await control.teardown();
 
-					await widget.resetSettings();
+					await editorPage.resetElementSettings( elementId );
 				} );
 			}
 		} );
@@ -107,18 +101,6 @@ function createControlHandler( page, { config, sectionConfig } ) {
 	}
 
 	return new ControlClass( page, { config, sectionConfig } );
-}
-
-/**
- * @param {import('../src/page').EditorPage} editorPage
- * @param {string}                           type
- * @param {Object}                           config
- * @return {import('../src/widgets/widget').Widget}
- */
-function createWidgetHandler( editorPage, type, config ) {
-	const WidgetClass = widgetHandlers[ type ] || widgetHandlers.widget;
-
-	return new WidgetClass( editorPage, { widgetType: type, ...config } );
 }
 
 async function assignValuesToControlDependencies( editorPage, widgetType, controlId ) {
