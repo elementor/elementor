@@ -56,5 +56,9 @@ class Module extends BaseModule {
 
 		( new Import_Export() )->register();
 		( new Usage() )->register();
+
+		if ( is_admin() ) {
+			( new Import_Export() )->register();
+		}
 	}
 }
