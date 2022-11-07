@@ -49,36 +49,76 @@ class Settings_Layout extends Tab_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'container_width',
-			[
-				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => '1140',
-				],
-				'tablet_default' => [
-					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
-				],
-				'mobile_default' => [
-					'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
-				],
-				'range' => [
-					'px' => [
-						'min' => 300,
-						'max' => 1500,
-						'step' => 10,
-					],
-				],
-				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
-				'selectors' => [
-					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
-					'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
 		$is_container_active = Plugin::instance()->experiments->is_feature_active( 'container' );
+
+		if ( $is_container_active ) {
+			$this->add_responsive_control(
+				'container_width',
+				[
+					'label' => esc_html__( 'Content Width', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'default' => [
+						'size' => '1140',
+					],
+					'tablet_default' => [
+						'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
+					],
+					'mobile_default' => [
+						'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
+					],
+					'size_units' => [ 'px', '%', 'vw' ],
+					'range' => [
+						'px' => [
+							'min' => 300,
+							'max' => 1500,
+							'step' => 10,
+						],
+						'%' => [
+							'min' => 0,
+							'max' => 100,
+						],
+						'vw' => [
+							'min' => 10,
+							'max' => 100,
+						],
+					],
+					'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+					'selectors' => [
+						'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
+						'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
+					],
+				]
+			);
+		} else {
+			$this->add_responsive_control(
+				'container_width',
+				[
+					'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
+					'type' => Controls_Manager::SLIDER,
+					'default' => [
+						'size' => '1140',
+					],
+					'tablet_default' => [
+						'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
+					],
+					'mobile_default' => [
+						'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
+					],
+					'range' => [
+						'px' => [
+							'min' => 300,
+							'max' => 1500,
+							'step' => 10,
+						],
+					],
+					'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+					'selectors' => [
+						'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
+						'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
+					],
+				]
+			);
+		}
 
 		if ( $is_container_active ) {
 			$this->add_responsive_control(
