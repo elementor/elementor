@@ -234,7 +234,6 @@ body {
 	}
 
 	&.loading:before {
-		-webkit-animation: rotation 1s infinite linear;
 		animation: rotation 1s infinite linear;
 	}
 

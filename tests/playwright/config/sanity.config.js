@@ -2,8 +2,8 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-	timeout: 40 * 1000, // 40 seconds
-	globalTimeout: 60 * 10 * 1000, // 10 minutes
+	timeout: 90 * 1000, // 90 seconds
+	globalTimeout: 60 * 15 * 1000, // 15 minutes
 	reporter: 'list',
 	testDir: '../sanity/',
 	globalSetup: require.resolve( './global-setup' ),
