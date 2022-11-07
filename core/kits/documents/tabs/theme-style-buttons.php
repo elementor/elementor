@@ -70,7 +70,6 @@ class Theme_Style_Buttons extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'button_typography',
 				'selector' => $button_selector,
 			]
@@ -227,7 +226,7 @@ class Theme_Style_Buttons extends Tab_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					$button_hover_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
