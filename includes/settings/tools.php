@@ -377,10 +377,10 @@ class Tools extends Settings_Page {
 
 		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
 			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
-				'label' => __( 'Recreate Kit', 'elementor' ),
+				'label' => esc_html__( 'Recreate Kit', 'elementor' ),
 				'field_args' => [
 					'type' => 'raw_html',
-					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), __( 'Recreate Kit', 'elementor' ) ),
+					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), esc_html__( 'Recreate Kit', 'elementor' ) ),
 					'desc' => esc_html__( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
 				],
 			];
