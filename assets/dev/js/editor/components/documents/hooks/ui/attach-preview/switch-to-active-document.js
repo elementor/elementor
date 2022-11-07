@@ -15,7 +15,7 @@ export class SwitchToActiveDocument extends $e.modules.hookUI.After {
 		return 'switch-to-active-document';
 	}
 
-	getConditions( args ) {
+	getConditions() {
 		if ( this.constructor.calledOnce ) {
 			return false;
 		}
