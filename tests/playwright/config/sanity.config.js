@@ -10,7 +10,11 @@ const config = {
 	retries: 1,
 	expect: {
 		timeout: 5 * 1000, // 5 seconds
-		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
+		toMatchSnapshot: {
+			threshold: 0.2,
+			maxDiffPixels: 100,
+			maxDiffPixelRatio: 0.2,
+		},
 	},
 	use: {
 		actionTimeout: 8 * 1000, // 4 seconds
