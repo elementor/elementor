@@ -142,7 +142,7 @@ class Repository {
 		$kit = $this->find( $id, [ 'manifest_included' => false ] );
 
 		if ( ! $kit ) {
-			throw new Error_404( __( 'Kit not found', 'elementor' ), 'kit_not_found' );
+			throw new Error_404( esc_html__( 'Kit not found', 'elementor' ), 'kit_not_found' );
 		}
 
 		$this->user_favorites->add( 'elementor', 'kits', $kit['id'] );
@@ -162,7 +162,7 @@ class Repository {
 		$kit = $this->find( $id, [ 'manifest_included' => false ] );
 
 		if ( ! $kit ) {
-			throw new Error_404( __( 'Kit not found', 'elementor' ), 'kit_not_found' );
+			throw new Error_404( esc_html__( 'Kit not found', 'elementor' ), 'kit_not_found' );
 		}
 
 		$this->user_favorites->remove( 'elementor', 'kits', $kit['id'] );
