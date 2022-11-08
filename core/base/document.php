@@ -1570,8 +1570,10 @@ abstract class Document extends Controls_Stack {
 		}
 	}
 
-	private function process_element_import_export( Controls_Stack $element, $method ) {
-		$element_data = $element->get_data();
+	public function process_element_import_export( Controls_Stack $element, $method, $element_data = null ) {
+		if ( null === $element_data ) {
+			$element_data = $element->get_data();
+		}
 
 		if ( method_exists( $element, $method ) ) {
 			// TODO: Use the internal element data without parameters.
@@ -1586,7 +1588,11 @@ abstract class Document extends Controls_Stack {
 				return $element_data;
 			}
 
-			if ( method_exists( $control_class, $method ) ) {
+			// Do not add default value to the final settings, if there is no value at the
+			// data before the methods `on_import` or `on_export` called.
+			$has_value = isset( $element_data[ $control['name'] ] );
+
+			if ( $has_value && method_exists( $control_class, $method ) ) {
 				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
 			}
 
