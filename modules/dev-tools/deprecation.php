@@ -347,7 +347,7 @@ class Deprecation {
 	 * @return mixed
 	 * @throws \Exception
 	 */
-	public function apply_deprecated_filter( $hook, $args, $version, $replacement = '', $base_version = null ) {
+	public function apply_deprecated_filter( $hook, array $args, $version, $replacement = '', $base_version = null ) {
 		if ( ! has_action( $hook ) ) {
 			return $args[0];
 		}
