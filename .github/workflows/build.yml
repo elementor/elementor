@@ -2,9 +2,8 @@ name: Build
 
 on:
   push:
-    branches:
-      - 'develop'
-      - 'release/*'
+  pull_request:
+
 jobs:
   run:
     runs-on: ubuntu-20.04
