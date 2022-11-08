@@ -120,7 +120,7 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 				command.apply( { container } );
 
 				// Assert
-				expect( updateElementDefaults ).toHaveBeenCalledWith( expectedType, { width: '100px' } );
+				expect( updateElementDefaults ).toHaveBeenNthCalledWith( 1, expectedType, { width: '100px' } );
 			},
 		);
 
