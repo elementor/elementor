@@ -213,7 +213,7 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a background color to an element.
 	 *
-	 * @param {string} color - The background color code;
+	 * @param {string} color       - The background color code;
 	 * @param {string} elementType - The element types are `widget` and `container`;
 	 *
 	 * @return {Promise<void>}
@@ -242,4 +242,11 @@ module.exports = class EditorPage extends BasePage {
 	async removeFocus() {
 		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
 	}
+
+	async changeUiTheme( uiMode ) {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
+		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
+	}
 };
+

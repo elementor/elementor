@@ -663,8 +663,7 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	/**
-	 * Register the Background section.
+	/** Register the Background section. 
 	 *
 	 * @return void
 	 */
