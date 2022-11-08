@@ -1144,7 +1144,7 @@ abstract class Element_Base extends Controls_Stack {
 							],
 						],
 						'selectors' => [
-							'{{WRAPPER}} > .elementor-widget-container' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}ms',
+							'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}ms',
 						],
 					]
 				);
