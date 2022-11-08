@@ -1,5 +1,33 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.10.0-dev1 - 2022-11-08
+* Fix: Separate "Default" and "None" values in "Border Type" [ED-8511] (#20145)
+* Tweak: Add more units to border width controls in various elements [ED-8465] (#20037)
+* Fix: Clear cache on plugin update only once (#20154)
+* Fix: Can't drag widgets into a Column after it's being emptied [ED-8499] (#20152)
+* Fix: Predefined container structure with default padding is not working [ED-8400] (#20171)
+* Fix: First container handle is not centered on an RTL page  [ED-7788] (#20036)
+* Fix: Repeater controls in "non-content" tabs cause JS errors when running Copy-Paste Style [ED-8548] (#20199)
+* New: Kit Elements Default Values [ED-8357] (#20113)
+* Fix: Background appearing around widgets when using the Lazy load experiment [ED-8564] (#20225)
+* Fix: Image thumbnails glitch on front when using the Lazy Load experiment [ED-8563] (#20233)
+* Fix: RTL text is printed backwards in Text path widget (#17309) [ED-7661] (#20230)
+* Tweak: Replace the remaining 'Go Pro' labels [ED-8566] (#20204)
+* Tweak: Adjusted Dark Mode in Navigator when using Container [ED-7578] (#20190)
+* Tweak: Remove unneeded CSS vendor prefixes [ED-8633] (#20287)
+* Tweak: Changed the confirmation modal content in Save as Default experiment [ED-8624] (#20286)
+* Tweak: Update recommended PHP version in system-info [ED-8567] (#20205)
+* Tweak: Added `rel="preconnect"` tag to Google Fonts to improve performance [ED-8054] (#20251)
+* Tweak: Escape translation strings for safe use in HTML output [ED-8565] (#20188)
+* Tweak: Remove redundant labels from group controls [ED-8558] (#20163)
+* Tweak: Add angle units to rotate/skew controls in various elements [ED-8449] (#20081)
+* Tweak: Add new styling controls to Post/Page Settings [ED-8483] (#20181)
+* Tweak: Update privacy mode control description about Vimeo support (#20308)
+* Tweak: Allow saving and reloading while in-place editing of documents [ED-8477] (#20150)
+* New: Kit defaults - Import/Export runner [ED-8179] (#20099)
+* Fix: Kits Defaults - Support for inner section [ED-8585] (#20261)
+* Fix: PHP errors caused by deprecation module [ED-8650] (#20063)
+
 #### 3.9.0-dev4 - 2022-10-27
 * Tweak: Remove duplicate queries on admin page [ED-8346] (#20098)
 * Fix: Container Full Width values are disappearing after latest version update [ED-8468] (#20111)
@@ -414,18 +442,3 @@
 
 #### 3.6.0-dev11 - 2021-11-26
 * Fix: Saving a template with a condition throws an error [ED-5661] (#17040)
-
-#### 3.6.0-dev10 - 2021-11-24
-* Fix: Templates Library is unreachable [ED-5613] (#17019)
-* Fix: PayPal Button widget doesn't work with Core 3.5.0 beta3 [ED-5664] (#17022)
-
-#### 3.6.0-dev9 - 2021-11-23
-* Tweak: Contextual texts in the prompts - Document settings [ED-5324] (#16834)
-* Tweak: Prompt the user permission to allow unfiltered file uploads in Import Template flow [ED-5279] (#16910)
-* Fix: Broken button shortcodes and internal URLs (#16971) [ED-5566] (#17005)
-* Fix: The data updater notice removed from update plugin page [ED-5381] (#17004)
-* Fix: Choose control was in reversed order in RTL sites [ED-5461] (#16893)
-* Fix: Scroll snap throw undefined error on Archive pages [ED-5544] (#17015)
-* Fix: Z-index control override negative values (#17016)
-* Fix: Text path widget is not optimized and makes redundant file system calls [ED-5420] (#16952)
-* Fix: Conflict with JetEngine plugin in v3.5.0 [ED-5603] (#17021)
