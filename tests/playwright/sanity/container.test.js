@@ -376,7 +376,8 @@ test.describe( 'Container tests', () => {
 
 	test( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
 		// Arrange.
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
