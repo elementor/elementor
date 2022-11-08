@@ -37,9 +37,17 @@ class Controller extends Base_Controller {
 					return is_array( $settings );
 				},
 				'sanitize_callback' => function( $settings, \WP_REST_Request $request ) {
-					return $this
-						->make_settings_sanitizer()
-						->sanitize( $settings, $request->get_param( 'type' ) );
+					$sanitizer = new Settings_Sanitizer(
+						Plugin::$instance->elements_manager,
+						array_keys( Plugin::$instance->widgets_manager->get_widget_types() )
+					);
+
+					return $sanitizer
+						->for( $request->get_param( 'type' ) )
+						->using( $settings )
+						->remove_invalid_settings()
+						->kses_deep()
+						->get();
 				},
 			],
 		] );
@@ -116,13 +124,6 @@ class Controller extends Base_Controller {
 			array_merge( $element_types, $widget_types ),
 			true
 		);
-	}
-
-	private function make_settings_sanitizer() {
-		$elements_manager = Plugin::$instance->elements_manager;
-		$widget_types = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
-
-		return new Settings_Sanitizer( $elements_manager, $widget_types );
 	}
 
 	public function get_items_permissions_check( $request ) {
