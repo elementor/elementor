@@ -320,6 +320,27 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$this->assertEquals( 'elementor-pro-test', $result );
 	}
 
+	public function test_apply_deprecated_filter__with_multiple_args_associative_array() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		add_filter( $hook, function( $value1, $value2 ) {
+			return $value1;
+		}, 10, 2 );
+
+		// Expect.
+		$this->setExpectedDeprecated( $hook );
+
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [
+			'elementor' => 'free',
+			'elementor-pro' => 'paid',
+		], '0.0.0', '', '0.5.0' );
+
+		// Assert.
+		$this->assertEquals( 'free', $result );
+	}
+
 	public function test_apply_deprecated_filter() {
 		// Arrange.
 		$hook = 'elementor/test/deprecated_filter';
