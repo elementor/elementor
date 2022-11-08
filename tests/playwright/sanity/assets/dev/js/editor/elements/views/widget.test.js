@@ -43,6 +43,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await page.locator( '.elementor-control-title_text input' ).fill( '' );
 		await page.locator( '.elementor-control-description_text textarea' ).fill( '' );
 
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-box > .elementor-widget-empty-icon.eicon-image-box' ).count();
 
 		// Assert.

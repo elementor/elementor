@@ -29,6 +29,6 @@ module.exports = class {
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
 		await this.page.reload();
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
+		await this.page.waitForSelector( '#elementor-editor-wrapper' );
 	}
 };
