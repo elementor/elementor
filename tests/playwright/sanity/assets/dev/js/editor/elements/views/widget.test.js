@@ -23,6 +23,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 
 		// Act.
 		await editor.addWidget( 'sidebar' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-sidebar .elementor-widget-empty-icon' ).count();
 
@@ -42,8 +43,8 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await page.click( '.elementor-control-media__remove' );
 		await page.locator( '.elementor-control-title_text input' ).fill( '' );
 		await page.locator( '.elementor-control-description_text textarea' ).fill( '' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-box > .elementor-widget-empty-icon.eicon-image-box' ).count();
 
 		// Assert.
@@ -57,6 +58,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 
 		// Act.
 		await editor.addWidget( 'image-gallery' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-gallery .elementor-widget-empty-icon' ).count();
 
@@ -72,6 +74,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Act.
 		await editor.addWidget( 'video' );
 		await page.selectOption( '.elementor-control-video_type >> select', 'hosted' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-video .elementor-widget-empty-icon' ).count();
 
@@ -88,6 +91,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await editor.addWidget( 'google_maps' );
 		await page.locator( '.elementor-control-address input' ).fill( '' );
 		await editor.page.waitForLoadState( 'domcontentloaded' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-google_maps .elementor-widget-empty-icon' ).count();
 
