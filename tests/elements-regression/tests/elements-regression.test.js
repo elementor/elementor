@@ -30,7 +30,7 @@ test.describe( 'Elements regression', () => {
 
 				expect(
 					await editorPage.screenshotElement( elementId ),
-				).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				).toMatchSnapshot( [ widgetType, 'default(editor).jpeg' ] );
 
 				await editorPage.publish();
 
@@ -74,7 +74,7 @@ test.describe( 'Elements regression', () => {
 
 							expect(
 								await editorPage.screenshotElement( elementId ),
-							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }(editor).jpeg` ] );
 
 							await editorPage.publish();
 

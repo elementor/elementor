@@ -14,7 +14,7 @@ dotenv.config( {
 const config = {
 	testDir: './tests/',
 	/* Maximum time one test can run for. */
-	timeout: 2 * 60 * 1000, // 2 minutes
+	timeout: 5 * 60 * 1000, // 5 minutes
 	globalSetup: path.resolve( __dirname, './src/global-setup.js' ),
 	expect: {
 		/**
