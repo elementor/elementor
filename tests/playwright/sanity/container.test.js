@@ -402,6 +402,7 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
+	} );
 
 	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -428,7 +429,7 @@ test.describe( 'Container tests', () => {
 		} );
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
-			const editor = await creatCanvasPage( wpAdmin );
+			const editor = await createCanvasPage( wpAdmin );
 			const container = await addContainerAndHover( editor );
 
 			expect( await container.screenshot( {
@@ -439,7 +440,7 @@ test.describe( 'Container tests', () => {
 			await wpAdmin.setLanguage( '' );
 		}
 
-		const editor = await creatCanvasPage( wpAdmin );
+		const editor = await createCanvasPage( wpAdmin );
 		const container = await addContainerAndHover( editor );
 
 		expect( await container.screenshot( {
@@ -449,7 +450,7 @@ test.describe( 'Container tests', () => {
 	} );
 } );
 
-async function creatCanvasPage( wpAdmin ) {
+async function createCanvasPage( wpAdmin ) {
 	const editor = await wpAdmin.openNewPage();
 	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.useCanvasTemplate();
