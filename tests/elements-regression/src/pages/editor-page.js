@@ -2,6 +2,13 @@ const BasePage = require( './base-page.js' );
 
 module.exports = class EditorPage extends BasePage {
 	/**
+	 * @return {Promise<number>}
+	 */
+	async getId() {
+		return await this.page.evaluate( () => elementor.config.initial_document.id );
+	}
+
+	/**
 	 * @return {Promise<void>}
 	 */
 	async ensureLoaded() {
@@ -131,6 +138,15 @@ module.exports = class EditorPage extends BasePage {
 
 			await this.page.waitForTimeout( 400 );
 		}
+	}
+
+	/**
+	 * @return {Promise<void>}
+	 */
+	async publish() {
+		await this.page.click( '#elementor-panel-saver-button-publish' );
+
+		await this.page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled' );
 	}
 
 	/**

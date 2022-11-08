@@ -20,7 +20,7 @@ test.describe( 'Elements regression', () => {
 
 	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
 		// Dynamic widget test creation.
-		test( widgetType, async ( { editorPage } ) => {
+		test( widgetType, async ( { editorPage, frontendPage } ) => {
 			const elementId = await editorPage.addWidget( widgetType );
 
 			await editorPage.page.waitForTimeout( 500 );
@@ -28,8 +28,16 @@ test.describe( 'Elements regression', () => {
 			await test.step( `default values`, async () => {
 				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
-				expect( await editorPage.screenshotElement( elementId ) )
-					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				expect(
+					await editorPage.screenshotElement( elementId ),
+				).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+
+				await editorPage.publish();
+
+				//
+				// expect(
+				// 	await frontendPage.screenshotElement( elementId ),
+				// ).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
 				await editorPage.resetElementSettings( elementId );
 
@@ -56,28 +64,32 @@ test.describe( 'Elements regression', () => {
 
 					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
 
-					await control.setup();
-
-					const initialValue = control.hasConditions() || control.hasSectionConditions()
-						? undefined
-						: await control.getValue();
-
-					for ( const value of await control.getTestValues( initialValue ) ) {
+					for ( const value of await getTestValues( control ) ) {
 						const valueLabel = control.generateSnapshotLabel( value );
 
 						await test.step( valueLabel, async () => {
+							await control.setup();
+
 							await control.setValue( value );
 
-							expect( await editorPage.screenshotElement( elementId ) )
-								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							expect(
+								await editorPage.screenshotElement( elementId ),
+							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+
+							await editorPage.publish();
+
+							//
+							// expect(
+							// 	await frontendPage.screenshotElement( elementId ),
+							// ).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 
 							testedValues.push( valueLabel );
+
+							await control.teardown();
 						} );
 					}
 
 					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
-
-					await control.teardown();
 
 					await editorPage.resetElementSettings( elementId );
 				} );
@@ -120,4 +132,18 @@ async function assignValuesToControlDependencies( editorPage, widgetType, contro
 		await control.setValue( value );
 		await control.teardown();
 	}
+}
+
+async function getTestValues( control ) {
+	await control.setup();
+
+	const initialValue = control.hasConditions() || control.hasSectionConditions()
+		? undefined
+		: await control.getValue();
+
+	const testValues = await control.getTestValues( initialValue );
+
+	await control.teardown();
+
+	return testValues;
 }
