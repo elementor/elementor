@@ -349,7 +349,7 @@ class Deprecation {
 	 */
 	public function apply_deprecated_filter( $hook, array $args, $version, $replacement = '', $base_version = null ) {
 		if ( ! has_action( $hook ) ) {
-			return $args[0];
+			return $args[0] ?? null;
 		}
 
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
