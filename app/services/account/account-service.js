@@ -9,7 +9,6 @@ export default class AccountService {
 	 *
 	 * @return {Promise}
 	 */
-
 	auth( buttonRef, parseUrl, sizes ) {
 		return new Promise( ( resolve ) => {
 			const success = ( e, data ) => {
