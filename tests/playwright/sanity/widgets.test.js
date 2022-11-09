@@ -12,7 +12,7 @@ test.describe( 'Widget tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
             widgetId = await editor.addWidget( 'heading', containerId ),
-			widgetSelector = '.elementor-edit-mode .elementor-element-' + widgetId;
+			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
 
 		// Act.
 		await editor.activatePanelTab( 'advanced' );
@@ -28,7 +28,7 @@ test.describe( 'Widget tests', () => {
 
 		// Assert.
 		// Check rotate and scale value.
-		await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toHaveCSS( '--e-transform-rotateZ', '2deg' );
-		await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toHaveCSS( '--e-transform-scale', '2' );
+		await expect( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-rotateZ', '2deg' );
+		await expect( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-scale', '2' );
 	} );
 } );
