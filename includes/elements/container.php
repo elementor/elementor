@@ -854,7 +854,7 @@ class Container extends Element_Base {
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
