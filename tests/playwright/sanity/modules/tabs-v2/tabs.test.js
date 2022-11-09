@@ -44,6 +44,7 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'tabs-v2', container );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
 
 		// Act.
 		const iconCountForTabs = await editor.getPreviewFrame().locator( '.elementor-tabs-content-wrapper .e-con.elementor-active .elementor-add-new-section i' ).count(),
