@@ -9,10 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Services {
-	/**
-	 * @var License_Service
-	 */
-	public $license;
+	private $services = [];
 
 	public function __construct() {
 		add_action( 'elementor/common/after_register_scripts', function () {
@@ -21,8 +18,22 @@ class Services {
 	}
 
 	private function register_services() {
-		$this->license = ( new License_Service() )->register();
+		$this->services[ 'license' ] = ( new License_Service() )->register();
 
-		do_action( 'elementor/app/services/register', $this );
+		$this->services = apply_filters( 'elementor/app/services/register', $this->services );
+	}
+
+	/**
+	 * Get a registered service
+	 *
+	 * @param $name
+	 * @return mixed|null
+	 */
+	public function get_service( $name ) {
+		if ( ! empty( $this->services[ $name ] ) ) {
+			return $this->services[ $name ];
+		}
+
+		return null;
 	}
 }

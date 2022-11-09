@@ -1361,8 +1361,13 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	/**
+	 * Check whether the account license is valid
+	 *
+	 * @return bool
+	 */
 	private function is_license_valid() {
-		return $this->app_services->license->is_valid();
+		return $this->app_services->get_service( 'license' )->is_valid();
 	}
 
 	public function add_filter_by_category( $post_type ) {
