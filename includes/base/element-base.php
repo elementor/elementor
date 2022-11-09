@@ -1,5 +1,6 @@
 <?php
 namespace Elementor;
+
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
