@@ -357,6 +357,14 @@ class Deprecation {
 			return $args;
 		}
 
+		// BC - See the comment above.
+		if ( ! is_array( $args ) ) {
+			$args = [ $args ];
+		}
+
+		// Avoid associative arrays.
+		$args = array_values( $args );
+
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
 
 		return apply_filters_ref_array( $hook, $args );
