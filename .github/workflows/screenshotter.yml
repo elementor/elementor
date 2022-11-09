@@ -34,12 +34,13 @@ jobs:
           npm i -g @elementor/screenshotter
           npm i -g grunt-cli
       - name: Install Dependencies
-        run: | 
+        run: |
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
       - name: Prepare Test
         run: | # Enable the container experiment & enable import SVG
           cd /tmp/wordpress
           wp elementor experiments activate container
+          wp elementor experiments activate nested-elements
           wp option update elementor_unfiltered_files_upload 1
           wp option update blogdescription 'Just another WordPress site' # WP >= 6.1
       - name: Import Templates
