@@ -778,6 +778,9 @@ abstract class Element_Base extends Controls_Stack {
 					'label' => esc_html__( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
+					'default' => [
+						'unit' => 'deg',
+					],
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -828,6 +831,9 @@ abstract class Element_Base extends Controls_Stack {
 					'label' => esc_html__( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
+					'default' => [
+						'unit' => 'deg',
+					],
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -863,6 +869,9 @@ abstract class Element_Base extends Controls_Stack {
 					'label' => esc_html__( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
+					'default' => [
+						'unit' => 'deg',
+					],
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -1094,6 +1103,9 @@ abstract class Element_Base extends Controls_Stack {
 					'label' => esc_html__( 'Skew X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
+					'default' => [
+						'unit' => 'deg',
+					],
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -1128,6 +1140,9 @@ abstract class Element_Base extends Controls_Stack {
 					'label' => esc_html__( 'Skew Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
+					'default' => [
+						'unit' => 'deg',
+					],
 					'range' => [
 						'deg' => [
 							'min' => -360,
