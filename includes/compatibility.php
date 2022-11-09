@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -33,6 +34,7 @@ class Compatibility {
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
 		self::polylang_compatibility();
+		self::yoast_duplicate_post();
 
 		if ( is_admin() || defined( 'WP_LOAD_IMPORTERS' ) ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
@@ -267,6 +269,27 @@ class Compatibility {
 		}
 
 		return $keys;
+	}
+
+	private static function yoast_duplicate_post() {
+		add_filter( 'duplicate_post_excludelist_filter', function( $meta_excludelist ) {
+			$exclude_list = [
+				Document::TYPE_META_KEY,
+				'_elementor_page_assets',
+				'_elementor_controls_usage',
+				'_elementor_css',
+				'_elementor_screenshot',
+			];
+
+			return array_merge( $meta_excludelist, $exclude_list );
+		} );
+
+		add_action( 'duplicate_post_post_copy', function( $new_post_id, $post ) {
+			$original_template_type = get_post_meta( $post->ID, Document::TYPE_META_KEY, true );
+			if ( ! empty( $original_template_type ) ) {
+				update_post_meta( $new_post_id, Document::TYPE_META_KEY, $original_template_type );
+			}
+		}, 10, 2 );
 	}
 
 	/**
