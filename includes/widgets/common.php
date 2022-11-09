@@ -723,6 +723,15 @@ class Widget_Common extends Widget_Base {
 							'max' => 1,
 						],
 					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
+					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}{{UNIT}};',
 					],
@@ -773,6 +782,15 @@ class Widget_Common extends Widget_Base {
 							'max' => 1,
 						],
 					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
+					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
 						"_transform_rotate_popover{$tab}!" => '',
@@ -807,6 +825,15 @@ class Widget_Common extends Widget_Base {
 							'min' => -1,
 							'max' => 1,
 						],
+					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
@@ -1039,6 +1066,15 @@ class Widget_Common extends Widget_Base {
 							'max' => 1,
 						],
 					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
+					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
@@ -1072,6 +1108,15 @@ class Widget_Common extends Widget_Base {
 							'min' => -1,
 							'max' => 1,
 						],
+					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',

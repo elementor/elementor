@@ -425,6 +425,12 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => [
 					'unit' => 'deg',
 				],
+				'tablet_default' => [
+					'unit' => 'deg',
+				],
+				'mobile_default' => [
+					'unit' => 'deg',
+				],
 				'device_args' => $rotate_device_args,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
