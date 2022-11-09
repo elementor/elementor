@@ -46,13 +46,13 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.addWidget( 'tabs-v2', container );
 
 		// Act.
-		const addSectionIconCountTabs = await editor.getPreviewFrame().locator( '.elementor-tabs-content-wrapper .e-con.elementor-active .elementor-add-new-section i' ).count(),
-			addSectionIconCountMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
+		const iconCountForTabs = await editor.getPreviewFrame().locator( '.elementor-tabs-content-wrapper .e-con.elementor-active .elementor-add-new-section i' ).count(),
+			iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
 
 		// Assert.
 		// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
-		expect( addSectionIconCountTabs ).toBe( 1 );
-		expect( addSectionIconCountMainContainer ).toBe( 2 );
+		expect( iconCountForTabs ).toBe( 1 );
+		expect( iconCountForMainContainer ).toBe( 2 );
 
 		await wpAdmin.setExperiments( {
 			container: false,
