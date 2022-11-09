@@ -52,17 +52,8 @@ export default function AddSectionArea( props ) {
 					>
 						<i className="eicon-plus" />
 					</div>
-					<div
-						className="elementor-add-section-area-button elementor-add-template-button"
-						onClick={ () => $e.run( 'library/open', args ) }
-						title={ __( 'Add Template', 'elementor' ) }
-						role="button"
-						tabIndex="0"
-					>
-						<i className="eicon-folder" />
-					</div>
 					<div className="elementor-add-section-drag-title">
-						{ __( 'Drag widgets here to create nested widget.', 'elementor' ) }
+						{ __( 'Drag widget here.', 'elementor' ) }
 					</div>
 				</div>
 			</div>
