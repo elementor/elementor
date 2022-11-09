@@ -368,7 +368,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @param array|string $element   The HTML element.
 	 * @param array $url_control      Array of link settings.
 	 * @param bool $overwrite         Optional. Whether to overwrite existing
-	 *                                attribute. Default is false, not to overwrite.
+	 *					            attribute. Default is false, not to overwrite.
 	 *
 	 * @return Element_Base Current instance of the element.
 	 */
@@ -520,8 +520,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param bool $with_html_content Optional. Whether to return the data with
-	 *                                HTML content or without. Used for caching.
-	 *                                Default is false, without HTML.
+	 *					            HTML content or without. Used for caching.
+	 *					            Default is false, without HTML.
 	 *
 	 * @return array Element raw data.
 	 */
@@ -777,14 +777,27 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
+						],
 					],
 					'selectors' => [
-						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateZ: {{SIZE}}deg',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateZ: {{SIZE}}{{UNIT}}',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
@@ -801,7 +814,7 @@ abstract class Element_Base extends Controls_Stack {
 					'label_on' => esc_html__( 'On', 'elementor' ),
 					'label_off' => esc_html__( 'Off', 'elementor' ),
 					'selectors' => [
-						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: 1deg;  --e-' . $transform_css_modifier . 'transform-perspective: 20px;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: 1{{UNIT}};  --e-' . $transform_css_modifier . 'transform-perspective: 20px;',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
@@ -814,10 +827,23 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
@@ -825,7 +851,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -836,10 +862,23 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
@@ -847,7 +886,7 @@ abstract class Element_Base extends Controls_Stack {
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateY: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1054,17 +1093,30 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Skew X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewX: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1075,17 +1127,30 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Skew Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
+						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
 						],
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewY: {{SIZE}}deg;',
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1135,16 +1200,22 @@ abstract class Element_Base extends Controls_Stack {
 				$this->add_control(
 					'_transform_transition_hover',
 					[
-						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
+						'label' => esc_html__( 'Transition Duration', 'elementor' ),
 						'type' => Controls_Manager::SLIDER,
+						'size_units' => [ 's', 'ms' ],
+						'default' => [
+							'unit' => 'ms',
+						],
 						'range' => [
-							'px' => [
-								'min' => 100,
+							's' => [
+								'max' => 10,
+							],
+							'ms' => [
 								'max' => 10000,
 							],
 						],
 						'selectors' => [
-							'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}ms',
+							'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}{{UNIT}}',
 						],
 					]
 				);

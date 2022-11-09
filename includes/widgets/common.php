@@ -1150,6 +1150,8 @@ class Widget_Common extends Widget_Base {
 
 		$this->register_effects_section();
 
+		$this->register_transform_section();
+
 		$this->register_background_section();
 
 		$this->register_border_section();
