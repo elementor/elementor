@@ -658,13 +658,6 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$this->start_controls_tabs( 'title_style' );
 
-		$this->start_controls_tab(
-			'title_normal',
-			[
-				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
-		);
-
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography',
 			'global' => [
@@ -672,6 +665,13 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'selector' => '{{WRAPPER}} .e-tab-title-text',
 		] );
+
+		$this->start_controls_tab(
+			'title_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
 
 		$this->add_control(
 			'title_text_color',
@@ -709,11 +709,6 @@ class TabsV2 extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_group_control( Group_Control_Typography::get_type(), [
-			'name' => 'title_typography_hover',
-			'selector' => '{{WRAPPER}}  .e-tab-title-text:hover',
-		] );
-
 		$this->add_control(
 			'title_text_color_hover',
 			[
@@ -749,11 +744,6 @@ class TabsV2 extends Widget_Nested_Base {
 				'label' => esc_html__( 'Active', 'elementor' ),
 			]
 		);
-
-		$this->add_group_control( Group_Control_Typography::get_type(), [
-			'name' => 'title_typography_active',
-			'selector' => '{{WRAPPER}} .elementor-active .e-tab-title-text',
-		] );
 
 		$this->add_control(
 			'title_text_color_active',
