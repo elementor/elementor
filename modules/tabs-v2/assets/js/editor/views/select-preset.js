@@ -16,15 +16,15 @@ export default function SelectPreset( props ) {
 				<i onClick={ () => props.setIsRenderPresets( false ) } className="eicon-close" aria-hidden="true" />
 				<span className="elementor-screen-only">{ __( 'Close', 'elementor' ) }</span>
 			</div>
-			<div className="e-view e-container-select-preset">
-				<div className="e-container-select-preset__title">{ __( 'Select your Structure', 'elementor' ) }</div>
-				<div className="e-container-select-preset__list">
+			<div className="e-view e-con-select-preset">
+				<div className="e-con-select-preset__title">{ __( 'Select your Structure', 'elementor' ) }</div>
+				<div className="e-con-select-preset__list">
 					{
 						elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
 							<div
 								onClick={ () => onPresetSelected( preset, props.container ) }
 								key={ preset }
-								className="e-container-preset"
+								className="e-con-preset"
 								data-preset={ preset }
 								dangerouslySetInnerHTML={ { __html: elementor.presetsFactory.generateContainerPreset( preset ) } }
 								role="button"

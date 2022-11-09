@@ -33,7 +33,7 @@ export default class BaseTabsV2 extends Base {
 			selectors: {
 				tablist: '[role="tablist"]',
 				tabTitle: '.elementor-tab-title',
-				tabContent: '.e-container',
+				tabContent: '.e-con',
 			},
 			classes: {
 				active: 'elementor-active',
