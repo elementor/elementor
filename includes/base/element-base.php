@@ -1,5 +1,6 @@
 <?php
 namespace Elementor;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -730,6 +731,24 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return void
 	 */
 	protected function register_transform_section( $element_selector = '' ) {
+		$default_unit_values_deg = [];
+		$default_unit_values_ms = [];
+
+		// Set the default unit sizes for all active breakpoints.
+		foreach ( Breakpoints_Manager::get_default_config() as $breakpoint_name => $breakpoint_config ) {
+			$default_unit_values_deg[ $breakpoint_name ] = [
+				'default' => [
+					'unit' => 'deg',
+				],
+			];
+
+			$default_unit_values_ms[ $breakpoint_name ] = [
+				'default' => [
+					'unit' => 'ms',
+				],
+			];
+		}
+
 		$this->start_controls_section(
 			'_section_transform',
 			[
@@ -781,6 +800,7 @@ abstract class Element_Base extends Controls_Stack {
 					'default' => [
 						'unit' => 'deg',
 					],
+					'device_args' => $default_unit_values_deg,
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -834,6 +854,7 @@ abstract class Element_Base extends Controls_Stack {
 					'default' => [
 						'unit' => 'deg',
 					],
+					'device_args' => $default_unit_values_deg,
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -872,6 +893,7 @@ abstract class Element_Base extends Controls_Stack {
 					'default' => [
 						'unit' => 'deg',
 					],
+					'device_args' => $default_unit_values_deg,
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -1106,6 +1128,7 @@ abstract class Element_Base extends Controls_Stack {
 					'default' => [
 						'unit' => 'deg',
 					],
+					'device_args' => $default_unit_values_deg,
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -1143,6 +1166,7 @@ abstract class Element_Base extends Controls_Stack {
 					'default' => [
 						'unit' => 'deg',
 					],
+					'device_args' => $default_unit_values_deg,
 					'range' => [
 						'deg' => [
 							'min' => -360,
@@ -1221,6 +1245,7 @@ abstract class Element_Base extends Controls_Stack {
 						'default' => [
 							'unit' => 'ms',
 						],
+						'device_args' => $default_unit_values_ms,
 						'range' => [
 							's' => [
 								'max' => 10,
