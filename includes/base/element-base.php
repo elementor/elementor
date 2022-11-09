@@ -520,8 +520,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param bool $with_html_content Optional. Whether to return the data with
-	 *                                          HTML content or without. Used for caching.
-	 *                                          Default is false, without HTML.
+	 *                                HTML content or without. Used for caching.
+	 *                                Default is false, without HTML.
 	 *
 	 * @return array Element raw data.
 	 */
