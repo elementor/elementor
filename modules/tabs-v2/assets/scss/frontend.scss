@@ -109,6 +109,7 @@
 			&:hover {
 				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
 				transition: all var( --tabs-v2-title-transition );
+				color: var( --tabs-v2-icon-color-hover );
 			}
 
 			&:hover {
