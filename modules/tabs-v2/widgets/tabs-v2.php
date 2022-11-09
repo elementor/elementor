@@ -214,7 +214,6 @@ class TabsV2 extends Widget_Nested_Base {
 					'icon' => 'eicon-h-align-stretch',
 				],
 			],
-			'default' => 'center',
 			'selectors_dictionary' => [
 				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
 				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
