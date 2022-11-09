@@ -72,10 +72,16 @@ export default class extends Marionette.CompositeView {
 	}
 
 	attributes() {
-		return {
+		const attrs = {
 			'data-id': this.model.id,
 			'data-model-cid': this.model.cid,
 		};
+
+		if ( this.model.get( 'isLocked' ) ) {
+			attrs[ 'data-locked' ] = true;
+		}
+
+		return attrs;
 	}
 
 	templateHelpers() {
@@ -248,7 +254,7 @@ export default class extends Marionette.CompositeView {
 			axis: 'y',
 			forcePlaceholderSize: true,
 			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' > .elementor-navigator__elements',
-			cancel: '[contenteditable="true"]',
+			cancel: '[contenteditable="true"], [data-locked="true"]',
 		} );
 	}
 
