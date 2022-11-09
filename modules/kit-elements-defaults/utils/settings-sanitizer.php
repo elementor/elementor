@@ -160,18 +160,28 @@ class Settings_Sanitizer {
 	 */
 	private function create_element( $type ) {
 		$is_widget = in_array( $type, $this->widget_types, true );
+		$is_inner_section = 'inner-section' === $type;
 
-		$args = $is_widget
-			? [
+		if ( $is_inner_section ) {
+			return $this->elements_manager->create_element_instance( [
+				'elType' => 'section',
+				'isInner' => true,
+				'id' => '0',
+			] );
+		}
+
+		if ( $is_widget ) {
+			return $this->elements_manager->create_element_instance( [
 				'elType' => 'widget',
 				'widgetType' => $type,
 				'id' => '0',
-			] : [
-				'elType' => $type,
-				'id' => '0',
-			];
+			] );
+		}
 
-		return $this->elements_manager->create_element_instance( $args );
+		return $this->elements_manager->create_element_instance( [
+			'elType' => $type,
+			'id' => '0',
+		] );
 	}
 
 	/**
