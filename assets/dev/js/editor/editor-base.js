@@ -1107,6 +1107,8 @@ export default class EditorBase extends Marionette.Application {
 			this.generateResponsiveControlsForElements();
 		}
 
+		this.elementsManager = new ElementsManager();
+
 		this.initComponents();
 
 		if ( ! this.checkEnvCompatibility() ) {
