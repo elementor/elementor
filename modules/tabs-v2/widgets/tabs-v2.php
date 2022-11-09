@@ -656,8 +656,6 @@ class TabsV2 extends Widget_Nested_Base {
 			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
-		$this->start_controls_tabs( 'title_style' );
-
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography',
 			'global' => [
@@ -665,6 +663,8 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'selector' => '{{WRAPPER}} .e-tab-title-text',
 		] );
+
+		$this->start_controls_tabs( 'title_style' );
 
 		$this->start_controls_tab(
 			'title_normal',
