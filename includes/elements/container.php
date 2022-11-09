@@ -639,6 +639,9 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => '--background-transition: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -851,7 +854,7 @@ class Container extends Element_Base {
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -982,8 +985,7 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}, transform var( --e-con-transform-transition-duration, {{SIZE}}{{UNIT}} )',
-					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--border-transition: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
