@@ -38,11 +38,32 @@ class Module extends App {
 		return [
 			'isDebug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
 			'urls' => [
-				'rest' => get_rest_url(),
+				'rest' => $this->get_rest_url(),
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
 			'nonce' => wp_create_nonce( 'wp_rest' ),
 			'version' => ELEMENTOR_VERSION,
 		];
+	}
+
+	/**
+	 * Force the REST URL to be in non-permalink structure (e.g. `/index.php?rest_route=/`
+	 * instead of `/wp-json/`) in order to make sure that servers that don't support
+	 * URL rewrites or have a corrupted .htaccess will still work.
+	 *
+	 * @return string
+	 */
+	protected function get_rest_url() {
+		$filter = function() {
+			return null;
+		};
+
+		add_filter( 'option_permalink_structure', $filter );
+
+		$rest_url = get_rest_url();
+
+		remove_filter( 'option_permalink_structure', $filter );
+
+		return $rest_url;
 	}
 }
