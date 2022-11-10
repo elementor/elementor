@@ -666,6 +666,30 @@ abstract class Base extends Base_File {
 		return $this->get_stylesheet()->__toString();
 	}
 
+
+	private function update_background_images_sizes( $control, $values ) {
+		if ( strpos( $control['name'], 'background_image' ) !== false ) {
+			$image_size = $values['background_dimension'];
+			if ( isset( $image_size ) && ! empty( $image_size ) ) {
+				$responsive_size = 'background_dimension';
+				if ( strpos( $control['name'], 'tablet' ) !== false ) {
+					$responsive_size .= '_tablet';
+				} elseif ( strpos( $control['name'], 'mobile' ) !== false ) {
+					$responsive_size .= '_mobile';
+				}
+				$size_value = $values[ $responsive_size ];
+				$original_image = $values[ $control['name'] ];
+				if ( isset( $size_value ) && ! empty( $size_value ) && isset( $original_image ) && ! empty( $original_image ) ) {
+					$image = wp_get_attachment_image_src( $original_image['id'], $size_value );
+					if ( $image ) {
+						$values[ $control['name'] ]['url'] = $image[0];
+					}
+				}
+			}
+		}
+		return $values;
+	}
+
 	/**
 	 * Add control style rules.
 	 *
@@ -681,6 +705,9 @@ abstract class Base extends Base_File {
 	 * @param array $replacements Replacements.
 	 */
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
+
+		$values = $this->update_background_images_sizes( $control, $values );
+
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );

@@ -258,6 +258,23 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
+		$dimentions_options = [];
+		foreach ( get_intermediate_image_sizes() as $size ) {
+			$dimentions_options[ $size ] = $size;
+		}
+
+		$fields['dimension'] = [
+			'label' => esc_html_x( 'Dimension', 'Background Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'options' => $dimentions_options,
+			'responsive' => true,
+			'default' => 'large',
+			'condition' => [
+				'background' => [ 'classic' ],
+				'image!' => '',
+			],
+		];
+
 		$fields['position'] = [
 			'label' => esc_html_x( 'Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
