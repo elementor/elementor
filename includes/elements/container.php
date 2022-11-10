@@ -597,6 +597,12 @@ class Container extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_image', 'url' ],
+						],
+					],
 				],
 			]
 		);
@@ -626,14 +632,10 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
+					'unit' => 's',
 					'size' => 0.3,
-				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
@@ -691,7 +693,7 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -805,7 +807,7 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -841,16 +843,15 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
+					'size' => 0.3,
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}s;',
+					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -960,14 +961,10 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
+					'unit' => 's',
 					'size' => 0.3,
-				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
 				],
 				'conditions' => [
 					'relation' => 'or',
@@ -985,8 +982,8 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
-					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
+					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
 				],
 			]
 		);

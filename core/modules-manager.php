@@ -98,6 +98,9 @@ class Modules_Manager {
 			'web-cli',
 			'promotions',
 			'notes',
+			'performance-lab',
+			'lazyload',
+			'kit-elements-defaults',
 		];
 	}
 

@@ -704,14 +704,36 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
+						],
+					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}{{UNIT}};',
 					],
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
@@ -741,18 +763,40 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
+						],
+					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -763,18 +807,40 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
+						],
+					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
 						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -981,17 +1047,39 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Skew X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
+						],
+					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1002,17 +1090,39 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => esc_html__( 'Skew Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
+						'grad' => [
+							'min' => -400,
+							'max' => 400,
+						],
+						'rad' => [
+							'min' => -6.2832,
+							'max' => 6.2832,
+						],
+						'turn' => [
+							'min' => -1,
+							'max' => 1,
+						],
+					],
+					'default' => [
+						'unit' => 'deg',
+					],
+					'tablet_default' => [
+						'unit' => 'deg',
+					],
+					'mobile_default' => [
+						'unit' => 'deg',
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1062,16 +1172,22 @@ class Widget_Common extends Widget_Base {
 				$this->add_control(
 					'_transform_transition_hover',
 					[
-						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
+						'label' => esc_html__( 'Transition Duration', 'elementor' ),
 						'type' => Controls_Manager::SLIDER,
+						'size_units' => [ 's', 'ms' ],
+						'default' => [
+							'unit' => 'ms',
+						],
 						'range' => [
-							'px' => [
-								'min' => 100,
+							's' => [
+								'max' => 10,
+							],
+							'ms' => [
 								'max' => 10000,
 							],
 						],
 						'selectors' => [
-							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
+							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}{{UNIT}}',
 						],
 					]
 				);
@@ -1196,6 +1312,15 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ '_background_image', 'url' ],
+							'selector' => '.elementor-widget-container',
+						],
+					],
+				],
 			]
 		);
 
@@ -1221,16 +1346,14 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container' => 'transition: background {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-widget-container' => 'transition: background {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -1315,7 +1438,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1336,14 +1459,12 @@ class Widget_Common extends Widget_Base {
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}{{_background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
