@@ -177,13 +177,13 @@
 		}
 	}
 
-	.e-container,
+	.e-con,
 	.elementor-tabs-content-wrapper {
 		border: 1px none var( --tabs-v2-border-color );
 		border-width: var( --tabs-v2-border-width );
 	}
 
-	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
+	.elementor-tabs-content-wrapper > .e-con:not(.elementor-active) {
 		display: none;
 	}
 }
