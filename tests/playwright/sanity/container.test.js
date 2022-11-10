@@ -473,11 +473,11 @@ test.describe( 'Container tests', () => {
 
 		// Act.
 		// Add widgets.
-		await editor.addWidget( 'spacer', containerId );
+		const spacer = await editor.addWidget( 'spacer', containerId );
 		// Set background colour and custom width.
 		await editor.activatePanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
-		await editor.setBackgroundColor( '#A81830' );
+		await editor.setBackgroundColor( '#A81830', spacer );
 		// Set container `align-items: center`.
 		await editor.selectElement( containerId );
 		await page.click( '.elementor-control-flex_align_items .eicon-align-center-v' );
