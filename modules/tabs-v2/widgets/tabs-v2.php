@@ -1030,19 +1030,19 @@ class TabsV2 extends Widget_Nested_Base {
 	}
 
 	/**
-	 * Print safe HTML tag for the element based on the element settings.	
-	 *	
-	 * @return void	
-	 */	
-	private function print_html_tag() {	
-		$html_tag = $this->get_settings_for_display( 'html_tag' );	
+	 * Print safe HTML tag for the element based on the element settings.
+	 *
+	 * @return void
+	 */
+	private function print_html_tag() {
+		$html_tag = $this->get_settings_for_display( 'html_tag' );
 
-		if ( empty( $html_tag ) ) {	
-			$html_tag = 'div';	
-		}	
+		if ( empty( $html_tag ) ) {
+			$html_tag = 'div';
+		}
 
-		Utils::print_validated_html_tag( $html_tag );	
-	}	
+		Utils::print_validated_html_tag( $html_tag );
+	}
 
 	protected function render() {
 		// Copied from tabs.php
