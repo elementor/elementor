@@ -25,14 +25,14 @@ jobs:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
             package*.json
-            ./github/**/*.yml
+            .github/**/*.yml
       - name: Check PHP files diff
         id: php_diff_files
         uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.php
-            ./github/**/*.yml
+            .github/**/*.yml
 
   JS-Lint:
     runs-on: ubuntu-18.04

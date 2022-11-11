@@ -24,7 +24,7 @@ jobs:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
             package*.json
-            ./github/**/*.yml
+            .github/**/*.yml
 
   q-unit:
     runs-on: ubuntu-18.04
