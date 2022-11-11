@@ -16,13 +16,14 @@ jobs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check JS files diff
         id: js_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
+            package*.json
 
   q-unit:
     runs-on: ubuntu-18.04
