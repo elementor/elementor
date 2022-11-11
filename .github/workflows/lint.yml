@@ -62,7 +62,7 @@ jobs:
         run: ./node_modules/eslint/bin/eslint.js .
 
   PHP-Lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
