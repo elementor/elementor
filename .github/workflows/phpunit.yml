@@ -27,7 +27,7 @@ jobs:
             .github/**/*.yml
 
   test:
-    runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
+    runs-on: ubuntu-20.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     strategy:
