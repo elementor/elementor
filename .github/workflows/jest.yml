@@ -24,6 +24,7 @@ jobs:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
             package*.json
+            ./github/**/*.yml
 
   jest:
     runs-on: ubuntu-20.04
