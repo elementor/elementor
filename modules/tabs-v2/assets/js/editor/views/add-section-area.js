@@ -3,12 +3,7 @@ import { useEffect, useRef } from 'react';
 
 export default function AddSectionArea( props ) {
 	const addAreaElementRef = useRef(),
-		containerHelper = elementor.helpers.container,
-		args = {
-			importOptions: {
-				target: props.container,
-			},
-		};
+		containerHelper = elementor.helpers.container;
 
 	// Make droppable area.
 	useEffect( () => {
