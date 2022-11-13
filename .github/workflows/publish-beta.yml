@@ -11,7 +11,7 @@ jobs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
@@ -23,7 +23,7 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
       - name: Checkout next release branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: ${{ env.RELEASE_BRANCH }}
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
@@ -68,7 +68,7 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
       - name: Checkout next release branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: ${{ env.RELEASE_BRANCH }}

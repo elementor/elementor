@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout develop branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
@@ -51,7 +51,7 @@ jobs:
           target_branch: master
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Checkout updated master branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master

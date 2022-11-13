@@ -16,7 +16,7 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
@@ -54,7 +54,7 @@ jobs:
             wpCoreVersion: 'latest'
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:

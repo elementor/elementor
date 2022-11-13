@@ -40,7 +40,7 @@ jobs:
     if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
@@ -67,7 +67,7 @@ jobs:
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
         with:
@@ -87,10 +87,6 @@ jobs:
           php7.4 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php8.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php8.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-      # - name: Setup PHP 7.1 # not included in ubuntu 18.04
-      #   uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
-      #   with:
-      #     php-version: '7.1'
       - name: Run PHP Syntax Lint 7.1
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
