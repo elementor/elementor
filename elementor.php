@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'ELEMENTOR_VERSION', '3.8.0' );
-define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '3.1.4' );
+define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '3.8.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -77,8 +77,15 @@ function elementor_load_plugin_textdomain() {
  * @return void
  */
 function elementor_fail_php_version() {
-	/* translators: %s: PHP version. */
-	$message = sprintf( esc_html__( 'Elementor requires PHP version %s+, plugin is currently NOT RUNNING.', 'elementor' ), '7.0' );
+	$message = sprintf(
+	/* translators: 1: Bold text opening tag, 2: Bold text closing tag, 3: translators: %s: PHP version. 4: Link opening tag, 5: Link closing tag. */
+	esc_html__( '%1$sElementor isn’t running because PHP is outdated.%2$s Update to PHP version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
+		'<h3>',
+		'</h3>',
+		'7.0',
+		'<a href="https://go.elementor.com/wp-dash-update-php/" target="_blank">',
+		'</a>'
+	);
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
@@ -93,8 +100,15 @@ function elementor_fail_php_version() {
  * @return void
  */
 function elementor_fail_wp_version() {
-	/* translators: %s: WordPress version. */
-	$message = sprintf( esc_html__( 'Elementor requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT RUNNING.', 'elementor' ), '5.2' );
+	$message = sprintf(
+	/* translators: 1: Bold text opening tag, 2: Bold text closing tag, 3: translators: %s: WP version. 4: Link opening tag, 5: Link closing tag. */
+		esc_html__( '%1$sElementor isn’t running because WordPress is outdated.%2$s Update to version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
+		'<h3>',
+		'</h3>',
+		'5.2',
+		'<a href="https://go.elementor.com/wp-dash-update-wordpress/" target="_blank">',
+		'</a>'
+	);
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
