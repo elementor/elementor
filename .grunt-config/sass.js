@@ -21,6 +21,13 @@ const sass = {
 				dest: 'assets/css/modules/container-converter',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/notes/assets/scss',
+				src: 'editor.scss',
+				dest: 'assets/css/modules/notes',
+				ext: '.css',
+			},
 		]
 	}
 };

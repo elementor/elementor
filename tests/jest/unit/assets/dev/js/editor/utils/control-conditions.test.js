@@ -85,4 +85,55 @@ describe( 'Control Conditions', () => {
 		// Assert.
 		expect( failResult ).toBe( false );
 	} );
+
+	test( 'getResponsiveControlDeviceSuffixDesktop', () => {
+		// Arrange.
+		const conditions = new ControlConditions();
+
+		const mockResponsiveControlDesktop = {
+			name: 'mock_control',
+			responsive: {
+				max: 'desktop',
+			},
+		};
+
+		// Act
+		const deviceSuffix = conditions.getResponsiveControlDeviceSuffix( mockResponsiveControlDesktop.responsive );
+
+		expect( deviceSuffix ).toEqual( '' );
+	} );
+
+	test( 'getResponsiveControlDeviceSuffixTabletMax', () => {
+		// Arrange.
+		const conditions = new ControlConditions();
+
+		const mockResponsiveControlTablet = {
+			name: 'mock_control_tablet',
+			responsive: {
+				max: 'tablet',
+			},
+		};
+
+		// Act
+		const deviceSuffix = conditions.getResponsiveControlDeviceSuffix( mockResponsiveControlTablet.responsive );
+
+		expect( deviceSuffix ).toEqual( '_tablet' );
+	} );
+
+	test( 'getResponsiveControlDeviceSuffixMobileExtraMin', () => {
+		// Arrange.
+		const conditions = new ControlConditions();
+
+		const mockResponsiveControlMobileExtra = {
+			name: 'mock_control_mobile_extra',
+			responsive: {
+				min: 'mobile_extra',
+			},
+		};
+
+		// Act
+		const deviceSuffix = conditions.getResponsiveControlDeviceSuffix( mockResponsiveControlMobileExtra.responsive );
+
+		expect( deviceSuffix ).toEqual( '_mobile_extra' );
+	} );
 } );

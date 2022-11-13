@@ -2,9 +2,9 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.7.4
+Stable tag: 3.8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -240,9 +240,76 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.8.0 - 2022-10-30 =
+* New: Revert your Website to its Previous Condition - Allow removing the last imported Kit
+* New: The container experiment is now officially set as beta
+* Tweak: Increase inputs in Replace URL tool to support long URLs ([#19559](https://github.com/elementor/elementor/issues/19559))
+* Tweak: Added Dynamic Tags for Global Colors ([#15135](https://github.com/elementor/elementor/issues/15135))
+* Tweak: Improved performance of Inline Fonts Icons experiment ([#19447](https://github.com/elementor/elementor/issues/19447))
+* Tweak: Improved browser responsiveness during Elementor's initialization process ([#15228](https://github.com/elementor/elementor/issues/15228), props [@FlyingDR](https://github.com/FlyingDR))
+* Tweak: Added Responsive control to Text Align in Columns and Sections ([#13199](https://github.com/elementor/elementor/issues/13199), props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added size units to Letter Spacing in Typography modal ([#19726](https://github.com/elementor/elementor/issues/19726))
+* Tweak: Added more size units to Size and Spacing controls Icon and Icon box widgets ([#19496](https://github.com/elementor/elementor/issues/19496))
+* Tweak: Added labels to font weight numeric values ([#18761](https://github.com/elementor/elementor/issues/18761))
+* Tweak: Added `rem` unit to gap between elements control in Container widget ([#18261](https://github.com/elementor/elementor/issues/18261))
+* Tweak: Added clarification for the `a` tag to the container element (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added text stroke to number in Counter widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added text stroke to title in Counter widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added text stroke to text in Divider widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added `em` unit for border radius to layout elements (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added text stroke to title in Image Box widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added more size units to Spacing and Image Size in Testimonial and Image Box widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Replaced `e-container` class name to `e-con` in Container
+* Tweak: Replaced `e-container--width-boxed` class name to `e-con-boxed` in Container
+* Tweak: Replaced `e-container--width-full` class name to `e-con-full` in Container
+* Tweak: Replaced `e-container__inner` class name to `e-con-inner` in Container
+* Tweak: Custom links in menu items should be relative to the site address when importing a Kit
+* Tweak: Import/Export CLI and UI mechanisms were merged into a unified service
+* Tweak: Improved the UX of dependencies between experiments
+* Tweak: Changed Full-width and Boxed content width functionality in Container
+* Tweak: Changed default Google fonts loading method to "Swap" on new sites
+* Tweak: Changed default direction for Featured sorting to ASC in Kit Library
+* Tweak: Added migrate script to handle retro PHP8 type error on image custom size
+* Tweak: Re-organized SCSS files for the Container
+* Tweak: Changed default Content Width when adding a new Container from right click context-menu
+* Fix: `isolation: isolate` property causing z-index issues in various scenarios when using Container ([#19834](https://github.com/elementor/elementor/issues/19834), [#19845](https://github.com/elementor/elementor/issues/19845), [#19705](https://github.com/elementor/elementor/issues/19705), [#20011](https://github.com/elementor/elementor/issues/20011))
+* Fix: Responsive controls with responsive conditions whose values are arrays (Base Multiple) did not apply in the frontend for non-desktop devices ([#19924](https://github.com/elementor/elementor/issues/19924), [#19917](https://github.com/elementor/elementor/issues/19917), [#19922](https://github.com/elementor/elementor/issues/19922), [#19894](https://github.com/elementor/elementor/issues/19894), [#19930](https://github.com/elementor/elementor/issues/19930), [#20001](https://github.com/elementor/elementor/issues/20001))
+* Fix: Importer WordPress root write permissions check causes import failures ([#17255](https://github.com/elementor/elementor/issues/17255))
+* Fix: Removed unnecessary default `max-width` and `flex-grow` settings in various widgets when using Container ([#19891](https://github.com/elementor/elementor/issues/19891))
+* Fix: Transitions functionality is not working as expected in Container ([#19913](https://github.com/elementor/elementor/issues/19913))
+* Fix: Progress Bar layout is not presented as expected when direction is set to row in Container
+* Fix: Insert library button is clickable while inserting a template
+* Fix: Go pro link UI glitch in export kit tool
+* Fix: Export kit doesn't work in a Multisite Network
+* Fix: WooCommerce products and categories are not imported as expected when assigned to a menu
+* Fix: CSS minified files not generated on build
+* Fix: Editor controls color issues in dark mode scheme
+
+= 3.7.8 - 2022-10-02 =
+* Fix: Using responsive control values in selectors and selector values causes a fatal error ([#19894](https://github.com/elementor/elementor/issues/19894))
+* Fix: Error message appears after connecting account and refreshing in a promotion screen
+* Fix: UI glitch when searching for non-existing terms in Template Library
+
+= 3.7.7 - 2022-09-20 =
+* Tweak: Removed the option to create a custom logo in Site Settings ([#19823](https://github.com/elementor/elementor/issues/19823))
+* Fix: Custom X Position of background image doesn't work for non-desktop devices ([#19487](https://github.com/elementor/elementor/issues/19487), [#19662](https://github.com/elementor/elementor/issues/19662), [#19669](https://github.com/elementor/elementor/issues/19669), [#19527](https://github.com/elementor/elementor/issues/19527))
+* Fix: Connect & activate to Elementor account issue with various WordPress site languages
+
+= 3.7.6 - 2022-09-15 =
+* Fix: Replaced link for better clarity in Site Settings
+
+= 3.7.5 - 2022-09-14 =
+* Tweak: Added an option to create a custom logo with AI Logo Maker by Fiverr in Site Settings
+* Fix: Background Image Custom Position and Size controls are not visible for Mobile and Tablet devices ([#19487](https://github.com/elementor/elementor/issues/19487), [#19669](https://github.com/elementor/elementor/issues/19669), [#19662](https://github.com/elementor/elementor/issues/19662))
+* Fix: Custom Width on Tablet and Mobile devices generates wrong values when Desktop is set to default ([#19487](https://github.com/elementor/elementor/issues/19487), [#19669](https://github.com/elementor/elementor/issues/19669), [#19662](https://github.com/elementor/elementor/issues/19662), [#19528](https://github.com/elementor/elementor/issues/19528), [#19542](https://github.com/elementor/elementor/issues/19542))
+* Fix: Empty state placeholder is not displayed in various widgets ([#19446](https://github.com/elementor/elementor/issues/19446))
+* Fix: When pasting a widget on a page the widget is being pasted into a Section when the Container experiment is active ([#19452](https://github.com/elementor/elementor/issues/19452))
+* Fix: Custom Image Size generates a fatal error after updating to PHP 8+
+* Fix: `is_current_user_can_edit` not working correctly when `$post_id` missing
+
 = 3.7.4 - 2022-08-31 =
-* Tweak: Removed redundant code in various widgets that includes images ([#12268] (https://github.com/elementor/elementor/issues/12268), props [@ibndawood](https://github.com/ibndawood))
-* Fix: Error message appears on front if WooCommerce is activated ([#19553] (https://github.com/elementor/elementor/issues/19553))
+* Tweak: Removed redundant code in various widgets that includes images ([#12268](https://github.com/elementor/elementor/issues/12268), props [@ibndawood](https://github.com/ibndawood))
+* Fix: Error message appears on front if WooCommerce is activated ([#19553](https://github.com/elementor/elementor/issues/19553))
 * Fix: Web CLI requires jQuery to avoid errors when jQuery is loaded in the footer (props [@nicomollet](https://github.com/nicomollet))
 
 = 3.7.3 - 2022-08-29 =
@@ -267,7 +334,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: Breakpoints manager shouldn't run deprecated hook
 
 = 3.7.0 - 2022-08-08 =
-* New: Use the user language in the Elementor Editor regardless of the Site's language ([#5148](https://github.com/elementor/elementor/issues/#5148))
+* New: Use the user language in the Elementor Editor regardless of the Site's language ([#5148](https://github.com/elementor/elementor/issues/5148))
 * New: "Exit To…" location setting when exiting the Editor
 * Tweak: Added filters to allow modifying upload temp paths in Uploads Manager ([#18565](https://github.com/elementor/elementor/issues/18565), props [@patrick-leb](https://github.com/patrick-leb))
 * Tweak: Added `EM` unit for border-radius controls in some widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))

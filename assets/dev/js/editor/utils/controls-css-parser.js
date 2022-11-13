@@ -211,7 +211,14 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {
 		if ( parserControlName ) {
-			control = _.findWhere( controls, { name: parserControlName } );
+			if ( control.responsive && controls[ parserControlName ] ) {
+				const deviceSuffix = elementor.conditions.getResponsiveControlDeviceSuffix( control.responsive );
+
+				control = _.findWhere( controls, { name: parserControlName + deviceSuffix } ) ??
+					_.findWhere( controls, { name: parserControlName } );
+			} else {
+				control = _.findWhere( controls, { name: parserControlName } );
+			}
 
 			value = this.getStyleControlValue( control, values );
 		}
