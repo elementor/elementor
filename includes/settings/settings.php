@@ -384,7 +384,6 @@ class Settings extends Settings_Page {
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
-			'e-form-submissions',
 			'elementor_custom_custom_code',
 			'popup_templates',
 		];
