@@ -262,6 +262,7 @@ class Group_Control_Background extends Group_Control_Base {
 		foreach ( get_intermediate_image_sizes() as $size ) {
 			$dimentions_options[ $size ] = $size;
 		}
+		$dimentions_options['full'] = 'full';
 
 		$fields['dimension'] = [
 			'label' => esc_html_x( 'Dimension', 'Background Control', 'elementor' ),
