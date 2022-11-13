@@ -263,7 +263,6 @@ class Group_Control_Background extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'options' => $this->get_images_sizes(),
 			'responsive' => true,
-			'frontend_available' => true,
 			'default' => 'full',
 			'condition' => [
 				'background' => [ 'classic' ],
