@@ -205,7 +205,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( 'default', $value );
 	}
 
-	// test get_super_global_value
 	public function test_get_super_global_value__returns_value() {
 		// Arrange
 		$_REQUEST['key'] = 'value';
@@ -217,7 +216,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( 'value', $value );
 	}
 
-	// test get_super_global_value
 	public function test_get_super_global_value__unslashed() {
 		// Arrange
 		$_REQUEST['key'] = 'value\\//';
@@ -238,5 +236,30 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 'valuealert(1)', $value );
+	}
+
+	public function test_get_super_global_value__files() {
+		// Arrange
+		$_FILES['file'] = [
+			'name' => '..%2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		$sanitized = [
+			'name' => '2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		// Act
+		$file = Utils::get_super_global_value( $_FILES,  'file' );
+
+		// Assert
+		$this->assertEquals( $sanitized, $file);
 	}
 }

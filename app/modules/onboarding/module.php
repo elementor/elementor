@@ -256,8 +256,10 @@ class Module extends BaseModule {
 	private function maybe_upload_logo_image() {
 		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload', [] );
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload']['type'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
@@ -268,7 +270,7 @@ class Module extends BaseModule {
 
 		// If the user has allowed it, set the Request's state as an "Elementor Upload" request, in order to add
 		// support for non-standard file uploads.
-		if ( 'image/svg+xml' === $_FILES['fileToUpload']['type'] ) {
+		if ( 'image/svg+xml' === $file['type'] ) {
 			if ( Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 				Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 			} else {
@@ -277,9 +279,9 @@ class Module extends BaseModule {
 		}
 
 		// If the image is an SVG file, sanitation is performed during the import (upload) process.
-		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $_FILES['fileToUpload'] );
+		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $file );
 
-		if ( 'image/svg+xml' === $_FILES['fileToUpload']['type'] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
+		if ( 'image/svg+xml' === $file['type'] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 			// Reset Upload state.
 			Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 		}

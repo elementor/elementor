@@ -796,6 +796,12 @@ class Utils {
 			return $default;
 		}
 
+		if ( $_FILES === $super_global ) {
+			// sanitize_file_name
+			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
+			return $super_global[ $key ];
+		}
+
 		return wp_kses_post( wp_unslash( $super_global[ $key ] ) );
 	}
 }
