@@ -76,7 +76,7 @@ jobs:
           composer require php-parallel-lint/php-parallel-lint
       - name: Run Lint
         run: |
-          vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+          vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php  --report=csv
       - name: Run PHP Syntax Lint
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
