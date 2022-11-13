@@ -1,9 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
 
 /**
- *  Test that the "Go Pro" popover appears when overing over the "Go Pro" button.
+ *  Test that the "Upgrade" popover appears when overing over the "Upgrade" button.
  */
-test( 'Onboarding Go Pro Popover', async ( { page } ) => {
+test( 'Onboarding Upgrade Popover', async ( { page } ) => {
 	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 	const goProHeaderButton = await page.locator( '#eps-app-header-btn-go-pro' );
