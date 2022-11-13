@@ -1,9 +1,13 @@
 import ControlsStack from 'elementor-views/controls-stack';
 
-module.exports = Marionette.CompositeView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
+export default class extends Marionette.CompositeView {
+	getTemplate() {
+		return Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' );
+	}
 
-	className: 'elementor-repeater-fields',
+	className() {
+		return 'elementor-repeater-fields';
+	}
 
 	ui() {
 		return {
@@ -12,48 +16,56 @@ module.exports = Marionette.CompositeView.extend( {
 			removeButton: '.elementor-repeater-tool-remove',
 			itemTitle: '.elementor-repeater-row-item-title',
 		};
-	},
+	}
 
-	behaviors: {
-		HandleInnerTabs: {
-			behaviorClass: require( 'elementor-behaviors/inner-tabs' ),
-		},
-	},
+	behaviors() {
+		return {
+			HandleInnerTabs: {
+				behaviorClass: require( 'elementor-behaviors/inner-tabs' ),
+			},
+		};
+	}
 
-	triggers: {
-		'click @ui.removeButton': 'click:remove',
-		'click @ui.duplicateButton': 'click:duplicate',
-		'click @ui.itemTitle': 'click:edit',
-	},
+	triggers() {
+		return {
+			'click @ui.removeButton': 'click:remove',
+			'click @ui.duplicateButton': 'click:duplicate',
+			'click @ui.itemTitle': 'click:edit',
+		};
+	}
 
-	modelEvents: {
-		change: 'onModelChange',
-	},
+	modelEvents() {
+		return {
+			change: 'onModelChange',
+		};
+	}
 
 	templateHelpers() {
 		return {
 			itemIndex: this.getOption( 'itemIndex' ),
 			itemActions: this.getOption( 'itemActions' ),
 		};
-	},
+	}
 
-	childViewContainer: '.elementor-repeater-row-controls',
+	childViewContainer() {
+		return '.elementor-repeater-row-controls';
+	}
 
 	getChildView( item ) {
 		var controlType = item.get( 'type' );
 
 		return elementor.getControlView( controlType );
-	},
+	}
 
 	childViewOptions() {
 		return {
 			container: this.options.container,
 		};
-	},
+	}
 
 	updateIndex( newIndex ) {
 		this.itemIndex = newIndex;
-	},
+	}
 
 	setTitle() {
 		const titleField = this.getOption( 'titleField' );
@@ -70,34 +82,34 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		this.ui.itemTitle.html( title );
-	},
+	}
 
 	toggleSort( enable ) {
 		this.$el.toggleClass( 'elementor-repeater-row--disable-sort', ! enable );
-	},
+	}
 
 	initialize( options ) {
 		this.itemIndex = 0;
 
 		// Collection for Controls list
 		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields ) ) );
-	},
+	}
 
 	onRender() {
 		this.setTitle();
 
 		ControlsStack.handlePopovers( this );
-	},
+	}
 
 	onModelChange() {
 		if ( this.getOption( 'titleField' ) ) {
 			this.setTitle();
 		}
-	},
+	}
 
 	onChildviewResponsiveSwitcherClick( childView, device ) {
 		if ( 'desktop' === device ) {
 			elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
-	},
-} );
+	}
+}

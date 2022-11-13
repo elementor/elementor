@@ -1,7 +1,9 @@
 /* global ElementorConfig */
 
 import ColorControl from './controls/color';
-import DateTimeControl from 'elementor-controls/date-time';
+import DateTimeControl from './controls/date-time';
+import RepeaterRow from './controls/repeater-row';
+
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import ElementsManager from './elements/manager';
@@ -176,7 +178,7 @@ export default class EditorBase extends Marionette.Application {
 			Order: require( 'elementor-controls/order' ),
 			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
-			RepeaterRow: require( 'elementor-controls/repeater-row' ),
+			RepeaterRow,
 			Section: require( 'elementor-controls/section' ),
 			Select: require( 'elementor-controls/select' ),
 			Select2: require( 'elementor-controls/select2' ),
