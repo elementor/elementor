@@ -101,7 +101,7 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/control-behavior.js', ()
 			isProConnected: false,
 			hasTags: false,
 			expected: false,
-			description: 'Should no render tools when there is no Pro and there is default',
+			description: 'Should not render tools when there is no Pro and there is default',
 		},
 	] )( '$description', ( options ) => {
 		// Arrange.
