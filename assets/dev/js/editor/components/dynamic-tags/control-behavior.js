@@ -14,25 +14,21 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	shouldRenderTools() {
-		const hasDefault = this.getOption( 'dynamicSettings' ).default,
-			hasPro = elementor.helpers.hasPro(),
-			hasTags = this.getOption( 'tags' ).length > 0,
-			shouldHavePromotion = ! hasPro || elementor.helpers.hasProAndNotConnected(),
-			shouldHaveSwitcher = hasPro && hasTags;
+		const hasDefault = this.getOption( 'dynamicSettings' ).default;
 
 		if ( hasDefault ) {
 			return false;
 		}
 
+		const shouldHavePromotion = ! elementor.helpers.hasPro() || elementor.helpers.hasProAndNotConnected();
+
 		if ( shouldHavePromotion ) {
 			return true;
 		}
 
-		if ( shouldHaveSwitcher ) {
-			return true;
-		}
+		const isFeatureAvailable = elementor.helpers.hasPro() && this.getOption( 'tags' ).length > 0;
 
-		return false;
+		return isFeatureAvailable;
 	},
 
 	renderTools() {
