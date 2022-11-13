@@ -82,13 +82,9 @@ jobs:
       - name: Run PHP Syntax Lint
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
+          php7.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.2 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.3 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.4 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php8.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php8.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-      - name: Run PHP Syntax Lint 7.1
-        run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
