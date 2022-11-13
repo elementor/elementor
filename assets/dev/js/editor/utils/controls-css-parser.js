@@ -51,14 +51,17 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				const sizeValue = values[ responsiveSize ];
 				const originalImage = values[ control.name ];
 				if ( sizeValue && originalImage ) {
-					const image = elementor.helpers.getImageUrl( originalImage.id, sizeValue );
+					const image = elementor.imagesManager.getImageUrl( {
+						id: originalImage.id,
+						size: sizeValue,
+					} );
 					if ( image ) {
 						values[ control.name ].url = image;
 					}
 				}
 			}
 		}
-			return values;
+		return values;
 	},
 
 	addStyleRules( styleControls, values, controls, placeholders, replacements ) {
