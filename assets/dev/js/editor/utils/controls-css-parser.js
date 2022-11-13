@@ -42,12 +42,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			const imageSize = values.background_dimension || false;
 			if ( imageSize ) {
 				let responsiveSize = 'background_dimension';
-				if ( control.name.includes( 'tablet' ) ) {
-					responsiveSize += '_tablet';
-				}
-				if ( control.name.includes( 'mobile' ) ) {
-					responsiveSize += '_mobile';
-				}
+				const breakpoints = elementorFrontend.config.responsive.breakpoints;
+				Object.entries( breakpoints ).forEach( ( [ breakpointName ] ) => {
+					if ( control.name.includes( breakpointName ) ) {
+						responsiveSize += '_' + breakpointName;
+					}
+				} );
 				const sizeValue = values[ responsiveSize ];
 				const originalImage = values[ control.name ];
 				if ( sizeValue && originalImage ) {

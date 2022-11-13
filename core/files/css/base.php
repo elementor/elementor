@@ -672,10 +672,11 @@ abstract class Base extends Base_File {
 			$image_size = $values['background_dimension'] ?? null;
 			if ( ! empty( $image_size ) ) {
 				$responsive_size = 'background_dimension';
-				if ( strpos( $control['name'], 'tablet' ) !== false ) {
-					$responsive_size .= '_tablet';
-				} elseif ( strpos( $control['name'], 'mobile' ) !== false ) {
-					$responsive_size .= '_mobile';
+				$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+				foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
+					if ( strpos( $control['name'], $breakpoint_key ) !== false ) {
+						$responsive_size .= '_' . $breakpoint_key;
+					}
 				}
 				$size_value = $values[ $responsive_size ] ?? null;
 				$original_image = $values[ $control['name'] ] ?? null;
