@@ -68,10 +68,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-      - name: Setup PHP 7.4
-        uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
+      - name: Setup PHP 7.1
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '7.1'
       - name: Install Dependencies
         run: |
           composer install
