@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   build-plugin:
     name: Build plugin
@@ -75,6 +80,7 @@ jobs:
           npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
           npx wp-env run cli "wp --user=admin elementor library import-dir elementor-playwright-templates"
           npx wp-env run cli "wp rewrite structure \"/%postname%/\" --hard"
+          npx wp-env run cli "wp theme activate twentytwentytwo"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"

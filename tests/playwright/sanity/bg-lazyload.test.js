@@ -23,11 +23,17 @@ test( 'Background lazy load sanity test', async ( { page } ) => {
 	await page.evaluate( ( lazyloadSelectorScrollTo ) => {
 		const lazyloadElement = document.querySelector( lazyloadSelectorScrollTo );
 		lazyloadElement.scrollIntoView();
+		lazyloadElement.setAttribute( 'bg-test-element', '' );
 	}, lazyloadSelector );
 
 	await page.waitForTimeout( 1500 );
 
-	const cssVariable = await page.$eval( lazyloadSelector, ( el ) => {
+	const hasClass = await page.$eval( '[bg-test-element]', ( el ) => {
+		return el.classList.contains( 'lazyloaded' );
+	} );
+	expect( hasClass ).toBe( true );
+
+	const cssVariable = await page.$eval( '[bg-test-element]', ( el ) => {
 		return window.getComputedStyle( el ).getPropertyValue( '--e-bg-lazyload' );
 	} );
 	expect( cssVariable ).toContain( 'Quote-About-Copy-1.png' );
