@@ -20,15 +20,10 @@ module.exports = Marionette.Behavior.extend( {
 			return false;
 		}
 
-		const shouldHavePromotion = ! elementor.helpers.hasPro() || elementor.helpers.hasProAndNotConnected();
+		const isFeatureAvalibleToUser = elementor.helpers.hasPro() && ! elementor.helpers.hasProAndNotConnected(),
+			hasTags = this.getOption( 'tags' ).length > 0;
 
-		if ( shouldHavePromotion ) {
-			return true;
-		}
-
-		const isFeatureAvailable = elementor.helpers.hasPro() && this.getOption( 'tags' ).length > 0;
-
-		return isFeatureAvailable;
+		return ! isFeatureAvalibleToUser || hasTags;
 	},
 
 	renderTools() {
