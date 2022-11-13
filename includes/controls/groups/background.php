@@ -264,7 +264,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'options' => $this->get_images_sizes(),
 			'responsive' => true,
 			'frontend_available' => true,
-			'default' => 'large',
+			'default' => 'full',
 			'condition' => [
 				'background' => [ 'classic' ],
 				'image[url]!' => '',
