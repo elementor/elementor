@@ -2,9 +2,9 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.8.0
+Stable tag: 3.8.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.8.1 - 2022-11-13 =
+
+* Fix: PHP error notice appears while saving in Site Settings when using PHP8.0+ ([#20062](https://github.com/elementor/elementor/issues/20062), props [@gerasimovdaniel](https://github.com/gerasimovdaniel))
 
 = 3.8.0 - 2022-10-30 =
 * New: Revert your Website to its Previous Condition - Allow removing the last imported Kit
