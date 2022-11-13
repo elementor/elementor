@@ -197,44 +197,44 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertFalse( $content );
 	}
 
-	public function test_get_request_var__returns_default() {
+	public function test_get_super_global_value__returns_default() {
 		// Act
-		$value = Utils::get_request_var( 'not_set', 'default' );
+		$value = Utils::get_super_global_value( $_REQUEST, 'not_set', 'default' );
 
 		// Assert
 		$this->assertEquals( 'default', $value );
 	}
 
-	// test get_request_var
-	public function test_get_request_var__returns_value() {
+	// test get_super_global_value
+	public function test_get_super_global_value__returns_value() {
 		// Arrange
 		$_REQUEST['key'] = 'value';
 
 		// Act
-		$value = Utils::get_request_var( 'key', 'default' );
+		$value = Utils::get_super_global_value( $_REQUEST,  'key', 'default' );
 
 		// Assert
 		$this->assertEquals( 'value', $value );
 	}
 
-	// test get_request_var
-	public function test_get_request_var__unslashed() {
+	// test get_super_global_value
+	public function test_get_super_global_value__unslashed() {
 		// Arrange
 		$_REQUEST['key'] = 'value\\//';
 
 		// Act
-		$value = Utils::get_request_var( 'key' );
+		$value = Utils::get_super_global_value( $_REQUEST,  'key' );
 
 		// Assert
 		$this->assertEquals( 'value//', $value );
 	}
 
-	public function test_get_request_var__returns_sanitize() {
+	public function test_get_super_global_value__returns_sanitize() {
 		// Arrange
 		$_REQUEST['key'] = 'value<script>alert(1)</script>';
 
 		// Act
-		$value = Utils::get_request_var( 'key' );
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
 		$this->assertEquals( 'valuealert(1)', $value );

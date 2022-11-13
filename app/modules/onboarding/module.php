@@ -8,6 +8,7 @@ use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\Utils;
 use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -156,7 +157,7 @@ class Module extends BaseModule {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( Utils::get_super_global_value( $_POST, 'data' ), true );
 
 		if ( ! isset( $data['siteName'] ) ) {
 			return $problem_error;
@@ -213,7 +214,7 @@ class Module extends BaseModule {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( Utils::get_super_global_value( $_POST, 'data' ), true );
 
 		// If there is no attachment ID passed or it is not a valid ID, exit here.
 		if ( empty( $data['attachmentId'] ) ) {
@@ -256,7 +257,7 @@ class Module extends BaseModule {
 		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+		if ( empty( $_FILES['fileToUpload']['type'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
