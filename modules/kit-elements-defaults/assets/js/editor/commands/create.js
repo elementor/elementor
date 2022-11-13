@@ -1,5 +1,6 @@
 import { updateElementDefaults } from '../api';
 import extractContainerSettings from '../extract-container-settings';
+import { extractElementType } from '../utils';
 
 export default class Create extends $e.modules.editor.CommandContainerBase {
 	validateArgs() {
@@ -9,12 +10,13 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 	async apply( { container } ) {
 		$e.internal( 'panel/state-loading' );
 
-		const elementType = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
-
 		const settings = extractContainerSettings( container );
 
 		try {
-			await updateElementDefaults( elementType, settings );
+			await updateElementDefaults(
+				extractElementType( container.model ),
+				settings,
+			);
 
 			elementor.notifications.showToast( {
 				message: __( 'Default settings changed.', 'elementor' ),

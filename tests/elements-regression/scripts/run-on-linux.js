@@ -34,6 +34,7 @@ async function run( args ) {
 
 ( async () => {
 	if ( ! await isDockerExist() ) {
+		// eslint-disable-next-line no-console
 		console.error( 'Docker is not installed, please install it first.' );
 
 		process.exit( 1 );

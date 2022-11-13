@@ -534,13 +534,19 @@ abstract class Element_Base extends Controls_Stack {
 			$elements[] = $child->get_raw_data( $with_html_content );
 		}
 
-		return [
+		$raw_data = [
 			'id' => $this->get_id(),
 			'elType' => $data['elType'],
 			'settings' => $data['settings'],
 			'elements' => $elements,
 			'isInner' => $data['isInner'],
 		];
+
+		if ( ! empty( $data['isLocked'] ) ) {
+			$raw_data['isLocked'] = $data['isLocked'];
+		}
+
+		return $raw_data;
 	}
 
 	public function get_data_for_save() {
@@ -734,7 +740,7 @@ abstract class Element_Base extends Controls_Stack {
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		foreach ( $active_devices as $breakpoint_key ) {
-			$label = 'desktop' === $breakpoint_key ? __( 'Desktop', 'elementor' ) : $active_breakpoints[ $breakpoint_key ]->get_label();
+			$label = 'desktop' === $breakpoint_key ? esc_html__( 'Desktop', 'elementor' ) : $active_breakpoints[ $breakpoint_key ]->get_label();
 
 			$this->add_control(
 				'hide_' . $breakpoint_key,
@@ -744,8 +750,8 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SWITCHER,
 					'default' => '',
 					'prefix_class' => 'elementor-',
-					'label_on' => __( 'Hide', 'elementor' ),
-					'label_off' => __( 'Show', 'elementor' ),
+					'label_on' => esc_html__( 'Hide', 'elementor' ),
+					'label_off' => esc_html__( 'Show', 'elementor' ),
 					'return_value' => 'hidden-' . $breakpoint_key,
 				]
 			);

@@ -19,11 +19,22 @@ const IGNORE_CHECKS_LIST = process.env.IGNORE_CHECKS_LIST.split(',');
 			}
 		  )
 		  const checkRuns = result.data.check_runs;
+		  const successfulCheckRuns = [];
 		  checkRuns.forEach(checkRun => {
 			console.log(`${checkRun.name} ${checkRun.status} - conclusion: ${checkRun.conclusion}`);
 			if( IGNORE_CHECKS_LIST.includes(checkRun.name) ) {
 				return;
 			}
+
+			// In case of few checks the last one is success and the previous one is failure
+			if ( successfulCheckRuns.includes( checkRun.name ) ) {
+				return;
+			}
+
+			if( checkRun.conclusion === 'success' ) {
+				successfulCheckRuns.push(checkRun.name);
+			}
+
 			if (checkRun.status === 'queued' || checkRun.status === 'in_progress') {
 				throw new Error(`Check run ${checkRun.name} is ${checkRun.status}, aborting deploy process, please wait for all checks to complete`);
 			}
