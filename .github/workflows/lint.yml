@@ -33,6 +33,7 @@ jobs:
           PATTERNS: |
             **/*.php
             .github/**/*.yml
+            composer.+(json|lock)
 
   JS-Lint:
     runs-on: ubuntu-20.04

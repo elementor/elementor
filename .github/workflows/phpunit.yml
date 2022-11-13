@@ -23,7 +23,7 @@ jobs:
         with:
           PATTERNS: |
             **/*.php
-            composer.json
+            composer.+(json|lock)
             .github/**/*.yml
 
   test:
