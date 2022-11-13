@@ -78,8 +78,8 @@ function elementor_load_plugin_textdomain() {
  */
 function elementor_fail_php_version() {
 	$message = sprintf(
-	/* translators: 1: Bold text opening tag, 2: Bold text closing tag, 3: translators: %s: PHP version. 4: Link opening tag, 5: Link closing tag. */
-	esc_html__( '%1$sElementor isn’t running because PHP is outdated.%2$s Update to PHP version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
+		/* translators: 1: `<h3>` opening tag, 2: `</h3>` closing tag, 3: PHP version. 4: Link opening tag, 5: Link closing tag. */
+		esc_html__( '%1$sElementor isn’t running because PHP is outdated.%2$s Update to PHP version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
 		'<h3>',
 		'</h3>',
 		'7.0',
@@ -101,7 +101,7 @@ function elementor_fail_php_version() {
  */
 function elementor_fail_wp_version() {
 	$message = sprintf(
-	/* translators: 1: Bold text opening tag, 2: Bold text closing tag, 3: translators: %s: WP version. 4: Link opening tag, 5: Link closing tag. */
+		/* translators: 1: `<h3>` opening tag, 2: `</h3>` closing tag, 3: WP version. 4: Link opening tag, 5: Link closing tag. */
 		esc_html__( '%1$sElementor isn’t running because WordPress is outdated.%2$s Update to version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
 		'<h3>',
 		'</h3>',
