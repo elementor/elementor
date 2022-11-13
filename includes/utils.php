@@ -790,4 +790,12 @@ class Utils {
 
 		return file_get_contents( $file, ...$args );
 	}
+
+	public static function get_request_var( $var_name, $default = null ) {
+		if ( empty( $_REQUEST[ $var_name ] ) ) {
+			return $default;
+		}
+
+		return wp_kses_post( wp_unslash( $_REQUEST[ $var_name ] ) );
+	}
 }

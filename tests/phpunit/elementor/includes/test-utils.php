@@ -196,4 +196,47 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		// Assert
 		$this->assertFalse( $content );
 	}
+
+	public function test_get_request_var__returns_default() {
+		// Act
+		$value = Utils::get_request_var( 'not_set', 'default' );
+
+		// Assert
+		$this->assertEquals( 'default', $value );
+	}
+
+	// test get_request_var
+	public function test_get_request_var__returns_value() {
+		// Arrange
+		$_REQUEST['key'] = 'value';
+
+		// Act
+		$value = Utils::get_request_var( 'key', 'default' );
+
+		// Assert
+		$this->assertEquals( 'value', $value );
+	}
+
+	// test get_request_var
+	public function test_get_request_var__unslashed() {
+		// Arrange
+		$_REQUEST['key'] = 'value\\//';
+
+		// Act
+		$value = Utils::get_request_var( 'key' );
+
+		// Assert
+		$this->assertEquals( 'value//', $value );
+	}
+
+	public function test_get_request_var__returns_sanitize() {
+		// Arrange
+		$_REQUEST['key'] = 'value<script>alert(1)</script>';
+
+		// Act
+		$value = Utils::get_request_var( 'key' );
+
+		// Assert
+		$this->assertEquals( 'valuealert(1)', $value );
+	}
 }
