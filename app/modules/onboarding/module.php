@@ -256,7 +256,7 @@ class Module extends BaseModule {
 	private function maybe_upload_logo_image() {
 		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload', [] );
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -341,8 +341,10 @@ class Module extends BaseModule {
 
 		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload', [] );
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
@@ -359,7 +361,7 @@ class Module extends BaseModule {
 
 		$skin = new Automatic_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
-		$upload_result = $upgrader->install( $_FILES['fileToUpload']['tmp_name'], [ 'overwrite_package' => false ] );
+		$upload_result = $upgrader->install( $file['tmp_name'], [ 'overwrite_package' => false ] );
 
 		if ( ! $upload_result || is_wp_error( $upload_result ) ) {
 			$result = [
@@ -417,7 +419,7 @@ class Module extends BaseModule {
 		$result = [];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( $_POST['action'] ) {
+		switch ( Utils::get_super_global_value( $_POST, 'action' ) ) {
 			case 'elementor_update_site_name':
 				// If no value is passed for any reason, no need ot update the site name.
 				$result = $this->maybe_update_site_name();
