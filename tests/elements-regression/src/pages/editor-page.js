@@ -83,17 +83,69 @@ module.exports = class EditorPage extends BasePage {
 		return await this.addElement( { widgetType, elType: 'widget' }, container );
 	}
 
+	/**
+	 * @return {import('@playwright/test').Frame}
+	 */
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
+	async getPreviewElement( id ) {
+		return this.getPreviewFrame().locator( `.elementor-element-${ id }` );
+	}
+
 	/**
-	 * @param {import('../utils/widgets/widget-base').WidgetBase} widget
+	 * @param {string} id
+	 * @return {Promise<void>}
+	 */
+	async resetElementSettings( id ) {
+		await this.page.evaluate( ( { elementId } ) => {
+			$e.run( 'document/elements/reset-settings', {
+				container: window.elementor.getContainer( elementId ),
+				options: {
+					external: true,
+				},
+			} );
+		}, { elementId: id } );
+	}
+
+	async waitForElementRender( id ) {
+		let isLoading;
+
+		try {
+			await this.getPreviewFrame().waitForSelector(
+				`.elementor-element-${ id }.elementor-loading`,
+				{ timeout: 500 },
+			);
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+			await this.getPreviewFrame().waitForSelector(
+				`.elementor-element-${ id }.elementor-loading`,
+				{ state: 'detached' },
+			);
+
+			await this.page.waitForTimeout( 400 );
+		}
+	}
+
+	/**
+	 * We are using custom page screenshot because:
+	 * 1. Screenshot should be taken after the element is loaded.
+	 * 2. Screenshot should be taken of element boundries but the maximum size is the viewport size.
+	 *
+	 * @param {string} id
 	 * @return {Promise<Buffer>}
 	 */
-	async screenshotWidget( widget ) {
+	async screenshotElement( id ) {
+		await this.waitForElementRender( id );
+
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
-		const elementRect = await ( await widget.getElement() ).boundingBox();
+		const elementRect = await ( await this.getPreviewElement( id ) ).boundingBox();
 
 		return await this.page.screenshot( {
 			type: 'jpeg',
