@@ -258,8 +258,8 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
-		$fields['dimension'] = [
-			'label' => esc_html_x( 'Dimension', 'Background Control', 'elementor' ),
+		$fields['dimensions'] = [
+			'label' => esc_html_x( 'Dimensions', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => $this->get_images_sizes(),
 			'responsive' => true,

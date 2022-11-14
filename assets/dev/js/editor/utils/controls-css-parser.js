@@ -37,11 +37,11 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	updateBackgroundImagesSizes( control, values ) {
+	updateBackgroundImagesDimension( control, values ) {
 		if ( control.name.includes( 'background_image' ) ) {
-			const imageSize = values.background_dimension || false;
+			const imageSize = values.background_dimensions;
 			if ( imageSize ) {
-				let responsiveSize = 'background_dimension';
+				let responsiveSize = 'background_dimensions';
 				const breakpoints = elementorFrontend.config.responsive.breakpoints;
 				Object.entries( breakpoints ).forEach( ( [ breakpointName ] ) => {
 					if ( control.name.includes( breakpointName ) ) {
@@ -94,7 +94,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addControlStyleRules( control, values, controls, placeholders, replacements, globalKeys ) {
-		values = this.updateBackgroundImagesSizes( control, values );
+		values = this.updateBackgroundImagesDimension( control, values );
 		let globalKey;
 
 		if ( globalKeys ) {

@@ -667,14 +667,14 @@ abstract class Base extends Base_File {
 	}
 
 
-	private function update_background_images_sizes( $control, $values ) {
-		if ( strpos( $control['name'], 'background_image' ) !== false ) {
-			$image_size = $values['background_dimension'] ?? null;
+	private function update_background_images_dimension( $control, $values ) {
+		if ( false !== strpos( $control['name'], 'background_image' ) ) {
+			$image_size = $values['background_dimensions'] ?? null;
 			if ( ! empty( $image_size ) ) {
-				$responsive_size = 'background_dimension';
+				$responsive_size = 'background_dimensions';
 				$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 				foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
-					if ( strpos( $control['name'], $breakpoint_key ) !== false ) {
+					if ( false !== strpos( $control['name'], $breakpoint_key ) ) {
 						$responsive_size .= '_' . $breakpoint_key;
 					}
 				}
@@ -707,7 +707,7 @@ abstract class Base extends Base_File {
 	 */
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 
-		$values = $this->update_background_images_sizes( $control, $values );
+		$values = $this->update_background_images_dimension( $control, $values );
 
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
