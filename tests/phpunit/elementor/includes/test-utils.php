@@ -227,7 +227,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( 'value//', $value );
 	}
 
-	public function test_get_super_global_value__returns_sanitize() {
+	public function test_get_super_global_value__returns_sanitized() {
 		// Arrange
 		$_REQUEST['key'] = 'value<script>alert(1)</script>';
 
@@ -236,6 +236,28 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 'valuealert(1)', $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'valuealert(1)' ], $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_associative_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'key' => 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'key' => 'valuealert(1)' ], $value );
 	}
 
 	public function test_get_super_global_value__files() {
