@@ -802,7 +802,7 @@ class Utils {
 		}
 
 		if ( is_array( $super_global[ $key ] ) ) {
-			return wp_kses_post_deep( $super_global[ $key ] );
+			return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
 		}
 
 		return wp_kses_post( wp_unslash( $super_global[ $key ] ) );
