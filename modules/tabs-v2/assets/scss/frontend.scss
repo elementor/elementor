@@ -189,7 +189,7 @@
 }
 
 // Responsive mode
-@mixin hide-mobile-tabs-($device) {
+@mixin hide-tabs-($device) {
 	.e-tabs-#{$device} {
 	
 		.elementor-tabs-wrapper {
@@ -198,7 +198,7 @@
 	}
 }
 
-@mixin hide-tabs-($device) {
+@mixin hide-mobile-tabs-($device) {
 	.e-tabs-#{$device} {
 	
 		.elementor-tab-mobile-title {
