@@ -52,12 +52,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				const sizeValue = values[ responsiveSize ];
 				const originalImage = values[ control.name ];
 				if ( sizeValue && originalImage ) {
-					const image = elementor.imagesManager.getImageUrl( {
+					const imageURL = elementor.imagesManager.getImageUrl( {
 						id: originalImage.id,
 						size: sizeValue,
 					} );
 					if ( image ) {
-						values[ control.name ].url = image;
+						values[ control.name ].url = imageURL;
 					}
 				}
 			}
