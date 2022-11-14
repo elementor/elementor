@@ -189,24 +189,56 @@
 }
 
 // Responsive mode
-// This code needs to be updated in the Responsive Tabs section task
-@media (max-width: $screen-mobile-max) {
-	.elementor-tabs {
-
+@mixin hide-mobile-tabs-($device) {
+	.e-tabs-#{$device} {
+	
 		.elementor-tabs-wrapper {
 			display: none;
 		}
 	}
 }
 
-@media (min-width: $screen-mobile-next) {
-	.elementor-widget-tabs-v2 {
-
-		.elementor-tabs {
-			
-			.elementor-tab-mobile-title {
-				display: none;
-			}
+@mixin hide-tabs-($device) {
+	.e-tabs-#{$device} {
+	
+		.elementor-tab-mobile-title {
+			display: none;
 		}
 	}
+}
+
+// Mobile.
+@media (min-width: $screen-mobile-next) {
+	@include hide-mobile-tabs-(mobile);
+}
+
+@media (max-width: $screen-mobile-max) {
+	@include hide-tabs-(mobile);
+}
+
+// Mobile Extra.
+@media (min-width: $screen-mobile-extra-next) {
+	@include hide-mobile-tabs-(mobile-extra);
+}
+
+@media (max-width: $screen-mobile-extra-max) {
+	@include hide-tabs-(mobile-extra);
+}
+
+// Tablet.
+@media (min-width: $screen-tablet-next) {
+	@include hide-mobile-tabs-(tablet);
+}
+
+@media (max-width: $screen-tablet-max) {
+	@include hide-tabs-(tablet);
+}
+
+// Tablet Extra.
+@media (min-width: $screen-tablet-extra-next) {
+	@include hide-mobile-tabs-(tablet-extra);
+}
+
+@media (max-width: $screen-tablet-extra-max) {
+	@include hide-tabs-(tablet-extra);
 }

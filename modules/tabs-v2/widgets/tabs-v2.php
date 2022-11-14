@@ -448,7 +448,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => $dropdown_options,
 				'default' => 'none',
-				'prefix_class' => 'e-tabs-breakpoint-',
+				'prefix_class' => 'e-tabs-',
 			]
 		);
 
