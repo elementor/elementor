@@ -7,7 +7,7 @@ test.describe( 'Nested Tabs tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
-            		'nested-elements': true,
+			'nested-elements': true,
 		} );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
