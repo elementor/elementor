@@ -56,7 +56,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						id: originalImage.id,
 						size: sizeValue,
 					} );
-					if ( image ) {
+					if ( imageURL ) {
 						values[ control.name ].url = imageURL;
 					}
 				}
