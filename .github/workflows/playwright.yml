@@ -16,11 +16,11 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -54,11 +54,11 @@ jobs:
             wpCoreVersion: 'latest'
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Restore build from cache
         uses: actions/cache@v2
         id: restore-build
