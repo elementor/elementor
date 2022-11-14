@@ -668,10 +668,11 @@ abstract class Base extends Base_File {
 
 
 	private function update_background_images_dimension( $control, $values ) {
+		$background_dimensions_prefix = 'background_dimensions';
 		if ( false !== strpos( $control['name'], 'background_image' ) ) {
-			$image_size = $values['background_dimensions'] ?? null;
+			$image_size = $values[ $background_dimensions_prefix ] ?? null;
 			if ( ! empty( $image_size ) ) {
-				$responsive_size = 'background_dimensions';
+				$responsive_size = $background_dimensions_prefix;
 				$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 				foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
 					if ( false !== strpos( $control['name'], $breakpoint_key ) ) {

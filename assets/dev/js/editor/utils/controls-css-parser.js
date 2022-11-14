@@ -38,10 +38,11 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	updateBackgroundImagesDimension( control, values ) {
+		const backgroundDimensionsPrefix = 'background_dimensions';
 		if ( control.name.includes( 'background_image' ) ) {
-			const imageSize = values.background_dimensions;
+			const imageSize = values[ backgroundDimensionsPrefix ];
 			if ( imageSize ) {
-				let responsiveSize = 'background_dimensions';
+				let responsiveSize = backgroundDimensionsPrefix;
 				const breakpoints = elementorFrontend.config.responsive.breakpoints;
 				Object.entries( breakpoints ).forEach( ( [ breakpointName ] ) => {
 					if ( control.name.includes( breakpointName ) ) {
