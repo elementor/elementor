@@ -316,10 +316,35 @@ class TabsV2 extends Widget_Nested_Base {
 					'icon' => 'eicon-text-align-right',
 				],
 			],
+			'conditions' => [
+				'relation' => 'or',
+				'terms' => [
+					[
+						'name' => 'tabs_justify_horizontal',
+						'operator' => '===',
+						'value' => '',
+					],
+					[
+						'name' => 'tabs_justify_horizontal',
+						'operator' => '===',
+						'value' => 'stretch',
+					],
+					[
+						'name' => 'tabs_direction',
+						'operator' => '===',
+						'value' => 'start',
+					],
+					[
+						'name' => 'tabs_direction',
+						'operator' => '===',
+						'value' => 'end',
+					],
+				],
+			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-title-alignment: ' . $start . ';',
-				'center' => '--tabs-v2-title-alignment: center;',
-				'end' => '--tabs-v2-title-alignment: ' . $end . ';',
+				'start' => '--tabs-v2-title-justify-content: flex-start;',
+				'center' => '--tabs-v2-title-justify-content: center;',
+				'end' => '--tabs-v2-title-justify-content: flex-end;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
