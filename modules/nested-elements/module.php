@@ -13,12 +13,22 @@ class Module extends \Elementor\Core\Base\Module {
 		return [
 			'name' => 'nested-elements',
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
-			'description' => esc_html__( 'Create a rich user experience by layering widgets together inside “Nested” Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'tag' => esc_html__( 'Feature', 'elementor-pro' ),
+			'description' => sprintf(
+				esc_html__('Create a rich user experience by layering widgets together inside “Nested” Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected. %1$sLearn More%2$s', 'elementor-pro' ),
+				'<a href=https://go.elementor.com/wp-dash-nested-elements/" target="_blank">',
+				'</a>'
+			),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'dependencies' => [
 				'container',
 			],
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.10.0',
+			],
+			'hidden' => true,
 		];
 	}
 

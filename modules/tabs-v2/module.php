@@ -2,6 +2,7 @@
 namespace Elementor\Modules\TabsV2;
 
 use Elementor\Plugin;
+use phpDocumentor\Reflection\Types\Parent_;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -9,8 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
+	const EXPERIMENT_NAME = 'nested-elements';
+
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	public function get_name() {
@@ -30,4 +33,5 @@ class Module extends \Elementor\Core\Base\Module {
 			], ELEMENTOR_VERSION, true );
 		} );
 	}
+
 }
