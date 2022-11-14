@@ -341,10 +341,10 @@ abstract class Document extends Controls_Stack {
 		$document = $this;
 
 		// Ajax request from editor.
-		// PHPCS - only reading the value from $_POST['initial_document_id'].
-		if ( ! empty( $_POST['initial_document_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			// PHPCS - only reading the value from $_POST['initial_document_id'].
-			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$initial_document_id = Utils::get_super_global_value( $_POST, 'initial_document_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( ! empty( $initial_document_id ) ) {
+			$document = Plugin::$instance->documents->get( $initial_document_id ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$url = get_preview_post_link(

@@ -2,6 +2,7 @@
 namespace Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Api;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -99,7 +100,7 @@ class Server extends Base {
 	 */
 	public function get_software() {
 		return [
-			'value' => $_SERVER['SERVER_SOFTWARE'],
+			'value' => Utils::get_super_global_value( $_SERVER, 'SERVER_SOFTWARE' ),
 		];
 	}
 

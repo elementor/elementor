@@ -24,6 +24,8 @@
  * GNU General Public License for more details.
  */
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -38,7 +40,7 @@ class Safe_Mode {
 	}
 
 	public function is_valid_token() {
-		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] ) ? $_COOKIE[ self::OPTION_TOKEN ] : null;
+		$token = Utils::get_super_global_value( $_COOKIE, self::OPTION_TOKEN );
 
 		if ( $token && get_option( self::OPTION_TOKEN ) === $token ) {
 			return true;
