@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\TabsV2;
 
+use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,10 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	const EXPERIMENT_NAME = 'nested-elements';
-
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
 	}
 
 	public function get_name() {
