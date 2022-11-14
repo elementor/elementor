@@ -17,6 +17,7 @@ use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Utils;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -408,6 +409,46 @@ class TabsV2 extends Widget_Nested_Base {
 				'condition' => [
 					'html_tag' => 'a',
 				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'section_tabs_responsive', [
+			'label' => esc_html__( 'Responsive Settings', 'elementor' ),
+		] );
+
+		$dropdown_options = [];
+		$excluded_breakpoints = [
+			'laptop',
+			'widescreen',
+		];
+
+		foreach ( Plugin::$instance->breakpoints->get_active_breakpoints() as $breakpoint_key => $breakpoint_instance ) {
+			// Do not include laptop and widscreen in the options since this feature is for mobile devices.
+			if ( in_array( $breakpoint_key, $excluded_breakpoints, true ) ) {
+				continue;
+			}
+
+			$dropdown_options[ $breakpoint_key ] = sprintf(
+				/* translators: 1: Breakpoint label, 2: `>` character, 3: Breakpoint value. */
+				esc_html__( '%1$s (%2$s %3$dpx)', 'elementor' ),
+				$breakpoint_instance->get_label(),
+				'>',
+				$breakpoint_instance->get_value()
+			);
+		}
+
+		$dropdown_options['none'] = esc_html__( 'None', 'elementor' );
+
+		$this->add_control(
+			'dropdown',
+			[
+				'label' => esc_html__( 'Breakpoint', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => $dropdown_options,
+				'default' => 'none',
+				'prefix_class' => 'e-tabs-breakpoint-',
 			]
 		);
 
