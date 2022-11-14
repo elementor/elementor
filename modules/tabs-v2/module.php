@@ -2,7 +2,6 @@
 namespace Elementor\Modules\TabsV2;
 
 use Elementor\Plugin;
-use phpDocumentor\Reflection\Types\Parent_;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
