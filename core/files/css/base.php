@@ -707,7 +707,6 @@ abstract class Base extends Base_File {
 	 * @param array $replacements Replacements.
 	 */
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
-
 		$values = $this->update_background_images_dimension( $control, $values );
 
 		$this->add_control_rules(

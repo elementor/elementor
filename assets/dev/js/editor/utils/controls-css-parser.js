@@ -96,6 +96,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 	addControlStyleRules( control, values, controls, placeholders, replacements, globalKeys ) {
 		values = this.updateBackgroundImagesDimension( control, values );
+
 		let globalKey;
 
 		if ( globalKeys ) {

@@ -261,7 +261,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['dimensions'] = [
 			'label' => esc_html_x( 'Dimensions', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-			'options' => $this->get_images_sizes(),
+			'options' => $this->get_images_sizes_options(),
 			'responsive' => true,
 			'default' => 'full',
 			'condition' => [
@@ -828,7 +828,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 	}
 
-	protected function get_images_sizes() {
+	protected function get_images_sizes_options() {
 		$sizes = get_intermediate_image_sizes();
 		$sizes[] = 'full';
 		$result = [];
