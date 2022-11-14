@@ -10,15 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	public static function is_active(): bool {
+	public static function is_active(){
 		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
 	}
 
-	public function get_name(): string {
+	public function get_name() {
 		return 'tabs-v2';
 	}
 
-	protected function get_widgets(): array {
+	protected function get_widgets(){
 		return [ 'TabsV2' ];
 	}
 
