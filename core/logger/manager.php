@@ -136,7 +136,7 @@ class Manager extends BaseModule {
 		} );
 
 		// PHPCS - See comment above.
-		foreach ( Utils::get_super_global_value( $_POST, 'data' ) as $error ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		foreach ( $data as $error ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$error['type'] = Logger_Interface::LEVEL_ERROR;
 
 			if ( ! empty( $error['customFields'] ) ) {
