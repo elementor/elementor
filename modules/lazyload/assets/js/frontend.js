@@ -1,6 +1,7 @@
 document.addEventListener( 'DOMContentLoaded', function() {
     const dataAttribute = 'data-e-bg-lazyload';
     const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+    const options = { rootMargin: '100px 0px 100px 0px' };
     const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
         entries.forEach( ( entry ) => {
             if ( entry.isIntersecting ) {
@@ -15,7 +16,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
                 lazyloadBackgroundObserver.unobserve( element );
             }
         } );
-    } );
+    }, options );
     lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
         lazyloadBackgroundObserver.observe( lazyloadBackground );
     } );

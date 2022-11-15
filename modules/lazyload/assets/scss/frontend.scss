@@ -1,10 +1,3 @@
-body.e-lazyload [data-e-bg-lazyload]:not(.lazyloaded) {
-    background-size: cover; 
-    &>div {
-        backdrop-filter: blur(50px);
-    }
-}
-
 .lazyloaded, body.e-lazyload [data-e-bg-lazyload]:not(.lazyloaded ):first-of-type {
     background-image: var(--e-bg-lazyload) !important;
 }

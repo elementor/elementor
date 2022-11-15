@@ -73,14 +73,11 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function reduce_background_image_size( $value, $css_property, $matches, $control ) {
+	private function remove_background_image( $value, $css_property, $matches, $control ) {
 		$is_lazyload_active = Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
 		if ( $is_lazyload_active ) {
 			if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
-				$thumbnail_image_src = wp_get_attachment_image_src( $value['id'], 'thumbnail' );
-				if ( $thumbnail_image_src ) {
-					$value['url'] = $thumbnail_image_src[0];
-				}
+				$value['url'] = 'unset';
 			}
 		}
 		return $value;
@@ -92,9 +89,19 @@ class Module extends BaseModule {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
+						$control = $this->apply_dominant_color_background( $control, $value, $selector );
 					}
 				}
 			}
+		}
+		return $control;
+	}
+
+	private function apply_dominant_color_background( $control, $value, $selector ) {
+		$metadata = wp_get_attachment_metadata( $value['id'] );
+		$dominant_color = Utils::get_array_value_by_keys( $metadata, [ 'dominant_color' ] );
+		if ( $dominant_color ) {
+			$control['selectors'][ $selector ] .= 'background-color: #' . $dominant_color . ';';
 		}
 		return $control;
 	}
@@ -107,7 +114,7 @@ class Module extends BaseModule {
 		} );
 
 		add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
-			return $this->reduce_background_image_size( $value, $css_property, $matches, $control );
+			return $this->remove_background_image( $value, $css_property, $matches, $control );
 		}, 10, 4 );
 
 		add_filter('elementor/files/css/selectors', function( $control, $value ) {
