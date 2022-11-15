@@ -420,7 +420,6 @@ class TabsV2 extends Widget_Nested_Base {
 
 		$dropdown_options = [];
 		$excluded_breakpoints = [
-			'laptop',
 			'widescreen',
 		];
 
@@ -439,15 +438,14 @@ class TabsV2 extends Widget_Nested_Base {
 			);
 		}
 
-		$dropdown_options['none'] = esc_html__( 'None', 'elementor' );
-
 		$this->add_control(
 			'dropdown',
 			[
 				'label' => esc_html__( 'Breakpoint', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'description' => esc_html__( 'Note: currently, the design of desktop (horizontal) and mobile (vertical) does not entirely match; for example, on mobile, we have grey borders around the tabs, and they shouldn’t be there.', 'elementor' ),
 				'options' => $dropdown_options,
-				'default' => 'none',
+				'default' => 'mobile',
 				'prefix_class' => 'e-tabs-',
 			]
 		);

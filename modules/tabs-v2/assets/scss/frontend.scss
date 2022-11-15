@@ -188,6 +188,32 @@
 	}
 }
 
+// TODO: Remove this code after class name change. 
+// We need to be able to distinguish the styling from the old and the new tab widget.
+.elementor-widget-tabs-v2 {
+	@media (max-width: $screen-mobile-max) {
+
+		.elementor-tabs {
+
+			.elementor-tab-title,
+			.elementor-tab-content {
+				border-style: none;
+				border-bottom-style: none;
+			}
+		}
+	}
+
+	@media (min-width: $screen-mobile-next) {
+
+		.elementor-tabs {
+
+			.elementor-tab-mobile-title {
+				display: flex;
+			}
+		}
+	}
+}
+
 // Responsive mode
 @mixin hide-tabs-($device) {
 	.e-tabs-#{$device} {
