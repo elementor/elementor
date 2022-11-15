@@ -6,7 +6,7 @@ use Elementor\Modules\LazyLoad\Module as LazyLoad;
 
 class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 
-	public function test_reduce_background_image_size() {
+	public function test_remove_background_image() {
 
 		//Arrange
 		$image_id = $this->factory()->attachment->create_upload_object( dirname( __DIR__, 3 ) . '/resources/mock-image.png' );
@@ -14,7 +14,7 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 
 		//Act
 		$reflection = new \ReflectionClass( LazyLoad::class );
-		$method = $reflection->getMethod( 'reduce_background_image_size' );
+		$method = $reflection->getMethod( 'remove_background_image' );
 		$method->setAccessible( true );
 		$lazyload = new LazyLoad();
 		$value = [
@@ -30,10 +30,10 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 				'active' => true,
 			],
 		];
-		$reduced_image = $method->invokeArgs( $lazyload, [ $value, $css_property, $matches, $control ] );
+		$removed_image = $method->invokeArgs( $lazyload, [ $value, $css_property, $matches, $control ] );
 
 		//Assert
-		$this->assertContains( 'mock-image-150x150.png', $reduced_image['url'] );
+		$this->assertEquals( 'unset', $removed_image['url'] );
 		wp_delete_attachment( $image_id, true );
 	}
 }
