@@ -2,7 +2,7 @@ import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
 
 export default class TabsV2 extends BaseTabsV2 {
 	getTabContentFilterSelector( tabIndex ) {
-		// Double by 2, since each `e-container` should have 'elementor-tab-mobile-title'.
+		// Double by 2, since each `e-con` should have 'elementor-tab-mobile-title'.
 		return `*:nth-child(${ tabIndex * 2 })`;
 	}
 
@@ -14,7 +14,7 @@ export default class TabsV2 extends BaseTabsV2 {
 
 			let index = 1;
 
-			this.findElement( '.e-container' ).each( function() {
+			this.findElement( '.e-con' ).each( function() {
 				const $current = jQuery( this ),
 					$desktopTabTitle = $widget.find( `.elementor-tabs-wrapper > *:nth-child(${ index })` ),
 					mobileTitleHTML = `<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
