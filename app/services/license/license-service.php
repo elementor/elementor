@@ -5,6 +5,10 @@ use Elementor\App\Services\Base_Service;
 
 class License_Service extends Base_Service {
 
+	public function get_name() : string {
+		return 'license';
+	}
+
 	public function register() {
 		return $this;
 	}

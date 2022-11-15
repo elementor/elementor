@@ -17,12 +17,6 @@ class Services {
 		} );
 	}
 
-	private function register_services() {
-		$this->services[ 'license' ] = ( new License_Service() )->register();
-
-		$this->services = apply_filters( 'elementor/app/services/register', $this->services );
-	}
-
 	/**
 	 * Get a registered service
 	 *
@@ -35,5 +29,15 @@ class Services {
 		}
 
 		return null;
+	}
+
+	private function register_services() {
+		$this->register_service( new License_Service() );
+
+		$this->services = apply_filters( 'elementor/app/services/register', $this->services );
+	}
+
+	private function register_service( $service ) {
+		$this->services[ $service->get_name() ] = $service->register();
 	}
 }

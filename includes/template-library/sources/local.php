@@ -14,7 +14,7 @@ use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categori
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\App\Services\Services as AppServices;
+use Elementor\App\App;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,11 +89,6 @@ class Source_Local extends Source_Base {
 	 * @var \WP_Post_Type
 	 */
 	private $post_type_object;
-
-	/**
-	 * @var AppServices
-	 */
-	private $app_services;
 
 	/**
 	 * @since 2.3.0
@@ -1367,7 +1362,7 @@ class Source_Local extends Source_Base {
 	 * @return bool
 	 */
 	private function is_license_valid() {
-		return $this->app_services->get_service( 'license' )->is_valid();
+		return App::$instance->services->get_service( 'license' )->is_valid();
 	}
 
 	public function add_filter_by_category( $post_type ) {
@@ -1737,7 +1732,6 @@ class Source_Local extends Source_Base {
 	public function __construct() {
 		parent::__construct();
 
-		$this->app_services = new AppServices();
 		$this->add_actions();
 	}
 }

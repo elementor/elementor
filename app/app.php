@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class App extends BaseApp {
+	public static $instance;
 
 	const PAGE_ID = 'elementor-app';
 
@@ -258,6 +259,8 @@ class App extends BaseApp {
 	}
 
 	public function __construct() {
+		self::$instance = $this;
+
 		$this->services = new Services();
 
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );

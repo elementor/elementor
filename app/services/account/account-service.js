@@ -4,7 +4,7 @@ export default class AccountService {
 	 *
 	 * @param {string} buttonRef
 	 * @param {string} parseUrl
-	 * @param {string} sizes
+	 * @param {Array} sizes
 	 * @since 3.9.0
 	 *
 	 * @return {Promise}
@@ -16,7 +16,7 @@ export default class AccountService {
 			};
 
 			const error = () => {
-				resolve( { data: null, error: 'Unable to connect' } );
+				resolve( { data: null, error: __( 'Unable to connect', 'elementor' ) } );
 			};
 
 			jQuery( buttonRef ).elementorConnect( {
