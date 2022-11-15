@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -18,25 +19,8 @@ class Admin {
 	 * @since 2.3.0
 	 * @access public
 	 */
-	public function register_admin_menu() {
-		$submenu_page = add_submenu_page(
-			Settings::PAGE_ID,
-			__( 'Connect', 'elementor' ),
-			__( 'Connect', 'elementor' ),
-			'edit_posts',
-			self::PAGE_ID,
-			[ $this, 'render_page' ]
-		);
-
-		add_action( 'load-' . $submenu_page, [ $this, 'on_load_page' ] );
-	}
-
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
-	public function hide_menu_item() {
-		remove_submenu_page( Settings::PAGE_ID, self::PAGE_ID );
+	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
 	}
 
 	/**
@@ -72,38 +56,15 @@ class Admin {
 	 * @since 2.3.0
 	 * @access public
 	 */
-	public function render_page() {
-		$apps = Plugin::$instance->common->get_component( 'connect' )->get_apps();
-		?>
-		<style>
-			.elementor-connect-app-wrapper{
-				margin-bottom: 50px;
-				overflow: hidden;
-			}
-		</style>
-		<div class="wrap">
-			<?php
-
-			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Base_App $app */
-			foreach ( $apps as $app ) {
-				echo '<div class="elementor-connect-app-wrapper">';
-				$app->render_admin_widget();
-				echo '</div>';
-			}
-
-			?>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
 	public function __construct() {
 		self::$url = admin_url( 'admin.php?page=' . self::PAGE_ID );
 
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 206 );
-		add_action( 'admin_head', [ $this, 'hide_menu_item' ] );
+		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
+
+		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
+			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
+				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );
+			}
+		}, 10, 2 );
 	}
 }

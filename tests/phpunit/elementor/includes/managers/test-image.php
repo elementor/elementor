@@ -9,11 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Image extends Elementor_Test_Base {
+	private function create_image() {
+		$file_name = __DIR__ . '/../../../resources/mock-image.png';
 
-	public function create_image() {
-		$attachment_id = $this->_make_attachment( [
-			'file' => __DIR__ . '/../../../resources/mock-image.png',
-			'url' => 'https://test.local/image.png',
+		$attachment_id = wp_insert_attachment( [
+			'post_title' => wp_basename( $file_name ),
+			'post_content' => '',
+			'post_type' => 'attachment',
+			'post_parent' => 0,
+			'post_mime_type' => wp_check_filetype( $file_name )['type'],
+			'guid' => 'https://test.local/mock-image.png',
 		] );
 
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
@@ -35,26 +40,43 @@ class Test_Image extends Elementor_Test_Base {
 		$attachment_id = $this->create_image();
 
 		// Act
-		( new Images_Manager() )->get_details( $attachment_id, 'custom_100x100', false );
+		( new Images_Manager() )->get_details( $attachment_id, 'custom_100x', false );
+		( new Images_Manager() )->get_details( $attachment_id, 'custom_150x150', false );
+		( new Images_Manager() )->get_details( $attachment_id, 'custom_x200', false );
 
 		// Assert
 		$new_metadata = wp_get_attachment_metadata( $attachment_id );
 
 		$this->assertTrue( is_array( $new_metadata['sizes'] ) );
 
-		$this->assertEquals( [
-				'file' => 'test-image.png',
-				'width' => '300',
-				'height' => '300',
-				'mime-type' => 'image/png',
+		$this->assertSame( [
+			'file' => 'test-image.png',
+			'width' => 300,
+			'height' => 300,
+			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['test_size'] );
 
-		$this->assertEquals( [
-				'file' => 'elementor/thumbs/mock-image.png',
-				'width' => '100',
-				'height' => '100',
-				'mime-type' => 'image/png',
-		], $new_metadata['sizes']['elementor_custom_100x100'] );
+		$this->assertSame( [
+			'file' => 'elementor/thumbs/mock-image.png',
+			'width' => 100,
+			'height' => 0,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_100x'] );
+
+		$this->assertSame( [
+			'file' => 'elementor/thumbs/mock-image.png',
+			'width' => 150,
+			'height' => 150,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_150x150'] );
+
+		$this->assertSame( [
+			'file' => 'elementor/thumbs/mock-image.png',
+			'width' => 0,
+			'height' => 200,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_x200'] );
+
 	}
 
 	public function test_delete_custom_images() {

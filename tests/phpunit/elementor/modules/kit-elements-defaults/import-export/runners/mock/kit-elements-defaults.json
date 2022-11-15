@@ -1,0 +1,17 @@
+{
+	"mock-widget": {
+		"text": "value <script>Test</script> value",
+		"invalid_control": "some value",
+		"removed_on_import_and_on_export_method": "some value",
+		"__globals__": {
+			"color": "global-color",
+			"invalid_control2": "some value"
+		},
+		"__dynamic__": {
+			"invalid_control3": "some value"
+		}
+	},
+	"invalid-widget": {
+		"text": "value"
+	}
+}

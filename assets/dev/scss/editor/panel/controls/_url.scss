@@ -68,9 +68,8 @@
 				border-radius: 2px;
 				@include margin-end(5px);
 
-				//hid the browser input style
-				-webkit-appearance: none;
-				-moz-appearance: none;
+				//hide the browser input style
+				appearance: none;
 				outline: none;
 				content: none;
 

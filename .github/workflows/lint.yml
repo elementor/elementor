@@ -2,6 +2,11 @@ name: Lint
 
 on: [push, pull_request]
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   file-diff:
     runs-on: ubuntu-18.04
@@ -34,10 +39,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - name: Install Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -80,18 +85,6 @@ jobs:
           php7.4 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php8.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php8.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-      - name: Setup PHP 5.6 # not included in ubuntu 18.04
-        uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
-        with:
-          php-version: '5.6'
-          tools: composer:v2.2.0 # composer 2.3+ is not supporting php 5.6
-      - name: Run PHP Syntax Lint 5.6
-        run: | # remove unsupported packages PHP < 7.4
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php -v
-          composer remove --dev thor-juhasz/phpunit-coverage-check --ignore-platform-reqs
-          composer update --no-interaction
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
       - name: Setup PHP 7.1 # not included in ubuntu 18.04
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
         with:

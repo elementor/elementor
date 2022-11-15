@@ -1052,6 +1052,10 @@ export default class EditorBase extends Marionette.Application {
 			success: ( data ) => {
 				this.addWidgetsCache( data );
 
+				if ( elementor.config.locale !== elementor.config.user.locale ) {
+					this.translateControlsDefaults( elementor.config.locale );
+				}
+
 				if ( this.loaded ) {
 					this.kitManager.renderGlobalsDefaultCSS();
 
@@ -1063,6 +1067,15 @@ export default class EditorBase extends Marionette.Application {
 				}
 			},
 		} );
+	}
+
+	translateControlsDefaults( locale ) {
+		elementorCommon.ajax.addRequest( 'get_widgets_default_value_translations', {
+			data: { locale },
+			success: ( data ) => {
+				this.addWidgetsCache( data );
+			},
+		}, true );
 	}
 
 	getPreferences( key ) {

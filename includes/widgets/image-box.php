@@ -224,6 +224,7 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'default' => [
 					'size' => 15,
 				],
@@ -339,17 +340,13 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
 				'default' => [
+					'unit' => 's',
 					'size' => 0.3,
 				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
-				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -499,6 +496,14 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'title_stroke',
+				'selector' => '{{WRAPPER}} .elementor-image-box-title',
+			]
+		);
+
+		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_shadow',
@@ -572,13 +577,6 @@ class Widget_Image_Box extends Widget_Base {
 		}
 
 		if ( ! empty( $settings['image']['url'] ) ) {
-			$this->add_render_attribute( 'image', 'src', $settings['image']['url'] );
-			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $settings['image'] ) );
-			$this->add_render_attribute( 'image', 'title', Control_Media::get_image_title( $settings['image'] ) );
-
-			if ( $settings['hover_animation'] ) {
-				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $settings['hover_animation'] );
-			}
 
 			$image_html = wp_kses_post( Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' ) );
 

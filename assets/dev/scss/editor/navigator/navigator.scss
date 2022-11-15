@@ -222,7 +222,7 @@ body {
 
 			&__text {
 				white-space: nowrap;
-				-webkit-user-select: text;
+				user-select: text;
 
 				&[contenteditable="true"] {
 					outline: none;
@@ -302,7 +302,7 @@ body {
 		}
 
 		&-section,
-		&-container, {
+		&-container {
 			background-color: $white;
 		}
 	}

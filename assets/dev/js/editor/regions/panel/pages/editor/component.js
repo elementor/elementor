@@ -81,20 +81,21 @@ export default class Component extends ComponentBase {
 	/**
 	 * Callback on route open under the current namespace.
 	 *
-	 * @param {string} route - Route ID.
+	 * @param {string} route
+	 * @param {Object} routeArgs
 	 *
 	 * @return {void}
 	 */
-	onRoute( route ) {
+	onRoute( route, routeArgs = {} ) {
 		super.onRoute( route );
 
-		const currentElement = elementor.getCurrentElement();
+		const { view } = routeArgs;
 
-		if ( ! currentElement ) {
+		if ( ! view?.getContainer() ) {
 			return;
 		}
 
-		SetDirectionMode.set( currentElement.getContainer() );
+		SetDirectionMode.set( view.getContainer() );
 	}
 
 	/**

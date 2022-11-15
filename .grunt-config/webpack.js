@@ -28,7 +28,7 @@ const getModuleRules = ( presets ) => {
 	return {
 		rules: [
 			{
-				test: /core[/\\]app.*\.(s)?css$/i,
+				test: /app.*\.(s)?css$/i,
 				use: [
 					{
 						loader: './loaders/app-imports.js',
@@ -76,6 +76,8 @@ const frontendRulesPresets = [ [
 				'last 2 Opera versions',
 			],
 		},
+		"useBuiltIns": "usage",
+		"corejs": "3.23",
 	}
 ] ];
 
@@ -90,13 +92,13 @@ const entry = {
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
-	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/module.js' ),
+	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
-	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
-	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
-	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
+	'app': path.resolve( __dirname, '../app/assets/js/index.js' ),
+	'app-loader': path.resolve( __dirname, '../app/assets/js/app-loader' ),
+	'app-packages': path.resolve( __dirname, '../app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
@@ -107,7 +109,11 @@ const entry = {
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
 	'tabs-v2': path.resolve( __dirname, '../modules/tabs-v2/assets/js/editor/index.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
+	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
+	'lazyload': path.resolve( __dirname, '../modules/lazyload/assets/js/frontend.js' ),
+	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
+	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 };
 
 const frontendEntries = {
@@ -276,10 +282,15 @@ const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
 } );
 
+const productionWatchConfig = webpackProductionConfig.map( ( config ) => {
+	return { ...config, watch: true };
+} );
+
 const gruntWebpackConfig = {
 	development: webpackConfig,
 	developmentNoWatch: developmentNoWatchConfig,
-	production: webpackProductionConfig
+	production: webpackProductionConfig,
+	productionWatch: productionWatchConfig,
 };
 
 module.exports = gruntWebpackConfig;

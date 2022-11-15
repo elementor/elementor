@@ -76,6 +76,9 @@ class Images_Manager {
 			if ( 0 === strpos( $size, 'custom_' ) ) {
 				preg_match( '/custom_(\d*)x(\d*)/', $size, $matches );
 
+				$matches[1] = (int) $matches[1];
+				$matches[2] = (int) $matches[2];
+
 				$instance = [
 					'image_size' => 'custom',
 					'image_custom_dimension' => [
@@ -150,20 +153,17 @@ class Images_Manager {
 
 	private function delete_custom_images( $post_id ) {
 		$image_meta = wp_get_attachment_metadata( $post_id );
-		if ( empty( $image_meta ) ) {
-			return;
-		}
-
-		( new Collection( $image_meta['sizes'] ) )
+		if ( ! empty( $image_meta ) && ! empty( $image_meta['sizes'] ) ) {
+			( new Collection( $image_meta['sizes'] ) )
 			->filter( function ( $value, $key ) {
 				return ( 0 === strpos( $key, 'elementor_custom_' ) );
 			} )
 			->pluck( 'file' )
 			->each( function ( $path ) {
 				$base_dir = wp_get_upload_dir()['basedir'];
-
 				wp_delete_file( $base_dir . '/' . $path );
 			} );
+		}
 	}
 
 	/**

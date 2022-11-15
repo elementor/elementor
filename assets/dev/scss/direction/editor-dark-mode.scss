@@ -21,6 +21,10 @@ $theme-dark-gradient-end: $theme-dark-gray;
 $theme-dark-panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 
 //General
+:root {
+	color-scheme: dark;
+}
+
 body {
 	color: $theme-dark-light;
 
@@ -1334,7 +1338,8 @@ label.elementor-template-library-order-label,
 		background-color: transparent;
 	}
 
-	&__item {
+	&__item,
+	&__elements {
 		background-color: $theme-dark-gray-dark;
 		border-color: $theme-dark-gray-darkest;
 

@@ -13,10 +13,21 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	shouldRenderTools() {
+		const hasDefault = this.getOption( 'dynamicSettings' ).default;
+
+		if ( hasDefault ) {
+			return false;
+		}
+
+		const isFeatureAvalibleToUser = elementor.helpers.hasPro() && ! elementor.helpers.hasProAndNotConnected(),
+			hasTags = this.getOption( 'tags' ).length > 0;
+
+		return ! isFeatureAvalibleToUser || hasTags;
+	},
+
 	renderTools() {
-		// If the user has Elementor Pro and the current control has no dynamic tags available, don't generate the dynamic switcher.
-		// If the user has the core version only, we do display the dynamic switcher for the promotion.
-		if ( this.getOption( 'dynamicSettings' ).default || ( elementor.helpers.hasPro() && ! this.getOption( 'tags' ).length ) ) {
+		if ( ! this.shouldRenderTools() ) {
 			return;
 		}
 
@@ -197,15 +208,28 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion() {
-		const message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
+			const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
+				dialogOptions = {
+					title: __( 'Dynamic Content', 'elementor' ),
+					content: __(
+						'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.',
+						'elementor',
+					),
+					targetElement: this.ui.dynamicSwitcher,
+					position: {
+						blockStart: '-10',
+					},
+					actionButton: {
+						url: hasProAndNotConnected
+							? elementorProEditorConfig.urls.connect
+							: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
+						text: hasProAndNotConnected
+							? __( 'Connect & Activate', 'elementor' )
+							: __( 'Upgrade', 'elementor' ),
+					},
+				};
 
-		elementor.promotion.showDialog( {
-			headerMessage: __( 'Dynamic Content', 'elementor' ),
-			message,
-			top: '-10',
-			element: this.ui.dynamicSwitcher,
-			actionURL: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
-		} );
+		elementor.promotion.showDialog( dialogOptions );
 	},
 
 	onRender() {

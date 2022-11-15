@@ -99,6 +99,11 @@ class Modules_Manager {
 			'tabs-v2',
 			'container-converter',
 			'web-cli',
+			'promotions',
+			'notes',
+			'performance-lab',
+			'lazyload',
+			'kit-elements-defaults',
 		];
 	}
 
