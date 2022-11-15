@@ -722,7 +722,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
