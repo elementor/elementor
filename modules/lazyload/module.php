@@ -101,7 +101,7 @@ class Module extends BaseModule {
 		$metadata = wp_get_attachment_metadata( $value['id'] );
 		$dominant_color = Utils::get_array_value_by_keys( $metadata, [ 'dominant_color' ] );
 		if ( $dominant_color ) {
-			$control['selectors'][ $selector ] .= 'background-color: #' . $dominant_color . ';';
+			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
 		}
 		return $control;
 	}
