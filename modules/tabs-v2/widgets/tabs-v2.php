@@ -185,8 +185,8 @@ class TabsV2 extends Widget_Nested_Base {
 			'selectors_dictionary' => [
 				'top' => '--tabs-v2-direction: column; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
 				'bottom' => '--tabs-v2-direction: column-reverse; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
-				'end' => '--tabs-v2-direction: row-reverse; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial; --tabs-v2-tabs-wrapper-width: 240px;',
-				'start' => '--tabs-v2-direction: row; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-title-grow: initial; --tabs-v2-tabs-wrapper-width: 240px;',
+				'end' => '--tabs-v2-direction: row-reverse; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-tabs-wrapper-width: 240px;',
+				'start' => '--tabs-v2-direction: row; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-tabs-wrapper-width: 240px;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -215,10 +215,10 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1; --tabs-v2-title-width: 100%; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: initial; --tabs-v2-title-width: 100%; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -254,10 +254,10 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-grow: initial; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-grow: 1; --tabs-v2-title-width: initial; --tabs-v2-title-height: 100%; --tabs-v2-title-align-items: center;',
+				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-width: initial; --tabs-v2-title-height: 100%; --tabs-v2-title-align-items: center;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
