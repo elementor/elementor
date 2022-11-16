@@ -33,7 +33,7 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 		$removed_image = $method->invokeArgs( $lazyload, [ $value, $css_property, $matches, $control ] );
 
 		//Assert
-		$this->assertEquals( 'unset', $removed_image['url'] );
+		$this->assertEquals( 'none', $removed_image['url'] );
 		wp_delete_attachment( $image_id, true );
 	}
 }
