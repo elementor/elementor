@@ -389,9 +389,7 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
-		if ( elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
-			this.modules.elementsColorPicker = new ElementsColorPicker();
-		}
+		this.modules.elementsColorPicker = new ElementsColorPicker();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
