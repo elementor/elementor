@@ -361,4 +361,16 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
 		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
 	}
+
+	/**
+	 * Select a responsive view.
+	 *
+	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async changeResponsiveView( device ) {
+		await page.locator( '#elementor-panel-footer-responsive i' ).click();
+		await page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+	}
 };

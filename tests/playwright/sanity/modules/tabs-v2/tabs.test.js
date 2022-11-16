@@ -31,4 +31,42 @@ test.describe( 'Nested Tabs tests', () => {
 			'nested-elements': false,
 		} );
 	} );
+
+	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'tabs-v2', container );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
+
+		// Act.
+		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'tablet' } );
+
+		const desktopTabWrapper = editor.getPreviewFrame().locator( '.elementor-tabs-wrapper' ),
+			mobileTabActive = editor.getPreviewFrame().locator( '.elementor-tab-mobile-title.elementor-active' );
+
+		// Assert.
+		// Check if the correct tabs are displayed on tablet view.
+		await editor.changeResponsiveView( 'tablet' );
+		expect( desktopTabWrapper ).toBeVisible();
+		expect( mobileTabActive ).not.toBeVisible();
+		// Check if the correct tabs are displayed on mobile view.
+		await editor.changeResponsiveView( 'mobile' );
+		expect( desktopTabWrapper ).not.toBeVisible();
+		expect( mobileTabActive ).toBeVisible();
+
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+		} );
+	} );
 } );

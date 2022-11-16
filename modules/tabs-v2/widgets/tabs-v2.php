@@ -419,13 +419,10 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$dropdown_options = [];
-		$excluded_breakpoints = [
-			'widescreen',
-		];
 
 		foreach ( Plugin::$instance->breakpoints->get_active_breakpoints() as $breakpoint_key => $breakpoint_instance ) {
-			// Do not include laptop and widscreen in the options since this feature is for mobile devices.
-			if ( in_array( $breakpoint_key, $excluded_breakpoints, true ) ) {
+			// Exclude the widescreen from the dropdown selector.
+			if ( 'widescreen' === $breakpoint_key ) {
 				continue;
 			}
 
@@ -439,7 +436,7 @@ class TabsV2 extends Widget_Nested_Base {
 		}
 
 		$this->add_control(
-			'dropdown',
+			'breakpoint_selector',
 			[
 				'label' => esc_html__( 'Breakpoint', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
