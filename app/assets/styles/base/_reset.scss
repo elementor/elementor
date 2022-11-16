@@ -32,7 +32,8 @@ body {
 }
 
 ::selection {
-	background-color: rgba(theme-colors(cta), $opacity-05);
+	background-color: $eps-theme-accent;
+	color: $color-white;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -165,7 +166,7 @@ button,
 [type="button"],
 [type="reset"],
 [type="submit"] {
-  -webkit-appearance: button;
+  appearance: button;
 }
 
 // Opinionated: add "hand" cursor to non-disabled button elements.

@@ -807,4 +807,22 @@ class Utils {
 
 		return wp_kses_post( wp_unslash( $super_global[ $key ] ) );
 	}
+
+	/**
+	 * Return specific object property value if exist from array of keys.
+	 *
+	 * @param $array
+	 * @param $keys
+	 * @return key|false
+	 */
+	public static function get_array_value_by_keys( $array, $keys ) {
+		$keys = (array) $keys;
+		foreach ( $keys as $key ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				return null;
+			}
+			$array = $array[ $key ];
+		}
+		return $array;
+	}
 }
