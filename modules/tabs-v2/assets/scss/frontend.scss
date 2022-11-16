@@ -4,7 +4,8 @@
 .elementor-widget-tabs-v2 {
 	--tabs-v2-color-accent-fallback: #61CE70;
 	--tabs-v2-color-secondary-fallback: #54595F;
-	--tabs-v2-default-padding: 15px;
+	--tabs-v2-default-padding-block: 15px;
+	--tabs-v2-default-padding-inline: 35px;
 	--tabs-v2-height: initial;
 	--tabs-v2-overflow-x: hidden;
 	--tabs-v2-overflow-y: auto;
@@ -18,7 +19,7 @@
 	--tabs-v2-tabs-wrapper-display: flex;
 	--tabs-v2-tabs-wrapper-direction: row;
 	--tabs-v2-tabs-wrapper-grow: initial;
-	--tabs-v2-tabs-wrapper-justify-content: initial;
+	--tabs-v2-tabs-wrapper-justify-content: center;
 	--tabs-v2-tabs-wrapper-width: initial;
 
 	--tabs-v2-height: initial;
@@ -32,17 +33,16 @@
 	--tabs-v2-title-background-color: #{$editor-background-light};
 	--tabs-v2-title-color-active: #{$white};
 	--tabs-v2-title-background-color-active: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
-	--tabs-v2-title-width: 100%;
+	--tabs-v2-title-width: initial;
 
 	--tabs-v2-title-justify-content: center;
 	--tabs-v2-title-align-items: center;
 	--tabs-v2-title-direction: row;
-	--tabs-v2-title-grow: 1;
 	--tabs-v2-title-gap: 10px;
-	--tabs-v2-title-padding-top: var( --tabs-v2-default-padding );
-	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding );
-	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding );
-	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding );
+	--tabs-v2-title-padding-top: var( --tabs-v2-default-padding-block );
+	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding-inline );
+	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding-block );
+	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding-inline );
 	--tabs-v2-title-border-radius: initial;
 	--tabs-v2-title-transition: 0.3s;
 
