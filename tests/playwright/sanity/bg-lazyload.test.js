@@ -18,7 +18,7 @@ test( 'Background lazy load sanity test', async ( { page } ) => {
 		const property = window.getComputedStyle( el ).getPropertyValue( 'background-image' );
 		return property.match( /url\((.*?)\)/ )[ 1 ].replace( /"/g, '' );
 	} );
-	expect( beforeURL ).toContain( 'Quote-About-Copy-1-150x150.png' );
+	expect( beforeURL ).toContain( 'none' );
 
 	await page.evaluate( ( lazyloadSelectorScrollTo ) => {
 		const lazyloadElement = document.querySelector( lazyloadSelectorScrollTo );

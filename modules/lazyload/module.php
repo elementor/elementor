@@ -77,7 +77,7 @@ class Module extends BaseModule {
 		$is_lazyload_active = Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
 		if ( $is_lazyload_active ) {
 			if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
-				$value['url'] = 'unset';
+				$value['url'] = 'none';
 			}
 		}
 		return $value;
