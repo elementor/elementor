@@ -44,7 +44,6 @@ abstract class Library_Document extends Document {
 		$properties['admin_tab_group'] = 'library';
 		$properties['show_in_library'] = true;
 		$properties['register_type'] = true;
-		$properties['cpt'] = [ Source_Local::CPT ];
 
 		return $properties;
 	}
