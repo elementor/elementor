@@ -46,7 +46,7 @@
 	--tabs-v2-title-border-radius: initial;
 	--tabs-v2-title-transition: 0.3s;
 
-  	--tabs-v2-icon-vertical-align: center;
+  	--tabs-v2-icon-align-items: center;
 	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
 	--tabs-v2-icon-color-hover: var( --tabs-v2-title-color-hover );
 	--tabs-v2-icon-color-active: #{$white};
@@ -128,7 +128,6 @@
 
 			.elementor-tab-icon {
 				display: flex;
-			  	align-items: var( --tabs-v2-icon-vertical-align );
 
 				> i {
 					color: var( --tabs-v2-icon-color );
@@ -140,7 +139,7 @@
 
 				&,
 				&-active {
-				  	align-items: var( --tabs-v2-icon-vertical-align );
+				  	align-items: var( --tabs-v2-icon-align-items );
 
 					> i {
 						font-size: var( --tabs-v2-icon-size );
