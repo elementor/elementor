@@ -1,4 +1,3 @@
-
 // Loading Editor screen
 
 #elementor-loading {
@@ -165,4 +164,22 @@
 
 i.eicon-tilted {
 	transform: rotate(90deg);
+}
+
+.media-dimensions {
+	margin-top: 15px;
+}
+
+.elementor-control {
+	padding: 0px;
+}
+
+.elementor-control-responsive-switchers {
+	display: none;
+}
+
+#media-display-dimensions {
+	padding-bottom: 0px;
+	width: 81%;
+	float: right;
 }

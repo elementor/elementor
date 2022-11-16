@@ -258,23 +258,11 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
-		$fields['dimensions'] = [
-			'label' => esc_html_x( 'Dimensions', 'Background Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => $this->get_image_sizes_options(),
-			'responsive' => true,
-			'default' => 'full',
-			'condition' => [
-				'background' => [ 'classic' ],
-				'image[url]!' => '',
-			],
-			'separator' => 'after',
-		];
-
 		$fields['position'] = [
 			'label' => esc_html_x( 'Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
+			'separator' => 'before',
 			'responsive' => true,
 			'options' => [
 				'' => esc_html_x( 'Default', 'Background Control', 'elementor' ),
@@ -828,19 +816,4 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 	}
 
-	protected function get_image_sizes_options() {
-		$sizes = get_intermediate_image_sizes();
-		$sizes[] = 'full';
-		$result = [];
-		foreach ( $sizes as $size ) {
-			$width = get_option( "{$size}_size_w" );
-			$height = get_option( "{$size}_size_h" );
-			if ( ! $width && ! $height ) {
-				$result[ $size ] = $size;
-			} else {
-				$result[ $size ] = $size . ' (' . $width . 'x' . $height . ')';
-			}
-		}
-		return $result;
-	}
 }

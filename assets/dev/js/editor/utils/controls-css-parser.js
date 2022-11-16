@@ -37,34 +37,6 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	updateBackgroundImagesDimension( control, values ) {
-		const backgroundDimensionsPrefix = 'background_dimensions';
-		if ( control.name.includes( 'background_image' ) ) {
-			const imageSize = values[ backgroundDimensionsPrefix ];
-			if ( imageSize ) {
-				let responsiveSize = backgroundDimensionsPrefix;
-				const breakpoints = elementorFrontend.config.responsive.breakpoints;
-				Object.entries( breakpoints ).forEach( ( [ breakpointName ] ) => {
-					if ( control.name.includes( breakpointName ) ) {
-						responsiveSize += '_' + breakpointName;
-					}
-				} );
-				const sizeValue = values[ responsiveSize ];
-				const originalImage = values[ control.name ];
-				if ( sizeValue && originalImage ) {
-					const imageURL = elementor.imagesManager.getImageUrl( {
-						id: originalImage.id,
-						size: sizeValue,
-					} );
-					if ( imageURL ) {
-						values[ control.name ].url = imageURL;
-					}
-				}
-			}
-		}
-		return values;
-	},
-
 	addStyleRules( styleControls, values, controls, placeholders, replacements ) {
 		// If the current element contains dynamic values, parse these values
 		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
@@ -95,8 +67,6 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addControlStyleRules( control, values, controls, placeholders, replacements, globalKeys ) {
-		values = this.updateBackgroundImagesDimension( control, values );
-
 		let globalKey;
 
 		if ( globalKeys ) {

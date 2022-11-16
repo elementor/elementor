@@ -47,6 +47,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
+			'dimensions' => '',
 		];
 	}
 
@@ -271,7 +272,40 @@ class Control_Media extends Control_Base_Multiple {
 			<# } #>
 			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
+		<div class="elementor-control-content media-dimensions">
+			<div class="elementor-control-field elementor-control elementor-control-type-select">
+				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Dimensions', 'elementor' ); ?></label>
+				<div class="elementor-control-input-wrapper">
+				<select data-setting="dimensions" id="media-display-dimensions" 
+				class="elementor-control elementor-control-type-select elementor-control-input-wrapper select">
+				<?php
+					$sizes = $this->get_image_sizes_options();
+					foreach ( $sizes as $key => $value ) {
+						echo "<option value='$key'>$value</option>";
+					}
+					?>
+				</select>
+				</div>
+			</div>
+			</div>
 		<?php
+	}
+
+
+	protected function get_image_sizes_options() {
+		$sizes = get_intermediate_image_sizes();
+		$sizes[] = 'full';
+		$result = [];
+		foreach ( $sizes as $size ) {
+			$width = get_option( "{$size}_size_w" );
+			$height = get_option( "{$size}_size_h" );
+			if ( ! $width && ! $height ) {
+				$result[ $size ] = $size;
+			} else {
+				$result[ $size ] = $size . ' (' . $width . 'x' . $height . ')';
+			}
+		}
+		return $result;
 	}
 
 	/**

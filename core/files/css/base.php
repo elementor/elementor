@@ -666,32 +666,6 @@ abstract class Base extends Base_File {
 		return $this->get_stylesheet()->__toString();
 	}
 
-
-	private function update_background_images_dimension( $control, $values ) {
-		$background_dimensions_prefix = 'background_dimensions';
-		if ( false !== strpos( $control['name'], 'background_image' ) ) {
-			$image_size = $values[ $background_dimensions_prefix ] ?? null;
-			if ( ! empty( $image_size ) ) {
-				$responsive_size = $background_dimensions_prefix;
-				$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-				foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
-					if ( false !== strpos( $control['name'], $breakpoint_key ) ) {
-						$responsive_size .= '_' . $breakpoint_key;
-					}
-				}
-				$size_value = $values[ $responsive_size ] ?? null;
-				$original_image = $values[ $control['name'] ] ?? null;
-				if ( ! empty( $size_value ) && ! empty( $original_image ) ) {
-					$image = wp_get_attachment_image_src( $original_image['id'], $size_value );
-					if ( $image ) {
-						$values[ $control['name'] ]['url'] = $image[0];
-					}
-				}
-			}
-		}
-		return $values;
-	}
-
 	/**
 	 * Add control style rules.
 	 *
@@ -707,8 +681,6 @@ abstract class Base extends Base_File {
 	 * @param array $replacements Replacements.
 	 */
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
-		$values = $this->update_background_images_dimension( $control, $values );
-
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );

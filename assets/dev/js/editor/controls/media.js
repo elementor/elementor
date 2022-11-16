@@ -13,6 +13,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
+		ui.mediaImageDimensions = '#media-display-dimensions';
 
 		return ui;
 	},
@@ -21,6 +22,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
+			'change @ui.mediaImageDimensions': 'onMediaImageDimensions',
 		} );
 	},
 
@@ -242,6 +244,24 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	onBeforeDestroy() {
 		this.$el.remove();
+	},
+
+	onMediaImageDimensions() {
+		const selectedDimensions = this.ui.mediaImageDimensions.val();
+		const imageURL = elementor.imagesManager.getImageUrl( {
+			id: this.getControlValue( 'id' ),
+			size: selectedDimensions,
+		} );
+		if ( imageURL ) {
+			this.setValue( {
+				url: imageURL,
+				id: this.getControlValue( 'id' ),
+				alt: this.getControlValue( 'alt' ),
+				dimensions: selectedDimensions,
+				source: 'library',
+			} );
+		}
+		this.renderWithChildren();
 	},
 } );
 
