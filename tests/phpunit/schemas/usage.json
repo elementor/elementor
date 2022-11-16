@@ -1028,10 +1028,6 @@
 									"default": "active",
 									"state": "default"
 								},
-								"admin-top-bar": {
-									"default": "inactive",
-									"state": "default"
-								},
 								"form-submissions": {
 									"default": "active",
 									"state": "default"
