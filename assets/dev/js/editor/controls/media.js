@@ -246,12 +246,28 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.$el.remove();
 	},
 
-	onMediaImageDimensions() {
+	async onMediaImageDimensions() {
 		const selectedDimensions = this.ui.mediaImageDimensions.val();
-		const imageURL = elementor.imagesManager.getImageUrl( {
+		let imageURL = await elementor.imagesManager.getImageUrl( {
 			id: this.getControlValue( 'id' ),
 			size: selectedDimensions,
 		} );
+
+		// Fallback for unloaded images, try to get the original image from WP media API.
+		if ( ! imageURL ) {
+			const apiSettings = window.wpApiSettings || {},
+			nonce = apiSettings.nonce,
+			restUrl = apiSettings.root + 'wp/v2/media/' + this.getControlValue( 'id' );
+			const response = await fetch( restUrl, {
+				method: 'GET',
+				headers: {
+					'X-WP-Nonce': nonce,
+				},
+			} );
+			const data = await response.json();
+			imageURL = data?.media_details?.sizes[ selectedDimensions ]?.source_url;
+		}
+
 		if ( imageURL ) {
 			this.setValue( {
 				url: imageURL,

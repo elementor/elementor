@@ -279,18 +279,18 @@ class Control_Media extends Control_Base_Multiple {
 				<select data-setting="dimensions" id="media-display-dimensions" 
 				class="elementor-control elementor-control-type-select elementor-control-input-wrapper select">
 				<?php
-					$sizes = $this->get_image_sizes_options();
-					foreach ( $sizes as $key => $value ) {
-						echo "<option value='$key'>$value</option>";
-					}
-					?>
+				$sizes = $this->get_image_sizes_options();
+				foreach ( $sizes as $key => $value ) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo "<option value='" . esc_attr( $key ) . "' {{ data.controlValue.dimensions == '$key' ? 'selected' : '' }}>$value</option>";
+				}
+				?>
 				</select>
 				</div>
 			</div>
 			</div>
 		<?php
 	}
-
 
 	protected function get_image_sizes_options() {
 		$sizes = get_intermediate_image_sizes();
