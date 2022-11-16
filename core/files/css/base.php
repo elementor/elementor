@@ -377,6 +377,10 @@ abstract class Base extends Base_File {
 							}
 						}
 
+						if ( '__EMPTY__' === $parsed_value ) {
+							$parsed_value = '';
+						}
+
 						return $parsed_value;
 					}, $css_property );
 				} catch ( \Exception $e ) {

@@ -24,6 +24,8 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 			this.ui.units.filter( `[value="${ placeholder }"]` )
 				.addClass( 'e-units-placeholder' );
 		}
+
+		this.$el.toggleClass( 'e-units-custom', this.isCustomUnit() );
 	},
 
 	recursiveUnitChange( includingSelf = true ) {
@@ -71,6 +73,21 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 		}
 
 		return ranges[ unit ];
+	},
+
+	isCustomUnit() {
+		return 'custom' === this.getControlValue( 'unit' );
+	},
+}, {
+	// Static methods
+	getStyleValue( placeholder, controlValue ) {
+		let returnValue = ControlBaseMultipleItemView.getStyleValue( placeholder, controlValue );
+
+		if ( 'UNIT' === placeholder && 'custom' === returnValue ) {
+			returnValue = '__EMPTY__';
+		}
+
+		return returnValue;
 	},
 } );
 

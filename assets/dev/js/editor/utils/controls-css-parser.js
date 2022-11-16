@@ -147,6 +147,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 							elementor.helpers.enqueueFont( parsedValue );
 						}
 
+						if ( '__EMPTY__' === parsedValue ) {
+							parsedValue = '';
+						}
+
 						return parsedValue;
 					} );
 				} catch ( e ) {

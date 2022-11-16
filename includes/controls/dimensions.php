@@ -100,7 +100,7 @@ class Control_Dimensions extends Control_Base_Units {
 					foreach ( $dimensions as $dimension_key => $dimension_title ) :
 						?>
 						<li class="elementor-control-dimension">
-							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="number" data-setting="<?php
+							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php
 								// PHPCS - the variable $dimension_key is a plain text.
 								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?>" placeholder="<#
