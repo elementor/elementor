@@ -15,7 +15,7 @@ const config = {
 	testDir: './tests/',
 	/* Maximum time one test can run for. */
 	timeout: 2 * 60 * 1000, // 2 minutes
-	globalSetup: path.resolve( __dirname, './global-setup.js' ),
+	globalSetup: path.resolve( __dirname, './src/global-setup.js' ),
 	expect: {
 		/**
 		 * Maximum time expect() should wait for the condition to be met.
@@ -26,7 +26,7 @@ const config = {
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !! process.env.CI,
 	/* Retry on CI only */
-	retries: process.env.CI ? 2 : 0,
+	retries: process.env.CI ? 1 : 0,
 	/* Retry on CI only */
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */

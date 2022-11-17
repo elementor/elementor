@@ -632,13 +632,14 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's',
 					'size' => 0.3,
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
+				],
 			]
 		);
 
@@ -843,15 +844,16 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
-				'default' => [
-					'unit' => 's',
-					'size' => 0.3,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}s;',
 				],
 			]
 		);
@@ -961,10 +963,14 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
-				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's',
 					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'conditions' => [
 					'relation' => 'or',
@@ -982,8 +988,7 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--border-transition: {{SIZE}}s;',
 				],
 			]
 		);
@@ -1616,6 +1621,8 @@ class Container extends Element_Base {
 		$this->register_advanced_controls();
 
 		$this->register_motion_effects_controls();
+
+		$this->register_transform_section( 'container' );
 
 		$this->register_responsive_controls();
 
