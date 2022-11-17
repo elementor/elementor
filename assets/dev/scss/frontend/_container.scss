@@ -45,18 +45,6 @@
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
-	transform: perspective( var(--e-con-transform-perspective, initial ) )
-		rotateZ( var(--e-con-transform-rotateZ, 0 ) )
-		rotateX( var(--e-con-transform-rotateX, 0 ) )
-		rotateY( var(--e-con-transform-rotateY, 0 ) )
-		translate( var(--e-con-transform-translate, 0 ) )
-		translateX( var(--e-con-transform-translateX, 0 ) )
-		translateY( var(--e-con-transform-translateY, 0 ) )
-		scaleX( calc( var(--e-con-transform-flipX, 1 ) * var(--e-con-transform-scaleX, var(--e-con-transform-scale, 1 ) ) ) )
-		scaleY( calc( var(--e-con-transform-flipY, 1 ) * var(--e-con-transform-scaleY, var(--e-con-transform-scale, 1 ) ) ) )
-		skewX( var(--e-con-transform-skewX, 0 ) )
-		skewY( var(--e-con-transform-skewY, 0 ) );
-	transform-origin: var(--e-con-transform-origin-y) var(--e-con-transform-origin-x);
 
 	&-full,
 	& > .e-con-inner {
