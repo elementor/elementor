@@ -58,7 +58,7 @@ class Log_Reporter extends Base {
 		if ( ! empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) {
 			$nonce = Utils::get_super_global_value( $_GET, '_wpnonce' );
 
-			if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, self::CLEAR_LOG_ACTION ) ) {
+			if ( ! wp_verify_nonce( $nonce, self::CLEAR_LOG_ACTION ) ) {
 				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
 					'back_link' => true,
 				] );

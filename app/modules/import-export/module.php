@@ -328,7 +328,7 @@ class Module extends BaseModule {
 	private function register_actions() {
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
-				ElementorUtils::get_super_global_value( $_POST, 'action' ) &&
+				isset( $_POST['action'] ) &&
 				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
 				current_user_can( 'manage_options' )
 			) {
@@ -417,14 +417,16 @@ class Module extends BaseModule {
 	 */
 	private function handle_upload_kit() {
 		// PHPCS - Already validated in caller function.
-		if ( ! empty( ElementorUtils::get_super_global_value( $_POST, 'e_import_file' ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$file_url = ElementorUtils::get_super_global_value( $_POST, 'e_import_file' );
+
+		// Import from kit library
+		if ( ! empty( $file_url ) ) {
 			if (
 				! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
 			) {
 				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
 			}
-
-			$file_url = ElementorUtils::get_super_global_value( $_POST, 'e_import_file' );
 
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
 				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
@@ -444,7 +446,7 @@ class Module extends BaseModule {
 			$referrer = static::REFERRER_KIT_LIBRARY;
 		} else {
 			// PHPCS - Already validated in caller function.
-			$file_name = ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$file_name = ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
 			$referrer = static::REFERRER_LOCAL;
 		}
 
