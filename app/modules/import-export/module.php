@@ -416,9 +416,11 @@ class Module extends BaseModule {
 	 * Handle upload kit ajax request.
 	 */
 	private function handle_upload_kit() {
-		// PHPCS - Already validated in caller function.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$file_url = ElementorUtils::get_super_global_value( $_POST, 'e_import_file' );
+		// PHPCS - A URL that should contain special chars (auth headers information).
+		$file_url = isset( $_POST['e_import_file'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			? wp_unslash( $_POST['e_import_file'] )
+			: '';
 
 		// Import from kit library
 		if ( ! empty( $file_url ) ) {
