@@ -370,7 +370,14 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async changeResponsiveView( device ) {
-		await page.locator( '#elementor-panel-footer-responsive i' ).click();
-		await page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+		const hasResponsiveViewBar = await this.page.$eval( '#elementor-preview-responsive-wrapper', ( el ) => {
+			return el.classList.contains( 'ui-resizable' );
+		} );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
+
+		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 };

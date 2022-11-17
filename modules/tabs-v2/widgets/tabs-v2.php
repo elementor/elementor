@@ -440,7 +440,7 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Breakpoint', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'description' => esc_html__( 'Note: currently, the design of desktop (horizontal) and mobile (vertical) does not entirely match; for example, on mobile, we have grey borders around the tabs, and they shouldn’t be there.', 'elementor' ),
+				'description' => esc_html__( 'Note: Choose at which breakpoint tabs will automatically switch to a vertical (“accordion”) layout.', 'elementor' ),
 				'options' => $dropdown_options,
 				'default' => 'mobile',
 				'prefix_class' => 'e-tabs-',
