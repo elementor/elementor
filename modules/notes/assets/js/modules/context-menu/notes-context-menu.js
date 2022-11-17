@@ -32,6 +32,7 @@ export class NotesContextMenu extends elementorModules.editor.utils.Module {
 			actions: [
 				{
 					name: 'open_notes',
+					icon: 'eicon-notes',
 					title: __( 'Notes', 'elementor' ),
 					shortcut: '<i class="eicon-pro-icon"></i>',
 					isEnabled: () => false,
