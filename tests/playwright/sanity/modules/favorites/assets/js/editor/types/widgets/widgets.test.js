@@ -33,6 +33,5 @@ test.describe( 'Favorite widgets', () => {
 		await expectFavoriteVisible();
 
 		await favoriteWidgets.remove( favoriteToAdd );
-
 	} );
 } );
