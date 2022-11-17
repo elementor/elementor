@@ -4,7 +4,7 @@ const FavoriteWidgetsHelper = require( './helpers' );
 const NotificationsHelpers = require( '../../../../../../../assets/js/editor/utils/notifications/helpers' );
 
 test.describe( 'Favorite widgets', () => {
-	test.only( 'Add favorite', async ( { page }, testInfo ) => {
+	test( 'Add favorite', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		const editor = await wpAdmin.useElementorCleanPost();
