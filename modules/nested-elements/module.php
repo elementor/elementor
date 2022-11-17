@@ -30,7 +30,6 @@ class Module extends \Elementor\Core\Base\Module {
 				'default_active' => true,
 				'minimum_installation_version' => '3.10.0',
 			],
-			'hidden' => true,
 		];
 	}
 
