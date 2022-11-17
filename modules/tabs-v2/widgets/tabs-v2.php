@@ -317,9 +317,9 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-title-alignment: ' . $start . ';',
-				'center' => '--tabs-v2-title-alignment: center;',
-				'end' => '--tabs-v2-title-alignment: ' . $end . ';',
+				'start' => '--tabs-v2-title-justify-content: flex-start;',
+				'center' => '--tabs-v2-title-justify-content: center;',
+				'end' => '--tabs-v2-title-justify-content: flex-end;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
