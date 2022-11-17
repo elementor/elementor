@@ -29,16 +29,6 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function enqueue_scripts() {
-		wp_enqueue_script(
-			'elementor-lazyload',
-			$this->get_js_assets_url( 'lazyload' ),
-			[ 'elementor-frontend' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-	}
-
 	private function enqueue_styles() {
 		wp_enqueue_style(
 			'elementor-lazyload',
@@ -117,8 +107,31 @@ class Module extends BaseModule {
 			$this->enqueue_styles();
 		} );
 
-		add_action( 'wp_footer', function() {
-			$this->enqueue_scripts();
+		add_action( 'wp_head', function () {
+			?>
+			<script type='text/javascript' defer>
+				document.addEventListener( 'DOMContentLoaded', function() {
+					const dataAttribute = 'data-e-bg-lazyload';
+					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+					entries.forEach( ( entry ) => {
+						if ( entry.isIntersecting ) {
+							let lazyloadBackground = entry.target;
+							const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
+							if ( lazyloadSelector ) {
+								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
+							}
+							lazyloadBackground.classList.add( 'lazyloaded' );
+							lazyloadBackgroundObserver.unobserve( entry.target );
+						}
+					});
+					}, { rootMargin: '100px 0px 100px 0px' } );
+					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+						lazyloadBackgroundObserver.observe( lazyloadBackground );
+					} );
+				} );
+			</script>
+			<?php
 		} );
 
 	}
