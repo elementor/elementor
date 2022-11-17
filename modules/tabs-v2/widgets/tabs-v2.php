@@ -326,92 +326,6 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_control( 'box_height', [
-			'label' => esc_html__( 'Box Height', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'default' => 'fit',
-			'options' => [
-				'fit' => esc_html__( 'Fit to content', 'elementor' ),
-				'height' => esc_html__( 'Height', 'elementor' ),
-			],
-			'selectors_dictionary' => [
-				'fit' => '--tabs-v2-overflow-x: initial; --tabs-v2-overflow-y: initial;',
-				'height' => '--tabs-v2-overflow-x: hidden; --tabs-v2-overflow-y: auto;',
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '{{VALUE}}',
-			],
-		] );
-
-		$this->add_responsive_control( 'tabs_height', [
-			'label' => esc_html__( 'Height', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 1000,
-				],
-				'vh' => [
-					'min' => 0,
-					'max' => 100,
-				],
-			],
-			'default' => [
-				'unit' => 'px',
-			],
-			'size_units' => [ 'px', 'vh' ],
-			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-height: {{SIZE}}{{UNIT}}',
-			],
-			'condition' => [
-				'box_height' => 'height',
-			],
-		] );
-
-		$this->add_control( 'active_item', [
-			'label' => esc_html__( 'Active Item', 'elementor' ),
-			'type' => Controls_Manager::NUMBER,
-			'description' => 'You can decide which tab will active as default.',
-		] );
-
-		$possible_tags = [
-			'div' => 'div',
-			'header' => 'header',
-			'footer' => 'footer',
-			'main' => 'main',
-			'article' => 'article',
-			'section' => 'section',
-			'aside' => 'aside',
-			'nav' => 'nav',
-			'a' => 'a',
-		];
-
-		$this->add_control(
-			'html_tag',
-			[
-				'label' => esc_html__( 'HTML Tag', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'separator' => 'before',
-				'default' => 'div',
-				'options' => $possible_tags,
-			]
-		);
-
-		$this->add_control(
-			'link',
-			[
-				'label' => esc_html__( 'Link', 'elementor' ),
-				'type' => Controls_Manager::URL,
-				'dynamic' => [
-					'active' => true,
-				],
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
-				'condition' => [
-					'html_tag' => 'a',
-				],
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section( 'section_tabs_style', [
@@ -1029,21 +943,6 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-	/**
-	 * Print safe HTML tag for the element based on the element settings.
-	 *
-	 * @return void
-	 */
-	private function print_html_tag() {
-		$html_tag = $this->get_settings_for_display( 'html_tag' );
-
-		if ( empty( $html_tag ) ) {
-			$html_tag = 'div';
-		}
-
-		Utils::print_validated_html_tag( $html_tag );
-	}
-
 	protected function render() {
 		// Copied from tabs.php
 		$settings = $this->get_settings_for_display();
@@ -1122,14 +1021,14 @@ class TabsV2 extends Widget_Nested_Base {
 			$tabs_content_html .= "<div $mobile_title_attributes>$tab_title</div>$tab_content";
 		}
 		?>
-		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="elementor-tabs-wrapper" role="tablist">
 				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
 				<?php echo $tabs_content_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
-		<<?php $this->print_html_tag(); ?>>
+		</div>
 		<?php
 	}
 
