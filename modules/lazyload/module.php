@@ -107,7 +107,7 @@ class Module extends BaseModule {
 			$this->enqueue_styles();
 		} );
 
-		add_action( 'wp_head', function () {
+		add_action( 'wp_footer', function() {
 			?>
 			<script type='text/javascript' defer>
 				document.addEventListener( 'DOMContentLoaded', function() {
