@@ -34,6 +34,7 @@
 	--tabs-v2-title-color-active: #{$white};
 	--tabs-v2-title-background-color-active: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
 	--tabs-v2-title-width: initial;
+	--tabs-v2-title-height: initial;
 
 	--tabs-v2-title-justify-content: center;
 	--tabs-v2-title-align-items: center;
@@ -96,7 +97,6 @@
 			padding-right: var( --tabs-v2-title-padding-right );
 			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
 			padding-left: var( --tabs-v2-title-padding-left );
-			text-align: var( --tabs-v2-title-alignment );
 			border-radius: var( --tabs-v2-title-border-radius );
 			transition: all var( --tabs-v2-title-transition );
 			height: var( --tabs-v2-title-height );
@@ -109,6 +109,7 @@
 			&:hover {
 				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
 				transition: all var( --tabs-v2-title-transition );
+				color: var( --tabs-v2-icon-color-hover );
 			}
 
 			&:hover {
