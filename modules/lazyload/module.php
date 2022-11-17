@@ -73,21 +73,12 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function remove_background_image( $value, $css_property, $matches, $control ) {
-		$is_lazyload_active = Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
-		if ( $is_lazyload_active ) {
-			if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
-				$value['url'] = 'none';
-			}
-		}
-		return $value;
-	}
-
 	private function append_lazyload_selector( $control, $value ) {
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
+						$css_property  = str_replace( 'url("{{URL}}")', 'none', $css_property );
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
 						$control = $this->apply_dominant_color_background( $control, $value, $selector );
 					}
@@ -112,10 +103,6 @@ class Module extends BaseModule {
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
 			$this->update_element_attributes( $element );
 		} );
-
-		add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
-			return $this->remove_background_image( $value, $css_property, $matches, $control );
-		}, 10, 4 );
 
 		add_filter('elementor/files/css/selectors', function( $control, $value ) {
 			return $this->append_lazyload_selector( $control, $value );

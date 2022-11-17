@@ -9,31 +9,29 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 	public function test_remove_background_image() {
 
 		//Arrange
-		$image_id = $this->factory()->attachment->create_upload_object( dirname( __DIR__, 3 ) . '/resources/mock-image.png' );
-		$image_url = wp_get_attachment_url( $image_id );
-
-		//Act
 		$reflection = new \ReflectionClass( LazyLoad::class );
-		$method = $reflection->getMethod( 'remove_background_image' );
+		$method = $reflection->getMethod( 'append_lazyload_selector' );
 		$method->setAccessible( true );
 		$lazyload = new LazyLoad();
-		$value = [
-			'id' => $image_id,
-			'url' => $image_url,
-		];
-		$css_property = 'background-image';
-		$matches = [
-			0 => '{{URL}}',
-		];
+		
 		$control = [
+			'selectors' => [
+				'{{WRAPPER}}' => 'background-image: url("{{URL}}");',
+			],
 			'background_lazyload' => [
 				'active' => true,
 			],
 		];
-		$removed_image = $method->invokeArgs( $lazyload, [ $value, $css_property, $matches, $control ] );
+
+		$values = [
+			'url' => "test.jpg",
+			'id'=>747,
+		];
+
+		//Act
+		$control = $method->invokeArgs( $lazyload, [ $control, $values ] );
 
 		//Assert
-		$this->assertEquals( 'none', $removed_image['url'] );
-		wp_delete_attachment( $image_id, true );
+		$this->assertEquals( $control['selectors']['{{WRAPPER}}'], 'background-image: none;--e-bg-lazyload: url("test.jpg");' );
 	}
 }

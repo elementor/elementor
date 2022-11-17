@@ -15,8 +15,7 @@ test( 'Background lazy load sanity test', async ( { page } ) => {
 	const lazyloadSelector = '[data-e-bg-lazyload]:not(.lazyloaded)';
 	await page.waitForSelector( lazyloadSelector );
 	const beforeURL = await page.$eval( lazyloadSelector, ( el ) => {
-		const property = window.getComputedStyle( el ).getPropertyValue( 'background-image' );
-		return property.match( /url\((.*?)\)/ )[ 1 ].replace( /"/g, '' );
+		return window.getComputedStyle( el ).getPropertyValue( 'background-image' );
 	} );
 	expect( beforeURL ).toContain( 'none' );
 

@@ -1,3 +1,3 @@
-.lazyloaded, body.e-lazyload [data-e-bg-lazyload]:not(.lazyloaded ):first-of-type {
+body.e-lazyload .lazyloaded {
     background-image: var(--e-bg-lazyload) !important;
 }
