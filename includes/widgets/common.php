@@ -256,7 +256,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [ '_element_width' => 'initial' ],
 			]
