@@ -47,7 +47,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
-			'dimensions' => '',
+			'dimensions' => 'full',
 		];
 	}
 
@@ -276,8 +276,7 @@ class Control_Media extends Control_Base_Multiple {
 			<div class="elementor-control-field elementor-control elementor-control-type-select">
 				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Dimensions', 'elementor' ); ?></label>
 				<div class="elementor-control-input-wrapper">
-				<select data-setting="dimensions" id="media-display-dimensions" 
-				class="elementor-control elementor-control-type-select elementor-control-input-wrapper select">
+				<select data-setting="dimensions" id="media-display-dimensions" class="elementor-control elementor-control-type-select elementor-control-input-wrapper select">
 				<?php
 				$sizes = $this->get_image_sizes_options();
 				foreach ( $sizes as $key => $value ) {
@@ -288,7 +287,8 @@ class Control_Media extends Control_Base_Multiple {
 				</select>
 				</div>
 			</div>
-			</div>
+		</div>
+
 		<?php
 	}
 
@@ -391,4 +391,5 @@ class Control_Media extends Control_Base_Multiple {
 		}
 		return trim( strip_tags( $alt ) );
 	}
+
 }

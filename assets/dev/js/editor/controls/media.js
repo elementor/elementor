@@ -14,6 +14,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 		ui.mediaImageDimensions = '#media-display-dimensions';
+		ui.mediaDimensionsWrapper = '.media-dimensions';
 
 		return ui;
 	},
@@ -64,6 +65,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
+		this.toggleDimensionsControl();
 	},
 
 	openFrame( e ) {
@@ -237,6 +239,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			} else {
 				this.applySavedValue();
 			}
+
+			this.toggleDimensionsControls();
 		}
 
 		this.trigger( 'after:select' );
@@ -278,6 +282,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			} );
 		}
 		this.renderWithChildren();
+	},
+
+	toggleDimensionsControl() {
+		if ( this.getControlValue( 'id' ) ) {
+			this.ui.mediaDimensionsWrapper.show();
+		} else {
+			this.ui.mediaDimensionsWrapper.hide();
+		}
 	},
 } );
 
