@@ -116,7 +116,7 @@ class TabsV2 extends Widget_Nested_Base {
 		$repeater->add_control(
 			'tab_icon_active',
 			[
-				'label' => esc_html__( 'Icon Active', 'elementor' ),
+				'label' => esc_html__( 'Active Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
@@ -158,10 +158,11 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'title_field' => '{{{ tab_title }}}',
+			'button_text' => 'Add Tab',
 		] );
 
-		$this->add_responsive_control( 'tabs_position', [
-			'label' => esc_html__( 'Position', 'elementor' ),
+		$this->add_responsive_control( 'tabs_direction', [
+			'label' => esc_html__( 'Direction', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'top' => [
@@ -193,8 +194,8 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_location_horizontal', [
-			'label' => esc_html__( 'Tabs Location', 'elementor' ),
+		$this->add_responsive_control( 'tabs_justify_horizontal', [
+			'label' => esc_html__( 'Justify', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
@@ -224,7 +225,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
 			'condition' => [
-				'tabs_position' => [
+				'tabs_direction' => [
 					'',
 					'top',
 					'bottom',
@@ -232,8 +233,8 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_location_vertical', [
-			'label' => esc_html__( 'Tabs Location', 'elementor' ),
+		$this->add_responsive_control( 'tabs_justify_vertical', [
+			'label' => esc_html__( 'Justify', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
@@ -263,7 +264,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
 			'condition' => [
-				'tabs_position' => [
+				'tabs_direction' => [
 					'start',
 					'end',
 				],
@@ -271,7 +272,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'tabs_width', [
-			'label' => esc_html__( 'Tabs Width', 'elementor' ),
+			'label' => esc_html__( 'Width', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'%' => [
@@ -291,7 +292,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'{{WRAPPER}}' => '--tabs-v2-tabs-wrapper-width: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
-				'tabs_position' => [
+				'tabs_direction' => [
 					'start',
 					'end',
 				],
@@ -299,7 +300,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'title_alignment', [
-			'label' => esc_html__( 'Title Alignment', 'elementor' ),
+			'label' => esc_html__( 'Align Title', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
@@ -419,7 +420,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'tabs_title_spacing', [
-			'label' => esc_html__( 'Spacing', 'elementor' ),
+			'label' => esc_html__( 'Gap between tabs', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
@@ -434,7 +435,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'tabs_title_space_between', [
-			'label' => esc_html__( 'Space Between', 'elementor' ),
+			'label' => esc_html__( 'Distance from content', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
@@ -676,7 +677,7 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_control(
 			'title_text_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}}',
@@ -689,6 +690,11 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'fields_options' => [
+					'text_shadow_type' => [
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -697,6 +703,11 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke',
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'fields_options' => [
+					'text_stroke_type' => [
+						'label' => esc_html__( 'Stroke', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -712,10 +723,10 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_control(
 			'title_text_color_hover',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-title-color-hover: {{VALUE}}',
+					'{{WRAPPER}} .elementor-tab-title:hover' => '--tabs-v2-title-color-hover: {{VALUE}}',
 				],
 			]
 		);
@@ -725,6 +736,12 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow_hover',
 				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'fields_options' => [
+					'text_shadow_type' => [
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+					],
+				],
+
 			]
 		);
 
@@ -733,6 +750,11 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke_hover',
 				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'fields_options' => [
+					'text_stroke_type' => [
+						'label' => esc_html__( 'Stroke', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -748,7 +770,7 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->add_control(
 			'title_text_color_active',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-v2-title-color-active: {{VALUE}}',
@@ -761,6 +783,11 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow_active',
 				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'fields_options' => [
+					'text_shadow_type' => [
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -769,6 +796,11 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke_active',
 				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'fields_options' => [
+					'text_stroke_type' => [
+						'label' => esc_html__( 'Stroke', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -784,7 +816,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'icon_position', [
-			'label' => esc_html__( 'Icon Position', 'elementor' ),
+			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'top' => [
@@ -816,7 +848,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'icon_size', [
-			'label' => esc_html__( 'Icon Size', 'elementor' ),
+			'label' => esc_html__( 'Size', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
@@ -844,7 +876,7 @@ class TabsV2 extends Widget_Nested_Base {
 		] );
 
 		$this->add_responsive_control( 'icon_spacing', [
-			'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+			'label' => esc_html__( 'Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
@@ -876,7 +908,7 @@ class TabsV2 extends Widget_Nested_Base {
 		);
 
 		$this->add_control( 'icon_color', [
-			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-icon-color: {{VALUE}};',
@@ -893,7 +925,7 @@ class TabsV2 extends Widget_Nested_Base {
 		);
 
 		$this->add_control( 'icon_color_hover', [
-			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-icon-color-hover: {{VALUE}};',
@@ -910,7 +942,7 @@ class TabsV2 extends Widget_Nested_Base {
 		);
 
 		$this->add_control( 'icon_color_active', [
-			'label' => esc_html__( 'Icon Color', 'elementor' ),
+			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--tabs-v2-icon-color-active: {{VALUE}};',
@@ -924,7 +956,7 @@ class TabsV2 extends Widget_Nested_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section( 'section_box_style', [
-			'label' => esc_html__( 'Box', 'elementor' ),
+			'label' => esc_html__( 'Content', 'elementor' ),
 			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
