@@ -84,6 +84,16 @@ module.exports = class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
+			// Try to make the element visible - Since some of the experiments are may be hidden for the user,
+			// but actually exist and need to be tested.
+			await this.page.evaluate( ( el ) => {
+				const element = document.querySelector( el );
+
+				if ( element ) {
+					element.style.display = 'block';
+				}
+			}, `.elementor_experiment-${ id }` );
+
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
 		}
 

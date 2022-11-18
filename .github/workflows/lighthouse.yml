@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: '0 10 * * 0' # run at 10 AM UTC on Sunday
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   build-plugin:
     name: Build plugin
@@ -13,11 +18,11 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -54,12 +59,12 @@ jobs:
     steps:
       - name: Checkout source code
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Restore build from cache
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/cache@v2

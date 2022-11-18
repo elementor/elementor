@@ -10,9 +10,10 @@ const config = {
 	retries: 1,
 	expect: {
 		timeout: 5 * 1000, // 5 seconds
+		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
 	},
 	use: {
-		actionTimeout: 4 * 1000, // 4 seconds
+		actionTimeout: 10 * 1000, // 4 seconds
 		navigationTimeout: 10 * 1000, // 10 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
