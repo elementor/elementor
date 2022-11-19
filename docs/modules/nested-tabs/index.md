@@ -68,12 +68,12 @@
 * Default global values should be set in widget CSS.
     - Since nested-elements should use CSS variables and the editor/backend mechanism does not support it, it should be added manually:
   ```css
-	--nested-tabs-title-color: var(--e-global-color-primary);
-	--nested-tabs-title-active-color: var(--e-global-color-accent);
+	--n-tabs-title-color: var(--e-global-color-primary);
+	--n-tabs-title-active-color: var(--e-global-color-accent);
 
-	--nested-tabs-title-typography-font-family: var(--e-global-typography-primary-font-family);
-	--nested-tabs-title-typography-font-size: initial;
-	--nested-tabs-title-typography-font-weight: var(--e-global-typography-primary-font-weight);
+	--n-tabs-title-typography-font-family: var(--e-global-typography-primary-font-family);
+	--n-tabs-title-typography-font-size: initial;
+	--n-tabs-title-typography-font-weight: var(--e-global-typography-primary-font-weight);
    ```
 - --------------------------------------------------------------------------------------------------------------------------------
 
