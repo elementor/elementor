@@ -3,7 +3,7 @@ import EmptyView from './views/empty';
 
 export class NestedTabs extends elementor.modules.elements.types.Base {
 	getType() {
-		return 'tabs-v2';
+		return 'nested-tabs';
 	}
 
 	getView() {

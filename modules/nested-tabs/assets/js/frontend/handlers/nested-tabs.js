@@ -1,4 +1,4 @@
-import BaseNestedTabs from 'elementor-frontend/handlers/base-tabs-v2';
+import BaseNestedTabs from 'elementor-frontend/handlers/base-nested-tabs';
 
 export default class NestedTabs extends BaseNestedTabs {
 	getTabContentFilterSelector( tabIndex ) {

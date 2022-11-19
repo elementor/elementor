@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\TabsV2\Widgets;
+namespace Elementor\Modules\NestedTabs\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
@@ -22,10 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class TabsV2 extends Widget_Nested_Base {
+class NestedTabs extends Widget_Nested_Base {
 
 	public function get_name() {
-		return 'tabs-v2';
+		return 'nested-tabs';
 	}
 
 	public function get_title() {

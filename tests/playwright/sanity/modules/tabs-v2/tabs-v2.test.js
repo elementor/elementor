@@ -14,7 +14,7 @@ test.describe( 'Nested Tabs tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'tabs-v2', container );
+		await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Act.
@@ -44,7 +44,7 @@ test.describe( 'Nested Tabs tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'tabs-v2', container );
+		await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Act.

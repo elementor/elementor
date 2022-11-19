@@ -1,4 +1,4 @@
-# Elementor TabsV2 Module
+# Elementor NestedTabs Module
 
 * **Experiment:** `true`
 * **Module Description** - Module that allows you to create nested tabs widget.
@@ -11,7 +11,7 @@
 			- 📂 __editor__
 				- 📄 [index.js](#assetsjseditorindexjs---load-the-module) - `The first files to be loaded in the editor, tells the editor to load the module.`
 				- 📄 [module.js](#assetsjseditormodulejs---the-module-register-the-widget) - `Load the widget and register it to editor elementsManager., wait for NestedElements module to be loaded first!.`
-				- 📄 [tabs\-v2.js](#assetsjseditortabs-v2js---register-the-widget) - `Register the widget in the editor.`
+				- 📄 [tabs\-v2.js](#assetsjseditornested-tabsjs---register-the-widget) - `Register the widget in the editor.`
 				- 📂 __views__
 					- 📄 [add\-section\-area.js](#assetsjseditorviewsadd-section-areajs---custom-addsectionarea-for-nested-tabs) - `React component that renders the add section area, rendered via empty.js`
 					- 📄 [empty.js](#assetsjseditorviewsemptyjs---custom-empty-view-for-the-widget) - `React component, that will be rendered when the widget is empty, prints select-preset or add-section-area.`
@@ -19,12 +19,12 @@
 					- 📄 [view.js](#assetsjseditorviewsviewjs---custom-view-for-the-widget) - `The widget view, actually used to manipulate clicks on the widget (view), register the model, view. emptyView for the widget.`
 			- 📂 __frontend__
 				- 📂 __handlers__
-					- 📄 [tabs\-v2.js](#assetsjsfrontendhandlerstabs-v2js---custom-frontend-handler) - `Frontend handler(s), custom handlers for interacting with the widget.`
+					- 📄 [tabs\-v2.js](#assetsjsfrontendhandlersnested-tabsjs---custom-frontend-handler) - `Frontend handler(s), custom handlers for interacting with the widget.`
 		- 📂 __scss__
 			- 📄 [frontend.scss](assets/scss/frontend.scss) - `All CSS will be used in frontend, how visually the widget will looks`
 	- 📄 [module.php](#assetsjseditormodulejs---the-module-register-the-widget) - `The module, enable the experiment to work on/off, register editor scripts`
 	- 📂 __widgets__
-		- 📄 [tabs\-v2.php](#widgetstabs-v2php---how-to-register-a-widget) - `Backend, The widget that will be nested, insert new widget into the system.`
+		- 📄 [tabs\-v2.php](#widgetsnested-tabsphp---how-to-register-a-widget) - `Backend, The widget that will be nested, insert new widget into the system.`
 
 - --------------------------------------------------------------------------------------------------------------------------------
 ## Product knowledge base
@@ -32,8 +32,8 @@
 
 ## Attention needed / Known issues
 * The widget works only with [containers](../../core/container-element.md)
-* Abnormal behavior for handling mobile [tabs-v2.js](../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js)
-    - The reason for the issue is that __TabsV2__ should looks like old tab.
+* Abnormal behavior for handling mobile [nested-tabs.js](../../../modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js)
+    - The reason for the issue is that __NestedTabs__ should looks like old tab.
     - Since the content of the widget and its children was hardcoded, it was possible have any structure inside the widget markup,
          now, the Nested Elements mechanism is creating the children as Container for specific selector, so its required to have the same markup.
     ```javascript
@@ -64,41 +64,41 @@
         super.onInit( ...args );
     }
     ```
-     > Since TabsV2 should look like old Tabs widget, there is manual handling of the situation for mobile devices.
+     > Since NestedTabs should look like old Tabs widget, there is manual handling of the situation for mobile devices.
 * Default global values should be set in widget CSS.
     - Since nested-elements should use CSS variables and the editor/backend mechanism does not support it, it should be added manually:
   ```css
-	--tabs-v2-title-color: var(--e-global-color-primary);
-	--tabs-v2-title-active-color: var(--e-global-color-accent);
+	--nested-tabs-title-color: var(--e-global-color-primary);
+	--nested-tabs-title-active-color: var(--e-global-color-accent);
 
-	--tabs-v2-title-typography-font-family: var(--e-global-typography-primary-font-family);
-	--tabs-v2-title-typography-font-size: initial;
-	--tabs-v2-title-typography-font-weight: var(--e-global-typography-primary-font-weight);
+	--nested-tabs-title-typography-font-family: var(--e-global-typography-primary-font-family);
+	--nested-tabs-title-typography-font-size: initial;
+	--nested-tabs-title-typography-font-weight: var(--e-global-typography-primary-font-weight);
    ```
 - --------------------------------------------------------------------------------------------------------------------------------
 
-# How NestedElements, TabsV2 (Nested tabs) works?
-* The module [__TabsV2__](../../../modules/tabs-v2/) will be used as a live example of the guide.
-* What are the difference between __TabsV2__ and __Nested Elements__ modules?
+# How NestedElements, NestedTabs (Nested tabs) works?
+* The module [__NestedTabs__](../../../modules/nested-tabs/) will be used as a live example of the guide.
+* What are the difference between __NestedTabs__ and __Nested Elements__ modules?
   > [__Nested Elements__](../../modules/nested-elements/index.md) is a base module for all nested elements, it includes the infrastructure for creating nested elements.
 
-  > __TabsV2__ is a module that allows you to create nested tabs.
+  > __NestedTabs__ is a module that allows you to create nested tabs.
 
-	* __TabsV2__ module includes:
+	* __NestedTabs__ module includes:
 		* Editor scripts:
-			* Widget: __TabsV2__
+			* Widget: __NestedTabs__
 			* Custom Views:
-				* __View__ `modules/tabs-v2/assets/js/editor/views/view.js` - The actual view of the widget.
+				* __View__ `modules/nested-tabs/assets/js/editor/views/view.js` - The actual view of the widget.
 			* Custom Empty widget views:
-				* __Empty View__ `modules/tabs-v2/assets/js/editor/views/empty.js` - The view that will be rendered when the widget is empty.
-				* __Select Preset View__ `modules/tabs-v2/assets/js/editor/views/select-preset.js` - will be rendered when select preset selected.
-				* __Add Section Area View__ `modules/tabs-v2/assets/js/editor/views/add-section-area.js` - The default that will be rendered on the __Empty View__.
+				* __Empty View__ `modules/nested-tabs/assets/js/editor/views/empty.js` - The view that will be rendered when the widget is empty.
+				* __Select Preset View__ `modules/nested-tabs/assets/js/editor/views/select-preset.js` - will be rendered when select preset selected.
+				* __Add Section Area View__ `modules/nested-tabs/assets/js/editor/views/add-section-area.js` - The default that will be rendered on the __Empty View__.
 		* Frontend scripts:
-			* __TabsV2__ Handler `modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js`
+			* __NestedTabs__ Handler `modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js`
 		* Frontend styles:
-			* __TabsV2__ Styles `modules/tabs-v2/assets/scss/frontend.scss`
+			* __NestedTabs__ Styles `modules/nested-tabs/assets/scss/frontend.scss`
 		* Backend Widget:
-			* __TabsV2__ Widget registration `modules/tabs-v2/widgets/tabs-v2.php`
+			* __NestedTabs__ Widget registration `modules/nested-tabs/widgets/nested-tabs.php`
 
 	  > The views are extra, and they are not required.
 
@@ -106,16 +106,16 @@ The flow:
 3 main flows, editor, frontend and backend.
 
 * Backend:
-    -  `modules/tabs-v2/module.php` -> Register the widget in the backend -> `widgets/tabs-v2.php`
-    -  `modules/tabs-v2/widgets/tabs-v2.php` -> Register the widget in the backend according to the file code.
-    -  `modules/tabs-v2/module.php` -> Tells the editor to enqueue the scripts and styles.
+    -  `modules/nested-tabs/module.php` -> Register the widget in the backend -> `widgets/nested-tabs.php`
+    -  `modules/nested-tabs/widgets/nested-tabs.php` -> Register the widget in the backend according to the file code.
+    -  `modules/nested-tabs/module.php` -> Tells the editor to enqueue the scripts and styles.
 * Editor
     -  `assets/js/editor/index.js` -> Load editor module -> `assets/js/editor/module.js`.
     -  `assets/js/editor/module.js` -> Load widget and register it into `elementor.elementsManager.registerElementType`.
-    -  `assets/js/editor/module.js` -> Register the widget `assets/js/editor/widgets/tabs-v2.js`
-    -  `assets/js/editor/widgets/tabs-v2.js` -> Register the widget with custom views: `assets/js/editor/views/view.js`, `assets/js/editor/views/empty.js`, `assets/js/editor/views/select-preset.js`, `assets/js/editor/views/add-section-area.js`
+    -  `assets/js/editor/module.js` -> Register the widget `assets/js/editor/widgets/nested-tabs.js`
+    -  `assets/js/editor/widgets/nested-tabs.js` -> Register the widget with custom views: `assets/js/editor/views/view.js`, `assets/js/editor/views/empty.js`, `assets/js/editor/views/select-preset.js`, `assets/js/editor/views/add-section-area.js`
 * Frontend:
-  - Load the handler `assets/js/frontend/handlers/tabs-v2.js`
+  - Load the handler `assets/js/frontend/handlers/nested-tabs.js`
   - Load the styles `assets/scss/frontend.scss`
 
 The following guide will help you to understand how the module works, step by step.
@@ -123,19 +123,19 @@ The following guide will help you to understand how the module works, step by st
 Start by registering the module:
 
 ## `- Module.php` - How to register a module.
-* **Link to the actual file** - [module.php](../../../modules/tabs-v2/module.php)
+* **Link to the actual file** - [module.php](../../../modules/nested-tabs/module.php)
 * **Description** - Registers the experiment on/off, register editor scripts
 * **Extends** - `\Elementor\Core\Base\Module`
 
 How to register a module?
-* Since __TabsV2__ (nested tabs) depends on `NestedElements` module,
+* Since __NestedTabs__ (nested tabs) depends on `NestedElements` module,
 	- use `get_experimental_data` method used to notify the module dependency upon `NestedElementsModule`. Please see `'dependencies'` key.
     ```php
     use Elementor\Modules\NestedElements\Module as NestedElementsModule;
   
     public static function get_experimental_data() {
         return [
-            'name' => 'tabs-v2',
+            'name' => 'nested-tabs',
             'title' => esc_html__( 'Nested Tab', 'elementor' ),
             'description' => esc_html__( 'Nested Tabs', 'elementor' ),
             'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -149,7 +149,7 @@ How to register a module?
   public function __construct() {
         add_action( 'elementor/editor/before_enqueue_scripts', function () {
             // The script you load for the editor goes here.
-            wp_enqueue_script( 'tabs-v2', $this->get_js_assets_url( 'tabs-v2' ), [
+            wp_enqueue_script( 'nested-tabs', $this->get_js_assets_url( 'nested-tabs' ), [
                 'elementor-common',
             ], ELEMENTOR_VERSION, true );
         } );
@@ -161,13 +161,13 @@ How to register a module?
 * To register the widget, extend the `get_widgets` method in the `Module` and return the widget name, eg:
   ```php
   protected function get_widgets() {
-      return [ 'TabsV2' ]; // Located at widgets/tabs-v2.php (the file will be loaded automatically).
+      return [ 'NestedTabs' ]; // Located at widgets/nested-tabs.php (the file will be loaded automatically).
   }
   ```
 * The complete module
   ```php
   <?php
-  namespace Elementor\Modules\TabsV2;
+  namespace Elementor\Modules\NestedTabs;
 	
   use Elementor\Core\Experiments\Manager as Experiments_Manager;
   use Elementor\Modules\NestedElements\Module as NestedElementsModule;
@@ -176,7 +176,7 @@ How to register a module?
 	
       public static function get_experimental_data() {
           return [
-              'name' => 'tabs-v2',
+              'name' => 'nested-tabs',
               'title' => esc_html__( 'Nested Tab', 'elementor' ),
               'description' => esc_html__( 'Nested Tabs', 'elementor' ),
               'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -186,11 +186,11 @@ How to register a module?
       }
 	
       public function get_name() {
-          return 'tabs-v2';
+          return 'nested-tabs';
       }
 	
       protected function get_widgets() {
-          return [ 'TabsV2' ];
+          return [ 'NestedTabs' ];
       }
 	
       public function __construct() {
@@ -204,18 +204,18 @@ How to register a module?
       }
   }
   ```
-## `assets/js/frontend/handlers/tabs-v2.js` - Custom frontend handler.
-* **Link to the actual file** - [tabs-v2.js](../../../modules/tabs-v2/assets/js/frontend/handlers/tabs-v2.js)
+## `assets/js/frontend/handlers/nested-tabs.js` - Custom frontend handler.
+* **Link to the actual file** - [nested-tabs.js](../../../modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js)
 * Since NestedElements, and TabV2, are modules, it will be required to create such custom handler.
 ```javascript
-export default class YourCustomHandler extends elementorModules.frontend.handlers.BaseTabsV2 {
+export default class YourCustomHandler extends elementorModules.frontend.handlers.BaseNestedTabs {
 	// Create your custom handler.
 }
 ```
 
-## `widgets/tabs-v2.php` - How to register a widget.
-* **Link to the actual file** - [tabs-v2.php](../../../modules/tabs-v2/widgets/tabs-v2.php)
-* **Description** - The `widgets/tabs-v2.php` is the main backend configuration file for widget with nested capabilities.
+## `widgets/nested-tabs.php` - How to register a widget.
+* **Link to the actual file** - [nested-tabs.php](../../../modules/nested-tabs/widgets/nested-tabs.php)
+* **Description** - The `widgets/nested-tabs.php` is the main backend configuration file for widget with nested capabilities.
 * **Extends** - [`\Elementor\Modules\NestedElements\Base\Widget_Nested_Base`](#)
 
 * Requirements:
@@ -226,16 +226,16 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 	* `get_default_children_elements` - The inner children/elements that will be created when the widget created.
 	* `get_default_repeater_title_setting_key` - The setting key that will be used by `$e.run( 'document/elements/settings' )` in the frontend for the children title.
 	* `get_default_children_title` - The tab title including `%d` for the index.
-	* `get_default_children_placeholder_selector` - Custom selector to place the children, in __TabsV2__ is used inside the tabs content. Return `null` if the element should be added in the end of the element.
+	* `get_default_children_placeholder_selector` - Custom selector to place the children, in __NestedTabs__ is used inside the tabs content. Return `null` if the element should be added in the end of the element.
 
   ```php
   <?php
-  namespace Elementor\Modules\TabsV2\Widgets;
+  namespace Elementor\Modules\NestedTabs\Widgets;
 	
   use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
   use Elementor\Plugin;
 	
-  class TabsV2 extends Widget_Nested_Base {
+  class NestedTabs extends Widget_Nested_Base {
       protected function get_default_children_elements() {
               return [
               [
@@ -272,41 +272,41 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
   ```
   
 ## `assets/js/editor/index.js` - Load the module.
-* **Link to the actual file** - [index.js](../../../modules/tabs-v2/assets/js/editor/index.js)
+* **Link to the actual file** - [index.js](../../../modules/nested-tabs/assets/js/editor/index.js)
 
 * This is first loaded file in the editor.
-  * What it does? Await for `Nested Elements` module to be loaded (requirement since the TabsV2 depends on the Nested Elements module).
-  * Load the __TabsV2__ module.
+  * What it does? Await for `Nested Elements` module to be loaded (requirement since the NestedTabs depends on the Nested Elements module).
+  * Load the __NestedTabs__ module.
       ```javascript
       // On editor init components.
       elementorCommon.elements.$window.on( 'elementor/init-components', async () => {
           // The module should be loaded only when `nestedElements` is available.
           await elementor.modules.nestedElements;
 	
-          // Create the TabsV2 module.
+          // Create the NestedTabs module.
           new ( await import( '../editor/module' ) ).default();
       } );
       ```
 ## `assets/js/editor/module.js` - The module register the widget.
-* **Link to the actual file** - [module.js](../../../modules/tabs-v2/assets/js/editor/module.js)
+* **Link to the actual file** - [module.js](../../../modules/nested-tabs/assets/js/editor/module.js)
 
 * What the modules do? Register the widget only.
 * What are the advantages of registering the element in the `elmeentor.elementsManager`?
   * Enable the option to customize the `View, EmptyView, or Model`
 	
   ```javascript
-    import TabsV2 from './tabs-v2'; // Import the widget.
+    import NestedTabs from './nested-tabs'; // Import the widget.
 	
     export default class Module {
         constructor() {
-            // Register new TabsV2 widget.
-            elementor.elementsManager.registerElementType( new TabsV2() );
+            // Register new NestedTabs widget.
+            elementor.elementsManager.registerElementType( new NestedTabs() );
         }
     }
     ```
     * The registration required for creating widgets with custom view, models, or custom empty-view.
-## `assets/js/editor/tabs-v2.js` - Register the widget.
-* **Link to the actual file** - [tabs-v2.js](../../../modules/tabs-v2/assets/js/editor/tabs-v2.js)
+## `assets/js/editor/nested-tabs.js` - Register the widget.
+* **Link to the actual file** - [nested-tabs.js](../../../modules/nested-tabs/assets/js/editor/nested-tabs.js)
 * The minimum requirement for nested capabilities is having a model support nested elements(elements inside elements), and can be done by registering this class:
   ```javascript
   export class YourWidgetName extends elementor.modules.elements.Widget {
@@ -322,9 +322,9 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
     import View from './views/view';            // Custom view for handling the clicks.
     import EmptyView from './views/empty';      // Customn empty view for handling empty in the widget.
 	
-    export class TabsV2 extends elementor.modules.elements.types.Base {
+    export class NestedTabs extends elementor.modules.elements.types.Base {
         getType() {
-              return 'tabs-v2'; // Widget type from the backend registeration.
+              return 'nested-tabs'; // Widget type from the backend registeration.
         }
 	
         getView() {
@@ -344,12 +344,12 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
         }
     }
 	
-    export default TabsV2;
+    export default NestedTabs;
 	
     ```
 ## `assets/js/editor/views/view.js` - Custom view for the widget.
-* **Link to the actual file** - [view.js](../../../modules/tabs-v2/assets/js/editor/views/view.js)
-* The view should extend `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`, let use __TabsV2__ view as exmaple:
+* **Link to the actual file** - [view.js](../../../modules/nested-tabs/assets/js/editor/views/view.js)
+* The view should extend `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`, let use __NestedTabs__ view as exmaple:
 	```javascript
 	/**
 	 * @extends {NestedViewBase}
@@ -395,7 +395,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 - The view logic is handles the clicks on the widget, that's what it used in this scenario, if there is no custom logic, the default nested view can be used:       - `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`.
 
 ## `assets/js/editor/views/add-section-area.js` - Custom `AddSectionArea` for nested tabs.
-* **Link to the actual file** - [add-section-area.js](../../../modules/tabs-v2/assets/js/editor/views/add-section-area.js)
+* **Link to the actual file** - [add-section-area.js](../../../modules/nested-tabs/assets/js/editor/views/add-section-area.js)
 ```javascript
 import { useEffect, useRef } from 'react';
 
@@ -456,7 +456,7 @@ AddSectionArea.propTypes = {
 };
 ```
 ## `assets/js/editor/views/empty.js` - Custom empty-view for the widget.
-* **Link to the actual file** - [empty.js](../../../modules/tabs-v2/assets/js/editor/views/empty.js)
+* **Link to the actual file** - [empty.js](../../../modules/nested-tabs/assets/js/editor/views/empty.js)
 
 ![img](./_images/1.jpg)
 * The view should be `React` component, it will be the empty view for the widget children, in this case, the tabs.
@@ -484,7 +484,7 @@ AddSectionArea.propTypes = {
     ```
     - This component determines which component to print `SelectPreset` or `AddSectionArea`.
 ## `assets/js/editor/views/select-preset.js` - Custom react component to print the presets available for children containers.
-* **Link to the actual file** - [select-preset.js](../../../modules/tabs-v2/assets/js/editor/views/select-preset.js)
+* **Link to the actual file** - [select-preset.js](../../../modules/nested-tabs/assets/js/editor/views/select-preset.js)
 
 ![img](./_images/2.jpg)
 ```javascript

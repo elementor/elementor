@@ -117,7 +117,7 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$is_tabs_v2_active = Plugin::$instance->widgets_manager->get_widget_types( 'tabs-v2' );
+		$is_tabs_v2_active = Plugin::$instance->widgets_manager->get_widget_types( 'nested-tabs' );
 
 		if ( $is_tabs_v2_active ) {
 			$this->add_deprecation_message(
@@ -126,7 +126,7 @@ class Widget_Tabs extends Widget_Base {
 					'You are currently editing a Tabs Widget in its old version. Any new tabs widget dragged into the canvas will be the new Tab widget, with the improved Nested capabilities.',
 					'elementor'
 				),
-				'tabs-v2'
+				'nested-tabs'
 			);
 		}
 

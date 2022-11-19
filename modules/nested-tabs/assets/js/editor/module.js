@@ -1,4 +1,4 @@
-import NestedTabs from './tabs-v2';
+import NestedTabs from './nested-tabs';
 
 export default class Module {
 	constructor() {
