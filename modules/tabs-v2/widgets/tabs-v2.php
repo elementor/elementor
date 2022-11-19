@@ -72,11 +72,11 @@ class TabsV2 extends Widget_Nested_Base {
 	}
 
 	protected function get_default_children_placeholder_selector() {
-		return '.elementor-tabs-content-wrapper';
+		return '.e-n-tabs-content';
 	}
 
 	protected function get_html_wrapper_class() {
-		return 'elementor-widget-tabs-v2';
+		return 'elementor-widget-n-tabs';
 	}
 
 	protected function register_controls() {
@@ -184,10 +184,10 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--tabs-v2-direction: column; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
-				'bottom' => '--tabs-v2-direction: column-reverse; --tabs-v2-tabs-wrapper-direction: row; --tabs-v2-tabs-wrapper-width: initial;',
-				'end' => '--tabs-v2-direction: row-reverse; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-tabs-wrapper-width: 240px;',
-				'start' => '--tabs-v2-direction: row; --tabs-v2-tabs-wrapper-direction: column; --tabs-v2-tabs-wrapper-width: 240px;',
+				'top' => '--n-tabs-direction: column; --n-tabs-tabs-heading-direction: row; --n-tabs-tabs-heading-width: initial;',
+				'bottom' => '--n-tabs-direction: column-reverse; --n-tabs-tabs-heading-direction: row; --n-tabs-tabs-heading-width: initial;',
+				'end' => '--n-tabs-direction: row-reverse; --n-tabs-tabs-heading-direction: column; --n-tabs-tabs-heading-width: 240px;',
+				'start' => '--n-tabs-direction: row; --n-tabs-tabs-heading-direction: column; --n-tabs-tabs-heading-width: 240px;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -216,10 +216,10 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: initial; --tabs-v2-title-width: 100%; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
+				'start' => '--n-tabs-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'center' => '--n-tabs-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'end' => '--n-tabs-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'stretch' => '--n-tabs-tabs-heading-justify-content: initial; --n-tabs-title-width: 100%; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -255,10 +255,10 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'center' => '--tabs-v2-tabs-wrapper-justify-content: center; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'end' => '--tabs-v2-tabs-wrapper-justify-content: flex-end; --tabs-v2-title-width: initial; --tabs-v2-title-height: initial; --tabs-v2-title-align-items: initial;',
-				'stretch' => '--tabs-v2-tabs-wrapper-justify-content: flex-start; --tabs-v2-title-width: initial; --tabs-v2-title-height: 100%; --tabs-v2-title-align-items: center;',
+				'start' => '--n-tabs-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'center' => '--n-tabs-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'end' => '--n-tabs-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'stretch' => '--n-tabs-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -289,7 +289,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ '%', 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-tabs-wrapper-width: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-tabs-heading-width: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
 				'tabs_direction' => [
@@ -317,9 +317,9 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--tabs-v2-title-justify-content: flex-start;',
-				'center' => '--tabs-v2-title-justify-content: center;',
-				'end' => '--tabs-v2-title-justify-content: flex-end;',
+				'start' => '--n-tabs-title-justify-content: flex-start;',
+				'center' => '--n-tabs-title-justify-content: center;',
+				'end' => '--n-tabs-title-justify-content: flex-end;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -344,7 +344,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
@@ -359,7 +359,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-title-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
@@ -378,7 +378,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .e-n-tab-title',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -391,7 +391,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border',
-				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .e-n-tab-title',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -409,7 +409,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .e-n-tab-title',
 			]
 		);
 
@@ -428,7 +428,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_hover',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'selector' => '{{WRAPPER}} .e-n-tab-title:hover',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -441,7 +441,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_hover',
-				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'selector' => '{{WRAPPER}} .e-n-tab-title:hover',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -459,7 +459,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow_hover',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'selector' => '{{WRAPPER}} .e-n-tab-title:hover',
 			]
 		);
 
@@ -469,7 +469,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'label' => esc_html__( 'Transition Duration (s)', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-title-transition: {{SIZE}}s',
+					'{{WRAPPER}}' => '--n-tabs-title-transition: {{SIZE}}s',
 				],
 				'range' => [
 					'px' => [
@@ -495,7 +495,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_active',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -514,7 +514,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_active',
-				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -531,7 +531,7 @@ class TabsV2 extends Widget_Nested_Base {
 			[
 				'name' => 'tabs_title_box_shadow_active',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
-				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
 			]
 		);
 
@@ -547,7 +547,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-title-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--n-tabs-title-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -559,7 +559,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-title-padding-top: {{TOP}}{{UNIT}}; --tabs-v2-title-padding-right: {{RIGHT}}{{UNIT}}; --tabs-v2-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --tabs-v2-title-padding-left: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--n-tabs-title-padding-top: {{TOP}}{{UNIT}}; --n-tabs-title-padding-right: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -594,7 +594,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--n-tabs-title-color: {{VALUE}}',
 				],
 			]
 		);
@@ -603,7 +603,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow',
-				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .e-n-tab-title',
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -616,7 +616,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke',
-				'selector' => '{{WRAPPER}} .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .e-n-tab-title',
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -640,7 +640,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title:hover' => '--tabs-v2-title-color-hover: {{VALUE}}',
+					'{{WRAPPER}} .e-n-tab-title:hover' => '--n-tabs-title-color-hover: {{VALUE}}',
 				],
 			]
 		);
@@ -649,7 +649,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_hover',
-				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'selector' => '{{WRAPPER}} .e-n-tab-title:hover',
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -663,7 +663,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_hover',
-				'selector' => '{{WRAPPER}} .elementor-tab-title:hover',
+				'selector' => '{{WRAPPER}} .e-n-tab-title:hover',
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -687,7 +687,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-title-color-active: {{VALUE}}',
+					'{{WRAPPER}}' => '--n-tabs-title-color-active: {{VALUE}}',
 				],
 			]
 		);
@@ -696,7 +696,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_active',
-				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -709,7 +709,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_active',
-				'selector' => '{{WRAPPER}} .elementor-tab-title.elementor-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -751,10 +751,10 @@ class TabsV2 extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'top' => '--tabs-v2-title-direction: column;',
-				'end' => '--tabs-v2-title-direction: row-reverse;',
-				'bottom' => '--tabs-v2-title-direction: column-reverse;',
-				'start' => '--tabs-v2-title-direction: row;',
+				'top' => '--n-tabs-title-direction: column;',
+				'end' => '--n-tabs-title-direction: row-reverse;',
+				'bottom' => '--n-tabs-title-direction: column-reverse;',
+				'start' => '--n-tabs-title-direction: row;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -785,7 +785,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', 'em', 'rem' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-icon-size: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-icon-size: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
@@ -808,7 +808,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', 'vw' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-icon-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-icon-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
@@ -825,7 +825,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-icon-color: {{VALUE}};',
+				'{{WRAPPER}}' => '--n-tabs-icon-color: {{VALUE}};',
 			],
 		] );
 
@@ -842,7 +842,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-icon-color-hover: {{VALUE}};',
+				'{{WRAPPER}}' => '--n-tabs-icon-color-hover: {{VALUE}};',
 			],
 		] );
 
@@ -859,7 +859,7 @@ class TabsV2 extends Widget_Nested_Base {
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-icon-color-active: {{VALUE}};',
+				'{{WRAPPER}}' => '--n-tabs-icon-color-active: {{VALUE}};',
 			],
 		] );
 
@@ -880,7 +880,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'name' => 'box_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'selector' => '{{WRAPPER}} .e-n-tabs-content',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -893,7 +893,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'box_border',
-				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'selector' => '{{WRAPPER}} .e-n-tabs-content',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -912,7 +912,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--n-tabs-content-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -921,7 +921,7 @@ class TabsV2 extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow_box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-tabs-content-wrapper',
+				'selector' => '{{WRAPPER}} .e-n-tabs-content',
 				'condition' => [
 					'box_height!' => 'height',
 				],
@@ -935,7 +935,7 @@ class TabsV2 extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--tabs-v2-content-wrapper-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--n-tabs-content-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -956,10 +956,10 @@ class TabsV2 extends Widget_Nested_Base {
 			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
 		}
 
-		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
-		$this->add_render_attribute( 'tab-title-text', 'class', 'e-tab-title-text' );
-		$this->add_render_attribute( 'tab-icon', 'class', 'elementor-tab-icon' );
-		$this->add_render_attribute( 'tab-icon-active', 'class', 'elementor-tab-icon-active' );
+		$this->add_render_attribute( 'elementor-tabs', 'class', 'e-n-tabs' );
+		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
+		$this->add_render_attribute( 'tab-icon', 'class', 'e-n-tab-icon' );
+		$this->add_render_attribute( 'tab-icon-active', 'class', 'e-active' );
 
 		$tabs_title_html = '';
 		$tabs_content_html = '';
@@ -971,26 +971,26 @@ class TabsV2 extends Widget_Nested_Base {
 			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
 			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 
-			$tab_id = empty( $item['element_id'] ) ? 'elementor-tab-title-' . $id_int . $tab_count : $item['element_id'];
+			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => $tab_id,
-				'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
+				'class' => [ 'e-n-tab-title', 'e-normal' ],
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
 				'role' => 'tab',
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
-				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
+				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
 			] );
 
 			$this->add_render_attribute( $tab_title_mobile_setting_key, [
-				'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
+				'class' => [ 'e-n-tab-title', 'e-collapse' ],
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
 				'role' => 'tab',
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
-				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
+				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
 				'id' => $tab_id . '-accordion',
 			] );
@@ -1022,10 +1022,10 @@ class TabsV2 extends Widget_Nested_Base {
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
-			<div class="elementor-tabs-wrapper" role="tablist">
+			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
-			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
+			<div class="e-n-tabs-content" role="tablist" aria-orientation="vertical">
 				<?php echo $tabs_content_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		</div>
@@ -1034,10 +1034,10 @@ class TabsV2 extends Widget_Nested_Base {
 
 	protected function content_template() {
 		?>
-		<div class="elementor-tabs" role="tablist" aria-orientation="vertical">
+		<div class="e-n-tabs" role="tablist" aria-orientation="vertical">
 			<# if ( settings['tabs'] ) {
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-			<div class="elementor-tabs-wrapper" role="tablist">
+			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
 				var tabCount = index + 1,
 				tabUid = elementUid + tabCount,
@@ -1049,18 +1049,18 @@ class TabsV2 extends Widget_Nested_Base {
 					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
 				}
 
-				let tabId = 'elementor-tab-title-' + tabUid;
+				let tabId = 'e-n-tab-title-' + tabUid;
 				if ( '' !== item.element_id ) {
 					tabId = item.element_id;
 				}
 
 				view.addRenderAttribute( tabTitleKey, {
 				'id': tabId,
-				'class': [ 'elementor-tab-title','elementor-tab-desktop-title' ],
+				'class': [ 'e-n-tab-title','e-normal' ],
 				'data-tab': tabCount,
 				'role': 'tab',
 				'tabindex': 1 === tabCount ? '0' : '-1',
-				'aria-controls': 'elementor-tab-content-' + tabUid,
+				'aria-controls': 'e-n-tab-content-' + tabUid,
 				'aria-expanded': 'false',
 				'data-binding-type': 'repeater-item',
 				'data-binding-repeater-name': 'tabs',
@@ -1069,13 +1069,13 @@ class TabsV2 extends Widget_Nested_Base {
 				} );
 				#>
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
-					<span class="elementor-tab-icon">{{{ tabIcon.value }}}</span>
-					<span class="elementor-tab-icon-active">{{{ tabActiveIcon.value }}}</span>
-					<span class="e-tab-title-text">{{{ item.tab_title }}}</span>
+					<span class="e-n-tab-icon">{{{ tabIcon.value }}}</span>
+					<span class="e-n-tab-icon e-active">{{{ tabActiveIcon.value }}}</span>
+					<span class="e-n-tab-title-text">{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
 			</div>
-			<div class="elementor-tabs-content-wrapper">
+			<div class="e-n-tabs-content">
 			</div>
 			<# } #>
 		</div>

@@ -1,176 +1,173 @@
 //
-// Tabs v2
+// Nested Tabs
 //
-.elementor-widget-tabs-v2 {
-	--tabs-v2-color-accent-fallback: #61CE70;
-	--tabs-v2-color-secondary-fallback: #54595F;
-	--tabs-v2-default-padding-block: 15px;
-	--tabs-v2-default-padding-inline: 35px;
-	--tabs-v2-height: initial;
-	--tabs-v2-overflow-x: hidden;
-	--tabs-v2-overflow-y: auto;
-	--tabs-v2-background-color: transparent;
-	--tabs-v2-display: flex;
-	--tabs-v2-direction: column;
-	--tabs-v2-gap: 10px;
-	--tabs-v2-border-width: 1px;
-	--tabs-v2-border-color: initial;
+.elementor-widget-n-tabs {
+	--n-tabs-color-accent-fallback: #61CE70;
+	--n-tabs-color-secondary-fallback: #54595F;
+	--n-tabs-default-padding-block: 15px;
+	--n-tabs-default-padding-inline: 35px;
+	--n-tabs-height: initial;
+	--n-tabs-overflow-x: hidden;
+	--n-tabs-overflow-y: auto;
+	--n-tabs-background-color: transparent;
+	--n-tabs-display: flex;
+	--n-tabs-direction: column;
+	--n-tabs-gap: 10px;
+	--n-tabs-border-width: 1px;
+	--n-tabs-border-color: initial;
 
-	--tabs-v2-tabs-wrapper-display: flex;
-	--tabs-v2-tabs-wrapper-direction: row;
-	--tabs-v2-tabs-wrapper-grow: initial;
-	--tabs-v2-tabs-wrapper-justify-content: center;
-	--tabs-v2-tabs-wrapper-width: initial;
+	--n-tabs-tabs-heading-display: flex;
+	--n-tabs-tabs-heading-direction: row;
+	--n-tabs-tabs-heading-grow: initial;
+	--n-tabs-tabs-heading-justify-content: center;
+	--n-tabs-tabs-heading-width: initial;
 
-	--tabs-v2-height: initial;
-	--tabs-v2-border-width: 1px;
-	--tabs-v2-border-color: #{$gray-light};
+	--n-tabs-height: initial;
+	--n-tabs-border-width: 1px;
+	--n-tabs-border-color: #{$gray-light};
 
-	--tabs-v2-content-wrapper-padding: initial;
-	--tabs-v2-content-wrapper-border-radius: initial;
+	--n-tabs-content-padding: initial;
+	--n-tabs-content-border-radius: initial;
 
-	--tabs-v2-title-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
-	--tabs-v2-title-background-color: #{$editor-background-light};
-	--tabs-v2-title-color-active: #{$white};
-	--tabs-v2-title-background-color-active: var( --e-global-color-accent, var( --tabs-v2-color-accent-fallback ) );
-	--tabs-v2-title-width: initial;
-	--tabs-v2-title-height: initial;
+	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-title-background-color: #{$editor-background-light};
+	--n-tabs-title-color-active: #{$white};
+	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-width: initial;
+	--n-tabs-title-height: initial;
 
-	--tabs-v2-title-justify-content: center;
-	--tabs-v2-title-align-items: center;
-	--tabs-v2-title-direction: row;
-	--tabs-v2-title-gap: 10px;
-	--tabs-v2-title-padding-top: var( --tabs-v2-default-padding-block );
-	--tabs-v2-title-padding-right: var( --tabs-v2-default-padding-inline );
-	--tabs-v2-title-padding-bottom: var( --tabs-v2-default-padding-block );
-	--tabs-v2-title-padding-left: var( --tabs-v2-default-padding-inline );
-	--tabs-v2-title-border-radius: initial;
-	--tabs-v2-title-transition: 0.3s;
+	--n-tabs-title-justify-content: center;
+	--n-tabs-title-align-items: center;
+	--n-tabs-title-direction: row;
+	--n-tabs-title-gap: 10px;
+	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-border-radius: initial;
+	--n-tabs-title-transition: 0.3s;
 
-	--tabs-v2-icon-color: var( --e-global-color-secondary, var( --tabs-v2-color-secondary-fallback ) );
-	--tabs-v2-icon-color-hover: var( --tabs-v2-title-color-hover );
-	--tabs-v2-icon-color-active: #{$white};
-	--tabs-v2-icon-size: initial;
-	--tabs-v2-icon-gap: 5px;
+	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
+	--n-tabs-icon-color-active: #{$white};
+	--n-tabs-icon-size: initial;
+	--n-tabs-icon-gap: 5px;
 
-	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
+	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
 
-	.elementor-tabs {
-		display: var( --tabs-v2-display );
-		flex-direction: var( --tabs-v2-direction );
-		gap: var( --tabs-v2-gap );
+	.e-n-tabs {
+		display: var( --n-tabs-display );
+		flex-direction: var( --n-tabs-direction );
+		gap: var( --n-tabs-gap );
 		text-align: $start;
-		height: var( --tabs-v2-height );
-		overflow-x: var( --tabs-v2-overflow-x );
-		overflow-y: var( --tabs-v2-overflow-y );
+		height: var( --n-tabs-height );
+		overflow-x: var( --n-tabs-overflow-x );
+		overflow-y: var( --n-tabs-overflow-y );
 
-		&-wrapper {
-			display: var( --tabs-v2-tabs-wrapper-display );
-			flex-basis: var( --tabs-v2-tabs-wrapper-width );
-			flex-direction: var( --tabs-v2-tabs-wrapper-direction );
-			justify-content: var( --tabs-v2-tabs-wrapper-justify-content );
-			gap: var( --tabs-v2-title-gap );
+		&-heading {
+			display: var( --n-tabs-tabs-heading-display );
+			flex-basis: var( --n-tabs-tabs-heading-width );
+			flex-direction: var( --n-tabs-tabs-heading-direction );
+			justify-content: var( --n-tabs-tabs-heading-justify-content );
+			gap: var( --n-tabs-title-gap );
 		}
 	
-		&-content-wrapper {
+		&-content {
 			flex-grow: 1;
-			padding: var( --tabs-v2-content-wrapper-padding );
-			border-radius: var( --tabs-v2-content-wrapper-border-radius );
+			padding: var( --n-tabs-content-padding );
+			border-radius: var( --n-tabs-content-border-radius );
 		}	
 	}
 
-	.elementor-tab {
+	.e-n-tab {
 
 		&-title {
 			display: flex;
-			align-items: var( --tabs-v2-title-align-items );
-			flex-direction: var( --tabs-v2-title-direction );
-			justify-content: var( --tabs-v2-title-justify-content );
-			gap: var( --tabs-v2-icon-gap );
-			color: var( --tabs-v2-title-color );
-			background-color: var( --tabs-v2-title-background-color );
-			border-width: var( --tabs-v2-border-width );
+			align-items: var( --n-tabs-title-align-items );
+			flex-direction: var( --n-tabs-title-direction );
+			justify-content: var( --n-tabs-title-justify-content );
+			gap: var( --n-tabs-icon-gap );
+			color: var( --n-tabs-title-color );
+			background-color: var( --n-tabs-title-background-color );
+			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
 			outline: none;
-			padding-top: var( --tabs-v2-title-padding-top );
-			padding-right: var( --tabs-v2-title-padding-right );
-			padding-bottom: var( --tabs-v2-title-padding-bottom ); 
-			padding-left: var( --tabs-v2-title-padding-left );
-			border-radius: var( --tabs-v2-title-border-radius );
-			transition: all var( --tabs-v2-title-transition );
-			height: var( --tabs-v2-title-height );
-			width: var( --tabs-v2-title-width );
+			padding-top: var( --n-tabs-title-padding-top );
+			padding-right: var( --n-tabs-title-padding-right );
+			padding-bottom: var( --n-tabs-title-padding-bottom ); 
+			padding-left: var( --n-tabs-title-padding-left );
+			border-radius: var( --n-tabs-title-border-radius );
+			transition: all var( --n-tabs-title-transition );
+			height: var( --n-tabs-title-height );
+			width: var( --n-tabs-title-width );
 
 			&-text {
 				width: 100%;
 			}
 
 			&:hover {
-				background-color: var( --tabs-v2-title-background-color-hover, var( --tabs-v2-title-background-color ) );
-				transition: all var( --tabs-v2-title-transition );
-				color: var( --tabs-v2-icon-color-hover );
-			}
+				background-color: var( --n-tabs-title-background-color-hover, var( --n-tabs-title-background-color ) );
+				transition: all var( --n-tabs-title-transition );
+				color: var( --n-tabs-icon-color-hover );
 
-			&:hover {
-
-				.elementor-tab-icon {
+				.e-n-tab-icon {
 
 					> i {
-						color: var( --tabs-v2-icon-color-hover );
+						color: var( --n-tabs-icon-color-hover );
 					}
 
 					svg {
-						fill: var( --tabs-v2-icon-color-hover );
+						fill: var( --n-tabs-icon-color-hover );
 					}
 				}
 			}
 
-			.elementor-tab-icon {
+			.e-n-tab-icon {
 				display: flex;
 
 				> i {
-					color: var( --tabs-v2-icon-color );
+					color: var( --n-tabs-icon-color );
 				}
 
 				svg {
-					fill: var( --tabs-v2-icon-color );
+					fill: var( --n-tabs-icon-color );
 				}
 
 				&,
-				&-active {
+				&.e-active {
 
 					> i {
-						font-size: var( --tabs-v2-icon-size );
+						font-size: var( --n-tabs-icon-size );
 					}
 
 					svg {
-						width: var( --tabs-v2-icon-size );
-						height: var( --tabs-v2-icon-size );
+						width: var( --n-tabs-icon-size );
+						height: var( --n-tabs-icon-size );
 					}
 				}
 
-				&-active {
+				&.e-active {
 					display: none;
 
 					> i {
-						color: var( --tabs-v2-icon-color-active );
+						color: var( --n-tabs-icon-color-active );
 					}
 
 					svg {
-						fill: var( --tabs-v2-icon-color-active );
+						fill: var( --n-tabs-icon-color-active );
 					}
 				}
 			}
 
-			&.elementor-active {
-				color: var( --tabs-v2-title-color-active );
-				background-color: var( --tabs-v2-title-background-color-active );
+			&.e-active {
+				color: var( --n-tabs-title-color-active );
+				background-color: var( --n-tabs-title-background-color-active );
 
-				.elementor-tab-icon {
+				.e-n-tab-icon {
 					display: none;
 
-					&-active {
+					&.e-active {
 						display: flex;
 					}
 				}
@@ -179,12 +176,12 @@
 	}
 
 	.e-con,
-	.elementor-tabs-content-wrapper {
-		border: 1px none var( --tabs-v2-border-color );
-		border-width: var( --tabs-v2-border-width );
+	.e-n-tabs-content {
+		border: 1px none var( --n-tabs-border-color );
+		border-width: var( --n-tabs-border-width );
 	}
 
-	.elementor-tabs-content-wrapper > .e-con:not(.elementor-active) {
+	.e-n-tabs-content > .e-con:not(.e-active) {
 		display: none;
 	}
 }
@@ -192,20 +189,20 @@
 // Responsive mode
 // This code needs to be updated in the Responsive Tabs section task
 @media (max-width: $screen-mobile-max) {
-	.elementor-tabs {
+	.e-n-tabs {
 
-		.elementor-tabs-wrapper {
+		.e-n-tabs-heading {
 			display: none;
 		}
 	}
 }
 
 @media (min-width: $screen-mobile-next) {
-	.elementor-widget-tabs-v2 {
+	.elementor-widget-n-tabs {
 
-		.elementor-tabs {
+		.e-n-tabs {
 			
-			.elementor-tab-mobile-title {
+			.e-collapse {
 				display: none;
 			}
 		}

@@ -32,11 +32,11 @@ export default class BaseTabsV2 extends Base {
 		return {
 			selectors: {
 				tablist: '[role="tablist"]',
-				tabTitle: '.elementor-tab-title',
+				tabTitle: '.e-n-tab-title',
 				tabContent: '.e-con',
 			},
 			classes: {
-				active: 'elementor-active',
+				active: 'e-active',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',

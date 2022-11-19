@@ -2,22 +2,22 @@ import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
 
 export default class TabsV2 extends BaseTabsV2 {
 	getTabContentFilterSelector( tabIndex ) {
-		// Double by 2, since each `e-con` should have 'elementor-tab-mobile-title'.
+		// Double by 2, since each `e-con` should have 'e-collapse'.
 		return `*:nth-child(${ tabIndex * 2 })`;
 	}
 
 	onInit( ...args ) {
-		// TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
+		// TODO: Find better solution, Manually adding 'e-collapse' for each container.
 		if ( elementorFrontend.isEditMode() ) {
 			const $widget = this.$element,
-				$removed = this.findElement( '.elementor-tab-mobile-title' ).remove();
+				$removed = this.findElement( '.e-collapse' ).remove();
 
 			let index = 1;
 
 			this.findElement( '.e-con' ).each( function() {
 				const $current = jQuery( this ),
-					$desktopTabTitle = $widget.find( `.elementor-tabs-wrapper > *:nth-child(${ index })` ),
-					mobileTitleHTML = `<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
+					$desktopTabTitle = $widget.find( `.e-n-tabs-heading > *:nth-child(${ index })` ),
+					mobileTitleHTML = `<div class="e-n-tab-title e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
 
 					$current.before( mobileTitleHTML );
 
