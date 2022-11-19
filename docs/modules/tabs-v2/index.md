@@ -38,17 +38,17 @@
          now, the Nested Elements mechanism is creating the children as Container for specific selector, so its required to have the same markup.
     ```javascript
     onInit( ...args ) {
-        // TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
+        // TODO: Find better solution, Manually adding 'e-collapse' for each container.
         if ( elementorFrontend.isEditMode() ) {
             const $widget = this.$element,
-                $removed = this.findElement( '.elementor-tab-mobile-title' ).remove();
+                $removed = this.findElement( '.e-collapse' ).remove();
 
             let index = 1;
 
             this.findElement( '.e-container' ).each( function() {
                 const $current = jQuery( this ),
-                    $desktopTabTitle = $widget.find( `.elementor-tabs-wrapper > *:nth-child(${ index })` ),
-                    mobileTitleHTML = `<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
+                    $desktopTabTitle = $widget.find( `.e-n-tabs-heading > *:nth-child(${ index })` ),
+                    mobileTitleHTML = `<div class="e-n-tab-title e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
 
                     $current.before( mobileTitleHTML );
 
@@ -262,11 +262,11 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
       }
 	
       protected function get_default_children_placeholder_selector() {
-          return '.elementor-tabs-content-wrapper';
+          return '.e-n-tabs-content';
       }
 	
       protected function get_html_wrapper_class() {
-          return 'elementor-widget-tabs-v2';
+          return 'elementor-widget-n-tabs';
       }
   }
   ```
