@@ -1,6 +1,6 @@
-import BaseTabsV2 from 'elementor-frontend/handlers/base-tabs-v2';
+import BaseNestedTabs from 'elementor-frontend/handlers/base-tabs-v2';
 
-export default class TabsV2 extends BaseTabsV2 {
+export default class NestedTabs extends BaseNestedTabs {
 	getTabContentFilterSelector( tabIndex ) {
 		// Double by 2, since each `e-con` should have 'e-collapse'.
 		return `*:nth-child(${ tabIndex * 2 })`;

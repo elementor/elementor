@@ -1,7 +1,7 @@
 import View from './views/view';
 import EmptyView from './views/empty';
 
-export class TabsV2 extends elementor.modules.elements.types.Base {
+export class NestedTabs extends elementor.modules.elements.types.Base {
 	getType() {
 		return 'tabs-v2';
 	}
@@ -19,4 +19,4 @@ export class TabsV2 extends elementor.modules.elements.types.Base {
 	}
 }
 
-export default TabsV2;
+export default NestedTabs;
