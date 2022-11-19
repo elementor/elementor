@@ -112,7 +112,6 @@
 				color: var( --n-tabs-icon-color-hover );
 
 				.e-n-tab-icon {
-
 					> i {
 						color: var( --n-tabs-icon-color-hover );
 					}
@@ -145,6 +144,10 @@
 						width: var( --n-tabs-icon-size );
 						height: var( --n-tabs-icon-size );
 					}
+
+					&:empty {
+						display: none;
+					}
 				}
 
 				&.e-active {
@@ -169,6 +172,10 @@
 
 					&.e-active {
 						display: flex;
+
+						&:empty {
+							display: none;
+						}
 					}
 				}
 			}
