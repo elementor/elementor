@@ -117,9 +117,9 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
-		$is_tabs_v2_active = Plugin::$instance->widgets_manager->get_widget_types( 'nested-tabs' );
+		$is_nested_tabs_active = Plugin::$instance->widgets_manager->get_widget_types( 'nested-tabs' );
 
-		if ( $is_tabs_v2_active ) {
+		if ( $is_nested_tabs_active ) {
 			$this->add_deprecation_message(
 				'3.8.0',
 				esc_html__(
