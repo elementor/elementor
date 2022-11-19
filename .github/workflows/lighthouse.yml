@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build
         run: npx grunt build
       - name: Save build to cache
@@ -80,14 +80,13 @@ jobs:
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.8.0
+        run: |
+          npm ci
+          npm install --no-package-lock --no-save @lhci/cli@0.8.0
       - name: Install WordPress environment
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
-          npx wp-env start
-          # change wp-env folder owner to www-data
-          sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+          npm run run-local-server
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |

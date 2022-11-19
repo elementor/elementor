@@ -70,24 +70,18 @@ jobs:
           PHP_VERSION: ${{ matrix.phpVersion }}
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
-      - name: Install wp-env
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0
+      - name: Install dependencies
+        run: npm ci
       - name: Install WordPress environment
         run: |
-          npx wp-env start
-          # change wp-env folder owner to www-data
-          sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
-          npx wp-env run cli "wp --user=admin elementor library import-dir elementor-playwright-templates"
-          npx wp-env run cli "wp rewrite structure \"/%postname%/\" --hard"
-          npx wp-env run cli "wp theme activate twentytwentytwo"
+          npm run run-local-server
+          npm run test:pre-playwright-sanity
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
           npx wp-env run tests-cli "wp --info"
       - name: Install playwright/test
         run: |
-          npm ci
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
