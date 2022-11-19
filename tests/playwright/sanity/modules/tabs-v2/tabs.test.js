@@ -1,32 +1,35 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 
-test.describe( 'tabs v2 icon vertical alignment', async ( { page }, testInfo ) => {
-
-	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	await wpAdmin.setExperiments( {
-		container: true,
-		'nested-elements': true,
-	} );
-
-	const editor = await wpAdmin.useElementorCleanPost(),
-		container = await editor.addElement( { elType: 'container' }, 'document' );
-
-	// Add widgets.
-	await editor.addWidget( 'tabs-v2', container );
-	await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
-
-	// Set icons to tabs according 'TabsIcons' array.
-	await setIconsToTabs( page, TabsIcons );
-
-	const icon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon' ).first();
-	const activeTabIcon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon-active' ).first();
-
+test.describe( 'tabs v2 icon vertical alignment', async () => {
+	let wpAdmin;
+	let editor;
+	let icon;
+	let activeTabIcon;
 	let locationOption;
-	// Check first tab icon vertical alignment.
+	const locationOptions = [ 'Start', 'Center', 'End', 'Justified' ];
+
 	for ( locationOption of locationOptions ) {
-		test( `Should be vertically centered when location is on ${ locationOption }`, async ( { page } ) = {
+		// eslint-disable-next-line no-shadow
+		test( `Should be vertically centered when location is on ${ locationOption }`, async ( { page }, testInfo ) => {
+			wpAdmin = new WpAdminPage( page, testInfo );
+			await wpAdmin.setExperiments( {
+				container: true,
+				'nested-elements': true,
+			} );
+
+			editor = await wpAdmin.useElementorCleanPost();
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+
+			// Add widgets.
+			await editor.addWidget( 'tabs-v2', container );
+			await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
+
+			// Set icons to tabs according 'TabsIcons' array.
+			await setIconsToTabs( page, TabsIcons );
+			icon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon' ).first();
+			activeTabIcon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon-active' ).first();
+
 			await page.locator( `.elementor-control-tabs_location_horizontal [original-title='${ locationOption }']` ).first().click();
 			await expect( icon ).toHaveCSS( 'align-items', 'center' );
 			await clickTab( editor, '1' );
@@ -71,7 +74,6 @@ const setIconsToTabs = async ( page, TabIcons ) => {
 
 // Click on tab by position.
 const clickTab = async ( editor, tabPosition ) => {
+	console.log( tabPosition )
 	await editor.getPreviewFrame().locator( `.elementor-widget-tabs-v2 .elementor-tabs-wrapper .elementor-tab-title >> nth=${ tabPosition } ` ).first().click();
 };
-
-const locationOptions = [ 'Start', 'Center', 'End', 'Justified' ];
