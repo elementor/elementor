@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Usage;
 
 use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,7 +51,10 @@ class Usage_Reporter extends Base {
 		$module = Module::instance();
 
 		if ( ! empty( $_GET[ self::RECALC_ACTION ] ) ) {
-			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], self::RECALC_ACTION ) ) {
+			// phpcs:ignore
+			$nonce = Utils::get_super_global_value( $_GET, '_wpnonce' );
+
+			if ( ! wp_verify_nonce( $nonce, self::RECALC_ACTION ) ) {
 				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
 					'back_link' => true,
 				] );
