@@ -26,7 +26,6 @@ test.describe( 'Nested Tabs - Tab icon vertical alignment', async () => {
 				activeTabIcon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon-active' ).first(),
 				currentContext = editor.getPreviewFrame();
 
-
 			// Assert
 			await page.locator( `.elementor-control-tabs_justify_horizontal [original-title='${ locationOption }']` ).first().click();
 			await expect( icon ).toHaveCSS( 'align-items', 'center' );
@@ -71,6 +70,50 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 		await expect( activeTabIcon ).toBeVisible();
 		await clickTab( currentContext, '1' );
 		await expect( icon ).toBeVisible();
+		await clickTab( currentContext, '0' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+			e_font_icon_svg: false,
+		} );
+	} );
+
+	test( `Should change icon size`, async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+			e_font_icon_svg: true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'tabs-v2', container );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
+
+		// Set icons to tabs according 'TabsIcons' array.
+		await setIconsToTabs( page, TabsIcons );
+
+		// Set icon size.
+		await page.locator( '.elementor-tab-control-style' ).click();
+		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
+
+		await editor.publishAndViewPage();
+
+		const icon = await page.locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon-active' ).first(),
+			currentContext = page;
+
+		// Assert
+		await expect( activeTabIcon ).toBeVisible();
+		await expect( activeTabIcon ).toHaveCSS( 'height', '50px' );
+		await clickTab( currentContext, '1' );
+		await expect( icon ).toBeVisible();
+		await expect( icon ).toHaveCSS( 'height', '50px' );
 		await clickTab( currentContext, '0' );
 
 		await wpAdmin.setExperiments( {
