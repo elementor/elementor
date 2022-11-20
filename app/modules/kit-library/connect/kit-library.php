@@ -16,8 +16,8 @@ class Kit_Library extends Library {
 		return __( 'Kit Library', 'elementor' );
 	}
 
-	public function get_all() {
-		return $this->http_request( 'GET', 'kits' );
+	public function get_all( $args = [] ) {
+		return $this->http_request( 'GET', 'kits', $args );
 	}
 
 	public function get_taxonomies() {

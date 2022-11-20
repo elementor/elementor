@@ -6,6 +6,7 @@ use Elementor\Data\V2\Base\Exceptions\Error_404;
 use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
 use Elementor\Modules\Library\User_Favorites;
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,6 +23,8 @@ class Repository {
 
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
 	const KITS_TAXONOMIES_CACHE_KEY = 'elementor_remote_kits_taxonomies';
+
+	const CACHED_KITS_LAYOUT_TYPE = 'elementor_remote_kits_layout_type';
 
 	const KITS_CACHE_TTL_HOURS = 12;
 	const KITS_TAXONOMIES_CACHE_TTL_HOURS = 12;
@@ -179,14 +182,30 @@ class Repository {
 	 */
 	private function get_kits_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_CACHE_KEY );
+		$cached_kits_editor_layout_type = get_transient( static::CACHED_KITS_LAYOUT_TYPE );
 
-		if ( ! $data || $force_api_request ) {
-			$data = $this->api->get_all();
+		$experiments_manager = Plugin::$instance->experiments;
+
+		if ( $experiments_manager->is_feature_active( 'container' ) ) {
+			$kits_editor_layout_type = 'container_flexbox';
+		} else {
+			$kits_editor_layout_type = '';
+		}
+
+		if ( ! $data || $force_api_request || $cached_kits_editor_layout_type !== $kits_editor_layout_type ) {
+			$args = [
+				'body' => [
+					'editor_layout_type' => $kits_editor_layout_type,
+				],
+			];
+
+			$data = $this->api->get_all( $args );
 
 			if ( is_wp_error( $data ) ) {
 				throw new WP_Error_Exception( $data );
 			}
 
+			set_transient( static::CACHED_KITS_LAYOUT_TYPE, $kits_editor_layout_type, DAY_IN_SECONDS );
 			set_transient( static::KITS_CACHE_KEY, $data, static::KITS_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
 
