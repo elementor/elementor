@@ -23,54 +23,62 @@ test.describe( 'Nested Tabs - Tab icon vertical alignment', async () => {
 			// Set icons to tabs according 'TabsIcons' array.
 			await setIconsToTabs( page, TabsIcons );
 			const icon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon' ).first(),
-				activeTabIcon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon-active' ).first();
+				activeTabIcon = await editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon-active' ).first(),
+				currentContext = editor.getPreviewFrame();
+
 
 			// Assert
 			await page.locator( `.elementor-control-tabs_justify_horizontal [original-title='${ locationOption }']` ).first().click();
 			await expect( icon ).toHaveCSS( 'align-items', 'center' );
-			await clickTab( editor, '1' );
+			await clickTab( currentContext, '1' );
 			await expect( activeTabIcon ).toHaveCSS( 'align-items', 'center' );
-			await clickTab( editor, '0' );
+			await clickTab( currentContext, '0' );
+
+			await wpAdmin.setExperiments( {
+				container: false,
+				'nested-elements': false,
+			} );
 		} );
 	}
+} );
 
-	const TabsIcons = [
-		{
-			icon: 'fa-arrow-alt-circle-right',
-			activeIcon: 'fa-bookmark',
-		},
-		{
-			icon: 'fa-clipboard',
-			activeIcon: 'fa-clock',
-		},
-		{
-			icon: 'fa-closed-captioning',
-			activeIcon: 'fa-bell',
-		},
-	];
+test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
+	test( `Icon should be visible when Inline font icons experiment is active`, async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+			e_font_icon_svg: true,
+		} );
 
-	// Set icons to tabs, used in setIconsToTabs function.
-	const addIcon = async ( page, selectedIcon ) => {
-		await page.locator( `#elementor-icons-manager__tab__content .${ selectedIcon }` ).first().click();
-		await page.locator( '.dialog-lightbox-insert_icon' ).click();
-	};
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-	// Iterate tabs and add an icon and an active Icon to each one.
-	const setIconsToTabs = async ( page, TabIcons ) => {
-		for ( const tab of TabIcons ) {
-			const index = TabsIcons.indexOf( tab ) + 1;
-			await page.locator( `#elementor-controls >> text=Tab #${ index }` ).click();
-			await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index } ) .elementor-control-tab_icon .eicon-circle` ).click();
-			await addIcon( page, tab.icon );
-			await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index }  ) .elementor-control-tab_icon_active .eicon-circle` ).click();
-			await addIcon( page, tab.activeIcon );
-		}
-	};
+		// Add widgets.
+		await editor.addWidget( 'tabs-v2', container );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
 
-	// Click on tab by position.
-	const clickTab = async ( editor, tabPosition ) => {
-		await editor.getPreviewFrame().locator( `.elementor-widget-tabs-v2 .elementor-tabs-wrapper .elementor-tab-title >> nth=${ tabPosition } ` ).first().click();
-	};
+		// Set icons to tabs according 'TabsIcons' array.
+		await setIconsToTabs( page, TabsIcons );
+
+		await editor.publishAndViewPage();
+
+		const icon = await page.locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-tabs-v2 .elementor-tab-title .elementor-tab-icon-active' ).first(),
+			currentContext = page;
+
+		// Assert
+		await expect( activeTabIcon ).toBeVisible();
+		await clickTab( currentContext, '1' );
+		await expect( icon ).toBeVisible();
+		await clickTab( currentContext, '0' );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+			e_font_icon_svg: false,
+		} );
+	} );
 } );
 
 test.describe( 'Nested Tabs tests', () => {
@@ -135,3 +143,37 @@ test.describe( 'Nested Tabs tests', () => {
 		} );
 	} );
 } );
+
+const TabsIcons = [
+	{
+		icon: 'fa-arrow-alt-circle-right',
+		activeIcon: 'fa-bookmark',
+	},
+	{
+		icon: 'fa-clipboard',
+		activeIcon: 'fa-clock',
+	},
+];
+
+// Set icons to tabs, used in setIconsToTabs function.
+const addIcon = async ( page, selectedIcon ) => {
+	await page.locator( `#elementor-icons-manager__tab__content .${ selectedIcon }` ).first().click();
+	await page.locator( '.dialog-lightbox-insert_icon' ).click();
+};
+
+// Iterate tabs and add an icon and an active Icon to each one.
+const setIconsToTabs = async ( page, TabIcons ) => {
+	for ( const tab of TabIcons ) {
+		const index = TabsIcons.indexOf( tab ) + 1;
+		await page.locator( `#elementor-controls >> text=Tab #${ index }` ).click();
+		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index } ) .elementor-control-tab_icon .eicon-circle` ).click();
+		await addIcon( page, tab.icon );
+		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index }  ) .elementor-control-tab_icon_active .eicon-circle` ).click();
+		await addIcon( page, tab.activeIcon );
+	}
+};
+
+// Click on tab by position.
+const clickTab = async ( context, tabPosition ) => {
+	await context.locator( `.elementor-widget-tabs-v2 .elementor-tabs-wrapper .elementor-tab-title >> nth=${ tabPosition } ` ).first().click();
+};

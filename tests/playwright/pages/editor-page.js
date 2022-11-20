@@ -361,4 +361,16 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
 		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
 	}
+
+	async publishAndViewPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await Promise.all( [
+			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
+			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
+		] );
+
+		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
+		await this.page.waitForLoadState();
+	}
 };

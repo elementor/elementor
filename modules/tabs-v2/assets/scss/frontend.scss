@@ -52,6 +52,7 @@
 	--tabs-v2-icon-color-hover: var( --tabs-v2-title-color-hover );
 	--tabs-v2-icon-color-active: #{$white};
 	--tabs-v2-icon-size: initial;
+  	--tabs-v2-svg-icon-size: 15px;
 	--tabs-v2-icon-gap: 5px;
 
 	max-width: 100%; /* Fix issue with new created tabs-v2 inside tabs-v2 with overflow */
@@ -147,8 +148,7 @@
 					}
 
 					svg {
-						width: var( --tabs-v2-icon-size );
-						height: var( --tabs-v2-icon-size );
+					  	height: var( --tabs-v2-svg-icon-size );
 					}
 				}
 

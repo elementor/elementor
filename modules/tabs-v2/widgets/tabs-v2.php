@@ -785,7 +785,7 @@ class TabsV2 extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', 'em', 'rem' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-v2-icon-size: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--tabs-v2-svg-icon-size: {{SIZE}}{{UNIT}}; --tabs-v2-icon-size: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
