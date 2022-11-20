@@ -798,6 +798,7 @@ class Utils {
 
 		if ( $_FILES === $super_global ) {
 			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
+
 			return $super_global[ $key ];
 		}
 
