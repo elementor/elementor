@@ -49,7 +49,7 @@
 - --------------------------------------------------------------------------------------------------------------------------------
 
 ## How to consume the module?
->  [__TabsV2__](../tabs-v2/index.md) documentation is explaining about how to use NestedElements.
+>  [__NestedTabs__](../nested-tabs/index.md) documentation is explaining about how to use NestedElements.
 
 #  What inside?
 > [__Nested Elements__](#) is a base module for all nested elements, it includes the infrastructure for creating nested elements.
