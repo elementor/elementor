@@ -1,15 +1,21 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
+const { ExperimentsAPI } = require( '../../../API/experiments-api' );
+
+test.beforeAll( async ( {}, testInfo ) => {
+	const experimentsAPI = new ExperimentsAPI( testInfo );
+	await experimentsAPI.activateExperiments( [ 'nested-elements', 'container' ] );
+} );
+
+test.afterAll( async ( {}, testInfo ) => {
+	const experimentsAPI = new ExperimentsAPI( testInfo );
+	await experimentsAPI.deactivateExperiments( [ 'nested-elements', 'container' ] );
+} );
 
 test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -25,20 +31,11 @@ test.describe( 'Nested Tabs tests', () => {
 		// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
 		expect( iconCountForTabs ).toBe( 1 );
 		expect( iconCountForMainContainer ).toBe( 2 );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-		} );
 	} );
 
 	test( 'Title alignment setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -54,12 +51,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 
 		// Assert.
-		// Check if title's are aligned on the left.
+		// Check if titles are aligned on the left.
 		await expect( editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tabs-wrapper .elementor-tab-title.elementor-active' ) ).toHaveCSS( 'justify-content', 'flex-start' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-		} );
 	} );
 } );
