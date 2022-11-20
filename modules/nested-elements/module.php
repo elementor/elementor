@@ -14,8 +14,8 @@ class Module extends \Elementor\Core\Base\Module {
 	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'tag' => esc_html__( 'Feature', 'elementor' ),
+			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'description' => sprintf(
 				esc_html__( 'Create a rich user experience by layering widgets together inside “Nested” Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected. %1$sLearn More%2$s', 'elementor' ),
 				'<a href=https://go.elementor.com/wp-dash-nested-elements/" target="_blank">',
@@ -30,6 +30,7 @@ class Module extends \Elementor\Core\Base\Module {
 				'default_active' => true,
 				'minimum_installation_version' => '3.10.0',
 			],
+			'hidden' => true,
 		];
 	}
 
