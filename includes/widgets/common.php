@@ -254,7 +254,7 @@ class Widget_Common extends Widget_Base {
 						'step' => 1,
 					],
 				],
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
