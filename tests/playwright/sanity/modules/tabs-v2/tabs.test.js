@@ -1,20 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 
-// test.beforeEach( async ( { page } ) => {
-// 	const wpAdmin = new WpAdminPage( page, testInfo );
-// 	await wpAdmin.setExperiments( {
-// 		container: true,
-// 		'nested-elements': true,
-// 	} );
-//
-// 	const editor = await wpAdmin.useElementorCleanPost(),
-// 		container = await editor.addElement( { elType: 'container' }, 'document' );
-//
-// 	// Add widgets.
-// 	await editor.addWidget( 'tabs-v2', container );
-// 	await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
-// } );
 test.describe( 'Nested Tabs - Tab icon vertical alignment', async () => {
 	let locationOption;
 	const locationOptions = [ 'Start', 'Center', 'End', 'Justified' ];
