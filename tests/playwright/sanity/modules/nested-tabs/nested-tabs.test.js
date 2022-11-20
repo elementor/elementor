@@ -125,6 +125,8 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 
 		await editor.publishAndViewPage();
 
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
+
 		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon' ).first(),
 			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active' ).first(),
 			currentContext = page;
