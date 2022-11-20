@@ -47,10 +47,12 @@
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
 
+  	--n-tabs-icon-align-items: center;
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};
 	--n-tabs-icon-size: initial;
+  	--n-tabs-svg-icon-size: 15px;
 	--n-tabs-icon-gap: 5px;
 
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
@@ -71,12 +73,12 @@
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
 		}
-	
+
 		&-content {
 			flex-grow: 1;
 			padding: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
-		}	
+		}
 	}
 
 	.e-n-tab {
@@ -95,7 +97,7 @@
 			outline: none;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
-			padding-bottom: var( --n-tabs-title-padding-bottom ); 
+			padding-bottom: var( --n-tabs-title-padding-bottom );
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
 			transition: all var( --n-tabs-title-transition );
@@ -104,6 +106,8 @@
 
 			&-text {
 				width: 100%;
+				display: flex;
+			  	align-items: center;
 			}
 
 			&:hover {
@@ -124,6 +128,7 @@
 
 			.e-n-tab-icon {
 				display: flex;
+			  	align-items: var( --n-tabs-icon-align-items );
 
 				> i {
 					color: var( --n-tabs-icon-color );
@@ -141,8 +146,7 @@
 					}
 
 					svg {
-						width: var( --n-tabs-icon-size );
-						height: var( --n-tabs-icon-size );
+						height: var( --n-tabs-svg-icon-size );
 					}
 
 					&:empty {
@@ -178,6 +182,10 @@
 						}
 					}
 				}
+
+				svg {
+				  height: var( --n-tabs-svg-icon-size );
+				}
 			}
 		}
 	}
@@ -208,7 +216,7 @@
 	.elementor-widget-n-tabs {
 
 		.e-n-tabs {
-			
+
 			.e-collapse {
 				display: none;
 			}
