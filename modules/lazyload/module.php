@@ -68,7 +68,7 @@ class Module extends BaseModule {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
-						$css_property  = str_replace( 'url("{{URL}}")', 'none', $css_property );
+						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
 						$control = $this->apply_dominant_color_background( $control, $value, $selector );
 					}
