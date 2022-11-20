@@ -391,5 +391,4 @@ class Control_Media extends Control_Base_Multiple {
 		}
 		return trim( strip_tags( $alt ) );
 	}
-
 }
