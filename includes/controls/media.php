@@ -300,9 +300,9 @@ class Control_Media extends Control_Base_Multiple {
 			$width = get_option( "{$size}_size_w" );
 			$height = get_option( "{$size}_size_h" );
 			if ( ! $width && ! $height ) {
-				$result[ $size ] = $size;
+				$result[ $size ] = ucfirst( $size );
 			} else {
-				$result[ $size ] = $size . ' (' . $width . 'x' . $height . ')';
+				$result[ $size ] = ucfirst( $size ) . " ($width x $height)";
 			}
 		}
 		return $result;
