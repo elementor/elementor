@@ -129,7 +129,7 @@ class Manager extends BaseModule {
 		}
 
 		// PHPCS - See comment above.
-		$data = Utils::get_super_global_value( $_POST, 'data', [] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$data = Utils::get_super_global_value( $_POST, 'data' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		array_walk_recursive( $data, function( &$value ) {
 			$value = sanitize_text_field( $value );

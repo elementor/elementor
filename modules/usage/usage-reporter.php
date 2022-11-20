@@ -54,7 +54,7 @@ class Usage_Reporter extends Base {
 			// phpcs:ignore
 			$nonce = Utils::get_super_global_value( $_GET, '_wpnonce' );
 
-			if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, self::RECALC_ACTION ) ) {
+			if ( ! wp_verify_nonce( $nonce, self::RECALC_ACTION ) ) {
 				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
 					'back_link' => true,
 				] );
