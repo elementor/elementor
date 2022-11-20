@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\TabsV2;
+namespace Elementor\Modules\NestedTabs;
 
 use Elementor\Plugin;
 
@@ -14,11 +14,11 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function get_name() {
-		return 'tabs-v2';
+		return 'nested-tabs';
 	}
 
 	protected function get_widgets() {
-		return [ 'TabsV2' ];
+		return [ 'NestedTabs' ];
 	}
 
 	public function __construct() {
