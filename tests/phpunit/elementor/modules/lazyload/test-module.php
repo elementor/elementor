@@ -32,6 +32,6 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 		$control = $method->invokeArgs( $lazyload, [ $control, $values ] );
 
 		//Assert
-		$this->assertEquals( $control['selectors']['{{WRAPPER}}'], 'background-image: none;--e-bg-lazyload: url("test.jpg");' );
+		$this->assertEquals( $control['selectors']['{{WRAPPER}}'], 'background-image: var(--e-bg-lazyload-loaded);--e-bg-lazyload: url("test.jpg");' );
 	}
 }
