@@ -16,11 +16,11 @@
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: initial;
 
-	--n-tabs-tabs-heading-display: flex;
-	--n-tabs-tabs-heading-direction: row;
-	--n-tabs-tabs-heading-grow: initial;
-	--n-tabs-tabs-heading-justify-content: center;
-	--n-tabs-tabs-heading-width: initial;
+	--n-tabs-heading-display: flex;
+	--n-tabs-heading-direction: row;
+	--n-tabs-heading-grow: initial;
+	--n-tabs-heading-justify-content: center;
+	--n-tabs-heading-width: initial;
 
 	--n-tabs-height: initial;
 	--n-tabs-border-width: 1px;
@@ -65,10 +65,10 @@
 		overflow-y: var( --n-tabs-overflow-y );
 
 		&-heading {
-			display: var( --n-tabs-tabs-heading-display );
-			flex-basis: var( --n-tabs-tabs-heading-width );
-			flex-direction: var( --n-tabs-tabs-heading-direction );
-			justify-content: var( --n-tabs-tabs-heading-justify-content );
+			display: var( --n-tabs-heading-display );
+			flex-basis: var( --n-tabs-heading-width );
+			flex-direction: var( --n-tabs-heading-direction );
+			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
 		}
 	

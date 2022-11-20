@@ -184,10 +184,10 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--n-tabs-direction: column; --n-tabs-tabs-heading-direction: row; --n-tabs-tabs-heading-width: initial;',
-				'bottom' => '--n-tabs-direction: column-reverse; --n-tabs-tabs-heading-direction: row; --n-tabs-tabs-heading-width: initial;',
-				'end' => '--n-tabs-direction: row-reverse; --n-tabs-tabs-heading-direction: column; --n-tabs-tabs-heading-width: 240px;',
-				'start' => '--n-tabs-direction: row; --n-tabs-tabs-heading-direction: column; --n-tabs-tabs-heading-width: 240px;',
+				'top' => '--n-tabs-direction: column; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial;',
+				'bottom' => '--n-tabs-direction: column-reverse; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial;',
+				'end' => '--n-tabs-direction: row-reverse; --n-tabs-heading-direction: column; --n-tabs-heading-width: 240px;',
+				'start' => '--n-tabs-direction: row; --n-tabs-heading-direction: column; --n-tabs-heading-width: 240px;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -216,10 +216,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'center' => '--n-tabs-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'end' => '--n-tabs-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'stretch' => '--n-tabs-tabs-heading-justify-content: initial; --n-tabs-title-width: 100%; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'start' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'center' => '--n-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'end' => '--n-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'stretch' => '--n-tabs-heading-justify-content: initial; --n-tabs-title-width: 100%; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -255,10 +255,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'center' => '--n-tabs-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'end' => '--n-tabs-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'stretch' => '--n-tabs-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center;',
+				'start' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'center' => '--n-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'end' => '--n-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'stretch' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -289,7 +289,7 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ '%', 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-tabs-heading-width: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-heading-width: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
 				'tabs_direction' => [
