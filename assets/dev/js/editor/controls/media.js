@@ -257,7 +257,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			size: selectedDimensions,
 		} );
 
-		// Fallback for unloaded images, try to get the original image from WP media API.
+		// In case the image is not set, try to get the image from WP media API.
 		if ( ! imageURL ) {
 			const apiSettings = window.wpApiSettings || {},
 			nonce = apiSettings.nonce,
@@ -285,10 +285,12 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	toggleDimensionsControl() {
-		if ( this.getControlValue( 'id' ) ) {
-			this.ui.mediaDimensionsWrapper.show();
-		} else {
-			this.ui.mediaDimensionsWrapper.hide();
+		if ( this.$el.hasClass( 'elementor-control-background_image' ) ) {
+			if ( this.getControlValue( 'id' ) ) {
+				this.ui.mediaDimensionsWrapper.css( 'display', 'flex' );
+			} else {
+				this.ui.mediaDimensionsWrapper.hide();
+			}
 		}
 	},
 } );
