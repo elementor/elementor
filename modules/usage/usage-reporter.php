@@ -19,7 +19,7 @@ class Usage_Reporter extends Base {
 	const RECALC_ACTION = 'elementor_usage_recalc';
 
 	public function get_title() {
-		return __( 'Elements Usage', 'elementor' );
+		return esc_html__( 'Elements Usage', 'elementor' );
 	}
 
 	public function get_fields() {

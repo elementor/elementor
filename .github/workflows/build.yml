@@ -11,11 +11,11 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        uses: actions/checkout@master
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x    
+          node-version: 18.x    
       - name: Cache node modules
         uses: actions/cache@v1
         env:

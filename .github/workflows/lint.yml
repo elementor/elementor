@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     name: Lint - File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -17,32 +17,36 @@ jobs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check JS files diff
         id: js_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
+            package*.json
+            .github/**/*.yml
       - name: Check PHP files diff
         id: php_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.php
             ruleset.xml
+            .github/**/*.yml
+            composer.+(json|lock)
 
   JS-Lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -55,7 +59,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
       - name: Run Lint
         run: ./node_modules/eslint/bin/eslint.js .
 
@@ -65,7 +69,7 @@ jobs:
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
         with:
