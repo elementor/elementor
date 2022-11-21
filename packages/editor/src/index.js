@@ -7,10 +7,16 @@ window.__ = ( text, domain ) => {
 	return text;
 }
 
+const MAX_WAIT_TIME = 10000;
+const WAIT_TIME_INTERVAL = 1000;
+let waitTime = 0;
 const render = () => {
 	if ( ! window.elementor ) {
-		console.log('wait for elementor');
-		setTimeout(render, 100);
+		if ( waitTime < MAX_WAIT_TIME ) {
+			console.log('wait for elementor', waitTime);
+			waitTime += WAIT_TIME_INTERVAL;
+			setTimeout(render, WAIT_TIME_INTERVAL);
+		}
 		return;
 	}
 
