@@ -358,7 +358,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'description' => esc_html__( 'Note: Choose at which breakpoint tabs will automatically switch to a vertical (“accordion”) layout.', 'elementor' ),
 				'options' => $dropdown_options,
 				'default' => 'mobile',
-				'prefix_class' => 'e-tabs-',
+				'prefix_class' => 'e-n-tabs-',
 			]
 		);
 
