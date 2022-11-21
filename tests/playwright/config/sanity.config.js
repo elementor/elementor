@@ -2,19 +2,19 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-	timeout: 90 * 1000, // 90 seconds
-	globalTimeout: 60 * 15 * 1000, // 15 minutes
+	timeout: 90_000, // 90 seconds
+	globalTimeout: 60 * 15_000, // 15 minutes
 	reporter: 'list',
 	testDir: '../sanity/',
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
 	expect: {
-		timeout: 5 * 1000, // 5 seconds
+		timeout: 20_000, // 20 seconds
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
 	},
 	use: {
-		actionTimeout: 10 * 1000, // 4 seconds
-		navigationTimeout: 10 * 1000, // 10 seconds
+		actionTimeout: 20_000, // 20 seconds
+		navigationTimeout: 20_000, // 20 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
