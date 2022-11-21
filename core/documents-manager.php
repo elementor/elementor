@@ -704,40 +704,21 @@ class Documents_Manager {
 	}
 
 	private function get_doc_type_by_id( $post_id ) {
-		// Content built with Elementor.
-		$template_type = $this->get_template_type_by_id( $post_id );
-
-		if ( $template_type && isset( $this->types[ $template_type ] ) ) {
-			return $template_type;
-		}
-
 		// Auto-save post type should be inherited from the original post.
 		if ( wp_is_post_autosave( $post_id ) ) {
 			$post_id = wp_get_post_parent_id( $post_id );
+		}
+
+		// Content built with Elementor.
+		$template_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+		if ( $template_type && isset( $this->types[ $template_type ] ) ) {
+			return $template_type;
 		}
 
 		$post_type = get_post_type( $post_id );
 
 		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
 		return $this->cpt[ $post_type ] ?? 'post';
-	}
-
-	private function get_template_type_by_id( $post_id ) {
-		$template_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
-
-		if ( $template_type ) {
-			return $template_type;
-		}
-
-		// Autosave of a post that doesn't have a meta yet.
-		if ( wp_is_post_autosave( $post_id ) ) {
-			return get_post_meta(
-				wp_get_post_parent_id( $post_id ),
-				Document::TYPE_META_KEY,
-				true
-			);
-		}
-
-		return '';
 	}
 }
