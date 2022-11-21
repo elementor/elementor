@@ -6,7 +6,7 @@
 
 	li {
 		flex: 1;
-		transition: flex-grow .4s ease-in-out;
+		transition: flex-grow .3s ease-in-out;
 
 		&.elementor-control-dimension:focus-within {
 			flex: 1.75;
@@ -63,19 +63,12 @@
 		}
 	}
 
-	$font-family-monospace: monospace;
-
 	&.e-units-custom {
 
 		li {
 
 			&.elementor-control-dimension:focus-within {
 				flex: 2.5;
-			}
-
-			input {
-				font-family: $font-family-monospace;
-				font-size: 0.85em;
 			}
 		}
 	}

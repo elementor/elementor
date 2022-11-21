@@ -83,6 +83,18 @@
 	.elementor-dynamic-cover {
 		margin-top: 10px;
 	}
+
+	&.e-units-custom {
+
+		.elementor-slider {
+			display: none;
+
+			&-input {
+				width: 100%;
+				margin: 0;
+			}
+		}
+	}
 }
 
 .elementor-slider {
@@ -97,6 +109,11 @@
 		width: 21%;
 		min-width: 54px;
 		@include margin-start(12px);
+		transition: width .4s ease-in-out;;
+
+		&:focus-within {
+			width: 30%;
+		}
 	}
 
 	&__extra {
