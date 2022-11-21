@@ -194,26 +194,9 @@ class Documents_Manager {
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
-
-			if ( wp_is_post_autosave( $post_id ) ) {
-				$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
-			} else {
-				$post_type = get_post_type( $post_id );
-			}
-
-			$doc_type = 'post';
-
-			if ( isset( $this->cpt[ $post_type ] ) ) {
-				$doc_type = $this->cpt[ $post_type ];
-			}
-
-			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
-
-			if ( $meta_type && isset( $this->types[ $meta_type ] ) ) {
-				$doc_type = $meta_type;
-			}
-
+			$doc_type = $this->get_doc_type_by_id( $post_id );
 			$doc_type_class = $this->get_document_type( $doc_type );
+
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
 			] );
@@ -718,5 +701,46 @@ class Documents_Manager {
 		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
 
 		return $new_post_url;
+	}
+
+	private function get_doc_type_by_id( $post_id ) {
+		if ( wp_is_post_autosave( $post_id ) ) {
+			$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
+		} else {
+			$post_type = get_post_type( $post_id );
+		}
+
+		// Content built with Elementor.
+		$template_type = $this->get_post_template_type( $post_id );
+
+		if ( $template_type && isset( $this->types[ $template_type ] ) ) {
+			return $template_type;
+		}
+
+		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
+		if ( isset( $this->cpt[ $post_type ] ) ) {
+			return $this->cpt[ $post_type ];
+		}
+
+		return 'post';
+	}
+
+	private function get_post_template_type( $post_id ) {
+		$template_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+		if ( $template_type ) {
+			return $template_type;
+		}
+
+		// Autosave of a post that doesn't have a meta yet.
+		if ( wp_is_post_autosave( $post_id ) ) {
+			return get_post_meta(
+				wp_get_post_parent_id( $post_id ),
+				Document::TYPE_META_KEY,
+				true
+			);
+		}
+
+		return '';
 	}
 }
