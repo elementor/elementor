@@ -279,7 +279,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_RC,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
@@ -293,7 +293,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 		] );
 
 		$this->add_feature( [
@@ -322,21 +322,6 @@ class Manager extends Base_Object {
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.4.0-beta',
-			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'e_import_export',
-			'title' => esc_html__( 'Import Export Website Kit', 'elementor' ),
-			'tag' => esc_html__( 'Feature', 'elementor' ),
-			'description' => esc_html__( 'Design sites faster with a Website Kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
-				. '<br>'
-				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.2.0-beta',
 			],
 		] );
 

@@ -14,11 +14,11 @@ test.describe( 'Nested Tabs tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'tabs-v2', container );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Act.
-		const iconCountForTabs = await editor.getPreviewFrame().locator( '.elementor-tabs-content-wrapper .e-con.elementor-active .elementor-add-new-section i' ).count(),
+		const iconCountForTabs = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active .elementor-add-new-section i' ).count(),
 			iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
 
 		// Assert.
@@ -44,8 +44,8 @@ test.describe( 'Nested Tabs tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'tabs-v2', container );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Act.
 		// Set tabs direction to 'stretch'.
@@ -55,7 +55,7 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Assert.
 		// Check if title's are aligned on the left.
-		await expect( editor.getPreviewFrame().locator( '.elementor-widget-tabs-v2 .elementor-tabs-wrapper .elementor-tab-title.elementor-active' ) ).toHaveCSS( 'justify-content', 'flex-start' );
+		await expect( editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tabs-heading .e-n-tab-title.e-active' ) ).toHaveCSS( 'justify-content', 'flex-start' );
 
 		await wpAdmin.setExperiments( {
 			container: false,

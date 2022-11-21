@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress.Elementor">
-	<description>Deprecated File! Elementor Coding Standard</description>
+	<description>Elementor Coding Standard</description>
 
 	<arg name="parallel" value="8" />
 
