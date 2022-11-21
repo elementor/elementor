@@ -473,7 +473,7 @@ class Module extends BaseModule {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
 				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				wp_verify_nonce( Utils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
 				current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();
