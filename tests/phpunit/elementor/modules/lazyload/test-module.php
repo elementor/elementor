@@ -25,7 +25,7 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 
 		$values = [
 			'url' => "test.jpg",
-			'id'=> 747,
+			'id' => 747,
 		];
 
 		//Act
