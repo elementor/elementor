@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress.Elementor">
+	<description>Deprecated File! Elementor Coding Standard</description>
+
+	<arg name="parallel" value="8" />
+
+	<config name="text_domain" value="elementor" />
+
+	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>tmp/</exclude-pattern>
+	<exclude-pattern>build/</exclude-pattern>
+	<exclude-pattern>node_modules/</exclude-pattern>
+	<exclude-pattern>includes/libraries/</exclude-pattern>
+	<exclude-pattern>tests/*.php</exclude-pattern>
+
+	<rule ref="WordPress-Extra">
+		<exclude name="Generic.Commenting.DocComment.MissingShort" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Squiz.Commenting.ClassComment.Missing" />
+		<exclude name="Squiz.Commenting.FileComment.Missing" />
+		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
+		<exclude name="Squiz.Commenting.VariableComment.Missing" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralSingle" />
+		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />
+		<exclude name="WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+	</rule>
+
+	<rule ref="WordPress.WP.DeprecatedFunctions">
+		<properties>
+			<property name="minimum_supported_version" value="4.7" />
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.ValidHookName">
+		<properties>
+			<property name="additionalWordDelimiters" value="/-" />
+		</properties>
+	</rule>
+</ruleset>
