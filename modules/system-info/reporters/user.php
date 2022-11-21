@@ -116,7 +116,7 @@ class User extends Base {
 	 */
 	public function get_agent() {
 		return [
-			'value' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
+			'value' => esc_html( $_SERVER['HTTP_USER_AGENT'] ),
 		];
 	}
 }

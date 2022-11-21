@@ -23,7 +23,7 @@ class Htaccess extends Inspection_Base {
 			return true;
 		}
 
-		$server = strtoupper( Utils::get_super_global_value( $_SERVER, 'SERVER_SOFTWARE' ) );
+		$server = strtoupper( $_SERVER['SERVER_SOFTWARE'] );
 
 		if ( strstr( $server, 'APACHE' ) ) {
 			$htaccess_file = get_home_path() . '.htaccess';

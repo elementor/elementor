@@ -153,7 +153,7 @@ class Module extends BaseModule {
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
-		$this->requests = json_decode( Utils::get_super_global_value( $_REQUEST, 'actions' ), true );
+		$this->requests = json_decode( stripslashes( $_REQUEST['actions'] ), true );
 
 		foreach ( $this->requests as $id => $action_data ) {
 			$this->current_action_id = $id;
@@ -230,7 +230,7 @@ class Module extends BaseModule {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
-		return wp_verify_nonce( Utils::get_super_global_value( $_REQUEST, '_nonce' ), self::NONCE_KEY );
+		return ! empty( $_REQUEST['_nonce'] ) && wp_verify_nonce( $_REQUEST['_nonce'], self::NONCE_KEY );
 	}
 
 	protected function get_init_settings() {
