@@ -109,7 +109,7 @@
 		width: 21%;
 		min-width: 54px;
 		@include margin-start(12px);
-		transition: width .4s ease-in-out;;
+		transition: width .3s ease-in-out;;
 
 		&:focus-within {
 			width: 30%;
