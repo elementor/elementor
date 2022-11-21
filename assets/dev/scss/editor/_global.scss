@@ -166,20 +166,20 @@ i.eicon-tilted {
 	transform: rotate(90deg);
 }
 
-.elementor-control .elementor-control-content.media-size {
+.elementor-control .elementor-control-content.elementor-control-media-size {
 	margin-top: 15px;
 	display: none;
 }
 
-.media-size .elementor-control-field {
+.elementor-control-media-size .elementor-control-field {
 	padding: 0px;
 }
 
-.media-size .elementor-control-responsive-switchers {
+.elementor-control-media-size .elementor-control-responsive-switchers {
 	display: none;
 }
 
-.media-display-size.select {
+.elementor-control-media-display-size.select {
 	padding-bottom: 0px;
 	width: 81%;
 	float: right;

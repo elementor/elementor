@@ -13,8 +13,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
-		ui.mediaImageSize = '.media-display-size';
-		ui.mediaSizeWrapper = '.media-size';
+		ui.mediaImageSize = '.elementor-control-media-display-size';
+		ui.mediaSizeWrapper = '.elementor-control-media-size';
 
 		return ui;
 	},
@@ -256,29 +256,23 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			id: this.getControlValue( 'id' ),
 			size: selectedSize,
 		} );
-
-		// In case the image is not set, try to get the image from WP media API.
-		if ( ! imageURL ) {
-			const apiSettings = window.wpApiSettings || {},
-			nonce = apiSettings.nonce,
-			restUrl = apiSettings.root + 'wp/v2/media/' + this.getControlValue( 'id' );
-			const response = await fetch( restUrl, {
-				method: 'GET',
-				headers: {
-					'X-WP-Nonce': nonce,
-				},
-			} );
-			const data = await response.json();
-			imageURL = data?.media_details?.sizes[ selectedSize ]?.source_url;
-		}
-
+		const stateOptions = {
+			url: null,
+			id: this.getControlValue( 'id' ),
+			alt: this.getControlValue( 'alt' ),
+			dimensions: selectedSize,
+			source: 'library',
+		};
 		if ( imageURL ) {
-			this.setValue( {
-				url: imageURL,
-				id: this.getControlValue( 'id' ),
-				alt: this.getControlValue( 'alt' ),
-				dimensions: selectedSize,
-				source: 'library',
+			stateOptions.url = imageURL;
+			this.setValue( stateOptions );
+		} else {
+			elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
+				imageURL = data[ this.getControlValue( 'id' ) ][ selectedSize ];
+				if ( imageURL ) {
+					stateOptions.url = imageURL;
+					this.setValue( stateOptions );
+				}
 			} );
 		}
 	},

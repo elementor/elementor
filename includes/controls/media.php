@@ -272,11 +272,11 @@ class Control_Media extends Control_Base_Multiple {
 			<# } #>
 			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
-		<div class="elementor-control-content media-size">
+		<div class="elementor-control-content elementor-control-media-size">
 			<div class="elementor-control-field elementor-control elementor-control-type-select">
 				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Size', 'elementor' ); ?></label>
 				<div class="elementor-control-input-wrapper media-size-input-wrapper">
-				<select data-setting="size" class="elementor-control elementor-control-type-select elementor-control-input-wrapper media-display-size select">
+				<select data-setting="size" class="elementor-control elementor-control-type-select elementor-control-input-wrapper elementor-control-media-display-size select">
 				<?php
 				$sizes = $this->get_image_sizes_options();
 				foreach ( $sizes as $key => $value ) {
