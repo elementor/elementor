@@ -704,7 +704,7 @@ class Documents_Manager {
 	}
 
 	private function get_doc_type_by_id( $post_id ) {
-		// Auto-save post type should be inherited from the original post.
+		// Auto-save inherits from the original post.
 		if ( wp_is_post_autosave( $post_id ) ) {
 			$post_id = wp_get_post_parent_id( $post_id );
 		}
@@ -716,9 +716,9 @@ class Documents_Manager {
 			return $template_type;
 		}
 
+		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
 		$post_type = get_post_type( $post_id );
 
-		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
 		return $this->cpt[ $post_type ] ?? 'post';
 	}
 }
