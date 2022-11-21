@@ -431,7 +431,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['size'] = [
-			'label' => esc_html_x( 'Size', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Display Size', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'responsive' => true,
 			'default' => '',

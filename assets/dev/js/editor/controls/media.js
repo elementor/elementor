@@ -13,8 +13,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
-		ui.mediaImageDimensions = '#media-display-dimensions';
-		ui.mediaDimensionsWrapper = '.media-dimensions';
+		ui.mediaImageSize = '.media-display-size';
+		ui.mediaSizeWrapper = '.media-size';
 
 		return ui;
 	},
@@ -23,7 +23,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
-			'change @ui.mediaImageDimensions': 'onMediaImageDimensions',
+			'change @ui.mediaImageSize': 'onMediaImageSize',
 		} );
 	},
 
@@ -65,7 +65,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
-		this.toggleDimensionsControl();
+		this.toggleSizeControl();
 	},
 
 	openFrame( e ) {
@@ -240,7 +240,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				this.applySavedValue();
 			}
 
-			this.toggleDimensionsControls();
+			this.toggleSizeControls();
 		}
 
 		this.trigger( 'after:select' );
@@ -250,11 +250,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.$el.remove();
 	},
 
-	async onMediaImageDimensions() {
-		const selectedDimensions = this.ui.mediaImageDimensions.val();
+	async onMediaImageSize() {
+		const selectedSize = this.ui.mediaImageSize.val();
 		let imageURL = await elementor.imagesManager.getImageUrl( {
 			id: this.getControlValue( 'id' ),
-			size: selectedDimensions,
+			size: selectedSize,
 		} );
 
 		// In case the image is not set, try to get the image from WP media API.
@@ -269,7 +269,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				},
 			} );
 			const data = await response.json();
-			imageURL = data?.media_details?.sizes[ selectedDimensions ]?.source_url;
+			imageURL = data?.media_details?.sizes[ selectedSize ]?.source_url;
 		}
 
 		if ( imageURL ) {
@@ -277,19 +277,18 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				url: imageURL,
 				id: this.getControlValue( 'id' ),
 				alt: this.getControlValue( 'alt' ),
-				dimensions: selectedDimensions,
+				dimensions: selectedSize,
 				source: 'library',
 			} );
 		}
-		this.renderWithChildren();
 	},
 
-	toggleDimensionsControl() {
+	toggleSizeControl() {
 		if ( this.$el.hasClass( 'elementor-control-background_image' ) ) {
 			if ( this.getControlValue( 'id' ) ) {
-				this.ui.mediaDimensionsWrapper.css( 'display', 'flex' );
+				this.ui.mediaSizeWrapper.css( 'display', 'flex' );
 			} else {
-				this.ui.mediaDimensionsWrapper.hide();
+				this.ui.mediaSizeWrapper.hide();
 			}
 		}
 	},

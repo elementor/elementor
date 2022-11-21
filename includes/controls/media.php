@@ -47,7 +47,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
-			'dimensions' => 'full',
+			'size' => 'full',
 		];
 	}
 
@@ -272,16 +272,17 @@ class Control_Media extends Control_Base_Multiple {
 			<# } #>
 			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
-		<div class="elementor-control-content media-dimensions">
+		<div class="elementor-control-content media-size">
 			<div class="elementor-control-field elementor-control elementor-control-type-select">
-				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Dimensions', 'elementor' ); ?></label>
-				<div class="elementor-control-input-wrapper">
-				<select data-setting="dimensions" id="media-display-dimensions" class="elementor-control elementor-control-type-select elementor-control-input-wrapper select">
+				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Size', 'elementor' ); ?></label>
+				<div class="elementor-control-input-wrapper media-size-input-wrapper">
+				<select data-setting="size" class="elementor-control elementor-control-type-select elementor-control-input-wrapper media-display-size select">
 				<?php
 				$sizes = $this->get_image_sizes_options();
 				foreach ( $sizes as $key => $value ) {
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo "<option value='" . esc_attr( $key ) . "' {{ data.controlValue.dimensions == '$key' ? 'selected' : '' }}>$value</option>";
+					?>
+						<option value="<?php echo esc_attr( $key ); ?>" {{ data.controlValue.size == '<?php echo esc_attr( $key ); ?>' ? 'selected' : '' }}><?php echo esc_html( $value ); ?></option>
+					<?php
 				}
 				?>
 				</select>
