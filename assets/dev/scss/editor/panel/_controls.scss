@@ -156,8 +156,6 @@
 
 			select {
 				appearance: none;
-				-webkit-appearance: none;
-				-moz-appearance: none;
 				font-size: 12px;
 				font-family: inherit;
 				font-weight: inherit;
@@ -286,6 +284,7 @@
 
 			> .elementor-control-input-wrapper {
 				width: 100%;
+				max-width: 100%;
 				margin-top: 10px;
 
 				// TODO: Hack to make choices full width when label is block.
@@ -337,6 +336,7 @@
 
 			> .elementor-control-title {
 				flex-shrink: 0;
+				max-width: 60%;
 			}
 
 			> .elementor-control-input-wrapper {

@@ -790,4 +790,36 @@ class Utils {
 
 		return file_get_contents( $file, ...$args );
 	}
+
+	public static function get_super_global_value( $super_global, $key, $default = null ) {
+		if ( ! isset( $super_global[ $key ] ) ) {
+			return $default;
+		}
+
+		if ( $_FILES === $super_global ) {
+			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
+
+			return $super_global[ $key ];
+		}
+
+		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
+	}
+
+	/**
+	 * Return specific object property value if exist from array of keys.
+	 *
+	 * @param $array
+	 * @param $keys
+	 * @return key|false
+	 */
+	public static function get_array_value_by_keys( $array, $keys ) {
+		$keys = (array) $keys;
+		foreach ( $keys as $key ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				return null;
+			}
+			$array = $array[ $key ];
+		}
+		return $array;
+	}
 }

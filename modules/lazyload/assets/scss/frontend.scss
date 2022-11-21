@@ -1,0 +1,16 @@
+body.e-lazyload [data-e-bg-lazyload]:not(.lazyloaded) {
+    background-size: cover; 
+    &>div {
+        backdrop-filter: blur(50px);
+    }
+}
+
+// TODO: Temp fix - Need to unify the background & lazy-load selectors.
+//  This fix accounts for the DOM experiment & motion fx changes, that are already fixed in the background
+//  selector itself (which is the reason we need to unify it).
+.lazyloaded:not( .elementor-motion-effects-element-type-background ),
+.lazyloaded > .elementor-motion-effects-container > .elementor-motion-effects-layer,
+.lazyloaded > [class *= "-wrap"] > .elementor-motion-effects-container > .elementor-motion-effects-layer,
+body.e-lazyload [data-e-bg-lazyload]:not( .lazyloaded ):first-of-type {
+    background-image: var(--e-bg-lazyload) !important;
+}

@@ -29,7 +29,7 @@ class Images_Manager {
 	 */
 	public function get_images_details() {
 		// PHPCS - Already validated by wp_ajax.
-		$items = $_POST['items']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$items = Utils::get_super_global_value( $_POST, 'items' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$urls  = [];
 
 		foreach ( $items as $item ) {
@@ -75,6 +75,9 @@ class Images_Manager {
 		foreach ( $sizes as $size ) {
 			if ( 0 === strpos( $size, 'custom_' ) ) {
 				preg_match( '/custom_(\d*)x(\d*)/', $size, $matches );
+
+				$matches[1] = (int) $matches[1];
+				$matches[2] = (int) $matches[2];
 
 				$instance = [
 					'image_size' => 'custom',

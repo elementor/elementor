@@ -1024,20 +1024,8 @@
 									"default": "active",
 									"state": "default"
 								},
-								"e_import_export": {
-									"default": "active",
-									"state": "default"
-								},
 								"landing-pages": {
 									"default": "active",
-									"state": "default"
-								},
-								"elements-color-picker": {
-									"default": "active",
-									"state": "default"
-								},
-								"admin-top-bar": {
-									"default": "inactive",
 									"state": "default"
 								},
 								"form-submissions": {
@@ -1213,6 +1201,35 @@
 						}
 					],
 					"additionalProperties": false
+				},
+				"kit": {
+				  "$id": "#/usages/kit",
+				  "title": "Elementor kit usage",
+				  "properties": {
+					"defaults": {
+					  "$id": "#/usages/kit/defaults",
+					  "type": "object",
+					  "properties": {
+						"count": {
+						  "type": "integer"
+						},
+						"elements": {
+						  "$id": "#/usages/kit/defaults/elements",
+						  "type": "array",
+						  "items": {
+							"type": "string"
+						  },
+						  "additionalProperties": false
+						}
+					  },
+					  "required": [
+						"count",
+						"elements"
+					  ],
+					  "additionalProperties": false
+					}
+				  },
+				  "additionalProperties": false
 				}
 			},
 			"additionalProperties": false

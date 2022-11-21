@@ -232,7 +232,6 @@ body {
 	}
 
 	&.loading:before {
-		-webkit-animation: rotation 1s infinite linear;
 		animation: rotation 1s infinite linear;
 	}
 
@@ -257,7 +256,7 @@ body {
 		color: $editor-light;
 	}
 
-	h2 {
+	h3 {
 		font-size: 32px;
 		font-weight: 300;
 		color: inherit;

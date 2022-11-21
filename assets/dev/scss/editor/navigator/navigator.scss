@@ -100,6 +100,10 @@ body {
 		transition: padding .5s linear;
 		overflow: hidden;
 
+		&[data-locked="true"] {
+			cursor: not-allowed;
+		}
+
 		&:not(.elementor-active) {
 
 			.elementor-navigator__element__list-toggle {
@@ -148,7 +152,6 @@ body {
 	}
 
 	&__element {
-
 		&.elementor-dragging-on-child {
 
 			> .elementor-navigator__elements {
@@ -218,7 +221,7 @@ body {
 
 			&__text {
 				white-space: nowrap;
-				-webkit-user-select: text;
+				user-select: text;
 
 				&[contenteditable="true"] {
 					outline: none;
@@ -298,7 +301,7 @@ body {
 		}
 
 		&-section,
-		&-container, {
+		&-container {
 			background-color: $white;
 		}
 	}

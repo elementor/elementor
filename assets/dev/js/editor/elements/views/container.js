@@ -2,20 +2,30 @@
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import EmptyView from 'elementor-elements/views/container/empty-view';
 
-const BaseElementView = require( 'elementor-elements/views/base' ),
-	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
-
+const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ColumnEmptyView,
+	emptyView: EmptyView,
 
-	// Child view is empty in order to use the parent element.
-	childViewContainer: '',
+	getChildViewContainer() {
+		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
+			? '> .e-con-inner'
+			: '';
+
+		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
+	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-container`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
+	},
+
+	childViewOptions() {
+		return {
+			emptyViewOwner: this,
+		};
 	},
 
 	tagName() {
@@ -112,9 +122,13 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
+		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
+		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+
 		return {
 			axis: this.getDroppableAxis(),
-			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -129,9 +143,11 @@ const ContainerView = BaseElementView.extend( {
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggingInSameParent = ( draggedView?.parent === this );
+					draggingInSameParent = ( draggedView?.parent === this ),
+					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-con-inner' ),
+					containerSelector = hasInnerContainer ? event.currentTarget.parentElement.parentElement : event.currentTarget.parentElement;
 
-				let $elements = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+				let $elements = jQuery( containerSelector ).find( '> .elementor-element' );
 
 				// Exclude the dragged element from the indexing calculations.
 				if ( draggingInSameParent ) {
@@ -140,7 +156,7 @@ const ContainerView = BaseElementView.extend( {
 
 				const widgetsArray = Object.values( $elements );
 
-				let newIndex = widgetsArray.indexOf( event.currentTarget );
+				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
@@ -208,6 +224,9 @@ const ContainerView = BaseElementView.extend( {
 		$e.run( 'document/elements/create', {
 			model: {
 				elType: 'container',
+				settings: {
+					content_width: 'full',
+				},
 			},
 			container: targetContainer,
 		} );
@@ -349,28 +368,26 @@ const ContainerView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
-
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-			this.$el.html5Droppable( this.getDroppableOptions() );
+			this.droppableInitialize( this.container.settings );
 		} );
 	},
 
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		// Re-initialize the droppable in order to make sure the axis works properly.
-		if ( settings.changed.flex_direction ) {
-			this.$el.html5Droppable( 'destroy' );
-			this.$el.html5Droppable( this.getDroppableOptions() );
+		if ( settings.changed.flex_direction || settings.changed.content_width ) {
+			this.droppableDestroy();
+			this.droppableInitialize( settings );
 		}
 	},
 
 	onDragStart() {
-		this.$el.html5Droppable( 'destroy' );
+		this.droppableDestroy();
 	},
 
 	onDragEnd() {
-		this.$el.html5Droppable( this.getDroppableOptions() );
+		this.droppableInitialize( this.container.settings );
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -417,6 +434,19 @@ const ContainerView = BaseElementView.extend( {
 	onResizeStop() {
 		if ( this.ui.percentsTooltip ) {
 			this.ui.percentsTooltip.hide();
+		}
+	},
+
+	droppableDestroy() {
+		this.$el.html5Droppable( 'destroy' );
+		this.$el.find( '> .e-con-inner' ).html5Droppable( 'destroy' );
+	},
+
+	droppableInitialize( settings ) {
+		if ( 'boxed' === settings.get( 'content_width' ) ) {
+			this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
+		} else {
+			this.$el.html5Droppable( this.getDroppableOptions() );
 		}
 	},
 } );

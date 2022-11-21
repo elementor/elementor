@@ -2,6 +2,11 @@ name: Jest
 
 on: [push, pull_request]
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   file-diff:
     runs-on: ubuntu-20.04
@@ -11,13 +16,15 @@ jobs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check JS files diff
         id: js_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
+            package*.json
+            .github/**/*.yml
 
   jest:
     runs-on: ubuntu-20.04
@@ -26,11 +33,11 @@ jobs:
     name: Test
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:

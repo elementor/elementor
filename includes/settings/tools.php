@@ -1,8 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
+use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,27 +33,6 @@ class Tools extends Settings_Page {
 			'function' => [ $this, 'display_settings_page' ],
 			'index' => 50,
 		] );
-	}
-
-	/**
-	 * Register admin menu legacy.
-	 *
-	 * Add new Elementor Tools admin menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function register_admin_menu_legacy() {
-		add_submenu_page(
-			Settings::PAGE_ID,
-			esc_html__( 'Tools', 'elementor' ),
-			esc_html__( 'Tools', 'elementor' ),
-			'manage_options',
-			self::PAGE_ID,
-			[ $this, 'display_settings_page' ]
-		);
 	}
 
 	/**
@@ -117,8 +98,8 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
 
-		$from = ! empty( $_POST['from'] ) ? $_POST['from'] : '';
-		$to = ! empty( $_POST['to'] ) ? $_POST['to'] : '';
+		$from = Utils::get_super_global_value( $_POST, 'from' ) ?? '';
+		$to = Utils::get_super_global_value( $_POST, 'to' ) ?? '';
 
 		try {
 			$results = Utils::replace_urls( $from, $to );
@@ -146,7 +127,9 @@ class Tools extends Settings_Page {
 		}
 
 		$rollback_versions = $this->get_rollback_versions();
-		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
+		$version = Utils::get_super_global_value( $_GET, 'version' );
+
+		if ( empty( $version ) || ! in_array( $version, $rollback_versions, true ) ) {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
@@ -154,10 +137,10 @@ class Tools extends Settings_Page {
 
 		$rollback = new Rollback(
 			[
-				'version' => $_GET['version'],
+				'version' => $version,
 				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
 				'plugin_slug' => $plugin_slug,
-				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $_GET['version'] ),
+				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
 			]
 		);
 
@@ -186,9 +169,9 @@ class Tools extends Settings_Page {
 				$this->register_admin_menu( $menu );
 			} );
 		} else {
-			add_action( 'admin_menu', function() {
-				$this->register_admin_menu_legacy();
-			}, 205 );
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+			}, Settings::ADMIN_MENU_PRIORITY + 20 );
 		}
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
@@ -323,7 +306,7 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Update Site Address (URL)', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
+									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="large-text"><input type="text" name="to" placeholder="http://new-url.com" class="large-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
 									'desc' => esc_html__( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 								],
 							],
@@ -396,10 +379,10 @@ class Tools extends Settings_Page {
 
 		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
 			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
-				'label' => __( 'Recreate Kit', 'elementor' ),
+				'label' => esc_html__( 'Recreate Kit', 'elementor' ),
 				'field_args' => [
 					'type' => 'raw_html',
-					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), __( 'Recreate Kit', 'elementor' ) ),
+					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), esc_html__( 'Recreate Kit', 'elementor' ) ),
 					'desc' => esc_html__( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
 				],
 			];

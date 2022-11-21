@@ -4,9 +4,10 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\Core\App\Modules\Onboarding\Module as Onboarding_Module;
+use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -213,7 +214,7 @@ class Admin extends App {
 	 * @param int $post_id Post ID.
 	 */
 	public function save_post( $post_id ) {
-		if ( ! isset( $_POST['_elementor_edit_mode_nonce'] ) || ! wp_verify_nonce( $_POST['_elementor_edit_mode_nonce'], basename( __FILE__ ) ) ) {
+		if ( ! wp_verify_nonce( Utils::get_super_global_value( $_POST, '_elementor_edit_mode_nonce' ), basename( __FILE__ ) ) ) {
 			return;
 		}
 
@@ -298,7 +299,7 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Go Pro', 'elementor' ) );
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Get Elementor Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -543,11 +544,7 @@ class Admin extends App {
 	public function admin_action_new_post() {
 		check_admin_referer( 'elementor_action_new_post' );
 
-		if ( empty( $_GET['post_type'] ) ) {
-			$post_type = 'post';
-		} else {
-			$post_type = $_GET['post_type'];
-		}
+		$post_type = Utils::get_super_global_value( $_GET, 'post_type' ) ?? 'post';
 
 		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
 			return;
@@ -556,12 +553,10 @@ class Admin extends App {
 		if ( empty( $_GET['template_type'] ) ) {
 			$type = 'post';
 		} else {
-			$type = sanitize_text_field( $_GET['template_type'] );
+			$type = sanitize_text_field( wp_unslash( $_GET['template_type'] ) );
 		}
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
-
-		$meta = [];
 
 		/**
 		 * Create new post meta data.
@@ -572,6 +567,12 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
+		$meta = [];
+
+		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
+			$meta = array_map( 'sanitize_text_field', wp_unslash( $_GET['meta'] ) );
+		}
+
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
 		$post_data['post_type'] = $post_type;
@@ -758,6 +759,7 @@ class Admin extends App {
 				'option_enabled' => 'no' !== $elementor_beta,
 				'signup_dismissed' => $beta_tester_signup_dismissed,
 			],
+			'experiments' => $this->get_experiments(),
 		];
 
 		/**
@@ -777,6 +779,26 @@ class Admin extends App {
 		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
 
 		return $settings;
+	}
+
+	private function get_experiments() {
+		return ( new Collection( Plugin::$instance->experiments->get_features() ) )
+			->map( function ( $experiment_data ) {
+				$dependencies = $experiment_data['dependencies'] ?? [];
+
+				$dependencies = ( new Collection( $dependencies ) )
+					->map( function ( $dependency ) {
+						return $dependency->get_name();
+					} )->all();
+
+				return [
+					'name' => $experiment_data['name'],
+					'title' => $experiment_data['title'] ?? $experiment_data['name'],
+					'state' => $experiment_data['state'],
+					'default' => $experiment_data['default'],
+					'dependencies' => $dependencies,
+				];
+			} )->all();
 	}
 
 	private function register_menu() {

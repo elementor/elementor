@@ -1,81 +1,123 @@
-const { test, expect } = require( '@playwright/test' );
-const WpAdminPage = require( '../pages/wp-admin-page.js' );
-const widgetsCache = require( '../assets/widgets-cache' );
-const controlsTestConfig = require( '../assets/controls-test-config' );
+const { expect } = require( '@playwright/test' );
+const test = require( '../src/test' );
+const elementsConfig = require( '../elements-config.json' );
+const testConfig = require( '../test.config' );
+const ConfigProvider = require( '../src/config-provider' );
+const controlHandlers = require( '../src/controls' );
 
-const {
-	Heading,
-	WidgetBase,
-} = require( '../utils/widgets' );
+const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
 
-const {
-	Choose,
-	Select,
-	Textarea,
-} = require( '../utils/controls' );
+test.describe( 'Elements regression', () => {
+	const testedElements = {};
 
-const { Registrar } = require( '../utils/registrar' );
+	test.afterAll( async ( {}, testInfo ) => {
+		// TODO: Need to find a better solution for now this is not working well.
 
-test( 'All widgets sanity test @regression', async ( { page }, testInfo ) => {
-	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
+			expect( JSON.stringify( testedElements, null, '\t' ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+		}
+	} );
 
-	const navigatorCloseButton = await page.$( '#elementor-navigator__close' );
+	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
+		// Dynamic widget test creation.
+		test( widgetType, async ( { editorPage } ) => {
+			const elementId = await editorPage.addWidget( widgetType );
 
-	if ( navigatorCloseButton ) {
-		await navigatorCloseButton.click();
-	}
+			await editorPage.page.waitForTimeout( 500 );
 
-	const widgetsRegistrar = new Registrar()
-		.register( Heading )
-		.register( WidgetBase );
+			await test.step( `default values`, async () => {
+				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
-	const controlsRegistrar = new Registrar()
-		.register( Choose )
-		.register( Select )
-		.register( Textarea );
+				expect( await editorPage.screenshotElement( elementId ) )
+					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
-	for ( const widgetType of Object.keys( widgetsCache ) ) {
-		const WidgetClass = widgetsRegistrar.get( widgetType );
+				await editorPage.resetElementSettings( elementId );
 
-		/**
-		 * @type {WidgetBase}
-		 */
-		const widget = new WidgetClass(
-			editor,
-			controlsRegistrar,
-			{
-				widgetType,
-				controls: widgetsCache[ widgetType ].controls,
-				controlsTestConfig: controlsTestConfig[ widgetType ] || {},
-			},
-		);
+				testedElements[ widgetType ] = {};
+			} );
 
-		// Act.
-		await widget.create();
+			for ( const {
+				controlId,
+				controlConfig,
+				sectionConfig,
+			} of configMediator.getControlsForTests( widgetType ) ) {
+				// Dynamic control test step creation.
+				const control = createControlHandler(
+					editorPage.page,
+					{ config: controlConfig, sectionConfig },
+				);
 
-		await page.waitForTimeout( 500 );
+				if ( ! control || ! control.canTestControl() ) {
+					continue;
+				}
 
-		const element = await widget.getElement();
+				await test.step( controlId, async () => {
+					const testedValues = [];
 
-		// Assert - Match snapshot for default appearance.
-		expect( await element.screenshot( {
-			type: 'jpeg',
-			quality: 70,
-		} ) ).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
 
-		await widget.test( async ( controlId, currentControlValue ) => {
-			// Skip default values.
-			if ( [ '', 'default' ].includes( currentControlValue ) ) {
-				return;
+					await control.setup();
+
+					const initialValue = control.hasConditions() || control.hasSectionConditions()
+						? undefined
+						: await control.getValue();
+
+					for ( const value of await control.getTestValues( initialValue ) ) {
+						const valueLabel = control.generateSnapshotLabel( value );
+
+						await test.step( valueLabel, async () => {
+							await control.setValue( value );
+
+							expect( await editorPage.screenshotElement( elementId ) )
+								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+
+							testedValues.push( valueLabel );
+						} );
+					}
+
+					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
+
+					await control.teardown();
+
+					await editorPage.resetElementSettings( elementId );
+				} );
 			}
-
-			// Assert - Match snapshot for specific control.
-			expect( await element.screenshot( {
-				type: 'jpeg',
-				quality: 70,
-			} ) ).toMatchSnapshot( [ widgetType, controlId, `${ currentControlValue }.jpeg` ] );
 		} );
 	}
 } );
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {Object}                          options
+ * @param {Object}                          options.config
+ * @param {Object}                          options.sectionConfig
+ * @return {null|import('../src/controls/control-base').ControlBase}
+ */
+function createControlHandler( page, { config, sectionConfig } ) {
+	const ControlClass = controlHandlers[ config.type ];
+
+	if ( ! ControlClass ) {
+		return null;
+	}
+
+	return new ControlClass( page, { config, sectionConfig } );
+}
+
+async function assignValuesToControlDependencies( editorPage, widgetType, controlId ) {
+	const controlDependencies = configMediator.getControlDependencies( widgetType, controlId );
+
+	for ( const {
+		controlConfig,
+		sectionConfig,
+		value,
+	} of controlDependencies ) {
+		const control = createControlHandler(
+			editorPage.page,
+			{ config: controlConfig, sectionConfig },
+		);
+
+		await control.setup();
+		await control.setValue( value );
+		await control.teardown();
+	}
+}

@@ -327,6 +327,8 @@ abstract class Base extends Base_File {
 
 		$stylesheet = $this->get_stylesheet();
 
+		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [] );
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -342,6 +344,8 @@ abstract class Base extends Base_File {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 						$parsed_value = '';
+
+						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
 
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
@@ -436,7 +440,14 @@ abstract class Base extends Base_File {
 	 */
 	public function parse_property_placeholder( array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null ) {
 		if ( $parser_control_name ) {
-			$control = $controls_stack[ $parser_control_name ];
+			// If both the processed control and the control name found in the placeholder are responsive
+			if ( ! empty( $control['responsive'] ) && ! empty( $controls_stack[ $parser_control_name ]['responsive'] ) ) {
+				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
+
+				$control = $controls_stack[ $parser_control_name . $device_suffix ] ?? $controls_stack[ $parser_control_name ];
+			} else {
+				$control = $controls_stack[ $parser_control_name ];
+			}
 
 			$value = call_user_func( $value_callback, $control );
 		}

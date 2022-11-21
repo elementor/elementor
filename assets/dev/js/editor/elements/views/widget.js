@@ -123,20 +123,13 @@ const WidgetView = BaseWidget.extend( {
 
 		BaseWidget.prototype.onRender.apply( self, arguments );
 
-		var editModel = self.getEditModel(),
-			skinType = editModel.getSetting( '_skin' ) || 'default';
-
-		self.$el
-			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
-			.removeClass( 'elementor-widget-empty' )
-			.children( '.elementor-widget-empty-icon' )
-			.remove();
+		this.normalizeAttributes();
 
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
 				// Since 'outerHeight' will not handle hidden elements, and mark them as empty (e.g. nested tabs).
-				const $widgetContainer = self.$el.children( '.elementor-widget-container' ),
+				const $widgetContainer = self.$el.children( '.elementor-widget-container' ).length ? self.$el.children( '.elementor-widget-container' ) : self.$el,
 					shouldHandleEmptyWidget = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
 
 				if ( shouldHandleEmptyWidget ) {

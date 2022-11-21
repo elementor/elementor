@@ -156,7 +156,7 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						isEnabled: () => elementor.selection.isSameType(),
+						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
 						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
@@ -224,6 +224,7 @@ BaseElementView = BaseContainer.extend( {
 					},
 					shortcut: '⌦',
 					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
 		} );
@@ -949,13 +950,19 @@ BaseElementView = BaseContainer.extend( {
 	 */
 	initDraggable() {
 		// Init the draggable only for Containers and their children.
-		if ( ! this.$el.hasClass( '.e-container' ) && ! this.$el.parents( '.e-container' ).length ) {
+		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
 			return;
 		}
 
 		this.$el.html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
+
+				if ( this.getContainer().isLocked() ) {
+					e.originalEvent.preventDefault();
+
+					return;
+				}
 
 				// Need to stop this event when the element is absolute since it clashes with this one.
 				// See `behaviors/widget-draggable.js`.

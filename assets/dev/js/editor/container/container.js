@@ -372,7 +372,7 @@ export default class Container extends ArgsObject {
 		if ( [ 'widget', 'document' ].includes( this.type ) ) {
 			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
-			if ( 1 === repeaters.length ) {
+			if ( ! this.model.get( 'supportRepeaterChildren' ) && 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
 						elementorDevTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
@@ -519,6 +519,13 @@ export default class Container extends ArgsObject {
 
 	isDesignable() {
 		return elementor.userCan( 'design' ) && this.isEditable();
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	isLocked() {
+		return this.model.get( 'isLocked' );
 	}
 
 	isRepeater() {
