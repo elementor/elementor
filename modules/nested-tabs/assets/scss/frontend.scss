@@ -249,7 +249,7 @@
 }
 
 // Laptop.
-@media (min-width: $screen-laptop-next) {
+@media (min-width: $screen-laptop-min) {
 	@include hide-mobile-n-tabs-(laptop);
 }
 
