@@ -1,0 +1,154 @@
+//
+// Controls Utility (child of panel controls)
+//
+
+//Start responsive switcher
+$item-size: 2em;
+
+.elementor-control-responsive-switchers {
+	--selected-option: 0;
+	--pointer-position: var(--selected-option);
+
+	position: relative;
+	width: $item-size;
+	height: $item-size;
+	margin: calc( -#{$item-size} + var(--control-title-size)) 0;
+	@include margin-end(5px);
+
+	&__holder {
+		position: absolute;
+		width: 100%;
+		top: 0;
+		background-color: #fff;
+		border-radius: 3px;
+		transition: 0.15s;
+		border: 1px transparent solid;
+	}
+
+	&.elementor-responsive-switchers-open {
+		z-index: 11000;
+
+		.elementor-responsive-switcher {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
+
+			&:hover {
+				color: $editor-info;
+			}
+		}
+
+		.elementor-control-responsive-switchers__holder {
+			top: calc(-1 * var(--selected-option) * #{$item-size});
+			box-shadow: 0 0 3px rgba(0,0,0,0.2);
+		}
+	}
+}
+
+.elementor-responsive-switcher {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	z-index: 2;
+	cursor: pointer;
+	height: 0;
+	transform: scale(0);
+	opacity: 0;
+	transition: 0.15s;
+	font-size: 12px;
+}
+
+a.elementor-responsive-switcher {
+	color: $editor-light;
+
+	&:hover {
+		color: $editor-info;
+	}
+}
+
+@each $device in $devices {
+	.elementor-device-#{ $device } {
+		.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device } {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
+		}
+		.elementor-responsive-switchers-open:not(:hover) {
+			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
+				color: $editor-info;
+			}
+		}
+	}
+}
+//End responsive switcher
+
+// Start control unit switcher
+.e-units-wrapper {
+	position: relative;
+	@include margin-start(auto);
+
+	.e-units-switcher {
+		cursor: pointer;
+		text-transform: uppercase;
+		font-size: 9px;
+		padding: 0 3px;
+	}
+}
+
+.e-units-choices {
+
+	input {
+		display: none;
+
+		&:checked + label {
+			color: $editor-info;
+		}
+
+		&.e-units-placeholder + label {
+			color: $editor-lighter;
+			text-decoration: underline;
+		}
+	}
+
+	label {
+		cursor: pointer;
+		display: block;
+	}
+
+	& {
+		display: none;
+	}
+
+	&.e-units-choices-open {
+		display: block;
+		z-index: 11000;
+		top: 0;
+		@include start(-15px);
+		position: absolute;
+		padding: 5px;
+		width: 40px;
+		text-align: center;
+		background-color: #fff;
+		border-radius: 3px;
+		transition: 0.15s;
+		border: 1px transparent solid;
+		box-shadow: 0 0 3px rgba(0,0,0,0.2);
+
+		.elementor-units-choices-label {
+			display: flex;
+			align-items: center;
+			height: 3em;
+			justify-content: center;
+			text-transform: uppercase;
+			font-size: 9px;
+			transition: 0.15s;
+			transform: scale(1);
+
+			&:hover {
+				color: $editor-info;
+			}
+		}
+	}
+}
+//End control unit switcher

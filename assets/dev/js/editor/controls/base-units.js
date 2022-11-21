@@ -5,9 +5,9 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 	ui() {
 		return Object.assign( ControlBaseMultipleItemView.prototype.ui.apply( this, arguments ), {
-			units: '.elementor-units-choices>input',
-			unitSwitcher: '.elementor-units-switcher',
-			unitChoices: '.elementor-units-choices',
+			units: '.e-units-choices>input',
+			unitSwitcher: '.e-units-switcher',
+			unitChoices: '.e-units-choices',
 		} );
 	},
 
