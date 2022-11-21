@@ -194,7 +194,7 @@
 }
 
 // Responsive mode
-@mixin hide-n-tabs-($device) {
+@mixin hide-normal-tabs-($device) {
 	.e-n-tabs-#{$device} {
 	
 		.e-n-tabs-heading {
@@ -203,7 +203,7 @@
 	}
 }
 
-@mixin hide-mobile-n-tabs-($device) {
+@mixin hide-collapse-tabs-($device) {
 	.e-n-tabs-#{$device} {
 	
 		.e-collapse {
@@ -214,45 +214,45 @@
 
 // Mobile.
 @media (min-width: $screen-mobile-next) {
-	@include hide-mobile-n-tabs-(mobile);
+	@include hide-collapse-tabs-(mobile);
 }
 
 @media (max-width: $screen-mobile-max) {
-	@include hide-n-tabs-(mobile);
+	@include hide-normal-tabs-(mobile);
 }
 
 // Mobile Extra.
 @media (min-width: $screen-mobile-extra-next) {
-	@include hide-mobile-n-tabs-(mobile-extra);
+	@include hide-collapse-tabs-(mobile_extra);
 }
 
 @media (max-width: $screen-mobile-extra-max) {
-	@include hide-n-tabs-(mobile-extra);
+	@include hide-normal-tabs-(mobile_extra);
 }
 
 // Tablet.
 @media (min-width: $screen-tablet-next) {
-	@include hide-mobile-n-tabs-(tablet);
+	@include hide-collapse-tabs-(tablet);
 }
 
 @media (max-width: $screen-tablet-max) {
-	@include hide-n-tabs-(tablet);
+	@include hide-normal-tabs-(tablet);
 }
 
 // Tablet Extra.
 @media (min-width: $screen-tablet-extra-next) {
-	@include hide-mobile-n-tabs-(tablet-extra);
+	@include hide-collapse-tabs-(tablet_extra);
 }
 
 @media (max-width: $screen-tablet-extra-max) {
-	@include hide-n-tabs-(tablet-extra);
+	@include hide-normal-tabs-(tablet_extra);
 }
 
 // Laptop.
-@media (min-width: $screen-laptop-min) {
-	@include hide-mobile-n-tabs-(laptop);
+@media (min-width: $screen-desktop-min) {
+	@include hide-collapse-tabs-(laptop);
 }
 
 @media (max-width: $screen-laptop-max) {
-	@include hide-n-tabs-(laptop);
+	@include hide-normal-tabs-(laptop);
 }
