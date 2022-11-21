@@ -76,7 +76,10 @@ jobs:
         run: npm ci
       - name: Install WordPress environment
         run: |
-          npm run run-local-server
+          npx wp-env start
+          # change wp-env folder owner to www-data
+          sudo chown 33:33 -R ~/wp-env/
+          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
