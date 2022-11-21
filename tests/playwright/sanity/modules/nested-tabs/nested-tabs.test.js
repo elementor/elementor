@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
+const EditorPage = require( '../../../pages/editor-page' );
 
 test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
@@ -69,7 +70,7 @@ test.describe( 'Nested Tabs - Tab icon vertical alignment', async () => {
 	const locationOptions = [ 'Start', 'Center', 'End', 'Justified' ];
 
 	for ( locationOption of locationOptions ) {
-		test( `Should be vertically centered when Justify is set on ${ locationOption }`, async ( { page }, testInfo ) => {
+		test( `Should be vertically centered when Justify is set to ${ locationOption }`, async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			await wpAdmin.setExperiments( {
 				container: true,
@@ -113,7 +114,9 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 			e_font_icon_svg: true,
 		} );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
+		await wpAdmin.openNewPage();
+
+		const editor = new EditorPage( page, testInfo ),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
@@ -137,6 +140,7 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 		await expect( icon ).toBeVisible();
 		await clickTab( currentContext, '0' );
 
+		// Reset experiments.
 		await wpAdmin.setExperiments( {
 			container: false,
 			'nested-elements': false,
@@ -152,7 +156,9 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 			e_font_icon_svg: true,
 		} );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
+		await wpAdmin.openNewPage();
+
+		const editor = new EditorPage( page, testInfo ),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
@@ -181,6 +187,7 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 		await expect( icon ).toHaveCSS( 'height', '50px' );
 		await clickTab( currentContext, '0' );
 
+		// Reset experiments
 		await wpAdmin.setExperiments( {
 			container: false,
 			'nested-elements': false,
