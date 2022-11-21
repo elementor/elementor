@@ -63,14 +63,13 @@ test.describe( 'Nested Tabs tests', () => {
 			'nested-elements': false,
 		} );
 	} );
-} );
 
-test.describe( 'Nested Tabs - Tab icon vertical alignment', async () => {
 	let locationOption;
+
 	const locationOptions = [ 'Start', 'Center', 'End', 'Justified' ];
 
 	for ( locationOption of locationOptions ) {
-		test( `Should be vertically centered when Justify is set to ${ locationOption }`, async ( { page }, testInfo ) => {
+		test( `Check that Icons are vertically centered when Justify is set to ${ locationOption }`, async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			await wpAdmin.setExperiments( {
 				container: true,
@@ -90,24 +89,25 @@ test.describe( 'Nested Tabs - Tab icon vertical alignment', async () => {
 				activeTabIcon = await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active' ).first(),
 				currentContext = editor.getPreviewFrame();
 
-			// Assert
+			// Assert.
 			await page.locator( `.elementor-control-tabs_justify_horizontal [original-title='${ locationOption }']` ).first().click();
 			await expect( icon ).toHaveCSS( 'align-items', 'center' );
 			await clickTab( currentContext, '1' );
 			await expect( activeTabIcon ).toHaveCSS( 'align-items', 'center' );
 			await clickTab( currentContext, '0' );
 
+			// Reset experiments.
 			await wpAdmin.setExperiments( {
 				container: false,
 				'nested-elements': false,
 			} );
 		} );
 	}
-} );
 
-test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
-	test( `Icon should be visible when Inline font icons experiment is active`, async ( { page }, testInfo ) => {
+	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		// Set experiments.
 		await wpAdmin.setExperiments( {
 			container: true,
 			'nested-elements': true,
@@ -125,11 +125,10 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 
 		// Set icons to tabs according 'TabsIcons' array.
 		await setIconsToTabs( page, TabsIcons );
-
 		await editor.publishAndViewPage();
-
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
+		// Set published page variables
 		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon' ).first(),
 			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active' ).first(),
 			currentContext = page;
@@ -148,8 +147,10 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 		} );
 	} );
 
-	test( `Should change icon size`, async ( { page }, testInfo ) => {
+	test( `Check the icon size on frontEnd`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		// Set experiments.
 		await wpAdmin.setExperiments( {
 			container: true,
 			'nested-elements': true,
@@ -172,11 +173,11 @@ test.describe( 'Nested Tabs - Inline font icons experiment', async () => {
 		await page.locator( '.elementor-tab-control-style' ).click();
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
-
 		await editor.publishAndViewPage();
 
-		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon' ).first(),
-			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active' ).first(),
+		// Set published page variables
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active svg' ).first(),
 			currentContext = page;
 
 		// Assert

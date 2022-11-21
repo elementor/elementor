@@ -54,7 +54,7 @@
 	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};
 	--n-tabs-icon-size: initial;
-  	--n-tabs-svg-icon-size: 15px;
+  	--n-tabs-svg-icon-size: 1rem;
 	--n-tabs-icon-gap: 5px;
 
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
