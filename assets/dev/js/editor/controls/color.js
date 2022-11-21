@@ -79,10 +79,6 @@ export default class extends ControlBaseDataView {
 	}
 
 	addEyedropper() {
-		if ( ! elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
-			return;
-		}
-
 		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
 			$colorPickerToolsContainer = this.colorPicker.$pickerToolsContainer,
 			container = this.getOption( 'container' );
