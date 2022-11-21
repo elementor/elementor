@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
 
-test.describe.only( 'Nested Tabs tests', () => {
+test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
