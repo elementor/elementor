@@ -35,6 +35,8 @@
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
+  	--n-tabs-title-text-display: flex;
+  	--n-tabs-title-text-align-items: center;
 
 	--n-tabs-title-justify-content: center;
 	--n-tabs-title-align-items: center;
@@ -106,8 +108,8 @@
 
 			&-text {
 				width: 100%;
-				display: flex;
-			  	align-items: center;
+				display: var( --n-tabs-title-text-display );
+			  	align-items: var( --n-tabs-title-text-align-items );
 			}
 
 			&:hover {
@@ -127,7 +129,6 @@
 			}
 
 			.e-n-tab-icon {
-				display: flex;
 			  	align-items: var( --n-tabs-icon-align-items );
 
 				> i {
