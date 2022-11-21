@@ -3,7 +3,6 @@ import {useEffect, useRef} from "react";
 import Wrapper from "./components/wrapper";
 import useConfig from "./hooks/useConfig";
 
-
 function EditorTitle() {
 	const [ initialDocument ] = useConfig( 'initial_document' );
 
