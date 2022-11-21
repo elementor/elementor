@@ -40,7 +40,7 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act.
-		$document = Plugin::$instance->documents->get( '' );
+		$document = Plugin::$instance->documents->get( '', false );
 
 		// Assert.
 		$this->assertFalse( $document );
@@ -51,10 +51,25 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act.
-		$document = Plugin::$instance->documents->get( 999999999 );
+		$document = Plugin::$instance->documents->get( 999999999, false );
 
 		// Assert.
 		$this->assertFalse( $document );
+	}
+
+	public function test_get__from_cache() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$post_id = $this->factory()->post->create( [
+			'post_type' => 'page',
+		] );
+
+		// Act.
+		$cached_document = Plugin::$instance->documents->get( $post_id );
+
+		// Assert.
+		$this->assertSame( $cached_document, Plugin::$instance->documents->get( $post_id ) );
 	}
 
 	public function test_get__non_elementor_page() {
@@ -66,7 +81,7 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$document = Plugin::$instance->documents->get( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id, false );
 
 		// Assert.
 		$this->assertInstanceOf( WP_Page::class, $document );
@@ -81,7 +96,7 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$document = Plugin::$instance->documents->get( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id, false );
 
 		// Assert.
 		$this->assertInstanceOf( WP_Post::class, $document );
@@ -100,7 +115,7 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$document = Plugin::$instance->documents->get( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id, false );
 
 		// Assert.
 		$this->assertInstanceOf( Theme_Page::class, $document );
@@ -110,7 +125,7 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_admin();
 
-		$post_id = $this->factory()->post->create( [
+		$post = $this->factory()->post->create_and_get( [
 			'post_type' => Source_Local::CPT,
 			'meta_input' => [
 				Document::BUILT_WITH_ELEMENTOR_META_KEY => true,
@@ -118,14 +133,26 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 			],
 		] );
 
-		$autosave_id = wp_create_post_autosave( [
-			'post_ID' => $post_id,
-		] );
+		// Assert.
+		$action = function($post_id) {
+			$document = Plugin::$instance->documents->get( $post_id, false );
+
+			$this->assertInstanceOf( Theme_Page::class, $document );
+		};
+
+		add_action('save_post', $action );
 
 		// Act.
-		$document = Plugin::$instance->documents->get( $autosave_id );
+		$autosave_id = wp_create_post_autosave( [
+			'post_ID' => $post->ID,
+			'post_type' => $post->post_type,
+			'post_title' => $post->post_title,
+			'post_excerpt' => $post->post_excerpt,
+			'post_content' => '<!-- Created With Elementor -->',
+			'post_modified' => current_time( 'mysql' ),
+		] );
 
-		// Assert.
-		$this->assertInstanceOf( Theme_Page::class, $document );
+		// Cleanup.
+		remove_action('save_post', $action );
 	}
 }
