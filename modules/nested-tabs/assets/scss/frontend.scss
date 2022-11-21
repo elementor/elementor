@@ -1,5 +1,5 @@
 //
-// Tabs v2
+// Nested Tabs
 //
 .elementor-widget-n-tabs {
 	--n-tabs-color-accent-fallback: #61CE70;
@@ -193,30 +193,6 @@
 	}
 }
 
-// .elementor-widget-n-tabs {
-// 	@media (max-width: $screen-mobile-max) {
-
-// 		.e-n-tabs {
-
-// 			.e-n-tab-title,
-// 			.e-n-tab-content {
-// 				border-style: none;
-// 				border-bottom-style: none;
-// 			}
-// 		}
-// 	}
-
-// 	@media (min-width: $screen-mobile-next) {
-
-// 		.e-n-tabs {
-
-// 			.e-collapse {
-// 				display: flex;
-// 			}
-// 		}
-// 	}
-// }
-
 // Responsive mode
 @mixin hide-n-tabs-($device) {
 	.e-n-tabs-#{$device} {
@@ -270,4 +246,13 @@
 
 @media (max-width: $screen-tablet-extra-max) {
 	@include hide-n-tabs-(tablet-extra);
+}
+
+// Laptop.
+@media (min-width: $screen-laptop-next) {
+	@include hide-mobile-n-tabs-(laptop);
+}
+
+@media (max-width: $screen-laptop-max) {
+	@include hide-n-tabs-(laptop);
 }
