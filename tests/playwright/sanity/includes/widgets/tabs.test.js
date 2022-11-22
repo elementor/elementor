@@ -5,18 +5,19 @@ const { ExperimentsAPI } = require( '../../../API/experiments-api' );
 const nestedElementsExperiment = 'nested-elements';
 const containerExperiment = 'container';
 
-test.beforeAll( async ( { request, browser }, testInfo ) => {
+test.beforeAll( async ( { browser } ) => {
 	const page = await ( await browser.newContext() ).newPage();
-	const experimentsAPI = new ExperimentsAPI( request, testInfo, page );
+	const experimentsAPI = new ExperimentsAPI( page );
 	await experimentsAPI.activateExperiments( [ nestedElementsExperiment, containerExperiment ] );
  } );
 
-// Test.afterAll( async ( { request }, testInfo ) => {
-// 	const experimentsAPI = new ExperimentsAPI( request, testInfo );
-// 	await experimentsAPI.deactivateExperiments( [ nestedElementsExperiment, containerExperiment ] );
-// } );
+test.afterAll( async ( { browser } ) => {
+	const page = await ( await browser.newContext() ).newPage();
+	const experimentsAPI = new ExperimentsAPI( page );
+	await experimentsAPI.deactivateExperiments( [ nestedElementsExperiment, containerExperiment ] );
+} );
 
-test.only( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page }, testInfo ) => {
+test( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
