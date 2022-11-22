@@ -1,7 +1,4 @@
 <?php
-/**
- * @phpcs:disable WordPress.Security.NonceVerification
- */
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\Core\Admin\Admin_Notices;
@@ -187,6 +184,7 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is verified in line 200.
 		$state = Utils::get_super_global_value( $_REQUEST, 'state' );
 
 		if ( empty( $state ) || $state !== $this->get( 'state' ) ) {
@@ -196,7 +194,7 @@ abstract class Base_App {
 
 		$response = $this->request( 'get_token', [
 			'grant_type' => 'authorization_code',
-			'code' => Utils::get_super_global_value( $_REQUEST, 'code' ),
+			'code' => Utils::get_super_global_value( $_REQUEST, 'code' ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is verified in line 200.
 			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
 			'client_id' => $this->get( 'client_id' ),
 		] );
@@ -606,7 +604,7 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function set_client_id() {
-		$source = Utils::get_super_global_value( $_REQUEST, 'source' );
+		$source = Utils::get_super_global_value( $_REQUEST, 'source' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$response = $this->request(
 			'get_client_id',
 			[
@@ -646,7 +644,7 @@ abstract class Base_App {
 		<script>
 			if ( opener && opener !== window ) {
 				opener.jQuery( 'body' ).trigger(
-					'elementor/connect/success/<?php echo esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); ?>',
+					'elementor/connect/success/<?php echo esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here. ?>',
 					<?php echo wp_json_encode( $data ); ?>
 				);
 
@@ -691,10 +689,10 @@ abstract class Base_App {
 	protected function redirect_to_remote_authorize_url() {
 		switch ( $this->auth_mode ) {
 			case 'cli':
-				$this->get_app_token_from_cli_token( Utils::get_super_global_value( $_REQUEST, 'token' ) );
+				$this->get_app_token_from_cli_token( Utils::get_super_global_value( $_REQUEST, 'token' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 				return;
 			default:
-				wp_redirect( $this->get_remote_authorize_url() ); //phpcs:ignore
+				wp_redirect( $this->get_remote_authorize_url() ); //phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Safe redirect is used here.
 				die;
 		}
 	}
@@ -706,7 +704,7 @@ abstract class Base_App {
 			case 'popup':
 				$redirect_uri = add_query_arg( [
 					'mode' => 'popup',
-					'callback_id' => esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ),
+					'callback_id' => esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 				], $redirect_uri );
 				break;
 		}
@@ -783,7 +781,7 @@ abstract class Base_App {
 			$this->set_auth_mode( 'xhr' );
 		}
 
-		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' );
+		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 
 		if ( isset( $mode ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$allowed_auth_modes = [

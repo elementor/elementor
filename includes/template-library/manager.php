@@ -1,7 +1,4 @@
 <?php
-/**
- * @phpcs:disable WordPress.Security.NonceVerification
- */
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
@@ -629,9 +626,9 @@ class Manager {
 			$this->handle_direct_action_error( 'Access Denied' );
 		}
 
-		$action = Utils::get_super_global_value( $_REQUEST, 'library_action' );
+		$action = Utils::get_super_global_value( $_REQUEST, 'library_action' ); // phpcs:ignore -- Nonce already verified.
 
-		$result = $this->$action( $_REQUEST );
+		$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
 
 		if ( is_wp_error( $result ) ) {
 			/** @var \WP_Error $result */
