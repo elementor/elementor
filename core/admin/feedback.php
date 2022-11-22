@@ -180,6 +180,6 @@ class Feedback extends Module {
 	 * @access private
 	 */
 	private function is_plugins_screen() {
-		return in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] ); // phpcs:ignore
+		return in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] );
 	}
 }
