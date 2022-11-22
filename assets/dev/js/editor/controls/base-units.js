@@ -70,8 +70,10 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 			return false;
 		}
 
+		console.log( Object.values( ranges )[ 0 ] );
+
 		if ( ! ranges[ unit ] ) {
-			ranges[ unit ] = ranges[ Object.keys( ranges )[ 0 ] ];
+			ranges[ unit ] = Object.values( ranges )[ 0 ];
 		}
 
 		return ranges[ unit ];
