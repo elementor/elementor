@@ -77,7 +77,7 @@ jobs:
       - name: Install WordPress environment
         run: |
           npx wp-env start
-          # npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
