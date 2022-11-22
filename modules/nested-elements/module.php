@@ -18,7 +18,7 @@ class Module extends \Elementor\Core\Base\Module {
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'description' => sprintf(
 				esc_html__( 'Create a rich user experience by layering widgets together inside “Nested” Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected. %1$sLearn More%2$s', 'elementor' ),
-				'<a href=https://go.elementor.com/wp-dash-nested-elements/" target="_blank">',
+				'<a href="https://go.elementor.com/wp-dash-nested-elements/" target="_blank">',
 				'</a>'
 			),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
