@@ -1398,6 +1398,7 @@ class Element_Section extends Element_Base {
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
+		<div class="elementor-edit-click-area"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
 			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				<div class="elementor-row"></div>

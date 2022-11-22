@@ -48,6 +48,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			tools: '> .elementor-element-overlay > .elementor-editor-element-settings',
 			editButton: '> .elementor-element-overlay .elementor-editor-element-edit',
+			editClickArea: '.elementor-edit-click-area',
 			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
 			addButton: '> .elementor-element-overlay .elementor-editor-element-add',
 			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
@@ -77,6 +78,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			mousedown: 'onMouseDown',
 			'click @ui.editButton': 'onEditButtonClick',
+			'click @ui.editClickArea': 'onEditButtonClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
 			'click @ui.removeButton': 'onRemoveButtonClick',

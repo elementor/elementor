@@ -114,6 +114,7 @@ class Container extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
+		<div class="elementor-edit-click-area"></div>
 		<# if ( 'boxed' === settings.content_width ) { #>
 			<div class="e-con-inner">
 		<#

@@ -919,6 +919,7 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-<?php echo esc_attr( $wrapper_element ); ?>-wrap">
 			<div class="elementor-background-overlay"></div>
+			<div class="elementor-edit-click-area"></div>
 			<?php if ( ! $is_dom_optimization_active ) { ?>
 				<div class="elementor-widget-wrap"></div>
 			<?php } ?>
