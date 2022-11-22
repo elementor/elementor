@@ -2,6 +2,15 @@
 namespace Elementor\App\Services;
 
 abstract class Base_Service {
-	abstract function get_name() : string;
-	abstract function register();
+	/**
+	 * Retrieve the service name.
+	 * @return string
+	 */
+	abstract public function get_name() : string;
+
+	/**
+	 * Register the service.
+	 * @return mixed
+	 */
+	abstract public function register();
 }

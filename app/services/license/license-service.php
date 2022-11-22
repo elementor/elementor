@@ -9,11 +9,11 @@ class License_Service extends Base_Service {
 		return 'license';
 	}
 
-	public function register() {
+	public function register() : License_Service {
 		return $this;
 	}
 
-	public function is_valid() {
+	public function is_valid() : bool {
 		return true;
 	}
 }
