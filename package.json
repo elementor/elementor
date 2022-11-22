@@ -9,11 +9,11 @@
     "author": "Elementor Team",
     "homepage": "https://elementor.com/",
     "scripts": {
-        "run-local-server": "wp-env start && wp-env run tests-cli \"bash -c 'bash elementor-config/setup.sh'\"",
+        "start-local-server": "wp-env start && wp-env run tests-cli \"bash -c 'bash elementor-config/setup.sh'\"",
         "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
         "test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
         "test:qunit": "grunt qunit",
-        "test:pre-playwright-sanity": "wp-env run cli \"wp --user=admin elementor library import-dir elementor-playwright-templates\" && wp-env run cli \"wp rewrite structure \"/%postname%/\" --hard\" && wp-env run cli \"wp theme activate twentytwentytwo\"",
+        "test:setup-playwright-sanity": "wp-env run cli \"wp --user=admin elementor library import-dir elementor-playwright-templates\" && wp-env run cli \"wp rewrite structure \"/%postname%/\" --hard\" && wp-env run cli \"wp theme activate twentytwentytwo\"",
         "test:playwright": "playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "test:playwright:local": "playwright test \"--config=tests/playwright/config/local.config.js\"",
         "test:playwright:debug": "npm run test:playwright -- --debug",

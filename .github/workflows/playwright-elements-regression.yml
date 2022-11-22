@@ -76,8 +76,7 @@ jobs:
         run: npm ci
       - name: Install WordPress environment
         run: |
-          npx wp-env start
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+          npm run start-local-server
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
