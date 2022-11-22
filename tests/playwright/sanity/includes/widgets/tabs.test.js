@@ -7,7 +7,6 @@ test( 'Ensure the old tabs widget is telling deprecation warning message', async
 	const editor = await wpAdmin.useElementorCleanPost();
 
 	// Act.
-	// Act.
 	await editor.addWidget( 'tabs' );
 
 	// Assert.
