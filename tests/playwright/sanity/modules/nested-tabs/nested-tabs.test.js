@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
+const EditorPage = require( '../../../pages/editor-page' );
 
 test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
@@ -48,7 +49,109 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		await wpAdmin.openNewPage();
+
+		const editor = new EditorPage( page, testInfo ),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Set icons to tabs according 'TabsIcons' array.
+		await setIconsToTabs( page, TabsIcons );
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
+
+		// Set published page variables
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active' ).first(),
+			currentContext = page;
+
+		// Assert
+		await expect( activeTabIcon ).toBeVisible();
+		await clickTab( currentContext, '1' );
+		await expect( icon ).toBeVisible();
+		await clickTab( currentContext, '0' );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( `Check the icon size on frontend`, async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		await wpAdmin.openNewPage();
+
+		const editor = new EditorPage( page, testInfo ),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Set icons to tabs according 'TabsIcons' array.
+		await setIconsToTabs( page, TabsIcons );
+
+		// Set icon size.
+		await page.locator( '.elementor-tab-control-style' ).click();
+		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
+		await editor.publishAndViewPage();
+
+		// Set published page variables
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active svg' ).first(),
+			currentContext = page;
+
+		// Assert
+		await expect( activeTabIcon ).toBeVisible();
+		await expect( activeTabIcon ).toHaveCSS( 'height', '50px' );
+		await clickTab( currentContext, '1' );
+		await expect( icon ).toBeVisible();
+		await expect( icon ).toHaveCSS( 'height', '50px' );
+		await clickTab( currentContext, '0' );
+
+		await cleanup( wpAdmin );
+	} );
 } );
+
+const TabsIcons = [
+	{
+		icon: 'fa-arrow-alt-circle-right',
+		activeIcon: 'fa-bookmark',
+	},
+	{
+		icon: 'fa-clipboard',
+		activeIcon: 'fa-clock',
+	},
+];
+
+// Set icons to tabs, used in setIconsToTabs function.
+const addIcon = async ( page, selectedIcon ) => {
+	await page.locator( `#elementor-icons-manager__tab__content .${ selectedIcon }` ).first().click();
+	await page.locator( '.dialog-lightbox-insert_icon' ).click();
+};
+
+// Iterate tabs and add an icon and an active Icon to each one.
+const setIconsToTabs = async ( page, TabIcons ) => {
+	for ( const tab of TabIcons ) {
+		const index = TabsIcons.indexOf( tab ) + 1;
+		await page.locator( `#elementor-controls >> text=Tab #${ index }` ).click();
+		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index } ) .elementor-control-tab_icon .eicon-circle` ).click();
+		await addIcon( page, tab.icon );
+		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index }  ) .elementor-control-tab_icon_active .eicon-circle` ).click();
+		await addIcon( page, tab.activeIcon );
+	}
+};
+
+// Click on tab by position.
+const clickTab = async ( context, tabPosition ) => {
+	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition } ` ).first().click();
+};
 
 async function setup( wpAdmin ) {
 	await wpAdmin.setExperiments( {

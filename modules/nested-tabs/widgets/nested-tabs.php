@@ -576,7 +576,14 @@ class NestedTabs extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'selector' => '{{WRAPPER}} .e-tab-title-text',
+			'selector' => '{{WRAPPER}} .e-n-tab-title-text',
+			'fields_options' => [
+				'font_size' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--n-tabs-title-font-size: {{SIZE}}{{UNIT}}',
+					],
+				],
+			],
 		] );
 
 		$this->start_controls_tabs( 'title_style' );
@@ -959,7 +966,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'e-n-tabs' );
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'e-n-tab-icon' );
-		$this->add_render_attribute( 'tab-icon-active', 'class', 'e-active' );
+		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon', 'e-active' ] );
 
 		$tabs_title_html = '';
 		$tabs_content_html = '';
