@@ -196,4 +196,92 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		// Assert
 		$this->assertFalse( $content );
 	}
+
+	public function test_get_super_global_value__returns_default() {
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'not_set', 'default' );
+
+		// Assert
+		$this->assertEquals( 'default', $value );
+	}
+
+	public function test_get_super_global_value__returns_value() {
+		// Arrange
+		$_REQUEST['key'] = 'value';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST,  'key', 'default' );
+
+		// Assert
+		$this->assertEquals( 'value', $value );
+	}
+
+	public function test_get_super_global_value__unslashed() {
+		// Arrange
+		$_REQUEST['key'] = 'value\\//';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST,  'key' );
+
+		// Assert
+		$this->assertEquals( 'value//', $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized() {
+		// Arrange
+		$_REQUEST['key'] = 'value<script>alert(1)</script>';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( 'valuealert(1)', $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'valuealert(1)' ], $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_associative_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'key' => 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'key' => 'valuealert(1)' ], $value );
+	}
+
+	public function test_get_super_global_value__files() {
+		// Arrange
+		$_FILES['file'] = [
+			'name' => '..%2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		$sanitized = [
+			'name' => '2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		// Act
+		$file = Utils::get_super_global_value( $_FILES,  'file' );
+
+		// Assert
+		$this->assertEquals( $sanitized, $file);
+	}
 }

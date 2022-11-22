@@ -147,7 +147,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
+				'{{SELECTOR}}' => '--align-items: {{VALUE}}; --container-widget-width: calc( ( 1 - var( --container-widget-flex-grow ) ) * 100% );',
 			],
 			'responsive' => true,
 		];
