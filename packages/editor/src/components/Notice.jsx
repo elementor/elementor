@@ -1,6 +1,6 @@
 import useConfig from "../hooks/useConfig";
 
-const Notice = () => {
+export const Notice = () => {
 	const [ notice ] = useConfig('notice');
 
 	if (!notice) {
@@ -22,4 +22,3 @@ const Notice = () => {
 		</div>
 	)
 }
-export default Notice;

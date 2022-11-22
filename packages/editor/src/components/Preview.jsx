@@ -1,8 +1,8 @@
-import ResponsiveBar from "./responsive-bar";
-import Notice from "./notice";
-import Loading from "./loading";
+import {ResponsiveBar} from "./ResponsiveBar";
+import {Notice} from "./Notice";
+import {Loading} from "./Loading";
 
-const Preview = ( props ) => {
+export const Preview = ( props ) => {
 	return (
 		<div id="elementor-preview" style={{
 			"width": "100%",

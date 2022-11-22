@@ -1,7 +1,7 @@
 /* global __ */
 import './loading.css';
 
-const Loading = () => {
+export const Loading = () => {
 	return (
 		<div id="elementor-loading">
 			<div className="elementor-loader-wrapper">
@@ -18,5 +18,3 @@ const Loading = () => {
 		</div>
 	)
 }
-
-export default Loading
