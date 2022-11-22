@@ -71,12 +71,12 @@
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
 		}
-	
+
 		&-content {
 			flex-grow: 1;
 			padding: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
-		}	
+		}
 	}
 
 	.e-n-tab {
@@ -95,7 +95,7 @@
 			outline: none;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
-			padding-bottom: var( --n-tabs-title-padding-bottom ); 
+			padding-bottom: var( --n-tabs-title-padding-bottom );
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
 			transition: all var( --n-tabs-title-transition );
@@ -196,7 +196,7 @@
 // Responsive mode
 @mixin hide-normal-tabs-($device) {
 	.e-n-tabs-#{$device} {
-	
+
 		.e-n-tabs-heading {
 			display: none;
 		}
@@ -205,9 +205,22 @@
 
 @mixin hide-collapse-tabs-($device) {
 	.e-n-tabs-#{$device} {
-	
+
 		.e-collapse {
 			display: none;
+		}
+	}
+}
+
+@mixin add-gap-and-distance-($device) {
+	.e-n-tabs-#{$device} {
+
+		.e-n-tabs-heading {
+			gap: var( --n-tabs-title-gap-#{$device} );
+		}
+
+		.e-n-tab-title {
+			margin-bottom: var( --n-tabs-title-distance-#{$device} );
 		}
 	}
 }
