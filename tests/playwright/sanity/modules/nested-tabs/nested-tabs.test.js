@@ -64,7 +64,7 @@ test.describe( 'Nested Tabs tests', () => {
 		} );
 	} );
 
-	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
+	test.only( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -82,7 +82,7 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Act.
 		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'tablet' } );
+		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
 
 		const desktopTabWrapper = editor.getPreviewFrame().locator( '.e-n-tabs-heading' ),
 			mobileTabActive = editor.getPreviewFrame().locator( '.e-collapse.e-active' );
