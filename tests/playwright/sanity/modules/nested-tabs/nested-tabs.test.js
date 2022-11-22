@@ -5,6 +5,7 @@ test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -20,11 +21,14 @@ test.describe( 'Nested Tabs tests', () => {
 		// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
 		expect( iconCountForTabs ).toBe( 1 );
 		expect( iconCountForMainContainer ).toBe( 2 );
+
+		await cleanup( wpAdmin );
 	} );
 
 	test( 'Title alignment setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -41,5 +45,20 @@ test.describe( 'Nested Tabs tests', () => {
 		// Assert.
 		// Check if title's are aligned on the left.
 		await expect( editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tabs-heading .e-n-tab-title.e-active' ) ).toHaveCSS( 'justify-content', 'flex-start' );
+
+		await cleanup( wpAdmin );
 	} );
 } );
+
+async function setup( wpAdmin ) {
+	await wpAdmin.setExperiments( {
+		container: 'active',
+		'nested-elements': 'active',
+	} );
+}
+async function cleanup( wpAdmin ) {
+	await wpAdmin.setExperiments( {
+		container: 'inactive',
+		'nested-elements': 'inactive',
+	} );
+}
