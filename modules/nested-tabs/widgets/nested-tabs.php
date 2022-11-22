@@ -792,7 +792,7 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', 'em', 'rem' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-svg-icon-size: {{SIZE}}{{UNIT}}; --n-tabs-icon-size: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-icon-size: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
