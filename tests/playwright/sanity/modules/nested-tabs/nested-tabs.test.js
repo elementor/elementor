@@ -105,7 +105,7 @@ test.describe( 'Nested Tabs tests', () => {
 		} );
 	} );
 
-	test( `Check the icon size on frontEnd`, async ( { page }, testInfo ) => {
+	test( `Check the icon size on frontend`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		// Set experiments.
