@@ -98,6 +98,20 @@ a.elementor-responsive-switcher {
 		&:hover {
 			color: $editor-info;
 		}
+
+		&:not([data-selected="custom"]) {
+
+			i {
+				display: none;
+			}
+		}
+
+		&[data-selected="custom"] {
+
+			span {
+				display: none;
+			}
+		}
 	}
 }
 
@@ -128,7 +142,7 @@ a.elementor-responsive-switcher {
 		display: block;
 		z-index: 11000;
 		top: 0;
-		@include start(-15px);
+		@include start(-20px);
 		position: absolute;
 		padding: 5px;
 		width: 40px;
@@ -152,10 +166,24 @@ a.elementor-responsive-switcher {
 			&:hover {
 				color: $editor-info;
 			}
+
+			&:not([data-choose="custom"]) {
+
+				i {
+					display: none;
+				}
+			}
+
+			&[data-choose="custom"] {
+
+				span {
+					display: none;
+				}
+			}
 		}
 	}
 }
-//End control unit switcher
+
 $font-family-monospace: monospace;
 
 .e-units-custom {
@@ -166,3 +194,5 @@ $font-family-monospace: monospace;
 		text-align: center;
 	}
 }
+
+//End control unit switcher
