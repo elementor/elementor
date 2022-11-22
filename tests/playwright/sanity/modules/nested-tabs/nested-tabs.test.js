@@ -92,12 +92,12 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.changeResponsiveView( 'tablet' );
 
 		await expect( desktopTabWrapper ).toBeVisible();
-		await expect( mobileTabActive ).not.toBeVisible();
+		await expect( mobileTabActive ).toHaveCSS( 'display', 'none' );
 
 		// Check if the correct tabs are displayed on mobile view.
 		await editor.changeResponsiveView( 'mobile' );
 
-		await expect( desktopTabWrapper ).not.toBeVisible();
+		await expect( desktopTabWrapper ).toHaveCSS( 'display', 'none' );
 		await expect( mobileTabActive ).toBeVisible();
 
 		await wpAdmin.setExperiments( {
