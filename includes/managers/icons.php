@@ -94,7 +94,7 @@ class Icons_Manager {
 			$dependencies = [];
 			if ( ! empty( $icon_type['enqueue'] ) ) {
 				foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
-					if ( ! in_array( $font_css_url, array_keys( $shared_styles ) ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+					if ( ! in_array( $font_css_url, array_keys( $shared_styles ), true ) ) {
 						$style_handle = 'elementor-icons-shared-' . count( $shared_styles );
 						wp_register_style(
 							$style_handle,
