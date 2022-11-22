@@ -93,6 +93,11 @@ a.elementor-responsive-switcher {
 		text-transform: uppercase;
 		font-size: 9px;
 		padding: 0 3px;
+		transition: all ease-in-out .15s;
+
+		&:hover {
+			color: $editor-info;
+		}
 	}
 }
 
@@ -107,7 +112,6 @@ a.elementor-responsive-switcher {
 
 		&.e-units-placeholder + label {
 			color: $editor-lighter;
-			text-decoration: underline;
 		}
 	}
 
@@ -152,3 +156,13 @@ a.elementor-responsive-switcher {
 	}
 }
 //End control unit switcher
+$font-family-monospace: monospace;
+
+.e-units-custom {
+
+	input {
+		font-family: $font-family-monospace;
+		font-size: 0.85em;
+		text-align: center;
+	}
+}
