@@ -334,6 +334,18 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . esc_html__( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . esc_html__( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
+							'google_font' => [
+								'label' => esc_html__( 'Google Fonts', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Disable this option if you want to use Google Fonts from a different plugin or theme.', 'elementor' ),
+								],
+							],
 							'font_display' => [
 								'label' => esc_html__( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
