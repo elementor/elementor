@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** This action is documented in wp-admin/admin-footer.php */
 do_action( 'admin_print_footer_scripts' );
 ?>
-<script src="http://localhost:3000/static/js/bundle.js"></script>
 </body>
 </html>
 

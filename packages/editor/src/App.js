@@ -1,6 +1,6 @@
 /* global __ */
 import {useEffect, useRef} from "react";
-import {Loader} from "./components/loader/Loader";
+import {Loader} from "./components/loader/Loader.jsx";
 import useConfig from "./hooks/useConfig";
 import {useDocumentConfig} from "./components/loader/hooks/useDocumentConfig";
 import './css/variables.css';
