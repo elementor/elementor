@@ -68,20 +68,24 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 	},
 
 	onUnitChange() {
-		this.ui.unitChoices.removeClass( 'e-units-choices-open' );
+		this.toggleUnitChoices( false );
 
 		this.recursiveUnitChange( false );
 		this.updatePlaceholder();
 	},
 
+	toggleUnitChoices( stateVal ) {
+		this.ui.unitChoices.toggleClass( 'e-units-choices-open', stateVal );
+	},
+
 	onUnitClick() {
-		this.ui.unitChoices.removeClass( 'e-units-choices-open' );
+		this.toggleUnitChoices( false );
 	},
 
 	onUnitLabelClick( event ) {
 		event.preventDefault();
 
-		this.ui.unitChoices.toggleClass( 'e-units-choices-open' );
+		this.toggleUnitChoices();
 	},
 
 	getCurrentRange() {
