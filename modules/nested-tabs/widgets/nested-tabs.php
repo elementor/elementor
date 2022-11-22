@@ -577,6 +577,13 @@ class NestedTabs extends Widget_Nested_Base {
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
 			'selector' => '{{WRAPPER}} .e-n-tab-title-text',
+			'fields_options' => [
+				'font_size' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--n-tabs-title-font-size: {{SIZE}}{{UNIT}}',
+					],
+				],
+			],
 		] );
 
 		$this->start_controls_tabs( 'title_style' );
