@@ -1024,20 +1024,8 @@
 									"default": "active",
 									"state": "default"
 								},
-								"e_import_export": {
-									"default": "active",
-									"state": "default"
-								},
 								"landing-pages": {
 									"default": "active",
-									"state": "default"
-								},
-								"elements-color-picker": {
-									"default": "active",
-									"state": "default"
-								},
-								"admin-top-bar": {
-									"default": "inactive",
 									"state": "default"
 								},
 								"form-submissions": {

@@ -329,8 +329,7 @@ class Module extends BaseModule {
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
-				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
 				current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();
@@ -393,7 +392,9 @@ class Module extends BaseModule {
 	 */
 	private function maybe_handle_ajax() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( $_POST['action'] ) {
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' );
+
+		switch ( $action ) {
 			case static::EXPORT_TRIGGER_KEY:
 				$this->handle_export_kit();
 				break;
@@ -415,16 +416,19 @@ class Module extends BaseModule {
 	 * Handle upload kit ajax request.
 	 */
 	private function handle_upload_kit() {
-		// PHPCS - Already validated in caller function.
-		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// PHPCS - A URL that should contain special chars (auth headers information).
+		$file_url = isset( $_POST['e_import_file'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			? wp_unslash( $_POST['e_import_file'] )
+			: '';
+
+		// Import from kit library
+		if ( ! empty( $file_url ) ) {
 			if (
-				! isset( $_POST['e_kit_library_nonce'] ) ||
-				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
+				! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
 			) {
 				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
 			}
-
-			$file_url = $_POST['e_import_file'];
 
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
 				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
@@ -444,7 +448,7 @@ class Module extends BaseModule {
 			$referrer = static::REFERRER_KIT_LIBRARY;
 		} else {
 			// PHPCS - Already validated in caller function.
-			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$file_name = ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
 			$referrer = static::REFERRER_LOCAL;
 		}
 
@@ -482,7 +486,7 @@ class Module extends BaseModule {
 	 */
 	private function handle_import_kit() {
 		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$tmp_folder_id = $settings['session'];
 
 		$import = $this->import_kit( $tmp_folder_id, $settings );
@@ -498,7 +502,7 @@ class Module extends BaseModule {
 	 */
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$export = $this->export_kit( $settings );
 
 		$file_name = $export['file_name'];

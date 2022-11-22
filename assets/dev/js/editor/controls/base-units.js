@@ -95,8 +95,12 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 	getUnitRange( unit ) {
 		var ranges = this.model.get( 'range' );
 
-		if ( ! ranges || ! ranges[ unit ] ) {
+		if ( ! ranges ) {
 			return false;
+		}
+
+		if ( ! ranges[ unit ] ) {
+			ranges[ unit ] = Object.values( ranges )[ 0 ];
 		}
 
 		return ranges[ unit ];
