@@ -1,13 +1,15 @@
 /* global __ */
 import {useEffect, useRef} from "react";
-import Wrapper from "./components/wrapper";
+import {Loader} from "./components/loader/Loader";
 import useConfig from "./hooks/useConfig";
+import {useDocumentConfig} from "./components/loader/hooks/useDocumentConfig";
+import './css/variables.css';
 
 function EditorTitle() {
-	const [ initialDocument ] = useConfig( 'initial_document' );
+	const config = useDocumentConfig();
 
 	useEffect( () => {
-		document.title = __( 'Elementor', 'elementor' ) + ' | ' + initialDocument.settings.settings.post_title
+		document.title = __( 'Elementor', 'elementor' ) + ' | ' + config.settings.settings.post_title
 	} , [] );
 	return null;
 }
@@ -36,16 +38,12 @@ function App() {
 
 			window.elementor.start();
 		}
-
-//	<script>
-// 		var ajaxurl = '<?php Utils::print_unescaped_internal_string( admin_url( 'admin-ajax.php', 'relative' ) ); ?>';
-// 	</script>
 	}, [] );
 
   return (
 	  <div className="editor-app">
 		  <EditorTitle />
-		  <Wrapper />
+		  <Loader />
 	</div>
   );
 }

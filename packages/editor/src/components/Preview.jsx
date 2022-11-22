@@ -1,7 +1,7 @@
 import ResponsiveBar from "./responsive-bar";
 import Notice from "./notice";
 
-const Preview = () => {
+const Preview = ( props ) => {
 	return (
 		<div id="elementor-preview" style={{
 			"width": "100%",
@@ -16,6 +16,12 @@ const Preview = () => {
 					 "height": "100%",
 				 }}
 			>
+				<iframe
+					id="elementor-preview-iframe"
+					src={props.iframePreviewURL}
+					allowFullScreen="1"
+					onLoad={props.onPreviewLoaded}
+				></iframe>
 				<Notice />
 			</div>
 		</div>

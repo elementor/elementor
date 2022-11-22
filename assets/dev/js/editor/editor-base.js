@@ -449,25 +449,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPreview() {
-		const $ = jQuery,
-			previewIframeId = 'elementor-preview-iframe';
 
-		this.$previewWrapper = $( '#elementor-preview' );
-
-		this.$previewResponsiveWrapper = $( '#elementor-preview-responsive-wrapper' );
-
-		// Make sure the iFrame does not exist.
-		if ( ! this.$preview ) {
-			this.$preview = $( '<iframe>', {
-				id: previewIframeId,
-				src: this.config.initial_document.urls.preview,
-				allowfullscreen: 1,
-			} );
-
-			this.$previewResponsiveWrapper.append( this.$preview );
-		}
-
-		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	}
 
 	initPreviewView( document ) {
@@ -1139,6 +1121,12 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onPreviewLoaded() {
+		if ( ! this.$preview ) {
+			this.$preview = jQuery( '#elementor-preview-iframe' );
+			this.$previewWrapper = jQuery( '#elementor-preview' );
+			this.$previewResponsiveWrapper = jQuery( '#elementor-preview-responsive-wrapper' );
+		}
+
 		const previewWindow = this.$preview[ 0 ].contentWindow;
 
 		if ( ! previewWindow.elementorFrontend ) {

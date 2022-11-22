@@ -3,7 +3,7 @@ import {Element} from "./Element";
 import {EmptyCategory} from "./EmptyCategory";
 
 export const Category = (props) => {
-	const [isActive, setIsActive] = useState(props.isActive && !! props.elements.length),
+	const [isActive, setIsActive] = useState(props.isActive ),
 		activeClass = isActive ? 'elementor-active' : '';
 
 	if ( ! props.elements.length && props.hideIfEmpty !== false ) {
