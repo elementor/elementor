@@ -1,12 +1,16 @@
 .elementor-control-type-dimensions {
 
 	.elementor-control-dimensions {
-		overflow: hidden;
+		display: flex;
 	}
 
 	li {
-		float: left;
-		width: 20%;
+		flex: 1;
+		transition: flex-grow .3s ease-in-out;
+
+		&.elementor-control-dimension:focus-within {
+			flex: 1.75;
+		}
 
 		input,
 		.elementor-link-dimensions {
@@ -20,7 +24,7 @@
 		input {
 			border-left: none;
 			border-radius: 0;
-			padding: 4px 0;
+			padding: 3px;
 
 			&:focus {
 				border-left: solid 1px;
@@ -55,6 +59,16 @@
 					margin-left: 0;
 					width: 100%;
 				}
+			}
+		}
+	}
+
+	&.e-units-custom {
+
+		li {
+
+			&.elementor-control-dimension:focus-within {
+				flex: 2.5;
 			}
 		}
 	}
