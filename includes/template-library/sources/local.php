@@ -1,4 +1,7 @@
 <?php
+/**
+ * @phpcs:disable WordPress.Security.NonceVerification
+ */
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
@@ -1172,14 +1175,9 @@ class Source_Local extends Source_Base {
 	 * @return array An updated array of available list table views.
 	 */
 	public function admin_print_tabs( $views ) {
-		$current_type = '';
-		$active_class = ' nav-tab-active';
+		$current_type = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG ) ?? '';
+		$active_class = $current_type ? '' : ' nav-tab-active';
 		$current_tabs_group = $this->get_current_tab_group();
-
-		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {
-			$current_type = $_REQUEST[ self::TAXONOMY_TYPE_SLUG ];
-			$active_class = '';
-		}
 
 		$url_args = [
 			'post_type' => self::CPT,
@@ -1357,7 +1355,6 @@ class Source_Local extends Source_Base {
 		}
 
 		$all_items = get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items;
-
 		$dropdown_options = array(
 			'show_option_all' => $all_items,
 			'show_option_none' => $all_items,
@@ -1368,7 +1365,7 @@ class Source_Local extends Source_Base {
 			'value_field' => 'slug',
 			'taxonomy' => self::TAXONOMY_CATEGORY_SLUG,
 			'name' => self::TAXONOMY_CATEGORY_SLUG,
-			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
+			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
 		);
 		echo '<label class="screen-reader-text" for="cat">' . esc_html_x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
@@ -1653,17 +1650,15 @@ class Source_Local extends Source_Base {
 	}
 
 	public function get_current_tab_group( $default = '' ) {
-		$current_tabs_group = $default;
+		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group' ) ?? $default;
+		$type_slug = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG );
 
-		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {
-			$doc_type = Plugin::$instance->documents->get_document_type( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ], '' );
+		if ( $type_slug ) {
+			$doc_type = Plugin::$instance->documents->get_document_type( $type_slug, '' );
 			if ( $doc_type ) {
 				$current_tabs_group = $doc_type::get_property( 'admin_tab_group' );
 			}
-		} elseif ( ! empty( $_REQUEST['tabs_group'] ) ) {
-			$current_tabs_group = $_REQUEST['tabs_group'];
 		}
-
 		return $current_tabs_group;
 	}
 

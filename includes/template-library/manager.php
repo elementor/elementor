@@ -1,4 +1,7 @@
 <?php
+/**
+ * @phpcs:disable WordPress.Security.NonceVerification
+ */
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
@@ -8,6 +11,7 @@ use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,7 +36,7 @@ class Manager {
 	 *
 	 * @var Source_Base[]
 	 */
-	protected $_registered_sources = [];
+	protected $_registered_sources = []; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Imported template images.
@@ -43,7 +47,7 @@ class Manager {
 	 *
 	 * @var Import_Images
 	 */
-	private $_import_images = null;
+	private $_import_images = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Template library manager constructor.
@@ -437,8 +441,8 @@ class Manager {
 	public function direct_import_template() {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
-
-		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
+		$file = Utils::get_super_global_value( $_FILES, 'file' );
+		return $source->import_template( $file['name'], $file['tmp_name'] );
 	}
 
 	/**
@@ -625,7 +629,7 @@ class Manager {
 			$this->handle_direct_action_error( 'Access Denied' );
 		}
 
-		$action = $_REQUEST['library_action'];
+		$action = Utils::get_super_global_value( $_REQUEST, 'library_action' );
 
 		$result = $this->$action( $_REQUEST );
 
