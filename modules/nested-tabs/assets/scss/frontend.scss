@@ -140,10 +140,10 @@
 				&.e-active {
 
 					> i {
-					  	font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+						font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					}
 
-				  	svg {
+					svg {
 						width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 						height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					}
