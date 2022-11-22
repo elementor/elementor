@@ -69,7 +69,9 @@ class Fonts {
 				self::EARLYACCESS => esc_html__( 'Google Early Access', 'elementor' ),
 			];
 
-			unset( $font_groups[ self::GOOGLE ] );
+			if ( ! static::is_enable_google_font() ) {
+				unset( $font_groups[ self::GOOGLE ] );
+			}
 
 			/**
 			 * Font groups.
