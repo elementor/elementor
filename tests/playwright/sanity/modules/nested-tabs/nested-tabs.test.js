@@ -1,27 +1,11 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
-const { ExperimentsAPI } = require( '../../../API/experiments-api' );
-
-const nestedElementsExperiment = 'nested-elements';
-const containerExperiment = 'container';
-
-test.beforeAll( async ( { browser } ) => {
-	const page = await ( await browser.newContext() ).newPage();
-	const experimentsAPI = new ExperimentsAPI( page );
-	await experimentsAPI.activateExperiments( [ nestedElementsExperiment, containerExperiment ] );
-} );
-
-test.afterAll( async ( { browser } ) => {
-	const page = await ( await browser.newContext() ).newPage();
-	const experimentsAPI = new ExperimentsAPI( page );
-	await experimentsAPI.deactivateExperiments( [ nestedElementsExperiment, containerExperiment ] );
-} );
 
 test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
@@ -41,7 +25,7 @@ test.describe( 'Nested Tabs tests', () => {
 	test( 'Title alignment setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
