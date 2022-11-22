@@ -14,6 +14,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 	events() {
 		return Object.assign( ControlBaseMultipleItemView.prototype.events.apply( this, arguments ), {
 			'change @ui.units': 'onUnitChange',
+			'click @ui.units': 'onUnitClick',
 			'click @ui.unitSwitcher': 'onUnitLabelClick',
 		} );
 	},
@@ -23,12 +24,17 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 		this.ui.units.removeClass( 'e-units-placeholder' );
 
-		if ( placeholder !== this.getControlValue( 'unit' ) ) {
+		const currentUnitSelected = this.getControlValue( 'unit' );
+
+		if ( placeholder !== currentUnitSelected ) {
 			this.ui.units.filter( `[value="${ placeholder }"]` )
 				.addClass( 'e-units-placeholder' );
 		}
 
-		this.ui.unitSwitcher.html( this.getControlValue( 'unit' ) );
+		this.ui.unitSwitcher
+			.attr( 'data-selected', currentUnitSelected )
+			.find( 'span' )
+			.html( currentUnitSelected );
 
 		this.$el.toggleClass( 'e-units-custom', this.isCustomUnit() );
 	},
@@ -66,6 +72,10 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 		this.recursiveUnitChange( false );
 		this.updatePlaceholder();
+	},
+
+	onUnitClick() {
+		this.ui.unitChoices.removeClass( 'e-units-choices-open' );
 	},
 
 	onUnitLabelClick( event ) {
