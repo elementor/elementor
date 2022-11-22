@@ -334,10 +334,15 @@ class NestedTabs extends Widget_Nested_Base {
 		] );
 
 		$dropdown_options = [];
+		$excluded_breakpoints = [
+			'laptop',
+			'tablet_extra',
+			'widescreen',
+		];
 
 		foreach ( Plugin::$instance->breakpoints->get_active_breakpoints() as $breakpoint_key => $breakpoint_instance ) {
-			// Exclude the widescreen from the dropdown selector.
-			if ( 'widescreen' === $breakpoint_key ) {
+			// Exclude the larger breakpoints from the dropdown selector.
+			if ( in_array( $breakpoint_key, $excluded_breakpoints, true ) ) {
 				continue;
 			}
 
