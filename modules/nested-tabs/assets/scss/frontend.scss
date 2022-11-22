@@ -35,6 +35,7 @@
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
+	--n-tabs-title-font-size: 1rem;
 
 	--n-tabs-title-justify-content: center;
 	--n-tabs-title-align-items: center;
@@ -50,7 +51,6 @@
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};
-	--n-tabs-icon-size: initial;
 	--n-tabs-icon-gap: 5px;
 
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
@@ -71,12 +71,12 @@
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
 		}
-	
+
 		&-content {
 			flex-grow: 1;
 			padding: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
-		}	
+		}
 	}
 
 	.e-n-tab {
@@ -95,7 +95,7 @@
 			outline: none;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
-			padding-bottom: var( --n-tabs-title-padding-bottom ); 
+			padding-bottom: var( --n-tabs-title-padding-bottom );
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
 			transition: all var( --n-tabs-title-transition );
@@ -104,6 +104,9 @@
 
 			&-text {
 				width: 100%;
+				display: flex;
+			  	align-items: center;
+			  	font-size: var( --n-tabs-title-font-size );
 			}
 
 			&:hover {
@@ -123,7 +126,7 @@
 			}
 
 			.e-n-tab-icon {
-				display: flex;
+			  	align-items: center;
 
 				> i {
 					color: var( --n-tabs-icon-color );
@@ -137,12 +140,12 @@
 				&.e-active {
 
 					> i {
-						font-size: var( --n-tabs-icon-size );
+						font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					}
 
 					svg {
-						width: var( --n-tabs-icon-size );
-						height: var( --n-tabs-icon-size );
+						width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+						height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					}
 
 					&:empty {
@@ -208,7 +211,7 @@
 	.elementor-widget-n-tabs {
 
 		.e-n-tabs {
-			
+
 			.e-collapse {
 				display: none;
 			}
