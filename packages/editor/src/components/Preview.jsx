@@ -1,5 +1,6 @@
 import ResponsiveBar from "./responsive-bar";
 import Notice from "./notice";
+import Loading from "./loading";
 
 const Preview = ( props ) => {
 	return (
@@ -7,6 +8,7 @@ const Preview = ( props ) => {
 			"width": "100%",
 			"height": "100%",
 		}}>
+			<Loading />
 			<ResponsiveBar />
 
 			<div id="elementor-preview-responsive-wrapper"
