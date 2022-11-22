@@ -78,14 +78,14 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-tabs-content-wrapper .e-con.elementor-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Act.
 		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
 		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'tablet' } );
 
-		const desktopTabWrapper = editor.getPreviewFrame().locator( '.elementor-tabs-wrapper' ),
-			mobileTabActive = editor.getPreviewFrame().locator( '.elementor-tab-mobile-title.elementor-active' );
+		const desktopTabWrapper = editor.getPreviewFrame().locator( '.e-n-tabs-heading' ),
+			mobileTabActive = editor.getPreviewFrame().locator( '.e-collapse.e-active' );
 
 		// Assert.
 		// Check if the correct tabs are displayed on tablet view.
