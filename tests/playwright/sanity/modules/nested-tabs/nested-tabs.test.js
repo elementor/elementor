@@ -66,6 +66,7 @@ test.describe( 'Nested Tabs tests', () => {
 	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
+
 		await wpAdmin.setExperiments( {
 			container: true,
 			'nested-elements': true,
@@ -88,10 +89,13 @@ test.describe( 'Nested Tabs tests', () => {
 		// Assert.
 		// Check if the correct tabs are displayed on tablet view.
 		await editor.changeResponsiveView( 'tablet' );
+
 		expect( desktopTabWrapper ).toBeVisible();
 		expect( mobileTabActive ).not.toBeVisible();
+
 		// Check if the correct tabs are displayed on mobile view.
 		await editor.changeResponsiveView( 'mobile' );
+
 		expect( desktopTabWrapper ).not.toBeVisible();
 		expect( mobileTabActive ).toBeVisible();
 
