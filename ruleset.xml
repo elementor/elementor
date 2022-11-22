@@ -13,7 +13,6 @@
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 	
-	<rule ref="WordPress.Security" />
 	<rule ref="WordPress-Extra">
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
@@ -36,7 +35,6 @@
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
-
 	</rule>
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">
