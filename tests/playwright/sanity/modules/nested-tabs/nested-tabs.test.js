@@ -64,7 +64,7 @@ test.describe( 'Nested Tabs tests', () => {
 		} );
 	} );
 
-	test.only( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
+	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
