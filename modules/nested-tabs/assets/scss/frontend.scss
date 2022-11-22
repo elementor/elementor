@@ -215,12 +215,15 @@
 @mixin add-gap-and-distance-($device) {
 	.e-n-tabs-#{$device} {
 
-		.e-n-tabs-heading {
-			gap: var( --n-tabs-title-gap-#{$device} );
-		}
+		.e-collapse {
 
-		.e-n-tab-title {
-			margin-bottom: var( --n-tabs-title-distance-#{$device} );
+			&:not(:first-child) {
+				  margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+			 	 margin-bottom: var( --n-tabs-gap );
+			}
 		}
 	}
 }
@@ -232,6 +235,7 @@
 
 @media (max-width: $screen-mobile-max) {
 	@include hide-normal-tabs-(mobile);
+  	@include add-gap-and-distance-(mobile);
 }
 
 // Mobile Extra.
@@ -241,6 +245,7 @@
 
 @media (max-width: $screen-mobile-extra-max) {
 	@include hide-normal-tabs-(mobile_extra);
+  	@include add-gap-and-distance-(mobile_extra);
 }
 
 // Tablet.
@@ -250,6 +255,7 @@
 
 @media (max-width: $screen-tablet-max) {
 	@include hide-normal-tabs-(tablet);
+  	@include add-gap-and-distance-(tablet);
 }
 
 // Tablet Extra.
@@ -259,6 +265,7 @@
 
 @media (max-width: $screen-tablet-extra-max) {
 	@include hide-normal-tabs-(tablet_extra);
+  	@include add-gap-and-distance-(tablet_extra);
 }
 
 // Laptop.
@@ -268,4 +275,5 @@
 
 @media (max-width: $screen-laptop-max) {
 	@include hide-normal-tabs-(laptop);
+  	@include add-gap-and-distance-(laptop);
 }
