@@ -18,6 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Source_Remote extends Source_Base {
 
+	const API_TEMPLATES_URL = 'https://my.elementor.com/api/connect/v1/library/templates';
+
+	const TEMPLATES_DATA_TRANSIENT_KEY_PREFIX = 'elementor_remote_templates_data_';
+
+	const TEMPLATES_DATA_LAYOUT_TYPE_TRANSIENT_KEY = 'elementor_remote_templates_data_layout_type';
+
 	/**
 	 * Get remote template ID.
 	 *
@@ -65,19 +71,19 @@ class Source_Remote extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $args Optional. Nou used in remote source.
+	 * @param array $args Optional. Not used in remote source.
 	 *
 	 * @return array Remote templates.
 	 */
 	public function get_items( $args = [] ) {
-		$library_data = Api::get_library_data();
+		$force_update = $args['force_update'] ?? false;
+
+		$templates_data = $this->get_templates_data( $force_update );
 
 		$templates = [];
 
-		if ( ! empty( $library_data['templates'] ) ) {
-			foreach ( $library_data['templates'] as $template_data ) {
-				$templates[] = $this->prepare_template( $template_data );
-			}
+		foreach ( $templates_data as $template_data ) {
+			$templates[] = $this->prepare_template( $template_data );
 		}
 
 		return $templates;
@@ -208,6 +214,91 @@ class Source_Remote extends Source_Base {
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
 		return $data;
+	}
+
+	/**
+	 * Get templates data from transient or by remote request.
+	 * The remote request will happen in one of those 3 conditions:
+	 * 1. Force update.
+	 * 2. The data saved in the transient is empty.
+	 * 3. The container feature has changed since the last data fetch.
+	 *
+	 * @param $force_update
+	 * @return array
+	 */
+	private function get_templates_data( $force_update ) {
+		$templates_data_cache_key = static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
+		$templates_data_layout_type_cache_key = static::TEMPLATES_DATA_LAYOUT_TYPE_TRANSIENT_KEY;
+
+		$experiments_manager = Plugin::$instance->experiments;
+		$editor_layout_type = $experiments_manager->is_feature_active( 'container' ) ? 'container_flexbox' : '';
+
+		if ( $force_update ) {
+			return $this->get_templates( $editor_layout_type );
+		}
+
+		$cached_tempates_editor_layout_type = get_transient( $templates_data_layout_type_cache_key );
+
+		if ( $cached_tempates_editor_layout_type !== $editor_layout_type ) {
+			return $this->get_templates( $editor_layout_type );
+		}
+
+		$templates_data = get_transient( $templates_data_cache_key );
+
+		if ( empty( $templates_data ) ) {
+			return $this->get_templates( $editor_layout_type );
+		}
+
+		return $templates_data;
+	}
+
+	/**
+	 * Get the templates from the remote server and set the transients.
+	 *
+	 * @param $editor_layout_type
+	 * @return array
+	 */
+	private function get_templates( $editor_layout_type ): array {
+		$templates_data_cache_key = static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
+		$templates_data_layout_type_cache_key = static::TEMPLATES_DATA_LAYOUT_TYPE_TRANSIENT_KEY;
+
+		$templates_data = $this->get_templates_remotely( $editor_layout_type );
+
+		if ( empty( $templates_data ) ) {
+			return [];
+		}
+
+		set_transient( $templates_data_cache_key, $templates_data, 12 * HOUR_IN_SECONDS );
+		set_transient( $templates_data_layout_type_cache_key, $editor_layout_type, 12 * HOUR_IN_SECONDS );
+
+		return $templates_data;
+	}
+
+	/**
+	 * Fetch templates from the remote server.
+	 *
+	 * @param $editor_layout_type
+	 * @return array|false
+	 */
+	private function get_templates_remotely( $editor_layout_type ) {
+		$response = wp_remote_get( static::API_TEMPLATES_URL, [
+			'body' => [
+				'plugin_version' => ELEMENTOR_VERSION,
+				'editor_layout_type' => $editor_layout_type,
+			],
+		] );
+
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return false;
+		}
+
+		$templates_data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( empty( $templates_data ) || ! is_array( $templates_data ) ) {
+			return [];
+		}
+
+		return $templates_data;
 	}
 
 	/**
