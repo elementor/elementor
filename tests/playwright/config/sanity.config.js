@@ -9,12 +9,12 @@ const config = {
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
 	expect: {
-		timeout: 20_000, // 20 seconds
+		timeout: 5_000, // 5 seconds
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
 	},
 	use: {
-		actionTimeout: 20_000, // 20 seconds
-		navigationTimeout: 20_000, // 20 seconds
+		actionTimeout: 10_000, // 10 seconds
+		navigationTimeout: 10_000, // 10 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
