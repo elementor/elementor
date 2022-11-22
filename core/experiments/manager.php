@@ -513,8 +513,8 @@ class Manager extends Base_Object {
 			?>
 		</p>
 		<?php if ( $this->get_features() ) { ?>
-		<button type="button" class="button e-experiment__button" value="active">Activate All Experiments</button>
-		<button type="button" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
+		<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All Experiments', 'elementor' ); ?></button>
+		<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All Experiments', 'elementor' ); ?></button>
 		<?php } ?>
 		<hr>
 		<h2 class="e-experiment__table-title">
