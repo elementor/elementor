@@ -81,6 +81,7 @@ jobs:
           npx wp-env run cli "wp --user=admin elementor library import-dir elementor-playwright-templates"
           npx wp-env run cli "wp rewrite structure \"/%postname%/\" --hard"
           npx wp-env run cli "wp theme activate twentytwentytwo"
+          npx wp-env run cli "wp elementor experiments activate nested-elements"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
@@ -89,9 +90,6 @@ jobs:
         run: |
           npm ci
           npx playwright install chromium
-      - name: Activate Experiments
-        run: |
-          npx wp-env run cli "wp elementor experiments activate nested-elements"
       - name: Run Playwright tests
         run: |
           npm run test:playwright
