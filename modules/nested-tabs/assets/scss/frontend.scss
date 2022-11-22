@@ -102,10 +102,6 @@
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
 
-			&-text {
-				width: 100%;
-			}
-
 			&:hover {
 				background-color: var( --n-tabs-title-background-color-hover, var( --n-tabs-title-background-color ) );
 				transition: all var( --n-tabs-title-transition );
