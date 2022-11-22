@@ -64,46 +64,6 @@ test.describe( 'Nested Tabs tests', () => {
 		} );
 	} );
 
-	let locationOption;
-
-	const locationOptions = [ 'Start', 'Center', 'End', 'Justified' ];
-
-	for ( locationOption of locationOptions ) {
-		test( `Check that Icons are vertically centered when Justify is set to ${ locationOption }`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
-				container: true,
-				'nested-elements': true,
-			} );
-
-			const editor = await wpAdmin.useElementorCleanPost(),
-				container = await editor.addElement( { elType: 'container' }, 'document' );
-
-			// Add widgets.
-			await editor.addWidget( 'nested-tabs', container );
-			await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-			// Set icons to tabs according 'TabsIcons' array.
-			await setIconsToTabs( page, TabsIcons );
-			const icon = await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon' ).first(),
-				activeTabIcon = await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active' ).first(),
-				currentContext = editor.getPreviewFrame();
-
-			// Assert.
-			await page.locator( `.elementor-control-tabs_justify_horizontal [original-title='${ locationOption }']` ).first().click();
-			await expect( icon ).toHaveCSS( 'align-items', 'center' );
-			await clickTab( currentContext, '1' );
-			await expect( activeTabIcon ).toHaveCSS( 'align-items', 'center' );
-			await clickTab( currentContext, '0' );
-
-			// Reset experiments.
-			await wpAdmin.setExperiments( {
-				container: false,
-				'nested-elements': false,
-			} );
-		} );
-	}
-
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		// Set experiments.
