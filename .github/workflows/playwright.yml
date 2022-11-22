@@ -91,7 +91,7 @@ jobs:
           npx playwright install chromium
       - name: Activate Experiments
         run: |
-          wp-env run cli "wp elementor experiments activate nested-elements"
+          npx wp-env run cli "wp elementor experiments activate nested-elements"
       - name: Run Playwright tests
         run: |
           npm run test:playwright
