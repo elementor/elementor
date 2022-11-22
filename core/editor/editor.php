@@ -531,6 +531,7 @@ class Editor {
 				'name' => 'wp',
 				'version' => $GLOBALS['wp_version'],
 			],
+			'assets_url' => ELEMENTOR_ASSETS_URL,
 
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
