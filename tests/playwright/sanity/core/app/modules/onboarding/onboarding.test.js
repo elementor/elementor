@@ -1,10 +1,10 @@
-const { test, expect } = require( '@playwright/test' );
-const { onboarding } = require('../onboarding/onboarding.utils')
+const { test, expect } = require('@playwright/test');
+const {onboarding} = require('./onboarding.utils')
 
 let helper = {};
 
 test.beforeEach(async ({ page }) => {
-   helper = new onboarding(page);
+	helper = new onboarding(page);
 });
 
 
@@ -141,7 +141,7 @@ test( 'Onboarding Site Logo Page', async ( { page } ) => {
 /**
  * In the Good to Go page - tests that clicking on the Kit Library card/button navigates the user to the Kit Library.
  */
-test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
+test.only( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
 	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
 
 	const nextButton = await page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );
