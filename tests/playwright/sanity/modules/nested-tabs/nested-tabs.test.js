@@ -83,7 +83,12 @@ test.describe( 'Nested Tabs tests', () => {
 
 	test( `Check the icon size on frontend`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		// Set experiments.
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+			e_font_icon_svg: true,
+		} );
 		await wpAdmin.openNewPage();
 
 		const editor = new EditorPage( page, testInfo ),
@@ -115,7 +120,12 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( icon ).toHaveCSS( 'height', '50px' );
 		await clickTab( currentContext, '0' );
 
-		await cleanup( wpAdmin );
+		// Set experiments.
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+			e_font_icon_svg: false,
+		} );
 	} );
 } );
 
