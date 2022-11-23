@@ -374,7 +374,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
-		$this->add_responsive_control( 'tabs_title_spacing', [
+		$this->add_responsive_control( 'tabs_title_space_between', [
 			'label' => esc_html__( 'Gap between tabs', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
@@ -385,11 +385,11 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_title_space_between', [
+		$this->add_responsive_control( 'tabs_title_spacing', [
 			'label' => esc_html__( 'Distance from content', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
@@ -400,7 +400,7 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 

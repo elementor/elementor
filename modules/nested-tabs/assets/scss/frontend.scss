@@ -188,6 +188,17 @@
 	.e-n-tabs-content {
 		border: 1px none var( --n-tabs-border-color );
 		border-width: var( --n-tabs-border-width );
+
+		.e-collapse {
+
+			&:not(:first-child) {
+				  margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+				  margin-bottom: var( --n-tabs-gap );
+			}
+		}
 	}
 
 	.e-n-tabs-content > .e-con:not(.e-active) {
@@ -198,7 +209,7 @@
 // Responsive mode
 @mixin hide-normal-tabs-($device) {
 	.e-n-tabs-#{$device} {
-	
+
 		.e-n-tabs-heading {
 			display: none;
 		}
@@ -207,7 +218,7 @@
 
 @mixin hide-collapse-tabs-($device) {
 	.e-n-tabs-#{$device} {
-	
+
 		.e-collapse {
 			display: none;
 		}
