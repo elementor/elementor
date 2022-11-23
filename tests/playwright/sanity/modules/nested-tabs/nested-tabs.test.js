@@ -169,6 +169,44 @@ test.describe( 'Nested Tabs tests', () => {
 			e_font_icon_svg: false,
 		} );
 	} );
+
+	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
+		await page.locator( '.elementor-tab-control-style' ).click();
+
+		// Open responsive bar and select mobile view
+		await page.locator( '#elementor-panel-footer-responsive i' ).click();
+		await page.waitForSelector( '#e-responsive-bar' );
+		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+
+		// Set controls values.
+		await page.locator( '.elementor-control-tabs_title_spacing_mobile input' ).fill( '50' );
+		await page.locator( '.elementor-control-tabs_title_space_between_mobile input' ).fill( '25' );
+
+		const activeTab = editor.getPreviewFrame().locator( '.e-collapse.e-active' ),
+			lastTab = editor.getPreviewFrame().locator( '.e-collapse' ).last();
+
+		// Assert.
+		await expect( activeTab ).toHaveCSS( 'margin-bottom', '50px' );
+		await expect( lastTab ).toHaveCSS( 'margin-top', '25px' );
+	} );
 } );
 
 const TabsIcons = [
