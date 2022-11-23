@@ -53,10 +53,12 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
-
 			if ( ! value && url ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
 			}
+			this.ui.mediaImage.attr( 'data-id', this.getControlValue( 'id' ) || this.getControlPlaceholder()?.id );
+			this.ui.mediaImage.attr( 'data-alt', this.getControlValue( 'alt' ) || this.getControlPlaceholder()?.alt || '' );
+			this.ui.mediaImage.attr( 'data-size', this.getControlValue( 'size' ) || this.getControlPlaceholder()?.size || 'full' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
 		} else {
@@ -251,15 +253,22 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	async onMediaImageSize() {
+		this.ui.mediaImageSize.css( 'color', 'inherit' );
+		const previewPlaceHolder = this.$el.find( '.elementor-control-media__preview' );
+		const selectedImageId = {
+			id: this?.getControlValue( 'id' ) || previewPlaceHolder[ 0 ].getAttribute( 'data-id' ),
+			alt: this?.getControlValue( 'alt' ) || previewPlaceHolder[ 0 ].getAttribute( 'alt' ),
+		};
+
 		const selectedSize = this.ui.mediaImageSize.val();
 		let imageURL = await elementor.imagesManager.getImageUrl( {
-			id: this.getControlValue( 'id' ),
+			id: selectedImageId.id,
 			size: selectedSize,
 		} );
 		const stateOptions = {
 			url: null,
-			id: this.getControlValue( 'id' ),
-			alt: this.getControlValue( 'alt' ),
+			id: selectedImageId.id,
+			alt: selectedImageId.alt,
 			dimensions: selectedSize,
 			source: 'library',
 		};
@@ -268,7 +277,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.setValue( stateOptions );
 		} else {
 			elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
-				imageURL = data[ this.getControlValue( 'id' ) ][ selectedSize ];
+				imageURL = data[ selectedImageId.id ][ selectedSize ];
 				if ( imageURL ) {
 					stateOptions.url = imageURL;
 					this.setValue( stateOptions );
@@ -278,12 +287,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	toggleSizeControl() {
-		if ( this.$el[ 0 ].className.match( /background_image/g ) ) {
-			if ( this.getControlValue( 'id' ) ) {
-				this.ui.mediaSizeWrapper.css( 'display', 'flex' );
-			} else {
-				this.ui.mediaSizeWrapper.hide();
+		const previewImageExist = this.$el.find( '.elementor-control-media__preview' )[ 0 ]?.style?.backgroundImage;
+		const backgroundControl = this.$el[ 0 ]?.className?.match( /background_image/g );
+		if ( backgroundControl && previewImageExist ) {
+			const inheritedBgImage = '0.5' === this.$el.find( '.elementor-control-media__preview' )[ 0 ].style.opacity;
+			if ( inheritedBgImage ) {
+				this.ui.mediaImageSize.css( 'color', '#a0a5aa' );
 			}
+			this.ui.mediaSizeWrapper.css( 'display', 'flex' );
+		} else {
+			this.ui.mediaSizeWrapper.hide();
 		}
 	},
 } );
