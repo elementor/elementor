@@ -1,6 +1,6 @@
 import {Panel} from "../panel-wrapper/Panel";
 import {ElementsPanel} from "../elements-panel/ElementsPanel";
-import Preview from "../Preview";
+import {Preview} from "../Preview";
 import {Navigator} from "../Navigator";
 import {useCategories} from "./hooks/useCategories";
 import {useElements} from "./hooks/useElements";

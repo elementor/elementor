@@ -29,5 +29,3 @@ export const Preview = ( props ) => {
 		</div>
 	)
 }
-
-export default Preview
