@@ -89,6 +89,7 @@ a.elementor-responsive-switcher {
 	@include margin-start(auto);
 
 	.e-units-switcher {
+		color: $editor-light;
 		cursor: pointer;
 		text-transform: uppercase;
 		font-size: 9px;
@@ -116,16 +117,13 @@ a.elementor-responsive-switcher {
 }
 
 .e-units-choices {
+	display: none;
 
 	input {
 		display: none;
 
 		&:checked + label {
 			color: $editor-info;
-		}
-
-		&.e-units-placeholder + label {
-			color: $editor-lighter;
 		}
 	}
 
@@ -134,14 +132,10 @@ a.elementor-responsive-switcher {
 		display: block;
 	}
 
-	& {
-		display: none;
-	}
-
 	&.e-units-choices-open {
 		display: block;
 		z-index: 11000;
-		top: 0;
+		top: -0.5em;
 		@include start(-1em);
 		position: absolute;
 		width: 3em;
@@ -160,7 +154,6 @@ a.elementor-responsive-switcher {
 			text-transform: uppercase;
 			font-size: 9px;
 			transition: 0.15s;
-			transform: scale(1);
 
 			&:hover {
 				color: $editor-info;
@@ -190,7 +183,6 @@ $font-family-monospace: monospace;
 	input {
 		font-family: $font-family-monospace;
 		font-size: 0.85em;
-		text-align: center;
 	}
 }
 
