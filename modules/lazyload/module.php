@@ -49,18 +49,17 @@ class Module extends BaseModule {
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
 			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
-			break;
-		}
-
-		if ( $keys ) {
-			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
-			if ( $background_image_url ) {
-				$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
-				$element->add_render_attribute( '_wrapper', [
-					'data-e-bg-lazyload' => $bg_selector,
-				] );
+			if ( $keys ) {
+				$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
+				if ( $background_image_url ) {
+					$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
+					$element->add_render_attribute( '_wrapper', [
+						'data-e-bg-lazyload' => $bg_selector,
+					] );
+				}
 			}
 		}
+
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
