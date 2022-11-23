@@ -1,5 +1,5 @@
 //
-// Tabs v2
+// Nested Tabs
 //
 .elementor-widget-n-tabs {
 	--n-tabs-color-accent-fallback: #61CE70;
@@ -188,6 +188,17 @@
 	.e-n-tabs-content {
 		border: 1px none var( --n-tabs-border-color );
 		border-width: var( --n-tabs-border-width );
+
+		.e-collapse {
+
+			&:not(:first-child) {
+				  margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+				  margin-bottom: var( --n-tabs-gap );
+			}
+		}
 	}
 
 	.e-n-tabs-content > .e-con:not(.e-active) {
@@ -196,9 +207,8 @@
 }
 
 // Responsive mode
-// This code needs to be updated in the Responsive Tabs section task
-@media (max-width: $screen-mobile-max) {
-	.e-n-tabs {
+@mixin hide-normal-tabs-($device) {
+	.e-n-tabs-#{$device} {
 
 		.e-n-tabs-heading {
 			display: none;
@@ -206,14 +216,56 @@
 	}
 }
 
-@media (min-width: $screen-mobile-next) {
-	.elementor-widget-n-tabs {
+@mixin hide-collapse-tabs-($device) {
+	.e-n-tabs-#{$device} {
 
-		.e-n-tabs {
-
-			.e-collapse {
-				display: none;
-			}
+		.e-collapse {
+			display: none;
 		}
 	}
+}
+
+// Mobile.
+@media (min-width: $screen-mobile-next) {
+	@include hide-collapse-tabs-(mobile);
+}
+
+@media (max-width: $screen-mobile-max) {
+	@include hide-normal-tabs-(mobile);
+}
+
+// Mobile Extra.
+@media (min-width: $screen-mobile-extra-next) {
+	@include hide-collapse-tabs-(mobile_extra);
+}
+
+@media (max-width: $screen-mobile-extra-max) {
+	@include hide-normal-tabs-(mobile_extra);
+}
+
+// Tablet.
+@media (min-width: $screen-tablet-next) {
+	@include hide-collapse-tabs-(tablet);
+}
+
+@media (max-width: $screen-tablet-max) {
+	@include hide-normal-tabs-(tablet);
+}
+
+// Tablet Extra.
+@media (min-width: $screen-tablet-extra-next) {
+	@include hide-collapse-tabs-(tablet_extra);
+}
+
+@media (max-width: $screen-tablet-extra-max) {
+	@include hide-normal-tabs-(tablet_extra);
+}
+
+// Laptop.
+@media (min-width: $screen-desktop-min) {
+	@include hide-collapse-tabs-(laptop);
+}
+
+@media (max-width: $screen-laptop-max) {
+	@include hide-normal-tabs-(laptop);
 }
