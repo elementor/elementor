@@ -334,10 +334,15 @@ class NestedTabs extends Widget_Nested_Base {
 		] );
 
 		$dropdown_options = [];
+		$excluded_breakpoints = [
+			'laptop',
+			'tablet_extra',
+			'widescreen',
+		];
 
 		foreach ( Plugin::$instance->breakpoints->get_active_breakpoints() as $breakpoint_key => $breakpoint_instance ) {
-			// Exclude the widescreen from the dropdown selector.
-			if ( 'widescreen' === $breakpoint_key ) {
+			// Exclude the larger breakpoints from the dropdown selector.
+			if ( in_array( $breakpoint_key, $excluded_breakpoints, true ) ) {
 				continue;
 			}
 
@@ -612,7 +617,14 @@ class NestedTabs extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'selector' => '{{WRAPPER}} .e-tab-title-text',
+			'selector' => '{{WRAPPER}} .e-n-tab-title-text',
+			'fields_options' => [
+				'font_size' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--n-tabs-title-font-size: {{SIZE}}{{UNIT}}',
+					],
+				],
+			],
 		] );
 
 		$this->start_controls_tabs( 'title_style' );
@@ -995,7 +1007,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'e-n-tabs' );
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'e-n-tab-icon' );
-		$this->add_render_attribute( 'tab-icon-active', 'class', 'e-active' );
+		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon', 'e-active' ] );
 
 		$tabs_title_html = '';
 		$tabs_content_html = '';
