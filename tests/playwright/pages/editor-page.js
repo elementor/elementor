@@ -370,12 +370,9 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async changeResponsiveView( device ) {
-		const editorWrapper = '#elementor-preview-responsive-wrapper';
-
-		// eslint-disable-next-line no-shadow
-		const hasResponsiveViewBar = await this.page.evaluate( ( editorWrapper ) => {
-			return document.querySelector( editorWrapper ).classList.contains( 'ui-resizable' );
-		}, editorWrapper );
+		const hasResponsiveViewBar = await this.page.evaluate( () => {
+			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
+		} );
 
 		if ( ! hasResponsiveViewBar ) {
 			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
