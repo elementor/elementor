@@ -573,7 +573,7 @@ class Documents_Manager {
 		$document = $this->get_doc_or_auto_save( $post_id );
 
 		if ( ! $document ) {
-			throw new \Exception( 'Not Found.' );
+			throw new \Exception( 'Not found.' );
 		}
 
 		if ( ! $document->is_editable_by_current_user() ) {
