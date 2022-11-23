@@ -17,6 +17,7 @@ use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Utils;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -325,6 +326,46 @@ class NestedTabs extends Widget_Nested_Base {
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
 		] );
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'section_tabs_responsive', [
+			'label' => esc_html__( 'Responsive Settings', 'elementor' ),
+		] );
+
+		$dropdown_options = [];
+		$excluded_breakpoints = [
+			'laptop',
+			'tablet_extra',
+			'widescreen',
+		];
+
+		foreach ( Plugin::$instance->breakpoints->get_active_breakpoints() as $breakpoint_key => $breakpoint_instance ) {
+			// Exclude the larger breakpoints from the dropdown selector.
+			if ( in_array( $breakpoint_key, $excluded_breakpoints, true ) ) {
+				continue;
+			}
+
+			$dropdown_options[ $breakpoint_key ] = sprintf(
+				/* translators: 1: Breakpoint label, 2: `>` character, 3: Breakpoint value. */
+				esc_html__( '%1$s (%2$s %3$dpx)', 'elementor' ),
+				$breakpoint_instance->get_label(),
+				'>',
+				$breakpoint_instance->get_value()
+			);
+		}
+
+		$this->add_control(
+			'breakpoint_selector',
+			[
+				'label' => esc_html__( 'Breakpoint', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'description' => esc_html__( 'Note: Choose at which breakpoint tabs will automatically switch to a vertical (“accordion”) layout.', 'elementor' ),
+				'options' => $dropdown_options,
+				'default' => 'mobile',
+				'prefix_class' => 'e-n-tabs-',
+			]
+		);
 
 		$this->end_controls_section();
 
