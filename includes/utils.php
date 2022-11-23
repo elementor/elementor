@@ -166,12 +166,12 @@ class Utils {
 		$to = trim( $to );
 
 		if ( $from === $to ) {
-			throw new \Exception( 'The `from` and `to` URL\'s must be different URL\'s.' );
+			throw new \Exception( "The `from` and `to` URL's must be different URL's." );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( 'The `from` and `to` URL\'s must be valid URL\'s.' );
+			throw new \Exception( "The `from` and `to` URL's must be valid URL's." );
 		}
 
 		global $wpdb;
