@@ -1,18 +1,31 @@
 const { test, expect } = require( '@playwright/test' );
+const { onboarding } = require('../onboarding/onboarding.utils')
+
+let helper = {};
+
+test.beforeEach(async ({ page }) => {
+   helper = new onboarding(page);
+});
+
 
 /**
  *  Test that the "Upgrade" popover appears when overing over the "Upgrade" button.
  */
-test( 'Onboarding Upgrade Popover', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+test( 'Onboarding "Upgrade" Popover Button Works', async ( { page } ) => {
+	await helper.gotoStep1();
 
-	const goProHeaderButton = await page.locator( '#eps-app-header-btn-go-pro' );
+	await helper.hoverOverGoProHeaderButton();
 
-	await goProHeaderButton.hover();
+	await helper.goProPopoverIsVisible();
 
-	const goProPopover = await page.locator( '.e-app__popover.e-onboarding__go-pro' );
+	const [ proPage ] = await Promise.all( [
+		// It is important to call waitForEvent before click to set up waiting.
+		page.waitForEvent( 'popup' ),
+		// Opens popup.
+		helper.selectUpgradeNowButton(),
+	] );
 
-	await expect( goProPopover ).toBeVisible();
+	await helper.validateUserIsOnProPage(proPage);
 } );
 
 /**
@@ -20,7 +33,7 @@ test( 'Onboarding Upgrade Popover', async ( { page } ) => {
  * text, And that clicking on it opens the popup to create an account in my.elementor.com
  */
 test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+	await helper.gotoStep1();
 
 	const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
@@ -35,10 +48,7 @@ test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 
 	await popup.waitForLoadState( 'domcontentloaded' );
 
-	const createAccount = await popup.locator( 'text=Sign up for Elementor' );
-
-	// Check that the popup opens the Elementor Connect screen.
-	await expect( createAccount ).toBeVisible();
+	await helper.createAccountButtonIsVisible();
 
 	popup.close();
 } );
@@ -47,7 +57,7 @@ test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
  * Test the "Skip" button - to make sure it skips to the next step.
  */
 test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+	await helper.gotoStep1();;
 
 	const skipButton = await page.waitForSelector( 'text=Skip' );
 
