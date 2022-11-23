@@ -64,17 +64,17 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be different
+	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be different URL&#039;s.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_equal() {
-		//$this->expectExceptionMessage( 'The `from` and `to` URL\'s must be different' );
+		//$this->expectExceptionMessage( 'The `from` and `to` URL\'s must be different URL\'s.' );
 		Utils::replace_urls( 'http://' . home_url() . '/elementor', 'http://' . home_url() . '/elementor' );
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be valid URL&#039;s
+	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be valid URL&#039;s.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
