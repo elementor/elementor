@@ -240,7 +240,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				this.applySavedValue();
 			}
 
-			this.toggleSizeControls();
+			this.toggleSizeControl();
 		}
 
 		this.trigger( 'after:select' );
@@ -278,7 +278,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	toggleSizeControl() {
-		if ( this.$el.hasClass( 'elementor-control-background_image' ) ) {
+		if ( this.$el[ 0 ].className.match( /background_image/g ) ) {
 			if ( this.getControlValue( 'id' ) ) {
 				this.ui.mediaSizeWrapper.css( 'display', 'flex' );
 			} else {

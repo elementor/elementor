@@ -274,7 +274,7 @@ class Control_Media extends Control_Base_Multiple {
 		</div>
 		<div class="elementor-control-content elementor-control-media-size">
 			<div class="elementor-control-field elementor-control elementor-control-type-select">
-				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Size', 'elementor' ); ?></label>
+				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
 				<div class="elementor-control-input-wrapper media-size-input-wrapper">
 				<select data-setting="size" class="elementor-control elementor-control-type-select elementor-control-input-wrapper elementor-control-media-display-size select">
 				<?php
