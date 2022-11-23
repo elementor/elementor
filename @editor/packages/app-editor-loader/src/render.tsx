@@ -10,7 +10,6 @@ const MAX_WAIT_TIME = 10000;
 const WAIT_TIME_INTERVAL = 1000;
 let waitTime = 0;
 
-
 export const render = () => {
 	if ( ! window.elementor ) {
 		if ( waitTime < MAX_WAIT_TIME ) {
