@@ -39,10 +39,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-editor-v2',
 			$this->get_js_assets_url( 'editor-v2' ),
-			[
-				'react',
-				'react-dom',
-			],
+			[],
 			ELEMENTOR_VERSION,
 			false
 		);
@@ -51,32 +48,9 @@ class Module extends BaseModule {
 	private function enqueue_styles() {
 		wp_enqueue_style(
 			'elementor-editor-v2',
-			$this->get_editor_package_url( 'css' ),
+			$this->get_css_assets_url( 'style', '@editor/packages/app-editor-loader/dist/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
-	}
-
-	private function get_editor_package_url( string $type ) {
-		static $manifest = null;
-
-		$manifest_relative_dir = 'packages/editor/build/';
-
-		if ( ! $manifest ) {
-			$manifest_path = ELEMENTOR_PATH . $manifest_relative_dir . 'asset-manifest.json';
-
-			if ( ! file_exists( $manifest_path ) ) {
-				return false;
-			}
-
-			$manifest = json_decode( file_get_contents( $manifest_path ) );
-		}
-
-		switch ( $type ) {
-			case 'js':
-				return ELEMENTOR_URL . $manifest_relative_dir . $manifest->entrypoints[1];
-			case 'css':
-				return ELEMENTOR_URL . $manifest_relative_dir . $manifest->entrypoints[0];
-		}
 	}
 }

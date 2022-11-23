@@ -1,7 +1,11 @@
-/* global __ */
+import React from 'react';
 import './loading.css';
 
-export const Loading = () => {
+type Props = {
+	text: string,
+}
+
+export const Loading: React.FC<Props> = ( props ) => {
 	return (
 		<div id="elementor-loading">
 			<div className="elementor-loader-wrapper">
@@ -13,8 +17,8 @@ export const Loading = () => {
 						<div className="elementor-loader-box"></div>
 					</div>
 				</div>
-				<div className="elementor-loading-title">{__('Loading', 'elementor')}</div>
+				<div className="elementor-loading-title">{ props.text }</div>
 			</div>
 		</div>
-	)
-}
+	);
+};

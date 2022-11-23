@@ -114,7 +114,7 @@ const entry = {
 	'lazyload': path.resolve( __dirname, '../modules/lazyload/assets/js/frontend.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
-	'editor-v2': path.resolve( __dirname, '../packages/editor/src/index.js' ),
+	'editor-v2': path.resolve( __dirname, '../@editor/packages/app-editor-loader/dist/app-editor-loader.es.js' ),
 };
 
 const frontendEntries = {
