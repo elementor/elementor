@@ -18,6 +18,7 @@ function App() {
 	const config = useDocumentConfig();
 
 	useEffect( () => {
+		// Avoid re-rendering on strict mode
 		if ( ! isFirstTime ) {
 			isFirstTime = true;
 		} else {
