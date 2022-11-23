@@ -43,6 +43,7 @@ class Slider extends ControlBase {
 			.locator( `input[type="radio"][value="${ unit }"]` )
 			.evaluate( ( el ) => el.id );
 
+		await this.elementLocator.locator( `.e-units-switcher` ).click();
 		await this.elementLocator.locator( `label[for="${ inputId }"]` ).click();
 	}
 
