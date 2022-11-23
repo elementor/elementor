@@ -1174,6 +1174,7 @@ class Fonts {
 			'Playball' => self::GOOGLE,
 			'Playfair Display' => self::GOOGLE,
 			'Playfair Display SC' => self::GOOGLE,
+			'Plus Jakarta Sans' => self::GOOGLE,
 			'Podkova' => self::GOOGLE,
 			'Poiret One' => self::GOOGLE,
 			'Poller One' => self::GOOGLE,
