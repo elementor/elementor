@@ -1,5 +1,7 @@
-const { test, expect } = require('@playwright/test');
-const {onboarding} = require('./onboarding.utils')
+const { test, expect } = require( '@playwright/test' );
+const { onboarding } = require( './onboarding.utils' );
+const testData = JSON.parse(JSON.stringify(require('./onboarding.data.json')));
+
 
 let helper = {};
 
@@ -8,67 +10,76 @@ test.beforeEach(async ({ page }) => {
 });
 
 
-/**
- *  Test that the "Upgrade" popover appears when overing over the "Upgrade" button.
- */
-test( 'Onboarding "Upgrade" Popover Button Works', async ( { page } ) => {
-	await helper.gotoStep1();
+test.describe('First Page - Elementor Account', () => {
 
-	await helper.hoverOverGoProHeaderButton();
+	test( '"Upgrade" CTA on Popover Works', async ( { page } ) => {
+		await helper.gotoStep1();
 
-	await helper.goProPopoverIsVisible();
+		await helper.hoverOverGoProHeaderButton();
 
-	const [ proPage ] = await Promise.all( [
-		// It is important to call waitForEvent before click to set up waiting.
-		page.waitForEvent( 'popup' ),
-		// Opens popup.
-		helper.selectUpgradeNowButton(),
-	] );
+		await helper.checkGoProPopoverIsVisible();
+		
+		const [ proPage ] = await Promise.all( [
+			page.waitForEvent( 'popup' ),
 
-	await helper.validateUserIsOnProPage(proPage);
-} );
+			helper.selectUpgradeNowButton(),
+		] );
+		
+		await helper.checkUserIsOnProPage(proPage);
+	} );
 
-/**
- * Test the first onboarding page - Test that the Action button at the bottom shows the correct "Create my account"
- * text, And that clicking on it opens the popup to create an account in my.elementor.com
- */
-test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
-	await helper.gotoStep1();
+	test( 'Progress Bar: Only first step is filled', async ( { page } ) => {
+		await helper.gotoStep1();
 
-	const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
+		await helper.checkOnlyCorrectStepsAreFilled(1);
 
-	await expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+		await helper.checkIconsNotSupposedToBeFilled(1);
+	} );
 
-	const [ popup ] = await Promise.all( [
-		// It is important to call waitForEvent before click to set up waiting.
-		page.waitForEvent( 'popup' ),
-		// Opens popup.
-		page.click( 'a.e-onboarding__button-action' ),
-	] );
 
-	await popup.waitForLoadState( 'domcontentloaded' );
 
-	await helper.createAccountButtonIsVisible();
+	test.only( 'Onboarding "Create my account" Popup Open', async ( { page } ) => {
+		await helper.gotoStep1();
+	
+		await helper.checkButtonHasCorrectName(helper.createAccountButton, testData.createAccountButtonText);
+	
+		const [ popup ] = await Promise.all( [
+			// It is important to call waitForEvent before click to set up waiting.
+			page.waitForEvent( 'popup' ),
+			// Opens popup.
+			helper.selectCreateMyAccountCTA(),
+		] );
+		
+		const createAccount = await popup.locator( 'text=Sign up for Elementor' );
+	
+		// Check that the popup opens the Elementor Connect screen. 
+		//This test is not working
+		await expect( createAccount ).toBeVisible();
+	
+		popup.close();
+	} );
 
-	popup.close();
-} );
+	test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+	
+		const skipButton = await page.waitForSelector( 'text=Skip' );
+	
+		await skipButton.click();
+	
+		const PageTitle = await page.waitForSelector( '.e-onboarding__page-content-section-title' ),
+			pageTitleText = await PageTitle.innerText();
+	
+		// Check that the screen changed to the Hello page.
+		await expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
+	} );
+});
+
+
 
 /**
  * Test the "Skip" button - to make sure it skips to the next step.
  */
-test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
-	await helper.gotoStep1();;
 
-	const skipButton = await page.waitForSelector( 'text=Skip' );
-
-	await skipButton.click();
-
-	const PageTitle = await page.waitForSelector( '.e-onboarding__page-content-section-title' ),
-		pageTitleText = await PageTitle.innerText();
-
-	// Check that the screen changed to the Hello page.
-	await expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
-} );
 
 /**
  * Test the Site Name page
@@ -141,7 +152,7 @@ test( 'Onboarding Site Logo Page', async ( { page } ) => {
 /**
  * In the Good to Go page - tests that clicking on the Kit Library card/button navigates the user to the Kit Library.
  */
-test.only( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
+test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
 	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
 
 	const nextButton = await page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );

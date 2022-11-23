@@ -11,8 +11,9 @@ class onboarding {
         this.step1URL = '/wp-admin/admin.php?page=elementor-app#onboarding';
         this.upgradeHeaderButton = this.page.locator( '#eps-app-header-btn-go-pro' );
         this.goProPopover = this.page.locator( '.e-app__popover.e-onboarding__go-pro' );
-        //this.upgradeNowButton = popup.locator( '[text="Upgrade Now"]' );
-        this.createAccountButton = this.page.locator()
+        this.upgradeNowButton = this.page.locator( '[text="Upgrade Now"]' );
+        this.createAccountButton = this.page.locator('a.e-onboarding__button-action');
+    
 
         //Step 2 - Onboarding
 
@@ -21,8 +22,11 @@ class onboarding {
         
     };
 
+
+    /*
+    * First Step - Elementor Account - Functions
+    */
     async gotoStep1(){
-        console.log('/wp-admin/admin.php?page=elementor-app#onboarding')
         await this.page.goto(this.step1URL);
     };
 
@@ -30,20 +34,57 @@ class onboarding {
         await this.upgradeHeaderButton.hover();
     };
 
-    async goProPopoverIsVisible(){
+    async checkGoProPopoverIsVisible(){
         await expect( this.goProPopover , `Go Pro popover is not visible`).toBeVisible();
     };
 
-    // async selectUpgradeNowButton(){
-    //     await this.page.locator( this.upgradeNowButton , `"Upgrade Now" button is not visible`).click();
-    // };
+    async selectUpgradeNowButton(){
+        await this.upgradeNowButton.click();
+    };
 
-    async validateUserIsOnProPage(proPage){
-        await expect((await proPage.url('https://elementor.com/pro/')[0]).split(), `"Upgrade" button does not take to the pro page`).toEqual('https://elementor.com/pro/');
+    async checkUserIsOnProPage(proPage){
+        await expect((await proPage.url()).split('?')[0], `"Upgrade" button does not take to the pro page`).toEqual('https://elementor.com/pro/');
+
     };
 
     async createAccountButtonIsVisible(){
         await createAccountButton.isVisible()
+    }
+
+    async checkOnlyCorrectStepsAreFilled(Step){
+        let el = this.page.locator('.e-onboarding__progress-bar .e-onboarding__progress-bar-item');
+        let stepsToBeFilled = [];
+        for(let i = 0; i < 5; i++){
+            const stepNumber = el.nth(i)
+            if(i <= Step - 1) {
+                if((await stepNumber.getAttribute('class')).includes('active')) {
+                    continue
+                } else {
+                    stepsToBeFilled.push(`Icon ${i + 1}`) ;
+                }
+            };
+        }
+        await expect(stepsToBeFilled, `The page icons that are supposed to be filled: ${stepsToBeFilled} `).toEqual([])
+    }
+
+    async checkIconsNotSupposedToBeFilled(Step){
+        let el = this.page.locator('.e-onboarding__progress-bar .e-onboarding__progress-bar-item');
+        let stepsNotToBeFilled = [];
+        for(let i = 0; i < 5; i++){
+            const stepNumber = el.nth(i)
+            if(i <= Step - 1) {
+                if(!(await stepNumber.getAttribute('class')).includes('active')) stepsNotToBeFilled.push(`Icon ${i + 1}`) ;
+            };
+        }
+        await expect(stepsNotToBeFilled, `The page icons that are not supposed to be filled: ${stepsNotToBeFilled} `).toEqual([])
+    }
+
+    async checkButtonHasCorrectName(selector, ButtonName){
+		await expect( await selector.innerText(), `Button is not called "${ButtonName}"`).toBe( ButtonName );
+    }
+
+    async selectCreateMyAccountCTA(){
+        await this.createAccountButton.click()
     }
 
 };
