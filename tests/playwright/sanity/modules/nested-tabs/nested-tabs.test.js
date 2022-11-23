@@ -50,6 +50,48 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
+	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
+
+		const desktopTabWrapper = editor.getPreviewFrame().locator( '.e-n-tabs-heading' ),
+			mobileTabActive = editor.getPreviewFrame().locator( '.e-collapse.e-active' );
+
+		// Assert.
+		// Check if the correct tabs are displayed on tablet view.
+		await editor.changeResponsiveView( 'tablet' );
+
+		await expect( desktopTabWrapper ).toBeVisible();
+		await expect( mobileTabActive ).toHaveCSS( 'display', 'none' );
+
+		// Check if the correct tabs are displayed on mobile view.
+		await editor.changeResponsiveView( 'mobile' );
+
+		await expect( desktopTabWrapper ).toHaveCSS( 'display', 'none' );
+		await expect( mobileTabActive ).toBeVisible();
+
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+		} );
+	} );
+
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
