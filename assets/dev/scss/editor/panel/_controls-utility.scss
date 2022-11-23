@@ -22,7 +22,7 @@ $item-size: 2em;
 		background-color: #fff;
 		border-radius: 3px;
 		transition: 0.15s;
-		border: 1px transparent solid;
+		border: 1px solid transparent;
 	}
 
 	&.elementor-responsive-switchers-open {
@@ -39,7 +39,7 @@ $item-size: 2em;
 		}
 
 		.elementor-control-responsive-switchers__holder {
-			top: calc(-1 * var(--selected-option) * #{$item-size});
+			//top: calc(-1 * var(--selected-option) * #{$item-size});
 			box-shadow: 0 0 3px rgba(0,0,0,0.2);
 		}
 	}
@@ -142,15 +142,14 @@ a.elementor-responsive-switcher {
 		display: block;
 		z-index: 11000;
 		top: 0;
-		@include start(-20px);
+		@include start(-1em);
 		position: absolute;
-		padding: 5px;
-		width: 40px;
+		width: 3em;
 		text-align: center;
 		background-color: #fff;
 		border-radius: 3px;
 		transition: 0.15s;
-		border: 1px transparent solid;
+		border: 1px solid transparent;
 		box-shadow: 0 0 3px rgba(0,0,0,0.2);
 
 		.elementor-units-choices-label {
