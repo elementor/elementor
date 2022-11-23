@@ -103,6 +103,7 @@ class Modules_Manager {
 			'notes',
 			'performance-lab',
 			'lazyload',
+			'editor-v2',
 			'kit-elements-defaults',
 		];
 	}
