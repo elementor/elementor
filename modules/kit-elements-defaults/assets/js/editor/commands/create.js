@@ -17,7 +17,7 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 		try {
 			await updateElementDefaults( type, newDefaults );
 
-			// Re-initialize the toast beacause of a bug in the notificaitons module
+			// Re-initialize the toast because of a bug in the notificaitons module
 			// that causes the toast to be rendered without buttons.
 			// TODO: Find a better solution. Maybe fix the root cause.
 			elementor.notifications.initToast();
