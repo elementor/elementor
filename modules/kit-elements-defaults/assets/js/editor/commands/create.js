@@ -1,6 +1,6 @@
-import { updateElementDefaults } from '../api';
+import { getElementDefaults, updateElementDefaults } from '../api';
 import extractContainerSettings from '../extract-container-settings';
-import { extractElementType } from '../utils';
+import { extractElementType, isPopulatedObject } from '../utils';
 
 export default class Create extends $e.modules.editor.CommandContainerBase {
 	validateArgs() {
@@ -10,16 +10,30 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 	async apply( { container } ) {
 		$e.internal( 'panel/state-loading' );
 
-		const settings = extractContainerSettings( container );
+		const type = extractElementType( container.model ),
+			previousDefaults = getElementDefaults( type ),
+			newDefaults = extractContainerSettings( container );
 
 		try {
-			await updateElementDefaults(
-				extractElementType( container.model ),
-				settings,
-			);
+			await updateElementDefaults( type, newDefaults );
+
+			// Re-initialize the toast beacause of a bug in the notificaitons module
+			// that causes the toast to be rendered without buttons.
+			// TODO: Find a better solution. Maybe fix the root cause.
+			elementor.notifications.initToast();
 
 			elementor.notifications.showToast( {
 				message: __( 'Default settings changed.', 'elementor' ),
+				buttons: [ {
+					name: 'undo',
+					text: __( 'Undo', 'elementor' ),
+					callback() {
+						$e.run( 'kit-elements-defaults/restore', {
+							type,
+							defaults: previousDefaults,
+						} );
+					},
+				} ],
 			} );
 		} catch ( error ) {
 			elementor.notifications.showToast( {

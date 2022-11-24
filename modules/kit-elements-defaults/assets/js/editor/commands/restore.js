@@ -1,14 +1,14 @@
-import { deleteElementDefaults } from '../api';
+import { updateElementDefaults } from '../api';
 
-export default class Delete extends $e.modules.CommandBase {
-	async apply( { type } ) {
+export default class Restore extends $e.modules.CommandBase {
+	async apply( { type, defaults } ) {
 		$e.internal( 'panel/state-loading' );
 
 		try {
-			await deleteElementDefaults( type );
+			await updateElementDefaults( type, defaults );
 
 			elementor.notifications.showToast( {
-				message: __( 'Default settings has been reset.', 'elementor' ),
+				message: __( 'Previous settings restored.', 'elementor' ),
 			} );
 		} catch ( e ) {
 			elementor.notifications.showToast( {
