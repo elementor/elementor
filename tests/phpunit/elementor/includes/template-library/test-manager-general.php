@@ -176,8 +176,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		// Act
 		$templates = self::$manager->get_templates();
 
-		var_dump( $templates );
-
 		// Assert
 		$ids = array_map( function ( $item ) {
 			return $item['template_id'];
