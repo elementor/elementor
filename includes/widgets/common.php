@@ -694,7 +694,7 @@ class Widget_Common extends Widget_Base {
 					'image' => [
 						'background_lazyload' => [
 							'active' => true,
-							'keys' => [ '_background_image', 'url' ],
+							'keys' => [ 'background_overlay_image', 'url' ],
 							'selector' => '.elementor-widget-container',
 						],
 					],
