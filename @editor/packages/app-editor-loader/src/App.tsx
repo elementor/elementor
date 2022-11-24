@@ -25,7 +25,7 @@ function App() {
 			return;
 		}
 
-		document.title = __( 'Elementor', 'elementor' ) + ' | ' + config.settings.settings.post_title;
+		document.title = __( 'Elementor', 'elementor' ) + ' | ' + config?.settings?.settings?.post_title;
 
 		document.documentElement.setAttribute( 'lang', lang );
 

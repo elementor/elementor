@@ -1,4 +1,11 @@
 {
+  "platform": {
+	"name": "wordpress",
+	"version": "6.0.0"
+  },
+  "is_rtl": false,
+  "lang":  "en_US",
+  "editing_mode":"full",
   "initial_document": {
 	"id": 1,
 	"urls": {

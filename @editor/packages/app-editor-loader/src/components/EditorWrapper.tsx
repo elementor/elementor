@@ -20,7 +20,7 @@ export const EditorWrapper: React.FC = () => {
 			<div id="elementor-editor-wrapper">
 				<Panel />
 				<Preview
-					iframePreviewURL={ config?.urls.preview }
+					iframePreviewURL={ config?.urls?.preview }
 					onPreviewLoaded={ () => {
 						elementor.onPreviewLoaded();
 					} }
