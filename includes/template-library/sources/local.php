@@ -14,7 +14,6 @@ use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categori
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\App\App;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1342,27 +1341,14 @@ class Source_Local extends Source_Base {
 					?>
 				</h3>
 				<p><?php echo wp_kses_post( $description ); ?></p>
-				<?php if ( $this->is_license_valid() ) { ?>
-					<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
-						<?php
-						/* translators: %s: Template type label. */
-						printf( esc_html__( 'Add New %s', 'elementor' ), esc_html( $current_type_label ) );
-						?>
-					</a>
-				<?php } else {
-					// TODO: Connect & Activate has to be here
-				} ?>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
+					<?php
+					/* translators: %s: Template type label. */
+					printf( esc_html__( 'Add New %s', 'elementor' ), esc_html( $current_type_label ) );
+					?>
+				</a>
 			</div>
 		<?php
-	}
-
-	/**
-	 * Check whether the account license is valid
-	 *
-	 * @return bool
-	 */
-	private function is_license_valid() {
-		return App::$instance->services->get_service( 'license' )->is_valid();
 	}
 
 	public function add_filter_by_category( $post_type ) {
