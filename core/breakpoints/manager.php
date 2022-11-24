@@ -530,7 +530,7 @@ class Manager extends Module {
 		$deprecation_module = Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation;
 
 		// TODO: REMOVE THIS DEPRECATED HOOK IN ELEMENTOR v3.10.0/v4.0.0
-		$templates = $deprecation_module->apply_deprecated_filter( $deprecated_hook, $templates, '3.2.0', $replacement_hook );
+		$templates = $deprecation_module->apply_deprecated_filter( $deprecated_hook, [ $templates ], '3.2.0', $replacement_hook );
 
 		return apply_filters( $replacement_hook, $templates );
 	}

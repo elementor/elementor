@@ -90,6 +90,25 @@ module.exports = class EditorPage extends BasePage {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
+	async getPreviewElement( id ) {
+		return this.getPreviewFrame().locator( `.elementor-element-${ id }` );
+	}
+
+	/**
+	 * @param {string} id
+	 * @return {Promise<void>}
+	 */
+	async resetElementSettings( id ) {
+		await this.page.evaluate( ( { elementId } ) => {
+			$e.run( 'document/elements/reset-settings', {
+				container: window.elementor.getContainer( elementId ),
+				options: {
+					external: true,
+				},
+			} );
+		}, { elementId: id } );
+	}
+
 	async waitForElementRender( id ) {
 		let isLoading;
 
@@ -119,14 +138,14 @@ module.exports = class EditorPage extends BasePage {
 	 * 1. Screenshot should be taken after the element is loaded.
 	 * 2. Screenshot should be taken of element boundries but the maximum size is the viewport size.
 	 *
-	 * @param {import('../widgets/widget').Widget} widget
+	 * @param {string} id
 	 * @return {Promise<Buffer>}
 	 */
-	async screenshotWidget( widget ) {
-		await this.waitForElementRender( widget.id );
+	async screenshotElement( id ) {
+		await this.waitForElementRender( id );
 
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
-		const elementRect = await ( await widget.getElement() ).boundingBox();
+		const elementRect = await ( await this.getPreviewElement( id ) ).boundingBox();
 
 		return await this.page.screenshot( {
 			type: 'jpeg',

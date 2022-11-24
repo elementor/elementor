@@ -9,19 +9,31 @@ module.exports = {
 	},
 	controls: {
 		heading: {
+			dependencies: {
+				blend_mode: {
+					_background_background: 'classic',
+					_background_color: [ 'local', '#FF0000' ],
+				},
+			},
 			exclude: [
-				'text_stroke_stroke_color', // Cannot be tested alone: setting stroke color without setting stroke width.
+				// Cannot be tested alone: setting stroke color without setting stroke width,
+				// + have some issues with color picker inside the popover.
+				'text_stroke_stroke_color',
 			],
 		},
 		'text-editor': {
-			exclude: [
-				'column_gap', // Cannot be tested alone: must be along side with `column` control.
-			],
+			dependencies: {
+				column_gap: {
+					text_columns: '4',
+				},
+			},
 		},
 		divider: {
-			exclude: [
-				'align', // Cannot be tested alone, need also some size.
-			],
+			dependencies: {
+				align: {
+					width: [ '%', '30' ],
+				},
+			},
 		},
 		button: {
 			exclude: [

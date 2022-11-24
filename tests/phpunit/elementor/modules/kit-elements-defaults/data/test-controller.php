@@ -127,27 +127,6 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'settings', $response->get_data()['data']['params'] );
 	}
 
-	public function test_update_item__widget_returns_200() {
-		// Arrange.
-		$this->act_as_admin();
-
-		// Act.
-		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
-			'settings' => [
-				'button_type' => 'info',
-			],
-		] );
-
-		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
-
-		$this->assertEquals( [
-			'button' => [
-				'button_type' => 'info',
-			],
-		], $this->kit->get_json_meta( Module::META_KEY ) );
-	}
-
 	public function test_update_item__sanitizes_globals_and_dynamics() {
 		// Arrange.
 		$this->act_as_admin();
@@ -223,6 +202,37 @@ class Test_Controller extends Elementor_Test_Base {
 				'heading_color' => 'text with "double" and \'single\' quotes',
 			],
 		], $this->kit->get_json_meta( Module::META_KEY ) );
+	}
+
+	/**
+	 * @dataProvider get_element_types_data_provider
+	 */
+	public function test_update_item__for_type( $type, $settings ) {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$response = $this->send_request( 'PUT', "/kit-elements-defaults/{$type}", [
+			'settings' => $settings,
+		] );
+
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		$this->assertEquals( [
+			$type => $settings,
+		], $this->kit->get_json_meta( Module::META_KEY ) );
+	}
+
+	public function get_element_types_data_provider() {
+		return [
+			[ 'section', ['html_tag' => 'div'] ],
+			[ 'inner-section', ['html_tag' => 'div'] ],
+			[ 'column', [ 'html_tag' => 'div' ] ],
+			[ 'container', ['content_width' => 'full'] ],
+			[ 'button', ['button_type' => 'info'] ],
+		];
 	}
 
 	public function test_update_item() {

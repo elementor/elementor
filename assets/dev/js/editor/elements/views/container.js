@@ -2,14 +2,13 @@
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import EmptyView from 'elementor-elements/views/container/empty-view';
 
-const BaseElementView = require( 'elementor-elements/views/base' ),
-	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
-
+const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ColumnEmptyView,
+	emptyView: EmptyView,
 
 	getChildViewContainer() {
 		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
@@ -21,6 +20,12 @@ const ContainerView = BaseElementView.extend( {
 
 	className() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
+	},
+
+	childViewOptions() {
+		return {
+			emptyViewOwner: this,
+		};
 	},
 
 	tagName() {

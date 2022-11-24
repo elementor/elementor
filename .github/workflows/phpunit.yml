@@ -2,6 +2,11 @@ name: PHPUnit
 
 on: [push, pull_request]
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   file-diff:
     runs-on: ubuntu-20.04
@@ -11,14 +16,15 @@ jobs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check PHP files diff
         id: php_diff_files
         uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.php
-            composer.json
+            composer.+(json|lock)
+            .github/**/*.yml
 
   test:
     runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
@@ -36,7 +42,7 @@ jobs:
       - name: Startup MySQL service
         run: sudo /etc/init.d/mysql start
       - name: Checkout source code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:

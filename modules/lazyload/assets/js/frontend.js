@@ -8,7 +8,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
 
                 const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
                 if ( lazyloadSelector ) {
-                    lazyloadBackground = lazyloadSelector;
+                    lazyloadBackground = element.querySelector( lazyloadSelector );
                 }
 
                 lazyloadBackground.classList.add( 'lazyloaded' );
