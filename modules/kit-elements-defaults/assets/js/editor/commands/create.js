@@ -1,6 +1,6 @@
 import { getElementDefaults, updateElementDefaults } from '../api';
 import extractContainerSettings from '../extract-container-settings';
-import { extractElementType, isPopulatedObject } from '../utils';
+import { extractElementType } from '../utils';
 
 export default class Create extends $e.modules.editor.CommandContainerBase {
 	validateArgs() {
