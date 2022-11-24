@@ -93,11 +93,14 @@ a.elementor-responsive-switcher {
 		cursor: pointer;
 		text-transform: uppercase;
 		font-size: 9px;
-		padding: 0 3px;
+		padding: .5em;
+		margin: -.5em 0;
 		transition: all ease-in-out .15s;
 
 		&:hover {
 			color: $editor-info;
+			background-color: $editor-background-light;
+			border-radius: 3px;
 		}
 
 		&:not([data-selected="custom"]) {
@@ -117,7 +120,6 @@ a.elementor-responsive-switcher {
 }
 
 .e-units-choices {
-	display: none;
 
 	input {
 		display: none;
@@ -132,19 +134,23 @@ a.elementor-responsive-switcher {
 		display: block;
 	}
 
-	&.e-units-choices-open {
-		display: block;
-		z-index: 11000;
+	& {
+		display: none;
+		overflow: hidden;
+		max-height: 0;
+		position: absolute;
 		top: -0.5em;
 		@include start(-1em);
-		position: absolute;
 		width: 3em;
 		text-align: center;
 		background-color: #fff;
 		border-radius: 3px;
-		transition: 0.15s;
 		border: 1px solid transparent;
 		box-shadow: 0 0 3px rgba(0,0,0,0.2);
+		animation-timing-function: linear;
+		animation-delay: 0s;
+		animation-fill-mode: forwards;
+		z-index: 11000;
 
 		.elementor-units-choices-label {
 			display: flex;
@@ -174,6 +180,12 @@ a.elementor-responsive-switcher {
 			}
 		}
 	}
+
+	&.e-units-choices-open {
+		display: block;
+		animation-duration: 1s;
+		animation-name: e-units-choices-open;
+	}
 }
 
 $font-family-monospace: monospace;
@@ -184,6 +196,12 @@ $font-family-monospace: monospace;
 		font-family: $font-family-monospace;
 		font-size: 0.85em;
 	}
+}
+
+@keyframes e-units-choices-open {
+	from { max-height: 0; }
+	// Intentionally 100vh and not 100% to avoid the element from being cut off.
+	to { max-height: 100vh; }
 }
 
 //End control unit switcher
