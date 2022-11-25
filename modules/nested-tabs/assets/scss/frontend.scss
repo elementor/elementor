@@ -88,7 +88,7 @@
 			justify-content: var( --n-tabs-title-justify-content );
 			gap: var( --n-tabs-icon-gap );
 			color: var( --n-tabs-title-color );
-			background: var( --n-tabs-title-background-color );
+			background-color: var( --n-tabs-title-background-color );
 			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
@@ -109,7 +109,7 @@
 			}
 
 			&:hover {
-				background: var( --n-tabs-title-background-color-hover, var( --n-tabs-title-background-color ) );
+				background-color: var( --n-tabs-title-background-color-hover, var( --n-tabs-title-background-color ) );
 				transition: all var( --n-tabs-title-transition );
 				color: var( --n-tabs-icon-color-hover );
 
@@ -167,7 +167,7 @@
 
 			&.e-active {
 				color: var( --n-tabs-title-color-active );
-				background: var( --n-tabs-title-background-color-active );
+				background-color: var( --n-tabs-title-background-color-active );
 
 				.e-n-tab-icon {
 					display: none;
