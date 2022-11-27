@@ -734,7 +734,8 @@ class Manager extends Base_Object {
 					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					throw new Exceptions\Dependency_Exception(
-						sprintf( 'The feature `%s` has a dependency `%s` that is not available.',
+						sprintf(
+							'The feature `%s` has a dependency `%s` that is not available.',
 							$feature['name'],
 							$dependency->get_name()
 						)
@@ -747,10 +748,9 @@ class Manager extends Base_Object {
 				if ( self::STATE_INACTIVE === $dependency_state ) {
 					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
-					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 					throw new Exceptions\Dependency_Exception(
 						sprintf(
-							esc_html__( 'To turn on `%1$s`, Experiment: `%2$s` activity is required!', 'elementor' ),
+							'To turn on `%1$s`, Experiment: `%2$s` activity is required!',
 							$feature['name'],
 							$dependency_feature['name']
 						)

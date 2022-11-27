@@ -427,11 +427,11 @@ class Module extends BaseModule {
 			if (
 				! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
 			) {
-				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
+				throw new \Error( 'Invalid kit library nonce.' );
 			}
 
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
+				throw new \Error( 'Invalid URL.' );
 			}
 
 			$remote_zip_request = wp_remote_get( $file_url );
@@ -509,7 +509,7 @@ class Module extends BaseModule {
 		$file = ElementorUtils::file_get_contents( $file_name );
 
 		if ( ! $file ) {
-			throw new \Error( esc_html__( 'Could not read the exported file', 'elementor' ) );
+			throw new \Error( 'Could not read the exported file.' );
 		}
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
