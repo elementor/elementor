@@ -2,6 +2,7 @@
 namespace Elementor\App\Services;
 
 abstract class Base_Service {
+
 	/**
 	 * Retrieve the service name.
 	 * @return string
