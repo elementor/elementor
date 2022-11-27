@@ -185,12 +185,7 @@ class Repository {
 		$cached_kits_editor_layout_type = get_transient( static::CACHED_KITS_LAYOUT_TYPE );
 
 		$experiments_manager = Plugin::$instance->experiments;
-
-		if ( $experiments_manager->is_feature_active( 'container' ) ) {
-			$kits_editor_layout_type = 'container_flexbox';
-		} else {
-			$kits_editor_layout_type = '';
-		}
+		$kits_editor_layout_type = $experiments_manager->is_feature_active( 'container' ) ? 'container_flexbox' : '';
 
 		if ( ! $data || $force_api_request || $cached_kits_editor_layout_type !== $kits_editor_layout_type ) {
 			$args = [
