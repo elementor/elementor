@@ -237,9 +237,9 @@ class Source_Remote extends Source_Base {
 			return $this->get_templates( $editor_layout_type );
 		}
 
-		$cached_tempates_editor_layout_type = get_transient( $templates_data_layout_type_cache_key );
+		$cached_templates_editor_layout_type = get_transient( $templates_data_layout_type_cache_key );
 
-		if ( $cached_tempates_editor_layout_type !== $editor_layout_type ) {
+		if ( $cached_templates_editor_layout_type !== $editor_layout_type ) {
 			return $this->get_templates( $editor_layout_type );
 		}
 
@@ -283,7 +283,7 @@ class Source_Remote extends Source_Base {
 	private function get_templates_remotely( $editor_layout_type ) {
 		$response = wp_remote_get( static::API_TEMPLATES_URL, [
 			'body' => [
-				'plugin_version' => ELEMENTOR_VERSION,
+				'minimum_version' => ELEMENTOR_VERSION,
 				'editor_layout_type' => $editor_layout_type,
 			],
 		] );
