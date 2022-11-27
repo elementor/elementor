@@ -133,5 +133,6 @@ class Module extends BaseModule {
 			</script>
 			<?php
 		} );
+
 	}
 }
