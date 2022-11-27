@@ -62,8 +62,6 @@ class Module extends BaseModule {
 			}
 		}
 
-	}
-
 	private function append_lazyload_selector( $control, $value ) {
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
