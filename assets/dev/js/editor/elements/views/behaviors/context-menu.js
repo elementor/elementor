@@ -45,6 +45,7 @@ module.exports = Marionette.Behavior.extend( {
 				actions: [
 					{
 						name: 'navigator',
+						icon: 'eicon-navigator',
 						title: __( 'Navigator', 'elementor' ),
 						callback: () => $e.route( 'navigator', {
 							reOpen: true,

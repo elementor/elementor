@@ -166,7 +166,7 @@ button,
 [type="button"],
 [type="reset"],
 [type="submit"] {
-  -webkit-appearance: button;
+  appearance: button;
 }
 
 // Opinionated: add "hand" cursor to non-disabled button elements.

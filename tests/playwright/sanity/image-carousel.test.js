@@ -7,33 +7,22 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 		editor = await wpAdmin.useElementorCleanPost();
 
   // Close Navigator
-  await page.click( '#elementor-navigator__close' );
+  await editor.closeNavigatorIfOpen();
 
-	// Act.
-	await editor.addWidget( 'image-carousel' );
+  // Set Canvas template.
+  await editor.useCanvasTemplate();
 
-  await page.locator( '[aria-label="Add Images"]' ).click();
+  // Act.
+  await editor.addWidget( 'image-carousel' );
 
-  // Open Media Library
-  await page.click( 'text=Media Library' );
+  // Hide slider navigation.
+  await page.selectOption( '.elementor-control-navigation >> select', 'none' );
 
-  // Upload the images to WP media library
-  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
-  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
-  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
-  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
-  await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
+  // Populate the widget with images.
+  await editor.populateImageCarousel();
 
-  // Create a new gallery
-  await page.locator( 'text=Create a new gallery' ).click();
-
-  // Insert gallery
-  await page.locator( 'text=Insert gallery' ).click();
-
-  // Open The Additional options Section
-  await page.click( '#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)' );
-
-  // Disable AutoPlay
-  await page.selectOption( 'select', 'no' );
   expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+
+  // Reset the Default template.
+  await editor.useDefaultTemplate();
 } );

@@ -1,5 +1,6 @@
 import Component from './component';
 import { loadElementsDefaults } from './api';
+import { extractElementType } from './utils';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
@@ -16,8 +17,14 @@ export default class Module extends elementorModules.editor.utils.Module {
 			return;
 		}
 
-		[ 'widget', 'container' ].forEach( ( elType ) => {
+		[ 'widget', 'container', 'section' ].forEach( ( elType ) => {
 			elementor.hooks.addFilter( `elements/${ elType }/contextMenuGroups`, ( groups, view ) => {
+				// Supporting only inner section and not sections,
+				// extractElementType() will return 'inner-section' for inner sections instead of 'section'.
+				if ( 'section' === extractElementType( view.options?.model || {} ) ) {
+					return groups;
+				}
+
 				return groups.map( ( group ) => {
 					if ( group.name !== 'save' ) {
 						return group;

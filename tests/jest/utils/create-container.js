@@ -2,6 +2,7 @@ export default function createContainer( {
 	elType,
 	widgetType,
 	id,
+	isInner = false,
 	settings = {},
 	controls = {},
  } = {} ) {
@@ -14,13 +15,13 @@ export default function createContainer( {
 			} ),
 		},
 		model: {
-			get: ( key ) => {
-				const map = {
-					elType,
-					widgetType,
-				};
-
-				return map[ key ];
+			attributes: {
+				elType,
+				widgetType,
+				isInner,
+			},
+			get( key ) {
+				return this.attributes[ key ];
 			},
 		},
 	};

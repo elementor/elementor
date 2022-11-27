@@ -560,14 +560,14 @@ class Manager {
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
-			throw new \Exception( 'Access Denied' );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		if ( ! empty( $data['editor_post_id'] ) ) {
 			$editor_post_id = absint( $data['editor_post_id'] );
 
 			if ( ! get_post( $editor_post_id ) ) {
-				throw new \Exception( esc_html__( 'Post not found.', 'elementor' ) );
+				throw new \Exception( 'Post not found.' );
 			}
 
 			Plugin::$instance->db->switch_to_post( $editor_post_id );
