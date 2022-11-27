@@ -61,6 +61,7 @@ class Module extends BaseModule {
 				] );
 			}
 		}
+	}
 
 	private function append_lazyload_selector( $control, $value ) {
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
@@ -132,6 +133,5 @@ class Module extends BaseModule {
 			</script>
 			<?php
 		} );
-
 	}
 }
