@@ -171,7 +171,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		// Arrange
 		$admin = $this->act_as_admin();
 
-		$document_ids = $this->create_mock_templates( $admin );
+		$document_ids = $this->create_mock_templates( $admin, 'container_flexbox' );
 
 		// Act
 		$templates = self::$manager->get_templates();
@@ -248,9 +248,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	private function create_mock_templates( $user, $layout_type = '' ) {
-		// This is the indication to not go to fetch from server and go to the option.
-		set_transient('elementor_remote_info_api_data_' . ELEMENTOR_VERSION, ['test' => 'test'] );
-
 		set_transient('elementor_remote_templates_data_layout_type', $layout_type );
 
 		$templates = [
