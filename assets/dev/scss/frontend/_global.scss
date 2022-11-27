@@ -123,12 +123,9 @@
 		}
 	}
 
-	.elementor-click-area {
-		height: 100%;
-		width: 100%;
-		top: 0;
-		left: 0;
+	.e-edit-click-area {
 		position: absolute;
+		inset: 0;
 	}
 }
 

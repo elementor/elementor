@@ -48,7 +48,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			tools: '> .elementor-element-overlay > .elementor-editor-element-settings',
 			editButton: '> .elementor-element-overlay .elementor-editor-element-edit',
-			editClickArea: '.elementor-edit-click-area',
+			editClickArea: '.e-edit-click-area',
 			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
 			addButton: '> .elementor-element-overlay .elementor-editor-element-add',
 			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
@@ -832,6 +832,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditButtonClick( event ) {
+		event.stopPropagation();
 		this.model.trigger( 'request:edit', { append: event.ctrlKey || event.metaKey } );
 	},
 
