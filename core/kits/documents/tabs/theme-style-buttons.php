@@ -70,7 +70,6 @@ class Theme_Style_Buttons extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'button_typography',
 				'selector' => $button_selector,
 			]

@@ -849,7 +849,7 @@ class Plugin {
 		}
 
 		if ( property_exists( $this, $property ) ) {
-			throw new \Exception( 'Cannot access private property' );
+			throw new \Exception( 'Cannot access private property.' );
 		}
 
 		return null;

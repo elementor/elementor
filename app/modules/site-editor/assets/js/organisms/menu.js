@@ -11,7 +11,7 @@ export default function Menu( props ) {
 			const className = 'eps-menu-item__action-button';
 
 			if ( props.promotion ) {
-				return <Button text={ __( 'Go Pro', 'elementor' ) } hideText icon="eicon-lock" className={ className } />;
+				return <Button text={ __( 'Upgrade Now', 'elementor' ) } hideText icon="eicon-lock" className={ className } />;
 			}
 
 			const goToCreate = () => {

@@ -132,7 +132,7 @@ abstract class Widget_Base extends Element_Base {
 		$is_type_instance = $this->is_type_instance();
 
 		if ( ! $is_type_instance && null === $args ) {
-			throw new \Exception( '`$args` argument is required when initializing a full widget instance.' );
+			throw new \Exception( 'An `$args` argument is required when initializing a full widget instance.' );
 		}
 
 		if ( $is_type_instance ) {
@@ -1023,7 +1023,6 @@ abstract class Widget_Base extends Element_Base {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	public function register_runtime_widget( $widget_name ) {
@@ -1073,6 +1072,34 @@ abstract class Widget_Base extends Element_Base {
 		$config = $this->get_responsive_widgets_config();
 
 		return $responsive_widgets_data_manager->get_asset_data_from_config( $config );
+	}
+
+	/**
+	 * Mark widget as deprecated.
+	 *
+	 * Use `get_deprecation_message()` method to print the message control at specific location in register_controls().
+	 *
+	 * @param $version string           The version of Elementor that deprecated the widget.
+	 * @param $message string         A message regarding the deprecation.
+	 * @param $replacement string   The widget that should be used instead.
+	 */
+	protected function add_deprecation_message( $version, $message, $replacement ) {
+		// Expose the config for handling in JS.
+		$this->set_config( 'deprecation', [
+			'version' => $version,
+			'message' => $message,
+			'replacement' => $replacement,
+		] );
+
+		$this->add_control(
+			'deprecation_message',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => $message,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'separator' => 'after',
+			]
+		);
 	}
 
 	/**

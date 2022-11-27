@@ -5,6 +5,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\KitElementsDefaults\Data\Controller;
 use Elementor\Plugin;
+use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -26,7 +27,10 @@ class Module extends BaseModule {
 				'Maintain consistency across your site by saving the changes to a widget as the default setting for future use. These settings will automatically apply to the widget every time you place it. Note: This feature doesn\'t affect existing widgets.',
 				'elementor'
 			) . ' <a href="https://go.elementor.com/wp-dash-save-as-default" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'new_site' => [
+				'default_active' => true,
+			],
 		];
 	}
 
@@ -54,5 +58,9 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		( new Usage() )->register();
+
+		if ( is_admin() ) {
+			( new Import_Export() )->register();
+		}
 	}
 }

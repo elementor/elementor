@@ -162,7 +162,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['font_style'] = [
-			'label' => _x( 'Style', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Style', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [

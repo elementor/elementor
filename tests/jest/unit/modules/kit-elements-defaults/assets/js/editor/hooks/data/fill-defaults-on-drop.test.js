@@ -92,6 +92,33 @@ describe( `$e.run('preview/drop') - Hook: FillDefaultsOnDrop`, () => {
 		} );
 	} );
 
+	it.each( [
+		{ elType: 'section', expectedType: 'section' },
+		{ elType: 'widget', widgetType: 'button', expectedType: 'button' },
+		{ elType: 'widget', widgetType: 'heading', expectedType: 'heading' },
+		{ elType: 'section', widgetType: 'inner-section', expectedType: 'inner-section' },
+		{ elType: 'section', isInner: true, expectedType: 'inner-section' },
+	] )(
+		'should support multiple types: elType: $elType, widgetType: $widgetType',
+		( { elType, widgetType, isInner = false, expectedType } ) => {
+			// Arrange
+			const hook = new CommandHook();
+
+			// Act
+			hook.apply( {
+				model: {
+					elType,
+					widgetType,
+					isInner,
+					settings: {},
+				},
+			} );
+
+			// Assert
+			expect( getElementDefaults ).toHaveBeenNthCalledWith( 1, expectedType );
+		},
+	);
+
 	it( 'should do nothing if there are no defaults', () => {
 		// Arrange
 		const hook = new CommandHook();

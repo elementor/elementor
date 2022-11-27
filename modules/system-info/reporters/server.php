@@ -2,6 +2,7 @@
 namespace Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Api;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -99,7 +100,7 @@ class Server extends Base {
 	 */
 	public function get_software() {
 		return [
-			'value' => $_SERVER['SERVER_SOFTWARE'],
+			'value' => Utils::get_super_global_value( $_SERVER, 'SERVER_SOFTWARE' ),
 		];
 	}
 
@@ -124,8 +125,12 @@ class Server extends Base {
 			'value' => PHP_VERSION,
 		];
 
-		if ( version_compare( $result['value'], '5.4', '<' ) ) {
-			$result['recommendation'] = _x( 'We recommend to use php 5.4 or higher', 'System Info', 'elementor' );
+		if ( version_compare( $result['value'], '7.4', '<' ) ) {
+			$result['recommendation'] = sprintf(
+				/* translators: %s: Recommended PHP version. */
+				esc_html_x( 'We recommend using PHP version %s or higher.', 'System Info', 'elementor' ),
+				'7.4'
+			);
 
 			$result['warning'] = true;
 		}
@@ -161,8 +166,8 @@ class Server extends Base {
 
 		if ( $memory_limit_bytes < $min_recommended_bytes ) {
 			$result['recommendation'] = sprintf(
-			/* translators: 1: Minimum recommended_memory, 2: Preferred memory, 3: WordPress wp-config memory documentation. */
-				_x( 'We recommend setting memory to at least %1$s. (%2$sMB or higher is preferred) For more information, read about <a href="%3$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+				/* translators: 1: Minimum recommended_memory, 2: Preferred memory, 3: WordPress wp-config memory documentation. */
+				_x( 'We recommend setting memory to at least %1$s. (%2$s or higher is preferred) For more information, read about <a href="%3$s">how to increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
 				$min_recommended_memory,
 				$preferred_memory,
 				'https://go.elementor.com/wordpress-wp-config-memory/'

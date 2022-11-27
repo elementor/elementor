@@ -5,9 +5,10 @@ document.addEventListener( 'DOMContentLoaded', function() {
         entries.forEach( ( entry ) => {
             if ( entry.isIntersecting ) {
                 let [ lazyloadBackground, element ] = [ entry.target, entry.target ];
-                const lazyloadSelector = element.querySelector( '.elementor-widget-container' );
+
+                const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
                 if ( lazyloadSelector ) {
-                    lazyloadBackground = lazyloadSelector;
+                    lazyloadBackground = element.querySelector( lazyloadSelector );
                 }
 
                 lazyloadBackground.classList.add( 'lazyloaded' );
