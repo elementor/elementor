@@ -5,7 +5,7 @@ export default class AccountService {
 	 * @param {string} buttonRef
 	 * @param {string} parseUrl
 	 * @param {Array} sizes
-	 * @since 3.9.0
+	 * @since 3.10.0
 	 *
 	 * @return {Promise}
 	 */
