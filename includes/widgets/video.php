@@ -519,11 +519,16 @@ class Widget_Video extends Widget_Base {
 				'label' => esc_html__( 'Preload', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'none' => esc_html__( 'None', 'elementor' ),
-					'auto' => esc_html__( 'Auto', 'elementor' ),
 					'metadata' => esc_html__( 'Metadata', 'elementor' ),
+					'auto' => esc_html__( 'Auto', 'elementor' ),
+					'none' => esc_html__( 'None', 'elementor' ),
 				],
-				'default' => 'none',
+				'description' => sprintf(
+					esc_html__( 'Preload attribute lets you specify how the video should be loaded when the page loads. %1$sLearn More%2$s', 'elementor' ),
+					'<a target="_blank" href="https://go.elementor.com/preload-video/">',
+					'</a>'
+				),
+				'default' => 'metadata',
 				'condition' => [
 					'video_type' => 'hosted',
 				],
