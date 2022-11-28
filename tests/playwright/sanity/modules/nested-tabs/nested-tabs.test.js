@@ -263,8 +263,8 @@ test.describe( 'Nested Tabs tests', () => {
 		// Set icons to tabs.
 		await setIconsToTabs( page, TabsIcons );
 
-		// Set icon color.
-		await setColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
+		// Set icon hover color.
+		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
 			whiteColor = 'rgb(255, 255, 255)',
@@ -335,10 +335,10 @@ async function cleanup( wpAdmin ) {
 	} );
 }
 
-async function setColor( page, editor, sectionClass, tabClass, colorPickerClass, color ) {
+async function setTabItemColor( page, editor, panelClass, tabState, colorPickerClass, color ) {
 	await editor.activatePanelTab( 'style' );
-	await page.locator( `.elementor-control-${ sectionClass }` ).click();
-	await page.locator( `.elementor-control-${ tabClass }` ).click();
+	await page.locator( `.elementor-control-${ panelClass }` ).click();
+	await page.locator( `.elementor-control-${ tabState }` ).click();
 	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
 }
