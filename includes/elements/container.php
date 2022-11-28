@@ -1636,12 +1636,12 @@ class Container extends Element_Base {
 	protected function hook_sticky_notice_into_transform_section() {
 		add_action( 'elementor/element/container/_section_transform/after_section_start', function( $container ) {
 			$container->add_control(
-					'transform_sticky_notice',
-					[
-							'type' => Controls_Manager::RAW_HTML,
-							'raw' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
-							'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-					]
+				'transform_sticky_notice',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
 			);
 		} );
 	}
