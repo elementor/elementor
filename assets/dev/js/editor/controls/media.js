@@ -45,20 +45,21 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
-
+	setFallbackValues() {
+		this.ui.mediaImage.attr( 'data-id', this.getControlValue( 'id' ) || this.getControlPlaceholder()?.id );
+		this.ui.mediaImage.attr( 'data-alt', this.getControlValue( 'alt' ) || this.getControlPlaceholder()?.alt || '' );
+		this.ui.mediaImage.attr( 'data-size', this.getControlValue( 'size' ) || this.getControlPlaceholder()?.size || 'full' );
+	},
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
 			mediaType = this.getMediaType();
-
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 			if ( ! value && url ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
 			}
-			this.ui.mediaImage.attr( 'data-id', this.getControlValue( 'id' ) || this.getControlPlaceholder()?.id );
-			this.ui.mediaImage.attr( 'data-alt', this.getControlValue( 'alt' ) || this.getControlPlaceholder()?.alt || '' );
-			this.ui.mediaImage.attr( 'data-size', this.getControlValue( 'size' ) || this.getControlPlaceholder()?.size || 'full' );
+			this.setFallbackValues();
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
 		} else {
@@ -254,21 +255,21 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	async onMediaImageSize() {
 		this.ui.mediaImageSize.css( 'color', 'inherit' );
-		const previewPlaceHolder = this.$el.find( '.elementor-control-media__preview' );
-		const selectedImageId = {
-			id: this?.getControlValue( 'id' ) || previewPlaceHolder[ 0 ].getAttribute( 'data-id' ),
-			alt: this?.getControlValue( 'alt' ) || previewPlaceHolder[ 0 ].getAttribute( 'alt' ),
+		const previewPlaceHolder = this.ui.mediaImage;
+		const selectedImage = {
+			id: this.getControlValue( 'id' ) || previewPlaceHolder[ 0 ].getAttribute( 'data-id' ),
+			alt: this.getControlValue( 'alt' ) || previewPlaceHolder[ 0 ].getAttribute( 'alt' ),
 		};
 
 		const selectedSize = this.ui.mediaImageSize.val();
 		let imageURL = await elementor.imagesManager.getImageUrl( {
-			id: selectedImageId.id,
+			id: selectedImage.id,
 			size: selectedSize,
 		} );
 		const stateOptions = {
 			url: null,
-			id: selectedImageId.id,
-			alt: selectedImageId.alt,
+			id: selectedImage.id,
+			alt: selectedImage.alt,
 			dimensions: selectedSize,
 			source: 'library',
 		};
@@ -277,7 +278,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.setValue( stateOptions );
 		} else {
 			elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
-				imageURL = data[ selectedImageId.id ][ selectedSize ];
+				imageURL = data[ selectedImage.id ][ selectedSize ];
 				if ( imageURL ) {
 					stateOptions.url = imageURL;
 					this.setValue( stateOptions );
