@@ -48,7 +48,6 @@ class Control_Date_Time extends Base_Data_Control {
 			'picker_options' => [],
 			'dynamic' => [
 				'categories' => [
-					TagsModule::DATE_CATEGORY,
 					TagsModule::DATETIME_CATEGORY,
 				],
 			],

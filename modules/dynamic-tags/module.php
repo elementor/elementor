@@ -66,11 +66,6 @@ class Module extends BaseModule {
 	const COLOR_CATEGORY = 'color';
 
 	/**
-	 * Dynamic tags date category.
-	 */
-	const DATE_CATEGORY = 'date';
-
-	/**
 	 * Dynamic tags datetime category.
 	 */
 	const DATETIME_CATEGORY = 'datetime';
