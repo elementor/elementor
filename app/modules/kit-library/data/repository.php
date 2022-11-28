@@ -310,11 +310,9 @@ class Repository {
 		$this->api = $kit_library;
 		$this->user_favorites = $user_favorites;
 		$this->subscription_plans = $subscription_plans;
-
-		add_action( 'elementor/experiments/feature-state-change', [ $this, 'clear_cache' ], 10, 3 );
 	}
 
-	public function clear_cache( $feature_name, $old_state, $new_state ) {
+	public static function clear_cache( $feature_name, $old_state, $new_state ) {
 		if ( 'container' === $feature_name ) {
 			delete_transient( static::KITS_CACHE_KEY );
 		}
