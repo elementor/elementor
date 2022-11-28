@@ -208,7 +208,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( lastTab ).toHaveCSS( 'margin-top', '25px' );
 	} );
 
-	test( 'Check independent styling of parent nested tab and child nested tab', async ( { page }, testInfo ) => {
+	test( 'Verify the separation of the parent and child nested tabs styling', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
