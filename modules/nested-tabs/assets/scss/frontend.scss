@@ -173,22 +173,18 @@
 				&.e-active{
 				  color: var( --n-tabs-title-color-hover );
 				  background-color: var( --n-tabs-title-background-color-hover );
-
-				  //background-color: var( --n-tabs-title-background-color-hover, var( --n-tabs-title-background-color ) );
-				  //transition: all var( --n-tabs-title-transition );
-				  //color: var( --n-tabs-icon-color-hover );
 				}
 
-					.e-n-tab-icon {
+				.e-n-tab-icon {
 
-						> i {
-							color: var( --n-tabs-icon-color-hover );
-						}
-
-						svg {
-							fill: var( --n-tabs-icon-color-hover );
-						}
+					> i {
+						color: var( --n-tabs-icon-color-hover );
 					}
+
+					svg {
+						fill: var( --n-tabs-icon-color-hover );
+					}
+				}
 			}
 		}
 	}

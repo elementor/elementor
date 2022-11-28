@@ -419,7 +419,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} .e-n-tab-title:not(.e-active)',
+				'selector' => '{{WRAPPER}} .e-n-tab-title',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -1084,7 +1084,6 @@ class NestedTabs extends Widget_Nested_Base {
 		?>
 		<div class="e-n-tabs" role="tablist" aria-orientation="vertical">
 			<# if ( settings['tabs'] ) {
-			console.log( settings['tabs'])
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
@@ -1117,7 +1116,6 @@ class NestedTabs extends Widget_Nested_Base {
 				'data-binding-index': tabCount,
 				} );
 				#>
-
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 					<span class="e-n-tab-icon">{{{ tabIcon.value }}}</span>
 					<span class="e-n-tab-icon e-active">{{{ tabActiveIcon.value }}}</span>
