@@ -3,12 +3,14 @@ const { expect } = require('@playwright/test');
 
 class onboarding {
 
-    constructor(page, url){
+    constructor(page, baseURL ){
         this.page = page;
-        this.url = url;
-        this.themesPage = 'http://test.local/wp-admin/themes.php';
-        this.wpAdminPage = 'http://test.local/wp-admin/';
+        this.baseUrl = baseURL.replace(/\/$/, "");
+        this.themesPage = '/wp-admin/themes.php';
+        this.wpAdminPage = '/wp-admin/';
         this.loginURL = 'https://my.elementor.com/login/';
+        this.WpGeneralSettingsPage = '/wp-admin/options-general.php';
+        this.customizePage = '/wp-admin/customize.php'
 
         //On all Steps
         this.closeOnboardingButton = this.page.locator('.eps-icon.eicon-close');
@@ -27,7 +29,7 @@ class onboarding {
     
 
         //Step 2 - Hello Theme
-        this.step2URL = 'http://test.local/wp-admin/admin.php?page=elementor-app#onboarding/hello';
+        this.step2URL = '/wp-admin/admin.php?page=elementor-app#onboarding/hello';
         this.continueWithHelloThemeButton = this.page.locator('[text="Continue with Hello Theme"]');
         this.elementorTheme = this.page.locator('[data-slug="hello-elementor"]');
         this.twenty21Theme = this.page.locator('[data-slug="twentytwentyone"]');
@@ -37,9 +39,35 @@ class onboarding {
 
 
         //Step 3 - Hello Theme Step
-        this.step3URL = 'http://test.local/wp-admin/admin.php?page=elementor-app#onboarding/siteName';
+        this.step3URL = '/wp-admin/admin.php?page=elementor-app#onboarding/siteName';
+        this.siteTitleFieldSelector = 'input.e-onboarding__site-name-input';
+        this.siteTitleField = this.page.locator('input.e-onboarding__site-name-input');
+        this.nextButton = this.page.locator('[text = next]');
+
+        //Step 4 - Hello Theme Step
+        this.step4URL = '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo';
+
         
     };
+
+
+    /*
+    * Global - Functions
+    */
+    async checkBrokenCSS(page,url) {
+        // Validate the CSS on the page is not broken
+        let requestFailed = []
+
+        this.page.on('request', async request => {
+            if(request.failure() !== null && request.url().includes('.css'))requestFailed.push(request.url());
+        });
+      
+        //Go to the URL
+        await this.page.goto(url, {waitUntil: "networkidle"});        
+        
+        //Validate Broken CSS Requests
+        await expect(requestFailed, `Failed Assets: ${requestFailed.toString()}`).toEqual([])
+    }
 
 
     /*
@@ -149,14 +177,15 @@ class onboarding {
 
 
     /*
-    * Second Step - Elementor Account - Functions
+    * Second Step - Hello Theme - Functions
     */
     async gotoStep2(){
         await this.page.goto(this.step2URL);
     };
    
     async checkUserIsOnStepTwo(){
-        await expect(this.page.url()).toEqual(this.step2URL);
+        console.log(this.baseUrl)
+        await expect(this.page.url(), `User is not on Step 2 but instead on ${await this.page.url()}`).toEqual( this.baseUrl + this.step2URL);
    };
 
    async selectContinueWithHelloThemeButton(){
@@ -165,7 +194,7 @@ class onboarding {
    };
 
    async checkUserIsOnStepThree(){
-        await expect(this.page.url()).toEqual(this.step3URL);
+        await expect(this.page.url(), `User is not on Step 3 but instead on ${await this.page.url()}`).toEqual(this.baseUrl + this.step3URL);
    }
 
    async gotoThemesPage(){
@@ -190,14 +219,64 @@ class onboarding {
         await expect(this.disclaimerNotice).toContainText(disclaimer);
    }
 
+   
+
 
 
    /*
-    * Third Step - Elementor Account - Functions
+    * Third Step - Site Name - Functions
     */
     async gotoStep3(){
         await this.page.goto(this.step3URL);
     };
+
+    async extractSiteTitle(){
+        return await this.page.evaluate( () => elementorAppConfig.onboarding.siteName );
+    }
+
+    async checkTitleIsCorrect(title){
+        await this.page.waitForSelector(this.siteTitleFieldSelector);
+        await expect(await this.siteTitleField.getAttribute('value')).toEqual(title);
+    }
+
+    async emptySiteNameField(){
+        await this.page.fill( 'input[type="text"]', '' )
+    }
+
+    async checkNextButtonIsDisabled(){
+        await expect( this.nextButton , `The Next button is enabled`).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
+    }
+
+    async checkNextButtonIsEnabled(){
+    await expect( this.nextButton , `The Next button is disabled`).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
+    }
+
+    async insertPageName(pageName){
+        await this.page.fill( 'input[type="text"]', pageName );
+    }
+
+
+
+
+   /*
+    * Third Four - Site Logo - Functions
+    */
+    async gotoStep4(){
+        await this.page.goto(this.step4URL);
+    };
+
+    async checkStepFourURL(url){
+        await expect(await this.page.url(), `User is not on Step 4 but instead on ${await this.page.url()}`).toEqual(url);
+    }
+
+    async goToSiteItentityPage(){
+        await this.page.goto(this.customizePage);
+        await this.page.locator('#accordion-section-title_tagline').click();
+        await this.page.waitForSelector('#customize-control-custom_logo .upload-button')
+        await this.page.locator('#customize-control-custom_logo .upload-button').first().click();
+        await this.page.waitForLoadState('networkidle')
+    }
+
 
 };
 
