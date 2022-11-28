@@ -182,8 +182,8 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		return this.getControlValue( 'isLinked' );
 	},
 
-	updatePlaceholder() {
-		ControlBaseUnitsItemView.prototype.updatePlaceholder.apply( this, arguments );
+	updateUnitChoices() {
+		ControlBaseUnitsItemView.prototype.updateUnitChoices.apply( this, arguments );
 
 		let inputType = 'number';
 
