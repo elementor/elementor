@@ -248,8 +248,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	private function create_mock_templates( $user, $layout_type = '' ) {
-		set_transient('elementor_remote_templates_data_layout_type', $layout_type );
-
 		$templates = [
 			[
 				'id' => 100,
@@ -303,8 +301,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	private function create_remote_mock_templates( $layout_type = '' ) {
-		set_transient('elementor_remote_templates_data_layout_type', $layout_type );
-
 		$templates = [
 			[
 				'id' => 100,

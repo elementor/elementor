@@ -187,10 +187,10 @@ class Manager {
 	 * Retrieve all the templates from all the registered sources.
 	 *
 	 * @param array $filter_sources
-	 *
+	 * @param bool $force_update
 	 * @return array
 	 */
-	public function get_templates( array $filter_sources = [], $force_update = false ): array {
+	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
 		$templates = [];
 
 		foreach ( $this->get_registered_sources() as $source ) {

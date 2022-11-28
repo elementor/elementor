@@ -22,7 +22,15 @@ class Source_Remote extends Source_Base {
 
 	const TEMPLATES_DATA_TRANSIENT_KEY_PREFIX = 'elementor_remote_templates_data_';
 
-	const TEMPLATES_DATA_LAYOUT_TYPE_TRANSIENT_KEY = 'elementor_remote_templates_data_layout_type';
+	public function __construct() {
+		parent::__construct();
+
+		$this->add_actions();
+	}
+
+	public function add_actions() {
+		add_action( 'elementor/experiments/feature-state-change', [ $this, 'clear_cache'], 10, 3 );
+	}
 
 	/**
 	 * Get remote template ID.
@@ -217,29 +225,21 @@ class Source_Remote extends Source_Base {
 	}
 
 	/**
-	 * Get templates data from transient or by remote request.
-	 * The remote request will happen in one of those 3 conditions:
-	 * 1. Force update.
-	 * 2. The data saved in the transient is empty.
-	 * 3. The container feature has changed since the last data fetch.
+	 * Get templates data from a transient or from a remote request.
+	 * In any of the following 2 conditions, the remote request will be triggered:
+	 * 1. Force update - "$force_update = true" parameter was passed.
+	 * 2. The data saved in the transient is empty or not exist.
 	 *
-	 * @param $force_update
+	 * @param bool $force_update
 	 * @return array
 	 */
-	private function get_templates_data( $force_update ) {
+	private function get_templates_data( bool $force_update ) : array {
 		$templates_data_cache_key = static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
-		$templates_data_layout_type_cache_key = static::TEMPLATES_DATA_LAYOUT_TYPE_TRANSIENT_KEY;
 
 		$experiments_manager = Plugin::$instance->experiments;
 		$editor_layout_type = $experiments_manager->is_feature_active( 'container' ) ? 'container_flexbox' : '';
 
 		if ( $force_update ) {
-			return $this->get_templates( $editor_layout_type );
-		}
-
-		$cached_templates_editor_layout_type = get_transient( $templates_data_layout_type_cache_key );
-
-		if ( $cached_templates_editor_layout_type !== $editor_layout_type ) {
 			return $this->get_templates( $editor_layout_type );
 		}
 
@@ -253,14 +253,13 @@ class Source_Remote extends Source_Base {
 	}
 
 	/**
-	 * Get the templates from the remote server and set the transients.
+	 * Get the templates from a remote server and set a transient.
 	 *
-	 * @param $editor_layout_type
+	 * @param string $editor_layout_type
 	 * @return array
 	 */
-	private function get_templates( $editor_layout_type ): array {
+	private function get_templates( string $editor_layout_type ): array {
 		$templates_data_cache_key = static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
-		$templates_data_layout_type_cache_key = static::TEMPLATES_DATA_LAYOUT_TYPE_TRANSIENT_KEY;
 
 		$templates_data = $this->get_templates_remotely( $editor_layout_type );
 
@@ -269,7 +268,6 @@ class Source_Remote extends Source_Base {
 		}
 
 		set_transient( $templates_data_cache_key, $templates_data, 12 * HOUR_IN_SECONDS );
-		set_transient( $templates_data_layout_type_cache_key, $editor_layout_type, 12 * HOUR_IN_SECONDS );
 
 		return $templates_data;
 	}
@@ -277,13 +275,13 @@ class Source_Remote extends Source_Base {
 	/**
 	 * Fetch templates from the remote server.
 	 *
-	 * @param $editor_layout_type
+	 * @param string $editor_layout_type
 	 * @return array|false
 	 */
-	private function get_templates_remotely( $editor_layout_type ) {
+	private function get_templates_remotely( string $editor_layout_type ) {
 		$response = wp_remote_get( static::API_TEMPLATES_URL, [
 			'body' => [
-				'minimum_version' => ELEMENTOR_VERSION,
+				'plugin_version' => ELEMENTOR_VERSION,
 				'editor_layout_type' => $editor_layout_type,
 			],
 		] );
@@ -326,5 +324,11 @@ class Source_Remote extends Source_Base {
 			'url' => $template_data['url'],
 			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] ),
 		];
+	}
+
+	public function clear_cache ( string $feature_name, $old_state, $new_state ) {
+		if ( 'container' === $feature_name ) {
+			delete_transient( static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
+		}
 	}
 }

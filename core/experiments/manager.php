@@ -702,6 +702,8 @@ class Manager extends Base_Object {
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $old_state, $new_state );
 		}
+
+		do_action( 'elementor/experiments/feature-state-change', $old_feature_data['name'], $old_state, $new_state );
 	}
 
 	/**
