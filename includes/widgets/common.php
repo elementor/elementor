@@ -409,7 +409,7 @@ class Widget_Common extends Widget_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'size_units' => [ 'px', '%', 'vw', 'vh', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
@@ -448,7 +448,7 @@ class Widget_Common extends Widget_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'size_units' => [ 'px', '%', 'vw', 'vh', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
@@ -508,7 +508,7 @@ class Widget_Common extends Widget_Base {
 						'max' => 200,
 					],
 				],
-				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'size_units' => [ 'px', '%', 'vh', 'vw', 'custom' ],
 				'default' => [
 					'size' => '0',
 				],
@@ -546,7 +546,7 @@ class Widget_Common extends Widget_Base {
 						'max' => 200,
 					],
 				],
-				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'size_units' => [ 'px', '%', 'vh', 'vw', 'custom' ],
 				'default' => [
 					'size' => '0',
 				],
@@ -781,7 +781,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -818,7 +818,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -959,7 +959,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Scale', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'size_units' => [ 'px', 'em', '%', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -1020,7 +1020,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'X Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'size_units' => [ 'px', 'em', '%', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => -500,
@@ -1056,7 +1056,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Y Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'size_units' => [ 'px', 'em', '%', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => -500,
