@@ -1622,6 +1622,8 @@ class Container extends Element_Base {
 
 		$this->register_motion_effects_controls();
 
+		$this->hook_sticky_notice_into_transform_section();
+
 		$this->register_transform_section( 'con' );
 
 		$this->register_responsive_controls();
@@ -1631,12 +1633,7 @@ class Container extends Element_Base {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
-	/**
-	 * Register the Container's controls.
-	 *
-	 * @return void
-	 */
-	protected function register_controls() {
+	protected function hook_sticky_notice_into_transform_section() {
 		add_action( 'elementor/element/container/_section_transform/after_section_start', function( $container ) {
 			$container->add_control(
 					'transform_sticky_notice',
@@ -1647,7 +1644,14 @@ class Container extends Element_Base {
 					]
 			);
 		} );
+	}
 
+	/**
+	 * Register the Container's controls.
+	 *
+	 * @return void
+	 */
+	protected function register_controls() {
 		$this->register_layout_tab();
 		$this->register_style_tab();
 		$this->register_advanced_tab();
