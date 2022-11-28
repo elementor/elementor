@@ -136,33 +136,68 @@ class Import {
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @throws \Exception
 	 */
-	public function __construct( string $path, array $settings = [] ) {
-		if ( is_file( $path ) ) {
-			$this->extracted_directory_path = $this->extract_zip( $path );
-		} else {
-			$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
-			$path = $elementor_tmp_directory . basename( $path );
+	public function __construct( string $path, array $settings = [], $old_instance = null ) {
+		if ( $old_instance ) {
+			$this->session_id = $path;
 
-			if ( ! is_dir( $path ) ) {
-				throw new \Exception( static::SESSION_DOES_NOT_EXITS_ERROR );
+			$old_instance_data = $old_instance['instance_data'];
+			$this->extracted_directory_path = $old_instance_data->extracted_directory_path;
+			$this->runners = $old_instance_data->runners;
+			$this->adapters = $old_instance_data->adapters;
+
+			$this->manifest = $old_instance_data->manifest;
+			$this->site_settings = $old_instance_data->site_settings;
+
+			$this->settings_include = $old_instance_data->settings_include;
+			$this->settings_referrer = $old_instance_data->settings_referrer;
+			$this->settings_conflicts = $old_instance_data->settings_conflicts;
+			$this->settings_selected_override_conditions = $old_instance_data->settings_selected_override_conditions;
+			$this->settings_selected_custom_post_types = $old_instance_data->settings_selected_custom_post_types;
+			$this->settings_selected_plugins = $old_instance_data->settings_selected_plugins;
+
+			$this->documents_elements = $old_instance_data->documents_elements;
+			$this->imported_data = $old_instance_data->imported_data;
+			$this->runners_import_metadata = $old_instance_data->runners_import_metadata;
+		} else {
+			if ( is_file( $path ) ) {
+				$this->extracted_directory_path = $this->extract_zip( $path );
+			} else {
+				$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
+				$path = $elementor_tmp_directory . basename( $path );
+
+				if ( ! is_dir( $path ) ) {
+					throw new \Exception( static::SESSION_DOES_NOT_EXITS_ERROR );
+				}
+
+				$this->extracted_directory_path = $path . '/';
 			}
 
-			$this->extracted_directory_path = $path . '/';
+			$this->session_id = basename( $this->extracted_directory_path );
+			$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
+			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
+
+			// Using isset and not empty is important since empty array is valid option.
+			$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
+			$this->settings_selected_custom_post_types = $settings['selectedCustomPostTypes'] ?? null;
+			$this->settings_selected_plugins = $settings['plugins'] ?? null;
+
+			$this->manifest = $this->read_manifest_json();
+			$this->site_settings = $this->read_site_settings_json();
+
+			$this->set_default_settings();
+		}
+	}
+
+	public static function fromSession( $session_id ) {
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+
+		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
+			throw new \Exception( static::SESSION_DOES_NOT_EXITS_ERROR );
 		}
 
-		$this->session_id = basename( $this->extracted_directory_path );
-		$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
-		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
+		$import_session = $import_sessions[ $session_id ];
 
-		// Using isset and not empty is important since empty array is valid option.
-		$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
-		$this->settings_selected_custom_post_types = $settings['selectedCustomPostTypes'] ?? null;
-		$this->settings_selected_plugins = $settings['plugins'] ?? null;
-
-		$this->manifest = $this->read_manifest_json();
-		$this->site_settings = $this->read_site_settings_json();
-
-		$this->set_default_settings();
+		return new self( $session_id, [], $import_session );
 	}
 
 	/**
@@ -257,6 +292,84 @@ class Import {
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $this->extracted_directory_path );
 		return $this->imported_data;
+	}
+
+	public function run_runner( $runner_name ) {
+		if ( empty( $this->runners ) ) {
+			throw new \Exception( 'Please specify import runners.' );
+		}
+
+		$data = [
+			'session_id' => $this->session_id,
+			'include' => $this->settings_include,
+			'manifest' => $this->manifest,
+			'site_settings' => $this->site_settings,
+			'selected_plugins' => $this->settings_selected_plugins,
+			'extracted_directory_path' => $this->extracted_directory_path,
+			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
+		];
+
+		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
+
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
+		$runner = $this->runners[ $runner_name ];
+
+		if ( empty( $runner ) ) {
+			throw new \Exception( 'Runner not found.' );
+		}
+
+		if ( $runner->should_import( $data ) ) {
+			$import = $runner->import( $data, $this->imported_data );
+			$this->imported_data = array_merge_recursive( $this->imported_data, $import );
+
+			$this->runners_import_metadata[ $runner::get_name() ] = $runner->get_import_session_metadata();
+		}
+
+		// After the upload complete, set the elementor upload state back to false.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
+
+		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
+
+		return true;
+	}
+
+	public function init_import_session() {
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+
+		$import_sessions[ time() ] = [
+			'session_id' => $this->session_id,
+			'kit_name' => $this->manifest['name'],
+			'kit_source' => $this->settings_referrer,
+			'user_id' => get_current_user_id(),
+			'start_timestamp' => current_time( 'timestamp' ),
+			'instance_data' => [
+				'extracted_directory_path' => $this->extracted_directory_path,
+				'runners' => $this->runners,
+				'adapters' => $this->adapters,
+
+				'manifest' => $this->manifest,
+				'site_settings' => $this->site_settings,
+
+				'settings_include' => $this->settings_include,
+				'settings_referrer' => $this->settings_referrer,
+				'settings_conflicts' => $this->settings_conflicts,
+				'settings_selected_override_conditions' => $this->settings_selected_override_conditions,
+				'settings_selected_custom_post_types' => $this->settings_selected_custom_post_types,
+				'settings_selected_plugins' => $this->settings_selected_plugins,
+
+				'documents_elements' => $this->documents_elements,
+				'imported_data' => $this->imported_data,
+				'runners_import_metadata' => $this->runners_import_metadata,
+			],
+		];
+
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+	}
+
+	public function get_runners_name() {
+		return array_keys( $this->runners );
 	}
 
 	public function get_manifest() {

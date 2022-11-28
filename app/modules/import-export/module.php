@@ -264,7 +264,7 @@ class Module extends BaseModule {
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function import_kit( $path, $settings ) {
+	public function import_kit( $path, $settings, $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
 
 		$this->import = new Import( $path, $settings );
@@ -272,7 +272,26 @@ class Module extends BaseModule {
 
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
+		if ( $split_to_chunks ) {
+			$this->import->init_import_session();
+
+			return [
+				'session_id' => $this->import->get_session_id(),
+				'runners' => $this->import->get_runners_name(),
+			];
+		}
+
 		return $this->import->run();
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public function import_kit_by_runner( $session_id, $runner_name ): bool {
+		// Check session_id
+		$this->import = Import::fromSession( $session_id );
+
+		return $this->import->run_runner( $runner_name );
 	}
 
 	/**
@@ -489,7 +508,23 @@ class Module extends BaseModule {
 		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$tmp_folder_id = $settings['session'];
 
-		$import = $this->import_kit( $tmp_folder_id, $settings );
+		$import = $this->import_kit( $tmp_folder_id, $settings, true );
+
+		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
+		$import['configData'] = $this->get_config_data();
+
+		wp_send_json_success( $import );
+	}
+
+	/**
+	 * Handle import kit ajax request.
+	 */
+	private function handle_import_kit_by_runner() {
+		// PHPCS - Already validated in caller function
+		$session_id = $_POST['session_id'];
+		$runner = $_POST['runner'];
+
+		$import = $this->import_kit_by_runner( $session_id, $runner );
 
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
