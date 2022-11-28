@@ -61,6 +61,10 @@
 				}
 			}
 		}
+
+		&:last-child {
+			max-width: $control-unit;
+		}
 	}
 
 	&.e-units-custom {

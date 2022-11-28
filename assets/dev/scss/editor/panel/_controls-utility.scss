@@ -3,7 +3,7 @@
 //
 
 //Start responsive switcher
-$item-size: 2em;
+$item-size: 2.5em;
 
 .elementor-control-responsive-switchers {
 	--selected-option: 0;
@@ -139,9 +139,9 @@ a.elementor-responsive-switcher {
 		overflow: hidden;
 		max-height: 0;
 		position: absolute;
-		top: -0.5em;
-		@include start(-1em);
-		width: 3em;
+		top: -.8em;
+		@include start(-.5em);
+		width: $item-size;
 		text-align: center;
 		background-color: #fff;
 		border-radius: 3px;
