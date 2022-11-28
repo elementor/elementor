@@ -2,6 +2,7 @@
 namespace Elementor\Modules\NestedTabs;
 
 use Elementor\Plugin;
+use  Elementor\Modules\NestedElements\Module as NestedElementsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -10,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends \Elementor\Core\Base\Module {
 
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
+		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
 	}
 
 	public function get_name() {

@@ -17,6 +17,7 @@ use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Utils;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -328,12 +329,52 @@ class NestedTabs extends Widget_Nested_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section( 'section_tabs_responsive', [
+			'label' => esc_html__( 'Responsive Settings', 'elementor' ),
+		] );
+
+		$dropdown_options = [];
+		$excluded_breakpoints = [
+			'laptop',
+			'tablet_extra',
+			'widescreen',
+		];
+
+		foreach ( Plugin::$instance->breakpoints->get_active_breakpoints() as $breakpoint_key => $breakpoint_instance ) {
+			// Exclude the larger breakpoints from the dropdown selector.
+			if ( in_array( $breakpoint_key, $excluded_breakpoints, true ) ) {
+				continue;
+			}
+
+			$dropdown_options[ $breakpoint_key ] = sprintf(
+				/* translators: 1: Breakpoint label, 2: `>` character, 3: Breakpoint value. */
+				esc_html__( '%1$s (%2$s %3$dpx)', 'elementor' ),
+				$breakpoint_instance->get_label(),
+				'>',
+				$breakpoint_instance->get_value()
+			);
+		}
+
+		$this->add_control(
+			'breakpoint_selector',
+			[
+				'label' => esc_html__( 'Breakpoint', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'description' => esc_html__( 'Note: Choose at which breakpoint tabs will automatically switch to a vertical (“accordion”) layout.', 'elementor' ),
+				'options' => $dropdown_options,
+				'default' => 'mobile',
+				'prefix_class' => 'e-n-tabs-',
+			]
+		);
+
+		$this->end_controls_section();
+
 		$this->start_controls_section( 'section_tabs_style', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
 			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
-		$this->add_responsive_control( 'tabs_title_spacing', [
+		$this->add_responsive_control( 'tabs_title_space_between', [
 			'label' => esc_html__( 'Gap between tabs', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
@@ -344,11 +385,11 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
-		$this->add_responsive_control( 'tabs_title_space_between', [
+		$this->add_responsive_control( 'tabs_title_spacing', [
 			'label' => esc_html__( 'Distance from content', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
@@ -359,7 +400,7 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
 			],
 		] );
 
@@ -576,7 +617,14 @@ class NestedTabs extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'selector' => '{{WRAPPER}} .e-tab-title-text',
+			'selector' => '{{WRAPPER}} .e-n-tab-title-text',
+			'fields_options' => [
+				'font_size' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--n-tabs-title-font-size: {{SIZE}}{{UNIT}}',
+					],
+				],
+			],
 		] );
 
 		$this->start_controls_tabs( 'title_style' );
@@ -959,7 +1007,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'e-n-tabs' );
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'e-n-tab-icon' );
-		$this->add_render_attribute( 'tab-icon-active', 'class', 'e-active' );
+		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon', 'e-active' ] );
 
 		$tabs_title_html = '';
 		$tabs_content_html = '';
