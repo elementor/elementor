@@ -514,6 +514,23 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'preload',
+			[
+				'label' => esc_html__( 'Preload', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'none' => esc_html__( 'None', 'elementor' ),
+					'auto' => esc_html__( 'Auto', 'elementor' ),
+					'metadata' => esc_html__( 'Metadata', 'elementor' ),
+				],
+				'default' => 'none',
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
+		);
+
+		$this->add_control(
 			'poster',
 			[
 				'label' => esc_html__( 'Poster', 'elementor' ),
@@ -1161,7 +1178,9 @@ class Widget_Video extends Widget_Base {
 	private function get_hosted_params() {
 		$settings = $this->get_settings_for_display();
 
-		$video_params = [];
+		$video_params = [
+			'preload' => $settings['preload'],
+		];
 
 		foreach ( [ 'autoplay', 'loop', 'controls' ] as $option_name ) {
 			if ( $settings[ $option_name ] ) {
