@@ -150,7 +150,7 @@
 				}
 			}
 
-			&.e-active {
+			&.e-active:not( :hover ) {
 				color: var( --n-tabs-title-color-active );
 				background-color: var( --n-tabs-title-background-color-active );
 
@@ -169,11 +169,8 @@
 
 			&:hover {
 
-			  	&,
-				&.e-active{
 				  color: var( --n-tabs-title-color-hover );
 				  background-color: var( --n-tabs-title-background-color-hover );
-				}
 
 				.e-n-tab-icon {
 
