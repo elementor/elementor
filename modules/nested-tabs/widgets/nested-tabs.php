@@ -483,7 +483,7 @@ class NestedTabs extends Widget_Nested_Base {
 						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
 						'selectors' => [
-							'{{WRAPPER}} .e-n-tab-title:hover' => 'background: {{VALUE}}',
+							'{{SELECTOR}}' => 'background: {{VALUE}};',
 						],
 					],
 				],
