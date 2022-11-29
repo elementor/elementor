@@ -1184,7 +1184,9 @@ class Widget_Video extends Widget_Base {
 	private function get_hosted_params() {
 		$settings = $this->get_settings_for_display();
 
-		$video_params = [];
+		$video_params = [
+			'preload' => $settings['preload'],
+		];
 
 		foreach ( [ 'autoplay', 'loop', 'controls' ] as $option_name ) {
 			if ( $settings[ $option_name ] ) {
