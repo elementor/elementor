@@ -27,10 +27,10 @@ export class PluginsTester {
 	}
 
 	cmd(cmd) {
-		this.logger.info('cmd', cmd);
+		this.options.logger.info('cmd', cmd);
 		try {
 			const result = execSync(cmd).toString();
-			this.logger.info('success', result);
+			this.options.logger.info('success', result);
 
 			return result;
 		} catch (e) {
@@ -40,7 +40,7 @@ export class PluginsTester {
 
 	checkPlugins() {
 		const errors = [];
-		this.pluginsToTest.forEach((slug) => {
+		this.options.pluginsToTest.forEach((slug) => {
 			this.cmd(`npx wp-env run cli wp plugin install ${slug} --activate`);
 			this.cmd(`npx wp-env run cli wp plugin activate ${slug}`);
 			this.cmd(`npx wp-env run cli wp plugin list`);
@@ -51,7 +51,7 @@ export class PluginsTester {
 			try {
 				this.cmd(`node ./scripts/run-backstop.js --slug=${slug}`);
 			} catch (error) {
-				this.logger.error(error);
+				this.options.logger.error(error);
 				errors.push({
 					slug,
 					error,
@@ -61,7 +61,7 @@ export class PluginsTester {
 			this.cmd(`npx wp-env run cli wp plugin deactivate ${slug}`);
 		});
 
-		this.logger.error('errors:', errors);
+		this.options.error('errors:', errors);
 
 		if (errors.length) {
 			process.exit(1);
@@ -73,7 +73,7 @@ export class PluginsTester {
 	}
 
 	setPwd() {
-		this.cmd(`cd ${this.pwd}`)
+		this.cmd(`cd ${this.options.pwd}`)
 	}
 
 	prepareTestSite() {
@@ -81,7 +81,7 @@ export class PluginsTester {
 		try {
 			this.cmd(`npx wp-env run cli "wp --user=admin elementor library import-dir /var/www/html/elementor-templates"`);
 		} catch (error) {
-			this.logger.error(error);
+			this.options.logger.error(error);
 		}
 
 		this.cmd(`npx wp-env run cli wp rewrite structure "/%postname%/" --hard`);
