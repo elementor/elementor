@@ -54,6 +54,11 @@ class Module extends BaseModule {
 
 		if ( $keys ) {
 			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
+			if ( ! $background_image_url ) {
+				// If the background image is not set, check also for overlay image.
+				$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'overlay_keys' ] );
+				$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
+			}
 			if ( $background_image_url ) {
 				$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
 				$element->add_render_attribute( '_wrapper', [

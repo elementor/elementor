@@ -298,7 +298,8 @@ class Element_Column extends Element_Base {
 						'background_lazyload' => [
 							'active' => true,
 							'keys' => [ 'background_image', 'url' ],
-							'selector' => '.elementor-column-wrap',
+							'overlay_keys' => [ 'background_overlay_image', 'url' ],
+							'selector' => '.elementor-element-populated',
 						],
 					],
 				],
@@ -373,6 +374,15 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ '_background_overlay', 'url' ],
+							'selector' => '.elementor-background-overlay,',
+						],
+					],
+				],
 			]
 		);
 

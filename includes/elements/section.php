@@ -577,6 +577,7 @@ class Element_Section extends Element_Base {
 						'background_lazyload' => [
 							'active' => true,
 							'keys' => [ 'background_image', 'url' ],
+							'overlay_keys' => [ 'background_overlay_image', 'url' ],
 						],
 					],
 				],
@@ -652,7 +653,7 @@ class Element_Section extends Element_Base {
 					'image' => [
 						'background_lazyload' => [
 							'active' => true,
-							'keys' => [ '_background_overlay', 'url' ],
+							'keys' => [ 'background_overlay_image', 'url' ],
 							'selector' => '.elementor-background-overlay',
 						],
 					],
