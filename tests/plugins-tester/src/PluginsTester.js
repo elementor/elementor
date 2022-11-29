@@ -6,7 +6,7 @@ export class PluginsTester {
 		debug: false,
 		pluginsToTest: [],
 		pwd: '',
-		logger
+		logger: null
 	};
 
 	constructor(options) {
