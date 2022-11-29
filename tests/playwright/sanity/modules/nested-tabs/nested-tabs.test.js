@@ -320,6 +320,45 @@ test.describe( 'Nested Tabs tests', () => {
 		await notActiveTab.hover();
 		await expect( notActiveTab ).toHaveCSS( 'color', rgbColor );
 	} );
+
+	test( 'Verify the separation of the parent and child nested tabs styling', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			parentWidgetId = await editor.addWidget( 'nested-tabs', container ),
+			tabsContainer = editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .e-con.e-active` ),
+			tabsContainerId = await tabsContainer.getAttribute( 'data-id' );
+
+		await editor.addWidget( 'nested-tabs', tabsContainerId );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		// Set tabs direction to 'stretch' for parent widget.
+		await editor.selectElement( parentWidgetId );
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		// Set align title to 'start'.
+		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.elementor-control-tabs_title_background_color_background .eicon-paint-brush' ).click();
+		await page.locator( '.elementor-control-tabs_title_background_color_color .pcr-button' ).click();
+		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#ff0000' );
+
+		// Assert.
+		// Check if title's are aligned on the left for the parent widget.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active` ) ).toHaveCSS( 'justify-content', 'flex-start' );
+		// Check if title's are aligned on the center for the child widget.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active` ) ).toHaveCSS( 'justify-content', 'center' );
+		// Check if parent widget has red tabs.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active + .e-n-tab-title` ) ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+		// Check if child widget doesn't have red tabs.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active + .e-n-tab-title` ) ).not.toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const TabsIcons = [
