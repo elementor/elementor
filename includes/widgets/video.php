@@ -85,7 +85,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion' ];
+		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion', 'videopress' ];
 	}
 
 	/**
@@ -114,6 +114,7 @@ class Widget_Video extends Widget_Base {
 					'youtube' => esc_html__( 'YouTube', 'elementor' ),
 					'vimeo' => esc_html__( 'Vimeo', 'elementor' ),
 					'dailymotion' => esc_html__( 'Dailymotion', 'elementor' ),
+					'videopress' => esc_html__( 'VideoPress', 'videopress' ),
 					'hosted' => esc_html__( 'Self Hosted', 'elementor' ),
 				],
 				'frontend_available' => true,
@@ -185,6 +186,27 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'videopress_url',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
+					],
+				],
+				'placeholder' => esc_html__( 'Enter your URL', 'elementor' ) . ' (VideoPress)',
+				'default' => 'https://videopress.com/v/Ygmx4akX',
+				'label_block' => true,
+				'condition' => [
+					'video_type' => 'videopress',
+				],
+			]
+		);
+
+		$this->add_control(
 			'insert_url',
 			[
 				'label' => esc_html__( 'External URL', 'elementor' ),
@@ -246,6 +268,9 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'description' => esc_html__( 'Specify a start time (in seconds)', 'elementor' ),
 				'frontend_available' => true,
+				'condition' => [
+					'video_type!' => 'videopress',
+				],
 			]
 		);
 
@@ -298,8 +323,19 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Play On Mobile', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'condition' => [
-					'autoplay' => 'yes',
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'autoplay',
+							'value' => 'yes',
+						],
+						[
+							'name' => 'video_type',
+							'operator' => '!==',
+							'value' => 'videopress',
+						],
+					],
 				],
 				'frontend_available' => true,
 			]
@@ -1129,6 +1165,8 @@ class Widget_Video extends Widget_Base {
 			$params['start'] = $settings['start'];
 
 			$params['endscreen-enable'] = '0';
+		} elseif ( 'videopress' === $settings['video_type'] ) {
+			$params_dictionary = $this->get_params_dictionary_for_videopress();
 		}
 
 		foreach ( $params_dictionary as $key => $param_name ) {
@@ -1144,6 +1182,20 @@ class Widget_Video extends Widget_Base {
 		}
 
 		return $params;
+	}
+
+	/**
+	 * Get the params dictionary for VideoPress videos.
+	 *
+	 * @return array
+	 */
+	private function get_params_dictionary_for_videopress() {
+		return [
+			'controls',
+			'autoplay' => 'autoPlay',
+			'mute' => 'muted',
+			'loop',
+		];
 	}
 
 	/**
@@ -1267,9 +1319,64 @@ class Widget_Video extends Widget_Base {
 		}
 
 		$video_params = $this->get_hosted_params();
-		/* Sometimes the video url is base64, therefore we use `esc_attr` in `src`. */
-		?>
-		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
-		<?php
+
+		if ( ! $this->render_hosted_videopress_video( $video_url, $video_params ) ) {
+			/* Sometimes the video url is base64, therefore we use `esc_attr` in `src`. */
+			?>
+			<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
+			<?php
+		}
 	}
+
+	/**
+	 * VideoPress videos from media library should still use the VideoPress player
+	 * instead of the direct MP4 link.
+	 *
+	 * @param string $video_url
+	 * @param array $video_params
+	 * @return bool
+	 */
+	private function render_hosted_videopress_video( $video_url, $video_params ) {
+		$video_guid = $this->get_videopress_video_guid( $video_url );
+		if ( null === $video_guid ) {
+			return false;
+		}
+
+		$videopress_url = 'https://videopress.com/v/' . $video_guid;
+		$embed_url_params = [];
+		$params_dictionary = $this->get_params_dictionary_for_videopress();
+
+		foreach ( $params_dictionary as $key => $param_name ) {
+			$setting_name = is_string( $key ) ? $key : $param_name;
+			$setting_value = isset( $video_params[ $setting_name ] ) ? '1' : '0';
+			$embed_url_params[ $param_name ] = $setting_value;
+		}
+
+		echo Embed::get_embed_html( $videopress_url, $embed_url_params );
+
+		return true;
+	}
+
+	/**
+	 * Parses a video URL and returns a VideoPress video GUID or null
+	 * if the URL is not a valid VideoPress URL.
+	 *
+	 * @param string $video_url
+	 * @return string|null
+	 */
+	private function get_videopress_video_guid( $video_url ) {
+		$videopress_patterns = [
+			'/^http(?:s)?:\/\/videos\.files\.wordpress\.com\/([a-zA-Z\d]{8,})\//i',
+			'/^.*video(?:\.word)?press\.com\/(?:v|embed)\/([a-zA-Z\d]{8,})(.+)?/',
+		];
+
+		foreach ( $videopress_patterns as $pattern ) {
+			if ( preg_match( $pattern, $video_url, $url_matches ) ) {
+				return $url_matches[1];
+			}
+		}
+
+		return null;
+	}
+
 }

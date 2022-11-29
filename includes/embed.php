@@ -31,6 +31,7 @@ class Embed {
 		'youtube' => '/^.*(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
 		'vimeo' => '/^.*vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
 		'dailymotion' => '/^.*dailymotion.com\/(?:video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/',
+		'videopress' => '/^.*video(?:\.word)?press\.com\/(?:v|embed)\/([a-zA-Z\d]{8,})(.+)?/',
 	];
 
 	/**
@@ -48,6 +49,7 @@ class Embed {
 		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
 		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}#t={TIME}',
 		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
+		'videopress' => 'https://video.wordpress.com/embed/{VIDEO_ID}',
 	];
 
 	/**
@@ -181,7 +183,7 @@ class Embed {
 		if ( ! $video_embed_url ) {
 			return null;
 		}
-		if ( ! $options['lazy_load'] ) {
+		if ( ! isset( $options['lazy_load'] ) || ! $options['lazy_load'] ) {
 			$default_frame_attributes['src'] = $video_embed_url;
 		} else {
 			$default_frame_attributes['data-lazy-load'] = $video_embed_url;
