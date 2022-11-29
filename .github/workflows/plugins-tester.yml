@@ -73,10 +73,6 @@ jobs:
         run: |
             echo "PLUGINS_TESTER__PLUGINS_TO_TEST=${{ github.event.inputs.plugins }}" >> $GITHUB_ENV
             echo "PLUGINS_TESTER__DIFF_THRESHOLD=${{ github.event.inputs.diffThreshold }}" >> $GITHUB_ENV
-      - name: Debug
-        run: |
-            node -e "console.log(process.env)"
-      - run: ls
       - run: cd ./tests/plugins-tester && npm install
       - run: pwd
       - name: Run tests
