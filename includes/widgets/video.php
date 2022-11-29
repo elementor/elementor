@@ -1329,8 +1329,8 @@ class Widget_Video extends Widget_Base {
 	 */
 	private function get_videopress_video_guid( $video_url ) {
 		$videopress_patterns = [
-			'/^http(?:s)?:\/\/videos\.files\.wordpress\.com\/([a-zA-Z\d]{8,})\//i',
-			'/^.*video(?:\.word)?press\.com\/(?:v|embed)\/([a-zA-Z\d]{8,})(.+)?/',
+			'/^(?:http(?:s)?:\/\/)?videos\.files\.wordpress\.com\/([a-zA-Z\d]{8,})\//i',
+			'/^(?:http(?:s)?:\/\/)?video(?:\.word)?press\.com\/(?:v|embed)\/([a-zA-Z\d]{8,})(.+)?/',
 		];
 
 		foreach ( $videopress_patterns as $pattern ) {
