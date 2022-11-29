@@ -84,6 +84,11 @@ export class PluginsTester {
 		this.cmd(`npx wp-env run cli wp rewrite flush --hard`);
 		this.cmd(`npx wp-env run cli wp elementor flush-css`);
 		this.cmd(`npx wp-env run cli wp post list --post_type=page`);
+
+		if (process.env.CI) {
+			// change wp-env folder owner to www-data
+			this.cmd(`sudo chown 33:33 -R ~/wp-env/`);
+		}
 	}
 
 	cleanup() {
