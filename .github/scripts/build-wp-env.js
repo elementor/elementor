@@ -30,7 +30,7 @@ if ( PLUGINS ) {
 }
 
 if ( PORT ) {
-	wpEnv.port = PORT;
+	wpEnv.port = parseInt( PORT );
 }
 
 wpEnv.phpVersion = PHP_VERSION;
