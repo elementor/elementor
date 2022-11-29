@@ -54,10 +54,7 @@ test.describe( 'Nested Tabs tests', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
+		await setup( wpAdmin );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -86,10 +83,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( desktopTabWrapper ).toHaveCSS( 'display', 'none' );
 		await expect( mobileTabActive ).toBeVisible();
 
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-		} );
+		await cleanup( wpAdmin );
 	} );
 
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
@@ -174,10 +168,7 @@ test.describe( 'Nested Tabs tests', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
+		await setup( wpAdmin );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -206,6 +197,34 @@ test.describe( 'Nested Tabs tests', () => {
 		// Assert.
 		await expect( activeTab ).toHaveCSS( 'margin-bottom', '50px' );
 		await expect( lastTab ).toHaveCSS( 'margin-top', '25px' );
+	} );
+
+	test( 'Verify that icon doesn\'t disappear when the tab title is updated', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		// Add tab icons.
+		await setIconsToTabs( page, TabsIcons );
+		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
+		// Update first tab title.
+		await page.locator( '.elementor-repeater-fields:nth-child( 2 ) .elementor-control-tab_title input' ).fill( 'Title change' );
+		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
+
+		// Assert.
+		expect( activeTabSpanCount ).toBe( 3 );
+		expect( activeTabUpdatedSpanCount ).toBe( 3 );
+
+		await cleanup( wpAdmin );
 	} );
 } );
 
@@ -249,6 +268,7 @@ async function setup( wpAdmin ) {
 		'nested-elements': 'active',
 	} );
 }
+
 async function cleanup( wpAdmin ) {
 	await wpAdmin.setExperiments( {
 		container: 'inactive',
