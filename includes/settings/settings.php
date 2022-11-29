@@ -343,7 +343,11 @@ class Settings extends Settings_Page {
 										'1' => esc_html__( 'Enable', 'elementor' ),
 										'' => esc_html__( 'Disable', 'elementor' ),
 									],
-									'desc' => esc_html__( 'Disable this option if you want to use Google Fonts from a different plugin or theme.', 'elementor' ),
+									'desc' => sprintf(
+										esc_html__( 'Disable this option if you want to prevent Google Fonts from being loaded. This setting is recommended when loading fonts from a different source (plugin, theme or %1$scustom fonts%2$s).', 'elementor' ),
+										'<a href="' . admin_url( 'admin.php?page=elementor_custom_fonts' ) . '">',
+										'</a>'
+									),
 								],
 							],
 							'font_display' => [
