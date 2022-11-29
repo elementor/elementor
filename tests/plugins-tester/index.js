@@ -7,9 +7,9 @@ import topPluginsConfig from "./config/plugins.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const logger = new Logger( {
+const logger = new Logger({
 	debug: true,
-} )
+})
 
 /**
  *
@@ -20,8 +20,8 @@ const logger = new Logger( {
  * }}
  * @returns {any}
  */
-const getConfig = ( args ) => {
-	if (process.env[ args.envVar ] ) {
+const getConfig = (args) => {
+	if (process.env[args.envVar]) {
 		args.logger.log('Get config from process.env.' + args.envVar);
 
 		return process.env[args.envVar].split(',');
@@ -30,17 +30,17 @@ const getConfig = ( args ) => {
 	return args.default;
 }
 
-const pluginsToTest = getConfig( {
+const pluginsToTest = getConfig({
 	envVar: 'PLUGINS_TESTER__PLUGINS_TO_TEST',
 	default: topPluginsConfig,
 	logger,
 });
 
-const diffThreshold = getConfig( {
+const diffThreshold = getConfig({
 	envVar: 'PLUGINS_TESTER__DIFF_THRESHOLD',
 	default: 0.05,
 	logger,
-} );
+});
 
 console.log(
 	pluginsToTest.length + ' plugins',
