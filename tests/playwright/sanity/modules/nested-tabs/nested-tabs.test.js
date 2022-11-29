@@ -213,8 +213,8 @@ test.describe( 'Nested Tabs tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
+			container: 'active',
+			'nested-elements': 'active',
 		} );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -239,6 +239,53 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( activeTab ).toHaveCSS( 'color', rgbColor );
 		await notActiveTab.hover();
 		await expect( notActiveTab ).toHaveCSS( 'color', rgbColor );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+		} );
+	} );
+
+	test( 'Check that icon color does not effect text color in active and non-active tabs on hover state', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		// Set icons to tabs.
+		await setIconsToTabs( page, TabsIcons );
+
+		// Set icon hover color.
+		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
+
+		const redColor = 'rgb(255, 0, 0)',
+			whiteColor = 'rgb(255, 255, 255)',
+			activeTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active > .e-n-tab-icon.e-active i' ).first(),
+			activeTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
+			notActiveTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-icon:not(.e-active) i' ).first(),
+			notActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-title-text' ).first();
+
+		// Assert.
+		// Check color differences in active tab.
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon.e-active i' );
+		await activeTabIcon.hover();
+		await expect( activeTabIcon ).toHaveCSS( 'color', redColor );
+		await expect( activeTabTitle ).toHaveCSS( 'color', whiteColor );
+
+		// Check color differences in non active tab.
+		await notActiveTabIcon.hover();
+		await expect( notActiveTabIcon ).toHaveCSS( 'color', redColor );
+		await expect( notActiveTabTitle ).toHaveCSS( 'color', whiteColor );
+
+		await cleanup( wpAdmin );
 	} );
 
 	test( 'Verify the separation of the parent and child nested tabs styling', async ( { page }, testInfo ) => {
@@ -327,3 +374,12 @@ async function cleanup( wpAdmin ) {
 		'nested-elements': 'inactive',
 	} );
 }
+
+async function setTabItemColor( page, editor, panelClass, tabState, colorPickerClass, color ) {
+	await editor.activatePanelTab( 'style' );
+	await page.locator( `.elementor-control-${ panelClass }` ).click();
+	await page.locator( `.elementor-control-${ tabState }` ).click();
+	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
+	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
+}
+
