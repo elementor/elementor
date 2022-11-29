@@ -24,19 +24,9 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Lazy loading images that are not in the viewport improves initial page load performance and user experience. By activating this experiment all background images except the first one on your page will be lazy loaded to improve your LCP score', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		];
-	}
-
-	private function enqueue_scripts() {
-		wp_enqueue_script(
-			'elementor-lazyload',
-			$this->get_js_assets_url( 'lazyload' ),
-			[ 'elementor-frontend' ],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 
 	private function enqueue_styles() {
@@ -73,28 +63,26 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function reduce_background_image_size( $value, $css_property, $matches, $control ) {
-		$is_lazyload_active = Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
-		if ( $is_lazyload_active ) {
-			if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
-				$thumbnail_image_src = wp_get_attachment_image_src( $value['id'], 'thumbnail' );
-				if ( $thumbnail_image_src ) {
-					$value['url'] = $thumbnail_image_src[0];
-				}
-			}
-		}
-		return $value;
-	}
-
 	private function append_lazyload_selector( $control, $value ) {
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
+						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
+						$control = $this->apply_dominant_color_background( $control, $value, $selector );
 					}
 				}
 			}
+		}
+		return $control;
+	}
+
+	private function apply_dominant_color_background( $control, $value, $selector ) {
+		$metadata = wp_get_attachment_metadata( $value['id'] );
+		$dominant_color = Utils::get_array_value_by_keys( $metadata, [ 'dominant_color' ] );
+		if ( $dominant_color ) {
+			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
 		}
 		return $control;
 	}
@@ -105,10 +93,6 @@ class Module extends BaseModule {
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
 			$this->update_element_attributes( $element );
 		} );
-
-		add_filter('elementor/files/css/property', function( $value, $css_property, $matches, $control ) {
-			return $this->reduce_background_image_size( $value, $css_property, $matches, $control );
-		}, 10, 4 );
 
 		add_filter('elementor/files/css/selectors', function( $control, $value ) {
 			return $this->append_lazyload_selector( $control, $value );
@@ -124,7 +108,30 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'wp_footer', function() {
-			$this->enqueue_scripts();
+			?>
+			<script type='text/javascript' defer>
+				document.addEventListener( 'DOMContentLoaded', function() {
+					const dataAttribute = 'data-e-bg-lazyload';
+					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+					entries.forEach( ( entry ) => {
+						if ( entry.isIntersecting ) {
+							let lazyloadBackground = entry.target;
+							const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
+							if ( lazyloadSelector ) {
+								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
+							}
+							lazyloadBackground.classList.add( 'lazyloaded' );
+							lazyloadBackgroundObserver.unobserve( entry.target );
+						}
+					});
+					}, { rootMargin: '100px 0px 100px 0px' } );
+					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+						lazyloadBackgroundObserver.observe( lazyloadBackground );
+					} );
+				} );
+			</script>
+			<?php
 		} );
 
 	}

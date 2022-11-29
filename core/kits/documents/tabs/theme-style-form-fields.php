@@ -134,14 +134,16 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			'form_field_focus_transition_duration',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
-				'default' => [
-					'unit' => 'ms',
-				],
 				'selectors' => [
-					$input_selector => 'transition: {{SIZE}}{{UNIT}}',
+					$input_selector => 'transition: {{SIZE}}ms',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3000,
+					],
 				],
 			]
 		);
