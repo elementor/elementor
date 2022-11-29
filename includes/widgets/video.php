@@ -85,7 +85,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion', 'videopress' ];
+		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion' ];
 	}
 
 	/**
@@ -114,7 +114,6 @@ class Widget_Video extends Widget_Base {
 					'youtube' => esc_html__( 'YouTube', 'elementor' ),
 					'vimeo' => esc_html__( 'Vimeo', 'elementor' ),
 					'dailymotion' => esc_html__( 'Dailymotion', 'elementor' ),
-					'videopress' => esc_html__( 'VideoPress', 'videopress' ),
 					'hosted' => esc_html__( 'Self Hosted', 'elementor' ),
 				],
 				'frontend_available' => true,
@@ -186,27 +185,6 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'videopress_url',
-			[
-				'label' => esc_html__( 'Link', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
-					'active' => true,
-					'categories' => [
-						TagsModule::POST_META_CATEGORY,
-						TagsModule::URL_CATEGORY,
-					],
-				],
-				'placeholder' => esc_html__( 'Enter your URL', 'elementor' ) . ' (VideoPress)',
-				'default' => 'https://videopress.com/v/Ygmx4akX',
-				'label_block' => true,
-				'condition' => [
-					'video_type' => 'videopress',
-				],
-			]
-		);
-
-		$this->add_control(
 			'insert_url',
 			[
 				'label' => esc_html__( 'External URL', 'elementor' ),
@@ -268,9 +246,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'description' => esc_html__( 'Specify a start time (in seconds)', 'elementor' ),
 				'frontend_available' => true,
-				'condition' => [
-					'video_type!' => 'videopress',
-				],
 			]
 		);
 
@@ -1154,8 +1129,6 @@ class Widget_Video extends Widget_Base {
 			$params['start'] = $settings['start'];
 
 			$params['endscreen-enable'] = '0';
-		} elseif ( 'videopress' === $settings['video_type'] ) {
-			$params_dictionary = $this->get_params_dictionary_for_videopress();
 		}
 
 		foreach ( $params_dictionary as $key => $param_name ) {
@@ -1171,21 +1144,6 @@ class Widget_Video extends Widget_Base {
 		}
 
 		return $params;
-	}
-
-	/**
-	 * Get the params dictionary for VideoPress videos.
-	 *
-	 * @return array
-	 */
-	private function get_params_dictionary_for_videopress() {
-		return [
-			'controls',
-			'autoplay' => 'autoPlay',
-			'mute' => 'muted',
-			'loop',
-			'play_on_mobile' => 'playsinline',
-		];
 	}
 
 	/**
@@ -1316,6 +1274,21 @@ class Widget_Video extends Widget_Base {
 			<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 			<?php
 		}
+	}
+
+	/**
+	 * Get the params dictionary for VideoPress videos.
+	 *
+	 * @return array
+	 */
+	private function get_params_dictionary_for_videopress() {
+		return [
+			'controls',
+			'autoplay' => 'autoPlay',
+			'mute' => 'muted',
+			'loop',
+			'play_on_mobile' => 'playsinline',
+		];
 	}
 
 	/**
