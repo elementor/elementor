@@ -208,6 +208,39 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( lastTab ).toHaveCSS( 'margin-top', '25px' );
 	} );
 
+	test( 'Check that active and non-active tabs color changes on hover', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+		} );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.elementor-control-section_title_style' ).click();
+		await page.locator( '.elementor-control-title_hover' ).click();
+		await page.locator( '.elementor-control-title_text_color_hover .pcr-button' ).click();
+		await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', '#ff0000' );
+
+		const rgbColor = 'rgb(255, 0, 0)';
+		const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
+			notActiveTab = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active)' ).first();
+
+		await activeTab.hover();
+		await expect( activeTab ).toHaveCSS( 'color', rgbColor );
+		await notActiveTab.hover();
+		await expect( notActiveTab ).toHaveCSS( 'color', rgbColor );
+	} );
+
 	test( 'Verify the separation of the parent and child nested tabs styling', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
