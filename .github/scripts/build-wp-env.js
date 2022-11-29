@@ -31,6 +31,7 @@ if ( PLUGINS ) {
 
 if ( PORT ) {
 	wpEnv.port = parseInt( PORT );
+	wpEnv.testsPort = wpEnv.port + 1;
 }
 
 wpEnv.phpVersion = PHP_VERSION;
