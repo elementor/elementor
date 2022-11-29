@@ -50,6 +50,7 @@ console.log(
 );
 
 new PluginsTester({
+	runServer: process.env.CI !== 'github',
 	debug: true,
 	pluginsToTest,
 	diffThreshold,

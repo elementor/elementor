@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 const wpEnv = require('../../.wp-env.json');
-const { PHP_VERSION, WP_CORE_VERSION } = process.env;
+const { PHP_VERSION, WP_CORE_VERSION, PLUGINS, PORT } = process.env;
 
 if (!PHP_VERSION) {
 	console.error('missing env var PHP_VERSION');
@@ -21,6 +21,16 @@ let wpCore = null;
 
 if (WP_CORE_VERSION !== 'latest') {
 	wpCore = `WordPress/WordPress#${WP_CORE_VERSION}`;
+}
+
+if ( PLUGINS ) {
+	PLUGINS.split( ',' ).forEach( ( plugin ) => {
+		wpEnv.plugins.push( plugin );
+	} );
+}
+
+if ( PORT ) {
+	wpEnv.port = PORT;
 }
 
 wpEnv.phpVersion = PHP_VERSION;

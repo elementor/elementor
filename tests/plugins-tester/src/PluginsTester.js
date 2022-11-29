@@ -1,23 +1,28 @@
 import {execSync} from "child_process";
 
 export class PluginsTester {
-	debug = false;
-	pluginsToTest = [];
-	pwd = '';
-	logger;
+	options = {
+		runServer: true,
+		debug: false,
+		pluginsToTest: [],
+		pwd: '',
+		logger
+	};
 
 	constructor(options) {
-		Object.entries(options).forEach(([key, value]) => {
-			this[key] = value;
-		});
+		Object.assign(this.options, options);
 
 		this.run();
 	}
 
 	async run() {
 		this.setPwd();
-		this.runServer();
-		this.prepareTestSite();
+
+		if (this.options.runServer) {
+			this.runServer();
+			this.prepareTestSite();
+		}
+
 		this.checkPlugins();
 	}
 
@@ -35,7 +40,7 @@ export class PluginsTester {
 
 	checkPlugins() {
 		const errors = [];
-		this.pluginsToTest.forEach( (slug) => {
+		this.pluginsToTest.forEach((slug) => {
 			this.cmd(`npx wp-env run cli wp plugin install ${slug} --activate`);
 			this.cmd(`npx wp-env run cli wp plugin activate ${slug}`);
 			this.cmd(`npx wp-env run cli wp plugin list`);
@@ -84,11 +89,6 @@ export class PluginsTester {
 		this.cmd(`npx wp-env run cli wp rewrite flush --hard`);
 		this.cmd(`npx wp-env run cli wp elementor flush-css`);
 		this.cmd(`npx wp-env run cli wp post list --post_type=page`);
-
-		if (process.env.CI) {
-			// change wp-env folder owner to www-data
-			this.cmd(`sudo chown 33:33 -R ~/wp-env/`);
-		}
 	}
 
 	cleanup() {

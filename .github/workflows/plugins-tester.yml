@@ -11,7 +11,7 @@ on:
         type: string
         description: 'Ignore mismatch threshold'
         required: false
-        default: '0.01'
+        default: '0.05'
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -73,8 +73,12 @@ jobs:
         run: |
             echo "PLUGINS_TESTER__PLUGINS_TO_TEST=${{ github.event.inputs.plugins }}" >> $GITHUB_ENV
             echo "PLUGINS_TESTER__DIFF_THRESHOLD=${{ github.event.inputs.diffThreshold }}" >> $GITHUB_ENV
+      - name: Run wp-env
+        uses: ./.github/workflows/run-wp-env
+        with:
+          PLUGINS: './tests/plugins-tester/plugins/elementor-tests-utils'
+          PORT: '7777'
       - run: cd ./tests/plugins-tester && npm install
-      - run: pwd
       - name: Run tests
         run: cd ./tests/plugins-tester && npm test
       - uses: actions/upload-artifact@v2
@@ -82,4 +86,10 @@ jobs:
         with:
           name: results
           path: results/
+          retention-days: 14
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: reports
+          path: reports/
           retention-days: 14
