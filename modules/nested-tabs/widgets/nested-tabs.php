@@ -471,8 +471,17 @@ class NestedTabs extends Widget_Nested_Base {
 				'exclude' => [ 'image' ],
 				'selector' => '{{WRAPPER}} .e-n-tab-title:hover',
 				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
 					'color' => [
+						'global' => [
+							'default' => Global_Colors::COLOR_ACCENT,
+						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'selectors' => [
+							'{{WRAPPER}} .e-n-tab-title:hover' => 'background: {{VALUE}}',
+						],
 					],
 				],
 			]
@@ -536,7 +545,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_active',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active:not(:hover)',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -546,6 +555,9 @@ class NestedTabs extends Widget_Nested_Base {
 							'default' => Global_Colors::COLOR_ACCENT,
 						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'selectors' => [
+							'{{WRAPPER}} .e-n-tab-title.e-active:not(:hover)' => 'background: {{VALUE}}',
+						],
 					],
 				],
 			]
@@ -555,7 +567,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_active',
-				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active:not(:hover)',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -572,7 +584,7 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'tabs_title_box_shadow_active',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
-				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active:not(:hover)',
 			]
 		);
 
@@ -744,7 +756,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_active',
-				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active:not(:hover)',
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -757,7 +769,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_active',
-				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active',
+				'selector' => '{{WRAPPER}} .e-n-tab-title.e-active:not(:hover)',
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
