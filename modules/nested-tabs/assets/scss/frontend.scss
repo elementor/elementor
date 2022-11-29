@@ -1,5 +1,5 @@
 //
-// Tabs v2
+// Nested Tabs
 //
 .elementor-widget-n-tabs {
 	--n-tabs-color-accent-fallback: #61CE70;
@@ -30,11 +30,13 @@
 	--n-tabs-content-border-radius: initial;
 
 	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-title-color-hover: #{$white};
 	--n-tabs-title-background-color: #{$editor-background-light};
 	--n-tabs-title-color-active: #{$white};
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
+	--n-tabs-title-font-size: 1rem;
 
 	--n-tabs-title-justify-content: center;
 	--n-tabs-title-align-items: center;
@@ -50,7 +52,6 @@
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};
-	--n-tabs-icon-size: initial;
 	--n-tabs-icon-gap: 5px;
 
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
@@ -71,12 +72,12 @@
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
 		}
-	
+
 		&-content {
 			flex-grow: 1;
 			padding: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
-		}	
+		}
 	}
 
 	.e-n-tab {
@@ -95,7 +96,7 @@
 			outline: none;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
-			padding-bottom: var( --n-tabs-title-padding-bottom ); 
+			padding-bottom: var( --n-tabs-title-padding-bottom );
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
 			transition: all var( --n-tabs-title-transition );
@@ -103,13 +104,18 @@
 			width: var( --n-tabs-title-width );
 
 			&-text {
-				width: 100%;
+				display: flex;
+			  	align-items: center;
+			  	font-size: var( --n-tabs-title-font-size );
 			}
 
 			&:hover {
-				background-color: var( --n-tabs-title-background-color-hover, var( --n-tabs-title-background-color ) );
-				transition: all var( --n-tabs-title-transition );
-				color: var( --n-tabs-icon-color-hover );
+
+				&,
+				&.e-active{
+					transition: all var( --n-tabs-title-transition );
+					color: var( --n-tabs-title-color-hover );
+				}
 
 				.e-n-tab-icon {
 					> i {
@@ -123,7 +129,7 @@
 			}
 
 			.e-n-tab-icon {
-				display: flex;
+				align-items: center;
 
 				> i {
 					color: var( --n-tabs-icon-color );
@@ -137,12 +143,12 @@
 				&.e-active {
 
 					> i {
-						font-size: var( --n-tabs-icon-size );
+						font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					}
 
 					svg {
-						width: var( --n-tabs-icon-size );
-						height: var( --n-tabs-icon-size );
+						width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+						height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					}
 
 					&:empty {
@@ -186,6 +192,17 @@
 	.e-n-tabs-content {
 		border: 1px none var( --n-tabs-border-color );
 		border-width: var( --n-tabs-border-width );
+
+		.e-collapse {
+
+			&:not(:first-child) {
+				  margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+				  margin-bottom: var( --n-tabs-gap );
+			}
+		}
 	}
 
 	.e-n-tabs-content > .e-con:not(.e-active) {
@@ -194,24 +211,65 @@
 }
 
 // Responsive mode
-// This code needs to be updated in the Responsive Tabs section task
-@media (max-width: $screen-mobile-max) {
-	.e-n-tabs {
+@mixin hide-normal-tabs-($device) {
+	.e-n-tabs-#{$device} {
 
-		.e-n-tabs-heading {
+		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
 			display: none;
 		}
 	}
 }
 
-@media (min-width: $screen-mobile-next) {
-	.elementor-widget-n-tabs {
+@mixin hide-collapse-tabs-($device) {
+	.e-n-tabs-#{$device} {
 
-		.e-n-tabs {
-			
-			.e-collapse {
-				display: none;
-			}
+		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
+			display: none;
 		}
 	}
+}
+
+// Mobile.
+@media (min-width: $screen-mobile-next) {
+	@include hide-collapse-tabs-(mobile);
+}
+
+@media (max-width: $screen-mobile-max) {
+	@include hide-normal-tabs-(mobile);
+}
+
+// Mobile Extra.
+@media (min-width: $screen-mobile-extra-next) {
+	@include hide-collapse-tabs-(mobile_extra);
+}
+
+@media (max-width: $screen-mobile-extra-max) {
+	@include hide-normal-tabs-(mobile_extra);
+}
+
+// Tablet.
+@media (min-width: $screen-tablet-next) {
+	@include hide-collapse-tabs-(tablet);
+}
+
+@media (max-width: $screen-tablet-max) {
+	@include hide-normal-tabs-(tablet);
+}
+
+// Tablet Extra.
+@media (min-width: $screen-tablet-extra-next) {
+	@include hide-collapse-tabs-(tablet_extra);
+}
+
+@media (max-width: $screen-tablet-extra-max) {
+	@include hide-normal-tabs-(tablet_extra);
+}
+
+// Laptop.
+@media (min-width: $screen-desktop-min) {
+	@include hide-collapse-tabs-(laptop);
+}
+
+@media (max-width: $screen-laptop-max) {
+	@include hide-normal-tabs-(laptop);
 }
