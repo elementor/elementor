@@ -1,6 +1,8 @@
 .lazyloaded:not( .elementor-motion-effects-element-type-background ),
 .lazyloaded > .elementor-motion-effects-container > .elementor-motion-effects-layer,
 .lazyloaded > [class *= "-wrap"] > .elementor-motion-effects-container > .elementor-motion-effects-layer,
-body.e-lazyload .lazyloaded, body.e-lazyload .lazyloaded .elementor-background-overlay {
+body.e-lazyload .lazyloaded, body.e-lazyload .lazyloaded .elementor-background-overlay,
+// support for container overlay
+body.e-lazyload .e-con.lazyloaded::before {
     --e-bg-lazyload-loaded: var(--e-bg-lazyload);
 }
