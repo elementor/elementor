@@ -323,19 +323,8 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Play On Mobile', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'conditions' => [
-					'relation' => 'and',
-					'terms' => [
-						[
-							'name' => 'autoplay',
-							'value' => 'yes',
-						],
-						[
-							'name' => 'video_type',
-							'operator' => '!==',
-							'value' => 'videopress',
-						],
-					],
+				'condition' => [
+					'autoplay' => 'yes',
 				],
 				'frontend_available' => true,
 			]
@@ -1195,6 +1184,7 @@ class Widget_Video extends Widget_Base {
 			'autoplay' => 'autoPlay',
 			'mute' => 'muted',
 			'loop',
+			'play_on_mobile' => 'playsinline',
 		];
 	}
 
@@ -1343,7 +1333,7 @@ class Widget_Video extends Widget_Base {
 		}
 
 		$videopress_url = 'https://videopress.com/v/' . $video_guid;
-		$embed_url_params = [];
+		$embed_url_params = [ 'preloadContent' => $video_params['preload'] ];
 		$params_dictionary = $this->get_params_dictionary_for_videopress();
 
 		foreach ( $params_dictionary as $key => $param_name ) {

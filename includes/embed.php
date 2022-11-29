@@ -49,7 +49,7 @@ class Embed {
 		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
 		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}#t={TIME}',
 		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
-		'videopress' => 'https://video.wordpress.com/embed/{VIDEO_ID}',
+		'videopress' => 'https://videopress.com/embed/{VIDEO_ID}',
 	];
 
 	/**
