@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor_Loader;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -34,6 +36,13 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 	</script>
 </head>
 <body class="<?php echo esc_attr( implode( ' ', $body_classes ) ); ?>">
+<?php
+if ( isset( $editor_version ) && $editor_version === Editor_Loader::VERSION_2 ) {
+	?>
+		<div id="elementor-editor-app"></div>
+	<?php
+}
+?>
 <div id="elementor-editor-wrapper">
 	<div id="elementor-panel" class="elementor-panel"></div>
 	<div id="elementor-preview">

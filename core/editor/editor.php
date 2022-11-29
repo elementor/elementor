@@ -74,6 +74,11 @@ class Editor {
 	public $promotion;
 
 	/**
+	 * @var Editor_Loader
+	 */
+	private $loader;
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
@@ -90,6 +95,11 @@ class Editor {
 		if ( empty( $_REQUEST['post'] ) ) {
 			return;
 		}
+
+		$this->loader = new Editor_Loader(
+			$_REQUEST['post'],
+			$_REQUEST['v'] ?? null
+		);
 
 		$this->set_post_id( absint( $_REQUEST['post'] ) );
 
@@ -160,7 +170,7 @@ class Editor {
 
 		do_action( 'elementor/editor/init' );
 
-		$this->print_editor_template();
+		$this->loader->print_root_template();
 
 		// From the action it's an empty string, from tests its `false`
 		if ( false !== $die ) {
@@ -311,18 +321,6 @@ class Editor {
 	}
 
 	/**
-	 * Print Editor Template.
-	 *
-	 * Include the wrapper template of the editor.
-	 *
-	 * @since 2.2.0
-	 * @access public
-	 */
-	public function print_editor_template() {
-		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
-	}
-
-	/**
 	 * Enqueue scripts.
 	 *
 	 * Registers all the editor scripts and enqueues them.
@@ -341,164 +339,9 @@ class Editor {
 		$wp_styles = new \WP_Styles(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wp_scripts = new \WP_Scripts(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
+		$suffix = Utils::is_script_debug() || Utils::is_elementor_tests() ? '' : '.min';
 
-		wp_register_script(
-			'elementor-editor-modules',
-			ELEMENTOR_ASSETS_URL . 'js/editor-modules' . $suffix . '.js',
-			[
-				'elementor-common-modules',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_register_script(
-			'elementor-editor-document',
-			ELEMENTOR_ASSETS_URL . 'js/editor-document' . $suffix . '.js',
-			[
-				'elementor-common-modules',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-		// Hack for waypoint with editor mode.
-		wp_register_script(
-			'elementor-waypoints',
-			ELEMENTOR_ASSETS_URL . 'lib/waypoints/waypoints-for-editor.js',
-			[
-				'jquery',
-			],
-			'4.0.2',
-			true
-		);
-
-		wp_register_script(
-			'perfect-scrollbar',
-			ELEMENTOR_ASSETS_URL . 'lib/perfect-scrollbar/js/perfect-scrollbar' . $suffix . '.js',
-			[],
-			'1.4.0',
-			true
-		);
-
-		wp_register_script(
-			'jquery-easing',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-easing/jquery-easing' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'1.3.2',
-			true
-		);
-
-		wp_register_script(
-			'nprogress',
-			ELEMENTOR_ASSETS_URL . 'lib/nprogress/nprogress' . $suffix . '.js',
-			[],
-			'0.2.0',
-			true
-		);
-
-		wp_register_script(
-			'tipsy',
-			ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
-			'jquery-elementor-select2',
-			ELEMENTOR_ASSETS_URL . 'lib/e-select2/js/e-select2.full' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'4.0.6-rc.1',
-			true
-		);
-
-		wp_register_script(
-			'flatpickr',
-			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'1.12.0',
-			true
-		);
-
-		wp_register_script(
-			'ace',
-			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js',
-			[],
-			'1.2.5',
-			true
-		);
-
-		wp_register_script(
-			'ace-language-tools',
-			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ext-language_tools.js',
-			[
-				'ace',
-			],
-			'1.2.5',
-			true
-		);
-
-		wp_register_script(
-			'jquery-hover-intent',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
-			'nouislider',
-			ELEMENTOR_ASSETS_URL . 'lib/nouislider/nouislider' . $suffix . '.js',
-			[],
-			'13.0.0',
-			true
-		);
-
-		wp_register_script(
-			'pickr',
-			ELEMENTOR_ASSETS_URL . 'lib/pickr/pickr.min.js',
-			[],
-			'1.5.0',
-			true
-		);
-
-		wp_register_script(
-			'elementor-editor',
-			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
-			[
-				'elementor-common',
-				'elementor-editor-modules',
-				'elementor-editor-document',
-				'wp-auth-check',
-				'jquery-ui-sortable',
-				'jquery-ui-resizable',
-				'perfect-scrollbar',
-				'nprogress',
-				'tipsy',
-				'imagesloaded',
-				'heartbeat',
-				'jquery-elementor-select2',
-				'flatpickr',
-				'ace',
-				'ace-language-tools',
-				'jquery-hover-intent',
-				'nouislider',
-				'pickr',
-				'react',
-				'react-dom',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
+		$this->loader->register_scripts();
 
 		/**
 		 * Before editor enqueue scripts.
@@ -616,7 +459,7 @@ class Editor {
 
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
-		wp_enqueue_script( 'elementor-editor' );
+		$this->loader->enqueue_scripts();
 
 		wp_set_script_translations( 'elementor-editor', 'elementor' );
 
