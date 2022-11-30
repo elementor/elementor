@@ -84,14 +84,8 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: results
-          path: results/
-          retention-days: 14
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
           name: reports
-          path: reports/
+          path: ./tests/plugins-tester/reports/
           retention-days: 14
       - uses: actions/upload-artifact@v2
         if: always()
