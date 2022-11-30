@@ -299,6 +299,7 @@ class Widget_Image_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
+		);
 
 		$this->add_control(
 			'hover_animation',
