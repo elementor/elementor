@@ -78,6 +78,7 @@ jobs:
         with:
           PLUGINS: './tests/plugins-tester/plugins/elementor-tests-utils'
           PORT: '7777'
+      - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
         run: cd ./tests/plugins-tester && npm test
