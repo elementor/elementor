@@ -14,5 +14,5 @@
     },
     "config": {
         "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
-	}
+    }
 }
