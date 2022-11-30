@@ -51,7 +51,7 @@ export class PluginsTester {
 			this.runWP(`npx wp-env run cli wp plugin install ${slug} --activate`);
 
 			try {
-				this.cmd(`node ./scripts/run-backstop.js --slug=${slug}`);
+				this.cmd(`node ./scripts/run-backstop.js --slug=${slug} --diffThreshold=${this.options.diffThreshold}`);
 			} catch (error) {
 				this.options.logger.error(error);
 				errors.push({

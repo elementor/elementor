@@ -15,7 +15,7 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
 }, {});
 
 // Config
-const {slug} = args;
+const {slug, diffThreshold} = args;
 
 const backstopConfig = Object.assign(config, {
 	"paths": {
@@ -25,6 +25,10 @@ const backstopConfig = Object.assign(config, {
 		"html_report": 'reports/' + slug + "/backstop_data/html_report",
 		"ci_report": 'reports/' + slug + "/backstop_data/ci_report"
 	},
+});
+
+backstopConfig.scenarios.forEach((scenario) => {
+	scenario.misMatchThreshold = diffThreshold;
 });
 
 // Run test
