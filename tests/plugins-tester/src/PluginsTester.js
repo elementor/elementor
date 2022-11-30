@@ -10,8 +10,6 @@ export class PluginsTester {
 	};
 
 	constructor(options) {
-		console.log(this.options, options);
-
 		Object.assign(this.options, options);
 
 		this.run();
@@ -42,13 +40,9 @@ export class PluginsTester {
 
 	runWP(cmd) {
 		if ( ! this.options.runServer ) {
-			this.cmd(`cd ${ process.env.PWD }`);
-		}
-
-		this.cmd(`${cmd}`);
-
-		if ( ! this.options.runServer ) {
-			this.setPwd();
+			this.cmd(`cd ${ process.env.PWD } && ${cmd}`);
+		} else {
+			this.cmd(cmd);
 		}
 	}
 
