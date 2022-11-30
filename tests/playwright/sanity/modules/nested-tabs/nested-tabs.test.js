@@ -283,6 +283,7 @@ test.describe( 'Nested Tabs tests', () => {
 		// Add tab icons.
 		await setIconsToTabs( page, TabsIcons );
 		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
+
 		// Update first tab title.
 		await page.locator( '.elementor-repeater-fields:nth-child( 2 ) .elementor-control-tab_title input' ).fill( 'Title change' );
 		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
