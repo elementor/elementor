@@ -30,6 +30,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
+		if ( this.isCustomUnit() ) {
+			return;
+		}
+
 		this.destroySlider();
 
 		const isMultiple = this.isMultiple(),
@@ -42,6 +46,9 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			sizes = Object.values( sizes );
 		} else {
 			sizes = [ sizes ];
+
+			// Make sure the value is a number, because the slider can't handle strings.
+			sizes[ 0 ] = parseFloat( sizes[ 0 ] ) || 0;
 
 			this.ui.input.attr( unitRange );
 		}
@@ -78,9 +85,13 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	applySavedValue() {
 		ControlBaseUnitsItemView.prototype.applySavedValue.apply( this, arguments );
 		// Slider does not exist in tests.
-		if ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider ) {
+		if ( this.isSliderInitialized() ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		}
+	},
+
+	isSliderInitialized() {
+		return ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider );
 	},
 
 	getSize() {
@@ -135,10 +146,27 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	onInputChange( event ) {
 		var dataChanged = event.currentTarget.dataset.setting;
 
-		if ( 'size' === dataChanged ) {
+		if ( 'size' === dataChanged && this.isSliderInitialized() ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		} else if ( 'unit' === dataChanged ) {
 			this.resetSize();
+		}
+	},
+
+	updateUnitChoices() {
+		ControlBaseUnitsItemView.prototype.updateUnitChoices.apply( this, arguments );
+
+		let inputType = 'number';
+
+		if ( this.isCustomUnit() ) {
+			inputType = 'text';
+			this.destroySlider();
+		} else {
+			this.initSlider();
+		}
+
+		if ( ! this.isMultiple() ) {
+			this.ui.input.attr( 'type', inputType );
 		}
 	},
 
