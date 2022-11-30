@@ -48,14 +48,8 @@ export class PluginsTester {
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach((slug) => {
-			this.cmd(`echo pwd`);
-			this.cmd(`curl http:/localhost:7777/law-firm-about/?elementor`);
-
 			this.runWP(`npx wp-env run cli wp plugin install ${slug} --activate`);
 
-			const siteUrl = this.cmd(`npx wp-env run cli wp option get siteurl`).trim();
-			// Some plugins have a welcome message for the first time.
-			this.cmd(`curl http:/localhost:7777/law-firm-about/?elementor`);
 			try {
 				this.cmd(`node ./scripts/run-backstop.js --slug=${slug}`);
 			} catch (error) {
