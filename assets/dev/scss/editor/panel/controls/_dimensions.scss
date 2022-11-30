@@ -22,14 +22,13 @@
 		}
 
 		input {
-			border-left: none;
+			@include border-start(none);
 			border-radius: 0;
 			padding: 3px;
 
 			&:focus {
-				border-left: solid 1px;
-				border-color: $editor-light;
-				margin-left: -1px;
+				@include border-start(1px solid $editor-light);
+				@include margin-start(-1px);
 				width: calc(100% + 1px);
 
 				+ .elementor-control-dimension-label {
@@ -40,23 +39,23 @@
 
 		.elementor-link-dimensions {
 			border: 1px solid $editor-lightest;
-			border-left: none;
+			@include border-start(none);
 			background-color: #fff;
 			padding: 0;
 			outline: none;
-			border-radius: 0 3px 3px 0;
+			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 			cursor: pointer;
 		}
 
 		&:first-child {
 
 			input {
-				border-left: 1px solid $editor-lightest;
-				border-radius: 3px 0 0 3px;
+				@include border-start(1px solid $editor-lightest);
+				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 
 				&:focus {
 					border-color: $editor-light;
-					margin-left: 0;
+					@include margin-start(0);
 					width: 100%;
 				}
 			}
