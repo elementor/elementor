@@ -11,15 +11,6 @@ const logger = new Logger({
 	debug: true,
 })
 
-/**
- *
- * @param args {{
- *     envVar: string,
- *     default: any,
- *     logger
- * }}
- * @returns {any}
- */
 const getConfig = (args) => {
 	if (process.env[args.envVar]) {
 		args.logger.log('Get config from process.env.' + args.envVar);
@@ -50,7 +41,7 @@ console.log(
 );
 
 new PluginsTester({
-	runServer: ! process.env.CI,
+	runServer: !process.env.CI,
 	debug: true,
 	pluginsToTest,
 	diffThreshold,

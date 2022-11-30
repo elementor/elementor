@@ -92,9 +92,4 @@ export class PluginsTester {
 		this.cmd(`npx wp-env run cli wp elementor flush-css`);
 		this.cmd(`npx wp-env run cli wp post list --post_type=page`);
 	}
-
-	cleanup() {
-		// Cleanup old reports
-		// fs.rmSync( __dirname + '/reports/', { recursive: true, force: true } );
-	}
 }
