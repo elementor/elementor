@@ -93,3 +93,9 @@ jobs:
           name: reports
           path: reports/
           retention-days: 14
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: results
+          path: ./tests/plugins-tester/results/
+          retention-days: 14
