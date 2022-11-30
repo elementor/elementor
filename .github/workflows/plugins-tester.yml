@@ -80,7 +80,7 @@ jobs:
           PORT: '7777'
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
-        run: cd ./tests/plugins-tester && npm test
+        run: node ./tests/plugins-tester/index.js
       - uses: actions/upload-artifact@v2
         if: always()
         with:
