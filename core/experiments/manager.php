@@ -413,7 +413,10 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			if ( ! $feature['mutable'] || $feature[ static::TYPE_HIDDEN ] ) {
+			$is_hidden = $feature[ static::TYPE_HIDDEN ];
+			$is_mutable = $feature['mutable'];
+
+			if ( ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() ) ) {
 				unset( $features[ $feature_name ] );
 
 				continue;
@@ -773,6 +776,10 @@ class Manager extends Base_Object {
 				}
 			}
 		}
+	}
+
+	private function should_show_hidden() {
+		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
 	}
 
 	public function __construct() {
