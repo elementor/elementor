@@ -10,6 +10,8 @@ export class PluginsTester {
 	};
 
 	constructor(options) {
+		console.log(this.options, options);
+
 		Object.assign(this.options, options);
 
 		this.run();

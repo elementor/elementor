@@ -49,6 +49,8 @@ console.log(
 	diffThreshold,
 );
 
+console.log(process.env.CI, 'process.env.CI')
+
 new PluginsTester({
 	runServer: !! process.env.CI,
 	debug: true,
