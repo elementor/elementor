@@ -212,7 +212,7 @@
 @mixin hide-normal-tabs-($device) {
 	.e-n-tabs-#{$device} {
 
-		.e-n-tabs-heading {
+		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
 			display: none;
 		}
 	}
@@ -221,7 +221,7 @@
 @mixin hide-collapse-tabs-($device) {
 	.e-n-tabs-#{$device} {
 
-		.e-collapse {
+		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
 			display: none;
 		}
 	}
