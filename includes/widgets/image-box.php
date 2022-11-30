@@ -261,7 +261,7 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'range' => [
 					'%' => [
-						'min' => 1,
+						'min' => 5,
 						'max' => 100,
 					],
 					'px' => [
