@@ -46,7 +46,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			sizes = Object.values( sizes );
 		} else {
 			sizes = [ sizes ];
-			sizes[0] = parseFloat( sizes[0] ) || 0;
+			sizes[ 0 ] = parseFloat( sizes[ 0 ] ) || 0;
 
 			this.ui.input.attr( unitRange );
 		}

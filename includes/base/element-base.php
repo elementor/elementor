@@ -771,9 +771,9 @@ abstract class Element_Base extends Controls_Stack {
 		$transform_selector_class = ' > .elementor-widget-container';
 		$transform_css_modifier = '';
 
-		if ( 'container' === $element_selector ) {
-			$transform_selector_class = '.e-con';
-			$transform_css_modifier = 'con-';
+		if ( 'con' === $element_selector ) {
+			$transform_selector_class = '.e-' . $element_selector;
+			$transform_css_modifier = $element_selector . '-';
 		}
 
 		foreach ( [ '', '_hover' ] as $tab ) {
