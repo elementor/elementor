@@ -63,7 +63,7 @@ export class PluginsTester {
 			this.runWP(`npx wp-env run cli wp plugin deactivate ${slug}`);
 		});
 
-		this.options.error('errors:', errors);
+		this.options.logger.error('errors:', errors);
 
 		if (errors.length) {
 			process.exit(1);
