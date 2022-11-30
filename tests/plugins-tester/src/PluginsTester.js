@@ -16,9 +16,8 @@ export class PluginsTester {
 	}
 
 	async run() {
-		this.setPwd();
-
 		if (this.options.runServer) {
+			this.setPwd();
 			this.runServer();
 			this.prepareTestSite();
 		}
@@ -40,9 +39,9 @@ export class PluginsTester {
 
 	runWP(cmd) {
 		if ( ! this.options.runServer ) {
-			this.cmd(`cd ../../../ && ${cmd}`);
+			return this.cmd(`cd ../../ && ${cmd}`);
 		} else {
-			this.cmd(cmd);
+			return this.cmd(cmd);
 		}
 	}
 
@@ -50,9 +49,7 @@ export class PluginsTester {
 		const errors = [];
 		this.options.pluginsToTest.forEach((slug) => {
 			this.runWP(`npx wp-env run cli wp plugin install ${slug} --activate`);
-			this.cmd(`npx wp-env run cli wp plugin activate ${slug}`);
-			this.cmd(`npx wp-env run cli wp plugin list`);
-			// get wp site url
+
 			const siteUrl = this.cmd(`npx wp-env run cli wp option get siteurl`).trim();
 			// Some plugins have a welcome message for the first time.
 			this.cmd(`curl ${siteUrl}/law-firm-about/?elementor`);
@@ -66,7 +63,7 @@ export class PluginsTester {
 				});
 			}
 
-			this.cmd(`npx wp-env run cli wp plugin deactivate ${slug}`);
+			this.runWP(`npx wp-env run cli wp plugin deactivate ${slug}`);
 		});
 
 		this.options.error('errors:', errors);
