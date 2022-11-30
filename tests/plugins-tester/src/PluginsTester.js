@@ -40,10 +40,18 @@ export class PluginsTester {
 		}
 	};
 
+	npx(cmd) {
+		if ( this.options.runServer ) {
+			this.cmd(`npx ${cmd}`);
+		} else {
+			this.cmd(`${cmd}`);
+		}
+	}
+
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach((slug) => {
-			this.cmd(`npx wp-env run cli wp plugin install ${slug} --activate`);
+			this.npx(`wp-env run cli wp plugin install ${slug} --activate`);
 			this.cmd(`npx wp-env run cli wp plugin activate ${slug}`);
 			this.cmd(`npx wp-env run cli wp plugin list`);
 			// get wp site url
