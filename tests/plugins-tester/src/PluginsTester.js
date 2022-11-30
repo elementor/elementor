@@ -40,18 +40,22 @@ export class PluginsTester {
 		}
 	};
 
-	npx(cmd) {
-		if ( this.options.runServer ) {
-			this.cmd(`npx ${cmd}`);
-		} else {
-			this.cmd(`${cmd}`);
+	runWP(cmd) {
+		if ( ! this.options.runServer ) {
+			this.cmd(`cd ${ process.env.PWD }`);
+		}
+
+		this.cmd(`${cmd}`);
+
+		if ( ! this.options.runServer ) {
+			this.setPwd();
 		}
 	}
 
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach((slug) => {
-			this.npx(`wp-env run cli wp plugin install ${slug} --activate`);
+			this.runWP(`npx wp-env run cli wp plugin install ${slug} --activate`);
 			this.cmd(`npx wp-env run cli wp plugin activate ${slug}`);
 			this.cmd(`npx wp-env run cli wp plugin list`);
 			// get wp site url
