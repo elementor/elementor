@@ -251,7 +251,7 @@ class Widget_Image_Box extends Widget_Base {
 				'size_units' => [ '%', 'px', 'vw' ],
 				'default' => [
 					'unit' => '%',
-					'size' => 25,
+					'size' => 30,
 				],
 				'tablet_default' => [
 					'unit' => '%',
