@@ -127,6 +127,7 @@
 
 				&,
 				&.e-active {
+
 					> i {
 						font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					}
@@ -178,6 +179,7 @@
 				background-color: var( --n-tabs-title-background-color-hover );
 
 				.e-n-tab-icon {
+
 					> i {
 						color: var( --n-tabs-icon-color-hover );
 					}
