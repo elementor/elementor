@@ -311,7 +311,7 @@ const ContainerView = BaseElementView.extend( {
 			icon: 'handle',
 		};
 
-		if ( elementor.getPreferences( 'edit_buttons' ) ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) && ! this.getContainer().isLocked() ) {
 			editTools.duplicate = {
 				/* Translators: %s: Element Name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
@@ -319,11 +319,13 @@ const ContainerView = BaseElementView.extend( {
 			};
 		}
 
-		editTools.remove = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-			icon: 'close',
-		};
+		if ( ! this.getContainer().isLocked() ) {
+			editTools.remove = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+				icon: 'close',
+			};
+		}
 
 		return editTools;
 	},
