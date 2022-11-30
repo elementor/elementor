@@ -1,11 +1,11 @@
 import { updateElementDefaults } from '../api';
 
 export default class Restore extends $e.modules.CommandBase {
-	async apply( { type, defaults } ) {
+	async apply( { type, settings } ) {
 		$e.internal( 'panel/state-loading' );
 
 		try {
-			await updateElementDefaults( type, defaults );
+			await updateElementDefaults( type, settings );
 
 			elementor.notifications.showToast( {
 				message: __( 'Previous settings restored.', 'elementor' ),

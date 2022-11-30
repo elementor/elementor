@@ -24,7 +24,6 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		global.elementor = {
 			notifications: {
 				showToast: jest.fn(),
-				initToast: jest.fn(),
 			},
 		};
 
@@ -160,7 +159,7 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		// Assert
 		expect( $e.run ).toHaveBeenCalledWith( 'kit-elements-defaults/restore', {
 			type: 'button',
-			defaults: { text: 'original-text' },
+			settings: { text: 'original-text' },
 		} );
 	} );
 

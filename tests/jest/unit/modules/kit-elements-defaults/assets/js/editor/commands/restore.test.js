@@ -40,7 +40,7 @@ describe( `$e.run( 'kit-elements-defaults/restore' )`, () => {
 		// Act.
 		command.apply( {
 			type: 'button',
-			defaults: {
+			settings: {
 				type: 'info',
 				color: '#FFF',
 			} } );
@@ -56,7 +56,7 @@ describe( `$e.run( 'kit-elements-defaults/restore' )`, () => {
 		// Arrange.
 		const command = new RestoreCommand(),
 			type = 'button',
-			defaults = {
+			settings = {
 				type: 'info',
 			};
 
@@ -65,6 +65,6 @@ describe( `$e.run( 'kit-elements-defaults/restore' )`, () => {
 		} );
 
 		// Act & Assert.
-		expect( () => command.apply( { type, defaults } ) ).rejects.toThrow( 'Failed to upsert' );
+		expect( () => command.apply( { type, settings } ) ).rejects.toThrow( 'Failed to upsert' );
 	} );
 } );

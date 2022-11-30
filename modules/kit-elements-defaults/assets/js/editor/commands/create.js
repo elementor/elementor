@@ -17,11 +17,6 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 		try {
 			await updateElementDefaults( type, newDefaults );
 
-			// Re-initialize the toast because of a bug in the notificaitons module
-			// that causes the toast to be rendered without buttons.
-			// TODO: Find a better solution. Maybe fix the root cause.
-			elementor.notifications.initToast();
-
 			elementor.notifications.showToast( {
 				message: __( 'Default settings changed.', 'elementor' ),
 				buttons: [ {
@@ -30,7 +25,7 @@ export default class Create extends $e.modules.editor.CommandContainerBase {
 					callback() {
 						$e.run( 'kit-elements-defaults/restore', {
 							type,
-							defaults: previousDefaults,
+							settings: previousDefaults,
 						} );
 					},
 				} ],
