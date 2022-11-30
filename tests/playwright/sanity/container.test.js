@@ -3,7 +3,7 @@ const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Container tests', () => {
-	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+	test.only( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
