@@ -11,7 +11,7 @@ on:
         type: string
         description: 'Ignore mismatch threshold'
         required: false
-        default: '0.05'
+        default: '0.9'
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
