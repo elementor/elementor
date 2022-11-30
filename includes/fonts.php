@@ -70,7 +70,7 @@ class Fonts {
 			];
 
 			if ( ! static::is_enable_google_font() ) {
-				unset( $font_groups[ self::GOOGLE ] );
+				unset( $font_groups[ self::GOOGLE ], $font_groups[ self::EARLYACCESS ] );
 			}
 
 			/**
