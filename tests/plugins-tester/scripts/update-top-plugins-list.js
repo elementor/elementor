@@ -1,7 +1,7 @@
-import fetch from "node-fetch";
-import fs from "fs";
-import {fileURLToPath} from "url";
-import {dirname} from "path";
+import fetch from 'node-fetch';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 const __filename = fileURLToPath( import.meta.url );
 const __dirname = dirname( __filename );
 
@@ -10,28 +10,27 @@ const FILE_NAME = __dirname + '/../config/top-plugins.json';
 
 console.log( FILE_NAME );
 
-const fetchPluginsList = async (url, filename) => {
+const fetchPluginsList = async ( url, filename ) => {
     try {
-        const response = await fetch(url);
+        const response = await fetch( url );
         const data = await response.json();
 
         const pluginsList = [];
-        data.plugins.forEach(plugin => {
-            if ('elementor' === plugin.slug) {
+        data.plugins.forEach( ( plugin ) => {
+            if ( 'elementor' === plugin.slug ) {
                 return;
             }
 
-            pluginsList.push(plugin.slug);
-        });
+            pluginsList.push( plugin.slug );
+        } );
 
-        console.log(pluginsList);
+        console.log( pluginsList );
 
-        fs.writeFileSync(filename, JSON.stringify(pluginsList, null, 2));
-
-    } catch (error) {
-        console.log(error);
+        fs.writeFileSync( filename, JSON.stringify( pluginsList, null, 2 ) );
+    } catch ( error ) {
+        console.log( error );
     }
-}
+};
 
-fetchPluginsList(URL, FILE_NAME);
+fetchPluginsList( URL, FILE_NAME );
 

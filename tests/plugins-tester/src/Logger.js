@@ -7,15 +7,15 @@ export const Logger = class {
 		} );
 	}
 
-	error(...args) {
-		console.error(...args);
+	error( ...args ) {
+		console.error( ...args );
 	}
 
 	info( ...args ) {
 		console.info( ...args );
 	}
 
-	log(...args) {
-		console.log(...args);
+	log( ...args ) {
+		console.log( ...args );
 	}
-}
+};
