@@ -40,7 +40,7 @@ export class PluginsTester {
 
 	runWP(cmd) {
 		if ( ! this.options.runServer ) {
-			this.cmd(`cd ${ process.env.PWD } && ${cmd}`);
+			this.cmd(`cd ../../../ && ${cmd}`);
 		} else {
 			this.cmd(cmd);
 		}
