@@ -37,6 +37,7 @@
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
+	--n-tabs-title-text-align: initial;
 	--n-tabs-title-font-size: 1rem;
 
 	--n-tabs-title-justify-content: center;
@@ -120,31 +121,23 @@
 
 				> i {
 					color: var( --n-tabs-icon-color );
+					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
 				svg {
 					fill: var( --n-tabs-icon-color );
+					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
-				&,
-				&.e-active {
-
-					> i {
-						font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
-					}
-
-					svg {
-						width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
-						height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
-					}
-
-					&:empty {
-						display: none;
-					}
-				}
-
-				&.e-active {
+				&:empty {
 					display: none;
+				}
+
+				&.e-active {
+					transform: translate(0, -100vh);
+					height: 0;
+					opacity: 0;
 
 					> i {
 						color: var( --n-tabs-icon-color-active );
@@ -162,15 +155,15 @@
 					background-color: var( --n-tabs-title-background-color-active );
 				}
 
-				.e-n-tab-icon {
-					display: none;
+				.e-n-tab-icon{
+					transform: initial;
+					height: initial;
+					opacity: initial;
 
-					&.e-active {
-						display: flex;
-
-						&:empty {
-							display: none;
-						}
+					&:not( .e-active ) {
+						transform: translate(0, -100vh);
+						height: 0;
+						opacity: 0;
 					}
 				}
 			}
@@ -180,7 +173,6 @@
 				background-color: var( --n-tabs-title-background-color-hover );
 
 				.e-n-tab-icon {
-
 					> i {
 						color: var( --n-tabs-icon-color-hover );
 					}
@@ -190,6 +182,14 @@
 					}
 				}
 			}
+		}
+
+		&-icons {
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+			align-items: center;
+			// justify-content: var(--n-tabs-heading-justify-content);
 		}
 	}
 

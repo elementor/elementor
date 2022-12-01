@@ -320,9 +320,9 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-title-justify-content: flex-start;',
-				'center' => '--n-tabs-title-justify-content: center;',
-				'end' => '--n-tabs-title-justify-content: flex-end;',
+				'start' => '--n-tabs-title-justify-content: flex-start; --n-tabs-title-text-align:' . $start,
+				'center' => '--n-tabs-title-justify-content: center; --n-tabs-title-text-align: center;',
+				'end' => '--n-tabs-title-justify-content: flex-end; --n-tabs-title-text-align:' . $end,
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -1119,8 +1119,11 @@ class NestedTabs extends Widget_Nested_Base {
 				} );
 				#>
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
-					<span class="e-n-tab-icon">{{{ tabIcon.value }}}</span>
-					<span class="e-n-tab-icon e-active">{{{ tabActiveIcon.value }}}</span>
+					<div class="e-n-tab-icons">
+						<span class="e-n-tab-icon">{{{ tabIcon.value }}}</span>
+						<span class="e-n-tab-icon e-active">{{{ tabActiveIcon.value }}}</span>
+					</div>
+
 					<span class="e-n-tab-title-text">{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
