@@ -86,8 +86,8 @@
 
 		&-title {
 			display: flex;
-			flex-direction: var( --n-tabs-title-direction );
 			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
+			flex-direction: var( --n-tabs-title-direction );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
 			color: var( --n-tabs-title-color );

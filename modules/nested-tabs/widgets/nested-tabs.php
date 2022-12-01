@@ -320,9 +320,6 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				// 'start' => '--n-tabs-title-justify-content: flex-start;',
-				// 'center' => '--n-tabs-title-justify-content: center;',
-				// 'end' => '--n-tabs-title-justify-content: flex-end;',
 				'start' => '--n-tabs-title-justify-content: flex-start; --n-tabs-title-align-items: flex-start;',
 				'center' => '--n-tabs-title-justify-content: center; --n-tabs-title-align-items: center;',
 				'end' => '--n-tabs-title-justify-content: flex-end; --n-tabs-title-align-items: flex-end;',
