@@ -163,7 +163,7 @@ class Feedback extends Module {
 	 */
 	public function ajax_elementor_deactivate_feedback() {
 		$wpnonce = Utils::get_super_global_value( $_POST, '_wpnonce' ); // phpcs:ignore -- Nonce verification is made in `wp_verify_nonce()`.
-		if ( ! isset( $wpnonce ) || ! wp_verify_nonce( $wpnonce, '_elementor_deactivate_feedback_nonce' ) ) {
+		if ( ! wp_verify_nonce( $wpnonce, '_elementor_deactivate_feedback_nonce' ) ) {
 			wp_send_json_error();
 		}
 

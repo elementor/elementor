@@ -184,7 +184,7 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is verified in line 200.
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$state = Utils::get_super_global_value( $_REQUEST, 'state' );
 
 		if ( empty( $state ) || $state !== $this->get( 'state' ) ) {
@@ -194,7 +194,7 @@ abstract class Base_App {
 
 		$response = $this->request( 'get_token', [
 			'grant_type' => 'authorization_code',
-			'code' => Utils::get_super_global_value( $_REQUEST, 'code' ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is verified in line 200.
+			'code' => Utils::get_super_global_value( $_REQUEST, 'code' ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
 			'client_id' => $this->get( 'client_id' ),
 		] );
@@ -608,7 +608,7 @@ abstract class Base_App {
 		$response = $this->request(
 			'get_client_id',
 			[
-				'source' => isset( $source ) ? esc_attr( $source ) : '',
+				'source' => $source ? esc_attr( $source ) : '',
 			]
 		);
 
@@ -692,7 +692,7 @@ abstract class Base_App {
 				$this->get_app_token_from_cli_token( Utils::get_super_global_value( $_REQUEST, 'token' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 				return;
 			default:
-				wp_redirect( $this->get_remote_authorize_url() ); //phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Safe redirect is used here.
+				wp_safe_redirect( $this->get_remote_authorize_url() );
 				die;
 		}
 	}
@@ -783,7 +783,7 @@ abstract class Base_App {
 
 		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 
-		if ( isset( $mode ) ) { // phpcs:ignore -- nonce validation is not require here.
+		if ( $mode ) {
 			$allowed_auth_modes = [
 				'popup',
 			];
