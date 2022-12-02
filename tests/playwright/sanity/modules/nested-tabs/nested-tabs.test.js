@@ -391,6 +391,40 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Verify that the tab width doesn\'t change between normal and active state', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add tabs widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		// Add Icons.
+		await setIconsToTabs( page, TabsIcons );
+		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
+		const lastTab = editor.getPreviewFrame().locator( '.e-normal:last-child' );
+
+		// Set first tab to active tab.
+		await firstTab.click();
+		// Get last tab width.
+		const lastTabWidth = await lastTab.boundingBox().width;
+		// Set last tab to active tab.
+		await lastTab.click();
+		// Get last tab active width.
+		const lastTabActiveWidth = await lastTab.boundingBox().width;
+
+		// Assert.
+		// Check if the normal tab width is equal to the active tab width.
+		expect( lastTabWidth ).toBe( lastTabActiveWidth );
+		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const TabsIcons = [
