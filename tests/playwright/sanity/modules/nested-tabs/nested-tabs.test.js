@@ -94,7 +94,11 @@ test.describe( 'Nested Tabs tests', () => {
 
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: true,
+			'nested-elements': true,
+			e_font_icon_svg: true,
+		} );
 		await wpAdmin.openNewPage();
 
 		const editor = new EditorPage( page, testInfo ),
@@ -110,8 +114,8 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 		// Set published page variables
-		const icon = await page.locator( '.elementor-widget-n-tabs .e-normal:last-child .e-n-tab-icon svg:first-child' ),
-			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-normal:last-child .e-n-tab-icon svg:last-child' ),
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:first-child' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:last-child' ).first(),
 			currentContext = page;
 
 		// Assert
@@ -120,7 +124,11 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( icon ).toBeVisible();
 		await clickTab( currentContext, '0' );
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+			e_font_icon_svg: false,
+		} );
 	} );
 
 	test( `Check the icon size on frontend`, async ( { page }, testInfo ) => {
@@ -268,14 +276,14 @@ test.describe( 'Nested Tabs tests', () => {
 
 		const redColor = 'rgb(255, 0, 0)',
 			whiteColor = 'rgb(255, 255, 255)',
-			activeTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active > .e-n-tab-icon.e-active i' ).first(),
+			activeTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active > .e-n-tab-icon i:last-child' ).first(),
 			activeTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
-			notActiveTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-icon:not(.e-active) i' ).first(),
+			notActiveTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-icon i:first-child' ).first(),
 			notActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-title-text' ).first();
 
 		// Assert.
 		// Check color differences in active tab.
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon.e-active i' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon i:last-child' );
 		await activeTabIcon.hover();
 		await expect( activeTabIcon ).toHaveCSS( 'color', redColor );
 		await expect( activeTabTitle ).toHaveCSS( 'color', whiteColor );
@@ -383,40 +391,6 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
-
-	test( 'Verify that the tab width doesn\'t change between normal and active state', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add tabs widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, TabsIcons );
-		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
-		const lastTab = editor.getPreviewFrame().locator( '.e-normal:last-child' );
-
-		// Set first tab to active tab.
-		await firstTab.click();
-		// Get last tab width.
-		const lastTabWidth = await lastTab.boundingBox().width;
-		// Set last tab to active tab.
-		await lastTab.click();
-		// Get last tab active width.
-		const lastTabActiveWidth = await lastTab.boundingBox().width;
-
-		// Assert.
-		// Check if the normal tab width is equal to the active tab width.
-		expect( lastTabWidth ).toBe( lastTabActiveWidth );
-		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
-
-		await cleanup( wpAdmin );
-	} );
 } );
 
 const TabsIcons = [
@@ -427,10 +401,6 @@ const TabsIcons = [
 	{
 		icon: 'fa-clipboard',
 		activeIcon: 'fa-clock',
-	},
-	{
-		icon: 'fa-clipboard',
-		activeIcon: 'fa-address-card',
 	},
 ];
 

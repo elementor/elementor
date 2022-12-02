@@ -1050,7 +1050,6 @@ class NestedTabs extends Widget_Nested_Base {
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
 			$tab_title_text = $this->get_render_attribute_string( 'tab-title-text' );
 			$tab_icon_attributes = $this->get_render_attribute_string( 'tab-icon' );
-			$tab_icon_active_attributes = $this->get_render_attribute_string( 'tab-icon-active' );
 
 			$icon_html = Icons_Manager::try_get_icon_html( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
 			$icon_active_html = $icon_html;
@@ -1059,8 +1058,7 @@ class NestedTabs extends Widget_Nested_Base {
 			}
 
 			$tabs_title_html .= "<div {$title_render_attributes}>";
-			$tabs_title_html .= "\t<span {$tab_icon_attributes}> {$icon_html}</span>";
-			$tabs_title_html .= "\t<span {$tab_icon_active_attributes}> {$icon_active_html}</span>";
+			$tabs_title_html .= "\t<span {$tab_icon_attributes}>{$icon_html}{$icon_active_html}</span>";
 			$tabs_title_html .= "\t<span {$tab_title_text}>{$tab_title}</span>";
 			$tabs_title_html .= '</div>';
 
@@ -1095,7 +1093,6 @@ class NestedTabs extends Widget_Nested_Base {
 					tabWrapperKey = tabUid,
 					tabTitleKey = 'tab-title-' + tabUid,
 					tabIconKey = 'tab-icon-' + tabUid,
-					tabActiveIconKey = 'tab-active-icon-' + tabUid,
 					tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 					tabActiveIcon = tabIcon,
 					tabId = 'e-n-tab-title-' + tabUid;

@@ -37,7 +37,6 @@
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
-	--n-tabs-title-text-align: initial;
 	--n-tabs-title-font-size: 1rem;
 
 	--n-tabs-title-justify-content-toggle: initial;
@@ -191,7 +190,8 @@
 				background-color: var( --n-tabs-title-background-color-hover );
 
 				.e-n-tab-icon {
-					i {
+
+					> i {
 						color: var( --n-tabs-icon-color-hover );
 					}
 
