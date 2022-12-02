@@ -424,6 +424,9 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title",
 				'fields_options' => [
 					'color' => [
+						'global' => [
+							'default' => Global_Colors::COLOR_ACCENT,
+						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
 						'selectors' => [
 							'{{SELECTOR}}' => 'background: {{VALUE}}',
