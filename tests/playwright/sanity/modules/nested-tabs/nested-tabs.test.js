@@ -327,7 +327,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
+	test.only( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -361,13 +361,13 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await editor.togglePreviewMode();
 
-		// Tabs styling scenario 2: Direction: Left, Align Title: Center, Icon Position: Top.
+		// Tabs styling scenario 2: Direction: Left, Align Title: Right, Icon Position: Top.
 		await editor.selectElement( tabsId );
 		// Set Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
-		// Set align title to 'center'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-center' ).click();
+		// Set align title to 'right'.
+		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
 		// Set icon position to 'top'.
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-icon_section_style' ).click();
@@ -379,7 +379,7 @@ test.describe( 'Nested Tabs tests', () => {
 		expect( await activeTab.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'tabs-direction-left-icon-position-top-align-center.jpeg' );
+		} ) ).toMatchSnapshot( 'tabs-direction-left-icon-position-top-align-right.jpeg' );
 
 		await cleanup( wpAdmin );
 	} );
@@ -439,4 +439,3 @@ async function setTabItemColor( page, editor, panelClass, tabState, colorPickerC
 	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
 }
-
