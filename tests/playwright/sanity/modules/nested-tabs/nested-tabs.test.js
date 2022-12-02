@@ -110,8 +110,8 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 		// Set published page variables
-		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon' ).first(),
-			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active' ).first(),
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-normal:last-child .e-n-tab-icon svg:first-child' ),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-normal:last-child .e-n-tab-icon svg:last-child' ),
 			currentContext = page;
 
 		// Assert
@@ -150,8 +150,8 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.publishAndViewPage();
 
 		// Set published page variables
-		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg' ).first(),
-			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon.e-active svg' ).first(),
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:first-child' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:last-child' ).first(),
 			currentContext = page;
 
 		// Assert

@@ -163,23 +163,19 @@
 
 				.e-n-tab-icon{
 					* {
-						transform: translate(0, -100vh);
-						height: 0;
-						opacity: 0;
-
-						&:last-child {
-							transform: initial;
-							height: initial;
-							opacity: initial;
-
-							&i {
-								color: var( --n-tabs-icon-color-active );
-							}
-		
-							&svg {
-								fill: var( --n-tabs-icon-color-active );
-							}
+						&:first-child {
+							transform: translate(0, -100vh);
+							height: 0;
+							opacity: 0;
 						}
+					}
+
+					i:last-child {
+						color: var( --n-tabs-icon-color-active );
+					}
+
+					svg:last-child {
+						fill: var( --n-tabs-icon-color-active );
 					}
 				}
 			}
@@ -189,7 +185,7 @@
 				background-color: var( --n-tabs-title-background-color-hover );
 
 				.e-n-tab-icon {
-					> i {
+					i {
 						color: var( --n-tabs-icon-color-hover );
 					}
 
