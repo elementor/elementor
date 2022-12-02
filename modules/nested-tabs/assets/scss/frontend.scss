@@ -108,7 +108,16 @@
 
 			&,
 			span * {
-				transition: background var( --n-tabs-title-transition ), color var( --n-tabs-title-transition ), fill var( --n-tabs-title-transition ), border var( --n-tabs-title-transition ), box-shadow var( --n-tabs-title-transition ), text-shadow var( --n-tabs-title-transition );
+				transition: background var( --n-tabs-title-transition ),
+					color var( --n-tabs-title-transition ),
+					fill var( --n-tabs-title-transition ),
+					border var( --n-tabs-title-transition ),
+					box-shadow var( --n-tabs-title-transition ),
+					text-shadow var( --n-tabs-title-transition ),
+					stroke var( --n-tabs-title-transition ),
+					stroke-width var( --n-tabs-title-transition ),
+					-webkit-text-stroke-width var( --n-tabs-title-transition ),
+					-webkit-text-stroke-color var( --n-tabs-title-transition );
 			}
 
 			&-text {
