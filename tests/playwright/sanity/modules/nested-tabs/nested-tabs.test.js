@@ -227,10 +227,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await notActiveTab.hover();
 		await expect( notActiveTab ).toHaveCSS( 'color', rgbColor );
 
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-		} );
+		await cleanup( wpAdmin );
 	} );
 
 	test( 'Check that icon color does not effect text color in active and non-active tabs on hover state', async ( { page }, testInfo ) => {
