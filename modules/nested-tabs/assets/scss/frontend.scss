@@ -168,6 +168,12 @@
 							height: 0;
 							opacity: 0;
 						}
+
+						&:last-child {
+							transform: initial;
+							height: initial;
+							opacity: initial;
+						}
 					}
 
 					i:last-child {
