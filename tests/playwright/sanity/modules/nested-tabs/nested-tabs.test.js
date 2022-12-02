@@ -164,10 +164,10 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Assert
 		await expect( activeTabIcon ).toBeVisible();
-		await expect( activeTabIcon ).toHaveCSS( 'height', '50px' );
+		await expect( activeTabIcon ).toHaveCSS( 'width', '50px' );
 		await clickTab( currentContext, '1' );
 		await expect( icon ).toBeVisible();
-		await expect( icon ).toHaveCSS( 'height', '50px' );
+		await expect( icon ).toHaveCSS( 'width', '50px' );
 		await clickTab( currentContext, '0' );
 
 		// Set experiments.
@@ -276,20 +276,22 @@ test.describe( 'Nested Tabs tests', () => {
 
 		const redColor = 'rgb(255, 0, 0)',
 			whiteColor = 'rgb(255, 255, 255)',
+			activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
 			activeTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active > .e-n-tab-icon i:last-child' ).first(),
 			activeTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
+			notActiveTab = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active)' ).first(),
 			notActiveTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-icon i:first-child' ).first(),
 			notActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-title-text' ).first();
 
 		// Assert.
 		// Check color differences in active tab.
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon i:last-child' );
-		await activeTabIcon.hover();
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon i' );
+		await activeTab.hover();
 		await expect( activeTabIcon ).toHaveCSS( 'color', redColor );
 		await expect( activeTabTitle ).toHaveCSS( 'color', whiteColor );
 
 		// Check color differences in non active tab.
-		await notActiveTabIcon.hover();
+		await notActiveTab.hover();
 		await expect( notActiveTabIcon ).toHaveCSS( 'color', redColor );
 		await expect( notActiveTabTitle ).toHaveCSS( 'color', whiteColor );
 
@@ -392,7 +394,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the tab width doesn\'t change between normal and active state', async ( { page }, testInfo ) => {
+	test( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -435,6 +437,10 @@ const TabsIcons = [
 	{
 		icon: 'fa-clipboard',
 		activeIcon: 'fa-clock',
+	},
+	{
+		icon: 'fa-clipboard',
+		activeIcon: 'fa-address-card',
 	},
 ];
 

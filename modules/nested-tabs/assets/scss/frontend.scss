@@ -175,12 +175,14 @@
 						}
 					}
 
-					i:last-child {
-						color: var( --n-tabs-icon-color-active );
-					}
+					&:not(:hover) {
+						i:last-child {
+							color: var( --n-tabs-icon-color-active );
+						}
 
-					svg:last-child {
-						fill: var( --n-tabs-icon-color-active );
+						svg:last-child {
+							fill: var( --n-tabs-icon-color-active );
+						}
 					}
 				}
 			}
