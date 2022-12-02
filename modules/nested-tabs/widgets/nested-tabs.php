@@ -476,6 +476,9 @@ class NestedTabs extends Widget_Nested_Base {
 				'exclude' => [ 'image' ],
 				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title:hover",
 				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
 					'color' => [
 						'global' => [
 							'default' => Global_Colors::COLOR_ACCENT,
@@ -983,7 +986,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow_box_shadow',
-				'selector' => "{$nested_tabs_content_selector_class}",
+				'selector' => '{{WRAPPER}} .e-n-tabs-content',
 				'condition' => [
 					'box_height!' => 'height',
 				],
