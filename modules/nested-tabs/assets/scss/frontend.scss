@@ -40,6 +40,8 @@
 	--n-tabs-title-text-align: initial;
 	--n-tabs-title-font-size: 1rem;
 
+	--n-tabs-title-justify-content-toggle: initial;
+	--n-tabs-title-align-items-toggle: center;
 	--n-tabs-title-justify-content: center;
 	--n-tabs-title-align-items: center;
 	--n-tabs-title-direction: row;
@@ -86,9 +88,9 @@
 
 		&-title {
 			display: flex;
-			align-items: var( --n-tabs-title-align-items );
+			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
 			flex-direction: var( --n-tabs-title-direction );
-			justify-content: var( --n-tabs-title-justify-content );
+			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
 			color: var( --n-tabs-title-color );
 			background-color: var( --n-tabs-title-background-color );
@@ -118,6 +120,7 @@
 			.e-n-tab-icon {
 				display: flex;
 				align-items: center;
+				order: var( --n-tabs-icon-order );
 
 				> i {
 					color: var( --n-tabs-icon-color );
