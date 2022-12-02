@@ -351,11 +351,15 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_position i.eicon-h-align-right' ).click();
 
+		await editor.togglePreviewMode();
+
 		// Assert
 		expect( await activeTab.screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'tabs-direction-top-icon-position-right-align-left.jpeg' );
+
+		await editor.togglePreviewMode();
 
 		// Tabs styling scenario 2: Direction: Left, Align Title: Center, Icon Position: Top.
 		await editor.selectElement( tabsId );
@@ -368,6 +372,8 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_position i.eicon-v-align-top' ).click();
+
+		await editor.togglePreviewMode();
 
 		// Assert
 		expect( await activeTab.screenshot( {
