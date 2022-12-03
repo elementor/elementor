@@ -53,12 +53,7 @@ test.describe( 'Nested Tabs tests', () => {
 	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
-
+		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -86,10 +81,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( desktopTabWrapper ).toHaveCSS( 'display', 'none' );
 		await expect( mobileTabActive ).toBeVisible();
 
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-		} );
+		await cleanup( wpAdmin );
 	} );
 
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
@@ -248,10 +240,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await notActiveTab.hover();
 		await expect( notActiveTab ).toHaveCSS( 'color', rgbColor );
 
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-		} );
+		await cleanup( wpAdmin );
 	} );
 
 	test( 'Check that icon color does not effect text color in active and non-active tabs on hover state', async ( { page }, testInfo ) => {
