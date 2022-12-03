@@ -285,7 +285,7 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Assert.
 		// Check color differences in active tab.
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon i' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon i' ).first();
 		await activeTab.hover();
 		await expect( activeTabIcon ).toHaveCSS( 'color', redColor );
 		await expect( activeTabTitle ).toHaveCSS( 'color', whiteColor );
