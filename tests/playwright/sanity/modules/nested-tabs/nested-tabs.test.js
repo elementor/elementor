@@ -421,9 +421,10 @@ test.describe( 'Nested Tabs tests', () => {
 		const lastTabActiveWidth = await lastTab.boundingBox().width;
 
 		// Assert.
+		// Verify that the last tab is active.
+		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
 		// Check if the normal tab width is equal to the active tab width.
 		expect( lastTabWidth ).toBe( lastTabActiveWidth );
-		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
 
 		await cleanup( wpAdmin );
 	} );

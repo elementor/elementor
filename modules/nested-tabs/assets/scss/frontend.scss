@@ -31,9 +31,8 @@
 
 	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-title-color-hover: #{$white};
-	--n-tabs-title-color-active: #{$white};
 	--n-tabs-title-background-color: #{$editor-background-light};
-	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-color-active: #{$white};
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
@@ -132,7 +131,7 @@
 				order: var( --n-tabs-icon-order );
 				overflow: hidden;
 
-				i {
+				> i {
 					color: var( --n-tabs-icon-color );
 					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
