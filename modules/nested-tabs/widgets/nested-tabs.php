@@ -893,7 +893,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-icon-color-hover: {{VALUE}};',
+				'{{WRAPPER}} .e-n-tab-title:hover' => '--n-tabs-icon-color-hover: {{VALUE}};',
 			],
 		] );
 
