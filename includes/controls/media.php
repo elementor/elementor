@@ -275,7 +275,7 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-content elementor-control-media-size">
 			<div class="elementor-control-field elementor-control elementor-control-type-select">
 				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
-				<div class="elementor-control-input-wrapper media-size-input-wrapper">
+				<div class="elementor-control-input-wrapper media-size-input-wrapper elementor-control-unit-5">
 				<select data-setting="size" class="elementor-control elementor-control-type-select elementor-control-input-wrapper elementor-control-media-display-size select">
 				<?php
 				$sizes = $this->get_image_sizes_options();
@@ -300,10 +300,10 @@ class Control_Media extends Control_Base_Multiple {
 		foreach ( $sizes as $size ) {
 			$width = get_option( "{$size}_size_w" );
 			$height = get_option( "{$size}_size_h" );
-			if ( ! $width && ! $height ) {
-				$result[ $size ] = ucfirst( $size );
-			} else {
+			if ( $width && $height ) {
 				$result[ $size ] = ucfirst( $size ) . " ($width x $height)";
+			} else {
+				$result[ $size ] = ucfirst( $size );
 			}
 		}
 		return $result;
