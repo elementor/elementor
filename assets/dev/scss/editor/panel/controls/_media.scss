@@ -262,6 +262,10 @@
 	padding-bottom: 0;
 	width: 72%;
 	float: right;
+
+	.e-select-placeholder {
+		display: flex;
+	}
 }
 
 .media-size-input-wrapper {

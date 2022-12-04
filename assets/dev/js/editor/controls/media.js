@@ -254,7 +254,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	async onMediaImageSize() {
-		this.ui.mediaImageSize.css( 'color', 'inherit' );
+		this.ui.mediaImageSize.removeClass( 'e-select-placeholder' );
 		const previewPlaceHolder = this.ui.mediaImage;
 		const selectedImage = {
 			id: this.getControlValue( 'id' ) || previewPlaceHolder[ 0 ].getAttribute( 'data-id' ),
@@ -266,6 +266,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			id: selectedImage.id,
 			size: selectedSize,
 		} );
+
 		const stateOptions = {
 			url: null,
 			id: selectedImage.id,
@@ -273,6 +274,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			dimensions: selectedSize,
 			source: 'library',
 		};
+
 		if ( imageURL ) {
 			stateOptions.url = imageURL;
 			this.setValue( stateOptions );
@@ -291,11 +293,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		const previewImageExist = this.$el.find( '.elementor-control-media__preview' )[ 0 ]?.style?.backgroundImage;
 		const backgroundControl = this.$el[ 0 ]?.className?.match( /background_image/g );
 		if ( backgroundControl && previewImageExist ) {
-			const inheritedBgImage = '0.5' === this.$el.find( '.elementor-control-media__preview' )[ 0 ].style.opacity;
+			const inheritedBgImage = this.$el.find( '.elementor-control-media__preview' )[ 0 ].style.opacity;
 			if ( inheritedBgImage ) {
-				this.ui.mediaImageSize.css( 'color', '#a0a5aa' );
+				this.ui.mediaImageSize.addClass( 'e-select-placeholder' );
 			}
-			this.ui.mediaSizeWrapper.css( 'display', 'flex' );
 		} else {
 			this.ui.mediaSizeWrapper.hide();
 		}
