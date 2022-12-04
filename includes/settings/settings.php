@@ -339,10 +339,11 @@ class Settings extends Settings_Page {
 								'label' => esc_html__( 'Google Fonts', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => Upgrade_Manager::install_compare( '3.10.0', '>=' ) ? '' : '1',
+									'std' => '',
 									'options' => [
+										'' => esc_html__( 'Default', 'elementor' ),
 										'1' => esc_html__( 'Enable', 'elementor' ),
-										'' => esc_html__( 'Disable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
 									'desc' => sprintf(
 										esc_html__( 'Disable this option if you want to prevent Google Fonts from being loaded. This setting is recommended when loading fonts from a different source (plugin, theme or %1$scustom fonts%2$s).', 'elementor' ),

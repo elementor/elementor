@@ -322,7 +322,9 @@ import TemplateControls from './new-template/template-controls.js';
 			} ).trigger( 'change' );
 
 			$( '.elementor_google_font select' ).on( 'change', function() {
-				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
+				var thisValue = $( this ).val();
+
+				$( '.elementor_font_display' ).toggle( '1' === thisValue || '' === thisValue );
 			} ).trigger( 'change' );
 		},
 

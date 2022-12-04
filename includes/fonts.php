@@ -1565,9 +1565,14 @@ class Fonts {
 		static $retval = null;
 
 		if ( null === $retval ) {
-			$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
+			$option = get_option( 'elementor_google_font', '' );
 
-			$retval = '1' === get_option( 'elementor_google_font', $is_new_site ? '0' : '1' );
+			if ( '' === $option ) {
+				$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
+				$option = $is_new_site ? '0' : '1';
+			}
+
+			$retval = '1' === $option;
 		}
 
 		return $retval;
