@@ -60,6 +60,7 @@ class Module extends BaseModule {
 				if ( $keys ) {
 					$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
 				}
+
 			}
 			if ( $background_image_url ) {
 				$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
