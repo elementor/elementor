@@ -362,121 +362,12 @@
 	color: $editor-warning;
 }
 
-.elementor-units-choices {
-	flex-grow: 1;
-	text-align: $end;
-	z-index: 3;
-
-	input {
-		display: none;
-
-		&:not(:checked) + label {
-			color: $editor-light;
-		}
-
-		&.e-units-placeholder + label {
-			color: $editor-lighter;
-			text-decoration: underline;
-		}
-
-		&:checked + label {
-			text-decoration: underline;
-		}
-	}
-
-	label {
-		cursor: pointer;
-		padding: 0 2px;
-		text-transform: uppercase;
-		font-size: 9px;
-	}
-}
-
 @if $direction == rtl {
 
 	.elementor-control-start-end {
 
 		.eicon-h-align-left, .eicon-h-align-right {
 			transform: rotate(180deg);
-		}
-	}
-}
-
-$item-size: 2em;
-
-.elementor-control-responsive-switchers {
-	--selected-option: 0;
-	--pointer-position: var(--selected-option);
-
-	position: relative;
-	width: $item-size;
-	height: $item-size;
-	margin: calc( -#{$item-size} + var(--control-title-size)) 0;
-	@include margin-end(5px);
-
-	&__holder {
-		position: absolute;
-		width: 100%;
-		top: 0;
-		background-color: #fff;
-		border-radius: 3px;
-		transition: 0.15s;
-		border: 1px transparent solid;
-	}
-
-	&.elementor-responsive-switchers-open {
-		z-index: 11000;
-
-		.elementor-responsive-switcher {
-			height: $item-size;
-			transform: scale(1);
-			opacity: 1;
-
-			&:hover {
-				color: $editor-info;
-			}
-		}
-
-		.elementor-control-responsive-switchers__holder {
-			top: calc(-1 * var(--selected-option) * #{$item-size});
-			box-shadow: 0 0 3px rgba(0,0,0,0.2);
-		}
-	}
-}
-
-.elementor-responsive-switcher {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-	z-index: 2;
-	cursor: pointer;
-	height: 0;
-	transform: scale(0);
-	opacity: 0;
-	transition: 0.15s;
-	font-size: 12px;
-}
-
-a.elementor-responsive-switcher {
-	color: $editor-light;
-
-	&:hover {
-		color: $editor-info;
-	}
-}
-
-@each $device in $devices {
-	.elementor-device-#{ $device } {
-		.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device } {
-			height: $item-size;
-			transform: scale(1);
-			opacity: 1;
-		}
-		.elementor-responsive-switchers-open:not(:hover) {
-			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
-				color: $editor-info;
-			}
 		}
 	}
 }
@@ -516,6 +407,8 @@ a.elementor-responsive-switcher {
 		}
 	}
 }
+
+@import "controls-utility";
 
 @import "controls/button";
 
