@@ -102,6 +102,12 @@ export default class EditorBase extends Marionette.Application {
 				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
 			},
 		},
+		panelUnitControlSwitchers: {
+			element: '.e-units-choices',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'e-units-choices-open' );
+			},
+		},
 		promotion: {
 			ignore: '.elementor-responsive-panel',
 			callback: () => {
