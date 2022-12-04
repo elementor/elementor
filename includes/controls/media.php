@@ -47,7 +47,6 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
-			'size' => 'full',
 		];
 	}
 
@@ -281,7 +280,11 @@ class Control_Media extends Control_Base_Multiple {
 				$sizes = $this->get_image_sizes_options();
 				foreach ( $sizes as $key => $value ) {
 					?>
-						<option value="<?php echo esc_attr( $key ); ?>" {{ data.controlValue.size == '<?php echo esc_attr( $key ); ?>' ? 'selected' : '' }}><?php echo esc_html( $value ); ?></option>
+						<option value="<?php echo esc_attr( $key ); ?>" 
+						{{ data.controlValue.size && data.controlValue.size == '<?php echo esc_attr( $key ); ?>' ? 'selected' : '' }}
+						{{ ! data.controlValue.size && '<?php echo esc_attr( $key ); ?>' == 'full' ? 'selected' : '' }}
+						>
+						<?php echo esc_html( $value ); ?></option>
 					<?php
 				}
 				?>
