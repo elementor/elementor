@@ -29,7 +29,7 @@ class Source_Remote extends Source_Base {
 	}
 
 	public function add_actions() {
-		add_action( 'elementor/experiments/feature-state-change', [ $this, 'clear_cache'], 10, 3 );
+		add_action( 'elementor/experiments/feature-state-change', [ $this, 'clear_cache' ], 10, 3 );
 	}
 
 	/**
@@ -326,7 +326,7 @@ class Source_Remote extends Source_Base {
 		];
 	}
 
-	public function clear_cache ( string $feature_name, $old_state, $new_state ) {
+	public function clear_cache( string $feature_name, $old_state, $new_state ) {
 		if ( 'container' === $feature_name ) {
 			delete_transient( static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
 		}
