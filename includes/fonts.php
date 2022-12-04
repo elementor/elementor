@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -1560,7 +1562,15 @@ class Fonts {
 	}
 
 	public static function is_enable_google_font() {
-		return '1' === get_option( 'elementor_google_font', '1' );
+		static $retval = null;
+
+		if ( null === $retval ) {
+			$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
+
+			$retval = '1' === get_option( 'elementor_google_font', $is_new_site ? '0' : '1' );
+		}
+
+		return $retval;
 	}
 
 	public static function get_font_display_setting() {
