@@ -292,11 +292,11 @@ class Widget_Image_Box extends Widget_Base {
 			'image_border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em' ],
 				'separator' => 'after',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
