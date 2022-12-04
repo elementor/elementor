@@ -303,7 +303,7 @@ class Control_Media extends Control_Base_Multiple {
 			if ( ! $width && ! $height ) {
 				$result[ $size ] = ucfirst( $size );
 			} else {
-				$result[ $size ] = ucfirst( $size ) . " ($width x $height)"; // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+				$result[ $size ] = ucfirst( $size ) . " ($width x $height)";
 			}
 		}
 		return $result;
