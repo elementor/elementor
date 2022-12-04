@@ -143,15 +143,22 @@
 		}
 
 		// Hard selector to override default margin
-		.elementor-control-content {
+		.elementor-repeater-row-controls {
 
-			> .elementor-control-field {
+			> .elementor-control {
 
-				> .elementor-control-input-wrapper {
-					margin-top: 0;
+				> .elementor-control-content {
+
+					> .elementor-control-field {
+
+						> .elementor-control-input-wrapper {
+							margin-top: 0;
+						}
+					}
 				}
 			}
 		}
+
 
 		.elementor-controls-popover {
 			align-self: end;
@@ -175,7 +182,6 @@
 		.elementor-button-wrapper {
 			text-align: center;
 			border-top: 1px solid $editor-background;
-			max-width: 260px;
 			padding-top: 15px;
 		}
 
