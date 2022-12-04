@@ -12,5 +12,5 @@ body.e-lazyload .lazyloaded .elementor-background-overlay,
 body.e-lazyload .e-con.lazyloaded::before,
 // Support regular background ( Column, Section, Widget, Container, Widget )
 body.e-lazyload .lazyloaded {
---e-bg-lazyload-loaded: var(--e-bg-lazyload);
+    --e-bg-lazyload-loaded: var(--e-bg-lazyload);
 }
