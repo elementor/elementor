@@ -20,25 +20,25 @@ class Promotion {
 		if ( ! $license_valid ) {
 			$promotion = [
 				'action_button' => [
-					'text' => __( 'Upgrade', 'elementor' ),
+					'text' => esc_html__( 'Upgrade', 'elementor' ),
 					'url' => 'https://go.elementor.com/go-pro-templates',
 				],
 			];
 		} elseif ( $license_valid ) {
 			$promotion = [
-				'title' => __( 'Connect & Activate', 'elementor' ),
-				'content' => __( 'Connect your Elementor account to activate Elementor Pro and unlock all the features.', 'elementor' ),
+				'title' => esc_html__( 'Connect & Activate', 'elementor' ),
+				'content' => esc_html__( 'Connect your Elementor account to activate Elementor Pro and unlock all the features.', 'elementor' ),
 				'action_button' => [
-					'text' => __( 'Connect & Activate', 'elementor' ),
+					'text' => esc_html__( 'Connect & Activate', 'elementor' ),
 					'url' => admin_url( 'admin.php?page=elementor-license' ),
 				],
 			];
 		} else {
 			$promotion = [
-				'title' => __( 'Go Pro', 'elementor' ),
-				'content' => __( 'Unlock all the features of Elementor Pro and build sites faster and better.', 'elementor' ),
+				'title' => esc_html__( 'Go Pro', 'elementor' ),
+				'content' => esc_html__( 'Unlock all the features of Elementor Pro and build sites faster and better.', 'elementor' ),
 				'action_button' => [
-					'text' => __( 'Upgrade', 'elementor' ),
+					'text' => esc_html__( 'Upgrade', 'elementor' ),
 					'url' => 'https://go.elementor.com/go-pro-templates',
 				],
 			];
