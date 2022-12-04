@@ -7,6 +7,9 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
+use Elementor\Core\Editor\Loading_Strategies\Editor_V1_Loading_Strategy;
+use Elementor\Core\Editor\Loading_Strategies\Editor_V2_Loading_Strategy;
+use Elementor\Core\Editor\Loading_Strategies\Loading_Strategy_Interface;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -97,8 +100,7 @@ class Editor {
 		}
 
 		$this->loader = new Editor_Loader(
-			$_REQUEST['post'],
-			$_REQUEST['v'] ?? null
+			$this->make_loading_strategy()
 		);
 
 		$this->set_post_id( absint( $_REQUEST['post'] ) );
@@ -814,5 +816,16 @@ class Editor {
 
 	public function set_post_id( $post_id ) {
 		$this->post_id = $post_id;
+	}
+
+	/**
+	 * @return Loading_Strategy_Interface
+	 */
+	private function make_loading_strategy() {
+		if ( isset( $_REQUEST['v'] ) && $_REQUEST['v'] === '2' ) {
+			return new Editor_V2_Loading_Strategy();
+		}
+
+		return new Editor_V1_Loading_Strategy();
 	}
 }

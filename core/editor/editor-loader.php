@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
+use Elementor\Core\Editor\Loading_Strategies\Loading_Strategy_Interface;
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
 
@@ -9,104 +10,106 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_Loader {
-	const VERSION_1 = 1;
-	const VERSION_2 = 2;
-
-	const AVAILABLE_VERSIONS = [
-		self::VERSION_1,
-		self::VERSION_2,
-	];
+	/**
+	 * @var Loading_Strategy_Interface
+	 */
+	private $strategy;
 
 	/**
-	 * @var number
+	 * @param Loading_Strategy_Interface $strategy
 	 */
-	private $post_id;
-
-	/**
-	 * @var number
-	 */
-	private $version;
-
-	/**
-	 * @param int|string $post_id
-	 * @param int|string $version
-	 */
-	public function __construct( $post_id, $version = self::VERSION_1 ) {
-		$this->post_id = (int) $post_id;
-		$this->version = in_array( (int) $version, self::AVAILABLE_VERSIONS, true )
-			? (int) $version
-			: self::VERSION_1;
+	public function __construct( Loading_Strategy_Interface $strategy ) {
+		$this->strategy = $strategy;
 	}
 
 	/**
 	 * @return void
 	 */
 	public function register_scripts() {
-		$scripts_config = require_once __DIR__ . '/config/scripts.php';
+		$script_configs = $this->normalize_script_configs(
+			$this->strategy->get_scripts()
+		);
 
-		Collection::make( $scripts_config['common'] )
-			->merge( $scripts_config[ $this->version ] )
-			->each( function ( $script_config ) {
-				$script_config = wp_parse_args( $script_config, [
-					'deps' => [],
-					'ver' => ELEMENTOR_VERSION,
-					'in_footer' => true,
-				] );
+		foreach ( $script_configs as $script_config ) {
+			wp_register_script(
+				$script_config['handle'],
+				$script_config['src'],
+				$script_config['deps'],
+				$script_config['ver'],
+				$script_config['in_footer']
+			);
+		}
+	}
 
-				if ( empty( $script_config['handle'] ) || empty( $script_config['src'] ) ) {
-					return;
-				}
+	/**
+	 * @return void
+	 */
+	public function enqueue_scripts() {
+		$script_configs = $this->normalize_script_configs(
+			$this->strategy->get_loader_scripts()
+		);
 
-				$replacements = [
-					'{{ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
-					'{{SUFFIX}}' => Utils::is_script_debug() || Utils::is_elementor_tests() ?
-						'' :
-						'.min',
-				];
+		foreach ( $script_configs as $script_config ) {
+			wp_enqueue_script(
+				$script_config['handle'],
+				$script_config['src'],
+				$script_config['deps'],
+				$script_config['ver'],
+				$script_config['in_footer']
+			);
+		}
+	}
 
+	/**
+	 * @return void
+	 */
+	public function print_root_template() {
+		// Exposing the path for the view part to render the body of the editor template.
+		$body_file_path = $this->strategy->get_template_body_file_path();
+
+		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+	}
+
+	/**
+	 * Normalize script configs for enqueue and register methods.
+	 *
+	 * @param array $script_configs
+	 *
+	 * @return array
+	 */
+	private function normalize_script_configs( array $script_configs ) {
+		$default = [
+			'handle' => '',
+			'src' => '',
+			'deps' => [],
+			'ver' => ELEMENTOR_VERSION,
+			'in_footer' => true,
+		];
+
+		$replacements = [
+			'{{ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
+			'{{SUFFIX}}' => Utils::is_script_debug() || Utils::is_elementor_tests() ? '' : '.min',
+		];
+
+		return Collection::make( $script_configs )
+			->filter( function ( $config ) {
+				return ! empty( $config['handle'] ) && ! empty( $config['src'] );
+			} )
+			->map( function ( $config ) use ( $default, $replacements ) {
+				// Assign default values.
+				$config =  wp_parse_args( $config, $default );
+
+				// Replace placeholders with actual values.
 				foreach ( $replacements as $replacement_key => $replacement_value ) {
-					$script_config['src'] = str_replace(
+					$config['src'] = str_replace(
 						$replacement_key,
 						$replacement_value,
-						$script_config['src']
+						$config['src']
 					);
 				}
 
-				wp_register_script(
-					$script_config['handle'],
-					$script_config['src'],
-					$script_config['deps'],
-					$script_config['ver'],
-					$script_config['in_footer']
-				);
-			} );
-	}
-
-	public function enqueue_scripts() {
-		// TODO: Replace it to the path of the build file.
-		wp_enqueue_script(
-			'elementor-editor-loader',
-			ELEMENTOR_URL . 'core/editor/assets/js/editor-loader.js',
-			[ 'elementor-editor' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		$config = wp_json_encode( [
-			'version' => $this->version,
-		] );
-
-		wp_add_inline_script(
-			'elementor-editor-loader',
-			"globalThis.elementorEditorLoaderConfig = {$config};",
-			'before'
-		);
-	}
-
-	public function print_root_template() {
-		// Exposing the version to the view template
-		$editor_version = $this->version;
-
-		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+				return $config;
+			} )
+			->all();
 	}
 }
