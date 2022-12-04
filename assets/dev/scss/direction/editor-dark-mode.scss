@@ -467,6 +467,7 @@ select {
 	}
 }
 
+//Controls Utility
 .elementor-control-responsive-switchers {
 
 	&__holder {
@@ -498,6 +499,43 @@ a.elementor-responsive-switcher {
 		}
 	}
 }
+
+.e-units-wrapper {
+
+	.e-units-switcher {
+
+		&:hover {
+			color: $theme-dark-accent;
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+
+		&:checked + label {
+			color: $theme-dark-accent;
+		}
+
+		&.e-units-placeholder + label {
+			color: $theme-dark-light;
+		}
+	}
+
+	&.e-units-choices-open {
+		background-color: $theme-dark-gray-dark;
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+
+		.elementor-units-choices-label {
+
+			&:hover {
+				color: $theme-dark-accent;
+			}
+		}
+	}
+}
+
 
 .elementor-control-type-popover_toggle {
 

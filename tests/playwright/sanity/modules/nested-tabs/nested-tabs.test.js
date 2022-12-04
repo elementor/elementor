@@ -53,11 +53,7 @@ test.describe( 'Nested Tabs tests', () => {
 	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
+		await setup( wpAdmin );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -86,10 +82,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( desktopTabWrapper ).toHaveCSS( 'display', 'none' );
 		await expect( mobileTabActive ).toBeVisible();
 
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-		} );
+		await cleanup( wpAdmin );
 	} );
 
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
@@ -173,11 +166,7 @@ test.describe( 'Nested Tabs tests', () => {
 	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
+		await setup( wpAdmin );
 
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -206,6 +195,146 @@ test.describe( 'Nested Tabs tests', () => {
 		// Assert.
 		await expect( activeTab ).toHaveCSS( 'margin-bottom', '50px' );
 		await expect( lastTab ).toHaveCSS( 'margin-top', '25px' );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Check that active and non-active tabs color changes on hover', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.elementor-control-section_title_style' ).click();
+		await page.locator( '.elementor-control-title_hover' ).click();
+		await page.locator( '.elementor-control-title_text_color_hover .pcr-button' ).click();
+		await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', '#ff0000' );
+
+		const rgbColor = 'rgb(255, 0, 0)';
+		const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
+			notActiveTab = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active)' ).first();
+
+		await activeTab.hover();
+		await expect( activeTab ).toHaveCSS( 'color', rgbColor );
+		await notActiveTab.hover();
+		await expect( notActiveTab ).toHaveCSS( 'color', rgbColor );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Check that icon color does not effect text color in active and non-active tabs on hover state', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		// Set icons to tabs.
+		await setIconsToTabs( page, TabsIcons );
+
+		// Set icon hover color.
+		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
+
+		const redColor = 'rgb(255, 0, 0)',
+			whiteColor = 'rgb(255, 255, 255)',
+			activeTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active > .e-n-tab-icon.e-active i' ).first(),
+			activeTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
+			notActiveTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-icon:not(.e-active) i' ).first(),
+			notActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-title-text' ).first();
+
+		// Assert.
+		// Check color differences in active tab.
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-active > .e-n-tab-icon.e-active i' );
+		await activeTabIcon.hover();
+		await expect( activeTabIcon ).toHaveCSS( 'color', redColor );
+		await expect( activeTabTitle ).toHaveCSS( 'color', whiteColor );
+
+		// Check color differences in non active tab.
+		await notActiveTabIcon.hover();
+		await expect( notActiveTabIcon ).toHaveCSS( 'color', redColor );
+		await expect( notActiveTabTitle ).toHaveCSS( 'color', whiteColor );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Verify the separation of the parent and child nested tabs styling', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			parentWidgetId = await editor.addWidget( 'nested-tabs', container ),
+			tabsContainer = editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .e-con.e-active` ),
+			tabsContainerId = await tabsContainer.getAttribute( 'data-id' );
+
+		await editor.addWidget( 'nested-tabs', tabsContainerId );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		// Set tabs direction to 'stretch' for parent widget.
+		await editor.selectElement( parentWidgetId );
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		// Set align title to 'start'.
+		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.elementor-control-tabs_title_background_color_background .eicon-paint-brush' ).click();
+		await page.locator( '.elementor-control-tabs_title_background_color_color .pcr-button' ).click();
+		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#ff0000' );
+
+		// Assert.
+		// Check if title's are aligned on the left for the parent widget.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active` ) ).toHaveCSS( 'justify-content', 'flex-start' );
+		// Check if title's are aligned on the center for the child widget.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active` ) ).toHaveCSS( 'justify-content', 'center' );
+		// Check if parent widget has red tabs.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active + .e-n-tab-title` ) ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+		// Check if child widget doesn't have red tabs.
+		await expect( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title.e-active + .e-n-tab-title` ) ).not.toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Verify that icon doesn\'t disappear when the tab title is updated', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		// Add tab icons.
+		await setIconsToTabs( page, TabsIcons );
+		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
+
+		// Update first tab title.
+		await page.locator( '.elementor-repeater-fields:nth-child( 2 ) .elementor-control-tab_title input' ).fill( 'Title change' );
+		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
+
+		// Assert.
+		expect( activeTabSpanCount ).toBe( 3 );
+		expect( activeTabUpdatedSpanCount ).toBe( 3 );
+
+		await cleanup( wpAdmin );
 	} );
 } );
 
@@ -249,9 +378,19 @@ async function setup( wpAdmin ) {
 		'nested-elements': 'active',
 	} );
 }
+
 async function cleanup( wpAdmin ) {
 	await wpAdmin.setExperiments( {
 		container: 'inactive',
 		'nested-elements': 'inactive',
 	} );
 }
+
+async function setTabItemColor( page, editor, panelClass, tabState, colorPickerClass, color ) {
+	await editor.activatePanelTab( 'style' );
+	await page.locator( `.elementor-control-${ panelClass }` ).click();
+	await page.locator( `.elementor-control-${ tabState }` ).click();
+	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
+	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
+}
+
