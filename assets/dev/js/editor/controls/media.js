@@ -54,6 +54,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
 			mediaType = this.getMediaType();
+
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 			if ( ! value && url ) {
@@ -290,10 +291,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	toggleSizeControl() {
-		const previewImageExist = this.$el.find( '.elementor-control-media__preview' )[ 0 ]?.style?.backgroundImage;
+		const previewImageExist = this.ui.mediaImage[ 0 ]?.style?.backgroundImage;
 		const backgroundControl = this.$el[ 0 ]?.className?.match( /background_image/g );
 		if ( backgroundControl && previewImageExist ) {
-			const inheritedBgImage = this.$el.find( '.elementor-control-media__preview' )[ 0 ].style.opacity;
+			const inheritedBgImage = this.ui.mediaImage[ 0 ].style.opacity;
 			if ( inheritedBgImage ) {
 				this.ui.mediaImageSize.addClass( 'e-select-placeholder' );
 			}
