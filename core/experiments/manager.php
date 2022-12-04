@@ -415,8 +415,9 @@ class Manager extends Base_Object {
 		foreach ( $features as $feature_name => $feature ) {
 			$is_hidden = $feature[ static::TYPE_HIDDEN ];
 			$is_mutable = $feature['mutable'];
+			$should_hide_experiment = ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() );
 
-			if ( ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() ) ) {
+			if ( $should_hide_experiment ) {
 				unset( $features[ $feature_name ] );
 
 				continue;
