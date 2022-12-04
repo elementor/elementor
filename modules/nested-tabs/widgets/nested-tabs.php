@@ -1089,39 +1089,62 @@ class NestedTabs extends Widget_Nested_Base {
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
-				var tabCount = index + 1,
-				tabUid = elementUid + tabCount,
-				tabTitleKey = 'tab-title-' + tabUid;
-				tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
+				let tabCount = index + 1,
+					tabUid = elementUid + tabCount,
+					tabWrapperKey = tabUid,
+					tabTitleKey = 'tab-title-' + tabUid,
+					tabIconKey = 'tab-icon-' + tabUid,
+					tabActiveIconKey = 'tab-active-icon-' + tabUid,
+					tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+					tabActiveIcon = tabIcon,
+					tabId = 'e-n-tab-title-' + tabUid;
 
-				let tabActiveIcon = tabIcon;
 				if ( '' !== item.tab_icon_active.value ) {
 					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
 				}
 
-				let tabId = 'e-n-tab-title-' + tabUid;
 				if ( '' !== item.element_id ) {
 					tabId = item.element_id;
 				}
 
+				view.addRenderAttribute( tabWrapperKey, {
+					'id': tabId,
+					'class': [ 'e-n-tab-title','e-normal' ],
+					'data-tab': tabCount,
+					'role': 'tab',
+					'tabindex': 1 === tabCount ? '0' : '-1',
+					'aria-controls': 'e-n-tab-content-' + tabUid,
+					'aria-expanded': 'false',
+				} );
+
 				view.addRenderAttribute( tabTitleKey, {
-				'id': tabId,
-				'class': [ 'e-n-tab-title','e-normal' ],
-				'data-tab': tabCount,
-				'role': 'tab',
-				'tabindex': 1 === tabCount ? '0' : '-1',
-				'aria-controls': 'e-n-tab-content-' + tabUid,
-				'aria-expanded': 'false',
-				'data-binding-type': 'repeater-item',
-				'data-binding-repeater-name': 'tabs',
-				'data-binding-setting': 'tab_title',
-				'data-binding-index': tabCount,
+					'class': [ 'e-n-tab-title-text' ],
+					'data-binding-type': 'repeater-item',
+					'data-binding-repeater-name': 'tabs',
+					'data-binding-setting': [ 'tab_title' ],
+					'data-binding-index': tabCount,
+				} );
+
+				view.addRenderAttribute( tabIconKey, {
+					'class': [ 'e-n-tab-icon' ],
+					'data-binding-type': 'repeater-item',
+					'data-binding-repeater-name': 'tabs',
+					'data-binding-setting': [ 'tab_icon.value' ],
+					'data-binding-index': tabCount,
+				} );
+
+				view.addRenderAttribute( tabActiveIconKey, {
+					'class': [ 'e-n-tab-icon', 'e-active' ],
+					'data-binding-type': 'repeater-item',
+					'data-binding-repeater-name': 'tabs',
+					'data-binding-setting': [ 'tab_icon_active.value' ],
+					'data-binding-index': tabCount,
 				} );
 				#>
-				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
-					<span class="e-n-tab-icon">{{{ tabIcon.value }}}</span>
-					<span class="e-n-tab-icon e-active">{{{ tabActiveIcon.value }}}</span>
-					<span class="e-n-tab-title-text">{{{ item.tab_title }}}</span>
+				<div {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
+					<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}</span>
+					<span {{{ view.getRenderAttributeString( tabActiveIconKey ) }}}>{{{ tabActiveIcon.value }}}</span>
+					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
 			</div>
