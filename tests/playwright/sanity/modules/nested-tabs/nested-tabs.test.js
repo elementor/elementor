@@ -435,63 +435,6 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
-
-	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			tabsId = await editor.addWidget( 'nested-tabs', container );
-
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, TabsIcons );
-		const activeTab = editor.getPreviewFrame().locator( '.e-normal.e-active' );
-
-		// Tabs styling scenario 1: Direction: Top, Align Title: Left, Icon Position: Right.
-		await editor.selectElement( tabsId );
-		// Set align title to 'start'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
-		// Set icon position to 'right'.
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
-		await page.locator( '.elementor-control-icon_position i.eicon-h-align-right' ).click();
-
-		await editor.togglePreviewMode();
-
-		// Assert
-		expect( await activeTab.screenshot( {
-			type: 'jpeg',
-			quality: 70,
-		} ) ).toMatchSnapshot( 'tabs-direction-top-icon-position-right-align-left.jpeg' );
-
-		await editor.togglePreviewMode();
-
-		// Tabs styling scenario 2: Direction: Left, Align Title: Right, Icon Position: Top.
-		await editor.selectElement( tabsId );
-		// Set Direction: Left.
-		await editor.activatePanelTab( 'content' );
-		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
-		// Set align title to 'right'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
-		// Set icon position to 'top'.
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
-		await page.locator( '.elementor-control-icon_position i.eicon-v-align-top' ).click();
-
-		await editor.togglePreviewMode();
-
-		// Assert
-		expect( await activeTab.screenshot( {
-			type: 'jpeg',
-			quality: 70,
-		} ) ).toMatchSnapshot( 'tabs-direction-left-icon-position-top-align-right.jpeg' );
-
-		await cleanup( wpAdmin );
-	} );
 } );
 
 const TabsIcons = [
