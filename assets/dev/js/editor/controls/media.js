@@ -46,9 +46,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
 	setFallbackValues() {
-		this.ui.mediaImage.attr( 'data-id', this.getControlValue( 'id' ) || this.getControlPlaceholder()?.id );
-		this.ui.mediaImage.attr( 'data-alt', this.getControlValue( 'alt' ) || this.getControlPlaceholder()?.alt || '' );
-		this.ui.mediaImage.attr( 'data-size', this.getControlValue( 'size' ) || this.getControlPlaceholder()?.size || 'full' );
+		this.setEditSetting( 'mediaId', this.getControlValue( 'id' ) || this.getControlPlaceholder()?.id );
+		this.setEditSetting( 'mediaAlt', this.getControlValue( 'alt' ) || this.getControlPlaceholder()?.alt || '' );
+		this.setEditSetting( 'mediaSize', this.getControlValue( 'size' ) || this.getControlPlaceholder()?.size || 'full' );
 	},
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
@@ -256,10 +256,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	async onMediaImageSize() {
 		this.ui.mediaImageSize.removeClass( 'e-select-placeholder' );
-		const previewPlaceHolder = this.ui.mediaImage;
 		const selectedImage = {
-			id: this.getControlValue( 'id' ) || previewPlaceHolder[ 0 ].getAttribute( 'data-id' ),
-			alt: this.getControlValue( 'alt' ) || previewPlaceHolder[ 0 ].getAttribute( 'alt' ),
+			id: this.getEditSettings( 'mediaId' ),
+			alt: this.getEditSettings( 'mediaAlt' ),
 		};
 
 		const selectedSize = this.ui.mediaImageSize.val();
@@ -276,17 +275,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			source: 'library',
 		};
 
+		elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
+			if ( selectedImage.id !== data.id ) {
+				return;
+			}
+			imageURL = data[ selectedImage.id ][ selectedSize ];
+			if ( imageURL ) {
+				stateOptions.url = imageURL;
+				this.setValue( stateOptions );
+			}
+		} );
+
 		if ( imageURL ) {
 			stateOptions.url = imageURL;
 			this.setValue( stateOptions );
-		} else {
-			elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
-				imageURL = data[ selectedImage.id ][ selectedSize ];
-				if ( imageURL ) {
-					stateOptions.url = imageURL;
-					this.setValue( stateOptions );
-				}
-			} );
 		}
 	},
 

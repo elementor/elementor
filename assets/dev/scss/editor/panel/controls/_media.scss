@@ -256,15 +256,12 @@
 		padding: 0;
 	}
 
+	// Control won't support more than one breakpoints
 	.elementor-control-responsive-switchers {
 		display: none;
 	}
 
-	.elementor-control-title {
-		width: 32%;
-	}
-
-	.elementor-control-input-wrapper {
+	.media-size-input-wrapper {
 		margin-left: auto;
 	}
 
