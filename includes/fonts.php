@@ -67,12 +67,13 @@ class Fonts {
 		if ( null === self::$font_groups ) {
 			$font_groups = [
 				self::SYSTEM => esc_html__( 'System', 'elementor' ),
-				self::GOOGLE => esc_html__( 'Google', 'elementor' ),
-				self::EARLYACCESS => esc_html__( 'Google Early Access', 'elementor' ),
 			];
 
-			if ( ! static::is_enable_google_font() ) {
-				unset( $font_groups[ self::GOOGLE ], $font_groups[ self::EARLYACCESS ] );
+			if ( static::is_enable_google_font() ) {
+				$font_groups = array_merge( $font_groups, [
+					self::GOOGLE => esc_html__( 'Google', 'elementor' ),
+					self::EARLYACCESS => esc_html__( 'Google (Early Access)', 'elementor' ),
+				] );
 			}
 
 			/**
@@ -1565,14 +1566,13 @@ class Fonts {
 		static $retval = null;
 
 		if ( null === $retval ) {
-			$option = get_option( 'elementor_google_font', '' );
+			$default_value = '1';
 
-			if ( '' === $option ) {
-				// TODO: For future use, using for new installs.
-				//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
-				//$option = $is_new_site ? '0' : '1';
-				$option = '1';
-			}
+			// TODO: For future use, using for new installs.
+			//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
+			//$default_value = $is_new_site ? '0' : '1';
+
+			$option = get_option( 'elementor_google_font', $default_value );
 
 			$retval = '1' === $option;
 		}

@@ -937,7 +937,7 @@
 									"default": "1",
 									"enum": [
 										"1",
-										""
+										"0"
 									]
 								},
 								"font_display": {
