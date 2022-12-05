@@ -77,7 +77,7 @@ jobs:
         uses: ./.github/workflows/run-wp-env
         with:
           PLUGINS: './tests/plugins-tester/plugins/elementor-tests-utils'
-          PORT: '7777'
+          PORT: '7777' # In order to enable local run side by side with another default server (port 8888)
       - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
