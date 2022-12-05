@@ -271,6 +271,9 @@ class Control_Media extends Control_Base_Multiple {
 			<# } #>
 			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
+
+		<# if ( data.sizes_supported ) { #>
+
 		<div class="elementor-control-content elementor-control-media-size">
 			<div class="elementor-control-field elementor-control elementor-control-type-select">
 				<label for="elementor-control-default" class="elementor-control-title"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
@@ -292,7 +295,7 @@ class Control_Media extends Control_Base_Multiple {
 				</div>
 			</div>
 		</div>
-
+	<# } #>
 		<?php
 	}
 
@@ -326,6 +329,7 @@ class Control_Media extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'sizes' => false,
 			'media_types' => [
 				'image',
 			],

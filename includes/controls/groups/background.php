@@ -256,6 +256,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'condition' => [
 				'background' => [ 'classic' ],
 			],
+			'sizes_supported' => true,
 		];
 
 		$fields['position'] = [

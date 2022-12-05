@@ -45,11 +45,22 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
-	setFallbackValues() {
-		this.setEditSetting( 'mediaId', this.getControlValue( 'id' ) || this.getControlPlaceholder()?.id );
-		this.setEditSetting( 'mediaAlt', this.getControlValue( 'alt' ) || this.getControlPlaceholder()?.alt || '' );
-		this.setEditSetting( 'mediaSize', this.getControlValue( 'size' ) || this.getControlPlaceholder()?.size || 'full' );
+
+	updatePrevState( options ) {
+		if ( ! options.id ) {
+			return;
+		}
+		this.setEditSetting( 'mediaId', options.id );
+		this.setEditSetting( 'mediaAlt', options.alt );
+		this.setEditSetting( 'mediaSize', options.size );
 	},
+
+	resetPrevState() {
+		this.setEditSetting( 'mediaId', null );
+		this.setEditSetting( 'mediaAlt', null );
+		this.setEditSetting( 'mediaSize', null );
+	},
+
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
@@ -57,10 +68,21 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+
+			if ( value ) {
+				this.setEditSetting( 'image_url', true );
+			}
+
 			if ( ! value && url ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
+				this.setEditSetting( 'image_opacity', true );
 			}
-			this.setFallbackValues();
+
+			this.updatePrevState( {
+				id: this.getControlValue( 'id' ),
+				alt: this.getControlValue( 'alt' ),
+				size: this.getControlValue( 'size' ),
+			} );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
 		} else {
@@ -213,6 +235,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.trigger( 'before:select' );
 
 		const state = this.frame.state();
+		this.resetPrevState();
+
 		let attachment;
 
 		if ( 'embed' === state.get( 'id' ) ) {
@@ -230,12 +254,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		if ( attachment.url ) {
-			this.setValue( {
+			const updatedState = {
 				url: attachment.url,
 				id: attachment.id,
 				alt: attachment.alt,
 				source: attachment.source,
-			} );
+			};
+			this.setValue( updatedState );
 
 			if ( this.model.get( 'responsive' ) ) {
 				// Render is already calls `applySavedValue`, therefore there's no need for it in this case.
@@ -244,9 +269,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				this.applySavedValue();
 			}
 
+			this.updatePrevState( updatedState );
 			this.toggleSizeControl();
 		}
-
 		this.trigger( 'after:select' );
 	},
 
@@ -275,29 +300,27 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			source: 'library',
 		};
 
-		elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
-			if ( selectedImage.id !== data.id ) {
-				return;
-			}
-			imageURL = data[ selectedImage.id ][ selectedSize ];
-			if ( imageURL ) {
-				stateOptions.url = imageURL;
-				this.setValue( stateOptions );
-			}
-		} );
-
 		if ( imageURL ) {
 			stateOptions.url = imageURL;
 			this.setValue( stateOptions );
+		} else {
+			elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
+				imageURL = data[ selectedImage.id ][ selectedSize ];
+				if ( imageURL ) {
+					stateOptions.url = imageURL;
+					this.setValue( stateOptions );
+				}
+			} );
 		}
 	},
 
 	toggleSizeControl() {
-		const previewImageExist = this.ui.mediaImage[ 0 ]?.style?.backgroundImage;
-		const backgroundControl = this.$el[ 0 ]?.className?.match( /background_image/g );
-		if ( backgroundControl && previewImageExist ) {
-			const inheritedBgImage = this.ui.mediaImage[ 0 ].style.opacity;
-			if ( inheritedBgImage ) {
+		const sizesSupport = this.model.get( 'sizes_supported' );
+		const hasImage = this.getEditSettings( 'image_url' );
+		const opacity = this.getEditSettings( 'image_opacity' );
+
+		if ( sizesSupport && hasImage ) {
+			if ( opacity ) {
 				this.ui.mediaImageSize.addClass( 'e-select-placeholder' );
 			}
 		} else {
