@@ -87,6 +87,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
 		$nested_tabs_heading_selector_class = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
 		$nested_tabs_content_selector_class = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content';
+		$tab_title_background_color = 'rgba(241, 243, 245, 1)';
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -423,13 +424,13 @@ class NestedTabs extends Widget_Nested_Base {
 				'exclude' => [ 'image' ],
 				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title",
 				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
 					'color' => [
-						'global' => [
-							'default' => Global_Colors::COLOR_ACCENT,
-						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
 						'selectors' => [
-							'{{SELECTOR}}' => 'background: {{VALUE}}',
+							'{{WRAPPER}}' => '--n-tabs-title-background-color: {{VALUE}}',
 						],
 					],
 				],
@@ -560,7 +561,7 @@ class NestedTabs extends Widget_Nested_Base {
 					],
 					'color' => [
 						'global' => [
-							'default' => Global_Colors::COLOR_ACCENT,
+							'default' => Global_Colors::COLOR_PRIMARY,
 						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
 						'selectors' => [

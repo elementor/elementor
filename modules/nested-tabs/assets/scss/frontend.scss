@@ -153,7 +153,7 @@
 
 			&.e-active {
 				color: var( --n-tabs-title-color-active );
-				background-color: var( --n-tabs-title-background-color-active );
+				background: var( --n-tabs-title-background-color-active );
 
 				.e-n-tab-icon {
 					display: none;
@@ -207,6 +207,8 @@
 		display: none;
 	}
 }
+
+.elementor .elementor-element.elementor-element-3daeca23 > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title
 
 // Responsive mode
 @mixin hide-normal-tabs-($device) {
