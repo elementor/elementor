@@ -208,7 +208,16 @@
 	}
 }
 
-.elementor .elementor-element.elementor-element-3daeca23 > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title
+// TODO: Remove once PHP global color support is fixed.
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title {
+	&.e-active {
+		background: var( --n-tabs-title-background-color-active );
+	}
+
+	&:hover {
+		  background: var( --n-tabs-title-background-color-hover );
+	}
+}
 
 // Responsive mode
 @mixin hide-normal-tabs-($device) {

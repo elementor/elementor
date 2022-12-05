@@ -561,7 +561,7 @@ class NestedTabs extends Widget_Nested_Base {
 					],
 					'color' => [
 						'global' => [
-							'default' => Global_Colors::COLOR_PRIMARY,
+							'default' => Global_Colors::COLOR_ACCENT,
 						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
 						'selectors' => [
