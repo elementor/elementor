@@ -1568,8 +1568,10 @@ class Fonts {
 			$option = get_option( 'elementor_google_font', '' );
 
 			if ( '' === $option ) {
-				$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
-				$option = $is_new_site ? '0' : '1';
+				// TODO: For future use, using for new installs.
+				//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
+				//$option = $is_new_site ? '0' : '1';
+				$option = '1';
 			}
 
 			$retval = '1' === $option;

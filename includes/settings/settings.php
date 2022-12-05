@@ -338,9 +338,8 @@ class Settings extends Settings_Page {
 								'label' => esc_html__( 'Google Fonts', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => '',
+									'std' => '1',
 									'options' => [
-										'' => esc_html__( 'Default', 'elementor' ),
 										'1' => esc_html__( 'Enable', 'elementor' ),
 										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
