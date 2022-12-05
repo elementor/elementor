@@ -50,9 +50,9 @@ class Fonts {
 	 *
 	 * @var null|array
 	 */
-	private static $font_groups;
+	protected static $font_groups;
 
-	private static $is_google_fonts_enabled = null;
+	protected static $is_google_fonts_enabled = null;
 
 	/**
 	 * Get font Groups.
