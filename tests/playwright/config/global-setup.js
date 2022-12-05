@@ -6,11 +6,11 @@ module.exports = async ( config ) => {
 	const browser = await chromium.launch( { headless: config.headless } ),
 		page = await browser.newPage();
 
-	await page.goto( `${ config.baseURL }/wp-admin`, { waitUntil : 'networkidle' } );
+	await page.goto( `${ config.baseURL }/wp-admin`, { waitUntil: 'networkidle' } );
 
 	await page.waitForSelector( 'text=Log In' );
-	await page.type( 'input[name="log"]', config.user.username, { delay : 100 }  );
-	await page.type( 'input[name="pwd"]', config.user.password, { delay : 100 }  );
+	await page.type( 'input[name="log"]', config.user.username, { delay: 100 } );
+	await page.type( 'input[name="pwd"]', config.user.password, { delay: 100 } );
 	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
 
