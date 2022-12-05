@@ -31,8 +31,9 @@
 
 	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-title-color-hover: #{$white};
-	--n-tabs-title-background-color: #{$editor-background-light};
 	--n-tabs-title-color-active: #{$white};
+	--n-tabs-title-background-color: #{$editor-background-light};
+	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
@@ -99,9 +100,13 @@
 			padding-bottom: var( --n-tabs-title-padding-bottom );
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
-			transition: all var( --n-tabs-title-transition );
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
+
+			&,
+			span * {
+				transition: all var( --n-tabs-title-transition );
+			}
 
 			&-text {
 				display: flex;
@@ -109,26 +114,8 @@
 			  	font-size: var( --n-tabs-title-font-size );
 			}
 
-			&:hover {
-
-				&,
-				&.e-active{
-					transition: all var( --n-tabs-title-transition );
-					color: var( --n-tabs-title-color-hover );
-				}
-
-				.e-n-tab-icon {
-					> i {
-						color: var( --n-tabs-icon-color-hover );
-					}
-
-					svg {
-						fill: var( --n-tabs-icon-color-hover );
-					}
-				}
-			}
-
 			.e-n-tab-icon {
+				display: flex;
 				align-items: center;
 
 				> i {
@@ -170,8 +157,10 @@
 			}
 
 			&.e-active {
-				color: var( --n-tabs-title-color-active );
-				background-color: var( --n-tabs-title-background-color-active );
+				&:not(:hover) {
+					color: var( --n-tabs-title-color-active );
+					background-color: var( --n-tabs-title-background-color-active );
+				}
 
 				.e-n-tab-icon {
 					display: none;
