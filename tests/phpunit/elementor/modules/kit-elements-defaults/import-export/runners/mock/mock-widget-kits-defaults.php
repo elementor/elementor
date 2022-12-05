@@ -4,15 +4,17 @@ namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExport\Runners;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 
-class Mock_Widget extends Widget_Base {
-	const NAME = 'mock-widget';
+class Mock_Widget_Kits_Defaults extends Widget_Base {
+	const NAME = 'mock-widget-kits-defaults';
 
 	public function get_name() {
 		return static::NAME;
 	}
 
 	protected function register_controls() {
-		$this->start_controls_section( 'test-section' );
+		$this->start_controls_section( 'test-section', [
+			'tab' => Controls_Manager::TAB_CONTENT,
+		] );
 
 		$this->add_control(
 			'text',
@@ -57,6 +59,22 @@ class Mock_Widget extends Widget_Base {
 			'another_setting',
 			[
 				'label' => esc_html__( 'Text', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'mock-control-1',
+			[
+				'label' => esc_html__( 'Mock Control 1', 'elementor' ),
+				'type' => Mock_Control_Kits_Defaults::NAME,
+			]
+		);
+
+		$this->add_control(
+			'mock-control-2',
+			[
+				'label' => esc_html__( 'Mock Control 2', 'elementor' ),
+				'type' => Mock_Control_Kits_Defaults::NAME,
 			]
 		);
 
