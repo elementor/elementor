@@ -338,8 +338,8 @@ test.describe( 'Nested Tabs tests', () => {
 		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Assert.
-		expect( activeTabSpanCount ).toBe( 3 );
-		expect( activeTabUpdatedSpanCount ).toBe( 3 );
+		expect( activeTabSpanCount ).toBe( 2 );
+		expect( activeTabUpdatedSpanCount ).toBe( 2 );
 
 		await cleanup( wpAdmin );
 	} );
