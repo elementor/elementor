@@ -467,7 +467,7 @@ test.describe( 'Nested Tabs tests', () => {
 		// Assert.
 		await activeTab.hover();
 
-		// Check that active tab receives the hover defined background color.
+		// Check that active tab receives the hover styling.
 		await expect( activeTab ).toHaveCSS( 'border-style', borderStyle );
 		await expect( activeTab ).toHaveCSS( 'box-shadow', boxShadow );
 		await expect( activeTab ).toHaveCSS( 'border-radius', borderRadius );
