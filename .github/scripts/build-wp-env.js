@@ -25,7 +25,7 @@ if (WP_CORE_VERSION !== 'latest') {
 
 if ( PLUGINS ) {
 	PLUGINS.split( ',' ).forEach( ( plugin ) => {
-		wpEnv.plugins.push( plugin );
+		wpEnv.plugins.push( plugin.trim() );
 	} );
 }
 
