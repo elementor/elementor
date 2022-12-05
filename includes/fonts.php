@@ -52,6 +52,8 @@ class Fonts {
 	 */
 	private static $font_groups;
 
+	private static $is_google_fonts_enabled = null;
+
 	/**
 	 * Get font Groups.
 	 *
@@ -69,7 +71,7 @@ class Fonts {
 				self::SYSTEM => esc_html__( 'System', 'elementor' ),
 			];
 
-			if ( static::is_enable_google_font() ) {
+			if ( static::is_google_fonts_enabled() ) {
 				$font_groups = array_merge( $font_groups, [
 					self::GOOGLE => esc_html__( 'Google', 'elementor' ),
 					self::EARLYACCESS => esc_html__( 'Google (Early Access)', 'elementor' ),
@@ -148,7 +150,7 @@ class Fonts {
 			'Georgia' => self::SYSTEM,
 		];
 
-		if ( static::is_enable_google_font() ) {
+		if ( static::is_google_fonts_enabled() ) {
 			$fonts = array_merge( $fonts, [
 				// Google Fonts (last update: 17/01/2022).
 				'ABeeZee' => self::GOOGLE,
@@ -1562,10 +1564,8 @@ class Fonts {
 		} );
 	}
 
-	public static function is_enable_google_font() {
-		static $retval = null;
-
-		if ( null === $retval ) {
+	public static function is_google_fonts_enabled() : bool {
+		if ( null === static::$is_google_fonts_enabled ) {
 			$default_value = '1';
 
 			// TODO: For future use, using for new installs.
@@ -1574,10 +1574,10 @@ class Fonts {
 
 			$option = get_option( 'elementor_google_font', $default_value );
 
-			$retval = '1' === $option;
+			static::$is_google_fonts_enabled = '1' === $option;
 		}
 
-		return $retval;
+		return static::$is_google_fonts_enabled;
 	}
 
 	public static function get_font_display_setting() {
