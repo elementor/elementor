@@ -12,8 +12,8 @@ test.describe( 'Elements regression', () => {
 	const testedElements = {};
 
 	test.afterAll( async ( {}, testInfo ) => {
-		// eslint-disable-next-line no-console
-		console.log( 'summaryData', summary( testedElements, elementsConfig ) );
+		const summaryData = summary( testedElements, elementsConfig );
+		test.info().annotations.push( { type: 'summary', description: JSON.stringify( summaryData ) } );
 
 		// TODO: Need to find a better solution for now this is not working well.
 
