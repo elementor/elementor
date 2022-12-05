@@ -84,7 +84,7 @@ class Source_Remote extends Source_Base {
 	 * @return array Remote templates.
 	 */
 	public function get_items( $args = [] ) {
-		$force_update = ! empty ( $args['force_update'] ) && is_bool( $args['force_update'] );
+		$force_update = ! empty( $args['force_update'] ) && is_bool( $args['force_update'] );
 
 		$templates_data = $this->get_templates_data( $force_update );
 
