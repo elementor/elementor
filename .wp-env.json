@@ -11,5 +11,8 @@
         "elementor-templates": "./templates/lighthouse",
         "elementor-config": "./tests/wp-env/config",
         "elementor-playwright-templates": "./templates/playwright"
+    },
+    "config": {
+        "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
     }
 }

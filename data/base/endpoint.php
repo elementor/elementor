@@ -54,7 +54,7 @@ abstract class Endpoint {
 	 */
 	public function __construct( $controller ) {
 		if ( ! ( $controller instanceof Controller ) ) {
-			throw new \Exception( 'Invalid controller' );
+			throw new \Exception( 'Invalid controller.' );
 		}
 
 		$this->controller = $controller;

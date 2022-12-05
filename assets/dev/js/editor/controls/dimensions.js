@@ -181,6 +181,18 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	isLinkedDimensions() {
 		return this.getControlValue( 'isLinked' );
 	},
+
+	updateUnitChoices() {
+		ControlBaseUnitsItemView.prototype.updateUnitChoices.apply( this, arguments );
+
+		let inputType = 'number';
+
+		if ( this.isCustomUnit() ) {
+			inputType = 'text';
+		}
+
+		this.ui.controls.attr( 'type', inputType );
+	},
 } );
 
 module.exports = ControlDimensionsItemView;
