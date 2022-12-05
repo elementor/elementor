@@ -106,7 +106,8 @@
 			width: var( --n-tabs-title-width );
 
 			&,
-			span * {
+			span svg,
+			span i {
 				transition: background var( --n-tabs-title-transition ),
 					color var( --n-tabs-title-transition ),
 					fill var( --n-tabs-title-transition ),
@@ -128,43 +129,30 @@
 			.e-n-tab-icon {
 				display: flex;
 				align-items: center;
+				flex-direction: column;
 				order: var( --n-tabs-icon-order );
+				overflow: hidden;
 
 				> i {
 					color: var( --n-tabs-icon-color );
+					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
 				svg {
 					fill: var( --n-tabs-icon-color );
+					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
-				&,
-				&.e-active {
-
-					> i {
-						font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
-					}
-
-					svg {
-						width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
-						height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
-					}
-
-					&:empty {
-						display: none;
-					}
-				}
-
-				&.e-active {
+				&:empty {
 					display: none;
+				}
 
-					> i {
-						color: var( --n-tabs-icon-color-active );
-					}
-
-					svg {
-						fill: var( --n-tabs-icon-color-active );
-					}
+				i:last-child,
+				svg:last-child {
+					transform: translate(0, -100vh);
+					height: 0;
+					opacity: 0;
 				}
 			}
 
@@ -172,16 +160,30 @@
 				&:not(:hover) {
 					color: var( --n-tabs-title-color-active );
 					background: var( --n-tabs-title-background-color-active );
+
+					i:last-child {
+						color: var( --n-tabs-icon-color-active );
+					}
+
+					svg:last-child {
+						fill: var( --n-tabs-icon-color-active );
+					}
 				}
 
 				.e-n-tab-icon {
-					display: none;
 
-					&.e-active {
-						display: flex;
+					i,
+					svg {
+						&:first-child {
+							transform: translate(0, -100vh);
+							height: 0;
+							opacity: 0;
+						}
 
-						&:empty {
-							display: none;
+						&:last-child {
+							transform: initial;
+							height: initial;
+							opacity: initial;
 						}
 					}
 				}
@@ -193,7 +195,7 @@
 
 				.e-n-tab-icon {
 
-					> i {
+					i {
 						color: var( --n-tabs-icon-color-hover );
 					}
 
