@@ -29,7 +29,7 @@ class Source_Remote extends Source_Base {
 	}
 
 	public function add_actions() {
-		add_action( 'elementor/experiments/feature-state-change', [ $this, 'clear_cache' ], 10, 3 );
+		add_action( 'elementor/experiments/feature-state-change/container', [ $this, 'clear_cache' ], 10, 0 );
 	}
 
 	/**
@@ -84,7 +84,7 @@ class Source_Remote extends Source_Base {
 	 * @return array Remote templates.
 	 */
 	public function get_items( $args = [] ) {
-		$force_update = $args['force_update'] ?? false;
+		$force_update = ! empty ( $args['force_update'] ) && is_bool( $args['force_update'] );
 
 		$templates_data = $this->get_templates_data( $force_update );
 
@@ -326,9 +326,7 @@ class Source_Remote extends Source_Base {
 		];
 	}
 
-	public function clear_cache( string $feature_name, $old_state, $new_state ) {
-		if ( 'container' === $feature_name ) {
-			delete_transient( static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
-		}
+	public function clear_cache() {
+		delete_transient( static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
 	}
 }

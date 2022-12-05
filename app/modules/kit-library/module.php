@@ -81,9 +81,7 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 
 		// Assigning this action here since the repository is being loaded by demand.
-		add_action( 'elementor/experiments/feature-state-change', function ( $feature_name, $old_state, $new_state ) {
-			Repository::clear_cache( $feature_name, $old_state, $new_state );
-		}, 10, 3 );
+		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
 			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {

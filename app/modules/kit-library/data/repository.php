@@ -312,9 +312,7 @@ class Repository {
 		$this->subscription_plans = $subscription_plans;
 	}
 
-	public static function clear_cache( $feature_name, $old_state, $new_state ) {
-		if ( 'container' === $feature_name ) {
-			delete_transient( static::KITS_CACHE_KEY );
-		}
+	public static function clear_cache() {
+		delete_transient( static::KITS_CACHE_KEY );
 	}
 }
