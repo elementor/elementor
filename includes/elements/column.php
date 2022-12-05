@@ -298,7 +298,6 @@ class Element_Column extends Element_Base {
 						'background_lazyload' => [
 							'active' => true,
 							'keys' => [ 'background_image', 'url' ],
-							'overlay_keys' => [ 'background_overlay_image', 'url' ],
 							'selector' => '.elementor-element-populated',
 						],
 					],
