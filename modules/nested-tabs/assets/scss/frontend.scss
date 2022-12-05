@@ -106,7 +106,8 @@
 			width: var( --n-tabs-title-width );
 
 			&,
-			span * {
+			span svg,
+			span i {
 				transition: background var( --n-tabs-title-transition ),
 					color var( --n-tabs-title-transition ),
 					fill var( --n-tabs-title-transition ),
@@ -147,7 +148,8 @@
 					display: none;
 				}
 
-				*:last-child {
+				i:last-child,
+				svg:last-child {
 					transform: translate(0, -100vh);
 					height: 0;
 					opacity: 0;
@@ -168,8 +170,10 @@
 					}
 				}
 
-				.e-n-tab-icon{
-					* {
+				.e-n-tab-icon {
+
+					i,
+					svg {
 						&:first-child {
 							transform: translate(0, -100vh);
 							height: 0;
@@ -191,7 +195,7 @@
 
 				.e-n-tab-icon {
 
-					> i {
+					i {
 						color: var( --n-tabs-icon-color-hover );
 					}
 
