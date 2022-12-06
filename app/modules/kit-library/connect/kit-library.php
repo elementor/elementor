@@ -17,7 +17,7 @@ class Kit_Library extends Library {
 	}
 
 	public function get_all( $args = [] ) {
-		return $this->http_request( 'GET', 'kits/plugin-version/' . ELEMENTOR_VERSION , $args );
+		return $this->http_request( 'GET', 'kits/plugin-version/' . ELEMENTOR_VERSION, $args );
 	}
 
 	public function get_taxonomies() {
