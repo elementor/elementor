@@ -1,13 +1,14 @@
 import { createRequire } from 'module';
 import fs from 'fs';
 
-var require = createRequire( import.meta.url );
+// Hack to use require in ES6 module for a ES5 modules.
+const require = createRequire( import.meta.url );
 const mergeImages = require( 'merge-images' );
 const { Canvas, Image, loadImage } = require( 'canvas' );
 
-export const mergeFromReportDir = ( dir ) => {
+export const mergeReportFromDir = ( dir ) => {
 	let config;
-	// eslint-disable-next-line
+	// eslint-disable-next-line no-unused-vars
 	const report = ( data ) => config = data; // Hack for use backstopjs-report data in the eval below
 	const configDir = `${ dir }/backstop_data/html_report`;
 	const configRaw = fs.readFileSync( `${ configDir }/config.js`, { encoding: 'utf8', flag: 'r' } );
@@ -16,11 +17,9 @@ export const mergeFromReportDir = ( dir ) => {
 
 	const promises = [];
 	config.tests.forEach( async ( result ) => {
-		if ( 'pass' === result.status ) {
-			promises.push( Promise.resolve() );
-			return;
+		if ( 'pass' !== result.status ) {
+			promises.push( handleErrorReport( configDir, result ) );
 		}
-		promises.push( handleErrorReport( configDir, result ) );
 	} );
 
 	return Promise.all( promises );
@@ -53,8 +52,10 @@ export const handleErrorReport = async ( configDir, result ) => {
 
 			try {
 				fs.writeFileSync( fs.realpathSync( `${ __dirname }/../results` ) + `/${ slug }-${ filename }`, base64Image, { encoding: 'base64' } );
+				// eslint-disable-next-line no-console
 				console.log( 'Diff File created' );
 			} catch ( err ) {
+				// eslint-disable-next-line no-console
 				console.log( 'Failed to create a Diff file', err );
 			}
 			return Promise.resolve();

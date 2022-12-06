@@ -1,9 +1,7 @@
-// eslint-disable-next-line
 import backstop from 'backstopjs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { mergeFromReportDir } from '../src/merge-images-utils.js';
-// eslint-disable-all
+import { mergeReportFromDir } from '../src/merge-images-utils.js';
 import config from '../backstop.json' assert {type: 'json'};
 
 const __filename = fileURLToPath( import.meta.url );
@@ -34,14 +32,13 @@ backstopConfig.scenarios.forEach( ( scenario ) => {
 } );
 
 // Run test
-backstop( 'test', {
-	config,
-} )
-	.then( ( data ) => {
+backstop( 'test', { config } )
+	.then( () => {
+		// eslint-disable-next-line no-console
 		console.log( 'Results: Success' );
 		process.exit( 0 );
 	} )
-	.catch( async ( data ) => {
-		await mergeFromReportDir( __dirname + '/../reports/' + slug );
+	.catch( async () => {
+		await mergeReportFromDir( __dirname + '/../reports/' + slug );
 		process.exit( 1 );
 	} );

@@ -33,7 +33,7 @@ const diffThreshold = getConfig( {
 	logger,
 } );
 
-console.log(
+logger.log(
 	pluginsToTest.length + ' plugins',
 	pluginsToTest,
 	'diffThreshold',
@@ -45,6 +45,6 @@ new PluginsTester( {
 	debug: true,
 	pluginsToTest,
 	diffThreshold,
-	pwd: __dirname,
+	cwd: __dirname,
 	logger,
 } );

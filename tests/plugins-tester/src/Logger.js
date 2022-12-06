@@ -1,21 +1,16 @@
 export const Logger = class {
-	debug = false;
-
-	constructor( options ) {
-		Object.entries( options ).forEach( ( [ key, value ] ) => {
-			this[ key ] = value;
-		} );
-	}
-
 	error( ...args ) {
+		// eslint-disable-next-line no-console
 		console.error( ...args );
 	}
 
 	info( ...args ) {
+		// eslint-disable-next-line no-console
 		console.info( ...args );
 	}
 
 	log( ...args ) {
+		// eslint-disable-next-line no-console
 		console.log( ...args );
 	}
 };

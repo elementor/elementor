@@ -31,7 +31,7 @@ add_action('elementor/editor/after_enqueue_scripts', function () {
 	?>
 	<script>
 		window.addEventListener("elementor:init", () => {
-			console.log("Elementor is init!");
+			// Backstop will run the tests based on the log, without wait for a specific selector.
 			elementor.on("document:loaded", () => {
 				setTimeout(() => console.log("Elementor is ready!"), 1000);
 			});
@@ -45,8 +45,8 @@ add_action('elementor/editor/after_enqueue_scripts', function () {
 });
 
 /**
- * Don't use Google Fonts, some time they are not loaded and cause the tests failing
-*/
+ * Don't use Google Fonts. Sometimes they are not loaded and cause the tests to fail.
+ */
 
 // Avoid loading Google Fonts on the editor preview
 add_action('elementor/editor/after_enqueue_scripts', function () {
@@ -69,7 +69,7 @@ add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
 
 // Avoid loading Google Fonts on 3rd plugins
 function dequeue_fonts( $href ) {
-	if ( false !== strpos( $href, 'https://fonts.' ) ) {
+	if ( false !== strpos( $href, 'https://fonts.google' ) ) {
 		return false;
 	}
 

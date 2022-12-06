@@ -5,7 +5,7 @@ export class PluginsTester {
 		runServer: true,
 		debug: false,
 		pluginsToTest: [],
-		pwd: '',
+		cwd: '',
 		logger: null,
 	};
 
@@ -17,7 +17,7 @@ export class PluginsTester {
 
 	async run() {
 		if ( this.options.runServer ) {
-			this.setPwd();
+			this.setCwd();
 			this.runServer();
 			this.prepareTestSite();
 		}
@@ -35,7 +35,7 @@ export class PluginsTester {
 		if ( ! this.options.runServer ) {
 			return this.cmd( `cd ../../ && ${ cmd }` );
 		}
-			return this.cmd( cmd );
+		return this.cmd( cmd );
 	}
 
 	checkPlugins() {
@@ -67,8 +67,8 @@ export class PluginsTester {
 		this.cmd( 'npm run wp-env start' );
 	}
 
-	setPwd() {
-		this.cmd( `cd ${ this.options.pwd }` );
+	setCwd() {
+		this.cmd( `cd ${ this.options.cwd }` );
 	}
 
 	prepareTestSite() {
