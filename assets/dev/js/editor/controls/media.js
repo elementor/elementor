@@ -71,12 +71,12 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 
 			if ( value ) {
-				this.setEditSetting( 'preview_image', true );
+				this.setEditSetting( 'has_image', true );
 			}
 
 			if ( ! value && url ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
-				this.setEditSetting( 'preview_image_opacity', true );
+				this.setEditSetting( 'has_placeholder_image', true );
 			}
 
 			this.setPrevState( {
@@ -317,8 +317,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	toggleSizeControl() {
 		const sizesSupport = this.model.get( 'sizes_supported' );
-		const hasImage = this.getEditSettings( 'preview_image' );
-		const opacity = this.getEditSettings( 'preview_image_opacity' );
+		const hasImage = this.getEditSettings( 'has_image' );
+		const opacity = this.getEditSettings( 'has_placeholder_image' );
 
 		if ( ! sizesSupport && ! hasImage ) {
 			this.ui.mediaSizeWrapper.hide();

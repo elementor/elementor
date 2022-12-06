@@ -262,7 +262,8 @@
 		padding: 0;
 	}
 
-	// Multipal switcher are supported in the same control. 
+	// Multiple switcher are not supported in the same control - there is a bug in the core that needs to be fixed.
+	// Clicking on the switcher will toggle both switchers and not only the one that was clicked.
 	.elementor-control-responsive-switchers {
 		display: none;
 	}
@@ -276,7 +277,7 @@
 .elementor-control-media-display-size.select {
 
 	padding-bottom: 0;
-	margin-left: auto;
+	margin-inline-start: auto;
 
 	.e-select-placeholder {
 		display: flex;

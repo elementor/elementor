@@ -197,6 +197,16 @@ class Control_Media extends Control_Base_Multiple {
 						return '<?php esc_html_e( 'Choose File', 'elementor' ); ?>';
 				}
 			}
+
+			isSeletedSizeOption = ( key ) => {
+				if ( data.controlValue.size && data.controlValue.size == key ) {
+					return true;
+				}
+				if ( ! data.controlValue.size && 'full' == key ) {
+					return true;
+				}
+				return false;
+			}
 		#>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
@@ -272,7 +282,7 @@ class Control_Media extends Control_Base_Multiple {
 			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
 
-		<# if ( data.sizes_supported ) { #>
+		<# if ( data.has_sizes ) { #>
 
 		<div class="elementor-control-content elementor-control-media-size">
 			<div class="elementor-control-field elementor-control elementor-control-type-select">
@@ -284,8 +294,9 @@ class Control_Media extends Control_Base_Multiple {
 				foreach ( $sizes as $key => $value ) {
 					?>
 						<option value="<?php echo esc_attr( $key ); ?>" 
-						{{ data.controlValue.size && data.controlValue.size == '<?php echo esc_attr( $key ); ?>' ? 'selected' : '' }}
-						{{ ! data.controlValue.size && '<?php echo esc_attr( $key ); ?>' == 'full' ? 'selected' : '' }}
+						<# if ( isSeletedSizeOption ( '<?php echo esc_attr( $key ); ?>' ) ) { #>
+							selected
+						<# } #>
 						>
 						<?php echo esc_html( $value ); ?></option>
 					<?php
@@ -328,7 +339,7 @@ class Control_Media extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'sizes' => false,
+			'has_sizes' => false,
 			'media_types' => [
 				'image',
 			],
