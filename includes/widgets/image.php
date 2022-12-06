@@ -248,12 +248,63 @@ class Widget_Image extends Widget_Base {
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
+		
+		$this->add_control(
+			'show_aspect_ratio',
+			[
+				'label' => esc_html__( 'Aspect Ratio', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => '',
+			]
+		);
+		
+		$this->add_responsive_control(
+			'aspect_ratio_width',
+			[
+				'label' => esc_html__( 'Aspect Width', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'condition' => [
+        			'show_aspect_ratio' => 'yes',
+        		],
+				'min' => 1,
+				'max' => 100,
+				'step' => 1,
+				'default' => 1,
+				'selectors' => [
+					'{{WRAPPER}} img' => 'aspect-ratio: {{VALUE}}/var(--aspect-ratio-height,1); width: 100%; height: auto;',
+				],
+			]
+		);
+		
+		$this->add_responsive_control(
+			'aspect_ratio_height',
+			[
+				'label' => esc_html__( 'Aspect Height', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'condition' => [
+        			'show_aspect_ratio' => 'yes',
+        		],
+				'min' => 1,
+				'max' => 100,
+				'step' => 1,
+				'default' => 1,
+				'selectors' => [
+					'{{WRAPPER}} img' => '--aspect-ratio-height: {{VALUE}};',
+				],
+			]
+		);
 
 		$this->add_responsive_control(
 			'width',
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'condition' => [
+        			'show_aspect_ratio!' => 'yes',
+        		],
 				'default' => [
 					'unit' => '%',
 				],
@@ -324,6 +375,9 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'condition' => [
+        			'show_aspect_ratio!' => 'yes',
+        		],
 				'default' => [
 					'unit' => 'px',
 				],
@@ -355,8 +409,20 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Object Fit', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'condition' => [
-					'height[size]!' => '',
+				'conditions' => [
+				    'relation' => 'or',
+					'terms' => [
+					    [
+						    'name' => 'height[size]',
+						    'operator' => '!==',
+						    'value' => '',
+						],
+						[
+						    'name' => 'show_aspect_ratio',
+						    'operator' => '===',
+						    'value' => 'yes',
+						],
+					    ],
 				],
 				'options' => [
 					'' => esc_html__( 'Default', 'elementor' ),
