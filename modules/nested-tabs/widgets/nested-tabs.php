@@ -987,7 +987,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow_box_shadow',
-				'selector' => '{{WRAPPER}} .e-n-tabs-content',
+				'selector' => "{$nested_tabs_content_selector_class}",
 				'condition' => [
 					'box_height!' => 'height',
 				],

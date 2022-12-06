@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
 
-test.describe.only( 'Nested Tabs tests', () => {
+test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -436,7 +436,7 @@ test.describe.only( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check that active tab receives custom hover color when hovering above it', async ( { page }, testInfo ) => {
+	test( 'Check if the custom hover color works on active tabs`', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -472,7 +472,7 @@ test.describe.only( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check that while hovering an active tab hover styling is shown', async ( { page }, testInfo ) => {
+	test( 'Check if the hover effect works on active tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -492,6 +492,7 @@ test.describe.only( 'Nested Tabs tests', () => {
 		await page.locator( '.elementor-control-tabs_title_border_hover_border select' ).selectOption( 'solid' );
 		// Set shadow
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
+		// Close shadow panel
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
 		// Set border radius
 		await page.locator( '.elementor-control-tabs_title_border_radius .elementor-control-dimensions li:first-child input' ).fill( '15' );

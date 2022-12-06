@@ -230,14 +230,18 @@
 }
 
 // TODO: Remove once PHP global color support is fixed.
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title {
-	&.e-active {
-		background: var( --n-tabs-title-background-color-active );
-	}
+:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
+  .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ){
 
-	&:hover {
-		background: var( --n-tabs-title-background-color-hover );
-	}
+	  &.e-active {
+		  background-color: var( --n-tabs-title-background-color-active );
+		  background-image: initial
+	  }
+
+	  &:hover {
+		  background-color: var( --n-tabs-title-background-color-hover );
+		  background-image: initial
+	  }
 }
 
 // Responsive mode
