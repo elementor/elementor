@@ -1067,7 +1067,10 @@ class NestedTabs extends Widget_Nested_Base {
 			$this->print_child( $index );
 			$tab_content = ob_get_clean();
 
-			$tabs_content_html .= "<div $mobile_title_attributes>$tab_title</div>$tab_content";
+			$tabs_content_html .= "<div $mobile_title_attributes>";
+			$tabs_content_html .= "\t<span {$tab_icon_attributes}>{$icon_html}{$icon_active_html}</span>";
+			$tabs_content_html .= "\t<span {$tab_title_text}>{$tab_title}</span>";
+			$tabs_content_html .= "</div>$tab_content";
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>

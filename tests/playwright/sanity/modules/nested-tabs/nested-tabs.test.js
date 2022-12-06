@@ -435,6 +435,31 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Check if the icons are visible on mobile display in the front end', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+
+		// Act.
+		// Add Icons.
+		await setIconsToTabs( page, TabsIcons );
+
+		// Open front end.
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
+
+		// Assert
+		await expect( page.locator( '.e-collapse.e-active .e-n-tab-icon' ) ).toBeVisible();
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const TabsIcons = [
