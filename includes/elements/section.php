@@ -648,6 +648,15 @@ class Element_Section extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-background-overlay',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_overlay_image', 'url' ],
+							'selector' => '.elementor-background-overlay',
+						],
+					],
+				],
 			]
 		);
 

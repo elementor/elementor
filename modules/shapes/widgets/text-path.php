@@ -334,12 +334,17 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Word Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em' ],
 				'range' => [
 					'px' => [
 						'min' => -20,
 						'max' => 20,
 						'step' => 1,
+					],
+					'em' => [
+						'min' => -1,
+						'max' => 1,
+						'step' => 0.1,
 					],
 				],
 				'default' => [

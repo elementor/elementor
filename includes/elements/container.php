@@ -690,6 +690,12 @@ class Container extends Element_Base {
 							$background_overlay_selector => '--background-overlay: \'\';',
 						],
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_overlay', 'url' ],
+						],
+					],
 				],
 			]
 		);
@@ -1622,13 +1628,28 @@ class Container extends Element_Base {
 
 		$this->register_motion_effects_controls();
 
-		$this->register_transform_section( 'container' );
+		$this->hook_sticky_notice_into_transform_section();
+
+		$this->register_transform_section( 'con' );
 
 		$this->register_responsive_controls();
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+	}
+
+	protected function hook_sticky_notice_into_transform_section() {
+		add_action( 'elementor/element/container/_section_transform/after_section_start', function( $container ) {
+			$container->add_control(
+				'transform_sticky_notice',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
+			);
+		} );
 	}
 
 	/**
