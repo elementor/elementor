@@ -78,7 +78,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			mousedown: 'onMouseDown',
 			'click @ui.editButton': 'onEditButtonClick',
-			'click @ui.editClickArea': 'onEditButtonClick',
+			'click @ui.editClickArea': 'onEditAreaClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
 			'click @ui.removeButton': 'onRemoveButtonClick',
@@ -832,7 +832,15 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditButtonClick( event ) {
+		this.triggerEdit( event );
+	},
+
+	onEditAreaClick( event ) {
 		event.stopPropagation();
+		this.triggerEdit( event );
+	},
+
+	triggerEdit( event ) {
 		this.model.trigger( 'request:edit', { append: event.ctrlKey || event.metaKey } );
 	},
 
