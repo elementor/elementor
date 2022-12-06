@@ -597,6 +597,12 @@ class Container extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_image', 'url' ],
+						],
+					],
 				],
 			]
 		);
@@ -629,14 +635,11 @@ class Container extends Element_Base {
 				'default' => [
 					'size' => 0.3,
 				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
-				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
+				],
 			]
 		);
 
@@ -687,11 +690,17 @@ class Container extends Element_Base {
 							$background_overlay_selector => '--background-overlay: \'\';',
 						],
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_overlay', 'url' ],
+						],
+					],
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -805,7 +814,7 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -850,7 +859,7 @@ class Container extends Element_Base {
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}s;',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}s;',
 				],
 			]
 		);
@@ -985,8 +994,7 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
-					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--border-transition: {{SIZE}}s;',
 				],
 			]
 		);
@@ -1620,11 +1628,28 @@ class Container extends Element_Base {
 
 		$this->register_motion_effects_controls();
 
+		$this->hook_sticky_notice_into_transform_section();
+
+		$this->register_transform_section( 'con' );
+
 		$this->register_responsive_controls();
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+	}
+
+	protected function hook_sticky_notice_into_transform_section() {
+		add_action( 'elementor/element/container/_section_transform/after_section_start', function( $container ) {
+			$container->add_control(
+				'transform_sticky_notice',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
+			);
+		} );
 	}
 
 	/**

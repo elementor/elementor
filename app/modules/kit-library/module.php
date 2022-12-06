@@ -29,8 +29,8 @@ class Module extends BaseModule {
 
 	private function register_admin_menu( MainMenu $menu ) {
 		$menu->add_submenu( [
-			'page_title' => __( 'Kit Library', 'elementor' ),
-			'menu_title' => '<span id="e-admin-menu__kit-library">' . __( 'Kit Library', 'elementor' ) . '</span>',
+			'page_title' => esc_html__( 'Kit Library', 'elementor' ),
+			'menu_title' => '<span id="e-admin-menu__kit-library">' . esc_html__( 'Kit Library', 'elementor' ) . '</span>',
 			'menu_slug' => Plugin::$instance->app->get_base_url() . '#/kit-library',
 			'index' => 40,
 		] );

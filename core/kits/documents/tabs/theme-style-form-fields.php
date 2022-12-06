@@ -87,7 +87,6 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
 				'selector' => $label_selector,
 			]
@@ -105,7 +104,6 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
 				'selector' => $input_selector,
 			]
