@@ -436,7 +436,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check if the custom hover color works on active tabs', async ( { page }, testInfo ) => {
+	test( 'Verify that the custom hover color doesn\'t effect the active tab color', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -456,23 +456,28 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.publishAndViewPage();
 
 		// Hover background style.
-		const backgroundHoverStyle = 'rgb(255, 0, 0)',
-			defaultActiveTabColor = 'rgb(97, 206, 112)',
-			activeTab = await page.locator( '.e-normal.e-active' );
+		const hoverTabBackgroundColor = 'rgb(255, 0, 0)',
+			activeTabBackgroundColor = 'rgb(97, 206, 112)',
+			activeTab = page.locator( '.e-normal.e-active' ),
+			notActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
 
 		// Assert.
 		// Check that active tab default color is seen.
-		await expect( activeTab ).toHaveCSS( 'background-color', defaultActiveTabColor );
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
+		// Check that non-active tab doesn't have the have color.
+		await expect( notActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
+		// Hover over tab.
 		await activeTab.hover();
-
-		// Check that active tab receives the hover defined background color.
-		await expect( activeTab ).toHaveCSS( 'background-color', backgroundHoverStyle );
+		// Check that active tab doesn't change background color on hover.
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
+		// Check that non-active tab receives the hover background color.
+		await expect( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check if the hover effect works on active tabs', async ( { page }, testInfo ) => {
+	test( 'Check if the hover effect change the normal tab styling', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -504,15 +509,15 @@ test.describe( 'Nested Tabs tests', () => {
 		const borderStyle = 'solid',
 			boxShadow = 'rgba(0, 0, 0, 0.5) 0px 0px 10px 0px',
 			borderRadius = '15px',
-			activeTab = await page.locator( '.e-normal.e-active' );
+			nonActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
 
 		// Assert.
-		await activeTab.hover();
+		await nonActiveTab.hover();
 
 		// Check that active tab receives the hover styling.
-		await expect( activeTab ).toHaveCSS( 'border-style', borderStyle );
-		await expect( activeTab ).toHaveCSS( 'box-shadow', boxShadow );
-		await expect( activeTab ).toHaveCSS( 'border-radius', borderRadius );
+		await expect( nonActiveTab ).toHaveCSS( 'border-style', borderStyle );
+		await expect( nonActiveTab ).toHaveCSS( 'box-shadow', boxShadow );
+		await expect( nonActiveTab ).toHaveCSS( 'border-radius', borderRadius );
 
 		await cleanup( wpAdmin );
 	} );
