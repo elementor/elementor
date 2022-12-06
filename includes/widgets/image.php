@@ -265,7 +265,7 @@ class Widget_Image extends Widget_Base {
 			'aspect_ratio_width',
 			[
 				'label' => esc_html__( 'Aspect Width', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::NUMBER,
+				'type' => Controls_Manager::NUMBER,
 				'condition' => [
         			'show_aspect_ratio' => 'yes',
         		],
@@ -283,7 +283,7 @@ class Widget_Image extends Widget_Base {
 			'aspect_ratio_height',
 			[
 				'label' => esc_html__( 'Aspect Height', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::NUMBER,
+				'type' => Controls_Manager::NUMBER,
 				'condition' => [
         			'show_aspect_ratio' => 'yes',
         		],
