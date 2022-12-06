@@ -331,15 +331,17 @@ test.describe( 'Nested Tabs tests', () => {
 		// Act.
 		// Add tab icons.
 		await setIconsToTabs( page, TabsIcons );
-		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
+
+		// Assert.
+		// Verify that the icon is visible before the title text change.
+		await expect( editor.getPreviewFrame().locator( '.e-normal.e-active .e-n-tab-icon' ) ).toBeVisible();
 
 		// Update active tab title.
 		await page.locator( '.elementor-repeater-fields:nth-child( 3 ) .elementor-control-tab_title input' ).fill( 'Title change' );
-		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Assert.
-		expect( activeTabSpanCount ).toBe( 2 );
-		expect( activeTabUpdatedSpanCount ).toBe( 2 );
+		// Verify that the icon is still visible after the title text change.
+		await expect( editor.getPreviewFrame().locator( '.e-normal.e-active .e-n-tab-icon' ) ).toBeVisible();
 
 		await cleanup( wpAdmin );
 	} );
