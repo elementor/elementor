@@ -6,10 +6,20 @@ test.beforeEach( async ( { page }, testInfo ) => {
 	helper = new onboarding( page, testInfo.project.use.baseURL );
 } );
 
+test.beforeAll( async ( { browser }, testInfo ) => {
+		const page = await browser.newPage(),
+		helper = new onboarding( page, testInfo.project.use.baseURL );
+
+		await helper.gotoThemesPage();
+		await page.waitForLoadState( 'networkidle' );
+		await helper.activateTwenty21Theme();
+} );
+
 test.describe( 'First Step - Elementor Account', () => {
-	test( '"Upgrade" CTA Works and Check for Broken CSS', async ( { page } ) => {
+	test.only( '"Upgrade" CTA Works and Check for Broken CSS', async ( { page } ) => {
 		// Deactivate Hello Theme in the first test so that we will see step 2 in the flow
 		await helper.gotoThemesPage();
+		await page.waitForLoadState( 'networkidle' );
 		await helper.activateTwenty21Theme();
 
 		await helper.checkBrokenCSS( page, helper.step1URL );
@@ -66,7 +76,7 @@ test.describe( 'First Step - Elementor Account', () => {
 } );
 
 test.describe( 'Second Step - Hello Theme', () => {
-	test( ' "Continue with Hello Theme" button works', async ( { page } ) => {
+	test.only( ' "Continue with Hello Theme" button works', async ( { page } ) => {
 		await helper.gotoStep2();
 		await helper.selectContinueWithHelloThemeButton();
 		await helper.gotoThemesPage();
@@ -140,7 +150,7 @@ test.describe( 'Fourth Step - Upload Logo', () => {
 		await helper.addALogo();
 	} );
 
-	test( 'Progress Bar: Fourth step is filled and 5 are not', async ( { page } ) => {
+	test.only( 'Progress Bar: Fourth step is filled and 5 are not', async ( { page } ) => {
 		await helper.gotoStep4();
 		await helper.checkCurrentStepIsFilled( 4 );
 	} );

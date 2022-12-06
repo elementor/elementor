@@ -23,8 +23,8 @@ module.exports = class WpAdminPage extends BasePage {
 		}
 
 		await this.page.waitForSelector( 'text=Log In' );
-		await this.page.type( 'input[name="log"]', this.config.user.username, { delay : 100 } );
-		await this.page.type( 'input[name="pwd"]', this.config.user.password, { delay : 100 } );
+		await this.page.type( 'input[name="log"]', this.config.user.username, { delay: 100 } );
+		await this.page.type( 'input[name="pwd"]', this.config.user.password, { delay: 100 } );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}

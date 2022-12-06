@@ -236,6 +236,7 @@ missingFeatures.push( list[ i ] );
             await this.twenty21Theme.hover();
 
             await this.selectActivateTwent21Theme.click();
+            await this.page.waitForLoadState( 'networkidle' );
         }
     }
 
