@@ -949,7 +949,7 @@ class Frontend extends App {
 	 *                            Default is an empty array.
 	 */
 	private function enqueue_google_fonts( $google_fonts = [] ) {
-		$print_google_fonts = true;
+		$print_google_fonts = Fonts::is_google_fonts_enabled();
 
 		/**
 		 * Print frontend google fonts.
