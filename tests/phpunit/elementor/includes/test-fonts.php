@@ -6,10 +6,13 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Fonts extends Elementor_Test_Base {
 
-	public function tear_down() {
-		parent::tear_down();
+	public function setUp() {
+		parent::setUp();
 
-		Fonts::reset_local_cache();
+		$reflection = new \ReflectionClass( Fonts::class );
+
+		$reflection->setStaticPropertyValue( 'font_groups', null );
+		$reflection->setStaticPropertyValue( 'is_google_fonts_enabled', null );
 	}
 
 	public function test_is_google_fonts_enabled__returns_true() {
