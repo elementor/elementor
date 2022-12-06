@@ -188,7 +188,6 @@ class Repository {
 			$args = [
 				'body' => [
 					'editor_layout_type' => $kits_editor_layout_type,
-					'plugin_version' => ELEMENTOR_VERSION,
 				],
 			];
 
