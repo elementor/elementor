@@ -16,7 +16,7 @@ test.beforeAll( async ( { browser }, testInfo ) => {
 } );
 
 test.describe( 'First Step - Elementor Account', () => {
-	test.only( '"Upgrade" CTA Works and Check for Broken CSS', async ( { page } ) => {
+	test( '"Upgrade" CTA Works and Check for Broken CSS', async ( { page } ) => {
 		// Deactivate Hello Theme in the first test so that we will see step 2 in the flow
 		await helper.gotoThemesPage();
 		await page.waitForLoadState( 'networkidle' );
@@ -76,7 +76,7 @@ test.describe( 'First Step - Elementor Account', () => {
 } );
 
 test.describe( 'Second Step - Hello Theme', () => {
-	test.only( ' "Continue with Hello Theme" button works', async ( { page } ) => {
+	test( ' "Continue with Hello Theme" button works', async ( { page } ) => {
 		await helper.gotoStep2();
 		await helper.selectContinueWithHelloThemeButton();
 		await page.waitForNavigation( { url: 'wp-admin/admin.php?page=elementor-app#onboarding/siteName' }, { waitUntil: 'networkidle' } );
@@ -151,7 +151,7 @@ test.describe( 'Fourth Step - Upload Logo', () => {
 		await helper.addALogo();
 	} );
 
-	test.only( 'Progress Bar: Fourth step is filled and 5 are not', async ( { page } ) => {
+	test( 'Progress Bar: Fourth step is filled and 5 are not', async ( { page } ) => {
 		await helper.gotoStep4();
 		await helper.checkCurrentStepIsFilled( 4 );
 	} );
