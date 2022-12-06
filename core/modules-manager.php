@@ -96,7 +96,7 @@ class Modules_Manager {
 			'admin-top-bar',
 			'nested-elements',
 			// Depends on Nested Elements module
-			'tabs-v2',
+			'nested-tabs',
 			'container-converter',
 			'web-cli',
 			'promotions',

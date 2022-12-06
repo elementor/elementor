@@ -361,4 +361,37 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
 		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
 	}
+
+	/**
+	 * Select a responsive view.
+	 *
+	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async changeResponsiveView( device ) {
+		const hasResponsiveViewBar = await this.page.evaluate( () => {
+			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
+		} );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
+
+		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+	}
+
+	async publishAndViewPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await Promise.all( [
+			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
+			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
+		] );
+
+		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
+		await this.page.waitForLoadState( 'networkidle' );
+	}
 };

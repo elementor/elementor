@@ -4,12 +4,7 @@ const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
 test( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
-
-	await wpAdmin.setExperiments( {
-		container: true,
-		'nested-elements': true,
-	} );
-
+	await setup( wpAdmin );
 	const editor = await wpAdmin.useElementorCleanPost();
 
 	// Act.
@@ -19,9 +14,18 @@ test( 'Ensure the old tabs widget is telling deprecation warning message', async
 	await expect( editor.page.locator( '.elementor-control-raw-html.elementor-panel-alert.elementor-panel-alert-info' ) )
 		.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
 
-	// Cleanup.
-	await wpAdmin.setExperiments( {
-		container: false,
-		'nested-elements': false,
-	} );
+	await cleanup( wpAdmin );
 } );
+
+async function setup( wpAdmin ) {
+	await wpAdmin.setExperiments( {
+		container: 'active',
+		'nested-elements': 'active',
+	} );
+}
+async function cleanup( wpAdmin ) {
+	await wpAdmin.setExperiments( {
+		container: 'inactive',
+		'nested-elements': 'inactive',
+	} );
+}

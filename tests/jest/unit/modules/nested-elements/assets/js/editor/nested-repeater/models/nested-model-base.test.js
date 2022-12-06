@@ -2,7 +2,7 @@ import { freeMock, setupMock } from 'elementor/tests/jest/unit/assets/dev/js/edi
 
 jest.mock( 'elementor/modules/nested-elements/assets/js/editor/utils', () => ( {
 	...jest.requireActual( 'elementor/modules/nested-elements/assets/js/editor/utils' ),
-	isWidgetSupportNesting: ( name ) => 'tabs-v2' === name,
+	isWidgetSupportNesting: ( name ) => 'nested-tabs' === name,
 } ) );
 
 describe( 'NestedModelBase', () => {
@@ -38,7 +38,7 @@ describe( 'NestedModelBase', () => {
 		childModel.set( 'isLocked', true );
 
 		nestedModelBase.set( 'elType', 'widget' );
-		nestedModelBase.set( 'widgetType', 'tabs-v2' );
+		nestedModelBase.set( 'widgetType', 'nested-tabs' );
 
 		// Act.
 		const isValidChild = nestedModelBase.isValidChild( childModel );

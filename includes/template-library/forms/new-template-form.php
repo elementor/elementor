@@ -24,7 +24,7 @@ class New_Template_Form extends Controls_Stack {
 					$this->render_select( $control );
 					break;
 				default:
-					throw new \Exception( '"' . $control['type'] . '" control type is not supported' );
+					throw new \Exception( "'{$control['type']}' control type is not supported." );
 			}
 		}
 	}
