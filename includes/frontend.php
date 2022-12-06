@@ -140,6 +140,8 @@ class Frontend extends App {
 		'elementor-default',
 	];
 
+	private $google_fonts_index = 0;
+
 	/**
 	 * Front End constructor.
 	 *
@@ -228,8 +230,17 @@ class Frontend extends App {
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
 		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
+		add_action( 'wp_head', [ $this, 'print_google_fonts_preconnect_tag' ], 8 );
 		add_action( 'wp_head', [ $this, 'add_theme_color_meta_tag' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
+	}
+
+	public function print_google_fonts_preconnect_tag() {
+		if ( 0 >= $this->google_fonts_index ) {
+			return;
+		}
+
+		echo '<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>';
 	}
 
 	/**
@@ -938,8 +949,6 @@ class Frontend extends App {
 	 *                            Default is an empty array.
 	 */
 	private function enqueue_google_fonts( $google_fonts = [] ) {
-		static $google_fonts_index = 0;
-
 		$print_google_fonts = true;
 
 		/**
@@ -959,22 +968,22 @@ class Frontend extends App {
 
 		// Print used fonts
 		if ( ! empty( $google_fonts['google'] ) ) {
-			$google_fonts_index++;
+			$this->google_fonts_index++;
 
 			$fonts_url = $this->get_stable_google_fonts_url( $google_fonts['google'] );
 
-			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( 'google-fonts-' . $this->google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
 			$early_access_font_urls = $this->get_early_access_google_font_urls( $google_fonts['early'] );
 
 			foreach ( $early_access_font_urls as $ea_font_url ) {
-				$google_fonts_index++;
+				$this->google_fonts_index++;
 
 				//printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 
-				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+				wp_enqueue_style( 'google-earlyaccess-' . $this->google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 

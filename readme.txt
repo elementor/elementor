@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.8.1
+Stable tag: 3.9.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,41 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.9.0 - 2022-12-06 =
+
+* New: Introducing Save as Default as a Beta experiment - Create your default settings for every element for better consistency
+* New: Introducing Background images Lazy Load as an Alpha experiment
+* Tweak: Separate "Default" and "None" values in Border Type control ([#11565](https://github.com/elementor/elementor/issues/11565), [#13328](https://github.com/elementor/elementor/issues/13328), [#11723](https://github.com/elementor/elementor/issues/11723))
+* Tweak: Added `dnt` param to Vimeo embed background and Video widget ([#13797](https://github.com/elementor/elementor/issues/13797), [#13631](https://github.com/elementor/elementor/issues/13631))
+* Tweak: Added Transform section to Advanced tab in Flexbox Container ([#18648](https://github.com/elementor/elementor/issues/18648), [#18268](https://github.com/elementor/elementor/issues/18268))
+* Tweak: Added responsive control for Border Radius in Button widget ([#18914](https://github.com/elementor/elementor/issues/18914))
+* Tweak: Added responsive control to opacity of background overlay image in Sections and Containers ([#19659](https://github.com/elementor/elementor/issues/19659))
+* Tweak: Removed extra SQL queries on every page for better performance ([#12162](https://github.com/elementor/elementor/issues/12162))
+* Tweak: Added background color option to the video background control ([#4353](https://github.com/elementor/elementor/issues/4353))
+* Tweak: Added responsive control for caption to Image, Image Gallery and Image Carousel widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added responsive control to icon border radius in Icon and Social Icons widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added `em` unit to Word Spacing control in Text Path widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added responsive control to image border radius in Image Carousel, Basic Gallery and Testimonial widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Make Elementor compatible with WebP uploads via Performance Lab plugin
+* Tweak: Added `em` units to border radius control in various elements
+* Tweak: Upgraded the `autoprefixer` package to better minify CSS files
+* Tweak: Added more units options to Border Width control in various elements
+* Tweak: Adjusted Dark Mode in Navigator when using Container
+* Tweak: Added `rel=preconnect` tag to Google Fonts to improve performance
+* Tweak: Added escape translation strings for safe use in HTML output
+* Tweak: Removed redundant labels from group controls
+* Tweak: Added new margin controls to Post and Page Settings
+* Tweak: Allow saving and reloading a page while in-place editing of documents
+* Tweak: Added compatibility for Yoast Duplicate Post plugin
+* Tweak: Added new hook action when element handler ready
+* Fix: Predefined container structure with default padding is not working ([#19990](https://github.com/elementor/elementor/issues/19990))
+* Fix: Repeater controls in `non-content` tabs cause JS errors when running Copy-Paste Style ([#19895](https://github.com/elementor/elementor/issues/19895))
+* Fix: Various widgets disappear in certain scenarios when choosing direction Row or Column in Container
+* Fix: Align items controls are not working as expected in container when using Spacer widget with custom width
+* Fix: Pasting an element into the Preview Container throws a JS error in console
+* Fix: Can't drag widgets into a Column after it's being emptied
+* Fix: First container handle is not centered on an RTL language
 
 = 3.8.1 - 2022-11-13 =
 
