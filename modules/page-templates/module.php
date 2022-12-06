@@ -154,9 +154,9 @@ class Module extends BaseModule {
 		}
 
 		$page_templates = [
-			self::TEMPLATE_CANVAS => _x( 'Elementor Canvas', 'Page Template', 'elementor' ),
-			self::TEMPLATE_HEADER_FOOTER => _x( 'Elementor Full Width', 'Page Template', 'elementor' ),
-			self::TEMPLATE_THEME => _x( 'Theme', 'Page Template', 'elementor' ),
+			self::TEMPLATE_CANVAS => esc_html_x( 'Elementor Canvas', 'Page Template', 'elementor' ),
+			self::TEMPLATE_HEADER_FOOTER => esc_html_x( 'Elementor Full Width', 'Page Template', 'elementor' ),
+			self::TEMPLATE_THEME => esc_html_x( 'Theme', 'Page Template', 'elementor' ),
 		] + $page_templates;
 
 		return $page_templates;

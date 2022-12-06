@@ -388,9 +388,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => esc_html__( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
+				'description' => esc_html__( 'When you turn on privacy mode, YouTube/Vimeo won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
 				'condition' => [
-					'video_type' => 'youtube',
+					'video_type' => [ 'youtube', 'vimeo' ],
 				],
 				'frontend_available' => true,
 			]
@@ -746,7 +746,7 @@ class Widget_Video extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => _x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
 					],
 				],
 				'condition' => [
@@ -1084,6 +1084,10 @@ class Widget_Video extends Widget_Base {
 			$params['color'] = str_replace( '#', '', $settings['color'] );
 
 			$params['autopause'] = '0';
+
+			if ( ! empty( $settings['yt_privacy'] ) ) {
+				$params['dnt'] = 'true';
+			}
 		} elseif ( 'dailymotion' === $settings['video_type'] ) {
 			$params_dictionary = [
 				'controls',

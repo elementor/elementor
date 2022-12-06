@@ -383,8 +383,8 @@ html.elementor-html {
 .elementor-editor-container-settings {
 	height: 24px;
 	top: 1px;
-	@include start(50%);
-	transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
+  	left: 50%;
+  	transform: translateX( -50% ) translateY( -100% );
 	background-color: var( --primary-color );
 	border-radius: 5px 5px 0 0;
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);

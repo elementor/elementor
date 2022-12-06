@@ -25,7 +25,6 @@
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
-	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
@@ -45,7 +44,7 @@
 	padding-right: var( --padding-right );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
-	transition: var( --transition );
+	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
 	&-full,
 	& > .e-con-inner {
@@ -125,8 +124,12 @@
 		top: 0;
 		mix-blend-mode: var( --overlay-mix-blend-mode );
 		opacity: var( --overlay-opacity );
-		transition: var( --overlay-transition );
+		transition: var( --overlay-transition, 0.3s );
 		border-radius: var( --border-radius );
+	}
+
+	&::before {
+		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
 	> .elementor-background-video-container:before,
