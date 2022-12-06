@@ -4,8 +4,8 @@ namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExport\Runners;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 
-class Mock_Widget extends Widget_Base {
-	const NAME = 'mock-widget';
+class Mock_Widget_Kits_Defaults extends Widget_Base {
+	const NAME = 'mock-widget-kits-defaults';
 
 	public function get_name() {
 		return static::NAME;
@@ -57,6 +57,24 @@ class Mock_Widget extends Widget_Base {
 			'another_setting',
 			[
 				'label' => esc_html__( 'Text', 'elementor' ),
+			]
+		);
+
+		// Should exists on import and export.
+		$this->add_control(
+			'mock-control-1',
+			[
+				'label' => esc_html__( 'Mock Control 1', 'elementor' ),
+				'type' => Mock_Control_Kits_Defaults::NAME,
+			]
+		);
+
+		// Should not exists on import and export.
+		$this->add_control(
+			'mock-control-2',
+			[
+				'label' => esc_html__( 'Mock Control 2', 'elementor' ),
+				'type' => Mock_Control_Kits_Defaults::NAME,
 			]
 		);
 
