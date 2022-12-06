@@ -306,10 +306,9 @@ class Control_Media extends Control_Base_Multiple {
 		foreach ( $sizes as $size ) {
 			$width = get_option( "{$size}_size_w" );
 			$height = get_option( "{$size}_size_h" );
+			$result[ $size ] = ucfirst( $size );
 			if ( $width && $height ) {
-				$result[ $size ] = ucfirst( $size ) . " ($width x $height)";
-			} else {
-				$result[ $size ] = ucfirst( $size );
+				$result[ $size ] .= " ($width x $height)";
 			}
 		}
 		return $result;

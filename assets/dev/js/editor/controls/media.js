@@ -23,7 +23,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
-			'change @ui.mediaImageSize': 'onMediaImageSize',
+			'change @ui.mediaImageSize': 'onMediaImageSizeChange',
 		} );
 	},
 
@@ -46,7 +46,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
 
-	updatePrevState( options ) {
+	// Save last selected control for breakpoints to be able to open the same control on breakpoint change, with defaults values.
+	setPrevState( options ) {
 		if ( ! options.id ) {
 			return;
 		}
@@ -70,15 +71,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 
 			if ( value ) {
-				this.setEditSetting( 'image_url', true );
+				this.setEditSetting( 'preview_image', true );
 			}
 
 			if ( ! value && url ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
-				this.setEditSetting( 'image_opacity', true );
+				this.setEditSetting( 'preview_image_opacity', true );
 			}
 
-			this.updatePrevState( {
+			this.setPrevState( {
 				id: this.getControlValue( 'id' ),
 				alt: this.getControlValue( 'alt' ),
 				size: this.getControlValue( 'size' ),
@@ -269,7 +270,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				this.applySavedValue();
 			}
 
-			this.updatePrevState( updatedState );
+			this.setPrevState( updatedState );
 			this.toggleSizeControl();
 		}
 		this.trigger( 'after:select' );
@@ -279,15 +280,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.$el.remove();
 	},
 
-	async onMediaImageSize() {
+	onMediaImageSizeChange() {
 		this.ui.mediaImageSize.removeClass( 'e-select-placeholder' );
 		const selectedImage = {
-			id: this.getEditSettings( 'mediaId' ),
-			alt: this.getEditSettings( 'mediaAlt' ),
+			id: this.getCurrentValue()?.id ?? this.getEditSettings( 'mediaId' ),
+			alt: this.getCurrentValue()?.alt ?? this.getEditSettings( 'mediaAlt' ),
 		};
 
 		const selectedSize = this.ui.mediaImageSize.val();
-		let imageURL = await elementor.imagesManager.getImageUrl( {
+		let imageURL = elementor.imagesManager.getImageUrl( {
 			id: selectedImage.id,
 			size: selectedSize,
 		} );
@@ -316,15 +317,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	toggleSizeControl() {
 		const sizesSupport = this.model.get( 'sizes_supported' );
-		const hasImage = this.getEditSettings( 'image_url' );
-		const opacity = this.getEditSettings( 'image_opacity' );
+		const hasImage = this.getEditSettings( 'preview_image' );
+		const opacity = this.getEditSettings( 'preview_image_opacity' );
 
-		if ( sizesSupport && hasImage ) {
-			if ( opacity ) {
-				this.ui.mediaImageSize.addClass( 'e-select-placeholder' );
-			}
-		} else {
+		if ( ! sizesSupport && ! hasImage ) {
 			this.ui.mediaSizeWrapper.hide();
+		}
+		if ( opacity ) {
+			this.ui.mediaImageSize.addClass( 'e-select-placeholder' );
 		}
 	},
 } );

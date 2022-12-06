@@ -48,7 +48,7 @@ ImagesManager = function() {
 		} );
 	};
 
-	// Ir url is exist, return it from cache, otherwise, get it from server and trigger event.
+	// If the image exists in cache - return it. Otherwise, send a request and fire an event on success.
 	self.getImageUrl = function( image ) {
 		// Register for AJAX checking
 		self.registerItem( image );
@@ -128,7 +128,7 @@ ImagesManager = function() {
 			} );
 		}
 
-		// On the request, the hook 'imagesManager:detailsReceived' is triggered with the response (image Id)
+		// On success, an 'imagesManager:detailsReceived' event is fired with the response.
 		elementorCommon.ajax.send(
 			'get_images_details', {
 				data: {

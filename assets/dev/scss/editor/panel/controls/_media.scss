@@ -3,7 +3,9 @@
 	&.elementor-media-empty {
 
 		.elementor-control-media-area {
-			.elementor-control-media__remove, .elementor-control-media__content__remove {
+
+			.elementor-control-media__remove,
+			.elementor-control-media__content__remove {
 				display: none;
 			}
 		}
@@ -92,7 +94,7 @@
 		height: $control-unit;
 		transition: all .2s ease-in-out;
 
-		> * {
+		>* {
 
 			&:not(:first-child) {
 				@include margin-start(1px);
@@ -196,7 +198,7 @@
 		}
 	}
 
-	&:not(.elementor-media-empty) &__file  {
+	&:not(.elementor-media-empty) &__file {
 		&__content {
 			&__label {
 				display: none;
@@ -210,6 +212,7 @@
 				display: none;
 			}
 		}
+
 		&__controls {
 			&__remove {
 				display: none;
@@ -238,7 +241,8 @@
 		}
 	}
 }
-.elementor-control:not( .elementor-control-type-icons ) {
+
+.elementor-control:not(.elementor-control-type-icons) {
 	.elementor-control-media {
 		&__preview {
 			background-color: $editor-lightest;
@@ -246,8 +250,10 @@
 	}
 }
 
-.elementor-control .elementor-control-content.elementor-control-media-size {
-	margin-top: 15px;
+.elementor-control .elementor-control-content {
+	.elementor-control-media-size {
+		margin-top: 15px;
+	}
 }
 
 .elementor-control-media-size {
@@ -256,13 +262,13 @@
 		padding: 0;
 	}
 
-	// Control won't support more than one breakpoints
+	// Multipal switcher are supported in the same control. 
 	.elementor-control-responsive-switchers {
 		display: none;
 	}
 
 	.media-size-input-wrapper {
-		margin-left: auto;
+		margin-inline-start: auto;
 	}
 
 }
