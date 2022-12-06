@@ -1583,4 +1583,9 @@ class Fonts {
 	public static function get_font_display_setting() {
 		return get_option( 'elementor_font_display', 'auto' );
 	}
+
+	public static function reset_local_cache() {
+		static::$is_google_fonts_enabled = null;
+		static::$font_groups = null;
+	}
 }
