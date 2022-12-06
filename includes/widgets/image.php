@@ -253,7 +253,7 @@ class Widget_Image extends Widget_Base {
 			'show_aspect_ratio',
 			[
 				'label' => esc_html__( 'Aspect Ratio', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'type' => Controls_Manager::SWITCHER,
 				'label_on' => esc_html__( 'On', 'elementor' ),
 				'label_off' => esc_html__( 'Off', 'elementor' ),
 				'return_value' => 'yes',
