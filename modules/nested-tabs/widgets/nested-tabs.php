@@ -634,7 +634,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title-text",
+			'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title > .e-n-tab-title-text",
 			'fields_options' => [
 				'font_size' => [
 					'selectors' => [
