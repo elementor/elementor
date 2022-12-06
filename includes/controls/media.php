@@ -202,6 +202,7 @@ class Control_Media extends Control_Base_Multiple {
 				if ( ! data.controlValue.size ) {
 					return 'full' === key;
 				}
+
 				return data.controlValue.size === key;
 			}
 		#>

@@ -318,12 +318,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	toggleSizeControl() {
 		const sizesSupport = this.model.get( 'sizes_supported' );
 		const hasImage = this.getEditSettings( 'has_image' );
-		const opacity = this.getEditSettings( 'has_placeholder_image' );
+		const hasPlaceholderImage = this.getEditSettings( 'has_placeholder_image' );
 
 		if ( ! sizesSupport && ! hasImage ) {
 			this.ui.mediaSizeWrapper.hide();
 		}
-		if ( opacity ) {
+
+		if ( hasPlaceholderImage ) {
 			this.ui.mediaImageSize.addClass( 'e-select-placeholder' );
 		}
 	},
