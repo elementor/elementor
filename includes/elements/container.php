@@ -690,6 +690,12 @@ class Container extends Element_Base {
 							$background_overlay_selector => '--background-overlay: \'\';',
 						],
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_overlay', 'url' ],
+						],
+					],
 				],
 			]
 		);
