@@ -198,14 +198,11 @@ class Control_Media extends Control_Base_Multiple {
 				}
 			}
 
-			isSeletedSizeOption = ( key ) => {
-				if ( data.controlValue.size && data.controlValue.size == key ) {
-					return true;
+			const isSelectedSizeOption = ( key ) => {
+				if ( ! data.controlValue.size ) {
+					return 'full' === key;
 				}
-				if ( ! data.controlValue.size && 'full' == key ) {
-					return true;
-				}
-				return false;
+				return data.controlValue.size === key;
 			}
 		#>
 		<div class="elementor-control-field elementor-control-media">
@@ -294,7 +291,7 @@ class Control_Media extends Control_Base_Multiple {
 				foreach ( $sizes as $key => $value ) {
 					?>
 						<option value="<?php echo esc_attr( $key ); ?>" 
-						<# if ( isSeletedSizeOption ( '<?php echo esc_attr( $key ); ?>' ) ) { #>
+						<# if ( isSelectedSizeOption ( '<?php echo esc_attr( $key ); ?>' ) ) { #>
 							selected
 						<# } #>
 						>
