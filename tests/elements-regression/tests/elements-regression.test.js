@@ -4,6 +4,7 @@ const elementsConfig = require( '../elements-config.json' );
 const testConfig = require( '../test.config' );
 const ConfigProvider = require( '../src/config-provider' );
 const controlHandlers = require( '../src/controls' );
+const { summary } = require( '../src/utils' );
 
 const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
 
@@ -11,6 +12,9 @@ test.describe( 'Elements regression', () => {
 	const testedElements = {};
 
 	test.afterAll( async ( {}, testInfo ) => {
+		// eslint-disable-next-line no-console
+		console.log( 'summaryData', summary( testedElements, elementsConfig ) );
+
 		// TODO: Need to find a better solution for now this is not working well.
 
 		if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
@@ -21,6 +25,8 @@ test.describe( 'Elements regression', () => {
 	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
 		// Dynamic widget test creation.
 		test( widgetType, async ( { editorPage } ) => {
+			testedElements[ widgetType ] = {};
+
 			const elementId = await editorPage.addWidget( widgetType );
 
 			await editorPage.page.waitForTimeout( 500 );
@@ -32,8 +38,6 @@ test.describe( 'Elements regression', () => {
 					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
 
 				await editorPage.resetElementSettings( elementId );
-
-				testedElements[ widgetType ] = {};
 			} );
 
 			for ( const {
@@ -66,12 +70,12 @@ test.describe( 'Elements regression', () => {
 						const valueLabel = control.generateSnapshotLabel( value );
 
 						await test.step( valueLabel, async () => {
+							testedValues.push( valueLabel );
+
 							await control.setValue( value );
 
 							expect( await editorPage.screenshotElement( elementId ) )
 								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
-
-							testedValues.push( valueLabel );
 						} );
 					}
 
