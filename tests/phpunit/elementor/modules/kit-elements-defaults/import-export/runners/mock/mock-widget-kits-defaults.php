@@ -12,9 +12,7 @@ class Mock_Widget_Kits_Defaults extends Widget_Base {
 	}
 
 	protected function register_controls() {
-		$this->start_controls_section( 'test-section', [
-			'tab' => Controls_Manager::TAB_CONTENT,
-		] );
+		$this->start_controls_section( 'test-section' );
 
 		$this->add_control(
 			'text',
@@ -62,6 +60,7 @@ class Mock_Widget_Kits_Defaults extends Widget_Base {
 			]
 		);
 
+		// Should exists on import and export.
 		$this->add_control(
 			'mock-control-1',
 			[
@@ -70,6 +69,7 @@ class Mock_Widget_Kits_Defaults extends Widget_Base {
 			]
 		);
 
+		// Should not exists on import and export.
 		$this->add_control(
 			'mock-control-2',
 			[
