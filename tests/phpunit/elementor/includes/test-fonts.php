@@ -9,10 +9,7 @@ class Test_Fonts extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$reflection = new \ReflectionClass( Fonts::class );
-
-		$reflection->setStaticPropertyValue( 'font_groups', null );
-		$reflection->setStaticPropertyValue( 'is_google_fonts_enabled', null );
+		Fonts::reset_local_cache();
 	}
 
 	public function test_is_google_fonts_enabled__returns_true() {
