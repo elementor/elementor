@@ -79,6 +79,7 @@ test.describe( 'Second Step - Hello Theme', () => {
 	test.only( ' "Continue with Hello Theme" button works', async ( { page } ) => {
 		await helper.gotoStep2();
 		await helper.selectContinueWithHelloThemeButton();
+		await page.waitForNavigation( { url: 'wp-admin/admin.php?page=elementor-app#onboarding/siteName' }, { waitUntil: 'networkidle' } );
 		await helper.gotoThemesPage();
 		await helper.checkElementorThemeIsActive();
 		await helper.activateTwenty21Theme();
