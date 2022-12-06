@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
 
-test.describe.only( 'Nested Tabs tests', () => {
+test.describe( 'Nested Tabs tests', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -299,7 +299,7 @@ test.describe.only( 'Nested Tabs tests', () => {
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-tabs_title_background_color_background .eicon-paint-brush' ).click();
+		await page.locator( '.elementor-control-tabs_title_background_color_color .pcr-button' ).click();
 		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#ff0000' );
 
 		// Assert.
