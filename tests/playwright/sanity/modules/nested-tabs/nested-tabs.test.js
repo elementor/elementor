@@ -436,7 +436,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check if the custom hover color works on active tabs`', async ( { page }, testInfo ) => {
+	test( 'Check if the custom hover color works on active tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 

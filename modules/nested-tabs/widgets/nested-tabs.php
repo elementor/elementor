@@ -426,7 +426,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
 						'selectors' => [
-							'{{WRAPPER}}' => '--n-tabs-title-background-color: {{VALUE}}',
+							'{{SELECTOR}}' => 'background: {{VALUE}}',
 						],
 					],
 				],

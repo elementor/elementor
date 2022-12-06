@@ -159,7 +159,6 @@
 			&.e-active {
 				&:not(:hover) {
 					color: var( --n-tabs-title-color-active );
-					background: var( --n-tabs-title-background-color-active );
 
 					i:last-child {
 						color: var( --n-tabs-icon-color-active );
@@ -191,7 +190,6 @@
 
 			&:hover {
 				color: var( --n-tabs-title-color-hover );
-				background: var( --n-tabs-title-background-color-hover );
 
 				.e-n-tab-icon {
 
@@ -229,18 +227,17 @@
 	}
 }
 
-// TODO: Remove once PHP global color support is fixed.
 :is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
   .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ){
 
 	  &.e-active {
 		  background-color: var( --n-tabs-title-background-color-active );
-		  background-image: initial
+		  background-image: initial;
 	  }
 
 	  &:hover {
 		  background-color: var( --n-tabs-title-background-color-hover );
-		  background-image: initial
+		  background-image: initial;
 	  }
 }
 
