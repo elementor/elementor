@@ -423,9 +423,6 @@ class NestedTabs extends Widget_Nested_Base {
 				'exclude' => [ 'image' ],
 				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
 				'fields_options' => [
-					'background' => [
-						'default' => 'classic',
-					],
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
 						'selectors' => [
