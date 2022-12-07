@@ -10,6 +10,7 @@ use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Editor\Loading_Strategies\Editor_V1_Loading_Strategy;
 use Elementor\Core\Editor\Loading_Strategies\Editor_V2_Loading_Strategy;
 use Elementor\Core\Editor\Loading_Strategies\Loading_Strategy_Interface;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -726,6 +727,10 @@ class Editor {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
+		// Register editor v2 experiment
+		$this->register_editor_v2_experiment();
+
+
 		// Handle autocomplete feature for URL control.
 		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
@@ -822,10 +827,29 @@ class Editor {
 	 * @return Loading_Strategy_Interface
 	 */
 	private function make_loading_strategy() {
-		if ( isset( $_REQUEST['v'] ) && $_REQUEST['v'] === '2' ) {
+		$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
+
+		if ( $is_editor_v2_active && isset( $_REQUEST['v'] ) && $_REQUEST['v'] === '2' ) {
 			return new Editor_V2_Loading_Strategy();
 		}
 
 		return new Editor_V1_Loading_Strategy();
+	}
+
+	/**
+	 * Adding Editor V2 experiment.
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	private function register_editor_v2_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'editor_v2',
+			'title' => __( 'Editor V2', 'elementor' ),
+			'description' => __( 'Enable the new editor.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+		] );
 	}
 }
