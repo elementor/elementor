@@ -86,11 +86,7 @@ test.describe( 'Nested Tabs tests', () => {
 
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-			e_font_icon_svg: true,
-		} );
+		await setup( wpAdmin, true );
 		await wpAdmin.openNewPage();
 
 		const editor = new EditorPage( page, testInfo ),
@@ -116,21 +112,13 @@ test.describe( 'Nested Tabs tests', () => {
 		await expect( icon ).toBeVisible();
 		await clickTab( currentContext, '0' );
 
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-			e_font_icon_svg: false,
-		} );
+		await cleanup( wpAdmin );
 	} );
 
 	test( `Check the icon size on frontend`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		// Set experiments.
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-			e_font_icon_svg: true,
-		} );
+		await setup( wpAdmin, true );
 		await wpAdmin.openNewPage();
 
 		const editor = new EditorPage( page, testInfo ),
@@ -163,11 +151,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await clickTab( currentContext, '0' );
 
 		// Set experiments.
-		await wpAdmin.setExperiments( {
-			container: false,
-			'nested-elements': false,
-			e_font_icon_svg: false,
-		} );
+		await cleanup( wpAdmin );
 	} );
 
 	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page }, testInfo ) => {
@@ -316,7 +300,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that icon doesn\'t disappear when the tab title is updated', async ( { page }, testInfo ) => {
+	test( 'Verify that the icons don\'t disappear when the tab title is updated', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -436,7 +420,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check if the icons are visible on mobile display in the front end', async ( { page }, testInfo ) => {
+	test( 'Check if the icons are visible on mobile display on the front end', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -456,7 +440,37 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 		// Assert
+		await page.setViewportSize( { width: 400, height: 480 } );
 		await expect( page.locator( '.e-collapse.e-active .e-n-tab-icon' ) ).toBeVisible();
+		await page.setViewportSize( { width: 1920, height: 1080 } );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Check if the svg icons are visible on mobile display on the front end', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin, true );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+
+		// Act.
+		// Add Icons.
+		await setIconsToTabs( page, TabsIcons );
+
+		// Open front end.
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
+
+		// Assert
+		await page.pause();
+		await page.setViewportSize( { width: 400, height: 480 } );
+		await expect( page.locator( '.e-collapse.e-active .e-n-tab-icon' ) ).toBeVisible();
+		await page.setViewportSize( { width: 1920, height: 1080 } );
 
 		await cleanup( wpAdmin );
 	} );
@@ -500,17 +514,19 @@ const clickTab = async ( context, tabPosition ) => {
 	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition } ` ).first().click();
 };
 
-async function setup( wpAdmin ) {
+async function setup( wpAdmin, svgActive = false ) {
 	await wpAdmin.setExperiments( {
-		container: 'active',
-		'nested-elements': 'active',
+		container: true,
+		'nested-elements': true,
+		e_font_icon_svg: svgActive,
 	} );
 }
 
 async function cleanup( wpAdmin ) {
 	await wpAdmin.setExperiments( {
-		container: 'inactive',
-		'nested-elements': 'inactive',
+		container: false,
+		'nested-elements': false,
+		e_font_icon_svg: false,
 	} );
 }
 
