@@ -5,11 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Editor_V2_Loading_Strategy extends Editor_Base_Loading_Strategy {
+class Editor_V2_Loading_Strategy extends Editor_Base_Loading_Strategy implements Loading_Strategy_Interface {
 	public function get_scripts() {
 		$scripts = parent::get_scripts();
 
-		// Here we should add a filter to allow packages to register their scripts.
+		// Here we should add a filter to allow packages to REGISTER their scripts.
 
 		return $scripts;
 	}
@@ -17,7 +17,7 @@ class Editor_V2_Loading_Strategy extends Editor_Base_Loading_Strategy {
 	public function get_loader_scripts() {
 		$deps = [ 'elementor-editor' ];
 
-		// Here we should add filter to allow packages load their scripts with the loader.
+		// Here we should add filter to allow packages LOAD their scripts with the loader.
 
 		return [
 			[

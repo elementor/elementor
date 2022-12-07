@@ -119,7 +119,7 @@ class Utils {
 	 *
 	 * @return bool
 	 */
-	public static function is_elementor_tests(  ) {
+	public static function is_elementor_tests() {
 		return defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
 	}
 

@@ -35,7 +35,7 @@ class Editor_Loader {
 				$script_config['handle'],
 				$script_config['src'],
 				$script_config['deps'],
-				$script_config['ver'],
+				$script_config['version'],
 				$script_config['in_footer']
 			);
 		}
@@ -54,7 +54,7 @@ class Editor_Loader {
 				$script_config['handle'],
 				$script_config['src'],
 				$script_config['deps'],
-				$script_config['ver'],
+				$script_config['version'],
 				$script_config['in_footer']
 			);
 		}
@@ -82,7 +82,7 @@ class Editor_Loader {
 			'handle' => '',
 			'src' => '',
 			'deps' => [],
-			'ver' => ELEMENTOR_VERSION,
+			'version' => ELEMENTOR_VERSION,
 			'in_footer' => true,
 		];
 

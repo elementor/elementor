@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Editor_V1_Loading_Strategy extends Editor_Base_Loading_Strategy {
+class Editor_V1_Loading_Strategy extends Editor_Base_Loading_Strategy implements Loading_Strategy_Interface {
 	public function get_scripts() {
 		return parent::get_scripts();
 	}
