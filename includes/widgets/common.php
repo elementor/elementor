@@ -337,7 +337,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_position',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
@@ -357,7 +357,7 @@ class Widget_Common extends Widget_Base {
 		$start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
 		$end = ! is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_offset_orientation_h',
 			[
 				'label' => esc_html__( 'Horizontal Orientation', 'elementor' ),
