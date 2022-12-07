@@ -727,9 +727,7 @@ class Editor {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
-		// Register editor v2 experiment
 		$this->register_editor_v2_experiment();
-
 
 		// Handle autocomplete feature for URL control.
 		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
@@ -845,8 +843,8 @@ class Editor {
 	private function register_editor_v2_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'editor_v2',
-			'title' => __( 'Editor V2', 'elementor' ),
-			'description' => __( 'Enable the new editor.', 'elementor' ),
+			'title' => esc_html__( 'Editor V2', 'elementor' ),
+			'description' => esc_html__( 'Enable the new editor.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
