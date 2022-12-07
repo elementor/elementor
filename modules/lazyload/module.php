@@ -41,7 +41,7 @@ class Module extends BaseModule {
 	private function update_element_attributes( Element_Base $element ) {
 		$settings = $element->get_settings_for_display();
 		$controls = $element->get_controls();
-		$keys = null;
+		$lazyload_attribute_name = 'data-e-bg-lazyload';
 
 		$controls_with_background_image = array_filter( $controls, function( $control ) {
 			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
@@ -49,16 +49,16 @@ class Module extends BaseModule {
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
 			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
-			break;
-		}
-
-		if ( $keys ) {
 			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
 			if ( $background_image_url ) {
-				$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
-				$element->add_render_attribute( '_wrapper', [
-					'data-e-bg-lazyload' => $bg_selector,
-				] );
+
+				$has_attribute = $element->get_render_attributes( '_wrapper', $lazyload_attribute_name );
+				if ( ! $has_attribute ) {
+					$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
+					$element->add_render_attribute( '_wrapper', [
+						$lazyload_attribute_name => $bg_selector,
+					] );
+				}
 			}
 		}
 	}

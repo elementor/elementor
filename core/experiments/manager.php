@@ -413,7 +413,11 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			if ( ! $feature['mutable'] || $feature[ static::TYPE_HIDDEN ] ) {
+			$is_hidden = $feature[ static::TYPE_HIDDEN ];
+			$is_mutable = $feature['mutable'];
+			$should_hide_experiment = ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() );
+
+			if ( $should_hide_experiment ) {
 				unset( $features[ $feature_name ] );
 
 				continue;
@@ -702,6 +706,8 @@ class Manager extends Base_Object {
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $old_state, $new_state );
 		}
+
+		do_action( 'elementor/experiments/feature-state-change/' . $old_feature_data['name'], $old_state, $new_state );
 	}
 
 	/**
@@ -773,6 +779,10 @@ class Manager extends Base_Object {
 				}
 			}
 		}
+	}
+
+	private function should_show_hidden() {
+		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
 	}
 
 	public function __construct() {

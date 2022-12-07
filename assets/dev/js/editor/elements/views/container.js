@@ -311,19 +311,21 @@ const ContainerView = BaseElementView.extend( {
 			icon: 'handle',
 		};
 
-		if ( elementor.getPreferences( 'edit_buttons' ) ) {
-			editTools.duplicate = {
+		if ( ! this.getContainer().isLocked() ) {
+			if ( elementor.getPreferences( 'edit_buttons' ) ) {
+				editTools.duplicate = {
+					/* Translators: %s: Element Name. */
+					title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
+					icon: 'clone',
+				};
+			}
+
+			editTools.remove = {
 				/* Translators: %s: Element Name. */
-				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
-				icon: 'clone',
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+				icon: 'close',
 			};
 		}
-
-		editTools.remove = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-			icon: 'close',
-		};
 
 		return editTools;
 	},
