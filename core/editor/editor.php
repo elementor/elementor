@@ -827,7 +827,9 @@ class Editor {
 	private function make_loading_strategy() {
 		$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
 
-		if ( $is_editor_v2_active && isset( $_REQUEST['v'] ) && $_REQUEST['v'] === '2' ) {
+		// Nonce verification is not required, using param from routing purpose.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $is_editor_v2_active && isset( $_GET['v'] ) && '2' === $_GET['v'] ) {
 			return new Editor_V2_Loading_Strategy();
 		}
 

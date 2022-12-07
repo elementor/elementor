@@ -97,7 +97,7 @@ class Editor_Loader {
 			} )
 			->map( function ( $config ) use ( $default, $replacements ) {
 				// Assign default values.
-				$config =  wp_parse_args( $config, $default );
+				$config = wp_parse_args( $config, $default );
 
 				// Replace placeholders with actual values.
 				foreach ( $replacements as $replacement_key => $replacement_value ) {
