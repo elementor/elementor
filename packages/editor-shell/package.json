@@ -1,0 +1,18 @@
+{
+  "name": "@elementor/editor-shell",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+	"test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "description": "",
+  "dependencies": {
+	"@elementor/locations": "*"
+  },
+  "peerDependencies": {
+	"react": "*",
+	"react-dom": "*"
+  }
+}

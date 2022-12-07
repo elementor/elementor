@@ -104,6 +104,7 @@ class Modules_Manager {
 			'performance-lab',
 			'lazyload',
 			'kit-elements-defaults',
+			'editor-packages-loader',
 		];
 	}
 
