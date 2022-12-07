@@ -344,7 +344,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
+	test.only( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -390,13 +390,23 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_position i.eicon-v-align-top' ).click();
 
+		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
+		await editor.selectElement( tabsId );
+		// Unset Direction: Left.
+		await editor.activatePanelTab( 'content' );
+		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		// Justify: Stretch.
+		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-h-align-stretch' ).click();
+		// Unset align title to 'right'.
+		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
+
 		await editor.togglePreviewMode();
 
 		// Assert
 		expect( await activeTab.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'tabs-direction-left-icon-position-top-align-right.jpeg' );
+		} ) ).toMatchSnapshot( 'tabs-direction-top-icon-position-top-align-default.jpeg' );
 
 		await cleanup( wpAdmin );
 	} );
