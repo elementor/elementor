@@ -355,7 +355,7 @@ class Widget_Icon_List extends Widget_Base {
 					'vh' => [
 						'min' => 1,
 						'max' => 100,
-					],	
+					],
 				],
 				'condition' => [
 					'divider' => 'yes',
