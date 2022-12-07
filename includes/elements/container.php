@@ -693,7 +693,7 @@ class Container extends Element_Base {
 					'image' => [
 						'background_lazyload' => [
 							'active' => true,
-							'keys' => [ 'background_overlay', 'url' ],
+							'keys' => [ 'background_overlay_image', 'url' ],
 						],
 					],
 				],
