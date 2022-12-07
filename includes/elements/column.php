@@ -298,7 +298,7 @@ class Element_Column extends Element_Base {
 						'background_lazyload' => [
 							'active' => true,
 							'keys' => [ 'background_image', 'url' ],
-							'selector' => '.elementor-column-wrap',
+							'selector' => '.elementor-element-populated',
 						],
 					],
 				],
@@ -373,6 +373,15 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ '_background_overlay', 'url' ],
+							'selector' => '.elementor-background-overlay,',
+						],
+					],
+				],
 			]
 		);
 
@@ -920,6 +929,7 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-<?php echo esc_attr( $wrapper_element ); ?>-wrap">
 			<div class="elementor-background-overlay"></div>
+			<div class="e-edit-click-area"></div>
 			<?php if ( ! $is_dom_optimization_active ) { ?>
 				<div class="elementor-widget-wrap"></div>
 			<?php } ?>
