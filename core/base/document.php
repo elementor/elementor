@@ -1590,10 +1590,13 @@ abstract class Document extends Controls_Stack {
 
 			// Do not add default value to the final settings, if there is no value at the
 			// data before the methods `on_import` or `on_export` called.
-			$has_value = isset( $element_data[ $control['name'] ] );
+			$has_value = isset( $element_data['settings'][ $control['name'] ] );
 
 			if ( $has_value && method_exists( $control_class, $method ) ) {
-				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+				$element_data['settings'][ $control['name'] ] = $control_class->{$method}(
+					$element_data['settings'][ $control['name'] ],
+					$control
+				);
 			}
 
 			// On Export, check if the control has an argument 'export' => false.
