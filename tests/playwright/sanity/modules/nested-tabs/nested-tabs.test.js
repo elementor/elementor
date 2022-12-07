@@ -261,22 +261,15 @@ test.describe( 'Nested Tabs tests', () => {
 
 		const redColor = 'rgb(255, 0, 0)',
 			whiteColor = 'rgb(255, 255, 255)',
-			activeTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active > .e-n-tab-icon i:last-child' ).first(),
-			activeTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title.e-active' ).first(),
-			notActiveTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-icon i:first-child' ).first(),
-			notActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-title-text' ).first();
+			nonActiveTabIcon = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-icon i:first-child' ).first(),
+			nonActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title:not(.e-active) > .e-n-tab-title-text' ).first();
 
 		// Assert.
-		// Check color differences in active tab.
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active > .e-n-tab-icon' );
-		await activeTabIcon.hover();
-		await expect( activeTabIcon ).toHaveCSS( 'color', redColor );
-		await expect( activeTabTitle ).toHaveCSS( 'color', whiteColor );
-
 		// Check color differences in non active tab.
-		await notActiveTabIcon.hover();
-		await expect( notActiveTabIcon ).toHaveCSS( 'color', redColor );
-		await expect( notActiveTabTitle ).toHaveCSS( 'color', whiteColor );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active > .e-n-tab-icon' );
+		await nonActiveTabIcon.hover();
+		await expect( nonActiveTabIcon ).toHaveCSS( 'color', redColor );
+		await expect( nonActiveTabTitle ).toHaveCSS( 'color', whiteColor );
 
 		await cleanup( wpAdmin );
 	} );
@@ -461,13 +454,13 @@ test.describe( 'Nested Tabs tests', () => {
 		const hoverTabBackgroundColor = 'rgb(255, 0, 0)',
 			activeTabBackgroundColor = 'rgb(97, 206, 112)',
 			activeTab = page.locator( '.e-normal.e-active' ),
-			notActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
+			nonActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
 
 		// Assert.
 		// Check that active tab default color is seen.
 		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
 		// Check that non-active tab doesn't have the have color.
-		await expect( notActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+		await expect( nonActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
 		// Hover over tab.
 		await activeTab.hover();
