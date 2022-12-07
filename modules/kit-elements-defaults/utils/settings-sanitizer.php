@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults\Utils;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Element_Base;
 use Elementor\Elements_Manager;
 use Elementor\Core\Base\Document;
@@ -94,15 +95,21 @@ class Settings_Sanitizer {
 		}
 
 		$controls = $this->pending_element->get_controls();
+		$available_settings = $this->get_avaliable_settings( $controls );
 
 		$this->pending_settings = ( new Collection( $this->pending_settings ) )
-			->only( array_merge( array_keys( $controls ), static::SPECIAL_SETTINGS ) )
-			->map( function ( $value, $key ) use ( $controls ) {
+			->only( array_merge(
+				$available_settings,
+				static::SPECIAL_SETTINGS
+			) )
+			->map( function ( $value, $key ) use ( $available_settings ) {
 				if ( ! in_array( $key, static::SPECIAL_SETTINGS, true ) ) {
 					return $value;
 				}
 
-				return array_intersect_key( $value, $controls );
+				return ( new Collection( $value ) )
+					->only( $available_settings )
+					->all();
 			} )
 			->all();
 
@@ -208,5 +215,33 @@ class Settings_Sanitizer {
 		$this->pending_settings = $result['settings'];
 
 		return $this;
+	}
+
+	/**
+	 * Get all the available settings of a specific element, including responsive settings.
+	 *
+	 * @param $controls
+	 *
+	 * @return array
+	 */
+	private function get_avaliable_settings( $controls ) {
+		$control_keys = new Collection(
+			array_keys( $controls )
+		);
+
+		$optional_responsive_keys = new Collection(
+			Breakpoints_Manager::BREAKPOINT_KEYS
+		);
+
+		return $control_keys
+			->map( function ( $control_key ) use ( $optional_responsive_keys ) {
+				return $optional_responsive_keys->map( function ( $responsive_key ) use ( $control_key ) {
+					return "{$control_key}_{$responsive_key}";
+				} )
+				->push( $control_key )
+				->all();
+			} )
+			->flatten()
+			->values();
 	}
 }
