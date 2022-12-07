@@ -452,21 +452,20 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Hover background style.
 		const hoverTabBackgroundColor = 'rgb(255, 0, 0)',
-			activeTabBackgroundColor = 'rgb(97, 206, 112)',
 			activeTab = page.locator( '.e-normal.e-active' ),
 			nonActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
 
 		// Assert.
-		// Check that active tab default color is seen.
-		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
-		// Check that non-active tab doesn't have the have color.
+		// Check that by default the hover color isn't applied.
+		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 		await expect( nonActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
 		// Hover over tab.
 		await activeTab.hover();
 		// Check that active tab doesn't change background color on hover.
-		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
+		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 		// Check that non-active tab receives the hover background color.
+		await nonActiveTab.hover();
 		await expect( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
 		await cleanup( wpAdmin );
