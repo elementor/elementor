@@ -458,8 +458,6 @@ class Module extends BaseModule {
 				wp_enqueue_script( 'updates' );
 				// Needed for uploading Logo from WP Media Library.
 				wp_enqueue_media();
-
-				Plugin::$instance->app->set_settings( 'disable_dark_theme', true );
 			}
 		}, 12 );
 

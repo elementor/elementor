@@ -14,6 +14,15 @@ export default function App() {
 	// Send an AJAX request to update the database option which makes sure the Onboarding process only runs once,
 	// for new Elementor sites.
 	useEffect( () => {
+
+		// This is a quick fix to prevent dark theme in onboarding app from the frontend and not backend (doing it from the backend causes bugs)
+		const darkThemeClassName = 'eps-theme-dark';
+		let hasDarkMode = document.body.classList.contains( darkThemeClassName );
+
+		if ( hasDarkMode ) {
+			document.body.classList.remove( darkThemeClassName );
+		}
+
 		if ( ! elementorAppConfig.onboarding.onboardingAlreadyRan ) {
 			const formData = new FormData();
 
@@ -27,6 +36,12 @@ export default function App() {
 		}
 
 		elementorAppConfig.return_url = elementorAppConfig.admin_url;
+
+		return () => {
+			if ( hasDarkMode ) {
+				document.body.classList.add( darkThemeClassName );
+			}
+		}
 	}, [] );
 
 	return (
