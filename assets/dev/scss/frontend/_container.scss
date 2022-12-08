@@ -108,24 +108,30 @@
 	}
 
 	// Background overlay.
-	&::before,
-	> .elementor-background-video-container::before,
-	> .e-con-inner > .elementor-background-video-container::before,
-	> .elementor-background-slideshow:before,
-	> .e-con-inner > .elementor-background-slideshow:before {
-		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
-		// control with an empty string (e.g. `--background-overlay: '';`).
-		content: var( --background-overlay );
-		display: block;
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		left: 0;
-		top: 0;
-		mix-blend-mode: var( --overlay-mix-blend-mode );
-		opacity: var( --overlay-opacity );
-		transition: var( --overlay-transition, 0.3s );
-		border-radius: var( --border-radius );
+	&,
+	& > .e-con-inner {
+
+		&,
+		> .elementor-background-video-container,
+		> .elementor-background-slideshow,
+		> .elementor-motion-effects-container > .elementor-motion-effects-layer {
+
+			&::before {
+				// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
+				// control with an empty string (e.g. `--background-overlay: '';`).
+				content: var( --background-overlay );
+				display: block;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				mix-blend-mode: var( --overlay-mix-blend-mode );
+				opacity: var( --overlay-opacity );
+				transition: var( --overlay-transition, 0.3s );
+				border-radius: var( --border-radius );
+			}
+		}
 	}
 
 	&::before {
