@@ -1,0 +1,207 @@
+//
+// Controls Utility (child of panel controls)
+//
+
+//Start responsive switcher
+$item-size: 2.5em;
+
+.elementor-control-responsive-switchers {
+	--selected-option: 0;
+	--pointer-position: var(--selected-option);
+
+	position: relative;
+	width: $item-size;
+	height: $item-size;
+	margin: calc( -#{$item-size} + var(--control-title-size)) 0;
+	@include margin-end(5px);
+
+	&__holder {
+		position: absolute;
+		width: 100%;
+		top: 0;
+		background-color: #fff;
+		border-radius: 3px;
+		transition: 0.15s;
+		border: 1px solid transparent;
+	}
+
+	&.elementor-responsive-switchers-open {
+		z-index: 11000;
+
+		.elementor-responsive-switcher {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
+
+			&:hover {
+				color: $editor-info;
+			}
+		}
+
+		.elementor-control-responsive-switchers__holder {
+			//top: calc(-1 * var(--selected-option) * #{$item-size});
+			box-shadow: 0 0 3px rgba(0,0,0,0.2);
+		}
+	}
+}
+
+.elementor-responsive-switcher {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	z-index: 2;
+	cursor: pointer;
+	height: 0;
+	transform: scale(0);
+	opacity: 0;
+	transition: 0.15s;
+	font-size: 12px;
+}
+
+a.elementor-responsive-switcher {
+	color: $editor-light;
+
+	&:hover {
+		color: $editor-info;
+	}
+}
+
+@each $device in $devices {
+	.elementor-device-#{ $device } {
+		.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device } {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
+		}
+		.elementor-responsive-switchers-open:not(:hover) {
+			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
+				color: $editor-info;
+			}
+		}
+	}
+}
+//End responsive switcher
+
+// Start control unit switcher
+.e-units-wrapper {
+	position: relative;
+	@include margin-start(auto);
+
+	.e-units-switcher {
+		color: $editor-light;
+		cursor: pointer;
+		text-transform: uppercase;
+		font-size: 9px;
+		padding: .5em;
+		margin: -.5em 0;
+		transition: all ease-in-out .15s;
+
+		&:hover {
+			color: $editor-info;
+			background-color: $editor-background-light;
+			border-radius: 3px;
+		}
+
+		&:not([data-selected="custom"]) {
+
+			i {
+				display: none;
+			}
+		}
+
+		&[data-selected="custom"] {
+
+			span {
+				display: none;
+			}
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+		display: none;
+
+		&:checked + label {
+			color: $editor-info;
+		}
+	}
+
+	label {
+		cursor: pointer;
+		display: block;
+	}
+
+	& {
+		display: none;
+		overflow: hidden;
+		max-height: 0;
+		position: absolute;
+		top: -.8em;
+		@include start(-.5em);
+		width: $item-size;
+		text-align: center;
+		background-color: #fff;
+		border-radius: 3px;
+		border: 1px solid transparent;
+		box-shadow: 0 0 3px rgba(0,0,0,0.2);
+		animation-timing-function: linear;
+		animation-delay: 0s;
+		animation-fill-mode: forwards;
+		z-index: 11000;
+
+		.elementor-units-choices-label {
+			display: flex;
+			align-items: center;
+			height: 3em;
+			justify-content: center;
+			text-transform: uppercase;
+			font-size: 9px;
+			transition: 0.15s;
+
+			&:hover {
+				color: $editor-info;
+			}
+
+			&:not([data-choose="custom"]) {
+
+				i {
+					display: none;
+				}
+			}
+
+			&[data-choose="custom"] {
+
+				span {
+					display: none;
+				}
+			}
+		}
+	}
+
+	&.e-units-choices-open {
+		display: block;
+		animation-duration: 1s;
+		animation-name: e-units-choices-open;
+	}
+}
+
+$font-family-monospace: monospace;
+
+.e-units-custom {
+
+	input {
+		font-family: $font-family-monospace;
+		font-size: 0.85em;
+	}
+}
+
+@keyframes e-units-choices-open {
+	from { max-height: 0; }
+	// Intentionally 100vh and not 100% to avoid the element from being cut off.
+	to { max-height: 100vh; }
+}
+
+//End control unit switcher
