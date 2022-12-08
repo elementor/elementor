@@ -435,6 +435,87 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Check if the custom hover color works on active tabs', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		// Act.
+		// Set tab hover color.
+		await setTabItemColor( page, editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
+
+		await editor.publishAndViewPage();
+
+		// Hover background style.
+		const backgroundHoverStyle = 'rgb(255, 0, 0)',
+			defaultActiveTabColor = 'rgb(97, 206, 112)',
+			activeTab = await page.locator( '.e-normal.e-active' );
+
+		// Assert.
+		// Check that active tab default color is seen.
+		await expect( activeTab ).toHaveCSS( 'background-color', defaultActiveTabColor );
+
+		await activeTab.hover();
+
+		// Check that active tab receives the hover defined background color.
+		await expect( activeTab ).toHaveCSS( 'background-color', backgroundHoverStyle );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Check if the hover effect works on active tabs', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await setup( wpAdmin );
+
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+
+		await editor.activatePanelTab( 'style' );
+		// Set tab hover style.
+		await page.locator( '.elementor-control-tabs_title_hover' ).click();
+		// Select solid border
+		await page.locator( '.elementor-control-tabs_title_border_hover_border select' ).selectOption( 'solid' );
+		// Set shadow
+		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
+		// Close shadow panel
+		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
+		// Set border radius
+		await page.locator( '.elementor-control-tabs_title_border_radius .elementor-control-dimensions li:first-child input' ).fill( '15' );
+
+		// Act.
+		await editor.publishAndViewPage();
+
+		// Hover background style.
+		const borderStyle = 'solid',
+			boxShadow = 'rgba(0, 0, 0, 0.5) 0px 0px 10px 0px',
+			borderRadius = '15px',
+			activeTab = await page.locator( '.e-normal.e-active' );
+
+		// Assert.
+		await activeTab.hover();
+
+		// Check that active tab receives the hover styling.
+		await expect( activeTab ).toHaveCSS( 'border-style', borderStyle );
+		await expect( activeTab ).toHaveCSS( 'box-shadow', boxShadow );
+		await expect( activeTab ).toHaveCSS( 'border-radius', borderRadius );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const TabsIcons = [
@@ -491,7 +572,9 @@ async function cleanup( wpAdmin ) {
 
 async function setTabItemColor( page, editor, panelClass, tabState, colorPickerClass, color ) {
 	await editor.activatePanelTab( 'style' );
-	await page.locator( `.elementor-control-${ panelClass }` ).click();
+	if ( 'tabs' !== panelClass ) {
+		await page.locator( `.elementor-control-${ panelClass }` ).click();
+	}
 	await page.locator( `.elementor-control-${ tabState }` ).click();
 	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
