@@ -7,5 +7,8 @@
   },
   "author": "",
   "license": "GPL-3.0-or-later",
-  "description": ""
+  "description": "",
+  "peerDependencies": {
+	"react": "^17.0.2"
+  }
 }

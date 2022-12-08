@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
-import elementorLocations from '../';
+import { useLocation } from '../hooks/useLocation';
 
 export const Slot = ( { name } ) => {
-	const components = elementorLocations.get( name ) ?? [];
+	const components = useLocation( name );
 
 	return components.map( ( Component, index ) => (
 		<Suspense key={ index } fallback={ null }>

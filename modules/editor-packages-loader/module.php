@@ -53,7 +53,7 @@ class Module extends BaseModule {
 		return [
 			[
 				'name' => 'locations',
-				'deps' => [],
+				'deps' => [ 'react' ],
 			],
 		];
 	}
