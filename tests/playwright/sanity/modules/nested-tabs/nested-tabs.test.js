@@ -420,7 +420,6 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-<<<<<<< HEAD
 	test( 'Check if the icons are visible on mobile display on the front end', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -444,7 +443,10 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.setViewportSize( viewportSize.mobile );
 		await expect( page.locator( '.e-collapse.e-active .e-n-tab-icon' ) ).toBeVisible();
 		await page.setViewportSize( viewportSize.desktop );
-=======
+
+		await cleanup( wpAdmin );
+	} );
+
 	test( 'Check if the custom hover color works on active tabs', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -477,7 +479,6 @@ test.describe( 'Nested Tabs tests', () => {
 
 		// Check that active tab receives the hover defined background color.
 		await expect( activeTab ).toHaveCSS( 'background-color', backgroundHoverStyle );
->>>>>>> 7403b5c5336b686ed4a9b3ee6457663061f5dfd3
 
 		await cleanup( wpAdmin );
 	} );
