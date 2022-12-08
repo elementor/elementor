@@ -187,10 +187,10 @@ class Manager {
 	 * Retrieve all the templates from all the registered sources.
 	 *
 	 * @param array $filter_sources
-	 * @param bool $force_update
+	 *
 	 * @return array
 	 */
-	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
+	public function get_templates( $filter_sources = [] ) {
 		$templates = [];
 
 		foreach ( $this->get_registered_sources() as $source ) {
@@ -198,7 +198,7 @@ class Manager {
 				continue;
 			}
 
-			$templates = array_merge( $templates, $source->get_items( [ 'force_update' => $force_update ] ) );
+			$templates = array_merge( $templates, $source->get_items() );
 		}
 
 		return $templates;
@@ -227,10 +227,9 @@ class Manager {
 		Plugin::$instance->documents->get_document_types();
 
 		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
-		$force_update = ! empty( $args['sync'] );
 
 		return [
-			'templates' => $this->get_templates( $filter_sources, $force_update ),
+			'templates' => $this->get_templates( $filter_sources ),
 			'config' => $library_data['types_data'],
 		];
 	}
