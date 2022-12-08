@@ -21,21 +21,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Set the Eye-Dropper as an experimental feature.
-	 *
-	 * @return array
-	 */
-	public static function get_experimental_data() {
-		return [
-			'name' => 'elements-color-picker',
-			'title' => esc_html__( 'Color Sampler', 'elementor' ),
-			'default' => Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'description' => esc_html__( 'Adds a new color picker functionality that allows choose a color from other elements settings.', 'elementor' ),
-		];
-	}
-
-	/**
 	 * Enqueue the `Color-Thief` library to pick colors from images.
 	 *
 	 * @return void

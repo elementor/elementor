@@ -48,6 +48,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			tools: '> .elementor-element-overlay > .elementor-editor-element-settings',
 			editButton: '> .elementor-element-overlay .elementor-editor-element-edit',
+			editClickArea: '.e-edit-click-area',
 			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
 			addButton: '> .elementor-element-overlay .elementor-editor-element-add',
 			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
@@ -77,6 +78,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			mousedown: 'onMouseDown',
 			'click @ui.editButton': 'onEditButtonClick',
+			'click @ui.editClickArea': 'onEditAreaClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
 			'click @ui.removeButton': 'onRemoveButtonClick',
@@ -156,7 +158,7 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						isEnabled: () => elementor.selection.isSameType(),
+						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
 						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
@@ -224,6 +226,7 @@ BaseElementView = BaseContainer.extend( {
 					},
 					shortcut: '⌦',
 					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
 		} );
@@ -829,6 +832,15 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditButtonClick( event ) {
+		this.triggerEdit( event );
+	},
+
+	onEditAreaClick( event ) {
+		event.stopPropagation();
+		this.triggerEdit( event );
+	},
+
+	triggerEdit( event ) {
 		this.model.trigger( 'request:edit', { append: event.ctrlKey || event.metaKey } );
 	},
 
@@ -956,6 +968,12 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
+
+				if ( this.getContainer().isLocked() ) {
+					e.originalEvent.preventDefault();
+
+					return;
+				}
 
 				// Need to stop this event when the element is absolute since it clashes with this one.
 				// See `behaviors/widget-draggable.js`.

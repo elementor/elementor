@@ -102,6 +102,12 @@ export default class EditorBase extends Marionette.Application {
 				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
 			},
 		},
+		panelUnitControlSwitchers: {
+			element: '.e-units-choices',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'e-units-choices-open' );
+			},
+		},
 		promotion: {
 			ignore: '.elementor-responsive-panel',
 			callback: () => {
@@ -372,9 +378,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.noticeBar = new NoticeBar();
 
-		if ( elementorCommon.config.experimentalFeatures[ 'favorite-widgets' ] ) {
-			this.favorites = new Favorites();
-		}
+		this.favorites = new Favorites();
 
 		this.history = new HistoryManager();
 
@@ -389,9 +393,7 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
-		if ( elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
-			this.modules.elementsColorPicker = new ElementsColorPicker();
-		}
+		this.modules.elementsColorPicker = new ElementsColorPicker();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
@@ -1106,6 +1108,8 @@ export default class EditorBase extends Marionette.Application {
 			// Duplicate responsive controls for section and column default configs.
 			this.generateResponsiveControlsForElements();
 		}
+
+		this.elementsManager = new ElementsManager();
 
 		this.initComponents();
 
