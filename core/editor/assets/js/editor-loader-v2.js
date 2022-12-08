@@ -5,7 +5,7 @@
 	window.elementor.start();
 
 	// TODO: Move to externals and use import.
-	const { boot } = window.elementorEditorPackages.editorShell;
+	const { render } = window.elementorEditorPackages.editorShell;
 
-	boot( document.getElementById( 'elementor-editor-wrapper-v2' ) );
+	render( document.getElementById( 'elementor-editor-wrapper-v2' ) );
 } )();
