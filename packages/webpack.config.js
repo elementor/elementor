@@ -50,7 +50,7 @@ module.exports = {
 };
 
 function kebabToCamelCase( kebabCase ) {
-	return kebabCase.replace( /-(\w)/, ( match, w ) => {
+	return kebabCase.replace( /-(\w)/g, ( match, w ) => {
 		return w.toUpperCase();
 	} );
 }
