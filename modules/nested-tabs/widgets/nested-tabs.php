@@ -85,7 +85,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$end = is_rtl() ? 'left' : 'right';
 		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
 		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
-		$nested_tabs_heading_selector_class = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
+		$nested_tabs_heading_selector_class = ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading, {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content )';
 		$nested_tabs_content_selector_class = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content';
 
 		$this->start_controls_section( 'section_tabs', [
@@ -219,10 +219,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'center' => '--n-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'end' => '--n-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'stretch' => '--n-tabs-heading-justify-content: initial; --n-tabs-title-width: 100%; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
+				'start' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center;',
+				'center' => '--n-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center;',
+				'end' => '--n-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center',
+				'stretch' => '--n-tabs-heading-justify-content: initial; --n-tabs-title-width: 100%; --n-tabs-title-height: initial; --n-tabs-title-align-items: center;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -421,10 +421,13 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'selectors' => [
+							'{{SELECTOR}}' => 'background: {{VALUE}}',
+						],
 					],
 				],
 			]
@@ -434,7 +437,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -452,7 +455,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
 			]
 		);
 
@@ -471,10 +474,19 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_hover',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
 				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
 					'color' => [
+						'global' => [
+							'default' => Global_Colors::COLOR_ACCENT,
+						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'selectors' => [
+							'{{SELECTOR}}' => 'background: {{VALUE}};',
+						],
 					],
 				],
 			]
@@ -484,7 +496,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -502,7 +514,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow_hover',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
 			]
 		);
 
@@ -538,7 +550,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_active',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title.e-active:not(:hover)",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title.e-active",
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -548,6 +560,9 @@ class NestedTabs extends Widget_Nested_Base {
 							'default' => Global_Colors::COLOR_ACCENT,
 						],
 						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'selectors' => [
+							'{{SELECTOR}}' => 'background: {{VALUE}};',
+						],
 					],
 				],
 			]
@@ -557,7 +572,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_active',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title.e-active:not(:hover)",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title.e-active",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -574,7 +589,7 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'tabs_title_box_shadow_active',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title.e-active:not(:hover)",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title.e-active",
 			]
 		);
 
@@ -619,7 +634,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
-			'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title-text",
+			'selector' => "{$nested_tabs_heading_selector_class} > :is( .e-n-tab-title > .e-n-tab-title-text, .e-n-tab-title )",
 			'fields_options' => [
 				'font_size' => [
 					'selectors' => [
@@ -653,7 +668,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -666,7 +681,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -699,7 +714,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -713,7 +728,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -746,7 +761,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_active',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title.e-active:not(:hover)",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title.e-active",
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -759,7 +774,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_active',
-				'selector' => "{$nested_tabs_heading_selector_class} .e-n-tab-title.e-active:not(:hover)",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title.e-active",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),

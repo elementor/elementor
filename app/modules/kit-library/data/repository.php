@@ -6,7 +6,6 @@ use Elementor\Data\V2\Base\Exceptions\Error_404;
 use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
 use Elementor\Modules\Library\User_Favorites;
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -181,17 +180,8 @@ class Repository {
 	private function get_kits_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_CACHE_KEY );
 
-		$experiments_manager = Plugin::$instance->experiments;
-		$kits_editor_layout_type = $experiments_manager->is_feature_active( 'container' ) ? 'container_flexbox' : '';
-
 		if ( ! $data || $force_api_request ) {
-			$args = [
-				'body' => [
-					'editor_layout_type' => $kits_editor_layout_type,
-				],
-			];
-
-			$data = $this->api->get_all( $args );
+			$data = $this->api->get_all();
 
 			if ( is_wp_error( $data ) ) {
 				throw new WP_Error_Exception( $data );
@@ -309,9 +299,5 @@ class Repository {
 		$this->api = $kit_library;
 		$this->user_favorites = $user_favorites;
 		$this->subscription_plans = $subscription_plans;
-	}
-
-	public static function clear_cache() {
-		delete_transient( static::KITS_CACHE_KEY );
 	}
 }
