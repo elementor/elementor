@@ -586,16 +586,22 @@ test.describe( 'Nested Tabs tests', () => {
 		// Get the initial first tab width.
 		await editor.getPreviewFrame().locator( '.e-normal:first-child' ).click();
 		await editor.getPreviewFrame().waitForSelector( '.e-normal.e-active' );
-		await page.pause();
-		const initialTabWidth = await editor.getPreviewFrame().locator( '.e-normal.e-active' ).boundingBox().width;
+		const initialTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
 
 		// Add content
 		await editor.addWidget( 'image', activeContentContainerId );
 
 		// Assert
-		// Verify that the width tab doesn't change after adding the content.
-		const finalTabWidth = await editor.getPreviewFrame().locator( '.e-normal.e-active' ).boundingBox().width;
-		expect( await finalTabWidth ).toBe( initialTabWidth );
+		// Verify that the tab width doesn't change after adding the content.
+		const finalTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		expect( finalTabWidth ).toBe( initialTabWidth );
+
+		await cleanup( wpAdmin );
 	} );
 } );
 
