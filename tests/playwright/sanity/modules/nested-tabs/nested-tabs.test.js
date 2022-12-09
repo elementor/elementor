@@ -563,6 +563,100 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Verify the correct relationships between normal, hover and active styling', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Hex colors.
+		const colorGreen = '#95E46E',
+			colorYellow = '#CFE46E',
+			colorBlue = '#134FF2',
+			colorBrown = '#967008',
+			colorRed = '#961708',
+			colorPink = '#E1086E',
+			colorGreenRgb = 'rgb(149, 228, 110)',
+			colorYellowRgb = 'rgb(207, 228, 110)',
+			colorBlueRgb = 'rgb(19, 79, 242)',
+			colorBrownRgb = 'rgb(150, 112, 8)',
+			colorRedRgb = 'rgb(150, 23, 8)',
+			colorPinkRgb = 'rgb(225, 8, 110)';
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+		// Add icons.
+		await setIconsToTabs( page, tabIcons );
+
+		// Normal tab styling: text color green, border color: green and icon color: yellow.
+		await editor.activatePanelTab( 'style' );
+		// Set text color.
+		await setTabItemColor( page, editor, 'section_title_style', 'title_normal', 'title_text_color', colorGreen );
+		// Set border color.
+		await setTabBorderColor( page, editor, 'normal', '', colorGreen, '5' );
+		// Set icon color.
+		await editor.activatePanelTab( 'content' );
+		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_normal', 'icon_color', colorYellow );
+		await editor.activatePanelTab( 'content' );
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.elementor-control-section_tabs_style' ).click();
+
+		// Hover tab styling: text color: red, border color: red and icon color: pink.
+		// Set text color.
+		await setTabItemColor( page, editor, 'section_title_style', 'title_hover', 'title_text_color_hover', colorRed );
+		// Set border color.
+		await setTabBorderColor( page, editor, 'hover', '_hover', colorRed, '5' );
+		// Set icon color.
+		await editor.activatePanelTab( 'content' );
+		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', colorPink );
+		await editor.activatePanelTab( 'content' );
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.elementor-control-section_tabs_style' ).click();
+
+		// Active tab styling: text color: blue, border color: blue and icon color: brown.
+		// Set text color.
+		await setTabItemColor( page, editor, 'section_title_style', 'title_active', 'title_text_color_active', colorBlue );
+		// Set border color.
+		await setTabBorderColor( page, editor, 'active', '_active', colorBlue, '5' );
+		// Set icon color.
+		await editor.activatePanelTab( 'content' );
+		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_active', 'icon_color_active', colorBrown );
+		await editor.activatePanelTab( 'content' );
+
+		// Act.
+		await editor.getPreviewFrame().locator( '.e-normal:first-child' ).click();
+		const tabNormal = editor.getPreviewFrame().locator( '.e-normal:not( .e-active ):last-child' ),
+			tabActive = editor.getPreviewFrame().locator( '.e-normal.e-active' );
+
+		// Assert.
+		// Normal tab.
+		await expect( tabNormal ).toHaveCSS( 'color', colorGreenRgb );
+		await expect( tabNormal ).toHaveCSS( 'border-color', colorGreenRgb );
+		await expect( tabNormal.locator( 'i:first-child' ) ).toHaveCSS( 'color', colorYellowRgb );
+		// Active tab.
+		await expect( tabActive ).toHaveCSS( 'color', colorBlueRgb );
+		await expect( tabActive ).toHaveCSS( 'border-color', colorBlueRgb );
+		await expect( tabActive.locator( 'i:last-child' ) ).toHaveCSS( 'color', colorBrownRgb );
+
+		// Hover normal tab.
+		await tabNormal.hover();
+		// Normal tab.
+		await expect( tabNormal ).toHaveCSS( 'color', colorRedRgb );
+		await expect( tabNormal ).toHaveCSS( 'border-color', colorRedRgb );
+		await expect( tabNormal.locator( 'i:first-child' ) ).toHaveCSS( 'color', colorPinkRgb );
+
+		// Hover active tab.
+		await tabNormal.hover();
+		// Active tab.
+		await expect( tabActive ).toHaveCSS( 'color', colorBlueRgb );
+		await expect( tabActive ).toHaveCSS( 'border-color', colorBlueRgb );
+		await expect( tabActive.locator( 'i:last-child' ) ).toHaveCSS( 'color', colorBrownRgb );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const viewportSize = {
@@ -635,5 +729,15 @@ async function setTabItemColor( page, editor, panelClass, tabState, colorPickerC
 	}
 	await page.locator( `.elementor-control-${ tabState }` ).click();
 	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
+	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
+}
+
+async function setTabBorderColor( page, editor, state, stateExtended, color, borderWidth, borderStyle = 'solid' ) {
+	await editor.activatePanelTab( 'style' );
+	await page.locator( `.elementor-control-section_tabs_style` ).click();
+	await page.locator( `.elementor-control-tabs_title_${ state }` ).click();
+	await page.selectOption( `.elementor-control-tabs_title_border${ stateExtended }_border >> select`, borderStyle );
+	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` ).first().fill( borderWidth );
+	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_color .pcr-button` ).click();
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
 }

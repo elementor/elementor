@@ -13,8 +13,6 @@
 	--n-tabs-display: flex;
 	--n-tabs-direction: column;
 	--n-tabs-gap: 10px;
-	--n-tabs-border-width: 1px;
-	--n-tabs-border-color: initial;
 
 	--n-tabs-heading-display: flex;
 	--n-tabs-heading-direction: row;
@@ -91,8 +89,6 @@
 			flex-direction: var( --n-tabs-title-direction );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
-			color: var( --n-tabs-title-color );
-			background-color: var( --n-tabs-title-background-color );
 			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
@@ -104,6 +100,11 @@
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
+
+			&:not( .e-active ) {
+				background-color: var( --n-tabs-title-background-color );
+				color: var( --n-tabs-title-color );
+			}
 
 			&,
 			span svg,
@@ -133,15 +134,24 @@
 				order: var( --n-tabs-icon-order );
 				overflow: hidden;
 
-				> i {
-					color: var( --n-tabs-icon-color );
+				i {
 					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
 				svg {
-					fill: var( --n-tabs-icon-color );
 					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+				}
+
+				&:not( .e-active ) {
+
+					i {
+						color: var( --n-tabs-icon-color );
+					}
+	
+					svg {
+						fill: var( --n-tabs-icon-color );
+					}
 				}
 
 				&:empty {
@@ -156,7 +166,7 @@
 				}
 			}
 
-			&:hover {
+			&:not( .e-active ):hover {
 				color: var( --n-tabs-title-color-hover );
 
 				.e-n-tab-icon {
