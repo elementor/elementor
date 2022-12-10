@@ -10,8 +10,9 @@
     "homepage": "https://elementor.com/",
     "scripts": {
         "setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
-        "setup-local-server": "wp-env run tests-cli \"bash -c 'bash elementor-config/setup.sh'\"",
-        "start-local-server": "npm run setup-templates && wp-env start && npm run setup-local-server",
+        "setup-local-server:origial": "wp-env run tests-cli \"bash -c 'bash elementor-config/setup.sh'\"",
+        "setup-local-server": "",
+        "start-local-server": "npm run setup-templates && wp-env start --update && npm run setup-local-server",
         "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
         "test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
         "test:qunit": "grunt qunit",
