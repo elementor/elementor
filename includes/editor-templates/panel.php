@@ -296,7 +296,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			<?php echo esc_html__( 'You’re missing out!', 'elementor' ); ?><br />
 			<?php echo esc_html__( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
 			<a href="{{{ promotionUrl }}}" class="elementor-tags-list__teaser-link" target="_blank">
-				<?php echo esc_html__( 'See it in action', 'elementor' ); ?>
+				<?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 			</a>
 		</div>
 	</div>

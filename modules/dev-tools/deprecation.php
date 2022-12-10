@@ -349,8 +349,21 @@ class Deprecation {
 	 */
 	public function apply_deprecated_filter( $hook, $args, $version, $replacement = '', $base_version = null ) {
 		if ( ! has_action( $hook ) ) {
+			// `$args` should be an array, but in order to keep BC, we need to support non-array values.
+			if ( is_array( $args ) ) {
+				return $args[0] ?? null;
+			}
+
 			return $args;
 		}
+
+		// BC - See the comment above.
+		if ( ! is_array( $args ) ) {
+			$args = [ $args ];
+		}
+
+		// Avoid associative arrays.
+		$args = array_values( $args );
 
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
 

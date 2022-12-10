@@ -97,6 +97,10 @@ class Modules_Manager {
 			'container-converter',
 			'web-cli',
 			'promotions',
+			'notes',
+			'performance-lab',
+			'lazyload',
+			'kit-elements-defaults',
 		];
 	}
 

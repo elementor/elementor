@@ -17,10 +17,4 @@ class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 
 		$obj_cloned = clone \Elementor\Plugin::$instance;
 	}
-
-	public function test_Wakeup() {
-		$this->expect_doing_it_wrong('__wakeup');
-
-		unserialize( serialize( \Elementor\Plugin::$instance ) );
-	}
 }

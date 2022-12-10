@@ -2,9 +2,12 @@
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Plugin;
+use Elementor\Tests\Phpunit\Responsive_Control_Testing_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
+
+	use Responsive_Control_Testing_Trait;
 
 	/**
 	 * Element with a responsive condition
@@ -27,19 +30,7 @@ class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
 	public function test_is_control_visible_when_condition_met() {
 		$initial_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
-		/**
-		 * Arrange
-		 *
-		 * The test case here is checking that the method works properly for CSS Generation, which requires
-		 * responsive control duplication in the back-end.
-		 *
-		 * Since the Common widget's controls stack is added to the Controls Manager's stack cache before this test is
-		 * run, we need to remove it and re-register it with the Responsive Control Duplication Mode set to 'on', in
-		 * order for it to be registered with all responsive controls duplicated.
-		 */
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
-
-		Plugin::$instance->controls_manager->delete_stack( $this->get_common_widget_instance() );
+		$this->setup_responsive_control_condition_test();
 
 		/**
 		 * Act
@@ -64,19 +55,7 @@ class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
 	public function test_is_control_visible_when_condition_unmet() {
 		$initial_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
-		/**
-		 * Arrange
-		 *
-		 * The test case here is checking that the method works properly for CSS Generation, which requires
-		 * responsive control duplication in the back-end.
-		 *
-		 * Since the Common widget's controls stack is added to the Controls Manager's stack cache before this test is
-		 * run, we need to remove it from the stack cache,so it is re-registered with the Responsive Control Duplication
-		 * Mode set to 'on', in order for it to be registered with all responsive controls duplicated.
-		 */
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
-
-		Plugin::$instance->controls_manager->delete_stack( $this->get_common_widget_instance() );
+		$this->setup_responsive_control_condition_test();
 
 		$widget_data = self::$element_with_conditions_mock;
 
@@ -100,25 +79,5 @@ class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
 		 * Cleanup
 		 */
 		$this->cleanup_is_control_visible_test( $initial_duplication_mode );
-	}
-
-	/**
-	 * Cleanup - is_control_visible() test
-	 *
-	 * The Responsive Control Duplication Mode is reset to it's initial state.
-	 * The Common widget's control stack is removed from the Controls Manager stack cache so it will be re-initialized
-	 * with the initial Responsive Control Duplication Mode whenever it is required in later-running tests.
-	 *
-	 * @param string $initial_duplication_mode
-	 * @return void
-	 */
-	private function cleanup_is_control_visible_test( string $initial_duplication_mode ) {
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_duplication_mode );
-
-		Plugin::$instance->controls_manager->delete_stack( $this->get_common_widget_instance() );
-	}
-
-	private function get_common_widget_instance() {
-		return Plugin::$instance->widgets_manager->get_widget_types( 'common' );
 	}
 }

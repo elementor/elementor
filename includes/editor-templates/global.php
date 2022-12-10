@@ -48,13 +48,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<# } ); #>
 			</ul>
 		</div>
-		<div class="e-view e-container-select-preset">
-			<div class="e-container-select-preset__title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
-			<div class="e-container-select-preset__list">
+		<div class="e-view e-con-select-preset">
+			<div class="e-con-select-preset__title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
+			<div class="e-con-select-preset__list">
 				<#
 					elementor.presetsFactory.getContainerPresets().forEach( ( preset ) => {
 					#>
-					<div class="e-container-preset" data-preset="{{ preset }}">
+					<div class="e-con-preset" data-preset="{{ preset }}">
 						{{{ elementor.presetsFactory.generateContainerPreset( preset ) }}}
 					</div>
 					<#

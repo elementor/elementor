@@ -92,19 +92,19 @@ class Group_Control_Background extends Group_Control_Base {
 	private static function get_default_background_types() {
 		return [
 			'classic' => [
-				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
+				'title' => esc_html_x( 'Classic', 'Background Control', 'elementor' ),
 				'icon' => 'eicon-paint-brush',
 			],
 			'gradient' => [
-				'title' => _x( 'Gradient', 'Background Control', 'elementor' ),
+				'title' => esc_html_x( 'Gradient', 'Background Control', 'elementor' ),
 				'icon' => 'eicon-barcode',
 			],
 			'video' => [
-				'title' => _x( 'Video', 'Background Control', 'elementor' ),
+				'title' => esc_html_x( 'Video', 'Background Control', 'elementor' ),
 				'icon' => 'eicon-video-camera',
 			],
 			'slideshow' => [
-				'title' => _x( 'Slideshow', 'Background Control', 'elementor' ),
+				'title' => esc_html_x( 'Slideshow', 'Background Control', 'elementor' ),
 				'icon' => 'eicon-slideshow',
 			],
 		];
@@ -124,26 +124,26 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields = [];
 
 		$fields['background'] = [
-			'label' => _x( 'Background Type', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Background Type', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'render_type' => 'ui',
 		];
 
 		$fields['color'] = [
-			'label' => _x( 'Color', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Color', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
-			'title' => _x( 'Background Color', 'Background Control', 'elementor' ),
+			'title' => esc_html_x( 'Background Color', 'Background Control', 'elementor' ),
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-color: {{VALUE}};',
 			],
 			'condition' => [
-				'background' => [ 'classic', 'gradient' ],
+				'background' => [ 'classic', 'gradient', 'video' ],
 			],
 		];
 
 		$fields['color_stop'] = [
-			'label' => _x( 'Location', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Location', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'size_units' => [ '%' ],
 			'default' => [
@@ -158,7 +158,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['color_b'] = [
-			'label' => _x( 'Second Color', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Second Color', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '#f2295b',
 			'render_type' => 'ui',
@@ -169,7 +169,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['color_b_stop'] = [
-			'label' => _x( 'Location', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Location', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'size_units' => [ '%' ],
 			'default' => [
@@ -184,11 +184,11 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['gradient_type'] = [
-			'label' => _x( 'Type', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Type', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
-				'linear' => _x( 'Linear', 'Background Control', 'elementor' ),
-				'radial' => _x( 'Radial', 'Background Control', 'elementor' ),
+				'linear' => esc_html_x( 'Linear', 'Background Control', 'elementor' ),
+				'radial' => esc_html_x( 'Radial', 'Background Control', 'elementor' ),
 			],
 			'default' => 'linear',
 			'render_type' => 'ui',
@@ -199,17 +199,12 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['gradient_angle'] = [
-			'label' => _x( 'Angle', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Angle', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'deg' ],
+			'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 			'default' => [
 				'unit' => 'deg',
 				'size' => 180,
-			],
-			'range' => [
-				'deg' => [
-					'step' => 10,
-				],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
@@ -222,18 +217,18 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['gradient_position'] = [
-			'label' => _x( 'Position', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
-				'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
-				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
-				'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
-				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
-				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
-				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
-				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
-				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
-				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
+				'center center' => esc_html_x( 'Center Center', 'Background Control', 'elementor' ),
+				'center left' => esc_html_x( 'Center Left', 'Background Control', 'elementor' ),
+				'center right' => esc_html_x( 'Center Right', 'Background Control', 'elementor' ),
+				'top center' => esc_html_x( 'Top Center', 'Background Control', 'elementor' ),
+				'top left' => esc_html_x( 'Top Left', 'Background Control', 'elementor' ),
+				'top right' => esc_html_x( 'Top Right', 'Background Control', 'elementor' ),
+				'bottom center' => esc_html_x( 'Bottom Center', 'Background Control', 'elementor' ),
+				'bottom left' => esc_html_x( 'Bottom Left', 'Background Control', 'elementor' ),
+				'bottom right' => esc_html_x( 'Bottom Right', 'Background Control', 'elementor' ),
 			],
 			'default' => 'center center',
 			'selectors' => [
@@ -247,13 +242,13 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['image'] = [
-			'label' => _x( 'Image', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Image', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
 			'dynamic' => [
 				'active' => true,
 			],
 			'responsive' => true,
-			'title' => _x( 'Background Image', 'Background Control', 'elementor' ),
+			'title' => esc_html_x( 'Background Image', 'Background Control', 'elementor' ),
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-image: url("{{URL}}");',
 			],
@@ -264,22 +259,22 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['position'] = [
-			'label' => _x( 'Position', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'responsive' => true,
 			'options' => [
-				'' => _x( 'Default', 'Background Control', 'elementor' ),
-				'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
-				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
-				'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
-				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
-				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
-				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
-				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
-				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
-				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
-				'initial' => _x( 'Custom', 'Background Control', 'elementor' ),
+				'' => esc_html_x( 'Default', 'Background Control', 'elementor' ),
+				'center center' => esc_html_x( 'Center Center', 'Background Control', 'elementor' ),
+				'center left' => esc_html_x( 'Center Left', 'Background Control', 'elementor' ),
+				'center right' => esc_html_x( 'Center Right', 'Background Control', 'elementor' ),
+				'top center' => esc_html_x( 'Top Center', 'Background Control', 'elementor' ),
+				'top left' => esc_html_x( 'Top Left', 'Background Control', 'elementor' ),
+				'top right' => esc_html_x( 'Top Right', 'Background Control', 'elementor' ),
+				'bottom center' => esc_html_x( 'Bottom Center', 'Background Control', 'elementor' ),
+				'bottom left' => esc_html_x( 'Bottom Left', 'Background Control', 'elementor' ),
+				'bottom right' => esc_html_x( 'Bottom Right', 'Background Control', 'elementor' ),
+				'initial' => esc_html_x( 'Custom', 'Background Control', 'elementor' ),
 
 			],
 			'selectors' => [
@@ -292,7 +287,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['xpos'] = [
-			'label' => _x( 'X Position', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'X Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
 			'size_units' => [ 'px', 'em', '%', 'vw' ],
@@ -338,7 +333,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['ypos'] = [
-			'label' => _x( 'Y Position', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Y Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
 			'size_units' => [ 'px', 'em', '%', 'vh' ],
@@ -384,13 +379,13 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['attachment'] = [
-			'label' => _x( 'Attachment', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Attachment', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => _x( 'Default', 'Background Control', 'elementor' ),
-				'scroll' => _x( 'Scroll', 'Background Control', 'elementor' ),
-				'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
+				'' => esc_html_x( 'Default', 'Background Control', 'elementor' ),
+				'scroll' => esc_html_x( 'Scroll', 'Background Control', 'elementor' ),
+				'fixed' => esc_html_x( 'Fixed', 'Background Control', 'elementor' ),
 			],
 			'selectors' => [
 				'(desktop+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
@@ -414,16 +409,16 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['repeat'] = [
-			'label' => _x( 'Repeat', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Repeat', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'responsive' => true,
 			'options' => [
-				'' => _x( 'Default', 'Background Control', 'elementor' ),
-				'no-repeat' => _x( 'No-repeat', 'Background Control', 'elementor' ),
-				'repeat' => _x( 'Repeat', 'Background Control', 'elementor' ),
-				'repeat-x' => _x( 'Repeat-x', 'Background Control', 'elementor' ),
-				'repeat-y' => _x( 'Repeat-y', 'Background Control', 'elementor' ),
+				'' => esc_html_x( 'Default', 'Background Control', 'elementor' ),
+				'no-repeat' => esc_html_x( 'No-repeat', 'Background Control', 'elementor' ),
+				'repeat' => esc_html_x( 'Repeat', 'Background Control', 'elementor' ),
+				'repeat-x' => esc_html_x( 'Repeat-x', 'Background Control', 'elementor' ),
+				'repeat-y' => esc_html_x( 'Repeat-y', 'Background Control', 'elementor' ),
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-repeat: {{VALUE}};',
@@ -435,16 +430,16 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['size'] = [
-			'label' => _x( 'Size', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Size', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'responsive' => true,
 			'default' => '',
 			'options' => [
-				'' => _x( 'Default', 'Background Control', 'elementor' ),
-				'auto' => _x( 'Auto', 'Background Control', 'elementor' ),
-				'cover' => _x( 'Cover', 'Background Control', 'elementor' ),
-				'contain' => _x( 'Contain', 'Background Control', 'elementor' ),
-				'initial' => _x( 'Custom', 'Background Control', 'elementor' ),
+				'' => esc_html_x( 'Default', 'Background Control', 'elementor' ),
+				'auto' => esc_html_x( 'Auto', 'Background Control', 'elementor' ),
+				'cover' => esc_html_x( 'Cover', 'Background Control', 'elementor' ),
+				'contain' => esc_html_x( 'Contain', 'Background Control', 'elementor' ),
+				'initial' => esc_html_x( 'Custom', 'Background Control', 'elementor' ),
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-size: {{VALUE}};',
@@ -456,7 +451,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['bg_width'] = [
-			'label' => _x( 'Width', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Width', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
 			'size_units' => [ 'px', 'em', '%', 'vw' ],
@@ -491,7 +486,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['video_link'] = [
-			'label' => _x( 'Video Link', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
 			'placeholder' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
 			'description' => esc_html__( 'YouTube/Vimeo link, or link to video file (mp4 is recommended).', 'elementor' ),
@@ -562,7 +557,6 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['privacy_mode'] = [
 			'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'description' => esc_html__( 'Only works for YouTube videos.', 'elementor' ),
 			'condition' => [
 				'background' => [ 'video' ],
 			],
@@ -571,7 +565,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['video_fallback'] = [
-			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'description' => esc_html__( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
 			'dynamic' => [
@@ -587,7 +581,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['slideshow_gallery'] = [
-			'label' => _x( 'Images', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Images', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::GALLERY,
 			'condition' => [
 				'background' => [ 'slideshow' ],
@@ -672,15 +666,15 @@ class Group_Control_Background extends Group_Control_Base {
 			'responsive' => true,
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
-				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
-				'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
-				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
-				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
-				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
-				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
-				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
-				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
+				'center center' => esc_html_x( 'Center Center', 'Background Control', 'elementor' ),
+				'center left' => esc_html_x( 'Center Left', 'Background Control', 'elementor' ),
+				'center right' => esc_html_x( 'Center Right', 'Background Control', 'elementor' ),
+				'top center' => esc_html_x( 'Top Center', 'Background Control', 'elementor' ),
+				'top left' => esc_html_x( 'Top Left', 'Background Control', 'elementor' ),
+				'top right' => esc_html_x( 'Top Right', 'Background Control', 'elementor' ),
+				'bottom center' => esc_html_x( 'Bottom Center', 'Background Control', 'elementor' ),
+				'bottom left' => esc_html_x( 'Bottom Left', 'Background Control', 'elementor' ),
+				'bottom right' => esc_html_x( 'Bottom Right', 'Background Control', 'elementor' ),
 			],
 			'selectors' => [
 				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-position: {{VALUE}};',

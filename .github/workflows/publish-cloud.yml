@@ -25,8 +25,8 @@ jobs:
           token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Get Configuration
         id: configuration
-        uses: antifree/json-to-variables@v1.0.1
-        with: 
+        uses: maork-elementor/json-to-variables@main
+        with:
             filename: './.github/workflows/config.json'
             prefix: config
       - name: Test permissions
@@ -59,7 +59,7 @@ jobs:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           CURRENT_SHA: ${{ env.CURRENT_SHA }}
-          IGNORE_CHECKS_LIST: "publish-to-cloud" # Comma separated list of checks to ignore
+          IGNORE_CHECKS_LIST: "publish-to-cloud,publish_to_jira" # Comma separated list of checks to ignore
       - name: Bump version
         id: bump_version_step
         uses: ./.github/workflows/bump-version
@@ -136,4 +136,4 @@ jobs:
         with:
           MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNELS }}
+          SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}

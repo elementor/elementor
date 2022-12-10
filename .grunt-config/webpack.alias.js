@@ -4,7 +4,7 @@ module.exports = {
 	resolve: {
 		alias: {
 			'elementor': path.resolve( __dirname, '../' ),
-			'elementor-app': path.resolve( __dirname, '../core/app/assets/js' ),
+			'elementor-app': path.resolve( __dirname, '../app/assets/js' ),
 			'elementor-admin': path.resolve( __dirname, '../assets/dev/js/admin' ),
 			'elementor-api': path.resolve( __dirname, '../modules/web-cli/assets/js/' ),
 			'elementor-assets-js': path.resolve( __dirname, '../assets/dev/js' ),

@@ -106,6 +106,10 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				muted: true,
 			};
 
+		if ( elementSettings.background_privacy_mode ) {
+			vimeoOptions.dnt = true;
+		}
+
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
 
 		// Handle user-defined start/end times

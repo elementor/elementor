@@ -2,6 +2,11 @@ name: Elementor-ScreenShotter
 
 on: [ push, pull_request ]
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   run:
     runs-on: ubuntu-20.04
@@ -41,6 +46,7 @@ jobs:
           cd /tmp/wordpress
           wp elementor experiments activate container
           wp option update elementor_unfiltered_files_upload 1
+          wp option update blogdescription 'Just another WordPress site' # WP >= 6.1
       - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true

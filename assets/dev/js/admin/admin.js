@@ -3,6 +3,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 import environment from '../../../../core/common/assets/js/utils/environment';
 import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
+import TemplateControls from './new-template/template-controls.js';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -339,6 +340,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
+			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();
 		},
@@ -382,9 +384,11 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 			}
 
 			const self = this,
+				$importForm = self.elements.$importForm,
 				$importButton = self.elements.$importButton,
 				$importArea = self.elements.$importArea,
-				$importNowButton = self.elements.$importNowButton;
+				$importNowButton = self.elements.$importNowButton,
+				$importFormFileInput = self.elements.$importFormFileInput;
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
@@ -396,12 +400,15 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 				$( '#elementor-import-template-area' ).toggle();
 			} );
 
-			$importNowButton.on( 'click', ( event ) => {
-				if ( self.elements.$importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+			$importForm.on( 'submit', ( event ) => {
+				$importNowButton[ 0 ].disabled = true;
+				$importNowButton[ 0 ].value = __( 'Importing...', 'elementor' );
+
+				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
 					event.preventDefault();
 
 					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
-						self.elements.$importForm.trigger( 'submit' );
+						$importForm.trigger( 'submit' );
 					} );
 
 					enableUnfilteredFilesModal.show();

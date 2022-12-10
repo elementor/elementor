@@ -201,12 +201,12 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
+		$this->delete( 'state' );
+		$this->set( (array) $response );
+
 		if ( ! empty( $response->data_share_opted_in ) && current_user_can( 'manage_options' ) ) {
 			Tracker::set_opt_in( true );
 		}
-
-		$this->delete( 'state' );
-		$this->set( (array) $response );
 
 		$this->after_connect();
 
@@ -377,12 +377,14 @@ abstract class Base_App {
 	}
 
 	/**
-	 * Get all the connect information
+	 * Get Base Connect Info
+	 *
+	 * Returns an array of connect info.
 	 *
 	 * @return array
 	 */
-	protected function get_connect_info() {
-		$connect_info = [
+	protected function get_base_connect_info() {
+		return [
 			'app' => $this->get_slug(),
 			'access_token' => $this->get( 'access_token' ),
 			'client_id' => $this->get( 'client_id' ),
@@ -390,6 +392,15 @@ abstract class Base_App {
 			'site_key' => $this->get_site_key(),
 			'home_url' => trailingslashit( home_url() ),
 		];
+	}
+
+	/**
+	 * Get all the connect information
+	 *
+	 * @return array
+	 */
+	protected function get_connect_info() {
+		$connect_info = $this->get_base_connect_info();
 
 		$additional_info = [];
 

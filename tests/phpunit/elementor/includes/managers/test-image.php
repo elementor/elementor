@@ -41,6 +41,8 @@ class Test_Image extends Elementor_Test_Base {
 
 		// Act
 		( new Images_Manager() )->get_details( $attachment_id, 'custom_100x', false );
+		( new Images_Manager() )->get_details( $attachment_id, 'custom_150x150', false );
+		( new Images_Manager() )->get_details( $attachment_id, 'custom_x200', false );
 
 		// Assert
 		$new_metadata = wp_get_attachment_metadata( $attachment_id );
@@ -60,6 +62,21 @@ class Test_Image extends Elementor_Test_Base {
 			'height' => 0,
 			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['elementor_custom_100x'] );
+
+		$this->assertSame( [
+			'file' => 'elementor/thumbs/mock-image.png',
+			'width' => 150,
+			'height' => 150,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_150x150'] );
+
+		$this->assertSame( [
+			'file' => 'elementor/thumbs/mock-image.png',
+			'width' => 0,
+			'height' => 200,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_x200'] );
+
 	}
 
 	public function test_delete_custom_images() {
