@@ -1,4 +1,4 @@
-// eslint-disable-line no-unresolved
+// eslint-disable-next-line
 import backstop from 'backstopjs'; // It's not included in global package.json.
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
