@@ -304,15 +304,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( imageURL ) {
 			stateOptions.url = imageURL;
 			this.setValue( stateOptions );
-		} else {
-			elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
-				imageURL = data[ selectedImage.id ][ selectedSize ];
-				if ( imageURL ) {
-					stateOptions.url = imageURL;
-					this.setValue( stateOptions );
-				}
-			} );
+			return;
 		}
+
+		elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
+			imageURL = data[ selectedImage.id ][ selectedSize ];
+			if ( imageURL ) {
+				stateOptions.url = imageURL;
+				this.setValue( stateOptions );
+			}
+		} );
 	},
 
 	toggleSizeControl() {
