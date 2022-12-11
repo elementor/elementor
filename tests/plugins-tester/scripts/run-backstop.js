@@ -1,4 +1,4 @@
-// eslint-disable-line import/no-unresolved
+// eslint-disable-line no-unresolved
 import backstop from 'backstopjs'; // It's not included in global package.json.
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
