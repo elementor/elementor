@@ -1,12 +1,8 @@
 {
     "createAccountButtonText" : "Create my account",
-
     "disclaimerNotice" : "* You can switch your theme later on",
-
     "importElementorPopupTitle" : "Elementor | Upload and Install Elementor Pro",
-
     "signIntoElementorPopupTitle" : "Sign in – My Account",
-
     "upgradeFeaturesList" : [
         "90+ Basic & Pro widgets",
         "300+ Basic & Pro templates",

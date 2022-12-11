@@ -36,34 +36,34 @@ test.describe( 'First Step - Elementor Account', () => {
 		await expect( await importPopup.url() ).toContain( 'uploadAndInstallPro' );
 	} );
 
-	test( '"Connect Your Account" link works', async ( { page } ) => {
+	test( '"Connect Your Account" link works', async () => {
 		await helper.gotoStep1();
 		await helper.signInPopupWorks();
 	} );
 
-	test( 'User can close the onboarding process', async ( { page } ) => {
+	test( 'User can close the onboarding process', async () => {
 		await helper.gotoStep1();
 		await helper.selectCloseOnboardingButton();
 		await helper.checkUserIsOnWpAdminPage();
 	} );
 
-	test( 'Progress Bar: Only first step is filled', async ( { page } ) => {
+	test( 'Progress Bar: Only first step is filled', async () => {
 		await helper.gotoStep1();
 		await helper.checkCurrentStepIsFilled( 1 );
 	} );
 
-	test( '"Create my account" Popup Open', async ( { page } ) => {
+	test( '"Create my account" Popup Open', async () => {
 		await helper.gotoStep1();
 		await helper.checkButtonHasCorrectName( helper.createMyAccountButton, testData.createAccountButtonText );
 		await helper.createMyAccountPopupWorks();
 	} );
 
-	test( '"Create Account" in the header Popup Open', async ( { page } ) => {
+	test( '"Create Account" in the header Popup Open', async () => {
 		await helper.gotoStep1();
 		await helper.createAccountPopUpWorks();
 	} );
 
-	test( 'Skip to Hello Theme Page', async ( { page } ) => {
+	test( 'Skip to Hello Theme Page', async () => {
 		await helper.gotoStep1();
 		await helper.selectSkipButton();
 		await helper.checkUserIsOnStepTwo();
@@ -87,7 +87,7 @@ test.describe( 'Second Step - Hello Theme', () => {
 		await helper.checkUserIsOnStepThree();
 	} );
 
-	test( 'Progress Bar: Second step is filled and 3,4,5 are not', async ( { page } ) => {
+	test( 'Progress Bar: Second step is filled and 3,4,5 are not', async () => {
 		await helper.gotoStep2();
 		await helper.checkCurrentStepIsFilled( 2 );
 	} );
@@ -101,7 +101,7 @@ test.describe( 'Third Step - Hello Theme', () => {
 		await helper.checkTitleIsCorrect( siteTitle );
 	} );
 
-	test( 'Next Button active only when field is not empty', async ( { page } ) => {
+	test( 'Next Button active only when field is not empty', async () => {
 		await helper.gotoStep3();
 		await helper.emptySiteNameField();
 		await helper.checkNextBottonIsDisabled();
@@ -109,13 +109,13 @@ test.describe( 'Third Step - Hello Theme', () => {
 		await helper.checkNextBottonIsEnabled();
 	} );
 
-	test( 'Skip Button takes to step 4', async ( { page } ) => {
+	test( 'Skip Button takes to step 4', async () => {
 		await helper.gotoStep3();
 		await helper.selectSkipButton();
 		await helper.checkStepFourURL( helper.step4URL );
 	} );
 
-	test( 'Progress Bar: Third step is filled and 4,5 are not', async ( { page } ) => {
+	test( 'Progress Bar: Third step is filled and 4,5 are not', async () => {
 		await helper.gotoStep3();
 		await helper.checkCurrentStepIsFilled( 3 );
 	} );
@@ -132,7 +132,7 @@ test.describe( 'Fourth Step - Upload Logo', () => {
 		await helper.checkNextBottonIsDisabled();
 	} );
 
-	test( 'Selecting Skip takes to the 5th - good to go step', async ( { page } ) => {
+	test( 'Selecting Skip takes to the 5th - good to go step', async () => {
 		await helper.gotoStep4();
 		await helper.selectSkipButton();
 		await helper.checkUserIsOnStep5();
@@ -146,7 +146,7 @@ test.describe( 'Fourth Step - Upload Logo', () => {
 		await helper.addALogo();
 	} );
 
-	test( 'Progress Bar: Fourth step is filled and 5 are not', async ( { page } ) => {
+	test( 'Progress Bar: Fourth step is filled and 5 are not', async () => {
 		await helper.gotoStep4();
 		await helper.checkCurrentStepIsFilled( 4 );
 	} );
@@ -162,19 +162,19 @@ test.describe( 'Fifth Step - Good to Go', () => {
 		await helper.checkUserIsOnAFreshPost();
 	} );
 
-	test( 'Proceed with empty canvas', async ( { page } ) => {
+	test( 'Proceed with empty canvas', async () => {
 		await helper.gotoStep5();
 		await helper.selectEditWithBlankCanvas();
 		await helper.checkUserIsOnAFreshPost();
 	} );
 
-	test( 'Skip Step 5', async ( { page } ) => {
+	test( 'Skip Step 5', async () => {
 		await helper.gotoStep5();
 		await helper.selectSkipButton();
 		await helper.checkUserIsOnAFreshPost();
 	} );
 
-	test( 'Progress Bar: Fifth step is filled and 5 are not', async ( { page } ) => {
+	test( 'Progress Bar: Fifth step is filled', async () => {
 		await helper.gotoStep5();
 		await helper.checkCurrentStepIsFilled( 5 );
 	} );
