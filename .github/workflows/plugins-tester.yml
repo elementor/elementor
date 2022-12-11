@@ -46,7 +46,7 @@ jobs:
       - name: Build
         run: npx grunt build
       - name: Save build to cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: restore-build
         with:
           path: ./build/*
@@ -64,7 +64,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Restore build from cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: restore-build
         with:
           path: ./build/*
