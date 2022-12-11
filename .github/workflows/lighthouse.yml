@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build
         run: npx grunt build
       - name: Save build to cache
@@ -80,19 +80,18 @@ jobs:
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
-        run: npm install --no-package-lock --no-save @wordpress/env@5.0.0 @lhci/cli@0.8.0
+        run: |
+          npm ci
+          npm install --no-package-lock --no-save @lhci/cli@0.8.0
       - name: Install WordPress environment
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
-          npx wp-env start
-          # change wp-env folder owner to www-data
-          sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+          npm run start-local-server
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
-          npx wp-env run tests-cli "wp core version"
-          npx wp-env run tests-cli "wp --info"
+          npx wp-env run cli "wp core version"
+          npx wp-env run cli "wp --info"
       - name: Run Lighthouse tests
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
@@ -124,4 +123,3 @@ jobs:
         run: |
           MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
           curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
-
