@@ -93,4 +93,4 @@ jobs:
         with:
           name: results
           path: ./tests/plugins-tester/results/
-          retention-days: 14
+          retention-days: 7
