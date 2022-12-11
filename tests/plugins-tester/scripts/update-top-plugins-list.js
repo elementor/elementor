@@ -36,4 +36,3 @@ const fetchPluginsList = async ( url, filename ) => {
 };
 
 fetchPluginsList( URL, FILE_NAME );
-
