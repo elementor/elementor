@@ -2,7 +2,7 @@
 	window.elementor.start();
 
 	// Here should be all the loading logic for the editor v2.
-	// THIS CODE SHOULD REMOVE
+	// THIS CODE SHOULD BE REMOVED
 	ReactDOM.render(
 		React.createElement(
 			'div',
