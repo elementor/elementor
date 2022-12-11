@@ -152,10 +152,6 @@ requestFailed.push( request.url() );
         await this.headerCreateAccountButton.click();
     }
 
-    async checkCreateAccountPopupTitleIsVisible( createAccountPopUp ) {
-        await expect( createAccountPopUp.locator( 'text=Sign up for Elementor' ), `"Sign up for Elementor" text is not present on the pop up` ).toBeVisible();
-    }
-
     async checkUpgradeFeatureListIsCorrect( list ) {
         await this.page.waitForLoadState( 'networkidle' );
         const upgradeFeatureList = await this.upgradeFeatureCheckList.allTextContents();
@@ -163,8 +159,8 @@ requestFailed.push( request.url() );
 
         for ( let i = 0; i < list.length; i++ ) {
             if ( ! upgradeFeatureList.includes( list[ i ] ) ) {
-missingFeatures.push( list[ i ] );
-}
+            missingFeatures.push( list[ i ] );
+            }
         }
 
         await expect( missingFeatures ).toEqual( [] );
@@ -178,7 +174,8 @@ missingFeatures.push( list[ i ] );
 			this.selectCreateMyAccountCTA(),
 		] );
 
-		await this.checkCreateAccountPopupTitleIsVisible( createAccountPopUp );
+		await createAccountPopUp.waitForLoadState( 'networkidle' );
+        await expect( await createAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
     }
 
     async createAccountPopUpWorks() {
@@ -189,7 +186,8 @@ missingFeatures.push( list[ i ] );
 			this.selectHeaderCreateAccountCTA(),
 		] );
 
-		await this.checkCreateAccountPopupTitleIsVisible( createAccountPopUp );
+		await createAccountPopUp.waitForLoadState( 'networkidle' );
+        await expect( await createAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
     }
 
     async signInPopupWorks() {

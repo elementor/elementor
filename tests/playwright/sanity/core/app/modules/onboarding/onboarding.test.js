@@ -17,11 +17,6 @@ test.beforeAll( async ( { browser }, testInfo ) => {
 
 test.describe( 'First Step - Elementor Account', () => {
 	test( '"Upgrade" CTA Works and Check for Broken CSS', async ( { page } ) => {
-		// Deactivate Hello Theme in the first test so that we will see step 2 in the flow
-		await helper.gotoThemesPage();
-		await page.waitForLoadState( 'networkidle' );
-		await helper.activateTwenty21Theme();
-
 		await helper.checkBrokenCSS( page, helper.step1URL );
 		await helper.hoverOverGoProHeaderButton();
 		await helper.checkGoProPopoverIsVisible();
