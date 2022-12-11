@@ -72,8 +72,13 @@ jobs:
           PHP_VERSION: ${{ matrix.phpVersion }}
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
+<<<<<<< HEAD
       - name: Install dependencies
         run: npm ci
+=======
+      - name: Install wp-env
+        run: npm install --no-package-lock --no-save @wordpress/env@5.0.0
+>>>>>>> 3.10.0
       - name: Install WordPress environment
         run: |
           npm run start-local-server
