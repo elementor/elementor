@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
-import useImportRunner from '../pages/import/hooks/use-import-runner';
 
 const KIT_STATUS_MAP = Object.freeze( {
 		INITIAL: 'initial',
