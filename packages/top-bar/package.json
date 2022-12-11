@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --config='../jest.config.js'"
   },
   "author": "",
   "license": "GPL-3.0-or-later",
@@ -13,6 +13,6 @@
     "@elementor/locations": "*"
   },
   "peerDependencies": {
-	"react": "^17.0.2"
+    "react": "^17.0.2"
   }
 }
