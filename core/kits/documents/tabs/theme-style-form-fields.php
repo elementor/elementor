@@ -192,7 +192,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 				],
 			]
 		);
-		
+
 		$this->add_control(
 			$prefix . '_background_color',
 			[
