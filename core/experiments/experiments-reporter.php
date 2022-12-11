@@ -86,7 +86,9 @@ class Experiments_Reporter extends Base {
 				$output .= "\t";
 			}
 
-			$output .= $experiment['title'] . ': ' . $state . PHP_EOL;
+			$title = isset( $experiment['title'] ) ? $experiment['title'] : $experiment['name'];
+
+			$output .= $title . ': ' . $state . PHP_EOL;
 
 			$is_first_item = false;
 		}
@@ -112,7 +114,9 @@ class Experiments_Reporter extends Base {
 			// If the state is default, add the default state to the string.
 			$state = Plugin::$instance->experiments->get_feature_state_label( $experiment );
 
-			$output .= '<tr><td>' . esc_html( $experiment['title'] ) . ': </td>';
+			$title = isset( $experiment['title'] ) ? $experiment['title'] : $experiment['name'];
+
+			$output .= '<tr><td>' . esc_html( $title ) . ': </td>';
 			$output .= '<td>' . esc_html( $state ) . '</td>';
 			$output .= '</tr>';
 		}

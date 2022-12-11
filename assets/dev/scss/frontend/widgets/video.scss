@@ -47,3 +47,13 @@
 		}
 	}
 }
+
+.e-con,
+.e-con-inner {
+
+	> .elementor-widget-video {
+		// Fix - Video widget has an undefined height on mobile using 'flex column wrap' inside the flex container (ED-7604).
+		width: var( --container-widget-width );
+		--flex-grow: var( --container-widget-flex-grow );
+	}
+}

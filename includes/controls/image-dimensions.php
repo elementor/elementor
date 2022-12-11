@@ -91,12 +91,12 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-image-dimensions-field elementor-control-unit-2">
-					<input id="<?php $this->print_control_uid( 'width' ); ?>" type="text" data-setting="width" />
+					<input id="<?php $this->print_control_uid( 'width' ); ?>" type="number" data-setting="width" />
 					<label for="<?php $this->print_control_uid( 'width' ); ?>" class="elementor-image-dimensions-field-description"><?php echo esc_html__( 'Width', 'elementor' ); ?></label>
 				</div>
 				<div class="elementor-image-dimensions-separator">x</div>
 				<div class="elementor-image-dimensions-field elementor-control-unit-2">
-					<input id="<?php $this->print_control_uid( 'height' ); ?>" type="text" data-setting="height" />
+					<input id="<?php $this->print_control_uid( 'height' ); ?>" type="number" data-setting="height" />
 					<label for="<?php $this->print_control_uid( 'height' ); ?>" class="elementor-image-dimensions-field-description"><?php echo esc_html__( 'Height', 'elementor' ); ?></label>
 				</div>
 				<button class="elementor-button elementor-button-success elementor-image-dimensions-apply-button"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>

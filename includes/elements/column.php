@@ -294,6 +294,13 @@ class Element_Column extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_image', 'url' ],
+							'selector' => '.elementor-element-populated',
+						],
+					],
 				],
 			]
 		);
@@ -366,10 +373,19 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ '_background_overlay', 'url' ],
+							'selector' => '.elementor-background-overlay,',
+						],
+					],
+				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -443,7 +459,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -529,7 +545,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay, {{WRAPPER}} > .elementor-background-slideshow' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -566,7 +582,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover > .elementor-element-populated, {{WRAPPER}}:hover > .elementor-element-populated > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -683,7 +699,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'text_align',
 			[
 				'label' => esc_html__( 'Text Align', 'elementor' ),
@@ -702,7 +718,7 @@ class Element_Column extends Element_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
+						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
@@ -729,7 +745,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};
 					--e-column-margin-right: {{RIGHT}}{{UNIT}}; --e-column-margin-left: {{LEFT}}{{UNIT}};',
@@ -748,7 +764,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'custom' ],
 				'selectors' => [
 					$padding_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -913,6 +929,7 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-<?php echo esc_attr( $wrapper_element ); ?>-wrap">
 			<div class="elementor-background-overlay"></div>
+			<div class="e-edit-click-area"></div>
 			<?php if ( ! $is_dom_optimization_active ) { ?>
 				<div class="elementor-widget-wrap"></div>
 			<?php } ?>
@@ -1030,6 +1047,10 @@ class Element_Column extends Element_Base {
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'section' );
+		}
+
+		if ( 'container' === $element_data['elType'] ) {
+			return Plugin::$instance->elements_manager->get_element_types( 'container' );
 		}
 
 		// If the element doesn't exists (disabled element, experiment, etc.), return false to prevent errors.

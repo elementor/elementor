@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Duplicate extends CommandHistory {
+export class Duplicate extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -15,7 +13,7 @@ export class Duplicate extends CommandHistory {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args,
+		const { containers = [ args.container ], options = {} } = args,
 			result = [];
 		let at = containers[ containers.length - 1 ].view._index;
 
@@ -40,6 +38,7 @@ export class Duplicate extends CommandHistory {
 				container: parent,
 				model: container.model.toJSON(),
 				options: {
+					...options,
 					at: ++at,
 					clone: true,
 				},

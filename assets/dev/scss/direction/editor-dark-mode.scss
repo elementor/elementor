@@ -21,6 +21,10 @@ $theme-dark-gradient-end: $theme-dark-gray;
 $theme-dark-panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 
 //General
+:root {
+	color-scheme: dark;
+}
+
 body {
 	color: $theme-dark-light;
 
@@ -463,6 +467,7 @@ select {
 	}
 }
 
+//Controls Utility
 .elementor-control-responsive-switchers {
 
 	&__holder {
@@ -494,6 +499,44 @@ a.elementor-responsive-switcher {
 		}
 	}
 }
+
+.e-units-wrapper {
+
+	.e-units-switcher {
+
+		&:hover {
+			color: $theme-dark-accent;
+			background-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+
+		&:checked + label {
+			color: $theme-dark-accent;
+		}
+
+		&.e-units-placeholder + label {
+			color: $theme-dark-light;
+		}
+	}
+
+	&.e-units-choices-open {
+		background-color: $theme-dark-gray-dark;
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+
+		.elementor-units-choices-label {
+
+			&:hover {
+				color: $theme-dark-accent;
+			}
+		}
+	}
+}
+
 
 .elementor-control-type-popover_toggle {
 
@@ -554,8 +597,10 @@ a.elementor-responsive-switcher {
 
 .elementor-control-type-media {
 
-	.elementor-control-media__preview {
-		background-color: $theme-dark-gray-darkest;
+	.elementor-control-media-area {
+		.elementor-control-media__preview {
+			background-color: $theme-dark-gray-darkest;
+		}
 	}
 }
 
@@ -1332,7 +1377,8 @@ label.elementor-template-library-order-label,
 		background-color: transparent;
 	}
 
-	&__item {
+	&__item,
+	&__elements {
 		background-color: $theme-dark-gray-dark;
 		border-color: $theme-dark-gray-darkest;
 

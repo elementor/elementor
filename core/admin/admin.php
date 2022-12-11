@@ -4,7 +4,10 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -51,15 +54,23 @@ class Admin extends App {
 			return;
 		}
 
-		global $wpdb;
+		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
 
-		$has_elementor_page = ! ! $wpdb->get_var( "SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_elementor_edit_mode' LIMIT 1;" );
+		// Get the latest installation from Elementor's Install log in the DB.
+		$latest_install = key( Upgrade_Manager::get_installs_history() );
 
-		if ( $has_elementor_page ) {
+		if ( ! empty( $latest_install ) ) {
+			$is_new_install = version_compare( $latest_install, '3.6.0-beta', '>=' );
+		} else {
+			// If `$latest_install` is not set, Elementor was never installed on this site.
+			$is_new_install = true;
+		}
+
+		if ( $already_had_onboarding || ! $is_new_install ) {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-app#onboarding' ) );
 
 		exit;
 	}
@@ -76,10 +87,19 @@ class Admin extends App {
 	 */
 	public function enqueue_scripts() {
 		wp_register_script(
+			'elementor-admin-modules',
+			$this->get_js_assets_url( 'admin-modules' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
 			[
 				'elementor-common',
+				'elementor-admin-modules',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -194,7 +214,7 @@ class Admin extends App {
 	 * @param int $post_id Post ID.
 	 */
 	public function save_post( $post_id ) {
-		if ( ! isset( $_POST['_elementor_edit_mode_nonce'] ) || ! wp_verify_nonce( $_POST['_elementor_edit_mode_nonce'], basename( __FILE__ ) ) ) {
+		if ( ! wp_verify_nonce( Utils::get_super_global_value( $_POST, '_elementor_edit_mode_nonce' ), basename( __FILE__ ) ) ) {
 			return;
 		}
 
@@ -279,7 +299,7 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash' ), esc_html__( 'Go Pro', 'elementor' ) );
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Get Elementor Pro', 'elementor' ) );
 
 		return $links;
 	}
@@ -424,7 +444,7 @@ class Admin extends App {
 							$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
 							?>
 							<li class="e-overview__post">
-								<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>, <?php the_time(); ?></span>
+								<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>, <?php the_modified_time(); ?></span>
 							</li>
 						<?php endwhile; ?>
 					</ul>
@@ -481,15 +501,15 @@ class Admin extends App {
 
 		$additions_actions = [
 			'go-pro' => [
-				'title' => esc_html__( 'Go Pro', 'elementor' ),
-				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
+				'title' => esc_html__( 'Upgrade', 'elementor' ),
+				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 			],
 		];
 
 		// Visible to all core users when Elementor Pro is not installed.
 		$additions_actions['find_an_expert'] = [
 			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
 		];
 
 		/**
@@ -524,11 +544,7 @@ class Admin extends App {
 	public function admin_action_new_post() {
 		check_admin_referer( 'elementor_action_new_post' );
 
-		if ( empty( $_GET['post_type'] ) ) {
-			$post_type = 'post';
-		} else {
-			$post_type = $_GET['post_type'];
-		}
+		$post_type = Utils::get_super_global_value( $_GET, 'post_type' ) ?? 'post';
 
 		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
 			return;
@@ -537,12 +553,10 @@ class Admin extends App {
 		if ( empty( $_GET['template_type'] ) ) {
 			$type = 'post';
 		} else {
-			$type = sanitize_text_field( $_GET['template_type'] );
+			$type = sanitize_text_field( wp_unslash( $_GET['template_type'] ) );
 		}
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
-
-		$meta = [];
 
 		/**
 		 * Create new post meta data.
@@ -553,6 +567,12 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
+		$meta = [];
+
+		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
+			$meta = array_map( 'sanitize_text_field', wp_unslash( $_GET['meta'] ) );
+		}
+
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
 		$post_data['post_type'] = $post_type;
@@ -681,7 +701,6 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
-		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
@@ -740,6 +759,7 @@ class Admin extends App {
 				'option_enabled' => 'no' !== $elementor_beta,
 				'signup_dismissed' => $beta_tester_signup_dismissed,
 			],
+			'experiments' => $this->get_experiments(),
 		];
 
 		/**
@@ -759,6 +779,26 @@ class Admin extends App {
 		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
 
 		return $settings;
+	}
+
+	private function get_experiments() {
+		return ( new Collection( Plugin::$instance->experiments->get_features() ) )
+			->map( function ( $experiment_data ) {
+				$dependencies = $experiment_data['dependencies'] ?? [];
+
+				$dependencies = ( new Collection( $dependencies ) )
+					->map( function ( $dependency ) {
+						return $dependency->get_name();
+					} )->all();
+
+				return [
+					'name' => $experiment_data['name'],
+					'title' => $experiment_data['title'] ?? $experiment_data['name'],
+					'state' => $experiment_data['state'],
+					'default' => $experiment_data['default'],
+					'dependencies' => $dependencies,
+				];
+			} )->all();
 	}
 
 	private function register_menu() {

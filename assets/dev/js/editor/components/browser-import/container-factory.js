@@ -1,17 +1,20 @@
 import ElementModel from '../../elements/models/element';
 
-export default class ContainerFactory {
+/**
+ * @typedef {import('../../container/container')} Container
+ */
+ export default class ContainerFactory {
 	/**
 	 * Create an element container.
 	 *
-	 * @param element
-	 * @returns {Container}
+	 * @param {*} element
+	 * @return {Container} element container
 	 */
 	static createElementContainer( element ) {
 		const model = new ElementModel(
 			this.regenerateIds( [ Object.assign( {
 				elType: element?.elType || 'widget',
-			}, element ) ] )[ 0 ]
+			}, element ) ] )[ 0 ],
 		);
 
 		return new elementorModules.editor.Container( {
@@ -19,6 +22,7 @@ export default class ContainerFactory {
 			type: model.get( 'elType' ),
 			settings: model.get( 'settings' ),
 			model,
+			parent: false,
 		} );
 	}
 

@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.13.0");
-  src: url("../fonts/eicons.eot?5.13.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.13.0") format("woff2"), url("../fonts/eicons.woff?5.13.0") format("woff"), url("../fonts/eicons.ttf?5.13.0") format("truetype"), url("../fonts/eicons.svg?5.13.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.17.0");
+  src: url("../fonts/eicons.eot?5.17.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.17.0") format("woff2"), url("../fonts/eicons.woff?5.17.0") format("woff"), url("../fonts/eicons.ttf?5.17.0") format("truetype"), url("../fonts/eicons.svg?5.17.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1328,6 +1328,36 @@
 
 .eicon-justify-start-v:before {
   content: '\e9b1'; }
+
+.eicon-woocommerce-cross-sells:before {
+  content: '\e9b2'; }
+
+.eicon-woocommerce-notices:before {
+  content: '\e9b3'; }
+
+.eicon-inner-container:before {
+  content: '\e9b4'; }
+
+.eicon-warning-full:before {
+  content: '\e9b5'; }
+
+.eicon-exit:before {
+  content: '\e9b6'; }
+
+.eicon-loop-builder:before {
+  content: '\e9b7'; }
+
+.eicon-notes:before {
+  content: '\e9b8'; }
+
+.eicon-read:before {
+  content: '\e9b9'; }
+
+.eicon-unread:before {
+  content: '\e9ba'; }
+
+.eicon-carousel-loop:before {
+  content: '\e9bb'; }
 
 .eicon-eye:before {
   content: '\e8ac'; }

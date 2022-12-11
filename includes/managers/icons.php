@@ -22,6 +22,9 @@ class Icons_Manager {
 	const FONT_ICON_SVG_CLASS_NAME = 'e-font-icon-svg';
 
 	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
+
+	const ELEMENTOR_ICONS_VERSION = '5.17.0';
+
 	/**
 	 * Tabs.
 	 *
@@ -36,10 +39,41 @@ class Icons_Manager {
 
 	private static $data_manager;
 
-	private static $font_icon_svg_symbols = [];
-
 	private static function get_needs_upgrade_option() {
 		return get_option( 'elementor_' . self::NEEDS_UPDATE_OPTION, null );
+	}
+
+	/**
+	 * @param $icon
+	 * @param $attributes
+	 * @param $tag
+	 * @return bool|mixed|string
+	 */
+	public static function try_get_icon_html( $icon, $attributes = [], $tag = 'i' ) {
+		if ( empty( $icon['library'] ) ) {
+			return '';
+		}
+
+		return static::get_icon_html( $icon, $attributes, $tag );
+	}
+
+	/**
+	 * @param array $icon
+	 * @param array $attributes
+	 * @param $tag
+	 * @return bool|mixed|string
+	 */
+	private static function get_icon_html( array $icon, array $attributes, $tag ) {
+		/**
+		 * When the library value is svg it means that it's a SVG media attachment uploaded by the user.
+		 * Otherwise, it's the name of the font family that the icon belongs to.
+		 */
+		if ( 'svg' === $icon['library'] ) {
+			$output = self::render_uploaded_svg_icon( $icon['value'] );
+		} else {
+			$output = self::render_font_icon( $icon, $attributes, $tag );
+		}
+		return $output;
 	}
 
 	/**
@@ -164,7 +198,7 @@ class Icons_Manager {
 		 */
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', $additional_tabs );
 
-		return array_merge( self::$tabs, $additional_tabs );
+		return array_replace( self::$tabs, $additional_tabs );
 	}
 
 	public static function enqueue_shim() {
@@ -227,26 +261,9 @@ class Icons_Manager {
 	}
 
 	/**
-	 * render_svg_symbols
-	 *
+	 * @deprecated 3.8.0
 	 */
-	public static function render_svg_symbols() {
-		if ( ! self::$font_icon_svg_symbols ) {
-			return;
-		}
-
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" id="e-font-icon-svg-symbols" style="display: none;">';
-
-		foreach ( self::$font_icon_svg_symbols as $symbol_id => $symbol ) {
-			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . esc_attr( $symbol['width'] ) . ' ' . esc_attr( $symbol['height'] ) . '">';
-			$svg .= '<path d="' . esc_attr( $symbol['path'] ) . '"></path>';
-			$svg .= '</symbol>';
-		}
-
-		$svg .= '</svg>';
-
-		Utils::print_unescaped_internal_string( $svg );
-	}
+	public static function render_svg_symbols() {}
 
 	public static function get_icon_svg_data( $icon ) {
 		return self::$data_manager->get_font_icon_svg_data( $icon );
@@ -266,30 +283,20 @@ class Icons_Manager {
 			return '';
 		}
 
-		// Add the icon data to the symbols array for later use in page rendering process.
-		if ( ! in_array( $icon_data['key'], self::$font_icon_svg_symbols, true ) ) {
-			self::$font_icon_svg_symbols[ $icon_data['key'] ] = $icon_data;
-		}
-
 		if ( ! empty( $attributes['class'] ) && ! is_array( $attributes['class'] ) ) {
 			$attributes['class'] = [ $attributes['class'] ];
 		}
 
 		$attributes['class'][] = self::FONT_ICON_SVG_CLASS_NAME;
 		$attributes['class'][] = 'e-' . $icon_data['key'];
+		$attributes['viewBox'] = '0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'];
+		$attributes['xmlns'] = 'http://www.w3.org/2000/svg';
 
-		/**
-		 * If in edit mode inline the full svg, otherwise use the symbol.
-		 * Will be displayed only after page update or widget "blur".
-		 */
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			return '<svg xmlns="http://www.w3.org/2000/svg" ' . Utils::render_html_attributes( $attributes ) . '
-				viewBox="0 0 ' . esc_attr( $icon_data['width'] ) . ' ' . esc_attr( $icon_data['height'] ) . '">
-				<path d="' . esc_attr( $icon_data['path'] ) . '"></path>
-			</svg>';
-		}
-
-		return '<svg ' . Utils::render_html_attributes( $attributes ) . '><use xlink:href="#' . esc_attr( $icon_data['key'] ) . '" /></svg>';
+		return (
+			'<svg ' . Utils::render_html_attributes( $attributes ) . '>' .
+				'<path d="' . esc_attr( $icon_data['path'] ) . '"></path>' .
+			'</svg>'
+		);
 	}
 
 	public static function render_uploaded_svg_icon( $value ) {
@@ -351,17 +358,7 @@ class Icons_Manager {
 			return false;
 		}
 
-		$output = '';
-
-		/**
-		 * When the library value is svg it means that it's a SVG media attachment uploaded by the user.
-		 * Otherwise, it's the name of the font family that the icon belongs to.
-		 */
-		if ( 'svg' === $icon['library'] ) {
-			$output = self::render_uploaded_svg_icon( $icon['value'] );
-		} else {
-			$output = self::render_font_icon( $icon, $attributes, $tag );
-		}
+		$output = static::get_icon_html( $icon, $attributes, $tag );
 
 		Utils::print_unescaped_internal_string( $output );
 
@@ -387,7 +384,7 @@ class Icons_Manager {
 			];
 		}
 		if ( false === $migration_dictionary ) {
-			$migration_dictionary = json_decode( file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
+			$migration_dictionary = json_decode( Utils::file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
 		}
 		if ( isset( $migration_dictionary[ $value ] ) ) {
 			return $migration_dictionary[ $value ];
@@ -502,18 +499,44 @@ class Icons_Manager {
 			},
 			'fields' => [
 				[
-					'label'      => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
+					'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
-						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
+						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" data-redirect-url="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
+							esc_url( $this->get_upgrade_redirect_url() ),
 							esc_html__( 'Upgrade To Font Awesome 5', 'elementor' )
 						),
 					],
 				],
 			],
 		] );
+	}
+
+	/**
+	 * Get redirect URL when upgrading font awesome.
+	 *
+	 * @return string
+	 */
+	public function get_upgrade_redirect_url() {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'tools-page-from-editor' ) ) {
+			return '';
+		}
+
+		$document_id = ! empty( $_GET['redirect_to_document'] ) ? absint( $_GET['redirect_to_document'] ) : null;
+
+		if ( ! $document_id ) {
+			return '';
+		}
+
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		if ( ! $document ) {
+			return '';
+		}
+
+		return $document->get_edit_url();
 	}
 
 	/**
@@ -524,7 +547,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => '<p>' . esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
+		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ] );
 	}
 
 	/**
@@ -546,7 +569,7 @@ class Icons_Manager {
 			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );
 			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
 				self::enqueue_shim();
-			} else if ( 'yes' === $load_shim ) {
+			} elseif ( 'yes' === $load_shim ) {
 				self::enqueue_shim();
 			}
 		}
@@ -562,22 +585,6 @@ class Icons_Manager {
 	}
 
 	/**
-	 * @since 3.0.0
-	 * @deprecated 3.0.0
-	 */
-	public function register_ajax_actions() {
-		_deprecated_function( __METHOD__, '3.0.0' );
-	}
-
-	/**
-	 * @since 3.0.0.
-	 * @deprecated 3.0.0
-	 */
-	public function ajax_enable_svg_uploads() {
-		_deprecated_function( __METHOD__, '3.0.0' );
-	}
-
-	/**
 	 * Icons Manager constructor
 	 */
 	public function __construct() {
@@ -588,8 +595,6 @@ class Icons_Manager {
 
 		if ( self::is_font_icon_inline_svg() ) {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
-
-			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ], 10 );
 		}
 
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );

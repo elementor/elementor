@@ -1,6 +1,14 @@
 import globalHandler from './handlers/global';
-import sectionHandlers from './handlers/section/section';
+import backgroundHandlers from './handlers/background';
+import containerHandlers from './handlers/container/container';
 import columnHandlers from './handlers/column';
+
+// Section handlers.
+import HandlesPosition from './handlers/section/handles-position';
+import StretchedSection from './handlers/section/stretched-section';
+import Shapes from './handlers/section/shapes';
+
+/* global elementorFrontendConfig */
 
 module.exports = function( $ ) {
 	const handlersInstances = {};
@@ -18,10 +26,27 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
+		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
+	}
+
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
-		this.elementsHandlers.section = sectionHandlers;
+		this.elementsHandlers.section = [
+			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
+			...backgroundHandlers,
+			HandlesPosition,
+			Shapes,
+		];
+
+		this.elementsHandlers.container = [ ...backgroundHandlers ];
+
+		// Add editor-only handlers.
+		if ( elementorFrontend.isEditMode() ) {
+			this.elementsHandlers.container.push( ...containerHandlers );
+		}
+
 		this.elementsHandlers.column = columnHandlers;
 
 		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
@@ -37,21 +62,27 @@ module.exports = function( $ ) {
 
 	const isClassHandler = ( Handler ) => Handler.prototype?.getUniqueHandlerID;
 
-	const addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
+	const addHandlerWithHook = ( elementBaseName, Handler, skin = 'default' ) => {
 		skin = skin ? '.' + skin : '';
 
-		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }${ skin }`, ( $element ) => {
+		const elementName = elementBaseName + skin;
+
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( $element ) => {
 			if ( isClassHandler( Handler ) ) {
-				this.addHandler( Handler, { $element }, true );
+				this.addHandler( Handler, { $element, elementName }, true );
 			} else {
 				const handlerValue = Handler();
 
+				if ( ! handlerValue ) {
+					return;
+				}
+
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
-						this.addHandler( dynamicHandler, { $element }, true );
+						this.addHandler( dynamicHandler, { $element, elementName }, true );
 					} );
 				} else {
-					this.addHandler( handlerValue, { $element }, true );
+					this.addHandler( handlerValue, { $element, elementName }, true );
 				}
 			}
 		} );
@@ -79,6 +110,8 @@ module.exports = function( $ ) {
 
 		const newHandler = new HandlerClass( options );
 
+		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.$element, $ );
+
 		if ( elementID ) {
 			handlersInstances[ elementID ][ handlerID ] = newHandler;
 		}
@@ -93,10 +126,6 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandler = function( handlerName ) {
-		if ( ! handlerName ) {
-			return;
-		}
-
 		const elementHandler = this.elementsHandlers[ handlerName ];
 
 		if ( isClassHandler( elementHandler ) ) {
@@ -111,7 +140,7 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandlers = function( handlerName ) {
-		elementorCommon.helpers.softDeprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
+		elementorDevTools.deprecation.deprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
 
 		if ( handlerName ) {
 			return this.getHandler( handlerName );

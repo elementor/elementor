@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Empty extends CommandHistory {
+export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );
@@ -9,6 +7,13 @@ export class Empty extends CommandHistory {
 
 			if ( data ) {
 				elementor.getPreviewView().addChildModel( data );
+
+				$e.store.dispatch(
+					$e.store.get( 'document/elements' ).actions.populate( {
+						documentId: elementor.documents.getCurrentId(),
+						elements: structuredClone( data ),
+					} ),
+				);
 			}
 
 			$e.internal( 'document/save/set-is-modified', { status: true } );
@@ -32,6 +37,13 @@ export class Empty extends CommandHistory {
 		if ( args.force && elementor.elements ) {
 			elementor.elements.reset();
 			elementor.getPreviewContainer().panel.closeEditor();
+
+			$e.store.dispatch(
+				this.component.store.actions.empty( {
+					documentId: elementor.documents.getCurrentId(),
+				} ),
+			);
+
 			return;
 		}
 
@@ -39,8 +51,19 @@ export class Empty extends CommandHistory {
 	}
 
 	isDataChanged() {
-		if ( this.args.force ) {
-			return true;
+		return this.args.force;
+	}
+
+	static reducer( state, { payload } ) {
+		const { documentId } = payload;
+
+		if ( state[ documentId ] ) {
+			state[ documentId ] = {
+				document: {
+					id: 'document',
+					elements: [],
+				},
+			};
 		}
 	}
 }

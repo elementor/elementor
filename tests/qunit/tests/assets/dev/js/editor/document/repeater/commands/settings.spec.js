@@ -7,7 +7,7 @@ export const Settings = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn ),
+					eTabs = ElementsHelper.createWidgetTabs( eColumn ),
 					tabTitle = 'This is was changed';
 
 				RepeaterHelper.settings( eTabs, 'tabs', 1, {
@@ -26,7 +26,7 @@ export const Settings = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs = ElementsHelper.createTabs( eColumn ),
+					eTabs = ElementsHelper.createWidgetTabs( eColumn ),
 					tabTitle = 'This is was changed',
 					index = 1,
 					eTab = eTabs.settings.get( 'tabs' ).at( index ),
@@ -64,8 +64,8 @@ export const Settings = () => {
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn ),
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn ),
 					tabTitle = 'This is was changed';
 
 				RepeaterHelper.multiSettings( [ eTabs1, eTabs2 ], 'tabs', 1, {
@@ -85,8 +85,8 @@ export const Settings = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eTabs1 = ElementsHelper.createTabs( eColumn ),
-					eTabs2 = ElementsHelper.createTabs( eColumn ),
+					eTabs1 = ElementsHelper.createWidgetTabs( eColumn ),
+					eTabs2 = ElementsHelper.createWidgetTabs( eColumn ),
 					index = 1,
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					tabTitle = 'This is was changed',

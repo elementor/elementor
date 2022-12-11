@@ -273,6 +273,17 @@ class Uploads_Manager extends Base_Object {
 	public function create_temp_file( $file_content, $file_name ) {
 		$temp_filename = $this->create_unique_dir() . $file_name;
 
+		/**
+		 * Temp File Path
+		 *
+		 * Allows modifying the full path of the temporary file.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string full path to file
+		 */
+		$temp_filename = apply_filters( 'elementor/files/temp-file-path', $temp_filename );
+
 		file_put_contents( $temp_filename, $file_content ); // phpcs:ignore
 
 		return $temp_filename;
@@ -292,7 +303,18 @@ class Uploads_Manager extends Base_Object {
 		if ( ! $this->temp_dir ) {
 			$wp_upload_dir = wp_upload_dir();
 
-			$this->temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], 'elementor', 'tmp' ] ) . DIRECTORY_SEPARATOR;
+			$temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], 'elementor', 'tmp' ] ) . DIRECTORY_SEPARATOR;
+
+			/**
+			 * Temp File Path
+			 *
+			 * Allows modifying the full path of the temporary file.
+			 *
+			 * @since 3.7.0
+			 *
+			 * @param string temporary directory
+			 */
+			$this->temp_dir = apply_filters( 'elementor/files/temp-dir', $temp_dir );
 
 			if ( ! is_dir( $this->temp_dir ) ) {
 				wp_mkdir_p( $this->temp_dir );

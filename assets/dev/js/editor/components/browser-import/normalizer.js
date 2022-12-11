@@ -2,11 +2,17 @@ import isInstanceof from '../../utils/is-instanceof';
 import Item from './items/item';
 import ItemCollection from './items/item-collection';
 
-export default class Normalizer {
+/**
+ * @typedef {import('../modules/component-base')} ComponentBase
+ */
+/**
+ * @typedef {import('./manager')} Manager
+ */
+ export default class Normalizer {
 	/**
 	 * Normalizer constructor.
 	 *
-	 * @param manager
+	 * @param {Manager} manager
 	 */
 	constructor( manager ) {
 		this.manager = manager;
@@ -17,8 +23,8 @@ export default class Normalizer {
 	 * vast spectrum of input types - from data url strings to blob objects, and array of them. Other kind of parsers
 	 * can be registered to the Manager.
 	 *
-	 * @param input
-	 * @returns {Promise<ItemCollection>}
+	 * @param {*} input
+	 * @return {Promise<ItemCollection>} result
 	 */
 	async normalize( input ) {
 		if ( ! ( input instanceof ItemCollection ) ) {
@@ -32,14 +38,14 @@ export default class Normalizer {
 	 * Convert an single or multiple input subjects into a ItemCollection object. To learn more about the way each
 	 * subject is treated, please refer the 'toItem' method.
 	 *
-	 * @param subjects
-	 * @returns {Promise<ItemCollection>}
+	 * @param {*} subjects
+	 * @return {Promise<ItemCollection>} result
 	 */
 	async toItemCollection( subjects ) {
 		if ( ! Array.isArray( subjects ) ) {
-			subjects = isInstanceof( subjects, FileList ) || isInstanceof( subjects, DataTransferItemList ) ?
-				Array.from( subjects ) :
-				[ subjects ];
+			subjects = isInstanceof( subjects, FileList ) || isInstanceof( subjects, DataTransferItemList )
+				? Array.from( subjects )
+				: [ subjects ];
 		}
 
 		return Promise.all(
@@ -51,15 +57,15 @@ export default class Normalizer {
 				}
 
 				return subject;
-			} )
+			} ),
 		).then( ( items ) => new ItemCollection( items ) );
 	}
 
 	/**
 	 * Convert a single subject into an Item object.
 	 *
-	 * @param subject
-	 * @returns {Promise<Item>}
+	 * @param {*} subject
+	 * @return {Promise<Item>} result
 	 */
 	async toItem( subject ) {
 		// The method purpose is to generate an Item object, which requires a Blob/File objects. When the subject is
@@ -96,10 +102,10 @@ export default class Normalizer {
 	/**
 	 * A utility for creating a data url string functionally.
 	 *
-	 * @param data
-	 * @param mimeType
-	 * @param base64
-	 * @returns {string}
+	 * @param {string}           data
+	 * @param {string|undefined} mimeType
+	 * @param {boolean}          base64
+	 * @return {string} data URI
 	 */
 	static createDataUrl( data, mimeType = null, base64 = true ) {
 		if ( base64 ) {

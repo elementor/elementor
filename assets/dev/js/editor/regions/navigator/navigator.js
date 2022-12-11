@@ -187,7 +187,7 @@ export default class extends BaseRegion {
 	/**
 	 * Set the navigator size to a specific value or default to the storage-saved value.
 	 *
-	 * @param {String} size A specific new size.
+	 * @param {string} size A specific new size.
 	 */
 	setSize( size = null ) {
 		if ( size ) {

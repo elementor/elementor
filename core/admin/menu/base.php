@@ -73,21 +73,27 @@ abstract class Base extends Base_Object {
 			return $a['index'] - $b['index'];
 		} );
 
-		foreach ( $this->submenus as $submenu ) {
+		foreach ( $this->submenus as $index => $submenu_item ) {
 			$submenu_args = [
 				$args['menu_slug'],
-				$submenu['page_title'],
-				$submenu['menu_title'],
-				$submenu['capability'],
-				$submenu['menu_slug'],
-				$submenu['function'],
+				$submenu_item['page_title'],
+				$submenu_item['menu_title'],
+				$submenu_item['capability'],
+				$submenu_item['menu_slug'],
+				$submenu_item['function'],
 			];
 
-			if ( 0 === $submenu['index'] ) {
+			if ( 0 === $submenu_item['index'] ) {
 				$submenu_args[] = 0;
 			}
 
 			add_submenu_page( ...$submenu_args );
+
+			if ( ! empty( $submenu_item['class'] ) ) {
+				global $submenu;
+
+				$submenu[ $args['menu_slug'] ][ $index + 1 ][4] = $submenu_item['class']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			}
 		}
 	}
 

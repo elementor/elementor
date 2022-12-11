@@ -1,5 +1,5 @@
 module.exports = elementorModules.ViewModule.extend( {
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			element: null,
 			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
@@ -9,18 +9,19 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		return {
 			$element: jQuery( this.getSettings( 'element' ) ),
 		};
 	},
 
-	stretch: function() {
+	stretch() {
 		var containerSelector = this.getSettings( 'selectors.container' ),
 			$container;
 
 		try {
 			$container = jQuery( containerSelector );
+			// eslint-disable-next-line no-empty
 		} catch ( e ) {}
 
 		if ( ! $container || ! $container.length ) {
@@ -63,7 +64,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		$element.css( css );
 	},
 
-	reset: function() {
+	reset() {
 		var css = {};
 
 		css.width = '';

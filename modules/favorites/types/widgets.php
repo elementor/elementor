@@ -34,8 +34,13 @@ class Widgets extends Favorites_Type {
 	 * @return string[]
 	 */
 	public function get_available() {
-		return (array) array_keys(
-			Plugin::instance()->widgets_manager->get_widget_types()
+		return array_merge(
+			array_keys(
+				Plugin::instance()->widgets_manager->get_widget_types()
+			),
+			array_keys(
+				Plugin::instance()->elements_manager->get_element_types()
+			)
 		);
 	}
 
@@ -46,8 +51,16 @@ class Widgets extends Favorites_Type {
 	 */
 	public function update_widget_categories( $document ) {
 		foreach ( $this->values() as $favorite ) {
-			Plugin::$instance->widgets_manager->get_widget_types( $favorite )
-				->set_config( 'categories', [ static::CATEGORY_SLUG ] );
+			$widget = Plugin::$instance->widgets_manager->get_widget_types( $favorite );
+
+			// If it's not a widget, maybe it's an element.
+			if ( ! $widget ) {
+				$widget = Plugin::$instance->elements_manager->get_element_types( $favorite );
+			}
+
+			if ( $widget ) {
+				$widget->set_config( 'categories', [ static::CATEGORY_SLUG ] );
+			}
 		}
 	}
 }

@@ -410,4 +410,42 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'a' => 1, 'b' => 1, 'c' => 1 ], $result_asc );
 		$this->assertEqualSets( [ 'c' => 1, 'b' => 1, 'a' => 1 ], $result_desc );
 	}
+
+	public function test_each() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 1, 'b' => 2, 'c' => 3 ] );
+
+		$mock = $this->getMockBuilder( \stdClass::class )
+			->setMethods( [ 'each_callback' ] )
+			->getMock();
+
+		// Expect
+		$mock->expects( $this->exactly( 3 ) )
+			->method( 'each_callback' )
+			->withConsecutive(
+				[ 1, 'a' ],
+				[ 2, 'b' ],
+				[ 3, 'c' ]
+			);
+
+		// Act
+		$collection->each( [ $mock, 'each_callback' ] );
+	}
+
+	public function test_each__breaks_on_false() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 1, 'b' => 2, 'c' => 3 ] );
+
+		$mock = $this->getMockBuilder( \stdClass::class )
+			->setMethods( [ 'each_callback' ] )
+			->getMock();
+
+		// Expect
+		$mock->expects( $this->exactly( 1 ) )
+			->method( 'each_callback' )
+			->willReturn( false );
+
+		// Act
+		$collection->each( [ $mock, 'each_callback' ] );
+	}
 }

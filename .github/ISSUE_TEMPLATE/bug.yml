@@ -1,0 +1,61 @@
+name: "🐞 Bug Report"
+description: "Report a bug if something isn't working as expected in Elementor"
+labels: ["status/awaiting_triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## BEFORE POSTING YOUR ISSUE
+
+        - Please create GitHub issues only for Elementor bugs. GitHub issues ARE NOT FOR SUPPORT.
+
+        - To avoide duplicates, please search this repository for the issue.
+
+        - If the issue can't be recreated on other sites, it's not an Elementor bug. In that case use the support links above.
+
+        - Make sure you are using the most updated versions of Elementor, WordPress & your theme.
+
+        - Deactivate all of your plugins. If this solves the problem, gradually activate your plugins one by one, until you spot the problematic plugin.
+
+        - Change your WordPress theme to [Hello theme](https://wordpress.org/themes/hello-elementor/).
+
+        ## THE ISSUE
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: "Prerequisites"
+      options:
+        - label: "I have searched for similar issues in both open and closed tickets and cannot find a duplicate."
+          required: true
+        - label: "The issue still exists against the latest stable version of Elementor."
+          required: true
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: "Description"
+      description: "Describe the problem. What caused the issue? What did you expect to happen and what actual happen? Please be as descriptive as possible. Attach screenshots and related links."
+  - type: textarea
+    id: steps_to_reproduce
+    validations:
+      required: true
+    attributes:
+      label: "Steps to reproduce"
+      description: "List all the steps needed to reproduce the issue, so we can replicate it ourselves."
+      placeholder: "1) ... 2) ... 3) ..."
+  - type: checkboxes
+    id: isolating_the_problem
+    attributes:
+      label: "Isolating the problem"
+      options:
+        - label: "This bug happens with only Elementor plugin active (and Elementor Pro)."
+        - label: "This bug happens with a Blank WordPress theme active ([Hello theme](https://wordpress.org/themes/hello-elementor/))."
+        - label: "I can reproduce this bug consistently using the steps above."
+  - type: textarea
+    id: system_info
+    validations:
+      required: true
+    attributes:
+      label: "System Info"
+      description: "For faster debugging [copy your system environment](https://www.youtube.com/watch?v=tDXdynsnYuA) from `Elementor` => `System info`, and paste it here or in https://pastebin.com/"

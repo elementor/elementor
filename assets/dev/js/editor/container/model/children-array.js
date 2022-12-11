@@ -1,4 +1,7 @@
-export default class ChildrenArray extends Array {
+/**
+ * @typedef {import('../container')} Container
+ */
+ export default class ChildrenArray extends Array {
 	clear() {
 		this.length = 0;
 	}
@@ -8,9 +11,9 @@ export default class ChildrenArray extends Array {
 	 *
 	 * Will run over children recursively and pass the children to the callback till the callback returns positive value.
 	 *
-	 * @param {function(container:Container)} callback
+	 * @param {function(Container) : *} callback
 	 *
-	 * @returns {Container|false}
+	 * @return {Container|false} child
 	 */
 	findRecursive( callback ) {
 		for ( const container of this ) {
@@ -35,9 +38,9 @@ export default class ChildrenArray extends Array {
 	 *
 	 * Will run over children recursively.
 	 *
-	 * @param {function(container:Container)} callback
+	 * @param {function(Container) : *} callback
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	forEachRecursive( callback ) {
 		for ( const container of this ) {
@@ -54,7 +57,7 @@ export default class ChildrenArray extends Array {
 	 *
 	 * Will run over children recursively, breaks if the callback return true.
 	 *
-	 * @param {function(container:Container)} callback
+	 * @param {function(Container) : *} callback
 	 *
 	 */
 	someRecursive( callback ) {

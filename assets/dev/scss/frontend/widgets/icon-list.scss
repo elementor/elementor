@@ -101,211 +101,100 @@
 		}
 	}
 
-	&.elementor-align-center {
+	@mixin align-list( $device ) {
 
-		.elementor-icon-list-item {
+		&.elementor#{$device}-align-center {
 
-			&, a {
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: center;
+				}
+
+				&:after {
+					margin: auto;
+				}
+			}
+
+			.elementor-inline-items {
 				justify-content: center;
 			}
+		}
 
-			&:after {
-				margin: auto;
+		&.elementor#{$device}-align-left {
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: getValueByDirection(flex-start, flex-end);
+					text-align: left;
+				}
 			}
-		}
 
-		.elementor-inline-items {
-			justify-content: center;
-		}
-	}
-
-	&.elementor-align-left {
-
-		.elementor-icon-list-item {
-
-			&, a {
+			.elementor-inline-items {
 				justify-content: getValueByDirection(flex-start, flex-end);
-				text-align: left;
 			}
 		}
 
-		.elementor-inline-items {
-			justify-content: getValueByDirection(flex-start, flex-end);
-		}
-	}
+		&.elementor#{$device}-align-right {
 
-	&.elementor-align-right {
+			.elementor-icon-list-item {
 
-		.elementor-icon-list-item {
+				&, a {
+					justify-content: getValueByDirection(flex-end, flex-start);
+					text-align: right;
+				}
+			}
 
-			&, a {
+			.elementor-icon-list-items {
 				justify-content: getValueByDirection(flex-end, flex-start);
-				text-align: right;
 			}
 		}
 
-		.elementor-icon-list-items {
-			justify-content: getValueByDirection(flex-end, flex-start);
+		&:not(.elementor#{$device}-align-right) {
+
+			.elementor-icon-list-item {
+
+				&:after {
+					@include start(0);
+				}
+			}
+		}
+
+		&:not(.elementor#{$device}-align-left) {
+
+			.elementor-icon-list-item {
+
+				&:after {
+					@include end(0);
+				}
+			}
 		}
 	}
 
-	&:not(.elementor-align-right) {
+	@include align-list('');
 
-		.elementor-icon-list-item {
-
-			&:after {
-				@include start(0);
-			}
-		}
+	@media (min-width: $screen-widescreen-min) {
+		@include align-list('-widescreen');
 	}
 
-	&:not(.elementor-align-left) {
+	@media (max-width: $screen-laptop-max) {
+		@include align-list('-laptop');
+	}
 
-		.elementor-icon-list-item {
-
-			&:after {
-				@include end(0);
-			}
-		}
+	@media (max-width: $screen-tablet-extra-max) {
+		@include align-list('-tablet_extra');
 	}
 
 	@media (max-width: $screen-tablet-max) {
-		&.elementor-tablet-align-center {
+		@include align-list('-tablet');
+	}
 
-			.elementor-icon-list-items {
-				justify-content: center;
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: center;
-				}
-
-				&:after {
-					margin: auto;
-				}
-			}
-		}
-
-		&.elementor-tablet-align-left {
-
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-start, flex-end );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: left;
-				}
-			}
-		}
-
-		&.elementor-tablet-align-right {
-
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-end, flex-start );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: right;
-				}
-			}
-		}
-
-		&:not(.elementor-tablet-align-right) {
-
-			.elementor-icon-list-item {
-
-				&:after {
-					@include start(0);
-				}
-			}
-		}
-
-		&:not(.elementor-tablet-align-left) {
-
-			.elementor-icon-list-item {
-
-				&:after {
-					@include end(0);
-				}
-			}
-		}
+	@media (max-width: $screen-mobile-extra-max) {
+		@include align-list('-mobile_extra');
 	}
 
 	@media (max-width: $screen-mobile-max) {
-		&.elementor-mobile-align-center {
-
-			.elementor-icon-list-items {
-				justify-content: center;
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: center;
-				}
-
-				&:after {
-					margin: auto;
-				}
-			}
-		}
-
-		&.elementor-mobile-align-left {
-
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-start, flex-end );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: left;
-				}
-			}
-		}
-
-		&.elementor-mobile-align-right {
-
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-end, flex-start );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: right;
-				}
-			}
-		}
-
-		&:not(.elementor-mobile-align-right) {
-
-			.elementor-icon-list-item {
-
-				&:after {
-					@include start(0);
-				}
-			}
-		}
-
-		&:not(.elementor-mobile-align-left) {
-
-			.elementor-icon-list-item {
-
-				&:after {
-					@include end(0);
-				}
-			}
-		}
+		@include align-list('-mobile');
 	}
 }

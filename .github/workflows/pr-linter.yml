@@ -3,16 +3,21 @@ on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   pr_name_lint:
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Node.js 14.x
+      - uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 18.x
       - name: Install Dependencies
         run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter
