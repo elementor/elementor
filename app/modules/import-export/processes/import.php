@@ -138,26 +138,7 @@ class Import {
 	 */
 	public function __construct( string $path, array $settings = [], $old_instance = null ) {
 		if ( $old_instance ) {
-			$this->session_id = $path;
-
-			$old_instance_data = $old_instance['instance_data'];
-			$this->extracted_directory_path = $old_instance_data->extracted_directory_path;
-			$this->runners = $old_instance_data->runners;
-			$this->adapters = $old_instance_data->adapters;
-
-			$this->manifest = $old_instance_data->manifest;
-			$this->site_settings = $old_instance_data->site_settings;
-
-			$this->settings_include = $old_instance_data->settings_include;
-			$this->settings_referrer = $old_instance_data->settings_referrer;
-			$this->settings_conflicts = $old_instance_data->settings_conflicts;
-			$this->settings_selected_override_conditions = $old_instance_data->settings_selected_override_conditions;
-			$this->settings_selected_custom_post_types = $old_instance_data->settings_selected_custom_post_types;
-			$this->settings_selected_plugins = $old_instance_data->settings_selected_plugins;
-
-			$this->documents_elements = $old_instance_data->documents_elements;
-			$this->imported_data = $old_instance_data->imported_data;
-			$this->runners_import_metadata = $old_instance_data->runners_import_metadata;
+			$this->set_import_object( $old_instance );
 		} else {
 			if ( is_file( $path ) ) {
 				$this->extracted_directory_path = $this->extract_zip( $path );
@@ -186,6 +167,30 @@ class Import {
 
 			$this->set_default_settings();
 		}
+	}
+
+	private function set_import_object( $old_instance ) : void {
+		$this->session_id = $old_instance['session_id'];
+
+		$old_instance_data = $old_instance['instance_data'];
+
+		$this->extracted_directory_path = $old_instance_data['extracted_directory_path'];
+		$this->runners = $old_instance_data['runners'];
+		$this->adapters = $old_instance_data['adapters'];
+
+		$this->manifest = $old_instance_data['manifest'];
+		$this->site_settings = $old_instance_data['site_settings'];
+
+		$this->settings_include = $old_instance_data['settings_include'];
+		$this->settings_referrer = $old_instance_data['settings_referrer'];
+		$this->settings_conflicts = $old_instance_data['settings_conflicts'];
+		$this->settings_selected_override_conditions = $old_instance_data['settings_selected_override_conditions'];
+		$this->settings_selected_custom_post_types = $old_instance_data['settings_selected_custom_post_types'];
+		$this->settings_selected_plugins = $old_instance_data['settings_selected_plugins'];
+
+		$this->documents_elements = $old_instance_data['documents_elements'];
+		$this->imported_data = $old_instance_data['imported_data'];
+		$this->runners_import_metadata = $old_instance_data['runners_import_metadata'];
 	}
 
 	public static function fromSession( $session_id ) {
@@ -332,13 +337,24 @@ class Import {
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
-		return true;
+
+		if ( $runner_name === array_key_last( $this->runners ) ) {
+			$this->finalize_import_session_option();
+			$this->save_elements_of_imported_posts();
+		} else {
+			$this->update_import_session_option();
+		}
+
+		return [
+			'status' => 'success',
+			'runner' => $runner_name,
+		];
 	}
 
-	public function init_import_session() {
+	public function init_import_session(): void {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
-		$import_sessions[ time() ] = [
+		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
 			'kit_name' => $this->manifest['name'],
 			'kit_source' => $this->settings_referrer,
@@ -368,6 +384,27 @@ class Import {
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 
+	public function update_import_session_option(): void {
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+
+		$import_sessions[ $this->session_id ]['instance_data']['documents_elements'] = $this->documents_elements;
+		$import_sessions[ $this->session_id ]['instance_data']['imported_data'] = $this->imported_data;
+		$import_sessions[ $this->session_id ]['instance_data']['runners_import_metadata'] = $this->runners_import_metadata;
+
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+	}
+
+	public function finalize_import_session_option(): void {
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+
+		unset( $import_sessions[ $this->session_id ]['instance_data'] );
+
+		$import_sessions[ $this->session_id ]['end_timestamp'] = current_time( 'timestamp' );
+		$import_sessions[ $this->session_id ]['runners'] = $this->runners_import_metadata;
+
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+	}
+
 	public function get_runners_name() {
 		return array_keys( $this->runners );
 	}
@@ -386,6 +423,10 @@ class Import {
 
 	public function get_adapters() {
 		return $this->adapters;
+	}
+
+	public function get_imported_data() {
+		return $this->imported_data;
 	}
 
 	/**
@@ -647,7 +688,7 @@ class Import {
 	private function add_import_session_option( $start_time ) {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
-		$import_sessions[ time() ] = [
+		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
 			'kit_name' => $this->manifest['name'],
 			'kit_source' => $this->settings_referrer,

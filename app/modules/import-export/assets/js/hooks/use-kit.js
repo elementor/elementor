@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
+import useImportRunner from '../pages/import/hooks/use-import-runner';
 
 const KIT_STATUS_MAP = Object.freeze( {
 		INITIAL: 'initial',
@@ -11,10 +12,11 @@ const KIT_STATUS_MAP = Object.freeze( {
 	} ),
 	UPLOAD_KIT_KEY = 'elementor_upload_kit',
 	IMPORT_KIT_KEY = 'elementor_import_kit',
-	EXPORT_KIT_KEY = 'elementor_export_kit';
+	EXPORT_KIT_KEY = 'elementor_export_kit',
+	RUN_RUNNER_KEY = 'elementor_import_kit__runner';
 
 export default function useKit() {
-	const { ajaxState, setAjax, ajaxActions } = useAjax(),
+	const { ajaxState, setAjax, ajaxActions, runRequest } = useAjax(),
 		kitStateInitialState = {
 			status: KIT_STATUS_MAP.INITIAL,
 			data: null,
@@ -29,7 +31,7 @@ export default function useKit() {
 				},
 			} );
 		},
-		importKit = ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+		initImportProcess = async ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
 			const ajaxConfig = {
 				data: {
 					action: IMPORT_KIT_KEY,
@@ -51,7 +53,52 @@ export default function useKit() {
 
 			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
 
-			setAjax( ajaxConfig );
+			return await runRequest( ajaxConfig );
+		},
+		runImportRunners = async ( session, runners ) => {
+			for ( const [ iteration, runner ] of runners.entries() ) {
+				const ajaxConfig = {
+					data: {
+						action: RUN_RUNNER_KEY,
+						data: {
+							session,
+							runner,
+						},
+					},
+				};
+
+				ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
+
+				// The last runner should run using the setAjax method, so it will trigger the useEffect and update the kitState.
+				const isLastIteration = iteration === runners.length - 1;
+				if ( ! isLastIteration ) {
+					await runRequest( ajaxConfig );
+				} else {
+					setAjax( ajaxConfig );
+				}
+			}
+		},
+		importKit = async ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+			ajaxActions.reset();
+
+			const importSession = await initImportProcess( {
+				session,
+				include,
+				overrideConditions,
+				referrer,
+				selectedCustomPostTypes,
+			} );
+
+			if ( ! importSession.success ) {
+				const newState = {
+					status: KIT_STATUS_MAP.ERROR,
+					data: ajaxState.response || {},
+				};
+
+				setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
+			} else {
+				await runImportRunners( importSession.data.session, importSession.data.runners );
+			}
 		},
 		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
 			setAjax( {

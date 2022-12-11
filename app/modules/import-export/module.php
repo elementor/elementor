@@ -31,6 +31,8 @@ class Module extends BaseModule {
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
 
+	const IMPORT_RUNNER_TRIGGER_KEY = 'elementor_import_kit__runner';
+
 	const REFERRER_KIT_LIBRARY = 'kit-library';
 
 	const REFERRER_LOCAL = 'local';
@@ -276,7 +278,7 @@ class Module extends BaseModule {
 			$this->import->init_import_session();
 
 			return [
-				'session_id' => $this->import->get_session_id(),
+				'session' => $this->import->get_session_id(),
 				'runners' => $this->import->get_runners_name(),
 			];
 		}
@@ -287,11 +289,18 @@ class Module extends BaseModule {
 	/**
 	 * @throws \Exception
 	 */
-	public function import_kit_by_runner( $session_id, $runner_name ): bool {
+	public function import_kit_by_runner( $session_id, $runner_name ): array {
 		// Check session_id
 		$this->import = Import::fromSession( $session_id );
+		$runners = $this->import->get_runners_name();
 
-		return $this->import->run_runner( $runner_name );
+		$run = $this->import->run_runner( $runner_name );
+
+		if ( end( $runners ) === $run['runner'] ) {
+			return $this->import->get_imported_data();
+		}
+
+		return $run;
 	}
 
 	/**
@@ -426,6 +435,10 @@ class Module extends BaseModule {
 				$this->handle_import_kit();
 				break;
 
+			case static::IMPORT_RUNNER_TRIGGER_KEY:
+				$this->handle_import_kit__runner();
+				break;
+
 			default:
 				break;
 		}
@@ -519,10 +532,11 @@ class Module extends BaseModule {
 	/**
 	 * Handle import kit ajax request.
 	 */
-	private function handle_import_kit_by_runner() {
+	private function handle_import_kit__runner() {
 		// PHPCS - Already validated in caller function
-		$session_id = $_POST['session_id'];
-		$runner = $_POST['runner'];
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$session_id = $settings['session'];
+		$runner = $settings['runner'];
 
 		$import = $this->import_kit_by_runner( $session_id, $runner );
 
