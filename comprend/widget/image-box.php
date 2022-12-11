@@ -246,12 +246,11 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_responsive_control(
 			'image_size',
 			[
-				'label' => esc_html__( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Width', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px', 'vw' ],
 				'default' => [
-					'unit' => '%',
 					'size' => 30,
+					'unit' => '%',
 				],
 				'tablet_default' => [
 					'unit' => '%',
@@ -259,17 +258,10 @@ class Widget_Image_Box extends Widget_Base {
 				'mobile_default' => [
 					'unit' => '%',
 				],
+				'size_units' => [ '%' ],
 				'range' => [
 					'%' => [
 						'min' => 5,
-						'max' => 100,
-					],
-					'px' => [
-						'min' => 1,
-						'max' => 1000,
-					],
-					'vw' => [
-						'min' => 1,
 						'max' => 100,
 					],
 				],
