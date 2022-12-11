@@ -170,6 +170,18 @@ class Theme_Style_Form_Fields extends Tab_Base {
 
 	private function add_form_field_state_tab_controls( $prefix, $selector ) {
 		$this->add_control(
+			$prefix . '_accent_color',
+			[
+				'label' => esc_html__( 'Accent Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
+				'selectors' => [
+					$selector => 'accent-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			$prefix . '_text_color',
 			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
