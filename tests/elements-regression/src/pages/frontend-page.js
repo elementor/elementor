@@ -5,7 +5,7 @@ module.exports = class FrontendPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async ensureLoaded() {
-		await this.page.waitForSelector( '.page-header .entry-title' );
+		await this.page.waitForSelector( `.elementor-${ this.pageId }` );
 	}
 
 	async refresh() {
@@ -14,7 +14,8 @@ module.exports = class FrontendPage extends BasePage {
 	}
 
 	async goto( pageId ) {
-		await this.page.goto( `?page_id=${ pageId }` );
+		this.pageId = pageId;
+		await this.page.goto( `?page_id=${ this.pageId }` );
 		await this.ensureLoaded();
 	}
 
