@@ -31,7 +31,9 @@ class onboarding {
         this.continueWithHelloThemeButton = this.page.locator( '[text="Continue with Hello Theme"]' );
         this.elementorTheme = this.page.locator( '[data-slug="hello-elementor"]' );
         this.twenty21Theme = this.page.locator( '[data-slug="twentytwentyone"]' );
+        this.helloTheme = this.page.locator( '[data-slug="hello-elementor"]' );
         this.selectActivateTwent21Theme = this.page.locator( '[aria-label="Activate Twenty Twenty-One"]' );
+        this.selectActivateHelloTheme = this.page.locator( '[aria-label="Activate Hello Elementor"]' );
         this.twenty21ThemeStatus = this.page.locator( '#hello-elementor-name span' );
         this.disclaimerNotice = this.page.locator( '.e-onboarding__footnote' );
 
@@ -238,6 +240,15 @@ requestFailed.push( request.url() );
         }
     }
 
+    async activateHelloTheme() {
+        if ( await this.selectActivateHelloTheme.isVisible() ) {
+            await this.helloTheme.hover();
+
+            await this.selectActivateHelloTheme.click();
+            await this.page.waitForLoadState( 'networkidle' );
+        }
+    }
+
     async checkTwenty21ThemeIsActive() {
         await expect( await this.twenty21Theme.getAttribute( 'class' ), `The Twenty 21 Theme is not active` ).toEqual( 'theme active' );
     }
@@ -278,7 +289,7 @@ requestFailed.push( request.url() );
     }
 
     async checkStepFourURL( url ) {
-        await expect( await this.page.url(), `User is not on Step 4 but instead on ${ await this.page.url() }` ).toEqual( this.baseUrl + this.step4URL );
+        await expect( await this.page.url(), `User is not on Step 4 but instead on ${ await this.page.url() }` ).toEqual( this.baseUrl + url );
     }
 
     async goToSiteItentityPage() {

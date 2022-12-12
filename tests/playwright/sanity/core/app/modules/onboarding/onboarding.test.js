@@ -7,12 +7,20 @@ test.beforeEach( async ( { page }, testInfo ) => {
 } );
 
 test.beforeAll( async ( { browser }, testInfo ) => {
-		const page = await browser.newPage(),
-		helper = new onboarding( page, testInfo.project.use.baseURL );
+	const page = await browser.newPage();
+	helper = new onboarding( page, testInfo.project.use.baseURL );
 
-		await helper.gotoThemesPage();
-		await page.waitForLoadState( 'networkidle' );
-		await helper.activateTwenty21Theme();
+	await helper.gotoThemesPage();
+	await page.waitForLoadState( 'networkidle' );
+	await helper.activateTwenty21Theme();
+} );
+
+test.afterAll( async ( { browser }, testInfo ) => {
+	const page = await browser.newPage();
+	helper = new onboarding( page, testInfo.project.use.baseURL );
+	await helper.gotoThemesPage();
+	await page.waitForLoadState( 'networkidle' );
+	await helper.activateHelloTheme();
 } );
 
 test.describe( 'First Step - Elementor Account', () => {
@@ -71,15 +79,6 @@ test.describe( 'First Step - Elementor Account', () => {
 } );
 
 test.describe( 'Second Step - Hello Theme', () => {
-	test( ' "Continue with Hello Theme" button works', async ( { page } ) => {
-		await helper.gotoStep2();
-		await helper.selectContinueWithHelloThemeButton();
-		await page.waitForNavigation( { url: 'wp-admin/admin.php?page=elementor-app#onboarding/siteName' }, { waitUntil: 'networkidle' } );
-		await helper.gotoThemesPage();
-		await helper.checkElementorThemeIsActive();
-		await helper.activateTwenty21Theme();
-	} );
-
 	test( 'CSS is not Broken and Validated notice is present and skip works', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step2URL );
 		await helper.checkDisclaimerIsPresent( testData.disclaimerNotice );
@@ -90,6 +89,15 @@ test.describe( 'Second Step - Hello Theme', () => {
 	test( 'Progress Bar: Second step is filled and 3,4,5 are not', async () => {
 		await helper.gotoStep2();
 		await helper.checkCurrentStepIsFilled( 2 );
+	} );
+
+	test( ' "Continue with Hello Theme" button works', async ( { page } ) => {
+		await helper.gotoStep2();
+		await helper.selectContinueWithHelloThemeButton();
+		await page.waitForNavigation( { url: 'wp-admin/admin.php?page=elementor-app#onboarding/siteName' }, { waitUntil: 'networkidle' } );
+		await helper.gotoThemesPage();
+		await helper.checkElementorThemeIsActive();
+		await helper.activateTwenty21Theme();
 	} );
 } );
 
@@ -115,7 +123,7 @@ test.describe( 'Third Step - Hello Theme', () => {
 		await helper.checkStepFourURL( helper.step4URL );
 	} );
 
-	test( 'Progress Bar: Third step is filled and 4,5 are not', async () => {
+	test( 'Progress Bar: Third step is filled', async () => {
 		await helper.gotoStep3();
 		await helper.checkCurrentStepIsFilled( 3 );
 	} );
