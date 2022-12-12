@@ -3,6 +3,11 @@ on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   pr_name_lint:
     runs-on: ubuntu-latest

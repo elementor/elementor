@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: '0 10 * * 0' # run at 10 AM UTC on Sunday
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   build-plugin:
     name: Build plugin
@@ -75,7 +80,7 @@ jobs:
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.8.0
+        run: npm install --no-package-lock --no-save @wordpress/env@5.0.0 @lhci/cli@0.8.0
       - name: Install WordPress environment
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |

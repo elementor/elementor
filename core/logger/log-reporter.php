@@ -21,7 +21,7 @@ class Log_Reporter extends Base {
 	const CLEAR_LOG_ACTION = 'elementor-clear-log';
 
 	public function get_title() {
-		return __( 'Log', 'elementor' );
+		return esc_html__( 'Log', 'elementor' );
 	}
 
 	public function get_fields() {

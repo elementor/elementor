@@ -14,8 +14,8 @@
 
 	& > .elementor-widget-spacer {
 		width: var( --container-widget-width, var( --spacer-size ) );
-		align-self: stretch;
-		flex-shrink: 0;
+		--align-self: var( --container-widget-align-self, initial );
+		--flex-shrink: 0;
 
 		& > .elementor-widget-container {
 			height: 100%;

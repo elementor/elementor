@@ -76,29 +76,35 @@ BaseSettingsModel = Backbone.Model.extend( {
 		self.set( attrs );
 	},
 
+	convertRepeaterValueToCollection( attrs, repeaterControl ) {
+		return new Backbone.Collection( attrs[ repeaterControl.name ], {
+			model( attributes, options ) {
+				options = options || {};
+
+				options.controls = {};
+
+				Object.values( repeaterControl.fields ).forEach( ( item ) => {
+					options.controls[ item.name ] = item;
+				} );
+
+				// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
+				if ( ! attributes._id ) {
+					attributes._id = elementorCommon.helpers.getUniqueId();
+				}
+
+				return new BaseSettingsModel( attributes, options );
+			},
+		} );
+	},
+
 	handleRepeaterData( attrs ) {
+		const self = this;
+
 		_.each( this.controls, function( field ) {
 			if ( field.is_repeater ) {
 				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
-					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
-						model( attributes, options ) {
-							options = options || {};
-
-							options.controls = {};
-
-							Object.values( field.fields ).forEach( ( item ) => {
-								options.controls[ item.name ] = item;
-							} );
-
-							// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
-							if ( ! attributes._id ) {
-								attributes._id = elementorCommon.helpers.getUniqueId();
-							}
-
-							return new BaseSettingsModel( attributes, options );
-						},
-					} );
+					attrs[ field.name ] = self.convertRepeaterValueToCollection( attrs, field );
 				}
 			}
 		} );
@@ -133,6 +139,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			if ( control.fields ) {
 				var styleFields = [];
+
+				if ( ! ( self.attributes[ control.name ] instanceof Backbone.Collection ) ) {
+					self.attributes[ control.name ] = self.convertRepeaterValueToCollection( self.attributes, control );
+				}
 
 				self.attributes[ control.name ].each( function( item ) {
 					styleFields.push( self.getStyleControls( control.fields, item.attributes ) );

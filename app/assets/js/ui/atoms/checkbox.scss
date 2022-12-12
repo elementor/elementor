@@ -3,7 +3,7 @@
 
 // checkbox label
 .#{$eps-prefix}checkbox {
-	-webkit-appearance: none;
+	appearance: none;
 	border-radius: $eps-checkbox-border-radius;
 	width: $eps-checkbox-size;
 	height: $eps-checkbox-size;
