@@ -563,6 +563,46 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Verify that the tab sizes don\'t shrink when adding a widget in the content section.', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			tabsWidgetId = await editor.addWidget( 'nested-tabs', container ),
+			activeContentContainer = editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` ),
+			activeContentContainerId = await activeContentContainer.getAttribute( 'data-id' );
+
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		// Add Icons.
+		await setIconsToTabs( page, tabIcons );
+		// Set Direction: Left.
+		await editor.selectElement( tabsWidgetId );
+		await editor.activatePanelTab( 'content' );
+		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		// Get the initial first tab width.
+		await editor.getPreviewFrame().locator( '.e-normal:first-child' ).click();
+		await editor.getPreviewFrame().waitForSelector( '.e-normal.e-active' );
+		const initialTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		// Add content
+		await editor.addWidget( 'image', activeContentContainerId );
+
+		// Assert
+		// Verify that the tab width doesn't change after adding the content.
+		const finalTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		expect( finalTabWidth ).toBe( initialTabWidth );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const viewportSize = {

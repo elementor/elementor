@@ -72,6 +72,7 @@
 			display: var( --n-tabs-heading-display );
 			flex-basis: var( --n-tabs-heading-width );
 			flex-direction: var( --n-tabs-heading-direction );
+			flex-shrink: 0;
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
 		}
