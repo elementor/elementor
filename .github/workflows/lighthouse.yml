@@ -80,7 +80,7 @@ jobs:
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.8.0
+        run: npm install --no-package-lock --no-save @wordpress/env@5.0.0 @lhci/cli@0.8.0
       - name: Install WordPress environment
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
