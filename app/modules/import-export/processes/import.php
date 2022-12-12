@@ -337,7 +337,6 @@ class Import {
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
-
 		if ( $runner_name === key( array_slice( $this->runners, -1, 1, true ) ) ) {
 			$this->finalize_import_session_option();
 			$this->save_elements_of_imported_posts();
