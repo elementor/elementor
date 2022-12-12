@@ -483,7 +483,7 @@ trait Button_Trait {
 		<div class="elementor-button-wrapper">
 			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
 				<span class="elementor-button-content-wrapper">
-					<# if ( settings.icon || settings.selected_icon ) { #>
+					<# if ( settings.icon || iconHTML.rendered ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
 						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
 							{{{ iconHTML.value }}}
