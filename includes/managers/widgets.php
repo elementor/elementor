@@ -250,6 +250,14 @@ class Widgets_Manager {
 
 		return true;
 	}
+
+	/** register promoted widgets
+	 *
+	 * Since we cannot allow widgets to place themselves is a specific
+	 * location on our widgets panel we need to use an hard coded solution fort his
+	 *
+	 * @return void
+	 */
 	private function register_promoted_widgets() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements' ) ) {
 			$nested_tabs = new NestedTabs();
