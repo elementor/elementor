@@ -31,7 +31,7 @@ add_action('elementor/editor/after_enqueue_scripts', function () {
 	?>
 	<script>
 		window.addEventListener("elementor:init", () => {
-			// Backstop will run the tests based on the log, without wait for a specific selector.
+			// Backstop will run the tests based on the log, without waiting for a specific selector.
 			elementor.on("document:loaded", () => {
 				setTimeout(() => console.log("Elementor is ready!"), 1000);
 			});
