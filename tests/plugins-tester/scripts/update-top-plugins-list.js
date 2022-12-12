@@ -8,9 +8,6 @@ const __dirname = dirname( __filename );
 const URL = 'https://api.wordpress.org/plugins/info/1.2/?action=query_plugins&request[search]=elementor&request[page]=1&request[per_page]=40';
 const FILE_NAME = __dirname + '/../config/top-plugins.json';
 
-// eslint-disable-next-line no-console
-console.log( FILE_NAME );
-
 const fetchPluginsList = async ( url, filename ) => {
     try {
         const response = await fetch( url );
@@ -29,6 +26,9 @@ const fetchPluginsList = async ( url, filename ) => {
         console.log( pluginsList );
 
         fs.writeFileSync( filename, JSON.stringify( pluginsList, null, 2 ) );
+
+		// eslint-disable-next-line no-console
+		console.log( `${ FILE_NAME } has been updated successfully` );
     } catch ( error ) {
 	// eslint-disable-next-line no-console
         console.log( error );
