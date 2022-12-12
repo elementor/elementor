@@ -465,8 +465,12 @@ class Module extends BaseModule {
 
 		// Needed for uploading Logo from WP Media Library. The 'admin_menu' hook is used because it runs before
 		// 'admin_init', and the App triggers printing footer scripts on 'admin_init' at priority 0.
-		add_action( 'admin_menu', function() {
-			add_action( 'wp_print_footer_scripts', 'wp_print_media_templates' );
+		add_action( 'admin_menu', function () {
+			add_action( 'wp_print_footer_scripts', function () {
+				if ( function_exists( 'wp_print_media_templates' ) ) {
+					wp_print_media_templates();
+				}
+			} );
 		} );
 
 		add_action( 'admin_init', function() {
