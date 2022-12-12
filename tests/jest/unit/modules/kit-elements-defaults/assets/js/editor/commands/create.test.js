@@ -1,9 +1,10 @@
-import { updateElementDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
+import { getElementDefaults, updateElementDefaults } from 'elementor/modules/kit-elements-defaults/assets/js/editor/api';
 import createContainer from 'elementor/tests/jest/utils/create-container';
 
 jest.mock( 'elementor/modules/kit-elements-defaults/assets/js/editor/api', () => ( {
 	__esModule: true,
 	updateElementDefaults: jest.fn(),
+	getElementDefaults: jest.fn(),
 } ) );
 
 describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
@@ -12,6 +13,7 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 	beforeEach( async () => {
 		global.$e = {
 			internal: jest.fn(),
+			run: jest.fn(),
 			modules: {
 				editor: {
 					CommandContainerBase: class {},
@@ -123,6 +125,43 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 				expect( updateElementDefaults ).toHaveBeenNthCalledWith( 1, expectedType, { width: '100px' } );
 			},
 		);
+
+	it( 'should restore to previous settings on undo', async () => {
+		// Arrange
+		const command = new CreateCommand();
+
+		let restoreCallback;
+
+		elementor.notifications.showToast.mockImplementation( ( options ) => {
+			restoreCallback = options.buttons[ 0 ].callback;
+		} );
+
+		getElementDefaults.mockReturnValue( {
+			text: 'original-text',
+		} );
+
+		const container = createContainer( {
+			widgetType: 'button',
+			elType: 'widget',
+			id: '123',
+			settings: {
+				text: 'updated-text',
+			},
+			controls: {
+				text: {},
+			},
+		} );
+
+		// Act
+		await command.apply( { container } );
+		restoreCallback();
+
+		// Assert
+		expect( $e.run ).toHaveBeenCalledWith( 'kit-elements-defaults/restore', {
+			type: 'button',
+			settings: { text: 'original-text' },
+		} );
+	} );
 
 	it( 'should throw an error if upsert fails', () => {
 		// Arrange
