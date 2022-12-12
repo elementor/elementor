@@ -22,7 +22,7 @@ const fetchPluginsList = async ( url, filename ) => {
             pluginsList.push( plugin.slug );
         } );
 
-	// eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.log( pluginsList );
 
         fs.writeFileSync( filename, JSON.stringify( pluginsList, null, 2 ) );
