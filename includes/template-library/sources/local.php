@@ -1173,7 +1173,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function admin_print_tabs( $views ) {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
-		$current_type = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG ) ?? '';
+		$current_type = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG, '' );
 		$active_class = $current_type ? '' : ' nav-tab-active';
 		$current_tabs_group = $this->get_current_tab_group();
 
@@ -1651,7 +1651,7 @@ class Source_Local extends Source_Base {
 
 	public function get_current_tab_group( $default = '' ) {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
-		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group' ) ?? $default;
+		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group', $default );
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$type_slug = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG );
 
