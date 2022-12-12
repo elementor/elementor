@@ -38,7 +38,9 @@ test.describe( 'Container tests', () => {
 		// Test that the image is between the heading & button.
 		expect( elBeforeButton ).toBe( elAfterHeading );
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test.skip( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
@@ -129,7 +131,9 @@ test.describe( 'Container tests', () => {
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-boxed-start.jpeg' );
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test.skip( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
@@ -193,7 +197,9 @@ test.describe( 'Container tests', () => {
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test.skip( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
@@ -239,7 +245,9 @@ test.describe( 'Container tests', () => {
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test( 'Container full width and position fixed', async ( { page }, testInfo ) => {
@@ -286,7 +294,9 @@ test.describe( 'Container tests', () => {
 			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
@@ -304,7 +314,9 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
 		await expect( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test.skip( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
@@ -438,7 +450,9 @@ test.describe( 'Container tests', () => {
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
@@ -490,13 +504,16 @@ test.describe( 'Container tests', () => {
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
 
-		await cleanup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test.skip( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await createCanvasPage( wpAdmin );
@@ -521,7 +538,9 @@ test.describe( 'Container tests', () => {
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
 
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -547,56 +566,6 @@ test.describe( 'Container tests', () => {
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
-
-	test.only( 'Test motion effect and background overlay', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-
-		const editor = await wpAdmin.useElementorCleanPost(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			container = editor.getFrame().locator( `.elementor-element-${ containerId } .elementor-empty-view` ),
-			containerBottomId = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Set min-height.
-		await editor.selectElement( containerId );
-		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '700' );
-		// Set background image.
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
-		await page.locator( '.elementor-control-background_image .elementor-control-media__content' ).hover();
-		await page.locator( '.elementor-control-background_image .elementor-control-media__tools.elementor-control-dynamic-switcher-wrapper' ).click();
-		// Open Media Library
-		await page.locator( '#menu-item-upload' ).click();
-		// Upload the images to WP media library
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/background-text.jpg' );
-		await page.locator( '.media-button' ).click();
-		// Add background overlay.
-		await page.locator( '.elementor-control-section_background_overlay' ).click();
-		await page.locator( '.elementor-control-background_overlay_background i.eicon-paint-brush' ).click();
-		await page.locator( '.elementor-control-background_overlay_color .pcr-button' ).click();
-		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#000000' );
-		// Add motion effect.
-		await page.locator( '.elementor-control-section_background' ).click();
-		await page.locator( '.elementor-control-background_motion_fx_motion_fx_scrolling .elementor-control-input-wrapper .elementor-switch-label' ).click();
-		await page.locator( '.elementor-control-background_motion_fx_translateY_effect i.eicon-edit' ).click();
-		// Select bottom container.
-		await editor.selectElement( containerBottomId );
-		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
-		// Scroll downwards.
-		await page.evaluate( () => elementor.$preview[ 0 ].contentWindow.scrollBy( 0, 300 ) );
-
-		await editor.togglePreviewMode();
-
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-motion-effect-background-overlay.jpeg' );
-
-		// Reset to the Default template.
-		await editor.togglePreviewMode();
-
-		await cleanup( wpAdmin );
-	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
@@ -612,16 +581,4 @@ async function addContainerAndHover( editor ) {
 	const container = editor.getPreviewFrame().locator( containerSelector );
 	editor.getPreviewFrame().hover( containerSelector );
 	return container;
-}
-
-async function setup( wpAdmin ) {
-	await wpAdmin.setExperiments( {
-		container: true,
-	} );
-}
-
-async function cleanup( wpAdmin ) {
-	await wpAdmin.setExperiments( {
-		container: false,
-	} );
 }
