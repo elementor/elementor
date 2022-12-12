@@ -87,8 +87,6 @@ test.describe( 'Elements regression', () => {
 								await frontendPage.screenshotElement( elementId ),
 							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 
-							testedValues.push( valueLabel );
-
 							await control.teardown();
 						} );
 					}
