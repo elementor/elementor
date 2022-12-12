@@ -5,7 +5,7 @@ module.exports = class FrontendPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async ensureLoaded() {
-		await this.page.waitForSelector( `.elementor-${ this.pageId }` );
+		await this.page.waitForSelector( `.elementor-${ this.config.pageId }` );
 	}
 
 	async refresh() {
@@ -13,9 +13,8 @@ module.exports = class FrontendPage extends BasePage {
 		await this.ensureLoaded();
 	}
 
-	async goto( pageId ) {
-		this.pageId = pageId;
-		await this.page.goto( `?page_id=${ this.pageId }` );
+	async load() {
+		await this.page.goto( `?page_id=${ this.config.pageId }` );
 		await this.ensureLoaded();
 	}
 
@@ -24,7 +23,7 @@ module.exports = class FrontendPage extends BasePage {
 	}
 
 	async screenshotElement( id ) {
-		await this.refresh();
+		await this.load();
 
 		const pageRect = await this.page.locator( 'body' ).boundingBox();
 		const elementRect = await ( await this.getElement( id ) ).boundingBox();

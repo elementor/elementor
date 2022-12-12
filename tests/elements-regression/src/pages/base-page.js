@@ -5,13 +5,20 @@ module.exports = class BasePage {
 	page;
 
 	/**
-	 * @param {import('@playwright/test').Page} page
+	 * @type {{}}
 	 */
-	constructor( page ) {
+	config = {};
+
+	/**
+	 * @param {import('@playwright/test').Page} page
+	 * @param {{}}                              config
+	 */
+	constructor( page, config ) {
 		if ( ! page ) {
 			throw new Error( 'Page must be provided' );
 		}
 
 		this.page = page;
+		this.config = config;
 	}
 };

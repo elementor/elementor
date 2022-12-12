@@ -24,8 +24,8 @@ module.exports = base.test.extend( {
 	},
 	frontendPage: async ( { editorPage, context }, use ) => {
 		const page = await context.newPage();
-		const frontendPage = new FrontendPage( page );
-		await frontendPage.goto( await editorPage.getId() );
+		const pageId = await editorPage.getId();
+		const frontendPage = new FrontendPage( page, { pageId } );
 
 		await use( frontendPage );
 
