@@ -79,7 +79,7 @@ test.describe( 'Elements regression', () => {
 
 							expect(
 								await editorPage.screenshotElement( elementId ),
-							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }(editor).jpeg` ] );
+							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 
 							await editorPage.publish();
 
