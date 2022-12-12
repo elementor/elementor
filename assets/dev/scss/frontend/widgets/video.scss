@@ -8,6 +8,17 @@
 		transform: translate3d(0, 0, 0); // Allow border-radius in Safari
 	}
 
+	.elementor-wrapper {
+
+		iframe,
+		video {
+			height: 100%;
+			width: 100%;
+			border: none; // To deal with inconsistencies
+			background-color: #000;
+		}
+	}
+
 	.elementor-open-inline {
 
 		.elementor-custom-embed-image-overlay {
@@ -42,6 +53,7 @@
 	}
 
 	.e-hosted-video {
+
 		.elementor-video {
 			object-fit: cover;
 		}
