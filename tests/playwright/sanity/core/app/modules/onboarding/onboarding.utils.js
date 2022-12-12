@@ -387,15 +387,17 @@ class onboarding {
     */
 
     async gotoStep5() {
-        await this.page.goto( this.step5URL );
+        await this.page.goto( this.step5URL, { waitUntil: 'networkidle' } );
     }
 
     async selectKitLibaryOption() {
         await this.kitLibraryButton.click();
+        await this.page.waitForLoadState( 'networkidle' );
     }
 
     async userIsOnTheLibraryKitsPage() {
         await expect( await this.page.url().includes( '/kit-library' ) ).toBeTruthy();
+        await this.page.waitForLoadState( 'networkidle' );
     }
 
     async selectEditWithBlankCanvas() {
