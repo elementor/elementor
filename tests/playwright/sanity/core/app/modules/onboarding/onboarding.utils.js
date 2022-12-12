@@ -10,6 +10,7 @@ class onboarding {
         this.WpGeneralSettingsPage = '/wp-admin/options-general.php';
         this.customizePage = '/wp-admin/customize.php';
         this.logoRemoveButton = this.page.locator( '.button.remove-button' );
+        this.addLogoButtonSelector = '#customize-control-custom_logo .upload-button.button-add-media';
 
         // On all Steps
         this.closeOnboardingButton = this.page.locator( '.eps-icon.eicon-close' );
@@ -66,8 +67,8 @@ class onboarding {
 
         this.page.on( 'request', async ( request ) => {
             if ( request.failure() !== null && request.url().includes( '.css' ) ) {
-requestFailed.push( request.url() );
-}
+            requestFailed.push( request.url() );
+            }
         } );
 
         // Go to the URL
@@ -175,8 +176,6 @@ requestFailed.push( request.url() );
 			// Opens popup.
 			this.selectCreateMyAccountCTA(),
 		] );
-
-		await createAccountPopUp.waitForLoadState( 'networkidle' );
         await expect( await createAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
     }
 
@@ -187,8 +186,6 @@ requestFailed.push( request.url() );
 			// Opens popup.
 			this.selectHeaderCreateAccountCTA(),
 		] );
-
-		await createAccountPopUp.waitForLoadState( 'networkidle' );
         await expect( await createAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
     }
 
@@ -285,7 +282,7 @@ requestFailed.push( request.url() );
     * Fourth Step - Site Logo - Functions
     */
     async gotoStep4() {
-        await this.page.goto( this.step4URL );
+        await this.page.goto( this.step4URL, { waitUntil: 'networkidle' } );
     }
 
     async checkStepFourURL( url ) {
@@ -293,14 +290,17 @@ requestFailed.push( request.url() );
     }
 
     async goToSiteItentityPage() {
-        await this.page.goto( this.customizePage );
+        await this.page.goto( this.customizePage, { waitUntil: 'networkidle' } );
         await this.page.locator( '#accordion-section-title_tagline' ).click();
+        await this.page.waitForLoadState( 'networkidle' );
         await this.page.waitForSelector( '#customize-control-custom_logo .upload-button' );
     }
 
     async uploadLogo() {
         await this.page.locator( '#customize-control-custom_logo .upload-button' ).first().click();
+        await this.page.waitForLoadState( 'networkidle' );
         await this.page.locator( '#menu-item-browse' ).click();
+        await this.page.waitForLoadState( 'networkidle' );
         if ( await this.page.locator( '.attachment-preview div.thumbnail img' ).count() < 1 ) {
             const [ fileChooser ] = await Promise.all( [
                 // It is important to call waitForEvent before click to set up waiting.
@@ -319,6 +319,7 @@ requestFailed.push( request.url() );
     }
 
     async checkLogoIsPresent() {
+        await this.page.waitForLoadState( 'networkidle' );
         await expect( await this.potentialLogo.count() ).toEqual( 1 );
     }
 
@@ -341,15 +342,17 @@ requestFailed.push( request.url() );
 
     async makeSureLogoIsRemoved() {
         await this.goToSiteItentityPage();
-
+        await this.page.waitForLoadState( 'networkidle' );
         if ( await this.page.isVisible( '.button.remove-button' ) ) {
             this.logoRemoveButton.click();
             await this.page.locator( '[value="Publish"]' ).click();
+            await this.page.waitForSelector( '[value="Published"]' );
             await this.page.waitForLoadState( 'networkidle' );
         }
     }
 
     async checkLogoIsNotPresent() {
+        await this.page.waitForLoadState( 'networkidle' );
         await expect( await this.potentialLogo.count() ).toEqual( 0 );
     }
 
