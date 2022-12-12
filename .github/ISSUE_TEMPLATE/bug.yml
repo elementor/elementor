@@ -58,4 +58,4 @@ body:
       required: true
     attributes:
       label: "System Info"
-      description: "For faster debugging copy your system environment from `Elementor` => `System info`, and paste it here or in https://pastebin.com/"
+      description: "For faster debugging [copy your system environment](https://www.youtube.com/watch?v=tDXdynsnYuA) from `Elementor` => `System info`, and paste it here or in https://pastebin.com/"

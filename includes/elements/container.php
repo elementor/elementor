@@ -114,6 +114,7 @@ class Container extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
+		<div class="e-edit-click-area"></div>
 		<# if ( 'boxed' === settings.content_width ) { #>
 			<div class="e-con-inner">
 		<#
@@ -688,6 +689,12 @@ class Container extends Element_Base {
 						'selectors' => [
 							// Hack to set the `::before` content in order to render it only when there is a background overlay.
 							$background_overlay_selector => '--background-overlay: \'\';',
+						],
+					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_overlay', 'url' ],
 						],
 					],
 				],
