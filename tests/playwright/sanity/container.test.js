@@ -554,7 +554,7 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			container = editor.getFrame().locator( '.elementor-element-' + containerId ),
+			container = editor.getFrame().locator( `.elementor-element-${ containerId } .elementor-empty-view` ),
 			containerBottomId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set min-height.
