@@ -1,11 +1,11 @@
 {
   "name": "@elementor/editor-shell",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "jest --config='../jest.config.js'"
   },
-  "author": "",
+  "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "description": "",
   "dependencies": {

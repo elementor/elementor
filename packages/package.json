@@ -4,16 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack -w",
+    "build": "webpack --mode=production",
+    "dev": "webpack -w --mode=development",
     "test": "jest --config='./jest/jest.config.js'"
   },
-  "author": "",
+  "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "workspaces": [
-    "editor-shell",
-    "locations",
-    "top-bar"
+    "apps/editor-shell",
+    "libs/locations",
+    "features/top-bar"
   ],
   "devDependencies": {
     "@babel/core": "^7.20.5",

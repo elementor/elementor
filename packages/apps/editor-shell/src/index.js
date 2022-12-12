@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom';
-import { Editor } from './components/editor';
+import { Shell } from './components/shell';
 
 console.log( 'loaded: editor-shell' );
 
 export function render( element ) {
-	ReactDOM.render( <Editor />, element );
+	ReactDOM.render( <Shell />, element );
 }

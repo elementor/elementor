@@ -1,4 +1,4 @@
-export class Locations {
+export class LocationsManager {
 	locations = {};
 
 	register( locationName, component ) {

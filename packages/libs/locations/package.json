@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest"
   },
-  "author": "",
+  "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "description": "",
   "peerDependencies": {

@@ -1,27 +1,35 @@
 const path = require( 'path' );
-const packages = require( './package.json' ).workspaces;
+const packages = require( './package.json' ).workspaces.map( ( packagePath ) => {
+	const packageName = packagePath.replace( /^(apps|features|libs)\//, '' );
 
-const entry = packages.reduce( ( acc, packageName ) => {
+	return {
+		packagePath,
+		packageName,
+		packageNameCamelCase: kebabToCamelCase( packageName ),
+	};
+} );
+
+const entry = packages.reduce( ( acc, { packagePath, packageName, packageNameCamelCase } ) => {
 	return {
 		...acc,
 		[ packageName ]: {
-			import: path.resolve( __dirname, `./${ packageName }/index.js` ),
+			import: path.resolve( __dirname, `./${ packagePath }/src/index` ),
 			library: {
-				name: [ 'elementorEditorPackages', kebabToCamelCase( packageName ) ],
+				name: [ 'elementorEditorPackages', packageNameCamelCase ],
 				type: 'window',
 			},
 		},
 	};
 }, {} );
 
-const externals = packages.reduce( ( acc, packageName ) => {
+const externals = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) => {
 	return {
 		...acc,
-		[ `@elementor/${ packageName }` ]: `elementorEditorPackages.${ kebabToCamelCase( packageName ) }`,
+		[ `@elementor/${ packageName }` ]: `elementorEditorPackages.${ packageNameCamelCase }`,
 	};
 }, {} );
 
-module.exports = {
+const config = {
 	entry,
 	externals: {
 		...externals,
@@ -46,7 +54,22 @@ module.exports = {
 		filename: '[name].js',
 		path: path.resolve( __dirname, '../assets/js/editor-packages/' ),
 	},
-	mode: 'development',
+};
+
+module.exports = ( env, argv ) => {
+	if ( 'development' === argv.mode ) {
+		config.devtool = 'source-map';
+	}
+
+	if ( 'production' === argv.mode ) {
+		config.optimization = {
+			minimize: true,
+		};
+
+		config.output.filename = '[name].min.js';
+	}
+
+	return config;
 };
 
 function kebabToCamelCase( kebabCase ) {
