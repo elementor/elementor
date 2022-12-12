@@ -261,7 +261,7 @@ class Widgets_Manager {
 	private function register_promoted_widgets() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements' ) ) {
 			$nested_tabs = new NestedTabs();
-			$this->_widget_types = array( $nested_tabs->get_name() => $nested_tabs ) + $this->_widget_types;
+			$this->_widget_types = [ $nested_tabs->get_name() => $nested_tabs ] + $this->_widget_types;
 		}
 	}
 
