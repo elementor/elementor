@@ -10,13 +10,13 @@ for ( const testDevice of Breakpoints.getBasic() ) {
 		continue;
 	}
 
-	test( `Reverse columns:${ testDevice } - Experiment breakpoints:Off`, async ( { page }, testInfo ) => {
+	test( `Reverse columns:${ testDevice } - Experiment breakpoints:Off @reverse-columns`, async ( { page }, testInfo ) => {
 		const reverseColumns = new ReverseColumns( page, testInfo );
 		await reverseColumns.testReverseColumnsOneActivated( testDevice );
 	} );
 }
 
-test( 'Reverse columns:All - Experiment breakpoints:Off', async ( { page }, testInfo ) => {
+test( 'Reverse columns:All - Experiment breakpoints:Off @reverse-columns', async ( { page }, testInfo ) => {
 	const reverseColumns = new ReverseColumns( page, testInfo );
 	await reverseColumns.testReverseColumnsAllActivated();
 } );
@@ -29,13 +29,13 @@ for ( const testDevice of Breakpoints.getAll() ) {
 		continue;
 	}
 
-	test.skip( `Reverse columns:${ testDevice } - Experiment breakpoints:On`, async ( { page }, testInfo ) => {
+	test.skip( `Reverse columns:${ testDevice } - Experiment breakpoints:On @reverse-columns`, async ( { page }, testInfo ) => {
 		const reverseColumns = new ReverseColumns( page, testInfo );
 		await reverseColumns.testReverseColumnsOneActivated( testDevice, true );
 	} );
 }
 
-test.skip( 'Reverse columns:All - Experiment breakpoints:On', async ( { page }, testInfo ) => {
+test.skip( 'Reverse columns:All - Experiment breakpoints:On @reverse-columns', async ( { page }, testInfo ) => {
 	const reverseColumns = new ReverseColumns( page, testInfo );
 	await reverseColumns.testReverseColumnsAllActivated( true );
 } );

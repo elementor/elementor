@@ -6,6 +6,7 @@ const config = {
 	globalTimeout: 60 * 15_000, // 15 minutes
 	reporter: 'list',
 	testDir: '../sanity/',
+	grepInvert: [ /@reverse-columns/ ],
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
 	expect: {
