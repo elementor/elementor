@@ -167,8 +167,8 @@ class Feedback extends Module {
 			wp_send_json_error();
 		}
 
-		$reason_key = Utils::get_super_global_value( $_POST, 'reason_key' ) ?? '';
-		$reason_text = Utils::get_super_global_value( $_POST, "reason_{$reason_key}" ) ?? '';
+		$reason_key = Utils::get_super_global_value( $_POST, 'reason_key', '' );
+		$reason_text = Utils::get_super_global_value( $_POST, "reason_{$reason_key}", '' );
 
 		Api::send_feedback( $reason_key, $reason_text );
 
