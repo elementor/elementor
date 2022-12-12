@@ -291,7 +291,7 @@ class Module extends BaseModule {
 	 */
 	public function import_kit_by_runner( $session_id, $runner_name ): array {
 		// Check session_id
-		$this->import = Import::fromSession( $session_id );
+		$this->import = Import::from_session( $session_id );
 		$runners = $this->import->get_runners_name();
 
 		$run = $this->import->run_runner( $runner_name );

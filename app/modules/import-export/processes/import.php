@@ -193,7 +193,7 @@ class Import {
 		$this->runners_import_metadata = $old_instance_data['runners_import_metadata'];
 	}
 
-	public static function fromSession( $session_id ) {
+	public static function from_session( $session_id ) {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
@@ -338,7 +338,7 @@ class Import {
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
 
-		if ( $runner_name === array_key_last( $this->runners ) ) {
+		if ( $runner_name === key( array_slice( $this->runners, -1, 1, true ) ) ) {
 			$this->finalize_import_session_option();
 			$this->save_elements_of_imported_posts();
 		} else {
