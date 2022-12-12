@@ -169,7 +169,7 @@ class Import {
 		}
 	}
 
-	private function set_import_object( $old_instance ) : void {
+	private function set_import_object( $old_instance ) {
 		$this->session_id = $old_instance['session_id'];
 
 		$old_instance_data = $old_instance['instance_data'];
@@ -351,7 +351,7 @@ class Import {
 		];
 	}
 
-	public function init_import_session(): void {
+	public function init_import_session() {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		$import_sessions[ $this->session_id ] = [
@@ -384,7 +384,7 @@ class Import {
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 
-	public function update_import_session_option(): void {
+	public function update_import_session_option() {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		$import_sessions[ $this->session_id ]['instance_data']['documents_elements'] = $this->documents_elements;
@@ -394,7 +394,7 @@ class Import {
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 
-	public function finalize_import_session_option(): void {
+	public function finalize_import_session_option() {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		unset( $import_sessions[ $this->session_id ]['instance_data'] );
