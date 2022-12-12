@@ -13,8 +13,6 @@
 	--n-tabs-display: flex;
 	--n-tabs-direction: column;
 	--n-tabs-gap: 10px;
-	--n-tabs-border-width: 1px;
-	--n-tabs-border-color: initial;
 
 	--n-tabs-heading-display: flex;
 	--n-tabs-heading-direction: row;
@@ -72,6 +70,7 @@
 			display: var( --n-tabs-heading-display );
 			flex-basis: var( --n-tabs-heading-width );
 			flex-direction: var( --n-tabs-heading-direction );
+			flex-shrink: 0;
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
 		}
@@ -91,8 +90,6 @@
 			flex-direction: var( --n-tabs-title-direction );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
-			color: var( --n-tabs-title-color );
-			background-color: var( --n-tabs-title-background-color );
 			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
@@ -133,13 +130,11 @@
 				order: var( --n-tabs-icon-order );
 				overflow: hidden;
 
-				> i {
-					color: var( --n-tabs-icon-color );
+				i {
 					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
 				svg {
-					fill: var( --n-tabs-icon-color );
 					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
@@ -147,17 +142,44 @@
 				&:empty {
 					display: none;
 				}
+			}
 
-				i:last-child,
-				svg:last-child {
-					transform: translate(0, -100vh);
-					height: 0;
-					opacity: 0;
+			&:not( .e-active ) {
+				background-color: var( --n-tabs-title-background-color );
+
+				&,
+				& a {
+					color: var( --n-tabs-title-color );
+				}
+
+				.e-n-tab-icon {
+
+					i {
+						color: var( --n-tabs-icon-color );
+					}
+
+					svg {
+						fill: var( --n-tabs-icon-color );
+					}
+
+					i,
+					svg {
+
+						&:last-child {
+							transform: translate(0, -100vh);
+							height: 0;
+							opacity: 0;
+						}
+					}
 				}
 			}
 
-			&:hover {
-				color: var( --n-tabs-title-color-hover );
+			&:not( .e-active ):hover {
+
+				&,
+				& a {
+					color: var( --n-tabs-title-color-hover );
+				}
 
 				.e-n-tab-icon {
 
@@ -172,7 +194,11 @@
 			}
 
 			&.e-active {
-				color: var( --n-tabs-title-color-active );
+
+				&,
+				& a {
+					color: var( --n-tabs-title-color-active );
+				}
 
 				.e-n-tab-icon {
 
@@ -186,16 +212,11 @@
 
 					i,
 					svg {
+
 						&:first-child {
 							transform: translate(0, -100vh);
 							height: 0;
 							opacity: 0;
-						}
-
-						&:last-child {
-							transform: initial;
-							height: initial;
-							opacity: initial;
 						}
 					}
 				}
