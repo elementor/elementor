@@ -351,7 +351,7 @@ class Widget_Image_Gallery extends Widget_Base {
 				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'default' => [
 					'unit' => 'px',
-					],
+				],
 				'range' => [
 					'px' => [
 						'min' => 0,
