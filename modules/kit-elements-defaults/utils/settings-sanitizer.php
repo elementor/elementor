@@ -95,21 +95,30 @@ class Settings_Sanitizer {
 		}
 
 		$controls = $this->pending_element->get_controls();
+
+		if ( ! $controls ) {
+			return $this;
+		}
+
 		$available_settings = $this->get_avaliable_settings( $controls );
 
 		$this->pending_settings = ( new Collection( $this->pending_settings ) )
+			// Remove all the settings that are not available in the current element + save the special settings.
 			->only( array_merge(
 				$available_settings,
 				static::SPECIAL_SETTINGS
 			) )
 			->map( function ( $value, $key ) use ( $available_settings ) {
-				if ( ! in_array( $key, static::SPECIAL_SETTINGS, true ) ) {
-					return $value;
+				$is_special_setting = in_array( $key, static::SPECIAL_SETTINGS, true );
+
+				// Remove all the special settings that are not available in the current element.
+				if ( $is_special_setting ) {
+					return ( new Collection( $value ) )
+						->only( $available_settings )
+						->all();
 				}
 
-				return ( new Collection( $value ) )
-					->only( $available_settings )
-					->all();
+				return $value;
 			} )
 			->all();
 
@@ -220,25 +229,31 @@ class Settings_Sanitizer {
 	/**
 	 * Get all the available settings of a specific element, including responsive settings.
 	 *
-	 * @param $controls
+	 * @param array $controls
 	 *
 	 * @return array
 	 */
-	private function get_avaliable_settings( $controls ) {
+	private function get_avaliable_settings( array $controls ) {
 		$control_keys = new Collection(
 			array_keys( $controls )
 		);
 
-		$optional_responsive_keys = new Collection(
-			Breakpoints_Manager::BREAKPOINT_KEYS
-		);
+		$optional_responsive_keys = new Collection( [
+			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
+			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
+			Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+			Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA,
+			Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP,
+			Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN,
+		] );
 
 		return $control_keys
 			->map( function ( $control_key ) use ( $optional_responsive_keys ) {
+				// Add the responsive settings.
 				return $optional_responsive_keys->map( function ( $responsive_key ) use ( $control_key ) {
 					return "{$control_key}_{$responsive_key}";
 				} )
-				->push( $control_key )
+				->push( $control_key ) // Add the setting itself (not responsive).
 				->all();
 			} )
 			->flatten()

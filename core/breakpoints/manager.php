@@ -22,16 +22,6 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_DESKTOP = 'desktop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
 
-	const BREAKPOINT_KEYS = [
-		self::BREAKPOINT_KEY_MOBILE,
-		self::BREAKPOINT_KEY_MOBILE_EXTRA,
-		self::BREAKPOINT_KEY_TABLET,
-		self::BREAKPOINT_KEY_TABLET_EXTRA,
-		self::BREAKPOINT_KEY_LAPTOP,
-		self::BREAKPOINT_KEY_DESKTOP,
-		self::BREAKPOINT_KEY_WIDESCREEN,
-	];
-
 	/**
 	 * Breakpoints
 	 *
