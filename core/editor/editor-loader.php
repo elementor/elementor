@@ -16,10 +16,10 @@ class Editor_Loader {
 	private $config_provider;
 
 	/**
-	 * @param Config_Provider_Interface $strategy
+	 * @param Config_Provider_Interface $config_provider
 	 */
-	public function __construct( Config_Provider_Interface $strategy ) {
-		$this->config_provider = $strategy;
+	public function __construct( Config_Provider_Interface $config_provider ) {
+		$this->config_provider = $config_provider;
 	}
 
 	/**

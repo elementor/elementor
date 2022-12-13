@@ -7,9 +7,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Config_Providers\Editor_V1_Config_Provider;
-use Elementor\Core\Editor\Config_Providers\Editor_V2_Config_Provider;
-use Elementor\Core\Editor\Config_Providers\Config_Provider_Interface;
+use Elementor\Core\Editor\Config_Providers\Config_Provider_Factory;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
@@ -42,6 +40,8 @@ class Editor {
 	 * User capability required to access Elementor editor.
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';
+
+	const EDITOR_V2_EXPERIMENT_NAME = 'editor_v2';
 
 	/**
 	 * Post ID.
@@ -100,9 +100,7 @@ class Editor {
 			return;
 		}
 
-		$this->loader = new Editor_Loader(
-			$this->create_loader_config_provider()
-		);
+		$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
 
 		$this->set_post_id( absint( $_REQUEST['post'] ) );
 
@@ -836,23 +834,6 @@ class Editor {
 	}
 
 	/**
-	 * @return Config_Provider_Interface
-	 */
-	private function create_loader_config_provider() {
-		$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
-
-		// Nonce verification is not required, using param for routing purposes.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$editor_version = Utils::get_super_global_value( $_GET, 'v', $is_editor_v2_active ? '2' : '1' );
-
-		if ( '2' === $editor_version ) {
-			return new Editor_V2_Config_Provider();
-		}
-
-		return new Editor_V1_Config_Provider();
-	}
-
-	/**
 	 * Adding Editor V2 experiment.
 	 *
 	 * @return void
@@ -860,7 +841,7 @@ class Editor {
 	 */
 	private function register_editor_v2_experiment() {
 		Plugin::$instance->experiments->add_feature( [
-			'name' => 'editor_v2',
+			'name' => static::EDITOR_V2_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Editor V2', 'elementor' ),
 			'description' => esc_html__( 'Enable the new editor.', 'elementor' ),
 			'hidden' => true,
