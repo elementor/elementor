@@ -390,6 +390,8 @@ class onboarding {
     }
 
     async selectKitLibaryOption() {
+        this.page.on( 'response', ( response ) =>
+            console.log( '<<', response.status(), response.url() ) );
         await this.kitLibraryButton.click();
         await this.page.waitForLoadState( 'networkidle' );
     }
