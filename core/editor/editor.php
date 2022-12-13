@@ -101,7 +101,7 @@ class Editor {
 		}
 
 		$this->loader = new Editor_Loader(
-			$this->make_loading_strategy()
+			$this->create_loader_config_provider()
 		);
 
 		$this->set_post_id( absint( $_REQUEST['post'] ) );
@@ -824,12 +824,14 @@ class Editor {
 	/**
 	 * @return Config_Provider_Interface
 	 */
-	private function make_loading_strategy() {
+	private function create_loader_config_provider() {
 		$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
 
 		// Nonce verification is not required, using param from routing purpose.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( $is_editor_v2_active && isset( $_GET['v'] ) && '2' === $_GET['v'] ) {
+		$editor_version = Utils::get_super_global_value( $_GET, 'v', $is_editor_v2_active ? '2' : '1' );
+
+		if ( '2' === $editor_version ) {
 			return new Editor_V2_Config_Provider();
 		}
 
