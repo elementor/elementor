@@ -315,7 +315,7 @@ class onboarding {
         await this.page.locator( '.media-button-select:visible' ).click();
         await this.page.locator( ' .media-button-skip' ).click();
         await this.page.locator( '[value="Publish"]' ).click();
-        await this.page.waitForLoadState( 'networkidle' );
+        await this.page.waitForSelector( '[value="Published"]' );
     }
 
     async checkLogoIsPresent() {
@@ -347,7 +347,6 @@ class onboarding {
             this.logoRemoveButton.click();
             await this.page.locator( '[value="Publish"]' ).click();
             await this.page.waitForSelector( '[value="Published"]' );
-            await this.page.waitForLoadState( 'networkidle' );
         }
     }
 
@@ -391,8 +390,6 @@ class onboarding {
     }
 
     async selectKitLibaryOption() {
-        this.page.on( 'response', ( response ) =>
-            console.log( '<<', response.status(), response.url() ) );
         await this.kitLibraryButton.click();
         await this.page.waitForLoadState( 'networkidle' );
     }

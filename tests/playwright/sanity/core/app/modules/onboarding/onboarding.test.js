@@ -160,11 +160,11 @@ test.describe( 'Fourth Step - Upload Logo', () => {
 } );
 
 test.describe( 'Fifth Step - Good to Go', () => {
-	test.only( 'Check CSS and Check Kit Library with blank kit', async ( { page } ) => {
+	test( 'Check CSS and Check Kit Library with blank kit', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step5URL );
-		await helper.selectKitLibaryOption( page );
+		await helper.selectKitLibaryOption();
 		await helper.userIsOnTheLibraryKitsPage();
-		await page.waitForTimeout( 2000 );
+		await page.waitForTimeout( 1000 );
 		await helper.checkFirstKitIsBlankCanvas();
 		await helper.selectTheBlankCanvasKit();
 		await helper.checkUserIsOnAFreshPost();
