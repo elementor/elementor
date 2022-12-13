@@ -14,7 +14,10 @@
 	.dialog-buttons-wrapper {
 		display: flex;
 		justify-content: flex-end;
-		margin-top: 15px;
+
+		&:not( :empty ) {
+			margin-top: 15px;
+		}
 	}
 
 	.dialog-button {
