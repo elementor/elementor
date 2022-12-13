@@ -18,10 +18,6 @@ class Module extends \Elementor\Core\Base\Module {
 		return 'nested-tabs';
 	}
 
-	protected function get_widgets() {
-		return [ 'NestedTabs' ];
-	}
-
 	public function __construct() {
 		parent::__construct();
 
