@@ -35,10 +35,12 @@ test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 
 	await popup.waitForLoadState( 'domcontentloaded' );
 
-	const createAccount = await popup.locator( 'text=Sign up for Elementor' );
+	await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
+
+	const signupForm = await popup.locator( 'form#signup-form' );
 
 	// Check that the popup opens the Elementor Connect screen.
-	await expect( createAccount ).toBeVisible();
+	await expect( signupForm ).toBeVisible();
 
 	popup.close();
 } );
