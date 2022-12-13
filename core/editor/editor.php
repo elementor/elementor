@@ -324,6 +324,20 @@ class Editor {
 	}
 
 	/**
+	 * NOTICE: This method not in use, it's here for backward compatibility.
+	 *
+	 * Print Editor Template.
+	 *
+	 * Include the wrapper template of the editor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 */
+	public function print_editor_template() {
+		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+	}
+
+	/**
 	 * Enqueue scripts.
 	 *
 	 * Registers all the editor scripts and enqueues them.
@@ -827,7 +841,7 @@ class Editor {
 	private function create_loader_config_provider() {
 		$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
 
-		// Nonce verification is not required, using param from routing purpose.
+		// Nonce verification is not required, using param for routing purposes.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$editor_version = Utils::get_super_global_value( $_GET, 'v', $is_editor_v2_active ? '2' : '1' );
 
