@@ -157,6 +157,24 @@ module.exports = class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
 	}
 
+	async copyElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
+		await this.page.waitForSelector( copyListItemSelector );
+		await this.page.locator( copyListItemSelector ).click();
+	}
+
+	async pasteStyleElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
+		await this.page.waitForSelector( pasteListItemSelector );
+		await this.page.locator( pasteListItemSelector ).click();
+	}
+
 	/**
 	 * Activate a tab inside the panel editor.
 	 *
@@ -360,5 +378,38 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
 		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
+	}
+
+	/**
+	 * Select a responsive view.
+	 *
+	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async changeResponsiveView( device ) {
+		const hasResponsiveViewBar = await this.page.evaluate( () => {
+			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
+		} );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
+
+		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+	}
+
+	async publishAndViewPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await Promise.all( [
+			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
+			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
+		] );
+
+		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 };
