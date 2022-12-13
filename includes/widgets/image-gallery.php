@@ -343,7 +343,6 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 		
-
 		$this->add_responsive_control(
 			'caption_space',
 			[
