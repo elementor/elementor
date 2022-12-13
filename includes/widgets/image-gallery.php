@@ -350,7 +350,7 @@ class Widget_Image_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'default' => [
-					'unit' => 'px'
+					'unit' => 'px',
 					],
 				'range' => [
 					'px' => [
