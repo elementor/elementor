@@ -342,7 +342,7 @@ class Widget_Image_Gallery extends Widget_Base {
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
 			]
 		);
-		
+
 		$this->add_responsive_control(
 			'caption_space',
 			[
