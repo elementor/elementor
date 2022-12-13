@@ -604,7 +604,7 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function set_client_id() {
-		$source = Utils::get_super_global_value( $_REQUEST, 'source', '' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$source = Utils::get_super_global_value( $_REQUEST, 'source' ) ?? ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$response = $this->request(
 			'get_client_id',
 			[
