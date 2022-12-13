@@ -1,11 +1,11 @@
 <?php
-namespace Elementor\Core\Editor\Loading_Strategies;
+namespace Elementor\Core\Editor\Config_Providers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Editor_Base_Loading_Strategy implements Loading_Strategy_Interface {
+abstract class Editor_Base_Config_Provider implements Config_Provider_Interface {
 	public function get_scripts() {
 		return [
 			[

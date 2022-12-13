@@ -7,9 +7,9 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Loading_Strategies\Editor_V1_Loading_Strategy;
-use Elementor\Core\Editor\Loading_Strategies\Editor_V2_Loading_Strategy;
-use Elementor\Core\Editor\Loading_Strategies\Loading_Strategy_Interface;
+use Elementor\Core\Editor\Config_Providers\Editor_V1_Config_Provider;
+use Elementor\Core\Editor\Config_Providers\Editor_V2_Config_Provider;
+use Elementor\Core\Editor\Config_Providers\Config_Provider_Interface;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
@@ -822,7 +822,7 @@ class Editor {
 	}
 
 	/**
-	 * @return Loading_Strategy_Interface
+	 * @return Config_Provider_Interface
 	 */
 	private function make_loading_strategy() {
 		$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
@@ -830,10 +830,10 @@ class Editor {
 		// Nonce verification is not required, using param from routing purpose.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $is_editor_v2_active && isset( $_GET['v'] ) && '2' === $_GET['v'] ) {
-			return new Editor_V2_Loading_Strategy();
+			return new Editor_V2_Config_Provider();
 		}
 
-		return new Editor_V1_Loading_Strategy();
+		return new Editor_V1_Config_Provider();
 	}
 
 	/**
