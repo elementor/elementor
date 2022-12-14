@@ -518,13 +518,13 @@ class NestedTabs extends Widget_Nested_Base {
 			]
 		);
 
-        $this->add_control(
-            'hover_animation',
-            [
-                'label' => esc_html__( 'Hover Animation', 'elementor' ),
-                'type' => Controls_Manager::HOVER_ANIMATION,
-            ]
-        );
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+			]
+		);
 
 		$this->add_control(
 			'tabs_title_transition_duration',
@@ -1048,8 +1048,8 @@ class NestedTabs extends Widget_Nested_Base {
 			$tab_title_mobile_classes = [ 'e-n-tab-title', 'e-collapse' ];
 
 			if ( $settings['hover_animation'] ) {
-			array_push( $tab_title_classes, 'elementor-animation-' . $settings['hover_animation'] );
-			array_push( $tab_title_mobile_classes, 'elementor-animation-' . $settings['hover_animation'] );
+				array_push( $tab_title_classes, 'elementor-animation-' . $settings['hover_animation'] );
+				array_push( $tab_title_mobile_classes, 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
 			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
@@ -1083,8 +1083,9 @@ class NestedTabs extends Widget_Nested_Base {
 
 			$icon_html = Icons_Manager::try_get_icon_html( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
 			$icon_active_html = $icon_html;
+
 			if ( $this->is_active_icon_exist( $item ) ) {
-			$icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
+				$icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
 			}
 
 			$tabs_title_html .= "<div {$title_render_attributes}>";
