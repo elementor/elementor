@@ -7,6 +7,7 @@
 		React.createElement(
 			'div',
 			{
+				id: 'elementor-editor-v2-top-bar',
 				style: {
 					background: '#000',
 					height: '50px',
