@@ -30,48 +30,33 @@ class Test_Config_Provider_Factory extends Elementor_Test_Base {
 			->set_feature_default_state( Editor::EDITOR_V2_EXPERIMENT_NAME, $this->original_experiment_default_state );
 	}
 
-
-	public function test_create() {
+	/**
+	 * @dataProvider create_data_provider
+	 */
+	public function test_create( $state, $query_params, $expected_class ) {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
 			Editor::EDITOR_V2_EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
+			$state
 		);
+
+		foreach ( $query_params as $key => $value ) {
+			$_GET[ $key ] = $value;
+		}
 
 		// Act
 		$config_provider = Config_Provider_Factory::create();
 
 		// Assert
-		$this->assertInstanceOf( Editor_V1_Config_Provider::class, $config_provider );
+		$this->assertInstanceOf( $expected_class, $config_provider );
 	}
 
-	public function test_create__with_editor_v2_experiment_on() {
-		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state(
-			Editor::EDITOR_V2_EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
-		// Act
-		$config_provider = Config_Provider_Factory::create();
-
-		// Assert
-		$this->assertInstanceOf( Editor_V2_Config_Provider::class, $config_provider );
-	}
-
-	public function test_create__with_query_param() {
-		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state(
-			Editor::EDITOR_V2_EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-
-		$_GET['v'] = '2';
-
-		// Act
-		$config_provider = Config_Provider_Factory::create();
-
-		// Assert
-		$this->assertInstanceOf( Editor_V2_Config_Provider::class, $config_provider );
+	public function create_data_provider() {
+		return [
+			[ Experiments_Manager::STATE_INACTIVE, [], Editor_V1_Config_Provider::class ],
+			[ Experiments_Manager::STATE_ACTIVE, [], Editor_V2_Config_Provider::class ],
+			[ Experiments_Manager::STATE_INACTIVE, [ 'v' => '2' ], Editor_V2_Config_Provider::class ],
+			[ Experiments_Manager::STATE_ACTIVE, [ 'v' => '1' ], Editor_V1_Config_Provider::class ],
+		];
 	}
 }
