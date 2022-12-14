@@ -42,7 +42,7 @@ const PostLayout = {
 	},
 
 	onPageTitleClick() {
-		if ( $e.routes.getCurrent( 'panel' ).includes( 'panel/global' ) ) {
+		if ( $e.routes.isPartOf( 'panel/global' ) ) {
 			return;
 		}
 
