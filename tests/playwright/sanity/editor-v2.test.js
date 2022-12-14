@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test.describe.only( 'Editor v2', () => {
+test.describe( 'Editor v2', () => {
 	const updateExperiment = async ( { browser, testInfo }, experimentState ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -24,7 +24,7 @@ test.describe.only( 'Editor v2', () => {
 		await updateExperiment( { browser, testInfo }, false );
 	} );
 
-	test( 'validate the editor is loaded', async ( { page }, testInfo ) => {
+	test( 'validate the top bar appears', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
