@@ -23,7 +23,7 @@
 
 	.eicon-plus-circle {
 		@include absolute-center;
-		color: #fff;
+		color: $white;
 		font-size: 20px;
 	}
 
@@ -40,6 +40,7 @@
 	&-area {
 		@include checkers-background(16px);
 		background-color: #f6f6f6;
+		aspect-ratio: 21 / 9;
 
 		&:not(:hover) {
 			.elementor-control-media__remove {
@@ -55,6 +56,8 @@
 	}
 
 	& &__content {
+		aspect-ratio: 21 / 9;
+		position: relative;
 		cursor: pointer;
 		overflow: hidden;
 
@@ -105,7 +108,7 @@
 		align-items: center;
 		justify-content: center;
 		flex-grow: 1;
-		color: #fff;
+		color: $white;
 		background-color: rgba($editor-dark, .85);
 		font-size: 11px;
 		transition: background .3s;
@@ -130,13 +133,14 @@
 		width: 20px;
 		height: 20px;
 		font-size: 11px;
-		color: $editor-light;
-		background-color: rgba(#fff, .9);
+		color: $white;
+		background-color: rgba($editor-dark, .85);
 		border-radius: 3px;
 		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
+		transition: background .3s;
 
 		&:hover {
-			background-color: rgba(#fff, 1);
+			background-color: rgba($editor-dark, .95);
 			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
 		}
 	}
@@ -221,7 +225,7 @@
 		border: none;
 		border-radius: 0;
 		background-color: rgba($editor-dark, .85);
-		color: #fff;
+		color: $white;
 
 		&:hover {
 			background-color: rgba($editor-dark, .95);
