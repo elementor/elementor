@@ -1142,7 +1142,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 				view.addRenderAttribute( tabWrapperKey, {
 					'id': tabId,
-					'class': [ 'e-n-tab-title', 'e-normal', hoverAnimationClass ],
+					'class': [ 'e-n-tab-title','e-normal',hoverAnimationClass ],
 					'data-tab': tabCount,
 					'role': 'tab',
 					'tabindex': 1 === tabCount ? '0' : '-1',
