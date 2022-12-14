@@ -389,16 +389,20 @@ class onboarding {
         await this.page.goto( this.step5URL, { waitUntil: 'networkidle' } );
     }
 
-    async userIsOnTheLibraryKitsPage() {
-        await expect( await this.page.url().includes( '/kit-library' ), `The User is on: ${ this.page.url() }` ).toBeTruthy();
-        await this.page.waitForLoadState( 'networkidle' );
-    }
-
     async selectKitLibaryOption() {
         await Promise.all( [
-            this.page.waitForLoadState( 'networkidle' ),
+            this.page.waitForSelector( '[alt="Blank Canvas"]' ),
             this.kitLibraryButton.click(),
           ] );
+    }
+
+    async checkUserIsOnTheLibraryKitsPage() {
+        await expect( await this.page.url().includes( '/kit-library' ), `The User is on: ${ this.page.url() }` ).toBeTruthy();
+    }
+
+    async checkFirstKitIsBlankCanvas() {
+        await this.page.waitForSelector( '[alt="Blank Canvas"]' );
+        await expect( await this.kitNames.nth( 0 ) ).toContainText( 'Blank Canvas' );
     }
 
     async selectEditWithBlankCanvas() {
@@ -407,10 +411,6 @@ class onboarding {
 
     async checkUserIsOnAFreshPost() {
         await expect( this.page.url().includes( '/wp-admin/post.php' ) ).toBeTruthy();
-    }
-
-    async checkFirstKitIsBlankCanvas() {
-        await expect( await this.kitNames.nth( 0 ) ).toContainText( 'Blank Canvas' );
     }
 
     async selectTheBlankCanvasKit() {
