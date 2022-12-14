@@ -15,7 +15,7 @@
 			height: 100%;
 			width: 100%;
 			border: none; // To deal with inconsistencies
-			background-color: #000;
+			background-color: $black; // To show the effect of the aspect ratio when the player does not support responsive well (e.g. Vimeo)
 		}
 	}
 
