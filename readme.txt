@@ -240,6 +240,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.9.1 - 2022-12-14 =
+
+* Fix: Copy-Paste Style prevents saving the page when Repeater controls exist in "non-content" tabs ([#19895](https://github.com/elementor/elementor/issues/19895), [#20637](https://github.com/elementor/elementor/issues/20637))
+* Fix: Font looks blurry in the Admin Top Bar (props [@CodeExplore](https://github.com/CodeExplore))
+* Fix: The not active tab in the media modal is missing
+* Fix: Background Overlay is not uploading in Container when using the Lazy Load experiment
+
 = 3.9.0 - 2022-12-06 =
 
 * New: Introducing Save as Default as a Beta experiment - Create your default settings for every element for better consistency
