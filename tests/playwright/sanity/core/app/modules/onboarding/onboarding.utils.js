@@ -389,16 +389,16 @@ class onboarding {
         await this.page.goto( this.step5URL, { waitUntil: 'networkidle' } );
     }
 
-    async selectKitLibaryOption() {
-        this.page.on( 'response', ( response ) =>
-            console.log( '<<', response.status(), response.url() ) );
-        await this.kitLibraryButton.click();
+    async userIsOnTheLibraryKitsPage() {
+        await expect( await this.page.url().includes( '/kit-library' ), `The User is on: ${ this.page.url() }` ).toBeTruthy();
         await this.page.waitForLoadState( 'networkidle' );
     }
 
-    async userIsOnTheLibraryKitsPage() {
-        await expect( await this.page.url().includes( '/kit-library' ) ).toBeTruthy();
-        await this.page.waitForLoadState( 'networkidle' );
+    async selectKitLibaryOption() {
+        await Promise.all( [
+            this.page.waitForLoadState( 'networkidle' ),
+            this.kitLibraryButton.click(),
+          ] );
     }
 
     async selectEditWithBlankCanvas() {
