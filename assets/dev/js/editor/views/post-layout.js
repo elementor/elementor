@@ -42,6 +42,10 @@ const PostLayout = {
 	},
 
 	onPageTitleClick() {
+		if ( $e.routes.getCurrent( 'panel' ).includes( 'panel/global' ) ) {
+			return;
+		}
+
 		$e.route( 'panel/page-settings/settings' );
 	},
 };
