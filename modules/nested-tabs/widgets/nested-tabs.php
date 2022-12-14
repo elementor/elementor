@@ -1040,10 +1040,10 @@ class NestedTabs extends Widget_Nested_Base {
 
 		foreach ( $tabs as $index => $item ) {
 			// Tabs title.
-			$tab_count = $index + 1;
-			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
-			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
-			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
+            $tab_count = $index + 1;
+            $tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
+            $tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
+            $tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
             $tab_title_classes = [ 'e-n-tab-title', 'e-normal' ];
             $tab_title_mobile_classes = [ 'e-n-tab-title', 'e-collapse' ];
 
@@ -1076,21 +1076,21 @@ class NestedTabs extends Widget_Nested_Base {
 				'id' => $tab_id . '-accordion',
 			] );
 
-			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
-			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
-			$tab_title_text_class = $this->get_render_attribute_string( 'tab-title-text' );
-			$tab_icon_class = $this->get_render_attribute_string( 'tab-icon' );
+            $title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
+            $mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
+            $tab_title_text_class = $this->get_render_attribute_string( 'tab-title-text' );
+            $tab_icon_class = $this->get_render_attribute_string( 'tab-icon' );
 
-			$icon_html = Icons_Manager::try_get_icon_html( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
-			$icon_active_html = $icon_html;
-			if ( $this->is_active_icon_exist( $item ) ) {
-				$icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
-			}
+            $icon_html = Icons_Manager::try_get_icon_html( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
+            $icon_active_html = $icon_html;
+            if ( $this->is_active_icon_exist( $item ) ) {
+                $icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
+            }
 
-			$tabs_title_html .= "<div {$title_render_attributes}>";
-			$tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
-			$tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
-			$tabs_title_html .= '</div>';
+            $tabs_title_html .= "<div {$title_render_attributes}>";
+            $tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
+            $tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
+            $tabs_title_html .= '</div>';
 
 			// Tabs content.
 			ob_start();
