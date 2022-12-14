@@ -1,4 +1,5 @@
 import AddSectionView from './add-section/independent';
+import PostLayout from './post-layout';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
@@ -7,6 +8,8 @@ const Preview = BaseSectionsContainerView.extend( {
 		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
 		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+
+		PostLayout.init();
 	},
 
 	getChildViewContainer() {

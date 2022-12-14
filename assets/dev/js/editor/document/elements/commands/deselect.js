@@ -8,7 +8,7 @@ export class Deselect extends $e.modules.editor.CommandContainerBase {
 	apply( args ) {
 		const { containers = [ args.container ], all = false } = args;
 
-		elementor.selection.remove( containers, all );
+		elementor.selection.remove( containers, all, { panelOpenDefault: false } );
 	}
 }
 

@@ -775,6 +775,8 @@ export default class EditorBase extends Marionette.Application {
 				isClickInsideElementor = !! $target.closest( '.elementor-edit-area, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[ 0 ] );
 
+			const isTargetPostLayoutElement = 'click' === ( $target.attr( 'data-e-post-layout' ) ?? false );
+
 			if ( $target.closest( 'a:not(.elementor-clickable)' ).length ) {
 				event.preventDefault();
 			}
@@ -786,7 +788,9 @@ export default class EditorBase extends Marionette.Application {
 			// It's a click on the preview area, not in the edit area,
 			// and a document is open and has an edit area.
 			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
-				$e.run( 'document/elements/deselect-all' );
+				$e.run( 'document/elements/deselect-all', {
+					panelOpenDefault: ! isTargetPostLayoutElement,
+				} );
 			}
 		} );
 	}

@@ -1,6 +1,6 @@
 export class DeselectAll extends $e.modules.CommandBase {
-	apply() {
-		elementor.selection.remove( [], true );
+	apply( args ) {
+		elementor.selection.remove( [], true, { panelOpenDefault: ( args.panelOpenDefault ?? true ) } );
 	}
 }
 

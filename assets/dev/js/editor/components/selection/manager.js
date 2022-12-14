@@ -21,6 +21,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 */
 	type = false;
 
+	panelOpenDefault = true;
+
 	/**
 	 * Manager constructor.
 	 *
@@ -39,7 +41,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 						target.updateType();
 						target.updateSortable();
-						target.updatePanelPage();
+						target.updatePanelPage( ...args );
 						target.updateNavigator();
 
 						return result;
@@ -102,8 +104,9 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 *
 	 * @param {Container[]|Container} containers
 	 * @param {boolean}               all
+	 * @param {Object}                args
 	 */
-	remove( containers, all = false ) {
+	remove( containers, all = false, args = {} ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		if ( all ) {
@@ -118,7 +121,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	}
 
 	/**
-	 * Does element selected.
+	 * Is element selected?
 	 *
 	 * Check whether an element container exists in the selected elements.
 	 *
@@ -160,11 +163,15 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Update the panel page.
 	 *
-	 * Selected elements affect the panel panel in a way that when element is selected - its settings page is displayed,
-	 * and when the element is blurred (unfocused) - the the default page opened. When more than one element selected,
+	 * Selected elements affect the panel in a way that when element is selected - its settings page is displayed,
+	 * and when the element is blurred (unfocused) - the default page is opened. When more than one element selected,
 	 * the default page should appear.
+	 *
+	 * @param {Container[]|Container} containers
+	 * @param {boolean}               action
+	 * @param {Object}                args
 	 */
-	updatePanelPage() {
+	updatePanelPage( containers = [], action = true, args = { panelOpenDefault: false } ) {
 		const elements = this.getElements();
 
 		if ( 1 === elements.length ) {
@@ -172,7 +179,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 				model: elements[ 0 ].model,
 				view: elements[ 0 ].view,
 			} );
-		} else {
+		} else if ( args.panelOpenDefault ?? true ) {
 			$e.internal( 'panel/open-default', {
 				autoFocusSearch: false,
 			} );
