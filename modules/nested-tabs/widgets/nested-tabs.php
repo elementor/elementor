@@ -1038,8 +1038,8 @@ class NestedTabs extends Widget_Nested_Base {
 		$tabs_title_html = '';
 		$mobile_tabs_title_html = '';
 
-		foreach ( $tabs as $index => $item ) {
-			// Tabs title.
+        foreach ( $tabs as $index => $item ) {
+            // Tabs title.
             $tab_count = $index + 1;
             $tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
             $tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
@@ -1052,7 +1052,7 @@ class NestedTabs extends Widget_Nested_Base {
                 array_push( $tab_title_mobile_classes, 'elementor-animation-' . $settings['hover_animation'] );
             }
 
-			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
+            $tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => $tab_id,
