@@ -29,7 +29,8 @@ export class SetSettings extends $e.modules.editor.CommandContainerInternalBase 
 				this.component.store.actions.settings( {
 					documentId: elementor.documents.getCurrentId(),
 					elementId: container.id,
-					settings,
+					// Deep copy in order to avoid making container setting properties immutable.
+					settings: JSON.parse( JSON.stringify( settings ) ),
 				} ),
 			);
 		} );
