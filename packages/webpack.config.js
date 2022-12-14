@@ -1,6 +1,6 @@
 const path = require( 'path' );
 const packages = require( './package.json' ).workspaces.map( ( packagePath ) => {
-	const packageName = packagePath.replace( /^(apps|features|libs)\//, '' );
+	const packageName = packagePath.replace( /^(apps|features|utils)\//, '' );
 
 	return {
 		packagePath,
@@ -44,11 +44,17 @@ const config = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: [ '@babel/preset-react' ],
+						presets: [
+							'@babel/preset-typescript',
+							'@babel/preset-react',
+						],
 					},
 				},
 			},
 		],
+	},
+	resolve: {
+		extensions: [ '.tsx', '.ts', '.js' ],
 	},
 	output: {
 		filename: '[name].js',

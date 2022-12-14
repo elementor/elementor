@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import elementorLocations from '@elementor/locations';
+import elementorLocations from '@elementor/locations'; // TODO: Fix ts-error.
 
 console.log( 'loaded: editor-top-bar' );
 

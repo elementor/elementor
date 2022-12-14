@@ -1,7 +1,7 @@
 export class LocationsManager {
-	locations = {};
+	locations : Record<string, React.FC[]> = {};
 
-	register( locationName, component ) {
+	register( locationName : string, component : React.FC ) {
 		if ( ! this.locations[ locationName ] ) {
 			this.locations[ locationName ] = [];
 		}
@@ -9,7 +9,7 @@ export class LocationsManager {
 		this.locations[ locationName ].push( component );
 	}
 
-	get( locationName ) {
+	get( locationName : string ) {
 		return this.locations[ locationName ];
 	}
 
