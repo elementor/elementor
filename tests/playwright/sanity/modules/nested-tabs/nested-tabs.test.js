@@ -713,7 +713,6 @@ test.describe( 'Nested Tabs tests', () => {
 		// Activate hover animation.
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-tabs_title_hover' ).click();
-		// await editor.setSelect2ControlValue( 'hover_animation', 'grow', true );
 		await page.locator( '.elementor-control-hover_animation .select2' ).click();
 		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
 		await page.waitForLoadState( 'networkidle' );

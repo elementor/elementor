@@ -1066,7 +1066,7 @@ class NestedTabs extends Widget_Nested_Base {
 			] );
 
 			$this->add_render_attribute( $tab_title_mobile_setting_key, [
-				'class' => [ 'e-n-tab-title', 'e-collapse' ],
+				'class' => $tab_title_mobile_classes,
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
 				'role' => 'tab',
