@@ -519,12 +519,12 @@ class NestedTabs extends Widget_Nested_Base {
 		);
 
         $this->add_control(
-			'hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-			]
-		);
+            'hover_animation',
+            [
+                'label' => esc_html__( 'Hover Animation', 'elementor' ),
+                'type' => Controls_Manager::HOVER_ANIMATION,
+            ]
+        );
 
 		$this->add_control(
 			'tabs_title_transition_duration',
