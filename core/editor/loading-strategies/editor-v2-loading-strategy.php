@@ -9,6 +9,7 @@ class Editor_V2_Loading_Strategy extends Editor_Base_Loading_Strategy implements
 	public function get_scripts() {
 		$scripts = parent::get_scripts();
 
+		// TODO: Choose a final name.
 		$scripts = apply_filters( 'elementor/editor/v2/loader/scripts/register', $scripts );
 
 		return $scripts;
@@ -17,6 +18,7 @@ class Editor_V2_Loading_Strategy extends Editor_Base_Loading_Strategy implements
 	public function get_loader_scripts() {
 		$deps = [ 'elementor-editor' ];
 
+		// TODO: Choose a final name.
 		$deps = apply_filters( 'elementor/editor/v2/loader/scripts/dependencies', $deps );
 
 		$deps = $this->ensure_registered_handles( $deps );
@@ -34,7 +36,7 @@ class Editor_V2_Loading_Strategy extends Editor_Base_Loading_Strategy implements
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
 	}
 
-	// TODO: Make it recursive, so if a package has a non-registered dependency in it's tree,
+	// TODO: Maybe make it recursive, so if a package has a non-registered dependency in its tree,
 	// 	it will be filtered out.
 	private function ensure_registered_handles( $handles ) {
 		return array_filter( $handles, function ( $handle ) {

@@ -16,6 +16,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		// TODO: Move the the loader strategy.
 		add_filter( 'elementor/editor/v2/loader/scripts/register', function ( array $scripts ) {
 			$packages = array_merge(
 				$this->get_utils(),
@@ -27,6 +28,7 @@ class Module extends BaseModule {
 				$deps = $package['deps'] ?? [];
 
 				$scripts[] = [
+					// TODO: Don't ise dynamically generated handle names.
 					'handle' => "elementor-$package_name",
 					'src' => "{{ASSETS_URL}}/js/editor-packages/$package_name.js",
 					'deps' => $deps,
@@ -49,6 +51,7 @@ class Module extends BaseModule {
 
 	// TODO: Load automatically.
 	// TODO: Pull deps from package.json? Use webpack to generate the php file?
+	// TODO: Add a `get_features()` method?
 	private function get_utils() {
 		return [
 			[
