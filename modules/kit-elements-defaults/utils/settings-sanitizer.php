@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults\Utils;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Element_Base;
 use Elementor\Elements_Manager;
 use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -93,18 +93,25 @@ class Settings_Sanitizer {
 			return $this;
 		}
 
-		$controls = $this->pending_element->get_controls();
+		$valid_settings_keys = $this->get_valid_settings_keys(
+			$this->pending_element->get_controls()
+		);
 
-		$this->pending_settings = ( new Collection( $this->pending_settings ) )
-			->only( array_merge( array_keys( $controls ), static::SPECIAL_SETTINGS ) )
-			->map( function ( $value, $key ) use ( $controls ) {
-				if ( ! in_array( $key, static::SPECIAL_SETTINGS, true ) ) {
-					return $value;
-				}
+		$this->pending_settings = $this->filter_invalid_settings(
+			$this->pending_settings,
+			array_merge( $valid_settings_keys, self::SPECIAL_SETTINGS )
+		);
 
-				return array_intersect_key( $value, $controls );
-			} )
-			->all();
+		foreach ( self::SPECIAL_SETTINGS as $special_setting ) {
+			if ( ! isset( $this->pending_settings[ $special_setting ] ) ) {
+				continue;
+			}
+
+			$this->pending_settings[ $special_setting ] = $this->filter_invalid_settings(
+				$this->pending_settings[ $special_setting ],
+				$valid_settings_keys
+			);
+		}
 
 		return $this;
 	}
@@ -208,5 +215,60 @@ class Settings_Sanitizer {
 		$this->pending_settings = $result['settings'];
 
 		return $this;
+	}
+
+	/**
+	 * Get all the available settings of a specific element, including responsive settings.
+	 *
+	 * @param array $controls
+	 *
+	 * @return array
+	 */
+	private function get_valid_settings_keys( $controls ) {
+		if ( ! $controls ) {
+			return [];
+		}
+
+		$control_keys = array_keys( $controls );
+
+		$optional_responsive_keys = [
+			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
+			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
+			Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+			Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA,
+			Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP,
+			Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN,
+		];
+
+		$settings = [];
+
+		foreach ( $control_keys as $control_key ) {
+			// Add the responsive settings.
+			foreach ( $optional_responsive_keys as $responsive_key ) {
+				$settings[] = "{$control_key}_{$responsive_key}";
+			}
+			// Add the setting itself (not responsive).
+			$settings[] = $control_key;
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Remove invalid settings.
+	 *
+	 * @param $settings
+	 * @param $valid_settings_keys
+	 *
+	 * @return array
+	 */
+	private function filter_invalid_settings( $settings, $valid_settings_keys ) {
+		return array_filter(
+			$settings,
+			function ( $setting_key ) use ( $valid_settings_keys ) {
+				return in_array( $setting_key, $valid_settings_keys, true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
 	}
 }
