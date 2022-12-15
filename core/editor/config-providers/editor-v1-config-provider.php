@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Editor_V1_Config_Provider extends Editor_Base_Config_Provider implements Config_Provider_Interface {
+class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	public function get_scripts() {
-		return parent::get_scripts();
+		return Editor_Common_Assets::get_scripts();
 	}
 
 	public function get_loader_scripts() {

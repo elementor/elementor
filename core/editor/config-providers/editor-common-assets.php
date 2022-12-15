@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Editor_Base_Config_Provider implements Config_Provider_Interface {
-	public function get_scripts() {
+class Editor_Common_Assets {
+	public static function get_scripts() {
 		return [
 			[
 				'handle' => 'elementor-editor-modules',

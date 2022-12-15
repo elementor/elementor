@@ -88,7 +88,7 @@ class Editor_Loader {
 
 		$replacements = [
 			'{{ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
-			'{{SUFFIX}}' => Utils::is_script_debug() || Utils::is_elementor_tests() ? '' : '.min',
+			'{{SUFFIX}}' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
 		];
 
 		return Collection::make( $script_configs )

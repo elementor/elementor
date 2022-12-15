@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Editor_V2_Config_Provider extends Editor_Base_Config_Provider implements Config_Provider_Interface {
+class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_scripts() {
-		$scripts = parent::get_scripts();
+		$scripts = Editor_Common_Assets::get_scripts();
 
 		// Here we should add a filter to allow packages to REGISTER their scripts.
 
