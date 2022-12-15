@@ -102,15 +102,15 @@ class Settings_Sanitizer {
 		$available_settings = $this->get_avaliable_settings( $controls );
 
 		foreach ( $this->pending_settings as $key => $value ) {
-			if ( in_array( $key, static::SPECIAL_SETTINGS, true ) ) {
-				// When the key is special settings like __dynamic__ or __globals__ it should run over the values.
+			$is_special_setting = in_array( $key, self::SPECIAL_SETTINGS, true );
+
+			if ( $is_special_setting ) {
 				foreach ( $this->pending_settings[ $key ] as $special_setting_key => $special_setting_value ) {
 					if ( ! in_array( $special_setting_key, $available_settings, true ) ) {
 						unset( $this->pending_settings[ $key ][ $special_setting_key ] );
 					}
 				}
 			} elseif ( ! in_array( $key, $available_settings, true ) ) {
-				// For regular settings, it should remove if not in the available settings.
 				unset( $this->pending_settings[ $key ] );
 			}
 		}
