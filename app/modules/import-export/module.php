@@ -257,12 +257,16 @@ class Module extends BaseModule {
 	 * Import a kit by session_id.
 	 * Upload and import a kit by kit zip file.
 	 *
+	 * If the split_to_chunks flag is true, the process won't start
+	 * It will initialize the import process and return the session_id and the runners.
+	 *
 	 * Assigning the Import process to the 'import' property,
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
 	 * @param array $settings Settings the import use to determine which content to import.
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param $split_to_chunks bool Determine if the import process should be split into chunks.
 	 * @return array
 	 * @throws \Exception
 	 */
@@ -287,6 +291,14 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Resuming import process by re-creating the import instance and running the specific runner.
+	 *
+	 * @param $session_id string The id off the import session.
+	 * @param $runner_name string The specific runner that we want to run.
+	 *
+	 * @return array Two types of response.
+	 * 		1. The status and the runner name.
+	 * 		2. The imported data. (Only if the runner is the last one in the import process)
 	 * @throws \Exception
 	 */
 	public function import_kit_by_runner( $session_id, $runner_name ): array {
@@ -530,7 +542,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Handle import kit ajax request.
+	 * Handle ajax request for running specific runner in the import kit process.
 	 */
 	private function handle_import_kit__runner() {
 		// PHPCS - Already validated in caller function

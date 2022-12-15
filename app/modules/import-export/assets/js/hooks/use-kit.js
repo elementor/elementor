@@ -55,7 +55,13 @@ export default function useKit() {
 			return await runRequest( ajaxConfig );
 		},
 		runImportRunners = async ( session, runners ) => {
+			let stopIterations = false;
+
 			for ( const [ iteration, runner ] of runners.entries() ) {
+				if ( stopIterations ) {
+					break;
+				}
+
 				const ajaxConfig = {
 					data: {
 						action: RUN_RUNNER_KEY,
@@ -71,7 +77,15 @@ export default function useKit() {
 				// The last runner should run using the setAjax method, so it will trigger the useEffect and update the kitState.
 				const isLastIteration = iteration === runners.length - 1;
 				if ( ! isLastIteration ) {
-					await runRequest( ajaxConfig );
+					await runRequest( ajaxConfig )
+						.catch( ( error ) => {
+							stopIterations = true;
+
+							setKitState( ( prevState ) => ( { ...prevState, ...{
+								status: KIT_STATUS_MAP.ERROR,
+								data: error,
+							} } ) );
+						} );
 				} else {
 					setAjax( ajaxConfig );
 				}
