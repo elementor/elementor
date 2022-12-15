@@ -93,26 +93,24 @@ class Settings_Sanitizer {
 			return $this;
 		}
 
-		$controls = $this->pending_element->get_controls();
+		$valid_settings_keys = $this->get_valid_settings_keys(
+			$this->pending_element->get_controls()
+		);
 
-		if ( ! $controls ) {
-			return $this;
-		}
+		$this->pending_settings = $this->filter_invalid_settings(
+			$this->pending_settings,
+			array_merge( $valid_settings_keys, self::SPECIAL_SETTINGS )
+		);
 
-		$available_settings = $this->get_avaliable_settings( $controls );
-
-		foreach ( $this->pending_settings as $key => $value ) {
-			$is_special_setting = in_array( $key, self::SPECIAL_SETTINGS, true );
-
-			if ( $is_special_setting ) {
-				foreach ( $this->pending_settings[ $key ] as $special_setting_key => $special_setting_value ) {
-					if ( ! in_array( $special_setting_key, $available_settings, true ) ) {
-						unset( $this->pending_settings[ $key ][ $special_setting_key ] );
-					}
-				}
-			} elseif ( ! in_array( $key, $available_settings, true ) ) {
-				unset( $this->pending_settings[ $key ] );
+		foreach ( self::SPECIAL_SETTINGS as $special_setting ) {
+			if ( ! isset( $this->pending_settings[ $special_setting ] ) ) {
+				continue;
 			}
+
+			$this->pending_settings[ $special_setting ] = $this->filter_invalid_settings(
+				$this->pending_settings[ $special_setting ],
+				$valid_settings_keys
+			);
 		}
 
 		return $this;
@@ -226,7 +224,11 @@ class Settings_Sanitizer {
 	 *
 	 * @return array
 	 */
-	private function get_avaliable_settings( array $controls ) {
+	private function get_valid_settings_keys( $controls ) {
+		if ( ! $controls ) {
+			return [];
+		}
+
 		$control_keys = array_keys( $controls );
 
 		$optional_responsive_keys = [
@@ -250,5 +252,23 @@ class Settings_Sanitizer {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Remove invalid settings.
+	 *
+	 * @param $settings
+	 * @param $valid_settings_keys
+	 *
+	 * @return array
+	 */
+	private function filter_invalid_settings( $settings, $valid_settings_keys ) {
+		return array_filter(
+			$settings,
+			function ( $setting_key ) use ( $valid_settings_keys ) {
+				return in_array( $setting_key, $valid_settings_keys, true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
 	}
 }
