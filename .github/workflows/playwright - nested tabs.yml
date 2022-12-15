@@ -1,4 +1,4 @@
-name: Playwright - Reverse columns
+name: Playwright - Nested tabs
 
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
           key: ${{ github.sha }}
 
   Playwright:
-    name: Playwright test - Reverse columns - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
+    name: Playwright test - Nested tabs - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
     runs-on: ubuntu-latest
     needs: [build-plugin]
     strategy:
@@ -85,7 +85,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright:reverse-columns
+          npm run test:playwright:nested-tabs
       - uses: actions/upload-artifact@v2
         if: always()
         with:
