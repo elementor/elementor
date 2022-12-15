@@ -123,7 +123,7 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 		?>
 		<# if ( data.size_units && data.size_units.length > 1 ) { #>
 		<div class="e-units-wrapper">
-			<div class="e-units-switcher"><span></span><i class="eicon-edit"></i></div>
+			<div class="e-units-switcher"><span></span><i class="eicon-edit"></i><i class="eicon-angle-right"></i></div>
 			<div class="e-units-choices">
 				<# _.each( data.size_units, function( unit ) { #>
 				<input id="elementor-choose-{{ data._cid + data.name + unit }}" type="radio" name="elementor-choose-{{ data.name + data._cid }}" data-setting="unit" value="{{ unit }}">

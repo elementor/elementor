@@ -696,9 +696,18 @@ class Widget_Video extends Widget_Base {
 					'11' => '1:1',
 					'916' => '9:16',
 				],
+				'selectors_dictionary' => [
+					'169' => '16 / 9',
+					'219' => '21 / 9',
+					'43' => '4 / 3',
+					'32' => '3 / 2',
+					'11' => '1 / 1',
+					'916' => '9 / 16',
+				],
 				'default' => '169',
-				'prefix_class' => 'elementor-aspect-ratio-',
-				'frontend_available' => true,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-wrapper' => 'aspect-ratio: {{VALUE}}',
+				],
 			]
 		);
 
@@ -944,10 +953,6 @@ class Widget_Video extends Widget_Base {
 		}
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
-
-		if ( ! $settings['lightbox'] ) {
-			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-fit-aspect-ratio' );
-		}
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-open-' . ( $settings['lightbox'] ? 'lightbox' : 'inline' ) );
 		?>
