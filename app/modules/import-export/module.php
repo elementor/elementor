@@ -297,8 +297,8 @@ class Module extends BaseModule {
 	 * @param $runner_name string The specific runner that we want to run.
 	 *
 	 * @return array Two types of response.
-	 * 		1. The status and the runner name.
-	 * 		2. The imported data. (Only if the runner is the last one in the import process)
+	 *      1. The status and the runner name.
+	 *      2. The imported data. (Only if the runner is the last one in the import process)
 	 * @throws \Exception
 	 */
 	public function import_kit_by_runner( $session_id, $runner_name ): array {
