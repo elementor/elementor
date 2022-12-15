@@ -99,7 +99,7 @@
 		whatsapp: 'https://api.whatsapp.com/send?text=*{title}*%0A{text}%0A{url}',
 		xing: 'https://www.xing.com/spi/shares/new?url={url}',
 		print: 'javascript:print()',
-		email: 'mailto:?subject={title}&body={text}\n{url}',
+		email: 'mailto:?subject={title}&body={text}%0A{url}',
 		telegram: 'https://telegram.me/share/url?url={url}&text={text}',
 		skype: 'https://web.skype.com/share?url={url}',
 	};
