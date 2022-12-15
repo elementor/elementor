@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
-use Elementor\Core\Editor\Loading_Strategies\Loading_Strategy_Interface;
+use Elementor\Core\Editor\Config_Providers\Config_Provider_Interface;
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
 
@@ -11,15 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_Loader {
 	/**
-	 * @var Loading_Strategy_Interface
+	 * @var Config_Provider_Interface
 	 */
-	private $strategy;
+	private $config_provider;
 
 	/**
-	 * @param Loading_Strategy_Interface $strategy
+	 * @param Config_Provider_Interface $config_provider
 	 */
-	public function __construct( Loading_Strategy_Interface $strategy ) {
-		$this->strategy = $strategy;
+	public function __construct( Config_Provider_Interface $config_provider ) {
+		$this->config_provider = $config_provider;
 	}
 
 	/**
@@ -27,7 +27,7 @@ class Editor_Loader {
 	 */
 	public function register_scripts() {
 		$script_configs = $this->normalize_script_configs(
-			$this->strategy->get_scripts()
+			$this->config_provider->get_scripts()
 		);
 
 		foreach ( $script_configs as $script_config ) {
@@ -46,7 +46,7 @@ class Editor_Loader {
 	 */
 	public function enqueue_scripts() {
 		$script_configs = $this->normalize_script_configs(
-			$this->strategy->get_loader_scripts()
+			$this->config_provider->get_loader_scripts()
 		);
 
 		foreach ( $script_configs as $script_config ) {
@@ -65,7 +65,7 @@ class Editor_Loader {
 	 */
 	public function print_root_template() {
 		// Exposing the path for the view part to render the body of the editor template.
-		$body_file_path = $this->strategy->get_template_body_file_path();
+		$body_file_path = $this->config_provider->get_template_body_file_path();
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}

@@ -7,9 +7,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Loading_Strategies\Editor_V1_Loading_Strategy;
-use Elementor\Core\Editor\Loading_Strategies\Editor_V2_Loading_Strategy;
-use Elementor\Core\Editor\Loading_Strategies\Loading_Strategy_Interface;
+use Elementor\Core\Editor\Config_Providers\Config_Provider_Factory;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
@@ -42,6 +40,8 @@ class Editor {
 	 * User capability required to access Elementor editor.
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';
+
+	const EDITOR_V2_EXPERIMENT_NAME = 'editor_v2';
 
 	/**
 	 * Post ID.
@@ -100,9 +100,7 @@ class Editor {
 			return;
 		}
 
-		$this->loader = new Editor_Loader(
-			$this->make_loading_strategy()
-		);
+		$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
 
 		$this->set_post_id( absint( $_REQUEST['post'] ) );
 
@@ -321,6 +319,20 @@ class Editor {
 		}
 
 		return get_user_by( 'id', $locked_user );
+	}
+
+	/**
+	 * NOTICE: This method not in use, it's here for backward compatibility.
+	 *
+	 * Print Editor Template.
+	 *
+	 * Include the wrapper template of the editor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 */
+	public function print_editor_template() {
+		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
 	/**
@@ -822,21 +834,6 @@ class Editor {
 	}
 
 	/**
-	 * @return Loading_Strategy_Interface
-	 */
-	private function make_loading_strategy() {
-		$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
-
-		// Nonce verification is not required, using param from routing purpose.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( $is_editor_v2_active && isset( $_GET['v'] ) && '2' === $_GET['v'] ) {
-			return new Editor_V2_Loading_Strategy();
-		}
-
-		return new Editor_V1_Loading_Strategy();
-	}
-
-	/**
 	 * Adding Editor V2 experiment.
 	 *
 	 * @return void
@@ -844,7 +841,7 @@ class Editor {
 	 */
 	private function register_editor_v2_experiment() {
 		Plugin::$instance->experiments->add_feature( [
-			'name' => 'editor_v2',
+			'name' => static::EDITOR_V2_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Editor V2', 'elementor' ),
 			'description' => esc_html__( 'Enable the new editor.', 'elementor' ),
 			'hidden' => true,

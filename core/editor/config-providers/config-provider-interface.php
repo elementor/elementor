@@ -1,8 +1,11 @@
 <?php
+namespace Elementor\Core\Editor\Config_Providers;
 
-namespace Elementor\Core\Editor\Loading_Strategies;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
-interface Loading_Strategy_Interface {
+interface Config_Provider_Interface {
 	/**
 	 * Return a list of the scripts to register.
 	 *

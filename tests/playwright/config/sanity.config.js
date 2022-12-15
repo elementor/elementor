@@ -8,6 +8,7 @@ const config = {
 	testDir: '../sanity/',
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
+	forbidOnly: !! process.env.CI,
 	expect: {
 		timeout: 5 * 1000, // 5 seconds
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },

@@ -114,7 +114,6 @@ class Container extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
-		<div class="e-edit-click-area"></div>
 		<# if ( 'boxed' === settings.content_width ) { #>
 			<div class="e-con-inner">
 		<#
@@ -677,7 +676,7 @@ class Container extends Element_Base {
 			]
 		);
 
-		$background_overlay_selector = '{{WRAPPER}}::before, {{WRAPPER}} > .elementor-background-video-container::before, {{WRAPPER}} > .e-con-inner > .elementor-background-video-container::before, {{WRAPPER}} > .elementor-background-slideshow::before, {{WRAPPER}} > .e-con-inner > .elementor-background-slideshow::before';
+		$background_overlay_selector = '{{WRAPPER}}::before, {{WRAPPER}} > .elementor-background-video-container::before, {{WRAPPER}} > .e-con-inner > .elementor-background-video-container::before, {{WRAPPER}} > .elementor-background-slideshow::before, {{WRAPPER}} > .e-con-inner > .elementor-background-slideshow::before, {{WRAPPER}} > .elementor-motion-effects-container > .elementor-motion-effects-layer::before';
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
