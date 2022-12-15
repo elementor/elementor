@@ -396,6 +396,7 @@ class onboarding {
     async addALogo() {
         await this.openMediaLibraryButton.click();
         await this.page.locator( '#menu-item-browse' ).click();
+        await this.page.waitForLoadState( 'load' );
         if ( await this.page.locator( '.attachment-preview .thumbnail' ).first().isVisible() ) {
             await this.page.locator( '.attachment-preview .thumbnail' ).first().click();
         } else {
