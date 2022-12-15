@@ -131,10 +131,10 @@ class Import {
 	private $runners_import_metadata = [];
 
 	/**
-	 * @param $path string session_id | zip_file_path
-	 * @param $settings array Use to determine which content to import.
+	 * @param string $path session_id | zip_file_path
+	 * @param array $settings Use to determine which content to import.
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param $old_instance array|null An array of old instance parameters that will be used for creating new instance.
+	 * @param array|null $old_instance An array of old instance parameters that will be used for creating new instance.
 	 *      We are using it for quick creation of the instance when the import process is being split into chunks.
 	 * @throws \Exception
 	 */
@@ -171,7 +171,13 @@ class Import {
 		}
 	}
 
-	private function set_import_object( $instance ) {
+	/**
+	 * Set the import object parameters.
+	 *
+	 * @param array $instance
+	 * @return void
+	 */
+	private function set_import_object( array $instance ) {
 		$this->session_id = $instance['session_id'];
 
 		$instance_data = $instance['instance_data'];
@@ -198,12 +204,12 @@ class Import {
 	/**
 	 * Creating a new instance of the import process by the id of the old import session.
 	 *
-	 * @param $session_id
+	 * @param string $session_id
 	 *
 	 * @return Import
 	 * @throws \Exception
 	 */
-	public static function from_session( $session_id ) {
+	public static function from_session( string $session_id ): Import {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
@@ -312,12 +318,12 @@ class Import {
 	/**
 	 * Run specific runner by runner_name
 	 *
-	 * @param $runner_name
+	 * @param string $runner_name
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function run_runner( $runner_name ) {
+	public function run_runner( string $runner_name ): array {
 		if ( empty( $this->runners ) ) {
 			throw new \Exception( 'Please specify import runners.' );
 		}
@@ -407,7 +413,7 @@ class Import {
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 
-	public function get_runners_name() {
+	public function get_runners_name(): array {
 		return array_keys( $this->runners );
 	}
 

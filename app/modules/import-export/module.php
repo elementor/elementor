@@ -266,11 +266,11 @@ class Module extends BaseModule {
 	 * @param string $path Path to the file or session_id.
 	 * @param array $settings Settings the import use to determine which content to import.
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param $split_to_chunks bool Determine if the import process should be split into chunks.
+	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function import_kit( $path, $settings, $split_to_chunks = false ): array {
+	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
 
 		$this->import = new Import( $path, $settings );
@@ -293,15 +293,15 @@ class Module extends BaseModule {
 	/**
 	 * Resuming import process by re-creating the import instance and running the specific runner.
 	 *
-	 * @param $session_id string The id off the import session.
-	 * @param $runner_name string The specific runner that we want to run.
+	 * @param string $session_id The id off the import session.
+	 * @param string $runner_name The specific runner that we want to run.
 	 *
 	 * @return array Two types of response.
 	 *      1. The status and the runner name.
 	 *      2. The imported data. (Only if the runner is the last one in the import process)
 	 * @throws \Exception
 	 */
-	public function import_kit_by_runner( $session_id, $runner_name ): array {
+	public function import_kit_by_runner( string $session_id, string $runner_name ): array {
 		// Check session_id
 		$this->import = Import::from_session( $session_id );
 		$runners = $this->import->get_runners_name();
@@ -326,7 +326,7 @@ class Module extends BaseModule {
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function export_kit( $settings ) {
+	public function export_kit( array $settings ) {
 		$this->ensure_writing_permissions();
 
 		$this->export = new Export( $settings );
