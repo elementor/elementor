@@ -16,7 +16,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		// TODO: Move the the loader strategy.
+		// TODO: Move to the loader strategy.
 		add_filter( 'elementor/editor/v2/loader/scripts/register', function ( array $scripts ) {
 			$packages = array_merge(
 				$this->get_utils(),
@@ -28,9 +28,9 @@ class Module extends BaseModule {
 				$deps = $package['deps'] ?? [];
 
 				$scripts[] = [
-					// TODO: Don't ise dynamically generated handle names.
+					// TODO: Don't use dynamically generated handle names.
 					'handle' => "elementor-$package_name",
-					'src' => "{{ASSETS_URL}}/js/editor-packages/$package_name.js",
+					'src' => "{{ASSETS_URL}}/js/editor-packages/$package_name{{SUFFIX}}.js",
 					'deps' => $deps,
 				];
 			}
