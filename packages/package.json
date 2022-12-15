@@ -11,9 +11,9 @@
   "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "workspaces": [
-    "apps/editor-shell",
-    "utils/locations",
-    "features/top-bar"
+    "packages/apps/editor-shell",
+    "packages/utils/locations",
+    "packages/features/top-bar"
   ],
   "devDependencies": {
     "@babel/core": "^7.20.5",

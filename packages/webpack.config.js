@@ -1,6 +1,6 @@
 const path = require( 'path' );
 const packages = require( './package.json' ).workspaces.map( ( packagePath ) => {
-	const packageName = packagePath.replace( /^(apps|features|utils)\//, '' );
+	const packageName = packagePath.replace( /^packages\/(apps|features|utils)\//, '' );
 
 	return {
 		packagePath,
