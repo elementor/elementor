@@ -97,7 +97,7 @@
 		stumbleupon: 'https://www.stumbleupon.com/submit?url={url}',
 		pocket: 'https://getpocket.com/edit?url={url}',
 		whatsapp: 'https://api.whatsapp.com/send?text=*{title}*%0A{text}%0A{url}',
-		xing: 'https://www.xing.com/app/user?op=share&url={url}',
+		xing: 'https://www.xing.com/spi/shares/new?url={url}',
 		print: 'javascript:print()',
 		email: 'mailto:?subject={title}&body={text}\n{url}',
 		telegram: 'https://telegram.me/share/url?url={url}&text={text}',
