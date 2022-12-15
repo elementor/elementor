@@ -11,16 +11,18 @@ test.beforeAll( async ( { browser }, testInfo ) => {
 	helper = new onboarding( page, testInfo.project.use.baseURL );
 
 	await helper.gotoThemesPage();
-	await page.waitForLoadState( 'networkidle' );
 	await helper.activateTwenty21Theme();
+	await helper.gotoExperiments();
+	await helper.checkflexBoxIsOff();
 } );
 
 test.afterAll( async ( { browser }, testInfo ) => {
 	const page = await browser.newPage();
 	helper = new onboarding( page, testInfo.project.use.baseURL );
 	await helper.gotoThemesPage();
-	await page.waitForLoadState( 'networkidle' );
 	await helper.activateHelloTheme();
+	await helper.gotoExperiments();
+	await helper.checkflexBoxIsBackToPreviousState();
 } );
 
 test.describe( 'First Step - Elementor Account', () => {
@@ -94,7 +96,7 @@ test.describe( 'Second Step - Hello Theme', () => {
 	test( ' "Continue with Hello Theme" button works', async ( { page } ) => {
 		await helper.gotoStep2();
 		await helper.selectContinueWithHelloThemeButton();
-		await page.waitForNavigation( { url: 'wp-admin/admin.php?page=elementor-app#onboarding/siteName' }, { waitUntil: 'networkidle' } );
+		await page.waitForNavigation( { url: helper.step3URL }, { waitUntil: 'networkidle' } );
 		await helper.gotoThemesPage();
 		await helper.checkElementorThemeIsActive();
 		await helper.activateTwenty21Theme();

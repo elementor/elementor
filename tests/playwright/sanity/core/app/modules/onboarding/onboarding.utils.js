@@ -11,6 +11,7 @@ class onboarding {
         this.customizePage = '/wp-admin/customize.php';
         this.logoRemoveButton = this.page.locator( '.button.remove-button' );
         this.addLogoButtonSelector = '#customize-control-custom_logo .upload-button.button-add-media';
+        this.flexBoxStatus = '';
 
         // On all Steps
         this.closeOnboardingButton = this.page.locator( '.eps-icon.eicon-close' );
@@ -76,6 +77,30 @@ class onboarding {
 
         // Validate Broken CSS Requests
         await expect( requestFailed, `Failed Assets: ${ requestFailed.toString() }` ).toEqual( [] );
+    }
+
+    async gotoExperiments() {
+        await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments', { waitUntil: 'networkidle' } );
+    }
+
+    async checkflexBoxIsOff() {
+        this.flexBoxStatus = await this.page.locator( 'select#e-experiment-container' ).inputValue();
+        if ( this.flexBoxStatus !== 'inactive' ) {
+            await this.page.selectOption( 'select#e-experiment-container', 'inactive' );
+            await this.page.locator( '#submit' ).click();
+            await this.page.waitForLoadState( 'networkidle' );
+            await expect( await this.page.locator( 'select#e-experiment-container' ).inputValue() ).toEqual( 'inactive' );
+        }
+    }
+
+    async checkflexBoxIsBackToPreviousState() {
+        const currentState = await this.page.locator( 'select#e-experiment-container' ).inputValue();
+        if ( currentState !== 'active' ) {
+            await this.page.selectOption( 'select#e-experiment-container', 'active' );
+            await this.page.locator( '#submit' ).click();
+            await this.page.waitForLoadState( 'networkidle' );
+            await expect( await this.page.locator( 'select#e-experiment-container' ).inputValue() ).toEqual( 'active' );
+        }
     }
 
     /*
