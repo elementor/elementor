@@ -19,7 +19,7 @@ $item-size: 2.5em;
 		position: absolute;
 		width: 100%;
 		top: 0;
-		background-color: #fff;
+		background-color: $white;
 		border-radius: 3px;
 		transition: 0.15s;
 		border: 1px solid transparent;
@@ -105,7 +105,7 @@ a.elementor-responsive-switcher {
 
 		&:not([data-selected="custom"]) {
 
-			i {
+			i.eicon-edit {
 				display: none;
 			}
 		}
@@ -115,6 +115,10 @@ a.elementor-responsive-switcher {
 			span {
 				display: none;
 			}
+		}
+
+		i.eicon-angle-right {
+			transform: rotate(90deg);
 		}
 	}
 }
@@ -143,7 +147,7 @@ a.elementor-responsive-switcher {
 		@include start(-.5em);
 		width: $item-size;
 		text-align: center;
-		background-color: #fff;
+		background-color: $white;
 		border-radius: 3px;
 		border: 1px solid transparent;
 		box-shadow: 0 0 3px rgba(0,0,0,0.2);
