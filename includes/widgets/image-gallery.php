@@ -363,7 +363,7 @@ class Widget_Image_Gallery extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} gallery-item .gallery-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
