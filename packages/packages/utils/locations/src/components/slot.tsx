@@ -11,6 +11,7 @@ export const Slot : React.FC<Props> = ( { name } ) => {
 	return (
 		<Suspense fallback={ null }>
 			{
+				// TODO: <ErrorBoundary />
 				components.map( ( Component, index ) => (
 					<Component key={ index } />
 				) )

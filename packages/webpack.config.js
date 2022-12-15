@@ -1,4 +1,6 @@
 const path = require( 'path' );
+
+// TODO: use `glob` or something to read it automatically and use `*` in the pacakge.json
 const packages = require( './package.json' ).workspaces.map( ( packagePath ) => {
 	const packageName = packagePath.replace( /^packages\/(apps|features|utils)\//, '' );
 
@@ -9,6 +11,7 @@ const packages = require( './package.json' ).workspaces.map( ( packagePath ) => 
 	};
 } );
 
+// TODO: Do we wanna expose everything to the global scope? Because curently we do.
 const entry = packages.reduce( ( acc, { packagePath, packageName, packageNameCamelCase } ) => {
 	return {
 		...acc,
@@ -57,6 +60,7 @@ const config = {
 		extensions: [ '.tsx', '.ts', '.js' ],
 	},
 	output: {
+		// TODO: Maybe the output should contain the package type? Currently it's just the pacakge name.
 		filename: '[name].js',
 		path: path.resolve( __dirname, '../assets/js/editor-packages/' ),
 	},
@@ -68,6 +72,7 @@ module.exports = ( env, argv ) => {
 	}
 
 	if ( 'production' === argv.mode ) {
+		// TODO: We probably need `@babel/preset-env` here
 		config.optimization = {
 			minimize: true,
 		};

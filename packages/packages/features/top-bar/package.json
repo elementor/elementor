@@ -1,10 +1,7 @@
 {
   "name": "@elementor/top-bar",
   "version": "0.0.1",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest --config='../jest.config.js'"
-  },
+  "main": "index.ts",
   "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "description": "",

@@ -1,4 +1,5 @@
 {
+  // TODO: Copied from the default vite config for React. Maybe we need to tweak it.
   "compilerOptions": {
 	"target": "ESNext",
 	"useDefineForClassFields": true,
