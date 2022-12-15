@@ -4,6 +4,7 @@ namespace Elementor\Modules\LazyLoad;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Element_Base;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -90,7 +91,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		// Disable lazyload in admin area, works for all roles ( True if inside WordPress administration interface - Editor, Admin, etc.)
+		// Disable lazyload in admin area (true if inside WordPress administration interface - Editor, Admin, etc.)
 		if ( is_admin() ) {
 			return;
 		}
