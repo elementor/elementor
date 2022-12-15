@@ -395,8 +395,9 @@ class onboarding {
 
     async addALogo() {
         await this.openMediaLibraryButton.click();
+        await this.page.waitForLoadState( 'networkidle' );
         await this.page.locator( '#menu-item-browse' ).click();
-        await this.page.waitForLoadState( 'load' );
+        await this.page.waitForTimeout( 500 );
         if ( await this.page.locator( '.attachment-preview .thumbnail' ).first().isVisible() ) {
             await this.page.locator( '.attachment-preview .thumbnail' ).first().click();
         } else {
