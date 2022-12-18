@@ -43,7 +43,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -75,7 +75,7 @@ test.describe( 'Container tests', () => {
 
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -90,7 +90,7 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
@@ -108,7 +108,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -123,7 +123,7 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
