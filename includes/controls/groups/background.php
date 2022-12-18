@@ -252,6 +252,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-image: url("{{URL}}");',
 			],
+			'has_sizes' => true,
 			'render_type' => 'template',
 			'condition' => [
 				'background' => [ 'classic' ],

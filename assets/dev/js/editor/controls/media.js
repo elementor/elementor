@@ -14,6 +14,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 
+		ui.mediaInputImageSize = '.elementor-control-media__size';
+
 		return ui;
 	},
 
@@ -21,6 +23,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
+			'change @ui.mediaInputImageSize': 'onMediaInputImageSizeChange',
 		} );
 	},
 
@@ -59,6 +62,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} else {
 			const fileName = url ? url.split( '/' ).pop() : '';
 			this.ui.fileName.text( fileName );
+		}
+
+		if ( this.ui.mediaInputImageSize ) {
+			this.ui.mediaInputImageSize.val( this.getControlValue( 'size' ) );
 		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
@@ -107,6 +114,36 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.applySavedValue();
+	},
+
+	onMediaInputImageSizeChange() {
+		if ( ! this.model.get( 'has_sizes' ) ) {
+			return;
+		}
+
+		const currentControlValue = this.getControlValue();
+
+		let imageURL;
+
+		elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
+			imageURL = data[ currentControlValue.id ][ currentControlValue.size ];
+
+			if ( imageURL ) {
+				currentControlValue.url = imageURL;
+				this.setValue( currentControlValue );
+			}
+		} );
+
+		imageURL = elementor.imagesManager.getImageUrl( {
+			id: currentControlValue.id,
+			url: currentControlValue.url,
+			size: currentControlValue.size,
+		} );
+
+		if ( imageURL ) {
+			currentControlValue.url = imageURL;
+			this.setValue( currentControlValue );
+		}
 	},
 
 	/**
@@ -227,6 +264,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				id: attachment.id,
 				alt: attachment.alt,
 				source: attachment.source,
+				size: this.model.get( 'default' ).size,
 			} );
 
 			if ( this.model.get( 'responsive' ) ) {
@@ -236,6 +274,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				this.applySavedValue();
 			}
 		}
+
+		this.onMediaInputImageSizeChange();
 
 		this.trigger( 'after:select' );
 	},
