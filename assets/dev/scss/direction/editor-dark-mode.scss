@@ -467,6 +467,7 @@ select {
 	}
 }
 
+//Controls Utility
 .elementor-control-responsive-switchers {
 
 	&__holder {
@@ -499,6 +500,44 @@ a.elementor-responsive-switcher {
 	}
 }
 
+.e-units-wrapper {
+
+	.e-units-switcher {
+
+		&:hover {
+			color: $theme-dark-accent;
+			background-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+
+		&:checked + label {
+			color: $theme-dark-accent;
+		}
+
+		&.e-units-placeholder + label {
+			color: $theme-dark-light;
+		}
+	}
+
+	&.e-units-choices-open {
+		background-color: $theme-dark-gray-dark;
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+
+		.elementor-units-choices-label {
+
+			&:hover {
+				color: $theme-dark-accent;
+			}
+		}
+	}
+}
+
+
 .elementor-control-type-popover_toggle {
 
 	.elementor-control-popover-toggle-toggle-label {
@@ -529,10 +568,6 @@ a.elementor-responsive-switcher {
 
 	.eicon-plus-circle {
 		color: $theme-dark-light;
-	}
-
-	.elementor-control-media__tool {
-		background-color: $theme-dark-gray-lighter;
 	}
 
 	&__file {
@@ -1338,7 +1373,8 @@ label.elementor-template-library-order-label,
 		background-color: transparent;
 	}
 
-	&__item {
+	&__item,
+	&__elements {
 		background-color: $theme-dark-gray-dark;
 		border-color: $theme-dark-gray-darkest;
 
@@ -1454,6 +1490,7 @@ label.elementor-template-library-order-label,
 
 //WP Media Modal
 .media-modal {
+	color-scheme: light;
 	color: $editor-dark;
 }
 

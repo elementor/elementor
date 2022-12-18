@@ -98,8 +98,8 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
 
-		$from = ! empty( $_POST['from'] ) ? $_POST['from'] : '';
-		$to = ! empty( $_POST['to'] ) ? $_POST['to'] : '';
+		$from = Utils::get_super_global_value( $_POST, 'from' ) ?? '';
+		$to = Utils::get_super_global_value( $_POST, 'to' ) ?? '';
 
 		try {
 			$results = Utils::replace_urls( $from, $to );
@@ -127,7 +127,9 @@ class Tools extends Settings_Page {
 		}
 
 		$rollback_versions = $this->get_rollback_versions();
-		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
+		$version = Utils::get_super_global_value( $_GET, 'version' );
+
+		if ( empty( $version ) || ! in_array( $version, $rollback_versions, true ) ) {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
@@ -135,10 +137,10 @@ class Tools extends Settings_Page {
 
 		$rollback = new Rollback(
 			[
-				'version' => $_GET['version'],
+				'version' => $version,
 				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
 				'plugin_slug' => $plugin_slug,
-				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $_GET['version'] ),
+				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
 			]
 		);
 
@@ -377,10 +379,10 @@ class Tools extends Settings_Page {
 
 		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
 			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
-				'label' => __( 'Recreate Kit', 'elementor' ),
+				'label' => esc_html__( 'Recreate Kit', 'elementor' ),
 				'field_args' => [
 					'type' => 'raw_html',
-					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), __( 'Recreate Kit', 'elementor' ) ),
+					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), esc_html__( 'Recreate Kit', 'elementor' ) ),
 					'desc' => esc_html__( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
 				],
 			];

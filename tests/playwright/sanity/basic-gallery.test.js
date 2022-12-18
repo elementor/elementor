@@ -7,7 +7,7 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 		editor = await wpAdmin.useElementorCleanPost();
 
 	// Close Navigator
-	await page.click( '#elementor-navigator__close' );
+	await editor.closeNavigatorIfOpen();
 
 	// Act.
 	await editor.addWidget( 'image-gallery' );
@@ -30,5 +30,6 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 	// Insert gallery
 	await page.locator( 'text=Insert gallery' ).click();
 
-	expect( await editor.getPreviewFrame().locator( 'div#gallery-1' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'gallery.jpeg' );
+	await editor.togglePreviewMode();
+	expect( await editor.getPreviewFrame().locator( 'div#gallery-1' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'gallery.jpeg' );
 } );

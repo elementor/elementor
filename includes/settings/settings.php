@@ -28,7 +28,7 @@ class Settings extends Settings_Page {
 	const PAGE_ID = 'elementor';
 
 	/**
-	 * Go Pro menu priority.
+	 * Upgrade menu priority.
 	 */
 	const MENU_PRIORITY_GO_PRO = 502;
 
@@ -334,6 +334,22 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . esc_html__( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . esc_html__( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
+							'google_font' => [
+								'label' => esc_html__( 'Google Fonts', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => sprintf(
+										esc_html__( 'Disable this option if you want to prevent Google Fonts from being loaded. This setting is recommended when loading fonts from a different source (plugin, theme or %1$scustom fonts%2$s).', 'elementor' ),
+										'<a href="' . admin_url( 'admin.php?page=elementor_custom_fonts' ) . '">',
+										'</a>'
+									),
+								],
+							],
 							'font_display' => [
 								'label' => esc_html__( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
@@ -368,10 +384,10 @@ class Settings extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			return __( 'Settings', 'elementor' );
+			return esc_html__( 'Settings', 'elementor' );
 		}
 
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 
 	/**

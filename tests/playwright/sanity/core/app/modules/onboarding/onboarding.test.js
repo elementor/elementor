@@ -1,9 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
 
 /**
- *  Test that the "Go Pro" popover appears when overing over the "Go Pro" button.
+ *  Test that the "Upgrade" popover appears when overing over the "Upgrade" button.
  */
-test( 'Onboarding Go Pro Popover', async ( { page } ) => {
+test( 'Onboarding Upgrade Popover', async ( { page } ) => {
 	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 	const goProHeaderButton = await page.locator( '#eps-app-header-btn-go-pro' );
@@ -35,10 +35,12 @@ test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 
 	await popup.waitForLoadState( 'domcontentloaded' );
 
-	const createAccount = await popup.locator( 'text=Sign up for Elementor' );
+	await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
+
+	const signupForm = await popup.locator( 'form#signup-form' );
 
 	// Check that the popup opens the Elementor Connect screen.
-	await expect( createAccount ).toBeVisible();
+	await expect( signupForm ).toBeVisible();
 
 	popup.close();
 } );

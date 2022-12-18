@@ -229,10 +229,13 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Left Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -426,14 +429,14 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
-				],
 				'range' => [
 					'px' => [
 						'max' => 3,
 						'step' => 0.1,
 					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
 				],
 			]
 		);

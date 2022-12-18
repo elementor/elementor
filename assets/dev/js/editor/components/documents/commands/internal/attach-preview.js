@@ -47,17 +47,19 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 			}
 
 			document.$element = elementor.$previewContents.find( selector );
+			const isInitialDocument = document.id === elementor.config.initial_document.id;
 
 			if ( ! document.$element.length ) {
-				elementor.onPreviewElNotFound();
+				if ( isInitialDocument ) {
+					elementor.onPreviewElNotFound();
+				}
 
 				return reject();
 			}
 
 			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
 
-			// If not the same document.
-			if ( document.id !== elementor.config.initial_document.id ) {
+			if ( ! isInitialDocument ) {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 

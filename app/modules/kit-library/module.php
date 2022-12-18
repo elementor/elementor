@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary;
 
+use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Plugin;
@@ -29,8 +30,8 @@ class Module extends BaseModule {
 
 	private function register_admin_menu( MainMenu $menu ) {
 		$menu->add_submenu( [
-			'page_title' => __( 'Kit Library', 'elementor' ),
-			'menu_title' => '<span id="e-admin-menu__kit-library">' . __( 'Kit Library', 'elementor' ) . '</span>',
+			'page_title' => esc_html__( 'Kit Library', 'elementor' ),
+			'menu_title' => '<span id="e-admin-menu__kit-library">' . esc_html__( 'Kit Library', 'elementor' ) . '</span>',
 			'menu_slug' => Plugin::$instance->app->get_base_url() . '#/kit-library',
 			'index' => 40,
 		] );
@@ -78,6 +79,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
+
+		// Assigning this action here since the repository is being loaded by demand.
+		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
 			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {

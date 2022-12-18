@@ -320,6 +320,10 @@ import TemplateControls from './new-template/template-controls.js';
 				$descriptions.hide();
 				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
 			} ).trigger( 'change' );
+
+			$( '.elementor_google_font select' ).on( 'change', function() {
+				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
+			} ).trigger( 'change' );
 		},
 
 		onInit() {

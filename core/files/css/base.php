@@ -327,6 +327,8 @@ abstract class Base extends Base_File {
 
 		$stylesheet = $this->get_stylesheet();
 
+		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [] );
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -342,6 +344,8 @@ abstract class Base extends Base_File {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 						$parsed_value = '';
+
+						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
 
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
@@ -371,6 +375,10 @@ abstract class Base extends Base_File {
 
 								throw new \Exception();
 							}
+						}
+
+						if ( '__EMPTY__' === $parsed_value ) {
+							$parsed_value = '';
 						}
 
 						return $parsed_value;

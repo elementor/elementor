@@ -2,6 +2,7 @@
 namespace Elementor\Core\Logger;
 
 use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -21,7 +22,7 @@ class Log_Reporter extends Base {
 	const CLEAR_LOG_ACTION = 'elementor-clear-log';
 
 	public function get_title() {
-		return __( 'Log', 'elementor' );
+		return esc_html__( 'Log', 'elementor' );
 	}
 
 	public function get_fields() {
@@ -55,7 +56,9 @@ class Log_Reporter extends Base {
 		$logger = $manager->get_logger( 'db' );
 
 		if ( ! empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) {
-			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], self::CLEAR_LOG_ACTION ) ) {
+			$nonce = Utils::get_super_global_value( $_GET, '_wpnonce' );
+
+			if ( ! wp_verify_nonce( $nonce, self::CLEAR_LOG_ACTION ) ) {
 				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
 					'back_link' => true,
 				] );

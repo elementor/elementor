@@ -65,7 +65,6 @@ class Theme_Style_Typography extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'body_typography',
 				'selector' => '{{WRAPPER}}',
 			]
@@ -142,7 +141,6 @@ class Theme_Style_Typography extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'link_normal_typography',
 				'selector' => $link_selectors,
 			]
@@ -172,7 +170,6 @@ class Theme_Style_Typography extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'link_hover_typography',
 				'selector' => $link_hover_selectors,
 			]
@@ -218,7 +215,6 @@ class Theme_Style_Typography extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => $prefix . '_typography',
 				'selector' => $selector,
 			]

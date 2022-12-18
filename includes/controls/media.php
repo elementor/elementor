@@ -202,15 +202,15 @@ class Control_Media extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<#
 			if ( isViewable() ) {
-				let inputWrapperClasses = 'elementor-control-input-wrapper elementor-aspect-ratio-219';
+				let inputWrapperClasses = 'elementor-control-input-wrapper';
 
 				if ( ! data.label_block ) {
 					inputWrapperClasses += ' elementor-control-unit-5';
 				}
 			#>
 				<div class="{{{ inputWrapperClasses }}}">
-					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-						<div class="elementor-control-media-area elementor-fit-aspect-ratio">
+					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area">
+						<div class="elementor-control-media-area">
 							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
 								<i class="eicon-trash-o"></i>
 							</div>
@@ -218,7 +218,7 @@ class Control_Media extends Control_Base_Multiple {
 								switch( getPreviewType() ) {
 									case 'image':
 										#>
-										<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
+										<div class="elementor-control-media__preview"></div>
 										<#
 										break;
 
@@ -356,5 +356,13 @@ class Control_Media extends Control_Base_Multiple {
 			}
 		}
 		return trim( strip_tags( $alt ) );
+	}
+
+	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		if ( 'URL' !== $css_property || empty( $control_value['id'] ) ) {
+			return parent::get_style_value( $css_property, $control_value, $control_data );
+		}
+
+		return wp_get_attachment_image_url( $control_value['id'], 'full' );
 	}
 }

@@ -87,7 +87,6 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
 				'selector' => $label_selector,
 			]
@@ -105,7 +104,6 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
 				'selector' => $input_selector,
 			]
@@ -179,6 +177,18 @@ class Theme_Style_Form_Fields extends Tab_Base {
 				'dynamic' => [],
 				'selectors' => [
 					$selector => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			$prefix . '_accent_color',
+			[
+				'label' => esc_html__( 'Accent Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
+				'selectors' => [
+					$selector => 'accent-color: {{VALUE}};',
 				],
 			]
 		);
