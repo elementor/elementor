@@ -157,6 +157,24 @@ module.exports = class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
 	}
 
+	async copyElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
+		await this.page.waitForSelector( copyListItemSelector );
+		await this.page.locator( copyListItemSelector ).click();
+	}
+
+	async pasteStyleElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
+		await this.page.waitForSelector( pasteListItemSelector );
+		await this.page.locator( pasteListItemSelector ).click();
+	}
+
 	/**
 	 * Activate a tab inside the panel editor.
 	 *
