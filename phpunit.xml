@@ -4,7 +4,7 @@
 		colors="true"
 		convertErrorsToExceptions="true"
 		convertNoticesToExceptions="true"
-		convertWarningsToExceptions="true"
+		convertWarningsToExceptions="false"
 >
 	<php>
 		<env name="PLUGIN_FILE" value="elementor.php"/>
