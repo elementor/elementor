@@ -127,10 +127,16 @@ class Render_Mode_Manager {
 	 * Add actions base on the current render.
 	 *
 	 * @throws \Requests_Exception_HTTP_403
+	 * @throws Status403
 	 */
 	private function add_current_actions() {
 		if ( ! $this->current->get_permissions_callback() ) {
-			throw new \Requests_Exception_HTTP_403();
+			// WP >= 6.2-alpha
+			if ( class_exists( '\WpOrg\Requests\Exception\Http\Status403' ) ) {
+				throw new \WpOrg\Requests\Exception\Http\Status403();
+			} else {
+				throw new \Requests_Exception_HTTP_403();
+			}
 		}
 
 		// Run when 'template-redirect' actually because the the class is instantiate when 'template-redirect' run.
