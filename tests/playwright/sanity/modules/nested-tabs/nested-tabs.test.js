@@ -697,6 +697,42 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Test the hover animation', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+
+		// Act.
+		// Activate hover animation.
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.elementor-control-tabs_title_hover' ).click();
+		await page.locator( '.elementor-control-hover_animation .select2' ).click();
+		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
+		await page.waitForLoadState( 'networkidle' );
+
+		// Assert.
+		// Test inside editor.
+		await expect( editor.getPreviewFrame().locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
+
+		// Test on front end.
+		// Open front end.
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
+		// Test on desktop.
+		await expect( page.locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
+		await page.setViewportSize( viewportSize.mobile );
+		await expect( page.locator( '.e-collapse.e-active' ) ).toHaveClass( 'e-n-tab-title e-collapse elementor-animation-grow e-active' );
+		await page.setViewportSize( viewportSize.desktop );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const viewportSize = {
