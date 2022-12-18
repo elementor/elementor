@@ -33,6 +33,9 @@ module.exports = {
 		requireConfigFile: false,
 		sourceType: 'module',
 		babelOptions: {
+			plugins: [
+				'@babel/plugin-syntax-import-assertions',
+			],
 			parserOpts: {
 				plugins: [ 'jsx' ],
 			},
