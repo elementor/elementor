@@ -357,4 +357,12 @@ class Control_Media extends Control_Base_Multiple {
 		}
 		return trim( strip_tags( $alt ) );
 	}
+
+	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		if ( 'URL' !== $css_property || empty( $control_value['id'] ) ) {
+			return parent::get_style_value( $css_property, $control_value, $control_data );
+		}
+
+		return wp_get_attachment_image_url( $control_value['id'], 'full' );
+	}
 }
