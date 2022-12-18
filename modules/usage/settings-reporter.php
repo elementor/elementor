@@ -23,6 +23,7 @@ class Settings_Reporter extends Base_Reporter {
 		$usage_settings_text = '';
 
 		$settings = Module::get_settings_usage();
+
 		foreach ( $settings as $setting_name => $setting_value ) {
 			$setting_value_text = is_array( $setting_value ) ? implode( ', ', $setting_value ) : $setting_value;
 
@@ -38,6 +39,7 @@ class Settings_Reporter extends Base_Reporter {
 		$usage_settings = PHP_EOL;
 
 		$settings = Module::get_settings_usage();
+
 		foreach ( $settings as $setting_name => $setting_value ) {
 			$setting_value_text = is_array( $setting_value ) ? implode( ', ', $setting_value ) : $setting_value;
 

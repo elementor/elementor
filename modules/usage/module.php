@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -586,7 +587,10 @@ class Module extends BaseModule {
 		$usage = [];
 
 		$settings_tab = Plugin::$instance->settings->get_tabs();
-		$settings = array_merge( $settings_tab[ \Elementor\Settings::TAB_GENERAL ]['sections'], $settings_tab[ \Elementor\Settings::TAB_ADVANCED ]['sections'] );
+		$settings = array_merge(
+			$settings_tab[ Settings::TAB_GENERAL ]['sections'],
+			$settings_tab[ Settings::TAB_ADVANCED ]['sections']
+		);
 
 		foreach ( $settings as $setting_data ) {
 			foreach ( $setting_data['fields'] as $field_name => $field_data ) {
@@ -600,7 +604,8 @@ class Module extends BaseModule {
 					continue;
 				}
 
-				if ( ! empty( $field_data['field_args']['std'] ) && $setting_value === $field_data['field_args']['std'] ) {
+				$is_default_value = ( ! empty( $field_data['field_args']['std'] ) && $setting_value === $field_data['field_args']['std'] );
+				if ( $is_default_value ) {
 					continue;
 				}
 
