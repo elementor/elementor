@@ -298,6 +298,7 @@ class Element_Column extends Element_Base {
 						'background_lazyload' => [
 							'active' => true,
 							'keys' => [ 'background_image', 'url' ],
+							'selector' => '.elementor-element-populated',
 						],
 					],
 				],
@@ -326,10 +327,14 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's',
 					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
@@ -368,6 +373,15 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ '_background_overlay', 'url' ],
+							'selector' => '.elementor-background-overlay,',
+						],
+					],
+				],
 			]
 		);
 
@@ -481,10 +495,14 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's',
 					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
@@ -527,7 +545,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay, {{WRAPPER}} > .elementor-background-slideshow' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -564,7 +582,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover > .elementor-element-populated, {{WRAPPER}}:hover > .elementor-element-populated > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -585,10 +603,14 @@ class Element_Column extends Element_Base {
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
-				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's',
 					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'conditions' => [
 					'relation' => 'or',
@@ -606,8 +628,8 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
+					'{{WRAPPER}} > .elementor-element-populated' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
 				],
 			]
 		);
@@ -723,7 +745,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};
 					--e-column-margin-right: {{RIGHT}}{{UNIT}}; --e-column-margin-left: {{LEFT}}{{UNIT}};',
@@ -742,7 +764,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'custom' ],
 				'selectors' => [
 					$padding_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

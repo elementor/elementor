@@ -147,7 +147,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				],
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
+				'{{SELECTOR}}' => '--align-items: {{VALUE}}; --container-widget-width: calc( ( 1 - var( --container-widget-flex-grow ) ) * 100% );',
 			],
 			'responsive' => true,
 		];
@@ -173,7 +173,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'max' => 50,
 				],
 			],
-			'size_units' => [ 'px', '%', 'vw', 'em', 'rem' ],
+			'size_units' => [ 'px', '%', 'vw', 'em', 'rem', 'custom' ],
 			'selectors' => [
 				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
 			],

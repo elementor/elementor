@@ -8,17 +8,23 @@ use Elementor\Modules\KitElementsDefaults\ImportExport\Runners\Import;
 
 class Test_Import extends Elementor_Test_Base {
 	public function setUp() {
+		require_once __DIR__ . '/mock/mock-widget-kits-defaults.php';
+		require_once __DIR__ . '/mock/mock-control-kits-defaults.php';
+
+		// Get controls will initialize the controls manager, so we can't register the control before.
+		Plugin::$instance->controls_manager->get_controls();
+		Plugin::$instance->controls_manager->register( new Mock_Control_Kits_Defaults() );
+		Plugin::$instance->widgets_manager->register( new Mock_Widget_Kits_Defaults() );
+
 		parent::setUp();
 
-		require_once __DIR__ . '/mock/mock-widget.php';
-
-		Plugin::$instance->widgets_manager->register( new Mock_Widget() );
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 
-		Plugin::$instance->widgets_manager->unregister( Mock_Widget::NAME );
+		Plugin::$instance->controls_manager->unregister( Mock_Control_Kits_Defaults::NAME );
+		Plugin::$instance->widgets_manager->unregister( Mock_Widget_Kits_Defaults::NAME );
 	}
 
 	public function test_import() {
@@ -30,8 +36,9 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( [
-			'mock-widget' => [
+			Mock_Widget_Kits_Defaults::NAME => [
 				'text' => 'value Test value',
+				'mock-control-1' => 'value changed on import',
 				'__globals__' => [
 					'color' => 'global-color',
 				],

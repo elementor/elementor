@@ -9,15 +9,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
+	const EXPERIMENT_NAME = 'nested-elements';
+
 	public static function get_experimental_data() {
 		return [
-			'name' => 'nested-elements',
+			'name' => self::EXPERIMENT_NAME,
+			'tag' => esc_html__( 'Feature', 'elementor' ),
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
-			'description' => esc_html__( 'Create a rich user experience by layering widgets together inside “Nested” Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected.', 'elementor' ),
+			'description' => sprintf(
+				esc_html__( 'Create a rich user experience by layering widgets together inside "Nested" Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected. %1$sLearn More%2$s', 'elementor' ),
+				'<a href="https://go.elementor.com/wp-dash-nested-elements/" target="_blank">',
+				'</a>'
+			),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'dependencies' => [
 				'container',
+			],
+			'new_site' => [
+				'default_active' => false,
+				'minimum_installation_version' => '3.10.0',
 			],
 		];
 	}

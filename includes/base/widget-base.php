@@ -132,7 +132,7 @@ abstract class Widget_Base extends Element_Base {
 		$is_type_instance = $this->is_type_instance();
 
 		if ( ! $is_type_instance && null === $args ) {
-			throw new \Exception( '`$args` argument is required when initializing a full widget instance.' );
+			throw new \Exception( 'An `$args` argument is required when initializing a full widget instance.' );
 		}
 
 		if ( $is_type_instance ) {
@@ -569,7 +569,7 @@ abstract class Widget_Base extends Element_Base {
 			}
 		}
 
-		$attributes['e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
+		$attributes['data-elementor-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
 
 		$this->add_render_attribute( $element, $attributes, null, $overwrite );
 

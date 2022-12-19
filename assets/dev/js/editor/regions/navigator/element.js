@@ -72,16 +72,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	attributes() {
-		const attrs = {
+		return {
 			'data-id': this.model.id,
 			'data-model-cid': this.model.cid,
 		};
-
-		if ( this.model.get( 'isLocked' ) ) {
-			attrs[ 'data-locked' ] = true;
-		}
-
-		return attrs;
 	}
 
 	templateHelpers() {
