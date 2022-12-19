@@ -68,7 +68,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.mediaInputImageSize.val( this.getControlValue( 'size' ) );
 		}
 
-		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
+		this.ui.controlMedia.toggleClass( 'e-media-empty', ! value );
 	},
 
 	openFrame( e ) {

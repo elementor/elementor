@@ -276,7 +276,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		if ( 'media' === skin ) {
-			this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
+			this.ui.controlMedia.toggleClass( 'e-media-empty', ! iconValue );
 		}
 
 		if ( ( 'inline' === skin && ! disableActiveState ) || iconType ) {
