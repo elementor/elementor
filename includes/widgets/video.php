@@ -1158,6 +1158,8 @@ class Widget_Video extends Widget_Base {
 			$params['endscreen-enable'] = '0';
 		} elseif ( 'videopress' === $settings['video_type'] ) {
 			$params_dictionary = $this->get_params_dictionary_for_videopress();
+
+			$params['at'] = $settings['start'];
 		}
 
 		foreach ( $params_dictionary as $key => $param_name ) {
@@ -1284,6 +1286,11 @@ class Widget_Video extends Widget_Base {
 		return $video_url;
 	}
 
+	/**
+	 * Get the VideoPress video URL from the current selected settings.
+	 *
+	 * @return string
+	 */
 	private function get_videopress_video_url() {
 		$settings = $this->get_settings_for_display();
 
@@ -1292,27 +1299,6 @@ class Widget_Video extends Widget_Base {
 		}
 
 		return $settings['hosted_url']['url'];
-	}
-
-	/**
-	 *
-	 * @since 2.1.0
-	 * @access private
-	 */
-	private function render_hosted_video() {
-		$video_url = $this->get_hosted_video_url();
-		if ( empty( $video_url ) ) {
-			return;
-		}
-
-		$video_params = $this->get_hosted_params();
-
-		if ( ! $this->render_hosted_videopress_video( $video_url, $video_params ) ) {
-			/* Sometimes the video url is base64, therefore we use `esc_attr` in `src`. */
-			?>
-			<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
-			<?php
-		}
 	}
 
 	/**
@@ -1331,54 +1317,22 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
-	 * VideoPress videos from media library should still use the VideoPress player
-	 * instead of the direct MP4 link.
 	 *
-	 * @param string $video_url
-	 * @param array $video_params
-	 * @return bool
+	 * @since 2.1.0
+	 * @access private
 	 */
-	private function render_hosted_videopress_video( $video_url, $video_params ) {
-		$video_guid = $this->get_videopress_video_guid( $video_url );
-		if ( null === $video_guid ) {
-			return false;
+	private function render_hosted_video() {
+		$video_url = $this->get_hosted_video_url();
+		if ( empty( $video_url ) ) {
+			return;
 		}
 
-		$videopress_url = 'https://videopress.com/v/' . $video_guid;
-		$embed_url_params = [ 'preloadContent' => $video_params['preload'] ];
-		$params_dictionary = $this->get_params_dictionary_for_videopress();
+		$video_params = $this->get_hosted_params();
 
-		foreach ( $params_dictionary as $key => $param_name ) {
-			$setting_name = is_string( $key ) ? $key : $param_name;
-			$setting_value = isset( $video_params[ $setting_name ] ) ? '1' : '0';
-			$embed_url_params[ $param_name ] = $setting_value;
-		}
-
-		echo Embed::get_embed_html( $videopress_url, $embed_url_params );
-
-		return true;
-	}
-
-	/**
-	 * Parses a video URL and returns a VideoPress video GUID or null
-	 * if the URL is not a valid VideoPress URL.
-	 *
-	 * @param string $video_url
-	 * @return string|null
-	 */
-	private function get_videopress_video_guid( $video_url ) {
-		$videopress_patterns = [
-			'/^(?:http(?:s)?:\/\/)?videos\.files\.wordpress\.com\/([a-zA-Z\d]{8,})\//i',
-			'/^(?:http(?:s)?:\/\/)?(?:www\.)?video(?:\.word)?press\.com\/(?:v|embed)\/([a-zA-Z\d]{8,})(.+)?/',
-		];
-
-		foreach ( $videopress_patterns as $pattern ) {
-			if ( preg_match( $pattern, $video_url, $url_matches ) ) {
-				return $url_matches[1];
-			}
-		}
-
-		return null;
+		/* Sometimes the video url is base64, therefore we use `esc_attr` in `src`. */
+		?>
+		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
+		<?php
 	}
 
 }
