@@ -90,6 +90,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		// Disable lazyload in admin area (true if inside WordPress administration interface - Editor, Admin, etc.)
+		if ( is_admin() ) {
+			return;
+		}
+
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
 			$this->update_element_attributes( $element );
 		} );
