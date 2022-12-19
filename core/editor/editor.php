@@ -354,7 +354,7 @@ class Editor {
 		$wp_styles = new \WP_Styles(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wp_scripts = new \WP_Scripts(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		$suffix = Utils::is_script_debug() || Utils::is_elementor_tests() ? '' : '.min';
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		$this->loader->register_scripts();
 

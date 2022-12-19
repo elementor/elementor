@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Editor_V2_Config_Provider extends Editor_Base_Config_Provider implements Config_Provider_Interface {
+class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_scripts() {
-		$scripts = parent::get_scripts();
+		$scripts = Editor_Common_Assets::get_scripts();
 
 		// TODO: Choose a final name.
 		$scripts = apply_filters( 'elementor/editor/v2/loader/scripts/register', $scripts );
@@ -36,8 +36,6 @@ class Editor_V2_Config_Provider extends Editor_Base_Config_Provider implements C
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
 	}
 
-	// TODO: Maybe make it recursive, so if a package has a non-registered dependency in its tree,
-	// 	it will be filtered out.
 	private function ensure_registered_handles( $handles ) {
 		return array_filter( $handles, function ( $handle ) {
 			return wp_script_is( $handle, 'registered' );
