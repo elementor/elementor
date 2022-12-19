@@ -1,0 +1,154 @@
+{
+    "libraryAppTitle" : "Kit Library",
+    "libraryAppPageTitle" : "Elementor | Kit Library",
+    "noFavoritesHereText" : "No favorites here yet...",
+    "welcomeCloudPageTitle" : "Choose Design - Elementor",
+    "ceramicsShopTitle" : "Ceramics Shop",
+    "ceramicsShopPreviewH1Text" : "HandmadeNEW ZEALAND Ceramics",
+    "ceramicsShopKitID" : "83",
+    
+    "businessKitNames" : [
+        "Digital Marketing Studio",
+        "Barbershop",
+        "Beauty Salon",
+        "Yoga Studio"
+    ],
+
+    "portfolioKitNames" : [
+        "Interior Design Firm",
+        "Art Gallery",
+        "Portrait Photography"
+    ],
+
+    "onlineStoreKitNames" : [
+        "Ceramics Shop",
+        "Eco Shop",
+        "Skate Shop"
+    ],
+
+    "foodDrinksKitNames" : [
+        "English Pub",
+        "Winery",
+        "Food Blog"
+    ],
+
+    "blogKitNames" : [
+        "Food Blog",
+        "Health Blog",
+        "Travel Blog"
+    ],
+
+    "newKits" : [
+        "Juice Bar",
+        "Dry Cleaning",
+        "Food Blog"
+    ],
+
+    "allCategoriesKitNames" : [
+        "Digital Marketing Studio",
+        "Art Gallery",
+        "Eco Shop",
+        "Winery"
+    ],
+
+    "freePlanKits" : [
+        "Bread Bakery",
+        "Wedding Photographer",
+        "Local Services Wireframe 2",
+        "Portfolio Wireframe 2",
+        "Painting Company"
+    ],
+
+    "proPlanKits" : [
+        "Digital Marketing Agency",
+        "Local Services Wireframe 1",
+        "Law Firm",
+        "Ceramics Shop",
+        "Interior Design Firm"
+    ],
+
+    "expertPlanKits" : [
+        "Computer Technician",
+        "Hiking Tours Company",
+        "Illustrator Portfolio",
+        "Online Coffee Shop"
+    ],
+
+    "dropDownValues" : {
+        "allCategories" : "-1",
+        "business" : "business",
+        "onlineStore" : "onlineStore",
+        "portfolio" : "portfolio",
+        "foodAndDrinks" : "foodAndDrinks",
+        "blog" : "blog"
+    },
+
+    "kitID" : {
+        "kitparameter" : "kit_id=",
+        "ceramicShop" : "kit_id=60e417ca0332830012fcad9d"
+    },
+
+    "dropDownSortValues" : [
+        "featuredIndex",
+        "createdAt",
+        "popularityIndex",
+        "trendIndex"
+    ],
+
+    "attorneyTagKit" : [
+        "Law Firm"
+    ],
+
+    "top5MostPopularKits" : {
+        "Local Services Wireframe 2" : {
+            "kitDescription" : "If you’re looking for a design-free services wireframe, this is the kit for you. The perfect starting point for any web creator, from beginner to advanced. Simply add your own creative designs using the basic structure as a guide.",
+            "pages" : {
+                "Home" : "This Headline Grabs Visitors’ Attention",
+                "Our Story" : "Our story",
+                "Our Services" : "Our Services",
+                "Contact Us" : "Contact Us"
+            }
+        },
+        "Bread Bakery" : {
+            "kitDescription" : "Visitors will want to devour your pieces of bread after visiting your Bakery website. A layout that awakens the senses of your baked treats, this calm modern design combines appetizing images with inviting typography.",
+            "pages" : {
+                "Home" : "The art of bakery",
+                "Our Breads" : "our bread collection",
+                "Our Story" : "baking with love ",
+                "Contact Us" : "get in touch"
+            },
+            "tags" : [
+                "Bakery",
+                "Bread",
+                "Cook",
+                "Food",
+                "Local Business",
+                "Food and Drink",
+                "Retail Stores",
+                "Business / Corporate website",
+                "Free"
+            ]
+        },
+        "Portfolio Wireframe 2" : {
+            "H1" : "This Headline Grabs Visitors’ Attention",
+            "kitDescription" : "", 
+            "pages" : [
+                
+            ] 
+        },
+        "Painting Company" : {
+            "H1" : "Barnes Painters",
+            "kitDescription" : "", 
+            "pages" : [
+                
+            ]
+        },
+        "Wedding Photographer" : {
+            "H1" : "creative documentary",
+            "kitDescription" : "", 
+            "pages" : [
+                
+            ]
+        }
+    }
+}
