@@ -13,9 +13,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
-
-		ui.mediaInputImageSize = '.e-image-size-select';
-
+		
+    ui.mediaInputImageSize = '.e-image-size-select';
+    
 		return ui;
 	},
 
