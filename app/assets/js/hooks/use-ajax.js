@@ -13,16 +13,16 @@ export default function useAjax() {
 			reset: () => setAjaxState( initialStatusKey ),
 		};
 
-	useEffect( () => {
-		if ( ajax ) {
+	const runRequest = async ( config ) => {
+		return new Promise( ( resolve, reject ) => {
 			const formData = new FormData();
 
-			if ( ajax.data ) {
-				for ( const key in ajax.data ) {
-					formData.append( key, ajax.data[ key ] );
+			if ( config.data ) {
+				for ( const key in config.data ) {
+					formData.append( key, config.data[ key ] );
 				}
 
-				if ( ! ajax.data.nonce ) {
+				if ( ! config.data.nonce ) {
 					formData.append( '_nonce', elementorCommon.config.ajax.nonce );
 				}
 			}
@@ -34,22 +34,33 @@ export default function useAjax() {
 				cache: false,
 				contentType: false,
 				processData: false,
-				...ajax,
+				...config,
 				data: formData,
 				success: ( response ) => {
-					const status = response.success ? 'success' : 'error';
-
-					setAjaxState( ( prevState ) => ( { ...prevState, status, response: response?.data } ) );
+					resolve( response );
 				},
-				error: () => {
-					setAjaxState( ( prevState ) => ( { ...prevState, status: 'error' } ) );
-				},
-				complete: () => {
-					setAjaxState( ( prevState ) => ( { ...prevState, isComplete: true } ) );
+				error: ( error ) => {
+					reject( error );
 				},
 			};
 
 			jQuery.ajax( options );
+		} );
+	};
+
+	useEffect( () => {
+		if ( ajax ) {
+			runRequest( ajax )
+				.then( ( response ) => {
+					const status = response.success ? 'success' : 'error';
+					setAjaxState( ( prevState ) => ( { ...prevState, status, response: response?.data } ) );
+				} )
+				.catch( () => {
+					setAjaxState( ( prevState ) => ( { ...prevState, status: 'error' } ) );
+				} )
+				.finally( () => {
+					setAjaxState( ( prevState ) => ( { ...prevState, isComplete: true } ) );
+				} );
 		}
 	}, [ ajax ] );
 
@@ -58,5 +69,6 @@ export default function useAjax() {
 		setAjax,
 		ajaxState,
 		ajaxActions,
+		runRequest,
 	};
 }

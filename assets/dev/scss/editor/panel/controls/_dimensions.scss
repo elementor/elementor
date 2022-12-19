@@ -8,16 +8,11 @@
 		flex: 1;
 		transition: flex-grow .3s ease-in-out;
 
-		&.elementor-control-dimension:focus-within {
-			flex: 1.75;
-		}
-
 		input,
 		.elementor-link-dimensions {
 			display: block;
 			text-align: center;
 			width: 100%;
-			border-color: $editor-lightest;
 			height: $control-unit;
 		}
 
