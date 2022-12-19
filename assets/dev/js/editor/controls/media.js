@@ -14,7 +14,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 
-		ui.mediaInputImageSize = '.elementor-control-media__size';
+		ui.mediaInputImageSize = '.e-thumb-size-select';
 
 		return ui;
 	},
@@ -68,7 +68,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.mediaInputImageSize.val( this.getControlValue( 'size' ) );
 		}
 
-		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
+		this.ui.controlMedia.toggleClass( 'e-media-empty', ! value );
 	},
 
 	openFrame( e ) {
