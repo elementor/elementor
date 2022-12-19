@@ -14,7 +14,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 
-		ui.mediaInputImageSize = '.elementor-control-media__size';
+		ui.mediaInputImageSize = '.e-thumb-size-select';
 
 		return ui;
 	},

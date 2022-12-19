@@ -276,7 +276,7 @@ class Control_Media extends Control_Base_Multiple {
 				<div class="elementor-control-field">
 					<label class="elementor-control-title" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Thumb Size', 'elementor' ); ?></label>
 					<div class="elementor-control-input-wrapper elementor-control-unit-5">
-						<select id="<?php $this->print_control_uid( 'size' ); ?>" data-setting="size">
+						<select class="e-thumb-size-select" id="<?php $this->print_control_uid( 'size' ); ?>" data-setting="size">
 							<?php foreach ( $this->get_image_sizes() as $size_key => $size_title ) : ?>
 								<option value="<?php echo esc_attr( $size_key ); ?>"><?php echo esc_html( $size_title ); ?></option>
 							<?php endforeach; ?>
