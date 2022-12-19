@@ -218,9 +218,7 @@ class App extends BaseApp {
 			true
 		);
 
-		if ( ! $this->get_settings( 'disable_dark_theme' ) ) {
-			$this->enqueue_dark_theme_detection_script();
-		}
+		$this->enqueue_dark_theme_detection_script();
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );

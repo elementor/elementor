@@ -570,10 +570,6 @@ a.elementor-responsive-switcher {
 		color: $theme-dark-light;
 	}
 
-	.elementor-control-media__tool {
-		background-color: $theme-dark-gray-lighter;
-	}
-
 	&__file {
 
 		&,
@@ -1494,6 +1490,7 @@ label.elementor-template-library-order-label,
 
 //WP Media Modal
 .media-modal {
+	color-scheme: light;
 	color: $editor-dark;
 }
 
