@@ -42,14 +42,17 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async useElementorCleanPost() {
-		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
+		const editor = this.useElementorPost( CLEAN_POST_ID );
+		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
+		return editor;
+	}
+
+	async useElementorPost( postId ) {
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
 		await this.waitForPanel();
 
-		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
-
-		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
-
+		const editor = new EditorPage( this.page, this.testInfo, postId );
 		return editor;
 	}
 

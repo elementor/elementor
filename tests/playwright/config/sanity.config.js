@@ -16,7 +16,10 @@ const config = {
 	use: {
 		actionTimeout: 10_000, // 10 seconds
 		navigationTimeout: 10_000, // 10 seconds
-		headless: true,
+		headless: false,
+		launchOptions: {
+			slowMo: 2_000,
+		},
 		storageState: './tests/playwright/config/storageState.json',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
