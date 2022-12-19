@@ -594,7 +594,9 @@ class Module extends BaseModule {
 
 		foreach ( $settings as $setting_data ) {
 			foreach ( $setting_data['fields'] as $field_name => $field_data ) {
-				if ( empty( $field_data['field_args']['type'] ) || 'hidden' === $field_data['field_args']['type'] ) {
+				$is_hidden_field = ( empty( $field_data['field_args']['type'] ) || 'hidden' === $field_data['field_args']['type'] );
+
+				if ( $is_hidden_field ) {
 					continue;
 				}
 
@@ -605,6 +607,7 @@ class Module extends BaseModule {
 				}
 
 				$is_default_value = ( ! empty( $field_data['field_args']['std'] ) && $setting_value === $field_data['field_args']['std'] );
+
 				if ( $is_default_value ) {
 					continue;
 				}
