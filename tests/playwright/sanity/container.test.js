@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
+const widgets = require( '../enums/widgets.js' );
 
 test.describe( 'Container tests', () => {
 	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
@@ -17,9 +18,9 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		// Add widgets.
-		const button = await editor.addWidget( 'button', container ),
-			heading = await editor.addWidget( 'heading', container ),
-			image = await editor.addWidget( 'image', container );
+		const button = await editor.addWidget( widgets.button, container ),
+			heading = await editor.addWidget( widgets.heading, container ),
+			image = await editor.addWidget( widgets.image, container );
 
 		// Act.
 		// Move the button to be last.
@@ -43,7 +44,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test.only( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -55,14 +56,14 @@ test.describe( 'Container tests', () => {
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
+		await editor.useCanvasTemplate();
 
 		// Act.
-		// Add widgets.
-		await editor.addWidget( 'accordion', containerId );
-		await editor.addWidget( 'divider', containerId );
-		const spacer = await editor.addWidget( 'spacer', containerId );
-		await editor.addWidget( 'toggle', containerId );
-		await editor.addWidget( 'video', containerId );
+		await editor.addWidget( widgets.accordion, containerId );
+		await editor.addWidget( widgets.divider, containerId );
+		const spacer = await editor.addWidget( widgets.spacer, containerId );
+		await editor.addWidget( widgets.toggle, containerId );
+		await editor.addWidget( widgets.video, containerId );
 
 		// Set background colour to spacer.
 		await editor.setBackgroundColor( '#A81830', spacer );
@@ -90,6 +91,7 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
+
 		await page.waitForLoadState( 'networkidle' );
 
 		expect( await container.screenshot( {
@@ -155,9 +157,7 @@ test.describe( 'Container tests', () => {
 			pageView = page.locator( 'body' );
 
 		// Act.
-		// Add widget.
-		await editor.addWidget( 'heading', container );
-		// Select container.
+		await editor.addWidget( widgets.heading, container );
 		await editor.selectElement( container );
 		// Set position absolute.
 		await editor.activatePanelTab( 'advanced' );
