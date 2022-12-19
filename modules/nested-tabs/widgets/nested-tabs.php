@@ -421,7 +421,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):not( :hover )",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -437,7 +437,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):not( :hover )",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -455,7 +455,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):not( :hover )",
 			]
 		);
 
@@ -474,7 +474,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_hover',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -496,7 +496,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -514,7 +514,15 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow_hover',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
+			]
+		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
 
@@ -668,7 +676,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):not( :hover )",
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -681,7 +689,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):not( :hover ) :is( span, a, i )",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -705,7 +713,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-n-tab-title:hover' => '--n-tabs-title-color-hover: {{VALUE}}',
+					'{{WRAPPER}} .e-n-tab-title:not( .e-active ):hover' => '--n-tabs-title-color-hover: {{VALUE}}',
 				],
 			]
 		);
@@ -714,7 +722,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -728,7 +736,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover :is( span, a, i )",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -774,7 +782,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_active',
-				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title.e-active",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title.e-active :is( span, a, i )",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -908,7 +916,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}} .e-n-tab-title:hover' => '--n-tabs-icon-color-hover: {{VALUE}};',
+				'{{WRAPPER}} .e-n-tab-title:not( .e-active ):hover' => '--n-tabs-icon-color-hover: {{VALUE}};',
 			],
 		] );
 
@@ -1028,7 +1036,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon', 'e-active' ] );
 
 		$tabs_title_html = '';
-		$tabs_content_html = '';
+		$mobile_tabs_title_html = '';
 
 		foreach ( $tabs as $index => $item ) {
 			// Tabs title.
@@ -1036,12 +1044,19 @@ class NestedTabs extends Widget_Nested_Base {
 			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
 			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
 			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
+			$tab_title_classes = [ 'e-n-tab-title', 'e-normal' ];
+			$tab_title_mobile_classes = [ 'e-n-tab-title', 'e-collapse' ];
+
+			if ( $settings['hover_animation'] ) {
+				array_push( $tab_title_classes, 'elementor-animation-' . $settings['hover_animation'] );
+				array_push( $tab_title_mobile_classes, 'elementor-animation-' . $settings['hover_animation'] );
+			}
 
 			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => $tab_id,
-				'class' => [ 'e-n-tab-title', 'e-normal' ],
+				'class' => $tab_title_classes,
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
 				'role' => 'tab',
@@ -1051,7 +1066,7 @@ class NestedTabs extends Widget_Nested_Base {
 			] );
 
 			$this->add_render_attribute( $tab_title_mobile_setting_key, [
-				'class' => [ 'e-n-tab-title', 'e-collapse' ],
+				'class' => $tab_title_mobile_classes,
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
 				'role' => 'tab',
@@ -1063,18 +1078,19 @@ class NestedTabs extends Widget_Nested_Base {
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
-			$tab_title_text = $this->get_render_attribute_string( 'tab-title-text' );
-			$tab_icon_attributes = $this->get_render_attribute_string( 'tab-icon' );
+			$tab_title_text_class = $this->get_render_attribute_string( 'tab-title-text' );
+			$tab_icon_class = $this->get_render_attribute_string( 'tab-icon' );
 
 			$icon_html = Icons_Manager::try_get_icon_html( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
 			$icon_active_html = $icon_html;
+
 			if ( $this->is_active_icon_exist( $item ) ) {
 				$icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
 			}
 
 			$tabs_title_html .= "<div {$title_render_attributes}>";
-			$tabs_title_html .= "\t<span {$tab_icon_attributes}>{$icon_html}{$icon_active_html}</span>";
-			$tabs_title_html .= "\t<span {$tab_title_text}>{$tab_title}</span>";
+			$tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
+			$tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
 			$tabs_title_html .= '</div>';
 
 			// Tabs content.
@@ -1082,7 +1098,10 @@ class NestedTabs extends Widget_Nested_Base {
 			$this->print_child( $index );
 			$tab_content = ob_get_clean();
 
-			$tabs_content_html .= "<div $mobile_title_attributes>$tab_title</div>$tab_content";
+			$mobile_tabs_title_html .= "<div $mobile_title_attributes>";
+			$mobile_tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
+			$mobile_tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
+			$mobile_tabs_title_html .= "</div>$tab_content";
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
@@ -1090,7 +1109,7 @@ class NestedTabs extends Widget_Nested_Base {
 				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="e-n-tabs-content" role="tablist" aria-orientation="vertical">
-				<?php echo $tabs_content_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo $mobile_tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		</div>
 		<?php
@@ -1100,16 +1119,18 @@ class NestedTabs extends Widget_Nested_Base {
 		?>
 		<div class="e-n-tabs" role="tablist" aria-orientation="vertical">
 			<# if ( settings['tabs'] ) {
-			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+			const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
-				let tabCount = index + 1,
+				const tabCount = index + 1,
 					tabUid = elementUid + tabCount,
 					tabWrapperKey = tabUid,
 					tabTitleKey = 'tab-title-' + tabUid,
 					tabIconKey = 'tab-icon-' + tabUid,
 					tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-					tabActiveIcon = tabIcon,
+					hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
+
+				let tabActiveIcon = tabIcon,
 					tabId = 'e-n-tab-title-' + tabUid;
 
 				if ( '' !== item.tab_icon_active.value ) {
@@ -1122,7 +1143,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 				view.addRenderAttribute( tabWrapperKey, {
 					'id': tabId,
-					'class': [ 'e-n-tab-title','e-normal' ],
+					'class': [ 'e-n-tab-title','e-normal',hoverAnimationClass ],
 					'data-tab': tabCount,
 					'role': 'tab',
 					'tabindex': 1 === tabCount ? '0' : '-1',

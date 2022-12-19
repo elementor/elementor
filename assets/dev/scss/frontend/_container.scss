@@ -111,8 +111,9 @@
 	&::before,
 	> .elementor-background-video-container::before,
 	> .e-con-inner > .elementor-background-video-container::before,
-	> .elementor-background-slideshow:before,
-	> .e-con-inner > .elementor-background-slideshow:before {
+	> .elementor-background-slideshow::before,
+	> .e-con-inner > .elementor-background-slideshow::before,
+	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
@@ -132,13 +133,13 @@
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
-	> .elementor-background-video-container:before,
-	> .e-con-inner > .elementor-background-video-container:before {
+	> .elementor-background-video-container::before,
+	> .e-con-inner > .elementor-background-video-container::before {
 		z-index: $first-layer;
 	}
 
-	> .elementor-background-slideshow:before,
-	> .e-con-inner > .elementor-background-slideshow:before {
+	> .elementor-background-slideshow::before,
+	> .e-con-inner > .elementor-background-slideshow::before {
 		z-index: $second-layer;
 	}
 
