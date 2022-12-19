@@ -481,7 +481,7 @@ test.describe( 'Container tests', () => {
 		// Assert
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
 	} );
 
