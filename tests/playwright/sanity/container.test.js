@@ -516,7 +516,7 @@ test.describe( 'Container tests', () => {
 			expect( await container.screenshot( {
 				type: 'jpeg',
 				quality: 90,
-			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg', { maxDiffPixels: 100 } );
+			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg');
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
@@ -527,7 +527,7 @@ test.describe( 'Container tests', () => {
 		expect( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
-		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg', { maxDiffPixels: 100 } );
+		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
 	} );
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
