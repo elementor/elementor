@@ -375,8 +375,9 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 'no', $settings_usage['disable_color_schemes'] );
-		$this->assertArrayNotHasKey( Settings::UPDATE_TIME_FIELD, $settings_usage );
-		$this->assertArrayNotHasKey( 'css_print_method', $settings_usage );
 		$this->assertEquals( '1', $settings_usage['editor_break_lines'] );
+
+		$this->assertArrayNotHasKey( 'css_print_method', $settings_usage );
+		$this->assertArrayNotHasKey( Settings::UPDATE_TIME_FIELD, $settings_usage );
 	}
 }
