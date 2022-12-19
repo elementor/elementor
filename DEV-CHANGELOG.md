@@ -1,5 +1,23 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.11.0-dev2 - 2022-12-19
+* Fix: Container background overlay background image does not load [ED-8985] (#20639)
+* Fix: The font looks blurry in the Admin Top Bar (#15930) (#20740)
+* Tweak: Add chevron for units dropdown for better UX [ED-9046] (#20741)
+* Tweak: Use `aspect-ratio` property instead of history CSS trick [ED-8875] (#20718)
+* Tweak: Added Hover Animation control to Tabs Hover in Tabs widget (#20733) [ED-9040] (#20745)
+* Fix: Wrong share URL for XING network [ED-9049] [ED-9048] (#20759)
+* Fix: Lazy Load Background Images not loading for Template widget in the editor [ED-8994] (#20742)
+* Fix: Kits Defaults - Responsive values are not saved [ED-8987] (#20657)
+* Tweak: Media control return image url from WP in style css [ED-9031] (#20715)
+* Fix: Rename `e-action-hash` attribute to a valid `data-elementor-action-hash` name [ED-9060] (#20514)
+* Tweak: I/E - break down import process into chunks [HTS-36] (#20777)
+* New: Add Mega Menu icon to eicons [ED-8920] (#20773)
+* Tweak: Reorder Library Categories [HTS-80] (#20710)
+* Fix: Rename `data-elementor-action-hash` attribute to a valid `data-e-action-hash` name (#20781)
+* Tweak: Added more sections on System info [ED-8741] (#20662)
+* New: Editor V2 - Backend experiment + loading the scripts (#20562)
+
 #### 3.11.0-dev1 - 2022-12-13
 * Tweak: Add missing default unit for controls using angel units [ED-8683] (#20344)
 * Tweak: Added compatibility for Yoast Duplicate Post [ED-8677] (#20349)
@@ -479,19 +497,3 @@
 
 #### 3.6.0-dev25 - 2022-01-03
 * Fix: Image size with a link shrunk in Image widget [ED-3397] (#17245)
-
-#### 3.6.0-dev22 - 2021-12-26
-* Fix: Responsive reverse columns control inoperative []ED-5877 (#17246)
-* Tweak: Remove `elementor-section-wrap` by adding it to the DOM experiment [ED-5865] (#17192)
-* Fix: Favorites are not kept after page reload [ED-5903] (#17242)
-* Tweak: Promoted some experiments status to Stable (#16986)
-* Fix: Elements are pasted in reverse order when copying and pasting multi-selected elements [ED-5723] (#17231)
-* Fix: Inner Section can’t be dragged into a column [ED-5910] (#17258)
-* Tweak: Updated changelog v3.5.2 (#17281)
-* Fix: Changelog links (#17285)
-
-#### 3.6.0-dev21 - 2021-12-20
-* Tweak: Delete deprecated 'Scheme' classes alias [ED-5894] (#17217)
-* Fix: Revert task ED-1628 - document handle below the header with z-index above 99 (#17205)
-* Revert "Tweak: Added Safe mode for Experiments [ED-741] (#16659)" (#17206)
-* Tweak: Changelog for v3.5.1 (#17184)
