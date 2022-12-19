@@ -1,6 +1,6 @@
 .elementor-control-media {
 
-	&.elementor-media-empty {
+	&.e-media-empty {
 
 		.elementor-control-media-area {
 			.elementor-control-media__remove, .elementor-control-media__content__remove {
@@ -9,7 +9,7 @@
 		}
 	}
 
-	&:not(.elementor-media-empty) {
+	&:not(.e-media-empty) {
 		.elementor-control-media__content {
 			&__upload-button {
 				display: none;
@@ -141,7 +141,7 @@
 		}
 	}
 
-	&.elementor-media-empty .elementor-control-file-area {
+	&.e-media-empty .elementor-control-file-area {
 		display: none;
 	}
 
@@ -196,7 +196,7 @@
 		}
 	}
 
-	&:not(.elementor-media-empty) &__file  {
+	&:not(.e-media-empty) &__file  {
 		&__content {
 			&__label {
 				display: none;
@@ -204,7 +204,7 @@
 		}
 	}
 
-	&.elementor-media-empty &__file {
+	&.e-media-empty &__file {
 		&__content {
 			&__info {
 				display: none;
