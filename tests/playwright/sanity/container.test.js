@@ -44,7 +44,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -138,7 +138,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -147,10 +147,7 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-
-		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -202,7 +199,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -259,10 +256,7 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-
-		// Use the Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -319,7 +313,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -396,7 +390,7 @@ test.describe( 'Container tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test.skip( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -509,7 +503,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
