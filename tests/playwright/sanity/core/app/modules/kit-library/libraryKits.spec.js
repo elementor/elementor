@@ -20,7 +20,7 @@ test.beforeEach( async ( { page } ) => {
 	await globalHelper.checkflexBoxIsOff();
  } );
 
-test.describe.only( 'Library Kits w/logged in State', () => {
+test.describe( 'Library Kits w/logged in State', () => {
    test( 'User can search using a category', async ( { page } ) => {
       await helper.goToKitPage();
       await helper.searchCategoriesEntryBox.type( 'blog', { delay: 50 } );
