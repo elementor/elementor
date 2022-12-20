@@ -6,10 +6,6 @@ class LibraryKits {
         this.url = url;
         this.randNum = Math.trunc( ( Math.random() * ( 30 ) ) + 40 );
 
-        // WP Admin Dashboard
-        this.templatesSection = this.page.locator( '#menu-posts-elementor_library' );
-        this.kitLibraryInsideTemplatesSection = this.page.locator( '#menu-posts-elementor_library a >> text=Kit Library' );
-
         // Kit Library
         this.appTitle = this.page.locator( '.eps-app__title' );
         this.kitTitles = this.page.locator( '.eps-h5' );
@@ -65,15 +61,79 @@ class LibraryKits {
         this.kitPage = this.page.locator( '.e-kit-library__kit-item-overlay-overview-button' );
     }
 
-    async goToKitPage() {
-        await this.page.goto( '/wp-admin/', { waitUntil: 'load' } );
-        await this.templatesSection.hover();
-        await this.kitLibraryInsideTemplatesSection.click();
-        await this.page.waitForLoadState( 'load' );
-    }
-
     async checkBlogCategory() {
         await this.page.check( this.blogCategorySelector );
+        await this.page.waitForLoadState( 'networkidle' );
+        await this.page.waitForTimeout( 500 );
+    }
+
+    async setTagsTheOnlyActiveSection() {
+        await this.categoriesTitle.click();
+        await this.tagsTitle.click();
+        await this.page.waitForSelector( this.searchTagsEntryBoxSelector );
+    }
+
+    async searchForCarsTag() {
+        // Type a tag fully and validate that there is only one tag thats available for selection
+        await this.searchTagsEntryBox.type( 'cars', { delay: 50 } );
+        await this.page.waitForTimeout( 500 );
+        await expect( await this.categoryItems.count(), `The search for "cars" tag was not found` ).toEqual( 1 );
+    }
+
+    async searchForBlogCategory() {
+        await this.searchCategoriesEntryBox.type( 'blog', { delay: 50 } );
+        await this.page.waitForLoadState( 'networkidle' );
+        await this.page.waitForTimeout( 500 );
+    }
+
+    async checkOnlyCarTagIsAvailable() {
+      await expect( await this.categoryItems.count(), `The search for "cars" tag was not found` ).toEqual( 1 );
+    }
+
+    async checkoffAttorneyTag() {
+        await this.attorneyTag.click();
+    }
+
+    async checkAttorneyTagIsCheckedOff() {
+        await expect( this.attorneyTag ).toBeChecked();
+        await this.page.waitForTimeout( 500 );
+    }
+
+    async checkOnlyAttorneyKitIsPresented( kit ) {
+        // Only 1 Kit is supposed to show up with an Attorney tag
+        await expect( this.kitTitles, `Law Firm Kit is not showing in the available kits` ).toContainText( kit );
+    }
+
+    async uncheckTheAttorneyTag() {
+        await this.filterItemCloseButton.click();
+    }
+
+    async checkTheAttorneyTagIsUnchecked() {
+        await expect( this.attorneyTag, `The attorney tag checkbox is still checked` ).not.toBeChecked();
+    }
+
+    async checkAllKitsAreNowPresent() {
+        await expect( await this.kitTitles.count(), `All the kits are not back into view after filter is cleared` ).toBeGreaterThan( 50 );
+    }
+
+    async searchForKit( kit ) {
+        await this.mainKitSearchEntryBox.type( Object.keys( kit )[ 0 ], { delay: 50 } );
+        await this.page.waitForTimeout( 500 );
+    }
+
+    async selectViewKitDemo() {
+        await this.viewKitDemo.click();
+        await this.page.waitForLoadState( 'networkidle' );
+        await this.page.waitForTimeout( 500 );
+    }
+
+    async checkKitDemoHeading( kit ) {
+        await expect( this.kitH1 ).toContainText( kit );
+    }
+
+    async checkSearchedKitIsPresent( kit ) {
+        const kitslist = await this.kitTitles.allTextContents();
+        await expect( kitslist.includes( Object.keys( kit )[ 0 ] ) ).toBeTruthy();
     }
 
     async checkFreePlan() {
@@ -99,10 +159,6 @@ class LibraryKits {
 
     async selectSortoption( selectOption ) {
         await this.sortOptionsDropDown.selectOption( { value: selectOption } );
-    }
-
-    async checkAttorneyTag() {
-        await this.page.check( this.attorneyTagSelector );
     }
 
     async checkBlogTag() {

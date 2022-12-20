@@ -105,4 +105,11 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
 	}
+
+	async goToKitPage() {
+        await this.page.goto( '/wp-admin/', { waitUntil: 'load' } );
+        await this.page.locator( '#menu-posts-elementor_library' ).hover();
+        await this.page.locator( '#menu-posts-elementor_library a >> text=Kit Library' ).click();
+        await this.page.waitForLoadState( 'networkidle' );
+    }
 };
