@@ -223,12 +223,10 @@
 				}
 
 			  	// Remove the general hover animation effect on active tabs.
-				@media (min-width: $screen-desktop-min) {
-					&:focus,
-					&:active {
-						transform: initial;
-					  	animation: none;
-					}
+				&:focus,
+				&:active {
+					transform: initial;
+					animation: none;
 				}
 			}
 		}
