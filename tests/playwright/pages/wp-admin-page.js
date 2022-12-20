@@ -42,7 +42,7 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async useElementorCleanPost() {
-		const editor = this.useElementorPost( CLEAN_POST_ID );
+		const editor = await this.useElementorPost( CLEAN_POST_ID );
 		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
 		return editor;
 	}
