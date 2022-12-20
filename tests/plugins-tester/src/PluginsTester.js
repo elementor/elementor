@@ -19,7 +19,6 @@ export class PluginsTester {
 		if ( this.options.runServer ) {
 			this.setCwd();
 			this.runServer();
-			this.prepareTestSite();
 		}
 
 		this.checkPlugins();
