@@ -41,26 +41,21 @@ class NestedTabs extends Widget_Nested_Base {
 		return [ 'nested', 'tabs', 'accordion', 'toggle' ];
 	}
 
+	protected function tab_content_container( int $index ) {
+		return [
+			'elType' => 'container',
+			'settings' => [
+				'_title' => sprintf( __( 'Tab #%s', 'elementor' ), $index ),
+				'content_width' => 'full',
+			],
+		];
+	}
+
 	protected function get_default_children_elements() {
 		return [
-			[
-				'elType' => 'container',
-				'settings' => [
-					'_title' => __( 'Tab #1', 'elementor' ),
-				],
-			],
-			[
-				'elType' => 'container',
-				'settings' => [
-					'_title' => __( 'Tab #2', 'elementor' ),
-				],
-			],
-			[
-				'elType' => 'container',
-				'settings' => [
-					'_title' => __( 'Tab #3', 'elementor' ),
-				],
-			],
+			$this->tab_content_container( 1 ),
+			$this->tab_content_container( 2 ),
+			$this->tab_content_container( 3 ),
 		];
 	}
 
