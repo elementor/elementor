@@ -516,7 +516,7 @@ test.describe( 'Container tests', () => {
 			expect( await container.screenshot( {
 				type: 'jpeg',
 				quality: 90,
-			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg');
+			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
