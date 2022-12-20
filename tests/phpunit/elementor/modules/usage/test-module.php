@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
 
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
+use Elementor\Settings;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
@@ -359,5 +360,27 @@ class Test_Module extends Elementor_Test_Base {
 
 			$this->isDynamicTags = true;
 		}
+	}
+
+	public function test_get_settings_usage() {
+		// Arrange.
+		update_option( 'elementor_disable_color_schemes', 'no' );
+		update_option( 'elementor_editor_break_lines', '1' );
+		
+		// Default value should not exist in the result
+		update_option( 'elementor_css_print_method', 'external' ); 
+		
+		// Not an Elementor option should not exist in the result
+		update_option( Settings::UPDATE_TIME_FIELD, time() );
+
+		// Act
+		$settings_usage = Module::get_settings_usage();
+
+		// Assert
+		$this->assertEquals( 'no', $settings_usage['disable_color_schemes'] );
+		$this->assertEquals( '1', $settings_usage['editor_break_lines'] );
+
+		$this->assertArrayNotHasKey( 'css_print_method', $settings_usage );
+		$this->assertArrayNotHasKey( Settings::UPDATE_TIME_FIELD, $settings_usage );
 	}
 }
