@@ -226,7 +226,8 @@
 				@media (min-width: $screen-desktop-min) {
 					&:focus,
 					&:active {
-					  transform: initial;
+						transform: initial;
+					  	animation: none;
 					}
 				}
 			}
