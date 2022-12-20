@@ -222,9 +222,11 @@
 					}
 				}
 
-			  	// Remove the general hover animation effect on active tabs.
-				&:focus,
-				&:active {
+			  	// Remove the hover animation from the active tabs.
+				&,
+			  	&:focus,
+				&:active,
+				&:hover {
 					transform: initial;
 					animation: none;
 				}
