@@ -11,9 +11,7 @@
   "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "workspaces": [
-    "packages/apps/editor-shell",
-    "packages/utils/locations",
-    "packages/features/top-bar"
+    "./packages/*"
   ],
   "devDependencies": {
     "@babel/core": "^7.20.5",
@@ -25,6 +23,8 @@
     "babel-loader": "^9.1.0",
     "concurrently": "^7.6.0",
     "jest": "^29.3.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "typescript": "^4.9.4",
     "webpack-cli": "^5.0.1"
   }

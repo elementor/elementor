@@ -11,19 +11,19 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			Editor_Common_Assets::get_scripts(),
 			[
 				[
-					'name' => 'elementor-locations',
-					'src' => '{{ASSETS_URL}}/js/editor-packages/location{{SUFFIX}}.js',
+					'handle' => 'elementor-packages-locations',
+					'src' => '{{ASSETS_URL}}/js/packages/locations{{SUFFIX}}.js',
 					'deps' => [ 'react' ],
 				],
 				[
-					'name' => 'elementor-top-bar',
-					'src' => '{{ASSETS_URL}}/js/editor-packages/top-bar{{SUFFIX}}.js',
-					'deps' => [ 'react', 'elementor-locations', 'elementor-editor-shell' ],
+					'handle' => 'elementor-packages-editor-top-bar',
+					'src' => '{{ASSETS_URL}}/js/packages/editor-top-bar{{SUFFIX}}.js',
+					'deps' => [ 'react', 'elementor-packages-locations', 'elementor-packages-editor' ],
 				],
 				[
-					'name' => 'elementor-editor-shell',
-					'src' => '{{ASSETS_URL}}/js/editor-packages/editor-shell{{SUFFIX}}.js',
-					'deps' => [ 'react', 'react-dom', 'elementor-locations' ],
+					'handle' => 'elementor-packages-editor',
+					'src' => '{{ASSETS_URL}}/js/packages/editor{{SUFFIX}}.js',
+					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations' ],
 				],
 			]
 		);
@@ -32,11 +32,11 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_loader_scripts() {
 		$deps = [
 			// Feature packages.
-			'elementor-top-bar',
+			'elementor-packages-editor-top-bar',
 
 			// Apps.
 			'elementor-editor',
-			'elementor-editor-shell',
+			'elementor-packages-editor',
 		];
 
 		// TODO: Maybe load feature packages and then there is no need for this filter.

@@ -1,36 +1,31 @@
 const path = require( 'path' );
+const { readdirSync } = require( 'fs' );
 
-// TODO: use `glob` or something to read it automatically and use `packages/*` in the pacakge.json
-const packages = require( './package.json' ).workspaces.map( ( packagePath ) => {
-	const packageName = packagePath.replace( /^packages\/(apps|features|utils)\//, '' );
+const globalObjectKey = 'ePackages';
 
-	return {
-		packagePath,
+const packages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
+	.filter( ( dirent ) => dirent.isDirectory() )
+	.map( ( dirent ) => dirent.name )
+	.map( ( packageName ) => ( {
 		packageName,
 		packageNameCamelCase: kebabToCamelCase( packageName ),
-	};
-} );
+	} ) );
 
-// TODO: Do we want to expose everything to the global scope? Because curently we do.
-const entry = packages.reduce( ( acc, { packagePath, packageName, packageNameCamelCase } ) => {
-	return {
-		...acc,
-		[ packageName ]: {
-			import: path.resolve( __dirname, `./${ packagePath }/src/index` ),
-			library: {
-				name: [ 'elementorEditorPackages', packageNameCamelCase ],
-				type: 'window',
-			},
+const entry = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) => ( {
+	...acc,
+	[ packageName ]: {
+		import: path.resolve( __dirname, `./packages/${ packageName }/src/index` ),
+		library: {
+			name: [ globalObjectKey, packageNameCamelCase ],
+			type: 'window',
 		},
-	};
-}, {} );
+	},
+} ), {} );
 
-const externals = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) => {
-	return {
-		...acc,
-		[ `@elementor/${ packageName }` ]: `elementorEditorPackages.${ packageNameCamelCase }`,
-	};
-}, {} );
+const externals = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) => ( {
+	...acc,
+	[ `@elementor/${ packageName }` ]: `${ globalObjectKey }.${ packageNameCamelCase }`,
+} ), {} );
 
 const config = {
 	entry,
@@ -57,13 +52,11 @@ const config = {
 		],
 	},
 	resolve: {
-		extensions: [ '.tsx', '.ts', '.js' ],
+		extensions: [ '.tsx', '.ts', '.js', '.jsx' ],
 	},
 	output: {
-		// TODO: Maybe the output should contain the package type (e.g. `editor-packages/apps/editor-shell.min.js`)?
-		//  Currently it's just the pacakge name.
 		filename: '[name].js',
-		path: path.resolve( __dirname, '../assets/js/editor-packages/' ),
+		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
 };
 
