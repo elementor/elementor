@@ -46,16 +46,6 @@ const KitListItem = ( props ) => {
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
-					{
-						subscriptionPlan?.label &&
-							<Badge
-								variant="sm"
-								className="e-kit-library__kit-item-subscription-plan-badge"
-								style={ { backgroundColor: subscriptionPlan.color } }
-							>
-								{ subscriptionPlan.label }
-							</Badge>
-					}
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-overlay">
 							<Button

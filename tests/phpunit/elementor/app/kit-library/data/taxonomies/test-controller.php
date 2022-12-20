@@ -95,10 +95,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'text' => $subscription_plans[Module::ACCESS_LEVEL_PRO]['label'],
 				'type' => 'subscription_plans'
 			],
-			[
-				'text' => $subscription_plans[Module::ACCESS_LEVEL_EXPERT]['label'],
-				'type' => 'subscription_plans'
-			],
+
 		], $result['data'] );
 	}
 }
