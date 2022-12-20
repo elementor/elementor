@@ -206,7 +206,7 @@
 					i {
 						color: var( --n-tabs-icon-color-active );
 					}
-	
+
 					svg {
 						fill: var( --n-tabs-icon-color-active );
 					}
@@ -220,6 +220,14 @@
 							opacity: 0;
 						}
 					}
+				}
+
+			  	// Remove the general hover animation effect on active tabs.
+				@media (min-width: $screen-desktop-min) {
+				  &:focus,
+				  &:active {
+					transform: initial;
+				  }
 				}
 			}
 		}
@@ -248,7 +256,7 @@
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
-:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title, 
+:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
 	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
 
 	&:hover {
