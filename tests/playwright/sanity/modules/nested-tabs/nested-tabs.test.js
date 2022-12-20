@@ -733,6 +733,27 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Test the container width type', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+
+		// Assert.
+		// Check if content tab contains the class 'e-con-full'.
+		const containerFullWidthCheck = await editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
+			return element.classList.contains( 'e-con-full' );
+		} );
+		expect( containerFullWidthCheck ).toBe( true );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 const viewportSize = {
