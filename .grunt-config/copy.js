@@ -48,6 +48,7 @@ const getBuildFiles = [
 
 	// Conflict with above rule.
 	'core/files/assets/**',
+	'core/editor/assets/**',
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
