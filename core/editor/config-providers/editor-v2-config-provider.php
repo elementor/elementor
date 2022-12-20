@@ -16,8 +16,8 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					'deps' => [ 'react' ],
 				],
 				[
-					'handle' => 'elementor-packages-editor-top-bar',
-					'src' => '{{ASSETS_URL}}/js/packages/editor-top-bar{{SUFFIX}}.js',
+					'handle' => 'elementor-packages-top-bar',
+					'src' => '{{ASSETS_URL}}/js/packages/top-bar{{SUFFIX}}.js',
 					'deps' => [ 'react', 'elementor-packages-locations', 'elementor-packages-editor' ],
 				],
 				[
@@ -32,7 +32,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_loader_scripts() {
 		$deps = [
 			// Feature packages.
-			'elementor-packages-editor-top-bar',
+			'elementor-packages-top-bar',
 
 			// Apps.
 			'elementor-editor',

@@ -1,7 +1,7 @@
 const path = require( 'path' );
 const { readdirSync } = require( 'fs' );
 
-const globalObjectKey = 'ePackages';
+const globalObjectKey = '__UNSTABLE__elementorPackages';
 
 const packages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
 	.filter( ( dirent ) => dirent.isDirectory() )

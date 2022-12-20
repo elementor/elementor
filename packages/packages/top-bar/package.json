@@ -1,5 +1,5 @@
 {
-  "name": "@elementor/editor-top-bar",
+  "name": "@elementor/top-bar",
   "dependencies": {
     "@elementor/editor": "*",
     "@elementor/locations": "*"
