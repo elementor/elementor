@@ -7,3 +7,4 @@
 - [ ] Seems like `eslint` not working well.
 - [ ] Need to investigate how to use TS in the packages (share types between packages).
 - [ ] Need to investigate how to use `webpack` in the packages (externals, minified, babel-preset-env, babel in general, etc. ).
+- [ ] Build should be inside the packages directory, and then copied to the plugin directory.
