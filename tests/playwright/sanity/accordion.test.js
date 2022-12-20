@@ -1,11 +1,10 @@
-const { getPageId } = require( '../utilities/site-utilities' );
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
 test( 'Accordion', async ( { page }, testInfo ) => {
     // Arrange.
     const wpAdmin = new WpAdminPage( page, testInfo ),
-    editor = await wpAdmin.useElementorPost( getPageId( 'accordion' ) );
+    editor = await wpAdmin.useElementorPost( 'accordion' );
 
     // Act
     await editor.togglePreviewMode();

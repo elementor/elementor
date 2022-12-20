@@ -1,3 +1,4 @@
+const { getPageId } = require( '../utilities/site-utilities' );
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
 
@@ -47,7 +48,14 @@ module.exports = class WpAdminPage extends BasePage {
 		return editor;
 	}
 
-	async useElementorPost( postId ) {
+	/**
+	 * Navigate to a post
+	 *
+	 * @param {string} postName
+	 * @return {EditorPage} editor page object
+	 */
+	async useElementorPost( postName ) {
+		const postId = getPageId( postName );
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
 		await this.waitForPanel();
