@@ -400,6 +400,10 @@ class Control_Media extends Control_Base_Multiple {
 			return parent::get_style_value( $css_property, $control_value, $control_data );
 		}
 
-		return wp_get_attachment_image_url( $control_value['id'], 'full' );
+		if ( ! isset( $control_value['size'] ) ) {
+			$control_value['size'] = $this->get_default_value()['size'];
+		}
+
+		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
 	}
 }
