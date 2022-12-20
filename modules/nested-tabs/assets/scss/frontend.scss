@@ -223,12 +223,13 @@
 				}
 
 			  	// Remove the hover animation from the active tabs.
-				&,
-			  	&:focus,
-				&:active,
-				&:hover {
-					transform: initial;
-					animation: none;
+			  	&[class^="elementor-animation-"] {
+					&:focus,
+					&:active,
+					&:hover {
+						transform: initial;
+						animation: none;
+					}
 				}
 			}
 		}

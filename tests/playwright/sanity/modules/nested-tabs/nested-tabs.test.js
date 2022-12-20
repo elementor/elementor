@@ -728,8 +728,8 @@ test.describe( 'Nested Tabs tests', () => {
 		// Test on desktop.
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
 		// Test the hover animations on the active tabs.
-		await expect( page.locator( '.e-normal.e-active' ) ).toHaveCSS( 'transform', 'initial' );
-		await expect( page.locator( '.e-normal.e-active' ) ).toHaveCSS( 'animation', 'none' );
+		await expect( page.locator( '.e-normal.e-active' ).hover() ).toHaveCSS( 'transform', 'initial' );
+		await expect( page.locator( '.e-normal.e-active' ).hover() ).toHaveCSS( 'animation', 'none' );
 		await page.setViewportSize( viewportSize.mobile );
 		await expect( page.locator( '.e-collapse.e-active' ) ).toHaveClass( 'e-n-tab-title e-collapse elementor-animation-grow e-active' );
 		await page.setViewportSize( viewportSize.desktop );
