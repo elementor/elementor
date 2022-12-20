@@ -7,7 +7,9 @@ test( 'Accordion', async ( { page }, testInfo ) => {
     const wpAdmin = new WpAdminPage( page, testInfo ),
     editor = await wpAdmin.useElementorPost( getPageId( 'accordion' ) );
 
-    // Assert
+    // Act
     await editor.togglePreviewMode();
+
+    // Assert
     expect( await editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'accordion.jpeg' );
 } );
