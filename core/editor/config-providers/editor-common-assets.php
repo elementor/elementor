@@ -20,7 +20,7 @@ class Editor_Common_Assets {
 			],
 			// Hack for waypoint with editor mode.
 			[
-				'handle' => 'elementor-editor-document',
+				'handle' => 'elementor-waypoints',
 				'src' => '{{ASSETS_URL}}lib/waypoints/waypoints-for-editor.js',
 				'deps' => [ 'jquery' ],
 				'version' => '4.0.2',
