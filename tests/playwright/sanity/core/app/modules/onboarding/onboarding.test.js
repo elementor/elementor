@@ -20,7 +20,7 @@ test.afterAll( async () => {
 	await helper.activateHelloTheme();
 } );
 
-test.describe.only( 'First Step - Elementor Account', () => {
+test.describe( 'First Step - Elementor Account', () => {
 	test( '"Upgrade" CTA Works and Check for Broken CSS', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step1URL );
 		await helper.hoverOverGoProHeaderButton();
@@ -69,7 +69,7 @@ test.describe.only( 'First Step - Elementor Account', () => {
 	} );
 } );
 
-test.describe.only( 'Second Step - Hello Theme', () => {
+test.describe( 'Second Step - Hello Theme', () => {
 	test( 'CSS is not Broken and Validated notice is present and skip works', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step2URL );
 		await helper.checkDisclaimerIsPresent( testData.disclaimerNotice );
@@ -91,7 +91,7 @@ test.describe.only( 'Second Step - Hello Theme', () => {
 	} );
 } );
 
-test.describe.only( 'Third Step - Hello Theme', () => {
+test.describe( 'Third Step - Hello Theme', () => {
 	test( 'Check for Broken CSS and the site name is pre-filled', async ( { page } ) => {
 		await helper.gotoStep3();
 		const siteTitle = await helper.extractSiteTitle();
@@ -119,7 +119,7 @@ test.describe.only( 'Third Step - Hello Theme', () => {
 	} );
 } );
 
-test.describe.only( 'Fourth Step - Upload Logo', () => {
+test.describe( 'Fourth Step - Upload Logo', () => {
 	test( 'Check CSS and that user can remove a logo and the next button works accordingly', async ( { page } ) => {
 		await helper.goToSiteItentityPage();
 		await helper.uploadLogo();
@@ -149,7 +149,7 @@ test.describe.only( 'Fourth Step - Upload Logo', () => {
 	} );
 } );
 
-test.describe.only( 'Fifth Step - Good to Go', () => {
+test.describe( 'Fifth Step - Good to Go', () => {
 	test( 'Check CSS and Check Kit Library with blank kit', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step5URL );
 		await helper.selectKitLibaryOption();
