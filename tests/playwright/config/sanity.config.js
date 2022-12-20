@@ -6,8 +6,10 @@ const config = {
 	globalTimeout: 60 * 15_000, // 15 minutes
 	reporter: 'list',
 	testDir: '../sanity/',
+	grepInvert: [ /@reverse-columns/, /@nested-tabs/ ],
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
+	forbidOnly: !! process.env.CI,
 	expect: {
 		timeout: 5_000, // 5 seconds
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
