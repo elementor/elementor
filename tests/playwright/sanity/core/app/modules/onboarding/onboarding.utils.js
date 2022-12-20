@@ -4,7 +4,6 @@ class onboarding {
     constructor( page, baseURL ) {
         this.page = page;
         this.baseUrl = baseURL.replace( /\/+$/, '' );
-        this.themesPage = '/wp-admin/themes.php';
         this.wpAdminPage = '/wp-admin/';
         this.loginURL = 'https://my.elementor.com/login/';
         this.WpGeneralSettingsPage = '/wp-admin/options-general.php';
@@ -23,7 +22,7 @@ class onboarding {
         this.upgradeHeaderButton = this.page.locator( '#eps-app-header-btn-go-pro' );
         this.goProPopover = this.page.locator( '.e-app__popover.e-onboarding__go-pro' );
         this.upgradeNowButton = this.page.locator( '[text="Upgrade Now"]' );
-        this.createMyAccountButton = this.page.locator( 'a.e-onboarding__button-action' );
+        this.createMyAccountButton = this.page.locator( '[text="Create my account"]' );
         this.skipButton = this.page.locator( '[text=Skip]' );
         this.upgradeFeatureCheckList = this.page.locator( '.e-onboarding__checklist li' );
         this.connectYourAccountLink = this.page.locator( '.e-onboarding__footnote a' );
@@ -107,8 +106,7 @@ class onboarding {
     * First Step - Elementor Account - Functions
     */
     async gotoStep1() {
-        await this.page.goto( this.step1URL );
-        await this.page.waitForLoadState( 'networkidle' );
+        await this.page.goto( this.step1URL, { waitUntil: 'networkidle' } );
     }
 
     async hoverOverGoProHeaderButton() {
@@ -195,13 +193,23 @@ class onboarding {
     }
 
     async createMyAccountPopupWorks() {
-        const [ createAccountPopUp ] = await Promise.all( [
+        const [ createMyAccountPopUp ] = await Promise.all( [
 			// It is important to call waitForEvent before click to set up waiting.
 			this.page.waitForEvent( 'popup' ),
 			// Opens popup.
 			this.selectCreateMyAccountCTA(),
 		] );
-        await expect( await createAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
+        await expect( await createMyAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
+        await createMyAccountPopUp.close();
+    }
+
+    async alreadyHaveElementorProWorks() {
+        const [ alreadyHaveElementorProPopup ] = await Promise.all( [
+			this.page.waitForEvent( 'popup' ),
+			this.selectAlreadyHaveElementorProLink(),
+		] );
+
+		await expect( await alreadyHaveElementorProPopup.url() ).toContain( 'uploadAndInstallPro' );
     }
 
     async createAccountPopUpWorks() {
@@ -212,6 +220,7 @@ class onboarding {
 			this.selectHeaderCreateAccountCTA(),
 		] );
         await expect( await createAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
+        await createAccountPopUp.close();
     }
 
     async signInPopupWorks() {
@@ -221,14 +230,14 @@ class onboarding {
 		] );
 
 		await expect( await signIntoElementorPopup.url() ).toContain( this.loginURL );
+        await signIntoElementorPopup.close();
     }
 
     /*
     * Second Step - Hello Theme - Functions
     */
     async gotoStep2() {
-        await this.page.goto( this.step2URL );
-        await this.page.waitForLoadState( 'networkidle' );
+        await this.page.goto( this.step2URL, { waitUntil: 'networkidle' } );
     }
 
     async checkUserIsOnStepTwo() {
@@ -242,10 +251,6 @@ class onboarding {
 
     async checkUserIsOnStepThree() {
         await expect( this.page.url(), `User is not on Step 3 but instead on ${ await this.page.url() }` ).toEqual( this.baseUrl + this.step3URL );
-    }
-
-    async gotoThemesPage() {
-        await this.page.goto( this.themesPage, { waitUntil: 'networkidle' } );
     }
 
     async checkElementorThemeIsActive() {
@@ -326,6 +331,7 @@ class onboarding {
         await this.page.waitForLoadState( 'networkidle' );
         await this.page.locator( '#menu-item-browse' ).click();
         await this.page.waitForLoadState( 'networkidle' );
+        await this.page.waitForTimeout( 500 );
         if ( await this.page.locator( '.attachment-preview div.thumbnail img' ).count() < 1 ) {
             const [ fileChooser ] = await Promise.all( [
                 // It is important to call waitForEvent before click to set up waiting.

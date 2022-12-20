@@ -1,10 +1,13 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'Image Carousel', async ( { page }, testInfo ) => {
+test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
+    await wpAdmin.setExperiments( {
+      container: false,
+    } );
 
   // Close Navigator
   await editor.closeNavigatorIfOpen();

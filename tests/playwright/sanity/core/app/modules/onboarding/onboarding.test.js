@@ -1,31 +1,26 @@
 const { test, expect } = require( '@playwright/test' );
 const { onboarding } = require( './onboarding.utils' );
+const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 const testData = JSON.parse( JSON.stringify( require( './onboarding.data.json' ) ) );
-
-test.beforeEach( async ( { page }, testInfo ) => {
-	helper = new onboarding( page, testInfo.project.use.baseURL );
-} );
 
 test.beforeAll( async ( { browser }, testInfo ) => {
 	const page = await browser.newPage();
 	helper = new onboarding( page, testInfo.project.use.baseURL );
+	wpAdminHelper = new WpAdminPage( page, testInfo );
 
-	await helper.gotoThemesPage();
+	await wpAdminHelper.gotoThemesPage();
 	await helper.activateTwenty21Theme();
-	await helper.gotoExperiments();
-	await helper.checkflexBoxIsOff();
+	await wpAdminHelper.setExperiments( {
+      container: false,
+	} );
 } );
 
-test.afterAll( async ( { browser }, testInfo ) => {
-	const page = await browser.newPage();
-	helper = new onboarding( page, testInfo.project.use.baseURL );
-	await helper.gotoThemesPage();
+test.afterAll( async () => {
+	await wpAdminHelper.gotoThemesPage();
 	await helper.activateHelloTheme();
-	await helper.gotoExperiments();
-	await helper.checkflexBoxIsBackToPreviousState();
 } );
 
-test.describe( 'First Step - Elementor Account', () => {
+test.describe.only( 'First Step - Elementor Account', () => {
 	test( '"Upgrade" CTA Works and Check for Broken CSS', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step1URL );
 		await helper.hoverOverGoProHeaderButton();
@@ -34,21 +29,21 @@ test.describe( 'First Step - Elementor Account', () => {
 		await helper.openPopUpToProPage();
 	} );
 
-	test( '"Already Have Elementor Pro" link on popover works', async ( { page } ) => {
+	test( '"Already Have Elementor Pro" link on popover works', async () => {
 		await helper.gotoStep1();
 		await helper.hoverOverGoProHeaderButton();
-
-		const [ importPopup ] = await Promise.all( [
-			page.waitForEvent( 'popup' ),
-			helper.selectAlreadyHaveElementorProLink(),
-		] );
-
-		await expect( await importPopup.url() ).toContain( 'uploadAndInstallPro' );
+		await helper.alreadyHaveElementorProWorks();
 	} );
 
 	test( '"Connect Your Account" link works', async () => {
 		await helper.gotoStep1();
 		await helper.signInPopupWorks();
+	} );
+
+	test( '"Create my account" Popup Open', async () => {
+		await helper.gotoStep1();
+		await helper.checkButtonHasCorrectName( helper.createMyAccountButton, testData.createAccountButtonText );
+		await helper.createMyAccountPopupWorks();
 	} );
 
 	test( 'User can close the onboarding process', async () => {
@@ -60,12 +55,6 @@ test.describe( 'First Step - Elementor Account', () => {
 	test( 'Progress Bar: Only first step is filled', async () => {
 		await helper.gotoStep1();
 		await helper.checkCurrentStepIsFilled( 1 );
-	} );
-
-	test( '"Create my account" Popup Open', async () => {
-		await helper.gotoStep1();
-		await helper.checkButtonHasCorrectName( helper.createMyAccountButton, testData.createAccountButtonText );
-		await helper.createMyAccountPopupWorks();
 	} );
 
 	test( '"Create Account" in the header Popup Open', async () => {
@@ -80,7 +69,7 @@ test.describe( 'First Step - Elementor Account', () => {
 	} );
 } );
 
-test.describe( 'Second Step - Hello Theme', () => {
+test.describe.only( 'Second Step - Hello Theme', () => {
 	test( 'CSS is not Broken and Validated notice is present and skip works', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step2URL );
 		await helper.checkDisclaimerIsPresent( testData.disclaimerNotice );
@@ -96,14 +85,13 @@ test.describe( 'Second Step - Hello Theme', () => {
 	test( ' "Continue with Hello Theme" button works', async ( { page } ) => {
 		await helper.gotoStep2();
 		await helper.selectContinueWithHelloThemeButton();
-		await page.waitForNavigation( { url: helper.step3URL }, { waitUntil: 'networkidle' } );
-		await helper.gotoThemesPage();
+		await wpAdminHelper.gotoThemesPage();
 		await helper.checkElementorThemeIsActive();
 		await helper.activateTwenty21Theme();
 	} );
 } );
 
-test.describe( 'Third Step - Hello Theme', () => {
+test.describe.only( 'Third Step - Hello Theme', () => {
 	test( 'Check for Broken CSS and the site name is pre-filled', async ( { page } ) => {
 		await helper.gotoStep3();
 		const siteTitle = await helper.extractSiteTitle();
@@ -131,7 +119,7 @@ test.describe( 'Third Step - Hello Theme', () => {
 	} );
 } );
 
-test.describe( 'Fourth Step - Upload Logo', () => {
+test.describe.only( 'Fourth Step - Upload Logo', () => {
 	test( 'Check CSS and that user can remove a logo and the next button works accordingly', async ( { page } ) => {
 		await helper.goToSiteItentityPage();
 		await helper.uploadLogo();
@@ -161,7 +149,7 @@ test.describe( 'Fourth Step - Upload Logo', () => {
 	} );
 } );
 
-test.describe( 'Fifth Step - Good to Go', () => {
+test.describe.only( 'Fifth Step - Good to Go', () => {
 	test( 'Check CSS and Check Kit Library with blank kit', async ( { page } ) => {
 		await helper.checkBrokenCSS( page, helper.step5URL );
 		await helper.selectKitLibaryOption();

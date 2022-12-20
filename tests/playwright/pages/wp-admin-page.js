@@ -105,4 +105,8 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
 	}
+
+	async gotoThemesPage() {
+        await this.page.goto( '/wp-admin/themes.php', { waitUntil: 'networkidle' } );
+    }
 };
