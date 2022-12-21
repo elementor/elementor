@@ -731,9 +731,8 @@ test.describe( 'Nested Tabs tests', () => {
 		// Test inside editor.
 		await expect( editor.getPreviewFrame().locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
 
-
-		// Test on front end.
-		// Open front end.
+		// Test on the front end.
+		// Open the front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 		// Test on desktop.
@@ -743,6 +742,7 @@ test.describe( 'Nested Tabs tests', () => {
 		// Test the active tabs with hover.
 		await page.locator( '.e-normal.e-active' ).hover();
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveCSS( 'transform', 'none' );
+
 		// Test on mobile.
 		await page.setViewportSize( viewportSize.mobile );
 		await expect( page.locator( '.e-collapse.e-active' ) ).toHaveClass( 'e-n-tab-title e-collapse elementor-animation-grow e-active' );
