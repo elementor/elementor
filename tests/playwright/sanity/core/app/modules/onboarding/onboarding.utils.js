@@ -259,24 +259,6 @@ class onboarding {
         await expect( await this.elementorTheme.getAttribute( 'class' ), `Elementor Theme is not active` ).toEqual( 'theme active' );
     }
 
-    async activateTwenty21Theme() {
-        if ( await this.selectActivateTwent21Theme.isVisible() ) {
-            await this.twenty21Theme.hover();
-
-            await this.selectActivateTwent21Theme.click();
-            await this.page.waitForLoadState( 'networkidle' );
-        }
-    }
-
-    async activateHelloTheme() {
-        if ( await this.selectActivateHelloTheme.isVisible() ) {
-            await this.helloTheme.hover();
-
-            await this.selectActivateHelloTheme.click();
-            await this.page.waitForLoadState( 'networkidle' );
-        }
-    }
-
     async checkTwenty21ThemeIsActive() {
         await expect( await this.twenty21Theme.getAttribute( 'class' ), `The Twenty 21 Theme is not active` ).toEqual( 'theme active' );
     }

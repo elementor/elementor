@@ -109,4 +109,24 @@ module.exports = class WpAdminPage extends BasePage {
 	async gotoThemesPage() {
         await this.page.goto( '/wp-admin/themes.php', { waitUntil: 'networkidle' } );
     }
+
+	async activateHelloTheme() {
+        await this.gotoThemesPage();
+		if ( await this.page.locator( '[aria-label="Activate Hello Elementor"]' ).isVisible() ) {
+            await this.page.locator( '[data-slug="hello-elementor"]' ).hover();
+
+            await this.page.locator( '[aria-label="Activate Hello Elementor"]' ).click();
+            await this.page.waitForLoadState( 'networkidle' );
+        }
+    }
+
+	async activateTwenty21Theme() {
+        await this.gotoThemesPage();
+		if ( await this.page.locator( '[aria-label="Activate Twenty Twenty-One"]' ).isVisible() ) {
+            await this.page.locator( '[data-slug="twentytwentyone"]' ).hover();
+
+            await this.page.locator( '[aria-label="Activate Twenty Twenty-One"]' ).click();
+            await this.page.waitForLoadState( 'networkidle' );
+        }
+    }
 };

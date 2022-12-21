@@ -8,16 +8,14 @@ test.beforeAll( async ( { browser }, testInfo ) => {
 	helper = new onboarding( page, testInfo.project.use.baseURL );
 	wpAdminHelper = new WpAdminPage( page, testInfo );
 
-	await wpAdminHelper.gotoThemesPage();
-	await helper.activateTwenty21Theme();
+	await wpAdminHelper.activateTwenty21Theme();
 	await wpAdminHelper.setExperiments( {
       container: false,
 	} );
 } );
 
 test.afterAll( async () => {
-	await wpAdminHelper.gotoThemesPage();
-	await helper.activateHelloTheme();
+	await wpAdminHelper.activateHelloTheme();
 } );
 
 test.describe( 'First Step - Elementor Account', () => {
