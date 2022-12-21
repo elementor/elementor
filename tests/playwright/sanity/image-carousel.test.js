@@ -5,9 +5,6 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
-    await wpAdmin.setExperiments( {
-      container: false,
-    } );
 
   // Close Navigator
   await editor.closeNavigatorIfOpen();
