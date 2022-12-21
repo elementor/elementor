@@ -83,9 +83,11 @@ test.describe( 'Elements regression', () => {
 
 							await editorPage.publish();
 
-							expect(
-								await frontendPage.screenshotElement( elementId ),
-							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							await test.step( valueLabel + '-frontend', async () => {
+								expect(
+									await frontendPage.screenshotElement( elementId ),
+								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							} );
 
 							await control.teardown();
 						} );
