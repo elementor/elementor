@@ -730,15 +730,16 @@ test.describe( 'Nested Tabs tests', () => {
 		// Test the hover animation.
 		const tabNormal = await page.locator( '.e-normal:not( .e-active )' ).last();
 		await tabNormal.hover();
-		const tabHover = await page.locator( '.e-normal:not( .e-active )' ).last().evaluate( ( element ) => {
+		const tabHover = await tabNormal.evaluate( ( element ) => {
 			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
 
 			return animationValue.includes( 'matrix(' ) ? true : false;
 		} );
 		await expect( tabHover ).toBe( true );
 		// Hover over an active tab.
-		await page.locator( '.e-normal.e-active' ).hover();
-		await expect( page.locator( '.e-normal.e-active' ) ).toHaveCSS( 'transform', 'none' );
+		const tabActive = page.locator( '.e-normal.e-active' );
+		await tabActive.hover();
+		await expect( tabActive ).toHaveCSS( 'transform', 'none' );
 
 		// Test on mobile.
 		await page.setViewportSize( viewportSize.mobile );
