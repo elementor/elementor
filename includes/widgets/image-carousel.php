@@ -818,7 +818,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
 		);
-		
+
 		$this->add_responsive_control(
 			'caption_space',
 			[
