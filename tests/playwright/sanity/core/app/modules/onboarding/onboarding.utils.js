@@ -247,6 +247,7 @@ class onboarding {
     async selectContinueWithHelloThemeButton() {
         await this.continueWithHelloThemeButton.click();
         await this.page.waitForLoadState( 'networkidle' );
+        await this.page.waitForTimeout( 250 );
     }
 
     async checkUserIsOnStepThree() {
