@@ -8,17 +8,21 @@ exports.GlobalUtils = class GlobalUtils {
         this.page = page;
     }
 
-    async checkTextIsPresentInArray( page, selector, testData ) {
-        const featuresList = await selector.allTextContents();
-        for ( let i = 0; i < testData.length; i++ ) {
-            await expect( featuresList.toString().includes( testData[ i ] ), `${ testData[ i ] } is not in the ${ featuresList }` ).toEqual( true );
+    async checkTextIsPresentInInSelectorElements( page, selector, testData ) {
+        const textValues = await selector.allTextContents();
+        if ( textValues.length > 0 ) {
+            for ( let i = 0; i < testData.length; i++ ) {
+                await expect( textValues.toString().includes( testData[ i ] ), `${ testData[ i ] } is not in the ${ textValues }` ).toEqual( true );
+            }
         }
     }
 
-    async checkTextIsNotPresentInArray( page, selector, testData ) {
-        const featuresList = await selector.allTextContents();
-        for ( let i = 0; i < testData.length; i++ ) {
-            await expect( ! featuresList.toString().includes( testData[ i ] ), `${ testData[ i ] } is in the ${ featuresList }` ).toEqual( true );
+    async checkTextIsNotPresentInInSelectorElements( page, selector, testData ) {
+        const textValues = await selector.allTextContents();
+        if ( textValues.length > 0 ) {
+            for ( let i = 0; i < testData.length; i++ ) {
+                await expect( ! textValues.toString().includes( testData[ i ] ), `${ testData[ i ] } is in the ${ textValues }` ).toEqual( true );
+            }
         }
     }
 };

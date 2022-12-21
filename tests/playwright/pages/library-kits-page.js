@@ -73,9 +73,9 @@ class LibraryKits {
         await this.page.waitForSelector( this.searchTagsEntryBoxSelector );
     }
 
-    async searchForCarsTag() {
+    async searchForTag( categoryName ) {
         // Type a tag fully and validate that there is only one tag thats available for selection
-        await this.searchTagsEntryBox.type( 'cars', { delay: 50 } );
+        await this.searchTagsEntryBox.type( categoryName, { delay: 50 } );
         await this.page.waitForTimeout( 500 );
         await expect( await this.categoryItems.count(), `The search for "cars" tag was not found` ).toEqual( 1 );
     }
@@ -86,8 +86,8 @@ class LibraryKits {
         await this.page.waitForTimeout( 500 );
     }
 
-    async checkOnlyCarTagIsAvailable() {
-      await expect( await this.categoryItems.count(), `The search for "cars" tag was not found` ).toEqual( 1 );
+    async checkOnlyOneCategoryItemIsPresented() {
+        await expect( await this.categoryItems.count(), `The search for "cars" tag was not found` ).toEqual( 1 );
     }
 
     async checkoffAttorneyTag() {
@@ -151,6 +151,7 @@ class LibraryKits {
     async goToFavoritesPage() {
         await this.favoritesPage.click();
         await this.page.waitForLoadState( 'networkidle' );
+        await this.page.waitForTimeout( 500 );
     }
 
     async goToAllWebsiteKits() {
@@ -191,12 +192,11 @@ class LibraryKits {
         await this.page.waitForSelector( this.kitTitlesSelector );
         const kitTitlesList = await this.kitTitles.allTextContents();
         const kitIndex = kitTitlesList.indexOf( kitName );
-        await this.facoriteIcon.nth( kitIndex ).click();
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 1000 );
+        await Promise.all( [
+            this.page.waitForResponse( ( response ) => response.url().includes( '/kits/favorites/' ) && 200 === response.status() ),
+            await this.facoriteIcon.nth( kitIndex ).click(),
+        ] );
         await this.goToFavoritesPage();
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 1000 );
         await this.page.waitForSelector( this.kitTitlesSelector );
         const kitsOnFavoritePage = await this.kitTitles.allTextContents();
         await expect( kitsOnFavoritePage.toString().includes( kitName ), `Kit: ${ kitName } is not in the favorites` ).toEqual( true );
@@ -209,15 +209,12 @@ class LibraryKits {
     }
 
     async clearAllFavorites( noFiltersMessage ) {
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 2000 );
         const favoriteKits = await this.kitTitles.allTextContents();
         if ( favoriteKits.length > 0 ) {
             for ( let i = 0; i < favoriteKits.length; i++ ) {
                 await this.favoriteKitsHeartIcon.nth( i ).click();
             }
         }
-        await this.page.waitForLoadState( 'networkidle' );
         await this.page.waitForSelector( this.noFavoritesHereMessageSelector );
         await expect( this.noFavoritesHereMessage ).toContainText( noFiltersMessage );
     }
@@ -227,11 +224,11 @@ class LibraryKits {
         const firstToLastOrder = await this.kitTitles.allTextContents();
         await this.sortFirstToLast.click();
         await this.page.waitForLoadState( 'networkidle' );
-        const LastToFirstOrder = await this.kitTitles.allTextContents();
+        const lastToFirstOrder = await this.kitTitles.allTextContents();
         await this.sortLastToFirst.click();
         await this.page.waitForLoadState( 'networkidle' );
         const backTOFirstToLastOrder = await this.kitTitles.allTextContents();
-        await expect( firstToLastOrder ).toEqual( LastToFirstOrder.reverse() );
+        await expect( firstToLastOrder ).toEqual( lastToFirstOrder.reverse() );
         await expect( firstToLastOrder ).toEqual( backTOFirstToLastOrder );
     }
 
