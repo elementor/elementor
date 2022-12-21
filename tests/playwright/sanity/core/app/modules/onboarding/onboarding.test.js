@@ -85,7 +85,7 @@ test.describe( 'Second Step - Hello Theme', () => {
 		await helper.selectContinueWithHelloThemeButton();
 		await wpAdminHelper.gotoThemesPage();
 		await helper.checkElementorThemeIsActive();
-		await helper.activateTwenty21Theme();
+		await wpAdminHelper.activateTwenty21Theme();
 	} );
 } );
 
@@ -152,7 +152,6 @@ test.describe( 'Fifth Step - Good to Go', () => {
 		await helper.checkBrokenCSS( page, helper.step5URL );
 		await helper.selectKitLibaryOption();
 		await helper.checkUserIsOnTheLibraryKitsPage();
-		await page.waitForTimeout( 1000 );
 		await helper.checkFirstKitIsBlankCanvas();
 		await helper.selectTheBlankCanvasKit();
 		await helper.checkUserIsOnAFreshPost();

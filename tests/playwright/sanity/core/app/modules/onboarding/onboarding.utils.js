@@ -417,6 +417,7 @@ class onboarding {
     }
 
     async checkFirstKitIsBlankCanvas() {
+        await page.waitForTimeout( 1000 );
         await this.page.waitForSelector( '[alt="Blank Canvas"]' );
         await expect( await this.kitNames.nth( 0 ) ).toContainText( 'Blank Canvas' );
     }
