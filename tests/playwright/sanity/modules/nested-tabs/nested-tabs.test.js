@@ -710,16 +710,27 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Act.
-		// Activate hover animation.
+		// Set the hover animation.
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-tabs_title_hover' ).click();
 		await page.locator( '.elementor-control-hover_animation .select2' ).click();
 		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
 		await page.waitForLoadState( 'networkidle' );
 
+		// Arrange.
+		// Add hover effect to a normal tab.
+		const tabNormal = await page.locator( '.e-normal:not( .e-active )' ).last();
+		await tabNormal.hover();
+		const tabHover = await page.locator( '.e-normal:not( .e-active )' ).last().evaluate( ( element ) => {
+			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
+
+			return animationValue.includes( 'matrix(' ) ? true : false;
+		} );
+
 		// Assert.
 		// Test inside editor.
 		await expect( editor.getPreviewFrame().locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
+
 
 		// Test on front end.
 		// Open front end.
@@ -727,24 +738,16 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 		// Test on desktop.
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
-
 		// Test the hover animation.
-		await page.locator( '.e-normal:not( .e-active )' ).last().hover();
-		const tabHover = await page.locator( '.e-normal:not( .e-active )' ).last().evaluate( ( element ) => {
-			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
-
-			return animationValue.includes( 'matrix(' ) ? true : false;
-		} );
 		await expect( tabHover ).toBe( true );
-
 		// Test the active tabs with hover.
 		await page.locator( '.e-normal.e-active' ).hover();
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveCSS( 'transform', 'none' );
-
 		// Test on mobile.
 		await page.setViewportSize( viewportSize.mobile );
 		await expect( page.locator( '.e-collapse.e-active' ) ).toHaveClass( 'e-n-tab-title e-collapse elementor-animation-grow e-active' );
 
+		// Reset the original state.
 		await page.setViewportSize( viewportSize.desktop );
 		await cleanup( wpAdmin );
 	} );
