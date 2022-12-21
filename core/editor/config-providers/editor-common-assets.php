@@ -28,7 +28,6 @@ class Editor_Common_Assets {
 			[
 				'handle' => 'perfect-scrollbar',
 				'src' => '{{ASSETS_URL}}lib/perfect-scrollbar/js/perfect-scrollbar{{SUFFIX}}.js',
-				'deps' => [ 'jquery' ],
 				'version' => '1.4.0',
 			],
 			[
