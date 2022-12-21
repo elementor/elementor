@@ -11,6 +11,7 @@ $theme-dark-gray-lighter: #7D7E82;
 $theme-dark-gray-lightest: #B4B5B7;
 
 $theme-dark-light: #E0E1E3;
+$theme-dark-lighter: #f1f3f5;
 $theme-dark-dark: #26292C;
 $theme-dark-accent: #71D7F7;
 $theme-dark-success: $editor-success;
@@ -503,6 +504,7 @@ a.elementor-responsive-switcher {
 .e-units-wrapper {
 
 	.e-units-switcher {
+		color: $theme-dark-lighter;
 
 		&:hover {
 			color: $theme-dark-accent;
