@@ -51,11 +51,16 @@ module.exports = class WpAdminPage extends BasePage {
 	/**
 	 * Navigate to a post
 	 *
-	 * @param {string} postName
+	 * @param {string|number} postNameOrId
 	 * @return {EditorPage} editor page object
 	 */
-	async useElementorPost( postName ) {
-		const postId = getPageId( postName );
+	async useElementorPost( postNameOrId ) {
+		let postId;
+		if ( 'string' === typeof postNameOrId ) {
+			postId = getPageId( postNameOrId );
+		} else {
+			postId = postNameOrId;
+		}
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
 		await this.waitForPanel();
