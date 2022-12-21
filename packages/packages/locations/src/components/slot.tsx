@@ -2,10 +2,10 @@ import React, { Suspense } from 'react';
 import { useLocation } from '../hooks/use-location';
 
 type Props = {
-	  name: string;
+	name: string;
 }
 
-export const Slot : React.FC<Props> = ( { name } ) => {
+export const Slot: React.FC<Props> = ( { name } ) => {
 	const components = useLocation( name );
 
 	return (

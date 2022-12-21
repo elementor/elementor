@@ -2,11 +2,11 @@
 
 ### Open issues
 - [ ] Seems like `eslint` not working well.
-- [ ] Need to investigate how to use TS in the packages (share types between packages).
+- [x] Need to investigate how to use TS in the packages (share types between packages).
 - [ ] Add coverage for jest.
 - [ ] Tests for the exiting packages.
 
-### Next phase open issues
+### Next phase Open Issues
 - [ ] Each package should be declared in `editor-v2-config-provider.php` file
 - [ ] The `test` and `build` scripts run all over the packages, it should be possible to run them on a specific package
 - [ ] When executing `build` in the root plugin directory it doesn't build the packages.
