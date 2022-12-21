@@ -818,6 +818,31 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
 		);
+		
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem' ],
+				'default' => [
+					'unit' => 'px',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 
