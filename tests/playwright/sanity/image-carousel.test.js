@@ -4,9 +4,6 @@ const WpAdminPage = require( '../pages/wp-admin-page.js' );
 test( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
-  await wpAdmin.setExperiments( {
-    container: false,
-  } );
 
   editor = await wpAdmin.useElementorCleanPost();
 
