@@ -1,16 +1,11 @@
 const path = require( 'path' );
 
-const paths = {
-	root: __dirname,
-	babelConfig: path.resolve( __dirname, './babel.config' ),
-};
-
 module.exports = {
 	verbose: true,
-	rootDir: paths.root,
+	rootDir: __dirname,
 	transform: {
 		'\\.(j|t)sx?$': [ 'babel-jest', {
-			configFile: paths.babelConfig,
+			configFile: path.resolve( __dirname, './babel.config' ),
 		} ],
 	},
 	testEnvironment: 'jsdom',
