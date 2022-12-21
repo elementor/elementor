@@ -9,12 +9,14 @@ module.exports = {
 		'plugin:@typescript-eslint/eslint-recommended',
 	],
 	settings: {
-		'import/internal-regex': '^@elementor/',
 		'import/resolver': {
 			node: {
 				extensions: [ '.js', '.jsx', '.ts', '.tsx' ],
 			},
 		},
+	},
+	rules: {
+		'import/no-unresolved': [ 2, { ignore: [ '@elementor/.+' ] } ],
 	},
 	overrides: [
 		{
