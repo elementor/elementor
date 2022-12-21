@@ -63,7 +63,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$subscription_plans = Plugin::$instance->common->get_component( 'connect' )->get_subscription_plans();
 
 		$this->assertArrayHasKey( 'data', $result );
-		$this->assertCount( 8, $result['data'] );
+		$this->assertCount( 6, $result['data'] );
 		$this->assertEqualSets( [
 			[
 				'text' => 'Creative',

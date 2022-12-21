@@ -106,7 +106,8 @@ class Repository {
 						'type' => $type,
 					];
 				}, $taxonomies ) );
-			}, new Collection( [] ) );
+			}, new Collection( [] ) )
+			->unique( [ 'text', 'type' ] );
 	}
 
 	/**
