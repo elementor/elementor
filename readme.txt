@@ -240,6 +240,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.9.2 - 2022-12-21 =
+
+* Fix: Images not loading in Template widget inside the Editor when using Lazy Load Background Images experiment ([#20635](https://github.com/elementor/elementor/issues/20635))
+* Fix: Wrong share URL for XING network ([#13112](https://github.com/elementor/elementor/issues/13112))
+* Fix: Browser ignores space in mail share URL ([#10803](https://github.com/elementor/elementor/issues/10803))
+* Fix: Responsive values are not saving as part of Save as Default functionality
+
 = 3.9.1 - 2022-12-14 =
 
 * Fix: Copy-Paste Style prevents saving the page when Repeater controls exist in "non-content" tabs ([#19895](https://github.com/elementor/elementor/issues/19895), [#20637](https://github.com/elementor/elementor/issues/20637))
