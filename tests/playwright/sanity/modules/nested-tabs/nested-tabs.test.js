@@ -717,16 +717,6 @@ test.describe( 'Nested Tabs tests', () => {
 		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
 		await page.waitForLoadState( 'networkidle' );
 
-		// Arrange.
-		// Add hover effect to a normal tab.
-		const tabNormal = await page.locator( '.e-normal:not( .e-active )' ).last();
-		await tabNormal.hover();
-		const tabHover = await page.locator( '.e-normal:not( .e-active )' ).last().evaluate( ( element ) => {
-			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
-
-			return animationValue.includes( 'matrix(' ) ? true : false;
-		} );
-
 		// Assert.
 		// Test inside editor.
 		await expect( editor.getPreviewFrame().locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
@@ -738,8 +728,15 @@ test.describe( 'Nested Tabs tests', () => {
 		// Test on desktop.
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
 		// Test the hover animation.
+		const tabNormal = await page.locator( '.e-normal:not( .e-active )' ).last();
+		await tabNormal.hover();
+		const tabHover = await page.locator( '.e-normal:not( .e-active )' ).last().evaluate( ( element ) => {
+			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
+
+			return animationValue.includes( 'matrix(' ) ? true : false;
+		} );
 		await expect( tabHover ).toBe( true );
-		// Test the active tabs with hover.
+		// Hover over an active tab.
 		await page.locator( '.e-normal.e-active' ).hover();
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveCSS( 'transform', 'none' );
 
