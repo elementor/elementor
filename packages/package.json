@@ -7,7 +7,7 @@
     "build": "webpack --mode production && tsc",
     "dev": "concurrently --raw \"webpack -w --mode development\" \"tsc --watch\"",
     "test": "jest --config='./jest.config.js'",
-    "lint": "eslint"
+    "lint": "concurrently --raw \"eslint .\" \"tsc\""
   },
   "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
