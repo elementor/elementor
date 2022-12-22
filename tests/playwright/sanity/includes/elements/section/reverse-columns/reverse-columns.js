@@ -10,8 +10,8 @@ module.exports = class {
 
 	async open() {
 		await this.page.waitForTimeout( 1000 );
-		await this.editor.getPreviewFrame().click( '.elementor-add-section-button', { delay: 500, clickCount: 2 } );
-		await this.editor.getPreviewFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
+		await this.editor.getPreviewFrame().hover( '.elementor-section' );
+		await this.editor.getPreviewFrame().click( '.elementor-editor-section-settings .elementor-editor-element-edit' );
 		await this.page.click( '#elementor-panel-footer-responsive' );
 		await this.page.click( 'text=Advanced' );
 		await this.page.click( 'text=Responsive' );
@@ -25,20 +25,10 @@ module.exports = class {
 		await this.page.click( `.elementor-control.elementor-control-reverse_order_${ device } .elementor-control-content .elementor-control-field .elementor-control-input-wrapper .elementor-switch .elementor-switch-label` );
 	}
 
-	async init( isExperimentBreakpoints ) {
+	async init() {
 		this.wpAdminPage = new WpAdminPage( this.page, this.testInfo );
 
-		await this.wpAdminPage.setExperiments( {
-			additional_custom_breakpoints: isExperimentBreakpoints,
-			container: false,
-		} );
-
-		this.editor = await this.wpAdminPage.useElementorCleanPost();
-
-		if ( isExperimentBreakpoints ) {
-			const breakpoints = new Breakpoints( this.page, this.testInfo );
-			await breakpoints.addAllBreakpoints();
-		}
+		this.editor = await this.wpAdminPage.useElementorPost( 'reverse-columns' );
 
 		await this.open();
 
