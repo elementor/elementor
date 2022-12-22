@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63c086757ede4e1cb2d9854d815f1cb8",
+    "content-hash": "75036a6057149403191e61be0f06f18a",
     "packages": [],
     "packages-dev": [
         {
@@ -147,47 +147,6 @@
             "time": "2020-11-10T18:47:58+00:00"
         },
         {
-            "name": "inewlegend/elementor-editor-testing",
-            "version": "v0.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/iNewLegend/elementor-editor-testing.git",
-                "reference": "28ab13e4ce923c240b4944ad4ae37d6357044af5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/iNewLegend/elementor-editor-testing/zipball/28ab13e4ce923c240b4944ad4ae37d6357044af5",
-                "reference": "28ab13e4ce923c240b4944ad4ae37d6357044af5",
-                "shasum": ""
-            },
-            "require": {
-                "justinrainbow/json-schema": "^5.2"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "phpunit/",
-                    "phpunit/factories/",
-                    "phpunit/traits/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Elementor team"
-                }
-            ],
-            "description": "Elementor editor testing base",
-            "support": {
-                "issues": "https://github.com/iNewLegend/elementor-editor-testing/issues",
-                "source": "https://github.com/iNewLegend/elementor-editor-testing/tree/v0.0.1"
-            },
-            "time": "2021-08-24T08:16:48+00:00"
-        },
-        {
             "name": "justinrainbow/json-schema",
             "version": "5.2.11",
             "source": {
@@ -256,6 +215,47 @@
                 "source": "https://github.com/justinrainbow/json-schema/tree/5.2.11"
             },
             "time": "2021-07-22T09:24:00+00:00"
+        },
+        {
+            "name": "matipojo/elementor-editor-testing",
+            "version": "v0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matipojo/elementor-editor-testing.git",
+                "reference": "c546f5838e427ec9d81afc55bebec69df0b1a288"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matipojo/elementor-editor-testing/zipball/c546f5838e427ec9d81afc55bebec69df0b1a288",
+                "reference": "c546f5838e427ec9d81afc55bebec69df0b1a288",
+                "shasum": ""
+            },
+            "require": {
+                "justinrainbow/json-schema": "^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "phpunit/",
+                    "phpunit/factories/",
+                    "phpunit/traits/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Elementor team"
+                }
+            ],
+            "description": "Elementor editor testing base",
+            "support": {
+                "issues": "https://github.com/matipojo/elementor-editor-testing/issues",
+                "source": "https://github.com/matipojo/elementor-editor-testing/tree/v0.0.2"
+            },
+            "time": "2022-11-02T12:00:09+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2906,5 +2906,5 @@
         "php": ">=7.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }
