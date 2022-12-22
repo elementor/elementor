@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.9.1
+Stable tag: 3.9.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.9.2 - 2022-12-21 =
+
+* Fix: Images not loading in Template widget inside the Editor when using Lazy Load Background Images experiment ([#20635](https://github.com/elementor/elementor/issues/20635))
+* Fix: Wrong share URL for XING network ([#13112](https://github.com/elementor/elementor/issues/13112))
+* Fix: Browser ignores space in mail share URL ([#10803](https://github.com/elementor/elementor/issues/10803))
+* Fix: Responsive values are not saving as part of Save as Default functionality
 
 = 3.9.1 - 2022-12-14 =
 
