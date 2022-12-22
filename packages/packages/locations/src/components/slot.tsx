@@ -15,7 +15,7 @@ export default function Slot( { name }: SlotProps ) {
 				<Suspense fallback={ null } key={ index }>
 					<Component />
 				</Suspense>
-			) ) };
+			) ) }
 		</>
 	);
 }
