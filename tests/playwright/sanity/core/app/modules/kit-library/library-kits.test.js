@@ -14,7 +14,7 @@ test.beforeAll( async ( { browser }, testInfo ) => {
    } );
 } );
 
-test.describe.only( 'Library Kits w/logged in State', () => {
+test.describe( 'Library Kits w/logged in State', () => {
    test( 'User can search using a category', async () => {
       await wpAdminHelper.goToKitPage();
       await kitLibraryHelper.searchForBlogCategory();
