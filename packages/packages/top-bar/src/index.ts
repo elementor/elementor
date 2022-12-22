@@ -1,7 +1,8 @@
-import React from 'react';
-import elementorLocations from '@elementor/locations';
+import { lazy } from 'react';
+import { addFiller } from '@elementor/locations';
+import { locations } from '@elementor/editor';
 
-elementorLocations.register(
-	'editor/top',
-	React.lazy( () => import( './components/top-bar' ) ),
-);
+addFiller( {
+	location: locations.TOP,
+	component: lazy( () => import( './components/top-bar' ) ),
+} );

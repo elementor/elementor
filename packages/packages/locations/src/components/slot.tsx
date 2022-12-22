@@ -1,21 +1,21 @@
 import React, { Suspense } from 'react';
-import { useLocation } from '../hooks/use-location';
+import useFillers from '../hooks/use-fillers';
 
-type Props = {
+type SlotProps = {
 	name: string;
 }
 
-export const Slot: React.FC<Props> = ( { name } ) => {
-	const components = useLocation( name );
+// TODO: <ErrorBoundary />
+export default function Slot( { name }: SlotProps ) {
+	const fillers = useFillers( name );
 
 	return (
-		<Suspense fallback={ null }>
-			{
-				// TODO: <ErrorBoundary />
-				components.map( ( Component, index ) => (
-					<Component key={ index } />
-				) )
-			}
-		</Suspense>
+		<>
+			{ fillers.map( ( { component: Component }, index ) => (
+				<Suspense fallback={ null } key={ index }>
+					<Component />
+				</Suspense>
+			) ) };
+		</>
 	);
-};
+}
