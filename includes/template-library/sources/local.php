@@ -1365,7 +1365,7 @@ class Source_Local extends Source_Base {
 			'taxonomy' => self::TAXONOMY_CATEGORY_SLUG,
 			'name' => self::TAXONOMY_CATEGORY_SLUG,
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
-			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG, '' ),
+			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
 		);
 		echo '<label class="screen-reader-text" for="cat">' . esc_html_x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
@@ -1651,7 +1651,7 @@ class Source_Local extends Source_Base {
 
 	public function get_current_tab_group( $default = '' ) {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
-		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group', $default );
+		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group' ) ?? '';
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$type_slug = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG );
 

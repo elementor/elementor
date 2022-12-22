@@ -184,10 +184,10 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended - The user as been authorized before in 'connect'.
 		$state = Utils::get_super_global_value( $_REQUEST, 'state' );
 
-		if ( empty( $state ) || $state !== $this->get( 'state' ) ) {
+		if ( $state !== $this->get( 'state' ) ) {
 			$this->add_notice( 'Get Token: Invalid Request.', 'error' );
 			$this->redirect_to_admin_page();
 		}
