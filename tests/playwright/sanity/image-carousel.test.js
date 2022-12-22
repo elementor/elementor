@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test( 'Image Carousel', async ( { page }, testInfo ) => {
+test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -22,7 +22,11 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
   // Populate the widget with images.
   await editor.populateImageCarousel();
 
-  expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+  await editor.togglePreviewMode();
+
+  expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+
+  await editor.togglePreviewMode();
 
   // Reset the Default template.
   await editor.useDefaultTemplate();
