@@ -235,9 +235,7 @@ class Repository {
 
 		$taxonomies = ( new Collection( ( (array) $kit )['taxonomies'] ) )
 			->filter( function ( $taxonomy ) {
-				$taxonomy = (array) $taxonomy;
-
-				return in_array( $taxonomy['type'], self::TAXONOMIES_KEYS );
+				return in_array( $taxonomy->type, self::TAXONOMIES_KEYS );
 			} )
 			->flatten()
 			->pluck( 'name' )
