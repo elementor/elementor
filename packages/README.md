@@ -7,10 +7,5 @@
 - [ ] Need to investigate how to use `webpack` in the packages (externals, minified, babel-preset-env, babel-runtime, babel in general, etc. ).
 - [ ] Build should be inside the packages directory, and then copied to the plugin directory.
 - [ ] We need to think about sharing locations between packages.
-
-### Resolved issues
-- [x] Seems like `eslint` not working well.
-- [x] Need to investigate how to use TS in the packages (share types between packages).
-- [ ] Add coverage for jest.
-- [ ] Tests for the exiting packages.
+- [ ] Enforce boundaries between packages (e.g. `top-bar` shouldn't be used in `locations`) (https://github.com/javierbrea/eslint-plugin-boundaries).
 
