@@ -25,5 +25,5 @@ module.exports = {
      * @param {string} name
      * @return {number} Page ID
      */
-    getPageId: ( name ) => pages[ name ],
+    getPageId: ( name ) => pages[ name.toLowerCase() ],
 };
