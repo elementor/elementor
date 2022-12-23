@@ -134,6 +134,7 @@
 			margin-bottom: 10px;
 		}
 	}
+
 	.dialog-ok {
 		color: $editor-success;
 	}
@@ -149,6 +150,19 @@
 	}
 }
 
+#e-kit-elements-defaults-create-dialog {
+	.dialog-ok {
+		color: $editor-success;
+	}
+
+	label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		margin-top: 20px;
+	}
+}
 
 .dialog-prevent-scroll {
 	overflow: hidden;

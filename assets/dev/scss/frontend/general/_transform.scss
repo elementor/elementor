@@ -1,15 +1,22 @@
+@mixin transform-styling($modifier) {
+	transform: perspective( var( --e-#{$modifier}transform-perspective, 0 ) )
+		rotateZ( var( --e-#{$modifier}transform-rotateZ, 0 ) )
+		rotateX( var( --e-#{$modifier}transform-rotateX, 0 ) )
+		rotateY( var( --e-#{$modifier}transform-rotateY, 0 ) )
+		translate( var( --e-#{$modifier}transform-translate, 0 ) )
+		translateX( var( --e-#{$modifier}transform-translateX, 0 ) )
+		translateY( var( --e-#{$modifier}transform-translateY, 0 ) )
+		scaleX( calc( var( --e-#{$modifier}transform-flipX, 1 ) * var( --e-#{$modifier}transform-scaleX, var( --e-#{$modifier}transform-scale, 1 ) ) ) )
+		scaleY( calc( var( --e-#{$modifier}transform-flipY, 1 ) * var( --e-#{$modifier}transform-scaleY, var(--e-#{$modifier}transform-scale, 1) ) ) )
+		skewX( var( --e-#{$modifier}transform-skewX, 0 ) )
+		skewY( var( --e-#{$modifier}transform-skewY, 0 ) );
+	transform-origin: var( --e-#{$modifier}transform-origin-y )  var( --e-#{$modifier}transform-origin-x );
+}
+
 .e-transform .elementor-widget-container {
-	transform: perspective( var( --e-transform-perspective, 0 ) )
-		rotateZ( var( --e-transform-rotateZ, 0 ) )
-		rotateX( var( --e-transform-rotateX, 0 ) )
-		rotateY( var( --e-transform-rotateY, 0 ) )
-		translate( var( --e-transform-translate, 0 ) )
-		translateX( var( --e-transform-translateX, 0 ) )
-		translateY( var( --e-transform-translateY, 0 ) )
-		scaleX( calc( var( --e-transform-flipX, 1 ) * var( --e-transform-scaleX, var( --e-transform-scale, 1 ) ) ) )
-		scaleY( calc( var( --e-transform-flipY, 1 ) * var( --e-transform-scaleY, var(--e-transform-scale, 1) ) ) )
-		skewX( var( --e-transform-skewX, 0 ) )
-		skewY( var( --e-transform-skewY, 0 ) );
-	transform-origin: var( --e-transform-origin-y )  var( --e-transform-origin-x );
-	transition: transform var( --e-transform-transition-duration, 400ms );
+	@include transform-styling('');
+}
+
+.e-con.e-transform {
+	@include transform-styling('con-');
 }

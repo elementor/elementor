@@ -409,7 +409,6 @@ class Widget_Icon_Box extends Widget_Base {
 		$rotate_device_settings = [
 			'default' => [
 				'unit' => 'deg',
-				'size' => '',
 			],
 		];
 
@@ -422,17 +421,15 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'deg' ],
-				'range' => [
-					'deg' => [
-						'min' => 0,
-						'max' => 360,
-						'step' => 1,
-					],
-				],
+				'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
 				'default' => [
 					'unit' => 'deg',
-					'size' => '',
+				],
+				'tablet_default' => [
+					'unit' => 'deg',
+				],
+				'mobile_default' => [
+					'unit' => 'deg',
 				],
 				'device_args' => $rotate_device_args,
 				'selectors' => [
@@ -446,6 +443,7 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

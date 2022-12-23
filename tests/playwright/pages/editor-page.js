@@ -112,9 +112,28 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async useCanvasTemplate() {
+		if ( await this.getPreviewFrame().$( '.elementor-template-canvas' ) ) {
+			return;
+		}
+
 		await this.page.click( '#elementor-panel-footer-settings' );
 		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
+	}
+
+	/**
+	 * Use the Default post template.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async useDefaultTemplate() {
+		if ( await this.getPreviewFrame().$( '.elementor-default' ) ) {
+			return;
+		}
+
+		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.page.selectOption( '.elementor-control-template >> select', 'default' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
 	}
 
 	/**
@@ -125,10 +144,35 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async selectElement( elementId ) {
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
+
+		if ( await this.getPreviewFrame().$( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' ) ) {
+			return;
+		}
+
 		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.hover();
 		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 		await elementEditButton.click();
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
+	}
+
+	async copyElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
+		await this.page.waitForSelector( copyListItemSelector );
+		await this.page.locator( copyListItemSelector ).click();
+	}
+
+	async pasteStyleElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
+		await this.page.waitForSelector( pasteListItemSelector );
+		await this.page.locator( pasteListItemSelector ).click();
 	}
 
 	/**
@@ -140,6 +184,12 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async activatePanelTab( panelName ) {
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+
+		// Check if panel has been activated already.
+		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
+			return;
+		}
+
 		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
@@ -185,6 +235,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async populateImageCarousel() {
+		await this.activatePanelTab( 'content' );
 		await this.page.locator( '[aria-label="Add Images"]' ).click();
 
 		// Open Media Library
@@ -213,19 +264,21 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a background color to an element.
 	 *
-	 * @param {string} color - The background color code;
-	 * @param {string} elementType - The element types are `widget` and `container`;
+	 * @param {string}  color     - The background color code;
+	 * @param {string}  elementId - The ID of targeted element;
+	 * @param {boolean} isWidget  - Indicate whether the element is a widget or not; the default value is 'widget';
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setBackgroundColor( color = '#A81830', elementType = 'widget' ) {
-		const panelTab = 'container' === elementType ? 'style' : 'advanced',
-			backgroundSelector = 'container' === elementType ? '.elementor-control-background_background ' : '.elementor-control-_background_background ',
-			backgroundColorSelector = 'container' === elementType ? '.elementor-control-background_color ' : '.elementor-control-_background_color ';
+	async setBackgroundColor( color, elementId, isWidget = true ) {
+		const panelTab = isWidget ? 'advanced' : 'style',
+			backgroundSelector = isWidget ? '.elementor-control-_background_background ' : '.elementor-control-background_background ',
+			backgroundColorSelector = isWidget ? '.elementor-control-_background_color ' : '.elementor-control-background_color ';
 
+		await this.selectElement( elementId );
 		await this.activatePanelTab( panelTab );
 
-		if ( 'widget' === elementType ) {
+		if ( isWidget ) {
 			await this.page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
 		}
 
@@ -241,5 +294,89 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async removeFocus() {
 		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
+		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click();
+	}
+
+	/**
+	 * Hide controls from the video widgets.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async hideVideoControls() {
+		await this.getPreviewFrame().waitForSelector( '.elementor-video' );
+
+		const videoFrame = this.getPreviewFrame().frameLocator( '.elementor-video' ),
+			videoButton = videoFrame.locator( 'button.ytp-large-play-button.ytp-button.ytp-large-play-button-red-bg' ),
+			videoGradient = videoFrame.locator( '.ytp-gradient-top' ),
+			videoTitle = videoFrame.locator( '.ytp-show-cards-title' ),
+			videoBottom = videoFrame.locator( '.ytp-impression-link' );
+
+		await videoButton.evaluate( ( element ) => element.style.opacity = 0 );
+		await videoGradient.evaluate( ( element ) => element.style.opacity = 0 );
+		await videoTitle.evaluate( ( element ) => element.style.opacity = 0 );
+		await videoBottom.evaluate( ( element ) => element.style.opacity = 0 );
+	}
+
+	/**
+	 * Hide controls and overlays on map widgets.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async hideMapControls() {
+		await this.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
+
+		const mapFrame = this.getPreviewFrame().frameLocator( '.elementor-widget-google_maps iframe' ),
+			mapText = mapFrame.locator( '.gm-style iframe + div + div' ),
+			mapInset = mapFrame.locator( 'button.gm-inset-map.gm-inset-light' ),
+			mapControls = mapFrame.locator( '.gmnoprint.gm-bundled-control.gm-bundled-control-on-bottom' );
+
+		await mapText.evaluate( ( element ) => element.style.opacity = 0 );
+		await mapInset.evaluate( ( element ) => element.style.opacity = 0 );
+		await mapControls.evaluate( ( element ) => element.style.opacity = 0 );
+	}
+
+	/**
+	 * Open the page in the Preview mode.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async togglePreviewMode() {
+		if ( ! await this.page.$( 'body.elementor-editor-preview' ) ) {
+			await this.page.locator( '#elementor-mode-switcher' ).click();
+			await this.page.waitForSelector( 'body.elementor-editor-preview' );
+			await this.page.waitForTimeout( 500 );
+		} else {
+			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
+			await this.page.waitForSelector( 'body.elementor-editor-active' );
+		}
+	}
+
+	async changeEditorLayout( layout ) {
+		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+		await this.page.selectOption( '[data-setting=template]', layout );
+		await this.ensurePreviewReload();
+	}
+
+	async ensurePreviewReload() {
+		await this.page.waitForSelector( '#elementor-preview-loading' );
+		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
+	}
+
+	/**
+	 * Hide all editor elements from the screenshots.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async hideEditorElements() {
+		const css = '<style>.elementor-element-overlay,.elementor-empty-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
+
+		await this.addWidget( 'html' );
+		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
+	}
+
+	async changeUiTheme( uiMode ) {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
+		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
 	}
 };

@@ -10,7 +10,7 @@ on:
 
 jobs:
   bump-version:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo' || github.actor == 'udidol') && startsWith(github.repository, 'elementor/')
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo' || github.actor == 'udidol' || github.actor == 'TzviRabinovitch') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-20.04
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
