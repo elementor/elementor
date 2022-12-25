@@ -5,17 +5,23 @@ const packageJson = require('../../package.json');
 const fs = require('fs');
 
 const preId = process.argv[2];
-if (!['dev', 'beta', 'cloud' ].includes(preId)) {
+const inputVersion = process.argv[3];
+
+if (!['dev', 'beta', 'cloud'].includes(preId)) {
 	console.error('missing argument dev or beta mode');
 	process.exit(1);
 }
 
 const bumpVersion = (relativeVersion, lastVersionTagName, bumpsFromCurrentVersion = 1) => {
 	const lastVersion = packageJson[lastVersionTagName] || '';
-	let expectedVersion = relativeVersion;
-	(new Array(bumpsFromCurrentVersion).fill(1)).forEach(() => {
-		expectedVersion = semverInc(expectedVersion, 'minor');
-	});
+	let expectedVersion = inputVersion || relativeVersion;
+	
+	if ( ! inputVersion ) {
+		(new Array(bumpsFromCurrentVersion).fill(1)).forEach(() => {
+			expectedVersion = semverInc(expectedVersion, 'minor');
+		});
+	}
+
 	let currentLastVersionNumber = 0;
 
 	if (lastVersion) {
@@ -36,9 +42,9 @@ const bumpVersion = (relativeVersion, lastVersionTagName, bumpsFromCurrentVersio
 	console.log(newVersion);
 }
 
-if (['beta','cloud'].includes(preId)) {
+if (['beta', 'cloud'].includes(preId)) {
 	const relativeVersion = packageJson.version;
-	bumpVersion(relativeVersion,`last_${preId}_version`);
+	bumpVersion(relativeVersion, `last_${preId}_version`);
 	return;
 }
 

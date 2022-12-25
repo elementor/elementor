@@ -3,6 +3,10 @@ description: Update package.json with the new version number & Sets the version 
 
 inputs:
   CHANNEL:
+    description: "cloud/alphas/betas etc"
+    required: true
+  INPUT_VERSION:
+    description: "The version to bump from, if not provided will be taken from package.json"
     required: true
 
 outputs:
@@ -16,10 +20,21 @@ runs:
     - shell: bash
       id: bump_version_step
       run: |
+            INPUT_VERSION=${{ inputs.INPUT_VERSION }}
+            INPUT_VERSION=${INPUT_VERSION##*/}
+            echo "INPUT_VERSION : ${INPUT_VERSION}"
+
             npm install --no-package-lock --no-save semver@7.3.4
-            PREV_PACKAGE_VERSION=$(node -p "require('./package.json').last_${{ inputs.CHANNEL }}_version")
-            NEW_PACKAGE_VERSION=$(node ./.github/scripts/update-prerelease-version.js ${{ inputs.CHANNEL }})
+
+            if [ -n "${INPUT_VERSION}" ]; then
+              PREV_PACKAGE_VERSION=${INPUT_VERSION}
+            else
+              PREV_PACKAGE_VERSION=$(node -p "require('./package.json').last_${{ inputs.CHANNEL }}_version")
+            fi
+
+            NEW_PACKAGE_VERSION=$(node ./.github/scripts/update-prerelease-version.js ${{ inputs.CHANNEL }} ${INPUT_VERSION})
             PACKAGE_VERSION=$(node -p "require('./package.json').last_${{ inputs.CHANNEL }}_version")
+    
             echo "PACKAGE_VERSION=${NEW_PACKAGE_VERSION}" >> $GITHUB_ENV
             echo "::set-output name=prev_version::${PREV_PACKAGE_VERSION}"
             echo "PACKAGE_VERSION : ${PACKAGE_VERSION}"
