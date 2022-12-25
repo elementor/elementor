@@ -1,6 +1,4 @@
-import { lazy } from 'react';
-import { addEditorTopFill } from '@elementor/editor';
+import { addToTop } from '@elementor/editor';
+import TopBar from './components/top-bar';
 
-addEditorTopFill( {
-	component: lazy( () => import( './components/top-bar' ) ),
-} );
+addToTop( { component: TopBar } );

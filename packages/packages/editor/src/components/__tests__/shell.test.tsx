@@ -1,12 +1,10 @@
 import { render } from '@testing-library/react';
 import Shell from '../shell';
-import { addFill } from '@elementor/locations';
-import { EDITOR_TOP_LOCATION } from '../../locations';
+import { addToTop } from '../../locations';
 
 describe( '@elementor/editor Shell component', () => {
 	it( 'should render', () => {
-		addFill( {
-			location: EDITOR_TOP_LOCATION,
+		addToTop( {
 			component: () => <div>test</div>,
 		} );
 

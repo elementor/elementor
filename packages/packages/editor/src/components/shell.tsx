@@ -1,11 +1,11 @@
 import React from 'react';
 import { Slot } from '@elementor/locations';
-import { EDITOR_TOP_LOCATION } from '../locations';
+import { LOCATION_TOP } from '../locations';
 
 export default function Shell() {
 	return (
 		<>
-			<Slot location={ EDITOR_TOP_LOCATION } />
+			<Slot location={ LOCATION_TOP } />
 		</>
 	);
 }

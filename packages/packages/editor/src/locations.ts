@@ -1,5 +1,7 @@
-import { createFillFunction } from '@elementor/locations';
+import { FillWithOptionalPriority, addFill } from '@elementor/locations';
 
-export const EDITOR_TOP_LOCATION = 'editor/top';
+export const LOCATION_TOP = 'editor/top';
 
-export const addEditorTopFill = createFillFunction( EDITOR_TOP_LOCATION );
+export function addToTop( { component, priority }: Omit<FillWithOptionalPriority, 'location'> ) {
+	addFill( { location: LOCATION_TOP, component, priority } );
+}

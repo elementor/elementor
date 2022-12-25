@@ -6,7 +6,7 @@ type MakeOptional<Type, Key extends keyof Type> =
 
 export type Fill = {
 	location: string;
-	component: FC;
+	component: FC; // TODO: support class components.
 	priority: number;
 };
 
