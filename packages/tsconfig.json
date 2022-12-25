@@ -1,20 +1,29 @@
 {
-  // TODO: Copied from the default vite config for React. Maybe we need to tweak it.
   "compilerOptions": {
 	"target": "ESNext",
-	"useDefineForClassFields": true,
-	"lib": ["DOM", "DOM.Iterable", "ESNext"],
-	"allowJs": false,
-	"skipLibCheck": true,
-	"esModuleInterop": false,
-	"allowSyntheticDefaultImports": true,
-	"strict": true,
-	"forceConsistentCasingInFileNames": true,
 	"module": "ESNext",
-	"moduleResolution": "Node",
-	"resolveJsonModule": true,
-//	"isolatedModules": true, // TODO: Causes some compilation errors. Do we need this?
-	"noEmit": true,
+	"lib": ["DOM", "DOM.Iterable", "ESNext"],
 	"jsx": "react-jsx",
+	"moduleResolution": "Node",
+	"esModuleInterop": false,
+	"isolatedModules": true,
+
+	/* Strict Type-Checking */
+	"strict": true,
+	"allowJs": false,
+	"forceConsistentCasingInFileNames": true,
+
+	/* Less Strict Type-Checking */
+	"skipLibCheck": true,
+	"allowSyntheticDefaultImports": true,
+	"resolveJsonModule": true,
+
+	/** Makes sure there is no output (webpack will output our code) */
+	"noEmit": true,
+
+	/** Aliases for the packages */
+	"paths": {
+	  "@elementor/*": ["./packages/*/src"]
+	}
   }
 }

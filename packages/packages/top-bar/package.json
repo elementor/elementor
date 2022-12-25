@@ -1,0 +1,9 @@
+{
+  "name": "@elementor/top-bar",
+  "dependencies": {
+    "@elementor/editor": "*"
+  },
+  "peerDependencies": {
+	"react": "17.x"
+  }
+}
