@@ -65,7 +65,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		if ( this.ui.mediaInputImageSize ) {
-			this.ui.mediaInputImageSize.val( this.getControlValue( 'size' ) );
+			let isPlaceholder = false,
+				imageSize = this.getControlValue( 'size' );
+
+			if ( ! imageSize ) {
+				imageSize = this.getControlPlaceholder()?.size;
+				isPlaceholder = true;
+			}
+
+			if ( ! imageSize ) {
+				imageSize = this.model.get( 'default' ).size;
+				isPlaceholder = false;
+			}
+
+			this.ui.mediaInputImageSize.val( imageSize );
 		}
 
 		this.ui.controlMedia.toggleClass( 'e-media-empty', ! value );
@@ -121,7 +134,33 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			return;
 		}
 
-		const currentControlValue = this.getControlValue();
+		const currentControlValue = this.getControlValue(),
+			placeholder = this.getControlPlaceholder();
+
+		const isSelectedImage = ( '' !== currentControlValue?.id ),
+			isSelectedPlaceholder = placeholder?.id;
+
+		if ( ! isSelectedImage && ! isSelectedPlaceholder ) {
+			return;
+		}
+
+		if ( ! isSelectedImage && isSelectedPlaceholder ) {
+			this.setValue( {
+				...placeholder,
+				size: currentControlValue.size,
+			} );
+
+			if ( this.model.get( 'responsive' ) ) {
+				// Render is already calls `applySavedValue`, therefore there's no need for it in this case.
+				this.renderWithChildren();
+			} else {
+				this.applySavedValue();
+			}
+
+			this.onMediaInputImageSizeChange();
+
+			return;
+		}
 
 		let imageURL;
 

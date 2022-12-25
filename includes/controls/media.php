@@ -47,7 +47,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
-			'size' => 'full',
+			'size' => '',
 		];
 	}
 
@@ -305,7 +305,7 @@ class Control_Media extends Control_Base_Multiple {
 			$image_sizes[ $size_key ] = $control_title;
 		}
 
-		$image_sizes['full'] = esc_html_x( 'Full', 'Image Size Control', 'elementor' );
+		$image_sizes[''] = esc_html_x( 'Full', 'Image Size Control', 'elementor' );
 
 		return $image_sizes;
 	}
@@ -400,8 +400,8 @@ class Control_Media extends Control_Base_Multiple {
 			return parent::get_style_value( $css_property, $control_value, $control_data );
 		}
 
-		if ( ! isset( $control_value['size'] ) ) {
-			$control_value['size'] = $this->get_default_value()['size'];
+		if ( empty( $control_value['size'] ) ) {
+			$control_value['size'] = 'full';
 		}
 
 		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
