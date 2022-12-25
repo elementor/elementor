@@ -177,6 +177,10 @@
 		};
 
 		var setSide = function( event ) {
+			if ( ! currentElement ) {
+				return;
+			}
+
 			var $element = $( currentElement ),
 				elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
 				elementWidth = $element.outerWidth();
@@ -228,6 +232,10 @@
 		};
 
 		var isDroppingAllowed = function( event ) {
+			if ( disableDragFromPreviewToNewSection( event ) ) {
+				return;
+			}
+
 			var dataTransferTypes,
 				draggableGroups,
 				isGroupMatch,
@@ -256,7 +264,7 @@
 							}
 						} );
 						// eslint-disable-next-line no-empty
-					} catch ( e ) {}
+					} catch ( e ) { }
 				} );
 
 				if ( ! isGroupMatch ) {
@@ -273,6 +281,17 @@
 			}
 
 			return true;
+		};
+
+		var disableDragFromPreviewToNewSection = function( event ) {
+			const isExperimentalContainerEnabled = elementorCommon.config.experimentalFeatures.container;
+			const isDraggedToNewSection = 'elementor-add-new-section' === event?.relatedTarget?.id;
+			const elementDataId = elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
+
+			if ( ! isExperimentalContainerEnabled || ! elementDataId ) {
+				return false;
+			}
+			return isDraggedToNewSection;
 		};
 
 		var onDragEnter = function( event ) {
