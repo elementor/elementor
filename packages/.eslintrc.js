@@ -16,7 +16,7 @@ module.exports = {
 		},
 	},
 	rules: {
-		'import/no-unresolved': [ 2, { ignore: [ '@elementor/.+' ] } ],
+		'import/no-unresolved': [ 'error', { ignore: [ '@elementor/.+' ] } ],
 	},
 	overrides: [
 		{
@@ -25,6 +25,7 @@ module.exports = {
 				'**/@(__mocks__|__tests__|test)/**/*.[tj]s?(x)',
 			],
 			rules: {
+				// In tests, we are importing dev dependencies of the workspace, so we need to disable this rule.
 				'import/no-extraneous-dependencies': 'off',
 			},
 		},
