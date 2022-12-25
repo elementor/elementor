@@ -14,7 +14,7 @@ test.beforeAll( async ( { browser }, testInfo ) => {
    } );
 } );
 
-test.describe.only( 'Library Kits w/logged in State', () => {
+test.describe( 'Library Kits w/logged in State', () => {
    test( 'User can search using a category', async () => {
       await wpAdminHelper.goToKitPage();
       await kitLibraryHelper.searchForBlogCategory();
@@ -117,7 +117,7 @@ test.describe.only( 'Library Kits w/logged in State', () => {
       await globalHelper.checkTextIsNotPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.freePlanKits );
    } );
 
-   test( 'User can do an overview of a kit and view one of the pages', async ( { page } ) => {
+   test.only( 'User can do an overview of a kit and view one of the pages', async ( { page } ) => {
       await wpAdminHelper.goToKitPage();
       await kitLibraryHelper.enterKitName( Object.keys( testData.top5MostPopularKits )[ 1 ] );
       await kitLibraryHelper.selectViewKitDemo();
