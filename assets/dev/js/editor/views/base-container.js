@@ -153,15 +153,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return widget;
 	},
 
-	isDraggeedFromPreview() {
-		return !! elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
-	},
-
 	onDrop( event, options ) {
-		if ( this.isDraggeedFromPreview() ) {
-			return;
-		}
-
 		const input = event.originalEvent.dataTransfer.files;
 
 		if ( input.length ) {
