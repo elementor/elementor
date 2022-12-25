@@ -8,4 +8,4 @@
 - [ ] Build should be inside the packages directory, and then copied to the plugin directory.
 - [ ] We need to think about sharing locations between packages.
 - [ ] Enforce boundaries between packages (e.g. `top-bar` shouldn't be used in `locations`) (https://github.com/javierbrea/eslint-plugin-boundaries).
-
+- [ ] Loading feature scripts should be enqueued and not registered as a dependency of the `editor-loader` script.
