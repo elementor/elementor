@@ -117,7 +117,7 @@ test.describe( 'Library Kits w/logged in State', () => {
       await globalHelper.checkTextIsNotPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.freePlanKits );
    } );
 
-   test.only( 'User can do an overview of a kit and view one of the pages', async ( { page } ) => {
+   test( 'User can do an overview of a kit and view one of the pages', async ( { page } ) => {
       await wpAdminHelper.goToKitPage();
       await kitLibraryHelper.enterKitName( Object.keys( testData.top5MostPopularKits )[ 1 ] );
       await kitLibraryHelper.selectViewKitDemo();
