@@ -4,10 +4,10 @@ type MakeOptional<Type, Key extends keyof Type> =
 	Omit<Type, Key> &
 	Partial<Pick<Type, Key>>;
 
-export type Filler = {
+export type Fill = {
 	location: string;
 	component: FC;
 	priority: number;
 };
 
-export type FillerWithOptionalPriority = MakeOptional<Filler, 'priority'>;
+export type FillWithOptionalPriority = MakeOptional<Fill, 'priority'>;

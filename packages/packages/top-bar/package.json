@@ -1,8 +1,7 @@
 {
   "name": "@elementor/top-bar",
   "dependencies": {
-    "@elementor/editor": "*",
-    "@elementor/locations": "*"
+    "@elementor/editor": "*"
   },
   "peerDependencies": {
 	"react": "17.x"

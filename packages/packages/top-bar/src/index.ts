@@ -1,8 +1,6 @@
 import { lazy } from 'react';
-import { addFiller } from '@elementor/locations';
-import { locations } from '@elementor/editor';
+import { addEditorTopFill } from '@elementor/editor';
 
-addFiller( {
-	location: locations.TOP,
+addEditorTopFill( {
 	component: lazy( () => import( './components/top-bar' ) ),
 } );

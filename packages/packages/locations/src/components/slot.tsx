@@ -1,13 +1,13 @@
 import React, { Suspense } from 'react';
-import useFillers from '../hooks/use-fillers';
+import useFills from '../hooks/use-fills';
 
 type SlotProps = {
-	name: string;
+	location: string;
 }
 
 // TODO: <ErrorBoundary />
-export default function Slot( { name }: SlotProps ) {
-	const fillers = useFillers( name );
+export default function Slot( { location }: SlotProps ) {
+	const fillers = useFills( location );
 
 	return (
 		<>

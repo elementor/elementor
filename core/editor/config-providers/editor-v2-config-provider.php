@@ -18,7 +18,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				[
 					'handle' => 'elementor-packages-top-bar',
 					'src' => '{{ASSETS_URL}}/js/packages/top-bar{{SUFFIX}}.js',
-					'deps' => [ 'react', 'elementor-packages-locations', 'elementor-packages-editor' ],
+					'deps' => [ 'react', 'elementor-packages-editor' ],
 				],
 				[
 					'handle' => 'elementor-packages-editor',

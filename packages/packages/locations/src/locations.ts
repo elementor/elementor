@@ -1,17 +1,17 @@
-import { Filler, FillerWithOptionalPriority } from './types';
+import { Fill, FillWithOptionalPriority } from './types';
 
-let fillers: Filler[] = [];
+let fills: Fill[] = [];
 
-export const addFiller = ( { location, component, priority = 10 }: FillerWithOptionalPriority ): void => {
-	fillers.push( { location, component, priority } );
+export const addFill = ( { location, component, priority = 10 }: FillWithOptionalPriority ): void => {
+	fills.push( { location, component, priority } );
 };
 
-export const getFillers = ( location: string ): Filler[] => {
-	return fillers
-		.filter( ( filler ) => filler.location === location )
+export const getFills = ( location: string ): Fill[] => {
+	return fills
+		.filter( ( fill ) => fill.location === location )
 		.sort( ( a, b ) => a.priority - b.priority );
 };
 
-export const resetFillers = (): void => {
-	fillers = [];
+export const resetFills = (): void => {
+	fills = [];
 };
