@@ -1,21 +1,21 @@
 const { test, expect } = require( '@playwright/test' );
-const { onboarding } = require( './onboarding.utils' );
+const { onboarding } = require( '../../../../../pages/onboarding-page' );
 const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 const testData = JSON.parse( JSON.stringify( require( './onboarding.data.json' ) ) );
 
 test.beforeAll( async ( { browser }, testInfo ) => {
 	const page = await browser.newPage();
 	helper = new onboarding( page, testInfo.project.use.baseURL );
-	wpAdminHelper = new WpAdminPage( page, testInfo );
+	wpAdmin = new WpAdminPage( page, testInfo );
 
-	await wpAdminHelper.activateTwenty21Theme();
-	await wpAdminHelper.setExperiments( {
+	await wpAdmin.activateTheme( '[aria-label="Activate Twenty Twenty-One"]' );
+	await wpAdmin.setExperiments( {
       container: false,
 	} );
 } );
 
 test.afterAll( async () => {
-	await wpAdminHelper.activateHelloTheme();
+	await wpAdmin.activateTheme( '[aria-label="Activate Hello Elementor"]' );
 } );
 
 test.describe( 'First Step - Elementor Account', () => {
@@ -83,9 +83,9 @@ test.describe( 'Second Step - Hello Theme', () => {
 	test( ' "Continue with Hello Theme" button works', async ( { page } ) => {
 		await helper.gotoStep2();
 		await helper.selectContinueWithHelloThemeButton();
-		await wpAdminHelper.gotoThemesPage();
+		await wpAdmin.gotoThemesPage();
 		await helper.checkElementorThemeIsActive();
-		await wpAdminHelper.activateTwenty21Theme();
+		await wpAdmin.activateTheme( '[aria-label="Activate Twenty Twenty-One"]' );
 	} );
 } );
 

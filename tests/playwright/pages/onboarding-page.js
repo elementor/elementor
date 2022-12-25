@@ -82,16 +82,6 @@ class onboarding {
         await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments', { waitUntil: 'networkidle' } );
     }
 
-    async checkflexBoxIsOff() {
-        this.flexBoxStatus = await this.page.locator( 'select#e-experiment-container' ).inputValue();
-        if ( this.flexBoxStatus !== 'inactive' ) {
-            await this.page.selectOption( 'select#e-experiment-container', 'inactive' );
-            await this.page.locator( '#submit' ).click();
-            await this.page.waitForLoadState( 'networkidle' );
-            await expect( await this.page.locator( 'select#e-experiment-container' ).inputValue() ).toEqual( 'inactive' );
-        }
-    }
-
     async checkflexBoxIsBackToPreviousState() {
         const currentState = await this.page.locator( 'select#e-experiment-container' ).inputValue();
         if ( currentState !== 'active' ) {
@@ -194,9 +184,11 @@ class onboarding {
 
     async createMyAccountPopupWorks() {
         const [ createMyAccountPopUp ] = await Promise.all( [
-			// It is important to call waitForEvent before click to set up waiting.
+
+            // It is important to call waitForEvent before click to set up waiting.
 			this.page.waitForEvent( 'popup' ),
-			// Opens popup.
+
+            // Opens popup.
 			this.selectCreateMyAccountCTA(),
 		] );
         await expect( await createMyAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
@@ -205,7 +197,10 @@ class onboarding {
 
     async alreadyHaveElementorProWorks() {
         const [ alreadyHaveElementorProPopup ] = await Promise.all( [
-			this.page.waitForEvent( 'popup' ),
+            // It is important to call waitForEvent before click to set up waiting.
+            this.page.waitForEvent( 'popup' ),
+
+            // Opens popup.
 			this.selectAlreadyHaveElementorProLink(),
 		] );
 
@@ -216,9 +211,11 @@ class onboarding {
         const [ createAccountPopUp ] = await Promise.all( [
 			// It is important to call waitForEvent before click to set up waiting.
 			this.page.waitForEvent( 'popup' ),
-			// Opens popup.
+
+            // Opens popup.
 			this.selectHeaderCreateAccountCTA(),
 		] );
+
         await expect( await createAccountPopUp.title(), `"Sign up for Elementor" text is not present on the pop up` ).toEqual( 'Sign Up – My Account' );
         await createAccountPopUp.close();
     }
@@ -246,8 +243,7 @@ class onboarding {
 
     async selectContinueWithHelloThemeButton() {
         await this.continueWithHelloThemeButton.click();
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 250 );
+        await this.page.waitForNavigation();
     }
 
     async checkUserIsOnStepThree() {
@@ -313,8 +309,7 @@ class onboarding {
         await this.page.locator( '#customize-control-custom_logo .upload-button' ).first().click();
         await this.page.waitForLoadState( 'networkidle' );
         await this.page.locator( '#menu-item-browse' ).click();
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForSelector( '.load-more-count' );
         if ( await this.page.locator( '.attachment-preview div.thumbnail img' ).count() < 1 ) {
             const [ fileChooser ] = await Promise.all( [
                 // It is important to call waitForEvent before click to set up waiting.
@@ -386,7 +381,7 @@ class onboarding {
         await this.openMediaLibraryButton.click();
         await this.page.waitForLoadState( 'networkidle' );
         await this.page.locator( '#menu-item-browse' ).click();
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForSelector( '.load-more-count' );
         if ( await this.page.locator( '.attachment-preview .thumbnail' ).first().isVisible() ) {
             await this.page.locator( '.attachment-preview .thumbnail' ).first().click();
         } else {
@@ -417,7 +412,7 @@ class onboarding {
     }
 
     async checkFirstKitIsBlankCanvas() {
-        await this.page.waitForTimeout( 1000 );
+        await this.page.waitForLoadState( 'networkidle' );
         await this.page.waitForSelector( '[alt="Blank Canvas"]' );
         await expect( await this.kitNames.nth( 0 ) ).toContainText( 'Blank Canvas' );
     }
