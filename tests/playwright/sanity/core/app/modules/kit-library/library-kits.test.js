@@ -14,7 +14,7 @@ test.beforeAll( async ( { browser }, testInfo ) => {
    } );
 } );
 
-test.describe( 'Library Kits w/logged in State', () => {
+test.describe.only( 'Library Kits w/logged in State', () => {
    test( 'User can search using a category', async () => {
       await wpAdminHelper.goToKitPage();
       await kitLibraryHelper.searchForBlogCategory();
@@ -26,13 +26,9 @@ test.describe( 'Library Kits w/logged in State', () => {
       await kitLibraryHelper.checkBlogCategory();
       await globalHelper.checkTextIsPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.blogKitNames );
       await globalHelper.checkTextIsNotPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.businessKitNames );
-
-      // Remove the Blog Category Filter
-      await kitLibraryHelper.filterItemCloseButton.click();
-      await expect( kitLibraryHelper.blogCategory, `The blog category checkbox is still checked` ).not.toBeChecked();
-
-      // All the kits are now again visible
-      await expect( await kitLibraryHelper.kitTitles.count(), `All the kits are not back into view after filter is cleared` ).toBeGreaterThan( 50 );
+      await kitLibraryHelper.removeBlogCategoryFilter();
+      await kitLibraryHelper.checBlogCategoryCheckBoxIsUnchecked();
+      await kitLibraryHelper.checkAllKitsAreNowPresent();
    } );
 
    test( 'User can search using a tag', async () => {
@@ -49,7 +45,7 @@ test.describe( 'Library Kits w/logged in State', () => {
       await kitLibraryHelper.checkAttorneyTagIsCheckedOff();
       await kitLibraryHelper.checkOnlyAttorneyKitIsPresented( testData.attorneyTagKit[ 0 ] );
       await kitLibraryHelper.uncheckTheAttorneyTag();
-      await kitLibraryHelper.checkTheAttorneyTagIsUnchecked();
+      await kitLibraryHelper.checkCheckBoxIsUnchecked( kitLibraryHelper.attorneyTag );
       await kitLibraryHelper.checkAllKitsAreNowPresent();
    } );
 
@@ -58,21 +54,16 @@ test.describe( 'Library Kits w/logged in State', () => {
       await kitLibraryHelper.setTagsTheOnlyActiveSection();
       await kitLibraryHelper.checkoffAttorneyTag();
       await kitLibraryHelper.checkBlogTag();
-
-      // All the kits with the Attorney tag and blog tag need to show up
       await globalHelper.checkTextIsPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.blogKitNames.concat( testData.attorneyTagKit ) );
-
       await kitLibraryHelper.selectClearAllFilters();
-
-      // All the kits are now again visible and checked tags are not checked
-      await expect( kitLibraryHelper.attorneyTag ).not.toBeChecked();
-      await expect( kitLibraryHelper.blogTag ).not.toBeChecked();
-      await expect( await kitLibraryHelper.kitTitles.count(), `All the kits are not back into view after filter is cleared` ).toBeGreaterThan( 50 );
+      await kitLibraryHelper.checkCheckBoxIsUnchecked( kitLibraryHelper.attorneyTag );
+      await kitLibraryHelper.checkCheckBoxIsUnchecked( kitLibraryHelper.blogTag );
+      await kitLibraryHelper.checkAllKitsAreNowPresent();
    } );
 
    test( 'Adding and removing a Kit to/from Favorites', async () => {
       await wpAdminHelper.goToKitPage();
-      await kitLibraryHelper.goToFavoritesPage();
+      await kitLibraryHelper.identifyFavoriteKitsAndCheckThemInFavorites();
       await kitLibraryHelper.clearAllFavorites( testData.noFavoritesHereText );
       await kitLibraryHelper.addKitToFavorites( testData.allCategoriesKitNames[ 1 ] );
       await kitLibraryHelper.clearAllFavorites( testData.noFavoritesHereText );
@@ -113,7 +104,6 @@ test.describe( 'Library Kits w/logged in State', () => {
       await kitLibraryHelper.categoriesTitle.click();
       await kitLibraryHelper.kitsByPlanTitle.click();
       await kitLibraryHelper.checkFreePlan();
-      await page.waitForTimeout( 500 );
       await globalHelper.checkTextIsPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.freePlanKits );
       await globalHelper.checkTextIsNotPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.proPlanKits );
    } );
@@ -123,16 +113,14 @@ test.describe( 'Library Kits w/logged in State', () => {
       await kitLibraryHelper.categoriesTitle.click();
       await kitLibraryHelper.kitsByPlanTitle.click();
       await kitLibraryHelper.checkProPlan();
-      await page.waitForTimeout( 500 );
       await globalHelper.checkTextIsPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.proPlanKits );
       await globalHelper.checkTextIsNotPresentInInSelectorElements( page, kitLibraryHelper.kitTitles, testData.freePlanKits );
    } );
 
    test( 'User can do an overview of a kit and view one of the pages', async ( { page } ) => {
       await wpAdminHelper.goToKitPage();
-      await kitLibraryHelper.mainKitSearchEntryBox.type( Object.keys( testData.top5MostPopularKits )[ 1 ], { delay: 50 } );
-      await page.waitForTimeout( 500 );
-      await kitLibraryHelper.viewKitDemo.click();
+      await kitLibraryHelper.enterKitName( Object.keys( testData.top5MostPopularKits )[ 1 ] );
+      await kitLibraryHelper.selectViewKitDemo();
       await kitLibraryHelper.selectOverviewButton();
       await kitLibraryHelper.validateKitDescription( testData.top5MostPopularKits[ 'Bread Bakery' ].kitDescription );
       await globalHelper.checkTextIsPresentInInSelectorElements( page, kitLibraryHelper.kitPageTitles, testData.top5MostPopularKits[ 'Bread Bakery' ].pages );
@@ -144,7 +132,7 @@ test.describe( 'Library Kits w/logged in State', () => {
    test( 'User can sort by popularity of the kits', async ( { page } ) => {
       await wpAdminHelper.goToKitPage();
       await kitLibraryHelper.selectSortoption( testData.dropDownSortValues[ 2 ] );
-      await page.waitForTimeout( 500 );
+      await page.waitForLoadState( 'networkidle' );
       await kitLibraryHelper.validateTop5PopularKits( Object.keys( testData.top5MostPopularKits ) );
    } );
 } );

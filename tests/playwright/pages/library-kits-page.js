@@ -63,8 +63,15 @@ class LibraryKits {
 
     async checkBlogCategory() {
         await this.page.check( this.blogCategorySelector );
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForSelector( '.e-kit-library__filter-indication-text' );
+    }
+
+    async removeBlogCategoryFilter() {
+        await this.filterItemCloseButton.click();
+    }
+
+    async checBlogCategoryCheckBoxIsUnchecked() {
+        await expect( this.blogCategory, `The blog category checkbox is still checked` ).not.toBeChecked();
     }
 
     async setTagsTheOnlyActiveSection() {
@@ -76,14 +83,13 @@ class LibraryKits {
     async searchForTag( categoryName ) {
         // Type a tag fully and validate that there is only one tag thats available for selection
         await this.searchTagsEntryBox.type( categoryName, { delay: 50 } );
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForSelector( '.eicon-close-circle' );
         await expect( await this.categoryItems.count(), `The search for "cars" tag was not found` ).toEqual( 1 );
     }
 
     async searchForBlogCategory() {
         await this.searchCategoriesEntryBox.type( 'blog', { delay: 50 } );
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForSelector( '.e-kit-library__tags-filter-list-search .eps-search-input__clear-icon' );
     }
 
     async checkOnlyOneCategoryItemIsPresented() {
@@ -92,11 +98,11 @@ class LibraryKits {
 
     async checkoffAttorneyTag() {
         await this.attorneyTag.click();
+        await this.page.waitForSelector( '.e-kit-library__filter-indication-text' );
     }
 
     async checkAttorneyTagIsCheckedOff() {
         await expect( this.attorneyTag ).toBeChecked();
-        await this.page.waitForTimeout( 500 );
     }
 
     async checkOnlyAttorneyKitIsPresented( kit ) {
@@ -112,19 +118,22 @@ class LibraryKits {
         await expect( this.attorneyTag, `The attorney tag checkbox is still checked` ).not.toBeChecked();
     }
 
+    async checkCheckBoxIsUnchecked( selector ) {
+        await expect( selector, `The attorney tag checkbox is still checked` ).not.toBeChecked();
+    }
+
     async checkAllKitsAreNowPresent() {
         await expect( await this.kitTitles.count(), `All the kits are not back into view after filter is cleared` ).toBeGreaterThan( 50 );
     }
 
     async searchForKit( kit ) {
         await this.mainKitSearchEntryBox.type( Object.keys( kit )[ 0 ], { delay: 50 } );
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForSelector( '.e-kit-library__index-layout-top-area-search .eps-search-input__clear-icon' );
     }
 
     async selectViewKitDemo() {
         await this.viewKitDemo.click();
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForSelector( '#eps-app-header-btn-connect' );
     }
 
     async checkKitDemoHeading( kit ) {
@@ -138,10 +147,17 @@ class LibraryKits {
 
     async checkFreePlan() {
         await this.page.check( this.freePlanSelector );
+        await this.page.waitForSelector( '.e-kit-library__filter-indication .e-kit-library__filter-indication-text' );
     }
 
     async checkProPlan() {
         await this.page.check( this.proPlanSelector );
+        await this.page.waitForSelector( '.e-kit-library__filter-indication .e-kit-library__filter-indication-text' );
+    }
+
+    async enterKitName( text ) {
+        await this.mainKitSearchEntryBox.type( text, { delay: 50 } );
+        await this.page.waitForSelector( '.e-kit-library__index-layout-top-area-search .eicon-close-circle' );
     }
 
     async checkExpertPlan() {
@@ -150,8 +166,21 @@ class LibraryKits {
 
     async goToFavoritesPage() {
         await this.favoritesPage.click();
-        await this.page.waitForLoadState( 'networkidle' );
-        await this.page.waitForTimeout( 500 );
+        await this.page.waitForNavigation();
+    }
+
+    async identifyFavoriteKitsAndCheckThemInFavorites() {
+        const favoriteKitsList = [];
+        const kitQuantity = await this.page.locator( '.eps-card__header  div' ).count();
+        for ( let i = 0; i < kitQuantity; i++ ) {
+            if ( 'eps-button e-kit-library__kit-favorite-actions e-kit-library__kit-favorite-actions--active ' === await this.page.locator( '.eps-card__header  div' ).nth( i ).getAttribute( 'class' ) ) {
+                await favoriteKitsList.push( await this.page.locator( '.eps-card__header  h3' ).nth( i ).textContent() );
+            }
+        }
+        await this.goToFavoritesPage();
+
+        const favoritesPageKits = await this.page.locator( '.eps-card__header h3' ).allTextContents();
+        await expect( favoritesPageKits.length ).toEqual( favoriteKitsList.length );
     }
 
     async goToAllWebsiteKits() {
