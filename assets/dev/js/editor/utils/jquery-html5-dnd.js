@@ -177,10 +177,6 @@
 		};
 
 		var setSide = function( event ) {
-			if ( ! currentElement ) {
-				return;
-			}
-
 			var $element = $( currentElement ),
 				elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
 				elementWidth = $element.outerWidth();
@@ -333,6 +329,10 @@
 
 		var onDragOver = function( event ) {
 			event.stopPropagation();
+
+			if ( ! currentElement ) {
+				onDragEnter.call( this, event );
+			}
 
 			var oldSide = currentSide;
 
