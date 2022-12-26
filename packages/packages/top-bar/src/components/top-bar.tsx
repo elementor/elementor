@@ -4,7 +4,7 @@ export const TopBar = () => {
 	return (
 		<div style={ {
 			background: '#000',
-			height: 'var(--e-editor-v2-top-bar-height, 50px)',
+			height: '50px',
 			width: '100%',
 		} }>
 			<img
