@@ -18,12 +18,17 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				[
 					'handle' => 'elementor-packages-top-bar',
 					'src' => '{{ASSETS_URL}}/js/packages/top-bar{{SUFFIX}}.js',
-					'deps' => [ 'react', 'elementor-packages-editor' ],
+					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui' ],
 				],
 				[
 					'handle' => 'elementor-packages-editor',
 					'src' => '{{ASSETS_URL}}/js/packages/editor{{SUFFIX}}.js',
-					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations' ],
+					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui' ],
+				],
+				[
+					'handle' => 'elementor-packages-ui',
+					'src' => '{{ASSETS_URL}}/js/packages/ui{{SUFFIX}}.js',
+					'deps' => [ 'react', 'react-dom' ],
 				],
 			]
 		);
@@ -37,6 +42,9 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			// Apps.
 			'elementor-editor',
 			'elementor-packages-editor',
+
+			// Utils.
+			'elementor-packages-ui',
 		];
 
 		// TODO: Maybe load feature packages and then there is no need for this filter.

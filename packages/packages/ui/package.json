@@ -1,0 +1,9 @@
+{
+  "name": "@elementor/ui",
+  "peerDependencies": {
+    "react": "17.x"
+  },
+  "devDependencies": {
+    "@elementor/ui": "^1.2.1"
+  }
+}
