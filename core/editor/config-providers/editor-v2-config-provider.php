@@ -25,31 +25,46 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					'src' => '{{ASSETS_URL}}/js/packages/editor{{SUFFIX}}.js',
 					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations' ],
 				],
+
+				// Loader script
+				[
+					'handle' => 'elementor-editor-loader-v2',
+					'src' => ELEMENTOR_URL . 'core/editor/assets/js/editor-loader-v2.js',
+					'deps' => [
+						'elementor-editor',
+						'elementor-packages-editor',
+					],
+				],
 			]
 		);
 	}
 
-	public function get_loader_scripts() {
-		$deps = [
-			// Feature packages.
+	public function get_scripts_for_enqueue() {
+		return [
 			'elementor-packages-top-bar',
 
-			// Apps.
-			'elementor-editor',
-			'elementor-packages-editor',
+			// Loader script - must be last.
+			'elementor-editor-loader-v2',
 		];
+	}
 
-		// TODO: Maybe load feature packages and then there is no need for this filter.
-		$deps = array_filter( $deps, function ( $handle ) {
-			return wp_script_is( $handle, 'registered' );
-		} );
-
-		return [
+	public function get_styles() {
+		return array_merge(
+			Editor_Common_Assets::get_styles(),
 			[
-				'handle' => 'elementor-editor-loader-v2',
-				'src' => ELEMENTOR_URL . 'core/editor/assets/js/editor-loader-v2.js',
-				'deps' => $deps,
-			],
+				[
+					'handle' => 'elementor-editor-v2-overrides',
+					'src' => ELEMENTOR_URL . 'core/editor/assets/css/editor-v2-overrides.css',
+					'deps' => [ 'elementor-editor' ],
+				],
+			]
+		);
+	}
+
+	public function get_styles_for_enqueue() {
+		return [
+			'elementor-editor-v2-overrides',
+			'elementor-editor',
 		];
 	}
 

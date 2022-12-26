@@ -113,4 +113,46 @@ class Editor_Common_Assets {
 			],
 		];
 	}
+
+	public static function get_styles() {
+		return [
+			[
+				'handle' => 'font-awesome',
+				'src' => '{{ASSETS_URL}}lib/font-awesome/css/font-awesome{{SUFFIX}}.css',
+				'version' => '4.7.0',
+			],
+			[
+				'handle' => 'elementor-select2',
+				'src' => '{{ASSETS_URL}}lib/e-select2/css/e-select2{{SUFFIX}}.css',
+				'version' => '4.0.6-rc.1',
+			],
+			[
+				'handle' => 'google-font-roboto',
+				'src' => 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+			],
+			[
+				'handle' => 'flatpickr',
+				'src' => '{{ASSETS_URL}}lib/flatpickr/flatpickr{{SUFFIX}}.css',
+				'version' => '1.12.0',
+			],
+			[
+				'handle' => 'pickr',
+				'src' => '{{ASSETS_URL}}lib/pickr/themes/monolith.min.css',
+				'version' => '1.5.0',
+			],
+			[
+				'handle' => 'elementor-editor',
+				'src' => '{{ASSETS_URL}}css/editor{{DIRECTION_SUFFIX}}{{SUFFIX}}.css',
+				'deps' => [
+					'elementor-common',
+					'elementor-select2',
+					'elementor-icons',
+					'wp-auth-check',
+					'google-font-roboto',
+					'flatpickr',
+					'pickr',
+				],
+			],
+		];
+	}
 }

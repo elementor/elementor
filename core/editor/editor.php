@@ -510,59 +510,8 @@ class Editor {
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		wp_register_style(
-			'font-awesome',
-			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
-			[],
-			'4.7.0'
-		);
-
-		wp_register_style(
-			'elementor-select2',
-			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2' . $suffix . '.css',
-			[],
-			'4.0.6-rc.1'
-		);
-
-		wp_register_style(
-			'google-font-roboto',
-			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
-			[],
-			ELEMENTOR_VERSION
-		);
-
-		wp_register_style(
-			'flatpickr',
-			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.css',
-			[],
-			'1.12.0'
-		);
-
-		wp_register_style(
-			'pickr',
-			ELEMENTOR_ASSETS_URL . 'lib/pickr/themes/monolith.min.css',
-			[],
-			'1.5.0'
-		);
-
-		wp_register_style(
-			'elementor-editor',
-			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
-			[
-				'elementor-common',
-				'elementor-select2',
-				'elementor-icons',
-				'wp-auth-check',
-				'google-font-roboto',
-				'flatpickr',
-				'pickr',
-			],
-			ELEMENTOR_VERSION
-		);
-
-		wp_enqueue_style( 'elementor-editor' );
+		$this->loader->register_styles();
+		$this->loader->enqueue_styles();
 
 		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
 
