@@ -1,20 +1,10 @@
-import React, { useEffect } from 'react';
-
-const height = '50px';
+import React from 'react';
 
 export const TopBar = () => {
-	useEffect( () => {
-		document.body.style.setProperty( '--e-editor-v2-top-bar-height', height );
-
-		return () => {
-			document.body.style.removeProperty( '--e-editor-v2-top-bar-height' );
-		};
-	}, [] );
-
 	return (
 		<div style={ {
 			background: '#000',
-			height,
+			height: 'var(--e-editor-v2-top-bar-height, 50px)',
 			width: '100%',
 		} }>
 			<img

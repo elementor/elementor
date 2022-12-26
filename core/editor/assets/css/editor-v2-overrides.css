@@ -1,5 +1,11 @@
-/** Here should be only styles that related to the Editor v1, and should be overridden when using the Editor v2. */
+/**
+ * Here should be only styles that related to the Editor v1, and should be overridden when using the Editor v2.
+ */
+
+body {
+	--e-editor-v2-top-bar-height: 50px;
+}
 
 #elementor-editor-wrapper {
-	height: calc(100vh - var(--e-editor-v2-top-bar-height, 0px));
+	height: calc(100vh - var(--e-editor-v2-top-bar-height));
 }
