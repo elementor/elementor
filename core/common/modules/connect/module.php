@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const ACCESS_LEVEL_CORE = 0;
 	const ACCESS_LEVEL_PRO = 1;
+	const ACCESS_LEVEL_EXPERT = 20;
 
 	/**
 	 * @since 2.3.0
@@ -200,6 +201,11 @@ class Module extends BaseModule {
 				'label' => 'Pro',
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
+			],
+			static::ACCESS_LEVEL_EXPERT => [
+				'label' => 'Expert',
+				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=goexpert',
+				'color' => '#010051',
 			],
 		];
 	}

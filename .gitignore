@@ -13,7 +13,6 @@ assets/css/
 assets/js/
 *.log
 *.map
-templates
 
 # build tools lock
 yarn.lock
