@@ -770,7 +770,44 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Test swiper carousels work as expected when switching to a new tab', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
+
+		// Act.
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		// Add testimonial-carousel widget to tab 1 & 2
+		for ( i = 1; i <= 2; i++ ) {
+			const activeContainerId = await editTab( editor, tabsWidgetId, i );
+			await editor.addWidget( 'testimonial-carousel', activeContainerId );
+			await page.locator( '.elementor-control-slides_per_view select' ).selectOption( '2' );
+			await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
+			await page.locator( '.elementor-control-loop label.elementor-switch' ).click();
+			await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
+		}
+		await editor.publishAndViewPage();
+
+		await page.locator( '.e-n-tabs-heading .e-n-tab-title>>nth=1' ).click();
+
+		// Assert.
+		// Check the swiper in the second nested tab has initialized.
+		await expect( await page.locator( '.e-n-tabs-content .e-con.e-active .swiper-wrapper .swiper-slide.swiper-slide-active' ) ).toBeVisible();
+
+		await cleanup( wpAdmin );
+	} );
 } );
+
+async function editTab( editor, tabsWidgetId, tabNumber = 1 ) {
+	await editor.getPreviewFrame().locator( '.e-normal>>nth=' + ( tabNumber - 1 ) ).dblclick();
+	await editor.getPreviewFrame().waitForSelector( '.e-normal.e-active' );
+	const activeContentContainer = await editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` );
+	return await activeContentContainer.getAttribute( 'data-id' );
+}
 
 const viewportSize = {
     desktop: { width: 1920, height: 1080 },
