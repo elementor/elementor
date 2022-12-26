@@ -169,6 +169,13 @@ class Test_Controller extends Elementor_Test_Base {
 				'types' => [
 					(object) [ 'name' => 'e' ],
 				],
+				'taxonomies' => [
+					(object) [ 'name' => 'a', 'type' => 'tags' ],
+					(object) [ 'name' => 'b', 'type' => 'tags' ],
+					(object) [ 'name' => 'c' , 'type' => 'categories' ],
+					(object) [ 'name' => 'd' , 'type' => 'features' ],
+					(object) [ 'name' => 'e' , 'type' => 'types' ],
+				],
 				'keywords' => [ 'word', 'word2' ],
 				'_id' => 'id_1',
 				'title' => 'kit_1',
@@ -194,6 +201,13 @@ class Test_Controller extends Elementor_Test_Base {
 				],
 				'types' => [
 					(object) [ 'name' => '5' ],
+				],
+				'taxonomies' => [
+					(object) [ 'name' => '1', 'type' => 'tags' ],
+					(object) [ 'name' => '2', 'type' => 'tags' ],
+					(object) [ 'name' => '3' , 'type' => 'categories' ],
+					(object) [ 'name' => '4' , 'type' => 'features' ],
+					(object) [ 'name' => '5' , 'type' => 'types' ],
 				],
 				'keywords' => [],
 				'_id' => 'id_2',
