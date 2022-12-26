@@ -76,7 +76,9 @@ class Revert {
 			return [];
 		}
 
-		ksort( $import_sessions, SORT_NUMERIC );
+		usort( $import_sessions, function( $a, $b ) {
+			return strcmp( $a['start_timestamp'], $b['start_timestamp'] );
+		} );
 
 		return $import_sessions;
 	}

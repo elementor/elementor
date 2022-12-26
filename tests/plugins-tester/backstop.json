@@ -1,0 +1,42 @@
+{
+	"id": "plugins-tester",
+	"viewports": [
+		{
+			"label": "laptop",
+			"width": 1366,
+			"height": 700
+	}
+	],
+	"scenarios": [
+		{
+			"label": "law-firm-about",
+			"url": "http://localhost:7777/law-firm-about/",
+			"onReadyScript": "scroll-to-bottom.cjs",
+			"misMatchThreshold": 0,
+			"readyTimeout": 60000
+		},
+		{
+			"label": "law-firm-about-editor",
+			"url": "http://localhost:7777/law-firm-about/?elementor",
+			"readyEvent": "Elementor is ready!",
+			"misMatchThreshold": 0,
+			"readyTimeout": 60000
+	    }
+	],
+	"paths": {
+		"bitmaps_reference": "backstop_data/bitmaps_reference",
+		"bitmaps_test": "backstop_data/bitmaps_test",
+		"engine_scripts": "backstop_data/engine_scripts",
+		"html_report": "backstop_data/html_report",
+		"ci_report": "backstop_data/ci_report"
+	},
+	"report": ["browser"],
+	"engine": "puppeteer",
+	"engineOptions": {
+		"args": ["--no-sandbox"]
+	},
+	"asyncCaptureLimit": 5,
+	"asyncCompareLimit": 50,
+	"debug": false,
+	"debugWindow": false
+}
