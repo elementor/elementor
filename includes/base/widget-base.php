@@ -569,7 +569,7 @@ abstract class Widget_Base extends Element_Base {
 			}
 		}
 
-		$attributes['data-e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
+		$attributes['e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
 
 		$this->add_render_attribute( $element, $attributes, null, $overwrite );
 

@@ -8,9 +8,9 @@
         "https://downloads.wordpress.org/theme/hello-elementor.zip"
     ],
     "mappings": {
-        "elementor-templates": "./templates/lighthouse",
+        "elementor-templates": "./tests/lighthouse/templates",
         "elementor-config": "./tests/wp-env/config",
-        "elementor-playwright-templates": "./templates/playwright"
+        "elementor-playwright-templates": "./tests/playwright/templates"
     },
     "config": {
         "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
