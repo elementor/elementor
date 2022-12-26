@@ -43,8 +43,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				return accessLevel >= templateData.accessLevel;
 			} );
 
-		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ];
-
+		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ] ?? subscriptionPlans[ subscriptionPlans.length - 1 ];
 		return Marionette.Renderer.render( template, {
 			promotionText: `Go ${ subscriptionPlan.label }`,
 			promotionLink: subscriptionPlan.promotion_url,

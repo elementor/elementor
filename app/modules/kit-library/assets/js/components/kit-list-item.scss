@@ -53,13 +53,4 @@ $root: e-kit-library__kit-item;
 			margin: 0 3px;
 		}
 	}
-
-	&-subscription-plan-badge {
-		position: absolute;
-		top: 0;
-		right: 0;
-		margin: spacing(5);
-		color: theme-colors( light );
-		text-transform: uppercase;
-	}
 }

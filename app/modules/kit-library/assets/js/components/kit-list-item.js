@@ -1,4 +1,3 @@
-import Badge from './badge';
 import FavoritesActions from '../components/favorites-actions';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
@@ -46,16 +45,6 @@ const KitListItem = ( props ) => {
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
-					{
-						subscriptionPlan?.label &&
-							<Badge
-								variant="sm"
-								className="e-kit-library__kit-item-subscription-plan-badge"
-								style={ { backgroundColor: subscriptionPlan.color } }
-							>
-								{ subscriptionPlan.label }
-							</Badge>
-					}
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-overlay">
 							<Button
