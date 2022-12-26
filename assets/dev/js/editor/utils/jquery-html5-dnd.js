@@ -232,10 +232,6 @@
 		};
 
 		var isDroppingAllowed = function( event ) {
-			if ( disableDragFromPreviewToNewSection( event ) ) {
-				return;
-			}
-
 			var dataTransferTypes,
 				draggableGroups,
 				isGroupMatch,
@@ -281,17 +277,6 @@
 			}
 
 			return true;
-		};
-
-		var disableDragFromPreviewToNewSection = function( event ) {
-			const isExperimentalContainerEnabled = elementorCommon.config.experimentalFeatures.container;
-			const isDraggedToNewSection = 'elementor-add-new-section' === event?.relatedTarget?.id;
-			const elementDataId = elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
-
-			if ( ! isExperimentalContainerEnabled || ! elementDataId ) {
-				return false;
-			}
-			return isDraggedToNewSection;
 		};
 
 		var onDragEnter = function( event ) {
