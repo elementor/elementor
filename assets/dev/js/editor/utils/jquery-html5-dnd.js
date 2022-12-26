@@ -260,7 +260,7 @@
 							}
 						} );
 						// eslint-disable-next-line no-empty
-					} catch ( e ) { }
+					} catch ( e ) {}
 				} );
 
 				if ( ! isGroupMatch ) {
@@ -333,10 +333,6 @@
 
 		var onDragOver = function( event ) {
 			event.stopPropagation();
-
-			if ( ! currentElement ) {
-				onDragEnter.call( this, event );
-			}
 
 			var oldSide = currentSide;
 
