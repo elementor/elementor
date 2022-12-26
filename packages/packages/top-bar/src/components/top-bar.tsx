@@ -1,23 +1,54 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
+import { AppBar, Grid, Box, IconButton } from '@elementor/ui';
+import { styled } from '@elementor/ui';
+import ElementorIcon from './icons/ElementorIcon';
+import PlusIcon from './icons/PlusIcon';
+
+interface ExtendedWindow extends Window {
+    $e: {
+        route: ( route: string ) => void;
+    };
+}
+
+const { $e } = window as unknown as ExtendedWindow;
+
+const AppBarAction = styled( IconButton )( ( { theme } ) => ( {
+    borderRadius: '8px',
+    padding: theme.spacing(2),
+    '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
+} ) );
 
 export const TopBar = () => {
-	return (
-		<div style={ {
-			background: '#000',
-			height: '50px',
-			width: '100%',
-		} }>
-			<img
-				alt="Elementor Logo"
-				src="https://elementor.com/marketing/wp-content/uploads/2021/10/Elementor-Logo-Symbol-Red.png"
-				style={ {
-					height: '90%',
-					marginTop: '2px',
-					marginLeft: '4px',
-				} }
-			/>
-		</div>
-	);
+    const appBarHeight = '48px';
+
+    useLayoutEffect( () => {
+        // Adjusting the editor panerl height, to consider the top-bar height;
+        const style = document.createElement( 'style' );
+
+        style.innerHTML = `#elementor-editor-wrapper {
+            height: calc( 100vh - ${ appBarHeight } );
+        }`;
+
+        document.body.appendChild( style );
+    }, [] );
+
+    return (
+        <AppBar position="sticky" sx={ { background: '#000', height: appBarHeight } }>
+            <Grid container direction="row">
+                <Box sx={ { flexGrow: 1, paddingInlineStart: '10px' } }>
+                    <IconButton onClick={ () => { $e.route( 'panel/menu' ) } }>
+                        <ElementorIcon />
+                    </IconButton>
+                    
+                    <AppBarAction onClick={ () => { $e.route( 'panel/elements/categories' ) } }>
+                        <PlusIcon />
+                    </AppBarAction>
+                </Box>
+            </Grid>
+        </AppBar>
+    );
 };
 
 export default TopBar;
