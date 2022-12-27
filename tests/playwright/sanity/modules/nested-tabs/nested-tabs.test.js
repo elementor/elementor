@@ -771,19 +771,21 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Test swiper carousels work as expected when switching to a new tab', async ( { page }, testInfo ) => {
+	test.only( 'Test swiper carousels work as expected when switching to a new tab', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Act.
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 		// Add testimonial-carousel widget to tab 1 & 2
 		for ( let i = 0; i <= 1; i++ ) {
-			const activeContainerId = await editTab( editor, tabsWidgetId, i );
+			const activeContainerId = await editTab( editor, i );
 			await editor.addWidget( 'testimonial-carousel', activeContainerId );
 			await page.locator( '.elementor-control-slides_per_view select' ).selectOption( '2' );
 			await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
@@ -794,24 +796,25 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.publishAndViewPage();
 
 		// Wait for Nested Tabs widget to be initialized and click to activate second tab.
-		await page.waitForSelector( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` );
-		await page.locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-heading .e-n-tab-title>>nth=1` ).click();
+		await page.waitForSelector( `.e-n-tabs-content .e-con.e-active` );
+		await page.locator( `.e-n-tabs-heading .e-n-tab-title>>nth=1` ).click();
 
 		// Assert.
 		// Check the swiper in the second nested tab has initialized.
-		await expect( await page.locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
+		await expect( await page.locator( `.e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
 
 		await cleanup( wpAdmin );
 	} );
 } );
 
-async function editTab( editor, tabsWidgetId, tabIndex = 1 ) {
-	const tabTitle = await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tabs-heading .e-n-tab-title>>nth=' + tabIndex );
+async function editTab( editor, tabIndex = 0 ) {
+	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
+	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
+	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
 	await tabTitle.click();
 	await editor.page.waitForTimeout( 100 );
 	await tabTitle.click();
-	await editor.getPreviewFrame().waitForSelector( '.e-normal.e-active' );
-	const activeContentContainer = await editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` );
+	const activeContentContainer = await editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con>>nth=${ tabIndex }` );
 	return activeContentContainer.getAttribute( 'data-id' );
 }
 
