@@ -782,31 +782,37 @@ test.describe( 'Nested Tabs tests', () => {
 		// Act.
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 		// Add testimonial-carousel widget to tab 1 & 2
-		for ( i = 1; i <= 2; i++ ) {
+		for ( let i = 0; i <= 1; i++ ) {
 			const activeContainerId = await editTab( editor, tabsWidgetId, i );
 			await editor.addWidget( 'testimonial-carousel', activeContainerId );
 			await page.locator( '.elementor-control-slides_per_view select' ).selectOption( '2' );
 			await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
 			await page.locator( '.elementor-control-loop label.elementor-switch' ).click();
 			await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
+			await page.waitForTimeout( 200 );
 		}
 		await editor.publishAndViewPage();
 
-		await page.locator( '.e-n-tabs-heading .e-n-tab-title>>nth=1' ).click();
+		// Wait for Nested Tabs widget to be initialized and click to activate second tab.
+		await page.waitForSelector( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` );
+		await page.locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-heading .e-n-tab-title>>nth=1` ).click();
 
 		// Assert.
 		// Check the swiper in the second nested tab has initialized.
-		await expect( await page.locator( '.e-n-tabs-content .e-con.e-active .swiper-wrapper .swiper-slide.swiper-slide-active' ) ).toBeVisible();
+		await expect( await page.locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
 
 		await cleanup( wpAdmin );
 	} );
 } );
 
-async function editTab( editor, tabsWidgetId, tabNumber = 1 ) {
-	await editor.getPreviewFrame().locator( '.e-normal>>nth=' + ( tabNumber - 1 ) ).dblclick();
+async function editTab( editor, tabsWidgetId, tabIndex = 1 ) {
+	const tabTitle = await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tabs-heading .e-n-tab-title>>nth=' + tabIndex );
+	await tabTitle.click();
+	await editor.page.waitForTimeout( 100 );
+	await tabTitle.click();
 	await editor.getPreviewFrame().waitForSelector( '.e-normal.e-active' );
 	const activeContentContainer = await editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` );
-	return await activeContentContainer.getAttribute( 'data-id' );
+	return activeContentContainer.getAttribute( 'data-id' );
 }
 
 const viewportSize = {
