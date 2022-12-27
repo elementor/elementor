@@ -139,6 +139,9 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 	getDroppableOptions() {
 		return {
+			isDroppingAllowed: ( ) => {
+				return ! elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
+			},
 			onDropping: ( side, event ) => {
 				elementor.getPreviewView().onDrop(
 					event,
