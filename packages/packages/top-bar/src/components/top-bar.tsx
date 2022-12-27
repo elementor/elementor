@@ -1,6 +1,5 @@
 import React, { useLayoutEffect } from 'react';
-import { AppBar, Grid, Box, IconButton } from '@elementor/ui';
-import { styled } from '@elementor/ui';
+import { AppBar, Grid, Box, IconButton, styled } from '@elementor/ui';
 import ElementorIcon from './icons/ElementorIcon';
 import PlusIcon from './icons/PlusIcon';
 
