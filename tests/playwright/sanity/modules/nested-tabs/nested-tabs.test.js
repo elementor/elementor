@@ -783,16 +783,14 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Act.
-		// Add testimonial-carousel widget to tab 1 & 2
-		for ( let i = 0; i <= 1; i++ ) {
-			const activeContainerId = await editTab( editor, i );
-			await editor.addWidget( 'testimonial-carousel', activeContainerId );
-			await page.locator( '.elementor-control-slides_per_view select' ).selectOption( '2' );
-			await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
-			await page.locator( '.elementor-control-loop label.elementor-switch' ).click();
-			await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
-			await page.waitForTimeout( 200 );
-		}
+		// Add testimonial-carousel widget to tab 2
+		const activeContainerId = await editTab( editor, 1 );
+		await editor.addWidget( 'testimonial-carousel', activeContainerId );
+		await page.locator( '.elementor-control-slides_per_view select' ).selectOption( '2' );
+		await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
+		await page.locator( '.elementor-control-loop label.elementor-switch' ).click();
+		await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
+
 		await editor.publishAndViewPage();
 
 		// Wait for Nested Tabs widget to be initialized and click to activate second tab.
