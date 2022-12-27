@@ -19,7 +19,7 @@ class Repository {
 	 */
 	const SUBSCRIPTION_PLAN_FREE_TAG = 'Free';
 
-	const TAXONOMIES_KEYS = [ 'tags', 'categories', 'features', 'types' ];
+	const TAXONOMIES_KEYS = [ 'tags', 'categories', 'main_category', 'third_category', 'features', 'types' ];
 
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
 	const KITS_TAXONOMIES_CACHE_KEY = 'elementor_remote_kits_taxonomies';
@@ -233,8 +233,10 @@ class Repository {
 	private function transform_kit_api_response( $kit, $manifest = null ) {
 		$subscription_plan_tag = $this->subscription_plans->get( $kit->access_level );
 
-		$taxonomies = ( new Collection( (array) $kit ) )
-			->only( static::TAXONOMIES_KEYS )
+		$taxonomies = ( new Collection( ( (array) $kit )['taxonomies'] ) )
+			->filter( function ( $taxonomy ) {
+				return in_array( $taxonomy->type, self::TAXONOMIES_KEYS );
+			} )
 			->flatten()
 			->pluck( 'name' )
 			->push( $subscription_plan_tag ? $subscription_plan_tag : self::SUBSCRIPTION_PLAN_FREE_TAG );
