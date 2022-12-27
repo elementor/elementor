@@ -18,7 +18,7 @@ module.exports = {
 	},
 	testEnvironment: 'jsdom',
 	moduleNameMapper: {
-		'@elementor/(.*)$': '<rootDir>/packages/$1/src',
+		'^@elementor/(?!ui)(.*)$': '<rootDir>/packages/$1/src',
 	},
 
 	/** Code coverage */

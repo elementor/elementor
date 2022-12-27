@@ -22,6 +22,14 @@ const entry = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) =>
 	},
 } ), {} );
 
+entry['ui'] = {
+	import: path.resolve( __dirname, `./node_modules/@elementor/ui/index` ),
+	library: {
+		name: [ globalObjectKey, 'ui' ],
+		type: 'window',
+	},
+}
+
 const externals = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) => ( {
 	...acc,
 	[ `@elementor/${ packageName }` ]: `${ globalObjectKey }.${ packageNameCamelCase }`,
