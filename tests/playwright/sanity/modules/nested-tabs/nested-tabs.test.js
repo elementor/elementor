@@ -770,49 +770,7 @@ test.describe( 'Nested Tabs tests', () => {
 
 		await cleanup( wpAdmin );
 	} );
-
-	test.only( 'Test swiper carousels work as expected when switching to a new tab', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
-
-		// Act.
-		// Add testimonial-carousel widget to tab 2
-		const activeContainerId = await editTab( editor, 1 );
-		await editor.addWidget( 'testimonial-carousel', activeContainerId );
-		await page.locator( '.elementor-control-slides_per_view select' ).selectOption( '2' );
-		await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
-		await page.locator( '.elementor-control-loop label.elementor-switch' ).click();
-		await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
-
-		await editor.publishAndViewPage();
-
-		// Wait for Nested Tabs widget to be initialized and click to activate second tab.
-		await page.waitForSelector( `.e-n-tabs-content .e-con.e-active` );
-		await page.locator( `.e-n-tabs-heading .e-n-tab-title>>nth=1` ).click();
-
-		// Assert.
-		// Check the swiper in the second nested tab has initialized.
-		await expect( await page.locator( `.e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
-
-		await cleanup( wpAdmin );
-	} );
 } );
-
-async function editTab( editor, tabIndex ) {
-	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
-	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
-	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
-	await tabTitle.click();
-	await editor.page.waitForTimeout( 100 );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
-}
 
 const viewportSize = {
     desktop: { width: 1920, height: 1080 },
