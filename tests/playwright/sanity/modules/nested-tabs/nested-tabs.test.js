@@ -805,15 +805,13 @@ test.describe( 'Nested Tabs tests', () => {
 	} );
 } );
 
-async function editTab( editor, tabIndex = 0 ) {
+async function editTab( editor, tabIndex ) {
 	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
 	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
 	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
 	await tabTitle.click();
 	await editor.page.waitForTimeout( 100 );
-	await tabTitle.click();
-	const activeContentContainer = await editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con>>nth=${ tabIndex }` );
-	return activeContentContainer.getAttribute( 'data-id' );
+	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
 }
 
 const viewportSize = {
