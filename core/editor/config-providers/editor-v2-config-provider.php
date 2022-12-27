@@ -42,9 +42,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			// Apps.
 			'elementor-editor',
 			'elementor-packages-editor',
-
-			// Utils.
-			'elementor-packages-ui',
 		];
 
 		// TODO: Maybe load feature packages and then there is no need for this filter.
