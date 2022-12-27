@@ -51,18 +51,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 	}
 
-	public static function get_experimental_data() {
-		return [
-			'name' => 'favorite-widgets',
-			'title' => esc_html__( 'Favorite Widgets', 'elementor' ),
-			'description' => esc_html__( 'Mark widgets as favorites by right clicking them. Favorite widgets will always appear at the top of the editor panel for easy access.', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-			],
-		];
-	}
-
 	/**
 	 * Add usage data related to favorites.
 	 *
