@@ -43,7 +43,7 @@ export const TopBar = () => {
                     </IconButton>
                     
                     <AppBarAction onClick={ () => { $e.route( 'panel/elements/categories' ) } }>
-                        <PlusIcon />
+                        <PlusIcon fontSize="small" />
                     </AppBarAction>
                 </Box>
             </Grid>
