@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import TopBar from '../top-bar';
 
 describe( '@elementor/top-bar TopBar component', () => {
@@ -7,6 +7,6 @@ describe( '@elementor/top-bar TopBar component', () => {
 
 		const buttons = queryAllByRole( 'button' );
 
-		expect( buttons[ 0 ] ).toBeTruthy();
+		expect( buttons.length ).toBe( 2 );
 	} );
 } );
