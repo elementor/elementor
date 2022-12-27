@@ -77,7 +77,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				.toggleClass( 'e-select-placeholder', isPlaceholder );
 		}
 
-		this.ui.controlMedia.toggleClass( 'e-media-empty', ! value );
+		this.ui.controlMedia
+			.toggleClass( 'e-media-empty', ! value )
+			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 	},
 
 	openFrame( e ) {
