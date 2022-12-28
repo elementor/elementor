@@ -2,6 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
+const Breakpoints = require( '../assets/breakpoints' );
 
 test.describe( 'Container tests', () => {
 	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
@@ -560,6 +561,34 @@ test.describe( 'Container tests', () => {
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
+
+	test.only( 'Justify icons are displayed correctly', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const breakpoints = Breakpoints.getBasic().reverse();
+		const directions = [ 'right', 'down', 'left', 'up' ];
+
+		try {
+			let editor = await wpAdmin.useElementorCleanPost();
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
+
+			await wpAdmin.setLanguage( 'he_IL' );
+			editor = await wpAdmin.useElementorCleanPost();
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
+		} finally {
+			await wpAdmin.setLanguage( '' );
+		}
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
@@ -575,4 +604,35 @@ async function addContainerAndHover( editor ) {
 	const container = editor.getPreviewFrame().locator( containerSelector );
 	editor.getPreviewFrame().hover( containerSelector );
 	return container;
+}
+
+async function toggleResponsiveControl( page, justifyControlsClass, breakpoints, i ) {
+	await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i ] }` );
+	if ( i < breakpoints.length - 1 ) {
+		await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i + 1 ] }` );
+	} else {
+		await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ 0 ] }` );
+	}
+}
+
+async function captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix ) {
+	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
+
+	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
+	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
+	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
+	expect( await justifyControlsContent.screenshot( {
+		type: 'jpeg',
+		quality: 90,
+	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
+
+	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
+}
+
+async function testJustifyDirections( directions, breakpoints, editor, page, snapshotPrefix ) {
+	for ( const direction of directions ) {
+		for ( let i = 0; i < breakpoints.length; i++ ) {
+			await captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix );
+		}
+	}
 }
