@@ -135,14 +135,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		const currentControlValue = this.getControlValue(),
 			placeholder = this.getControlPlaceholder();
 
-		const isSelectedImage = ( '' !== currentControlValue?.id ),
-			isSelectedPlaceholder = placeholder?.id;
+		const hasImage = ( '' !== currentControlValue?.id ),
+			hasPlaceholder = placeholder?.id,
+			hasValue = hasImage || hasPlaceholder;
 
-		if ( ! isSelectedImage && ! isSelectedPlaceholder ) {
+		if ( ! hasValue ) {
 			return;
 		}
 
-		if ( ! isSelectedImage && isSelectedPlaceholder ) {
+		if ( ! hasImage && hasPlaceholder ) {
 			this.setValue( {
 				...placeholder,
 				size: currentControlValue.size,
