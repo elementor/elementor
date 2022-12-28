@@ -1,12 +1,12 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import TopBar from '../top-bar';
 
 describe( '@elementor/top-bar TopBar component', () => {
 	it( 'should render elementor logo', () => {
-		const { queryAllByRole } = render( <TopBar /> );
+		const { queryByText } = render( <TopBar /> );
 
-		const buttons = queryAllByRole( 'button' );
+		const logoTitle = queryByText( 'Elementor Logo' );
 
-		expect( buttons.length ).toBe( 2 );
+		expect( logoTitle ).toBeTruthy();
 	} );
 } );

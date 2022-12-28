@@ -35,7 +35,7 @@ export const TopBar = () => {
 						// @ts-ignore
 						window.$e.route( 'panel/menu' );
 					} }>
-						<ElementorIcon />
+						<ElementorIcon titleAccess="Elementor Logo" />
 					</IconButton>
 
 					<AppBarAction onClick={ () => {
