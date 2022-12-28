@@ -17,6 +17,13 @@ module.exports = {
 	},
 	rules: {
 		'import/no-unresolved': [ 'error', { ignore: [ '@elementor/.+' ] } ],
+
+		// Disable the js no-unused-vars rule, and enable the ts version.
+		'no-unused-vars': 'off',
+		'@typescript-eslint/no-unused-vars': [ 'error' ],
+
+		// Disable import/named rule, TS will handle it.
+		'import/named': [ 'off' ],
 	},
 	overrides: [
 		{

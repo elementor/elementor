@@ -20,12 +20,17 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				[
 					'handle' => 'elementor-packages-top-bar',
 					'src' => '{{ASSETS_URL}}/js/packages/top-bar{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'elementor-packages-editor' ],
+					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui' ],
 				],
 				[
 					'handle' => 'elementor-packages-editor',
 					'src' => '{{ASSETS_URL}}/js/packages/editor{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations' ],
+					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui' ],
+				],
+				[
+					'handle' => 'elementor-packages-ui',
+					'src' => '{{ASSETS_URL}}/js/packages/ui{{SUFFIX}}.js',
+					'deps' => [ 'react', 'react-dom' ],
 				],
 
 				// Loader script
