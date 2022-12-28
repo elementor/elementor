@@ -167,7 +167,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
-						isEnabled: () => elementor.selection.isSameType(),
+						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
 						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'paste',
