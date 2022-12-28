@@ -26,8 +26,8 @@ class Editor_Loader {
 	 * @return void
 	 */
 	public function register_scripts() {
-		$script_configs = $this->normalize_script_configs(
-			$this->config_provider->get_scripts(),
+		$script_configs = $this->normalize_asset_configs(
+			$this->config_provider->get_script_configs(),
 			'script'
 		);
 
@@ -46,7 +46,7 @@ class Editor_Loader {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		foreach ( $this->config_provider->get_scripts_for_enqueue() as $script_handle ) {
+		foreach ( $this->config_provider->get_script_handles_to_enqueue() as $script_handle ) {
 			wp_enqueue_script( $script_handle );
 		}
 	}
@@ -55,8 +55,8 @@ class Editor_Loader {
 	 * @return void
 	 */
 	public function register_styles() {
-		$styles_config = $this->normalize_script_configs(
-			$this->config_provider->get_styles(),
+		$styles_config = $this->normalize_asset_configs(
+			$this->config_provider->get_style_configs(),
 			'style'
 		);
 
@@ -75,7 +75,7 @@ class Editor_Loader {
 	 * @return void
 	 */
 	public function enqueue_styles() {
-		foreach ( $this->config_provider->get_styles_for_enqueue() as $style_handle ) {
+		foreach ( $this->config_provider->get_style_handles_to_enqueue() as $style_handle ) {
 			wp_enqueue_style( $style_handle );
 		}
 	}
@@ -91,14 +91,14 @@ class Editor_Loader {
 	}
 
 	/**
-	 * Normalize script configs for enqueue and register methods.
+	 * Normalize script/style configs to enqueue and register methods.
 	 *
 	 * @param array $script_configs
 	 * @param string $type can be ['script', 'style']
 	 *
 	 * @return array
 	 */
-	private function normalize_script_configs( array $script_configs, $type ) {
+	private function normalize_asset_configs( array $script_configs, $type ) {
 		$additional_defaults = 'style' === $type ?
 			[ 'media' => 'all' ] :
 			[ 'in_footer' => true ];
@@ -113,8 +113,8 @@ class Editor_Loader {
 
 		$replacements = [
 			'{{ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
-			'{{SUFFIX}}' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
-			'{{DIRECTION_SUFFIX}}' => is_rtl() ? '.rtl' : '',
+			'{{MIN_SUFFIX}}' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
+			'{{DIR_SUFFIX}}' => is_rtl() ? '.rtl' : '',
 		];
 
 		return Collection::make( $script_configs )

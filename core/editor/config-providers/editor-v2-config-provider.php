@@ -6,30 +6,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V2_Config_Provider implements Config_Provider_Interface {
-	public function get_scripts() {
+	public function get_script_configs() {
+		// TODO: Hook to register script configs.
+
 		return array_merge(
-			Editor_Common_Assets::get_scripts(),
+			Editor_Common_Assets::get_script_configs(),
 			[
 				[
 					'handle' => 'elementor-packages-locations',
-					'src' => '{{ASSETS_URL}}/js/packages/locations{{SUFFIX}}.js',
+					'src' => '{{ASSETS_URL}}/js/packages/locations{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react' ],
 				],
 				[
 					'handle' => 'elementor-packages-top-bar',
-					'src' => '{{ASSETS_URL}}/js/packages/top-bar{{SUFFIX}}.js',
+					'src' => '{{ASSETS_URL}}/js/packages/top-bar{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'elementor-packages-editor' ],
 				],
 				[
 					'handle' => 'elementor-packages-editor',
-					'src' => '{{ASSETS_URL}}/js/packages/editor{{SUFFIX}}.js',
+					'src' => '{{ASSETS_URL}}/js/packages/editor{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations' ],
 				],
 
 				// Loader script
 				[
 					'handle' => 'elementor-editor-loader-v2',
-					'src' => ELEMENTOR_URL . 'core/editor/assets/js/editor-loader-v2.js',
+					'src' => '{{ASSETS_URL}}/js/editor-loader-v2{{MIN_SUFFIX}}.js',
 					'deps' => [
 						'elementor-editor',
 						'elementor-packages-editor',
@@ -39,7 +41,9 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		);
 	}
 
-	public function get_scripts_for_enqueue() {
+	public function get_script_handles_to_enqueue() {
+		// TODO: Hook to enqueue scripts.
+
 		return [
 			'elementor-packages-top-bar',
 
@@ -48,20 +52,20 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		];
 	}
 
-	public function get_styles() {
+	public function get_style_configs() {
 		return array_merge(
-			Editor_Common_Assets::get_styles(),
+			Editor_Common_Assets::get_style_configs(),
 			[
 				[
 					'handle' => 'elementor-editor-v2-overrides',
-					'src' => ELEMENTOR_URL . 'core/editor/assets/css/editor-v2-overrides.css',
+					'src' => '{{ASSETS_URL}}/css/editor-v2-overrides{{MIN_SUFFIX}}.css',
 					'deps' => [ 'elementor-editor' ],
 				],
 			]
 		);
 	}
 
-	public function get_styles_for_enqueue() {
+	public function get_style_handles_to_enqueue() {
 		return [
 			'elementor-editor-v2-overrides',
 			'elementor-editor',

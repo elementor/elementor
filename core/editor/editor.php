@@ -100,8 +100,6 @@ class Editor {
 			return;
 		}
 
-		$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
-
 		$this->set_post_id( absint( $_REQUEST['post'] ) );
 
 		if ( ! $this->is_edit_mode( $this->post_id ) ) {
@@ -171,7 +169,7 @@ class Editor {
 
 		do_action( 'elementor/editor/init' );
 
-		$this->loader->print_root_template();
+		$this->get_loader()->print_root_template();
 
 		// From the action it's an empty string, from tests its `false`
 		if ( false !== $die ) {
@@ -356,7 +354,7 @@ class Editor {
 
 		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
-		$this->loader->register_scripts();
+		$this->get_loader()->register_scripts();
 
 		/**
 		 * Before editor enqueue scripts.
@@ -474,7 +472,7 @@ class Editor {
 
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
-		$this->loader->enqueue_scripts();
+		$this->get_loader()->enqueue_scripts();
 
 		wp_set_script_translations( 'elementor-editor', 'elementor' );
 
@@ -510,8 +508,8 @@ class Editor {
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
-		$this->loader->register_styles();
-		$this->loader->enqueue_styles();
+		$this->get_loader()->register_styles();
+		$this->get_loader()->enqueue_styles();
 
 		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
 
@@ -780,6 +778,19 @@ class Editor {
 
 	public function set_post_id( $post_id ) {
 		$this->post_id = $post_id;
+	}
+
+	/**
+	 * Get loader.
+	 *
+	 * @return Editor_Loader
+	 */
+	private function get_loader() {
+		if ( ! $this->loader ) {
+			$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
+		}
+
+		return $this->loader;
 	}
 
 	/**
