@@ -3,18 +3,24 @@ const { readdirSync } = require( 'fs' );
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
-const packages = [
-	...readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
-		.filter( ( dirent ) => dirent.isDirectory() )
-		.map( ( dirent ) => dirent.name )
-		.map( ( name ) => ( {
-			name,
-			path: path.resolve( __dirname, `./packages/${ name }/src` ),
-		} ) ),
+const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
+	.filter( ( dirent ) => dirent.isDirectory() )
+	.map( ( dirent ) => dirent.name )
+	.map( ( name ) => ( {
+		name,
+		path: path.resolve( __dirname, `./packages/${ name }/src` ),
+	} ) );
+
+const externalPackages = [
 	{
 		name: 'ui',
 		path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
-	},
+	}
+];
+
+const packages = [
+	...internalPackages,
+	...externalPackages,
 ];
 
 function generateEntry() {
