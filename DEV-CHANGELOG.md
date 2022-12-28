@@ -1,5 +1,14 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.11.0-dev3 - 2022-12-28
+* Tweak: Changed tabs' initial container Content Width to Full Width in Tabs widget [ED-9069] (#20788)
+* Fix: Editor - Fix deps in scripts (#20818)
+* Fix: Hover animation on tabs is not working as expected in Tabs widget (#20795) [ED-9162] (#20804)
+* Fix: Added main and third category in kit library taxonomies [ED-9139] (#20854)
+* Tweak: Nested Elements - Prevent copying the tab container [ED-9128] (#20791)
+* Tweak: Prevent dragging widgets to the "Drag widget here" area from a container [ED-8939] (#20763)
+* Tweak: Editor V2 - Integrating the UI library [ED-8996] (#20856)
+
 #### 3.11.0-dev2 - 2022-12-19
 * Fix: Container background overlay background image does not load [ED-8985] (#20639)
 * Fix: The font looks blurry in the Admin Top Bar (#15930) (#20740)
@@ -484,16 +493,3 @@
 #### 3.6.0-dev28 - 2022-01-10
 * Fix: widescreen breakpoint  effects query media order (#17314)
 * Tweak: Adding Responsive option to Text Stroke [ED-5846] (#17235)
-
-#### 3.6.0-dev27 - 2022-01-07
-* Fix: Core SVG icons from template library are imported empty [ED-5980] (#17373)
-* Tweak: Adding Import Export to the Finder [ED-3997] (#17259)
-* Tweak: Add border options in Image Box widget [ED-3927] (#17250)
-* Tweak: Adding Kit Library to the Finder [ED-3726] (#17330)
-* Tweak: "Library page" was replaced with "Page template" in Finder [ED-6138] (#17360)
-
-#### 3.6.0-dev26 - 2022-01-06
-* Fix: Internal - Swiper Util accepts only jQuery instances as the container parameter [ED-6050] (#17319)
-
-#### 3.6.0-dev25 - 2022-01-03
-* Fix: Image size with a link shrunk in Image widget [ED-3397] (#17245)
