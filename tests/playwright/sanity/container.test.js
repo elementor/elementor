@@ -562,7 +562,7 @@ test.describe( 'Container tests', () => {
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
 
-	test.only( 'Justify icons are displayed correctly', async ( { page }, testInfo ) => {
+	test( 'Justify icons are displayed correctly', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
