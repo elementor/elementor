@@ -115,35 +115,29 @@ class Module extends BaseModule {
 		add_action( 'wp_footer', function() {
 			?>
 			<script type='text/javascript' defer>
-
 				const lazyloadRunObserver = () => {
-					const dataAttribute = 'data-e-bg-lazyload';
-					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
-					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
-					entries.forEach( ( entry ) => {
-						if ( entry.isIntersecting ) {
-							let lazyloadBackground = entry.target;
-							const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
-							if ( lazyloadSelector ) {
-								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
-							}
-							lazyloadBackground.classList.add( 'lazyloaded' );
-							lazyloadBackgroundObserver.unobserve( entry.target );
+				const dataAttribute = 'data-e-bg-lazyload';
+				const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+				const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+				entries.forEach( ( entry ) => {
+					if ( entry.isIntersecting ) {
+						let lazyloadBackground = entry.target;
+						const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
+						if ( lazyloadSelector ) {
+							lazyloadBackground = entry.target.querySelector( lazyloadSelector );
 						}
-					});
-					}, { rootMargin: '100px 0px 100px 0px' } );
+						lazyloadBackground.classList.add( 'lazyloaded' );
+						lazyloadBackgroundObserver.unobserve( entry.target );
+					}
+				});
+				}, { rootMargin: '100px 0px 100px 0px' } );
 					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
 				}
 
-				document.addEventListener( 'elementor/lazyload/run', function() {
-						lazyloadRunObserver();
-				} );
-
-				document.addEventListener( 'DOMContentLoaded', function() {
-					lazyloadRunObserver();
-				} );
+				document.addEventListener('elementor/lazyload/run', lazyloadRunObserver);
+				document.addEventListener('DOMContentLoaded', lazyloadRunObserver);
 			</script>
 			<?php
 		} );
