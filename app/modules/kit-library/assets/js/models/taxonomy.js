@@ -16,6 +16,14 @@ export const taxonomyType = [
 	},
 ];
 
+if ( ! elementorAppConfig.hasPro ) {
+	taxonomyType.push( 	{
+			key: 'subscription_plans',
+			label: __( 'Kits by plan', 'elementor' ),
+		},
+	);
+}
+
 export default class Taxonomy extends BaseModel {
 	text = '';
 	type = 'tag';

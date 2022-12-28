@@ -107,6 +107,14 @@ class Repository {
 					];
 				}, $taxonomies ) );
 			}, new Collection( [] ) )
+			->merge(
+				$this->subscription_plans->map( function ( $label ) {
+					return [
+						'text' => $label ? $label : self::SUBSCRIPTION_PLAN_FREE_TAG,
+						'type' => 'subscription_plans',
+					];
+				} )
+			)
 			->unique( [ 'text', 'type' ] );
 	}
 
