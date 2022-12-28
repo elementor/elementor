@@ -119,21 +119,23 @@ class Module extends BaseModule {
 				const dataAttribute = 'data-e-bg-lazyload';
 				const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
 				const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
-				entries.forEach( ( entry ) => {
-					if ( entry.isIntersecting ) {
-						let lazyloadBackground = entry.target;
-						const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
-						if ( lazyloadSelector ) {
-							lazyloadBackground = entry.target.querySelector( lazyloadSelector );
+
+					entries.forEach( ( entry ) => {
+						if ( entry.isIntersecting ) {
+							let lazyloadBackground = entry.target;
+							const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
+							if ( lazyloadSelector ) {
+								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
+							}
+							lazyloadBackground.classList.add( 'lazyloaded' );
+							lazyloadBackgroundObserver.unobserve( entry.target );
 						}
-						lazyloadBackground.classList.add( 'lazyloaded' );
-						lazyloadBackgroundObserver.unobserve( entry.target );
-					}
-				});
-				}, { rootMargin: '100px 0px 100px 0px' } );
-					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
-						lazyloadBackgroundObserver.observe( lazyloadBackground );
+					});
+					}, { rootMargin: '100px 0px 100px 0px' } );
+						lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+							lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
+
 				};
 
 				document.addEventListener('elementor/lazyload/run', lazyloadRunObserver);
