@@ -46,10 +46,11 @@ const KitListItem = ( props ) => {
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
-					{ ! elementorAppConfig.hasPro &&	subscriptionPlan?.label && <Badge
-						variant="sm"
-						className="e-kit-library__kit-item-subscription-plan-badge"
-						style={ { backgroundColor: subscriptionPlan.color } }
+					{ ! elementorAppConfig.hasPro && subscriptionPlan?.label &&
+						<Badge
+							variant="sm"
+							className="e-kit-library__kit-item-subscription-plan-badge"
+							style={ { backgroundColor: subscriptionPlan.color } }
 											>
 							{ subscriptionPlan.label }
 						</Badge>
