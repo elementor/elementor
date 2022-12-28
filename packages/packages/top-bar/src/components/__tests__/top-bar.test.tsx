@@ -3,8 +3,10 @@ import TopBar from '../top-bar';
 
 describe( '@elementor/top-bar TopBar component', () => {
 	it( 'should render elementor logo', () => {
-		const { queryByAltText } = render( <TopBar /> );
+		const { queryByText } = render( <TopBar /> );
 
-		expect( queryByAltText( 'Elementor Logo' ) ).toBeTruthy();
+		const logoTitle = queryByText( 'Elementor Logo' );
+
+		expect( logoTitle ).toBeTruthy();
 	} );
 } );

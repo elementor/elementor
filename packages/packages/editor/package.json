@@ -1,7 +1,8 @@
 {
   "name": "@elementor/editor",
   "dependencies": {
-    "@elementor/locations": "*"
+    "@elementor/locations": "*",
+    "@elementor/ui": "*"
   },
   "peerDependencies": {
 	"react": "17.x",
