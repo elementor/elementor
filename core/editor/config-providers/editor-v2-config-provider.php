@@ -29,7 +29,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				],
 				[
 					'handle' => 'elementor-packages-ui',
-					'src' => '{{ASSETS_URL}}/js/packages/ui{{SUFFIX}}.js',
+					'src' => '{{ASSETS_URL}}/js/packages/ui{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'react-dom' ],
 				],
 
