@@ -34,7 +34,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		const template = Marionette.TemplateCache.get( viewId );
 
-		const subscriptionPlan = subscriptionPlans[ templateData.accessLevel ] ?? 1; // 1 is Pro plan.
+		const subscriptionPlan = subscriptionPlans[ templateData.accessLevel ] ?? subscriptionPlans[ 1 ]; // 1 is Pro plan.
 
 		return Marionette.Renderer.render( template, {
 			promotionText: `Go ${ subscriptionPlan.label }`,
