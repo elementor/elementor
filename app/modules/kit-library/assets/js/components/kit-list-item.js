@@ -1,5 +1,5 @@
-import FavoritesActions from '../components/favorites-actions';
 import Badge from './badge';
+import FavoritesActions from '../components/favorites-actions';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
 import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
