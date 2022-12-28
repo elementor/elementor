@@ -134,7 +134,7 @@ class Module extends BaseModule {
 					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
-				}
+				};
 
 				document.addEventListener('elementor/lazyload/run', lazyloadRunObserver);
 				document.addEventListener('DOMContentLoaded', lazyloadRunObserver);
