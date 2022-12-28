@@ -23,7 +23,7 @@
         "scripts:watch": "grunt watch_scripts",
         "styles": "grunt styles",
         "styles:watch": "grunt watch_styles",
-        "lint:js": "eslint --fix ."
+        "lint:js": "eslint ."
     },
     "devDependencies": {
         "@babel/core": "~7.18.6",

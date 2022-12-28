@@ -1,5 +1,5 @@
 import FavoritesActions from '../components/favorites-actions';
-import Badge from "./badge";
+import Badge from './badge';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
 import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
@@ -47,9 +47,9 @@ const KitListItem = ( props ) => {
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
 					{ ! elementorAppConfig.hasPro &&	subscriptionPlan?.label && <Badge
-							variant="sm"
-							className="e-kit-library__kit-item-subscription-plan-badge"
-							style={ { backgroundColor: subscriptionPlan.color } }
+						variant="sm"
+						className="e-kit-library__kit-item-subscription-plan-badge"
+						style={ { backgroundColor: subscriptionPlan.color } }
 											>
 							{ subscriptionPlan.label }
 						</Badge>

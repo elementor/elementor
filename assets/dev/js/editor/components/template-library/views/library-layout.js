@@ -39,11 +39,12 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		// Example: access_level = 15, and access_level 15 is not exists in the plans the button will be "Go Expert" which is 20
 		const closestAccessLevel = Object.keys( subscriptionPlans )
 			.sort()
-			.find( ( accessLevel ) => {
-				return accessLevel >= templateData.accessLevel;
+			.find( ( accessLevel, index, array ) => {
+				const isLastElement = index === array.length - 1;
+				return isLastElement || accessLevel >= templateData.accessLevel;
 			} );
 
-		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ] ?? subscriptionPlans[ subscriptionPlans.length - 1 ];
+		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ];
 
 		return Marionette.Renderer.render( template, {
 			promotionText: `Go ${ subscriptionPlan.label }`,
