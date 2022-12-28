@@ -52,7 +52,7 @@ const KitListItem = ( props ) => {
 								variant="sm"
 								className="e-kit-library__kit-item-subscription-plan-badge"
 								style={ { backgroundColor: subscriptionPlan.color } }
-												>
+							>
 								{ subscriptionPlan.label }
 							</Badge>
 					}
