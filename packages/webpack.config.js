@@ -3,34 +3,56 @@ const { readdirSync } = require( 'fs' );
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
-const packages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
+const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
 	.filter( ( dirent ) => dirent.isDirectory() )
 	.map( ( dirent ) => dirent.name )
-	.map( ( packageName ) => ( {
-		packageName,
-		packageNameCamelCase: kebabToCamelCase( packageName ),
+	.map( ( name ) => ( {
+		name,
+		path: path.resolve( __dirname, `./packages/${ name }/src` ),
 	} ) );
 
-const entry = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) => ( {
-	...acc,
-	[ packageName ]: {
-		import: path.resolve( __dirname, `./packages/${ packageName }/src/index` ),
-		library: {
-			name: [ globalObjectKey, packageNameCamelCase ],
-			type: 'window',
-		},
+const externalPackages = [
+	{
+		name: 'ui',
+		path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
 	},
-} ), {} );
+];
 
-const externals = packages.reduce( ( acc, { packageName, packageNameCamelCase } ) => ( {
-	...acc,
-	[ `@elementor/${ packageName }` ]: `${ globalObjectKey }.${ packageNameCamelCase }`,
-} ), {} );
+const packages = [
+	...internalPackages,
+	...externalPackages,
+];
+
+function generateEntry() {
+	return packages.reduce( ( acc, { name, path: packagePath } ) => ( {
+		...acc,
+		[ name ]: {
+			import: packagePath,
+			library: {
+				name: [ globalObjectKey, kebabToCamelCase( name ) ],
+				type: 'window',
+			},
+		},
+	} ), {} );
+}
+
+function generateExternals() {
+	return packages.reduce( ( acc, { name } ) => ( {
+		...acc,
+		[ `@elementor/${ name }` ]: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
+	} ), {} );
+}
+
+function kebabToCamelCase( kebabCase ) {
+	return kebabCase.replace( /-(\w)/g, ( match, w ) => {
+		return w.toUpperCase();
+	} );
+}
 
 const config = {
-	entry,
+	entry: generateEntry(),
 	externals: {
-		...externals,
+		...generateExternals(),
 		react: 'React',
 		'react-dom': 'ReactDOM',
 	},
@@ -76,9 +98,3 @@ module.exports = ( env, argv ) => {
 
 	return config;
 };
-
-function kebabToCamelCase( kebabCase ) {
-	return kebabCase.replace( /-(\w)/g, ( match, w ) => {
-		return w.toUpperCase();
-	} );
-}
