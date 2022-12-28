@@ -15,7 +15,7 @@ const externalPackages = [
 	{
 		name: 'ui',
 		path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
-	}
+	},
 ];
 
 const packages = [
