@@ -194,26 +194,9 @@ class Documents_Manager {
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
-
-			if ( wp_is_post_autosave( $post_id ) ) {
-				$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
-			} else {
-				$post_type = get_post_type( $post_id );
-			}
-
-			$doc_type = 'post';
-
-			if ( isset( $this->cpt[ $post_type ] ) ) {
-				$doc_type = $this->cpt[ $post_type ];
-			}
-
-			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
-
-			if ( $meta_type && isset( $this->types[ $meta_type ] ) ) {
-				$doc_type = $meta_type;
-			}
-
+			$doc_type = $this->get_doc_type_by_id( $post_id );
 			$doc_type_class = $this->get_document_type( $doc_type );
+
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
 			] );
@@ -590,7 +573,7 @@ class Documents_Manager {
 		$document = $this->get_doc_or_auto_save( $post_id );
 
 		if ( ! $document ) {
-			throw new \Exception( 'Not Found.' );
+			throw new \Exception( 'Not found.' );
 		}
 
 		if ( ! $document->is_editable_by_current_user() ) {
@@ -718,5 +701,24 @@ class Documents_Manager {
 		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
 
 		return $new_post_url;
+	}
+
+	private function get_doc_type_by_id( $post_id ) {
+		// Auto-save inherits from the original post.
+		if ( wp_is_post_autosave( $post_id ) ) {
+			$post_id = wp_get_post_parent_id( $post_id );
+		}
+
+		// Content built with Elementor.
+		$template_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+		if ( $template_type && isset( $this->types[ $template_type ] ) ) {
+			return $template_type;
+		}
+
+		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
+		$post_type = get_post_type( $post_id );
+
+		return $this->cpt[ $post_type ] ?? 'post';
 	}
 }

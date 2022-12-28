@@ -24,4 +24,3 @@ test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom sel
 	// It will be duplicated since, the same widget tabs gonna be inside the first tab content.
 	expect( tabCount ).toBe( 8 ); // 8 Since there is hidden titles for the mobile version.
 } );
-
