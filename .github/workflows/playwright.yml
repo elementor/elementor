@@ -44,7 +44,7 @@ jobs:
           key: ${{ github.sha }}
 
   Playwright:
-    name: Playwright test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
+    name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin]
     strategy:
