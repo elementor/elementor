@@ -142,7 +142,7 @@ class Editor_Common_Assets {
 			],
 			[
 				'handle' => 'elementor-editor',
-				'src' => '{{ASSETS_URL}}css/editor{{DIR_SUFFIX}}{{MIN_SUFFIX}}.css',
+				'src' => '{{ASSETS_URL}}css/editor{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
 				'deps' => [
 					'elementor-common',
 					'elementor-select2',

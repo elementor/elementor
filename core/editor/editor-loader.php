@@ -114,7 +114,7 @@ class Editor_Loader {
 		$replacements = [
 			'{{ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
 			'{{MIN_SUFFIX}}' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
-			'{{DIR_SUFFIX}}' => is_rtl() ? '.rtl' : '',
+			'{{DIRECTION_SUFFIX}}' => is_rtl() ? '-rtl' : '',
 		];
 
 		return Collection::make( $script_configs )
