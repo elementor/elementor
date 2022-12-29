@@ -4,10 +4,10 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "build": "webpack --mode production && tsc",
-    "dev": "concurrently -n webpack,tsc -c magenta,green \"webpack -w --mode development\" \"tsc --watch\"",
+    "dev": "concurrently -n webpack,tsc -c blue,green \"webpack -w --mode development\" \"tsc --watch\"",
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "concurrently -n eslint,tsc -c blue,green \"eslint .\" \"tsc\""
+    "lint": "concurrently -n eslint,tsc -c magenta,green \"eslint .\" \"tsc\""
   },
   "workspaces": [
     "./packages/*"
