@@ -1,8 +1,9 @@
 <?php
 namespace Elementor\Modules\GeneratorTag;
 
-use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
+use Elementor\Settings;
+use Elementor\Core\Base\Module as BaseModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,6 +19,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		add_action( 'wp_head', [ $this, 'render_generator_tag' ] );
+		add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
 	}
 
 	public function render_generator_tag() {
@@ -59,5 +61,25 @@ class Module extends BaseModule {
 
 	private function get_generator_tag_settings(): array {
 		return apply_filters( 'elementor/generator_tag/settings', [] );
+	}
+
+	public function register_admin_settings( Settings $settings ) {
+		$settings->add_field(
+			Settings::TAB_ADVANCED,
+			Settings::TAB_ADVANCED,
+			'meta_generator_tag',
+			[
+				'label' => esc_html__( 'Generator Tag', 'elementor' ),
+				'field_args' => [
+					'type' => 'select',
+					'std' => '',
+					'options' => [
+						'' => esc_html__( 'Enable', 'elementor' ),
+						'1' => esc_html__( 'Disable', 'elementor' ),
+					],
+					'desc' => esc_html__( 'A generator tag is a meta element that indicates the attributes used to create a webpage. It is used for analytical purposes.', 'elementor' ),
+				],
+			]
+		);
 	}
 }
