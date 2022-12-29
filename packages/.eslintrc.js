@@ -16,23 +16,24 @@ module.exports = {
 		},
 	},
 	rules: {
-		// ignore when trying to use '@elementor/*' packages
+		// Ignore when trying to use '@elementor/*' packages.
 		'import/no-unresolved': [ 'error', { ignore: [ '@elementor/.+' ] } ],
 
-		// Don't allow relative import from package to package
+		// Don't allow relative import from package to package.
 		'import/no-relative-packages': [ 'error' ],
 		'no-restricted-syntax': [
 			'error',
 			{
+				// \u002F - forward slash
 				selector: 'ImportDeclaration[source.value=/^@elementor\\u002F.+\\u002F/]',
-				message: 'Path access on Elementor dependencies is not allowed, please access using only root level, e.g: "@elementor/locations" and not "@elementor/locations/src/index.ts".',
+				message: 'Path import of Elementor dependencies is not allowed, please use the package root (e.g: use "@elementor/locations" instead of "@elementor/locations/src/index.ts").',
 			},
 		],
 
 		// Disable import/named rule, TS will handle it.
 		'import/named': [ 'off' ],
 
-		// Disable the js no-unused-vars rule, and enable the ts version.
+		// Disable the js no-unused-vars rule, and enable the TS version.
 		'no-unused-vars': 'off',
 		'@typescript-eslint/no-unused-vars': [ 'error' ],
 	},
