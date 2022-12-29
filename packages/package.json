@@ -3,7 +3,7 @@
   "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "build": "webpack --mode production && tsc",
+    "build": "concurrently -n webpack-dev,webpack-prod -c blue,gray \"webpack --mode development\" \"webpack --mode production\"",
     "dev": "concurrently -n webpack,tsc -c blue,green \"webpack -w --mode development\" \"tsc --watch\"",
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
