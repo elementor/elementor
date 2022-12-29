@@ -32,7 +32,7 @@
         "styles:watch": "grunt watch_styles",
         "lint:js": "eslint .",
         "packages:install": "cd ./packages && npm ci --ignore-scripts",
-	    "packages:build": "cd ./packages && npm run build",
+        "packages:build": "cd ./packages && npm run build",
         "packages:dev": "cd ./packages && npm run dev",
         "packages:test": "cd ./packages && npm run test",
         "packages:test:coverage": "cd ./packages && npm run test:coverage",
