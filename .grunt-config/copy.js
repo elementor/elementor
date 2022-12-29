@@ -14,6 +14,7 @@ const getBuildFiles = [
 	'!.jshintignore',
 	'!.jshintrc',
 	'!.travis.yml',
+	'!app/**/assets/**',
 	'!assets/**/*.map',
 	'!assets/dev/**',
 	'!assets/js/qunit-tests*',
