@@ -4,7 +4,6 @@
 
 .elementor-panel-navigation {
 	background-color: $white;
-	box-shadow: $panel-bottom-shadow;
 	display: table;
 	table-layout: fixed;
 	width: 100%;
@@ -13,8 +12,8 @@
 		display: table-cell;
 
 		&.elementor-active {
-			background-image: linear-gradient(to bottom, $editor-background-light, #fff);
-			border-bottom: 3px solid $editor-accent;
+			background-image: $white;
+			border-bottom: 3px solid $e-gray-900;
 		}
 
 		a {

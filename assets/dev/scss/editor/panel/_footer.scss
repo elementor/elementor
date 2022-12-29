@@ -8,7 +8,7 @@
 	left: 0;
 	right: 0;
 	height: 40px;
-	background-color: $editor-darkest;
+	background-color: $e-gray-900;
 }
 
 #elementor-panel-footer-tools {
@@ -23,7 +23,7 @@
 	vertical-align: middle;
 	text-align: center;
 	cursor: pointer;
-	color: $editor-light;
+	color: $e-gray-100;
 	transition: $transition-hover;
 
 	#elementor-panel-saver-button-update {
@@ -51,7 +51,7 @@
 	&:not(.elementor-open) {
 
 		&:hover {
-			color: $editor-lightest;
+			color: $e-gray-0;
 		}
 
 		.elementor-panel-footer-sub-menu-wrapper {
@@ -65,7 +65,7 @@
 	bottom: 100%;
 	left: 0;
 	width: 100%;
-	background-color: $editor-darker;
+	background-color: $e-gray-900;
 	padding: 10px;
 	box-shadow: $panel-top-shadow;
 	cursor: default;

@@ -2,10 +2,27 @@
 // Variables
 //
 
-// Primary Colors
 $white:         #ffffff;
 $black:         #000000;
 
+// Facelift 2023
+$e-gray-0:		#FFFFFF;
+$e-gray-25:		#F9FAFA;
+$e-gray-50:		#F1F2F3;
+$e-gray-100:	#D5D8DC;
+$e-gray-200:	#BABFC5;
+$e-gray-300:	#9DA5AE;
+$e-gray-400:	#818A96;
+$e-gray-500:	#69727D;
+$e-gray-600:	#515962;
+$e-gray-700:	#3A3F45;
+$e-gray-800:	#232629;
+$e-gray-900:	#0C0D0E;
+
+$e-purple:		#524CFF;
+
+
+// Primary Colors
 $gray-darkest:  #2C2C2C;
 $gray-darker:   #373a3c;
 $gray-dark:     #55595c;
@@ -147,9 +164,9 @@ $brand-color-dark: #434363;
 $brand-color-light: #93003c; //fallback (deprecated v3.0)
 
 // Editor colors
-$editor-darkest:#495157;
-$editor-darker: #556068;
-$editor-dark: 	#6d7882;
+$editor-darkest:$e-gray-900;
+$editor-darker: $e-gray-700;
+$editor-dark: 	$e-gray-500;
 
 $editor-light: #a4afb7;
 $editor-lighter: #c2cbd2;
