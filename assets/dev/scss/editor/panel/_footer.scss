@@ -8,27 +8,25 @@
 	left: 0;
 	right: 0;
 	height: 40px;
-	background-color: $e-gray-900;
+	background-color: $editor-darkest;
 }
 
 #elementor-panel-footer-tools {
-	display: table;
-	table-layout: fixed;
-	width: 100%;
+	display: flex;
+	justify-content: space-between;
 	height: 100%;
 }
 
 .elementor-panel-footer-tool {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 15%;
 	cursor: pointer;
-	color: $e-gray-100;
+	color: $editor-light;
 	transition: $transition-hover;
 
 	#elementor-panel-saver-button-update {
-		@include border-end(1px solid #2d8739);
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 
 		i {
 			@include margin-end(5px);
@@ -37,7 +35,6 @@
 
 	#elementor-panel-saver-button-save-options {
 		float: $start;
-		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 
 		i {
 			margin: auto;
@@ -45,13 +42,13 @@
 	}
 
 	&.elementor-open {
-		color: #fff;
+		color: $white;
 	}
 
 	&:not(.elementor-open) {
 
 		&:hover {
-			color: $e-gray-0;
+			color: $editor-lightest;
 		}
 
 		.elementor-panel-footer-sub-menu-wrapper {
@@ -60,12 +57,99 @@
 	}
 }
 
+#elementor-panel-footer-help-title {
+	text-align: $start;
+	padding: 10px 0;
+	color: $editor-lightest;
+}
+
+#elementor-panel-footer-saver-publish {
+	width: 25%;
+	@include margin-start(auto);
+
+	.elementor-button-state {
+
+		i {
+			@include margin-end(0);
+		}
+
+		#elementor-panel-saver-button-publish-label {
+			display: none;
+		}
+	}
+}
+
+#elementor-panel-footer-saver-options {
+	width: auto;
+
+	.elementor-last-edited-wrapper {
+		font-size: 11px;
+		font-style: italic;
+		color: $editor-light;
+		padding: 5px 0 15px;
+
+		&:not(.elementor-state-active) {
+
+			.elementor-state-icon {
+				display: none;
+			}
+		}
+
+		time {
+			border-bottom: 1px dotted transparent;
+			transition: all ease-in-out .3s;
+			cursor: pointer;
+
+			&:hover {
+				border-bottom-color: inherit;
+			}
+		}
+	}
+}
+
+.elementor-disabled {
+	cursor: default;
+}
+
+#elementor-panel-saver- {
+
+	&button-{
+		&preview {
+			a {
+				color: $editor-light;
+			}
+		}
+
+		&publish,
+		&save-options {
+			font-size: 11px;
+			text-transform: uppercase;
+			height: 100%;
+			border-radius: 0;
+
+			&.elementor-disabled {
+				background-color: $editor-darker;
+				color: $editor-light;
+			}
+		}
+
+		&publish {
+			width: 100%;
+		}
+
+		&save-options {
+			width: 25px;
+		}
+	}
+}
+
+
 .elementor-panel-footer-sub-menu-wrapper {
 	position: absolute;
 	bottom: 100%;
 	left: 0;
 	width: 100%;
-	background-color: $e-gray-900;
+	background-color: $editor-darker;
 	padding: 10px;
 	box-shadow: $panel-top-shadow;
 	cursor: default;
@@ -126,99 +210,5 @@
 		font-size: 11px;
 		font-style: italic;
 		color: $editor-light;
-	}
-}
-
-#elementor-panel-footer-help-title {
-	text-align: $start;
-	padding: 10px 0;
-	color: $editor-lightest;
-}
-
-#elementor-panel-footer-responsive {
-	& > i {
-		display: block;
-		height: 100%;
-		line-height: 40px;
-	}
-}
-
-#elementor-panel-footer-saver-publish {
-	width: 80px;
-
-	.elementor-button-state {
-
-		i {
-			@include margin-end(0);
-		}
-
-		#elementor-panel-saver-button-publish-label {
-			display: none;
-		}
-	}
-}
-
-#elementor-panel-footer-saver-options {
-	width: 35px;
-	@include border-start(1px solid $editor-darkest);
-
-	.elementor-last-edited-wrapper {
-		font-size: 11px;
-		font-style: italic;
-		color: $editor-light;
-		padding: 5px 0 15px;
-
-		&:not(.elementor-state-active) {
-
-			.elementor-state-icon {
-				display: none;
-			}
-		}
-
-		time {
-			border-bottom: 1px dotted transparent;
-			transition: all ease-in-out .3s;
-			cursor: pointer;
-
-			&:hover {
-				border-bottom-color: inherit;
-			}
-		}
-	}
-}
-
-.elementor-disabled {
-	cursor: default;
-}
-
-#elementor-panel-saver- {
-
-	&button-{
-		&preview {
-			a {
-				color: $editor-light;
-			}
-		}
-
-		&publish,
-		&save-options {
-			font-size: 11px;
-			text-transform: uppercase;
-			height: 26px;
-
-			&.elementor-disabled {
-				background-color: $editor-darker;
-				color: $editor-light;
-			}
-		}
-
-		&publish {
-			width: 100%;
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-		}
-
-		&save-options {
-			width: 25px;
-		}
 	}
 }
