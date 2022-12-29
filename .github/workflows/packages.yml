@@ -78,5 +78,5 @@ jobs:
             ${{ runner.os }}-
       - name: Install Dependencies
         run: npm run packages:install
-      - name: Run Lint
+      - name: Run Test
         run: npm run packages:test:coverage
