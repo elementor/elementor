@@ -771,7 +771,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test.only( 'Test swiper carousels work as expected when switching to a new tab', async ( { page }, testInfo ) => {
+	test( 'Test swiper based carousel works as expected when switching to a new tab', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -779,7 +779,7 @@ test.describe( 'Nested Tabs tests', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Act.
-		// Add widget.
+		// Add nested-tabs widget.
 		await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 		// Add image-carousel widget to tab #2.
