@@ -23,20 +23,6 @@
 		}
 	}
 
-	&:not(.elementor-active) {
-
-		&:after {
-			content: '';
-			position: absolute;
-			left: 15px;
-			right: 15px;
-			bottom: 0;
-			height: 8px;
-			background: linear-gradient(rgba(0, 0, 0, 0.03), transparent);
-			transform: translateY(100%);
-		}
-	}
-
 	&-title {
 		margin: 0 15px;
 		padding: 20px 0;

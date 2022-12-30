@@ -57,9 +57,8 @@
 	@include padding(10px, 10px, 10px, 29px);
 	font-style: italic;
 	color: $editor-light;
-	border: none;
+	border: 1px solid $e-gray-100;
 	transition: all 1s;
-	border-radius: 3px;
 	appearance: none;
 
 	+ i {
@@ -71,7 +70,7 @@
 	}
 
 	&:focus {
-		background-color: rgba(255,255,255,1);
+		border-color: $e-gray-200;
 		@include padding-end(15px);
 	}
 }
@@ -79,6 +78,7 @@
 .elementor-panel {
 
 	.elementor-element {
+		border: 1px solid $e-gray-100;
 		border-radius: 3px;
 		background-color: #fff;
 		cursor: move;
@@ -99,14 +99,16 @@
 
 		.icon,
 		.title {
-			color: $editor-darker;
+			color: $e-gray-600;
 			transition: $transition-hover;
 		}
 
 		&:hover {
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+			background-color: $e-gray-50;
+			border-color: $e-gray-50;
 
-			.icon, .title {
+			.icon,
+			.title {
 				color: $editor-accent;
 			}
 		}

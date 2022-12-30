@@ -22,9 +22,13 @@
 	align-items: center;
 	justify-content: center;
 	width: 15%;
-	cursor: pointer;
 	color: $editor-light;
+	cursor: pointer;
 	transition: $transition-hover;
+
+	i {
+		font-size: 15px;
+	}
 
 	#elementor-panel-saver-button-update {
 

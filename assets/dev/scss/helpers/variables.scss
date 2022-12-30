@@ -23,16 +23,15 @@ $e-purple:		#524CFF;
 
 
 // Primary Colors
-$gray-darkest:  #2C2C2C;
-$gray-darker:   #373a3c;
-$gray-dark:     #55595c;
-$gray:          #818a91;
-$gray-light:    #D4D4D4;
-$gray-lighter:  #eceeef;
-$gray-lightest: #f7f7f7;
+$gray-darkest:  $e-gray-900;
+$gray-darker:   $e-gray-800;
+$gray-dark:     $e-gray-700;
+$gray:          $e-gray-500;
+$gray-light:    $e-gray-100;
+$gray-lighter:  $e-gray-50;
+$gray-lightest: $e-gray-25;
 $gray-mouse:    #CCD6DF;
-$gray-bg:       #e6e9ec;
-
+$gray-bg:		$e-gray-25;
 $blue:          #0275d8;
 $blue-flat:     #1b607f;
 $blue-light:    #5bc0de;
@@ -40,7 +39,7 @@ $green:         #5cb85c;
 $green-light:   #2ecc71;
 $orange:        #f0ad4e;
 $red:           #d9534f;
-$purple:		#9C7AC1;
+$purple:		$e-purple;
 
 // Platform
 $platform-primary: #040080;
@@ -59,6 +58,83 @@ $platform-danger-bg: #FDE8EC;
 $platform-danger-text: #B92136;
 $platform-success-bg: #ECF9F2;
 $platform-success-text: #117740;
+
+// WordPress Admin
+$wp-primary: #0085ba;
+$admin-font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
+
+//Brand Colors
+$brand-color-dark-pink: $e-purple;
+$brand-color-royal-blue: #010150;
+$brand-color-dark: #434363;
+$brand-color-light: $brand-color-dark-pink; //fallback (deprecated v3.0)
+
+// Editor colors
+$editor-darkest:$e-gray-900;
+$editor-darker: $e-gray-800;
+$editor-dark: 	$e-gray-700;
+
+$editor-light: $e-gray-200;
+$editor-lighter: $e-gray-100;
+$editor-lightest: $e-gray-50;
+
+$editor-accent: $brand-color-dark-pink;
+$editor-background: $e-gray-0;
+$editor-background-light: $e-gray-0;
+$editor-background-lighter: $e-gray-0;
+
+$editor-orange: #fcb92c;
+$editor-red: #d72b3f;
+
+$editor-danger: $editor-red;
+$editor-warning: #b01b1b;
+$editor-success: $e-purple;
+$editor-info: #71d7f7;
+
+// Container element primary color.
+// TODO: Need a final color from the Design.
+$editor-container-primary: #0098c7;
+
+$editor-kit-accent: #4ab7f4;
+
+// Panel Alert
+$editor-alert-danger: $editor-danger;
+$editor-alert-warning: $editor-orange;
+$editor-alert-info: $editor-info;
+$editor-alert-success: $editor-success;
+
+$editor-alert-danger-bg: #fefbfc;
+$editor-alert-warning-bg: #fcfcfc;
+$editor-alert-info-bg: #f3fcff;
+$editor-alert-success-bg: #fcfffc;
+
+// WordPress colors
+$wp-warning: #ffb900;
+$wp-warning-text: #f56e28;
+
+$wp-success: #46b450;
+$wp-success-text: #79ba49;
+
+// Panel style
+$panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
+$panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+
+$slides_gui: rgba(238, 238, 238, .9);
+
+// Panel Transition
+$transition-hover: all .3s;
+
+// Layers (Z-indexes)
+$under-layer: -1;
+$ground-layer: 0;
+$first-layer: 1;
+$second-layer: 2;
+$third-layer: 3;
+$fourth-layer: 4;
+
+$element-overlay: 9998;
+$editor-layer: 9999;
+$super-layer: 10000;
 
 // Info Alert
 $info:			#5bc0de;
@@ -152,83 +228,6 @@ $xing:			#026466;
 $yelp:			#af0606;
 $youtube:		#cd201f;
 $five-h-px:		#0099e5; //500px
-
-// WordPress Admin
-$wp-primary: #0085ba;
-$admin-font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
-
-//Brand Colors
-$brand-color-dark-pink: #93003c;
-$brand-color-royal-blue: #010150;
-$brand-color-dark: #434363;
-$brand-color-light: #93003c; //fallback (deprecated v3.0)
-
-// Editor colors
-$editor-darkest:$e-gray-900;
-$editor-darker: $e-gray-700;
-$editor-dark: 	$e-gray-500;
-
-$editor-light: #a4afb7;
-$editor-lighter: #c2cbd2;
-$editor-lightest: #d5dadf;
-
-$editor-accent: $brand-color-dark-pink;
-$editor-background: $gray-bg;
-$editor-background-light: #f1f3f5;
-$editor-background-lighter: #fcfcfc;
-
-$editor-orange: #fcb92c;
-$editor-red: #d72b3f;
-
-$editor-danger: $editor-red;
-$editor-warning: #b01b1b;
-$editor-success: #39b54a;
-$editor-info: #71d7f7;
-
-// Container element primary color.
-// TODO: Need a final color from the Design.
-$editor-container-primary: #0098c7;
-
-$editor-kit-accent: #4ab7f4;
-
-// Panel Alert
-$editor-alert-danger: $editor-danger;
-$editor-alert-warning: $editor-orange;
-$editor-alert-info: $editor-info;
-$editor-alert-success: $editor-success;
-
-$editor-alert-danger-bg: #fefbfc;
-$editor-alert-warning-bg: #fcfcfc;
-$editor-alert-info-bg: #f3fcff;
-$editor-alert-success-bg: #fcfffc;
-
-// WordPress colors
-$wp-warning: #ffb900;
-$wp-warning-text: #f56e28;
-
-$wp-success: #46b450;
-$wp-success-text: #79ba49;
-
-// Panel style
-$panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
-$panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-
-$slides_gui: rgba(238, 238, 238, .9);
-
-// Panel Transition
-$transition-hover: all .3s;
-
-// Layers (Z-indexes)
-$under-layer: -1;
-$ground-layer: 0;
-$first-layer: 1;
-$second-layer: 2;
-$third-layer: 3;
-$fourth-layer: 4;
-
-$element-overlay: 9998;
-$editor-layer: 9999;
-$super-layer: 10000;
 
 // Grid Columns
 $column-sizes: (
