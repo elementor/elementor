@@ -787,6 +787,7 @@ test.describe( 'Nested Tabs tests', () => {
 		await editor.addWidget( 'image-carousel', activeContainerId );
 		// Add images to the image-carousel widget.
 		await page.locator( '.elementor-control-carousel .elementor-control-gallery-add' ).click();
+		await page.locator( '.media-modal .media-router #menu-item-browse' ).click();
 		for ( let i = 0; i <= 4; i++ ) {
 			await page.locator( `.media-modal .attachments .attachment>>nth=${ i }` ).click();
 		}
