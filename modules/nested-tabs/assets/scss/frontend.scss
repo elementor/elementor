@@ -101,20 +101,21 @@
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
-
-			&,
-			span svg,
-			span i {
-				transition: background var( --n-tabs-title-transition ),
+			transition: background var( --n-tabs-title-transition ),
 					color var( --n-tabs-title-transition ),
-					fill var( --n-tabs-title-transition ),
 					border var( --n-tabs-title-transition ),
 					box-shadow var( --n-tabs-title-transition ),
 					text-shadow var( --n-tabs-title-transition ),
 					stroke var( --n-tabs-title-transition ),
 					stroke-width var( --n-tabs-title-transition ),
 					-webkit-text-stroke-width var( --n-tabs-title-transition ),
-					-webkit-text-stroke-color var( --n-tabs-title-transition );
+					-webkit-text-stroke-color var( --n-tabs-title-transition ),
+					transform var( --n-tabs-title-transition );
+
+			& span svg,
+			& span i {
+				transition: color var( --n-tabs-title-transition ),
+					fill var( --n-tabs-title-transition );
 			}
 
 			&-text {
@@ -205,7 +206,7 @@
 					i {
 						color: var( --n-tabs-icon-color-active );
 					}
-	
+
 					svg {
 						fill: var( --n-tabs-icon-color-active );
 					}
@@ -218,6 +219,16 @@
 							height: 0;
 							opacity: 0;
 						}
+					}
+				}
+
+			  	// Remove the hover animation from the active tabs.
+			  	&[class*="elementor-animation-"] {
+					&:focus,
+					&:active,
+					&:hover {
+						transform: initial;
+						animation: initial;
 					}
 				}
 			}
@@ -247,7 +258,7 @@
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
-:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title, 
+:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
 	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
 
 	&:hover {

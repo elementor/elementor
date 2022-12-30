@@ -115,6 +115,15 @@ class Utils {
 	}
 
 	/**
+	 * Whether elementor test mode is enabled or not.
+	 *
+	 * @return bool
+	 */
+	public static function is_elementor_tests() {
+		return defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+	}
+
+	/**
 	 * Get pro link.
 	 *
 	 * Retrieve the link to Elementor Pro.
