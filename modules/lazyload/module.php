@@ -137,9 +137,13 @@ class Module extends BaseModule {
 					} );
 
 				};
-
-				document.addEventListener('elementor/lazyload/run', lazyloadRunObserver);
-				document.addEventListener('DOMContentLoaded', lazyloadRunObserver);
+				const events = [
+					'DOMContentLoaded',
+					'elementor/widgets/posts/load-more',
+				];
+				events.forEach( ( event ) => {
+					document.addEventListener( event, lazyloadRunObserver );
+				} );
 			</script>
 			<?php
 		} );
