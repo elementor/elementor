@@ -6,42 +6,15 @@
 .elementor-panel-category {
 	position: relative;
 
-	&:first-child {
-
-		.elementor-panel-category-title {
-			padding-top: 14px;
-		}
+	.elementor-panel-heading {
+		padding: 0 15px;
 	}
 
 	&.elementor-active {
-
-		.elementor-panel-category-title {
-
-			&:before {
-				transform: rotate(getValueByDirection(90deg, -90deg));
-			}
-		}
-	}
-
-	&-title {
-		margin: 0 15px;
-		padding: 20px 0;
-		position: relative;
-		text-transform: uppercase;
-		font-size: 11px;
-		cursor: pointer;
-
-		&:before {
-			content: getValueByDirection( '\e87d', '\e87e' );
-			font-family: eicons;
-			position: absolute;
-			@include end(0);
-			transition: transform .3s;
-		}
+		padding-bottom: 20px;
 	}
 
 	&-items {
-		padding: 0 10px;
 
 		&-empty {
 			grid-column-start: 1;
