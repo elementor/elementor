@@ -1,0 +1,8 @@
+/**
+ * Here should be only styles that related to the Editor v1, and should be overridden when using the Editor v2.
+ */
+
+#elementor-editor-wrapper {
+	/** TopBar height */
+	height: calc(100vh - 48px);
+}

@@ -26,8 +26,9 @@ class Editor_Loader {
 	 * @return void
 	 */
 	public function register_scripts() {
-		$script_configs = $this->normalize_script_configs(
-			$this->config_provider->get_scripts()
+		$script_configs = $this->normalize_asset_configs(
+			$this->config_provider->get_script_configs(),
+			'script'
 		);
 
 		foreach ( $script_configs as $script_config ) {
@@ -45,18 +46,37 @@ class Editor_Loader {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		$script_configs = $this->normalize_script_configs(
-			$this->config_provider->get_loader_scripts()
+		foreach ( $this->config_provider->get_script_handles_to_enqueue() as $script_handle ) {
+			wp_enqueue_script( $script_handle );
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function register_styles() {
+		$styles_config = $this->normalize_asset_configs(
+			$this->config_provider->get_style_configs(),
+			'style'
 		);
 
-		foreach ( $script_configs as $script_config ) {
-			wp_enqueue_script(
-				$script_config['handle'],
-				$script_config['src'],
-				$script_config['deps'],
-				$script_config['version'],
-				$script_config['in_footer']
+		foreach ( $styles_config as $style_config ) {
+			wp_register_style(
+				$style_config['handle'],
+				$style_config['src'],
+				$style_config['deps'],
+				$style_config['version'],
+				$style_config['media']
 			);
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function enqueue_styles() {
+		foreach ( $this->config_provider->get_style_handles_to_enqueue() as $style_handle ) {
+			wp_enqueue_style( $style_handle );
 		}
 	}
 
@@ -71,24 +91,30 @@ class Editor_Loader {
 	}
 
 	/**
-	 * Normalize script configs for enqueue and register methods.
+	 * Normalize script/style configs to enqueue and register methods.
 	 *
 	 * @param array $script_configs
+	 * @param string $type can be ['script', 'style']
 	 *
 	 * @return array
 	 */
-	private function normalize_script_configs( array $script_configs ) {
-		$default = [
+	private function normalize_asset_configs( array $script_configs, $type ) {
+		$additional_defaults = 'style' === $type ?
+			[ 'media' => 'all' ] :
+			[ 'in_footer' => true ];
+
+		$default = array_merge( [
 			'handle' => '',
 			'src' => '',
 			'deps' => [],
 			'version' => ELEMENTOR_VERSION,
 			'in_footer' => true,
-		];
+		], $additional_defaults );
 
 		$replacements = [
 			'{{ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
-			'{{SUFFIX}}' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
+			'{{MIN_SUFFIX}}' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
+			'{{DIRECTION_SUFFIX}}' => is_rtl() ? '-rtl' : '',
 		];
 
 		return Collection::make( $script_configs )
