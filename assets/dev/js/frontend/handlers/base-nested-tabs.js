@@ -16,9 +16,9 @@ export default class BaseNestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabContentFilterSelector( tabIndex ) {
-		return `[data-tab="${ tabIndex }"]`;
+		// Double by 2, since each `e-con` should have 'e-collapse'.
+		return `*:nth-child(${ tabIndex * 2 })`;
 	}
-
 	/**
 	 * @param {HTMLElement} tabTitleElement
 	 *
@@ -34,7 +34,6 @@ export default class BaseNestedTabs extends Base {
 				tablist: '[role="tablist"]',
 				tabTitle: '.e-n-tab-title',
 				tabContent: '.e-con',
-				heading: '.e-n-tabs-heading',
 			},
 			classes: {
 				active: 'e-active',
@@ -252,7 +251,7 @@ export default class BaseNestedTabs extends Base {
 		}
 	}
 
-	addCollapseClassToItems( args ) {
+	addCollapseClassToItems( args, items ) {
 		if ( elementorFrontend.isEditMode() ) {
 			const $widget = this.$element,
 				$removed = this.findElement( '.e-collapse' ).remove();
@@ -261,8 +260,8 @@ export default class BaseNestedTabs extends Base {
 
 			this.findElement( '.e-con' ).each( function() {
 				const $current = jQuery( this ),
-					$desktopTabTitle = $widget.find( `${ this.getSettings( 'selectors' ).heading } > *:nth-child(${ index })` ),
-					mobileTitleHTML = `<div class="${ this.getSettings( 'selectors' ).tabTitle.replace( '.', '' ) } e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
+					$desktopTabTitle = $widget.find( `.${ items.headingClassName } > *:nth-child(${ index })` ),
+					mobileTitleHTML = `<div class="${ items.titleClassName } e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
 
 				$current.before( mobileTitleHTML );
 
