@@ -80,8 +80,8 @@ $editor-lightest: $e-gray-100;
 
 $editor-accent: $brand-color-dark-pink;
 $editor-background: $e-gray-0;
-$editor-background-light: $e-gray-0;
-$editor-background-lighter: $e-gray-0;
+$editor-background-light: $e-gray-50;
+$editor-background-lighter: $e-gray-100;
 
 $editor-orange: #fcb92c;
 $editor-red: #d72b3f;
@@ -94,7 +94,6 @@ $editor-info: #0077CC;
 // Container element primary color.
 // TODO: Need a final color from the Design.
 $editor-container-primary: #0098c7;
-
 $editor-kit-accent: #4ab7f4;
 
 // Panel Alert
