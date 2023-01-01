@@ -191,7 +191,14 @@ class Repository {
 				],
 			];
 
-			$args = apply_filters( 'elementor/kit-library/get-kits/args', $args );
+			/**
+			 * Filters arguments for the request to the Kits API.
+			 *
+			 * @since 3.11.0
+			 *
+			 * @param array[] $args Array of http arguments.
+			 */
+			$args = apply_filters( 'elementor/kit-library/get-kits-data/args', $args );
 
 			$data = $this->api->get_all( $args );
 
