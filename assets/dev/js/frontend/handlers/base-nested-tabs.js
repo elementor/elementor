@@ -252,7 +252,7 @@ export default class BaseNestedTabs extends Base {
 		}
 	}
 
-	addCollapseClassToItems( args, items ) {
+	addCollapseClassToItems( args ) {
 		if ( elementorFrontend.isEditMode() ) {
 			const $widget = this.$element,
 				$removed = this.findElement( '.e-collapse' ).remove();
