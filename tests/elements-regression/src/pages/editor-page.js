@@ -1,6 +1,14 @@
 const BasePage = require( './base-page.js' );
 
 module.exports = class EditorPage extends BasePage {
+	readyElements = {};
+
+	constructor( page, config ) {
+		super( page, config );
+
+		this.watchReadyElements();
+	}
+
 	/**
 	 * @return {Promise<number>}
 	 */
@@ -117,26 +125,14 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	async waitForElementRender( id ) {
-		let isLoading;
+		const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+		let elements = await this.getPreviewFrame().evaluate( 'window.readyElements' );
+		let i = 0;
 
-		try {
-			await this.getPreviewFrame().waitForSelector(
-				`.elementor-element-${ id }.elementor-loading`,
-				{ timeout: 500 },
-			);
-
-			isLoading = true;
-		} catch ( e ) {
-			isLoading = false;
-		}
-
-		if ( isLoading ) {
-			await this.getPreviewFrame().waitForSelector(
-				`.elementor-element-${ id }.elementor-loading`,
-				{ state: 'detached' },
-			);
-
-			await this.page.waitForTimeout( 400 );
+		while ( ! elements.includes( id ) && i < 10 ) {
+			i++;
+			await sleep( 100 );
+			elements = await this.getPreviewFrame().evaluate( 'window.readyElements' );
 		}
 	}
 
@@ -163,6 +159,8 @@ module.exports = class EditorPage extends BasePage {
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
 		const elementRect = await ( await this.getPreviewElement( id ) ).boundingBox();
 
+		await this.getPreviewFrame().evaluate( 'window.readyElements = []' );
+
 		return await this.page.screenshot( {
 			type: 'jpeg',
 			quality: 70,
@@ -172,6 +170,16 @@ module.exports = class EditorPage extends BasePage {
 				width: Math.min( elementRect.width, frameRect.width ) || 1,
 				height: Math.min( elementRect.height, frameRect.height ) || 1,
 			},
+		} );
+	}
+
+	async watchReadyElements() {
+		await this.getPreviewFrame().evaluate( () => {
+			window.readyElements = [];
+
+			elementorFrontend.hooks.addAction( 'frontend/element_ready/global', ( $element ) => {
+				window.readyElements.push( '' + $element.data( 'id' ) );
+			} );
 		} );
 	}
 };
