@@ -39,11 +39,6 @@
 
 			&:hover {
 				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
 			}
 		}
 	}
@@ -60,11 +55,6 @@
 
 			&:hover {
 				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
 			}
 		}
 	}
@@ -82,11 +72,6 @@
 			&:hover {
 				background-color: $editor-warning;
 				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
 			}
 		}
 	}
@@ -103,11 +88,6 @@
 
 			&:hover {
 				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
 			}
 		}
 	}
@@ -126,11 +106,6 @@
 
 		&:hover {
 			background-color: $editor-dark;
-			box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-		}
-
-		&:active {
-			box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
 		}
 
 		&:visited {
