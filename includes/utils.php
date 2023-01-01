@@ -311,6 +311,34 @@ class Utils {
 	}
 
 	/**
+	 * Get logo placeholder image source.
+	 *
+	 * Retrieve the source of the logo placeholder image.
+	 *
+	 * @since 3.11.0
+	 * @access public
+	 * @static
+	 *
+	 * @return string The source of the default logo placeholder image used by Elementor.
+	 */
+	public static function get_logo_placeholder_image_src() {
+		$logo_placeholder_image = ELEMENTOR_ASSETS_URL . 'images/logo-placeholder.png';
+
+		/**
+		 * Get placeholder image source.
+		 *
+		 * Filters the source of the default logo placeholder image used by Elementor.
+		 *
+		 * @since 3.11.0
+		 *
+		 * @param string $logo_placeholder_image The source of the default logo placeholder image.
+		 */
+		$logo_placeholder_image = apply_filters( 'elementor/utils/get_logo_placeholder_image_src', $logo_placeholder_image );
+
+		return $logo_placeholder_image;
+	}
+
+	/**
 	 * Generate random string.
 	 *
 	 * Returns a string containing a hexadecimal representation of random number.
