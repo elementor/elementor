@@ -1,6 +1,6 @@
-import BaseNested from 'elementor/modules/nested-elements/assets/js/frontend/handlers/base-nested';
+import Base from './base';
 
-export default class BaseNestedTabs extends BaseNested {
+export default class BaseNestedTabs extends Base {
 	/**
 	 * @param {string|number} tabIndex
 	 *
@@ -28,6 +28,31 @@ export default class BaseNestedTabs extends BaseNested {
 		return tabTitleElement.getAttribute( 'data-tab' );
 	}
 
+	getDefaultSettings() {
+		return {
+			selectors: {
+				tablist: '[role="tablist"]',
+				tabTitle: '.e-n-tab-title',
+				tabContent: '.e-con',
+				heading: '.e-n-tabs-heading',
+			},
+			classes: {
+				active: 'e-active',
+			},
+			showTabFn: 'show',
+			hideTabFn: 'hide',
+			toggleSelf: false,
+			hidePrevious: true,
+			autoExpand: true,
+			keyDirection: {
+				ArrowLeft: elementorFrontendConfig.is_rtl ? 1 : -1,
+				ArrowUp: -1,
+				ArrowRight: elementorFrontendConfig.is_rtl ? -1 : 1,
+				ArrowDown: 1,
+			},
+		};
+	}
+
 	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' );
 
@@ -37,16 +62,13 @@ export default class BaseNestedTabs extends BaseNested {
 		};
 	}
 
-	activateDefaultTab( openDefaultTab = true ) {
+	activateDefaultTab() {
 		const settings = this.getSettings();
 
 		if ( ! settings.autoExpand || ( 'editor' === settings.autoExpand && ! this.isEdit ) ) {
 			return;
 		}
 
-		if ( ! openDefaultTab ) {
-			return;
-		}
 		const defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
@@ -59,7 +81,7 @@ export default class BaseNestedTabs extends BaseNested {
 			hideTabFn: 'hide',
 		} );
 
-		this.changeActiveTab( defaultActiveTab );
+		this.changeActiveTab( defaultActiveTab, false );
 
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
@@ -155,28 +177,37 @@ export default class BaseNestedTabs extends BaseNested {
 		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
 	}
 
-	addCollapseClassToItems( args ) {
-		if ( elementorFrontend.isEditMode() ) {
-			const $widget = this.$element,
-				$removed = this.findElement( '.e-collapse' ).remove();
+	bindEvents() {
+		this.elements.$tabTitles.on( {
+			keydown: ( event ) => {
+				// Support for old markup that includes an `<a>` tag in the tab
+				if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
+					event.preventDefault();
+				}
 
-			let index = 1;
-
-			this.findElement( '.e-con' ).each( function() {
-				const $current = jQuery( this ),
-					$desktopTabTitle = $widget.find( `.e-n-tabs-heading > *:nth-child(${ index })` ),
-					mobileTitleHTML = `<div class="e-n-tab-title e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
-
-				$current.before( mobileTitleHTML );
-
-				++index;
-			} );
-
-			// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
-			if ( $removed.length ) {
-				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
-			}
-		}
+				// We listen to keydowon event for these keys in order to prevent undesired page scrolling
+				if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
+					this.handleKeyboardNavigation( event );
+				}
+			},
+			keyup: ( event ) => {
+				switch ( event.code ) {
+					case 'ArrowLeft':
+					case 'ArrowRight':
+						this.handleKeyboardNavigation( event );
+						break;
+					case 'Enter':
+					case 'Space':
+						event.preventDefault();
+						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+						break;
+				}
+			},
+			click: ( event ) => {
+				event.preventDefault();
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+			},
+		} );
 	}
 
 	onInit( ...args ) {
@@ -218,6 +249,30 @@ export default class BaseNestedTabs extends BaseNested {
 
 		if ( ! isActiveTab ) {
 			this.activateTab( tabIndex );
+		}
+	}
+
+	addCollapseClassToItems( args, items ) {
+		if ( elementorFrontend.isEditMode() ) {
+			const $widget = this.$element,
+				$removed = this.findElement( '.e-collapse' ).remove();
+
+			let index = 1;
+
+			this.findElement( '.e-con' ).each( function() {
+				const $current = jQuery( this ),
+					$desktopTabTitle = $widget.find( `${ this.getSettings( 'selectors' ).heading } > *:nth-child(${ index })` ),
+					mobileTitleHTML = `<div class="${ this.getSettings( 'selectors' ).tabTitle.replace( '.', '' ) } e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
+
+				$current.before( mobileTitleHTML );
+
+				++index;
+			} );
+
+			// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
+			if ( $removed.length ) {
+				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
+			}
 		}
 	}
 }
