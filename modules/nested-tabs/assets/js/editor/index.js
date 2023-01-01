@@ -1,6 +1,5 @@
-elementorCommon.elements.$window.on( 'elementor:init-components', async () => {
+elementorCommon.elements.$window.on( 'elementor/nested-element-type-loaded', async () => {
 	// The module should be loaded only when `nestedElements` is available.
-	await elementor.modules.nestedElements;
 
 	new ( await import( '../editor/module' ) ).default();
 } );
