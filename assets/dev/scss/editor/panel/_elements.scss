@@ -135,7 +135,7 @@
 			position: absolute;
 			top: 5px;
 			@include end(5px);
-			color: $editor-background;
+			color: $e-gray-100;
 		}
 	}
 }
@@ -181,6 +181,10 @@
 			.eicon-close {
 				cursor: pointer;
 				color: $editor-light;
+
+				&:hover {
+					color: $e-gray-400;
+				}
 			}
 		}
 

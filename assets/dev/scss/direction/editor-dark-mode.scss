@@ -395,15 +395,6 @@ select {
 		}
 	}
 
-	//Help Link
-	#elementor-panel__editor__help__link {
-		color: $theme-dark-gray-lightest;
-
-		&:hover {
-			color: $theme-dark-light;
-		}
-	}
-
 	//Global Widget
 	#elementor-panel-global-widget > * {
 		background-color: $theme-dark-gray-dark;
