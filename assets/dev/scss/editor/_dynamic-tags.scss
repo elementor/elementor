@@ -6,7 +6,7 @@
 	overflow: auto;
 	padding-bottom: 5px;
 	background-color: #fff;
-	border: 1px solid $editor-light;
+	border: 1px solid $e-gray-100;
 	border-radius: 3px;
 	z-index: $super-layer;
 
@@ -20,7 +20,7 @@
 
 		.eicon-info-circle {
 			@include padding-end(5px);
-			color: $editor-info;
+			color: $editor-accent;
 			font-size: 14px;
 		}
 	}
@@ -37,12 +37,12 @@
 		}
 
 		&:hover {
-			background-color: $editor-background;
+			background-color: $e-gray-50;
 		}
 	}
 
 	&__teaser {
-		border-top: 2px solid $editor-lightest;
+		border-top: 2px solid $e-gray-50;
 		padding-top: 4px;
 		margin-top: 4px;
 
@@ -142,6 +142,10 @@
 		border: 1px solid $editor-lightest;
 		border-radius: 3px;
 		background: #fff;
+
+		&:hover {
+			color: $editor-accent;
+		}
 
 		&.e-control-tool {
 			height: 20px;

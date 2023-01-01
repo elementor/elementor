@@ -34,7 +34,7 @@ $item-size: 2.5em;
 			opacity: 1;
 
 			&:hover {
-				color: $editor-info;
+				color: $editor-accent;
 			}
 		}
 
@@ -63,7 +63,7 @@ a.elementor-responsive-switcher {
 	color: $editor-light;
 
 	&:hover {
-		color: $editor-info;
+		color: $editor-accent;
 	}
 }
 
@@ -76,7 +76,7 @@ a.elementor-responsive-switcher {
 		}
 		.elementor-responsive-switchers-open:not(:hover) {
 			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
-				color: $editor-info;
+				color: $editor-accent;
 			}
 		}
 	}
@@ -98,7 +98,7 @@ a.elementor-responsive-switcher {
 		transition: all ease-in-out .15s;
 
 		&:hover {
-			color: $editor-info;
+			color: $editor-accent;
 			background-color: $editor-background-light;
 			border-radius: 3px;
 		}
@@ -129,7 +129,7 @@ a.elementor-responsive-switcher {
 		display: none;
 
 		&:checked + label {
-			color: $editor-info;
+			color: $editor-accent;
 		}
 	}
 
@@ -166,7 +166,7 @@ a.elementor-responsive-switcher {
 			transition: 0.15s;
 
 			&:hover {
-				color: $editor-info;
+				color: $editor-accent;
 			}
 
 			&:not([data-choose="custom"]) {

@@ -15,6 +15,12 @@
 }
 
 .elementor-panel {
+
+	@import "reset";
+
+	// Global
+	@import "global";
+
 	position: relative;
 	height: 100%;
 	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
@@ -53,11 +59,6 @@
 		}
 	}
 
-	@import "reset";
-
-	// Global
-	@import "global";
-
     // Header
     @import "header";
 
@@ -89,7 +90,7 @@
 #elementor-panel-inner {
 	position: relative;
 	height: 100%;
-	box-shadow: 0 0 5px 0 rgba(0,0,0,0.2);
+	@include direction-box-shadow(0, 0 5px 0 rgba(0, 0, 0, 0.1));
 }
 
 // Main Panel

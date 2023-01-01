@@ -79,15 +79,13 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		color: $editor-dark;
-		font-size: 12px;
+		font-size: 85%;
 		font-weight: 500;
 		transition: $transition-hover;
 
 		i {
 			padding: 0 5px;
-			color: $editor-light;
-			font-size: 18px;
+			font-size: 125%;
 			position: relative;
 
 			&:after {
@@ -101,22 +99,6 @@
 				#{$end}: 0;
 				border-radius: 50%;
 				z-index: -1;
-			}
-		}
-
-		&:hover {
-			color: $editor-darkest;
-
-			i {
-				color: $editor-info;
-
-				&:before {
-					content: '\e941';
-				}
-
-				&:after {
-					background: #fff;
-				}
 			}
 		}
 	}

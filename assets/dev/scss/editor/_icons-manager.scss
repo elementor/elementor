@@ -195,11 +195,11 @@
 				width: 5px;
 				top: 0;
 				@include start(0);
-				background-color: $editor-info;
+				background-color: $editor-accent;
 			}
 
 			i {
-				color: $editor-info;
+				color: $editor-accent;
 			}
 		}
 	}

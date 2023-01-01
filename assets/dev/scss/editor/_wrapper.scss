@@ -43,7 +43,7 @@ body {
 		@include end(0);
 		height: 100%;
 		width: 0;
-		background-color: $editor-info;
+		background-color: $editor-accent;
 		transition: width .5s;
 	}
 
