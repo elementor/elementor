@@ -14,7 +14,7 @@ $button-sm-line-height: 14px;
 $button-lg-font-size: type(text,lg);
 $button-lg-line-height: 18px;
 //Semantic Colors
-$button-primary-background-color: theme-colors(success);
+$button-primary-background-color: theme-colors(accent);
 $button-primary-hover-background-color: darken($button-primary-background-color, $button-hover-constant);
 $button-primary-active-background-color: darken($button-primary-background-color, $button-active-constant);
 $button-primary-color: theme-colors(light);
