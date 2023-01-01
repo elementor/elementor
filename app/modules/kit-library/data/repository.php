@@ -191,6 +191,8 @@ class Repository {
 				],
 			];
 
+			$args = apply_filters( 'elementor/kit-library/get-kits/args', $args );
+
 			$data = $this->api->get_all( $args );
 
 			if ( is_wp_error( $data ) ) {
