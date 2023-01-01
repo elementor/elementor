@@ -10,7 +10,7 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 
 		elementor.modules.elements.types.NestedElementBase.then( ( nestedElementBaseModule ) => {
 			elementor.modules.elements.types.NestedElementBase = nestedElementBaseModule.default;
-			Events.dispatch( elementorCommon.elements.$window, 'elementor/nested-element-type-loaded' );
+			events.dispatch( elementorCommon.elements.$window, 'elementor/nested-element-type-loaded' );
 		} );
 	} );
 } );
