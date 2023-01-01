@@ -183,7 +183,6 @@ export default class BaseNestedTabs extends BaseNested {
 		super.onInit( ...args );
 
 		this.activateDefaultTab();
-		// this.addCollapseClassToItems( args );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
