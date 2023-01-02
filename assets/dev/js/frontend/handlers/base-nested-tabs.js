@@ -81,7 +81,7 @@ export default class BaseNestedTabs extends Base {
 			hideTabFn: 'hide',
 		} );
 
-		this.changeActiveTab( defaultActiveTab, false );
+		this.changeActiveTab( defaultActiveTab );
 
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
@@ -252,7 +252,7 @@ export default class BaseNestedTabs extends Base {
 		}
 	}
 
-	addCollapseClassToItems( args ) {
+	createMobileTabs( args ) {
 		const settings = this.getSettings();
 		if ( elementorFrontend.isEditMode() ) {
 			const $widget = this.$element,
