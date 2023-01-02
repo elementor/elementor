@@ -66,10 +66,6 @@ export default class BaseNestedTabs extends Base {
 	activateDefaultTab() {
 		const settings = this.getSettings();
 
-		if ( ! settings.autoExpand || ( 'editor' === settings.autoExpand && ! this.isEdit ) ) {
-			return;
-		}
-
 		const defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
@@ -214,7 +210,11 @@ export default class BaseNestedTabs extends Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		this.activateDefaultTab();
+		this.createMobileTabs( args );
+
+		if ( this.getSettings( 'autoExpand' ) ) {
+			this.activateDefaultTab();
+		}
 	}
 
 	onEditSettingsChange( propertyName, value ) {

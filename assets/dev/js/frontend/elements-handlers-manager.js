@@ -27,7 +27,7 @@ module.exports = function( $ ) {
 	};
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
-		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
+		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ './handlers/nested-tabs' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
