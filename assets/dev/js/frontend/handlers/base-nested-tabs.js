@@ -19,6 +19,7 @@ export default class BaseNestedTabs extends Base {
 		// Double by 2, since each `e-con` should have 'e-collapse'.
 		return `*:nth-child(${ tabIndex * 2 })`;
 	}
+
 	/**
 	 * @param {HTMLElement} tabTitleElement
 	 *
