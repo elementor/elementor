@@ -34,6 +34,7 @@ export default class BaseNestedTabs extends Base {
 				tablist: '[role="tablist"]',
 				tabTitle: '.e-n-tab-title',
 				tabContent: '.e-con',
+				headingContainer: '.e-n-tabs-heading',
 			},
 			classes: {
 				active: 'e-active',
@@ -251,7 +252,8 @@ export default class BaseNestedTabs extends Base {
 		}
 	}
 
-	addCollapseClassToItems( args, items ) {
+	addCollapseClassToItems( args ) {
+		const settings = this.getSettings();
 		if ( elementorFrontend.isEditMode() ) {
 			const $widget = this.$element,
 				$removed = this.findElement( '.e-collapse' ).remove();
@@ -260,8 +262,8 @@ export default class BaseNestedTabs extends Base {
 
 			this.findElement( '.e-con' ).each( function() {
 				const $current = jQuery( this ),
-					$desktopTabTitle = $widget.find( `.${ items.headingClassName } > *:nth-child(${ index })` ),
-					mobileTitleHTML = `<div class="${ items.titleClassName } e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
+					$desktopTabTitle = $widget.find( `${ settings.selectors.headingContainer } > *:nth-child(${ index })` ),
+					mobileTitleHTML = `<div class="${ settings.selectors.tabTitle.replace( '.', '' ) } e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
 
 				$current.before( mobileTitleHTML );
 
