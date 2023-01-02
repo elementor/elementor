@@ -165,7 +165,10 @@ export default class BaseNestedTabs extends Base {
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
-			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' ),
+			() => {
+				elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' );
+				elementorFrontend.elements.$window.trigger( 'elementor/nested-tabs/activate', $requestedContent );
+			},
 		);
 		$requestedContent.removeAttr( 'hidden' );
 	}
@@ -205,6 +208,28 @@ export default class BaseNestedTabs extends Base {
 				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
 			},
 		} );
+
+		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+	}
+
+	/**
+	 * Fixes issues where Swipers that have been initialized while a tab is not visible are not properly rendered
+	 * and when switching to the tab the swiper will not respect any of the chosen `autoplay` related settings.
+	 *
+	 * This is triggered when switching to a nested tab, looks for Swipers in the tab content and reinitializes them.
+	 *
+	 * @param {Object} event   - Incoming event.
+	 * @param {Object} content - Active nested tab dom element.
+	 */
+	reInitSwipers( event, content ) {
+		const swiperElements = content.querySelectorAll( '.swiper-container' );
+		for ( const element of swiperElements ) {
+			if ( ! element.swiper ) {
+				return;
+			}
+			element.swiper.initialized = false;
+			element.swiper.init();
+		}
 	}
 
 	onInit( ...args ) {

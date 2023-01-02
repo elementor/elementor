@@ -2,6 +2,7 @@
 import topPluginsConfig from "./top-plugins.json" assert {type: 'json'};
 
 const notCompatiblePlugins = [
+	'essential-addons-for-elementor-lite',
 	'embedpress',
 	'flexible-elementor-panel',
 	'happy-elementor-addons',
