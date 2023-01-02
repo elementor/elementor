@@ -1,6 +1,8 @@
 const { test, expect } = require( '@playwright/test' );
 const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
+const widgets = require( '../enums/widgets.js' );
+const Breakpoints = require( '../assets/breakpoints' );
 
 test.describe( 'Container tests', () => {
 	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
@@ -17,9 +19,9 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		// Add widgets.
-		const button = await editor.addWidget( 'button', container ),
-			heading = await editor.addWidget( 'heading', container ),
-			image = await editor.addWidget( 'image', container );
+		const button = await editor.addWidget( widgets.button, container ),
+			heading = await editor.addWidget( widgets.heading, container ),
+			image = await editor.addWidget( widgets.image, container );
 
 		// Act.
 		// Move the button to be last.
@@ -43,7 +45,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -55,14 +57,14 @@ test.describe( 'Container tests', () => {
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
+		await editor.useCanvasTemplate();
 
 		// Act.
-		// Add widgets.
-		await editor.addWidget( 'accordion', containerId );
-		await editor.addWidget( 'divider', containerId );
-		const spacer = await editor.addWidget( 'spacer', containerId );
-		await editor.addWidget( 'toggle', containerId );
-		await editor.addWidget( 'video', containerId );
+		await editor.addWidget( widgets.accordion, containerId );
+		await editor.addWidget( widgets.divider, containerId );
+		const spacer = await editor.addWidget( widgets.spacer, containerId );
+		await editor.addWidget( widgets.toggle, containerId );
+		await editor.addWidget( widgets.video, containerId );
 
 		// Set background colour to spacer.
 		await editor.setBackgroundColor( '#A81830', spacer );
@@ -75,7 +77,7 @@ test.describe( 'Container tests', () => {
 
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -90,7 +92,8 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+
+		await page.waitForLoadState( 'networkidle' );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
@@ -108,7 +111,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -123,7 +126,7 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -136,7 +139,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -145,19 +148,14 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-
-		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = page.locator( 'body' );
 
 		// Act.
-		// Add widget.
-		await editor.addWidget( 'heading', container );
-		// Select container.
+		await editor.addWidget( widgets.heading, container );
 		await editor.selectElement( container );
 		// Set position absolute.
 		await editor.activatePanelTab( 'advanced' );
@@ -202,7 +200,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -259,10 +257,7 @@ test.describe( 'Container tests', () => {
 
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-
-		// Use the Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -319,7 +314,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -396,7 +391,7 @@ test.describe( 'Container tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test.skip( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -487,7 +482,7 @@ test.describe( 'Container tests', () => {
 		// Assert
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
 	} );
 
@@ -509,7 +504,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.skip( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -522,7 +517,7 @@ test.describe( 'Container tests', () => {
 			expect( await container.screenshot( {
 				type: 'jpeg',
 				quality: 90,
-			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg', { maxDiffPixels: 100 } );
+			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
@@ -533,7 +528,7 @@ test.describe( 'Container tests', () => {
 		expect( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
-		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg', { maxDiffPixels: 100 } );
+		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
 	} );
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
@@ -566,6 +561,34 @@ test.describe( 'Container tests', () => {
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
+
+	test( 'Justify icons are displayed correctly', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+
+		const breakpoints = Breakpoints.getBasic().reverse();
+		const directions = [ 'right', 'down', 'left', 'up' ];
+
+		try {
+			let editor = await wpAdmin.useElementorCleanPost();
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
+
+			await wpAdmin.setLanguage( 'he_IL' );
+			editor = await wpAdmin.useElementorCleanPost();
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
+		} finally {
+			await wpAdmin.setLanguage( '' );
+		}
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
@@ -581,4 +604,35 @@ async function addContainerAndHover( editor ) {
 	const container = editor.getPreviewFrame().locator( containerSelector );
 	editor.getPreviewFrame().hover( containerSelector );
 	return container;
+}
+
+async function toggleResponsiveControl( page, justifyControlsClass, breakpoints, i ) {
+	await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i ] }` );
+	if ( i < breakpoints.length - 1 ) {
+		await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i + 1 ] }` );
+	} else {
+		await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ 0 ] }` );
+	}
+}
+
+async function captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix ) {
+	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
+
+	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
+	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
+	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
+	expect( await justifyControlsContent.screenshot( {
+		type: 'jpeg',
+		quality: 90,
+	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
+
+	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
+}
+
+async function testJustifyDirections( directions, breakpoints, editor, page, snapshotPrefix ) {
+	for ( const direction of directions ) {
+		for ( let i = 0; i < breakpoints.length; i++ ) {
+			await captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix );
+		}
+	}
 }
