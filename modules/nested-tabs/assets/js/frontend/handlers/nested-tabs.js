@@ -1,4 +1,4 @@
-import Base from './base';
+import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 
 export default class NestedTabs extends Base {
 	/**
