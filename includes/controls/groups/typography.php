@@ -186,6 +186,16 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 		];
 
+		$fields['text_decoration_color'] = [	
+			'label' => esc_html_x( 'Decoration Color', 'Typography Control', 'elementor' ),	
+			'type' => Controls_Manager::COLOR,	
+			'default' => '',	
+			'condition' => [		
+				'text_decoration!' => 'none',	
+			],
+			'selector_value' => 'text-decoration-color: {{VALUE}};',
+		];
+
 		$fields['line_height'] = [
 			'label' => esc_html_x( 'Line-Height', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
