@@ -2,7 +2,7 @@
 // Forms
 //
 
-input, select, textarea, .elementor-input-style {
+input, select, textarea, .e-input-style {
 	border-radius: 3px;
 	font-size: 12px;
 	width: 100%;
@@ -41,21 +41,12 @@ input {
 	min-width: 0;
 }
 
-input, textarea, .elementor-input-style {
+input, textarea, .e-input-style {
 	padding: 5px;
 }
 
-textarea, .elementor-input-style {
+textarea, .e-input-style {
 	resize: vertical;
-}
-
-input[type="number"] {
-	appearance: textfield;
-
-	&:hover,
-	&:focus {
-		appearance: auto;
-	}
 }
 
 input[type="checkbox"],

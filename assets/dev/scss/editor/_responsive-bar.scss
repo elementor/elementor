@@ -106,8 +106,6 @@
 		height: 18px;
 		margin: auto 8px auto 4px;
 		text-align: center;
-		appearance: textfield;
-		-webkit-appearance: none; //Safari
 
 		&-separator {
 			color: $e-gray-200;
@@ -115,8 +113,10 @@
 
 		&[disabled] {
 			background-color: transparent;
-			color: $e-gray-300;
+			color: $e-gray-400;
 			cursor: default;
+			appearance: none;
+			-webkit-appearance: none; //Safari
 		}
 	}
 
