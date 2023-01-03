@@ -191,6 +191,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
 			'condition' => [
+				'text_decoration!' => '',
 				'text_decoration!' => 'none',
 			],
 			'selector_value' => 'text-decoration-color: {{VALUE}};',
