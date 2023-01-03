@@ -233,9 +233,9 @@ export default class NestedTabs extends Base {
 	}
 
 	onInit( ...args ) {
-		super.onInit( ...args );
-
 		this.createMobileTabs( args );
+
+		super.onInit( ...args );
 
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
