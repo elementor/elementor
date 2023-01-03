@@ -395,7 +395,7 @@ class Module extends BaseModule {
 	 */
 	public function empty_pages(): array {
 		return [];
-  }
+	}
 
 	private function ensure_writing_permissions() {
 		$server = new Server();
