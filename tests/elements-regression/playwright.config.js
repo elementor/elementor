@@ -37,7 +37,10 @@ const config = {
 		actionTimeout: 30 * 1000, // 30 seconds
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: 'on-first-retry',
-		video: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
+		video: {
+			mode: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
+			size: { width: 1920, height: 1080 },
+		},
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8889',
 		storageState: path.resolve( __dirname, 'storage-state.json' ),
