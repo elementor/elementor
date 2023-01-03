@@ -49,7 +49,7 @@ function kebabToCamelCase( kebabCase ) {
 	} );
 }
 
-const config = {
+module.exports = {
 	entry: generateEntry(),
 	externals: {
 		...generateExternals(),
@@ -80,21 +80,4 @@ const config = {
 		filename: '[name].js',
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
-};
-
-module.exports = ( env, argv ) => {
-	if ( 'development' === argv.mode ) {
-		config.devtool = 'source-map';
-	}
-
-	// TODO: We probably need to add `@babel/preset-env` here
-	if ( 'production' === argv.mode ) {
-		config.optimization = {
-			minimize: true,
-		};
-
-		config.output.filename = '[name].min.js';
-	}
-
-	return config;
 };
