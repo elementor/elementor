@@ -23,6 +23,10 @@ class Module extends BaseModule {
 	}
 
 	public function render_generator_tag() {
+		if ( '1' === get_option( 'elementor_meta_generator_tag' ) ) {
+			return;
+		}
+
 		$generator_content = $this->get_generator_content();
 
 		echo '<meta name="generator" content="' . esc_attr( $generator_content ) . '">' . PHP_EOL;
