@@ -34,15 +34,19 @@ test.describe( 'Elements regression', () => {
 			await test.step( `default values`, async () => {
 				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
-				expect(
-					await editorPage.screenshotElement( elementId ),
-				).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				await test.step( `editor`, async () => {
+					expect(
+						await editorPage.screenshotElement( elementId ),
+					).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				} );
 
 				await editorPage.publish();
 
-				expect(
-					await frontendPage.screenshotElement( elementId ),
-				).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				await test.step( `frontend`, async () => {
+					expect(
+						await frontendPage.screenshotElement( elementId ),
+					).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				} );
 
 				await editorPage.resetElementSettings( elementId );
 			} );
@@ -77,13 +81,15 @@ test.describe( 'Elements regression', () => {
 
 							await control.setValue( value );
 
-							expect(
-								await editorPage.screenshotElement( elementId ),
-							).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							await test.step( 'editor', async () => {
+								expect(
+									await editorPage.screenshotElement( elementId ),
+								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							} );
 
 							await editorPage.publish();
 
-							await test.step( valueLabel + '-frontend', async () => {
+							await test.step( 'frontend', async () => {
 								expect(
 									await frontendPage.screenshotElement( elementId ),
 								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
