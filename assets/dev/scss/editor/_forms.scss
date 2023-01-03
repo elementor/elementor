@@ -49,6 +49,15 @@ textarea, .elementor-input-style {
 	resize: vertical;
 }
 
+input[type="number"] {
+	appearance: textfield;
+
+	&:hover,
+	&:focus {
+		appearance: auto;
+	}
+}
+
 input[type="checkbox"],
 input[type="radio"] {
 	height: auto;

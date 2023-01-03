@@ -81,10 +81,6 @@
 			&:active {
 				background-color: fade-out($editor-background, .5);
 			}
-
-			&::-moz-focus-inner {
-				border: 0;
-			}
 		}
 	}
 }

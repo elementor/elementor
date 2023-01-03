@@ -104,16 +104,14 @@
 		font-size: 11px;
 		padding: 7px 21px;
 
-		&:hover {
-			background-color: $editor-dark;
-		}
-
+		&:hover,
+		&:focus,
 		&:visited {
-			color: #fff;
+			background-color: $editor-dark;
 		}
 	}
 
-	&.elementor-button-go-pro {
+	&.go-pro {
 		background-color: $editor-accent;
 	}
 
