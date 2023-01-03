@@ -1,6 +1,6 @@
 import Base from './base';
 
-export default class BaseNestedTabs extends Base {
+export default class NestedTabs extends Base {
 	/**
 	 * @param {string|number} tabIndex
 	 *
