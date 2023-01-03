@@ -178,7 +178,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => esc_html__( 'Default', 'elementor' ),
+				'none' => esc_html__( 'Default', 'elementor' ),
 				'underline' => esc_html_x( 'Underline', 'Typography Control', 'elementor' ),
 				'overline' => esc_html_x( 'Overline', 'Typography Control', 'elementor' ),
 				'line-through' => esc_html_x( 'Line Through', 'Typography Control', 'elementor' ),
