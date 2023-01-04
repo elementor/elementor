@@ -8,7 +8,7 @@ body {
 	width: var( --e-editor-navigator-width );
 	height: 50vh;
 	@include end(30px);
-	background-color: #fff;
+	background-color: $white;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -95,10 +95,14 @@ body {
 		display: flex;
 		height: 30px;
 		font-size: 11px;
-		border-bottom: 1px solid $editor-background;
+		border-bottom: 1px solid $e-gray-50;
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
+
+		&:hover {
+			background-color: $e-gray-25;
+		}
 
 		&[data-locked="true"] {
 			cursor: not-allowed;
@@ -196,11 +200,7 @@ body {
 			> .elementor-navigator__item {
 
 				&.elementor-editing {
-					background-color: $editor-info;
-
-					> * {
-						color: #fff;
-					}
+					background-color: $e-gray-50;
 				}
 			}
 		}
@@ -287,22 +287,6 @@ body {
 			.elementor-navigator__element__toggle {
 				opacity: .5;
 			}
-		}
-
-		&-column {
-			background-color: lighten($editor-background-light, 3%);
-
-			> .elementor-navigator__item {
-
-				.elementor-navigator__element__element-type {
-					color: $editor-light;
-				}
-			}
-		}
-
-		&-section,
-		&-container {
-			background-color: $white;
 		}
 	}
 }
