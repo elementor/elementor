@@ -27,7 +27,7 @@
 		@include _dimension_side_property(border-bottom, end, radius, 3px);
 	}
 
-	&.elementor-tab-active {
+	&.e-tab-active {
 		background-color: $editor-light;
 		border-color: $editor-light;
 		color: #ffffff;
