@@ -54,6 +54,10 @@ $remote-templates-items-space: 30px;
 	.elementor-button {
 		padding: 8px 14px;
 		font-size: 11px;
+
+		&.go-pro {
+			background-color: $e-go;
+		}
 	}
 
 	.elementor-template-library-template-insert {
@@ -67,11 +71,6 @@ $remote-templates-items-space: 30px;
 			background-color: $editor-darker;
 			transition: 0.3s;
 		}
-	}
-
-	.elementor-go-pro {
-		background-color: $editor-accent;
-		color: #fff;
 	}
 }
 
@@ -443,8 +442,8 @@ label.elementor-template-library-order-label {
 		color: $editor-success;
 	}
 
-	.elementor-go-pro {
-		color: $editor-accent;
+	.go-pro {
+		color: $e-go;
 	}
 
 	.elementor-template-library-template-footer {

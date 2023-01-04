@@ -85,8 +85,12 @@
 
 			&-row-tool {
 				cursor: pointer;
-				color: $editor-lightest;
+				color: $e-gray-200;
 				padding: 5px;
+
+				&:hover {
+					color: $e-gray-600;
+				}
 			}
 		}
 
@@ -197,7 +201,6 @@
 }
 
 .e-global-colors__color-value {
-	color: $editor-lightest;
 	font-size: 10px;
 	padding: 0 5px;
 	text-align: $end;

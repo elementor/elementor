@@ -43,15 +43,13 @@
 		display: none;
 
 		&.e-choose-placeholder + .elementor-choices-label {
-			color: $white;
-			background-color: $editor-lighter;
-			border-color: $editor-lighter;
+			background-color: $editor-lightest;
+			border-color: $editor-lightest;
 		}
 
 		&:checked + .elementor-choices-label {
-			color: #fff;
-			background-color: $editor-light;
-			border-color: $editor-light;
+			background-color: $editor-lightest;
+			border-color: $editor-lightest;
 		}
 	}
 }

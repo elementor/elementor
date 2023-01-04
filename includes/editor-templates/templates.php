@@ -203,7 +203,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-upgrade-plan-button">
 	<a
-		class="elementor-template-library-template-action elementor-button elementor-go-pro"
+		class="elementor-template-library-template-action elementor-button go-pro"
 		href="{{{ promotionLink }}}"
 		target="_blank"
 	>
