@@ -82,6 +82,19 @@ class Module extends BaseApp {
 		do_action( 'elementor/admin-top-bar/init', $this );
 	}
 
+	public static function update_items( \WP_Admin_Bar $admin_bar, $updates = [] ) {
+		foreach( $updates as $slug => $update ) {
+			$node = $admin_bar->get_node( $slug );
+
+			foreach( $update as $key => $value ) {
+				$node->$key = $value;
+			}
+
+			$node_array = json_decode( json_encode( $node, true ), true );
+			$admin_bar->add_node( $node_array );
+		}
+	}
+
 	/**
 	 * Module constructor.
 	 */

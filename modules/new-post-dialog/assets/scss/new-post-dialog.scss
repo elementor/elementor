@@ -1,0 +1,15 @@
+$margin: 20px;
+
+.e-new-post-dialog-form {
+	.e-new-post-dialog__content {
+		input {
+			font-size: inherit;
+			width: 100%;
+			margin-top: $margin;
+
+			+ input {
+				margin-top: $margin / 2;
+			}
+		}
+	}
+}

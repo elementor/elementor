@@ -110,4 +110,22 @@ class Admin_Menu_Manager {
 			}
 		}
 	}
+
+	public function update_submenu_items( string $parent_slug = '', array $updates = [] ) {
+		global $submenu;
+
+		$submenu_items = $submenu[ $parent_slug ] ?? [];
+
+		foreach ( $submenu_items as $key => $menu_item ) {
+			foreach ( $updates as $find => $replace ) {
+				$link_position = array_search( $find, $menu_item );
+
+				if ( ! $link_position ) {
+					continue;
+				}
+
+				$submenu[ $parent_slug ][ $key ][ $link_position ] = $replace;
+			}
+		}
+	}
 }

@@ -34,6 +34,13 @@ const sass = {
 				src: 'frontend.scss',
 				dest: 'assets/css/modules/lazyload',
 				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/new-post-dialog/assets/scss',
+				src: 'new-post-dialog.scss',
+				dest: 'assets/css/modules/new-post-dialog',
+				ext: '.css',
 			}
 		]
 	}
