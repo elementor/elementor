@@ -39,18 +39,17 @@
 			background-color: $e-gray-50;
 		}
 
+		&:active {
+			background-color: $e-gray-100;
+		}
+
 		&-icon {
 			text-align: center;
 			width: 30px;
 		  	flex-shrink: 0;
 		  	padding: 10px 0;
 			margin: 0 10px;
-			color: $editor-light;
 			font-size: 19px;
-
-			.eicon-editor-external-link {
-				font-size: 18px;
-			}
 		}
 
 		&-title {
@@ -61,7 +60,7 @@
 
 			&-badge {
 				margin: 0 10px;
-			  	background: #FFFFFFFF;
+			  	background: $white;
 			  	border-radius: 3px;
 			}
 
@@ -78,15 +77,6 @@
 		  	height: 100%;
 			padding-inline-start: 10px;
 		  	padding: 10px 0;
-		}
-
-		&-exit,
-		&-settings-additional-settings {
-			background-color: $e-gray-100;
-
-			&:hover {
-				background-color: darken($e-gray-100, 5%);
-			}
 		}
 	}
 }

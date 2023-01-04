@@ -5,7 +5,7 @@
 $white:         #ffffff;
 $black:         #000000;
 
-// Facelift 2023
+// Editor Facelift 2023
 $e-gray-0:		#FFFFFF;
 $e-gray-25:		#F9FAFA;
 $e-gray-50:		#F1F2F3;
@@ -20,8 +20,16 @@ $e-gray-800:	#232629;
 $e-gray-900:	#0C0D0E;
 
 $e-purple:		#524CFF;
+
+$e-btn:	$e-gray-600;
+$e-btn-hover:	darken($e-btn, 10%);
+$e-btn-active:	darken($e-btn, 20%);
+
 $e-global:		$e-purple;
+
 $e-go:			$e-purple;
+$e-go-hover:	darken($e-purple, 10%);
+$e-go-active:	darken($e-purple, 20%);
 
 // Primary Colors
 $gray-darkest:  $e-gray-900;

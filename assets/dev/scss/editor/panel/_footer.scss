@@ -30,13 +30,6 @@
 		font-size: 15px;
 	}
 
-	#elementor-panel-saver-button-update {
-
-		i {
-			@include margin-end(5px);
-		}
-	}
-
 	#elementor-panel-saver-button-save-options {
 		float: $start;
 
@@ -68,7 +61,7 @@
 }
 
 #elementor-panel-footer-saver-publish {
-	width: 25%;
+	width: 30%;
 	@include margin-start(auto);
 
 	.elementor-button-state {
@@ -84,7 +77,7 @@
 }
 
 #elementor-panel-footer-saver-options {
-	width: auto;
+	width: 10%;
 
 	.elementor-last-edited-wrapper {
 		font-size: 11px;
@@ -126,23 +119,17 @@
 
 		&publish,
 		&save-options {
+			padding: 0;
 			font-size: 11px;
 			text-transform: uppercase;
 			height: 100%;
+			width: 100%;
 			border-radius: 0;
 
 			&.elementor-disabled {
 				background-color: $editor-darker;
 				color: $editor-light;
 			}
-		}
-
-		&publish {
-			width: 100%;
-		}
-
-		&save-options {
-			width: 25px;
 		}
 	}
 }

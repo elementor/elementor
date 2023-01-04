@@ -3,17 +3,26 @@
 //
 
 .elementor-button {
+	font-size: 11px;
 	font-family: $admin-font-family;
 	font-weight: 500;
 	text-transform: uppercase;
+	padding: 7px 21px;
 	outline: none;
 	border: none;
 	border-radius: 3px;
+	background-color: $e-btn;
+	color: $white;
 	transition-property: background, color, box-shadow, opacity;
 	transition-duration: .3s;
 
 	&:hover {
-		border: none;
+		background-color: $e-btn-hover;
+		color: $white;
+	}
+
+	&:active {
+		background-color: $e-btn-active;
 	}
 
 	&:not([disabled]) {
@@ -98,21 +107,16 @@
 		color: #fff;
 	}
 
-	&.elementor-button-default {
-		background-color: $editor-light;
-		color: #fff;
-		font-size: 11px;
-		padding: 7px 21px;
-
-		&:hover,
-		&:focus,
-		&:visited {
-			background-color: $editor-dark;
-		}
-	}
-
 	&.go-pro {
 		background-color: $e-go;
+
+		&:hover {
+			background-color: $e-go-hover;
+		}
+
+		&:active {
+			background-color: $e-go-active;
+		}
 	}
 
 	i {
