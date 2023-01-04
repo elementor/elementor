@@ -51,6 +51,7 @@ module.exports = {
 					'vw-10',
 				],
 				typography_font_size: [
+					'em-0',
 					'em-10',
 					'px-1',
 					'px-100.5',
