@@ -114,12 +114,11 @@ class Module extends BaseModule {
 
 		add_action( 'wp_footer', function() {
 			?>
-			<script type='text/javascript' defer>
+			<script type='text/javascript'>
 				const lazyloadRunObserver = () => {
-				const dataAttribute = 'data-e-bg-lazyload';
-				const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
-				const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
-
+					const dataAttribute = 'data-e-bg-lazyload';
+					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
 					entries.forEach( ( entry ) => {
 						if ( entry.isIntersecting ) {
 							let lazyloadBackground = entry.target;
@@ -135,7 +134,6 @@ class Module extends BaseModule {
 						lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
 							lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
-
 				};
 				const events = [
 					'DOMContentLoaded',
