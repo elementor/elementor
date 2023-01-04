@@ -210,7 +210,7 @@
 .elementor-panel-category,
 .elementor-panel-scheme-item {
 
-	&.elementor-open,
+	&.e-open,
 	&.elementor-active{
 
 		.elementor-panel-heading-toggle {
@@ -224,7 +224,7 @@
 		}
 	}
 
-	&:not(.elementor-open):not(.elementor-active) {
+	&:not(.e-open):not(.elementor-active) {
 
 		.elementor-panel-heading-toggle {
 

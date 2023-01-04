@@ -45,11 +45,11 @@
 		}
 	}
 
-	&.elementor-open {
+	&.e-open {
 		color: $white;
 	}
 
-	&:not(.elementor-open) {
+	&:not(.e-open) {
 
 		&:hover {
 			color: $editor-lightest;

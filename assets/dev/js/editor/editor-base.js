@@ -93,7 +93,7 @@ export default class EditorBase extends Marionette.Application {
 			element: '.elementor-panel-footer-tool.elementor-toggle-state',
 			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
 			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-open' );
+				$elementsToHide.removeClass( 'e-open' );
 			},
 		},
 		panelResponsiveSwitchers: {
