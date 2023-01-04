@@ -9,7 +9,6 @@
 .e-con-inner {
 
 	& > .elementor-widget-spacer {
-		--container-widget-width: 100%;
 		--align-self: var( --container-widget-align-self, initial );
 		--flex-shrink: 0;
 		width: var( --container-widget-width, var( --spacer-size ) );
