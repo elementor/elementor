@@ -29,6 +29,13 @@ module.exports = {
 					'em-0',
 					'px-1',
 					'rem-0',
+					'vw-0',
+					'vw-5',
+					'vw-10',
+				],
+				typography_line_height: [
+					'em-0',
+					'px-1',
 				],
 			},
 		},
@@ -37,6 +44,27 @@ module.exports = {
 				column_gap: {
 					text_columns: '4',
 				},
+			},
+			frontend_exclude: {
+				column_gap: [
+					'vw-5',
+					'vw-10',
+				],
+				typography_font_size: [
+					'em-10',
+					'px-1',
+					'px-100.5',
+					'px-200',
+					'rem-0',
+					'rem-10',
+					'vw-0',
+					'vw-10',
+					'vw-5',
+				],
+				typography_line_height: [
+					'em-0',
+					'px-1',
+				],
 			},
 		},
 		divider: {
@@ -64,6 +92,16 @@ module.exports = {
 				'height', // Some bug in the CI, seems like this is a bug in the editor.
 				'image_size', // Nothing visual.
 			],
+			frontend_exclude: {
+				space: [
+					'percentage-1',
+					'vw-1',
+				],
+				width: [
+					'vw-1',
+					'vw-50.5',
+				],
+			},
 		},
 	},
 };
