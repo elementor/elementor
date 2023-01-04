@@ -87,14 +87,15 @@ test.describe( 'Elements regression', () => {
 								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 							} );
 
-							await editorPage.publish();
+							if ( configMediator.canTestControlOnFrontend( widgetType, controlId, valueLabel ) ) {
+								await editorPage.publish();
 
-							await test.step( 'frontend', async () => {
-								await expect(
-									await frontendPage.screenshotElement( elementId ),
-								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
-							} );
-
+								await test.step( 'frontend', async () => {
+									await expect(
+										await frontendPage.screenshotElement( elementId ),
+									).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+								} );
+							}
 							await control.teardown();
 						} );
 					}

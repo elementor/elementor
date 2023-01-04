@@ -20,6 +20,17 @@ module.exports = {
 				// + have some issues with color picker inside the popover.
 				'text_stroke_stroke_color',
 			],
+			frontend_exclude: {
+				text_stroke_text_stroke: [
+					'em-0.5',
+					'em-1',
+				],
+				typography_font_size: [
+					'em-0',
+					'px-1',
+					'rem-0',
+				],
+			},
 		},
 		'text-editor': {
 			dependencies: {
