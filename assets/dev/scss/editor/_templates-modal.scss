@@ -5,10 +5,10 @@ $remote-templates-items-space: 30px;
 	a.elementor-template-library-blank-footer-link {
 		font-style: normal;
 		text-decoration: underline;
-		color: $editor-success;
+		color: $editor-info;
 
 		&:hover {
-			color: darken($editor-success, 10%);
+			color: darken($editor-info, 10%);
 		}
 	}
 
@@ -34,8 +34,7 @@ $remote-templates-items-space: 30px;
 	cursor: pointer;
 
 	&.elementor-active {
-		background-image: linear-gradient(to bottom, $editor-background-light, #fff);
-		border-bottom: 3px solid $editor-accent;
+		border-bottom: 3px solid $e-gray-900;
 	}
 }
 
@@ -442,10 +441,6 @@ label.elementor-template-library-order-label {
 		color: $editor-success;
 	}
 
-	.go-pro {
-		color: $e-go;
-	}
-
 	.elementor-template-library-template-footer {
 		display: flex;
 		justify-content: space-between;
@@ -481,6 +476,7 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-favorite-label {
+		font-size: 15px;
 		cursor: pointer;
 
 		&:hover {
@@ -538,11 +534,10 @@ label.elementor-template-library-order-label {
 	height: 50px;
 	width: 100%;
 	margin-top: 1px;
-	background-color: #fff;
 	transition: background-color .3s linear;
 
 	&:hover {
-		background-color: lighten($editor-background-light, 3%);
+		background-color: $e-gray-25;
 	}
 
 	&:not(:hover) {
@@ -568,10 +563,6 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-name,
 	.elementor-template-library-template-meta {
 		@include padding-end(20px);
-	}
-
-	.elementor-template-library-template-meta {
-		color: $editor-light;
 	}
 
 	.elementor-template-library-template-name,
@@ -872,13 +863,6 @@ label.elementor-template-library-order-label {
 
 	.elementor-nerd-box-icon {
 		margin-top: 70px;
-	}
-
-	.elementor-excerpt {
-		color: $editor-light;
-		font-size: 15px;
-		font-weight: 500;
-		margin-top: 20px;
 	}
 }
 

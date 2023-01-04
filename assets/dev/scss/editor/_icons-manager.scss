@@ -13,6 +13,7 @@
 
 		.dialog-buttons-wrapper {
 			display: flex;
+			padding: 10px 15px;
 		}
 	}
 
@@ -70,11 +71,6 @@
 		input {
 			padding: 8px 15px;
 			background-color: #fff;
-			border: none;
-
-			&::placeholder {
-				font-style: italic;
-			}
 		}
 
 		i {
@@ -156,8 +152,7 @@
 
 	&__tab-link {
 		@include padding(15px, 0, 15px, 45px);
-		font-size: 14px;
-		color: $editor-dark;
+		font-size: 12px;
 		text-align: $start;
 		cursor: pointer;
 		position: relative;
@@ -165,16 +160,6 @@
 		i {
 			font-size: 20px;
 			@include padding-end(15px);
-			color: $editor-light;
-		}
-
-		@media (max-width: $editor-screen-lg-max) {
-			@include padding(15px, 15px, 15px, 25px);
-			font-size: 11px;
-
-			i {
-				font-size: 15px;
-			}
 		}
 
 		@media (max-width: $editor-screen-md-max) {
@@ -185,14 +170,13 @@
 		}
 
 		&.elementor-active {
-			background-color: #fff;
-			box-shadow: 0 6px 20px 0 rgba(0,0,0,0.1);
+			background-color: $e-gray-50;
 
 			&:after {
 				content: '';
 				position: absolute;
 				height: 100%;
-				width: 5px;
+				width: 3px;
 				top: 0;
 				@include start(0);
 				background-color: $editor-accent;
@@ -208,19 +192,18 @@
 		position: relative;
 		height: 0;
 		padding-bottom: 100%;
-		background-color: #fff;
-		box-shadow: 0 1px 12px rgba(0,0,0,.05);
+		background-color: $white;
 		border-radius: 3px;
 		cursor: pointer;
 		transition: $transition-hover;
 		overflow: hidden;
 
 		&:hover {
-			box-shadow: 0 1px 14px rgba(0, 0, 0, 0.16)
+			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 1px $e-gray-100;
 		}
 
 		&.elementor-selected {
-			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 3px #71d7f7;
+			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 1px $e-gray-900;
 		}
 
 		&__content {

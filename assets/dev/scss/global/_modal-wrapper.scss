@@ -2,7 +2,7 @@
 
 	.dialog-widget-content {
 		font-family: $admin-font-family;
-		background-color: $editor-background-light;
+		background-color: $white;
 		width: 100%;
 
 		@media (max-width: $library_screen_breakpoint) {
@@ -17,16 +17,13 @@
 	.dialog {
 
 		&-header {
+			border-bottom: 1px solid $e-gray-100;
 			padding: 0;
-			background-color: #fff;
-			box-shadow: $panel-bottom-shadow;
-			position: relative; // Show the shadow above the scrolled list
 			z-index: 1;
 		}
 
 		&-buttons-wrapper {
-			background-color: #fff;
-			border: none;
+			border-top-color: $e-gray-100;
 			display: none;
 			justify-content: flex-end;
 			padding: 5px;
@@ -161,11 +158,11 @@
 	&__sidebar {
 		flex-shrink: 0;
 		width: 25%;
-		background-color: rgba(255, 255, 255, 0.3);
+		border-inline-end: 1px solid $e-gray-100;
 	}
 
 	&__content {
+		background-color: $e-gray-25;
 		flex-grow: 1;
-		box-shadow: 0 0 13px inset rgba(0, 0, 0, 0.05);
 	}
 }

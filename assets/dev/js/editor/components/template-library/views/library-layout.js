@@ -46,7 +46,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ];
 
 		return Marionette.Renderer.render( template, {
-			promotionText: `Go ${ subscriptionPlan.label }`,
+			promotionText: `Upgrade`,
 			promotionLink: subscriptionPlan.promotion_url,
 		} );
 	},
