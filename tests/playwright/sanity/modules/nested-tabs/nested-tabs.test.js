@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const { getPageId } = require( '../../../utilities/site-utilities' );
 
-test.describe.only( 'Nested Tabs tests @nested-tabs', () => {
+test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -231,7 +231,7 @@ test.describe.only( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test.only( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
+	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
