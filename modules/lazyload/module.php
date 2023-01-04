@@ -137,7 +137,7 @@ class Module extends BaseModule {
 				};
 				const events = [
 					'DOMContentLoaded',
-					'elementor/widgets/posts/load-more',
+					'elementor/lazyload/observe',
 				];
 				events.forEach( ( event ) => {
 					document.addEventListener( event, lazyloadRunObserver );
