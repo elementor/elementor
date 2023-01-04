@@ -12,13 +12,15 @@ export default class extends ControlBaseDataView {
 
 	events() {
 		return {
+			...super.events(),
 			'change @ui.input': 'onBaseInputChange',
 		};
 	}
 
 	onBaseInputChange() {
-		if ( this.model.attributes.verify_min_date_field?.active ) {
-			const startDate = document.querySelector( `[data-setting=${ this.model.attributes.verify_min_date_field.compare_field_name }]` )?.value;
+		super.onBaseInputChange( ...arguments );
+		if ( this.model.attributes.verify_min_date_field ) {
+			const startDate = this.options.container.settings.get( this.model.attributes.verify_min_date_field.compare_field_name );
 			if ( ! startDate ) {
 				return;
 			}
