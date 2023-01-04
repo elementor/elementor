@@ -288,7 +288,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'tabs-direction-top-icon-position-top-align-default.jpeg' );
-await expect( true ).toBeFalsy();
+
 		await cleanup( wpAdmin );
 	} );
 
