@@ -9,10 +9,10 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 	constructor( { translationsRegexps } = {} ) {
 		if (
 			! translationsRegexps ||
-			! Array.isArray( this.translationsRegexps ) ||
-			this.translationsRegexps.some( ( regexp ) => ! ( regexp instanceof RegExp ) )
+			! Array.isArray( translationsRegexps ) ||
+			translationsRegexps.some( ( regexp ) => ! ( regexp instanceof RegExp ) )
 		) {
-			throw new Error( 'translationsRegexps must be an array of RegExp' );
+			throw new Error( '`translationsRegexps` must be an array of RegExp' );
 		}
 
 		this.translationsRegexps = translationsRegexps.map( ( regex ) => {

@@ -15,7 +15,7 @@ module.exports = merge( common, {
 	plugins: [
 		new ReadableJsAssetsWebpackPlugin(),
 		new ExtractI18nExpressionsWebpackPlugin( {
-			translationsRegexps: [ /_(?:_|n|nx|x)\(['"`].+['"`]\)/ ],
+			translationsRegexps: [ /\b_(?:_|n|nx|x)\(.+,\s*(?<c>['"`])[\w-]+\k<c>\)/ ],
 		} ),
 	],
 } );
