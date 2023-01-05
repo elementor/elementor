@@ -91,27 +91,38 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 		} );
 	} );
 
-	it( 'should create new default values for section element', () => {
-		// Arrange
-		const command = new CreateCommand();
+	it.each( [
+		{ elType: 'section', expectedType: 'section' },
+		{ elType: 'widget', widgetType: 'button', expectedType: 'button' },
+		{ elType: 'widget', widgetType: 'heading', expectedType: 'heading' },
+		{ elType: 'section', widgetType: 'inner-section', expectedType: 'inner-section' },
+		{ elType: 'section', isInner: true, expectedType: 'inner-section' },
+	] )(
+		'should support multiple types: elType: $elType, widgetType: $widgetType',
+		( { elType, widgetType, isInner = false, expectedType } ) => {
+				// Arrange
+				const command = new CreateCommand();
 
-		const container = createContainer( {
-			elType: 'section',
-			id: '123',
-			settings: {
-				width: '100px',
+				const container = createContainer( {
+					elType,
+					widgetType,
+					isInner,
+					id: '123',
+					settings: {
+						width: '100px',
+					},
+					controls: {
+						width: {},
+					},
+				} );
+
+				// Act
+				command.apply( { container } );
+
+				// Assert
+				expect( updateElementDefaults ).toHaveBeenNthCalledWith( 1, expectedType, { width: '100px' } );
 			},
-			controls: {
-				width: {},
-			},
-		} );
-
-		// Act
-		command.apply( { container } );
-
-		// Assert
-		expect( updateElementDefaults ).toHaveBeenCalledWith( 'section', { width: '100px' } );
-	} );
+		);
 
 	it( 'should throw an error if upsert fails', () => {
 		// Arrange

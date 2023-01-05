@@ -368,10 +368,10 @@ class Settings extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			return __( 'Settings', 'elementor' );
+			return esc_html__( 'Settings', 'elementor' );
 		}
 
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 
 	/**

@@ -79,7 +79,7 @@ class User_Favorites {
 		$result = update_user_meta( $this->user_id, self::USER_META_KEY, $all_favorites );
 
 		if ( false === $result ) {
-			throw new \Exception( __( 'Failed to save user favorites', 'elementor' ) );
+			throw new \Exception( esc_html__( 'Failed to save user favorites', 'elementor' ) );
 		}
 
 		$this->cache = $all_favorites;

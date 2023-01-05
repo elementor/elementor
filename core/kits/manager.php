@@ -171,7 +171,7 @@ class Manager {
 		}
 
 		$id = wp_insert_post( [
-			'post_title' => __( 'Default Kit', 'elementor' ),
+			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
 			'post_type' => Source_Local::CPT,
 			'post_status' => 'publish',
 			'meta_input' => [

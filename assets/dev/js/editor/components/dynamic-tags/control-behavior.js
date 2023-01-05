@@ -13,10 +13,21 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	shouldRenderTools() {
+		const hasDefault = this.getOption( 'dynamicSettings' ).default;
+
+		if ( hasDefault ) {
+			return false;
+		}
+
+		const isFeatureAvalibleToUser = elementor.helpers.hasPro() && ! elementor.helpers.hasProAndNotConnected(),
+			hasTags = this.getOption( 'tags' ).length > 0;
+
+		return ! isFeatureAvalibleToUser || hasTags;
+	},
+
 	renderTools() {
-		// If the user has Elementor Pro and the current control has no dynamic tags available, don't generate the dynamic switcher.
-		// If the user has the core version only, we do display the dynamic switcher for the promotion.
-		if ( this.getOption( 'dynamicSettings' ).default || ( elementor.helpers.hasPro() && ! this.getOption( 'tags' ).length ) ) {
+		if ( ! this.shouldRenderTools() ) {
 			return;
 		}
 

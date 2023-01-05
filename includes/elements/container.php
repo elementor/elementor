@@ -632,13 +632,14 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's',
 					'size' => 0.3,
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
+				],
 			]
 		);
 
@@ -687,6 +688,12 @@ class Container extends Element_Base {
 						'selectors' => [
 							// Hack to set the `::before` content in order to render it only when there is a background overlay.
 							$background_overlay_selector => '--background-overlay: \'\';',
+						],
+					],
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ 'background_overlay_image', 'url' ],
 						],
 					],
 				],
@@ -843,15 +850,16 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
-				'default' => [
-					'unit' => 's',
-					'size' => 0.3,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}}' => '--overlay-transition: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}s;',
 				],
 			]
 		);
@@ -961,10 +969,14 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
-				'size_units' => [ 's', 'ms' ],
 				'default' => [
-					'unit' => 's',
 					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'conditions' => [
 					'relation' => 'or',
@@ -982,8 +994,7 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--transition: background {{background_hover_transition.SIZE}}{{background_hover_transition.UNIT}}, border {{SIZE}}{{UNIT}}, border-radius {{SIZE}}{{UNIT}}, box-shadow {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}}::before' => '--overlay-transition: background {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}, border-radius {{SIZE}}{{UNIT}}, opacity {{background_overlay_hover_transition.SIZE}}{{background_overlay_hover_transition.UNIT}}',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--border-transition: {{SIZE}}s;',
 				],
 			]
 		);
@@ -1617,11 +1628,28 @@ class Container extends Element_Base {
 
 		$this->register_motion_effects_controls();
 
+		$this->hook_sticky_notice_into_transform_section();
+
+		$this->register_transform_section( 'con' );
+
 		$this->register_responsive_controls();
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+	}
+
+	protected function hook_sticky_notice_into_transform_section() {
+		add_action( 'elementor/element/container/_section_transform/after_section_start', function( $container ) {
+			$container->add_control(
+				'transform_sticky_notice',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				]
+			);
+		} );
 	}
 
 	/**

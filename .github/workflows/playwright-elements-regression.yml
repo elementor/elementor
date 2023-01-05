@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
 
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   build-plugin:
     name: Build plugin
@@ -68,7 +73,7 @@ jobs:
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0
+        run: npm install --no-package-lock --no-save @wordpress/env@5.0.0
       - name: Install WordPress environment
         run: |
           npx wp-env start

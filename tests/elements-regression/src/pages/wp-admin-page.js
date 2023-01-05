@@ -11,6 +11,12 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
+	async getWpRESTNonce() {
+		await this.page.goto( '/wp-admin' );
+
+		return await this.page.evaluate( () => window.wpApiSettings.nonce );
+	}
+
 	/**
 	 * @return {Promise<number>}
 	 */
