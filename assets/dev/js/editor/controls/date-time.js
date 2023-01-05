@@ -19,8 +19,8 @@ export default class extends ControlBaseDataView {
 
 	onBaseInputChange() {
 		super.onBaseInputChange( ...arguments );
-		if ( this.model.attributes.verify_min_date_field ) {
-			const startDate = this.options.container.settings.get( this.model.attributes.verify_min_date_field.compare_field_name );
+		if ( this.model.attributes.datetime_verify ) {
+			const startDate = this.options.container.settings.get( this.model.attributes.datetime_verify.control_name );
 			if ( ! startDate ) {
 				return;
 			}
@@ -29,7 +29,7 @@ export default class extends ControlBaseDataView {
 			const startDateTimestamp = new Date( startDate ).getTime();
 			const endDateTimestamp = new Date( endDate ).getTime();
 
-			switch ( this.model.attributes.verify_min_date_field.compare_field_operator ) {
+			switch ( this.model.attributes.datetime_verify.operator ) {
 				case '>=':
 					if ( startDateTimestamp >= endDateTimestamp ) {
 						this.ui.input[ 0 ].value = '';
