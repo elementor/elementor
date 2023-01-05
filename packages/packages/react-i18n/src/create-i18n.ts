@@ -4,13 +4,13 @@ import { I18n, I18nSource } from './types';
 export type CreateI18nOptions = {
     lang?: string;
     isRTL?: boolean;
-    sources?: Record<string, I18nSource[]>
+    sources?: I18nSource[]
 }
 
-export default function createI18n( { lang = 'en_US', isRTL = false, sources = {} }: CreateI18nOptions = {} ): I18n {
+export default function createI18n( { lang = 'en_US', isRTL = false, sources = [] }: CreateI18nOptions = {} ): I18n {
 	const i18n: OriginalI18n = createOriginalI18n();
 
-	( sources?.[ lang ] || [] ).forEach( ( source: I18nSource ) => {
+	sources.forEach( ( source: I18nSource ) => {
 		if ( source.type === 'object' ) {
 			i18n.setLocaleData( source.data, source.domain );
 		}
