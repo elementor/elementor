@@ -64,17 +64,17 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be different URL's.
+	 * @expectedExceptionMessage Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_equal() {
-		//$this->expectExceptionMessage( "The `from` and `to` URL's must be different URL's." );
+		//$this->expectExceptionMessage( "Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs." );
 		Utils::replace_urls( 'http://' . home_url() . '/elementor', 'http://' . home_url() . '/elementor' );
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be valid URL's.
+	 * @expectedExceptionMessage Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
