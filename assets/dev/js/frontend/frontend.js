@@ -345,6 +345,80 @@ export default class Frontend extends elementorModules.ViewModule {
 		} );
 	}
 
+	/**
+	 * Get Control Value
+	 *
+	 * Retrieves a control value.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @param {{}}     controlSettings	A settings object (e.g. element settings - keys and values)
+	 * @param {string} controlKey	    The control key name
+	 * @param {string} controlSubKey 	A specific property of the control object.
+	 * @return {*} Control Value
+	 */
+	getControlValue( controlSettings, controlKey, controlSubKey = '' ) {
+		let value;
+
+		if ( 'object' === typeof controlSettings[ controlKey ] && controlSubKey ) {
+			value = controlSettings[ controlKey ][ controlSubKey ];
+		} else {
+			value = controlSettings[ controlKey ];
+		}
+
+		return value;
+	}
+
+	/**
+	 * Get the value of a responsive control.
+	 *
+	 * Retrieves the value of a responsive control for the current device or for this first parent device which has a control value.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @param {{}}     controlSettings	A settings object (e.g. element settings - keys and values)
+	 * @param {string} controlKey	    The control key name
+	 * @param {string} controlSubKey 	A specific property of the control object.
+	 * @return {*} Control Value
+	 */
+	getResponsiveControlValue( controlSettings, controlKey, controlSubKey = '' ) {
+		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
+			controlValueDesktop = this.getControlValue( controlSettings, controlKey, controlSubKey );
+
+		// Set the control value for the current device mode.
+		// First check the widescreen device mode.
+		if ( 'widescreen' === currentDeviceMode ) {
+			const controlValueWidescreen = this.getControlValue( controlSettings, `${ controlKey }_widescreen`, controlSubKey );
+
+			return controlValueWidescreen ? controlValueWidescreen : controlValueDesktop;
+		} else if ( 'desktop' === currentDeviceMode ) {
+			return controlValueDesktop;
+		}
+
+		// Loop through all responsive and desktop device modes.
+		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ).reverse();
+
+		let parentDeviceMode = currentDeviceMode;
+
+		for ( let i = 0; i < activeBreakpoints.length; i++ ) {
+			if ( 'desktop' === parentDeviceMode ) {
+				return controlValueDesktop;
+			}
+
+			const responsiveControlKey = `${ controlKey }_${ parentDeviceMode }`,
+				responsiveControlValue = this.getControlValue( controlSettings, responsiveControlKey, controlSubKey );
+
+			if ( parentDeviceMode === activeBreakpoints[ i ] ) {
+				if ( responsiveControlValue ) {
+					return responsiveControlValue;
+				}
+
+				// If no control value has been set for the current device mode, then check the parent device mode.
+				parentDeviceMode = activeBreakpoints[ i + 1 ];
+			}
+		}
+	}
+
 	init() {
 		this.hooks = new EventManager();
 
