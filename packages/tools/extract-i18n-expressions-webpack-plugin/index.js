@@ -18,7 +18,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		this.translationsRegexps = translationsRegexps.map( ( regex ) => {
 			const flags = [ ...new Set( [ 'g', 'm', ...regex.flags.split( '' ) ] ) ].join( '' );
 
-			return new RegExp( regex.source, `${ flags }` );
+			return new RegExp( regex.source, flags );
 		} );
 	}
 

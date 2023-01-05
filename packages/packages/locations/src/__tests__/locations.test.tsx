@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render } from 'test-utils';
 import { lazy } from 'react';
 import { addFill, resetFills } from '../locations';
 import Slot from '../components/slot';

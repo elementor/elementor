@@ -1,4 +1,5 @@
 import React from 'react';
+import { useI18n } from '@elementor/react-i18n';
 import { AppBar, Grid, Box, IconButton, styled } from '@elementor/ui';
 import ElementorIcon from './icons/elementor-icon';
 import PlusIcon from './icons/plus-icon';
@@ -12,6 +13,8 @@ const AppBarAction = styled( IconButton )( ( { theme } ) => ( {
 } ) );
 
 export const TopBar = () => {
+	const { __ } = useI18n();
+
 	return (
 		<AppBar position="sticky" sx={ { background: '#000', height: '48px' } }>
 			<Grid container direction="row">
@@ -20,7 +23,7 @@ export const TopBar = () => {
 						// @ts-ignore
 						window.$e.route( 'panel/menu' );
 					} }>
-						<ElementorIcon titleAccess="Elementor Logo" />
+						<ElementorIcon titleAccess={ __( 'Elementor Logo', 'elementor' ) } />
 					</IconButton>
 
 					<AppBarAction onClick={ () => {

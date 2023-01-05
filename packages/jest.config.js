@@ -20,6 +20,11 @@ module.exports = {
 	moduleNameMapper: {
 		'^@elementor/(?!ui)(.*)$': '<rootDir>/packages/$1/src',
 	},
+	moduleDirectories: [
+		'node_modules',
+		'tests',
+		__dirname,
+	],
 
 	// By default jest avoids transforming files in node_modules.
 	transformIgnorePatterns: [

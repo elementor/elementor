@@ -2,7 +2,8 @@
 	"name": "@elementor/top-bar",
 	"dependencies": {
 		"@elementor/editor": "*",
-		"@elementor/ui": "*"
+		"@elementor/ui": "*",
+		"@elementor/react-i18n": "*"
 	},
 	"peerDependencies": {
 		"react": "17.x"
