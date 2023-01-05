@@ -352,9 +352,9 @@ export default class Frontend extends elementorModules.ViewModule {
 	 *
 	 * @since 3.11.0
 	 *
-	 * @param {{}}     controlSettings	A settings object (e.g. element settings - keys and values)
-	 * @param {string} controlKey	    The control key name
-	 * @param {string} controlSubKey 	A specific property of the control object.
+	 * @param {{}}     controlSettings A settings object (e.g. element settings - keys and values)
+	 * @param {string} controlKey      The control key name
+	 * @param {string} controlSubKey   A specific property of the control object.
 	 * @return {*} Control Value
 	 */
 	getControlValue( controlSettings, controlKey, controlSubKey = '' ) {
@@ -376,9 +376,9 @@ export default class Frontend extends elementorModules.ViewModule {
 	 *
 	 * @since 3.11.0
 	 *
-	 * @param {{}}     controlSettings	A settings object (e.g. element settings - keys and values)
-	 * @param {string} controlKey	    The control key name
-	 * @param {string} controlSubKey 	A specific property of the control object.
+	 * @param {{}}     controlSettings A settings object (e.g. element settings - keys and values)
+	 * @param {string} controlKey      The control key name
+	 * @param {string} controlSubKey   A specific property of the control object.
 	 * @return {*} Control Value
 	 */
 	getResponsiveControlValue( controlSettings, controlKey, controlSubKey = '' ) {
