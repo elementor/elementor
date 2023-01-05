@@ -43,15 +43,15 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 			}
 
 			compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
+				if ( ! translationsCallExpression.has( chunk.runtime ) ) {
+					translationsCallExpression.set( chunk.runtime, new Set() );
+				}
+
 				this.getSubModulesToCheck( module ).forEach( ( subModule ) => {
 					const source = subModule?._source?._valueAsString;
 
 					if ( ! source ) {
 						return;
-					}
-
-					if ( ! translationsCallExpression.has( chunk.runtime ) ) {
-						translationsCallExpression.set( chunk.runtime, new Set() );
 					}
 
 					this.translationsRegexps.forEach( ( regexp ) => {
