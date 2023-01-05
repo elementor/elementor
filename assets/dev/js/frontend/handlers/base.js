@@ -227,6 +227,37 @@ module.exports = elementorModules.ViewModule.extend( {
 		return elementorFrontend.getCurrentDeviceSetting( this.getElementSettings(), settingKey );
 	},
 
+	getResponsiveControlValue( controlSettings, controlKey, controlSubKey = '' ) {
+		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
+			controlValueDesktop = this.getConditionValue( controlSettings, controlKey, controlSubKey );
+
+		// Set the control value for the current device mode.
+		// First check the widescreen device mode.
+		if ( 'widescreen' === currentDeviceMode ) {
+			const controlValueWidescreen = this.getConditionValue( controlSettings, `${ controlKey }_widescreen`, controlSubKey );
+
+			return controlValueWidescreen ? controlValueWidescreen : controlValueDesktop;
+		} else if ( 'desktop' === currentDeviceMode ) {
+			return controlValueDesktop;
+		}
+
+		// Loop through all responsive and desktop device modes.
+		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ).reverse();
+
+		let parentDeviceMode = currentDeviceMode;
+
+		for ( let i = 0; i < activeBreakpoints.length; i++ ) {
+			if ( 'desktop' === parentDeviceMode ) {
+				return controlValueDesktop;
+			} else if ( parentDeviceMode === activeBreakpoints[ i ] && settings[ `${ controlKey }_${ parentDeviceMode }` ] ) {
+				return this.getConditionValue( controlSettings, controlKey, controlSubKey );
+			} else if ( parentDeviceMode === activeBreakpoints[ i ] && ! settings[ `columns_${ parentDeviceMode }` ] ) {
+				// If no control value has been set for the current device mode, then check the next device mode.
+				parentDeviceMode = activeBreakpoints[ i + 1 ];
+			}
+		}
+	},
+
 	onInit() {
 		if ( this.isActive( this.getSettings() ) ) {
 			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
