@@ -131,8 +131,8 @@ class Module extends BaseModule {
 						}
 					});
 					}, { rootMargin: '100px 0px 100px 0px' } );
-						lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
-							lazyloadBackgroundObserver.observe( lazyloadBackground );
+					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
 				};
 				const events = [
