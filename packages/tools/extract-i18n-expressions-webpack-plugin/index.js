@@ -24,71 +24,76 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 	apply( compiler ) {
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
-			compilation.hooks.processAssets.tap( {
-				name: this.constructor.name,
-			}, () => {
-				const translationsCallExpression = new Map();
+			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
+				const translationsCallExpression = this.getTranslationsCallExpression( compilation );
 
-				[ ...compilation.chunks ].forEach( ( chunk ) => {
-					const chunkJSFile = this.getFileFromChunk( chunk );
+				this.addTranslationsCallExpressionToAssets( compilation, translationsCallExpression );
+			} );
+		} );
+	}
 
-					if ( ! chunkJSFile ) {
-						// There's no JS file in this chunk, no work for us. Typically a `style.css` from cache group.
+	getTranslationsCallExpression( compilation ) {
+		const translationsCallExpression = new Map();
+
+		[ ...compilation.chunks ].forEach( ( chunk ) => {
+			const chunkJSFile = this.getFileFromChunk( chunk );
+
+			if ( ! chunkJSFile ) {
+				// There's no JS file in this chunk, no work for us. Typically a `style.css` from cache group.
+				return;
+			}
+
+			compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
+				this.getSubModulesToCheck( module ).forEach( ( subModule ) => {
+					const source = subModule?._source?._valueAsString;
+
+					if ( ! source ) {
 						return;
 					}
 
-					compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
-						const subModules = new Set();
+					if ( ! translationsCallExpression.has( chunk.runtime ) ) {
+						translationsCallExpression.set( chunk.runtime, new Set() );
+					}
 
-						[ ...( module.modules || [] ), module ].forEach( ( subModule ) => {
-							if ( this.shouldCheckModule( subModule ) ) {
-								subModules.add( subModule );
-							}
-						} );
-
-						subModules.forEach( ( subModule ) => {
-							const source = subModule?._source?._valueAsString;
-
-							if ( ! source ) {
-								return;
-							}
-
-							this.translationsRegexps.forEach( ( regexp ) => {
-								[ ...source.matchAll( regexp ) ].forEach( ( [ firstMatch ] ) => {
-									if ( ! translationsCallExpression.has( chunk.runtime ) ) {
-										translationsCallExpression.set( chunk.runtime, new Set() );
-									}
-
-									translationsCallExpression.get( chunk.runtime ).add( firstMatch );
-								} );
-							} );
+					this.translationsRegexps.forEach( ( regexp ) => {
+						[ ...source.matchAll( regexp ) ].forEach( ( [ firstMatch ] ) => {
+							translationsCallExpression.get( chunk.runtime ).add( firstMatch );
 						} );
 					} );
 				} );
-
-				[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
-					const chunk = entrypoint.chunks[ 0 ];
-					const chunkJSFile = this.getFileFromChunk( chunk );
-
-					if ( ! chunkJSFile ) {
-						return;
-					}
-
-					const assetFilename = compilation
-						.getPath( '[file]', { filename: chunkJSFile } )
-						.replace( /(\.min)?\.js$/i, '.strings.js' );
-
-					// Add source and file into compilation for webpack to output.
-					compilation.assets[ assetFilename ] = new RawSource(
-						[ ...( translationsCallExpression.get( id ) || new Set() ) ]
-							.map( ( expr ) => `${ expr };` )
-							.join( '' )
-					);
-
-					chunk.files.add( assetFilename );
-				} );
 			} );
 		} );
+
+		return translationsCallExpression;
+	}
+
+	addTranslationsCallExpressionToAssets( compilation, translationsCallExpression ) {
+		[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
+			const chunk = entrypoint.chunks[ 0 ];
+			const chunkJSFile = this.getFileFromChunk( chunk );
+
+			if ( ! chunkJSFile ) {
+				return;
+			}
+
+			const assetFilename = compilation
+				.getPath( '[file]', { filename: chunkJSFile } )
+				.replace( /(\.min)?\.js$/i, '.strings.js' );
+
+			// Add source and file into compilation for webpack to output.
+			compilation.assets[ assetFilename ] = new RawSource(
+				[ ...( translationsCallExpression.get( id ) || new Set() ) ]
+					.map( ( expr ) => `${ expr };` )
+					.join( '' )
+			);
+
+			chunk.files.add( assetFilename );
+		} );
+	}
+
+	getSubModulesToCheck( module ) {
+		return [ ...( module.modules || [] ), module ]
+			.filter( ( subModule ) => this.shouldCheckModule( subModule ) );
 	}
 
 	getFileFromChunk( chunk ) {
