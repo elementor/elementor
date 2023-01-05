@@ -46,8 +46,11 @@ module.exports = elementorModules.Module.extend( {
 				post_id: elementor.config.document.id,
 				tags: Object.keys( cacheRequests ),
 			},
-			success( data ) {
-				jQuery.extend( cache, data );
+			success: ( data ) => {
+				this.cache = {
+					...this.cache,
+					...data,
+				};
 
 				cacheCallbacks.forEach( function( callback ) {
 					callback();

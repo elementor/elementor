@@ -124,6 +124,11 @@
 		font-size: 11px;
 		padding: 7px 21px;
 
+		&.center {
+			display: block;
+			margin: 0 auto;
+		}
+
 		&:hover {
 			background-color: $editor-dark;
 			box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
