@@ -388,7 +388,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * empty_pages
 	 * Prevent the creation of the default WooCommerce pages (Cart, Checkout, etc.)
 	 *
 	 * @return array
