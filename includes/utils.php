@@ -174,6 +174,14 @@ class Utils {
 		$from = trim( $from );
 		$to = trim( $to );
 
+		if ( empty( $from ) ) {
+			throw new \Exception( "Couldn’t replace your address because the old URL was not provided. Try again by entering the old URL." );
+		}
+
+		if ( empty( $to ) ) {
+			throw new \Exception( "Couldn’t replace your address because the new URL was not provided. Try again by entering the new URL." );
+		}
+
 		if ( $from === $to ) {
 			throw new \Exception( "Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs." );
 		}
