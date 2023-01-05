@@ -33,8 +33,7 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	loadCacheRequests() {
-		var cache = this.cache,
-			cacheRequests = this.cacheRequests,
+		var cacheRequests = this.cacheRequests,
 			cacheCallbacks = this.cacheCallbacks;
 
 		this.cacheRequests = {};
