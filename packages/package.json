@@ -35,6 +35,6 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "@elementor/ui": "^1.2.3"
+    "@elementor/ui": "^1.2.1"
   }
 }
