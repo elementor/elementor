@@ -1,5 +1,4 @@
-const webpack = require( 'webpack' );
-const { RawSource } = webpack.sources;
+const { sources: { RawSource } } = require( 'webpack' );
 
 const MODULE_FILTER = [ /((?:[^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ];
 
