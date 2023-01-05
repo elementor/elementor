@@ -203,7 +203,7 @@ class Utils {
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
-			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			_n( '%d database row affected.', '%d database rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
 	}
