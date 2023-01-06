@@ -215,6 +215,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorPost( 'nested-icons-dont-disappear' );
+		const countActiveTabSpans = ( editor ) => editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Act.
 		const activeTabSpanCount = await countActiveTabSpans( editor );
