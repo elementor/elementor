@@ -238,7 +238,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorPost( 'nested-title-alignment' );
 		const tabsId = await editor.getPreviewFrame().locator( '[data-widget_type="nested-tabs.default"]' ).getAttribute( 'data-id' );
-		const activeTab = editor.getPreviewFrame().locator( '.e-normal.e-active' );
+		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal' ).click();
+		const activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
 
 		// Act.
 		// Tabs styling scenario 1: Direction: Top, Align Title: Left, Icon Position: Right.
