@@ -237,13 +237,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorPost( 'nested-title-alignment' );
-		const tabsId = await editor.getPreviewFrame().locator( '[data-widget_type="nested-tabs.default"]' ).getAttribute( 'data-id' );
-		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal' ).click();
+		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
+		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' ).click();
 		const activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
 
 		// Act.
 		// Tabs styling scenario 1: Direction: Top, Align Title: Left, Icon Position: Right.
-		await editor.selectElement( tabsId );
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 		// Set icon position to 'right'.
@@ -262,7 +261,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.togglePreviewMode();
 
 		// Tabs styling scenario 2: Direction: Left, Align Title: Right, Icon Position: Top.
-		await editor.selectElement( tabsId );
+		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
 		// Set Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
@@ -274,7 +273,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.elementor-control-icon_position i.eicon-v-align-top' ).click();
 
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
-		await editor.selectElement( tabsId );
+		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
 		// Unset Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
