@@ -10,56 +10,28 @@ export default class extends ControlBaseDataView {
 		this.ui.input.flatpickr( options );
 	}
 
-	events() {
-		return {
-			...super.events(),
-			'change @ui.input': 'onBaseInputChange',
-		};
-	}
-
 	onBaseInputChange() {
 		super.onBaseInputChange( ...arguments );
-		if ( this.model.attributes?.validation?.minDate ) {
-			const startDate = this.options.container.settings.get( this.model.attributes.validation.minDate.control_name );
+
+		if ( ! this.model.attributes?.validation ) {
+			return;
+		}
+
+		if ( this.model.attributes?.validation.minDate ) {
+			const controlName = this.model.attributes.validation.minDate.control_name;
+
+			const startDate = this.options.container.settings.get( controlName );
 			if ( ! startDate ) {
 				return;
 			}
 
-			const endDate = this.ui.input[ 0 ].value;
+			const endDate = this.ui.input.val();
 			const startDateTimestamp = new Date( startDate ).getTime();
 			const endDateTimestamp = new Date( endDate ).getTime();
+			const operator = this.model.attributes.validation.minDate.operator;
 
-			switch ( this.model.attributes.validation.minDate.operator ) {
-				case '>=':
-					if ( startDateTimestamp >= endDateTimestamp ) {
-						this.ui.input[ 0 ].value = '';
-					}
-					break;
-				case '<=':
-					if ( startDateTimestamp <= endDateTimestamp ) {
-						this.ui.input[ 0 ].value = '';
-					}
-					break;
-				case '>':
-					if ( startDateTimestamp > endDateTimestamp ) {
-						this.ui.input[ 0 ].value = '';
-					}
-					break;
-				case '<':
-					if ( startDateTimestamp < endDateTimestamp ) {
-						this.ui.input[ 0 ].value = '';
-					}
-					break;
-				case '==':
-					if ( startDateTimestamp === endDateTimestamp ) {
-						this.ui.input[ 0 ].value = '';
-					}
-					break;
-				case '!=':
-					if ( startDateTimestamp !== endDateTimestamp ) {
-						this.ui.input[ 0 ].value = '';
-					}
-					break;
+			if ( elementor.conditions.compare( startDateTimestamp, endDateTimestamp, operator ) ) {
+				this.ui.input.val( '' );
 			}
 		}
 	}
