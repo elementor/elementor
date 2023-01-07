@@ -19,8 +19,8 @@ export default class extends ControlBaseDataView {
 
 		if ( this.model.attributes?.validation.minDate ) {
 			const controlName = this.model.attributes.validation.minDate.control_name;
-
 			const startDate = this.options.container.settings.get( controlName );
+
 			if ( ! startDate ) {
 				return;
 			}
