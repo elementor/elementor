@@ -116,7 +116,12 @@ class Module extends BaseModule {
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
 
 			$current_document = \Elementor\Plugin::$instance->documents->get_current();
-			$post_id = $current_document ? $current_document->get_main_id() : false;
+
+			if ( ! $current_document ) {
+				return;
+			}
+
+			$post_id = $current_document->get_main_id();
 
 			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
 				return;
