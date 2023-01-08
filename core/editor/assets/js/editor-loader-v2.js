@@ -1,7 +1,5 @@
-( function() {
-	window.elementor.start();
+window.elementor.start();
 
-	const { init } = window.__UNSTABLE__elementorPackages.editor;
+const { init } = window.__UNSTABLE__elementorPackages.editor;
 
-	init( document.getElementById( 'elementor-editor-wrapper-v2' ) );
-} )();
+init( document.getElementById( 'elementor-editor-wrapper-v2' ) );
