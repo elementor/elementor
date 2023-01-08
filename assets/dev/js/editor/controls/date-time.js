@@ -18,7 +18,7 @@ export default class extends ControlBaseDataView {
 		}
 
 		if ( this.model.attributes?.validation.minDate ) {
-			const controlName = this.model.attributes.validation.minDate.control_name;
+			const { control_name: controlName, operator } = this.model.attributes.validation.minDate;
 			const startDate = this.options.container.settings.get( controlName );
 
 			if ( ! startDate ) {
@@ -28,7 +28,6 @@ export default class extends ControlBaseDataView {
 			const endDate = this.ui.input.val();
 			const startDateTimestamp = new Date( startDate ).getTime();
 			const endDateTimestamp = new Date( endDate ).getTime();
-			const operator = this.model.attributes.validation.minDate.operator;
 
 			if ( elementor.conditions.compare( startDateTimestamp, endDateTimestamp, operator ) ) {
 				this.ui.input.val( '' );
