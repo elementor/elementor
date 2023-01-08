@@ -39,7 +39,6 @@ const config = {
 		trace: 'on-first-retry',
 		video: {
 			mode: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
-			size: { width: 1920, height: 1080 },
 		},
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8889',
