@@ -24,7 +24,7 @@ const externalPackages = [
 const wordpressPackages = [
 	{
 		fullName: '@wordpress/i18n',
-		runtimePath: 'wp.apiFetch',
+		runtimePath: 'wp.i18n',
 	},
 ];
 
