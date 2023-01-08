@@ -3,11 +3,7 @@ import { I18n } from './types';
 
 const I18nContext = createContext<I18n | null>( null );
 
-type I18nContextProviderProps = PropsWithChildren<{
-    i18n: I18n;
-}>;
-
-export function I18nContextProvider( { i18n, children }: I18nContextProviderProps ) {
+export function I18nContextProvider( { i18n, children }: PropsWithChildren<{ i18n: I18n }> ) {
 	return (
 		<I18nContext.Provider value={ i18n }>
 			{ children }

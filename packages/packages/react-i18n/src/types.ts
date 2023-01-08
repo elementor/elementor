@@ -1,7 +1,7 @@
 import { I18n as OriginalI18n } from '@wordpress/i18n';
 
-// TODO: Add support for URL sources ('object' | 'url').
-type SourceType = 'object';
+// TODO: Add support for URL sources ('jed-object' | 'jed-remote?').
+type SourceType = 'jed-object';
 
 type I18nBaseSource<TType extends SourceType> = {
     domain: string;
@@ -16,13 +16,13 @@ export type JEDLocaleDataDomainFormat = {
     }
 } | { [key: string]: string[] };
 
-export type I18nObjectSource = I18nBaseSource<'object'> & {
+export type I18nJEDObjectSource = I18nBaseSource<'jed-object'> & {
     data: JEDLocaleDataDomainFormat;
 }
 
-export type I18nSource = I18nObjectSource;
+export type I18nSource = I18nJEDObjectSource;
 
-export type I18n = OriginalI18n & {
+export type I18n = Pick<OriginalI18n, '__' | '_n' | '_x' | '_nx'> & {
     isRTL: () => boolean;
-    getLang: () => string;
+    getLocale: () => string;
 }

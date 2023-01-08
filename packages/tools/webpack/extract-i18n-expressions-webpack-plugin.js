@@ -43,10 +43,6 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 			}
 
 			compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
-				if ( ! translationsCallExpression.has( chunk.runtime ) ) {
-					translationsCallExpression.set( chunk.runtime, new Set() );
-				}
-
 				this.getSubModulesToCheck( module ).forEach( ( subModule ) => {
 					const source = subModule?._source?._valueAsString;
 
@@ -54,9 +50,15 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 						return;
 					}
 
+					const mainEntrypointFile = this.findMainModuleOfEntryPoint( subModule, compilation );
+
+					if ( ! translationsCallExpression.has( mainEntrypointFile ) ) {
+						translationsCallExpression.set( mainEntrypointFile, new Set() );
+					}
+
 					this.translationsRegexps.forEach( ( regexp ) => {
 						[ ...source.matchAll( regexp ) ].forEach( ( [ firstMatch ] ) => {
-							translationsCallExpression.get( chunk.runtime ).add( firstMatch );
+							translationsCallExpression.get( mainEntrypointFile ).add( firstMatch );
 						} );
 					} );
 				} );
@@ -75,13 +77,15 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 				return;
 			}
 
+			const mainFilePath = compilation.options.entry[ id ].import[ 0 ];
+
 			const assetFilename = compilation
 				.getPath( '[file]', { filename: chunkJSFile } )
 				.replace( /(\.min)?\.js$/i, '.strings.js' );
 
 			// Add source and file into compilation for webpack to output.
 			compilation.assets[ assetFilename ] = new RawSource(
-				[ ...( translationsCallExpression.get( id ) || new Set() ) ]
+				[ ...( translationsCallExpression.get( mainFilePath ) || new Set() ) ]
 					.map( ( expr ) => `${ expr };` )
 					.join( '' )
 			);
@@ -101,5 +105,13 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 	shouldCheckModule( module ) {
 		return MODULE_FILTER.every( ( filter ) => filter.test( module.userRequest ) );
+	}
+
+	findMainModuleOfEntryPoint( module, compilation ) {
+		if ( compilation.moduleGraph.getIssuer( module ) ) {
+			return this.findMainModuleOfEntryPoint( compilation.moduleGraph.getIssuer( module ), compilation );
+		}
+
+		return module.rawRequest;
 	}
 };

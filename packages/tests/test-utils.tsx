@@ -6,15 +6,15 @@ type RenderExtraOptions = {
 	i18n?: I18n
 }
 
+const i18nInstance = createI18n();
+
 const customRender = (
 	ui: ReactElement,
 	{ i18n, ...options }: Omit<RenderOptions, 'wrapper'> & RenderExtraOptions = {},
 ) => {
-	const i18nInstance = i18n || createI18n();
-
 	return render( ui, {
 		wrapper: ( { children }: { children: ReactElement } ) => (
-			<I18nContextProvider i18n={ i18nInstance }>
+			<I18nContextProvider i18n={ i18n || i18nInstance }>
 				{ children }
 			</I18nContextProvider>
 		),
