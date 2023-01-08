@@ -3,7 +3,7 @@
 	"dependencies": {
 		"@elementor/editor": "*",
 		"@elementor/ui": "*",
-		"@elementor/react-i18n": "*"
+		"@wordpress/i18n": "*"
 	},
 	"peerDependencies": {
 		"react": "17.x"

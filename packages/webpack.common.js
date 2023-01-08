@@ -3,6 +3,7 @@ const { readdirSync } = require( 'fs' );
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
+// All our internal packages
 const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
 	.filter( ( dirent ) => dirent.isDirectory() )
 	.map( ( dirent ) => dirent.name )
@@ -11,10 +12,19 @@ const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { w
 		path: path.resolve( __dirname, `./packages/${ name }/src` ),
 	} ) );
 
+// Packages that lives outside the `packages` directory, but we want treat them as they were part of the monorepo.
 const externalPackages = [
 	{
 		name: 'ui',
 		path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
+	},
+];
+
+// Packages that exists in WordPress, and we use them as externals.
+const wordpressPackages = [
+	{
+		fullName: '@wordpress/i18n',
+		runtimePath: 'wp.apiFetch',
 	},
 ];
 
@@ -37,10 +47,16 @@ function generateEntry() {
 }
 
 function generateExternals() {
-	return packages.reduce( ( acc, { name } ) => ( {
+	const externals = packages.reduce( ( acc, { name } ) => ( {
 		...acc,
 		[ `@elementor/${ name }` ]: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
 	} ), {} );
+
+	wordpressPackages.forEach( ( { fullName, runtimePath } ) => {
+		externals[ fullName ] = runtimePath;
+	} );
+
+	return externals;
 }
 
 function kebabToCamelCase( kebabCase ) {

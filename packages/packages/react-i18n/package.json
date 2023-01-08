@@ -1,9 +1,0 @@
-{
-  "name": "@elementor/react-i18n",
-  "peerDependencies": {
-    "react": "17.x"
-  },
-  "dependencies": {
-    "@wordpress/i18n": "^4.24.0"
-  }
-}

@@ -23,7 +23,6 @@
 
 		"paths": {
 			"@elementor/*": ["./packages/*/src"],
-			"test-utils": ["./tests/test-utils"]
 		}
 	}
 }

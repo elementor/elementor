@@ -1,4 +1,4 @@
-import { render } from 'test-utils';
+import { render } from '@testing-library/react';
 import Shell from '../shell';
 import { addToTop } from '../../locations';
 
