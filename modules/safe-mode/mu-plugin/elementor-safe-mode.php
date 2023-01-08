@@ -38,7 +38,9 @@ class Safe_Mode {
 	}
 
 	public function is_valid_token() {
-		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] ) ? $_COOKIE[ self::OPTION_TOKEN ] : null;
+		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] )
+			? wp_kses_post( wp_unslash( $_COOKIE[ self::OPTION_TOKEN ] ) )
+			: null;
 
 		if ( $token && get_option( self::OPTION_TOKEN ) === $token ) {
 			return true;

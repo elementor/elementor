@@ -218,9 +218,7 @@ class App extends BaseApp {
 			true
 		);
 
-		if ( ! $this->get_settings( 'disable_dark_theme' ) ) {
-			$this->enqueue_dark_theme_detection_script();
-		}
+		$this->enqueue_dark_theme_detection_script();
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
@@ -245,7 +243,7 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
 
-		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) || Utils::is_wp_cli() ) {
+		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
 
 			// Kit library is depended on import-export
