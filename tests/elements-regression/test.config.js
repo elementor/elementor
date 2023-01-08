@@ -74,6 +74,11 @@ module.exports = {
 					width: [ '%', '30' ],
 				},
 			},
+			frontend_exclude: {
+				style: [
+					'trees_tribal',
+				],
+			},
 		},
 		button: {
 			exclude: [
