@@ -297,16 +297,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add tabs widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		const editor = await wpAdmin.useElementorPost( 'nested-title-alignment' );
 
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
 		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
 		const lastTab = editor.getPreviewFrame().locator( '.e-normal:last-child' );
 
