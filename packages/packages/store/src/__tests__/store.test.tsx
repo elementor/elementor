@@ -7,10 +7,11 @@ import {
 	registerSlice,
 	registerMiddleware,
 	createStore,
+	dispatch,
 	reset,
 	Dispatch,
-	AnyAction,
 	MiddlewareAPI,
+	AnyAction,
 } from '../index';
 
 interface SliceStateRoot {
@@ -68,9 +69,9 @@ describe( '@elementor/store', () => {
 		const { slice, wrapper } = createStoreEntities();
 
 		const { result } = renderHook( () => {
-			const dispatch = useDispatch();
+			const dispatchAction = useDispatch();
 
-			dispatch( slice.actions.setValue( 3 ) );
+			dispatchAction( slice.actions.setValue( 3 ) );
 
 			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
 		}, { wrapper } );
@@ -87,9 +88,9 @@ describe( '@elementor/store', () => {
 		const { slice, wrapper } = createStoreEntities();
 
 		const { result } = renderHook( () => {
-			const dispatch = useDispatch();
+			const dispatchAction = useDispatch();
 
-			dispatch( slice.actions.setValue( 4 ) );
+			dispatchAction( slice.actions.setValue( 4 ) );
 
 			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
 		}, { wrapper } );
@@ -105,13 +106,39 @@ describe( '@elementor/store', () => {
 		const { slice, wrapper } = createStoreEntities();
 
 		const { result } = renderHook( () => {
-			const dispatch = useDispatch();
+			const dispatchAction = useDispatch();
 
-			dispatch( slice.actions.setValue( 4 ) );
+			dispatchAction( slice.actions.setValue( 4 ) );
 
 			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
 		}, { wrapper } );
 
 		expect( result.current ).toBe( 4 );
+	} );
+
+	it( 'should dispatch an action without using the useDispatch hook', () => {
+		registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+			next( action );
+		} );
+
+		const { wrapper } = createStoreEntities();
+
+		const { result } = renderHook( () => {
+			dispatch( { type: 'slice/setValue', payload: 6 } );
+
+			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
+		}, { wrapper } );
+
+		expect( result.current ).toBe( 6 );
+	} );
+
+	it( 'should collect actions that are dispatched before the store exist, and should run them when the store instance is created', () => {
+		dispatch( { type: 'slice/setValue', payload: 7 } );
+
+		const { wrapper } = createStoreEntities();
+
+		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), { wrapper } );
+
+		expect( result.current ).toBe( 7 );
 	} );
 } );

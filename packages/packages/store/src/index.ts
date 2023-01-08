@@ -6,11 +6,21 @@ import {
 	ThunkMiddleware,
 	Store,
 	Slice,
+	AnyAction,
+} from '@reduxjs/toolkit';
+
+export type {
+	Slice,
+	CreateSliceOptions,
+	PayloadAction,
+	Store,
+	Dispatch,
+	AnyAction,
+	Action,
+	MiddlewareAPI,
 } from '@reduxjs/toolkit';
 
 export { createSlice } from '@reduxjs/toolkit';
-
-export type { Slice, CreateSliceOptions, PayloadAction, Store, Dispatch, AnyAction, MiddlewareAPI } from '@reduxjs/toolkit';
 
 export { useSelector, useDispatch, Provider as StoreProvider } from 'react-redux';
 
@@ -23,6 +33,8 @@ let instance: Store | null = null;
 const middlewares = new Set<ThunkMiddleware>();
 
 let slices: SlicesMap = {};
+
+let pendingActions: AnyAction[] = [];
 
 const getReducers = () => {
 	const reducers = Object.entries( slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
@@ -57,6 +69,11 @@ export const createStore = () => {
 			reducer: getReducers(),
 			middleware: Array.from( middlewares ),
 		} );
+
+		if ( pendingActions.length ) {
+			pendingActions.forEach( ( action ) => instance?.dispatch( action ) );
+			pendingActions = [];
+		}
 	}
 
 	return instance;
@@ -65,5 +82,16 @@ export const createStore = () => {
 export const reset = () => {
 	instance = null;
 	slices = {};
+	pendingActions = [];
 	middlewares.clear();
+};
+
+export const dispatch = ( action: AnyAction ) => {
+	if ( ! instance ) {
+		pendingActions.push( action );
+
+		return;
+	}
+
+	return instance.dispatch( action );
 };
