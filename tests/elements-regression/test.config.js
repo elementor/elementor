@@ -85,6 +85,11 @@ module.exports = {
 				'button_css_id', // Nothing changed
 				'button_type', // Bug in the editor nothing changed.
 			],
+			frontend_exclude: {
+				size: [
+					'xs',
+				],
+			},
 		},
 		image: {
 			dependencies: {
