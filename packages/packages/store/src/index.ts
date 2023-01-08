@@ -10,7 +10,7 @@ import {
 
 export { createSlice } from '@reduxjs/toolkit';
 
-export type { Slice, CreateSliceOptions, PayloadAction, Store, Dispatch, AnyAction } from '@reduxjs/toolkit';
+export type { Slice, CreateSliceOptions, PayloadAction, Store, Dispatch, AnyAction, MiddlewareAPI } from '@reduxjs/toolkit';
 
 export { useSelector, useDispatch, Provider as StoreProvider } from 'react-redux';
 
@@ -20,9 +20,9 @@ interface SlicesMap {
 
 let instance: Store | null = null;
 
-const middlewares: ThunkMiddleware[] = [];
+const middlewares = new Set<ThunkMiddleware>();
 
-const slices: SlicesMap = {};
+let slices: SlicesMap = {};
 
 const getReducers = () => {
 	const reducers = Object.entries( slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
@@ -48,14 +48,22 @@ export const registerSlice = ( ( sliceConfig ) => {
 } ) as typeof createSlice;
 
 export const registerMiddleware = ( middleware: ThunkMiddleware ) => {
-	middlewares.push( middleware );
+	middlewares.add( middleware );
 };
 
 export const createStore = () => {
-	instance = configureStore( {
-		reducer: getReducers(),
-		middleware: middlewares,
-	} );
+	if ( ! instance ) {
+		instance = configureStore( {
+			reducer: getReducers(),
+			middleware: Array.from( middlewares ),
+		} );
+	}
 
 	return instance;
+};
+
+export const reset = () => {
+	instance = null;
+	slices = {};
+	middlewares.clear();
 };

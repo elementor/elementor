@@ -7,8 +7,10 @@ import {
 	registerSlice,
 	registerMiddleware,
 	createStore,
+	reset,
 	Dispatch,
 	AnyAction,
+	MiddlewareAPI,
 } from '../index';
 
 interface SliceStateRoot {
@@ -50,7 +52,11 @@ const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
 };
 
 describe( '@elementor/store', () => {
-	it( 'should verify the initial state of the slice', async () => {
+	afterEach( () => {
+		reset();
+	} );
+
+	it( 'should verify the initial state of the slice', () => {
 		const { wrapper } = createStoreEntities();
 
 		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), { wrapper } );
@@ -58,7 +64,7 @@ describe( '@elementor/store', () => {
 		expect( result.current ).toBe( 1 );
 	} );
 
-	it( 'should update the state value of the slice', async () => {
+	it( 'should update the state value of the slice', () => {
 		const { slice, wrapper } = createStoreEntities();
 
 		const { result } = renderHook( () => {
@@ -72,10 +78,10 @@ describe( '@elementor/store', () => {
 		expect( result.current ).toBe( 3 );
 	} );
 
-	it( 'should register a middleware that blocks the state update by not running next(action)', async () => {
-		registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+	it( 'should register a middleware that blocks the state update by not running next(action)', () => {
+		registerMiddleware( ( store: MiddlewareAPI ) => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
 			// eslint-disable-next-line no-console
-			console.log( 'blocking: ', next, action );
+			console.log( 'Blocking the update of: ', store, next, action );
 		} );
 
 		const { slice, wrapper } = createStoreEntities();
@@ -89,5 +95,23 @@ describe( '@elementor/store', () => {
 		}, { wrapper } );
 
 		expect( result.current ).toBe( 1 );
+	} );
+
+	it( 'should register a middleware that does not intefer with the state update', () => {
+		registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+			next( action );
+		} );
+
+		const { slice, wrapper } = createStoreEntities();
+
+		const { result } = renderHook( () => {
+			const dispatch = useDispatch();
+
+			dispatch( slice.actions.setValue( 4 ) );
+
+			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
+		}, { wrapper } );
+
+		expect( result.current ).toBe( 4 );
 	} );
 } );
