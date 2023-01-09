@@ -1,5 +1,5 @@
 export function dispatchWhenV1Initiated() {
-	return getV1LoadingPromise().then( ( v ) => {
+	return getV1LoadingPromise().then( () => {
 		window.dispatchEvent( new CustomEvent( 'elementor/v1/initialized' ) );
 	} );
 }

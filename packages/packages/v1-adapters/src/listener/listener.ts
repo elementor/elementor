@@ -1,4 +1,5 @@
 import { v1Init } from './event-creators';
+import { dispatchWhenV1Initiated } from './utils';
 import {
 	CommandEventDescriptor,
 	ListenerCallback,
@@ -7,20 +8,19 @@ import {
 	CommandEvent,
 	ListenerEvent,
 } from './types';
-import { dispatchWhenV1Initiated } from './utils';
 
-let callbacks : Record<EventDescriptor['name'], ListenerCallback[]> = {};
-let listeners : Record<EventDescriptor['name'], EventListener> = {};
+let callbacksByEvent : Record<EventDescriptor['name'], ListenerCallback[]> = {};
+let listenersByEvent : Record<EventDescriptor['name'], EventListener> = {};
 
 export function listenTo(
-	EventDescriptors : EventDescriptor | EventDescriptor[],
+	eventDescriptors : EventDescriptor | EventDescriptor[],
 	callback : ListenerCallback
 ) {
-	if ( ! Array.isArray( EventDescriptors ) ) {
-		EventDescriptors = [ EventDescriptors ];
+	if ( ! Array.isArray( eventDescriptors ) ) {
+		eventDescriptors = [ eventDescriptors ];
 	}
 
-	EventDescriptors.map( ( event ) => {
+	eventDescriptors.map( ( event ) => {
 		const { type, name } = event;
 
 		switch ( type ) {
@@ -35,29 +35,25 @@ export function listenTo(
 	} );
 }
 
-export function startV1Listeners() {
-	Object.keys( callbacks ).forEach( ( event ) => {
-		const listener : ListenerCallback = ( e ) => {
-			callbacks[ event ].forEach( ( callback ) => {
-				callback( e );
-			} );
-		};
+export function startV1Limsteners() {
+	Object.keys( callbacksByEvent ).forEach( ( event ) => {
+		const listener = makeListener( event );
 
 		window.addEventListener( event, listener );
 
-		listeners[ event ] = listener;
+		listenersByEvent[ event ] = listener;
 	} );
 
 	return dispatchWhenV1Initiated();
 }
 
 export function flushListeners() {
-	Object.entries( listeners ).forEach( ( [ event, listener ] ) => {
+	Object.entries( listenersByEvent ).forEach( ( [ event, listener ] ) => {
 		window.removeEventListener( event, listener );
 	} );
 
-	listeners = {};
-	callbacks = {};
+	listenersByEvent = {};
+	callbacksByEvent = {};
 }
 
 function registerCommandListener(
@@ -78,7 +74,15 @@ function registerCommandListener(
 }
 
 function registerWindowEventListener( event: WindowEventDescriptor['name'], callback: ListenerCallback ) {
-	callbacks[ event ] = callbacks[ event ] || [];
+	callbacksByEvent[ event ] = callbacksByEvent[ event ] || [];
 
-	callbacks[ event ].push( callback );
+	callbacksByEvent[ event ].push( callback );
+}
+
+function makeListener( event: EventDescriptor['name'] ) : ListenerCallback {
+	return ( e ) => {
+		callbacksByEvent[ event ].forEach( ( callback ) => {
+			callback( e );
+		} );
+	};
 }

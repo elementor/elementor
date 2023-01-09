@@ -90,10 +90,9 @@ describe( '@elementor/v1-adapters/listener', () => {
 		expect( callback ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'should trigger v1 init when it is loaded after v2 listeners', async () => {
+	it( 'should trigger v1 init when v1 is loaded after v2', async () => {
 		// Arrange.
-		const command = 'editor/documents/open',
-			callback = jest.fn();
+		const callback = jest.fn();
 
 		( window as any ).__elementorEditorV1Loaded = new Promise( ( resolve ) => {
 			setTimeout( resolve, 1000 );
@@ -115,8 +114,7 @@ describe( '@elementor/v1-adapters/listener', () => {
 
 	it( 'should throw when v1 is not loaded', async () => {
 		// Arrange.
-		const command = 'editor/documents/open',
-			callback = jest.fn();
+		const callback = jest.fn();
 
 		delete ( window as any ).__elementorEditorV1Loaded;
 
