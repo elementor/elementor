@@ -24,6 +24,11 @@ export { createSlice } from '@reduxjs/toolkit';
 
 export { useSelector, useDispatch, Provider as StoreProvider } from 'react-redux';
 
+// Usage: SliceState<typeof slice>
+export type SliceState<S extends Slice> = {
+	[ key in S['name'] ]: ReturnType<S['getInitialState']>;
+}
+
 interface SlicesMap {
 	[key: Slice['name']]: Slice;
 }
