@@ -13,12 +13,14 @@ export default class extends ControlBaseDataView {
 	onBaseInputChange() {
 		super.onBaseInputChange( ...arguments );
 
-		if ( ! this.model.attributes?.validation ) {
-			return;
+		if ( this.model.attributes?.validation.date_time ) {
+			this.validateDatetime();
 		}
+	}
 
-		if ( this.model.attributes?.validation.minDate ) {
-			const { control_name: controlName, operator } = this.model.attributes.validation.minDate;
+	validateDatetime() {
+		if ( this.model.attributes?.validation.date_time ) {
+			const { control_name: controlName, operator } = this.model.attributes.validation.date_time;
 			const startDate = this.options.container.settings.get( controlName );
 
 			if ( ! startDate ) {
