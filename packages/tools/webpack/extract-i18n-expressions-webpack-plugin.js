@@ -50,15 +50,15 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 						return;
 					}
 
-					const mainEntrypointFile = this.findMainModuleOfEntryPoint( subModule, compilation );
+					const mainEntryFile = this.findMainModuleOfEntry( subModule, compilation );
 
-					if ( ! translationsCallExpression.has( mainEntrypointFile ) ) {
-						translationsCallExpression.set( mainEntrypointFile, new Set() );
+					if ( ! translationsCallExpression.has( mainEntryFile ) ) {
+						translationsCallExpression.set( mainEntryFile, new Set() );
 					}
 
 					this.translationsRegexps.forEach( ( regexp ) => {
-						[ ...source.matchAll( regexp ) ].forEach( ( [ firstMatch ] ) => {
-							translationsCallExpression.get( mainEntrypointFile ).add( firstMatch );
+						[ ...source.matchAll( regexp ) ].forEach( ( [ callExpression ] ) => {
+							translationsCallExpression.get( mainEntryFile ).add( callExpression );
 						} );
 					} );
 				} );
@@ -107,9 +107,9 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		return MODULE_FILTER.every( ( filter ) => filter.test( module.userRequest ) );
 	}
 
-	findMainModuleOfEntryPoint( module, compilation ) {
+	findMainModuleOfEntry( module, compilation ) {
 		if ( compilation.moduleGraph.getIssuer( module ) ) {
-			return this.findMainModuleOfEntryPoint( compilation.moduleGraph.getIssuer( module ), compilation );
+			return this.findMainModuleOfEntry( compilation.moduleGraph.getIssuer( module ), compilation );
 		}
 
 		return module.rawRequest;

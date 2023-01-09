@@ -26,10 +26,7 @@ class Editor_Loader {
 	 * @return void
 	 */
 	public function register_scripts() {
-		$script_configs = $this->normalize_asset_configs(
-			$this->config_provider->get_script_configs(),
-			'script'
-		);
+		$script_configs = $this->get_script_configs();
 
 		foreach ( $script_configs as $script_config ) {
 			wp_register_script(
@@ -54,11 +51,28 @@ class Editor_Loader {
 	/**
 	 * @return void
 	 */
+	public function load_scripts_translations() {
+		$script_configs = $this->get_script_configs();
+
+		add_filter( 'load_script_textdomain_relative_path', function ( $relative_path, $src ) use ( $script_configs ) {
+			return $this->transform_translation_relative_path( $relative_path, $src, $script_configs );
+		}, 10, 2 );
+
+		foreach ( $script_configs as $script_config ) {
+			if ( $script_config['translations']['active'] ) {
+				wp_set_script_translations(
+					$script_config['handle'],
+					$script_config['translations']['domain']
+				);
+			}
+		}
+	}
+
+	/**
+	 * @return void
+	 */
 	public function register_styles() {
-		$styles_config = $this->normalize_asset_configs(
-			$this->config_provider->get_style_configs(),
-			'style'
-		);
+		$styles_config = $this->get_style_configs();
 
 		foreach ( $styles_config as $style_config ) {
 			wp_register_style(
@@ -91,19 +105,46 @@ class Editor_Loader {
 	}
 
 	/**
+	 * @return Collection
+	 */
+	private function get_script_configs() {
+		return $this->normalize_asset_configs(
+			$this->config_provider->get_script_configs(),
+			'script'
+		);
+	}
+
+	/**
+	 * @return Collection
+	 */
+	private function get_style_configs() {
+		return $this->normalize_asset_configs(
+			$this->config_provider->get_style_configs(),
+			'style'
+		);
+	}
+
+	/**
 	 * Normalize script/style configs to enqueue and register methods.
 	 *
 	 * @param array $script_configs
 	 * @param string $type can be ['script', 'style']
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	private function normalize_asset_configs( array $script_configs, $type ) {
 		$additional_defaults = 'style' === $type ?
 			[ 'media' => 'all' ] :
-			[ 'in_footer' => true ];
+			[
+				'in_footer' => true,
+				'translations' => [
+					'active' => false,
+					'domain' => 'elementor',
+					'path_suffix' => '',
+				],
+			];
 
-		$default = array_merge( [
+		$default = array_replace_recursive( [
 			'handle' => '',
 			'src' => '',
 			'deps' => [],
@@ -123,7 +164,7 @@ class Editor_Loader {
 			} )
 			->map( function ( $config ) use ( $default, $replacements ) {
 				// Assign default values.
-				$config = wp_parse_args( $config, $default );
+				$config = array_replace_recursive( $default, $config );
 
 				// Replace placeholders with actual values.
 				foreach ( $replacements as $replacement_key => $replacement_value ) {
@@ -135,7 +176,39 @@ class Editor_Loader {
 				}
 
 				return $config;
-			} )
-			->all();
+			} );
+	}
+
+	/**
+	 * The name of the translation file could be suffix with `strings` to support loading translations
+	 * for lazy loaded scripts.
+	 *
+	 * Want to go deeper:
+	 * @link https://developer.wordpress.com/2022/01/06/wordpress-plugin-i18n-webpack-and-composer/
+	 *
+	 * @param string $relative_path
+	 * @param string $src
+	 * @param Collection $script_configs collection of all the script configs
+	 *
+	 * @return string
+	 */
+	private function transform_translation_relative_path( $relative_path, $src, $script_configs ) {
+		$script_config = $script_configs->find( function ( $script_config ) use ( $src ) {
+			return $script_config['src'] === $src;
+		} );
+
+		$should_suffix_path = $script_config &&
+			$script_config['translations']['active'] &&
+			$script_config['translations']['path_suffix'];
+
+		if ( ! $should_suffix_path  ) {
+			return $relative_path;
+		}
+
+		// Translations are always based on the unminified filename.
+		$substr_offset = substr( $relative_path, -7 ) === '.min.js' ? -7 : -3;
+		$relative_path_without_ext = substr( $relative_path, 0, $substr_offset );
+
+		return "{$relative_path_without_ext}.{$script_config['translations']['path_suffix']}.js";
 	}
 }

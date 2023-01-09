@@ -110,6 +110,9 @@ class Editor_Common_Assets {
 					'react',
 					'react-dom',
 				],
+				'translations' => [
+					'active' => true,
+				],
 			],
 		];
 	}
