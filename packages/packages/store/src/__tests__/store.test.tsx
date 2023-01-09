@@ -137,4 +137,11 @@ describe( '@elementor/store', () => {
 
 		expect( result.current ).toBe( 7 );
 	} );
+
+	it( 'should create a single instance of the store that when exists the createStore function should return it', () => {
+		const firstStore = createStore();
+		const secondStore = createStore();
+
+		expect( firstStore ).toEqual( secondStore );
+	} );
 } );
