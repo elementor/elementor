@@ -3,6 +3,7 @@ import Document from './document';
 import StretchElement from './tools/stretch-element';
 import BaseHandler from './handlers/base';
 import SwiperBase from './handlers/base-swiper';
+import BaseNestedTabs from 'elementor-frontend/handlers/base-nested-tabs';
 
 elementorModules.frontend = {
 	Document,
@@ -12,5 +13,6 @@ elementorModules.frontend = {
 	handlers: {
 		Base: BaseHandler,
 		SwiperBase,
+		BaseNestedTabs,
 	},
 };

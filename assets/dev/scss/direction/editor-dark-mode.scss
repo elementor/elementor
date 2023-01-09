@@ -11,6 +11,7 @@ $theme-dark-gray-lighter: #7D7E82;
 $theme-dark-gray-lightest: #B4B5B7;
 
 $theme-dark-light: #E0E1E3;
+$theme-dark-lighter: #f1f3f5;
 $theme-dark-dark: #26292C;
 $theme-dark-accent: #71D7F7;
 $theme-dark-success: $editor-success;
@@ -467,6 +468,7 @@ select {
 	}
 }
 
+//Controls Utility
 .elementor-control-responsive-switchers {
 
 	&__holder {
@@ -498,6 +500,45 @@ a.elementor-responsive-switcher {
 		}
 	}
 }
+
+.e-units-wrapper {
+
+	.e-units-switcher {
+		color: $theme-dark-lighter;
+
+		&:hover {
+			color: $theme-dark-accent;
+			background-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+
+		&:checked + label {
+			color: $theme-dark-accent;
+		}
+
+		&.e-units-placeholder + label {
+			color: $theme-dark-light;
+		}
+	}
+
+	&.e-units-choices-open {
+		background-color: $theme-dark-gray-dark;
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+
+		.elementor-units-choices-label {
+
+			&:hover {
+				color: $theme-dark-accent;
+			}
+		}
+	}
+}
+
 
 .elementor-control-type-popover_toggle {
 
