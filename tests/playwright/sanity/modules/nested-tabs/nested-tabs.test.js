@@ -215,7 +215,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorPost( 'nested-icons-dont-disappear' );
-		const countActiveTabSpans = ( editor ) => editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
+		const countActiveTabSpans = ( editorPage ) => editorPage.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Act.
 		const activeTabSpanCount = await countActiveTabSpans( editor );
@@ -297,7 +297,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorPost( 'nested-title-alignment' );
+		const editor = await wpAdmin.useElementorPost( 'nested-verify-tab-width' );
 
 		// Act.
 		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
@@ -327,12 +327,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+		const editor = await wpAdmin.useElementorPost( 'nested-hover-doesnt-affect-active-tab-color' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 
 		// Act.
 		// Set tab hover color.
@@ -365,17 +361,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		const editor = await wpAdmin.useElementorPost( 'nested-icons-visible-on-mobile-frontend' );
 
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
-
+		// Required for the tab to appear in a mobile viewport
+		await editor.useCanvasTemplate();
 		// Open front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
