@@ -1,25 +1,34 @@
 import { responsive } from './utils';
 
-const map = ( { isInner } ) => {
+const map = ( { isInner, settings = {} } ) => {
 	const widthKey = isInner ? 'width' : 'boxed_width';
 
 	return {
-		...responsive( 'content_width', widthKey ),
-		...responsive( 'custom_height', 'min_height' ),
-		height: ( { value, settings } ) => {
+		...( 'boxed' === settings.layout ? responsive( 'content_width', widthKey ) : { content_width: null } ),
+		...( 'min-height' === settings.height && responsive( 'custom_height', 'min_height' ) ),
+		layout: ( { value } ) => {
+			const optionsMap = {
+				boxed: 'boxed',
+				full_width: 'full',
+			};
+			return [ 'content_width', optionsMap[ value ] || value ];
+		},
+		height: ( { value, settings: sectionSettings } ) => {
 			switch ( value ) {
 				case 'full':
 					value = { size: 100, unit: 'vh' };
 					break;
 
 				case 'min-height':
-					value = settings.custom_height || { size: 400, unit: 'px' }; // Default section's height.
+					value = sectionSettings.custom_height || { size: 400, unit: 'px' }; // Default section's height.
 					break;
+				default:
+					return false;
 			}
 
 			return [ 'min_height', value ];
 		},
-		gap: ( { value, settings } ) => {
+		gap: ( { value, settings: sectionSettings } ) => {
 			const sizesMap = {
 				no: 0,
 				narrow: 5,
@@ -28,7 +37,7 @@ const map = ( { isInner } ) => {
 				wider: 30,
 			};
 
-			value = ( 'custom' === value ) ? settings.gap_columns_custom : { size: sizesMap[ value ], unit: 'px' };
+			value = ( 'custom' === value ) ? sectionSettings.gap_columns_custom : { size: sizesMap[ value ], unit: 'px' };
 
 			return [ 'flex_gap', value ];
 		},
