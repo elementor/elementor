@@ -69,19 +69,19 @@ export const registerMiddleware = ( middleware: ThunkMiddleware ) => {
 };
 
 export const createStore = () => {
-	if ( instance ) {
-		return;
+	if ( ! instance ) {
+		instance = configureStore( {
+			reducer: getReducers(),
+			middleware: Array.from( middlewares ),
+		} );
+
+		if ( pendingActions.length ) {
+			pendingActions.forEach( ( action ) => instance?.dispatch( action ) );
+			pendingActions = [];
+		}
 	}
 
-	instance = configureStore( {
-		reducer: getReducers(),
-		middleware: Array.from( middlewares ),
-	} );
-
-	if ( pendingActions.length ) {
-		pendingActions.forEach( ( action ) => instance?.dispatch( action ) );
-		pendingActions = [];
-	}
+	return instance;
 };
 
 export const getStore = () => instance;
