@@ -7,10 +7,12 @@ import {
 	registerSlice,
 	registerMiddleware,
 	createStore,
+	getStore,
 	dispatch,
 	resetStore,
 	Dispatch,
 	AnyAction,
+	Store,
 } from '../index';
 
 interface SliceStateRoot {
@@ -36,7 +38,9 @@ const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
 		},
 	} );
 
-	const store = createStore();
+	createStore();
+
+	const store = getStore() as Store;
 
 	const wrapper: React.FC = ( { children } ) => (
 		<StoreProvider store={ store }>
@@ -139,8 +143,13 @@ describe( '@elementor/store', () => {
 	} );
 
 	it( 'should create a single instance of the store that when exists the createStore function should return it', () => {
-		const firstStore = createStore();
-		const secondStore = createStore();
+		createStore();
+
+		const firstStore = getStore();
+
+		createStore();
+
+		const secondStore = getStore();
 
 		expect( firstStore ).toEqual( secondStore );
 	} );
