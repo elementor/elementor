@@ -152,6 +152,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			autoplay_speed: 'delay',
 			speed: 'speed',
 			image_spacing_custom: 'spaceBetween',
+			arrows_position: 'arrows_position', // Not a Swiper setting.
 		};
 	}
 
