@@ -14,12 +14,11 @@ export default class extends ControlBaseDataView {
 		super.onBaseInputChange( ...arguments );
 
 		if ( this.model.attributes?.validation.date_time ) {
-			this.validateDatetime();
+			this.validateDateTime();
 		}
 	}
 
-	validateDatetime() {
-		if ( this.model.attributes?.validation.date_time ) {
+	validateDateTime() {
 			const { control_name: controlName, operator } = this.model.attributes.validation.date_time;
 			const startDate = this.options.container.settings.get( controlName );
 
@@ -34,7 +33,6 @@ export default class extends ControlBaseDataView {
 			if ( elementor.conditions.compare( startDateTimestamp, endDateTimestamp, operator ) ) {
 				this.ui.input.val( '' );
 			}
-		}
 	}
 
 	onBeforeDestroy() {
