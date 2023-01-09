@@ -8,6 +8,8 @@ import HandlesPosition from './handlers/section/handles-position';
 import StretchedSection from './handlers/section/stretched-section';
 import Shapes from './handlers/section/shapes';
 
+/* global elementorFrontendConfig */
+
 module.exports = function( $ ) {
 	const handlersInstances = {};
 
@@ -23,6 +25,10 @@ module.exports = function( $ ) {
 		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
+
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
+		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
+	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
