@@ -84,7 +84,7 @@ export const createStore = () => {
 	return instance;
 };
 
-export const reset = () => {
+export const resetStore = () => {
 	instance = null;
 	slices = {};
 	pendingActions = [];

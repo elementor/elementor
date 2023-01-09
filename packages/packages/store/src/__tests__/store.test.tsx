@@ -8,9 +8,8 @@ import {
 	registerMiddleware,
 	createStore,
 	dispatch,
-	reset,
+	resetStore,
 	Dispatch,
-	MiddlewareAPI,
 	AnyAction,
 } from '../index';
 
@@ -54,7 +53,7 @@ const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
 
 describe( '@elementor/store', () => {
 	afterEach( () => {
-		reset();
+		resetStore();
 	} );
 
 	it( 'should verify the initial state of the slice', () => {
@@ -80,10 +79,7 @@ describe( '@elementor/store', () => {
 	} );
 
 	it( 'should register a middleware that blocks the state update by not running next(action)', () => {
-		registerMiddleware( ( store: MiddlewareAPI ) => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
-			// eslint-disable-next-line no-console
-			console.log( 'Blocking the update of: ', store, next, action );
-		} );
+		registerMiddleware( () => () => () => {} );
 
 		const { slice, wrapper } = createStoreEntities();
 
