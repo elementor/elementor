@@ -382,17 +382,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		const editor = await wpAdmin.useElementorPost( 'nested-svg-icons-visible-on-mobile-frontend' );
 
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
-
+		// Required for the tab to appear in a mobile viewport
+		await editor.useCanvasTemplate();
 		// Open front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
