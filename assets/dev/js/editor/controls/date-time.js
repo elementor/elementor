@@ -19,20 +19,20 @@ export default class extends ControlBaseDataView {
 	}
 
 	validateDateTime() {
-			const { control_name: controlName, operator } = this.model.attributes.validation.date_time;
-			const startDate = this.options.container.settings.get( controlName );
-
-			if ( ! startDate ) {
-				return;
-			}
-
-			const endDate = this.ui.input.val();
-			const startDateTimestamp = new Date( startDate ).getTime();
-			const endDateTimestamp = new Date( endDate ).getTime();
-
-			if ( elementor.conditions.compare( startDateTimestamp, endDateTimestamp, operator ) ) {
-				this.ui.input.val( '' );
-			}
+		const { control_name: controlName, operator } = this.model.attributes.validation.date_time;
+		const startDate = this.options.container.settings.get( controlName );
+		
+		if ( ! startDate ) {
+			return;
+		}
+		
+		const endDate = this.ui.input.val();
+		const startDateTimestamp = new Date( startDate ).getTime();
+		const endDateTimestamp = new Date( endDate ).getTime();
+		
+		if ( elementor.conditions.compare( startDateTimestamp, endDateTimestamp, operator ) ) {
+			this.ui.input.val( '' );
+		}
 	}
 
 	onBeforeDestroy() {
