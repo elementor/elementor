@@ -201,7 +201,7 @@ class Editor_Loader {
 			$script_config['translations']['active'] &&
 			$script_config['translations']['path_suffix'];
 
-		if ( ! $should_suffix_path  ) {
+		if ( ! $should_suffix_path ) {
 			return $relative_path;
 		}
 
