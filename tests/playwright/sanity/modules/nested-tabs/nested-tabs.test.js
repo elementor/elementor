@@ -399,18 +399,14 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin, { e_font_icon_svg: 'inactive' } );
 	} );
 
-	test( 'Check if the hover style changes the normal tab styling', async ( { page }, testInfo ) => {
+	test( 'Check that the hover style changes the normal tab styling', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+		const editor = await wpAdmin.useElementorPost( 'nested-hover-style-changes-the-normal-tab-styling' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 
 		await editor.activatePanelTab( 'style' );
 		// Set tab hover style.
@@ -448,8 +444,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.useElementorPost( 'nested-state-styling' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.e-normal:not( .e-active ):last-child' ).click();
 
 		// Hex colors.
 		const colorGreen = '#95E46E',
@@ -464,12 +461,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			colorBrownRgb = 'rgb(150, 112, 8)',
 			colorRedRgb = 'rgb(150, 23, 8)',
 			colorPinkRgb = 'rgb(225, 8, 110)';
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
-		// Add icons.
-		await setIconsToTabs( page, tabIcons );
 
 		// Normal tab styling: text color green, border color: green and icon color: yellow.
 		await editor.activatePanelTab( 'style' );
@@ -542,19 +533,13 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			tabsWidgetId = await editor.addWidget( 'nested-tabs', container ),
-			activeContentContainer = editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` ),
+		const editor = await wpAdmin.useElementorPost( 'nested-tab-sizes-dont-shrink-when-adding-widget-in-the-content-section' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
+		const activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ),
 			activeContentContainerId = await activeContentContainer.getAttribute( 'data-id' );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
 		// Set Direction: Left.
-		await editor.selectElement( tabsWidgetId );
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		// Get the initial first tab width.
@@ -582,12 +567,15 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.useElementorPost( 'nested-hover-animation' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
+
+		// const editor = await wpAdmin.useElementorCleanPost(),
+		// 	container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		// await editor.addWidget( 'nested-tabs', container );
+		// await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Act.
 		// Set the hover animation.
@@ -603,6 +591,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Test on the front end.
 		// Open the front end.
+		await editor.useCanvasTemplate();
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 		// Test on desktop.
