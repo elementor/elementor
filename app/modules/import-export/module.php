@@ -31,6 +31,8 @@ class Module extends BaseModule {
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
 
+	const IMPORT_RUNNER_TRIGGER_KEY = 'elementor_import_kit__runner';
+
 	const REFERRER_KIT_LIBRARY = 'kit-library';
 
 	const REFERRER_LOCAL = 'local';
@@ -255,16 +257,20 @@ class Module extends BaseModule {
 	 * Import a kit by session_id.
 	 * Upload and import a kit by kit zip file.
 	 *
+	 * If the split_to_chunks flag is true, the process won't start
+	 * It will initialize the import process and return the session_id and the runners.
+	 *
 	 * Assigning the Import process to the 'import' property,
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
 	 * @param array $settings Settings the import use to determine which content to import.
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function import_kit( $path, $settings ) {
+	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
 
 		$this->import = new Import( $path, $settings );
@@ -272,7 +278,41 @@ class Module extends BaseModule {
 
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
+		if ( $split_to_chunks ) {
+			$this->import->init_import_session();
+
+			return [
+				'session' => $this->import->get_session_id(),
+				'runners' => $this->import->get_runners_name(),
+			];
+		}
+
 		return $this->import->run();
+	}
+
+	/**
+	 * Resuming import process by re-creating the import instance and running the specific runner.
+	 *
+	 * @param string $session_id The id off the import session.
+	 * @param string $runner_name The specific runner that we want to run.
+	 *
+	 * @return array Two types of response.
+	 *      1. The status and the runner name.
+	 *      2. The imported data. (Only if the runner is the last one in the import process)
+	 * @throws \Exception
+	 */
+	public function import_kit_by_runner( string $session_id, string $runner_name ): array {
+		// Check session_id
+		$this->import = Import::from_session( $session_id );
+		$runners = $this->import->get_runners_name();
+
+		$run = $this->import->run_runner( $runner_name );
+
+		if ( end( $runners ) === $run['runner'] ) {
+			return $this->import->get_imported_data();
+		}
+
+		return $run;
 	}
 
 	/**
@@ -286,7 +326,7 @@ class Module extends BaseModule {
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function export_kit( $settings ) {
+	public function export_kit( array $settings ) {
 		$this->ensure_writing_permissions();
 
 		$this->export = new Export( $settings );
@@ -329,8 +369,7 @@ class Module extends BaseModule {
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
-				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
 				current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();
@@ -393,7 +432,9 @@ class Module extends BaseModule {
 	 */
 	private function maybe_handle_ajax() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( $_POST['action'] ) {
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' );
+
+		switch ( $action ) {
 			case static::EXPORT_TRIGGER_KEY:
 				$this->handle_export_kit();
 				break;
@@ -406,6 +447,10 @@ class Module extends BaseModule {
 				$this->handle_import_kit();
 				break;
 
+			case static::IMPORT_RUNNER_TRIGGER_KEY:
+				$this->handle_import_kit__runner();
+				break;
+
 			default:
 				break;
 		}
@@ -415,19 +460,22 @@ class Module extends BaseModule {
 	 * Handle upload kit ajax request.
 	 */
 	private function handle_upload_kit() {
-		// PHPCS - Already validated in caller function.
-		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// PHPCS - A URL that should contain special chars (auth headers information).
+		$file_url = isset( $_POST['e_import_file'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			? wp_unslash( $_POST['e_import_file'] )
+			: '';
+
+		// Import from kit library
+		if ( ! empty( $file_url ) ) {
 			if (
-				! isset( $_POST['e_kit_library_nonce'] ) ||
-				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
+				! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
 			) {
-				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
+				throw new \Error( 'Invalid kit library nonce.' );
 			}
 
-			$file_url = $_POST['e_import_file'];
-
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
+				throw new \Error( 'Invalid URL.' );
 			}
 
 			$remote_zip_request = wp_remote_get( $file_url );
@@ -444,7 +492,7 @@ class Module extends BaseModule {
 			$referrer = static::REFERRER_KIT_LIBRARY;
 		} else {
 			// PHPCS - Already validated in caller function.
-			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$file_name = ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
 			$referrer = static::REFERRER_LOCAL;
 		}
 
@@ -482,10 +530,27 @@ class Module extends BaseModule {
 	 */
 	private function handle_import_kit() {
 		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$tmp_folder_id = $settings['session'];
 
-		$import = $this->import_kit( $tmp_folder_id, $settings );
+		$import = $this->import_kit( $tmp_folder_id, $settings, true );
+
+		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
+		$import['configData'] = $this->get_config_data();
+
+		wp_send_json_success( $import );
+	}
+
+	/**
+	 * Handle ajax request for running specific runner in the import kit process.
+	 */
+	private function handle_import_kit__runner() {
+		// PHPCS - Already validated in caller function
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$session_id = $settings['session'];
+		$runner = $settings['runner'];
+
+		$import = $this->import_kit_by_runner( $session_id, $runner );
 
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
@@ -498,14 +563,14 @@ class Module extends BaseModule {
 	 */
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$export = $this->export_kit( $settings );
 
 		$file_name = $export['file_name'];
 		$file = ElementorUtils::file_get_contents( $file_name );
 
 		if ( ! $file ) {
-			throw new \Error( esc_html__( 'Could not read the exported file', 'elementor' ) );
+			throw new \Error( 'Could not read the exported file.' );
 		}
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );

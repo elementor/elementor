@@ -1,17 +1,46 @@
-export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base {
+import Base from './base';
+
+export default class BaseNestedTabs extends Base {
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @return {string}
+	 */
+	getTabTitleFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {string|number} tabIndex
+	 *
+	 * @return {string}
+	 */
+	getTabContentFilterSelector( tabIndex ) {
+		return `[data-tab="${ tabIndex }"]`;
+	}
+
+	/**
+	 * @param {HTMLElement} tabTitleElement
+	 *
+	 * @return {string}
+	 */
+	getTabIndex( tabTitleElement ) {
+		return tabTitleElement.getAttribute( 'data-tab' );
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
 				tablist: '[role="tablist"]',
-				tabTitle: '.elementor-tab-title',
-				tabContent: '.elementor-tab-content',
+				tabTitle: '.e-n-tab-title',
+				tabContent: '.e-con',
 			},
 			classes: {
-				active: 'elementor-active',
+				active: 'e-active',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
-			toggleSelf: true,
+			toggleSelf: false,
 			hidePrevious: true,
 			autoExpand: true,
 			keyDirection: {
@@ -106,9 +135,10 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
-			$activeContent = this.elements.$tabContents.filter( activeFilter );
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
 		$activeTitle.add( $activeContent ).removeClass( activeClass );
 		$activeTitle.attr( {
@@ -124,8 +154,8 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
-			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' ),
+			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
 			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
@@ -137,9 +167,11 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
-			() => elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' ),
+			() => {
+				elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' );
+				elementorFrontend.elements.$window.trigger( 'elementor/nested-tabs/activate', $requestedContent );
+			},
 		);
-
 		$requestedContent.removeAttr( 'hidden' );
 	}
 
@@ -161,7 +193,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 				}
 			},
 			keyup: ( event ) => {
-				switch ( event.key ) {
+				switch ( event.code ) {
 					case 'ArrowLeft':
 					case 'ArrowRight':
 						this.handleKeyboardNavigation( event );
@@ -178,6 +210,28 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
 			},
 		} );
+
+		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+	}
+
+	/**
+	 * Fixes issues where Swipers that have been initialized while a tab is not visible are not properly rendered
+	 * and when switching to the tab the swiper will not respect any of the chosen `autoplay` related settings.
+	 *
+	 * This is triggered when switching to a nested tab, looks for Swipers in the tab content and reinitializes them.
+	 *
+	 * @param {Object} event   - Incoming event.
+	 * @param {Object} content - Active nested tab dom element.
+	 */
+	reInitSwipers( event, content ) {
+		const swiperElements = content.querySelectorAll( '.swiper-container' );
+		for ( const element of swiperElements ) {
+			if ( ! element.swiper ) {
+				return;
+			}
+			element.swiper.initialized = false;
+			element.swiper.init();
+		}
 	}
 
 	onInit( ...args ) {
@@ -188,7 +242,7 @@ export default class BaseTabsV2 extends elementorModules.frontend.handlers.Base 
 
 	onEditSettingsChange( propertyName, value ) {
 		if ( 'activeItemIndex' === propertyName ) {
-			this.changeActiveTab( value );
+			this.changeActiveTab( value, false );
 		}
 	}
 
