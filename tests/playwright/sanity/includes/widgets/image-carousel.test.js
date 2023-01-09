@@ -21,7 +21,7 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Populate the widget with images.
 	await editor.populateImageCarousel();
 
-	expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+	expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper.swiper-initialized' ).screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
 
 	/**
 	 * Test Arrows Position control change - Carousel width should auto-adjust accordingly.

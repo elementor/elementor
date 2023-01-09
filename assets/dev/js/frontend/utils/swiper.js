@@ -27,7 +27,7 @@ export default class Swiper {
 
 		SwiperSource.prototype.adjustConfig = this.adjustConfig;
 
-		return new SwiperSource( container, config );
+		return new SwiperSource( container[0], config );
 	}
 
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)

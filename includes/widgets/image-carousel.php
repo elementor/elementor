@@ -908,7 +908,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'class' => 'elementor-image-carousel swiper-wrapper',
 			],
 			'carousel-wrapper' => [
-				'class' => 'elementor-image-carousel-wrapper swiper-container',
+				'class' => 'elementor-image-carousel-wrapper swiper',
 				'dir' => $settings['direction'],
 			],
 		] );
