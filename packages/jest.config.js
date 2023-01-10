@@ -1,6 +1,7 @@
 module.exports = {
 	verbose: true,
 	rootDir: __dirname,
+	testEnvironment: 'jsdom',
 	transform: {
 		'\\.(j|t)sx?$': [ 'babel-jest', {
 			presets: [
@@ -16,7 +17,6 @@ module.exports = {
 			],
 		} ],
 	},
-	testEnvironment: 'jsdom',
 	moduleNameMapper: {
 		'^@elementor/(?!ui)(.*)$': '<rootDir>/packages/$1/src',
 	},

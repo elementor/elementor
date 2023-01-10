@@ -2,7 +2,6 @@ import { render } from '@testing-library/react';
 import { lazy } from 'react';
 import { addFill, resetFills } from '../locations';
 import Slot from '../components/slot';
-import { expect } from '@playwright/test';
 
 describe( '@elementor/locations locations', () => {
 	beforeEach( () => {

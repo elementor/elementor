@@ -770,7 +770,57 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Test swiper based carousel works as expected when switching to a new tab', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Act.
+		// Add nested-tabs widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		// Add image-carousel widget to tab #2.
+		const activeContainerId = await editTab( editor, 1 );
+		await editor.addWidget( 'image-carousel', activeContainerId );
+		// Add images to the image-carousel widget.
+		await page.locator( '.elementor-control-carousel .elementor-control-gallery-add' ).click();
+		await page.locator( '.media-modal .media-router #menu-item-browse' ).click();
+		for ( let i = 0; i <= 4; i++ ) {
+			await page.locator( `.media-modal .attachments .attachment>>nth=${ i }` ).click();
+		}
+		await page.locator( '.media-toolbar-primary .media-button-gallery' ).click();
+		await page.locator( '.media-toolbar-primary .media-button-insert' ).click();
+		// Modify widget settings.
+		await page.locator( '.elementor-control-slides_to_show select' ).selectOption( '2' );
+		await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
+		await page.locator( '.elementor-control-infinite select' ).selectOption( 'no' );
+		await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
+
+		await editor.publishAndViewPage();
+
+		// Wait for Nested Tabs widget to be initialized and click to activate second tab.
+		await page.waitForSelector( `.e-n-tabs-content .e-con.e-active` );
+		await page.locator( `.e-n-tabs-heading .e-n-tab-title>>nth=1` ).click();
+
+		// Assert.
+		// Check the swiper in the second nested tab has initialized.
+		await expect( await page.locator( `.e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
+
+		await cleanup( wpAdmin );
+	} );
 } );
+
+async function editTab( editor, tabIndex ) {
+	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
+	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
+	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
+	await tabTitle.click();
+	await editor.page.waitForTimeout( 100 );
+	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
+}
 
 const viewportSize = {
     desktop: { width: 1920, height: 1080 },
