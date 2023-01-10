@@ -1,14 +1,10 @@
 import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import {
+	createStoreService,
 	StoreProvider,
 	useSelector,
 	useDispatch,
-	registerSlice,
-	registerMiddleware,
-	createStore,
-	dispatch,
-	resetStore,
 	Dispatch,
 	AnyAction,
 } from '../index';
@@ -23,8 +19,8 @@ interface Config {
 	initialValue?: SliceStateRoot['slice']['value'];
 }
 
-const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
-	const slice = registerSlice( {
+const createStoreEntities = ( storeService: ReturnType<typeof createStoreService>, { initialValue = 1 }: Config = {} ) => {
+	const slice = storeService.registerSlice( {
 		name: 'slice',
 		initialState: {
 			value: initialValue,
@@ -36,7 +32,7 @@ const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
 		},
 	} );
 
-	const store = createStore();
+	const store = storeService.createStore();
 
 	const wrapper: React.FC = ( { children } ) => (
 		<StoreProvider store={ store }>
@@ -52,12 +48,10 @@ const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
 };
 
 describe( '@elementor/store', () => {
-	afterEach( () => {
-		resetStore();
-	} );
-
 	it( 'should verify the initial state of the slice', () => {
-		const { wrapper } = createStoreEntities();
+		const storeService = createStoreService();
+
+		const { wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), { wrapper } );
 
@@ -65,7 +59,9 @@ describe( '@elementor/store', () => {
 	} );
 
 	it( 'should update the state value of the slice', () => {
-		const { slice, wrapper } = createStoreEntities();
+		const storeService = createStoreService();
+
+		const { slice, wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => {
 			const dispatchAction = useDispatch();
@@ -79,9 +75,11 @@ describe( '@elementor/store', () => {
 	} );
 
 	it( 'should register a middleware that blocks the state update by not running next(action)', () => {
-		registerMiddleware( () => () => () => {} );
+		const storeService = createStoreService();
 
-		const { slice, wrapper } = createStoreEntities();
+		storeService.registerMiddleware( () => () => () => {} );
+
+		const { slice, wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => {
 			const dispatchAction = useDispatch();
@@ -95,11 +93,13 @@ describe( '@elementor/store', () => {
 	} );
 
 	it( 'should register a middleware that does not intefer with the state update', () => {
-		registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+		const storeService = createStoreService();
+
+		storeService.registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
 			next( action );
 		} );
 
-		const { slice, wrapper } = createStoreEntities();
+		const { slice, wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => {
 			const dispatchAction = useDispatch();
@@ -113,14 +113,16 @@ describe( '@elementor/store', () => {
 	} );
 
 	it( 'should dispatch an action without using the useDispatch hook', () => {
-		registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+		const storeService = createStoreService();
+
+		storeService.registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
 			next( action );
 		} );
 
-		const { wrapper } = createStoreEntities();
+		const { wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => {
-			dispatch( { type: 'slice/setValue', payload: 6 } );
+			storeService.dispatch( { type: 'slice/setValue', payload: 6 } );
 
 			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
 		}, { wrapper } );
@@ -129,19 +131,30 @@ describe( '@elementor/store', () => {
 	} );
 
 	it( 'should collect actions that are dispatched before the store exist, and should run them when the store instance is created', () => {
-		dispatch( { type: 'slice/setValue', payload: 7 } );
+		const storeService = createStoreService();
 
-		const { wrapper } = createStoreEntities();
+		storeService.dispatch( { type: 'slice/setValue', payload: 7 } );
+
+		const { wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), { wrapper } );
 
 		expect( result.current ).toBe( 7 );
 	} );
 
-	it( 'should create a single instance of the store that when exists the createStore function should return it', () => {
-		const firstStore = createStore();
-		const secondStore = createStore();
+	it( 'should reset the store instance', () => {
+		const storeService = createStoreService();
 
-		expect( firstStore ).toEqual( secondStore );
+		const store = storeService.createStore();
+
+		let instance = storeService.getStore();
+
+		expect( instance ).toEqual( store );
+
+		storeService.resetStore();
+
+		instance = storeService.getStore();
+
+		expect( instance ).toBeNull();
 	} );
 } );

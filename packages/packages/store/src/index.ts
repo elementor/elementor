@@ -7,6 +7,7 @@ import {
 	Store,
 	Slice,
 	AnyAction,
+	CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
 export type {
@@ -33,72 +34,77 @@ interface SlicesMap {
 	[key: Slice['name']]: Slice;
 }
 
-let instance: Store | null = null;
+class StoreService {
+	private instance: Store | null = null;
+	private slices: SlicesMap = {};
+	private pendingActions: AnyAction[] = [];
+	private middlewares = new Set<ThunkMiddleware>();
 
-const middlewares = new Set<ThunkMiddleware>();
+	private getReducers() {
+		const reducers = Object.entries( this.slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
+			reducersData[ name ] = slice.reducer;
 
-let slices: SlicesMap = {};
+			return reducersData;
+		}, {} );
 
-let pendingActions: AnyAction[] = [];
-
-const getReducers = () => {
-	const reducers = Object.entries( slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
-		reducersData[ name ] = slice.reducer;
-
-		return reducersData;
-	}, {} );
-
-	return combineReducers( reducers );
-};
-
-// Should be casted into createSlice because this function detects the correct type only when the slice object is passed directly to it.
-export const registerSlice = ( ( sliceConfig ) => {
-	const slice = createSlice( sliceConfig );
-
-	if ( slices[ slice.name ] ) {
-		return slices[ slice.name ];
+		return combineReducers( reducers );
 	}
 
-	slices[ slice.name ] = slice;
+	// Should be casted into createSlice because this function detects the correct type only when the slice object is passed directly to it.
+	registerSlice( sliceConfig: CreateSliceOptions ) {
+		const slice = createSlice( sliceConfig );
 
-	return slice;
-} ) as typeof createSlice;
-
-export const registerMiddleware = ( middleware: ThunkMiddleware ) => {
-	middlewares.add( middleware );
-};
-
-export const createStore = () => {
-	if ( ! instance ) {
-		instance = configureStore( {
-			reducer: getReducers(),
-			middleware: Array.from( middlewares ),
-		} );
-
-		if ( pendingActions.length ) {
-			pendingActions.forEach( ( action ) => instance?.dispatch( action ) );
-			pendingActions = [];
+		if ( this.slices[ slice.name ] ) {
+			return this.slices[ slice.name ];
 		}
+
+		this.slices[ slice.name ] = slice;
+
+		return slice;
 	}
 
-	return instance;
-};
-
-export const getStore = () => instance;
-
-export const resetStore = () => {
-	instance = null;
-	slices = {};
-	pendingActions = [];
-	middlewares.clear();
-};
-
-export const dispatch = ( action: AnyAction ) => {
-	if ( ! instance ) {
-		pendingActions.push( action );
-
-		return;
+	registerMiddleware( middleware: ThunkMiddleware ) {
+		this.middlewares.add( middleware );
 	}
 
-	return instance.dispatch( action );
+	dispatch( action: AnyAction ) {
+		if ( ! this.instance ) {
+			this.pendingActions.push( action );
+
+			return;
+		}
+
+		return this.instance.dispatch( action );
+	}
+
+	createStore() {
+		if ( ! this.instance ) {
+			this.instance = configureStore( {
+				reducer: this.getReducers(),
+				middleware: Array.from( this.middlewares ),
+			} );
+
+			if ( this.pendingActions.length ) {
+				this.pendingActions.forEach( ( action ) => this.instance?.dispatch( action ) );
+				this.pendingActions = [];
+			}
+		}
+
+		return this.instance;
+	}
+
+	getStore() {
+		return this.instance;
+	}
+
+	resetStore() {
+		this.instance = null;
+		this.slices = {};
+		this.pendingActions = [];
+		this.middlewares.clear();
+	}
+}
+
+export const createStoreService = () => {
+	return new StoreService();
 };
