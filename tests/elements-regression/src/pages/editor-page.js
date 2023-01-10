@@ -131,7 +131,7 @@ module.exports = class EditorPage extends BasePage {
 
 		while ( ! elements.includes( id ) && i < 10 ) {
 			i++;
-			await sleep( 150 );
+			await sleep( 200 );
 			elements = await this.getPreviewFrame().evaluate( 'window.readyElements' );
 		}
 	}
