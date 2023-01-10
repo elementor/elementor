@@ -237,6 +237,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorPost( 'nested-title-alignment' );
+		await editor.useCanvasTemplate();
 		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
 		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' ).click();
 		const activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
