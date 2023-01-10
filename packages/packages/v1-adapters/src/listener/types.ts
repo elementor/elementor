@@ -27,4 +27,3 @@ export type EventDescriptor = CommandEventDescriptor | WindowEventDescriptor;
 export type ListenerEvent = WindowEvent | CommandEvent;
 
 export type ListenerCallback = ( e: ListenerEvent ) => void;
-

@@ -114,9 +114,7 @@ describe( '@elementor/v1-adapters/listener', () => {
 
 	it( 'should flush listeners & re-listen', () => {
 		// Arrange.
-		// Arrange.
-		const command = 'test-command',
-			event1 = 'test-event-1',
+		const event1 = 'test-event-1',
 			event2 = 'test-event-2',
 			callback = jest.fn();
 
