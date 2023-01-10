@@ -570,13 +570,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.useElementorPost( 'nested-hover-animation' );
 		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 
-		// const editor = await wpAdmin.useElementorCleanPost(),
-		// 	container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widget.
-		// await editor.addWidget( 'nested-tabs', container );
-		// await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
-
 		// Act.
 		// Set the hover animation.
 		await editor.activatePanelTab( 'style' );
@@ -623,12 +616,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		const editor = await wpAdmin.useElementorPost( 'nested-hover-animation' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 
 		// Assert.
 		// Check if content tab contains the class 'e-con-full'.
@@ -644,13 +633,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.useElementorPost( 'nested-swiper-based-carousel-works-when-switching-to-new-tab' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 
 		// Act.
-		// Add nested-tabs widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 		// Add image-carousel widget to tab #2.
 		const activeContainerId = await editTab( editor, 1 );
 		await editor.addWidget( 'image-carousel', activeContainerId );
