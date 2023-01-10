@@ -40,7 +40,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				],
 				[
 					'handle' => 'elementor-packages-v1-adapters',
-					'src' => '{{ASSETS_URL}}/js/packages/v1-adapters{{MIN_SUFFIX}}.js',
+					'src' => '{{ASSETS_URL}}js/packages/v1-adapters{{MIN_SUFFIX}}.js',
 				],
 
 				// Loader script
