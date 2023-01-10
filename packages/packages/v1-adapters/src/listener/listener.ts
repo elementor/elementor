@@ -1,7 +1,7 @@
 import { dispatchOnV1Init, makeListener } from './utils';
 import { CommandEventDescriptor, EventDescriptor, ListenerCallback, WindowEventDescriptor } from './types';
 
-let callbacksByEvent : Record<EventDescriptor['name'], ListenerCallback[]> = {};
+const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
 let abortController = new AbortController();
 
 export function listenTo(
@@ -28,7 +28,7 @@ export function listenTo(
 }
 
 export function startV1Listeners() {
-	Object.entries( callbacksByEvent ).forEach( ( [ event, callbacks ] ) => {
+	callbacksByEvent.forEach( ( callbacks, event ) => {
 		window.addEventListener(
 			event,
 			makeListener( event, callbacks ),
@@ -41,7 +41,7 @@ export function startV1Listeners() {
 
 export function flushListeners() {
 	abortController.abort();
-	callbacksByEvent = {};
+	callbacksByEvent.clear();
 
 	abortController = new AbortController();
 }
@@ -59,7 +59,10 @@ function registerCommandListener(
 }
 
 function registerWindowEventListener( event: WindowEventDescriptor['name'], callback: ListenerCallback ) {
-	callbacksByEvent[ event ] = callbacksByEvent[ event ] || [];
+	callbacksByEvent.set(
+		event,
+		callbacksByEvent.get( event ) || []
+	);
 
-	callbacksByEvent[ event ].push( callback );
+	callbacksByEvent.get( event )!.push( callback );
 }
