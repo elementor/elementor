@@ -46,6 +46,7 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 			'mutable' => true,
 			'hidden' => false,
+			'generator_tag' => false,
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
@@ -53,7 +54,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$re_added_feature = $this->add_test_feature( $test_feature_data );
 
 		$this->assertEquals( $test_set, $new_feature );
-
 		$this->assertEquals( null, $re_added_feature );
 	}
 
