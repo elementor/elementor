@@ -47,7 +47,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
-			'size' => 'full',
+			'size' => '',
 		];
 	}
 
@@ -274,7 +274,7 @@ class Control_Media extends Control_Base_Multiple {
 			<# if ( data.has_sizes ) { #>
 			<div class="elementor-control-type-select e-control-image-size">
 				<div class="elementor-control-field">
-					<label class="elementor-control-title" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
+					<label class="elementor-control-title" data-e-responsive-switcher-sibling="false" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
 					<div class="elementor-control-input-wrapper elementor-control-unit-5">
 						<select class="e-image-size-select" id="<?php $this->print_control_uid( 'size' ); ?>" data-setting="size">
 							<?php foreach ( $this->get_image_sizes() as $size_key => $size_title ) : ?>
@@ -305,7 +305,7 @@ class Control_Media extends Control_Base_Multiple {
 			$image_sizes[ $size_key ] = $control_title;
 		}
 
-		$image_sizes['full'] = esc_html_x( 'Full', 'Image Size Control', 'elementor' );
+		$image_sizes[''] = esc_html_x( 'Full', 'Image Size Control', 'elementor' );
 
 		return $image_sizes;
 	}
@@ -400,8 +400,8 @@ class Control_Media extends Control_Base_Multiple {
 			return parent::get_style_value( $css_property, $control_value, $control_data );
 		}
 
-		if ( ! isset( $control_value['size'] ) ) {
-			$control_value['size'] = $this->get_default_value()['size'];
+		if ( empty( $control_value['size'] ) ) {
+			$control_value['size'] = 'full';
 		}
 
 		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );

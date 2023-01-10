@@ -49,12 +49,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
+			isPlaceholder = ( ! value && url ),
 			mediaType = this.getMediaType();
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 
-			if ( ! value && url ) {
+			if ( isPlaceholder ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
 			}
 		} else if ( 'video' === mediaType ) {
@@ -65,10 +66,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		if ( this.ui.mediaInputImageSize ) {
-			this.ui.mediaInputImageSize.val( this.getControlValue( 'size' ) );
+			let imageSize = this.getControlValue( 'size' );
+
+			if ( isPlaceholder ) {
+				imageSize = this.getControlPlaceholder()?.size;
+			}
+
+			this.ui.mediaInputImageSize
+				.val( imageSize )
+				.toggleClass( 'e-select-placeholder', isPlaceholder );
 		}
 
-		this.ui.controlMedia.toggleClass( 'e-media-empty', ! value );
+		this.ui.controlMedia
+			.toggleClass( 'e-media-empty', ! value )
+			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 	},
 
 	openFrame( e ) {
@@ -121,12 +132,41 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			return;
 		}
 
-		const currentControlValue = this.getControlValue();
+		const currentControlValue = this.getControlValue(),
+			placeholder = this.getControlPlaceholder();
+
+		const hasImage = ( '' !== currentControlValue?.id ),
+			hasPlaceholder = placeholder?.id,
+			hasValue = hasImage || hasPlaceholder;
+
+		if ( ! hasValue ) {
+			return;
+		}
+
+		const shouldUpdateFromPlaceholder = ( hasPlaceholder && ! hasImage );
+
+		if ( shouldUpdateFromPlaceholder ) {
+			this.setValue( {
+				...placeholder,
+				size: currentControlValue.size,
+			} );
+
+			if ( this.model.get( 'responsive' ) ) {
+				// Render is already calls `applySavedValue`, therefore there's no need for it in this case.
+				this.renderWithChildren();
+			} else {
+				this.applySavedValue();
+			}
+
+			this.onMediaInputImageSizeChange();
+
+			return;
+		}
 
 		let imageURL;
 
 		elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
-			imageURL = data[ currentControlValue.id ][ currentControlValue.size ];
+			imageURL = data[ currentControlValue.id ]?.[ currentControlValue.size ];
 
 			if ( imageURL ) {
 				currentControlValue.url = imageURL;
