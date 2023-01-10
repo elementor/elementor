@@ -1376,6 +1376,7 @@ class Fonts {
 				'Spirax' => self::GOOGLE,
 				'Spline Sans' => self::GOOGLE,
 				'Squada One' => self::GOOGLE,
+				'Square Peg' => self::GOOGLE,
 				'Sree Krushnadevaraya' => self::GOOGLE,
 				'Sriracha' => self::GOOGLE,
 				'Srisakdi' => self::GOOGLE,
