@@ -7,6 +7,7 @@ test( 'Accordion', async ( { page }, testInfo ) => {
     editor = await wpAdmin.useElementorPost( 'accordion' );
 
     // Act
+    await editor.useCanvasTemplate();
     await editor.togglePreviewMode();
 
     // Assert

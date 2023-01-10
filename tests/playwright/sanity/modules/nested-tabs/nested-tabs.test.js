@@ -617,8 +617,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorPost( 'nested-hover-animation' );
-		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Assert.
 		// Check if content tab contains the class 'e-con-full'.
