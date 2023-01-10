@@ -1,13 +1,8 @@
-import { dispatchOnV1Init } from './utils';
-import {
-	CommandEventDescriptor,
-	EventDescriptor,
-	ListenerCallback,
-	WindowEventDescriptor,
-} from './types';
+import { dispatchOnV1Init, makeListener } from './utils';
+import { CommandEventDescriptor, EventDescriptor, ListenerCallback, WindowEventDescriptor } from './types';
 
 let callbacksByEvent : Record<EventDescriptor['name'], ListenerCallback[]> = {};
-let listenersByEvent : Record<EventDescriptor['name'], EventListener> = {};
+let abortController = new AbortController();
 
 export function listenTo(
 	eventDescriptors : EventDescriptor | EventDescriptor[],
@@ -25,7 +20,7 @@ export function listenTo(
 				registerCommandListener( name, event.state, callback );
 				break;
 
-			case 'event':
+			case 'window-event':
 				registerWindowEventListener( name, callback );
 				break;
 		}
@@ -33,24 +28,22 @@ export function listenTo(
 }
 
 export function startV1Listeners() {
-	Object.keys( callbacksByEvent ).forEach( ( event ) => {
-		const listener = makeListener( event );
-
-		window.addEventListener( event, listener );
-
-		listenersByEvent[ event ] = listener;
+	Object.entries( callbacksByEvent ).forEach( ( [ event, callbacks ] ) => {
+		window.addEventListener(
+			event,
+			makeListener( event, callbacks ),
+			{ signal: abortController.signal }
+		);
 	} );
 
 	return dispatchOnV1Init();
 }
 
 export function flushListeners() {
-	Object.entries( listenersByEvent ).forEach( ( [ event, listener ] ) => {
-		window.removeEventListener( event, listener );
-	} );
-
-	listenersByEvent = {};
+	abortController.abort();
 	callbacksByEvent = {};
+
+	abortController = new AbortController();
 }
 
 function registerCommandListener(
@@ -59,7 +52,7 @@ function registerCommandListener(
 	callback: ListenerCallback
 ) {
 	registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
-		if ( ( e as CustomEvent ).detail.command === command ) {
+		if ( e.type === 'command' && e.command === command ) {
 			callback( e );
 		}
 	} );
@@ -69,12 +62,4 @@ function registerWindowEventListener( event: WindowEventDescriptor['name'], call
 	callbacksByEvent[ event ] = callbacksByEvent[ event ] || [];
 
 	callbacksByEvent[ event ].push( callback );
-}
-
-function makeListener( event: EventDescriptor['name'] ) : ListenerCallback {
-	return ( e ) => {
-		callbacksByEvent[ event ].forEach( ( callback ) => {
-			callback( e );
-		} );
-	};
 }

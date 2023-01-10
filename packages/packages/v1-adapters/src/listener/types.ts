@@ -4,14 +4,23 @@ export type CommandEventDescriptor = {
 	state: 'before' | 'after',
 };
 
-export type CommandEvent = CustomEvent<{type: 'command', command: string}>;
-
 export type WindowEventDescriptor = {
-	type: 'event',
+	type: 'window-event',
 	name: string,
 };
 
-export type WindowEvent = Event;
+export type CommandEvent = {
+	type: CommandEventDescriptor['type'],
+	command: string,
+	args: object,
+	originalEvent: CustomEvent,
+};
+
+export type WindowEvent = {
+	type: WindowEventDescriptor['type'],
+	event: string,
+	originalEvent: Event,
+};
 
 export type EventDescriptor = CommandEventDescriptor | WindowEventDescriptor;
 

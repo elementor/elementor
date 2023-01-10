@@ -18,7 +18,7 @@ export const commandEnd = ( command: CommandEventDescriptor['name'] ) : CommandE
 
 export const windowEvent = ( event: WindowEventDescriptor['name'] ) : WindowEventDescriptor => {
 	return {
-		type: 'event',
+		type: 'window-event',
 		name: event,
 	};
 };
