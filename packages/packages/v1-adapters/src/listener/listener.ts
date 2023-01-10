@@ -1,5 +1,5 @@
 import { v1Init } from './event-creators';
-import { dispatchWhenV1Initiated } from './utils';
+import { dispatchOnV1Init } from './utils';
 import {
 	CommandEventDescriptor,
 	ListenerCallback,
@@ -35,7 +35,7 @@ export function listenTo(
 	} );
 }
 
-export function startV1Limsteners() {
+export function startV1Listeners() {
 	Object.keys( callbacksByEvent ).forEach( ( event ) => {
 		const listener = makeListener( event );
 
@@ -44,7 +44,7 @@ export function startV1Limsteners() {
 		listenersByEvent[ event ] = listener;
 	} );
 
-	return dispatchWhenV1Initiated();
+	return dispatchOnV1Init();
 }
 
 export function flushListeners() {
@@ -64,10 +64,7 @@ function registerCommandListener(
 	const events = [];
 
 	registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
-		// TODO: Find a better solution.
-		const ce = e as CommandEvent;
-
-		if ( ce.detail.command === command ) {
+		if ( ( e as CustomEvent ).detail.command === command ) {
 			callback( e );
 		}
 	} );
