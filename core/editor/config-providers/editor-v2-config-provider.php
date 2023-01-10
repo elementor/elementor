@@ -18,7 +18,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					'deps' => [ 'react' ],
 					'translations' => [
 						'active' => true,
-						'path_suffix' => 'strings',
+						'file_suffix' => 'strings',
 					],
 				],
 				[
@@ -27,7 +27,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui', 'wp-i18n' ],
 					'translations' => [
 						'active' => true,
-						'path_suffix' => 'strings',
+						'file_suffix' => 'strings',
 					],
 				],
 				[
@@ -36,7 +36,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui' ],
 					'translations' => [
 						'active' => true,
-						'path_suffix' => 'strings',
+						'file_suffix' => 'strings',
 					],
 				],
 				[
@@ -45,7 +45,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					'deps' => [ 'react', 'react-dom' ],
 					'translations' => [
 						'active' => true,
-						'path_suffix' => 'strings',
+						'file_suffix' => 'strings',
 					],
 				],
 

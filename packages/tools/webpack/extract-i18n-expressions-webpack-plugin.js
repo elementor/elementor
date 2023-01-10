@@ -24,15 +24,15 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 	apply( compiler ) {
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
-				const translationsCallExpression = this.getTranslationsCallExpression( compilation );
+				const translationCallExpressions = this.getTranslationCallExpressions( compilation );
 
-				this.addTranslationsCallExpressionToAssets( compilation, translationsCallExpression );
+				this.addTranslationCallExpressionsToAssets( compilation, translationCallExpressions );
 			} );
 		} );
 	}
 
-	getTranslationsCallExpression( compilation ) {
-		const translationsCallExpression = new Map();
+	getTranslationCallExpressions( compilation ) {
+		const translationCallExpressions = new Map();
 
 		[ ...compilation.chunks ].forEach( ( chunk ) => {
 			const chunkJSFile = this.getFileFromChunk( chunk );
@@ -52,23 +52,23 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 					const mainEntryFile = this.findMainModuleOfEntry( subModule, compilation );
 
-					if ( ! translationsCallExpression.has( mainEntryFile ) ) {
-						translationsCallExpression.set( mainEntryFile, new Set() );
+					if ( ! translationCallExpressions.has( mainEntryFile ) ) {
+						translationCallExpressions.set( mainEntryFile, new Set() );
 					}
 
 					this.translationsRegexps.forEach( ( regexp ) => {
 						[ ...source.matchAll( regexp ) ].forEach( ( [ callExpression ] ) => {
-							translationsCallExpression.get( mainEntryFile ).add( callExpression );
+							translationCallExpressions.get( mainEntryFile ).add( callExpression );
 						} );
 					} );
 				} );
 			} );
 		} );
 
-		return translationsCallExpression;
+		return translationCallExpressions;
 	}
 
-	addTranslationsCallExpressionToAssets( compilation, translationsCallExpression ) {
+	addTranslationCallExpressionsToAssets( compilation, translationCallExpressions ) {
 		[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
 			const chunk = entrypoint.chunks[ 0 ];
 			const chunkJSFile = this.getFileFromChunk( chunk );
@@ -85,7 +85,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 			// Add source and file into compilation for webpack to output.
 			compilation.assets[ assetFilename ] = new RawSource(
-				[ ...( translationsCallExpression.get( mainFilePath ) || new Set() ) ]
+				[ ...( translationCallExpressions.get( mainFilePath ) || new Set() ) ]
 					.map( ( expr ) => `${ expr };` )
 					.join( '' )
 			);

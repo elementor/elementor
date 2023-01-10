@@ -3,7 +3,7 @@ const { readdirSync } = require( 'fs' );
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
-// All our internal packages
+// Elementor's internal packages
 const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
 	.filter( ( dirent ) => dirent.isDirectory() )
 	.map( ( dirent ) => dirent.name )
@@ -12,7 +12,7 @@ const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { w
 		path: path.resolve( __dirname, `./packages/${ name }/src` ),
 	} ) );
 
-// Packages that lives outside the `packages` directory, but we want treat them as they were part of the monorepo.
+// Packages that live outside the `packages` directory, but we want to treat them as if they were a part of the monorepo.
 const externalPackages = [
 	{
 		name: 'ui',

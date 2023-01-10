@@ -27,7 +27,7 @@ module.exports = {
 			},
 		],
 
-		// Disable rules, TS will handle it.
+		// Disable conflicting rules, TS will handle it.
 		'import/named': [ 'off' ],
 		'import/no-unresolved': [ 'off' ],
 

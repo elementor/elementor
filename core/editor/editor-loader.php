@@ -25,6 +25,17 @@ class Editor_Loader {
 	/**
 	 * @return void
 	 */
+	public function register_actions() {
+		$script_configs = $this->get_script_configs();
+
+		add_filter( 'load_script_textdomain_relative_path', function ( $relative_path, $src ) use ( $script_configs ) {
+			return $this->transform_translation_relative_path( $relative_path, $src, $script_configs );
+		}, 10, 2 );
+	}
+
+	/**
+	 * @return void
+	 */
 	public function register_scripts() {
 		$script_configs = $this->get_script_configs();
 
@@ -53,10 +64,6 @@ class Editor_Loader {
 	 */
 	public function load_scripts_translations() {
 		$script_configs = $this->get_script_configs();
-
-		add_filter( 'load_script_textdomain_relative_path', function ( $relative_path, $src ) use ( $script_configs ) {
-			return $this->transform_translation_relative_path( $relative_path, $src, $script_configs );
-		}, 10, 2 );
 
 		foreach ( $script_configs as $script_config ) {
 			if ( $script_config['translations']['active'] ) {
@@ -140,7 +147,7 @@ class Editor_Loader {
 				'translations' => [
 					'active' => false,
 					'domain' => 'elementor',
-					'path_suffix' => '',
+					'file_suffix' => '',
 				],
 			];
 
@@ -180,11 +187,11 @@ class Editor_Loader {
 	}
 
 	/**
-	 * The name of the translation file could be suffix with `strings` to support loading translations
-	 * for lazy loaded scripts.
+	 * The name of the translation file could be suffixed with a translation's identifier (usually ".strings")
+	 * to support loading translations for lazy loaded scripts.
 	 *
-	 * Want to go deeper:
-	 * @link https://developer.wordpress.com/2022/01/06/wordpress-plugin-i18n-webpack-and-composer/
+	 * Want to go deeper? Read the following article:
+	 * @see https://developer.wordpress.com/2022/01/06/wordpress-plugin-i18n-webpack-and-composer/
 	 *
 	 * @param string $relative_path
 	 * @param string $src
@@ -199,16 +206,19 @@ class Editor_Loader {
 
 		$should_suffix_path = $script_config &&
 			$script_config['translations']['active'] &&
-			$script_config['translations']['path_suffix'];
+			$script_config['translations']['file_suffix'];
 
 		if ( ! $should_suffix_path ) {
 			return $relative_path;
 		}
 
-		// Translations are always based on the unminified filename.
-		$substr_offset = substr( $relative_path, -7 ) === '.min.js' ? -7 : -3;
-		$relative_path_without_ext = substr( $relative_path, 0, $substr_offset );
+		// Translations are always based on the non-minified filename.
+		$relative_path_without_ext = preg_replace( '/(\.min)?\.js$/i', '', $relative_path );
 
-		return "{$relative_path_without_ext}.{$script_config['translations']['path_suffix']}.js";
+		return implode( '.', [
+			$relative_path_without_ext,
+			$script_config['translations']['file_suffix'],
+			'js',
+		] );
 	}
 }
