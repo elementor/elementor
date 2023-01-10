@@ -1,12 +1,9 @@
-import { v1Init } from './event-creators';
 import { dispatchOnV1Init } from './utils';
 import {
 	CommandEventDescriptor,
-	ListenerCallback,
 	EventDescriptor,
+	ListenerCallback,
 	WindowEventDescriptor,
-	CommandEvent,
-	ListenerEvent,
 } from './types';
 
 let callbacksByEvent : Record<EventDescriptor['name'], ListenerCallback[]> = {};
@@ -20,7 +17,7 @@ export function listenTo(
 		eventDescriptors = [ eventDescriptors ];
 	}
 
-	eventDescriptors.map( ( event ) => {
+	eventDescriptors.forEach( ( event ) => {
 		const { type, name } = event;
 
 		switch ( type ) {
@@ -61,8 +58,6 @@ function registerCommandListener(
 	state: CommandEventDescriptor['state'],
 	callback: ListenerCallback
 ) {
-	const events = [];
-
 	registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
 		if ( ( e as CustomEvent ).detail.command === command ) {
 			callback( e );
