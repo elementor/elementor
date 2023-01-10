@@ -279,7 +279,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_RC,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
@@ -293,7 +293,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 		] );
 
 		$this->add_feature( [
@@ -322,21 +322,6 @@ class Manager extends Base_Object {
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.4.0-beta',
-			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'e_import_export',
-			'title' => esc_html__( 'Import Export Website Kit', 'elementor' ),
-			'tag' => esc_html__( 'Feature', 'elementor' ),
-			'description' => esc_html__( 'Design sites faster with a Website Kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
-				. '<br>'
-				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.2.0-beta',
 			],
 		] );
 
@@ -428,7 +413,11 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			if ( ! $feature['mutable'] || $feature[ static::TYPE_HIDDEN ] ) {
+			$is_hidden = $feature[ static::TYPE_HIDDEN ];
+			$is_mutable = $feature['mutable'];
+			$should_hide_experiment = ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() );
+
+			if ( $should_hide_experiment ) {
 				unset( $features[ $feature_name ] );
 
 				continue;
@@ -528,8 +517,8 @@ class Manager extends Base_Object {
 			?>
 		</p>
 		<?php if ( $this->get_features() ) { ?>
-		<button type="button" class="button e-experiment__button" value="active">Activate All Experiments</button>
-		<button type="button" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
+		<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All Experiments', 'elementor' ); ?></button>
+		<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All Experiments', 'elementor' ); ?></button>
 		<?php } ?>
 		<hr>
 		<h2 class="e-experiment__table-title">
@@ -717,6 +706,8 @@ class Manager extends Base_Object {
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $old_state, $new_state );
 		}
+
+		do_action( 'elementor/experiments/feature-state-change/' . $old_feature_data['name'], $old_state, $new_state );
 	}
 
 	/**
@@ -749,7 +740,8 @@ class Manager extends Base_Object {
 					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
 					throw new Exceptions\Dependency_Exception(
-						sprintf( 'The feature `%s` has a dependency `%s` that is not available.',
+						sprintf(
+							'The feature `%s` has a dependency `%s` that is not available.',
 							$feature['name'],
 							$dependency->get_name()
 						)
@@ -762,10 +754,9 @@ class Manager extends Base_Object {
 				if ( self::STATE_INACTIVE === $dependency_state ) {
 					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
-					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 					throw new Exceptions\Dependency_Exception(
 						sprintf(
-							esc_html__( 'To turn on `%1$s`, Experiment: `%2$s` activity is required!', 'elementor' ),
+							'To turn on `%1$s`, Experiment: `%2$s` activity is required!',
 							$feature['name'],
 							$dependency_feature['name']
 						)
@@ -788,6 +779,10 @@ class Manager extends Base_Object {
 				}
 			}
 		}
+	}
+
+	private function should_show_hidden() {
+		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
 	}
 
 	public function __construct() {

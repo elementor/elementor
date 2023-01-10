@@ -4,7 +4,7 @@
  * Description: The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!
  * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
- * Version: 3.9.2
+ * Version: 3.10.0
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '3.9.2' );
+define( 'ELEMENTOR_VERSION', '3.10.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -76,8 +76,15 @@ function elementor_load_plugin_textdomain() {
  * @return void
  */
 function elementor_fail_php_version() {
-	/* translators: %s: PHP version. */
-	$message = sprintf( esc_html__( 'Elementor requires PHP version %s+, plugin is currently NOT RUNNING.', 'elementor' ), '7.0' );
+	$message = sprintf(
+		/* translators: 1: `<h3>` opening tag, 2: `</h3>` closing tag, 3: PHP version. 4: Link opening tag, 5: Link closing tag. */
+		esc_html__( '%1$sElementor isn’t running because PHP is outdated.%2$s Update to PHP version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
+		'<h3>',
+		'</h3>',
+		'7.0',
+		'<a href="https://go.elementor.com/wp-dash-update-php/" target="_blank">',
+		'</a>'
+	);
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
@@ -92,8 +99,15 @@ function elementor_fail_php_version() {
  * @return void
  */
 function elementor_fail_wp_version() {
-	/* translators: %s: WordPress version. */
-	$message = sprintf( esc_html__( 'Elementor requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT RUNNING.', 'elementor' ), '5.2' );
+	$message = sprintf(
+		/* translators: 1: `<h3>` opening tag, 2: `</h3>` closing tag, 3: WP version. 4: Link opening tag, 5: Link closing tag. */
+		esc_html__( '%1$sElementor isn’t running because WordPress is outdated.%2$s Update to version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
+		'<h3>',
+		'</h3>',
+		'5.2',
+		'<a href="https://go.elementor.com/wp-dash-update-wordpress/" target="_blank">',
+		'</a>'
+	);
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
