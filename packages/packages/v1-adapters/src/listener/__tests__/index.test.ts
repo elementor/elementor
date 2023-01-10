@@ -45,6 +45,11 @@ describe( '@elementor/v1-adapters/listener', () => {
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
+		expect( callback ).toHaveBeenCalledWith( {
+			type: 'command',
+			command: 'editor/documents/open',
+			originalEvent: expect.any( CustomEvent ),
+		} );
 	} );
 
 	it( 'should listen to window events', () => {
@@ -65,6 +70,11 @@ describe( '@elementor/v1-adapters/listener', () => {
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
+		expect( callback ).toHaveBeenCalledWith( {
+			type: 'window-event',
+			event: 'test-event',
+			originalEvent: expect.any( Event ),
+		} );
 	} );
 
 	it( 'should accept an array of events', () => {
@@ -88,6 +98,57 @@ describe( '@elementor/v1-adapters/listener', () => {
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 2 );
+
+		expect( callback ).toHaveBeenNthCalledWith( 1, {
+			type: 'command',
+			command: 'test-command',
+			originalEvent: expect.any( CustomEvent ),
+		} );
+
+		expect( callback ).toHaveBeenNthCalledWith( 2, {
+			type: 'window-event',
+			event: 'test-event',
+			originalEvent: expect.any( Event ),
+		} );
+	} );
+
+	it( 'should flush listeners & re-listen', () => {
+		// Arrange.
+		// Arrange.
+		const command = 'test-command',
+			event1 = 'test-event-1',
+			event2 = 'test-event-2',
+			callback = jest.fn();
+
+		listenTo(
+			windowEvent( event1 ),
+			callback,
+		);
+
+		startV1Listeners();
+
+		// Act.
+		flushListeners();
+
+		// Dispatch events.
+		dispatchWindowEvent( event1 );
+
+		// Assert.
+		expect( callback ).toHaveBeenCalledTimes( 0 );
+
+		// Act.
+		listenTo(
+			windowEvent( event2 ),
+			callback,
+		);
+
+		startV1Listeners();
+
+		// Dispatch events.
+		dispatchWindowEvent( event2 );
+
+		// Assert.
+		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should trigger v1 init when v1 is loaded after v2', async () => {
