@@ -198,7 +198,6 @@ class Group_Control_Typography extends Group_Control_Base {
 				'wavy' => esc_html_x( 'Wavy', 'Typography Control', 'elementor' ),
 			],
 			'condition' => [
-				'text_decoration!' => '',
 				'text_decoration!' => 'none',
 			],
 			'selector_value' => 'text-decoration-style: {{VALUE}};',
@@ -209,7 +208,6 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
 			'condition' => [
-				'text_decoration!' => '',
 				'text_decoration!' => 'none',
 			],
 			'selector_value' => 'text-decoration-color: {{VALUE}};',
