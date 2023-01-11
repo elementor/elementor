@@ -1,10 +1,10 @@
 .elementor-context-menu {
 	position: absolute;
 	width: 200px;
-	background-color: #fff;
-	border: 1px solid $editor-background;
+	background-color: $white;
+	border: 1px solid $e-gray-50;
 	border-radius: 3px;
-	box-shadow: 0 2px 10px 0 rgba(0,0,0,0.09);
+	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	// To make sure the navigator item context menu is above the navigator, which has a z-index of 100
 	z-index: 101;
@@ -15,7 +15,7 @@
 			padding: 5px 0;
 
 			&:not(:last-child) {
-				border-bottom: 1px solid $editor-background;
+				border-bottom: 1px solid $e-gray-50;
 			}
 		}
 
@@ -24,26 +24,22 @@
 			@include padding-end(20px);
 			display: flex;
 			cursor: pointer;
+			transition: $transition-hover;
 
 			&--disabled {
 				cursor: default;
-				color: $editor-lightest;
+				color: $e-gray-200;
 			}
 
 			&:not(.elementor-context-menu-list__item--disabled) {
 
 				&:hover {
-					background-color: $editor-info;
-
-					> * {
-						color: #fff;
-					}
+					background-color: $e-gray-25;
 				}
 			}
 
 			&__icon {
 				width: 20px;
-				color: $editor-lighter;
 			}
 
 			&__title {
@@ -52,7 +48,7 @@
 			}
 
 			&__shortcut {
-				color: $editor-lightest;
+				color: $e-gray-200;
 			}
 
 			&.elementor-context-menu-list__item-delete {
@@ -60,7 +56,10 @@
 				&:not(.elementor-context-menu-list__item--disabled) {
 
 					&:hover {
-						background-color: $editor-red;
+
+						> * {
+							color: $e-danger;
+						}
 					}
 				}
 			}
@@ -68,6 +67,6 @@
 	}
 
 	.eicon-pro-icon {
-		color: $editor-orange;
+		color: $e-brand;
 	}
 }

@@ -9,6 +9,7 @@ body {
 	height: 50vh;
 	@include end(30px);
 	background-color: $white;
+	border: 1px solid $e-gray-50;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -27,7 +28,6 @@ body {
 
 	&__inner {
 		height: 100%;
-		background-color: $editor-background;
 	}
 
 	&__header {
@@ -35,8 +35,7 @@ body {
 		align-items: center;
 		justify-content: space-between;
 		padding: 12px 10px;
-		background-color: #fff;
-		border-bottom: 1px solid $editor-background;
+		border-bottom: 1px solid $e-gray-50;
 		cursor: move;
 	}
 
@@ -78,9 +77,7 @@ body {
 		left: 0;
 		bottom: 0;
 		text-align: center;
-		background-color: #fff;
-		border-top: 1px solid $editor-background;
-		color: $editor-light;
+		border-top: 1px solid $e-gray-50;
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -94,7 +91,7 @@ body {
 		position: relative;
 		display: flex;
 		height: 30px;
-		font-size: 11px;
+		font-size: 12px;
 		border-bottom: 1px solid $e-gray-50;
 		cursor: pointer;
 		transition: padding .5s linear;
@@ -102,6 +99,10 @@ body {
 
 		&:hover {
 			background-color: $e-gray-25;
+		}
+
+		&:active {
+			background-color: $e-gray-50;
 		}
 
 		&[data-locked="true"] {
@@ -132,7 +133,7 @@ body {
 
 		.elementor-empty-view {
 			padding: 10px;
-			border-bottom: 1px solid $editor-background;
+			border-bottom: 1px solid $e-gray-50;
 
 			&__title {
 				@include margin-start(23px);
@@ -143,15 +144,14 @@ body {
 		}
 
 		.ui-sortable-helper {
-			background-color: #fff;
 			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
 			transform: rotate(4deg);
-			border: 1px solid $editor-background;
+			background-color: $e-gray-50;
 			pointer-events: none;
 		}
 
 		.ui-sortable-placeholder {
-			background-color: $editor-background-light;
+			background-color: $e-gray-25;
 		}
 	}
 
@@ -161,7 +161,7 @@ body {
 			> .elementor-navigator__elements {
 
 				> .elementor-empty-view {
-					border-top: 2px solid $editor-info;
+					border-top: 2px solid $e-gray-900;
 
 					.elementor-empty-view__title {
 						display: none;
@@ -186,7 +186,11 @@ body {
 			> .elementor-navigator__item {
 
 				.elementor-navigator__element__toggle {
-					color: $editor-info;
+					color: $e-gray-600;
+
+					&:hover {
+						color: $e-gray-900;
+					}
 				}
 
 				&:not(:hover) {
@@ -208,7 +212,6 @@ body {
 		&__list-toggle {
 			@include margin-end(7px);
 			transition: transform .3s;
-			color: $editor-light;
 		}
 
 		&__element-type {
@@ -225,13 +228,13 @@ body {
 
 				&[contenteditable="true"] {
 					outline: none;
-					color: $editor-dark;
 					background-color: #fff;
-					padding: 2px 3px;
-					box-shadow: 0 0 4px rgba(0,0,0,0.2);
+					padding: 3px;
+					border: 1px solid $e-gray-100;
 				}
 
 				&:not([contenteditable="true"]) {
+					padding: 3px 0;
 					@include ellipsis;
 				}
 			}
@@ -266,13 +269,13 @@ body {
 			justify-content: center;
 			color: $editor-dark;
 			background-color: #fff;
-			@include border-start(1px solid $editor-background);
+			@include border-start(1px solid $e-gray-50);
 
 			&:first-child {
-				@include border-start(3px solid $editor-info);
+				@include border-start(3px solid $e-gray-900);
 
 				.elementor-editing & {
-					border-color: darken($editor-info, 10%);
+					border-color: lighten($e-gray-900, 10%);
 				}
 			}
 

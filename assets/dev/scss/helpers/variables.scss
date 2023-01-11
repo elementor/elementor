@@ -22,25 +22,31 @@ $e-gray-900:	#0C0D0E;
 $e-purple:		#524CFF;
 $e-purple-tint:	#6661FF;
 
-$e-primary:	$e-purple;
-$e-secondary: $e-gray-600;
-$e-danger:	#DD132F;
-$e-info: 	#0077CC;
-$e-brand: 	#0600A8;
+$e-primary:		$e-purple;
+$e-secondary: 	$e-gray-600;
+$e-success:		#16883C;
+$e-success-bg:	#F2FDF5;
+$e-danger:		#DD132F;
+$e-danger-bg:	#FEF1F4;
+$e-info: 		#0077CC;
+$e-info-bg: 	#F0F7FF;
+$e-warning: 	#FCB92C;
+$e-warning-bg: 	#FFF9F0;
+$e-brand: 		#0600A8;
 
 // Aliases
 $editor-danger: $e-danger;
-$editor-warning: $e-danger;
-$editor-success: $e-purple;
+$editor-warning: $e-warning;
+$editor-success: $e-success;
 $editor-info: $e-info;
 $editor-alert-danger: $e-danger;
-$editor-alert-warning: $e-danger;
+$editor-alert-warning: $e-warning;
 $editor-alert-info: $e-info;
-$editor-alert-success: $editor-success;
-$editor-alert-danger-bg: #fefbfc;
-$editor-alert-warning-bg: #fcfcfc;
-$editor-alert-info-bg: #f3fcff;
-$editor-alert-success-bg: #fcfffc;
+$editor-alert-success: $e-success;
+$editor-alert-danger-bg: $e-danger-bg;
+$editor-alert-warning-bg: $e-warning-bg;
+$editor-alert-info-bg: $e-info-bg;
+$editor-alert-success-bg: $e-success-bg;
 
 $e-global:		$e-purple;
 
@@ -106,7 +112,7 @@ $editor-background: $e-gray-0;
 $editor-background-light: $e-gray-50;
 $editor-background-lighter: $e-gray-100;
 
-$editor-orange: $e-danger;
+$editor-orange: $e-warning;
 $editor-red: $e-danger;
 
 // WordPress colors
@@ -292,10 +298,3 @@ $breakpoints: (
 );
 
 $devices: 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile';
-
-.icon-crown {
-	background-repeat: no-repeat no-repeat;
-	background-position: center center;
-	background-size: cover;
-}
-

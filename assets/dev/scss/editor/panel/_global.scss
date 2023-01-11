@@ -17,7 +17,7 @@
 
 // Alert
 .elementor-panel-alert {
-    background-color: $editor-background-lighter;
+    background-color: $e-gray-25;
 	padding: 15px;
     @include border-start(3px solid transparent);
 	position: relative;
@@ -36,7 +36,7 @@
 
 		&info {
 			border-color: $editor-alert-info;
-			background-color: $editor-alert-info-bg;
+			background: $e-info-bg;
 		}
 
 		&success {
