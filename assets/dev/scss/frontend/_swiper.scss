@@ -4,7 +4,7 @@
  */
 
 :root {
-	--swiper-theme-color: #007aff;
+	--swiper-theme-color: #000;
 	--swiper-navigation-size: 44px;
 }
 
@@ -418,8 +418,8 @@
 }
 
 .swiper-pagination-bullet {
-	width: var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size, 8px));
-	height: var(--swiper-pagination-bullet-height, var(--swiper-pagination-bullet-size, 8px));
+	width: var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size, 6px));
+	height: var(--swiper-pagination-bullet-height, var(--swiper-pagination-bullet-size, 6px));
 	display: inline-block;
 	border-radius: 50%;
 	background: var(--swiper-pagination-bullet-inactive-color, #000);
@@ -630,6 +630,16 @@ button {
 			&-next {
 				right: 0;
 			}
+		}
+	}
+}
+
+.swiper-image-stretch {
+
+	.swiper-slide {
+
+		.swiper-slide-image {
+			width: 100%;
 		}
 	}
 }
