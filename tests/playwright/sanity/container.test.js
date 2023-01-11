@@ -5,14 +5,14 @@ const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
 
 test.describe( 'Container tests', () => {
-	beforeAll( async ( { page }, testInfo ) => {
+	test.beforeAll( async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		wpAdmin.setExperiments( {
 			container: true,
 		} );
 	} );
 
-	afterAll( async ( { page }, testInfo ) => {
+	test.afterAll( async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: false,

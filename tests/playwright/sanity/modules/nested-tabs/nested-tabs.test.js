@@ -3,7 +3,7 @@ const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const { getPageId } = require( '../../../utilities/site-utilities' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	beforeAll( async ( { page }, testInfo ) => {
+	test.beforeAll( async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		wpAdmin.setExperiments( {
 			container: 'active',
@@ -11,7 +11,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	afterAll( async ( { page }, testInfo ) => {
+	test.afterAll( async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: 'inactive',
