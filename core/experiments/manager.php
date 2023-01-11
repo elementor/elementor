@@ -115,7 +115,12 @@ class Manager extends Base_Object {
 					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
 				}
 
-				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
+				$feature_not_exists = ! class_exists( $dependency ) && empty( $feature );
+				$feature_without_class = ! class_exists( $dependency ) && ! empty( $feature );
+
+				if ( $feature_not_exists ) {
+					$experimental_data['dependencies'][ $key ] = new Not_Existed_Dependency( $dependency );
+				} elseif ( $feature_without_class ) {
 					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
 				} else {
 					$experimental_data['dependencies'][ $key ] = $dependency::instance();
