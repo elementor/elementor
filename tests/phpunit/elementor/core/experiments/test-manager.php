@@ -3,7 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Experiments\Not_Existed_Dependency;
+use Elementor\Core\Experiments\Non_Existing_Dependency;
 use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Core\Upgrade\Manager;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_A;
@@ -85,7 +85,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
 	}
 
-	public function test_add_feature__adding_not_existed_dependency() {
+	public function test_add_feature__adding_non_existing_dependency() {
 		// Arrange.
 		$test_feature_data = [
 			'name' => 'test_feature',
@@ -98,11 +98,11 @@ class Test_Manager extends Elementor_Test_Base {
 		// Act.
 		$this->add_test_feature( $test_feature_data );
 
-		// Assert
+		// Assert.
 		$feature = $this->experiments->get_features( 'test_feature' );
 
 		$this->assertCount( 1, $feature['dependencies'] );
-		$this->assertInstanceOf( Not_Existed_Dependency::class, $feature['dependencies'][0] );
+		$this->assertInstanceOf( Non_Existing_Dependency::class, $feature['dependencies'][0] );
 		$this->assertEquals( 'feature-that-not-exists', $feature['dependencies'][0]->get_name() );
 	}
 

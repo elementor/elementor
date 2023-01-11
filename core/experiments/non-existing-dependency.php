@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Not_Existed_Dependency {
+class Non_Existing_Dependency {
 
 	private $feature_id;
 
