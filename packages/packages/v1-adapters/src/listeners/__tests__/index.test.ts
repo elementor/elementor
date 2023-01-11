@@ -1,8 +1,8 @@
 import {
 	commandEnd,
 	commandStart,
+	dispatchOnV1Ready,
 	flushListeners,
-	startV1Listeners,
 	listenTo,
 	windowEvent,
 	v1Ready,
@@ -10,8 +10,6 @@ import {
 
 describe( '@elementor/v1-adapters/listeners', () => {
 	beforeEach( () => {
-		( window as any ).__elementorEditorV1Loaded = Promise.resolve();
-
 		jest.useFakeTimers();
 	} );
 
@@ -19,8 +17,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		flushListeners();
 
 		jest.useRealTimers();
-
-		delete ( window as any ).__elementorEditorV1Loaded;
 	} );
 
 	it( 'should listen to commands', () => {
@@ -34,8 +30,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			commandEnd( commandToListen ),
 			callback
 		);
-
-		startV1Listeners();
 
 		// Dispatch events.
 		dispatchCommandBefore( commandToListen );
@@ -64,8 +58,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			callback
 		);
 
-		startV1Listeners();
-
 		// Dispatch events.
 		dispatchWindowEvent( event );
 
@@ -89,8 +81,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			windowEvent( event ),
 			commandStart( command ),
 		], callback );
-
-		startV1Listeners();
 
 		// Dispatch events.
 		dispatchCommandBefore( command );
@@ -124,8 +114,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			callback,
 		);
 
-		startV1Listeners();
-
 		// Act.
 		flushListeners();
 
@@ -140,8 +128,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			windowEvent( event2 ),
 			callback,
 		);
-
-		startV1Listeners();
 
 		// Dispatch events.
 		dispatchWindowEvent( event2 );
@@ -164,29 +150,24 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			callback
 		);
 
-		startV1Listeners();
+		dispatchOnV1Ready();
 
 		await waitForAllTicks();
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
+
+		// Cleanup.
+		delete ( window as any ).__elementorEditorV1Loaded;
 	} );
 
 	it( 'should throw when v1 is not loaded', async () => {
 		// Arrange.
 		const callback = jest.fn();
 
-		delete ( window as any ).__elementorEditorV1Loaded;
-
-		// Act.
-		listenTo(
-			v1Ready(),
-			callback
-		);
-
-		// Assert.
+		// Act & Assert.
 		try {
-			await startV1Listeners();
+			await dispatchOnV1Ready();
 		} catch ( e ) {
 			expect( e ).toBe( 'Elementor Editor V1 is not loaded' );
 		}

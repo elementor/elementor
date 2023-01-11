@@ -1,4 +1,4 @@
-import { dispatchOnV1Init, makeListener } from './utils';
+import { dispatchOnV1Ready, normalizeEvent } from './utils';
 import { CommandEventDescriptor, EventDescriptor, ListenerCallback, WindowEventDescriptor } from './types';
 
 const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
@@ -27,18 +27,6 @@ export function listenTo(
 	} );
 }
 
-export function startV1Listeners() {
-	callbacksByEvent.forEach( ( callbacks, event ) => {
-		window.addEventListener(
-			event,
-			makeListener( event, callbacks ),
-			{ signal: abortController.signal }
-		);
-	} );
-
-	return dispatchOnV1Init();
-}
-
 export function flushListeners() {
 	abortController.abort();
 	callbacksByEvent.clear();
@@ -52,17 +40,40 @@ function registerCommandListener(
 	callback: ListenerCallback
 ) {
 	registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
-		if ( e.type === 'command' && e.command === command ) {
+		const shouldRunCallback = e.type === 'command' && e.command === command;
+
+		if ( shouldRunCallback ) {
 			callback( e );
 		}
 	} );
 }
 
 function registerWindowEventListener( event: WindowEventDescriptor['name'], callback: ListenerCallback ) {
-	callbacksByEvent.set(
-		event,
-		callbacksByEvent.get( event ) || []
-	);
+	const isFirstListener = ! callbacksByEvent.has( event );
+
+	if ( isFirstListener ) {
+		callbacksByEvent.set( event, [] );
+
+		addListener( event );
+	}
 
 	callbacksByEvent.get( event )!.push( callback );
+}
+
+function addListener( event: EventDescriptor['name'] ) {
+	window.addEventListener(
+		event,
+		makeListener( event ),
+		{ signal: abortController.signal }
+	);
+}
+
+function makeListener( event: EventDescriptor['name'] ) : EventListener {
+	return ( e ) => {
+		const normalizedEvent = normalizeEvent( e );
+
+		callbacksByEvent.get( event )?.forEach( ( callback ) => {
+			callback( normalizedEvent );
+		} );
+	};
 }
