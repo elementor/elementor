@@ -823,14 +823,14 @@ class Widget_Image extends Widget_Base {
 	/**
 	 * Retrieve image widget link URL.
 	 *
-	 * @since 1.0.0
-	 * @access private
+	 * @since 3.11.0
+	 * @access protected
 	 *
 	 * @param array $settings
 	 *
 	 * @return array|string|false An array/string containing the link URL, or false if no link.
 	 */
-	private function get_link_url( $settings ) {
+	protected function get_link_url( $settings ) {
 		if ( 'none' === $settings['link_to'] ) {
 			return false;
 		}
