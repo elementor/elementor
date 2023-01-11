@@ -1,4 +1,4 @@
-import { EventDescriptor, ListenerCallback, ListenerEvent } from './types';
+import { ListenerEvent } from './types';
 
 export function dispatchOnV1Ready() {
 	return getV1LoadingPromise().then( () => {

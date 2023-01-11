@@ -162,9 +162,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 	} );
 
 	it( 'should throw when v1 is not loaded', async () => {
-		// Arrange.
-		const callback = jest.fn();
-
 		// Act & Assert.
 		try {
 			await dispatchOnV1Ready();

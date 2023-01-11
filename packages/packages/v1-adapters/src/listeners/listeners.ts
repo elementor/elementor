@@ -1,4 +1,4 @@
-import { dispatchOnV1Ready, normalizeEvent } from './utils';
+import { normalizeEvent } from './utils';
 import { CommandEventDescriptor, EventDescriptor, ListenerCallback, WindowEventDescriptor } from './types';
 
 const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
