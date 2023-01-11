@@ -18,6 +18,22 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		$this->mock_config_provider = $this->createMock( Config_Provider_Interface::class );
 	}
 
+	public function tearDown() {
+		// Clean up all the scripts and styles that were registered.
+		wp_deregister_script( 'test-script' );
+		wp_deregister_script( 'script-with-translations' );
+		wp_deregister_script( 'script-with-another-domain' );
+		wp_deregister_script( 'script-without-translations' );
+		wp_deregister_script( 'script-minified' );
+		wp_deregister_script( 'script-not-minified' );
+		wp_deregister_script( 'script-with-replace-requested-file-callback' );
+		wp_deregister_script( 'script-without-replace-requested-file' );
+
+		wp_deregister_style( 'test-style' );
+
+		parent::tearDown();
+	}
+
 	public function test_register_scripts() {
 		// Arrange
 		global $wp_scripts;
@@ -25,7 +41,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		$this->mock_config_provider->method( 'get_script_configs' )->willReturn( [
 			[
 				'handle' => 'test-script',
-				'src' => '{{ASSETS_URL}}js/test-script{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}js/test-script{{MIN_SUFFIX}}.js',
 				'deps' => [ 'test-dep' ],
 				'version' => '1.1.1',
 			],
@@ -41,9 +57,6 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'test-dep' ], $wp_scripts->registered['test-script']->deps );
 		$this->assertEquals( ELEMENTOR_ASSETS_URL . 'js/test-script.js', $wp_scripts->registered['test-script']->src );
 		$this->assertEquals( '1.1.1', $wp_scripts->registered['test-script']->ver );
-
-		// Cleanup
-		wp_deregister_script( 'test-script' );
 	}
 
 	public function test_register_styles() {
@@ -53,7 +66,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		$this->mock_config_provider->method( 'get_style_configs' )->willReturn( [
 			[
 				'handle' => 'test-style',
-				'src' => '{{ASSETS_URL}}js/test-style{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}js/test-style{{MIN_SUFFIX}}.js',
 				'deps' => [ 'test-dep' ],
 				'version' => '1.1.1',
 			],
@@ -69,9 +82,6 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'test-dep' ], $wp_styles->registered['test-style']->deps );
 		$this->assertEquals( ELEMENTOR_ASSETS_URL . 'js/test-style.js', $wp_styles->registered['test-style']->src );
 		$this->assertEquals( '1.1.1', $wp_styles->registered['test-style']->ver );
-
-		// Cleanup
-		wp_deregister_style( 'test-style' );
 	}
 
 	public function test_load_script_translations() {
@@ -85,14 +95,13 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 					'src' => 'http://localhost',
 					'deps' => [ 'some-dep' ],
 					'translations' => [
-						'active' => true,
+						'domain' => 'elementor',
 					]
 				],
 				[
 					'handle' => 'script-with-another-domain',
 					'src' => 'http://localhost',
 					'translations' => [
-					'active' => true,
 						'domain' => 'another-domain',
 					]
 				],
@@ -119,74 +128,78 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				'wp-i18n',
 			]
 		);
-
-		// Cleanup
-		wp_deregister_script( 'script-with-translations' );
-		wp_deregister_script( 'script-with-another-domain' );
-		wp_deregister_script( 'script-without-translations' );
 	}
 
-	public function test_load_script_translations__with_path_suffix() {
+	/** @dataProvider load_script_translations__with_replace_requested_file__data_provider */
+	public function load_script_translations__with_replace_requested_file( $script_config, $expected_relative_path ) {
 		// Arrange
 		remove_all_filters( 'load_script_textdomain_relative_path' );
 
 		$this->mock_config_provider->method( 'get_script_configs' )
-			->willReturn( [
+			->willReturn( [ $script_config ] );
+
+		$loader = new Editor_Loader( $this->mock_config_provider );
+		$loader->register_hooks();
+
+		// Act
+		$result = apply_filters(
+			'load_script_textdomain_relative_path',
+			str_replace( 'http://localhost/', '', $script_config['src'] ),
+			$script_config['src']
+		);
+
+		// Assert
+		$this->assertEquals( $expected_relative_path, $result );
+	}
+
+	public function load_script_translations__with_replace_requested_file__data_provider() {
+		return [
+			[
 				[
 					'handle' => 'script-minified',
 					'src' => 'http://localhost/assets/js/script-minified.min.js',
 					'translations' => [
-						'active' => true,
-						'file_suffix' => 'strings',
-					]
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
 				],
+				'assets/js/script-minified.strings.js',
+			],
+			[
 				[
 					'handle' => 'script-not-minified',
 					'src' => 'http://localhost/assets/js/script-not-minified.js',
 					'translations' => [
-						'active' => true,
-						'file_suffix' => 'strings',
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
 					]
 				],
+				'assets/js/script-not-minified.strings.js',
+			],
+			[
 				[
-					'handle' => 'script-without-path-suffix',
-					'src' => 'http://localhost/assets/js/script-without-path-suffix.js',
+					'handle' => 'script-with-replace-requested-file-callback',
+					'src' => 'http://localhost/assets/js/script-with-replace-requested-file-callback.js',
+					'translations' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+						'replace_requested_file_callback' => function ( $relative_path ) {
+							return 'translations/' . $relative_path;
+						}
+					],
+				],
+				'translations/assets/js/script-with-replace-requested-file-callback.js',
+			],
+			[
+				[
+					'handle' => 'script-without-replace-requested-file',
+					'src' => 'http://localhost/assets/js/script-without-replace-requested-file.js',
 					'translations' => [
 						'active' => true,
 					]
 				],
-			] );
-
-		$loader = new Editor_Loader( $this->mock_config_provider );
-		$loader->register_actions();
-
-		// Act
-		$script_minified_result = apply_filters(
-			'load_script_textdomain_relative_path',
-			'assets/js/script-minified.min.js',
-			'http://localhost/assets/js/script-minified.min.js'
-		);
-
-		$script_not_minified_result = apply_filters(
-			'load_script_textdomain_relative_path',
-			'assets/js/script-not-minified.js',
-			'http://localhost/assets/js/script-not-minified.js'
-		);
-
-		$script_without_file_suffix_result = apply_filters(
-			'load_script_textdomain_relative_path',
-			'assets/js/script-without-path-suffix.js',
-			'http://localhost/assets/js/script-without-path-suffix.js'
-		);
-
-		// Assert
-		$this->assertEquals( 'assets/js/script-minified.strings.js', $script_minified_result );
-		$this->assertEquals( 'assets/js/script-not-minified.strings.js', $script_not_minified_result );
-		$this->assertEquals( 'assets/js/script-without-path-suffix.js', $script_without_file_suffix_result );
-
-		// Cleanup
-		wp_deregister_script( 'script-minified' );
-		wp_deregister_script( 'script-not-minified' );
-		wp_deregister_script( 'script-without-path-suffix' );
+				'assets/js/script-without-replace-requested-file.js',
+			],
+		];
 	}
 }

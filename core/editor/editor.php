@@ -787,7 +787,7 @@ class Editor {
 	private function get_loader() {
 		if ( ! $this->loader ) {
 			$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
-			$this->loader->register_actions();
+			$this->loader->register_hooks();
 		}
 
 		return $this->loader;

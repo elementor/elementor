@@ -25,7 +25,7 @@ class Editor_Loader {
 	/**
 	 * @return void
 	 */
-	public function register_actions() {
+	public function register_hooks() {
 		$script_configs = $this->get_script_configs();
 
 		// Pointing WordPress to use request translations for external file ('assets/js/editor.strings.js') and not
@@ -68,7 +68,7 @@ class Editor_Loader {
 		$script_configs = $this->get_script_configs();
 
 		foreach ( $script_configs as $script_config ) {
-			if ( $script_config['translations']['active'] ) {
+			if ( $script_config['translations']['domain'] ) {
 				wp_set_script_translations(
 					$script_config['handle'],
 					$script_config['translations']['domain']
@@ -147,9 +147,20 @@ class Editor_Loader {
 			[
 				'in_footer' => true,
 				'translations' => [
-					'active' => false,
-					'domain' => 'elementor',
-					'file_suffix' => '',
+					'domain' => null,
+					'replace_requested_file' => false,
+					'replace_requested_file_callback' => function ( $relative_path ) {
+						// By default, we suffix the file with `.strings` e.g 'assets/js/editor.js' => 'assets/js/editor.strings.js'.
+
+						// Translations are always based on the non-minified filename.
+						$relative_path_without_ext = preg_replace( '/(\.min)?\.js$/i', '', $relative_path );
+
+						return implode( '.', [
+							$relative_path_without_ext,
+							'strings',
+							'js',
+						] );
+					},
 				],
 			];
 
@@ -162,7 +173,7 @@ class Editor_Loader {
 		], $additional_defaults );
 
 		$replacements = [
-			'{{ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
+			'{{ELEMENTOR_ASSETS_URL}}' => ELEMENTOR_ASSETS_URL,
 			'{{MIN_SUFFIX}}' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
 			'{{DIRECTION_SUFFIX}}' => is_rtl() ? '-rtl' : '',
 		];
@@ -200,7 +211,7 @@ class Editor_Loader {
 	 *
 	 * @param string $relative_path
 	 * @param string $src
-	 * @param Collection $script_configs collection of all the script configs
+	 * @param Collection $script_configs Collection of all the script configs
 	 *
 	 * @return string
 	 */
@@ -210,20 +221,16 @@ class Editor_Loader {
 		} );
 
 		$should_suffix_path = $script_config &&
-			$script_config['translations']['active'] &&
-			$script_config['translations']['file_suffix'];
+			$script_config['translations']['domain'] &&
+			$script_config['translations']['replace_requested_file'];
 
 		if ( ! $should_suffix_path ) {
 			return $relative_path;
 		}
 
-		// Translations are always based on the non-minified filename.
-		$relative_path_without_ext = preg_replace( '/(\.min)?\.js$/i', '', $relative_path );
-
-		return implode( '.', [
-			$relative_path_without_ext,
-			$script_config['translations']['file_suffix'],
-			'js',
-		] );
+		return $script_config['translations']['replace_requested_file_callback'](
+			$relative_path,
+			$script_config
+		);
 	}
 }

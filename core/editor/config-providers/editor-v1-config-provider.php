@@ -13,7 +13,7 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 				// Loader script
 				[
 					'handle' => 'elementor-editor-loader-v1',
-					'src' => '{{ASSETS_URL}}js/editor-loader-v1{{MIN_SUFFIX}}.js',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v1{{MIN_SUFFIX}}.js',
 					'deps' => [ 'elementor-editor' ],
 				],
 			]
