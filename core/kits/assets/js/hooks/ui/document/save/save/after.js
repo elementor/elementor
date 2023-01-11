@@ -15,6 +15,11 @@ export class KitAfterSave extends After {
 	}
 
 	apply( args ) {
+		// On save clear cache of all edited documents and dynamic tags.
+		// This is needed because when returning to the editor after saving the kit, it was still displaying the old data.
+		this.clearDocumentCache();
+		this.clearDynamicTagsCache();
+
 		if ( 'publish' === args.status ) {
 			elementor.notifications.showToast( {
 				message: __( 'Your changes have been updated.', 'elementor' ),
@@ -47,6 +52,17 @@ export class KitAfterSave extends After {
 
 			reloadConfirm.show();
 		}
+	}
+
+	clearDocumentCache() {
+		Object.keys( elementor.documents.documents ).forEach( ( id ) => {
+			elementor.documents.invalidateCache( id );
+		} );
+	}
+
+	clearDynamicTagsCache() {
+		elementor.dynamicTags.cleanCache();
+		elementor.dynamicTags.loadCacheRequests();
 	}
 }
 
