@@ -34,6 +34,7 @@
 		}
 	}
 }
+
 .swiper-wrapper {
 	position: relative;
 	width: 100%;
@@ -143,15 +144,18 @@
 		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 	}
 }
+
 .swiper-css-mode {
 
 	& > .swiper-wrapper {
 		overflow: auto;
 		scrollbar-width: none;
 		-ms-overflow-style: none;
+
 		&::-webkit-scrollbar {
 			display: none;
 		}
+
 		& > .swiper-slide {
 			scroll-snap-align: start start;
 		}
@@ -161,6 +165,7 @@
 .swiper-horizontal {
 
 	&.swiper-css-mode {
+
 		& > .swiper-wrapper {
 			scroll-snap-type: x mandatory;
 		}
@@ -176,6 +181,7 @@
 		}
 	}
 }
+
 .swiper-centered {
 
 	& > .swiper-wrapper {
