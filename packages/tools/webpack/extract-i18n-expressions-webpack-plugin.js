@@ -26,7 +26,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 		// Learn more about Webpack compilation process and hooks: https://webpack.js.org/api/compilation-hooks/
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
-			// We tap into the time Webpack done processing all the other assets.
+			// We tap into the time that Webpack has finished processing all the other assets
 			// learn more: https://webpack.js.org/api/compilation-hooks/#processassets.
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
 				const translationCallExpressions = this.getTranslationCallExpressions( compilation );
