@@ -264,7 +264,6 @@ export default class BaseNestedTabs extends Base {
 			return window.top.$e.run( 'document/repeater/select', {
 				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
 				index: parseInt( tabIndex ),
-				source: 'fromUser',
 			} );
 		}
 
