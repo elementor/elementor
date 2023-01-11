@@ -28,6 +28,8 @@ class Editor_Loader {
 	public function register_actions() {
 		$script_configs = $this->get_script_configs();
 
+		// Pointing WordPress to use request translations for external file ('assets/js/editor.strings.js') and not
+		// for the original file (assets/js/editor.js).
 		add_filter( 'load_script_textdomain_relative_path', function ( $relative_path, $src ) use ( $script_configs ) {
 			return $this->transform_translation_relative_path( $relative_path, $src, $script_configs );
 		}, 10, 2 );
@@ -187,8 +189,11 @@ class Editor_Loader {
 	}
 
 	/**
-	 * The name of the translation file could be suffixed with a translation's identifier (usually ".strings")
-	 * to support loading translations for lazy loaded scripts.
+	 * The purpose of this function is to point WP to request translations for other file
+	 * instead of the default file for translations.
+	 *
+	 * The idea is that all the translations for specific webpack entry locate in the same .js file
+	 * and not split into multiple files (when using lazy loading the main entry file split into multiple files),
 	 *
 	 * Want to go deeper? Read the following article:
 	 * @see https://developer.wordpress.com/2022/01/06/wordpress-plugin-i18n-webpack-and-composer/

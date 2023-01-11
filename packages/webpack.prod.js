@@ -15,6 +15,7 @@ module.exports = merge( common, {
 	plugins: [
 		new ReadableJsAssetsWebpackPlugin(),
 		new ExtractI18nExpressionsWebpackPlugin( {
+			// Example for regex match: `__('Hello', 'elementor')`, `_n('Me', 'Us', 2, 'elementor-pro')`.
 			translationsRegexps: [ /\b_(?:_|n|nx|x)\(.+,\s*(?<c>['"`])[\w-]+\k<c>\)/ ],
 		} ),
 	],

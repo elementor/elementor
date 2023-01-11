@@ -1,6 +1,6 @@
 const { sources: { RawSource } } = require( 'webpack' );
 
-const MODULE_FILTER = [ /((?:[^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ];
+const MODULE_FILTERS = Object.freeze( [ /((?:[^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
 
 module.exports = class ExtractI18nExpressionsWebpackPlugin {
 	translationsRegexps = [];
@@ -22,10 +22,17 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 	}
 
 	apply( compiler ) {
+		// Learn more about Webpack plugin system: https://webpack.js.org/api/plugins/
+
+		// Learn more about Webpack compilation process and hooks: https://webpack.js.org/api/compilation-hooks/
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
+			// We tap into the time Webpack done processing all the other assets.
+			// learn more: https://webpack.js.org/api/compilation-hooks/#processassets.
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
 				const translationCallExpressions = this.getTranslationCallExpressions( compilation );
 
+				// Add all the translation call expressions to Webpack assets as a seperated file,
+				// and let Webpack create this file.
 				this.addTranslationCallExpressionsToAssets( compilation, translationCallExpressions );
 			} );
 		} );
@@ -44,22 +51,17 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 			compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
 				this.getSubModulesToCheck( module ).forEach( ( subModule ) => {
-					const source = subModule?._source?._valueAsString;
-
-					if ( ! source ) {
-						return;
-					}
-
 					const mainEntryFile = this.findMainModuleOfEntry( subModule, compilation );
 
 					if ( ! translationCallExpressions.has( mainEntryFile ) ) {
 						translationCallExpressions.set( mainEntryFile, new Set() );
 					}
 
-					this.translationsRegexps.forEach( ( regexp ) => {
-						[ ...source.matchAll( regexp ) ].forEach( ( [ callExpression ] ) => {
-							translationCallExpressions.get( mainEntryFile ).add( callExpression );
-						} );
+					// Running over the submodules and find all the translation call expressions (e.g `__('Hello', 'elementor')`),
+					// extract them and add them to a Map, where the key is the main entry file, and the value is a Set of all the
+					// translation call expressions.
+					this.getTranslationCallExpressionsFromSubmodule( subModule ).forEach( ( callExpression ) => {
+						translationCallExpressions.get( mainEntryFile ).add( callExpression );
 					} );
 				} );
 			} );
@@ -83,13 +85,14 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 				.getPath( '[file]', { filename: chunkJSFile } )
 				.replace( /(\.min)?\.js$/i, '.strings.js' );
 
-			// Add source and file into compilation for webpack to output.
+			// Create Webpack source object which represents a new file, and add it to Webpack assets array.
 			compilation.assets[ assetFilename ] = new RawSource(
 				[ ...( translationCallExpressions.get( mainFilePath ) || new Set() ) ]
 					.map( ( expr ) => `${ expr };` )
 					.join( '' )
 			);
 
+			// Let Webpack know that the file that was created is a part of the chunk we're currently processing.
 			chunk.files.add( assetFilename );
 		} );
 	}
@@ -104,7 +107,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 	}
 
 	shouldCheckModule( module ) {
-		return MODULE_FILTER.every( ( filter ) => filter.test( module.userRequest ) );
+		return MODULE_FILTERS.every( ( filter ) => filter.test( module.userRequest ) );
 	}
 
 	findMainModuleOfEntry( module, compilation ) {
@@ -113,5 +116,23 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		}
 
 		return module.rawRequest;
+	}
+
+	getTranslationCallExpressionsFromSubmodule( subModule ) {
+		const source = subModule?._source?._valueAsString;
+
+		if ( ! source ) {
+			return [];
+		}
+
+		const translationCallExpressions = [];
+
+		this.translationsRegexps.forEach( ( regexp ) => {
+			[ ...source.matchAll( regexp ) ].forEach( ( [ callExpression ] ) => {
+				translationCallExpressions.push( callExpression );
+			} );
+		} );
+
+		return translationCallExpressions;
 	}
 };
