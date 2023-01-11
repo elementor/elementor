@@ -11,14 +11,28 @@ interface Config_Provider_Interface {
 	 *
 	 * @return array
 	 */
-	public function get_scripts();
+	public function get_script_configs();
 
 	/**
-	 * Return a list of the scripts to enqueue (loaders for the apps).
+	 * Return a list of the scripts handles to enqueue (loaders for the apps).
+	 *
+	 * @return string[] handle names
+	 */
+	public function get_script_handles_to_enqueue();
+
+	/**
+	 * Return a list of the styles to register.
 	 *
 	 * @return array
 	 */
-	public function get_loader_scripts();
+	public function get_style_configs();
+
+	/**
+	 * Return a list of the style handles to enqueue (loaders for the apps).
+	 *
+	 * @return string[] handle names
+	 */
+	public function get_style_handles_to_enqueue();
 
 	/**
 	 * Return the path to the template body file.
