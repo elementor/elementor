@@ -8,7 +8,7 @@ import {
 	v1Ready,
 } from '../';
 
-describe( '@elementor/v1-adapters/listener', () => {
+describe( '@elementor/v1-adapters/listeners', () => {
 	beforeEach( () => {
 		( window as any ).__elementorEditorV1Loaded = Promise.resolve();
 
@@ -150,7 +150,7 @@ describe( '@elementor/v1-adapters/listener', () => {
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should trigger v1 init when v1 is loaded after v2', async () => {
+	it( 'should trigger v1 ready when v1 is loaded after v2', async () => {
 		// Arrange.
 		const callback = jest.fn();
 
