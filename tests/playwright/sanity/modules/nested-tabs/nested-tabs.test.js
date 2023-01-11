@@ -3,15 +3,19 @@ const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const { getPageId } = require( '../../../utilities/site-utilities' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test.beforeAll( async ( { page }, testInfo ) => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		wpAdmin.setExperiments( {
+		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
 		} );
 	} );
 
-	test.afterAll( async ( { page }, testInfo ) => {
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: 'inactive',
