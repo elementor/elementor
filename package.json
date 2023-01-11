@@ -15,7 +15,7 @@
         "test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
         "test:qunit": "grunt qunit",
         "test:setup:elements-regression": "wp-env run tests-cli \"bash -c 'bash elementor-config/setup.sh'\"",
-        "test:setup:playwright-sanity": "wp-env run cli \"bash -c 'bash elementor-config/import-library.sh'\" && wp-env run cli \"wp rewrite structure \"/%postname%/\" --hard\" && wp-env run cli \"wp theme activate hello-elementor\"",
+        "test:setup:playwright-sanity": "wp-env run cli \"bash -c 'bash elementor-config/import-library.sh'\" && wp-env run cli \"wp rewrite structure \"/%postname%/\" --hard\" && wp-env run cli \"wp theme activate twentytwentytwo\"",
         "test:playwright": "playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "test:playwright:default": "npx cross-env TEST_SUITE=@default playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "test:playwright:reverse-columns": "npx cross-env TEST_SUITE=@reverse-columns playwright test \"--config=tests/playwright/config/sanity.config.js\"",
