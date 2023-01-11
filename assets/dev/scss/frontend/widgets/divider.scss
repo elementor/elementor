@@ -12,7 +12,7 @@
 	--divider-pattern-size: 20px;
 	--divider-pattern-url: none;
 	--divider-pattern-repeat: repeat-x;
-  	--divider-width:100%;
+  	--divider-default-width:100%;
 
 	.elementor-divider {
 		display: flex;
@@ -139,16 +139,12 @@
 	direction: rtl;
 }
 
-.e-con {
-  --container-widget-width: 100%;
-}
-
 .e-con,
 .e-con-inner {
 
 	& > .elementor-widget-divider {
 		// Fix - Divider widget has undefined width and height issues inside the flex container (ED-7722).
-		width: var( --container-widget-width, var( --divider-width ) );
+		width: var( --container-widget-width, var( --divider-default-width ) );
 	  	--flex-grow: var( --container-widget-flex-grow );
 	}
 }
