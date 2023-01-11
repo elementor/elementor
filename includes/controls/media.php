@@ -47,6 +47,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
+			'size' => '',
 		];
 	}
 
@@ -269,9 +270,44 @@ class Control_Media extends Control_Base_Multiple {
 			<# if ( data.description ) { #>
 				<div class="elementor-control-field-description">{{{ data.description }}}</div>
 			<# } #>
+
+			<# if ( data.has_sizes ) { #>
+			<div class="elementor-control-type-select e-control-image-size">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title" data-e-responsive-switcher-sibling="false" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
+					<div class="elementor-control-input-wrapper elementor-control-unit-5">
+						<select class="e-image-size-select" id="<?php $this->print_control_uid( 'size' ); ?>" data-setting="size">
+							<?php foreach ( $this->get_image_sizes() as $size_key => $size_title ) : ?>
+								<option value="<?php echo esc_attr( $size_key ); ?>"><?php echo esc_html( $size_title ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+			</div>
+			<# } #>
+
 			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
 		<?php
+	}
+
+	private function get_image_sizes() : array {
+		$wp_image_sizes = Group_Control_Image_Size::get_all_image_sizes();
+
+		$image_sizes = [];
+
+		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
+			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
+			if ( is_array( $size_attributes ) ) {
+				$control_title .= sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
+			}
+
+			$image_sizes[ $size_key ] = $control_title;
+		}
+
+		$image_sizes[''] = esc_html_x( 'Full', 'Image Size Control', 'elementor' );
+
+		return $image_sizes;
 	}
 
 	/**
@@ -288,6 +324,7 @@ class Control_Media extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'has_sizes' => false,
 			'media_types' => [
 				'image',
 			],
@@ -363,6 +400,10 @@ class Control_Media extends Control_Base_Multiple {
 			return parent::get_style_value( $css_property, $control_value, $control_data );
 		}
 
-		return wp_get_attachment_image_url( $control_value['id'], 'full' );
+		if ( empty( $control_value['size'] ) ) {
+			$control_value['size'] = 'full';
+		}
+
+		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
 	}
 }

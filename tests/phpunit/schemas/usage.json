@@ -960,6 +960,15 @@
 									],
 									"title": "Does Font awesome 4 enabled?",
 									"default": "yes"
+								},
+								"meta_generator_tag": {
+									"$id": "#/usages/settings/advanced/meta_generator_tag",
+									"enum": [
+										"",
+										"1"
+									],
+									"title": "Generator Tag",
+									"default": ""
 								}
 							},
 							"additionalProperties": false
