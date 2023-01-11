@@ -17,6 +17,13 @@
 	padding: 0;
 	z-index: 1;
 
+	.swiper-slide {
+
+		figure {
+			line-height: 0;
+		}
+	}
+
 	.elementor-lightbox-content-source {
 		display: none;
 	}
