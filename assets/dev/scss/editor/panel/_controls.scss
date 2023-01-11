@@ -81,10 +81,10 @@
 				content: '';
 				position: absolute;
 				height: 1px;
-				width: 100%;
+				width: calc(100% - 40px);
 				top: 0;
-				left: 0;
-				background-color: $editor-background;
+				@include start(20px);
+				background-color: $e-border-color;
 			}
 		}
 
@@ -94,10 +94,10 @@
 				content: '';
 				position: absolute;
 				height: 1px;
-				width: 100%;
+				width: calc(100% - 40px);
 				bottom: 0;
-				left: 0;
-				background-color: $editor-background;
+				@include start(20px);
+				background-color: $e-border-color;
 			}
 
 			+ .elementor-control-type-tabs,

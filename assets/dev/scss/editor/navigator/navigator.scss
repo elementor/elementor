@@ -230,7 +230,7 @@ body {
 					outline: none;
 					background-color: #fff;
 					padding: 3px;
-					border: 1px solid $e-gray-100;
+					border: $e-border;
 				}
 
 				&:not([contenteditable="true"]) {

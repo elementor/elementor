@@ -57,7 +57,7 @@
 	@include padding(10px, 10px, 10px, 29px);
 	font-style: italic;
 	color: $editor-light;
-	border: 1px solid $e-gray-100;
+	border: $e-border;
 	border-radius: 0;
 	transition: all 1s;
 	appearance: none;
@@ -79,7 +79,7 @@
 .elementor-panel {
 
 	.elementor-element {
-		border: 1px solid $e-gray-100;
+		border: $e-border;
 		border-radius: 3px;
 		background-color: $white;
 		cursor: move;

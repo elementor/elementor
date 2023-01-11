@@ -12,13 +12,13 @@
 	width: 100%;
 	padding: 0;
 	line-height: $control-unit - 2;
-	border-top: 1px solid $e-gray-100;
-	border-bottom: 1px solid $e-gray-100;
-	@include border-end(1px solid $e-gray-100);
+	border-top: $e-border;
+	border-bottom: $e-border;
+	@include border-end($e-border);
 	cursor: pointer;
 
 	&:first-child {
-		@include border-start(1px solid $e-gray-100);
+		@include border-start($e-border);
 		@include _dimension_side_property(border-top, start, radius, 3px);
 		@include _dimension_side_property(border-bottom, start, radius, 3px);
 	}
@@ -30,7 +30,7 @@
 
 	&.e-tab-active {
 		background-color: $e-gray-100;
-		border-color: $e-gray-100;
+		border-color: $e-border-color;
 	}
 }
 

@@ -34,6 +34,9 @@ $e-warning: 	#FCB92C;
 $e-warning-bg: 	#FFF9F0;
 $e-brand: 		#0600A8;
 
+$e-border-color: $e-gray-100;
+$e-border: 1px solid $e-border-color;
+
 // Aliases
 $editor-danger: $e-danger;
 $editor-warning: $e-warning;
@@ -66,7 +69,6 @@ $e-btn-brand-active:darken($e-btn-brand, 20%);
 $e-btn-danger:			$e-danger;
 $e-btn-danger-hover:	darken($e-btn-danger, 10%);
 $e-btn-danger-active:	darken($e-btn-danger, 20%);
-
 
 // Primary Colors
 $gray-darkest:  $e-gray-900;

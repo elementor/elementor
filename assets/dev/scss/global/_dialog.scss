@@ -60,7 +60,7 @@
 			width: 50%;
 			border: none;
 			background: none;
-			color: $editor-dark;
+			color: $e-btn;
 			font-size: 15px;
 			cursor: pointer;
 			padding: 13px 0;
@@ -71,11 +71,15 @@
 			}
 
 			&.dialog-ok {
-				color: $editor-warning;
+				color: $e-btn-primary;
+			}
+
+			&.dialog-cancel {
+
 			}
 
 			&.dialog-take_over {
-				color: $editor-success;
+				color: $e-btn-primary;
 			}
 
 			&:active {

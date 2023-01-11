@@ -17,7 +17,7 @@
 	}
 
 	&-items {
-		border: 1px solid $e-gray-100;
+		border: $e-border;
 		margin: 15px 0 25px;
 		border-radius: 5px;
 		overflow: hidden;
@@ -32,7 +32,7 @@
 		cursor: pointer;
 
 		&:not(:last-child) {
-			border-bottom: 1px solid $e-gray-100;
+			border-bottom: $e-border;
 		}
 
 		&:hover {

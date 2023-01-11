@@ -17,13 +17,13 @@
 	.dialog {
 
 		&-header {
-			border-bottom: 1px solid $e-gray-100;
+			border-bottom: $e-border;
 			padding: 0;
 			z-index: 1;
 		}
 
 		&-buttons-wrapper {
-			border-top-color: $e-gray-100;
+			border-top-color: $e-border-color;
 			display: none;
 			justify-content: flex-end;
 			padding: 5px;
@@ -158,7 +158,7 @@
 	&__sidebar {
 		flex-shrink: 0;
 		width: 25%;
-		border-inline-end: 1px solid $e-gray-100;
+		border-inline-end: $e-border;
 	}
 
 	&__content {
