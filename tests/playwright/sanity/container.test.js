@@ -5,13 +5,23 @@ const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
 
 test.describe( 'Container tests', () => {
+	beforeAll( async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		wpAdmin.setExperiments( {
+			container: true,
+		} );
+	} );
+
+	afterAll( async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
 	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -39,19 +49,11 @@ test.describe( 'Container tests', () => {
 		// Assert.
 		// Test that the image is between the heading & button.
 		expect( elBeforeButton ).toBe( elAfterHeading );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -133,19 +135,11 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-boxed-start.jpeg' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.closeNavigatorIfOpen();
@@ -194,19 +188,11 @@ test.describe( 'Container tests', () => {
 		// Reset the Default template.
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Close Navigator
@@ -242,19 +228,11 @@ test.describe( 'Container tests', () => {
 		// Reset the Default template.
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Container full width and position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.closeNavigatorIfOpen();
@@ -288,18 +266,10 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
@@ -308,17 +278,10 @@ test.describe( 'Container tests', () => {
 		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
 		await expect( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
 
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -393,10 +356,6 @@ test.describe( 'Container tests', () => {
 
 	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		await page.goto( '/wp-admin/media-new.php' );
 
 		if ( await page.locator( '.upload-flash-bypass a' ).isVisible() ) {
@@ -444,20 +403,11 @@ test.describe( 'Container tests', () => {
 		// Reset to the Default template.
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -488,27 +438,17 @@ test.describe( 'Container tests', () => {
 
 	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
+
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await createCanvasPage( wpAdmin );
@@ -533,9 +473,6 @@ test.describe( 'Container tests', () => {
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
 
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -564,11 +501,6 @@ test.describe( 'Container tests', () => {
 
 	test( 'Justify icons are displayed correctly', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const breakpoints = Breakpoints.getBasic().reverse();
 		const directions = [ 'right', 'down', 'left', 'up' ];
 
@@ -584,10 +516,6 @@ test.describe( 'Container tests', () => {
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 } );
 
