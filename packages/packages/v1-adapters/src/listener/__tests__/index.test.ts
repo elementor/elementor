@@ -4,7 +4,8 @@ import {
 	flushListeners,
 	startV1Listeners,
 	listenTo,
-	windowEvent, v1Init,
+	windowEvent,
+	v1Ready,
 } from '../';
 
 describe( '@elementor/v1-adapters/listener', () => {
@@ -159,7 +160,7 @@ describe( '@elementor/v1-adapters/listener', () => {
 
 		// Act.
 		listenTo(
-			v1Init(),
+			v1Ready(),
 			callback
 		);
 
@@ -179,7 +180,7 @@ describe( '@elementor/v1-adapters/listener', () => {
 
 		// Act.
 		listenTo(
-			v1Init(),
+			v1Ready(),
 			callback
 		);
 

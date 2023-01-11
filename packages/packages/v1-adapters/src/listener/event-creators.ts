@@ -23,6 +23,6 @@ export const windowEvent = ( event: WindowEventDescriptor['name'] ) : WindowEven
 	};
 };
 
-export const v1Init = () => {
+export const v1Ready = () => {
 	return windowEvent( 'elementor/v1/initialized' );
 };
