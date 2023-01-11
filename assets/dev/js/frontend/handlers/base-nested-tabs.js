@@ -154,9 +154,16 @@ export default class BaseNestedTabs extends Base {
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
-			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
 			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
+
+		let $requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) );
+
+		// Verify that the tabIndex exists, otherwise active the first tab.
+		if ( ! $requestedTitle.length ) {
+			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( 1 ) );
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( 1 ) );
+		}
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
 		$requestedTitle.attr( {
@@ -240,8 +247,8 @@ export default class BaseNestedTabs extends Base {
 		this.activateDefaultTab();
 	}
 
-	onEditSettingsChange( propertyName, value, route = '' ) {
-		if ( 'activeItemIndex' === propertyName && 'content' !== route ) {
+	onEditSettingsChange( propertyName, value ) {
+		if ( 'activeItemIndex' === propertyName ) {
 			this.changeActiveTab( value, false );
 		}
 	}
@@ -253,12 +260,13 @@ export default class BaseNestedTabs extends Base {
 	changeActiveTab( tabIndex, fromUser = false ) {
 		// `document/repeater/select` is used only in edit mod, and only when its not internal call,
 		// in other words only in editor and when user triggered the change.
-		// if ( fromUser && this.isEdit ) {
-		// 	return window.top.$e.run( 'document/repeater/select', {
-		// 		container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
-		// 		index: parseInt( tabIndex ),
-		// 	} );
-		// }
+		if ( fromUser && this.isEdit ) {
+			return window.top.$e.run( 'document/repeater/select', {
+				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
+				index: parseInt( tabIndex ),
+				source: 'fromUser',
+			} );
+		}
 
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
