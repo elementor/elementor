@@ -3,11 +3,12 @@
 //
 
 .elementor-button {
-	font-size: 11px;
+	font-size: 12px;
 	font-family: $admin-font-family;
 	font-weight: 500;
+	line-height: 1.2;
 	text-transform: uppercase;
-	padding: 6px 18px;
+	padding: 8px 16px;
 	outline: none;
 	border: none;
 	border-radius: 3px;
@@ -17,6 +18,7 @@
 
 	&:hover {
 		background-color: $e-btn-hover;
+		color: $white;
 	}
 
 	&:active {
@@ -73,14 +75,20 @@
 	}
 
 	&.go-pro {
-		background-color: $e-brand;
+		background-color: $e-btn-brand;
+
+		&:before {
+			content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-crown' stroke-width='2' stroke='white' fill='none' stroke-linecap='round' stroke-linejoin='round' viewBox='0.58 3.58 22.85 16.83'%3E%3Cpath d='M0 0h24v24H0z' stroke='none'%3E%3C/path%3E%3Cpath d='m12 6 4 6 5-4-2 10H5L3 8l5 4z'%3E%3C/path%3E%3C/svg%3E");
+			display: inline-block;
+			padding-inline-end: 10px;
+		}
 
 		&:hover {
-			background-color: $e-brand-hover;
+			background-color: $e-btn-brand-hover;
 		}
 
 		&:active {
-			background-color: $e-brand-active;
+			background-color: $e-btn-brand-active;
 		}
 	}
 

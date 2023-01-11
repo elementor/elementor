@@ -54,12 +54,12 @@ $e-btn-primary-hover:	darken($e-btn-primary, 10%);
 $e-btn-primary-active:	darken($e-btn-primary, 20%);
 
 $e-btn-brand:		$e-brand;
-$e-btn-brand-hover:	darken($e-purple, 10%);
-$e-btn-brand-active:darken($e-purple, 20%);
+$e-btn-brand-hover:	darken($e-btn-brand, 10%);
+$e-btn-brand-active:darken($e-btn-brand, 20%);
 
 $e-btn-danger:			$e-danger;
-$e-btn-danger-hover:	darken($e-btn-primary, 10%);
-$e-btn-danger-active:	darken($e-btn-primary, 20%);
+$e-btn-danger-hover:	darken($e-btn-danger, 10%);
+$e-btn-danger-active:	darken($e-btn-danger, 20%);
 
 
 // Primary Colors
@@ -292,3 +292,10 @@ $breakpoints: (
 );
 
 $devices: 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile';
+
+.icon-crown {
+	background-repeat: no-repeat no-repeat;
+	background-position: center center;
+	background-size: cover;
+}
+
