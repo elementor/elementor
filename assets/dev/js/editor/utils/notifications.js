@@ -67,6 +67,8 @@ module.exports = elementorModules.Module.extend( {
 	showToast( options ) {
 		var toast = this.getToast();
 
+		this.positionToWindow( toast );
+
 		toast.setMessage( options.message );
 
 		toast.getElements( 'buttonsWrapper' ).empty();
@@ -91,6 +93,24 @@ module.exports = elementorModules.Module.extend( {
 		}
 
 		return toast.show();
+	},
+
+	positionToWindow( toast ) {
+		const positionOf = toast.getSettings( 'position' ).of.replace( '#', '' );
+
+		if ( document.getElementById( positionOf ) ) {
+			return;
+		}
+
+		const position = {
+			...toast.getSettings( 'position' ),
+			my: 'right top',
+			at: 'right-10 top+42',
+			of: '',
+		};
+
+		toast.setSettings( 'position', position );
+		toast.getElements( 'widget' ).addClass( 'dialog-position-window' );
 	},
 
 	onInit() {
