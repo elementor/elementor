@@ -81,9 +81,10 @@
 	.elementor-element {
 		border: 1px solid $e-gray-100;
 		border-radius: 3px;
-		background-color: #fff;
+		background-color: $white;
 		cursor: move;
 		position: relative;
+		transition: $transition-hover;
 
 		&-wrapper {
 			text-align: center;
@@ -101,12 +102,10 @@
 		.icon,
 		.title {
 			color: $e-gray-600;
-			transition: $transition-hover;
 		}
 
 		&:hover {
-			background-color: $e-gray-50;
-			border-color: $e-gray-50;
+			background-color: $e-gray-25;
 		}
 
 		.icon {

@@ -7,18 +7,16 @@
 	font-family: $admin-font-family;
 	font-weight: 500;
 	text-transform: uppercase;
-	padding: 7px 21px;
+	padding: 6px 18px;
 	outline: none;
 	border: none;
 	border-radius: 3px;
 	background-color: $e-btn;
 	color: $white;
-	transition-property: background, color, box-shadow, opacity;
-	transition-duration: .3s;
+	transition: $transition-hover;
 
 	&:hover {
 		background-color: $e-btn-hover;
-		color: $white;
 	}
 
 	&:active {
@@ -37,67 +35,34 @@
 	}
 
 	&.elementor-button-success {
-		color: #fff;
+		background-color: $e-btn-primary;
 
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-			background-color: $editor-success;
-
-			&:hover {
-				opacity: 0.85;
-			}
+		&:hover {
+			background-color: $e-btn-primary-hover;
 		}
 	}
 
 	&.elementor-button-brand {
-		color: $white;
+		background-color: $editor-accent;
 
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-			background-color: $editor-accent;
-
-			&:hover {
-				opacity: 0.85;
-			}
+		&:hover {
+			background-color: $e-btn-brand-hover;
 		}
 	}
 
 	&.elementor-button-warning {
-		background-color: $editor-light;
-		color: #fff;
+		background-color: $e-btn-danger;
 
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-
-			&:hover {
-				background-color: $editor-warning;
-				opacity: 0.85;
-			}
+		&:hover {
+			background-color: $e-btn-danger-hover;
 		}
 	}
 
 	&.elementor-button-danger {
-		background-color: $editor-danger;
-		color: #fff;
+		background-color: $e-btn-danger;
 
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-
-			&:hover {
-				opacity: 0.85;
-			}
+		&:hover {
+			background-color: $e-btn-danger-hover;
 		}
 	}
 
@@ -108,14 +73,14 @@
 	}
 
 	&.go-pro {
-		background-color: $e-go;
+		background-color: $e-brand;
 
 		&:hover {
-			background-color: $e-go-hover;
+			background-color: $e-brand-hover;
 		}
 
 		&:active {
-			background-color: $e-go-active;
+			background-color: $e-brand-active;
 		}
 	}
 

@@ -20,17 +20,47 @@ $e-gray-800:	#232629;
 $e-gray-900:	#0C0D0E;
 
 $e-purple:		#524CFF;
-$e-purple-tint:		#6661FF;
+$e-purple-tint:	#6661FF;
 
-$e-btn:	$e-gray-600;
-$e-btn-hover:	darken($e-btn, 10%);
-$e-btn-active:	darken($e-btn, 20%);
+$e-primary:	$e-purple;
+$e-secondary: $e-gray-600;
+$e-danger:	#DD132F;
+$e-info: 	#0077CC;
+$e-brand: 	#0600A8;
+
+// Aliases
+$editor-danger: $e-danger;
+$editor-warning: $e-danger;
+$editor-success: $e-purple;
+$editor-info: $e-info;
+$editor-alert-danger: $e-danger;
+$editor-alert-warning: $e-danger;
+$editor-alert-info: $e-info;
+$editor-alert-success: $editor-success;
+$editor-alert-danger-bg: #fefbfc;
+$editor-alert-warning-bg: #fcfcfc;
+$editor-alert-info-bg: #f3fcff;
+$editor-alert-success-bg: #fcfffc;
 
 $e-global:		$e-purple;
 
-$e-go:			$e-purple;
-$e-go-hover:	darken($e-purple, 10%);
-$e-go-active:	darken($e-purple, 20%);
+//Buttons
+$e-btn:			$e-gray-600;
+$e-btn-hover:	darken($e-btn, 10%);
+$e-btn-active:	darken($e-btn, 20%);
+
+$e-btn-primary:			$e-primary;
+$e-btn-primary-hover:	darken($e-btn-primary, 10%);
+$e-btn-primary-active:	darken($e-btn-primary, 20%);
+
+$e-btn-brand:		$e-brand;
+$e-btn-brand-hover:	darken($e-purple, 10%);
+$e-btn-brand-active:darken($e-purple, 20%);
+
+$e-btn-danger:			$e-danger;
+$e-btn-danger-hover:	darken($e-btn-primary, 10%);
+$e-btn-danger-active:	darken($e-btn-primary, 20%);
+
 
 // Primary Colors
 $gray-darkest:  $e-gray-900;
@@ -51,24 +81,6 @@ $green-light:   #2ecc71;
 $orange:        #f0ad4e;
 $red:           #d9534f;
 $purple:		$e-purple;
-
-// Platform
-$platform-primary: #040080;
-$platform-secondary: #6A727C;
-$platform-text: #46F2B6;
-$platform-accent: #871A40;
-$platform-darkest-gray: #0C0D0E;
-$platform-darker-gray: #3A3F45;
-$platform-dark-gray: #525861;
-$platform-mid-gray: #69727D;
-$platform-gray-light: #9EA5AD;
-$platform-gray-lighter: #C2C7CC;
-$platform-gray-lightest: #D5D8DC;
-$platform-bg-light: #F9FAFA;
-$platform-danger-bg: #FDE8EC;
-$platform-danger-text: #B92136;
-$platform-success-bg: #ECF9F2;
-$platform-success-text: #117740;
 
 // WordPress Admin
 $wp-primary: #0085ba;
@@ -94,29 +106,8 @@ $editor-background: $e-gray-0;
 $editor-background-light: $e-gray-50;
 $editor-background-lighter: $e-gray-100;
 
-$editor-orange: #fcb92c;
-$editor-red: #d72b3f;
-
-$editor-danger: $editor-red;
-$editor-warning: #b01b1b;
-$editor-success: $e-purple;
-$editor-info: #0077CC;
-
-// Container element primary color.
-// TODO: Need a final color from the Design.
-$editor-container-primary: #0098c7;
-$editor-kit-accent: #4ab7f4;
-
-// Panel Alert
-$editor-alert-danger: $editor-danger;
-$editor-alert-warning: $editor-orange;
-$editor-alert-info: $editor-info;
-$editor-alert-success: $editor-success;
-
-$editor-alert-danger-bg: #fefbfc;
-$editor-alert-warning-bg: #fcfcfc;
-$editor-alert-info-bg: #f3fcff;
-$editor-alert-success-bg: #fcfffc;
+$editor-orange: $e-danger;
+$editor-red: $e-danger;
 
 // WordPress colors
 $wp-warning: #ffb900;
@@ -133,6 +124,29 @@ $slides_gui: rgba(238, 238, 238, .9);
 
 // Panel Transition
 $transition-hover: all .3s;
+
+// Container element primary color.
+// TODO: Need a final color from the Design.
+$editor-container-primary: #0098c7;
+$editor-kit-accent: #4ab7f4;
+
+// Platform
+$platform-primary: #040080;
+$platform-secondary: #6A727C;
+$platform-text: #46F2B6;
+$platform-accent: #871A40;
+$platform-darkest-gray: #0C0D0E;
+$platform-darker-gray: #3A3F45;
+$platform-dark-gray: #525861;
+$platform-mid-gray: #69727D;
+$platform-gray-light: #9EA5AD;
+$platform-gray-lighter: #C2C7CC;
+$platform-gray-lightest: #D5D8DC;
+$platform-bg-light: #F9FAFA;
+$platform-danger-bg: #FDE8EC;
+$platform-danger-text: #B92136;
+$platform-success-bg: #ECF9F2;
+$platform-success-text: #117740;
 
 // Layers (Z-indexes)
 $under-layer: -1;
