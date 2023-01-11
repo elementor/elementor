@@ -3,7 +3,7 @@ import {
 	ReducersMapObject,
 	configureStore,
 	combineReducers,
-	ThunkMiddleware,
+	Middleware,
 	Store,
 	Slice,
 	AnyAction,
@@ -19,6 +19,7 @@ export type {
 	AnyAction,
 	Action,
 	MiddlewareAPI,
+	Middleware,
 } from '@reduxjs/toolkit';
 
 export { createSlice } from '@reduxjs/toolkit';
@@ -38,7 +39,7 @@ class StoreService {
 	private instance: Store | null = null;
 	private slices: SlicesMap = {};
 	private pendingActions: AnyAction[] = [];
-	private middlewares = new Set<ThunkMiddleware>();
+	private middlewares = new Set<Middleware>();
 
 	private getReducers() {
 		const reducers = Object.entries( this.slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
@@ -55,7 +56,7 @@ class StoreService {
 		const slice = createSlice( sliceConfig );
 
 		if ( this.slices[ slice.name ] ) {
-			return this.slices[ slice.name ];
+			throw new Error( `Slice with name "${ slice.name }" already exists.` );
 		}
 
 		this.slices[ slice.name ] = slice;
@@ -63,7 +64,7 @@ class StoreService {
 		return slice;
 	}
 
-	registerMiddleware( middleware: ThunkMiddleware ) {
+	registerMiddleware( middleware: Middleware ) {
 		this.middlewares.add( middleware );
 	}
 
@@ -78,16 +79,18 @@ class StoreService {
 	}
 
 	createStore() {
-		if ( ! this.instance ) {
-			this.instance = configureStore( {
-				reducer: this.getReducers(),
-				middleware: Array.from( this.middlewares ),
-			} );
+		if ( this.instance ) {
+			throw new Error( 'The store instance already exist' );
+		}
 
-			if ( this.pendingActions.length ) {
-				this.pendingActions.forEach( ( action ) => this.instance?.dispatch( action ) );
-				this.pendingActions = [];
-			}
+		this.instance = configureStore( {
+			reducer: this.getReducers(),
+			middleware: Array.from( this.middlewares ),
+		} );
+
+		if ( this.pendingActions.length ) {
+			this.pendingActions.forEach( ( action ) => this.instance?.dispatch( action ) );
+			this.pendingActions = [];
 		}
 
 		return this.instance;
@@ -97,7 +100,7 @@ class StoreService {
 		return this.instance;
 	}
 
-	resetStore() {
+	deleteStore() {
 		this.instance = null;
 		this.slices = {};
 		this.pendingActions = [];

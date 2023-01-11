@@ -74,6 +74,44 @@ describe( '@elementor/store', () => {
 		expect( result.current ).toBe( 3 );
 	} );
 
+	it( 'should throw an error when trying to register a slice with the same name more than once', () => {
+		const storeService = createStoreService();
+
+		storeService.registerSlice( {
+			name: 'slice',
+			initialState: {
+				value: 1,
+			},
+			reducers: {},
+		} );
+
+		expect( () => {
+			storeService.registerSlice( {
+				name: 'slice',
+				initialState: {
+					value: 1,
+				},
+				reducers: {},
+			} );
+		} ).toThrowError();
+	} );
+
+	it( 'should throw an error when trying to re-create the store on the same storeService instance', () => {
+		const storeService = createStoreService();
+
+		storeService.registerSlice( {
+			name: 'slice',
+			initialState: {
+				value: 1,
+			},
+			reducers: {},
+		} );
+
+		storeService.createStore();
+
+		expect( () => storeService.createStore() ).toThrowError();
+	} );
+
 	it( 'should register a middleware that blocks the state update by not running next(action)', () => {
 		const storeService = createStoreService();
 
@@ -151,7 +189,7 @@ describe( '@elementor/store', () => {
 
 		expect( instance ).toEqual( store );
 
-		storeService.resetStore();
+		storeService.deleteStore();
 
 		instance = storeService.getStore();
 
