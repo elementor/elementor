@@ -55,7 +55,7 @@ const sass = {
 				cwd: 'assets/dev/scss/frontend',
 				src: '_swiper8.scss',
 				rename: () => {
-					return 'assets/lib/swiper/v8/css/swiper8.css';
+					return 'assets/lib/swiper/v8/css/swiper.css';
 				}
 			}
 		]
