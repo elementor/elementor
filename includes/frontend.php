@@ -543,6 +543,17 @@ class Frontend extends App {
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
+		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
+		$swiper_path = $e_swiper_latest ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/';
+		$swiper_version = $e_swiper_latest ? '8.4.5' : '3.4.2';
+
+		wp_register_style(
+			'swiper',
+			$this->get_css_assets_url( 'swiper', $swiper_path ),
+			[],
+			$swiper_version
+		);
+
 		/**
 		 * After frontend register styles.
 		 *

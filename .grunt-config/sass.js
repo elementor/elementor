@@ -41,6 +41,22 @@ const sass = {
 				src: 'frontend.scss',
 				dest: 'assets/css/modules/lazyload',
 				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend',
+				src: '_swiper.scss',
+				rename: () => {
+					return 'assets/lib/swiper/css/swiper.css';
+				}
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend',
+				src: '_swiper8.scss',
+				rename: () => {
+					return 'assets/lib/swiper/v8/css/swiper8.css';
+				}
 			}
 		]
 	}
