@@ -47,15 +47,20 @@ class Revert {
 		$this->register( new Wp_Content() );
 	}
 
+	/**
+	 * Execute the revert process.
+	 *
+	 * @throws \Exception If no revert runners have beed specified.
+	 */
 	public function run() {
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Please specify revert runners.' );
+			throw new \Exception( 'Couldn’t execute the revert process because no revert runners have beed specified. Try again by specifying revert runners.' );
 		}
 
 		$data = $this->get_last_import_session();
 
 		if ( empty( $data ) ) {
-			throw new \Exception( 'Could not find any import sessions to revert.' );
+			throw new \Exception( 'Couldn’t execute the revert process because there are no import sessions to revert.' );
 		}
 
 		foreach ( $this->runners as $runner ) {

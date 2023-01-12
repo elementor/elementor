@@ -269,13 +269,14 @@ class Import {
 	 * Execute the import process.
 	 *
 	 * @return array The imported data output.
-	 * @throws \Exception
+	 *
+	 * @throws \Exception If no import runners have beed specified.
 	 */
 	public function run() {
 		$start_time = current_time( 'timestamp' );
 
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Please specify import runners.' );
+			throw new \Exception( 'Couldn’t execute the import process because no import runners have beed specified. Try again by specifying import runners.' );
 		}
 
 		$data = [
@@ -321,11 +322,12 @@ class Import {
 	 * @param string $runner_name
 	 *
 	 * @return array
-	 * @throws \Exception
+	 *
+	 * @throws \Exception If no export runners have beed specified.
 	 */
 	public function run_runner( string $runner_name ): array {
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Please specify import runners.' );
+			throw new \Exception( 'Couldn’t execute the import process because no import runners have beed specified. Try again by specifying import runners.' );
 		}
 
 		$data = [
@@ -346,7 +348,7 @@ class Import {
 		$runner = $this->runners[ $runner_name ];
 
 		if ( empty( $runner ) ) {
-			throw new \Exception( 'Runner not found.' );
+			throw new \Exception( 'Couldn’t execute the import process because the import runner was not found. Try again by specifying an import runner.' );
 		}
 
 		if ( $runner->should_import( $data ) ) {
