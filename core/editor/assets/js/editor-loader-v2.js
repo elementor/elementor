@@ -1,7 +1,7 @@
 window.__elementorEditorV1LoadingPromise = new Promise( ( resolve ) => {
 	window.addEventListener( 'elementor/init', () => {
 		resolve();
-	} );
+	}, { once: true } );
 } );
 
 window.elementor.start();
