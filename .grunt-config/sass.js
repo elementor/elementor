@@ -45,7 +45,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'assets/dev/scss/frontend',
-				src: '_swiper.scss',
+				src: 'swiper.scss',
 				rename: () => {
 					return 'assets/lib/swiper/css/swiper.css';
 				}
@@ -53,7 +53,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'assets/dev/scss/frontend',
-				src: '_swiper8.scss',
+				src: 'swiper8.scss',
 				rename: () => {
 					return 'assets/lib/swiper/v8/css/swiper.css';
 				}

@@ -642,6 +642,8 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
+			wp_enqueue_style( 'swiper' );
+
 			/**
 			 * After frontend styles enqueued.
 			 *
