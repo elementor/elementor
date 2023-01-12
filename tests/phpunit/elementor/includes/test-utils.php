@@ -69,7 +69,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_equal() {
-		//$this->expectExceptionMessage( "Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs." );
+		//$this->expectExceptionMessage( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		Utils::replace_urls( 'http://' . home_url() . '/elementor', 'http://' . home_url() . '/elementor' );
 	}
 
@@ -79,6 +79,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_invalid() {
+		//$this->expectExceptionMessage( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		Utils::replace_urls( 'elementor', '/elementor' );
 	}
 

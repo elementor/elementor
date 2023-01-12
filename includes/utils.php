@@ -175,20 +175,20 @@ class Utils {
 		$to = trim( $to );
 
 		if ( empty( $from ) ) {
-			throw new \Exception( "Couldn’t replace your address because the old URL was not provided. Try again by entering the old URL." );
+			throw new \Exception( 'Couldn’t replace your address because the old URL was not provided. Try again by entering the old URL.' );
 		}
 
 		if ( empty( $to ) ) {
-			throw new \Exception( "Couldn’t replace your address because the new URL was not provided. Try again by entering the new URL." );
+			throw new \Exception( 'Couldn’t replace your address because the new URL was not provided. Try again by entering the new URL.' );
 		}
 
 		if ( $from === $to ) {
-			throw new \Exception( "Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs." );
+			throw new \Exception( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( "Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs." );
+			throw new \Exception( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		}
 
 		global $wpdb;
