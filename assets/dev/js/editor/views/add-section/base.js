@@ -97,8 +97,23 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 							onAfter: () => this.onAfterPaste(),
 						} ),
 					},
+					{
+						name: 'paste-from-clipboard',
+						title: __( 'Paste from clipboard', 'elementor' ),
+						isEnabled: () => true, // TODO: need to think about that
+						callback: () => $e.run( 'document/ui/paste', {
+							storageType: 'clipboard',
+							container: elementor.getPreviewContainer(),
+							options: {
+								at: this.getOption( 'at' ),
+								rebuild: true,
+							},
+							onAfter: () => this.onAfterPaste(),
+						} ),
+					},
 				],
-			}, {
+			},
+			{
 				name: 'content',
 				actions: [
 					{

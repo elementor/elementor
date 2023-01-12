@@ -1,10 +1,19 @@
 export class Paste extends $e.modules.CommandBase {
-	initialize( args ) {
+	async getPasteData( { storageType = 'localstorage' } ) {
+		if ( 'localstorage' === storageType ) {
+			return elementorCommon.storage.get( 'clipboard' ) || [];
+		}
+
+		// Extract the data with the clipboard api
+		const clipboardData = await navigator.clipboard.readText();
+
+		return JSON.parse( clipboardData ) || [];
+	}
+
+	async apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		super.initialize( args );
-
-		this.storage = elementorCommon.storage.get( 'clipboard' ) || [];
+		this.storage = await this.getPasteData( args );
 
 		this.storage = this.storage.map( ( model ) =>
 			new Backbone.Model( model ),
@@ -16,9 +25,7 @@ export class Paste extends $e.modules.CommandBase {
 		} else {
 			this.target = containers;
 		}
-	}
 
-	apply( args ) {
 		if ( ! this.target || 0 === this.storage.length ) {
 			return false;
 		}
@@ -50,6 +57,8 @@ export class Paste extends $e.modules.CommandBase {
 				if ( undefined !== options.at ) {
 					commandArgs.at = options.at;
 				}
+
+				commandArgs.storageType = args.storageType || 'localstorage';
 
 				result.push( $e.run( 'document/elements/paste', commandArgs ) );
 			}

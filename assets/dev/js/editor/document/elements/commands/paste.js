@@ -1,12 +1,13 @@
 export class Paste extends $e.modules.editor.document.CommandHistoryBase {
-	validateArgs( args ) {
-		this.requireContainer( args );
+	async getPasteData( { storageType = 'localstorage', storageKey = 'clipboard' } ) {
+		if ( 'localstorage' === storageType ) {
+			return elementorCommon.storage.get( storageKey ) || [];
+		}
 
-		// Validate if storage have data.
-		const { storageKey = 'clipboard' } = args,
-			storageData = elementorCommon.storage.get( storageKey );
+		// Extract the data with the clipboard api
+		const clipboardData = await navigator.clipboard.readText();
 
-		this.requireArgumentType( 'storageData', 'object', { storageData } );
+		return JSON.parse( clipboardData ) || [];
 	}
 
 	getHistory() {
@@ -16,9 +17,12 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		};
 	}
 
-	apply( args ) {
-		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
-			storageData = elementorCommon.storage.get( storageKey );
+	async apply( args ) {
+		const { at, rebuild = false, containers = [ args.container ], options = {} } = args,
+			storageData = await this.getPasteData( args );
+
+		this.requireContainer( args );
+		this.requireArgumentType( 'storageData', 'object', { storageData } );
 
 		let result = [];
 

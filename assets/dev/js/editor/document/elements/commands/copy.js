@@ -3,7 +3,7 @@ export class Copy extends $e.modules.editor.CommandContainerBase {
 		this.requireContainer( args );
 	}
 
-	apply( args ) {
+	async apply( args ) {
 		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
 		if ( ! elementor.selection.isSameType() ) {
@@ -21,11 +21,16 @@ export class Copy extends $e.modules.editor.CommandContainerBase {
 		}
 
 		const elements = elementor.getPreviewView().$el.find( '.elementor-element' );
+
+		const clipboardData = containers.sort( ( first, second ) => {
+			return elements.index( first.view.el ) - elements.index( second.view.el );
+		} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) );
+
+		await navigator.clipboard.writeText( JSON.stringify( clipboardData ) );
+
 		elementorCommon.storage.set(
 			storageKey,
-			containers.sort( ( first, second ) => {
-				return elements.index( first.view.el ) - elements.index( second.view.el );
-			} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) ),
+			clipboardData,
 		);
 	}
 }
