@@ -71,7 +71,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		}
 
 		if ( elementSettings.image_spacing_custom ) {
-			swiperOptions.spaceBetween = elementSettings.image_spacing_custom.size;
+			swiperOptions.spaceBetween = this.getSpaceBetween();
 		}
 
 		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
@@ -129,10 +129,6 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 
 		// Handle special cases where the value to update is not the value that the Swiper library accepts.
 		switch ( propertyName ) {
-			case 'image_spacing_custom':
-				params.spaceBetween = newSettingValue.size || 0;
-
-				break;
 			case 'autoplay_speed':
 				params.autoplay.delay = newSettingValue;
 
@@ -151,12 +147,16 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			pause_on_hover: 'pauseOnHover',
 			autoplay_speed: 'delay',
 			speed: 'speed',
-			image_spacing_custom: 'spaceBetween',
 			arrows_position: 'arrows_position', // Not a Swiper setting.
 		};
 	}
 
 	onElementChange( propertyName ) {
+		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
+			this.updateSpaceBetween( propertyName );
+			return;
+		}
+
 		const changeableProperties = this.getChangeableProperties();
 
 		if ( changeableProperties[ propertyName ] ) {
@@ -175,5 +175,116 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		if ( 'activeItemIndex' === propertyName ) {
 			this.swiper.slideToLoop( this.getEditSettings( 'activeItemIndex' ) - 1 );
 		}
+	}
+
+	/**
+	 * Get the value of a responsive control.
+	 *
+	 * Retrieves the value of a responsive control for the current device or for this first parent device which has a control value.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @param {{}}     controlSettings A settings object (e.g. element settings - keys and values)
+	 * @param {string} controlKey      The control key name
+	 * @param {string} controlSubKey   A specific property of the control object.
+	 * @return {*} Control Value
+	 */
+	getResponsiveControlValue( controlSettings, controlKey, controlSubKey = '', device = null ) {
+		const currentDeviceMode = device || elementorFrontend.getCurrentDeviceMode(),
+			controlValueDesktop = this.getControlValue( controlSettings, controlKey, controlSubKey );
+
+		// Set the control value for the current device mode.
+		// First check the widescreen device mode.
+		if ( 'widescreen' === currentDeviceMode ) {
+			const controlValueWidescreen = this.getControlValue( controlSettings, `${ controlKey }_widescreen`, controlSubKey );
+
+			return ( controlValueWidescreen || 0 === controlValueWidescreen ) ? controlValueWidescreen : controlValueDesktop;
+		}
+
+		// Loop through all responsive and desktop device modes.
+		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList( { withDesktop: true } );
+
+		let parentDeviceMode = currentDeviceMode,
+			deviceIndex = activeBreakpoints.indexOf( currentDeviceMode ),
+			controlValue = '';
+
+		while ( deviceIndex <= activeBreakpoints.length ) {
+			if ( 'desktop' === parentDeviceMode ) {
+				controlValue = controlValueDesktop;
+				break;
+			}
+
+			const responsiveControlKey = `${ controlKey }_${ parentDeviceMode }`,
+				responsiveControlValue = this.getControlValue( controlSettings, responsiveControlKey, controlSubKey );
+
+			if ( responsiveControlValue || 0 === responsiveControlValue ) {
+				controlValue = responsiveControlValue;
+				break;
+			}
+
+			// If no control value has been set for the current device mode, then check the parent device mode.
+			deviceIndex++;
+			parentDeviceMode = activeBreakpoints[ deviceIndex ];
+		}
+
+		return controlValue;
+	}
+
+	/**
+	 * Get Control Value
+	 *
+	 * Retrieves a control value.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @param {{}}     controlSettings A settings object (e.g. element settings - keys and values)
+	 * @param {string} controlKey      The control key name
+	 * @param {string} controlSubKey   A specific property of the control object.
+	 * @return {*} Control Value
+	 */
+	getControlValue( controlSettings, controlKey, controlSubKey = '' ) {
+		let value;
+
+		if ( 'object' === typeof controlSettings[ controlKey ] && controlSubKey ) {
+			value = controlSettings[ controlKey ][ controlSubKey ];
+		} else {
+			value = controlSettings[ controlKey ];
+		}
+
+		return value;
+	}
+
+	getSpaceBetween( device = null ) {
+		return this.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0 ;
+	}
+
+	updateSpaceBetween( propertyName ) {
+		const deviceMatch = propertyName.match( 'image_spacing_custom_(.*)' ),
+			device = deviceMatch ? deviceMatch[ 1 ] : 'desktop',
+			newSpaceBetween = this.getSpaceBetween( device );
+
+		if ( 'desktop' !== device ) {
+			this.swiper.params.breakpoints[ this.getDeviceBreakpointValue( device ) ].spaceBetween = newSpaceBetween;
+		} else {
+			this.swiper.params.spaceBetween = newSpaceBetween;
+		}
+
+		this.swiper.params.spaceBetween = newSpaceBetween;
+
+		this.swiper.update();
+	}
+
+	getDeviceBreakpointValue( device ) {
+		if ( ! this.breakpointsDictionary ) {
+			const breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
+
+			this.breakpointsDictionary = {};
+
+			Object.keys( breakpoints ).forEach( ( breakpointName ) => {
+				this.breakpointsDictionary[ breakpointName ] = breakpoints[ breakpointName ].value;
+			} );
+		}
+
+		return this.breakpointsDictionary[ device ];
 	}
 }
