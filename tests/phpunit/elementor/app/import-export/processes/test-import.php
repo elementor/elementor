@@ -449,7 +449,7 @@ class Test_Import extends Elementor_Test_Base {
 		$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
 
 		// Expect
-		$this->expectExceptionMessage( 'Couldn’t execute the import process because the import session does not exists.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because the import session does not exist.' );
 
 		// Act
 		$import = new Import( $elementor_tmp_directory . 'session-not-exits', [] );
