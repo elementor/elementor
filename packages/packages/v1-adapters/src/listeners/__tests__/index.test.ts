@@ -140,7 +140,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		// Arrange.
 		const callback = jest.fn();
 
-		( window as any ).__elementorEditorV1Loaded = new Promise( ( resolve ) => {
+		( window as any ).__elementorEditorV1LoadingPromise = new Promise( ( resolve ) => {
 			setTimeout( resolve, 1000 );
 		} );
 
@@ -158,7 +158,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 
 		// Cleanup.
-		delete ( window as any ).__elementorEditorV1Loaded;
+		delete ( window as any ).__elementorEditorV1LoadingPromise;
 	} );
 
 	it( 'should throw when v1 is not loaded', async () => {

@@ -8,16 +8,16 @@ export function dispatchOnV1Ready() {
 
 function getV1LoadingPromise() {
 	type ExtendedWindow = Window & {
-		__elementorEditorV1Loaded: Promise<void>;
+		__elementorEditorV1LoadingPromise: Promise<void>;
 	}
 
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	if ( ! extendedWindow.__elementorEditorV1Loaded ) {
+	if ( ! extendedWindow.__elementorEditorV1LoadingPromise ) {
 		return Promise.reject( 'Elementor Editor V1 is not loaded' );
 	}
 
-	return extendedWindow.__elementorEditorV1Loaded;
+	return extendedWindow.__elementorEditorV1LoadingPromise;
 }
 
 export function normalizeEvent( e: ListenerEvent['originalEvent'] ) : ListenerEvent {

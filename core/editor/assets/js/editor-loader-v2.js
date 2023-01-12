@@ -1,4 +1,4 @@
-window.__elementorEditorV1Loaded = new Promise( ( resolve ) => {
+window.__elementorEditorV1LoadingPromise = new Promise( ( resolve ) => {
 	window.addEventListener( 'elementor/init', () => {
 		resolve();
 	} );
