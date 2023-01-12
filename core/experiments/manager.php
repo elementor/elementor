@@ -362,13 +362,12 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'e_swiper_latest',
-			'title' => esc_html__( 'Swiper Library', 'elementor' ),
-			'description' => esc_html__( 'Use the latest SwiperJS library.', 'elementor' )
-						. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
-						. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
+			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'new_site' => [
 				'default_active' => true,
+				'minimum_installation_version' => '3.11.0',
 			],
 			'default' => self::STATE_INACTIVE,
 		] );
