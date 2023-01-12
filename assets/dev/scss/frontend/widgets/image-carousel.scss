@@ -3,6 +3,7 @@
 //
 .elementor-widget-image-carousel {
 
+	.swiper-container,
 	.swiper {
 		position: static; // Allow navigation arrows to stay outside
 
@@ -20,6 +21,7 @@
 }
 
 // Before the image-carousel layout is calculated by JS. //
+.elementor-image-carousel-wrapper:not(.swiper-container-initialized),
 .elementor-image-carousel-wrapper:not(.swiper-initialized) {
 
 	.swiper-slide {
