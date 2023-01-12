@@ -251,8 +251,8 @@ export default class NestedTabs extends Base {
 		}
 	}
 
-	onEditSettingsChange( propertyName, value, route = '' ) {
-		if ( 'activeItemIndex' === propertyName && 'content' !== route ) {
+	onEditSettingsChange( propertyName, value ) {
+		if ( 'activeItemIndex' === propertyName ) {
 			this.changeActiveTab( value, false );
 		}
 	}
@@ -264,12 +264,12 @@ export default class NestedTabs extends Base {
 	changeActiveTab( tabIndex, fromUser = false ) {
 		// `document/repeater/select` is used only in edit mod, and only when its not internal call,
 		// in other words only in editor and when user triggered the change.
-		// if ( fromUser && this.isEdit ) {
-		// 	return window.top.$e.run( 'document/repeater/select', {
-		// 		container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
-		// 		index: parseInt( tabIndex ),
-		// 	} );
-		// }
+		if ( fromUser && this.isEdit ) {
+			return window.top.$e.run( 'document/repeater/select', {
+				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
+				index: parseInt( tabIndex ),
+			} );
+		}
 
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
