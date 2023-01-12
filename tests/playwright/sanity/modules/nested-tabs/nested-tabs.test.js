@@ -229,7 +229,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect( activeTabUpdatedSpanCount ).toBe( 2 );
 	} );
 
-	test.only( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
+	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorPost( 'nested-title-alignment' );
