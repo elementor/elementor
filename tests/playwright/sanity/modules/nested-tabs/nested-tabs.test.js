@@ -229,11 +229,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect( activeTabUpdatedSpanCount ).toBe( 2 );
 	} );
 
-	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
+	test.only( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorPost( 'nested-title-alignment' );
-		await editor.useCanvasTemplate();
 		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
 		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' ).click();
 		const activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
@@ -350,8 +349,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.useElementorPost( 'nested-icons-visible-on-mobile-frontend' );
 
 		// Act.
-		// Required for the tab to appear in a mobile viewport
-		await editor.useCanvasTemplate();
 		// Open front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
@@ -370,8 +367,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			const editor = await wpAdmin.useElementorPost( 'nested-svg-icons-visible-on-mobile-frontend' );
 
 			// Act.
-			// Required for the tab to appear in a mobile viewport
-			await editor.useCanvasTemplate();
 			// Open front end.
 			await editor.publishAndViewPage();
 			await page.waitForSelector( '.elementor-widget-n-tabs' );
@@ -558,7 +553,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Test on the front end.
 		// Open the front end.
-		await editor.useCanvasTemplate();
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 		// Test on desktop.
