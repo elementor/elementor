@@ -159,7 +159,7 @@ export default class BaseNestedTabs extends Base {
 		let $requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) );
 
-		// Verify that the tabIndex exists.
+		// Check if the tabIndex exists.
 		if ( ! $requestedTitle.length ) {
 			// Activate the previous tab and ensure that the tab index is not less than 1.
 			const previousTabIndex = Math.max( ( tabIndex - 1 ), 1 );
