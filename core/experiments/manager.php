@@ -77,9 +77,10 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => null,
 			],
 			'on_state_change' => null,
+			'generator_tag' => false,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -256,6 +257,7 @@ class Manager extends Base_Object {
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
 			],
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
@@ -270,6 +272,7 @@ class Manager extends Base_Object {
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
 			],
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
@@ -284,6 +287,7 @@ class Manager extends Base_Object {
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
 			],
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
@@ -294,6 +298,7 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_BETA,
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
@@ -309,6 +314,7 @@ class Manager extends Base_Object {
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
 			],
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
@@ -323,6 +329,7 @@ class Manager extends Base_Object {
 				'default_active' => true,
 				'minimum_installation_version' => '3.4.0-beta',
 			],
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
