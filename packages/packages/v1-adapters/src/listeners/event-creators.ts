@@ -1,6 +1,6 @@
 import { CommandEventDescriptor, WindowEventDescriptor } from './types';
 
-export const commandStart = ( command: CommandEventDescriptor['name'] ) : CommandEventDescriptor => {
+export const commandStartEvent = ( command: CommandEventDescriptor['name'] ) : CommandEventDescriptor => {
 	return {
 		type: 'command',
 		name: command,
@@ -8,7 +8,7 @@ export const commandStart = ( command: CommandEventDescriptor['name'] ) : Comman
 	};
 };
 
-export const commandEnd = ( command: CommandEventDescriptor['name'] ) : CommandEventDescriptor => {
+export const commandEndEvent = ( command: CommandEventDescriptor['name'] ) : CommandEventDescriptor => {
 	return {
 		type: 'command',
 		name: command,
@@ -23,6 +23,6 @@ export const windowEvent = ( event: WindowEventDescriptor['name'] ) : WindowEven
 	};
 };
 
-export const v1Ready = () => {
+export const v1ReadyEvent = () => {
 	return windowEvent( 'elementor/v1/initialized' );
 };

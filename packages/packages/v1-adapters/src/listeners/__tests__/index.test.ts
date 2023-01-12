@@ -1,11 +1,11 @@
 import {
-	commandEnd,
-	commandStart,
+	commandEndEvent,
+	commandStartEvent,
 	dispatchOnV1Ready,
 	flushListeners,
 	listenTo,
 	windowEvent,
-	v1Ready,
+	v1ReadyEvent,
 } from '../';
 
 describe( '@elementor/v1-adapters/listeners', () => {
@@ -27,7 +27,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 		// Act.
 		listenTo(
-			commandEnd( commandToListen ),
+			commandEndEvent( commandToListen ),
 			callback
 		);
 
@@ -79,7 +79,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		// Act.
 		listenTo( [
 			windowEvent( event ),
-			commandStart( command ),
+			commandStartEvent( command ),
 		], callback );
 
 		// Dispatch events.
@@ -146,7 +146,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 		// Act.
 		listenTo(
-			v1Ready(),
+			v1ReadyEvent(),
 			callback
 		);
 
