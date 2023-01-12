@@ -16,6 +16,7 @@ module.exports = {
 			'elementor-dynamic-tags': path.resolve( __dirname, '../assets/dev/js/editor/components/dynamic-tags' ),
 			'elementor-editor': path.resolve( __dirname, '../assets/dev/js/editor' ),
 			'elementor-editor-utils': path.resolve( __dirname, '../assets/dev/js/editor/utils' ),
+			'elementor-editor-utils/notifications': path.resolve( __dirname, '../assets/dev/js/utils/notifications.js' ),
 			'elementor-elements': path.resolve( __dirname, '../assets/dev/js/editor/elements' ),
 			'elementor-frontend': path.resolve( __dirname, '../assets/dev/js/frontend' ),
 			'elementor-panel': path.resolve( __dirname, '../assets/dev/js/editor/regions/panel' ),

@@ -67,7 +67,7 @@ module.exports = elementorModules.Module.extend( {
 	showToast( options ) {
 		var toast = this.getToast();
 
-		this.positionToWindow( toast );
+		this.positionToWindow( toast, options );
 
 		toast.setMessage( options.message );
 
@@ -95,7 +95,11 @@ module.exports = elementorModules.Module.extend( {
 		return toast.show();
 	},
 
-	positionToWindow( toast ) {
+	positionToWindow( toast, options ) {
+		if ( position in options ) {
+			return;
+		}
+
 		const positionOf = toast.getSettings( 'position' ).of.replace( '#', '' );
 
 		if ( document.getElementById( positionOf ) ) {
