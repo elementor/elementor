@@ -21,8 +21,6 @@ use Elementor\App\Modules\ImportExport\Module;
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
-	const SESSION_DOES_NOT_EXITS_ERROR = 'session-does-not-exits-error';
-
 	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
 
 	/**
@@ -149,7 +147,7 @@ class Import {
 				$path = $elementor_tmp_directory . basename( $path );
 
 				if ( ! is_dir( $path ) ) {
-					throw new \Exception( static::SESSION_DOES_NOT_EXITS_ERROR );
+					throw new \Exception( 'Couldn’t execute the import process because the import session does not exists.' );
 				}
 
 				$this->extracted_directory_path = $path . '/';
@@ -213,7 +211,7 @@ class Import {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
-			throw new \Exception( static::SESSION_DOES_NOT_EXITS_ERROR );
+			throw new \Exception( 'Couldn’t execute the import process because the import session does not exists.' );
 		}
 
 		$import_session = $import_sessions[ $session_id ];
