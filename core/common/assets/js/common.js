@@ -7,7 +7,7 @@ import Connect from 'elementor-common-modules/connect/assets/js/connect';
 import WordpressComponent from './components/wordpress/component';
 import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
 import Events from 'elementor-common-modules/event-tracker/assets/js/events';
-import Notifications from 'elementor-editor-utils/notifications';
+import Notifications from 'elementor-utils/notifications';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
