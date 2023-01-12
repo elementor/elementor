@@ -16,36 +16,36 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					'handle' => 'elementor-packages-locations',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/locations{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react' ],
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
-						'file_suffix' => 'strings',
+						'replace_requested_file' => true,
 					],
 				],
 				[
 					'handle' => 'elementor-packages-top-bar',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/top-bar{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui', 'wp-i18n' ],
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
-						'file_suffix' => 'strings',
+						'replace_requested_file' => true,
 					],
 				],
 				[
 					'handle' => 'elementor-packages-editor',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/editor{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui' ],
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
-						'file_suffix' => 'strings',
+						'replace_requested_file' => true,
 					],
 				],
 				[
 					'handle' => 'elementor-packages-ui',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/ui{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'react-dom' ],
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
-						'file_suffix' => 'strings',
+						'replace_requested_file' => true,
 					],
 				],
 

@@ -110,7 +110,7 @@ class Editor_Common_Assets {
 					'react',
 					'react-dom',
 				],
-				'translations' => [
+				'i18n' => [
 					'domain' => 'elementor',
 				],
 			],

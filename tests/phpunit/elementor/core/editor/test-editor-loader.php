@@ -94,14 +94,14 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 					'handle' => 'script-with-translations',
 					'src' => 'http://localhost',
 					'deps' => [ 'some-dep' ],
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
 					]
 				],
 				[
 					'handle' => 'script-with-another-domain',
 					'src' => 'http://localhost',
-					'translations' => [
+					'i18n' => [
 						'domain' => 'another-domain',
 					]
 				],
@@ -158,7 +158,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				[
 					'handle' => 'script-minified',
 					'src' => 'http://localhost/assets/js/script-minified.min.js',
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
 						'replace_requested_file' => true,
 					],
@@ -169,7 +169,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				[
 					'handle' => 'script-not-minified',
 					'src' => 'http://localhost/assets/js/script-not-minified.js',
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
 						'replace_requested_file' => true,
 					]
@@ -180,7 +180,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				[
 					'handle' => 'script-with-replace-requested-file-callback',
 					'src' => 'http://localhost/assets/js/script-with-replace-requested-file-callback.js',
-					'translations' => [
+					'i18n' => [
 						'domain' => 'elementor',
 						'replace_requested_file' => true,
 						'replace_requested_file_callback' => function ( $relative_path ) {
@@ -194,8 +194,8 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				[
 					'handle' => 'script-without-replace-requested-file',
 					'src' => 'http://localhost/assets/js/script-without-replace-requested-file.js',
-					'translations' => [
-						'active' => true,
+					'i18n' => [
+						'domain' => 'elementor',
 					]
 				],
 				'assets/js/script-without-replace-requested-file.js',

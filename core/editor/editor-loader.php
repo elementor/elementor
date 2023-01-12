@@ -68,10 +68,10 @@ class Editor_Loader {
 		$script_configs = $this->get_script_configs();
 
 		foreach ( $script_configs as $script_config ) {
-			if ( $script_config['translations']['domain'] ) {
+			if ( $script_config['i18n']['domain'] ) {
 				wp_set_script_translations(
 					$script_config['handle'],
-					$script_config['translations']['domain']
+					$script_config['i18n']['domain']
 				);
 			}
 		}
@@ -146,7 +146,7 @@ class Editor_Loader {
 			[ 'media' => 'all' ] :
 			[
 				'in_footer' => true,
-				'translations' => [
+				'i18n' => [
 					'domain' => null,
 					'replace_requested_file' => false,
 					'replace_requested_file_callback' => function ( $relative_path ) {
@@ -224,14 +224,14 @@ class Editor_Loader {
 		} );
 
 		$should_suffix_path = $script_config &&
-			$script_config['translations']['domain'] &&
-			$script_config['translations']['replace_requested_file'];
+			$script_config['i18n']['domain'] &&
+			$script_config['i18n']['replace_requested_file'];
 
 		if ( ! $should_suffix_path ) {
 			return $relative_path;
 		}
 
-		return $script_config['translations']['replace_requested_file_callback'](
+		return $script_config['i18n']['replace_requested_file_callback'](
 			$relative_path,
 			$script_config
 		);
