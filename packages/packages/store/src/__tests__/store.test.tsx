@@ -48,33 +48,39 @@ const createStoreEntities = ( storeService: ReturnType<typeof createStoreService
 };
 
 describe( '@elementor/store', () => {
-	it( 'should verify the initial state of the slice', () => {
+	it( 'should set an initial state of a slice', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
 		const { wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), { wrapper } );
 
+		// Assert.
 		expect( result.current ).toBe( 1 );
 	} );
 
 	it( 'should update the state value of the slice', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
 		const { slice, wrapper } = createStoreEntities( storeService );
 
+		// Act.
 		const { result } = renderHook( () => {
-			const dispatchAction = useDispatch();
+			const dispatch = useDispatch();
 
-			dispatchAction( slice.actions.setValue( 3 ) );
+			dispatch( slice.actions.setValue( 3 ) );
 
 			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
 		}, { wrapper } );
 
+		// Assert.
 		expect( result.current ).toBe( 3 );
 	} );
 
 	it( 'should throw an error when trying to register a slice with the same name more than once', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
 		storeService.registerSlice( {
@@ -85,6 +91,7 @@ describe( '@elementor/store', () => {
 			reducers: {},
 		} );
 
+		// Assert.
 		expect( () => {
 			storeService.registerSlice( {
 				name: 'slice',
@@ -93,10 +100,11 @@ describe( '@elementor/store', () => {
 				},
 				reducers: {},
 			} );
-		} ).toThrowError();
+		} ).toThrow( 'Slice with name "slice" already exists.' );
 	} );
 
 	it( 'should throw an error when trying to re-create the store on the same storeService instance', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
 		storeService.registerSlice( {
@@ -109,28 +117,33 @@ describe( '@elementor/store', () => {
 
 		storeService.createStore();
 
-		expect( () => storeService.createStore() ).toThrowError();
+		// Assert.
+		expect( () => storeService.createStore() ).toThrow( 'The store instance already exists.' );
 	} );
 
 	it( 'should register a middleware that blocks the state update by not running next(action)', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
 		storeService.registerMiddleware( () => () => () => {} );
 
 		const { slice, wrapper } = createStoreEntities( storeService );
 
+		// Act.
 		const { result } = renderHook( () => {
-			const dispatchAction = useDispatch();
+			const dispatch = useDispatch();
 
-			dispatchAction( slice.actions.setValue( 4 ) );
+			dispatch( slice.actions.setValue( 4 ) );
 
 			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
 		}, { wrapper } );
 
+		// Assert.
 		expect( result.current ).toBe( 1 );
 	} );
 
-	it( 'should register a middleware that does not intefer with the state update', () => {
+	it( 'should register a middleware that does not interfere with the state update', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
 		storeService.registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
@@ -139,60 +152,130 @@ describe( '@elementor/store', () => {
 
 		const { slice, wrapper } = createStoreEntities( storeService );
 
+		// Act.
 		const { result } = renderHook( () => {
-			const dispatchAction = useDispatch();
+			const dispatch = useDispatch();
 
-			dispatchAction( slice.actions.setValue( 4 ) );
+			dispatch( slice.actions.setValue( 4 ) );
 
 			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
 		}, { wrapper } );
 
+		// Assert.
 		expect( result.current ).toBe( 4 );
 	} );
 
-	it( 'should dispatch an action without using the useDispatch hook', () => {
+	it( 'should dispatch an action without using hooks', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
-		storeService.registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
-			next( action );
+		storeService.registerSlice( {
+			name: 'slice',
+			initialState: {
+				value: 1,
+			},
+			reducers: {
+				setValue: ( state, action ) => {
+					state.value = action.payload;
+				},
+			},
 		} );
 
-		const { wrapper } = createStoreEntities( storeService );
+		const store = storeService.createStore();
 
-		const { result } = renderHook( () => {
-			storeService.dispatch( { type: 'slice/setValue', payload: 6 } );
+		// Act.
+		store.dispatch( { type: 'slice/setValue', payload: 6 } );
 
-			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
-		}, { wrapper } );
+		const stateResult = store.getState().slice.value;
 
-		expect( result.current ).toBe( 6 );
+		// Assert.
+		expect( stateResult ).toBe( 6 );
 	} );
 
-	it( 'should collect actions that are dispatched before the store exist, and should run them when the store instance is created', () => {
+	it( 'should collect actions that are dispatched before the store exist, and run them when the store instance is created', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
+		// Act.
 		storeService.dispatch( { type: 'slice/setValue', payload: 7 } );
 
 		const { wrapper } = createStoreEntities( storeService );
 
 		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), { wrapper } );
 
+		// Assert.
 		expect( result.current ).toBe( 7 );
 	} );
 
-	it( 'should reset the store instance', () => {
+	it( 'should delete the store instance', () => {
+		// Arrange.
 		const storeService = createStoreService();
 
 		const store = storeService.createStore();
 
 		let instance = storeService.getStore();
 
+		// Assert.
 		expect( instance ).toEqual( store );
 
+		// Act.
 		storeService.deleteStore();
 
 		instance = storeService.getStore();
 
+		// Assert.
 		expect( instance ).toBeNull();
+
+		expect( store.getState() ).toBeNull();
+	} );
+
+	it( 'should delete the registered slices', () => {
+		// Arrange.
+		const storeService = createStoreService();
+
+		createStoreEntities( storeService );
+
+		// Act.
+		storeService.deleteStore();
+
+		// Arrange.
+		const store = storeService.createStore();
+
+		const wrapper: React.FC = ( { children } ) => (
+			<StoreProvider store={ store }>
+				{ children }
+			</StoreProvider>
+		);
+
+		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice ), { wrapper } );
+
+		// Assert.
+		expect( result.current ).toBeUndefined();
+	} );
+
+	it( 'should delete the registered middlewares', () => {
+		// Arrange.
+		const storeService = createStoreService();
+
+		// Registering a middleware that blocks the state update by not running next(action).
+		storeService.registerMiddleware( () => () => () => {} );
+
+		createStoreEntities( storeService );
+
+		// Act.
+		storeService.deleteStore();
+
+		const { slice, wrapper } = createStoreEntities( storeService );
+
+		const { result } = renderHook( () => {
+			const dispatch = useDispatch();
+
+			dispatch( slice.actions.setValue( 8 ) );
+
+			return useSelector( ( state: SliceStateRoot ) => state.slice.value );
+		}, { wrapper } );
+
+		// Assert.
+		expect( result.current ).toBe( 8 );
 	} );
 } );

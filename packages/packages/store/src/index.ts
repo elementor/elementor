@@ -22,11 +22,17 @@ export type {
 	Middleware,
 } from '@reduxjs/toolkit';
 
-export { createSlice } from '@reduxjs/toolkit';
-
 export { useSelector, useDispatch, Provider as StoreProvider } from 'react-redux';
 
-// Usage: SliceState<typeof slice>
+/**
+ * Usage:
+ *
+ * const mySlice = storeService.registerSlice( ... );
+ *
+ * type MySliceState = SliceState<typeof mySlice>;
+ *
+ * const value = useSelector( ( state: MySliceState ) => state.mySlice.value );
+ */
 export type SliceState<S extends Slice> = {
 	[ key in S['name'] ]: ReturnType<S['getInitialState']>;
 }
@@ -51,7 +57,6 @@ class StoreService {
 		return combineReducers( reducers );
 	}
 
-	// Should be casted into createSlice because this function detects the correct type only when the slice object is passed directly to it.
 	registerSlice( sliceConfig: CreateSliceOptions ) {
 		const slice = createSlice( sliceConfig );
 
@@ -80,7 +85,7 @@ class StoreService {
 
 	createStore() {
 		if ( this.instance ) {
-			throw new Error( 'The store instance already exist' );
+			throw new Error( 'The store instance already exists.' );
 		}
 
 		this.instance = configureStore( {
@@ -89,7 +94,7 @@ class StoreService {
 		} );
 
 		if ( this.pendingActions.length ) {
-			this.pendingActions.forEach( ( action ) => this.instance?.dispatch( action ) );
+			this.pendingActions.forEach( ( action ) => this.dispatch( action ) );
 			this.pendingActions = [];
 		}
 
@@ -101,6 +106,8 @@ class StoreService {
 	}
 
 	deleteStore() {
+		// Cleaning all the reducers in case that there is a reference to the store.
+		this.instance?.replaceReducer( () => null );
 		this.instance = null;
 		this.slices = {};
 		this.pendingActions = [];
