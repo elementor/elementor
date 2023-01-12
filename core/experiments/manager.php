@@ -359,6 +359,19 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_swiper_latest',
+			'title' => esc_html__( 'Swiper Library', 'elementor' ),
+			'description' => esc_html__( 'Use the latest SwiperJS library.', 'elementor' )
+						. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
+						. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+			],
+			'default' => self::STATE_INACTIVE,
+		] );
 	}
 
 	/**

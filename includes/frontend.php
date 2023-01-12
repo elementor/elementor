@@ -1528,11 +1528,15 @@ class Frontend extends App {
 		];
 
 		if ( ! $this->is_improved_assets_loading() ) {
+			$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
+			$swiper_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
+			$swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
+
 			wp_register_script(
 				'swiper',
-				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+				$this->get_js_assets_url( 'swiper', $swiper_path ),
 				[],
-				'5.3.6',
+				$swiper_version,
 				true
 			);
 
