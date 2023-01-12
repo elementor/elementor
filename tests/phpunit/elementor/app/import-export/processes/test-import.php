@@ -87,7 +87,7 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Couldn’t execute the import process because no import runners have beed specified. Try again by specifying import runners.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 
 		// Arrange
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, [] );

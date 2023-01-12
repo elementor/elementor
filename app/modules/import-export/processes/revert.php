@@ -50,11 +50,11 @@ class Revert {
 	/**
 	 * Execute the revert process.
 	 *
-	 * @throws \Exception If no revert runners have beed specified.
+	 * @throws \Exception If no revert runners have been specified.
 	 */
 	public function run() {
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Couldn’t execute the revert process because no revert runners have beed specified. Try again by specifying revert runners.' );
+			throw new \Exception( 'Couldn’t execute the revert process because no revert runners have been specified. Try again by specifying revert runners.' );
 		}
 
 		$data = $this->get_last_import_session();
