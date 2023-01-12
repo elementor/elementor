@@ -856,7 +856,7 @@ async function editTab( editor, tabIndex ) {
 	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
 	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
 	await tabTitle.click();
-	await page.waitForTimeout( 100 );
+	await editor.page.waitForTimeout( 100 );
 	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
 }
 
