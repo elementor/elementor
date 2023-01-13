@@ -143,6 +143,21 @@ class Frontend extends App {
 	private $google_fonts_index = 0;
 
 	/**
+	 * @var bool
+	 */
+	private $e_swiper_latest = false;
+
+	/**
+	 * @var string
+	 */
+	private $e_swiper_asset_path;
+
+	/**
+	 * @var string
+	 */
+	private $e_swiper_version;
+
+	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
@@ -163,6 +178,7 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
+		$this->init_swiper_settings();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -322,6 +338,12 @@ class Frontend extends App {
 	 */
 	public function add_content_filter() {
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	public function init_swiper_settings() {
+		$this->e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
+		$this->e_swiper_asset_path = $this->e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
+		$this->e_swiper_version = $this->e_swiper_latest ? '8.4.5' : '3.4.2';
 	}
 
 	/**
@@ -543,15 +565,11 @@ class Frontend extends App {
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
-		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
-		$swiper_path = $e_swiper_latest ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/';
-		$swiper_version = $e_swiper_latest ? '8.4.5' : '3.4.2';
-
 		wp_register_style(
 			'swiper',
-			$this->get_css_assets_url( 'swiper', $swiper_path ),
+			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
 			[],
-			$swiper_version
+			$this->e_swiper_version
 		);
 
 		/**
@@ -1394,7 +1412,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
-			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
+			'swiperClass' => $this->e_swiper_latest ? 'swiper' : 'swiper-container',
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
@@ -1542,15 +1560,12 @@ class Frontend extends App {
 		];
 
 		if ( ! $this->is_improved_assets_loading() ) {
-			$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
-			$swiper_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
-			$swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
 
 			wp_register_script(
 				'swiper',
-				$this->get_js_assets_url( 'swiper', $swiper_path ),
+				$this->get_js_assets_url( 'swiper', $this->e_swiper_asset_path ),
 				[],
-				$swiper_version,
+				$this->e_swiper_version,
 				true
 			);
 
