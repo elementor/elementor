@@ -158,6 +158,11 @@ class Frontend extends App {
 	private $e_swiper_version;
 
 	/**
+	 * @var string
+	 */
+	private $e_swiper_class;
+
+	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
@@ -344,6 +349,11 @@ class Frontend extends App {
 		$this->e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
 		$this->e_swiper_asset_path = $this->e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
 		$this->e_swiper_version = $this->e_swiper_latest ? '8.4.5' : '3.4.2';
+		$this->e_swiper_class = $this->e_swiper_latest ? 'swiper' : 'swiper-container';
+	}
+
+	public function get_swiper_class() {
+		return $this->e_swiper_class;
 	}
 
 	/**
@@ -1412,7 +1422,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
-			'swiperClass' => $this->e_swiper_latest ? 'swiper' : 'swiper-container',
+			'swiperClass' => $this->get_swiper_class(),
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
