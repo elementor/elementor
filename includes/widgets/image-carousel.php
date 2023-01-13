@@ -903,12 +903,14 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
+		$swiper_class = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container';
+
 		$this->add_render_attribute( [
 			'carousel' => [
 				'class' => 'elementor-image-carousel swiper-wrapper',
 			],
 			'carousel-wrapper' => [
-				'class' => 'elementor-image-carousel-wrapper ' . Plugin::$instance->frontend->get_swiper_class(),
+				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
 				'dir' => $settings['direction'],
 			],
 		] );
