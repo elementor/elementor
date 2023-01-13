@@ -23,7 +23,6 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-header-menu {
 	text-align: center;
-	color: $editor-dark;
 	font-size: 13px;
 }
 
@@ -50,18 +49,7 @@ $remote-templates-items-space: 30px;
 	cursor: default;
 	padding: 0 10px;
 
-	.elementor-button {
-		padding: 8px 14px;
-		font-size: 11px;
-
-		&.go-pro {
-			background-color: $e-brand;
-		}
-	}
-
 	.elementor-template-library-template-insert {
-		color: #fff;
-		background-color: $editor-success;
 
 		&.elementor-disabled {
 			cursor: default;
@@ -79,8 +67,8 @@ $remote-templates-items-space: 30px;
 	cursor: pointer;
 	transition: color .5s;
 
-	&:not(:hover) {
-		color: $editor-light;
+	&:hover {
+		color: $e-gray-900;
 	}
 
 	i {
@@ -178,15 +166,6 @@ $remote-templates-items-space: 30px;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-start; // For blocks layout
-
-	// These rules are here because of selectors priority
-	.elementor-template-library-template-local {
-
-		.elementor-template-library-template-insert {
-			text-transform: none;
-			font-size: 12px;
-		}
-	}
 }
 
 #elementor-template-library-toolbar {
@@ -357,14 +336,15 @@ label.elementor-template-library-order-label {
 	&.elementor-template-library-pro-template {
 		.elementor-template-library-template-body:before {
 			content: var( --elementor-template-library-subscription-plan-label );
-			background-color: var( --elementor-template-library-subscription-plan-color );
-			color: $editor-lightest;
+			background-color: $e-brand;
+			color: $white;
 			position: absolute;
 			text-transform: uppercase;
+			line-height: 1;
 			top: 5px;
 			@include end(5px);
-			padding: 2px 4px 0;
-			font-size: 9px;
+			padding: 3px 5px;
+			font-size: 8px;
 			border-radius: 2px;
 		}
 	}
@@ -435,10 +415,6 @@ label.elementor-template-library-order-label {
 			color: $editor-lightest;
 			@include absolute-center;
 		}
-	}
-
-	.elementor-template-library-template-insert {
-		color: $editor-success;
 	}
 
 	.elementor-template-library-template-footer {
@@ -540,14 +516,6 @@ label.elementor-template-library-order-label {
 		background-color: $e-gray-25;
 	}
 
-	&:not(:hover) {
-
-		.elementor-template-library-template-insert {
-			background: none;
-			color: $editor-light;
-		}
-	}
-
 	&:first-child {
 		border-radius: 3px 3px 0 0;
 	}
@@ -577,11 +545,6 @@ label.elementor-template-library-order-label {
 		display: flex;
 		align-items: center;
 
-		&,
-		& a {
-			color: $editor-light;
-		}
-
 		> div {
 			cursor: pointer;
 			transition: color .5s;
@@ -601,22 +564,12 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-more {
 
-		&:hover,
-		a:hover {
-			color: $editor-darker;
-		}
-
 		.elementor-template-library-template-delete {
 
 			&:hover {
 				color: $editor-danger;
 			}
 		}
-	}
-
-	.elementor-template-library-template-action {
-		padding: 8px 18px;
-		margin: 0 5%;
 	}
 
 	.elementor-template-library-template-more {

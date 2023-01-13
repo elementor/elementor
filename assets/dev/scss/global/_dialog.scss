@@ -33,7 +33,6 @@
 
 	.dialog-header {
 		font-size: 15px;
-		color: $editor-darkest;
 		padding: 30px 0 10px;
 		font-weight: 500;
 	}
@@ -52,7 +51,7 @@
 	}
 
 	.dialog-buttons-wrapper {
-		border-top: 1px solid $editor-background;
+		border-top: $e-border;
 		text-align: center;
 
 		> .dialog-button {
@@ -67,7 +66,7 @@
 			outline: 0;
 
 			&:hover {
-				background-color: lighten($editor-background, 5%);
+				background-color: $e-gray-25;
 			}
 
 			&.dialog-ok {
@@ -75,6 +74,10 @@
 			}
 
 			&.dialog-cancel {
+
+				&:hover {
+					color: $e-danger;
+				}
 
 			}
 
@@ -117,7 +120,7 @@
 	.dialog-button {
 
 		&:first-child {
-			@include border-end(1px solid $editor-background);
+			@include border-end($e-border);
 		}
 	}
 }

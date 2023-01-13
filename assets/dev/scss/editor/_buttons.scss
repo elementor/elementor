@@ -36,6 +36,15 @@
 		}
 	}
 
+	&.e-btn-txt {
+		background: transparent;
+		color: $e-gray-600;
+
+		&:hover {
+			background: $e-gray-50;
+		}
+	}
+
 	&.elementor-button-success {
 		background-color: $e-btn-primary;
 
@@ -44,8 +53,25 @@
 		}
 	}
 
-	&.elementor-button-brand {
-		background-color: $editor-accent;
+	&.e-btn-primary {
+		background-color: $e-btn-primary;
+
+		&:hover {
+			background-color: $e-btn-primary-hover;
+		}
+
+		&.e-btn-txt {
+			background: transparent;
+			color: $e-btn-primary;
+
+			&:hover {
+				background: $e-primary-bg;
+			}
+		}
+	}
+
+	&.e-btn-brand {
+		background-color: $e-btn-brand;
 
 		&:hover {
 			background-color: $e-btn-brand-hover;

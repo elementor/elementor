@@ -3,16 +3,15 @@
 //
 
 .elementor-panel-navigation {
-	background-color: $white;
 	display: table;
 	table-layout: fixed;
 	width: 100%;
+	border-bottom: $e-border;
 
 	.elementor-panel-navigation-tab {
 		display: table-cell;
 
 		&.elementor-active {
-			background-image: $white;
 			border-bottom: 3px solid $e-gray-900;
 		}
 

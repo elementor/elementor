@@ -12,6 +12,10 @@
 
 	&.elementor-active {
 		padding-bottom: 20px;
+
+		.elementor-panel-heading {
+			margin-bottom: 20px;
+		}
 	}
 
 	&-items {

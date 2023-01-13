@@ -111,8 +111,8 @@
 				transition: $transition-hover;
 				cursor: pointer;
 
-				&:not(:hover) {
-					color: $editor-light;
+				&:hover {
+					color: $e-gray-900;
 				}
 			}
 		}
