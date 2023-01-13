@@ -352,10 +352,6 @@ class Frontend extends App {
 		$this->e_swiper_class = $this->e_swiper_latest ? 'swiper' : 'swiper-container';
 	}
 
-	public function get_swiper_class() {
-		return $this->e_swiper_class;
-	}
-
 	/**
 	 * Remove content filter.
 	 *
@@ -1422,7 +1418,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
-			'swiperClass' => $this->get_swiper_class(),
+			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
