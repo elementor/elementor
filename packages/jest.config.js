@@ -20,14 +20,12 @@ module.exports = {
 	moduleNameMapper: {
 		'^@elementor/(?!ui)(.*)$': '<rootDir>/packages/$1/src',
 	},
-
 	// By default jest avoids transforming files in node_modules.
 	transformIgnorePatterns: [
 		// Excluding elementor ui which is external package without commonjs build.
 		'node_modules/(?!@elementor/ui)',
 	],
-
-	/** Code coverage */
+	// Code coverage.
 	collectCoverageFrom: [
 		'packages/*/src/**/*.{js,jsx,ts,tsx}',
 	],
