@@ -443,6 +443,28 @@ class Container extends Element_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'max_height',
+			[
+				'label' => esc_html__( 'Max Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'vh', 'custom' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1440,
+					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'max-height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
 			[
