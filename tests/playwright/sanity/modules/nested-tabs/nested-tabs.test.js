@@ -350,7 +350,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Open front end.
-		await editor.publishAndViewPage();
+		await editor.publishAndViewPage( true );
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 		// Assert
@@ -368,7 +368,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 			// Act.
 			// Open front end.
-			await editor.publishAndViewPage();
+			await editor.publishAndViewPage( true );
 			await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 			// Assert

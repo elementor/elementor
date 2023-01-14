@@ -399,8 +399,17 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
-	async publishAndViewPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+	/**
+	 * @param {boolean?} force Force publishing of the page, even if there are no changes done in the editor
+	 * @return {Promise<void>}
+	 */
+	async publishAndViewPage( force ) {
+		if ( force ) {
+			await this.page.evaluate( "$e.run('document/save/publish')" );
+			await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		} else {
+			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		}
 		await this.page.waitForLoadState();
 		await Promise.all( [
 			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
