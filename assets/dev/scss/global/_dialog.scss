@@ -42,6 +42,7 @@
 		min-height: 50px;
 	}
 
+
 	&:not(.elementor-popup-modal) {
 
 		.dialog-header,
@@ -55,19 +56,6 @@
 		text-align: center;
 
 		> .dialog-button {
-			font-family: $admin-font-family;
-			width: 50%;
-			border: none;
-			background: none;
-			color: $e-btn;
-			font-size: 15px;
-			cursor: pointer;
-			padding: 13px 0;
-			outline: 0;
-
-			&:hover {
-				background-color: $e-gray-25;
-			}
 
 			&.dialog-ok {
 				color: $e-btn-primary;

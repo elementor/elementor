@@ -35,19 +35,13 @@
 	&__upload {
 		margin: 20px 45px;
 		padding-top: 35px;
-		border-top: 1px solid $editor-background;
+		border-top: $e-border;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 
 		@media (max-width: $editor-screen-lg-max) {
 			margin: 20px 25px;
-		}
-
-		&__title {
-			color: $editor-light;
-			font-size: 11px;
-			text-transform: uppercase;
 		}
 	}
 
@@ -169,6 +163,10 @@
 			}
 		}
 
+		&:hover {
+			background-color: $e-gray-25;
+		}
+
 		&.elementor-active {
 			background-color: $e-gray-50;
 
@@ -179,11 +177,7 @@
 				width: 3px;
 				top: 0;
 				@include start(0);
-				background-color: $editor-accent;
-			}
-
-			i {
-				color: $editor-accent;
+				background-color: $e-gray-900;
 			}
 		}
 	}
@@ -192,18 +186,19 @@
 		position: relative;
 		height: 0;
 		padding-bottom: 100%;
-		background-color: $white;
+		border: $e-border;
 		border-radius: 3px;
 		cursor: pointer;
 		transition: $transition-hover;
 		overflow: hidden;
 
 		&:hover {
-			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 1px $e-gray-100;
+			background-color: $e-gray-25;
 		}
 
 		&.elementor-selected {
-			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 1px $e-gray-900;
+			background-color: $e-gray-50;
+			border-color: $e-gray-900;
 		}
 
 		&__content {
@@ -217,11 +212,9 @@
 
 		&__icon {
 			font-size: 25px;
-			color: $editor-dark;
 		}
 
 		&__name {
-			color: $editor-lighter;
 			font-size: 11px;
 			padding: 13px 20px 0;
 			max-width: 100%;

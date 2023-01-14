@@ -74,7 +74,7 @@
 	.elementor-control-dimension-label {
 		display: block;
 		text-align: center;
-		color: $editor-lightest;
+		color: $e-gray-500;
 		font-size: 9px;
 		text-transform: uppercase;
 		padding-top: 5px;
@@ -83,7 +83,7 @@
 	.elementor-link-dimensions {
 
 		&.unlinked {
-			background-color: #fff;
+			background-color: $white;
 
 			.elementor-linked {
 				display: none;
@@ -91,17 +91,12 @@
 		}
 
 		&:not(.unlinked) {
-			background-color: $editor-light;
-			border-color: $editor-light;
+			background-color: $e-border-color;
+			border-color: $e-border-color;
 
 			.elementor-unlinked {
 				display: none;
 			}
 		}
-
-		.elementor-linked {
-			color: #fff;
-		}
-
 	}
 }
