@@ -1,0 +1,55 @@
+name: Create Tag
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        type: choice
+        description: 'Release type'
+        required: true
+        default: 'rc'
+        choices:
+          - 'rc'
+          - 'hotfix'
+jobs:
+  bump-version:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Get Configuration
+        id: configuration
+        uses: maork-elementor/json-to-variables@main
+        with:
+            filename: './.github/workflows/config.json'
+            prefix: config
+      - name: Test permissions
+        uses: ./.github/workflows/permissions
+        with:
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Bump tag version
+        uses: ./.github/workflows/bump-version
+        with:
+          CHANNEL: ${{ github.event.inputs.type }}
+      - name: Get next release branch
+        uses: ./.github/workflows/get-next-release-branch
+      - name: Create Git tag
+        uses : ./.github/workflows/create-git-tag
+        with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
