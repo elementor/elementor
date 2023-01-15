@@ -24,6 +24,7 @@ module.exports = {
 				text_stroke_text_stroke: [
 					'em-0.5',
 					'em-1',
+					'rem-1',
 				],
 				typography_font_size: [
 					'em-0',
