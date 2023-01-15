@@ -18,6 +18,7 @@ runs:
         REPO_NAME : ${{ inputs.REPO_NAME }}
         FILE_NAME : ${{ inputs.FILE_NAME }}
       run: |
+            npm install --no-package-lock --no-save @octokit/core@3.4.0
             ARTIFACT_URL=$(node ./.github/scripts/get-artifact-url.js)
             echo "ARTIFACT_URL=${ARTIFACT_URL}" >> $GITHUB_ENV
             echo "ARTIFACT_URL : ${ARTIFACT_URL}"
