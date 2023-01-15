@@ -14,29 +14,45 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			[
 				[
 					'handle' => 'elementor-packages-locations',
-					'src' => '{{ASSETS_URL}}/js/packages/locations{{MIN_SUFFIX}}.js',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/locations{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react' ],
+					'i18n' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
 				],
 				[
 					'handle' => 'elementor-packages-top-bar',
-					'src' => '{{ASSETS_URL}}/js/packages/top-bar{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui' ],
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/top-bar{{MIN_SUFFIX}}.js',
+					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui', 'wp-i18n' ],
+					'i18n' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
 				],
 				[
 					'handle' => 'elementor-packages-editor',
-					'src' => '{{ASSETS_URL}}/js/packages/editor{{MIN_SUFFIX}}.js',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/editor{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui' ],
+					'i18n' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
 				],
 				[
 					'handle' => 'elementor-packages-ui',
-					'src' => '{{ASSETS_URL}}/js/packages/ui{{MIN_SUFFIX}}.js',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/ui{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react', 'react-dom' ],
+					'i18n' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
 				],
 
 				// Loader script
 				[
 					'handle' => 'elementor-editor-loader-v2',
-					'src' => '{{ASSETS_URL}}/js/editor-loader-v2{{MIN_SUFFIX}}.js',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
 					'deps' => [
 						'elementor-editor',
 						'elementor-packages-editor',
@@ -63,7 +79,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			[
 				[
 					'handle' => 'elementor-editor-v2-overrides',
-					'src' => '{{ASSETS_URL}}/css/editor-v2-overrides{{MIN_SUFFIX}}.css',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}css/editor-v2-overrides{{MIN_SUFFIX}}.css',
 					'deps' => [ 'elementor-editor' ],
 				],
 			]

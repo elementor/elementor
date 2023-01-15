@@ -26,7 +26,7 @@ class Test_Module extends Elementor_Test_Base {
 		$module = new Finder_Module();
 
 		// Act
-		$category_items = $module->ajax_get_category_items( [ 'category' => 'mock' ] );
+		$category_items = $module->ajax_get_category_items( [ 'category' => 'mock_id' ] );
 
 		// Assert
 		$mock_items = $mock->get_category_items();

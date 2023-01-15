@@ -3,6 +3,7 @@ const { readdirSync } = require( 'fs' );
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
+// Elementor's internal packages
 const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
 	.filter( ( dirent ) => dirent.isDirectory() )
 	.map( ( dirent ) => dirent.name )
@@ -11,10 +12,19 @@ const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { w
 		path: path.resolve( __dirname, `./packages/${ name }/src` ),
 	} ) );
 
+// Packages that live outside the `packages` directory, but we want to treat them as if they were a part of the monorepo.
 const externalPackages = [
 	{
 		name: 'ui',
 		path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
+	},
+];
+
+// Packages that exists in WordPress, and we use them as externals.
+const wordpressPackages = [
+	{
+		fullName: '@wordpress/i18n',
+		runtimePath: 'wp.i18n',
 	},
 ];
 
@@ -37,10 +47,16 @@ function generateEntry() {
 }
 
 function generateExternals() {
-	return packages.reduce( ( acc, { name } ) => ( {
+	const externals = packages.reduce( ( acc, { name } ) => ( {
 		...acc,
 		[ `@elementor/${ name }` ]: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
 	} ), {} );
+
+	wordpressPackages.forEach( ( { fullName, runtimePath } ) => {
+		externals[ fullName ] = runtimePath;
+	} );
+
+	return externals;
 }
 
 function kebabToCamelCase( kebabCase ) {
@@ -49,7 +65,7 @@ function kebabToCamelCase( kebabCase ) {
 	} );
 }
 
-const config = {
+module.exports = {
 	entry: generateEntry(),
 	externals: {
 		...generateExternals(),
@@ -80,21 +96,4 @@ const config = {
 		filename: '[name].js',
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
-};
-
-module.exports = ( env, argv ) => {
-	if ( 'development' === argv.mode ) {
-		config.devtool = 'source-map';
-	}
-
-	// TODO: We probably need to add `@babel/preset-env` here
-	if ( 'production' === argv.mode ) {
-		config.optimization = {
-			minimize: true,
-		};
-
-		config.output.filename = '[name].min.js';
-	}
-
-	return config;
 };
