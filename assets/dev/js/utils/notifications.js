@@ -99,6 +99,7 @@ module.exports = elementorModules.Module.extend( {
 
 	isPositionValid( position ) {
 		const positionToCheck = position?.of ?? this.getToast().getSettings( 'position' ).of;
+		
 		if ( ! positionToCheck ) {
 			return false;
 		}
