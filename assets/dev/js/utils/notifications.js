@@ -98,11 +98,12 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	isPositionValid( position ) {
-		if ( ! position || ! position.of ) {
-			position.of = this.getToast().getSettings( 'position' ).of;
+		const positionToCheck = position?.of ?? this.getToast().getSettings( 'position' ).of;
+		if ( ! positionToCheck ) {
+			return false;
 		}
 
-		return !! document.querySelector( position.of );
+		return !! document.querySelector( positionToCheck );
 	},
 
 	positionToWindow() {
@@ -111,7 +112,7 @@ module.exports = elementorModules.Module.extend( {
 		const position = {
 			...toast.getSettings( 'position' ),
 			my: 'right top',
-			at: 'right-10 top+42', // Default admin bar height + 10px
+			at: 'right-10 top+42', // 42px is the default admin bar height + 10px
 			of: '',
 		};
 
