@@ -66,6 +66,9 @@ module.exports = {
 					'em-0',
 					'px-1',
 				],
+				typography_text_decoration: [
+					'overline',
+				],
 			},
 		},
 		divider: {
