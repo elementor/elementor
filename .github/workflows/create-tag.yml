@@ -9,7 +9,7 @@ on:
         description: 'Release type'
         required: true
         default: 'rc'
-        choices:
+        options:
           - 'rc'
           - 'hotfix'
 jobs:
