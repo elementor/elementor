@@ -20,12 +20,16 @@ $eps-theme-disabled: $eps-gray-100;
 $eps-theme-light: $white;
 $eps-theme-dark: $black;
 //
-$eps-theme-info: $e-info;
 $eps-theme-accent: $e-brand;
-$eps-theme-danger: $e-danger;
 $eps-theme-cta: $e-primary;
+$eps-theme-danger: $e-danger;
+$eps-theme-danger-bg: $e-danger-bg;
+$eps-theme-info: $e-info;
+$eps-theme-info-bg: $e-info-bg;
 $eps-theme-warning: $e-warning;
+$eps-theme-warning-bg: $e-warning-bg;
 $eps-theme-success: $e-success;
+$eps-theme-success-bg: $e-success-bg;
 
 // -use context
 $eps-body-color: $eps-gray-600;

@@ -79,11 +79,7 @@ $top-bar-height: 50px;
 	}
 
 	.e-admin-top-bar__heading-logo {
-		width: 30px;
-	}
-
-	.e-admin-top-bar__heading-logo {
-		background: $editor-accent;
+		background: $e-gray-900;
 		border-radius: 15px;
 		color: $white;
 		display: inline-block;
