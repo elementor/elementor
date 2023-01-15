@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const { readdirSync } = require( 'fs' );
+const ExtractDependenciesWebpackPlugin = require( './tools/webpack/extract-depndencies-webpack-plugin' );
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
@@ -92,8 +93,10 @@ module.exports = {
 	resolve: {
 		extensions: [ '.tsx', '.ts', '.js', '.jsx' ],
 	},
+	plugins: [
+		new ExtractDependenciesWebpackPlugin(),
+	],
 	output: {
-		filename: '[name].js',
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
 };

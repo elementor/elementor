@@ -1,6 +1,6 @@
 const { sources: { RawSource } } = require( 'webpack' );
 
-const MODULE_FILTERS = Object.freeze( [ /((?:[^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
+const MODULE_FILTERS = Object.freeze( [ /(([^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
 
 module.exports = class ExtractI18nExpressionsWebpackPlugin {
 	translationsRegexps = [];

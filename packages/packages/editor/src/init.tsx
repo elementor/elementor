@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom';
 import Shell from './components/shell';
 
 export default function init( domElement: HTMLElement ): void {
