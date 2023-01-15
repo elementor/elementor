@@ -13,7 +13,7 @@ on:
           - 'rc'
           - 'hotfix'
 jobs:
-  bump-version:
+  create-tag:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout branch
@@ -45,8 +45,6 @@ jobs:
         uses: ./.github/workflows/bump-version
         with:
           CHANNEL: ${{ github.event.inputs.type }}
-      - name: Get next release branch
-        uses: ./.github/workflows/get-next-release-branch
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
