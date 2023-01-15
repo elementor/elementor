@@ -16,9 +16,6 @@ module.exports = {
 		},
 	},
 	rules: {
-		// Ignore when trying to use '@elementor/*' packages.
-		'import/no-unresolved': [ 'error', { ignore: [ '@elementor/.+' ] } ],
-
 		// Don't allow relative import from package to package.
 		'import/no-relative-packages': [ 'error' ],
 		'no-restricted-syntax': [
@@ -30,11 +27,12 @@ module.exports = {
 			},
 		],
 
-		// Disable import/named rule, TS will handle it.
+		// Disable conflicting rules, TS will handle it.
 		'import/named': [ 'off' ],
+		'import/no-unresolved': [ 'off' ],
 
 		// Disable the js no-unused-vars rule, and enable the TS version.
-		'no-unused-vars': 'off',
+		'no-unused-vars': [ 'off' ],
 		'@typescript-eslint/no-unused-vars': [ 'error' ],
 	},
 	overrides: [
@@ -45,7 +43,7 @@ module.exports = {
 			],
 			rules: {
 				// In tests, we are importing dev dependencies of the workspace, so we need to disable this rule.
-				'import/no-extraneous-dependencies': 'off',
+				'import/no-extraneous-dependencies': [ 'off' ],
 			},
 		},
 	],
