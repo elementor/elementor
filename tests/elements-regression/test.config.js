@@ -96,6 +96,8 @@ module.exports = {
 				typography_font_size: [
 					'px-1',
 					'em-0',
+					'rem-0',
+					'vw-0',
 				],
 			},
 		},
