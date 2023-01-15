@@ -1,0 +1,25 @@
+name: Get Artifact URL
+description: Get the URL of the artifact that was uploaded to GitHub actions.
+
+inputs:
+  REPO_OWNER:
+    required: true
+  REPO_NAME:
+    required: true
+  FILE_NAME:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash 
+      env:
+        REPO_OWNER : ${{ inputs.REPO_OWNER }}
+        REPO_NAME : ${{ inputs.REPO_NAME }}
+        FILE_NAME : ${{ inputs.FILE_NAME }}
+      run: |
+            ARTIFACT_URL=$(node ./.github/scripts/get-artifact-url.js)
+            echo "ARTIFACT_URL=${ARTIFACT_URL}" >> $GITHUB_ENV
+            echo "ARTIFACT_URL : ${ARTIFACT_URL}"
+
+      
