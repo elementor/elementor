@@ -89,6 +89,9 @@ module.exports = {
 				size: [
 					'xs',
 				],
+				typography_font_size: [
+					'px-1',
+				],
 			},
 		},
 		image: {
