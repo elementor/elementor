@@ -10,52 +10,52 @@ class Editor_Common_Assets {
 		return [
 			[
 				'handle' => 'elementor-editor-modules',
-				'src' => '{{ASSETS_URL}}js/editor-modules{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-modules{{MIN_SUFFIX}}.js',
 				'deps' => [ 'elementor-common-modules' ],
 			],
 			[
 				'handle' => 'elementor-editor-document',
-				'src' => '{{ASSETS_URL}}js/editor-document{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-document{{MIN_SUFFIX}}.js',
 				'deps' => [ 'elementor-common-modules' ],
 			],
 			// Hack for waypoint with editor mode.
 			[
 				'handle' => 'elementor-waypoints',
-				'src' => '{{ASSETS_URL}}lib/waypoints/waypoints-for-editor.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/waypoints/waypoints-for-editor.js',
 				'deps' => [ 'jquery' ],
 				'version' => '4.0.2',
 			],
 			[
 				'handle' => 'perfect-scrollbar',
-				'src' => '{{ASSETS_URL}}lib/perfect-scrollbar/js/perfect-scrollbar{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/perfect-scrollbar/js/perfect-scrollbar{{MIN_SUFFIX}}.js',
 				'version' => '1.4.0',
 			],
 			[
 				'handle' => 'jquery-easing',
-				'src' => '{{ASSETS_URL}}lib/jquery-easing/jquery-easing{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/jquery-easing/jquery-easing{{MIN_SUFFIX}}.js',
 				'deps' => [ 'jquery' ],
 				'version' => '1.3.2',
 			],
 			[
 				'handle' => 'nprogress',
-				'src' => '{{ASSETS_URL}}lib/nprogress/nprogress{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/nprogress/nprogress{{MIN_SUFFIX}}.js',
 				'version' => '0.2.0',
 			],
 			[
 				'handle' => 'tipsy',
-				'src' => '{{ASSETS_URL}}lib/tipsy/tipsy{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/tipsy/tipsy{{MIN_SUFFIX}}.js',
 				'deps' => [ 'jquery' ],
 				'version' => '1.0.0',
 			],
 			[
 				'handle' => 'jquery-elementor-select2',
-				'src' => '{{ASSETS_URL}}lib/e-select2/js/e-select2.full{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/e-select2/js/e-select2.full{{MIN_SUFFIX}}.js',
 				'deps' => [ 'jquery' ],
 				'version' => '4.0.6-rc.1',
 			],
 			[
 				'handle' => 'flatpickr',
-				'src' => '{{ASSETS_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.js',
 				'deps' => [ 'jquery' ],
 				'version' => '1.12.0',
 			],
@@ -72,22 +72,22 @@ class Editor_Common_Assets {
 			],
 			[
 				'handle' => 'jquery-hover-intent',
-				'src' => '{{ASSETS_URL}}lib/jquery-hover-intent/jquery-hover-intent{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/jquery-hover-intent/jquery-hover-intent{{MIN_SUFFIX}}.js',
 				'version' => '1.0.0',
 			],
 			[
 				'handle' => 'nouislider',
-				'src' => '{{ASSETS_URL}}lib/nouislider/nouislider{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/nouislider/nouislider{{MIN_SUFFIX}}.js',
 				'version' => '13.0.0',
 			],
 			[
 				'handle' => 'pickr',
-				'src' => '{{ASSETS_URL}}lib/pickr/pickr.min.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/pickr/pickr.min.js',
 				'version' => '1.5.0',
 			],
 			[
 				'handle' => 'elementor-editor',
-				'src' => '{{ASSETS_URL}}js/editor{{MIN_SUFFIX}}.js',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor{{MIN_SUFFIX}}.js',
 				'deps' => [
 					'elementor-common',
 					'elementor-editor-modules',
@@ -110,6 +110,9 @@ class Editor_Common_Assets {
 					'react',
 					'react-dom',
 				],
+				'i18n' => [
+					'domain' => 'elementor',
+				],
 			],
 		];
 	}
@@ -118,12 +121,12 @@ class Editor_Common_Assets {
 		return [
 			[
 				'handle' => 'font-awesome',
-				'src' => '{{ASSETS_URL}}lib/font-awesome/css/font-awesome{{MIN_SUFFIX}}.css',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/font-awesome/css/font-awesome{{MIN_SUFFIX}}.css',
 				'version' => '4.7.0',
 			],
 			[
 				'handle' => 'elementor-select2',
-				'src' => '{{ASSETS_URL}}lib/e-select2/css/e-select2{{MIN_SUFFIX}}.css',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/e-select2/css/e-select2{{MIN_SUFFIX}}.css',
 				'version' => '4.0.6-rc.1',
 			],
 			[
@@ -132,17 +135,17 @@ class Editor_Common_Assets {
 			],
 			[
 				'handle' => 'flatpickr',
-				'src' => '{{ASSETS_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.css',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.css',
 				'version' => '1.12.0',
 			],
 			[
 				'handle' => 'pickr',
-				'src' => '{{ASSETS_URL}}lib/pickr/themes/monolith.min.css',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}lib/pickr/themes/monolith.min.css',
 				'version' => '1.5.0',
 			],
 			[
 				'handle' => 'elementor-editor',
-				'src' => '{{ASSETS_URL}}css/editor{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}css/editor{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
 				'deps' => [
 					'elementor-common',
 					'elementor-select2',
