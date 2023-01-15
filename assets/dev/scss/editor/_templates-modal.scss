@@ -677,21 +677,13 @@ label.elementor-template-library-order-label {
 
 #elementor-template-library-save-template-name {
 	width: 500px;
-	background-color: #fff;
-	font-weight: 300;
-	color: $editor-light;
 	@include padding-start(25px);
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-	border: none;
 }
 
 #elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-
-	&:hover {
-		box-shadow: none;
-	}
 }
 
 #elementor-template-library-import {

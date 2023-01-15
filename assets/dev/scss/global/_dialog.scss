@@ -1,9 +1,11 @@
+@import "../editor/buttons";
+
 //
 // Dialog
 //
 
 .dialog-widget-content {
-	background-color: #fff;
+	background-color: $white;
 	position: absolute;
 	border-radius: 3px;
 	box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
@@ -53,28 +55,23 @@
 
 	.dialog-buttons-wrapper {
 		border-top: $e-border;
-		text-align: center;
+		padding: 10px;
+		display: flex;
+		justify-content: space-between;
 
-		> .dialog-button {
+		.dialog-button {
+			@extend .elementor-button;
 
 			&.dialog-ok {
-				color: $e-btn-primary;
+				@extend .e-btn-primary;
 			}
 
 			&.dialog-cancel {
-
-				&:hover {
-					color: $e-danger;
-				}
-
+				@extend .e-btn-txt;
 			}
 
 			&.dialog-take_over {
-				color: $e-btn-primary;
-			}
-
-			&:active {
-				background-color: fade-out($editor-background, .5);
+				@extend .e-btn-primary;
 			}
 		}
 	}
@@ -93,26 +90,6 @@
 	}
 }
 
-.dialog-alert-widget {
-
-	.dialog-buttons-wrapper {
-
-		> button {
-			width: 100%;
-		}
-	}
-}
-
-.dialog-confirm-widget {
-
-	.dialog-button {
-
-		&:first-child {
-			@include border-end($e-border);
-		}
-	}
-}
-
 #elementor-change-exit-preference-dialog {
 
 	.dialog-message {
@@ -125,26 +102,15 @@
 			margin-bottom: 10px;
 		}
 	}
-
-	.dialog-ok {
-		color: $editor-success;
-	}
 }
 
 #e-experiments-dependency-dialog {
 	.dialog-confirm-header {
 		font-weight: 600;
 	}
-
-	.dialog-ok {
-		color: $editor-success;
-	}
 }
 
 #e-kit-elements-defaults-create-dialog {
-	.dialog-ok {
-		color: $editor-success;
-	}
 
 	label {
 		display: flex;

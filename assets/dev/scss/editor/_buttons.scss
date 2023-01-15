@@ -29,6 +29,11 @@
 		cursor: pointer;
 	}
 
+	&:disabled {
+		background-color: $e-btn-disabled;
+		color: $e-gray-300;
+	}
+
 	&:not(.elementor-button-state) {
 
 		.elementor-state-icon {
@@ -42,6 +47,11 @@
 
 		&:hover {
 			background: $e-gray-50;
+		}
+
+		&:disabled {
+			background: transparent;
+			color: $e-gray-300;
 		}
 	}
 
@@ -94,12 +104,6 @@
 		}
 	}
 
-	&.elementor-edit-template {
-		display: inline-block;
-		margin-top: 15px;
-		color: #fff;
-	}
-
 	&.go-pro {
 		background-color: $e-btn-brand;
 
@@ -113,6 +117,6 @@
 	}
 
 	i {
-		@include margin-end(10px);
+		@include margin-end(5px);
 	}
 }
