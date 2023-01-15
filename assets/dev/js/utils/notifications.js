@@ -67,11 +67,13 @@ module.exports = elementorModules.Module.extend( {
 	showToast( options ) {
 		var toast = this.getToast();
 
-		this.positionToWindow( toast, options );
-
 		toast.setMessage( options.message );
 
 		toast.getElements( 'buttonsWrapper' ).empty();
+
+		if ( ! this.isPositionValid( options.position ?? null ) ) {
+			this.positionToWindow();
+		}
 
 		if ( options.buttons ) {
 			options.buttons.forEach( function( button ) {
@@ -95,16 +97,16 @@ module.exports = elementorModules.Module.extend( {
 		return toast.show();
 	},
 
-	positionToWindow( toast, options ) {
-		if ( position in options ) {
-			return;
+	isPositionValid( position ) {
+		if ( ! position || ! position.of ) {
+			position.of = this.getToast().getSettings( 'position' ).of;
 		}
 
-		const positionOf = toast.getSettings( 'position' ).of.replace( '#', '' );
+		return document.querySelector( position.of );
+	},
 
-		if ( document.getElementById( positionOf ) ) {
-			return;
-		}
+	positionToWindow() {
+		const toast = this.getToast();
 
 		const position = {
 			...toast.getSettings( 'position' ),
