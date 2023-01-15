@@ -196,7 +196,7 @@ class Deprecation {
 		$diff = $this->compare_version( $base_version, $version );
 
 		if ( false === $diff ) {
-			throw new \Exception( 'Invalid deprecation diff' );
+			throw new \Exception( 'Invalid deprecation diff.' );
 		}
 
 		$print_deprecated = false;

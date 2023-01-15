@@ -90,6 +90,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		// Disable lazyload in admin area (true if inside WordPress administration interface - Editor, Admin, etc.)
+		if ( is_admin() ) {
+			return;
+		}
+
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
 			$this->update_element_attributes( $element );
 		} );
@@ -109,8 +114,8 @@ class Module extends BaseModule {
 
 		add_action( 'wp_footer', function() {
 			?>
-			<script type='text/javascript' defer>
-				document.addEventListener( 'DOMContentLoaded', function() {
+			<script type='text/javascript'>
+				const lazyloadRunObserver = () => {
 					const dataAttribute = 'data-e-bg-lazyload';
 					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
@@ -129,6 +134,13 @@ class Module extends BaseModule {
 					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
+				};
+				const events = [
+					'DOMContentLoaded',
+					'elementor/lazyload/observe',
+				];
+				events.forEach( ( event ) => {
+					document.addEventListener( event, lazyloadRunObserver );
 				} );
 			</script>
 			<?php
