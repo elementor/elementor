@@ -28,10 +28,7 @@ runs:
                bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
             fi
 
-            if [ -f "${{ inputs.BUILD_SCRIPT_PATH }}" ];
-              then
-               bash ${{ inputs.BUILD_SCRIPT_PATH }}
-            fi
+            bash ${{ inputs.BUILD_SCRIPT_PATH }}
             
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
