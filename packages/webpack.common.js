@@ -4,79 +4,71 @@ const ExtractDependenciesWebpackPlugin = require( './tools/webpack/extract-depnd
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
-// Elementor's internal packages
-const internalPackages = readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
-	.filter( ( dirent ) => dirent.isDirectory() )
-	.map( ( dirent ) => dirent.name )
-	.map( ( name ) => ( {
-		name,
-		path: path.resolve( __dirname, `./packages/${ name }/src` ),
-	} ) );
-
-// Packages that live outside the `packages` directory, but we want to treat them as if they were a part of the monorepo.
-const externalPackages = [
-	{
-		name: 'ui',
-		path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
-	},
-];
-
-// Packages that exists in WordPress, and we use them as externals.
-const wordpressPackages = [
-	{
-		fullName: '@wordpress/i18n',
-		runtimePath: 'wp.i18n',
-	},
-];
+const kebabToCamelCase = ( kebabCase ) => kebabCase.replace(
+	/-(\w)/g,
+	( match, w ) => w.toUpperCase()
+);
 
 const packages = [
-	...internalPackages,
-	...externalPackages,
+	// Elementor packages from the monorepo.
+	...readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
+		.filter( ( dirent ) => dirent.isDirectory() )
+		.map( ( dirent ) => dirent.name )
+		.map( ( name ) => ( {
+			name,
+			path: path.resolve( __dirname, `./packages/${ name }/src` ),
+		} ) ),
+	// Elementor packages that lives outside the monorepo.
+	...[
+		{
+			name: 'ui',
+			path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
+		},
+	],
 ];
 
-function generateEntry() {
-	return packages.reduce( ( acc, { name, path: packagePath } ) => ( {
+const externals = [
+	// Elementor packages.
+	...packages.map( ( { name } ) => ( {
+		name: `@elementor/${ name }`,
+		global: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
+	} ), [] ),
+	// Packages that exists in WordPress environment, and we use them as externals.
+	...[
+		{
+			name: '@wordpress/i18n',
+			global: 'wp.i18n',
+		},
+		{
+			name: 'react',
+			global: 'React',
+		},
+		{
+			name: 'react-dom',
+			global: 'ReactDOM',
+		},
+	],
+];
+
+module.exports = {
+	entry: packages.reduce( ( acc, pkg ) => ( {
 		...acc,
-		[ name ]: {
-			import: packagePath,
+		[ pkg.name ]: {
+			import: pkg.path,
 			library: {
-				name: [ globalObjectKey, kebabToCamelCase( name ) ],
+				name: [ globalObjectKey, kebabToCamelCase( pkg.name ) ],
 				type: 'window',
 			},
 		},
-	} ), {} );
-}
-
-function generateExternals() {
-	const externals = packages.reduce( ( acc, { name } ) => ( {
+	} ), {} ),
+	externals: externals.reduce( ( acc, { name, global } ) => ( {
 		...acc,
-		[ `@elementor/${ name }` ]: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
-	} ), {} );
-
-	wordpressPackages.forEach( ( { fullName, runtimePath } ) => {
-		externals[ fullName ] = runtimePath;
-	} );
-
-	return externals;
-}
-
-function kebabToCamelCase( kebabCase ) {
-	return kebabCase.replace( /-(\w)/g, ( match, w ) => {
-		return w.toUpperCase();
-	} );
-}
-
-module.exports = {
-	entry: generateEntry(),
-	externals: {
-		...generateExternals(),
-		react: 'React',
-		'react-dom': 'ReactDOM',
-	},
+		[ name ]: global,
+	} ), {} ),
 	module: {
 		rules: [
 			{
-				test: /\.(j|t)sx?$/,
+				test: /\.[jt]sx?$/,
 				exclude: /node_modules/,
 				use: {
 					loader: 'babel-loader',
@@ -97,6 +89,7 @@ module.exports = {
 		new ExtractDependenciesWebpackPlugin(),
 	],
 	output: {
+		clean: true,
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
 };

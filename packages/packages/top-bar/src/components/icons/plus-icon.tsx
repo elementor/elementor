@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { SvgIcon, SvgIconProps } from '@elementor/ui';
 
 const PlusIcon: React.FC<SvgIconProps> = ( props ) => {

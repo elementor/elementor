@@ -27,30 +27,30 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	private $packages_script_assets;
 
 	public function get_script_configs() {
-		$packages_script_configs = $this->get_packages_script_assets()->map( function ( $script_asset ) {
+		$packages_script_configs = $this->get_packages_script_assets()->map( function ( $script_asset, $package_name ) {
 			return [
 				'handle' => $script_asset['handle'],
-				'path' => "{{ELEMENTOR_ASSETS_URL}}assets/js/{$script_asset['name']}{{MIN_SUFFIX}}.js",
+				'src' => "{{ELEMENTOR_ASSETS_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js",
 				'deps' => $script_asset['deps'],
 				'i18n' => [
 					'domain' => 'elementor',
 					'replace_requested_file' => true,
 				],
 			];
-		} )->all();
+		} );
 
 		$loader_script_config = [
 			'handle' => 'elementor-editor-loader-v2',
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
 			'deps' => [
 				'elementor-editor',
-				$packages_script_configs[ static::APP_PACKAGE ]['handle'],
+				$packages_script_configs->get( static::APP_PACKAGE )['handle'],
 			],
 		];
 
 		return array_merge(
 			Editor_Common_Assets::get_script_configs(),
-			$packages_script_configs,
+			$packages_script_configs->values(),
 			[ $loader_script_config ]
 		);
 	}
@@ -98,19 +98,18 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			$this->packages_script_assets = Collection::make( [ self::APP_PACKAGE ] )
 				->merge( self::EXTENSION_PACKAGES )
 				->merge( self::UTIL_PACKAGES )
-				->map_with_keys( function ( $package ) {
+				->map_with_keys( function ( $package_name ) {
 					$assets_path = ELEMENTOR_ASSETS_PATH;
-					$script_asset_path = "{$assets_path}js/packages/{$package}.asset.php";
+					$script_asset_path = "{$assets_path}js/packages/{$package_name}.asset.php";
 
 					if ( ! file_exists( $script_asset_path ) ) {
-						return null;
+						return [];
 					}
 
 					$script_asset = require $script_asset_path;
 
-					return [ $script_asset['name'] => $script_asset ];
-				} )
-				->filter();
+					return [ $package_name => $script_asset ];
+				} );
 		}
 
 		return $this->packages_script_assets;

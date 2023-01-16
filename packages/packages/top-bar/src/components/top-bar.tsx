@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 import { AppBar, Grid, Box, IconButton, styled } from '@elementor/ui';
 import ElementorIcon from './icons/elementor-icon';
