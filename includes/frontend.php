@@ -143,11 +143,6 @@ class Frontend extends App {
 	private $google_fonts_index = 0;
 
 	/**
-	 * @var bool
-	 */
-	private $e_swiper_latest = false;
-
-	/**
 	 * @var string
 	 */
 	private $e_swiper_asset_path;
@@ -341,9 +336,9 @@ class Frontend extends App {
 	}
 
 	public function init_swiper_settings() {
-		$this->e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
-		$this->e_swiper_asset_path = $this->e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
-		$this->e_swiper_version = $this->e_swiper_latest ? '8.4.5' : '5.3.6';
+		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
+		$this->e_swiper_asset_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
+		$this->e_swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
 	}
 
 	/**
@@ -1412,7 +1407,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
-			'swiperClass' => $this->e_swiper_latest ? 'swiper' : 'swiper-container',
+			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
