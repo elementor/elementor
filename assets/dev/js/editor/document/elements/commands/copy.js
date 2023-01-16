@@ -21,12 +21,39 @@ export class Copy extends $e.modules.editor.CommandContainerBase {
 		}
 
 		const elements = elementor.getPreviewView().$el.find( '.elementor-element' );
+
+		const elementsData = containers.sort( ( first, second ) => {
+			return elements.index( first.view.el ) - elements.index( second.view.el );
+		} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) );
+
+		const storageData = {
+			type: 'elementor',
+			elements: elementsData,
+		};
+
 		elementorCommon.storage.set(
 			storageKey,
-			containers.sort( ( first, second ) => {
-				return elements.index( first.view.el ) - elements.index( second.view.el );
-			} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) ),
+			storageData,
 		);
+
+		// TODO: Use package for clipboard saving
+		const clipboard = document.createElement( 'textarea' );
+		clipboard.value = JSON.stringify( storageData );
+		document.body.appendChild( clipboard );
+		clipboard.select();
+		document.execCommand( 'copy' );
+		document.body.removeChild( clipboard );
+
+		// Show notification
+		elementor.notifications.showToast( {
+			message: __( 'Copied!', 'elementor' ),
+			buttons: [
+				{
+					name: 'got_it',
+					text: __( 'Got it', 'elementor' ),
+				},
+			],
+		} );
 	}
 }
 

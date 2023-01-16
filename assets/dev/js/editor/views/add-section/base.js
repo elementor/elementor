@@ -29,6 +29,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
 			containerPresets: '.e-con-preset',
+			pasteArea: '.e-paste-area',
 		};
 	}
 
@@ -39,6 +40,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.presets': 'onPresetSelected',
 			'click @ui.containerPresets': 'onContainerPresetSelected',
+			'paste @ui.pasteArea textarea': 'onPasteAreaPasted',
 		};
 	}
 
@@ -47,6 +49,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
 				groups: this.getContextMenuGroups(),
+				eventTargets: [ '.elementor-add-section-inner' ],
 			},
 		};
 	}
@@ -96,6 +99,15 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 							},
 							onAfter: () => this.onAfterPaste(),
 						} ),
+					},
+				],
+			}, {
+				name: 'paste_area',
+				actions: [
+					{
+						name: 'paste_area',
+						title: __( 'Paste Area', 'elementor' ),
+						callback: () => this.ui.pasteArea.show(),
 					},
 				],
 			}, {
@@ -183,6 +195,23 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			elementor.getPreviewContainer(),
 			this.options,
 		);
+	}
+
+	onPasteAreaPasted( event ) {
+		event.preventDefault();
+
+		$e.run( 'document/ui/paste', {
+			container: elementor.getPreviewContainer(),
+			storageType: 'rawdata',
+			data: event.originalEvent.clipboardData.getData( 'text' ),
+			options: {
+				at: this.getOption( 'at' ),
+				rebuild: true,
+			},
+			onAfter: () => this.onAfterPaste(),
+		} );
+
+		this.ui.pasteArea.hide();
 	}
 
 	onDropping() {

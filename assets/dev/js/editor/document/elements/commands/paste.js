@@ -3,10 +3,10 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		this.requireContainer( args );
 
 		// Validate if storage have data.
-		const { storageKey = 'clipboard' } = args,
-			storageData = elementorCommon.storage.get( storageKey );
+		//const { storageKey = 'clipboard' } = args,
+		//	storageData = elementorCommon.storage.get( storageKey );
 
-		this.requireArgumentType( 'storageData', 'object', { storageData } );
+		//this.requireArgumentType( 'storageData', 'object', { storageData } );
 	}
 
 	getHistory() {
@@ -16,22 +16,46 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		};
 	}
 
-	apply( args ) {
-		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
-			storageData = elementorCommon.storage.get( storageKey );
+	async getStorageData( args ) {
+		const { storageType = 'localstorage', storageKey = 'clipboard', data = '' } = args;
+
+		if ( 'localstorage' === storageType ) {
+			return elementorCommon.storage.get( storageKey ) || {};
+		}
+
+		try {
+			return JSON.parse( data ) || {};
+		} catch ( e ) {
+			return {};
+		}
+	}
+
+	async apply( args ) {
+		const { at, rebuild = false, containers = [ args.container ], options = {} } = args,
+			storageData = await this.getStorageData( args )
+
+		if ( ! storageData || ! storageData?.elements?.length && 'elementor' !== storageData?.type ) {
+			return false;
+		}
+
+		const storageDataElements = storageData.elements;
 
 		let result = [];
 
 		// Paste on "Add Section" area.
 		if ( rebuild ) {
-			result = this.rebuild( containers, storageData, at );
+			result = this.rebuild( containers, storageDataElements, at );
 		} else {
 			if ( undefined !== at ) {
 				options.at = at;
 			}
 
-			result.push( this.pasteTo( containers, storageData, options ) );
+			result.push( this.pasteTo( containers, storageDataElements, options ) );
 		}
+
+		elementor.notifications.showToast( {
+			message: __( 'Elements Pasted', 'elementor' ),
+		} );
 
 		if ( 1 === result.length ) {
 			return result[ 0 ];
