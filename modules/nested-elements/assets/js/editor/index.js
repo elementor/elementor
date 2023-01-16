@@ -10,7 +10,14 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 
 		elementor.modules.elements.types.NestedElementBase.then( ( nestedElementBaseModule ) => {
 			elementor.modules.elements.types.NestedElementBase = nestedElementBaseModule.default;
-			Events.dispatch( elementorCommon.elements.$window, 'elementor/nested-element-type-loaded' );
+
+			import( './views/view' )
+				.then( ( View ) => {
+					$e.components.get( 'nested-elements' ).exports = { NestedView: View.default };
+				} )
+				.then( () => {
+					Events.dispatch( elementorCommon.elements.$window, 'elementor/nested-element-type-loaded' );
+				} );
 		} );
 	} );
 } );
