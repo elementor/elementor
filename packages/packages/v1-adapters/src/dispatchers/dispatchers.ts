@@ -1,5 +1,5 @@
 import { Commands } from './commands';
-import { ExtendedWindow, jQueryDeferred, Promisify } from './types';
+import { ExtendedWindow, Promisify } from './types';
 import { isJQueryDeferred, promisifyJQueryDeferred } from './utils';
 
 export function runCommand<T extends keyof Commands>(
