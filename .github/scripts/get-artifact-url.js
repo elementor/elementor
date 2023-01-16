@@ -1,7 +1,7 @@
 'use strict';
 
 
-const { Octokit } = require("@octokit/core");
+const { Octokit } = require("@octokit/rest");
 
 const { TOKEN } = process.env;
 const octokit = new Octokit({ auth: TOKEN });
