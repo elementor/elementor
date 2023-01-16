@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test.only( 'Accordion', async ( { page }, testInfo ) => {
+test( 'Accordion', async ( { page }, testInfo ) => {
     // Arrange.
     const wpAdmin = new WpAdminPage( page, testInfo ),
     editor = await wpAdmin.useElementorPost( 'accordion' );
