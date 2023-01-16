@@ -1,4 +1,4 @@
-import Controls from 'elementor/frontend/utils/controls';
+import Controls from 'elementor/assets/dev/js/frontend/utils/controls';
 const responsiveSettingsObject = require( './responsiveSettings.json' );
 
 describe( 'Controls', () => {
