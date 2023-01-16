@@ -52,7 +52,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	await wpAdmin.setExperiments( {
 		additional_custom_breakpoints: true,
 	} );
-	
+
 	const editor = await wpAdmin.useElementorCleanPost();
 
 	await editor.closeNavigatorIfOpen();
