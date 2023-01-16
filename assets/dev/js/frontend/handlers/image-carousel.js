@@ -1,3 +1,5 @@
+import Conditions from 'elementor-editor-utils/conditions';
+
 export default class ImageCarousel extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
@@ -187,6 +189,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 	 * @param {{}}     controlSettings A settings object (e.g. element settings - keys and values)
 	 * @param {string} controlKey      The control key name
 	 * @param {string} controlSubKey   A specific property of the control object.
+	 * @param {string} device          If we want to get a value for a specific device mode.
 	 * @return {*} Control Value
 	 */
 	getResponsiveControlValue( controlSettings, controlKey, controlSubKey = '', device = null ) {
@@ -255,7 +258,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 	}
 
 	getSpaceBetween( device = null ) {
-		return this.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0 ;
+		return this.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0;
 	}
 
 	updateSpaceBetween( propertyName ) {
