@@ -17,7 +17,7 @@ export default class Controls {
 	 * @return {*} Control Value
 	 */
 	getResponsiveControlValue( controlSettings, controlKey, controlSubKey = '', device = null ) {
-		const currentDeviceMode = currentDeviceMode = device || elementorFrontend.getCurrentDeviceMode(),
+		const currentDeviceMode = device || elementorFrontend.getCurrentDeviceMode(),
 			controlValueDesktop = conditions.getConditionValue( controlSettings, controlKey, controlSubKey );
 
 		// Set the control value for the current device mode.
