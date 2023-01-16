@@ -1,3 +1,4 @@
+import { Route } from './routes';
 import { Commands } from './commands';
 
 export type jQueryDeferred<T> = {
@@ -8,6 +9,7 @@ export type Promisify<T> = Promise<Awaited<T>>;
 
 export type ExtendedWindow = Window & {
 	$e: {
-		run: <T extends keyof Commands>( command: T, args?: Commands[T]['args'] ) => Commands[T]['returnValue'],
+		run: <T extends keyof Commands>( command: T, args?: Commands[T]['args'] ) => Commands[T]['returnValue'];
+		route: ( route: Route ) => void;
 	},
 }

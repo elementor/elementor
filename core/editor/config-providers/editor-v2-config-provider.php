@@ -24,7 +24,13 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				[
 					'handle' => 'elementor-packages-top-bar',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/top-bar{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui', 'wp-i18n' ],
+					'deps' => [
+						'react',
+						'elementor-packages-editor',
+						'elementor-packages-ui',
+						'elementor-packages-v1-adapters',
+						'wp-i18n',
+					],
 					'i18n' => [
 						'domain' => 'elementor',
 						'replace_requested_file' => true,

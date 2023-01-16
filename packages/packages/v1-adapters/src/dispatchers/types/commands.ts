@@ -1,4 +1,4 @@
-import { jQueryDeferred } from './types';
+import { jQueryDeferred } from './util-types';
 
 export type Commands = {
 	'documents/save/auto': {
