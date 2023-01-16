@@ -104,7 +104,6 @@ export default class Shortcuts {
 	}
 
 	isControlEvent( event ) {
-		console.log( event );
 		return event[ environment.mac ? 'metaKey' : 'ctrlKey' ];
 	}
 
