@@ -107,7 +107,8 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 					{
 						name: 'paste_area',
 						title: __( 'Paste Area', 'elementor' ),
-						callback: () => this.ui.pasteArea.show(),
+						//callback: () => this.ui.pasteArea.show(),
+						callback: () => $e.run( 'document/elements/paste-area' ),
 					},
 				],
 			}, {
