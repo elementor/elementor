@@ -773,14 +773,11 @@ html.elementor-html {
 		justify-content: center;
 		height: 40px;
 		width: 40px;
-		color: #fff;
 		font-size: 16px;
 		border-radius: 50%;
-		transition: all .3s;
-		cursor: pointer;
 
-		&:hover {
-			opacity: 0.85;
+		i {
+			margin: 0;
 		}
 	}
 
