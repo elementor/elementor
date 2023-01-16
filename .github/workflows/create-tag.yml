@@ -62,4 +62,16 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+      - name: Push version
+        uses : ./.github/workflows/push-new-version
+        with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
+      # - name: Send slack message
+      #   uses: ./.github/workflows/slack-notify
+      #   with:
+      #     MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
+      #     SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      #     SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
         
