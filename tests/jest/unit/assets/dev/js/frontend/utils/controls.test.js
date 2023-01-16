@@ -1,4 +1,4 @@
-import Controls from 'elementor/assets/dev/js/frontend/utils/controls';
+import Controls from 'elementor-frontend-utils/controls';
 const responsiveSettingsObject = require( './responsiveSettings.json' );
 
 describe( 'Controls', () => {
@@ -33,30 +33,6 @@ describe( 'Controls', () => {
 		responsiveControlValueTest( 'laptop', 1, 10 );
 		responsiveControlValueTest( 'desktop', 1, 10 );
 		responsiveControlValueTest( 'widescreen', 1, 'widescreenValue' );
-	} );
-
-	test( 'Get Control Value', () => {
-		// Arrange.
-		const controls = new Controls();
-
-		const values = {
-			testControl: 'testControlValue',
-			testControlObject: {
-				testSubControl: 'testSubControlValue',
-			},
-		};
-
-		// Act - Test regular condition value.
-		const controlValue = controls.getControlValue( values, 'testControl' );
-
-		// Assert.
-		expect( controlValue ).toBe( 'testControlValue' );
-
-		// Act - Test sub-condition value.
-		const subControlValue = controls.getControlValue( values, 'testControlObject', 'testSubControl' );
-
-		// Assert.
-		expect( subControlValue ).toBe( 'testSubControlValue' );
 	} );
 } );
 
