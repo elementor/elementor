@@ -1,4 +1,4 @@
-import { jQueryDeferred } from './types/util-types';
+import { jQueryDeferred } from './types';
 
 export function isJQueryDeferred<T>( value: any ): value is jQueryDeferred<T> {
 	// TODO: Copied from:

@@ -1,12 +1,7 @@
-import { Route } from './types/routes';
-import { Commands } from './types/commands';
-import { ExtendedWindow, Promisify } from './types/util-types';
+import { ExtendedWindow } from './types';
 import { isJQueryDeferred, promisifyJQueryDeferred } from './utils';
 
-export function runCommand<T extends keyof Commands>(
-	command: T,
-	args?: Commands[T]['args']
-) : Promisify<Commands[T]['returnValue']> {
+export function runCommand( command: string, args?: object ) : Promise<unknown> {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
 	if ( ! extendedWindow.$e?.run ) {
@@ -16,24 +11,23 @@ export function runCommand<T extends keyof Commands>(
 	const result = extendedWindow.$e.run( command, args );
 
 	if ( result instanceof Promise ) {
-		return result as Promisify<Commands[T]['returnValue']>;
+		return result;
 	}
 
 	if ( isJQueryDeferred( result ) ) {
-		return promisifyJQueryDeferred( result ) as Promisify<Commands[T]['returnValue']>;
+		return promisifyJQueryDeferred( result );
 	}
 
 	return Promise.resolve( result );
 }
 
-export function goToRoute( route: Route ) {
+export function openRoute( route: string ) : Promise<void> {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
 	if ( ! extendedWindow.$e?.route ) {
 		return Promise.reject( '`$e.route()` is not available' );
 	}
 
-	// TODO: Do we want a Promise?
 	try {
 		return Promise.resolve(
 			extendedWindow.$e.route( route )
