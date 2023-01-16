@@ -56,12 +56,6 @@ jobs:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
           path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
-      - name: Get artifact URL
-        uses: ./.github/workflows/get-artifact-url
-        with:
-          REPO_OWNER: ${{ env.config_deployment_repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
-          FILE_NAME: ${{ env.PLUGIN_ZIP_FILENAME }}
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
