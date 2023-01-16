@@ -7,6 +7,10 @@
 	background-color: rgba(0, 0, 0, .8);
 	z-index: $super-layer;
 
+	&.dialog-position-window {
+		position: fixed;
+	}
+
 	.dialog-message {
 		font-size: 13px;
 	}

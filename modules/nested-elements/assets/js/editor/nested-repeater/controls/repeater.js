@@ -24,15 +24,13 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 	}
 
 	updateActiveRow() {
-		let activeItemIndex = 1;
-
-		if ( this.currentEditableChild ) {
-			activeItemIndex = this.currentEditableChild.itemIndex;
+		if ( ! this.currentEditableChild ) {
+			return;
 		}
 
 		$e.run( 'document/repeater/select', {
 			container: this.container,
-			index: activeItemIndex,
+			index: this.currentEditableChild.itemIndex,
 			options: { useHistory: false },
 		} );
 	}
