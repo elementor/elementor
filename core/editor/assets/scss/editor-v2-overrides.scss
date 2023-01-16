@@ -6,3 +6,8 @@
 	/** TopBar height */
 	height: calc(100vh - 48px);
 }
+
+body.elementor-navigator-docked #elementor-navigator {
+	/** TopBar height */
+	height: calc(100% - 48px);
+}

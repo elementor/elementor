@@ -27,25 +27,28 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	private $packages_script_assets;
 
 	public function get_script_configs() {
-		$packages_script_configs = $this->get_packages_script_assets()->map( function ( $script_asset, $package_name ) {
-			return [
-				'handle' => $script_asset['handle'],
-				'src' => "{{ELEMENTOR_ASSETS_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js",
-				'deps' => $script_asset['deps'],
-				'i18n' => [
-					'domain' => 'elementor',
-					'replace_requested_file' => true,
-				],
-			];
-		} );
+		$packages_script_configs = $this->get_packages_script_assets()
+			->map( function ( $script_asset, $package_name ) {
+				return [
+					'handle' => $script_asset['handle'],
+					'src' => "{{ELEMENTOR_ASSETS_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js",
+					'deps' => $script_asset['deps'],
+					'i18n' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
+				];
+			} );
+
+		$editor_script_config = $packages_script_configs->get( static::APP_PACKAGE );
 
 		$loader_script_config = [
 			'handle' => 'elementor-editor-loader-v2',
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
-			'deps' => [
-				'elementor-editor',
-				$packages_script_configs->get( static::APP_PACKAGE )['handle'],
-			],
+			'deps' => array_merge(
+				[ 'elementor-editor' ],
+				$editor_script_config ? [ $packages_script_configs['handle'] ] : []
+			),
 		];
 
 		return array_merge(
@@ -56,8 +59,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_script_handles_to_enqueue() {
-		// TODO: Hook to enqueue scripts.
-
 		return $this->get_packages_script_assets()
 			->filter( function ( $script_asset, $package_name ) {
 				return in_array( $package_name, static::EXTENSION_PACKAGES, true );
