@@ -43,6 +43,8 @@ jobs:
       - name: Install Dependencies
         run: |
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          ACTION_RUN="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "ACTION_RUN=${ACTION_RUN}" >> $GITHUB_ENV
           npm ci
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
@@ -68,10 +70,10 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
-      # - name: Send slack message
-      #   uses: ./.github/workflows/slack-notify
-      #   with:
-      #     MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
-      #     SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-      #     SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+      - name: Send slack message
+        uses: ./.github/workflows/slack-notify
+        with:
+          MESSAGE: "@here Elementor `${{ env.PACKAGE_VERSION }}` Tag created, please review changes. The build can be found in the artifacts : ${{ env.ACTION_RUN }}"
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
         
