@@ -556,7 +556,7 @@ class Admin extends App {
 			$type = sanitize_text_field( wp_unslash( $_GET['template_type'] ) );
 		}
 
-		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
+		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
 
 		/**
 		 * Create new post meta data.
