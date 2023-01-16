@@ -2,7 +2,9 @@ import { jQueryDeferred } from './util-types';
 
 export type Commands = {
 	'documents/save/auto': {
-		args: undefined,
+		args: {
+			force?: boolean,
+		},
 		returnValue: jQueryDeferred<string | SaveResponse>,
 	},
 };
