@@ -354,7 +354,7 @@ export default class EditorBase extends Marionette.Application {
 		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
-			Notifications = require( 'elementor-editor-utils/notifications' );
+			Notifications = require( 'elementor-utils/notifications' );
 
 		this.elementsManager = new ElementsManager();
 
