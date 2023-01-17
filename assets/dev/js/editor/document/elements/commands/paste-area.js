@@ -45,7 +45,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( 'Invalid JSON data', 'elementor' ) );
+			.html( __( 'Couldn’t paste that into your site. Copy the correct element and try again. ', 'elementor' ) );
 
 		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
