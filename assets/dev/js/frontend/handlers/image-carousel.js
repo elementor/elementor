@@ -191,7 +191,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			newSpaceBetween = this.getSpaceBetween( device );
 
 		if ( 'desktop' !== device ) {
-			this.swiper.params.breakpoints[  elementorFrontend.config.responsive.activeBreakpoints[ device ].value ].spaceBetween = newSpaceBetween;
+			this.swiper.params.breakpoints[ elementorFrontend.config.responsive.activeBreakpoints[ device ].value ].spaceBetween = newSpaceBetween;
 		}
 
 		this.swiper.params.spaceBetween = newSpaceBetween;
