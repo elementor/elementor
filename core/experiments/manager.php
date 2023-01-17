@@ -461,7 +461,7 @@ class Manager extends Base_Object {
 
 		$settings->add_tab(
 			'experiments', [
-				'label' => esc_html__( 'Experiments', 'elementor' ),
+				'label' => esc_html__( 'Experimental Features', 'elementor' ),
 				'sections' => [
 					'ongoing_experiments' => [
 						'callback' => function() {
