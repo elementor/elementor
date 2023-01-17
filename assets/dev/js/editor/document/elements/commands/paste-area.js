@@ -31,7 +31,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 					storageType: 'rawdata',
 					data: event.originalEvent.clipboardData.getData( 'text' ),
 					options: {
-						//at: this.getOption( 'at' ),
+						// TODO: at: this.getOption( 'at' ),
 						rebuild: true,
 					},
 				} );
@@ -48,7 +48,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( `Couldn't paste that into your site. Copy the correct element and try again.`, 'elementor' ) );
+			.html( __( "Couldn't paste that into your site. Copy the correct element and try again.", 'elementor' ) );
 
 		$messageContainer
 			.append( $inputArea )
