@@ -62,6 +62,8 @@
         .swiper-horizontal > .swiper-pagination-bullets,
         .swiper-pagination-bullets.swiper-pagination-horizontal {
             bottom: 5px;
+            left: 0;
+            width: 100%;
         }
 
         // Fix for Safari - Navigation arrows don't appear in cube mode without adding a 1px translateZ
