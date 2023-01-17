@@ -1,5 +1,6 @@
-export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
+import environment from 'elementor-common/utils/environment';
 
+export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	static dialog = null;
 
 	getHistory( args ) {
@@ -10,6 +11,13 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 		if ( this.dialog ) {
 			return this.dialog;
 		}
+
+		const ctrlLabel = environment.mac ? 'Cmd' : 'Ctrl';
+
+		const $messageContainer = jQuery( '<div>', {
+			class: 'e-dialog-description',
+		} )
+			.html( `Click the text field and press (${ ctrlLabel } + v) to paste the element into your site.` );
 
 		const $inputArea = jQuery( '<input>', {
 			id: 'elementor-paste-area-dialog__input',
@@ -28,7 +36,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 					storageType: 'rawdata',
 					data: event.originalEvent.clipboardData.getData( 'text' ),
 					options: {
-						//at: this.getOption( 'at' ),
+						// TODO: at: this.getOption( 'at' ),
 						rebuild: true,
 					},
 				} );
@@ -45,12 +53,16 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( 'Couldn’t paste that into your site. Copy the correct element and try again. ', 'elementor' ) );
+			.html( __( "Couldn't paste that into your site. Copy the correct element and try again.", 'elementor' ) );
+
+		$messageContainer
+			.append( $inputArea )
+			.append( $errorArea );
 
 		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
 			headerMessage: __( 'Paste from other site', 'elementor' ),
-			message: $inputArea,
+			message: $messageContainer,
 			position: {
 				my: 'center center',
 				at: 'center center',
@@ -59,8 +71,8 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			closeButtonOptions: {
 				iconClass: 'eicon-close',
 			},
-			onShow: function() {
-				$inputArea.after( $errorArea );
+			onShow: () => {
+				$inputArea.focus();
 			},
 		} );
 

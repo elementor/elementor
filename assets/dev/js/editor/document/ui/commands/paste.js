@@ -1,5 +1,4 @@
 export class Paste extends $e.modules.CommandBase {
-
 	getPasteData( { storageType = 'localstorage', data = '' } ) {
 		if ( 'localstorage' === storageType ) {
 			return elementorCommon.storage.get( 'clipboard' ) || {};
