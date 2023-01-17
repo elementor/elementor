@@ -28,7 +28,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		const { at, rebuild = false, containers = [ args.container ], options = {} } = args,
 			storageData = this.getStorageData( args )
 
-		if ( ! storageData || ! storageData?.elements?.length && 'elementor' !== storageData?.type ) {
+		if ( ! storageData || ! storageData?.elements?.length || 'elementor' !== storageData?.type ) {
 			return false;
 		}
 

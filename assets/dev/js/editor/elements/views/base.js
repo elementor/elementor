@@ -185,6 +185,10 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
+						name: 'pasteArea',
+						title: __( 'Paste Area', 'elementor' ),
+						callback: () => $e.run( 'document/elements/paste-area' ),
+					}, {
 						name: 'resetStyle',
 						title: __( 'Reset Style', 'elementor' ),
 						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
