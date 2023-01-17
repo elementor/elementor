@@ -800,9 +800,9 @@ class Utils {
 		return file_get_contents( $file, ...$args );
 	}
 
-	public static function get_super_global_value( $super_global, $key, $default = null ) {
+	public static function get_super_global_value( $super_global, $key ) {
 		if ( ! isset( $super_global[ $key ] ) ) {
-			return $default;
+			return null;
 		}
 
 		if ( $_FILES === $super_global ) {

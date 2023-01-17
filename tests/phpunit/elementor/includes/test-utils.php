@@ -197,20 +197,12 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertFalse( $content );
 	}
 
-	public function test_get_super_global_value__returns_default() {
-		// Act
-		$value = Utils::get_super_global_value( $_REQUEST, 'not_set', 'default' );
-
-		// Assert
-		$this->assertEquals( 'default', $value );
-	}
-
 	public function test_get_super_global_value__returns_value() {
 		// Arrange
 		$_REQUEST['key'] = 'value';
 
 		// Act
-		$value = Utils::get_super_global_value( $_REQUEST,  'key', 'default' );
+		$value = Utils::get_super_global_value( $_REQUEST,  'key' );
 
 		// Assert
 		$this->assertEquals( 'value', $value );
