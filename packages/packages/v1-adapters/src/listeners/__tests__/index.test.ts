@@ -164,6 +164,8 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 	it( 'should throw when v1 is not loaded', async () => {
 		// Act & Assert.
+		expect.assertions( 1 );
+
 		try {
 			await dispatchOnV1Ready();
 		} catch ( e ) {
