@@ -15,7 +15,7 @@ class Config_Provider_Factory {
 
 		// Nonce verification is not required, using param for routing purposes.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$editor_version = Utils::get_super_global_value( $_GET, 'v' ) ?? $is_editor_v2_active ? '2' : '1';
+		$editor_version = Utils::get_super_global_value( $_GET, 'v' ) ?? ( $is_editor_v2_active ? '2' : '1' );
 
 		if ( '2' === $editor_version ) {
 			return new Editor_V2_Config_Provider();
