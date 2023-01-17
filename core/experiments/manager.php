@@ -115,7 +115,11 @@ class Manager extends Base_Object {
 					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
 				}
 
-				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
+				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
+					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
+				} else {
+					$experimental_data['dependencies'][ $key ] = $dependency::instance();
+				}
 			}
 		}
 
@@ -411,7 +415,7 @@ class Manager extends Base_Object {
 		foreach ( $features as $feature_name => $feature ) {
 			$is_hidden = $feature[ static::TYPE_HIDDEN ];
 			$is_mutable = $feature['mutable'];
-			$should_hide_experiment = ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() ) || $this->has_non_existing_dependency( $feature );
+			$should_hide_experiment = ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() );
 
 			if ( $should_hide_experiment ) {
 				unset( $features[ $feature_name ] );
@@ -588,15 +592,6 @@ class Manager extends Base_Object {
 				<span><?php echo esc_html( $dependencies ); ?></span>
 			</div>
 		<?php
-	}
-
-	private function has_non_existing_dependency( $feature ) {
-		$non_existing_dep = ( new Collection( $feature['dependencies'] ?? [] ) )
-			->find( function ( $dependency ) {
-				return $dependency instanceof Non_Existing_Dependency;
-			} );
-
-		return ! ! $non_existing_dep;
 	}
 
 	/**
@@ -788,18 +783,6 @@ class Manager extends Base_Object {
 
 	private function should_show_hidden() {
 		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
-	}
-
-	private function create_dependency_class( $dependency_name, $dependency_args ) {
-		if ( class_exists( $dependency_name ) ) {
-			return $dependency_name::instance();
-		}
-
-		if ( ! empty( $dependency_args ) ) {
-			return new Wrap_Core_Dependency( $dependency_args );
-		}
-
-		return new Non_Existing_Dependency( $dependency_name );
 	}
 
 	public function __construct() {

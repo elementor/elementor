@@ -3,7 +3,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Experiments\Non_Existing_Dependency;
 use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Core\Upgrade\Manager;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_A;
@@ -83,27 +82,6 @@ class Test_Manager extends Elementor_Test_Base {
 		// Assert.
 		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
-	}
-
-	public function test_add_feature__adding_non_existing_dependency() {
-		// Arrange.
-		$test_feature_data = [
-			'name' => 'test_feature',
-			'state' => Experiments_Manager::STATE_INACTIVE,
-			'dependencies' => [
-				'feature-that-not-exists',
-			],
-		];
-
-		// Act.
-		$this->add_test_feature( $test_feature_data );
-
-		// Assert.
-		$feature = $this->experiments->get_features( 'test_feature' );
-
-		$this->assertCount( 1, $feature['dependencies'] );
-		$this->assertInstanceOf( Non_Existing_Dependency::class, $feature['dependencies'][0] );
-		$this->assertEquals( 'feature-that-not-exists', $feature['dependencies'][0]->get_name() );
 	}
 
 	public function test_feature_can_be_added_as_hidden() {
