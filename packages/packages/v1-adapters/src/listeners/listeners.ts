@@ -5,8 +5,8 @@ const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
 let abortController = new AbortController();
 
 export function listenTo(
-	eventDescriptors : EventDescriptor | EventDescriptor[],
-	callback : ListenerCallback
+	eventDescriptors: EventDescriptor | EventDescriptor[],
+	callback: ListenerCallback
 ) {
 	if ( ! Array.isArray( eventDescriptors ) ) {
 		eventDescriptors = [ eventDescriptors ];
@@ -63,12 +63,12 @@ function registerWindowEventListener( event: WindowEventDescriptor['name'], call
 function addListener( event: EventDescriptor['name'] ) {
 	window.addEventListener(
 		event,
-		makeListener( event ),
+		makeEventHandler( event ),
 		{ signal: abortController.signal }
 	);
 }
 
-function makeListener( event: EventDescriptor['name'] ) : EventListener {
+function makeEventHandler( event: EventDescriptor['name'] ): EventListener {
 	return ( e ) => {
 		const normalizedEvent = normalizeEvent( e );
 

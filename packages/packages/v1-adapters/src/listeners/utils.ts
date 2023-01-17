@@ -7,20 +7,14 @@ export function dispatchOnV1Ready() {
 }
 
 function getV1LoadingPromise() {
-	type ExtendedWindow = Window & {
-		__elementorEditorV1LoadingPromise: Promise<void>;
-	}
-
-	const extendedWindow = window as unknown as ExtendedWindow;
-
-	if ( ! extendedWindow.__elementorEditorV1LoadingPromise ) {
+	if ( ! ( window as any ).__elementorEditorV1LoadingPromise ) {
 		return Promise.reject( 'Elementor Editor V1 is not loaded' );
 	}
 
-	return extendedWindow.__elementorEditorV1LoadingPromise;
+	return ( window as any ).__elementorEditorV1LoadingPromise;
 }
 
-export function normalizeEvent( e: ListenerEvent['originalEvent'] ) : ListenerEvent {
+export function normalizeEvent( e: ListenerEvent['originalEvent'] ): ListenerEvent {
 	if ( e instanceof CustomEvent && e.detail?.command ) {
 		return {
 			type: 'command',

@@ -31,10 +31,11 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			callback
 		);
 
-		// Dispatch events.
+		// Dispatch the command to test.
 		dispatchCommandBefore( commandToListen );
 		dispatchCommandAfter( commandToListen );
 
+		// Dispatch another command to make sure we don't listen to it.
 		dispatchCommandBefore( anotherCommand );
 		dispatchCommandAfter( anotherCommand );
 
@@ -70,7 +71,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		} );
 	} );
 
-	it( 'should accept an array of events', () => {
+	it( 'should accept an array of events to listen to as parameter', () => {
 		// Arrange.
 		const command = 'test-command',
 			event = 'test-event',
@@ -152,7 +153,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 		dispatchOnV1Ready();
 
-		await waitForAllTicks();
+		await jest.runAllTimers();
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -189,10 +190,4 @@ function dispatchCommandAfter( command: string ) {
 
 function dispatchWindowEvent( event: string ) {
 	window.dispatchEvent( new CustomEvent( event ) );
-}
-
-function waitForAllTicks() {
-	jest.runAllTimers();
-
-	return Promise.resolve();
 }
