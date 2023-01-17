@@ -186,7 +186,8 @@ BaseElementView = BaseContainer.extend( {
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'pasteArea',
-						title: __( 'Paste Area', 'elementor' ),
+						icon: 'eicon-import-export',
+						title: __( 'Paste from other site', 'elementor' ),
 						callback: () => $e.run( 'document/elements/paste-area' ),
 					}, {
 						name: 'resetStyle',

@@ -14,7 +14,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 		const $inputArea = jQuery( '<input>', {
 			id: 'elementor-paste-area-dialog__input',
 			type: 'text',
-			placeholder: __( 'Paste your JSON data here', 'elementor' ),
+			placeholder: __( 'Paste here...', 'elementor' ),
 		} )
 			.attr( 'autocomplete', 'off' )
 			.on( 'keypress', ( event ) => {
@@ -49,7 +49,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 
 		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
-			headerMessage: __( 'Paste Area', 'elementor' ),
+			headerMessage: __( 'Paste from other site', 'elementor' ),
 			message: $inputArea,
 			position: {
 				my: 'center center',
