@@ -3,8 +3,13 @@ const WpAdminPage = require( '../../../pages/wp-admin-page' );
 
 test( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+	const wpAdmin = new WpAdminPage( page, testInfo );
+
+	await wpAdmin.setExperiments( {
+		e_swiper_latest: false,
+	} );
+
+	const editor = await wpAdmin.useElementorCleanPost();
 
 	// Close Navigator
 	await editor.closeNavigatorIfOpen();

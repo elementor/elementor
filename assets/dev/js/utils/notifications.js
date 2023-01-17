@@ -71,6 +71,10 @@ module.exports = elementorModules.Module.extend( {
 
 		toast.getElements( 'buttonsWrapper' ).empty();
 
+		if ( ! this.isPositionValid( options?.position ) ) {
+			this.positionToWindow();
+		}
+
 		if ( options.buttons ) {
 			options.buttons.forEach( function( button ) {
 				toast.addButton( button );
@@ -91,6 +95,30 @@ module.exports = elementorModules.Module.extend( {
 		}
 
 		return toast.show();
+	},
+
+	isPositionValid( position ) {
+		const positionToCheck = position?.of ?? this.getToast().getSettings( 'position' ).of;
+
+		if ( ! positionToCheck ) {
+			return false;
+		}
+
+		return !! document.querySelector( positionToCheck );
+	},
+
+	positionToWindow() {
+		const toast = this.getToast();
+
+		const position = {
+			...toast.getSettings( 'position' ),
+			my: 'right top',
+			at: 'right-10 top+42', // 42px is the default admin bar height + 10px
+			of: '',
+		};
+
+		toast.setSettings( 'position', position );
+		toast.getElements( 'widget' ).addClass( 'dialog-position-window' );
 	},
 
 	onInit() {
