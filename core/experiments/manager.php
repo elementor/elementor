@@ -464,7 +464,7 @@ class Manager extends Base_Object {
 
 		$settings->add_tab(
 			'experiments', [
-				'label' => esc_html__( 'Experimental Features', 'elementor' ),
+				'label' => esc_html__( 'Features', 'elementor' ),
 				'sections' => [
 					'ongoing_experiments' => [
 						'callback' => function() {
@@ -501,34 +501,32 @@ class Manager extends Base_Object {
 	private function render_settings_intro() {
 		?>
 		<h2>
-			<?php echo esc_html__( 'Elementor Experiments', 'elementor' ); ?>
+			<?php echo esc_html__( 'Experiments and Features', 'elementor' ); ?>
 		</h2>
+		<p class="e-experiment__description">
+			<?php
+			printf(
+			/* translators: %1$s Link open tag, %2$s: Link close tag. */
+				esc_html__( 'Personalize your Elementor experience by controlling which features and experiments are active on your site. Help make Elementor better by %1$ssharing your experience and feedback with us%2$s.', 'elementor' ),
+				'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
+				'</a>'
+			);
+			?>
+		</p>
 		<p class="e-experiment__description">
 			<?php
 				printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. %1$sLearn More.%2$s', 'elementor' ),
+					esc_html__( 'To use an experiment or feature on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time. %1$sLearn More.%2$s', 'elementor' ),
 					'<a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">',
 					'</a>'
 				);
 			?>
 		</p>
-		<p class="e-experiment__description">
-			<?php echo esc_html__( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?>
-		</p>
-		<p class="e-experiment__description">
-			<?php
-				printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'Your feedback is important - %1$shelp us%2$s improve these features by sharing your thoughts and inputs.', 'elementor' ),
-					'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
-					'</a>'
-				);
-			?>
-		</p>
+
 		<?php if ( $this->get_features() ) { ?>
-		<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All Experiments', 'elementor' ); ?></button>
-		<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All Experiments', 'elementor' ); ?></button>
+		<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All', 'elementor' ); ?></button>
+		<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All', 'elementor' ); ?></button>
 		<?php } ?>
 		<hr>
 		<h2 class="e-experiment__table-title">
