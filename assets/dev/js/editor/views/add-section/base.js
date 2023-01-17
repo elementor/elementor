@@ -106,6 +106,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 				actions: [
 					{
 						name: 'paste_area',
+						icon: 'eicon-import-export',
 						title: __( 'Paste from other site', 'elementor' ),
 						callback: () => $e.run( 'document/elements/paste-area' ),
 					},
