@@ -1,0 +1,21 @@
+#elementor-paste-area-dialog {
+
+	.e-dialog-description {
+
+	}
+
+	#elementor-paste-area-dialog__input {
+		margin: 10px 0 5px;
+		text-align: center;
+
+		&::placeholder {
+			color: $black;
+		}
+	}
+
+	#elementor-paste-area-dialog__error {
+		color: $editor-danger;
+		text-align: $start;
+		font-size: .9em;
+	}
+}
