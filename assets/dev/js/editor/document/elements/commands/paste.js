@@ -1,12 +1,6 @@
 export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
-
-		// Validate if storage have data.
-		//const { storageKey = 'clipboard' } = args,
-		//	storageData = elementorCommon.storage.get( storageKey );
-
-		//this.requireArgumentType( 'storageData', 'object', { storageData } );
 	}
 
 	getHistory() {
@@ -16,7 +10,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		};
 	}
 
-	async getStorageData( args ) {
+	getStorageData( args ) {
 		const { storageType = 'localstorage', storageKey = 'clipboard', data = '' } = args;
 
 		if ( 'localstorage' === storageType ) {
@@ -30,9 +24,9 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		}
 	}
 
-	async apply( args ) {
+	apply( args ) {
 		const { at, rebuild = false, containers = [ args.container ], options = {} } = args,
-			storageData = await this.getStorageData( args )
+			storageData = this.getStorageData( args )
 
 		if ( ! storageData || ! storageData?.elements?.length && 'elementor' !== storageData?.type ) {
 			return false;
@@ -52,10 +46,6 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 			result.push( this.pasteTo( containers, storageDataElements, options ) );
 		}
-
-		elementor.notifications.showToast( {
-			message: __( 'Elements Pasted', 'elementor' ),
-		} );
 
 		if ( 1 === result.length ) {
 			return result[ 0 ];

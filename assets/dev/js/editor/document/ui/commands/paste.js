@@ -1,6 +1,6 @@
 export class Paste extends $e.modules.CommandBase {
 
-	async getPasteData( { storageType = 'localstorage', data = '' } ) {
+	getPasteData( { storageType = 'localstorage', data = '' } ) {
 		if ( 'localstorage' === storageType ) {
 			return elementorCommon.storage.get( 'clipboard' ) || {};
 		}
@@ -12,15 +12,11 @@ export class Paste extends $e.modules.CommandBase {
 		}
 	}
 
-	async apply( args ) {
+	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		this.storage = await this.getPasteData( args );
+		this.storage = this.getPasteData( args );
 		if ( ! this.storage || ! this.storage?.elements?.length && 'elementor' !== this.storage?.type ) {
-			elementor.notifications.showToast( {
-				message: __( 'Nothing to paste.', 'elementor' ),
-			} );
-
 			return false;
 		}
 

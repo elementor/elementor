@@ -11,35 +11,53 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			return this.dialog;
 		}
 
-		this.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const $inputArea = jQuery( '<input>', {
+			id: 'elementor-paste-area-dialog__input',
+			type: 'text',
+			placeholder: __( 'Paste your JSON data here', 'elementor' ),
+		} )
+			.attr( 'autocomplete', 'off' )
+			.on( 'paste', ( event ) => {
+				event.preventDefault();
+
+				const retVal = $e.run( 'document/ui/paste', {
+					container: elementor.getPreviewContainer(),
+					storageType: 'rawdata',
+					data: event.originalEvent.clipboardData.getData( 'text' ),
+					options: {
+						//at: this.getOption( 'at' ),
+						rebuild: true,
+					},
+				} );
+
+				if ( retVal ) {
+					this.dialog.hide();
+					return;
+				}
+
+				$errorArea.show();
+			} );
+
+		const $errorArea = jQuery( '<div>', {
+			id: 'elementor-paste-area-dialog__error',
+			style: `display: none`,
+		} )
+			.html( __( 'Invalid JSON data', 'elementor' ) );
+
+		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
 			headerMessage: __( 'Paste Area', 'elementor' ),
-			message: '<input type="text" id="elementor-paste-area-dialog__input" placeholder="Paste Area" />',
+			message: $inputArea,
 			position: {
 				my: 'center center',
 				at: 'center center',
 			},
-			strings: {
-				cancel: __( 'Cancel', 'elementor' ),
+			closeButton: true,
+			closeButtonOptions: {
+				iconClass: 'eicon-close',
 			},
-			onShow: () => {
-				const $input = jQuery( '#elementor-paste-area-dialog__input' );
-
-				$input.on( 'paste', ( event ) => {
-					event.preventDefault();
-
-					this.dialog.hide();
-
-					$e.run( 'document/ui/paste', {
-						container: elementor.getPreviewContainer(),
-						storageType: 'rawdata',
-						data: event.originalEvent.clipboardData.getData( 'text' ),
-						options: {
-							//at: this.getOption( 'at' ),
-							rebuild: true,
-						},
-					} );
-				} );
+			onShow: function() {
+				$inputArea.after( $errorArea );
 			},
 		} );
 

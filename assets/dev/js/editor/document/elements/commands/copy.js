@@ -43,17 +43,6 @@ export class Copy extends $e.modules.editor.CommandContainerBase {
 		clipboard.select();
 		document.execCommand( 'copy' );
 		document.body.removeChild( clipboard );
-
-		// Show notification
-		elementor.notifications.showToast( {
-			message: __( 'Copied!', 'elementor' ),
-			buttons: [
-				{
-					name: 'got_it',
-					text: __( 'Got it', 'elementor' ),
-				},
-			],
-		} );
 	}
 }
 
