@@ -16,7 +16,7 @@ export class Paste extends $e.modules.CommandBase {
 		const { containers = [ args.container ] } = args;
 
 		this.storage = this.getPasteData( args );
-		if ( ! this.storage || ! this.storage?.elements?.length && 'elementor' !== this.storage?.type ) {
+		if ( ! this.storage || ! this.storage?.elements?.length || 'elementor' !== this.storage?.type ) {
 			return false;
 		}
 
