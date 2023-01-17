@@ -180,7 +180,7 @@ BaseElementView = BaseContainer.extend( {
 						} ),
 					}, {
 						name: 'pasteStyle',
-						title: __( 'Paste Style', 'elementor' ),
+						title: __( 'Paste style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
@@ -191,7 +191,7 @@ BaseElementView = BaseContainer.extend( {
 						callback: () => $e.run( 'document/elements/paste-area' ),
 					}, {
 						name: 'resetStyle',
-						title: __( 'Reset Style', 'elementor' ),
+						title: __( 'Reset style', 'elementor' ),
 						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
