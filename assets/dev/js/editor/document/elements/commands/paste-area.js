@@ -17,6 +17,9 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			placeholder: __( 'Paste your JSON data here', 'elementor' ),
 		} )
 			.attr( 'autocomplete', 'off' )
+			.on( 'keypress', ( event ) => {
+				event.preventDefault();
+			} )
 			.on( 'paste', ( event ) => {
 				event.preventDefault();
 
