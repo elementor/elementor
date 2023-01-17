@@ -811,6 +811,44 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Verify that the tab activation works correctly @latest', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
+
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		// Click on last tab.
+		const lastTab = editor.getPreviewFrame().locator( '.e-n-tabs .e-normal' ).last();
+		await lastTab.click();
+		// Use timeout to ensure that the value doesn't change after a short while.
+		await page.waitForTimeout( 500 );
+
+		// Assert.
+		// Verify that after clicking on the tab, the tab is activated correctly.
+		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
+
+		// Act.
+		const lastContentContainer = editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con` ).last(),
+			lastContentContainerId = await lastContentContainer.getAttribute( 'data-id' );
+		// Add content to the last tab.
+		await editor.addWidget( 'heading', lastContentContainerId );
+		const secondTab = editor.getPreviewFrame().locator( '.e-n-tabs .e-normal:nth-child( 2 )' );
+		await secondTab.click();
+		// Use timeout to ensure that the value doesn't change after a short while.
+		await page.waitForTimeout( 500 );
+
+		// Assert.
+		// Verify that after clicking on the tab, the tab is activated correctly.
+		await expect( secondTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 async function editTab( editor, tabIndex ) {
