@@ -1,5 +1,4 @@
 export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
-
 	static dialog = null;
 
 	getHistory( args ) {
@@ -11,10 +10,14 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			return this.dialog;
 		}
 
+		const $messageContainer = jQuery( '<div>', {
+			class: 'e-dialog-description',
+		} ).html( __( 'Click the text field and press {Ctrl + v} to paste the element into your site.', 'elementor' ) );
+
 		const $inputArea = jQuery( '<input>', {
 			id: 'elementor-paste-area-dialog__input',
 			type: 'text',
-			placeholder: __( 'Paste your JSON data here', 'elementor' ),
+			placeholder: __( 'Paste here...', 'elementor' ),
 		} )
 			.attr( 'autocomplete', 'off' )
 			.on( 'keypress', ( event ) => {
@@ -45,12 +48,16 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( 'Invalid JSON data', 'elementor' ) );
+			.html( __( `Couldn't paste that into your site. Copy the correct element and try again.`, 'elementor' ) );
+
+		$messageContainer
+			.append( $inputArea )
+			.append( $errorArea );
 
 		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
-			headerMessage: __( 'Paste Area', 'elementor' ),
-			message: $inputArea,
+			headerMessage: __( 'Paste from other site', 'elementor' ),
+			message: $messageContainer,
 			position: {
 				my: 'center center',
 				at: 'center center',
@@ -59,8 +66,8 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			closeButtonOptions: {
 				iconClass: 'eicon-close',
 			},
-			onShow: function() {
-				$inputArea.after( $errorArea );
+			onShow: () => {
+				$inputArea.focus();
 			},
 		} );
 
