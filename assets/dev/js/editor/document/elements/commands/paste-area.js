@@ -1,3 +1,5 @@
+import environment from 'elementor-common/utils/environment';
+
 export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	static dialog = null;
 
@@ -10,9 +12,12 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			return this.dialog;
 		}
 
+		const ctrlLabel = environment.mac ? 'Cmd' : 'Ctrl';
+
 		const $messageContainer = jQuery( '<div>', {
 			class: 'e-dialog-description',
-		} ).html( __( 'Click the text field and press {Ctrl + v} to paste the element into your site.', 'elementor' ) );
+		} )
+			.html( `Click the text field and press (${ ctrlLabel } + v) to paste the element into your site.` );
 
 		const $inputArea = jQuery( '<input>', {
 			id: 'elementor-paste-area-dialog__input',

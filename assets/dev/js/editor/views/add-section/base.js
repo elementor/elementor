@@ -99,12 +99,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 							},
 							onAfter: () => this.onAfterPaste(),
 						} ),
-					},
-				],
-			}, {
-				name: 'paste_area',
-				actions: [
-					{
+					}, {
 						name: 'paste_area',
 						icon: 'eicon-import-export',
 						title: __( 'Paste from other site', 'elementor' ),
