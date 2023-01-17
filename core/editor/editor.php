@@ -100,8 +100,6 @@ class Editor {
 			return;
 		}
 
-		$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
-
 		$this->set_post_id( absint( $_REQUEST['post'] ) );
 
 		if ( ! $this->is_edit_mode( $this->post_id ) ) {
@@ -171,7 +169,7 @@ class Editor {
 
 		do_action( 'elementor/editor/init' );
 
-		$this->loader->print_root_template();
+		$this->get_loader()->print_root_template();
 
 		// From the action it's an empty string, from tests its `false`
 		if ( false !== $die ) {
@@ -356,7 +354,7 @@ class Editor {
 
 		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
-		$this->loader->register_scripts();
+		$this->get_loader()->register_scripts();
 
 		/**
 		 * Before editor enqueue scripts.
@@ -474,9 +472,8 @@ class Editor {
 
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
-		$this->loader->enqueue_scripts();
-
-		wp_set_script_translations( 'elementor-editor', 'elementor' );
+		$this->get_loader()->enqueue_scripts();
+		$this->get_loader()->load_scripts_translations();
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
@@ -510,59 +507,8 @@ class Editor {
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		wp_register_style(
-			'font-awesome',
-			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
-			[],
-			'4.7.0'
-		);
-
-		wp_register_style(
-			'elementor-select2',
-			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2' . $suffix . '.css',
-			[],
-			'4.0.6-rc.1'
-		);
-
-		wp_register_style(
-			'google-font-roboto',
-			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
-			[],
-			ELEMENTOR_VERSION
-		);
-
-		wp_register_style(
-			'flatpickr',
-			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.css',
-			[],
-			'1.12.0'
-		);
-
-		wp_register_style(
-			'pickr',
-			ELEMENTOR_ASSETS_URL . 'lib/pickr/themes/monolith.min.css',
-			[],
-			'1.5.0'
-		);
-
-		wp_register_style(
-			'elementor-editor',
-			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
-			[
-				'elementor-common',
-				'elementor-select2',
-				'elementor-icons',
-				'wp-auth-check',
-				'google-font-roboto',
-				'flatpickr',
-				'pickr',
-			],
-			ELEMENTOR_VERSION
-		);
-
-		wp_enqueue_style( 'elementor-editor' );
+		$this->get_loader()->register_styles();
+		$this->get_loader()->enqueue_styles();
 
 		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
 
@@ -831,6 +777,20 @@ class Editor {
 
 	public function set_post_id( $post_id ) {
 		$this->post_id = $post_id;
+	}
+
+	/**
+	 * Get loader.
+	 *
+	 * @return Editor_Loader
+	 */
+	private function get_loader() {
+		if ( ! $this->loader ) {
+			$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
+			$this->loader->register_hooks();
+		}
+
+		return $this->loader;
 	}
 
 	/**
