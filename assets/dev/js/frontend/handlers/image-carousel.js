@@ -50,6 +50,12 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 				slidesPerGroup: +elementSettings[ 'slides_to_scroll_' + breakpointName ] || 1,
 			};
 
+			if ( elementSettings.image_spacing_custom ) {
+				swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ] = {
+					spaceBetween: this.getSpaceBetween( breakpointName ),
+				};
+			}
+
 			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
 		} );
 
@@ -68,10 +74,6 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			}
 		} else {
 			swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || 1;
-		}
-
-		if ( elementSettings.image_spacing_custom ) {
-			swiperOptions.spaceBetween = this.getSpaceBetween();
 		}
 
 		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
@@ -187,27 +189,11 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			newSpaceBetween = this.getSpaceBetween( device );
 
 		if ( 'desktop' !== device ) {
-			this.swiper.params.breakpoints[ this.getDeviceBreakpointValue( device ) ].spaceBetween = newSpaceBetween;
-		} else {
-			this.swiper.params.spaceBetween = newSpaceBetween;
+			this.swiper.params.breakpoints[  elementorFrontend.config.responsive.activeBreakpoints[ device ].value ].spaceBetween = newSpaceBetween;
 		}
 
 		this.swiper.params.spaceBetween = newSpaceBetween;
 
 		this.swiper.update();
-	}
-
-	getDeviceBreakpointValue( device ) {
-		if ( ! this.breakpointsDictionary ) {
-			const breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
-
-			this.breakpointsDictionary = {};
-
-			Object.keys( breakpoints ).forEach( ( breakpointName ) => {
-				this.breakpointsDictionary[ breakpointName ] = breakpoints[ breakpointName ].value;
-			} );
-		}
-
-		return this.breakpointsDictionary[ device ];
 	}
 }

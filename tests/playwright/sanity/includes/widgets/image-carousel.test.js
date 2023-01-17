@@ -1,6 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
-const Breakpoints = require( '../../assets/js/editor/breakpoints' );
+const Breakpoints = require( '../../../assets/breakpoints' );
 
 test( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
