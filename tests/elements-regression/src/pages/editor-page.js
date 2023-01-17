@@ -134,6 +134,9 @@ module.exports = class EditorPage extends BasePage {
 			await sleep( 200 );
 			elements = await this.getPreviewFrame().evaluate( 'window.readyElements' );
 		}
+
+		// Add extra sleep to make sure the element is fully loaded.
+		await sleep( 200 );
 	}
 
 	/**
