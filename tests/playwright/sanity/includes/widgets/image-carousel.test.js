@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
+const Breakpoints = require( '../../../assets/breakpoints' );
 
 test( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
@@ -48,4 +49,65 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 
 	// Reset the Default template.
 	await editor.useDefaultTemplate();
+} );
+
+test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
+
+	await wpAdmin.setExperiments( {
+		additional_custom_breakpoints: true,
+	} );
+
+	const editor = await wpAdmin.useElementorCleanPost();
+
+	await editor.closeNavigatorIfOpen();
+
+	// Add breakpoints.
+	const breakpoints = new Breakpoints( page );
+	await breakpoints.addAllBreakpoints();
+
+	await editor.addWidget( 'image-carousel' );
+
+	await page.locator( '.eicon-plus-circle' ).first().click();
+
+	await page.click( 'text=Media Library' );
+
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
+
+	await page.locator( 'text=Create a new gallery' ).click();
+
+	await page.locator( 'text=Insert gallery' ).click();
+
+	await editor.activatePanelTab( 'style' );
+	await page.locator( '.elementor-control-section_style_image' ).click();
+	await page.selectOption( '.elementor-control-image_spacing >> select', { value: 'custom' } );
+
+	// Test Desktop
+	await page.fill( '.elementor-control-image_spacing_custom input[type="number"]', '100' );
+	await editor.togglePreviewMode();
+	await expect( editor.getFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
+
+	// Test Tablet Extra
+	await editor.togglePreviewMode();
+	await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers__holder' ).click();
+	await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers [data-device="tablet_extra"]' ).click();
+	await page.fill( '.elementor-control-image_spacing_custom_tablet_extra input[type="number"]', '50' );
+	await editor.togglePreviewMode();
+	await expect( editor.getFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
+
+	// Test Tablet
+	await editor.togglePreviewMode();
+	await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers__holder' ).click();
+	await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers [data-device="tablet"]' ).click();
+	await page.fill( '.elementor-control-image_spacing_custom_tablet input[type="number"]', '10' );
+	await editor.togglePreviewMode();
+	await expect( editor.getFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
+
+	await wpAdmin.setExperiments( {
+		additional_custom_breakpoints: 'inactive',
+	} );
 } );
