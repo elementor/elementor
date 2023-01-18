@@ -65,7 +65,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 
 		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
-			headerMessage: `${ ctrlLabel } + v`,
+			headerMessage: `${ ctrlLabel } + V`,
 			message: $messageContainer,
 			position: {
 				my: 'center center',
