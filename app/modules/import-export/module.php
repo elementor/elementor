@@ -94,10 +94,6 @@ class Module extends BaseModule {
 	}
 
 	public function get_init_settings() {
-		if ( ! Plugin::$instance->app->is_current() ) {
-			return [];
-		}
-
 		return $this->get_config_data();
 	}
 
@@ -210,7 +206,7 @@ class Module extends BaseModule {
 			<?php
 			if ( $should_show_revert_section ) {
 				$link_attributes = [
-					'href' => wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
+					'href' => $this->maybe_add_referrer_param( wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ) ),
 					'id' => 'elementor-import-export__revert_kit',
 					'class' => 'button',
 				];
@@ -229,6 +225,21 @@ class Module extends BaseModule {
 			<?php } ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Checks if referred by a kit and adds the referrer ID to the href
+	 *
+	 * @param string $href
+	 *
+	 * @return string
+	 */
+	private function maybe_add_referrer_param( string $href ): string {
+		$param_name = 'referrer_kit';
+		if ( empty( $_GET[ $param_name ] ) ) {
+			return $href;
+		}
+		return add_query_arg( $param_name, $_GET[ $param_name ], $href );
 	}
 
 	/**
@@ -357,7 +368,7 @@ class Module extends BaseModule {
 	public function handle_revert_last_imported_kit() {
 		check_admin_referer( 'elementor_revert_kit' );
 
-		$this->revert_last_imported_kit();
+//		$this->revert_last_imported_kit();
 
 		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
 		die;
