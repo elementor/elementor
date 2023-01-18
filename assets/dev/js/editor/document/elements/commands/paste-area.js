@@ -3,6 +3,10 @@ import environment from 'elementor-common/utils/environment';
 export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	static dialog = null;
 
+	static container = null;
+
+	static options = {};
+
 	getHistory( args ) {
 		return false;
 	}
@@ -32,13 +36,10 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 				event.preventDefault();
 
 				const retVal = $e.run( 'document/ui/paste', {
-					container: elementor.getPreviewContainer(),
+					container: this.container,
 					storageType: 'rawdata',
 					data: event.originalEvent.clipboardData.getData( 'text' ),
-					options: {
-						// TODO: at: this.getOption( 'at' ),
-						rebuild: true,
-					},
+					options: this.options,
 				} );
 
 				if ( retVal ) {
@@ -80,6 +81,11 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
+		this.container = args.container;
+		if ( args.options ) {
+			this.options = args.options;
+		}
+
 		this.getDialog().show();
 	}
 }

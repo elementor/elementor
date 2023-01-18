@@ -168,7 +168,9 @@ BaseElementView = BaseContainer.extend( {
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
 						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
-						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/copy', {
+							containers: elementor.selection.getElements( this.getContainer() ),
+						} ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
@@ -188,11 +190,15 @@ BaseElementView = BaseContainer.extend( {
 						name: 'pasteArea',
 						icon: 'eicon-import-export',
 						title: __( 'Paste from other site', 'elementor' ),
-						callback: () => $e.run( 'document/elements/paste-area' ),
+						callback: () => $e.run( 'document/elements/paste-area', {
+							container: this.getContainer(),
+						} ),
 					}, {
 						name: 'resetStyle',
 						title: __( 'Reset style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/reset-style', {
+							containers: elementor.selection.getElements( this.getContainer() ),
+						} ),
 					},
 				],
 			},
