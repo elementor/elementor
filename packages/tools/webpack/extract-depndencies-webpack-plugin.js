@@ -56,7 +56,9 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 
 		compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
 			[ ...( module.modules || [] ), module ].forEach( ( subModule ) => {
-				if ( ! externals.includes( subModule.userRequest ) ) {
+				const isExternalDep = externals.includes( subModule.userRequest );
+
+				if ( ! isExternalDep ) {
 					return;
 				}
 
@@ -68,27 +70,28 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 	}
 
 	createAssetsFileContent( entryId, deps, shouldMinify ) {
-		const depsInString = [ ...deps ]
+		const depsAsString = [ ...deps ]
 			.sort()
-			.map( ( dep ) => this.replaceDependencyNames( dep ) )
-			.map( ( dep ) => `		'${ dep }',\n` )
-			.join( '' );
+			.map( ( dep ) => `'${ this.replaceDependencyNames( dep ) }'` )
+			.join( ',\n\t\t' );
 
 		let content =
-			'<?php\n\n' +
-			'if ( ! defined( \'ABSPATH\' ) ) {\n' +
-			'	exit;\n' +
-			'}\n\n' +
-			'return [\n' +
-			`	'handle' => '${ this.generateHandleName( entryId ) }',\n` +
-			`	'deps' => [\n` +
-					depsInString +
-			'	],\n' +
-			'];\n';
+`<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+return [
+	'handle' => '${ this.generateHandleName( entryId ) }',
+	'deps' => [
+		${ depsAsString },
+	],
+];
+`;
 
 		if ( shouldMinify ) {
 			content = content
-				.replaceAll( /[\n\t ]/gm, '' )
+				.replaceAll( /\s/gm, '' )
 				.replace( '<?php', '<?php\n' );
 		}
 

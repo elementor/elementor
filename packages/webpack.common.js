@@ -33,7 +33,7 @@ const externals = [
 		name: `@elementor/${ name }`,
 		global: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
 	} ), [] ),
-	// Packages that exists in WordPress environment, and we use them as externals.
+	// Packages that exist in WordPress environment, and we use them as externals.
 	...[
 		{
 			name: '@wordpress/i18n',

@@ -47,7 +47,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
 			'deps' => array_merge(
 				[ 'elementor-editor' ],
-				$editor_script_config ? [ $packages_script_configs['handle'] ] : []
+				$editor_script_config ? [ $editor_script_config['handle'] ] : []
 			),
 		];
 
@@ -96,9 +96,9 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	private function get_packages_script_assets() {
 		if ( ! $this->packages_script_assets ) {
-			$this->packages_script_assets = Collection::make( [ self::APP_PACKAGE ] )
-				->merge( self::EXTENSION_PACKAGES )
-				->merge( self::UTIL_PACKAGES )
+			$this->packages_script_assets = Collection::make( [ static::APP_PACKAGE ] )
+				->merge( static::EXTENSION_PACKAGES )
+				->merge( static::UTIL_PACKAGES )
 				->map_with_keys( function ( $package_name ) {
 					$assets_path = ELEMENTOR_ASSETS_PATH;
 					$script_asset_path = "{$assets_path}js/packages/{$package_name}.asset.php";
@@ -107,6 +107,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 						return [];
 					}
 
+					/** @var array{ handle: string, deps: string[] } $script_asset */
 					$script_asset = require $script_asset_path;
 
 					return [ $package_name => $script_asset ];
