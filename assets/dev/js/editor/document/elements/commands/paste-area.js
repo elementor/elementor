@@ -24,7 +24,6 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 		const $inputArea = jQuery( '<input>', {
 			id: 'elementor-paste-area-dialog__input',
 			type: 'text',
-			placeholder: __( 'Paste here...', 'elementor' ),
 		} )
 			.attr( 'autocomplete', 'off' )
 			.on( 'keypress', ( event ) => {
@@ -55,7 +54,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( "Couldn't paste that into your site. Copy the correct element and try again.", 'elementor' ) );
+			.html( __( "Couldn’t paste that into your site.<br>Make sure you’ve copied an element and try again.", 'elementor' ) );
 
 		$messageContainer
 			.append( $inputArea )
