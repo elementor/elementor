@@ -41,80 +41,72 @@ interface SlicesMap {
 	[key: Slice['name']]: Slice;
 }
 
-class StoreService {
-	private instance: Store | null = null;
-	private slices: SlicesMap = {};
-	private pendingActions: AnyAction[] = [];
-	private middlewares = new Set<Middleware>();
+let instance: Store | null = null;
+let slices: SlicesMap = {};
+const pendingActions: AnyAction[] = [];
+const middlewares = new Set<Middleware>();
 
-	private getReducers() {
-		const reducers = Object.entries( this.slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
-			reducersData[ name ] = slice.reducer;
+const getReducers = () => {
+	const reducers = Object.entries( slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
+		reducersData[ name ] = slice.reducer;
 
-			return reducersData;
-		}, {} );
+		return reducersData;
+	}, {} );
 
-		return combineReducers( reducers );
+	return combineReducers( reducers );
+};
+
+export const registerSlice = ( ( sliceConfig: CreateSliceOptions ) => {
+	const slice = createSlice( sliceConfig );
+
+	if ( slices[ slice.name ] ) {
+		throw new Error( `Slice with name "${ slice.name }" already exists.` );
 	}
 
-	registerSlice( sliceConfig: CreateSliceOptions ) {
-		const slice = createSlice( sliceConfig );
+	slices[ slice.name ] = slice;
 
-		if ( this.slices[ slice.name ] ) {
-			throw new Error( `Slice with name "${ slice.name }" already exists.` );
-		}
+	return slice;
+} ) as typeof createSlice;
 
-		this.slices[ slice.name ] = slice;
+export const registerMiddleware = ( middleware: Middleware ) => {
+	middlewares.add( middleware );
+};
 
-		return slice;
+export const dispatch = ( action: AnyAction ) => {
+	if ( ! instance ) {
+		pendingActions.push( action );
+
+		return;
 	}
 
-	registerMiddleware( middleware: Middleware ) {
-		this.middlewares.add( middleware );
+	return instance.dispatch( action );
+};
+
+export const createStore = () => {
+	if ( instance ) {
+		throw new Error( 'The store instance already exists.' );
 	}
 
-	dispatch( action: AnyAction ) {
-		if ( ! this.instance ) {
-			this.pendingActions.push( action );
+	instance = configureStore( {
+		reducer: getReducers(),
+		middleware: Array.from( middlewares ),
+	} );
 
-			return;
-		}
-
-		return this.instance.dispatch( action );
+	if ( pendingActions.length ) {
+		pendingActions.forEach( ( action ) => dispatch( action ) );
+		pendingActions.length = 0;
 	}
 
-	createStore() {
-		if ( this.instance ) {
-			throw new Error( 'The store instance already exists.' );
-		}
+	return instance;
+};
 
-		this.instance = configureStore( {
-			reducer: this.getReducers(),
-			middleware: Array.from( this.middlewares ),
-		} );
+export const getStore = () => {
+	return instance;
+};
 
-		if ( this.pendingActions.length ) {
-			this.pendingActions.forEach( ( action ) => this.dispatch( action ) );
-			this.pendingActions = [];
-		}
-
-		return this.instance;
-	}
-
-	getStore() {
-		return this.instance;
-	}
-
-	deleteStore() {
-		// Cleaning all the reducers in case that there is a reference to the store.
-		this.instance?.replaceReducer( () => null );
-		this.instance = null;
-		this.slices = {};
-		this.pendingActions = [];
-		this.middlewares.clear();
-	}
-}
-
-export const createStoreService = () => {
-	return new StoreService();
+export const deleteStore = () => {
+	instance = null;
+	slices = {};
+	pendingActions.length = 0;
+	middlewares.clear();
 };
