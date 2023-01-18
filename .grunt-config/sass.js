@@ -16,6 +16,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'core/editor/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css',
+				ext: '.css'
+			},
+			{
+				expand: true,
 				cwd: 'modules/container-converter/assets/scss',
 				src: 'editor.scss',
 				dest: 'assets/css/modules/container-converter',
@@ -34,6 +41,14 @@ const sass = {
 				src: 'frontend.scss',
 				dest: 'assets/css/modules/lazyload',
 				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend',
+				src: 'swiper.scss',
+				rename: () => {
+					return 'assets/lib/swiper/css/swiper.css';
+				}
 			}
 		]
 	}

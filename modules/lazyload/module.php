@@ -155,8 +155,8 @@ class Module extends BaseModule {
 
 		add_action( 'wp_footer', function() {
 			?>
-			<script type='text/javascript' defer>
-				document.addEventListener( 'DOMContentLoaded', function() {
+			<script type='text/javascript'>
+				const lazyloadRunObserver = () => {
 					const dataAttribute = 'data-e-bg-lazyload';
 					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
@@ -175,6 +175,13 @@ class Module extends BaseModule {
 					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
+				};
+				const events = [
+					'DOMContentLoaded',
+					'elementor/lazyload/observe',
+				];
+				events.forEach( ( event ) => {
+					document.addEventListener( event, lazyloadRunObserver );
 				} );
 			</script>
 			<?php
