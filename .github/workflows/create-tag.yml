@@ -1,5 +1,5 @@
 name: Create Tag
-# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_TAG_CHANNELS, MAINTAIN_TOKEN
 
 on:
   workflow_dispatch:
@@ -75,5 +75,5 @@ jobs:
         with:
           MESSAGE: "@here Elementor `${{ env.PACKAGE_VERSION }}` Tag created, please review changes. The build can be found in the artifacts : ${{ env.ACTION_RUN }}"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+          SLACK_CHANNELS: ${{ secrets.SLACK_TAG_CHANNELS }}
         
