@@ -1,6 +1,6 @@
 import { ListenerEvent } from './types';
 
-export function dispatchOnV1Ready() {
+export function dispatchReadyEvent() {
 	return getV1LoadingPromise().then( () => {
 		window.dispatchEvent( new CustomEvent( 'elementor/v1/initialized' ) );
 	} );
