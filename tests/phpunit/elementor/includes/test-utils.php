@@ -60,25 +60,26 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	 * @throws \Exception
 	 */
 	public function test_should_replace_0_urls() {
-		$this->assertSame( '0 rows affected.', Utils::replace_urls( 'http://' . home_url() . '/elementor', 'https://' . home_url() . '/elementor' ) );
+		$this->assertSame( '0 database rows affected.', Utils::replace_urls( 'http://' . home_url() . '/elementor', 'https://' . home_url() . '/elementor' ) );
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be different URL's.
+	 * @expectedExceptionMessage Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_equal() {
-		//$this->expectExceptionMessage( "The `from` and `to` URL's must be different URL's." );
+		//$this->expectExceptionMessage( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		Utils::replace_urls( 'http://' . home_url() . '/elementor', 'http://' . home_url() . '/elementor' );
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be valid URL's.
+	 * @expectedExceptionMessage Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_invalid() {
+		//$this->expectExceptionMessage( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		Utils::replace_urls( 'elementor', '/elementor' );
 	}
 
@@ -197,20 +198,12 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertFalse( $content );
 	}
 
-	public function test_get_super_global_value__returns_default() {
-		// Act
-		$value = Utils::get_super_global_value( $_REQUEST, 'not_set', 'default' );
-
-		// Assert
-		$this->assertEquals( 'default', $value );
-	}
-
 	public function test_get_super_global_value__returns_value() {
 		// Arrange
 		$_REQUEST['key'] = 'value';
 
 		// Act
-		$value = Utils::get_super_global_value( $_REQUEST,  'key', 'default' );
+		$value = Utils::get_super_global_value( $_REQUEST,  'key' );
 
 		// Assert
 		$this->assertEquals( 'value', $value );

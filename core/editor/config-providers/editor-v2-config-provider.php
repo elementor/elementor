@@ -33,7 +33,13 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				[
 					'handle' => 'elementor-packages-editor',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/editor{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui' ],
+					'deps' => [
+						'react',
+						'react-dom',
+						'elementor-packages-locations',
+						'elementor-packages-ui',
+						'elementor-packages-v1-adapters',
+					],
 					'i18n' => [
 						'domain' => 'elementor',
 						'replace_requested_file' => true,
@@ -47,6 +53,10 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 						'domain' => 'elementor',
 						'replace_requested_file' => true,
 					],
+				],
+				[
+					'handle' => 'elementor-packages-v1-adapters',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/v1-adapters{{MIN_SUFFIX}}.js',
 				],
 
 				// Loader script
