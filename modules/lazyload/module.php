@@ -88,7 +88,6 @@ class Module extends BaseModule {
 	}
 
 	private function is_document_support_lazyload( $post_id ) {
-
 		if ( ! $post_id ) {
 			return false;
 		}
