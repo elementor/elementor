@@ -241,7 +241,7 @@ export default class NestedTabs extends Base {
 	 * @param {Object} content - Active nested tab dom element.
 	 */
 	reInitSwipers( event, content ) {
-		const swiperElements = content.querySelectorAll( '.swiper-container' );
+		const swiperElements = content.querySelectorAll( `.${ elementorFrontend.config.swiperClass }` );
 		for ( const element of swiperElements ) {
 			if ( ! element.swiper ) {
 				return;
