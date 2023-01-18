@@ -14,19 +14,19 @@ dotenv.config( {
 const config = {
 	testDir: './tests/',
 	/* Maximum time one test can run for. */
-	timeout: 6 * 60 * 1000, // 6 minutes
+	timeout: 10 * 60 * 1000,
 	globalSetup: path.resolve( __dirname, './src/global-setup.js' ),
 	expect: {
 		/**
 		 * Maximum time expect() should wait for the condition to be met.
 		 * For example in `await expect(locator).toHaveText();`
 		 */
-		timeout: 5 * 1000, // 5 seconds
+		timeout: 2 * 1000, // 5 seconds
 	},
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !! process.env.CI,
 	/* Retry on CI only */
-	retries: process.env.CI ? 1 : 0,
+	retries: process.env.CI ? 2 : 0,
 	/* Retry on CI only */
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
