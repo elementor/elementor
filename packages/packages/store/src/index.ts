@@ -27,7 +27,7 @@ export { useSelector, useDispatch, Provider as StoreProvider } from 'react-redux
 /**
  * Usage:
  *
- * const mySlice = storeService.registerSlice( ... );
+ * const mySlice = addSlice( ... );
  *
  * type MySliceState = SliceState<typeof mySlice>;
  *
@@ -56,7 +56,7 @@ const getReducers = () => {
 	return combineReducers( reducers );
 };
 
-export const registerSlice = ( ( sliceConfig: CreateSliceOptions ) => {
+export const addSlice = ( ( sliceConfig: CreateSliceOptions ) => {
 	const slice = createSlice( sliceConfig );
 
 	if ( slices[ slice.name ] ) {
@@ -68,7 +68,7 @@ export const registerSlice = ( ( sliceConfig: CreateSliceOptions ) => {
 	return slice;
 } ) as typeof createSlice;
 
-export const registerMiddleware = ( middleware: Middleware ) => {
+export const addMiddleware = ( middleware: Middleware ) => {
 	middlewares.add( middleware );
 };
 

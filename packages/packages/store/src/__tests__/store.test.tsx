@@ -3,8 +3,8 @@ import { renderHook } from '@testing-library/react-hooks';
 import {
 	createStore,
 	getStore,
-	registerSlice,
-	registerMiddleware,
+	addSlice,
+	addMiddleware,
 	dispatch,
 	deleteStore,
 	StoreProvider,
@@ -25,7 +25,7 @@ interface Config {
 }
 
 const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
-	const slice = registerSlice( {
+	const slice = addSlice( {
 		name: 'slice',
 		initialState: {
 			value: initialValue,
@@ -84,9 +84,9 @@ describe( '@elementor/store', () => {
 		expect( result.current ).toBe( 3 );
 	} );
 
-	it( 'should throw an error when trying to register a slice with the same name more than once', () => {
+	it( 'should throw an error when trying to add a slice with the same name more than once', () => {
 		// Arrange.
-		registerSlice( {
+		addSlice( {
 			name: 'slice',
 			initialState: {
 				value: 1,
@@ -96,7 +96,7 @@ describe( '@elementor/store', () => {
 
 		// Assert.
 		expect( () => {
-			registerSlice( {
+			addSlice( {
 				name: 'slice',
 				initialState: {
 					value: 1,
@@ -108,7 +108,7 @@ describe( '@elementor/store', () => {
 
 	it( 'should throw an error when trying to re-create the store', () => {
 		// Arrange.
-		registerSlice( {
+		addSlice( {
 			name: 'slice',
 			initialState: {
 				value: 1,
@@ -122,9 +122,9 @@ describe( '@elementor/store', () => {
 		expect( () => createStore() ).toThrow( 'The store instance already exists.' );
 	} );
 
-	it( 'should register a middleware that blocks the state update by not running next(action)', () => {
+	it( 'should add a middleware that blocks the state update by not running next(action)', () => {
 		// Arrange.
-		registerMiddleware( () => () => () => {} );
+		addMiddleware( () => () => () => {} );
 
 		const { slice, wrapper } = createStoreEntities();
 
@@ -141,9 +141,9 @@ describe( '@elementor/store', () => {
 		expect( result.current ).toBe( 1 );
 	} );
 
-	it( 'should register a middleware that does not interfere with the state update', () => {
+	it( 'should add a middleware that does not interfere with the state update', () => {
 		// Arrange.
-		registerMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+		addMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
 			next( action );
 		} );
 
@@ -164,7 +164,7 @@ describe( '@elementor/store', () => {
 
 	it( 'should dispatch an action without using hooks', () => {
 		// Arrange.
-		registerSlice( {
+		addSlice( {
 			name: 'slice',
 			initialState: {
 				value: 1,
@@ -217,7 +217,7 @@ describe( '@elementor/store', () => {
 		expect( instance ).toBeNull();
 	} );
 
-	it( 'should delete the registered slices', () => {
+	it( 'should delete the added slices', () => {
 		// Arrange.
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
@@ -245,10 +245,10 @@ describe( '@elementor/store', () => {
 		expect( console.error ).toHaveBeenCalled();
 	} );
 
-	it( 'should delete the registered middlewares', () => {
+	it( 'should delete the added middlewares', () => {
 		// Arrange.
 		// Registering a middleware that blocks the state update by not running next(action).
-		registerMiddleware( () => () => () => {} );
+		addMiddleware( () => () => () => {} );
 
 		createStoreEntities();
 
