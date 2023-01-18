@@ -1,7 +1,7 @@
 import {
 	commandEndEvent,
 	commandStartEvent,
-	dispatchOnV1Ready,
+	dispatchReadyEvent,
 	flushListeners,
 	listenTo,
 	windowEvent,
@@ -71,7 +71,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		} );
 	} );
 
-	it( 'should accept an array of events to listen to as parameter', () => {
+	it( 'should listen to an array of events', () => {
 		// Arrange.
 		const command = 'test-command',
 			event = 'test-event',
@@ -151,7 +151,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			callback
 		);
 
-		dispatchOnV1Ready();
+		dispatchReadyEvent();
 
 		await jest.runAllTimers();
 
@@ -164,13 +164,13 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 	it( 'should throw when v1 is not loaded', async () => {
 		// Act & Assert.
-		expect.assertions( 1 );
-
 		try {
-			await dispatchOnV1Ready();
+			await dispatchReadyEvent();
 		} catch ( e ) {
 			expect( e ).toBe( 'Elementor Editor V1 is not loaded' );
 		}
+
+		expect.assertions( 1 );
 	} );
 } );
 
