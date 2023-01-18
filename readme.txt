@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.10.0
+Stable tag: 3.10.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.10.1 - 2023-01-17 =
+
+* Fix: Child containers inheriting styles from parent container ([#20669](https://github.com/elementor/elementor/issues/20669))
+* Fix: Lazyload not working after load more action in loop builder items
+* Fix: Tab toggle is not working as expected after dragging a widget to any tab in Tabs widget
+* Fix: Elementor Top bar is not fully responsive when WP sidebar is collapsed
 
 = 3.10.0 - 2023-01-09 =
 
