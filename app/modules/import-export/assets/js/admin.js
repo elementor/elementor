@@ -45,11 +45,11 @@ class Admin {
 		event.preventDefault();
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			headerMessage: __( 'Are you sure', 'elementor' ),
-			message: __( 'Removing', 'elementor' )  + __( 'assets or changing your site settings can drastically change the look of your website.', 'elementor' ),
+			headerMessage: __( 'Are you sure?', 'elementor' ),
+			message: __( 'Removing ', 'elementor' ) + this.getKitToRemoveName() + __( ' will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ),
 			strings: {
-				confirm: __( 'Yes', 'elementor' ),
-				cancel: __( 'No, go back', 'elementor' ),
+				confirm: __( 'Delete', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			onConfirm: this.onRevertBtnConfirm.bind( this, event.target ),
 		} ).show();
@@ -59,7 +59,6 @@ class Admin {
 		const referrerKit = new URLSearchParams( revertBtn.href ).get( 'referrer_kit' );
 
 		if ( referrerKit ) {
-
 			sessionStorage.setItem( this.kitReferrerKey, referrerKit );
 			sessionStorage.setItem( this.kitToRemoveKey, this.getKitToRemoveName() );
 		}
@@ -101,6 +100,11 @@ class Admin {
 		sessionStorage.removeItem( this.kitToRemoveKey );
 	}
 
+	/**
+	 * Retrieving the last imported kit from the elementorAppConfig global
+	 *
+	 * @return {string}
+	 */
 	getKitToRemoveName() {
 		if ( this.kitToRemoveName ) {
 			return this.kitToRemoveName;
