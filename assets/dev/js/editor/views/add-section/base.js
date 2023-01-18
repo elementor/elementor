@@ -1,4 +1,6 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import environment from 'elementor-common/utils/environment';
+
 
 /**
  * @typedef {import('../../container/container')} Container
@@ -40,7 +42,6 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.presets': 'onPresetSelected',
 			'click @ui.containerPresets': 'onContainerPresetSelected',
-			'paste @ui.pasteArea textarea': 'onPasteAreaPasted',
 		};
 	}
 
@@ -83,6 +84,8 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			return elementor.elements.length > 0;
 		};
 
+		const controlSign = environment.mac ? '&#8984;' : '^';
+
 		return [
 			{
 				name: 'paste',
@@ -90,6 +93,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 					{
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
+						shortcut: controlSign + '+V',
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( elementor.getPreviewContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
@@ -103,7 +107,13 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 						name: 'paste_area',
 						icon: 'eicon-import-export',
 						title: __( 'Paste from other site', 'elementor' ),
-						callback: () => $e.run( 'document/elements/paste-area' ),
+						callback: () => $e.run( 'document/elements/paste-area', {
+							container: elementor.getPreviewContainer(),
+							options: {
+								at: this.getOption( 'at' ),
+								rebuild: true,
+							},
+						} ),
 					},
 				],
 			}, {
@@ -191,23 +201,6 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			elementor.getPreviewContainer(),
 			this.options,
 		);
-	}
-
-	onPasteAreaPasted( event ) {
-		event.preventDefault();
-
-		$e.run( 'document/ui/paste', {
-			container: elementor.getPreviewContainer(),
-			storageType: 'rawdata',
-			data: event.originalEvent.clipboardData.getData( 'text' ),
-			options: {
-				at: this.getOption( 'at' ),
-				rebuild: true,
-			},
-			onAfter: () => this.onAfterPaste(),
-		} );
-
-		this.ui.pasteArea.hide();
 	}
 
 	onDropping() {

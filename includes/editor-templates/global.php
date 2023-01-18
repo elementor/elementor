@@ -63,9 +63,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 	</div>
-	<div class="e-paste-area" style="display: none;">
-		<textarea cols="30" rows="10" placeholder="<?php echo esc_attr__( 'Paste here elementor data...', 'elementor' ); ?>"></textarea>
-	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-tag-controls-stack-empty">

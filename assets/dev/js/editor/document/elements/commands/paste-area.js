@@ -3,6 +3,10 @@ import environment from 'elementor-common/utils/environment';
 export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	static dialog = null;
 
+	static container = null;
+
+	static options = {};
+
 	getHistory( args ) {
 		return false;
 	}
@@ -12,12 +16,10 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			return this.dialog;
 		}
 
-		const ctrlLabel = environment.mac ? 'Cmd' : 'Ctrl';
-
 		const $messageContainer = jQuery( '<div>', {
 			class: 'e-dialog-description',
 		} )
-			.html( `Click the text field and press (${ ctrlLabel } + v) to paste the element into your site.` );
+			.html( __( 'To paste the element from your other site.', 'elementor' ) );
 
 		const $inputArea = jQuery( '<input>', {
 			id: 'elementor-paste-area-dialog__input',
@@ -28,17 +30,17 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			.on( 'keypress', ( event ) => {
 				event.preventDefault();
 			} )
+			.on( 'blur', ( event ) => {
+				jQuery( event.currentTarget ).focus();
+			} )
 			.on( 'paste', ( event ) => {
 				event.preventDefault();
 
 				const retVal = $e.run( 'document/ui/paste', {
-					container: elementor.getPreviewContainer(),
+					container: this.container,
 					storageType: 'rawdata',
 					data: event.originalEvent.clipboardData.getData( 'text' ),
-					options: {
-						// TODO: at: this.getOption( 'at' ),
-						rebuild: true,
-					},
+					options: this.options,
 				} );
 
 				if ( retVal ) {
@@ -59,9 +61,11 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			.append( $inputArea )
 			.append( $errorArea );
 
+		const ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl';
+
 		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
-			headerMessage: __( 'Paste from other site', 'elementor' ),
+			headerMessage: `${ ctrlLabel } + V`,
 			message: $messageContainer,
 			position: {
 				my: 'center center',
@@ -80,6 +84,11 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
+		this.container = args.container;
+		if ( args.options ) {
+			this.options = args.options;
+		}
+
 		this.getDialog().show();
 	}
 }
