@@ -1,4 +1,6 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import environment from 'elementor-common/utils/environment';
+
 
 /**
  * @typedef {import('../../container/container')} Container
@@ -82,6 +84,8 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			return elementor.elements.length > 0;
 		};
 
+		const controlSign = environment.mac ? '&#8984;' : '^';
+
 		return [
 			{
 				name: 'paste',
@@ -89,6 +93,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 					{
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
+						shortcut: controlSign + '+V',
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( elementor.getPreviewContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),

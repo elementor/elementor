@@ -134,7 +134,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups() {
-		const controlSign = environment.mac ? '⌘' : '^';
+		const controlSign = environment.mac ? '&#8984;' : '^';
 
 		let groups = [
 			{
