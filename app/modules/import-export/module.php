@@ -89,6 +89,8 @@ class Module extends BaseModule {
 		}
 
 		( new Usage() )->register();
+
+		$this->revert = new Revert();
 	}
 
 	public function get_init_settings() {
@@ -157,7 +159,6 @@ class Module extends BaseModule {
 			],
 		];
 
-		$this->revert = new Revert();
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
 
@@ -609,6 +610,7 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+			'importSessions' => $this->revert->get_import_sessions(),
 		];
 	}
 
