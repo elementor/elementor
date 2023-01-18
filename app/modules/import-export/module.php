@@ -239,7 +239,7 @@ class Module extends BaseModule {
 		if ( empty( $_GET[ $param_name ] ) ) {
 			return $href;
 		}
-		return add_query_arg( $param_name, $_GET[ $param_name ], $href );
+		return add_query_arg( $param_name, sanitize_key( $_GET[ $param_name ] ), $href );
 	}
 
 	/**
@@ -368,7 +368,7 @@ class Module extends BaseModule {
 	public function handle_revert_last_imported_kit() {
 		check_admin_referer( 'elementor_revert_kit' );
 
-//		$this->revert_last_imported_kit();
+		$this->revert_last_imported_kit();
 
 		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
 		die;
