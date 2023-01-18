@@ -3,16 +3,16 @@ import { Dialog } from '@elementor/app-ui';
 export default function KitAlreadyAppliedDialog( props ) {
 	return (
 		<Dialog
-			title={ __( 'You\'ve already applied a Kit ', 'elementor' ) }
+			title={ __( 'You\'ve already applied a Kit.', 'elementor' ) }
 			text={ <>
 				{ __( 'Applying two Kits on the same website will mix global styles and colors and hurt your site\'s performance.', 'elementor' ) }
 				<br /><br />
-				{ __( 'Remove existing Kit before applying a new one.', 'elementor' ) }
+				{ __( 'Remove the existing Kit before applying a new one.', 'elementor' ) }
 			</> }
 			approveButtonText={ __( 'Remove existing Kit', 'elementor' ) }
 			approveButtonColor="primary" // TODO check if needed
 			approveButtonOnClick={ () => location.href = elementorAppConfig.return_url + '&referrer_kit=' + props.kitId + '#tab-import-export-kit' }
-			dismissButtonText={ __( 'Apply Anyway', 'elementor' ) }
+			dismissButtonText={ __( 'Apply anyway', 'elementor' ) }
 			dismissButtonOnClick={ props.dismissButtonOnClick }
 			onClose={ props.onClose }
 		/>

@@ -76,6 +76,7 @@ class Admin {
 		}
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'e-kit-deleted-dialog',
 			headerMessage: sessionStorage.getItem( this.kitToRemoveKey ) + __( ' successfully deleted', 'elementor' ),
 			message: __( 'You\'re ready to apply a new Kit! ', 'elementor' ),
 			strings: {
