@@ -1,8 +1,29 @@
-import Conditions from 'elementor/assets/dev/js/editor/utils/conditions';
-
-const conditions = new Conditions();
-
 export default class Controls {
+	/**
+	 * Get Control Value
+	 *
+	 * Retrieves a control value.
+	 * This function has been copied from `elementor/assets/dev/js/editor/utils/conditions.js`.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @param {{}}     controlSettings A settings object (e.g. element settings - keys and values)
+	 * @param {string} controlKey      The control key name
+	 * @param {string} controlSubKey   A specific property of the control object.
+	 * @return {*} Control Value
+	 */
+	getControlValue( controlSettings, controlKey, controlSubKey ) {
+		let value;
+
+		if ( 'object' === typeof controlSettings[ controlKey ] && controlSubKey ) {
+			value = controlSettings[ controlKey ][ controlSubKey ];
+		} else {
+			value = controlSettings[ controlKey ];
+		}
+
+		return value;
+	}
+
 	/**
 	 * Get the value of a responsive control.
 	 *
@@ -18,12 +39,12 @@ export default class Controls {
 	 */
 	getResponsiveControlValue( controlSettings, controlKey, controlSubKey = '', device = null ) {
 		const currentDeviceMode = device || elementorFrontend.getCurrentDeviceMode(),
-			controlValueDesktop = conditions.getConditionValue( controlSettings, controlKey, controlSubKey );
+			controlValueDesktop = this.getControlValue( controlSettings, controlKey, controlSubKey );
 
 		// Set the control value for the current device mode.
 		// First check the widescreen device mode.
 		if ( 'widescreen' === currentDeviceMode ) {
-			const controlValueWidescreen = conditions.getConditionValue( controlSettings, `${ controlKey }_widescreen`, controlSubKey );
+			const controlValueWidescreen = this.getControlValue( controlSettings, `${ controlKey }_widescreen`, controlSubKey );
 
 			return ( !! controlValueWidescreen || 0 === controlValueWidescreen ) ? controlValueWidescreen : controlValueDesktop;
 		}
@@ -42,7 +63,7 @@ export default class Controls {
 			}
 
 			const responsiveControlKey = `${ controlKey }_${ parentDeviceMode }`,
-				responsiveControlValue = conditions.getConditionValue( controlSettings, responsiveControlKey, controlSubKey );
+				responsiveControlValue = this.getControlValue( controlSettings, responsiveControlKey, controlSubKey );
 
 			if ( !! responsiveControlValue || 0 === responsiveControlValue ) {
 				controlValue = responsiveControlValue;

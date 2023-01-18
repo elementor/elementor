@@ -34,6 +34,30 @@ describe( 'Controls', () => {
 		responsiveControlValueTest( 'desktop', 1, 10 );
 		responsiveControlValueTest( 'widescreen', 1, 'widescreenValue' );
 	} );
+
+	test( 'Get Control Value', () => {
+		// Arrange.
+		const controls = new Controls();
+
+		const values = {
+			testControl: 'testControlValue',
+			testControlObject: {
+				testSubControl: 'testSubControlValue',
+			},
+		};
+
+		// Act - Test regular condition value.
+		const controlValue = controls.getControlValue( values, 'testControl' );
+
+		// Assert.
+		expect( controlValue ).toBe( 'testControlValue' );
+
+		// Act - Test sub-condition value.
+		const subControlValue = controls.getControlValue( values, 'testControlObject', 'testSubControl' );
+
+		// Assert.
+		expect( subControlValue ).toBe( 'testSubControlValue' );
+	} );
 } );
 
 async function responsiveControlValueTest( deviceMode, expectedValue1, expectedValue2 ) {
