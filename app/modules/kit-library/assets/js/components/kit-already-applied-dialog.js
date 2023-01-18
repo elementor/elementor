@@ -1,15 +1,6 @@
 import { Dialog } from '@elementor/app-ui';
 
 export default function KitAlreadyAppliedDialog( props ) {
-	const approveButtonOnClick = () => {
-		location.href = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools#tab-import-export-kit';
-
-		const appliedKits = elementorAppConfig[ 'import-export' ].importSessions;
-
-		sessionStorage.setItem( 'elementor-kit-referrer-id', props.kitId );
-		sessionStorage.setItem( 'elementor-kit-to-remove-name', appliedKits[ appliedKits.length - 1 ].title );
-	};
-
 	return (
 		<Dialog
 			title={ __( 'You\'ve already applied a Kit ', 'elementor' ) }
@@ -20,7 +11,7 @@ export default function KitAlreadyAppliedDialog( props ) {
 			</> }
 			approveButtonText={ __( 'Remove existing Kit', 'elementor' ) }
 			approveButtonColor="primary" // TODO check if needed
-			approveButtonOnClick={ approveButtonOnClick }
+			approveButtonOnClick={ () => location.href = elementorAppConfig.return_url + '&referrer_kit=' + props.kitId + '#tab-import-export-kit' }
 			dismissButtonText={ __( 'Apply Anyway', 'elementor' ) }
 			dismissButtonOnClick={ props.dismissButtonOnClick }
 			onClose={ props.onClose }
