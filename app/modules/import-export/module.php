@@ -609,6 +609,7 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+			'importSessions' => Revert::get_import_sessions(),
 		];
 	}
 

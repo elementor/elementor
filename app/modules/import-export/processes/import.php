@@ -698,7 +698,9 @@ class Import {
 
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
+			'kit_title' => $this->manifest['title'],
 			'kit_name' => $this->manifest['name'],
+			'kit_thumbnail' => $this->manifest['thumbnail'],
 			'kit_source' => $this->settings_referrer,
 			'user_id' => get_current_user_id(),
 			'start_timestamp' => $start_time,
