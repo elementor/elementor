@@ -1,5 +1,4 @@
 const { execSync } = require( 'child_process' );
-const { getPageId } = require( '../utilities/site-utilities' );
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
 
@@ -44,29 +43,14 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async useElementorCleanPost() {
-		const editor = await this.useElementorPost( CLEAN_POST_ID );
-		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
-		return editor;
-	}
-
-	/**
-	 * Navigate to a post
-	 *
-	 * @param {string|number} postNameOrId
-	 * @return {EditorPage} editor page object
-	 */
-	async useElementorPost( postNameOrId ) {
-		let postId;
-		if ( 'string' === typeof postNameOrId ) {
-			postId = getPageId( postNameOrId );
-		} else {
-			postId = postNameOrId;
-		}
-		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
 
 		await this.waitForPanel();
 
-		const editor = new EditorPage( this.page, this.testInfo, postId );
+		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
+
+		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
+
 		return editor;
 	}
 

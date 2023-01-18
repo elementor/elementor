@@ -8,16 +8,15 @@ To run the tests, we have 3 steps:
 In order to get a stable, reproducible test environment, we decided to use [wp-env](https://www.npmjs.com/package/@wordpress/env) which provides us with a Dockerized server and WP CLI.
 To run the server, run the following command:
 `npm run start-local-server`
-This command runs a WordPress server (using wp-env) and mounts a copy of the templates from `./tests/playwright/templates/` on to that WordPress server.
+This command runs a WordPress server (using wp-env).
 
 ## Configuring the server
 Our tests require the following configuration:
-1. Test pages
-2. .htaccess configuration
-3. Theme
+1. .htaccess configuration
+2. Theme
 To configure the server, run the following command:
 `npm run test:setup:playwright-sanity`
-This command imports test pages from `./tests/playwright/templates/`, rewrites .htaccess rules and activates the `hello-elementor` theme
+This command rewrites .htaccess rules and activates the `hello-elementor` theme
 
 ## Running tests
 We have several test packages that can be run separately. The separation has been done in order to parallelize the CI test runs.
