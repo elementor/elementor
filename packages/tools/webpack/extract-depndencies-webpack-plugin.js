@@ -72,8 +72,8 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 	createAssetsFileContent( entryId, deps, shouldMinify ) {
 		const depsAsString = [ ...deps ]
 			.sort()
-			.map( ( dep ) => `'${ this.replaceDependencyNames( dep ) }'` )
-			.join( ',\n\t\t' );
+			.map( ( dep ) => `'${ this.replaceDependencyNames( dep ) }',` )
+			.join( '\n\t\t' );
 
 		let content =
 `<?php
@@ -84,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'handle' => '${ this.generateHandleName( entryId ) }',
 	'deps' => [
-		${ depsAsString },
+		${ depsAsString }
 	],
 ];
 `;
