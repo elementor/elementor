@@ -12,6 +12,35 @@ module.exports = class EditorPage extends BasePage {
 		this.postId = cleanPostId;
 	}
 
+	async gotoPostId( id = this.postId ) {
+		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+
+		await this.ensurePanelLoaded();
+	}
+
+	async loadTemplate( template ) {
+		const templateData = require( `../templates/${ template }.json` );
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, templateData );
+	}
+
+	async cleanContent() {
+		await this.page.evaluate( () => {
+			$e.run( 'document/elements/empty', { force: true } );
+		} );
+	}
+
 	async openNavigator() {
 		const isOpen = await this.previewFrame.evaluate( () =>
 			elementor.navigator.isOpen(),
