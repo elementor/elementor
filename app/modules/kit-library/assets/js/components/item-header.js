@@ -156,9 +156,9 @@ export default function ItemHeader( props ) {
 			}
 			{
 				downloadLinkData && <KitDialog
+					kitId={ props.model.id }
 					downloadLinkData={ downloadLinkData }
-					setDownloadLinkData={ setDownloadLinkData }
-					kit={ props.model }
+					onClose={ () => setDownloadLinkData( null ) }
 				/>
 			}
 			{

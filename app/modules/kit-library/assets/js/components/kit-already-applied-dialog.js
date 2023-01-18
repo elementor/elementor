@@ -1,13 +1,13 @@
 import { Dialog } from '@elementor/app-ui';
 
 export default function KitAlreadyAppliedDialog( props ) {
-	const approveButtonOnClickHandler = () => {
+	const approveButtonOnClick = () => {
 		location.href = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools#tab-import-export-kit';
 
 		const appliedKits = elementorAppConfig[ 'import-export' ].importSessions;
 
 		sessionStorage.setItem( 'elementor-kit-referrer-id', props.kitId );
-		sessionStorage.setItem( 'elementor-kit-to-remove-name', appliedKits[ appliedKits.length - 1 ] );
+		sessionStorage.setItem( 'elementor-kit-to-remove-name', appliedKits[ appliedKits.length - 1 ].title );
 	};
 
 	return (
@@ -20,16 +20,16 @@ export default function KitAlreadyAppliedDialog( props ) {
 			</> }
 			approveButtonText={ __( 'Remove existing Kit', 'elementor' ) }
 			approveButtonColor="primary" // TODO check if needed
-			approveButtonOnClick={ approveButtonOnClickHandler }
+			approveButtonOnClick={ approveButtonOnClick }
 			dismissButtonText={ __( 'Apply Anyway', 'elementor' ) }
-			dismissButtonOnClick={ () => props.setApplyAnyway( true ) }
-			onClose={ props.setDownloadLinkData( null ) }
+			dismissButtonOnClick={ props.dismissButtonOnClick }
+			onClose={ props.onClose }
 		/>
 	);
 }
 
 KitAlreadyAppliedDialog.propTypes = {
 	kitId: PropTypes.string.isRequired,
-	setDownloadLinkData: PropTypes.func.isRequired,
-	setApplyAnyway: PropTypes.func.isRequired,
+	dismissButtonOnClick: PropTypes.func.isRequired,
+	onClose: PropTypes.func.isRequired,
 };
