@@ -103,7 +103,7 @@ export default class Routes extends Commands {
 		this.attachCurrent( container, route, args );
 
 		// In the previous condition, `$e.routes.is()` resolves the old route as active,
-		// so we can't use it here.
+		// so we can't use it there.
 		if ( oldRoute ) {
 			this.dispatchOnClose( oldRoute );
 		}

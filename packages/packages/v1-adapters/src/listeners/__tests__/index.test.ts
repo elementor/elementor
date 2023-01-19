@@ -10,6 +10,14 @@ import {
 	v1ReadyEvent,
 } from '../';
 
+import {
+	dispatchCommandAfter,
+	dispatchCommandBefore,
+	dispatchRouteClose,
+	dispatchRouteOpen,
+	dispatchWindowEvent,
+} from '../../__tests__/utils';
+
 describe( '@elementor/v1-adapters/listeners', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
@@ -349,39 +357,3 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		expect.assertions( 1 );
 	} );
 } );
-
-function dispatchCommandBefore( command: string ) {
-	window.dispatchEvent( new CustomEvent( 'elementor/commands/run/before', {
-		detail: {
-			command,
-		},
-	} ) );
-}
-
-function dispatchCommandAfter( command: string ) {
-	window.dispatchEvent( new CustomEvent( 'elementor/commands/run/after', {
-		detail: {
-			command,
-		},
-	} ) );
-}
-
-function dispatchRouteOpen( route: string ) {
-	window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
-		detail: {
-			route,
-		},
-	} ) );
-}
-
-function dispatchRouteClose( route: string ) {
-	window.dispatchEvent( new CustomEvent( 'elementor/routes/close', {
-		detail: {
-			route,
-		},
-	} ) );
-}
-
-function dispatchWindowEvent( event: string ) {
-	window.dispatchEvent( new CustomEvent( event ) );
-}

@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { useIsRouteActive, isRouteActive } from '@elementor/v1-adapters';
+import { dispatchRouteClose, dispatchRouteOpen } from '../../__tests__/utils';
 
 jest.mock( '../../dispatchers', () => {
 	return {
@@ -72,20 +73,3 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		expect( result.current ).toBe( false );
 	} );
 } );
-
-// TODO: Move to some test-utils file.
-function dispatchRouteOpen( route: string ) {
-	window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
-		detail: {
-			route,
-		},
-	} ) );
-}
-
-function dispatchRouteClose( route: string ) {
-	window.dispatchEvent( new CustomEvent( 'elementor/routes/close', {
-		detail: {
-			route,
-		},
-	} ) );
-}
