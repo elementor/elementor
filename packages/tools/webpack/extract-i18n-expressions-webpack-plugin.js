@@ -78,7 +78,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 	addTranslationCallExpressionsToAssets( compilation, translationCallExpressions ) {
 		[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
-			const chunk = entrypoint.chunks.find( ( c ) => c.name === id );
+			const chunk = entrypoint.chunks.find( ( { name } ) => name === id );
 			const chunkJSFile = this.getFileFromChunk( chunk );
 
 			if ( ! chunkJSFile ) {

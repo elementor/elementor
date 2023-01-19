@@ -19,12 +19,10 @@ const packages = [
 			path: path.resolve( __dirname, `./packages/${ name }/src` ),
 		} ) ),
 	// Elementor packages that lives outside the monorepo.
-	...[
-		{
-			name: 'ui',
-			path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
-		},
-	],
+	{
+		name: 'ui',
+		path: path.resolve( __dirname, `./node_modules/@elementor/ui` ),
+	},
 ];
 
 const externals = [
@@ -32,22 +30,20 @@ const externals = [
 	...packages.map( ( { name } ) => ( {
 		name: `@elementor/${ name }`,
 		global: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
-	} ), [] ),
+	} ) ),
 	// Packages that exist in WordPress environment, and we use them as externals.
-	...[
-		{
-			name: '@wordpress/i18n',
-			global: 'wp.i18n',
-		},
-		{
-			name: 'react',
-			global: 'React',
-		},
-		{
-			name: 'react-dom',
-			global: 'ReactDOM',
-		},
-	],
+	{
+		name: '@wordpress/i18n',
+		global: 'wp.i18n',
+	},
+	{
+		name: 'react',
+		global: 'React',
+	},
+	{
+		name: 'react-dom',
+		global: 'ReactDOM',
+	},
 ];
 
 module.exports = {

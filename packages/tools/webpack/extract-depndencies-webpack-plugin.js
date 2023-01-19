@@ -22,7 +22,7 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
 				[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
-					const chunk = entrypoint.chunks.find( ( c ) => c.name === id );
+					const chunk = entrypoint.chunks.find( ( { name } ) => name === id );
 					const chunkJSFile = this.getFileFromChunk( chunk );
 
 					if ( ! chunkJSFile ) {
