@@ -20,11 +20,11 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		( window as any ).$e.run.mockReturnValue( Promise.resolve( 'result' ) );
 
 		// Act.
-		const actual = runCommand( command, args );
+		const result = runCommand( command, args );
 
 		// Assert.
 		expect( ( window as any ).$e.run ).toHaveBeenCalledWith( command, args );
-		expect( actual ).toEqual( Promise.resolve( 'result' ) );
+		expect( result ).toEqual( Promise.resolve( 'result' ) );
 	} );
 
 	it( 'should run a V1 command that returns jQuery.Deferred object', () => {
@@ -35,14 +35,14 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		( window as any ).$e.run.mockReturnValue( makeJQueryDeferred( 'result' ) );
 
 		// Act.
-		const actual = runCommand( command, args );
+		const result = runCommand( command, args );
 
 		// Assert.
 		expect( ( window as any ).$e.run ).toHaveBeenCalledWith( command, args );
-		expect( actual ).toEqual( Promise.resolve( 'result' ) );
+		expect( result ).toEqual( Promise.resolve( 'result' ) );
 	} );
 
-	it( 'should run a V1 command that returns a regular value', () => {
+	it( 'should run a V1 command that returns a plain value', () => {
 		// Arrange.
 		const command = 'editor/documents/open',
 			args = { test: 'arg' };
@@ -50,11 +50,11 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		( window as any ).$e.run.mockReturnValue( 'result' );
 
 		// Act.
-		const actual = runCommand( command, args );
+		const result = runCommand( command, args );
 
 		// Assert.
 		expect( ( window as any ).$e.run ).toHaveBeenCalledWith( command, args );
-		expect( actual ).toEqual( Promise.resolve( 'result' ) );
+		expect( result ).toEqual( Promise.resolve( 'result' ) );
 	} );
 
 	it( 'should reject when trying to run a V1 command and `$e.run()` is unavailable', () => {
@@ -72,11 +72,11 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		const route = 'test/route';
 
 		// Act.
-		const actual = openRoute( route );
+		const result = openRoute( route );
 
 		// Assert.
 		expect( ( window as any ).$e.route ).toHaveBeenCalledWith( route );
-		expect( actual ).toEqual( Promise.resolve() );
+		expect( result ).toEqual( Promise.resolve() );
 	} );
 
 	it( 'should reject when failing to open a V1 route', () => {
