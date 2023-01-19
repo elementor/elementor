@@ -18,23 +18,24 @@ export function listenTo(
 		eventDescriptors = [ eventDescriptors ];
 	}
 
-	eventDescriptors.forEach( ( event ) => {
+	const cleanups = eventDescriptors.map( ( event ) => {
 		const { type, name } = event;
 
 		switch ( type ) {
 			case 'command':
-				registerCommandListener( name, event.state, callback );
-				break;
+				return registerCommandListener( name, event.state, callback );
 
 			case 'route':
-				registerRouteListener( name, event.state, callback );
-				break;
+				return registerRouteListener( name, event.state, callback );
 
 			case 'window-event':
-				registerWindowEventListener( name, callback );
-				break;
+				return registerWindowEventListener( name, callback );
 		}
 	} );
+
+	return () => {
+		cleanups.forEach( ( cleanup ) => cleanup() );
+	};
 }
 
 export function flushListeners() {
@@ -49,7 +50,7 @@ function registerCommandListener(
 	state: CommandEventDescriptor['state'],
 	callback: ListenerCallback
 ) {
-	registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
+	return registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
 		const shouldRunCallback = e.type === 'command' && e.command === command;
 
 		if ( shouldRunCallback ) {
@@ -63,7 +64,7 @@ function registerRouteListener(
 	state: RouteEventDescriptor['state'],
 	callback: ListenerCallback
 ) {
-	registerWindowEventListener( `elementor/routes/${ state }`, ( e ) => {
+	return registerWindowEventListener( `elementor/routes/${ state }`, ( e ) => {
 		const shouldRunCallback = e.type === 'route' && e.route === route;
 
 		if ( shouldRunCallback ) {
@@ -82,6 +83,14 @@ function registerWindowEventListener( event: WindowEventDescriptor['name'], call
 	}
 
 	callbacksByEvent.get( event )!.push( callback );
+
+	return () => {
+		const filtered = callbacksByEvent
+			.get( event )
+			?.filter( ( cb ) => cb !== callback ) || [];
+
+		callbacksByEvent.set( event, filtered );
+	};
 }
 
 function addListener( event: EventDescriptor['name'] ) {
