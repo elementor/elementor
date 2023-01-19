@@ -127,6 +127,11 @@ class User {
 			return false;
 		}
 
+		$current_user_can_edit = apply_filters( 'elementor/is_current_user_can_edit', true, $post->ID );
+		if ( $current_user_can_edit === false ) {
+			return false;
+		}
+
 		return true;
 	}
 
