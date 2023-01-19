@@ -152,9 +152,19 @@ export default class NestedTabs extends Base {
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
-			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ),
 			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
+
+		let $requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) );
+
+		// Check if the tabIndex exists.
+		if ( ! $requestedTitle.length ) {
+			// Activate the previous tab and ensure that the tab index is not less than 1.
+			const previousTabIndex = Math.max( ( tabIndex - 1 ), 1 );
+
+			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( previousTabIndex ) );
+			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
+		}
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
 		$requestedTitle.attr( {
@@ -177,38 +187,47 @@ export default class NestedTabs extends Base {
 		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
 	}
 
-	bindEvents() {
-		this.elements.$tabTitles.on( {
-			keydown: ( event ) => {
-				// Support for old markup that includes an `<a>` tag in the tab
-				if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
-					event.preventDefault();
-				}
+	onTabClick( event ) {
+		event.preventDefault();
+		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+	}
 
-				// We listen to keydowon event for these keys in order to prevent undesired page scrolling
-				if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
-					this.handleKeyboardNavigation( event );
-				}
-			},
-			keyup: ( event ) => {
-				switch ( event.code ) {
-					case 'ArrowLeft':
-					case 'ArrowRight':
-						this.handleKeyboardNavigation( event );
-						break;
-					case 'Enter':
-					case 'Space':
-						event.preventDefault();
-						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
-						break;
-				}
-			},
-			click: ( event ) => {
+	onTabKeyDown( event ) {
+		// Support for old markup that includes an `<a>` tag in the tab
+		if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
+			event.preventDefault();
+		}
+
+		// We listen to keydowon event for these keys in order to prevent undesired page scrolling
+		if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
+			this.handleKeyboardNavigation( event );
+		}
+	}
+
+	onTabKeyUp( event ) {
+		switch ( event.code ) {
+			case 'ArrowLeft':
+			case 'ArrowRight':
+				this.handleKeyboardNavigation( event );
+				break;
+			case 'Enter':
+			case 'Space':
 				event.preventDefault();
 				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
-			},
-		} );
+				break;
+		}
+	}
 
+	getTabEvents() {
+		return {
+			keydown: this.onTabKeyDown.bind( this ),
+			keyup: this.onTabKeyUp.bind( this ),
+			click: this.onTabClick.bind( this ),
+		};
+	}
+
+	bindEvents() {
+		this.elements.$tabTitles.on( this.getTabEvents() );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
@@ -222,7 +241,7 @@ export default class NestedTabs extends Base {
 	 * @param {Object} content - Active nested tab dom element.
 	 */
 	reInitSwipers( event, content ) {
-		const swiperElements = content.querySelectorAll( '.swiper-container' );
+		const swiperElements = content.querySelectorAll( `.${ elementorFrontend.config.swiperClass }` );
 		for ( const element of swiperElements ) {
 			if ( ! element.swiper ) {
 				return;

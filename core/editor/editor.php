@@ -473,8 +473,7 @@ class Editor {
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
 		$this->get_loader()->enqueue_scripts();
-
-		wp_set_script_translations( 'elementor-editor', 'elementor' );
+		$this->get_loader()->load_scripts_translations();
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
@@ -788,6 +787,7 @@ class Editor {
 	private function get_loader() {
 		if ( ! $this->loader ) {
 			$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
+			$this->loader->register_hooks();
 		}
 
 		return $this->loader;

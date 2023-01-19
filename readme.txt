@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.9.2
+Stable tag: 3.10.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,39 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.10.1 - 2023-01-17 =
+
+* Fix: Child containers inheriting styles from parent container ([#20669](https://github.com/elementor/elementor/issues/20669))
+* Fix: Lazyload not working after load more action in loop builder items
+* Fix: Tab toggle is not working as expected after dragging a widget to any tab in Tabs widget
+* Fix: Elementor Top bar is not fully responsive when WP sidebar is collapsed
+
+= 3.10.0 - 2023-01-09 =
+
+* New: Introducing the renewed Tabs widget - Enable more design options, and nesting capabilities ([#2587](https://github.com/elementor/elementor/issues/2587))
+* New: Introducing Custom Units - A new way to choose any unit you want, including CSS Math Functions ([#2219](https://github.com/elementor/elementor/issues/2219), [#19935](https://github.com/elementor/elementor/issues/19935), [#18738](https://github.com/elementor/elementor/issues/18738), [#8307](https://github.com/elementor/elementor/issues/8307), [#11335](https://github.com/elementor/elementor/issues/11335))
+* New: Container-based website assets - Kickstart your website creation and design process with container-based full website kits, templates and blocks
+* New: Added an option to disable Google Fonts integration from font-family control
+* Tweak: Added `preload="metadata"` to self hosted videos in Video widget ([#17308](https://github.com/elementor/elementor/issues/17308))
+* Tweak: Added `preload` selector to self hosted videos in Video widget ([#17308](https://github.com/elementor/elementor/issues/17308))
+* Tweak: Added `loading="lazy"` for custom size in media control ([#17884](https://github.com/elementor/elementor/issues/17884))
+* Tweak: Added additional units for width and height in Icon List widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added additional units for icon size in Icon List Widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added `loading="lazy"` to Google Map widget
+* Tweak: Updated `eicons` library to 5.17.0
+* Tweak: Merged various experiments to the version
+* Tweak: Promoted various experiments to Beta and Stable status
+* Tweak: Added Undo option into success toast in "Save as Default" experiment
+* Tweak: Media control return image URL from WordPress in Style CSS
+* Tweak: General infrastructure changes to Import Export Website Kit experiment
+* Fix: RTL text is printed backward in Text Path widget ([#17309](https://github.com/elementor/elementor/issues/17309))
+* Fix: Unnecessary `non-existing control` errors are thrown on page load ([#20027](https://github.com/elementor/elementor/issues/20027))
+* Fix: Post type is overridden on autosave for library documents ([#1994](https://github.com/elementor/elementor/issues/1994))
+* Fix: Compatibility issue with Rank Math plugin due to `wp_print_media_template()` in onboarding module ([#18368](https://github.com/elementor/elementor/issues/18368))
+* Fix: Auto detection of dark mode not working in the Theme Builder ([#19670](https://github.com/elementor/elementor/issues/19670))
+* Fix: Missing escaping translation in Experiments screen
+* Fix: Motion effect on background image disables background overlay in Container
 
 = 3.9.2 - 2022-12-21 =
 
