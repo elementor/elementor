@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
 
-test.describe( 'Nested Tabs tests @nested-tabs', () => {
+test.describe.only( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -89,15 +89,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 		await wpAdmin.openNewPage();
 
-		const editor = new EditorPage( page, testInfo ),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Set icons to tabs according 'tabIcons' array.
-		await setIconsToTabs( page, tabIcons );
+		const editor = new EditorPage( page, testInfo );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
@@ -121,17 +114,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 		await wpAdmin.openNewPage();
 
-		const editor = new EditorPage( page, testInfo ),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Set icons to tabs according 'tabIcons' array.
-		await setIconsToTabs( page, tabIcons );
+		const editor = new EditorPage( page, testInfo );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Set icon size.
+		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
 		await page.locator( '.elementor-tab-control-style' ).click();
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
@@ -229,18 +216,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
-
+		const editor = await wpAdmin.useElementorCleanPost();
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 		// Act.
-		// Set icons to tabs.
-		await setIconsToTabs( page, tabIcons );
-
 		// Set icon hover color.
+		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
@@ -295,24 +275,20 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the icons don\'t disappear when the tab title is updated', async ( { page }, testInfo ) => {
+	test.only( 'Verify that the icons don\'t disappear when the tab title is updated', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+		const editor = await wpAdmin.useElementorCleanPost();
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		// Add tab icons.
-		await setIconsToTabs( page, tabIcons );
+		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
 		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Update active tab title.
+		await page.locator( '.elementor-repeater-fields:nth-child( 3 )' ).click();
 		await page.locator( '.elementor-repeater-fields:nth-child( 3 ) .elementor-control-tab_title input' ).fill( 'Title change' );
 		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 

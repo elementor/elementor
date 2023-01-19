@@ -1,18 +1,15 @@
-const { test, expect } = require( '../utilities/test' );
+const { test, expect } = require( '@playwright/test' );
+const WpAdminPage = require( '../pages/wp-admin-page.js' );
 
-test.describe( 'Accordion widget', () => {
-    test.afterEach( async ( { editorPage } ) => {
-        await editorPage.cleanContent();
-    } );
+test( 'Accordion', async ( { page }, testInfo ) => {
+    // Arrange.
+    const wpAdmin = new WpAdminPage( page, testInfo ),
+    editor = await wpAdmin.useElementorCleanPost();
 
-    test( 'Accordion', async ( { editorPage } ) => {
-        // Arrange.
-        await editorPage.loadTemplate( 'accordion' );
+    // Act.
+    await editor.addWidget( 'accordion' );
 
-        // Act.
-        await editorPage.togglePreviewMode();
-
-        // Assert
-        expect( await editorPage.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'accordion.jpeg' );
-    } );
+    // Assert
+    await editor.togglePreviewMode();
+    expect( await editor.getPreviewFrame().locator( '.elementor-widget-wrap > .elementor-background-overlay' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'accordion.jpeg' );
 } );
