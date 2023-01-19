@@ -575,9 +575,9 @@ class Widget_Accordion extends Widget_Base {
 							<?php } ?>
 							</span>
 						<?php endif; ?>
-						<a class="elementor-accordion-title" href=""><?php
+						<span class="elementor-accordion-title"><?php
 							$this->print_unescaped_setting( 'tab_title', 'tabs', $index );
-						?></a>
+						?></span>
 					</<?php Utils::print_validated_html_tag( $settings['title_html_tag'] ); ?>>
 					<div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php
 						$this->print_text_editor( $item['tab_content'] );
@@ -667,7 +667,7 @@ class Widget_Accordion extends Widget_Base {
 								<# } #>
 							</span>
 							<# } #>
-							<a class="elementor-accordion-title" href="">{{{ item.tab_title }}}</a>
+							<span class="elementor-accordion-title">{{{ item.tab_title }}}</span>
 						</{{{ titleHTMLTag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>
