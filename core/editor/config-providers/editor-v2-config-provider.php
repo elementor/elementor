@@ -25,7 +25,13 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				[
 					'handle' => 'elementor-packages-editor',
 					'src' => '{{ASSETS_URL}}/js/packages/editor{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui', 'elementor-packages-store' ],
+					'deps' => [
+						'react',
+						'react-dom',
+						'elementor-packages-locations',
+						'elementor-packages-ui',
+						'elementor-packages-store',
+					],
 				],
 				[
 					'handle' => 'elementor-packages-ui',
@@ -34,7 +40,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				],
 				[
 					'handle' => 'elementor-packages-store',
-					'src' => '{{ASSETS_URL}}js/packages/store{{MIN_SUFFIX}}.js',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/store{{MIN_SUFFIX}}.js',
 					'deps' => [ 'react' ],
 				],
 

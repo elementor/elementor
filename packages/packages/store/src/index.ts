@@ -57,11 +57,11 @@ const getReducers = () => {
 };
 
 export const addSlice = ( ( sliceConfig: CreateSliceOptions ) => {
-	const slice = createSlice( sliceConfig );
-
-	if ( slices[ slice.name ] ) {
-		throw new Error( `Slice with name "${ slice.name }" already exists.` );
+	if ( slices[ sliceConfig.name ] ) {
+		throw new Error( `Slice with name "${ sliceConfig.name }" already exists.` );
 	}
+
+	const slice = createSlice( sliceConfig );
 
 	slices[ slice.name ] = slice;
 

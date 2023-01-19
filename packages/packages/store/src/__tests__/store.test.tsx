@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import {
 	createStore,
@@ -143,7 +143,11 @@ describe( '@elementor/store', () => {
 
 	it( 'should add a middleware that does not interfere with the state update', () => {
 		// Arrange.
+		const middlewareNextAction = jest.fn();
+
 		addMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+			middlewareNextAction( action );
+			
 			next( action );
 		} );
 
@@ -160,11 +164,13 @@ describe( '@elementor/store', () => {
 
 		// Assert.
 		expect( result.current ).toBe( 4 );
+
+		expect( middlewareNextAction ).toHaveBeenCalledWith( slice.actions.setValue( 4 ) );
 	} );
 
 	it( 'should dispatch an action without using hooks', () => {
 		// Arrange.
-		addSlice( {
+		const slice = addSlice( {
 			name: 'slice',
 			initialState: {
 				value: 1,
@@ -179,7 +185,7 @@ describe( '@elementor/store', () => {
 		const store = createStore();
 
 		// Act.
-		store.dispatch( { type: 'slice/setValue', payload: 6 } );
+		store.dispatch( slice.actions.setValue( 6 ) );
 
 		const stateResult = store.getState().slice.value;
 
@@ -219,7 +225,8 @@ describe( '@elementor/store', () => {
 
 	it( 'should delete the added slices', () => {
 		// Arrange.
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		// Redux sends an error to the console when trying to create a store without slices.
+		const spyOnConsoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		createStoreEntities();
 
@@ -240,9 +247,7 @@ describe( '@elementor/store', () => {
 		// Assert.
 		expect( result.current ).toBeUndefined();
 
-		// Redux sends an error to the console when no reducer is found.
-		// eslint-disable-next-line no-console
-		expect( console.error ).toHaveBeenCalled();
+		expect( spyOnConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should delete the added middlewares', () => {
@@ -255,7 +260,7 @@ describe( '@elementor/store', () => {
 		// Act.
 		deleteStore();
 
-		const { slice, wrapper } = createStoreEntities( );
+		const { slice, wrapper } = createStoreEntities();
 
 		const { result } = renderHook( () => {
 			const dispatchAction = useDispatch();
