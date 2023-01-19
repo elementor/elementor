@@ -12,10 +12,16 @@
 	}
 
 	#elementor-paste-area-dialog__input {
+		background: transparent;
 		color: transparent;
 		border-color: transparent;
 		padding: 0;
 		margin: 0;
+		height: 100px;
+		position: absolute;
+		top: -60px;
+		left: 0;
+		right: 0;
 
 		&:focus {
 			border-color: transparent;
