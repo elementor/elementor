@@ -29,8 +29,8 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			.on( 'keypress', ( event ) => {
 				event.preventDefault();
 			} )
-			.on( 'blur', ( event ) => {
-				jQuery( event.currentTarget ).focus();
+			.on( 'blur', () => {
+				_.defer( () => $inputArea.focus() );
 			} )
 			.on( 'paste', ( event ) => {
 				event.preventDefault();
@@ -54,7 +54,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( "Couldn’t paste that into your site.<br>Make sure you’ve copied an element and try again.", 'elementor' ) );
+			.html( __( "Couldn't paste that into your site.<br>Make sure you've copied an element and try again.", 'elementor' ) );
 
 		$messageContainer
 			.append( $inputArea )
@@ -76,6 +76,10 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			},
 			onShow: () => {
 				$inputArea.focus();
+
+				this.getDialog().getElements( 'widgetContent' ).on( 'click', () => {
+					$inputArea.focus();
+				} );
 			},
 		} );
 
