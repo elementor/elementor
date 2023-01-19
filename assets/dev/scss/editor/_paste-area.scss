@@ -1,21 +1,37 @@
 #elementor-paste-area-dialog {
 
-	.e-dialog-description {
+	.dialog-header {
+		padding-top: 60px;
+		font-size: 25px;
+		color: $editor-light;
+	}
 
+	.dialog-message {
+		padding: 0 15px 15px;
+		font-size: 15px;
 	}
 
 	#elementor-paste-area-dialog__input {
-		margin: 10px 0 5px;
-		text-align: center;
+		color: transparent;
+		border-color: transparent;
+		padding: 0;
+		margin: 0;
 
-		&::placeholder {
-			color: $black;
+		&:focus {
+			border-color: transparent;
+			outline: none;
 		}
 	}
 
 	#elementor-paste-area-dialog__error {
 		color: $editor-danger;
-		text-align: $start;
-		font-size: .9em;
+		font-size: 12px;
+
+		&:before {
+			content: '';
+			border-top: 1px solid $editor-background-light;
+			display: block;
+			margin: 0 -15px 15px;
+		}
 	}
 }
