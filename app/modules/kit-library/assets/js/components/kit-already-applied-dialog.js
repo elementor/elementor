@@ -11,7 +11,7 @@ export default function KitAlreadyAppliedDialog( props ) {
 			</> }
 			approveButtonText={ __( 'Remove existing Kit', 'elementor' ) }
 			approveButtonColor="primary" // TODO check if needed
-			approveButtonOnClick={ () => location.href = elementorAppConfig.return_url + '&referrer_kit=' + props.kitId + '#tab-import-export-kit' }
+			approveButtonOnClick={ () => location.href = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools&referrer_kit=' + props.kitId + '#tab-import-export-kit' }
 			dismissButtonText={ __( 'Apply anyway', 'elementor' ) }
 			dismissButtonOnClick={ props.dismissButtonOnClick }
 			onClose={ props.onClose }
