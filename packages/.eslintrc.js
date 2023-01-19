@@ -7,18 +7,15 @@ module.exports = {
 	extends: [
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
 		'plugin:@typescript-eslint/eslint-recommended',
+		'plugin:import/typescript',
 	],
 	settings: {
 		'import/resolver': {
-			node: {
-				extensions: [ '.js', '.jsx', '.ts', '.tsx' ],
-			},
+			typescript: {},
+			node: {},
 		},
 	},
 	rules: {
-		// Ignore when trying to use '@elementor/*' packages.
-		'import/no-unresolved': [ 'error', { ignore: [ '@elementor/.+' ] } ],
-
 		// Don't allow relative import from package to package.
 		'import/no-relative-packages': [ 'error' ],
 		'no-restricted-syntax': [
@@ -30,11 +27,8 @@ module.exports = {
 			},
 		],
 
-		// Disable import/named rule, TS will handle it.
-		'import/named': [ 'off' ],
-
 		// Disable the js no-unused-vars rule, and enable the TS version.
-		'no-unused-vars': 'off',
+		'no-unused-vars': [ 'off' ],
 		'@typescript-eslint/no-unused-vars': [ 'error' ],
 	},
 	overrides: [
@@ -44,8 +38,8 @@ module.exports = {
 				'**/@(__mocks__|__tests__|test)/**/*.[tj]s?(x)',
 			],
 			rules: {
-				// In tests, we are importing dev dependencies of the workspace, so we need to disable this rule.
-				'import/no-extraneous-dependencies': 'off',
+				// In tests, we are importing dev dependencies of the root directory, so we need to disable this rule.
+				'import/no-extraneous-dependencies': [ 'off' ],
 			},
 		},
 	],

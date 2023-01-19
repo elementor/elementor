@@ -3,7 +3,8 @@
 	"dependencies": {
 		"@elementor/locations": "*",
 		"@elementor/ui": "*",
-		"@elementor/store": "*"
+		"@elementor/store": "*",
+		"@elementor/v1-adapters": "*"
 	},
 	"peerDependencies": {
 		"react": "17.x",
