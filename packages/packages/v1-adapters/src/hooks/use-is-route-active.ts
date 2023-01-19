@@ -1,30 +1,24 @@
 import { useEffect, useState } from 'react';
-import { listenTo, routeCloseEvent, routeOpenEvent, RouteEventDescriptor } from '../listeners';
+import {
+	isRouteActive,
+	listenTo,
+	routeCloseEvent,
+	routeOpenEvent,
+	RouteEventDescriptor,
+} from '../';
 
 export function useIsRouteActive( route: RouteEventDescriptor['name'] ): boolean {
-	const [ isActive, setIsActive ] = useState( isRouteActive( route ) );
+	const [ isActive, setIsActive ] = useState( () => isRouteActive( route ) );
 
 	useEffect( () => {
-		const cleanupOpen = listenTo(
-			routeOpenEvent( route ),
-			() => setIsActive( true ),
+		return listenTo(
+			[
+				routeOpenEvent( route ),
+				routeCloseEvent( route ),
+			],
+			() => setIsActive( isRouteActive( route ) ),
 		);
-
-		const cleanupClose = listenTo(
-			routeCloseEvent( route ),
-			() => setIsActive( false ),
-		);
-
-		return () => {
-			cleanupOpen();
-			cleanupClose();
-		};
 	}, [] );
 
 	return isActive;
-}
-
-// TODO: Move to the dispatchers and promisify (?).
-function isRouteActive( route: string ): boolean {
-	return ( window as any ).$e.routes.is( route );
 }

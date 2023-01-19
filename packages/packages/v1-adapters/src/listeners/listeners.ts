@@ -18,6 +18,7 @@ export function listenTo(
 		eventDescriptors = [ eventDescriptors ];
 	}
 
+	// eslint-disable-next-line array-callback-return -- Clashes with typescript.
 	const cleanups = eventDescriptors.map( ( event ) => {
 		const { type, name } = event;
 
@@ -31,8 +32,6 @@ export function listenTo(
 			case 'window-event':
 				return registerWindowEventListener( name, callback );
 		}
-
-		return () => {};
 	} );
 
 	return () => {

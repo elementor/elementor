@@ -1,26 +1,26 @@
 import { useIsRouteActive } from '../';
 import { act, renderHook } from '@testing-library/react-hooks';
 
-describe( '@elementor/v1-adapters/hooks/useIsActiveRoute', () => {
-	let isActiveByDefault: boolean;
+describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
+	let isActive: boolean;
 
 	beforeEach( () => {
 		( window as any ).$e = {
 			routes: {
-				is: jest.fn( () => isActiveByDefault ),
+				isPartOf: jest.fn( () => isActive ),
 			},
 		};
 	} );
 
 	afterEach( () => {
-		delete ( window as any ).$e.routes.is;
+		delete ( window as any ).$e.routes.isPartOf;
 	} );
 
 	it( 'should return false when a route is inactive by default', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActiveByDefault = false;
+		isActive = false;
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
@@ -33,7 +33,7 @@ describe( '@elementor/v1-adapters/hooks/useIsActiveRoute', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActiveByDefault = true;
+		isActive = true;
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
@@ -46,12 +46,13 @@ describe( '@elementor/v1-adapters/hooks/useIsActiveRoute', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActiveByDefault = false;
+		isActive = false;
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
 
 		act( () => {
+			isActive = true;
 			dispatchRouteOpen( route );
 		} );
 
@@ -63,12 +64,13 @@ describe( '@elementor/v1-adapters/hooks/useIsActiveRoute', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActiveByDefault = true;
+		isActive = true;
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
 
 		act( () => {
+			isActive = false;
 			dispatchRouteClose( route );
 		} );
 

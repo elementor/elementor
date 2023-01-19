@@ -36,3 +36,13 @@ export function openRoute( route: string ): Promise<void> {
 		return Promise.reject( e );
 	}
 }
+
+export function isRouteActive( route: string ): boolean {
+	const extendedWindow = window as unknown as ExtendedWindow;
+
+	if ( ! extendedWindow.$e?.routes?.isPartOf ) {
+		return false;
+	}
+
+	return !! extendedWindow.$e.routes.isPartOf( route );
+}
