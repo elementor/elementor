@@ -7,6 +7,12 @@ class Admin {
 	 *
 	 * @type {string}
 	 */
+	isKitReferredKey = 'elementor-is-kit-referred';
+	/**
+	 * Session Storage Key
+	 *
+	 * @type {string}
+	 */
 	kitReferrerKey = 'elementor-referrer-kit-id';
 
 	/**
@@ -44,44 +50,63 @@ class Admin {
 	revertBtnOnClick( event ) {
 		event.preventDefault();
 
+		const kitNameToRemove = this.getKitToRemoveName();
+
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
-			message: __( 'Removing ', 'elementor' ) + this.getKitToRemoveName() + __( ' will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ),
+			message: __( 'Removing ', 'elementor' ) + kitNameToRemove + __( ' will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
 				cancel: __( 'Cancel', 'elementor' ),
 			},
-			onConfirm: this.onRevertConfirm.bind( this, event.target ),
+			onConfirm: this.onRevertConfirm.bind( this, event.target, kitNameToRemove ),
 		} ).show();
 	}
 
-	onRevertConfirm( revertBtn ) {
+	onRevertConfirm( revertBtn, kitNameToRemove ) {
 		const referrerKit = new URLSearchParams( revertBtn.href ).get( 'referrer_kit' );
 
-		if ( referrerKit ) {
-			sessionStorage.setItem( this.kitReferrerKey, referrerKit );
-			sessionStorage.setItem( this.kitNameToRemoveKey, this.getKitToRemoveName() );
-		}
+		this.setSessionStorage( Boolean( referrerKit ), referrerKit, kitNameToRemove );
 
 		location.href = revertBtn.href;
+	}
+
+	setSessionStorage( referred, referrerKit, kitNameToRemove ) {
+		sessionStorage.setItem( this.isKitReferredKey, referred.toString() );
+		if ( referred ) {
+			sessionStorage.setItem( this.kitReferrerKey, referrerKit );
+		}
+		sessionStorage.setItem( this.kitNameToRemoveKey, kitNameToRemove );
 	}
 
 	/**
 	 * MaybeShowKitReferrerDialog
 	 */
 	maybeShowKitReferrerDialog() {
-		const kitReferrerId = sessionStorage.getItem( this.kitReferrerKey );
-		if ( ! kitReferrerId ) {
+		const isKitReferred = sessionStorage.getItem( this.isKitReferredKey );
+		if ( ! isKitReferred ) {
 			return;
 		}
 
-		const kitRemoved = sessionStorage.getItem( this.kitNameToRemoveKey );
-		this.cleanUp();
+		if ( 'false' === isKitReferred ) {
+			this.createKitDeletedWidget( {
+				message: __( 'Try a different Kit or build your site from scratch.', 'elementor' ),
+				strings: {
+					confirm: __( 'OK', 'elementor' ),
+					cancel: __( 'Kit Library', 'elementor' ),
+				},
+				onCancel: () => {
+					location.href = elementorAppConfig.base_url + '#/kit-library';
+				},
+			} );
+			this.cleanUp( false );
 
-		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: 'e-kit-deleted-dialog',
-			headerMessage: kitRemoved + __( ' was successfully deleted', 'elementor' ),
-			message: __( 'You\'re ready to apply a new Kit! ', 'elementor' ),
+			return;
+		}
+
+		const kitReferrerId = sessionStorage.getItem( this.kitReferrerKey );
+		this.createKitDeletedWidget( {
+			message: __( 'You\'re ready to apply a new Kit!', 'elementor' ),
 			strings: {
 				confirm: __( 'Continue to new Kit', 'elementor' ),
 				cancel: __( 'Close', 'elementor' ),
@@ -89,14 +114,39 @@ class Admin {
 			onConfirm: () => {
 				location.href = elementorAppConfig.base_url + '#/kit-library/preview/' + kitReferrerId;
 			},
+		} );
+		this.cleanUp( true );
+	}
+
+	/**
+	 * CreateKitDeletedWidget
+	 *
+	 * @param {Object} options
+	 */
+	createKitDeletedWidget( options ) {
+		elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'e-kit-deleted-dialog',
+			headerMessage: sessionStorage.getItem( this.kitNameToRemoveKey ) + __( ' was successfully deleted', 'elementor' ),
+			message: options.message,
+			strings: {
+				confirm: options.strings.confirm,
+				cancel: options.strings.cancel,
+			},
+			...( options.onConfirm ) && { onConfirm: options.onConfirm },
+			...( options.onCancel ) && { onCancel: options.onCancel },
 		} ).show();
 	}
 
 	/**
 	 * CleanUp
+	 *
+	 * @param {boolean} referred
 	 */
-	cleanUp() {
-		sessionStorage.removeItem( this.kitReferrerKey );
+	cleanUp( referred ) {
+		sessionStorage.removeItem( this.isKitReferredKey );
+		if ( referred ) {
+			sessionStorage.removeItem( this.kitReferrerKey );
+		}
 		sessionStorage.removeItem( this.kitNameToRemoveKey );
 	}
 
@@ -106,21 +156,17 @@ class Admin {
 	 * @return {string}
 	 */
 	getKitToRemoveName() {
-		if ( this.kitToRemoveName ) {
-			return this.kitToRemoveName;
-		}
-
 		const lastKit = elementorAppConfig[ 'import-export' ].lastImportedSession;
 
 		if ( lastKit.kit_title ) {
-			this.kitToRemoveName = lastKit.kit_title;
-		} else if ( lastKit.kit_name ) {
-			this.kitToRemoveName = this.convertNameToTitle( lastKit.kit_name );
-		} else {
-			this.kitToRemoveName = 'Your Kit';
+			return lastKit.kit_title;
 		}
 
-		return this.kitToRemoveName;
+		if ( lastKit.kit_name ) {
+			return this.convertNameToTitle( lastKit.kit_name );
+		}
+
+		return 'Your Kit';
 	}
 
 	/**
@@ -140,4 +186,4 @@ class Admin {
 	}
 }
 
-new Admin();
+new Admin(); // TODO makes this script only run on the specific page not all admin
