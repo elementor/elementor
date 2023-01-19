@@ -613,7 +613,7 @@ class Module extends BaseModule {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
-		return [
+	  $config_data = [
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'builtinWpPostTypes' => ImportExportUtils::get_builtin_wp_post_types(),
@@ -621,8 +621,15 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
-			'importSessions' => $this->revert->get_import_sessions(),
-		];
+			'tools_url' => Tools::get_url(),
+	];
+
+		$last_import_session = $this->revert->get_last_import_session();
+		if ( ! empty( $last_import_session ) ) {
+			$config_data[ 'lastImportedSession' ] = $last_import_session;
+		}
+
+		return $config_data;
 	}
 
 	/**

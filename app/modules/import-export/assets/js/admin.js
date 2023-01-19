@@ -14,7 +14,7 @@ class Admin {
 	 *
 	 * @type {string}
 	 */
-	kitToRemoveKey = 'elementor-kit-to-remove-name';
+	kitNameToRemoveKey = 'elementor-kit-to-remove-name';
 
 	/**
 	 * Constructor
@@ -51,16 +51,16 @@ class Admin {
 				confirm: __( 'Delete', 'elementor' ),
 				cancel: __( 'Cancel', 'elementor' ),
 			},
-			onConfirm: this.onRevertBtnConfirm.bind( this, event.target ),
+			onConfirm: this.onRevertConfirm.bind( this, event.target ),
 		} ).show();
 	}
 
-	onRevertBtnConfirm( revertBtn ) {
+	onRevertConfirm( revertBtn ) {
 		const referrerKit = new URLSearchParams( revertBtn.href ).get( 'referrer_kit' );
 
 		if ( referrerKit ) {
 			sessionStorage.setItem( this.kitReferrerKey, referrerKit );
-			sessionStorage.setItem( this.kitToRemoveKey, this.getKitToRemoveName() );
+			sessionStorage.setItem( this.kitNameToRemoveKey, this.getKitToRemoveName() );
 		}
 
 		location.href = revertBtn.href;
@@ -75,20 +75,19 @@ class Admin {
 			return;
 		}
 
+		const kitRemoved = sessionStorage.getItem( this.kitNameToRemoveKey );
+		this.cleanUp();
+
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'e-kit-deleted-dialog',
-			headerMessage: sessionStorage.getItem( this.kitToRemoveKey ) + __( ' successfully deleted', 'elementor' ),
+			headerMessage: kitRemoved + __( ' was successfully deleted', 'elementor' ),
 			message: __( 'You\'re ready to apply a new Kit! ', 'elementor' ),
 			strings: {
 				confirm: __( 'Continue to new Kit', 'elementor' ),
 				cancel: __( 'Close', 'elementor' ),
 			},
 			onConfirm: () => {
-				this.cleanUp();
 				location.href = elementorAppConfig.base_url + '#/kit-library/preview/' + kitReferrerId;
-			},
-			onCancel: () => {
-				this.cleanUp();
 			},
 		} ).show();
 	}
@@ -98,7 +97,7 @@ class Admin {
 	 */
 	cleanUp() {
 		sessionStorage.removeItem( this.kitReferrerKey );
-		sessionStorage.removeItem( this.kitToRemoveKey );
+		sessionStorage.removeItem( this.kitNameToRemoveKey );
 	}
 
 	/**
@@ -111,10 +110,34 @@ class Admin {
 			return this.kitToRemoveName;
 		}
 
-		const appliedKits = elementorAppConfig[ 'import-export' ].importSessions;
-		this.kitToRemoveName = appliedKits[ appliedKits.length - 1 ].kit_name;
+		const lastKit = elementorAppConfig[ 'import-export' ].lastImportedSession;
+
+		if ( lastKit.kit_title ) {
+			this.kitToRemoveName = lastKit.kit_title;
+		} else if ( lastKit.kit_name ) {
+			this.kitToRemoveName = this.convertNameToTitle( lastKit.kit_name );
+		} else {
+			this.kitToRemoveName = 'Your Kit';
+		}
 
 		return this.kitToRemoveName;
 	}
+
+	/**
+	 * ConvertNameToTitle
+	 *
+	 * @param {string} name
+	 *
+	 * @return {string}
+	 */
+	convertNameToTitle( name ) {
+		const words = name.split( /[-_]+/ );
+		for ( const key in words ) {
+			const word = words[ key ];
+			words[ key ] = word[ 0 ].toUpperCase() + word.substring( 1 );
+		}
+		return words.join( ' ' );
+	}
 }
+
 new Admin();
