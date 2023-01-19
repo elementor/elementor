@@ -15,9 +15,9 @@ export function useIsRouteActive( route: RouteEventDescriptor['name'] ): boolean
 			routeOpenEvent( route ),
 			routeCloseEvent( route ),
 		],
-		() => setIsActive( isRouteActive( route ) ),
+		() => setIsActive( () => isRouteActive( route ) ),
 		);
-	}, [] );
+	}, [ route ] );
 
 	return isActive;
 }
