@@ -31,6 +31,8 @@ export function listenTo(
 			case 'window-event':
 				return registerWindowEventListener( name, callback );
 		}
+
+		return () => {};
 	} );
 
 	return () => {
