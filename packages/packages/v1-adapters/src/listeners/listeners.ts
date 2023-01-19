@@ -85,9 +85,13 @@ function registerWindowEventListener( event: WindowEventDescriptor['name'], call
 	callbacksByEvent.get( event )!.push( callback );
 
 	return () => {
-		const filtered = callbacksByEvent
-			.get( event )
-			?.filter( ( cb ) => cb !== callback ) || [];
+		const callbacks = callbacksByEvent.get( event );
+
+		if ( ! callbacks?.length ) {
+			return;
+		}
+
+		const filtered = callbacks.filter( ( cb ) => cb !== callback );
 
 		callbacksByEvent.set( event, filtered );
 	};

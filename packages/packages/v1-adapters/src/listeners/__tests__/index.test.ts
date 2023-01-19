@@ -259,6 +259,60 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'should cleanup listeners', () => {
+		// Arrange.
+		const event1 = 'test-event-1',
+			event2 = 'test-event-2',
+			callback1 = jest.fn(),
+			callback2 = jest.fn();
+
+		const cleanup1 = listenTo(
+			[
+				windowEvent( event1 ),
+				windowEvent( event2 ),
+			],
+			callback1,
+		);
+
+		const cleanup2 = listenTo(
+			windowEvent( event1 ),
+			callback2,
+		);
+
+		// Act.
+		cleanup1();
+		cleanup2();
+
+		// Dispatch events.
+		dispatchWindowEvent( event1 );
+		dispatchWindowEvent( event2 );
+
+		// Assert.
+		expect( callback1 ).toHaveBeenCalledTimes( 0 );
+		expect( callback2 ).toHaveBeenCalledTimes( 0 );
+	} );
+
+	it( 'should not fail when calling the same cleanup twice', () => {
+		// Arrange.
+		const event = 'test-event',
+			callback = jest.fn();
+
+		const cleanup = listenTo(
+			windowEvent( event ),
+			callback,
+		);
+
+		// Act.
+		cleanup();
+		cleanup();
+
+		// Dispatch events.
+		dispatchWindowEvent( event );
+
+		// Assert.
+		expect( callback ).toHaveBeenCalledTimes( 0 );
+	} );
+
 	it( 'should trigger v1 ready when v1 is loaded after v2', async () => {
 		// Arrange.
 		const callback = jest.fn();
