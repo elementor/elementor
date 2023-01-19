@@ -12,10 +12,10 @@
 		"strict": true,
 		"allowJs": false,
 		"forceConsistentCasingInFileNames": true,
+		"allowSyntheticDefaultImports": false,
 
 		/* Less Strict Type-Checking */
 		"skipLibCheck": true,
-		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
 
 		/** Makes sure there is no output (webpack will output our code) */
