@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { AppBar, Grid, Box, IconButton, styled } from '@elementor/ui';
 import ElementorIcon from './icons/elementor-icon';
 import PlusIcon from './icons/plus-icon';
-import { useIsRouteActive } from '@elementor/v1-adapters';
+import { openRoute, useIsRouteActive } from '@elementor/v1-adapters';
 
 const AppBarAction = styled( IconButton )( ( { theme } ) => ( {
 	borderRadius: '8px',
@@ -19,17 +19,11 @@ export const TopBar = () => {
 		<AppBar position="sticky" sx={ { background: '#000', height: '48px' } }>
 			<Grid container direction="row">
 				<Box sx={ { flexGrow: 1, paddingInlineStart: '10px' } }>
-					<IconButton onClick={ () => {
-						// @ts-ignore
-						window.$e.route( 'panel/menu' );
-					} }>
+					<IconButton onClick={ () => openRoute( 'panel/menu' ) }>
 						<ElementorIcon titleAccess={ __( 'Elementor Logo', 'elementor' ) } />
 					</IconButton>
 
-					<AppBarAction className={ isActive ? 'active' : undefined } onClick={ () => {
-						// @ts-ignore
-						$e.route( 'panel/elements/categories' );
-					} }>
+					<AppBarAction className={ isActive ? 'active' : '' } onClick={ () => openRoute( 'panel/elements/categories' ) }>
 						<PlusIcon fontSize="small" />
 					</AppBarAction>
 				</Box>
