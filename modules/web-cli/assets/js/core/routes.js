@@ -92,6 +92,12 @@ export default class Routes extends Commands {
 
 		if ( oldRoute ) {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
+
+			window.dispatchEvent( new CustomEvent( 'elementor/routes/close', {
+				detail: {
+					route: oldRoute,
+				},
+			} ) );
 		}
 
 		Commands.trace.push( route );
@@ -141,6 +147,12 @@ export default class Routes extends Commands {
 		const component = this.getComponent( route );
 
 		component.onRoute( route, args );
+
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
+			detail: {
+				route,
+			},
+		} ) );
 
 		super.afterRun( route, args, results, false );
 

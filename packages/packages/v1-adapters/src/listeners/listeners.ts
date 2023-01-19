@@ -1,5 +1,11 @@
 import { normalizeEvent } from './utils';
-import { CommandEventDescriptor, EventDescriptor, ListenerCallback, WindowEventDescriptor } from './types';
+import {
+	CommandEventDescriptor,
+	EventDescriptor,
+	ListenerCallback,
+	RouteEventDescriptor,
+	WindowEventDescriptor,
+} from './types';
 
 const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
 let abortController = new AbortController();
@@ -18,6 +24,10 @@ export function listenTo(
 		switch ( type ) {
 			case 'command':
 				registerCommandListener( name, event.state, callback );
+				break;
+
+			case 'route':
+				registerRouteListener( name, event.state, callback );
 				break;
 
 			case 'window-event':
@@ -41,6 +51,20 @@ function registerCommandListener(
 ) {
 	registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
 		const shouldRunCallback = e.type === 'command' && e.command === command;
+
+		if ( shouldRunCallback ) {
+			callback( e );
+		}
+	} );
+}
+
+function registerRouteListener(
+	route: RouteEventDescriptor['name'],
+	state: RouteEventDescriptor['state'],
+	callback: ListenerCallback
+) {
+	registerWindowEventListener( `elementor/routes/${ state }`, ( e ) => {
+		const shouldRunCallback = e.type === 'route' && e.route === route;
 
 		if ( shouldRunCallback ) {
 			callback( e );
