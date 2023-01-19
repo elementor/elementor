@@ -10,6 +10,7 @@ require $composer_autoloader_file;
 
 
 use Elementor\Autoloader;
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
@@ -63,8 +64,12 @@ remove_action( 'admin_init', '_maybe_update_plugins' );
 
 // The following action activates all registered experiments in order for them to be able to be tested.
 add_action( 'elementor/experiments/feature-registered', function ( Experiments_Manager $experiments_manager, array $experimental_data ) {
+	$exclude = [
+		Editor::EDITOR_V2_EXPERIMENT_NAME, // For now the tests are not ready for the new editor.
+	];
+
 	// Immutable experiments are not real experiments and should not be activated.
-	if ( ! $experimental_data['mutable'] ) {
+	if ( ! $experimental_data['mutable'] || in_array( $experimental_data['name'], $exclude, true ) ) {
 		return;
 	}
 
