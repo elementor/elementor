@@ -39,6 +39,8 @@ export default class Routes extends Commands {
 		this.detachCurrent( container );
 
 		this.getComponent( route ).onCloseRoute( route );
+
+		this.dispatchOnClose( route );
 	}
 
 	clear() {
@@ -92,12 +94,6 @@ export default class Routes extends Commands {
 
 		if ( oldRoute ) {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
-
-			window.dispatchEvent( new CustomEvent( 'elementor/routes/close', {
-				detail: {
-					route: oldRoute,
-				},
-			} ) );
 		}
 
 		Commands.trace.push( route );
@@ -105,6 +101,12 @@ export default class Routes extends Commands {
 		super.beforeRun( route, args, false );
 
 		this.attachCurrent( container, route, args );
+
+		// In the previous condition, `$e.routes.is()` resolves the old route as active,
+		// so we can't use it here.
+		if ( oldRoute ) {
+			this.dispatchOnClose( oldRoute );
+		}
 	}
 
 	to( route, args ) {
@@ -148,11 +150,7 @@ export default class Routes extends Commands {
 
 		component.onRoute( route, args );
 
-		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
-			detail: {
-				route,
-			},
-		} ) );
+		this.dispatchOnOpen( route );
 
 		super.afterRun( route, args, results, false );
 
@@ -194,5 +192,21 @@ export default class Routes extends Commands {
 
 	error( message ) {
 		throw Error( 'Routes: ' + message );
+	}
+
+	dispatchOnOpen( route ) {
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
+			detail: {
+				route,
+			},
+		} ) );
+	}
+
+	dispatchOnClose( route ) {
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/close', {
+			detail: {
+				route,
+			},
+		} ) );
 	}
 }

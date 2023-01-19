@@ -13,7 +13,7 @@ const AppBarAction = styled( IconButton )( ( { theme } ) => ( {
 } ) );
 
 export const TopBar = () => {
-	const isActive = useIsRouteActive( 'panel/elements/categories' );
+	const isActive = useIsRouteActive( 'panel/elements' );
 
 	return (
 		<AppBar position="sticky" sx={ { background: '#000', height: '48px' } }>

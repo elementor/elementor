@@ -66,7 +66,7 @@ function registerRouteListener(
 	callback: ListenerCallback
 ) {
 	return registerWindowEventListener( `elementor/routes/${ state }`, ( e ) => {
-		const shouldRunCallback = e.type === 'route' && e.route === route;
+		const shouldRunCallback = e.type === 'route' && e.route.startsWith( route );
 
 		if ( shouldRunCallback ) {
 			callback( e );

@@ -1,26 +1,20 @@
-import { useIsRouteActive } from '../';
 import { act, renderHook } from '@testing-library/react-hooks';
+import { useIsRouteActive, isRouteActive } from '@elementor/v1-adapters';
+
+jest.mock( '../../dispatchers', () => {
+	return {
+		isRouteActive: jest.fn(),
+	};
+} );
+
+const mockedIsRouteActive = jest.mocked( isRouteActive );
 
 describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
-	let isActive: boolean;
-
-	beforeEach( () => {
-		( window as any ).$e = {
-			routes: {
-				isPartOf: jest.fn( () => isActive ),
-			},
-		};
-	} );
-
-	afterEach( () => {
-		delete ( window as any ).$e.routes.isPartOf;
-	} );
-
 	it( 'should return false when a route is inactive by default', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActive = false;
+		mockedIsRouteActive.mockReturnValue( false );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
@@ -33,7 +27,7 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActive = true;
+		mockedIsRouteActive.mockReturnValue( true );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
@@ -46,13 +40,13 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActive = false;
+		mockedIsRouteActive.mockReturnValue( false );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
 
 		act( () => {
-			isActive = true;
+			mockedIsRouteActive.mockReturnValue( true );
 			dispatchRouteOpen( route );
 		} );
 
@@ -64,13 +58,13 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		isActive = true;
+		mockedIsRouteActive.mockReturnValue( true );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
 
 		act( () => {
-			isActive = false;
+			mockedIsRouteActive.mockReturnValue( false );
 			dispatchRouteClose( route );
 		} );
 

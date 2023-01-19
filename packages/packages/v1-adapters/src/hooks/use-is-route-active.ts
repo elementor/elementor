@@ -14,9 +14,7 @@ export function useIsRouteActive( route: RouteEventDescriptor['name'] ): boolean
 		return listenTo( [
 			routeOpenEvent( route ),
 			routeCloseEvent( route ),
-		],
-		() => setIsActive( () => isRouteActive( route ) ),
-		);
+		], () => setIsActive( isRouteActive( route ) ) );
 	}, [ route ] );
 
 	return isActive;
