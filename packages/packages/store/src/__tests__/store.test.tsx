@@ -147,7 +147,7 @@ describe( '@elementor/store', () => {
 
 		addMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
 			middlewareNextAction( action );
-			
+
 			next( action );
 		} );
 
