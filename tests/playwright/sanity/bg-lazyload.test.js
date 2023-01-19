@@ -1,5 +1,5 @@
 const { test, expect } = require( '../utilities/test' );
-const { createPage, deletePage } = require( '../utilities/rest-api');
+const { createPage, deletePage } = require( '../utilities/rest-api' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 const EditorPage = require( '../pages/editor-page' );
 
