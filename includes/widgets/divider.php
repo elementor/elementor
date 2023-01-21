@@ -420,7 +420,7 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ '%', 'px', 'vw' ],
 				'range' => [
 					'px' => [
 						'max' => 1000,
