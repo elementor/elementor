@@ -42,12 +42,30 @@ class Module extends BaseModule {
 		$settings = $element->get_settings_for_display();
 		$controls = $element->get_controls();
 		$lazyload_attribute_name = 'data-e-bg-lazyload';
-
+		$attributes = [];
 		$controls_with_background_image = array_filter( $controls, function( $control ) {
 			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
 		} );
 
+		$reapeter = array_filter( $controls, function( $control ) {
+			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
+				return true;
+			}
+		} );
+		$reapeter = array_shift( $reapeter );
+
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
+
+			// If the control is a repeater, we need to loop over the repeater fields and update the background image, And setting the lazyload attribute to the repeater container.
+			if ( $reapeter ) {
+				$lazyload_options = Utils::get_array_value_by_keys( $reapeter, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
+				$control_data['background_lazyload'] = array_merge( $control_data['background_lazyload'], $lazyload_options );
+
+				// Get lazyload property from the repeater first control.
+				$settings = $settings[ $reapeter['name'] ][0];
+				$attributes['data-e-bg-repeater'] = '';
+			}
+
 			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
 			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
 			if ( $background_image_url ) {
@@ -55,9 +73,11 @@ class Module extends BaseModule {
 				$has_attribute = $element->get_render_attributes( '_wrapper', $lazyload_attribute_name );
 				if ( ! $has_attribute ) {
 					$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
-					$element->add_render_attribute( '_wrapper', [
-						$lazyload_attribute_name => $bg_selector,
-					] );
+					$attributes[ $lazyload_attribute_name ] = $bg_selector;
+
+					$element->add_render_attribute( '_wrapper',
+						$attributes
+					);
 				}
 			}
 		}
@@ -69,7 +89,9 @@ class Module extends BaseModule {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
-						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
+						$css_property  = str_replace( 'url({{URL}})', 'var(--e-bg-lazyload-loaded)', $css_property );
+
+						$control['selectors'][ $selector ] = $css_property . ';--e-bg-lazyload: url("' . $value['url'] . '");';
 						$control = $this->apply_dominant_color_background( $control, $value, $selector );
 					}
 				}
@@ -117,7 +139,25 @@ class Module extends BaseModule {
 			<script type='text/javascript'>
 				const lazyloadRunObserver = () => {
 					const dataAttribute = 'data-e-bg-lazyload';
-					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					const reapterAttribute = 'data-e-bg-repeater';
+
+					let lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded, [${reapterAttribute}])` );
+					const lazyloadRepeaterBackgrounds = document.querySelectorAll( `[${ reapterAttribute }]` );
+					if ( lazyloadRepeaterBackgrounds.length ) {
+						const repeaterBackgrounds = [];
+						lazyloadRepeaterBackgrounds.forEach( ( repeater ) => {
+							const lazyloadSelector = repeater.getAttribute( dataAttribute );
+							if ( lazyloadSelector ) {
+								lazyloadBackground = repeater.querySelectorAll( lazyloadSelector );
+								if ( lazyloadBackground.length ) {
+									repeaterBackgrounds.push( ...lazyloadBackground );
+								}
+							}
+
+						} );
+						lazyloadBackgrounds = [ ...lazyloadBackgrounds, ...repeaterBackgrounds ];
+					}
+
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
 					entries.forEach( ( entry ) => {
 						if ( entry.isIntersecting ) {
