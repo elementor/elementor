@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import useFills from '../hooks/use-fills';
 
 type SlotProps = {

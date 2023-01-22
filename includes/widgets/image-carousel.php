@@ -701,7 +701,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_spacing_custom',
 			[
 				'label' => esc_html__( 'Image Spacing', 'elementor' ),
@@ -714,7 +714,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'default' => [
 					'size' => 20,
 				],
-				'show_label' => false,
 				'condition' => [
 					'image_spacing' => 'custom',
 					'slides_to_show!' => '1',
