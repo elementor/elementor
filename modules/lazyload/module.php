@@ -56,7 +56,7 @@ class Module extends BaseModule {
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
 
-			// If the control is a repeater, we need to loop over the repeater fields and update the background image, And setting the lazyload attribute to the repeater container.
+			// If the control is a repeater, we need to loop over the repeater fields options and check if the background image is set to lazyload.
 			if ( $reapeter ) {
 				$lazyload_options = Utils::get_array_value_by_keys( $reapeter, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
 				$control_data['background_lazyload'] = array_merge( $control_data['background_lazyload'], $lazyload_options );
