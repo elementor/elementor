@@ -20,7 +20,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 					enhancedNumber: () => {
 						const unit = this.getControlValue( 'unit' );
 
-						return ( [ 'rem', 'em' ].includes( unit ) ) ? 1 : 10;
+						return ( [ 'rem', 'em' ].includes( unit ) ) ? 0.5 : 10;
 					},
 				},
 			},
