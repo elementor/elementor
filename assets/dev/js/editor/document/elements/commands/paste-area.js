@@ -60,7 +60,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( "Couldn't paste that into your site.<br>Make sure you've copied an element and try again.", 'elementor' ) );
+			.html( __( "Make sure that both sites are updated to last version of Elementor and have enabled the features relevant to the copied element before trying again.", 'elementor' ) );
 
 		const $loadingArea = jQuery( '<i>', {
 			class: 'eicon-loading eicon-animation-spin',
