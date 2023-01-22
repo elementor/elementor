@@ -227,7 +227,8 @@ html.elementor-html {
 		}
 	}
 
-	&.elementor-absolute, &.elementor-fixed {
+	&.elementor-absolute,
+	&.elementor-fixed {
 		cursor: grab;
 
 		&:active {
@@ -362,7 +363,7 @@ html.elementor-html {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: $admin-font-family;
 	font-size: 13px;
 	font-weight: normal;
 	font-style: normal;
@@ -535,12 +536,13 @@ html.elementor-html {
 
 .elementor-sortable-helper {
 	position: absolute;
-	border-radius: 3px;
-	background-color: #fff;
-	text-align: center;
-	color: $editor-darker;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 	cursor: move;
+	border: $e-border;
+	border-radius: 3px;
+	background-color: $e-bg-color-active;
+	border-color: $e-border-color-active;
+	color: $e-txt-color-active;
+	text-align: center;
 
 	.icon {
 		font-size: 28px;
@@ -548,19 +550,15 @@ html.elementor-html {
 		line-height: 1;
 	}
 
-	.elementor-element-title-wrapper {
-		display: table;
-		width: 100%;
+	.title-wrapper {
+		display: flex;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.title {
 		font-size: 11px;
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: normal;
-		font-style: normal;
-		display: table-cell;
-		vertical-align: middle;
-		height: 40px;
 	}
 }
 
@@ -655,7 +653,8 @@ html.elementor-html {
 .elementor-column-placeholder {
 	position: relative;
 
-	&:before, &:after {
+	&:before,
+	&:after {
 		content: '';
 		position: absolute;
 		top: 10px;
@@ -787,7 +786,7 @@ html.elementor-html {
 }
 
 .elementor-add-section-drag-title {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: $admin-font-family;
 	font-size: 13px;
 	font-weight: normal;
 	font-style: italic;
@@ -812,7 +811,7 @@ html.elementor-html {
 }
 
 .elementor-select-preset-title {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: $admin-font-family;
 	font-size: 13px;
 	font-weight: 500;
 	font-style: normal;

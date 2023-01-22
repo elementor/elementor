@@ -79,17 +79,12 @@
 .elementor-panel {
 
 	.elementor-element {
+		text-align: center;
 		border: $e-border;
 		border-radius: 3px;
-		background-color: $white;
 		cursor: move;
 		position: relative;
 		transition: $transition-hover;
-
-		&-wrapper {
-			text-align: center;
-			box-sizing: border-box;
-		}
 
 		&--promotion {
 
@@ -99,13 +94,9 @@
 			}
 		}
 
-		.icon,
-		.title {
-			color: $e-gray-600;
-		}
-
 		&:hover {
-			background-color: $e-gray-25;
+			background-color:$e-bg-color-hover;
+			color: $e-txt-color-hover;
 		}
 
 		.icon {
@@ -113,16 +104,15 @@
 			padding-top: 15px;
 		}
 
-		.elementor-element-title-wrapper {
-			display: table;
-			width: 100%;
+		.title-wrapper {
+			display: flex;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
 		}
 
 		.title {
 			font-size: 11px;
-			display: table-cell;
-			vertical-align: middle;
-			height: 40px;
 		}
 
 		> .eicon-lock {
@@ -130,6 +120,12 @@
 			top: 5px;
 			@include end(5px);
 			color: $e-gray-100;
+		}
+
+		&:active {
+			background-color: $e-bg-color-active;
+			border-color: $e-border-color-active;
+			color: $e-txt-color-active;
 		}
 	}
 }

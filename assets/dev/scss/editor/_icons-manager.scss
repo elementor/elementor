@@ -164,11 +164,13 @@
 		}
 
 		&:hover {
-			background-color: $e-gray-25;
+			background-color: $e-bg-color-hover;
+			color: $e-txt-color-hover;
 		}
 
 		&.elementor-active {
-			background-color: $e-gray-50;
+			background-color: $e-bg-color-active;
+			color: $e-txt-color-active;
 
 			&:after {
 				content: '';
@@ -177,7 +179,7 @@
 				width: 3px;
 				top: 0;
 				@include start(0);
-				background-color: $e-gray-900;
+				background-color: $e-border-color-active;
 			}
 		}
 	}
@@ -193,12 +195,14 @@
 		overflow: hidden;
 
 		&:hover {
-			background-color: $e-gray-25;
+			background-color: $e-bg-color-hover;
+			color: $e-txt-color-hover;
 		}
 
 		&.elementor-selected {
-			background-color: $e-gray-50;
-			border-color: $e-gray-900;
+			background-color: $e-bg-color-active;
+			border-color: $e-border-color-active;
+			color: $e-txt-color-active;
 		}
 
 		&__content {

@@ -5,16 +5,18 @@
 
 .elementor-panel-category {
 	position: relative;
+	border-bottom: $e-border;
 
 	.elementor-panel-heading {
 		padding: 0 15px;
+		border: none;
 	}
 
 	&.elementor-active {
 		padding-bottom: 20px;
 
 		.elementor-panel-heading {
-			margin-bottom: 20px;
+			border: none;
 		}
 	}
 
