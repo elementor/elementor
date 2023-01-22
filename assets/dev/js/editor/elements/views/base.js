@@ -937,7 +937,7 @@ BaseElementView = BaseContainer.extend( {
 			<div class="icon">
 				<i class="${ model.getIcon() }"></i>
 			</div>
-			<div class="elementor-element-title-wrapper">
+			<div class="title-wrapper">
 				<div class="title">${ model.getTitle() }</div>
 			</div>
 		`;

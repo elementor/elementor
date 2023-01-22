@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="icon">
 			<i class="{{ icon }}" aria-hidden="true"></i>
 		</div>
-		<div class="elementor-element-title-wrapper">
+		<div class="title-wrapper">
 			<div class="title">{{{ title }}}</div>
 		</div>
 	</div>
