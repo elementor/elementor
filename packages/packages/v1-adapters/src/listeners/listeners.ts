@@ -18,6 +18,7 @@ export function listenTo(
 		eventDescriptors = [ eventDescriptors ];
 	}
 
+	// @see https://github.com/typescript-eslint/typescript-eslint/issues/2841
 	// eslint-disable-next-line array-callback-return -- Clashes with typescript.
 	const cleanups = eventDescriptors.map( ( event ) => {
 		const { type, name } = event;
