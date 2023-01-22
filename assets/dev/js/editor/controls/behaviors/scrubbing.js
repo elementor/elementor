@@ -48,23 +48,18 @@ export default class Scrubbing extends Marionette.Behavior {
 			return;
 		}
 
-		let newValue = input.value;
-
 		switch ( movementType ) {
 			case SCRUB_REGULAR:
-				newValue = this.getModifiedValue( input.value, movementEvent.movementX, 'valueModifier' );
+				input.value = this.getModifiedValue( input.value, movementEvent.movementX, 'valueModifier' );
 				break;
 
 			case SCRUB_ENHANCED:
-				newValue = this.getModifiedValue( input.value, movementEvent.movementX, 'enhancedNumber' );
+				input.value = this.getModifiedValue( input.value, movementEvent.movementX, 'enhancedNumber' );
 				break;
 
 			default:
 				break;
 		}
-
-		// Prevent cases where the value resolves to something like 1.0000000000000001.
-		input.value = parseFloat( newValue.toFixed( 1 ) );
 
 		// Fire an input event so other behaviors/validators can handle the new input
 		input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
@@ -102,7 +97,10 @@ export default class Scrubbing extends Marionette.Behavior {
 			? modifier()
 			: modifier;
 
-		return +value + ( movementX * modifierValue );
+		const newValue = +value + ( movementX * modifierValue );
+
+		// Prevent cases where the value resolves to something like 1.0000000000000001.
+		return parseFloat( newValue.toFixed( 1 ) );
 	}
 
 	isInputValidForScrubbing( input ) {
