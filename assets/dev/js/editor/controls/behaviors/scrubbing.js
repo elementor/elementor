@@ -17,6 +17,7 @@ export default class Scrubbing extends Marionette.Behavior {
 		this.scrubSettings = {
 			intentTime: 600,
 			skipperSteps: 10,
+			valueModifier: 1,
 			enhancedNumber: 10,
 			scrubbingActiveClass: 'e-scrubbing--active',
 			scrubbingOverClass: 'e-scrubbing-over',
@@ -47,18 +48,23 @@ export default class Scrubbing extends Marionette.Behavior {
 			return;
 		}
 
+		let newValue = input.value;
+
 		switch ( movementType ) {
 			case SCRUB_REGULAR:
-				input.value = +input.value + movementEvent.movementX;
+				newValue = this.getModifiedValue( input.value, movementEvent.movementX, 'valueModifier' );
 				break;
 
 			case SCRUB_ENHANCED:
-				input.value = +input.value + ( movementEvent.movementX * this.scrubSettings.enhancedNumber );
+				newValue = this.getModifiedValue( input.value, movementEvent.movementX, 'enhancedNumber' );
 				break;
 
 			default:
 				break;
 		}
+
+		// Prevent cases where the value resolves to something like 1.0000000000000001.
+		input.value = parseFloat( newValue.toFixed( 1 ) );
 
 		// Fire an input event so other behaviors/validators can handle the new input
 		input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
@@ -80,6 +86,23 @@ export default class Scrubbing extends Marionette.Behavior {
 		}
 
 		return ( movementEvent.ctrlKey || movementEvent.metaKey ) ? SCRUB_ENHANCED : SCRUB_REGULAR;
+	}
+
+	/**
+	 * @param {number}                           value
+	 * @param {number}                           movementX
+	 * @param {'valueModifier'|'enhancedNumber'} modifierType
+	 *
+	 * @return {number}
+	 */
+	getModifiedValue( value, movementX, modifierType ) {
+		const modifier = this.scrubSettings[ modifierType ];
+
+		const modifierValue = ( 'function' === typeof modifier )
+			? modifier()
+			: modifier;
+
+		return +value + movementX * modifierValue;
 	}
 
 	isInputValidForScrubbing( input ) {
