@@ -2,6 +2,7 @@
 	"name": "@elementor/top-bar",
 	"dependencies": {
 		"@elementor/editor": "*",
+		"@elementor/locations": "*",
 		"@elementor/ui": "*",
 		"@wordpress/i18n": "*"
 	},

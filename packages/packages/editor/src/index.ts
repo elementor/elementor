@@ -1,2 +1,2 @@
-export { addToTop } from './locations';
+export { injectIntoTopLocation } from './locations';
 export { default as init } from './init';

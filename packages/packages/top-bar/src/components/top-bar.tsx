@@ -1,39 +1,28 @@
 import * as React from 'react';
-import { __ } from '@wordpress/i18n';
-import { AppBar, Grid, Box, IconButton, styled } from '@elementor/ui';
-import ElementorIcon from './icons/elementor-icon';
-import PlusIcon from './icons/plus-icon';
+import { AppBar as BaseAppBar, Box, styled, Grid } from '@elementor/ui';
+import LocationMainMenu from './locations/location-main-menu';
+import LocationToolsMenu from './locations/location-tools-menu';
+import LocationCanvasView from './locations/location-canvas-view';
 
-const AppBarAction = styled( IconButton )( ( { theme } ) => ( {
-	borderRadius: '8px',
-	padding: theme.spacing( 2 ),
-	'&:hover': {
-		backgroundColor: 'rgba(255, 255, 255, 0.1)',
-	},
-} ) );
+const AppBar = styled( BaseAppBar )`
+	background-color: #232629;
+	height: 48px;
+	box-shadow: none;
+`;
 
-export const TopBar = () => {
+export default function TopBar() {
 	return (
-		<AppBar position="sticky" sx={ { background: '#000', height: '48px' } }>
-			<Grid container direction="row">
-				<Box sx={ { flexGrow: 1, paddingInlineStart: '10px' } }>
-					<IconButton onClick={ () => {
-						// @ts-ignore
-						window.$e.route( 'panel/menu' );
-					} }>
-						<ElementorIcon titleAccess={ __( 'Elementor Logo', 'elementor' ) } />
-					</IconButton>
-
-					<AppBarAction onClick={ () => {
-						// @ts-ignore
-						$e.route( 'panel/elements/categories' );
-					} }>
-						<PlusIcon fontSize="small" />
-					</AppBarAction>
-				</Box>
-			</Grid>
+		<AppBar position="sticky">
+			<Box display="grid" gridTemplateColumns="repeat(3, 1fr)">
+				<Grid container>
+					<LocationMainMenu />
+					<LocationToolsMenu />
+				</Grid>
+				<Grid container justifyContent="center">
+					<LocationCanvasView />
+				</Grid>
+				<Grid container justifyContent="end" />
+			</Box>
 		</AppBar>
 	);
-};
-
-export default TopBar;
+}

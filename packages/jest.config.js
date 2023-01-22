@@ -25,6 +25,10 @@ module.exports = {
 		// Excluding elementor ui which is external package without commonjs build.
 		'node_modules/(?!@elementor/ui)',
 	],
+	// Setup files to run for all the tests.
+	setupFilesAfterEnv: [
+		'<rootDir>/tests/setup-cleaning.ts',
+	],
 	// Code coverage.
 	collectCoverageFrom: [
 		'packages/*/src/**/*.{js,jsx,ts,tsx}',

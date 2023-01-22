@@ -1,28 +1,13 @@
 import { render } from '@testing-library/react';
 import { lazy } from 'react';
-import { addFill, resetFills } from '../locations';
+import { injectInto } from '../injections';
 import Slot from '../components/slot';
 
-describe( '@elementor/locations locations', () => {
-	beforeEach( () => {
-		resetFills();
-	} );
-
+describe( '@elementor/locations injections', () => {
 	it( 'should render components based on the location name', () => {
-		addFill( {
-			location: 'test',
-			component: () => <div data-testid="element">First div</div>,
-		} );
-
-		addFill( {
-			location: 'test',
-			component: () => <div data-testid="element">Second div</div>,
-		} );
-
-		addFill( {
-			location: 'test2',
-			component: () => <div data-testid="element">Should not exists</div>,
-		} );
+		injectInto( 'test', () => <div data-testid="element">First div</div> );
+		injectInto( 'test', () => <div data-testid="element">Second div</div> );
+		injectInto( 'test2', () => <div data-testid="element">Should not exists</div> );
 
 		const { getAllByTestId } = render( <Slot location="test" /> );
 
@@ -34,22 +19,9 @@ describe( '@elementor/locations locations', () => {
 	} );
 
 	it( 'should render components based on priority', () => {
-		addFill( {
-			location: 'test',
-			component: () => <div data-testid="element">Third div</div>,
-		} );
-
-		addFill( {
-			location: 'test',
-			component: () => <div data-testid="element">First div</div>,
-			priority: 5,
-		} );
-
-		addFill( {
-			location: 'test',
-			component: () => <div data-testid="element">Second div</div>,
-			priority: 5,
-		} );
+		injectInto( 'test', () => <div data-testid="element">Third div</div> );
+		injectInto( 'test', () => <div data-testid="element">First div</div>, { priority: 5 } );
+		injectInto( 'test', () => <div data-testid="element">Second div</div>, { priority: 5 } );
 
 		const { getAllByTestId } = render( <Slot location="test" /> );
 
@@ -68,17 +40,11 @@ describe( '@elementor/locations locations', () => {
 	} );
 
 	it( 'should render lazy components', async () => {
-		addFill( {
-			location: 'test',
-			component: () => <div>First div</div>,
-		} );
+		injectInto( 'test', () => <div>First div</div> );
 
-		addFill( {
-			location: 'test',
-			component: lazy( () => Promise.resolve( {
-				default: () => <div>Second div</div>,
-			} ) ),
-		} );
+		injectInto( 'test', lazy( () => Promise.resolve( {
+			default: () => <div>Second div</div>,
+		} ) ) );
 
 		const { queryByText, findByText } = render( <Slot location="test" /> );
 

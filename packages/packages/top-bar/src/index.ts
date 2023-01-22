@@ -1,4 +1,6 @@
-import { addToTop } from '@elementor/editor';
+import { injectIntoTopLocation } from '@elementor/editor';
 import TopBar from './components/top-bar';
 
-addToTop( { component: TopBar } );
+import './try';
+
+injectIntoTopLocation( TopBar );
