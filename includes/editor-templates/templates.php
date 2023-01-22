@@ -171,7 +171,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon-preview-medium" aria-hidden="true"></i>
 			<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Preview', 'elementor' ); ?></span>
 		</div>
-		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-btn-primary e-btn-txt">
+		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary e-btn-txt">
 			<i class="eicon-file-download" aria-hidden="true"></i>
 			<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 		</button>
@@ -195,7 +195,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
-	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-btn-primary">
+	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
 		<i class="eicon-file-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 	</a>

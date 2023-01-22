@@ -761,34 +761,28 @@ html.elementor-html {
 	text-align: center;
 	margin: 20px;
 	padding: 40px 0;
+	display: flex;
+	justify-content: center;
 	flex-grow: 1;
 }
 
 .elementor-add-new-section {
-	display: inline-block; // For smooth dragging above
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 5px;
 
 	.elementor-add-section-area-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
+		padding: 12px;
 		height: 40px;
 		width: 40px;
-		font-size: 16px;
 		border-radius: 50%;
+		font-size: 16px;
+		display: flex;
 
 		i {
 			margin: 0;
 		}
-	}
-
-	.elementor-add-section-button {
-		background-color: $editor-accent;
-		margin-inline-start: 5px;
-	}
-
-	.elementor-add-template-button {
-		background-color: $editor-dark;
-		@include margin-start(5px);
 	}
 }
 
@@ -799,7 +793,8 @@ html.elementor-html {
 	font-style: italic;
 	line-height: 1;
 	color: $editor-darker;
-	margin-top: 15px;
+	margin-top: 10px;
+	width: 100%;
 }
 
 .elementor-add-section-close {

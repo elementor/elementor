@@ -63,7 +63,7 @@
 			@extend .elementor-button;
 
 			&.dialog-ok {
-				@extend .e-btn-primary;
+				@extend .e-primary;
 			}
 
 			&.dialog-cancel {
@@ -71,7 +71,7 @@
 			}
 
 			&.dialog-take_over {
-				@extend .e-btn-primary;
+				@extend .e-primary;
 			}
 		}
 	}

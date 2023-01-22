@@ -2,7 +2,8 @@
 // Buttons
 //
 
-.elementor-button {
+.elementor-button,
+.e-btn {
 	font-size: 12px;
 	font-family: $admin-font-family;
 	font-weight: 500;
@@ -55,7 +56,8 @@
 		}
 	}
 
-	&.elementor-button-success {
+	&.elementor-button-success,
+	&.e-success {
 		background-color: $e-btn-primary;
 
 		&:hover {
@@ -63,7 +65,7 @@
 		}
 	}
 
-	&.e-btn-primary {
+	&.e-primary {
 		background-color: $e-btn-primary;
 
 		&:hover {
@@ -80,7 +82,7 @@
 		}
 	}
 
-	&.e-btn-brand {
+	&.e-brand {
 		background-color: $e-btn-brand;
 
 		&:hover {
@@ -88,7 +90,8 @@
 		}
 	}
 
-	&.elementor-button-warning {
+	&.elementor-button-warning,
+	&.e-warning{
 		background-color: $e-btn-danger;
 
 		&:hover {
@@ -96,7 +99,8 @@
 		}
 	}
 
-	&.elementor-button-danger {
+	&.elementor-button-danger,
+	&.e-danger {
 		background-color: $e-btn-danger;
 
 		&:hover {
