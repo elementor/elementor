@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { AppBar as BaseAppBar, Box, styled, Grid } from '@elementor/ui';
-import LocationMainMenu from './locations/location-main-menu';
-import LocationToolsMenu from './locations/location-tools-menu';
-import LocationCanvasView from './locations/location-canvas-view';
+import MainMenuLocation from './locations/main-menu-location';
+import ToolsMenuLocation from './locations/tools-menu-location';
+import LocationCanvasView from './locations/canvas-view-location';
+import UtilitiesMenuLocation from './locations/utilities-menu-location';
+import PrimaryActionLocation from './locations/primary-action-location';
 
 const AppBar = styled( BaseAppBar )`
 	background-color: #232629;
@@ -15,13 +17,16 @@ export default function TopBar() {
 		<AppBar position="sticky">
 			<Box display="grid" gridTemplateColumns="repeat(3, 1fr)">
 				<Grid container>
-					<LocationMainMenu />
-					<LocationToolsMenu />
+					<MainMenuLocation />
+					<ToolsMenuLocation />
 				</Grid>
 				<Grid container justifyContent="center">
 					<LocationCanvasView />
 				</Grid>
-				<Grid container justifyContent="end" />
+				<Grid container justifyContent="end">
+					<UtilitiesMenuLocation />
+					<PrimaryActionLocation />
+				</Grid>
 			</Box>
 		</AppBar>
 	);

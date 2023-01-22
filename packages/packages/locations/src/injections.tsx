@@ -15,7 +15,7 @@ export function injectInto(
 		id,
 		location,
 		filler: wrapFiller( filler ),
-		priority: options?.priority || 10,
+		priority: options?.priority || 100,
 	};
 
 	injections.set( id, injection );

@@ -2,10 +2,10 @@ import { __ } from '@wordpress/i18n';
 import { IconButton, usePopupState, bindMenu, bindTrigger, Box } from '@elementor/ui';
 import { Slot } from '@elementor/locations';
 import { LOCATION_MAIN_MENU } from '../../locations';
-import PopoverMenu from '../popover-menu';
-import ElementorLogo from '../elementor-logo';
+import PopoverMenu from '../misc/popover-menu';
+import ElementorLogo from '../misc/elementor-logo';
 
-export default function LocationMainMenu() {
+export default function MainMenuLocation() {
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'elementor-v2-top-bar-main-menu',

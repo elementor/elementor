@@ -10,13 +10,16 @@ const Button = styled( ToggleButton )( () => ( {
 	display: 'flex',
 	alignItems: 'center',
 	border: 0,
+	boxShadow: 'none',
 
 	[ [
-		`$.${ toggleButtonClasses.selected }`,
+		`&.${ toggleButtonClasses.selected }`,
+		`&.${ toggleButtonClasses.selected }:hover`,
 		'&:hover',
 		'&:active',
 	].join( ', ' ) ]: {
 		border: 0,
+		boxShadow: 'none',
 		backgroundColor: 'rgba(255, 255, 255, 0.1)',
 	},
 

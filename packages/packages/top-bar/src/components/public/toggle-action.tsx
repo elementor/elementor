@@ -1,7 +1,7 @@
 import { SvgIcon } from '@elementor/ui';
 import { useMenuContext } from '../../contexts/menu-context';
-import PopoverMenuItem from '../popover-menu-item';
-import HorizontalMenuToggleItem from '../horizontal-menu-toggle-item';
+import PopoverMenuItem from '../misc/popover-menu-item';
+import HorizontalMenuToggleItem from '../misc/horizontal-menu-toggle-item';
 
 type Props = {
     title: string;

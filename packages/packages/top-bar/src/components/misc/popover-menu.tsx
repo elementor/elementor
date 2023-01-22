@@ -1,15 +1,12 @@
 import { Menu, styled, MenuProps, paperClasses, menuClasses } from '@elementor/ui';
-import { MenuContextProvider } from '../contexts/menu-context';
+import { MenuContextProvider } from '../../contexts/menu-context';
 
 type ExtraProps = {
 	spacing?: string | number;
 }
 
 const StyledMenu = styled( ( props: MenuProps ) => (
-	<Menu
-		elevation={ 0 }
-		{ ...props }
-	/>
+	<Menu elevation={ 0 } { ...props } />
 ), {
 	shouldForwardProp: ( prop ) => 'spacing' !== prop,
 } )<ExtraProps>( ( { spacing = '13px' } ) => ( {

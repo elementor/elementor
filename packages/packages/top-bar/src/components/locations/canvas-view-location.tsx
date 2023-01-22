@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { useInjectionsAt } from '@elementor/locations';
 import { LOCATION_CANVAS_VIEW } from '../../locations';
-import HorizontalMenu from '../horizontal-menu';
+import HorizontalMenu from '../misc/horizontal-menu';
 import Divider from '../public/divider';
 
 export default function LocationCanvasView() {
@@ -13,7 +13,7 @@ export default function LocationCanvasView() {
 				( { filler: Filler, id }, index ) => (
 					<Fragment key={ id }>
 						{ index === 0 && <Divider /> }
-						<Filler key={ id } />
+						<Filler />
 						<Divider />
 					</Fragment>
 				)
