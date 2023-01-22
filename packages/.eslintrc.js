@@ -7,12 +7,12 @@ module.exports = {
 	extends: [
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
 		'plugin:@typescript-eslint/eslint-recommended',
+		'plugin:import/typescript',
 	],
 	settings: {
 		'import/resolver': {
-			node: {
-				extensions: [ '.js', '.jsx', '.ts', '.tsx' ],
-			},
+			typescript: {},
+			node: {},
 		},
 	},
 	rules: {
@@ -27,10 +27,6 @@ module.exports = {
 			},
 		],
 
-		// Disable conflicting rules, TS will handle it.
-		'import/named': [ 'off' ],
-		'import/no-unresolved': [ 'off' ],
-
 		// Disable the js no-unused-vars rule, and enable the TS version.
 		'no-unused-vars': [ 'off' ],
 		'@typescript-eslint/no-unused-vars': [ 'error' ],
@@ -42,7 +38,7 @@ module.exports = {
 				'**/@(__mocks__|__tests__|test)/**/*.[tj]s?(x)',
 			],
 			rules: {
-				// In tests, we are importing dev dependencies of the workspace, so we need to disable this rule.
+				// In tests, we are importing dev dependencies of the root directory, so we need to disable this rule.
 				'import/no-extraneous-dependencies': [ 'off' ],
 			},
 		},
