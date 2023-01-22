@@ -5,7 +5,7 @@
 
 .elementor-panel-category {
 	position: relative;
-	border-bottom: $e-border;
+	border-bottom: var(--e-admin-border);
 
 	.elementor-panel-heading {
 		padding: 0 15px;

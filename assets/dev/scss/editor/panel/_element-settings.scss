@@ -6,7 +6,7 @@
 	display: table;
 	table-layout: fixed;
 	width: 100%;
-	border-bottom: $e-border;
+	border-bottom: var(--e-admin-border);
 
 	.elementor-panel-navigation-tab {
 		display: table-cell;

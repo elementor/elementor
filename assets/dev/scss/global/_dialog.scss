@@ -54,7 +54,7 @@
 	}
 
 	.dialog-buttons-wrapper {
-		border-top: $e-border;
+		border-top: var(--e-admin-border);
 		padding: 10px;
 		display: flex;
 		justify-content: space-between;

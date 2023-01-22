@@ -2,10 +2,7 @@
 // Variables
 //
 
-$white:         #ffffff;
-$black:         #000000;
-
-// Editor Facelift 2023 - Grays
+//Editor Facelift 2023 - Grays
 $e-gray-0:		#FFFFFF;
 $e-gray-25:		#F9FAFA;
 $e-gray-50:		#F1F2F3;
@@ -23,31 +20,50 @@ $e-purple:		#524CFF;
 $e-purple-tint:	#6661FF;
 $e-purple-shade:#EBEBFF;
 
-// Editor Facelift 2023 - Semantic
+//Semantic Colors help with backwards compatible
+$white:         #ffffff;
+$black:         #000000;
+
 $e-primary:		$e-purple;
-$e-primary-bg:	$e-purple-shade;
 $e-secondary: 	$e-gray-600;
-$e-secondary-bg:$e-gray-600;
 $e-success:		#16883C;
-$e-success-bg:	#F2FDF5;
 $e-danger:		#DD132F;
-$e-danger-bg:	#FEF1F4;
 $e-info: 		#0077CC;
-$e-info-bg: 	#F0F7FF;
 $e-warning: 	#FCB92C;
-$e-warning-bg: 	#FFF9F0;
 $e-brand: 		#0600A8;
 
-$e-txt-color:		$e-gray-600;
-$e-txt-color-hover:	$e-gray-700;
-$e-txt-color-active:$e-gray-900;
-$e-bg-color-hover:	$e-gray-25;
-$e-bg-color-active: $e-gray-50;
-$e-border-color: 	$e-gray-100;
-$e-border-color-active: $e-gray-900;
-$e-border: 1px solid $e-border-color;
+//Remove
+//$e-primary-bg:	$e-purple-shade;
+//$e-secondary-bg:$e-gray-600;
+//$e-txt-color:		$e-gray-600;
+//$e-txt-color-hover:	$e-gray-700;
+//$e-txt-color-active:$e-gray-900;
+//$e-bg-color-hover:	$e-gray-25;
+//$e-bg-color-active: $e-gray-50;
+//$e-border-color: 	$e-gray-100;
+//$e-border-color-active: $e-gray-900;
+//$e-border: 1px solid var(--e-admin-border-color);
+//$e-btn-bg:				$e-gray-600;
+//$e-btn-color:			$white;
+//$e-btn-bg-hover:		darken($e-btn-bg, 10%);
+//$e-btn-bg-active:		darken($e-btn-bg, 20%);
+//$e-btn-bg-disabled:		$e-gray-100;
+//$e-btn-color-disabled:	$e-gray-300;
+//$e-btn-bg-primary:			$e-primary;
+//$e-btn-bg-primary-hover:	darken($e-btn-bg-primary, 10%);
+//$e-btn-bg-primary-active:	darken($e-btn-bg-primary, 20%);
+//$e-btn-bg-brand:			$e-brand;
+//$e-btn-bg-brand-hover:		darken($e-btn-bg-brand, 10%);
+//$e-btn-bg-brand-active:		darken($e-btn-bg-brand, 20%);
+//$e-btn-bg-danger:			$e-danger;
+//$e-btn-bg-danger-hover:		darken($e-btn-bg-danger, 10%);
+//$e-btn-bg-danger-active:	darken($e-btn-bg-danger, 20%);
 
 // Editor Facelift 2023 - Aliases
+$e-success-bg:	#F2FDF5;
+$e-danger-bg:	#FEF1F4;
+$e-info-bg: 	#F0F7FF;
+$e-warning-bg: 	#FFF9F0;
 $editor-danger: $e-danger;
 $editor-warning: $e-warning;
 $editor-success: $e-success;
@@ -62,24 +78,6 @@ $editor-alert-info-bg: $e-info-bg;
 $editor-alert-success-bg: $e-success-bg;
 
 $e-global:		$e-purple;
-
-//Buttons
-$e-btn:			$e-gray-600;
-$e-btn-hover:	darken($e-btn, 10%);
-$e-btn-active:	darken($e-btn, 20%);
-$e-btn-disabled:$e-gray-100;
-
-$e-btn-primary:			$e-primary;
-$e-btn-primary-hover:	darken($e-btn-primary, 10%);
-$e-btn-primary-active:	darken($e-btn-primary, 20%);
-
-$e-btn-brand:		$e-brand;
-$e-btn-brand-hover:	darken($e-btn-brand, 10%);
-$e-btn-brand-active:darken($e-btn-brand, 20%);
-
-$e-btn-danger:			$e-danger;
-$e-btn-danger-hover:	darken($e-btn-danger, 10%);
-$e-btn-danger-active:	darken($e-btn-danger, 20%);
 
 // Primary Colors
 $gray-darkest:  $e-gray-900;

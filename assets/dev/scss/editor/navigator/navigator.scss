@@ -228,9 +228,9 @@ body {
 
 				&[contenteditable="true"] {
 					outline: none;
-					background-color: #fff;
+					background-color: var(--e-admin-color-white);
 					padding: 3px;
-					border: $e-border;
+					border: var(--e-admin-border);
 				}
 
 				&:not([contenteditable="true"]) {

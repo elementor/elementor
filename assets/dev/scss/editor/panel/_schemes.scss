@@ -15,7 +15,7 @@
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
-	border-bottom: $e-border;
+	border-bottom: var(--e-admin-border);
 }
 
 .elementor-panel-scheme-button-wrapper {

@@ -537,11 +537,11 @@ html.elementor-html {
 .elementor-sortable-helper {
 	position: absolute;
 	cursor: move;
-	border: $e-border;
+	border: var(--e-admin-border);
 	border-radius: 3px;
-	background-color: $e-bg-color-active;
-	border-color: $e-border-color-active;
-	color: $e-txt-color-active;
+	background-color: var(--e-admin-bg-active);
+	border-color: var(--e-admin-border-active);
+	color: var(--e-admin-color-active);
 	text-align: center;
 
 	.icon {

@@ -17,13 +17,13 @@
 	.dialog {
 
 		&-header {
-			border-bottom: $e-border;
+			border-bottom: var(--e-admin-border);
 			padding: 0;
 			z-index: 1;
 		}
 
 		&-buttons-wrapper {
-			border-top-color: $e-border-color;
+			border-top-color: var(--e-admin-border-color);
 			display: none;
 			justify-content: flex-end;
 			padding: 5px;
@@ -136,7 +136,7 @@
 					@include border-start(1px solid);
 
 					&:not(:hover) { // Overwrite the default
-						color: #fff;
+						color: var(--e-admin-color-white);
 					}
 				}
 			}
@@ -146,7 +146,7 @@
 	&__sidebar {
 		flex-shrink: 0;
 		width: 25%;
-		border-inline-end: $e-border;
+		border-inline-end: var(--e-admin-border);
 	}
 
 	&__content {

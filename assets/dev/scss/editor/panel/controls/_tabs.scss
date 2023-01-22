@@ -12,13 +12,13 @@
 	width: 100%;
 	padding: 0;
 	line-height: $control-unit - 2;
-	border-top: $e-border;
-	border-bottom: $e-border;
-	@include border-end($e-border);
+	border-top: var(--e-admin-border);
+	border-bottom: var(--e-admin-border);
+	@include border-end(var(--e-admin-border));
 	cursor: pointer;
 
 	&:first-child {
-		@include border-start($e-border);
+		@include border-start(var(--e-admin-border));
 		@include _dimension_side_property(border-top, start, radius, 3px);
 		@include _dimension_side_property(border-bottom, start, radius, 3px);
 	}
@@ -29,8 +29,8 @@
 	}
 
 	&.e-tab-active {
-		background-color: $e-gray-100;
-		border-color: $e-border-color;
+		background-color: var(--e-admin-bg-active);;
+		border-color: var(--e-admin-border-color);
 	}
 }
 

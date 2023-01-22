@@ -17,7 +17,7 @@
 	}
 
 	&-items {
-		border: $e-border;
+		border: var(--e-admin-border);
 		margin: 15px 0 25px;
 		border-radius: 5px;
 		overflow: hidden;
@@ -32,7 +32,7 @@
 		cursor: pointer;
 
 		&:not(:last-child) {
-			border-bottom: $e-border;
+			border-bottom: var(--e-admin-border);
 		}
 
 		&:hover {

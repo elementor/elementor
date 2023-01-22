@@ -13,17 +13,17 @@
 	outline: none;
 	border: none;
 	border-radius: 3px;
-	background-color: $e-btn;
-	color: $white;
+	background-color: var(--e-admin-btn-bg);
+	color: var(--e-admin-btn-color);
 	transition: $transition-hover;
 
 	&:hover {
-		background-color: $e-btn-hover;
-		color: $white;
+		background-color: var(--e-admin-btn-bg-hover);
+		color: var(--e-admin-btn-color);
 	}
 
 	&:active {
-		background-color: $e-btn-active;
+		background-color: var(--e-admin-btn-bg-active);
 	}
 
 	&:not([disabled]) {
@@ -31,8 +31,8 @@
 	}
 
 	&:disabled {
-		background-color: $e-btn-disabled;
-		color: $e-gray-300;
+		background-color: var(--e-admin-btn-bg-disabled);
+		color: var(--e-admin-btn-color-disabled);
 	}
 
 	&:not(.elementor-button-state) {
@@ -44,79 +44,79 @@
 
 	&.e-btn-txt {
 		background: transparent;
-		color: $e-gray-600;
+		color: var(--e-admin-color-txt);
 
 		&:hover {
-			background: $e-gray-50;
+			background: var(--e-admin-bg-hover);
 		}
 
 		&:disabled {
 			background: transparent;
-			color: $e-gray-300;
+			color: var(--e-admin-color-txt-disabled);
 		}
 	}
 
 	&.elementor-button-success,
 	&.e-success {
-		background-color: $e-btn-primary;
+		background-color: var(--e-admin-btn-bg-success);
 
 		&:hover {
-			background-color: $e-btn-primary-hover;
+			background-color: var(--e-admin-btn-bg-success-hover);
 		}
 	}
 
 	&.e-primary {
-		background-color: $e-btn-primary;
+		background-color: var(--e-admin-btn-bg-primary);
 
 		&:hover {
-			background-color: $e-btn-primary-hover;
+			background-color: var(--e-admin-btn-bg-primary-hover);
 		}
 
 		&.e-btn-txt {
 			background: transparent;
-			color: $e-btn-primary;
+			color: var(--e-admin-color-primary);
 
 			&:hover {
-				background: $e-primary-bg;
+				background:var(--e-admin-bg-primary);
 			}
 		}
 	}
 
 	&.e-brand {
-		background-color: $e-btn-brand;
+		background-color: var(--e-admin-btn-bg-brand);
 
 		&:hover {
-			background-color: $e-btn-brand-hover;
+			background-color: var(--e-admin-btn-bg-brand-hover);
 		}
 	}
 
 	&.elementor-button-warning,
 	&.e-warning{
-		background-color: $e-btn-danger;
+		background-color: var(--e-admin-btn-bg-warning);
 
 		&:hover {
-			background-color: $e-btn-danger-hover;
+			background-color: var(--e-admin-btn-bg-warning-hover);
 		}
 	}
 
 	&.elementor-button-danger,
 	&.e-danger {
-		background-color: $e-btn-danger;
+		background-color: var(--e-admin-btn-bg-danger);
 
 		&:hover {
-			background-color: $e-btn-danger-hover;
+			background-color: var(--e-admin-btn-bg-danger-hover);
 		}
 	}
 
 	&.go-pro {
-		background-color: $e-btn-brand;
+		background-color: var(--e-admin-btn-bg-brand);
 
 		&:hover {
-			background-color: $e-btn-brand-hover;
+			background-color: var(--e-admin-btn-bg-brand-hover);
 		}
 
 		&:active {
-			background-color: $e-btn-brand-active;
+			background-color: var(--e-admin-btn-bg-brand-active);
 		}
 	}
 
