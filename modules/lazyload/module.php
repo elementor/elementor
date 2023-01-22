@@ -165,9 +165,6 @@ class Module extends BaseModule {
 				return $control;
 			}
 
-			//css controls parent control object
-			$parent_control = $control['parent'];
-
 			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
 				return $control;
 			}
