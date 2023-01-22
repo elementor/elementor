@@ -84,11 +84,17 @@ class Module extends BaseModule {
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
-		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
+
+		// If the control is a repeater, we need to loop over the repeater fields options to get the background_lazyload property.
+		$is_background_lazyload = Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ?? Utils::get_array_value_by_keys( $control, [ 'fields_options', 'image', 'background_lazyload', 'active' ] );
+
+		if ( $is_background_lazyload ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
+
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
+						// Support for background repeaters, control is without quotes.
 						$css_property  = str_replace( 'url({{URL}})', 'var(--e-bg-lazyload-loaded)', $css_property );
 
 						$control['selectors'][ $selector ] = $css_property . ';--e-bg-lazyload: url("' . $value['url'] . '");';
@@ -159,6 +165,9 @@ class Module extends BaseModule {
 				return $control;
 			}
 
+			//css controls parent control object
+			$parent_control = $control['parent'];
+
 			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
 				return $control;
 			}
@@ -178,26 +187,30 @@ class Module extends BaseModule {
 		add_action( 'wp_footer', function() {
 			?>
 			<script type='text/javascript'>
+				const getReapetersBackgroundLazyload = ( lazyloadBackgrounds, reapterAttribute, dataAttribute) => {
+					const lazyloadRepeaterBackgrounds = document.querySelectorAll( `[${ reapterAttribute }]` );
+					const repeaterBackgrounds = [];
+
+					lazyloadRepeaterBackgrounds.forEach( ( repeater ) => {
+						const lazyloadSelector = repeater.getAttribute( dataAttribute );
+						if ( lazyloadSelector ) {
+							lazyloadBackground = repeater.querySelectorAll( lazyloadSelector );
+							if ( lazyloadBackground.length ) {
+								repeaterBackgrounds.push( ...lazyloadBackground );
+							}
+						}
+					} );
+					lazyloadBackgrounds = [ ...lazyloadBackgrounds, ...repeaterBackgrounds ];
+
+					return lazyloadBackgrounds;
+				};
+
 				const lazyloadRunObserver = () => {
 					const dataAttribute = 'data-e-bg-lazyload';
 					const reapterAttribute = 'data-e-bg-repeater';
 
 					let lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded, [${reapterAttribute}])` );
-					const lazyloadRepeaterBackgrounds = document.querySelectorAll( `[${ reapterAttribute }]` );
-					if ( lazyloadRepeaterBackgrounds.length ) {
-						const repeaterBackgrounds = [];
-						lazyloadRepeaterBackgrounds.forEach( ( repeater ) => {
-							const lazyloadSelector = repeater.getAttribute( dataAttribute );
-							if ( lazyloadSelector ) {
-								lazyloadBackground = repeater.querySelectorAll( lazyloadSelector );
-								if ( lazyloadBackground.length ) {
-									repeaterBackgrounds.push( ...lazyloadBackground );
-								}
-							}
-
-						} );
-						lazyloadBackgrounds = [ ...lazyloadBackgrounds, ...repeaterBackgrounds ];
-					}
+					lazyloadBackgrounds = getReapetersBackgroundLazyload( lazyloadBackgrounds, reapterAttribute, dataAttribute );
 
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
 					entries.forEach( ( entry ) => {
