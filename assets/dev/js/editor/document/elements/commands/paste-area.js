@@ -32,15 +32,21 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			.on( 'blur', () => {
 				_.defer( () => $inputArea.focus() );
 			} )
-			.on( 'paste', ( event ) => {
+			.on( 'paste', async ( event ) => {
 				event.preventDefault();
 
-				const retVal = $e.run( 'document/ui/paste', {
+				const $widgetContent = this.getDialog().getElements( 'widgetContent' );
+
+				$widgetContent.addClass( 'e-state-loading' );
+
+				const retVal = await $e.run( 'document/ui/paste', {
 					container: this.container,
 					storageType: 'rawdata',
 					data: event.originalEvent.clipboardData.getData( 'text' ),
 					options: this.options,
 				} );
+
+				$widgetContent.removeClass( 'e-state-loading' );
 
 				if ( retVal ) {
 					this.dialog.hide();
@@ -56,9 +62,14 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 		} )
 			.html( __( "Couldn't paste that into your site.<br>Make sure you've copied an element and try again.", 'elementor' ) );
 
+		const $loadingArea = jQuery( '<i>', {
+			class: 'eicon-loading eicon-animation-spin',
+		} );
+
 		$messageContainer
 			.append( $inputArea )
-			.append( $errorArea );
+			.append( $errorArea )
+			.append( $loadingArea );
 
 		const ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl';
 

@@ -24,7 +24,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		}
 	}
 
-	apply( args ) {
+	async apply( args ) {
 		const { at, rebuild = false, containers = [ args.container ], options = {} } = args,
 			storageData = this.getStorageData( args );
 
@@ -32,7 +32,22 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 			return false;
 		}
 
-		const storageDataElements = storageData.elements;
+		let storageDataElements = storageData.elements;
+
+		if ( storageData.siteurl !== elementorCommon.config.urls.rest ) {
+			try {
+				storageDataElements = await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'import_from_json', {
+						data: {
+							elements: JSON.stringify( storageDataElements ),
+						},
+						success: resolve,
+						error: reject,
+					}
+				) );
+			} catch ( e ) {
+				return false;
+			}
+		}
 
 		let result = [];
 

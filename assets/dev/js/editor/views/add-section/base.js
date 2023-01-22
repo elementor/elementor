@@ -31,7 +31,6 @@ import environment from 'elementor-common/utils/environment';
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
 			containerPresets: '.e-con-preset',
-			pasteArea: '.e-paste-area',
 		};
 	}
 
