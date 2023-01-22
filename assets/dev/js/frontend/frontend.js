@@ -13,6 +13,7 @@ import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+import Controls from './utils/controls';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
@@ -192,6 +193,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
 			events: Events,
+			controls: new Controls(),
 		};
 
 		// TODO: BC since 2.4.0
