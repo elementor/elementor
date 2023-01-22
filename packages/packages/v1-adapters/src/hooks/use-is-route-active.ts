@@ -11,10 +11,17 @@ export function useIsRouteActive( route: RouteEventDescriptor['name'] ): boolean
 	const [ isActive, setIsActive ] = useState( () => isRouteActive( route ) );
 
 	useEffect( () => {
-		return listenTo( [
+		const events = [
 			routeOpenEvent( route ),
 			routeCloseEvent( route ),
-		], () => setIsActive( isRouteActive( route ) ) );
+		];
+
+		const cleanup = listenTo(
+			events,
+			() => setIsActive( isRouteActive( route ) )
+		);
+
+		return cleanup;
 	}, [ route ] );
 
 	return isActive;
