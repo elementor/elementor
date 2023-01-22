@@ -203,7 +203,7 @@
 	height: 40px;
 	padding: 0 20px;
 	width: 100%;
-	border-bottom: var(--e-admin-border);
+	border-top: var(--e-admin-border);
 	cursor: pointer;
 
 	> * {
@@ -219,6 +219,16 @@
 	&-title {
 		color: $editor-darkest;
 		font-weight: bold;
+	}
+}
+
+#elementor-controls {
+
+	.elementor-control-type-section:first-child {
+
+		.elementor-panel-heading {
+			border-top: none;
+		}
 	}
 }
 

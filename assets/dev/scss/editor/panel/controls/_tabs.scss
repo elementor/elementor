@@ -15,6 +15,7 @@
 	border-top: var(--e-admin-border);
 	border-bottom: var(--e-admin-border);
 	@include border-end(var(--e-admin-border));
+	transition: $transition-hover;
 	cursor: pointer;
 
 	&:first-child {
@@ -28,9 +29,15 @@
 		@include _dimension_side_property(border-bottom, end, radius, 3px);
 	}
 
+	&:hover {
+		background-color: var(--e-admin-bg-hover);
+		color: var(--e-admin-color-txt-hover);
+	}
+
 	&.e-tab-active {
-		background-color: var(--e-admin-bg-active);;
+		background-color: var(--e-admin-bg-active);
 		border-color: var(--e-admin-border-color);
+		color: var(--e-admin-color-txt-active);
 	}
 }
 

@@ -3,24 +3,38 @@
 //
 
 .elementor-panel-navigation {
-	display: table;
-	table-layout: fixed;
+	display: flex;
 	width: 100%;
 	border-bottom: var(--e-admin-border);
 
 	.elementor-panel-navigation-tab {
-		display: table-cell;
+		flex: auto;
+		transition: $transition-hover;
+
+		&:hover {
+			background-color: var(--e-admin-bg-hover);
+			color: var(--e-admin-color-txt-hover);
+
+			a {
+				color: var(--e-admin-color-txt-hover);
+			}
+		}
 
 		&.elementor-active {
-			border-bottom: 3px solid $e-gray-900;
+			border-bottom: 3px solid var(--e-admin-border-color-active);
+			color: var(--e-admin-color-txt-active);
+
+			a {
+				color: var(--e-admin-color-txt-active);
+			}
 		}
 
 		a {
+			color: inherit;
 			display: block;
 			text-align: center;
 			padding: 12px 0 8px;
 			font-size: 10px;
-			color: $editor-dark;
 
 			&:before {
 				font-family: eicons;
