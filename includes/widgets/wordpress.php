@@ -45,7 +45,7 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	public function hide_on_search() {
-		return Plugin::$instance->experiments->is_feature_active( 'e_hidden_wordpress_widgets' );
+		return true;
 	}
 
 	/**
