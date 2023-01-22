@@ -279,7 +279,7 @@ class Module extends BaseModule {
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
-			$this->import->init_import_session();
+			$this->import->init_import_session( true );
 
 			return [
 				'session' => $this->import->get_session_id(),
