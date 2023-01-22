@@ -102,7 +102,7 @@ export default class Scrubbing extends Marionette.Behavior {
 			? modifier()
 			: modifier;
 
-		return +value + movementX * modifierValue;
+		return +value + ( movementX * modifierValue );
 	}
 
 	isInputValidForScrubbing( input ) {
