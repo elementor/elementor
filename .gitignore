@@ -11,6 +11,7 @@ tmp/
 build/
 assets/css/
 assets/js/
+assets/lib/swiper/css/swiper*.css
 *.log
 *.map
 
