@@ -6,3 +6,4 @@ export default function PrimaryActionLocation() {
 		<Slot location={ LOCATION_PRIMARY_ACTION } ></Slot>
 	);
 }
+

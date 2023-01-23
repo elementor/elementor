@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { SvgIcon } from '@elementor/ui';
 import {
 	injectIntoMainMenu,
 	injectIntoToolsMenu,
@@ -8,6 +7,7 @@ import {
 	TopBarDivider,
 	TopBarToggleAction,
 } from '@elementor/top-bar';
+import { SvgIcon } from '@elementor/ui';
 
 const ExampleLink = () => {
 	return (

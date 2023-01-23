@@ -1,4 +1,4 @@
-import { Tooltip as BaseTooltip, styled, tooltipClasses, TooltipProps } from '@elementor/ui';
+import { styled, Tooltip as BaseTooltip, tooltipClasses, TooltipProps } from '@elementor/ui';
 
 const StyledTooltip = styled( ( { className, children, ...props }: TooltipProps ) => (
 	<BaseTooltip { ...props } arrow classes={ { popper: className } }>{ children }</BaseTooltip>
