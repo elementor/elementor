@@ -1,6 +1,5 @@
 // Alphabetical order.
 
-export { Copy } from './copy.spec';
 export { CopyAll } from './copy-all.spec';
 export { Create } from './create.spec';
 export { Delete } from './delete.spec';
