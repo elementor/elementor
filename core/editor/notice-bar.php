@@ -72,11 +72,11 @@ class Notice_Bar extends Base_Object {
 		}
 
 		?>
-		<div class="e-notice-bar__message <?php echo esc_attr( "e-notice-bar__${type}_message" ); ?>">
+		<div class="e-notice-bar__message <?php echo esc_attr( "e-notice-bar__{$type}_message" ); ?>">
 			<?php Utils::print_unescaped_internal_string( sprintf( $settings[ $action_message ], $settings[ $action_url ] ) ); ?>
 		</div>
 
-		<div class="e-notice-bar__action <?php echo esc_attr( "e-notice-bar__${type}_action" ); ?>">
+		<div class="e-notice-bar__action <?php echo esc_attr( "e-notice-bar__{$type}_action" ); ?>">
 			<a href="<?php Utils::print_unescaped_internal_string( $settings[ $action_url ] ); ?>"
 				target="<?php echo empty( $settings[ $action_target ] ) ? '_blank' : esc_attr( $settings[ $action_target ] ); ?>"
 			>
