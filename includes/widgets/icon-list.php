@@ -518,6 +518,33 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'icon_vertical_offset',
+			[
+				'label' => esc_html__( 'Adjust Vertical Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em' ],
+				'default' => [
+					'unit' => 'px',
+					'size' => 0,
+				],
+				'range' => [
+					'px' => [
+						'min' => -12,
+						'max' => 12,
+					],
+					'em' => [
+						'min' => -1,
+						'max' => 1,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon' => 'top: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
