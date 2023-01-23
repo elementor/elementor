@@ -235,7 +235,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Horizontal Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -459,7 +459,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_self_align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Horizontal Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -483,6 +483,37 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_self_vertical_align',
+			[
+				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'top' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'middle' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'bottom' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'default' => '',
+				'selectors_dictionary' => [
+					'top' => 'flex-start',
+					'middle' => 'center',
+					'bottom' => 'flex-end',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item' => 'align-items: {{VALUE}};',
 				],
 			]
 		);
