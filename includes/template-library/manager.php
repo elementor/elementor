@@ -521,6 +521,25 @@ class Manager {
 		return $source->mark_as_favorite( $args['template_id'], filter_var( $args['favorite'], FILTER_VALIDATE_BOOLEAN ) );
 	}
 
+	public function import_from_json( array $args ) {
+		$validate_args = $this->ensure_args( [ 'editor_post_id', 'elements' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$elements = json_decode( $args['elements'], true );
+
+		$document = Plugin::$instance->documents->get( $args['editor_post_id'] );
+		if ( ! $document ) {
+			return new \WP_Error( 'template_error', 'Document not found.' );
+		}
+
+		$import_data = $document->get_import_data( [ 'content' => $elements ] );
+
+		return $import_data['content'];
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -602,6 +621,7 @@ class Manager {
 			'delete_template',
 			'import_template',
 			'mark_template_as_favorite',
+			'import_from_json',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
