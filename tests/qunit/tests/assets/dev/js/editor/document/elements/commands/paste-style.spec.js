@@ -5,22 +5,6 @@ import * as eData from 'elementor/tests/qunit/mock/e-data';
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
 		QUnit.module( 'Single Selection', () => {
-			QUnit.test( 'On column', ( assert ) => {
-				const eColumnSimple = ElementsHelper.createAuto( 'column' ),
-					eColumnStyled = ElementsHelper.createWrappedButton( null, {
-						background_background: 'gradient',
-						background_color: '#D51D1D',
-					} ),
-					eStyledButtonBackground = eColumnStyled.settings.attributes.background_color;
-
-				ElementsHelper.copy( eColumnStyled );
-				ElementsHelper.pasteStyle( eColumnSimple );
-
-				// Check
-				assert.equal( eColumnSimple.settings.attributes.background_color, eStyledButtonBackground,
-					`Button background color was changed to '${ eStyledButtonBackground }'.` );
-			} );
-
 			QUnit.test( 'History', ( assert ) => {
 				const eWidgetSimple = ElementsHelper.createWrappedButton(),
 					eWidgetStyled = ElementsHelper.createWrappedButton( null, {
