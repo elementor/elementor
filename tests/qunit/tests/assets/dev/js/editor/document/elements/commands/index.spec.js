@@ -8,7 +8,6 @@ export { Empty } from './empty.spec';
 export { Import } from './import.spec';
 export { Move } from './move.spec';
 export { Paste } from './paste.spec';
-export { PasteStyle } from './paste-style.spec';
 export { ResetStyle } from './reset-style.spec';
 export { ResetSettings } from './reset-settings.spec';
 export { Settings } from './settings.spec';
