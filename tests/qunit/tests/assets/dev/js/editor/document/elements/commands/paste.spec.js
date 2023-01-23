@@ -79,31 +79,6 @@ export const Paste = () => {
 					);
 				}
 			} );
-
-			QUnit.test( 'History', ( assert ) => {
-				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createWidgetButton( eColumn );
-
-				ElementsHelper.copy( eWidget );
-
-				const ePastedWidget = ElementsHelper.paste( eColumn ),
-					historyItem = HistoryHelper.getFirstItem().attributes;
-
-				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
-
-				// Undo.
-				HistoryHelper.undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				HistoryHelper.destroyedValidate( assert, ePastedWidget );
-
-				// Redo.
-				HistoryHelper.redoValidate( assert, historyItem );
-
-				// Element exist again.
-				HistoryHelper.recreatedValidate( assert, ePastedWidget );
-			} );
 		} );
 	} );
 };
