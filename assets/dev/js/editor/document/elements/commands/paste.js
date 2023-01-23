@@ -42,7 +42,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						},
 						success: resolve,
 						error: reject,
-					}
+					},
 				) );
 			} catch ( e ) {
 				return false;

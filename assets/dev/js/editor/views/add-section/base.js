@@ -1,7 +1,6 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import environment from 'elementor-common/utils/environment';
 
-
 /**
  * @typedef {import('../../container/container')} Container
  */
@@ -43,7 +42,6 @@ import environment from 'elementor-common/utils/environment';
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 		};
 	}
-
 	behaviors() {
 		return {
 			contextMenu: {
