@@ -77,8 +77,8 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		// Arrange.
 		let route = 'active/route';
 
-		mockedIsRouteActive.mockImplementation( ( route ) => {
-			return 'active/route' === route;
+		mockedIsRouteActive.mockImplementation( ( r ) => {
+			return 'active/route' === r;
 		} );
 
 		// Act.
