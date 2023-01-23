@@ -134,7 +134,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups() {
-		const controlSign = environment.mac ? '⌘' : '^';
+		const controlSign = environment.mac ? '&#8984;' : '^';
 
 		let groups = [
 			{
@@ -168,7 +168,9 @@ BaseElementView = BaseContainer.extend( {
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
 						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
-						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/copy', {
+							containers: elementor.selection.getElements( this.getContainer() ),
+						} ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
@@ -180,14 +182,23 @@ BaseElementView = BaseContainer.extend( {
 						} ),
 					}, {
 						name: 'pasteStyle',
-						title: __( 'Paste Style', 'elementor' ),
+						title: __( 'Paste style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
+						name: 'pasteArea',
+						icon: 'eicon-import-export',
+						title: __( 'Paste from other site', 'elementor' ),
+						callback: () => $e.run( 'document/elements/paste-area', {
+							container: this.getContainer(),
+						} ),
+					}, {
 						name: 'resetStyle',
-						title: __( 'Reset Style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						title: __( 'Reset style', 'elementor' ),
+						callback: () => $e.run( 'document/elements/reset-style', {
+							containers: elementor.selection.getElements( this.getContainer() ),
+						} ),
 					},
 				],
 			},
