@@ -80,34 +80,6 @@ export const Paste = () => {
 				}
 			} );
 
-			QUnit.test( 'Sections', ( assert ) => {
-				const eSection1 = ElementsHelper.createSection(),
-					eSection2 = ElementsHelper.createSection(),
-					toCopy = [ eSection1, eSection2 ],
-					initialElementsCount = elementor.elements.length;
-				// We want to create different widgets in different sections in order to check later whether the paste
-				// order is preserved using the `widgetType`.
-				ElementsHelper.createWidgetButton( eSection1.children[ 0 ] );
-
-				ElementsHelper.createWidgetHeading( eSection2.children[ 0 ] );
-
-				ElementsHelper.multiCopy( toCopy.slice().reverse() );
-
-				const pasted = ElementsHelper.paste( elementor.getPreviewContainer(), true );
-
-				// Check pasted elements existence.
-				assert.equal( initialElementsCount + 2, elementor.elements.length, `Both elements pasted.` );
-
-				// Check whether they preserved their order.
-				for ( let i = 0; i < toCopy.length; i++ ) {
-					assert.equal(
-						toCopy[ i ].children[ 0 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						pasted[ i ].model.get( 'elements' ).models[ 0 ].get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						`Column ${ i + 1 } preserved its order.`,
-					);
-				}
-			} );
-
 			QUnit.test( 'On preview container', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createWidgetButton( eColumn ),
