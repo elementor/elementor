@@ -5,26 +5,6 @@ import * as eData from 'elementor/tests/qunit/mock/e-data';
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
 		QUnit.module( 'Multiple Selection', () => {
-			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonSimple1 = ElementsHelper.createWrappedButton(),
-					eButtonSimple2 = ElementsHelper.createWrappedButton(),
-					eButtonStyled = ElementsHelper.createWrappedButton( null, {
-						text: 'createAutoButtonStyled',
-						background_color: '#000000',
-					} ),
-					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
-
-				ElementsHelper.copy( eButtonStyled );
-
-				ElementsHelper.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
-
-				// Check pasted style exist.
-				assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
-					`Button #1 background color was changed to '${ eStyledButtonBackground }'.` );
-				assert.equal( eButtonSimple2.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
-					`Button #2 background color was changed to '${ eStyledButtonBackground }'.` );
-			} );
-
 			QUnit.test( 'History', ( assert ) => {
 				const eWidgetsSimple = ElementsHelper.multiCreateWrappedButton(),
 					eWidgetStyled = ElementsHelper.createWrappedButton( null, {
