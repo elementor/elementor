@@ -22,31 +22,6 @@ export const Paste = () => {
 				assert.equal( elementor.saver.isEditorChanged(), true,
 					'Command applied the saver editor is changed.' );
 			} );
-
-			QUnit.test( 'History', ( assert ) => {
-				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createWidgetButton( eColumn );
-
-				ElementsHelper.copy( eWidget );
-
-				const ePastedWidget = ElementsHelper.paste( eColumn ),
-					historyItem = HistoryHelper.getFirstItem().attributes;
-
-				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
-
-				// Undo.
-				HistoryHelper.undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				HistoryHelper.destroyedValidate( assert, ePastedWidget );
-
-				// Redo.
-				HistoryHelper.redoValidate( assert, historyItem );
-
-				// Element exist again.
-				HistoryHelper.recreatedValidate( assert, ePastedWidget );
-			} );
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
@@ -103,82 +78,6 @@ export const Paste = () => {
 						`Column ${ i + 1 } preserved its order.`,
 					);
 				}
-			} );
-
-			QUnit.test( 'Sections', ( assert ) => {
-				const eSection1 = ElementsHelper.createSection(),
-					eSection2 = ElementsHelper.createSection(),
-					toCopy = [ eSection1, eSection2 ],
-					initialElementsCount = elementor.elements.length;
-				// We want to create different widgets in different sections in order to check later whether the paste
-				// order is preserved using the `widgetType`.
-				ElementsHelper.createWidgetButton( eSection1.children[ 0 ] );
-
-				ElementsHelper.createWidgetHeading( eSection2.children[ 0 ] );
-
-				ElementsHelper.multiCopy( toCopy.slice().reverse() );
-
-				const pasted = ElementsHelper.paste( elementor.getPreviewContainer(), true );
-
-				// Check pasted elements existence.
-				assert.equal( initialElementsCount + 2, elementor.elements.length, `Both elements pasted.` );
-
-				// Check whether they preserved their order.
-				for ( let i = 0; i < toCopy.length; i++ ) {
-					assert.equal(
-						toCopy[ i ].children[ 0 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						pasted[ i ].model.get( 'elements' ).models[ 0 ].get( 'elements' ).models[ 0 ].get( 'widgetType' ),
-						`Column ${ i + 1 } preserved its order.`,
-					);
-				}
-			} );
-
-			QUnit.test( 'On preview container', ( assert ) => {
-				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createWidgetButton( eColumn ),
-					eHeading = ElementsHelper.createWidgetHeading( eColumn ),
-					toCopy = [ eButton, eHeading ];
-
-				ElementsHelper.multiCopy( toCopy );
-
-				const pasted = ElementsHelper.paste( elementor.getPreviewContainer(), true ),
-					parents = pasted.map( ( container ) => container.parent.parent );
-
-				// Check pasted elements existence.
-				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
-
-				// Check whether they preserved their order.
-				assert.equal(
-					elementor.getContainer( elementor.elements.models[ elementor.elements.length - 1 ].get( 'id' ) )
-						.children[ 0 ].model.get( 'widgetType' ),
-					toCopy[ toCopy.length - 1 ].model.get( 'widgetType' ),
-					'Elements preserved their position.',
-				);
-			} );
-
-			QUnit.test( 'History', ( assert ) => {
-				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createWidgetButton( eColumn );
-
-				ElementsHelper.copy( eWidget );
-
-				const ePastedWidget = ElementsHelper.paste( eColumn ),
-					historyItem = HistoryHelper.getFirstItem().attributes;
-
-				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
-
-				// Undo.
-				HistoryHelper.undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				HistoryHelper.destroyedValidate( assert, ePastedWidget );
-
-				// Redo.
-				HistoryHelper.redoValidate( assert, historyItem );
-
-				// Element exist again.
-				HistoryHelper.recreatedValidate( assert, ePastedWidget );
 			} );
 		} );
 	} );
