@@ -149,7 +149,7 @@ export default class NestedTabs extends Base {
 		$activeContent.attr( 'hidden', 'hidden' );
 	}
 
-	onHideTabContent() {}
+	onHideTabContent( $activeContent ) {}
 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
@@ -177,7 +177,7 @@ export default class NestedTabs extends Base {
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
-			() => this.onShowTabContent( $requestedContent )
+			() => this.onShowTabContent( $requestedContent ),
 		);
 		$requestedContent.removeAttr( 'hidden' );
 	}
