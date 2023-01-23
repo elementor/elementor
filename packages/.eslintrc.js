@@ -6,7 +6,7 @@ module.exports = {
 	],
 	extends: [
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
-		'plugin:@typescript-eslint/recommended',
+		'plugin:@typescript-eslint/eslint-recommended',
 		'plugin:import/typescript',
 	],
 	settings: {
