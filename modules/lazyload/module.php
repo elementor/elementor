@@ -47,22 +47,22 @@ class Module extends BaseModule {
 			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
 		} );
 
-		$reapeter = array_filter( $controls, function( $control ) {
+		$repeater = array_filter( $controls, function( $control ) {
 			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
 				return true;
 			}
 		} );
-		$reapeter = array_shift( $reapeter );
+		$repeater = array_shift( $repeater );
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
 
 			// If the control is a repeater, we need to loop over the repeater fields options and check if the background image is set to lazyload.
-			if ( $reapeter ) {
-				$lazyload_options = Utils::get_array_value_by_keys( $reapeter, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
+			if ( $repeater ) {
+				$lazyload_options = Utils::get_array_value_by_keys( $repeater, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
 				$control_data['background_lazyload'] = array_merge( $control_data['background_lazyload'], $lazyload_options );
 
 				// Get lazyload property from the repeater first control.
-				$settings = $settings[ $reapeter['name'] ][0];
+				$settings = $settings[ $repeater['name'] ][0];
 				$attributes['data-e-bg-repeater'] = '';
 			}
 
