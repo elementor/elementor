@@ -18,64 +18,14 @@
 	box-sizing: border-box;
 }
 
-.dialog-type-lightbox {
-	position: fixed;
-	height: 100%;
-	width: 100%;
-	bottom: 0;
-	left: 0;
-	background-color: rgba(0, 0, 0, 0.8);
-	z-index: 9999;
-	user-select: none;
-
-	.dialog-widget-content {
-		margin: auto;
-		width: 375px;
-	}
-
-	.dialog-header {
-		font-size: 15px;
-		padding: 30px 0 10px;
-		font-weight: 500;
-	}
-
-	.dialog-message {
-		padding: 0 30px 30px;
-		min-height: 50px;
-	}
-
-
-	&:not(.elementor-popup-modal) {
-
-		.dialog-header,
-		.dialog-message {
-			text-align: center;
-		}
-	}
-
-	.dialog-buttons-wrapper {
-		border-top: var(--e-admin-border);
-		padding: 10px;
-		display: flex;
-		justify-content: space-between;
-
-		.dialog-button {
-			@extend .elementor-button;
-
-			&.dialog-ok {
-				@extend .e-primary;
-			}
-
-			&.dialog-cancel {
-				@extend .e-btn-txt;
-			}
-
-			&.dialog-take_over {
-				@extend .e-primary;
-			}
-		}
-	}
+.dialog-buttons-wrapper {
+	border-top: var(--e-admin-border);
+	padding: 10px;
+	display: flex;
+	justify-content: end;
+	gap: 15px;
 }
+
 
 .dialog-close-button {
 	cursor: pointer;

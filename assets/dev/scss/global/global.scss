@@ -1,8 +1,10 @@
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
 @import "dialog";
+@import "dialog-confirm";
+@import "dialog-lightbox";
+@import "dialog-templates";
 @import "flatpicker";
-@import "modal-wrapper";
 @import "notifications";
 @import "app/modules/site-editor/assets/scss/admin/admin-bar";
 

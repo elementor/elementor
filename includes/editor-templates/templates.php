@@ -221,7 +221,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
-		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
+		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 			<span class="elementor-state-icon">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 			</span>
@@ -242,7 +242,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-blank-title"><?php echo esc_html__( 'Import Template to Your Library', 'elementor' ); ?></div>
 		<div class="elementor-template-library-blank-message"><?php echo esc_html__( 'Drag & drop your .JSON or .zip template file', 'elementor' ); ?></div>
 		<div id="elementor-template-library-import-form-or"><?php echo esc_html__( 'or', 'elementor' ); ?></div>
-		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button elementor-button-success"><?php echo esc_html__( 'Select File', 'elementor' ); ?></label>
+		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button e-primary"><?php echo esc_html__( 'Select File', 'elementor' ); ?></label>
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
 		<div class="elementor-template-library-blank-footer">
 			<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
@@ -285,7 +285,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'utm_content' => '%%template_type%%', // will be replaced in the frontend
 		] );
 		?>
-	<a id="elementor-template-library-connect__button" class="elementor-button elementor-button-success" href="<?php echo esc_attr( $url ); ?>">
+	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_attr( $url ); ?>">
 		{{{ button }}}
 	</a>
 	<?php
