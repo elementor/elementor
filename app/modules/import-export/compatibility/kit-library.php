@@ -14,6 +14,9 @@ class Kit_Library extends Base_Adapter {
 	public function adapt_manifest( array $manifest_data ) {
 		if ( ! empty( $manifest_data['content']['page'] ) ) {
 			foreach ( $manifest_data['content']['page'] as & $page ) {
+				if ( 'Home' === $page['title'] && empty( $manifest_data['thumbnail'] ) ) {
+					$manifest_data['thumbnail'] = $page['thumbnail'];
+				}
 				$page['thumbnail'] = false;
 			}
 		}

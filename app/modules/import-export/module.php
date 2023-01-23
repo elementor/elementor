@@ -171,16 +171,16 @@ class Module extends BaseModule {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
-					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? esc_html__( $last_imported_kit['kit_title'], 'elementor' ) : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>',
-					! empty( $penultimate_imported_kit['kit_name'] ) ? $penultimate_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $penultimate_imported_kit['kit_title'] ) ? esc_html__( $penultimate_imported_kit['kit_title'] ) : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $penultimate_imported_kit['start_timestamp'] )
 				);
 			} else {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
-					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? esc_html__( $last_imported_kit['kit_title'], 'elementor' ) : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>'
 				);
@@ -221,6 +221,7 @@ class Module extends BaseModule {
 					<p class="tab-import-export-kit__info">
 						<?php ElementorUtils::print_unescaped_internal_string( $revert_text ); ?>
 					</p>
+					<?php $this->render_last_kit_thumbnail( $last_imported_kit ); ?>
 					<a <?php ElementorUtils::print_html_attributes( $link_attributes ); ?> >
 						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Kit', 'elementor' ) ); ?>
 					</a>
@@ -229,6 +230,24 @@ class Module extends BaseModule {
 		</div>
 		<?php
 	}
+
+	private function render_last_kit_thumbnail( $last_imported_kit ) {
+		if ( empty( $last_imported_kit['kit_thumbnail'] ) ) {
+			return;
+		}
+
+		$img_attributes = [
+			'id' => 'tab-import-export-kit__kit_thumbnail',
+		];
+
+		?>
+		<img
+			src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ) ?>"
+			alt="<?php esc_attr_e( $last_imported_kit['kit_title'], 'elementor' ) ?>"
+			<?php ElementorUtils::print_html_attributes( $img_attributes ); ?>
+		>
+		<?php
+  }
 
 	/**
 	 * Upload a kit zip file and get the kit data.

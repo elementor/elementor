@@ -85,7 +85,13 @@
 	}
 }
 
-#elementor-import-export__revert_kit {
-	color: $danger-text;
-	border-color: $danger-text;
+.tab-import-export-kit__revert {
+	#elementor-import-export__revert_kit {
+		color: $danger-text;
+		border-color: $danger-text;
+	}
+	#tab-import-export-kit__kit_thumbnail {
+		margin-bottom: 15px;
+		display: block;
+	}
 }
