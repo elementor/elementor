@@ -36,11 +36,13 @@
 		}
 
 		&:hover {
-			background-color: $e-gray-25;
+			background-color: var(--e-admin-bg-hover);
+			color: var(--e-admin-color-txt-hover);
 		}
 
 		&:active {
-			background-color: $e-gray-50;
+			background-color: var(--e-admin-bg-active);
+			color: var(--e-admin-color-txt-active);
 		}
 
 		&-icon {
