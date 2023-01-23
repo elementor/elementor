@@ -18,7 +18,7 @@ export default class Component extends ComponentBase {
 				return false;
 			}
 
-			const hasLockedContainers = selectedElements.some( ( container ) => container.isLocked() );
+			const hasLockedContainers = selectedElements.some( ( container ) => container?.isLocked?.() );
 
 			return ! hasLockedContainers;
 		};
