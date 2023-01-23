@@ -171,16 +171,16 @@ class Module extends BaseModule {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
-					! empty( $last_imported_kit['kit_title'] ) ? esc_html__( $last_imported_kit['kit_title'], 'elementor' ) : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>',
-					! empty( $penultimate_imported_kit['kit_title'] ) ? esc_html__( $penultimate_imported_kit['kit_title'] ) : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $penultimate_imported_kit['kit_title'] ) ? $penultimate_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $penultimate_imported_kit['start_timestamp'] )
 				);
 			} else {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
-					! empty( $last_imported_kit['kit_title'] ) ? esc_html__( $last_imported_kit['kit_title'], 'elementor' ) : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>'
 				);
@@ -242,12 +242,12 @@ class Module extends BaseModule {
 
 		?>
 		<img
-			src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ) ?>"
-			alt="<?php esc_attr_e( $last_imported_kit['kit_title'], 'elementor' ) ?>"
+			src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ); ?>"
+			alt="<?php echo esc_attr( $last_imported_kit['kit_title'] ); ?>"
 			<?php ElementorUtils::print_html_attributes( $img_attributes ); ?>
 		>
 		<?php
-  }
+	}
 
 	/**
 	 * Upload a kit zip file and get the kit data.
