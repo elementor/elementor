@@ -205,8 +205,10 @@ class Module extends BaseModule {
 
 			<?php
 			if ( $should_show_revert_section ) {
+				$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
+				$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
 				$link_attributes = [
-					'href' => $this->maybe_add_referrer_param( wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ) ),
+					'href' => $this->maybe_add_referrer_param( $nonced_admin_post_url ),
 					'id' => 'elementor-import-export__revert_kit',
 					'class' => 'button',
 				];

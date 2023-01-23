@@ -4,12 +4,15 @@
 class Admin {
 	/**
 	 * Session Storage Key
+	 * Is the user referred from a Kit in the Kit library
 	 *
 	 * @type {string}
 	 */
 	isKitReferredKey = 'elementor-is-kit-referred';
+
 	/**
 	 * Session Storage Key
+	 * Identifier of the kit that referred the user from the Kit library
 	 *
 	 * @type {string}
 	 */
@@ -17,6 +20,7 @@ class Admin {
 
 	/**
 	 * Session Storage Key
+	 * Name of the last imported Kit that it to be or was removed
 	 *
 	 * @type {string}
 	 */
@@ -72,7 +76,7 @@ class Admin {
 	}
 
 	setSessionStorage( referred, referrerKit, kitNameToRemove ) {
-		sessionStorage.setItem( this.isKitReferredKey, referred.toString() );
+		sessionStorage.setItem( this.isKitReferredKey, referred ? 'yes' : 'no' );
 		if ( referred ) {
 			sessionStorage.setItem( this.kitReferrerKey, referrerKit );
 		}
@@ -88,7 +92,7 @@ class Admin {
 			return;
 		}
 
-		if ( 'false' === isKitReferred ) {
+		if ( 'no' === isKitReferred ) {
 			this.createKitDeletedWidget( {
 				message: __( 'Try a different Kit or build your site from scratch.', 'elementor' ),
 				strings: {
@@ -132,8 +136,8 @@ class Admin {
 				confirm: options.strings.confirm,
 				cancel: options.strings.cancel,
 			},
-			...( options.onConfirm ) && { onConfirm: options.onConfirm },
-			...( options.onCancel ) && { onCancel: options.onCancel },
+			onConfirm: options.onConfirm,
+			onCancel: options.onCancel,
 		} ).show();
 	}
 
@@ -158,11 +162,11 @@ class Admin {
 	getKitToRemoveName() {
 		const lastKit = elementorAppConfig[ 'import-export' ].lastImportedSession;
 
-		if ( lastKit.kit_title ) {
+		if ( lastKit?.kit_title ) {
 			return lastKit.kit_title;
 		}
 
-		if ( lastKit.kit_name ) {
+		if ( lastKit?.kit_name ) {
 			return this.convertNameToTitle( lastKit.kit_name );
 		}
 
@@ -177,11 +181,7 @@ class Admin {
 	 * @return {string}
 	 */
 	convertNameToTitle( name ) {
-		const words = name.split( /[-_]+/ );
-		for ( const key in words ) {
-			const word = words[ key ];
-			words[ key ] = word[ 0 ].toUpperCase() + word.substring( 1 );
-		}
+		const words = name.split( /[-_]+/ ).map( ( word ) => word[ 0 ].toUpperCase() + word.substring( 1 ) );
 		return words.join( ' ' );
 	}
 }
