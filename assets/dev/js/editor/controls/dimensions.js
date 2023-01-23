@@ -13,14 +13,14 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 				scrubSettings: {
 					intentTime: 800,
 					valueModifier: () => {
-						const unit = this.getControlValue( 'unit' );
+						const currentUnit = this.getControlValue( 'unit' );
 
-						return ( [ 'rem', 'em' ].includes( unit ) ) ? 0.1 : 1;
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.1 : 1;
 					},
 					enhancedNumber: () => {
-						const unit = this.getControlValue( 'unit' );
+						const currentUnit = this.getControlValue( 'unit' );
 
-						return ( [ 'rem', 'em' ].includes( unit ) ) ? 0.5 : 10;
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.5 : 10;
 					},
 				},
 			},
