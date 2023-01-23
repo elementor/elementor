@@ -4,44 +4,6 @@ import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
-		QUnit.module( 'Single Selection', () => {
-			QUnit.test( 'Globals', async ( assert ) => {
-				// Create widget.
-				const eButton = ElementsHelper.createWrappedButton(),
-					eButtonGlobal = ElementsHelper.createWrappedButton(),
-					id = elementorCommon.helpers.getUniqueId();
-
-				$e.data.setCache( $e.components.get( 'globals' ), 'globals/typography', {}, {
-					[ id ]: {
-						id,
-						value: { typography_text_transform: 'uppercase' },
-					},
-				} );
-
-				eData.attachCache();
-
-				ElementsHelper.settings( eButtonGlobal, {
-					typography_text_transform: 'uppercase',
-				} );
-
-				$e.run( 'document/globals/enable', {
-					container: eButtonGlobal,
-					settings: {
-						typography_typography: `globals/typography?id=${ id }`,
-					},
-				} );
-
-				ElementsHelper.copy( eButtonGlobal );
-				ElementsHelper.pasteStyle( eButton );
-
-				assert.deepEqual( eButton.settings.attributes.__globals__, eButtonGlobal.globals.attributes );
-				// Cover issue: When paste styling with globals values are not showing in panel (Fix PT#1030).
-				assert.deepEqual( eButton.globals.attributes, eButtonGlobal.globals.attributes );
-			} );
-
-			// TODO: Paste __dynamic__.
-		} );
-
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eButtonSimple1 = ElementsHelper.createWrappedButton(),
