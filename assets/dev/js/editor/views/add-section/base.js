@@ -1,4 +1,5 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import environment from 'elementor-common/utils/environment';
 
 /**
  * @typedef {import('../../container/container')} Container
@@ -41,12 +42,12 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 		};
 	}
-
 	behaviors() {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
 				groups: this.getContextMenuGroups(),
+				eventTargets: [ '.elementor-add-section-inner' ],
 			},
 		};
 	}
@@ -80,6 +81,8 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 			return elementor.elements.length > 0;
 		};
 
+		const controlSign = environment.mac ? '&#8984;' : '^';
+
 		return [
 			{
 				name: 'paste',
@@ -87,6 +90,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 					{
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
+						shortcut: controlSign + '+V',
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( elementor.getPreviewContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
@@ -95,6 +99,17 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 								rebuild: true,
 							},
 							onAfter: () => this.onAfterPaste(),
+						} ),
+					}, {
+						name: 'paste_area',
+						icon: 'eicon-import-export',
+						title: __( 'Paste from other site', 'elementor' ),
+						callback: () => $e.run( 'document/elements/paste-area', {
+							container: elementor.getPreviewContainer(),
+							options: {
+								at: this.getOption( 'at' ),
+								rebuild: true,
+							},
 						} ),
 					},
 				],
