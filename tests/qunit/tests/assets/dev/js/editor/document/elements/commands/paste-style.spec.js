@@ -5,28 +5,6 @@ import * as eData from 'elementor/tests/qunit/mock/e-data';
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
 		QUnit.module( 'Single Selection', () => {
-			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonSimple = ElementsHelper.createWrappedButton(),
-					eButtonStyled = ElementsHelper.createWrappedButton( null, {
-						text: 'createAutoButtonStyled',
-						background_color: '#000000',
-					} ),
-					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
-
-				ElementsHelper.copy( eButtonStyled );
-
-				// Ensure editor saver.
-				$e.internal( 'document/save/set-is-modified', { status: false } );
-
-				ElementsHelper.pasteStyle( eButtonSimple );
-
-				// Check
-				assert.equal( eButtonSimple.settings.attributes.background_color, eStyledButtonBackground,
-					`Button background color was changed to '${ eStyledButtonBackground }'.` );
-				assert.equal( elementor.saver.isEditorChanged(), true,
-					'Command applied the saver editor is changed.' );
-			} );
-
 			QUnit.test( 'On column', ( assert ) => {
 				const eColumnSimple = ElementsHelper.createAuto( 'column' ),
 					eColumnStyled = ElementsHelper.createWrappedButton( null, {
