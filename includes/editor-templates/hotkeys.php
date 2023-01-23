@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <script type="text/template" id="tmpl-elementor-hotkeys">
-	<# var ctrlLabel = environment.mac ? 'Cmd' : 'Ctrl'; #>
+	<# var ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl'; #>
 	<div id="elementor-hotkeys__content">
 		<div id="elementor-hotkeys__actions" class="elementor-hotkeys__col">
 
