@@ -55,7 +55,7 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		expect( result.current ).toBe( true );
 	} );
 
-	it( 'should return true when a route gets deactivated', () => {
+	it( 'should return false when a route gets deactivated', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
@@ -68,6 +68,29 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 			mockedIsRouteActive.mockReturnValue( false );
 			dispatchRouteClose( route );
 		} );
+
+		// Assert.
+		expect( result.current ).toBe( false );
+	} );
+
+	it( 'should re-check whether the route is active when changing it', () => {
+		// Arrange.
+		let route = 'active/route';
+
+		mockedIsRouteActive.mockImplementation( ( route ) => {
+			return 'active/route' === route;
+		} );
+
+		// Act.
+		const { result, rerender } = renderHook( () => useIsRouteActive( route ) );
+
+		// Assert.
+		expect( result.current ).toBe( true );
+
+		// Act.
+		route = 'inactive/route';
+
+		rerender();
 
 		// Assert.
 		expect( result.current ).toBe( false );
