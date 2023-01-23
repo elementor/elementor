@@ -2,7 +2,7 @@
 	position: absolute;
 	width: 200px;
 	background-color: $white;
-	border: 1px solid $e-gray-50;
+	border: var(--e-admin-border);
 	border-radius: 3px;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
@@ -15,7 +15,7 @@
 			padding: 5px 0;
 
 			&:not(:last-child) {
-				border-bottom: 1px solid $e-gray-50;
+				border-bottom: var(--e-admin-border);
 			}
 		}
 
@@ -24,7 +24,7 @@
 			@include padding-end(20px);
 			display: flex;
 			cursor: pointer;
-			transition: $transition-hover;
+			transition: var(--e-admin-transition-hover);
 
 			&--disabled {
 				cursor: default;
@@ -34,7 +34,8 @@
 			&:not(.elementor-context-menu-list__item--disabled) {
 
 				&:hover {
-					background-color: $e-gray-25;
+					background-color: var(--e-admin-bg-hover);
+					color: var(--e-admin-color-hover);
 				}
 			}
 
@@ -58,7 +59,7 @@
 					&:hover {
 
 						> * {
-							color: $e-danger;
+							color: var(--e-global-color-danger);
 						}
 					}
 				}
@@ -67,6 +68,6 @@
 	}
 
 	.eicon-pro-icon {
-		color: $e-brand;
+		color: var(--e-global-color-brand);
 	}
 }

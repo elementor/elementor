@@ -10,11 +10,6 @@
 		.dialog-content {
 			display: flex;
 		}
-
-		.dialog-buttons-wrapper {
-			display: flex;
-			padding: 10px 15px;
-		}
 	}
 
 	&__wrapper {
@@ -165,12 +160,12 @@
 
 		&:hover {
 			background-color: var(--e-admin-bg-hover);
-			color: var(--e-admin-txt-hover);
+			color: var(--e-admin-color-txt-hover);
 		}
 
 		&.elementor-active {
 			background-color: var(--e-admin-bg-active);
-			color: var(--e-admin-txt-active);
+			color: var(--e-admin-color-txt-active);
 
 			&:after {
 				content: '';
@@ -196,13 +191,13 @@
 
 		&:hover {
 			background-color: var(--e-admin-bg-hover);
-			color: var(--e-admin-txt-hover);
+			color: var(--e-admin-color-txt-hover);
 		}
 
 		&.elementor-selected {
 			background-color: var(--e-admin-bg-active);
 			border-color: var(--e-admin-border-color-active);
-			color: var(--e-admin-txt-active);
+			color: var(--e-admin-color-txt-active);
 		}
 
 		&__content {

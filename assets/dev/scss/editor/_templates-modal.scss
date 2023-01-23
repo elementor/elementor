@@ -23,7 +23,6 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-header-menu {
 	text-align: center;
-	font-size: 13px;
 }
 
 .elementor-template-library-menu-item {
@@ -32,8 +31,14 @@ $remote-templates-items-space: 30px;
 	width: 115px;
 	cursor: pointer;
 
+	&:hover {
+		background-color: var(--e-admin-bg-hover);
+		color: var(--e-admin-color-txt-hover);
+	}
+
 	&.elementor-active {
-		border-bottom: 3px solid $e-gray-900;
+		border-bottom: 3px solid var(--e-admin-border-color-active);
+		color: var(--e-admin-color-txt-active);
 	}
 }
 
@@ -82,12 +87,10 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-templates {
-	padding: 0 15px;
 
 	&[data-template-source="local"] {
 
 		#elementor-template-library-templates-container {
-			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
 			margin-top: 10px;
 			margin-bottom: 45px;
 		}
@@ -122,7 +125,8 @@ $remote-templates-items-space: 30px;
 
 	&[data-template-source="empty"] {
 
-		#elementor-template-library-order-toolbar-local, #elementor-template-library-footer-banner {
+		#elementor-template-library-order-toolbar-local,
+		#elementor-template-library-footer-banner {
 			display: none;
 		}
 	}
@@ -310,11 +314,12 @@ label.elementor-template-library-order-label {
 .elementor-template-library-template-remote {
 	margin: calc( #{$remote-templates-items-space} / 2 );
 	padding: 8px;
-	background-color: #fff;
-	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
+	border: var(--e-admin-border);
 	border-radius: 3px;
 
 	&:hover {
+		background-color: var(--e-admin-bg-hover);
+		color: var(--e-admin-color-txt-hover);
 
 		.elementor-template-library-template-name {
 			display: none;
@@ -334,9 +339,10 @@ label.elementor-template-library-order-label {
 	}
 
 	&.elementor-template-library-pro-template {
+
 		.elementor-template-library-template-body:before {
 			content: var( --elementor-template-library-subscription-plan-label );
-			background-color: $e-brand;
+			background-color: var(--e-admin-color-brand);
 			color: $white;
 			position: absolute;
 			text-transform: uppercase;
@@ -420,14 +426,14 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-footer {
 		display: flex;
 		justify-content: space-between;
-		margin-top: 10px;
 		font-size: 11px;
 		line-height: 1;
+		height: 40px;
+		align-items: center;
 	}
 
 	.elementor-template-library-template-name {
 		text-align: $start;
-		color: $editor-dark;
 		flex-grow: 1;
 		@include ellipsis;
 		@include padding-end(5px);
@@ -513,7 +519,7 @@ label.elementor-template-library-order-label {
 	transition: background-color .3s linear;
 
 	&:hover {
-		background-color: $e-gray-25;
+		background-color: var(--e-admin-bg-hover);
 	}
 
 	&:first-child {
@@ -622,7 +628,7 @@ label.elementor-template-library-order-label {
 		}
 
 		@media (min-width: $library_screen_breakpoint + 1) {
-			width: 1710px;
+			width: 1730px;
 		}
 	}
 }

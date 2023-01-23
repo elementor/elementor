@@ -1,3 +1,7 @@
+//
+// Dialog for templates, icons, kits, etc.
+//
+
 .elementor-templates-modal {
 
 	.dialog-widget-content {
@@ -34,10 +38,11 @@
 			height: 750px;
 			max-height: 85vh;
 			overflow-y: scroll;
-			padding-top: 25px;
+			padding: 20px;
 		}
 
 		&-content {
+			height: 100%;
 			text-align: center;
 		}
 
@@ -105,7 +110,7 @@
 
 			&--normal {
 				width: 47px;
-				@include border-start(1px solid $editor-background);
+				@include border-start(var(--e-admin-border));
 
 				i {
 					font-size: 18px;

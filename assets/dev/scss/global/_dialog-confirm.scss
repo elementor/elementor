@@ -3,27 +3,38 @@
 //
 // Dialog Confirm
 //
+
+$e-dialog-confirm-space: 20px;
+
 .dialog-type-confirm {
 
 	.dialog-widget-content {
 		margin: auto;
-		width: 375px;
+		width: 400px;
+		padding: $e-dialog-confirm-space;
 	}
 
 	.dialog-header {
 		font-size: 15px;
-		padding: 30px 0 10px;
 		font-weight: 500;
+
+		&:after {
+			content: '';
+			display: block;
+			border-bottom: var(--e-admin-border);
+			padding-bottom: 10px;
+			margin-bottom: 10px;
+			margin-right: -$e-dialog-confirm-space;
+			margin-left: -$e-dialog-confirm-space;
+		}
 	}
 
 	.dialog-message {
-		padding: 0 30px 30px;
 		min-height: 50px;
 	}
 
 	.dialog-buttons-wrapper {
-		border-top: var(--e-admin-border);
-		padding: 10px;
+		padding-top: 10px;
 		display: flex;
 		justify-content: end;
 		gap: 15px;

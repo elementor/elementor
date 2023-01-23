@@ -209,14 +209,6 @@
 
 	&__confirm {
 
-		&-add {
-
-			// Multiple selectors because a CSS specificity override was necessary
-			.dialog-buttons-wrapper > .dialog-button.dialog-confirm-ok {
-				color: $editor-success;
-			}
-		}
-
 		&-delete {
 
 			i {
@@ -236,7 +228,7 @@
 			align-items: center;
 			border: 1px solid $editor-light;
 			border-radius: 3px;
-			margin-top: 10px;
+			margin: 15px 0;
 			padding: 2px;
 
 			input {

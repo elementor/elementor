@@ -5,11 +5,11 @@ body {
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: var( --e-editor-navigator-width );
+	width: var(--e-editor-navigator-width);
 	height: 50vh;
 	@include end(30px);
-	background-color: $white;
-	border: 1px solid $e-gray-50;
+	background-color: var(--e-admin-color-white);
+	border: var(--e-admin-border);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -35,7 +35,7 @@ body {
 		align-items: center;
 		justify-content: space-between;
 		padding: 12px 10px;
-		border-bottom: 1px solid $e-gray-50;
+		border-bottom: var(--e-admin-border);
 		cursor: move;
 	}
 
@@ -77,7 +77,7 @@ body {
 		left: 0;
 		bottom: 0;
 		text-align: center;
-		border-top: 1px solid $e-gray-50;
+		border-top: var(--e-admin-border);
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -91,18 +91,19 @@ body {
 		position: relative;
 		display: flex;
 		height: 30px;
-		font-size: 12px;
-		border-bottom: 1px solid $e-gray-50;
+		border-bottom: var(--e-admin-border);
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
 
 		&:hover {
-			background-color: $e-gray-25;
+			background-color: var(--e-admin-bg-hover);
+			color: var(--e-admin-color-txt-hover);
 		}
 
 		&:active {
-			background-color: $e-gray-50;
+			background-color: var(--e-admin-bg-active);
+			color: var(--e-admin-color-txt-active);
 		}
 
 		&[data-locked="true"] {
@@ -133,7 +134,7 @@ body {
 
 		.elementor-empty-view {
 			padding: 10px;
-			border-bottom: 1px solid $e-gray-50;
+			border-bottom: var(--e-admin-border);
 
 			&__title {
 				@include margin-start(23px);
@@ -146,12 +147,14 @@ body {
 		.ui-sortable-helper {
 			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
 			transform: rotate(4deg);
-			background-color: $e-gray-50;
+			background-color: var(--e-admin-bg-active);
+			color: var(--e-admin-color-txt-active);
 			pointer-events: none;
 		}
 
 		.ui-sortable-placeholder {
-			background-color: $e-gray-25;
+			background-color: var(--e-admin-bg-hover);
+			color: var(--e-admin-color-txt-hover);
 		}
 	}
 

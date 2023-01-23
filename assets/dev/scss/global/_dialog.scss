@@ -18,15 +18,6 @@
 	box-sizing: border-box;
 }
 
-.dialog-buttons-wrapper {
-	border-top: var(--e-admin-border);
-	padding: 10px;
-	display: flex;
-	justify-content: end;
-	gap: 15px;
-}
-
-
 .dialog-close-button {
 	cursor: pointer;
 	position: absolute;

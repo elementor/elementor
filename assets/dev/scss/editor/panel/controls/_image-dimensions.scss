@@ -6,12 +6,12 @@
 	}
 
 	.elementor-control-input-wrapper {
-		overflow: hidden;
+		display: flex;
+		align-items: start;
 	}
 
 	.elementor-image-dimensions-field {
 		width: 65px;
-		float: $start;
 
 		input {
 
@@ -27,7 +27,6 @@
 	.elementor-image-dimensions-separator {
 		width: 20px;
 		text-align: center;
-		float: $start;
 		padding-top: 4px;
 	}
 
@@ -41,8 +40,6 @@
 	}
 
 	.elementor-image-dimensions-apply-button {
-		float: $end;
-		height: $control-unit;
-		width: 65px;
+		@include margin-start(auto);
 	}
 }

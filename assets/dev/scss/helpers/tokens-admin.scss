@@ -1,9 +1,10 @@
 @import "variables";
 // Editor CSS Vars
 :root {
+
+	//Colors
 	--e-admin-color-white: 			#{$white};
 	--e-admin-color-black: 			#{$black};
-
 	--e-admin-color-primary: 		#{$e-purple};
 	--e-admin-color-secondary: 		#{$e-gray-600};
 	--e-admin-color-success: 		#{$e-success};
@@ -12,6 +13,7 @@
 	--e-admin-color-warning: 		#{$e-warning};
 	--e-admin-color-brand: 			#{$e-brand};
 
+	//Backgrounds
 	--e-admin-bg-primary: 			#{$e-purple-shade};
 	--e-admin-bg-secondary: 		#{$e-gray-600};
 	--e-admin-bg-success: 			#F2FDF5;
@@ -19,6 +21,7 @@
 	--e-admin-bg-info: 				#F0F7FF;
 	--e-admin-bg-warning: 			#FCB92C;
 
+	//Text, Borders, Hovers
 	--e-admin-color-txt: 			#{$e-gray-600};
 	--e-admin-color-txt-hover: 		#{$e-gray-700};
 	--e-admin-color-txt-active: 	#{$e-gray-900};
@@ -28,9 +31,9 @@
 	--e-admin-border-color-active: 	#{$e-gray-900};
 	--e-admin-border:				1px solid var(--e-admin-border-color);
 
+	//Buttons
 	--e-admin-btn-color: 			#{$white};
 	--e-admin-btn-color-disabled:	#{$e-gray-300};
-
 	--e-admin-btn-bg: 				#{$e-gray-600};
 	--e-admin-btn-bg-hover: 		#{darken($e-gray-600, 10%)};
 	--e-admin-btn-bg-active: 		#{darken($e-gray-600, 20%)};
@@ -47,4 +50,7 @@
 	--e-admin-btn-bg-danger: 		#{$e-danger};
 	--e-admin-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
 	--e-admin-btn-bg-danger-active:	#{darken($e-danger, 20%)};
+
+	//Animation
+	--e-admin-transition-hover:		all .3s;
 }

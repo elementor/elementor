@@ -96,7 +96,7 @@
 
 		&:hover {
 			background-color: var(--e-admin-bg-hover);
-			color: var(--e-admin-txt-hover);
+			color: var(--e-admin-color-txt-hover);
 		}
 
 		.icon {
@@ -125,7 +125,7 @@
 		&:active {
 			background-color: var(--e-admin-bg-active);
 			border-color: var(--e-admin-border-active);
-			color: var(--e-admin-txt-active);
+			color: var(--e-admin-color-txt-active);
 		}
 	}
 }
