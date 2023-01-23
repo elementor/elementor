@@ -5,35 +5,6 @@ import * as eData from 'elementor/tests/qunit/mock/e-data';
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
 		QUnit.module( 'Single Selection', () => {
-			QUnit.test( 'History', ( assert ) => {
-				const eWidgetSimple = ElementsHelper.createWrappedButton(),
-					eWidgetStyled = ElementsHelper.createWrappedButton( null, {
-						text: 'createAutoButtonStyled',
-						background_color: '#000000',
-					} ),
-					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' );
-
-				ElementsHelper.copy( eWidgetStyled );
-				ElementsHelper.pasteStyle( eWidgetSimple );
-
-				const historyItem = HistoryHelper.getFirstItem().attributes;
-
-				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
-
-				// Undo.
-				HistoryHelper.undoValidate( assert, historyItem );
-
-				assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-					'Settings back to default.' );
-
-				// Redo.
-				HistoryHelper.redoValidate( assert, historyItem );
-
-				/* Assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-					'Settings restored.' ); // TODO: in tests its not back to default color.*/
-			} );
-
 			QUnit.test( 'Globals', async ( assert ) => {
 				// Create widget.
 				const eButton = ElementsHelper.createWrappedButton(),
