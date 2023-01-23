@@ -523,20 +523,15 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Adjust Vertical Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px' ],
 				'default' => [
 					'unit' => 'px',
 					'size' => 0,
 				],
 				'range' => [
 					'px' => [
-						'min' => -12,
-						'max' => 12,
-					],
-					'em' => [
-						'min' => -1,
-						'max' => 1,
-						'step' => 0.1,
+						'min' => -15,
+						'max' => 15,
 					],
 				],
 				'selectors' => [
