@@ -3,70 +3,50 @@
 	&__header {
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 10px;
-	}
-
-	&__swatch-tool {
-		position: relative;
-		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
-		background-color: #fff;
-
-		i {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-			color: $editor-dark;
-			font-size: 13px;
-		}
-	}
-
-	&__swatch-placeholder {
-		border: 1px dashed $editor-lighter;
-	}
-
-	&__dropping-area {
-		margin-top: 10px;
-		padding: 15px;
-		border: 1px dashed $editor-lightest;
-		text-align: center;
-		color: $editor-dark;
-		display: none;
-
-		&.elementor-active {
-			border-color: $editor-light;
-
-			i {
-				color: $editor-warning;
-			}
-		}
-
-		i {
-			font-size: 15px;
-		}
-
-		&__drag-to-delete {
-			margin-top: 10px;
-		}
-
-		.elementor-color-picker__swatch-placeholder {
-			display: none;
-		}
+		align-items: center;
+		font-weight: bold;
+		padding: 10px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	}
 }
 
-.pcr-swatch {
+.e-color-picker {
+	&__tools {
+		display: flex;
+	}
+}
 
-	&.pcr-active {
+.e-control-color--no-value {
 
-		~ .elementor-color-picker__add-swatch {
-			background-color: $editor-lightest;
-			pointer-events: none;
-			box-shadow: none;
+	.pcr-button {
+		background-image: linear-gradient(135deg, transparent 46%, #ff3030 50%, transparent 54%);
+		background-size: cover;
+		background-color: transparent;
+		border: 1px solid $editor-lightest;
+	}
+}
 
-			i {
-				color: #fff;
-			}
-		}
+.pcr {
+
+	&-app[data-theme=monolith] {
+		padding: 0;
+	}
+
+	&-result {
+		border-right-width: 1px;
+		border-radius: 3px;
+	}
+
+	&-selection, &-interaction {
+		padding: 0 20px;
+	}
+
+	&-interaction {
+		padding-bottom: 20px;
+	}
+
+	.elementor-control-dynamic-switcher {
+		height: 20px;
+		border: 0;
 	}
 }

@@ -1,0 +1,42 @@
+{
+  "initial_document": {
+	"id": 1,
+	"urls": {
+	  "preview": ""
+	}
+  },
+  "user": {
+	"introduction": {},
+	"restrictions": [],
+	"can_edit_kit": true
+  },
+  "elements": {},
+  "dynamicTags": {},
+  "library_connect": {
+	"show_popup": 0
+  },
+  "icons": {
+	"libraries": []
+  },
+  "autosave_interval": 1000,
+  "kit_id": "5",
+  "kit_config": {
+	  "typography_prefix": "typography_"
+  },
+  "globals": {
+	"defaults_enabled": {
+	  "colors": true,
+	  "typography": true
+	}
+  },
+  "dev_tools": {
+  	"deprecation": {
+		"soft_notices": []
+	}
+  },
+  "responsive": {
+	"breakpoints":  {},
+	"activeBreakpoints": {}
+  },
+  "experimentalFeatures": {}
+}

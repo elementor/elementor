@@ -1,4 +1,11 @@
-export default class ArgsObject {
+import InstanceType from './instance-type';
+import isInstanceof from '../../editor/utils/is-instanceof';
+
+export default class ArgsObject extends InstanceType {
+	static getInstanceType() {
+		return 'ArgsObject';
+	}
+
 	/**
 	 * Function constructor().
 	 *
@@ -7,6 +14,8 @@ export default class ArgsObject {
 	 * @param {{}} args
 	 */
 	constructor( args ) {
+		super();
+
 		this.args = args;
 	}
 
@@ -16,13 +25,13 @@ export default class ArgsObject {
 	 * Validate property in args.
 	 *
 	 * @param {string} property
-	 * @param {{}} args
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *
 	 */
 	requireArgument( property, args = this.args ) {
-		if ( ! args.hasOwnProperty( property ) ) {
+		if ( ! Object.prototype.hasOwnProperty.call( args, property ) ) {
 			throw Error( `${ property } is required.` );
 		}
 	}
@@ -34,7 +43,7 @@ export default class ArgsObject {
 	 *
 	 * @param {string} property
 	 * @param {string} type
-	 * @param {{}} args
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *
@@ -53,8 +62,8 @@ export default class ArgsObject {
 	 * Validate property in args using `args.whatever instanceof instance`.
 	 *
 	 * @param {string} property
-	 * @param {instanceof} instance
-	 * @param {{}} args
+	 * @param {*}      instance
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *
@@ -62,7 +71,7 @@ export default class ArgsObject {
 	requireArgumentInstance( property, instance, args = this.args ) {
 		this.requireArgument( property, args );
 
-		if ( ! ( args[ property ] instanceof instance ) ) {
+		if ( ! ( args[ property ] instanceof instance ) && ! isInstanceof( args[ property ], instance ) ) {
 			throw Error( `${ property } invalid instance.` );
 		}
 	}
@@ -73,8 +82,8 @@ export default class ArgsObject {
 	 * Validate property in args using `type === args.whatever.constructor`.
 	 *
 	 * @param {string} property
-	 * @param {*} type
-	 * @param {{}} args
+	 * @param {*}      type
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *
@@ -82,7 +91,9 @@ export default class ArgsObject {
 	requireArgumentConstructor( property, type, args = this.args ) {
 		this.requireArgument( property, args );
 
-		if ( args[ property ].constructor !== type ) {
+		// Note: Converting the constructor to string in order to avoid equation issues
+		// due to different memory addresses between iframes (window.Object !== window.top.Object).
+		if ( args[ property ].constructor.toString() !== type.prototype.constructor.toString() ) {
 			throw Error( `${ property } invalid constructor type.` );
 		}
 	}

@@ -1,0 +1,18 @@
+{
+	"success": true,
+	"code": 200,
+	"data": {
+		"status": "inherit",
+		"config": {
+			"document": {
+				"last_edited": "Draft saved on <time>Jan 19, 11:25<\/time> by test",
+				"urls": {
+				},
+				"revisions": {
+				}
+			}
+		},
+		"latest_revisions": [],
+		"revisions_ids": []
+	}
+}

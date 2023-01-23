@@ -38,7 +38,7 @@ class Widget_Read_More extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Read More', 'elementor' );
+		return esc_html__( 'Read More', 'elementor' );
 	}
 
 	/**
@@ -74,23 +74,39 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_title',
 			[
-				'label' => __( 'Read More', 'elementor' ),
+				'label' => esc_html__( 'Read More', 'elementor' ),
 			]
 		);
 
-		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', __( 'Continue reading', 'elementor' ) );
+		$default_link_text = esc_html__( 'Continue reading', 'elementor' );
+
+		/**
+		 * Read More widgets link text.
+		 *
+		 * Filters the link text in the "Read More" widget.
+		 *
+		 * This hook can be used to set different default text in the widget.
+		 *
+		 * @param string $default_link_text The link text in the "Read More" widget. Default is "Continue reading".
+		 */
+		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', $default_link_text );
 
 		$this->add_control(
 			'theme_support',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => sprintf( __( 'Note: This widget only affects themes that use `%s` in archive pages.', 'elementor' ), 'the_content' ),
+				'raw' => sprintf(
+					/* translators: %s: The `the_content` function. */
+					esc_html__( 'Note: This widget only affects themes that use `%s` in archive pages.', 'elementor' ),
+					'the_content'
+				),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
@@ -98,9 +114,12 @@ class Widget_Read_More extends Widget_Base {
 		$this->add_control(
 			'link_text',
 			[
-				'label' => __( 'Read More Text', 'elementor' ),
+				'label' => esc_html__( 'Read More Text', 'elementor' ),
 				'placeholder' => $default_link_text,
 				'default' => $default_link_text,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -115,7 +134,7 @@ class Widget_Read_More extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		printf( '<!--more %s-->', $this->get_settings_for_display( 'link_text' ) );
+		printf( '<!--more %s-->', wp_kses_post( $this->get_settings_for_display( 'link_text' ) ) );
 	}
 
 	/**
@@ -123,9 +142,10 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<!--more {{ settings.link_text }}-->
 		<?php

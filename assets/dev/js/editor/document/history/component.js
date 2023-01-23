@@ -1,7 +1,8 @@
-import BaseComponent from 'elementor-common/components/component';
-import * as Commands from './commands/';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
+import * as commandsInternal from './commands/internal/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	__construct( args ) {
 		super.__construct( args );
 
@@ -17,20 +18,12 @@ export default class Component extends BaseComponent {
 		return 'document/history';
 	}
 
-	getCommands() {
-		return {
-			'add-transaction': ( args ) => ( new Commands.AddTransaction( args ).run() ),
-			'delete-log': ( args ) => ( new Commands.DeleteLog( args ).run() ),
-			'delete-transaction': ( args ) => ( new Commands.DeleteTransaction( args ).run() ),
-			'end-log': ( args ) => ( new Commands.EndLog( args ).run() ),
-			'end-transaction': ( args ) => ( new Commands.EndTransaction( args ).run() ),
-			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),
-			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
-			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
+	defaultCommands() {
+		return this.importCommands( commands );
+	}
 
-			undo: () => elementor.history.history.navigate(),
-			redo: () => elementor.history.history.navigate( true ),
-		};
+	defaultCommandsInternal() {
+		return this.importCommands( commandsInternal );
 	}
 
 	normalizeLogTitle( args ) {
@@ -40,7 +33,7 @@ export default class Component extends BaseComponent {
 			if ( 1 === containers.length ) {
 				args.title = containers[ 0 ].label;
 			} else {
-				args.title = elementor.translate( 'elements' );
+				args.title = __( 'Elements', 'elementor' );
 			}
 		}
 
@@ -78,5 +71,9 @@ export default class Component extends BaseComponent {
 		} );
 
 		return result;
+	}
+
+	isTransactionStarted() {
+		return Boolean( this.transactions.length );
 	}
 }

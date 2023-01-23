@@ -1,6 +1,7 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'navigator';
 	}
@@ -12,24 +13,14 @@ export default class Component extends BaseComponent {
 	}
 
 	defaultCommands() {
-		return {
-			open: () => $e.route( this.getNamespace() ),
-			close: () => this.close(),
-			toggle: () => {
-				if ( this.isOpen ) {
-					this.close();
-				} else {
-					$e.route( this.getNamespace() );
-				}
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {
 		return {
 			toggle: {
 				keys: 'ctrl+i',
-				dependency: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
+				dependency: () => elementor.getPreviewContainer().isEditable(),
 			},
 		};
 	}
@@ -38,15 +29,16 @@ export default class Component extends BaseComponent {
 		const { model = false } = args;
 
 		this.manager.open( model );
+
 		return true;
 	}
 
-	close() {
+	close( silent ) {
 		if ( ! super.close() ) {
 			return false;
 		}
 
-		this.manager.close();
+		this.manager.close( silent );
 
 		return true;
 	}

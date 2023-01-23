@@ -27,6 +27,9 @@ class Api {
 	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
 
+	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
+
+
 	/**
 	 * API info URL.
 	 *
@@ -52,18 +55,6 @@ class Api {
 	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
 	/**
-	 * API get template content URL.
-	 *
-	 * Holds the URL of the template content API.
-	 *
-	 * @access private
-	 * @static
-	 *
-	 * @var string API get template content URL.
-	 */
-	private static $api_get_template_content_url = 'https://my.elementor.com/api/v1/templates/%d';
-
-	/**
 	 * Get info data.
 	 *
 	 * This function notifies the user of upgrade notices, new templates and contributors.
@@ -78,7 +69,7 @@ class Api {
 	 * @return array|false Info data, or false.
 	 */
 	private static function get_info_data( $force_update = false ) {
-		$cache_key = 'elementor_remote_info_api_data_' . ELEMENTOR_VERSION;
+		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
 
@@ -164,6 +155,16 @@ class Api {
 		}
 
 		return $data['canary_deployment'];
+	}
+
+	public static function get_promotion_widgets() {
+		$data = self::get_info_data();
+
+		if ( ! isset( $data['pro_widgets'] ) ) {
+			$data['pro_widgets'] = [];
+		}
+
+		return $data['pro_widgets'];
 	}
 
 	/**

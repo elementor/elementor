@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -45,8 +47,13 @@ class Control_Color extends Base_Data_Control {
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label || '' }}}</label>
-			<div class="elementor-control-input-wrapper"></div>
+			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper elementor-control-unit-5">
+				<div class="elementor-color-picker-placeholder"></div>
+			</div>
 		</div>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 
@@ -65,6 +72,15 @@ class Control_Color extends Base_Data_Control {
 		return [
 			'alpha' => true,
 			'scheme' => '',
+			'dynamic' => [
+				'categories' => [
+					TagsModule::COLOR_CATEGORY,
+				],
+				'active' => true,
+			],
+			'global' => [
+				'active' => true,
+			],
 		];
 	}
 }

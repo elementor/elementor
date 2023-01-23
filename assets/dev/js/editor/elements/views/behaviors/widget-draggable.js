@@ -13,9 +13,13 @@ export default class extends Marionette.Behavior {
 
 		// Save this instance for external use eg: ( hooks ).
 		this.view.options.draggable = this;
+
+		this.isActive = false;
 	}
 
 	activate() {
+		this.isActive = true;
+
 		this.$el.draggable( {
 			addClasses: false,
 		} );
@@ -26,16 +30,17 @@ export default class extends Marionette.Behavior {
 			return;
 		}
 
+		this.isActive = false;
+
 		this.$el.draggable( 'destroy' );
 	}
 
 	toggle() {
-		const isEditMode = 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
-			isAbsolute = this.view.getEditModel().getSetting( '_position' );
+		const isAbsolute = this.view.getEditModel().getSetting( '_position' );
 
 		this.deactivate();
 
-		if ( isEditMode && isAbsolute && elementor.userCan( 'design' ) ) {
+		if ( isAbsolute && this.view.getContainer().isDesignable() ) {
 			this.activate();
 		}
 	}

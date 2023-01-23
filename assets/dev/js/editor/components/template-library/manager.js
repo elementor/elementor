@@ -18,10 +18,10 @@ TemplateLibraryManager = function() {
 	const registerDefaultTemplateTypes = function() {
 		var data = {
 			saveDialog: {
-				description: elementor.translate( 'save_your_template_description' ),
+				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 			},
 			ajaxParams: {
-				success: function( successData ) {
+				success( successData ) {
 					$e.route( 'library/templates/my-templates', {
 						onBefore: () => {
 							if ( templatesCollection ) {
@@ -36,16 +36,24 @@ TemplateLibraryManager = function() {
 						},
 					} );
 				},
-				error: function( errorData ) {
+				error( errorData ) {
 					self.showErrorDialog( errorData );
 				},
 			},
 		};
 
-		_.each( [ 'page', 'section', elementor.config.document.type ], function( type ) {
+		const translationMap = {
+			page: __( 'Page', 'elementor' ),
+			section: __( 'Section', 'elementor' ),
+			container: __( 'Container', 'elementor' ),
+			[ elementor.config.document.type ]: elementor.config.document.panel.title,
+		};
+
+		jQuery.each( translationMap, function( type, title ) {
 			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
-					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] ),
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
 				},
 			} );
 
@@ -56,7 +64,7 @@ TemplateLibraryManager = function() {
 	const registerDefaultFilterTerms = function() {
 		filterTerms = {
 			text: {
-				callback: function( value ) {
+				callback( value ) {
 					value = value.toLowerCase();
 
 					if ( this.get( 'title' ).toLowerCase().indexOf( value ) >= 0 ) {
@@ -111,7 +119,7 @@ TemplateLibraryManager = function() {
 					source: templateModel.get( 'source' ),
 					template_id: templateModel.get( 'template_id' ),
 				},
-				success: function( response ) {
+				success( response ) {
 					templatesCollection.remove( templateModel, { silent: true } );
 
 					if ( options.onSuccess ) {
@@ -125,7 +133,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.importTemplate = function( model, args = {} ) {
-		elementorCommon.helpers.softDeprecated( 'importTemplate', '2.8.0',
+		elementorDevTools.deprecation.deprecated( 'importTemplate', '2.8.0',
 			"$e.run( 'library/insert-template' )" );
 
 		args.model = model;
@@ -138,7 +146,7 @@ TemplateLibraryManager = function() {
 
 		_.extend( data, {
 			source: 'local',
-			type: type,
+			type,
 		} );
 
 		if ( templateType.prepareSavedData ) {
@@ -147,7 +155,7 @@ TemplateLibraryManager = function() {
 
 		data.content = JSON.stringify( data.content );
 
-		var ajaxParams = { data: data };
+		var ajaxParams = { data };
 
 		if ( templateType.ajaxParams ) {
 			_.extend( ajaxParams, templateType.ajaxParams );
@@ -160,7 +168,7 @@ TemplateLibraryManager = function() {
 		var options = {
 			unique_id: id,
 			data: {
-				source: source,
+				source,
 				edit_mode: true,
 				display: true,
 				template_id: id,
@@ -179,7 +187,7 @@ TemplateLibraryManager = function() {
 			data: {
 				source: templateModel.get( 'source' ),
 				template_id: templateModel.get( 'template_id' ),
-				favorite: favorite,
+				favorite,
 			},
 		};
 
@@ -190,10 +198,10 @@ TemplateLibraryManager = function() {
 		if ( ! deleteDialog ) {
 			deleteDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-template-library-delete-dialog',
-				headerMessage: elementor.translate( 'delete_template' ),
-				message: elementor.translate( 'delete_template_confirm' ),
+				headerMessage: __( 'Delete Template', 'elementor' ),
+				message: __( 'Are you sure you want to delete this template?', 'elementor' ),
 				strings: {
-					confirm: elementor.translate( 'delete' ),
+					confirm: __( 'Delete', 'elementor' ),
 				},
 			} );
 		}
@@ -205,7 +213,7 @@ TemplateLibraryManager = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementorCommon.dialogsManager.createWidget( 'alert', {
 				id: 'elementor-template-library-error-dialog',
-				headerMessage: elementor.translate( 'an_error_occurred' ),
+				headerMessage: __( 'An error occurred', 'elementor' ),
 			} );
 		}
 
@@ -239,7 +247,7 @@ TemplateLibraryManager = function() {
 
 		var ajaxOptions = {
 			data: {},
-			success: function( data ) {
+			success( data ) {
 				templatesCollection = new TemplateLibraryCollection( data.templates );
 
 				if ( data.config ) {
@@ -290,15 +298,28 @@ TemplateLibraryManager = function() {
 	};
 
 	this.loadTemplates = function( onUpdate ) {
-		self.requestLibraryData( {
-			onBeforeUpdate: self.layout.showLoadingView.bind( self.layout ),
-			onUpdate: function() {
-				self.layout.hideLoadingView();
+		self.layout.showLoadingView();
 
-				if ( onUpdate ) {
-					onUpdate();
-				}
-			},
+		const query = { source: this.getFilter( 'source' ) },
+			options = {};
+
+		// TODO: Remove - it when all the data commands is ready, manage the cache!.
+		if ( 'local' === query.source ) {
+			options.refresh = true;
+		}
+
+		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
+			templatesCollection = new TemplateLibraryCollection( result.data.templates );
+
+			if ( result.data.config ) {
+				config = result.data.config;
+			}
+
+			self.layout.hideLoadingView();
+
+			if ( onUpdate ) {
+				onUpdate();
+			}
 		} );
 	};
 
@@ -331,18 +352,27 @@ TemplateLibraryManager = function() {
 			var message = '';
 
 			_.each( errorMessage, function( error ) {
+				if ( ! error?.message ) {
+					return;
+				}
+
 				message += '<div>' + error.message + '.</div>';
 			} );
 
 			errorMessage = message;
 		} else if ( errorMessage ) {
 			errorMessage += '.';
+		}
+
+		if ( errorMessage ) {
+			errorMessage = __( 'The following error(s) occurred while processing the request:', 'elementor' ) +
+				'<div id="elementor-template-library-error-info">' + errorMessage + '</div>';
 		} else {
-			errorMessage = '<i>&#60;The error message is empty&#62;</i>';
+			errorMessage = __( 'Please try again.', 'elementor' );
 		}
 
 		self.getErrorDialog()
-			.setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
+			.setMessage( errorMessage )
 			.show();
 	};
 };

@@ -1,35 +1,7 @@
 const ControlSelect2View = require( 'elementor-controls/select2' );
 
 module.exports = ControlSelect2View.extend( {
-	_enqueuedFonts: [],
-
 	$previewContainer: null,
-
-	enqueueFont( font ) {
-		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
-			return;
-		}
-
-		let fontUrl;
-		const fontType = elementor.config.controls.font.options[ font ];
-
-		switch ( fontType ) {
-			case 'googlefonts' :
-				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + '&text=' + font;
-				break;
-
-			case 'earlyaccess' :
-				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-				break;
-		}
-
-		if ( ! _.isEmpty( fontUrl ) ) {
-			jQuery( 'head' ).find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
-		}
-
-		this._enqueuedFonts.push( font );
-	},
 
 	getSelect2Options() {
 		return {
@@ -44,7 +16,7 @@ module.exports = ControlSelect2View.extend( {
 		this.ui.select.select2( this.getSelect2Options() );
 		this.ui.select.on( 'select2:open', function() {
 			self.$previewContainer = jQuery( '.select2-results__options[role="tree"]:visible' );
-			// load initial?
+			// Load initial?
 			setTimeout( function() {
 				self.enqueueFontsInView();
 			}, 100 );
@@ -88,8 +60,7 @@ module.exports = ControlSelect2View.extend( {
 	},
 
 	enqueueFontsInView() {
-		const self = this,
-			containerOffset = this.$previewContainer.offset(),
+		const containerOffset = this.$previewContainer.offset(),
 			top = containerOffset.top,
 			bottom = top + this.$previewContainer.innerHeight(),
 			fontsInView = [];
@@ -104,7 +75,7 @@ module.exports = ControlSelect2View.extend( {
 
 		fontsInView.forEach( function( font ) {
 			const fontFamily = jQuery( font ).find( 'span' ).html();
-			self.enqueueFont( fontFamily );
+			elementor.helpers.enqueueFont( fontFamily, 'editor' );
 		} );
 	},
 

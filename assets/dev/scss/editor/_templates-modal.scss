@@ -15,6 +15,10 @@ $remote-templates-items-space: 30px;
 	.dialog-buttons-wrapper {
 		display: none;
 	}
+
+	.select2-container {
+		z-index: 0;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -55,6 +59,19 @@ $remote-templates-items-space: 30px;
 	.elementor-template-library-template-insert {
 		color: #fff;
 		background-color: $editor-success;
+
+		&.elementor-disabled {
+			cursor: default;
+			pointer-events: none;
+			color: $editor-light;
+			background-color: $editor-darker;
+			transition: 0.3s;
+		}
+	}
+
+	.elementor-go-pro {
+		background-color: $editor-accent;
+		color: #fff;
 	}
 }
 
@@ -209,11 +226,10 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-filter {
-	@include border-end(1px solid $editor-lightest);
 
 	.select2 {
 		text-align: $start;
-		@include margin-end(25px);
+		width: calc(#{$control-unit} * 5) !important;
 	}
 
 	.select2-selection__rendered {
@@ -225,6 +241,8 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-transform: capitalize;
+		text-align: $start;
+		@include padding-start(5px);
 	}
 }
 
@@ -313,7 +331,7 @@ label.elementor-template-library-order-label {
 }
 
 .elementor-template-library-template-remote {
-	margin: $remote-templates-items-space / 2;
+	margin: calc( #{$remote-templates-items-space} / 2 );
 	padding: 8px;
 	background-color: #fff;
 	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
@@ -339,25 +357,22 @@ label.elementor-template-library-order-label {
 	}
 
 	&.elementor-template-library-pro-template {
-
-		.elementor-template-library-template-body {
-
-			&:before {
-				position: absolute;
-				content: 'pro';
-				text-transform: uppercase;
-				top: 5px;
-				@include end(5px);
-				background-color: $editor-accent;
-				color: $editor-lightest;
-				padding: 2px 4px 0;
-				font-size: 9px;
-				border-radius: 2px;
-			}
+		.elementor-template-library-template-body:before {
+			content: var( --elementor-template-library-subscription-plan-label );
+			background-color: var( --elementor-template-library-subscription-plan-color );
+			color: $editor-lightest;
+			position: absolute;
+			text-transform: uppercase;
+			top: 5px;
+			@include end(5px);
+			padding: 2px 4px 0;
+			font-size: 9px;
+			border-radius: 2px;
 		}
 	}
 
-	&:not(.elementor-template-library-template-page) {
+	// For blocks
+	&:not(.elementor-template-library-template-page):not(.elementor-template-library-template-lp) {
 		position: relative;
 		width: calc(33.333% - #{$remote-templates-items-space});
 		overflow: hidden;
@@ -420,19 +435,7 @@ label.elementor-template-library-order-label {
 		i {
 			font-size: 20px;
 			color: $editor-lightest;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-		}
-	}
-
-	.elementor-template-library-template-action {
-		background-color: transparent;
-		text-transform: none;
-
-		i {
-			@include margin-end(0);
+			@include absolute-center;
 		}
 	}
 
@@ -440,7 +443,7 @@ label.elementor-template-library-order-label {
 		color: $editor-success;
 	}
 
-	.elementor-button-go-pro {
+	.elementor-go-pro {
 		color: $editor-accent;
 	}
 
@@ -490,7 +493,9 @@ label.elementor-template-library-order-label {
 	}
 }
 
-.elementor-template-library-template-page {
+.elementor-template-library-template-page,
+.elementor-template-library-template-lp {
+
 	@media (max-width: $library_screen_breakpoint) {
 		width: calc(25% - #{$remote-templates-items-space});
 	}
@@ -688,6 +693,10 @@ label.elementor-template-library-order-label {
 	img {
 		width: 70px;
 	}
+
+	.elementor-template-library-no-results {
+		width: 200px;
+	}
 }
 
 .elementor-template-library-blank-title {
@@ -854,6 +863,7 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-footer-banner {
+	padding-bottom: 45px;
 
 	i {
 		color: $editor-lighter;
@@ -861,11 +871,15 @@ label.elementor-template-library-order-label {
 		margin-top: 40px;
 	}
 
+	.elementor-nerd-box-icon {
+		margin-top: 70px;
+	}
+
 	.elementor-excerpt {
 		color: $editor-light;
 		font-size: 15px;
 		font-weight: 500;
-		margin: 20px 0;
+		margin-top: 20px;
 	}
 }
 

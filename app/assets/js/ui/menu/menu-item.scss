@@ -1,0 +1,114 @@
+$menu-item-font-size: $eps-font-size-caption;
+$menu-item-line-height: $eps-line-height-sm;
+$menu-item-link-spacing: spacing(12);
+$menu-item-icon-size: $font-size-18;
+$menu-item-padding-y: spacing(8);
+$menu-item-padding-x: spacing(30);
+$menu-item-height: spacing(44);
+$menu-item-pointer-width: spacing(5);
+$menu-item-pointer-color: theme-elements-colors(link-color);
+$menu-item-action-button-padding: spacing(10);
+$menu-item-action-button-margin: spacing(20);
+$menu-item-action-button-color: tints(300);
+
+$menu-item-active-box-shadow: $eps-box-shadow;
+$menu-item-transition: $eps-transition-duration;
+
+$menu-item-color: tints(600);
+$menu-item-color-hover: tints(700);
+$menu-item-background-color-active: theme-colors(light);
+$menu-item-icon-color: tints(500);
+
+:root {
+	--menu-item-color: #{$menu-item-color};
+	--menu-item-color-hover: #{$menu-item-color-hover};
+	--menu-item-background-color-active: #{$menu-item-background-color-active};
+	--menu-item-icon-color: #{$menu-item-icon-color};
+	--menu-item-action-button-color: #{$menu-item-action-button-color};
+}
+
+$menu-item-dark-color: dark-tints(100);
+$menu-item-dark-color-hover: dark-tints(100);
+$menu-item-dark-background-color-active: dark-tints(600);
+$menu-item-icon-dark-color: dark-tints(200);
+$menu-item-action-button-dark-color: dark-tints(400);
+
+.eps-theme-dark {
+	--menu-item-color: #{$menu-item-dark-color};
+	--menu-item-color-hover: #{$menu-item-dark-color-hover};
+	--menu-item-background-color-active: #{$menu-item-dark-background-color-active};
+	--menu-item-icon-color: #{$menu-item-icon-dark-color};
+	--menu-item-action-button-color: #{$menu-item-action-button-dark-color};
+}
+
+.#{$eps-prefix}menu-item {
+	display: flex;
+	align-items: center;
+	position: relative;
+	transition: $menu-item-transition;
+	--action-button-opacity: 0;
+
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		inset-inline-start: 0;
+		height: 100%;
+		width: var(--menu-item-pointer-width);
+		background-color: $menu-item-pointer-color;
+	}
+
+	&:hover {
+		--action-button-opacity: 1;
+	}
+
+	&:hover, &--active {
+		--menu-item-color: var(--menu-item-color-hover);
+		--eps-link-color: var(--menu-item-color-hover);
+		--menu-item-icon-color: #{$menu-item-pointer-color};
+	}
+
+	&--active {
+		background-color: var(--menu-item-background-color-active);
+	}
+
+	&__link {
+		padding: $menu-item-padding-y $menu-item-padding-x;
+		min-height: $menu-item-height;
+		font-size: $menu-item-font-size;
+		line-height: $menu-item-line-height;
+		flex-grow: 1;
+		display: flex;
+		align-items: center;
+		color: var(--menu-item-color);
+		--eps-link-color: var(--menu-item-color);
+
+		&:not(:last-child) {
+			padding-inline-end: 0;
+		}
+
+		.eps-icon {
+			font-size: $menu-item-icon-size;
+			color: var(--menu-item-icon-color);
+			margin-inline-end: $menu-item-link-spacing;
+		}
+	}
+
+	&__action-button {
+		color: var(--menu-item-action-button-color);
+		opacity: var(--action-button-opacity);
+		padding: $menu-item-action-button-padding;
+		transition: $menu-item-transition;
+		margin-inline-end: $menu-item-action-button-margin;
+	}
+
+	&--active {
+		--menu-item-pointer-width: #{$menu-item-pointer-width};
+		box-shadow: $menu-item-active-box-shadow;
+
+		.#{$eps-prefix}menu-item__link .eps-icon {
+			color: $menu-item-pointer-color;
+		}
+	}
+}

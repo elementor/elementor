@@ -1,17 +1,38 @@
-// TODO: All components under document can be in one index file.
-import DocumentComponent from './document/component';
-import UIComponent from './document/ui/component';
-import ElementsComponent from './document/elements/component';
-import RepeaterComponent from './document/repeater/component';
-import HistoryComponent from './document/history/component';
-import DynamicComponent from './document/dynamic/component';
+import CommandContainerBase from './command-bases/command-container-base';
+import CommandContainerInternalBase from './command-bases/command-container-internal-base';
+import CommandHistoryBase from 'elementor-document/command-bases/command-history-base';
+import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
 
-elementorCommon.elements.$window.on( 'elementor:init', () => {
-	$e.components.register( new DocumentComponent() );
+$e.modules.editor = {
+	CommandContainerBase,
+	CommandContainerInternalBase,
 
-	$e.components.register( new UIComponent() );
-	$e.components.register( new ElementsComponent() );
-	$e.components.register( new RepeaterComponent() );
-	$e.components.register( new HistoryComponent() );
-	$e.components.register( new DynamicComponent() );
-} );
+	document: {
+		CommandHistoryBase,
+		CommandHistoryDebounceBase,
+	},
+};
+
+// TODO: Remove, BC.
+$e.modules.document = {
+	get CommandHistory() {
+		elementorDevTools.deprecation.deprecated(
+			'$e.modules.document.CommandHistory',
+			'3.7.0',
+			'$e.modules.editor.document.CommandHistoryBase',
+		);
+
+		return $e.modules.editor.document.CommandHistoryBase;
+	},
+
+	get CommandHistoryDebounce() {
+		elementorDevTools.deprecation.deprecated(
+			'$e.modules.CommandHistoryDebounce',
+			'3.7.0',
+			'$e.modules.editor.document.CommandHistoryDebounceBase',
+		);
+
+		return $e.modules.editor.document.CommandHistoryDebounceBase;
+	},
+};
+

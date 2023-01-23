@@ -16,9 +16,13 @@ Schemes = function() {
 	};
 
 	var initElements = function() {
-		elements.$style = jQuery( '<style>', {
-			id: 'elementor-style-scheme',
-		} );
+		const id = 'elementor-style-scheme';
+
+		elements.$style = elementor.$previewContents.find( `#${ id }` );
+
+		if ( ! elements.$style.length ) {
+			elements.$style = jQuery( '<style>', { id } );
+		}
 
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
 	};
@@ -34,7 +38,7 @@ Schemes = function() {
 			controlsStack,
 			( controlStyles ) => self.getSchemeValue( controlStyles.scheme.type, controlStyles.scheme.value, controlStyles.scheme.key ).value,
 			[ '{{WRAPPER}}' ],
-			[ settings.selectorWrapperPrefix + widgetType ]
+			[ settings.selectorWrapperPrefix + widgetType ],
 		);
 	};
 
@@ -47,7 +51,7 @@ Schemes = function() {
 	};
 
 	var fetchAllWidgetsSchemesStyle = function() {
-		_.each( elementor.config.widgets, function( widget ) {
+		_.each( elementor.widgetsCache, function( widget ) {
 			fetchWidgetControlsStyles( widget );
 		} );
 	};
@@ -150,6 +154,7 @@ Schemes = function() {
 	this.removeSchemeItem = function( schemeName, itemKey ) {
 		const items = schemes[ schemeName ].items;
 
+		// eslint-disable-next-line no-constant-condition
 		while ( true ) {
 			itemKey++;
 

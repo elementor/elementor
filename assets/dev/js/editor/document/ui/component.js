@@ -1,19 +1,13 @@
-import BaseComponent from 'elementor-common/components/component';
-import * as Commands from './commands/';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'document/ui';
 	}
 
 	defaultCommands() {
-		return {
-			copy: ( args ) => ( new Commands.Copy( args ) ).run(),
-			delete: ( args ) => ( new Commands.Delete( args ) ).run(),
-			duplicate: ( args ) => ( new Commands.Duplicate( args ) ).run(),
-			paste: ( args ) => ( new Commands.Paste( args ) ).run(),
-			'paste-style': ( args ) => ( new Commands.PasteStyle( args ) ).run(),
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {

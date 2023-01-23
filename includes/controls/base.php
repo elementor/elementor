@@ -114,7 +114,9 @@ abstract class Base_Control extends Base_Object {
 		?>
 		<script type="text/html" id="tmpl-elementor-control-<?php echo esc_attr( $this->get_type() ); ?>-content">
 			<div class="elementor-control-content">
-				<?php $this->content_template(); ?>
+				<?php
+				$this->content_template();
+				?>
 			</div>
 		</script>
 		<?php
@@ -132,6 +134,10 @@ abstract class Base_Control extends Base_Object {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
+		return [];
+	}
+
+	public static function get_assets( $setting ) {
 		return [];
 	}
 }

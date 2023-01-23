@@ -1,0 +1,27 @@
+{
+  "elements": {
+	"window",
+	"$window": "jQuery("
+	"window"
+	")"
+  },
+  "config": {
+	"elements": {
+	  "data": {},
+	  "editSettings": {}
+	},
+	"experimentalFeatures": {},
+	"breakpoints": {},
+	"responsive": {
+	  "breakpoints":  {},
+	  "activeBreakpoints": {}
+	}
+  },
+  "isEditMode": "()"
+  "=>" {
+},
+elementsHandler: {
+runReadyTrigger: () => {
+},
+},
+}

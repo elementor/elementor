@@ -2,7 +2,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlStructureItemView;
 
 ControlStructureItemView = ControlBaseDataView.extend( {
-	ui: function() {
+	ui() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.resetStructure = '.elementor-control-structure-reset';
@@ -10,13 +10,13 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	events: function() {
+	events() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'click @ui.resetStructure': 'onResetStructureClick',
 		} );
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		var helpers = ControlBaseDataView.prototype.templateHelpers.apply( this, arguments );
 
 		helpers.getMorePresets = this.getMorePresets.bind( this );
@@ -24,19 +24,19 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 		return helpers;
 	},
 
-	getCurrentEditedSection: function() {
+	getCurrentEditedSection() {
 		var editor = elementor.getPanelView().getCurrentPageView();
 
 		return editor.getOption( 'editedElementView' );
 	},
 
-	getMorePresets: function() {
+	getMorePresets() {
 		var parsedStructure = elementor.presetsFactory.getParsedStructure( this.getControlValue() );
 
 		return elementor.presetsFactory.getPresets( parsedStructure.columnsCount );
 	},
 
-	onResetStructureClick: function() {
+	onResetStructureClick() {
 		this.getCurrentEditedSection().resetColumnsCustomSize();
 	},
 } );

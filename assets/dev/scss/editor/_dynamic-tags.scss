@@ -8,13 +8,21 @@
 	background-color: #fff;
 	border: 1px solid $editor-light;
 	border-radius: 3px;
-	z-index: $first-layer;
+	z-index: $super-layer;
 
 	&__group-title {
 		color: $editor-darkest;
 		font-weight: bold;
 		font-size: 12px;
 		padding: 10px 15px;
+		display: flex;
+		align-items: center;
+
+		.eicon-info-circle {
+			@include padding-end(5px);
+			color: $editor-info;
+			font-size: 14px;
+		}
 	}
 
 	&__item {
@@ -32,13 +40,36 @@
 			background-color: $editor-background;
 		}
 	}
+
+	&__teaser {
+		border-top: 2px solid $editor-lightest;
+		padding-top: 4px;
+		margin-top: 4px;
+
+		&-title {
+			color: $editor-dark;
+		}
+
+		&-text {
+			padding: 2px 15px 8px;
+			line-height: 1.5;
+			font-size: 12px;
+		}
+
+		&-link {
+			color: $editor-accent;
+			text-decoration: underline;
+			font-style: italic;
+			font-weight: bold;
+		}
+	}
 }
 
 .elementor-dynamic-cover {
 	display: flex;
 	align-items: center;
 	width: 100%;
-	height: 27px;
+	height: $control-unit;
 	box-sizing: border-box; // overriding for TinyMCE environment
 
 	&__title {
@@ -101,40 +132,37 @@
 
 .elementor-control-dynamic {
 
-	&.elementor-label-inline {
-
-		.elementor-control-field {
-			flex-wrap: wrap;
-		}
-	}
-
 	&-switcher {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		height: $control-unit;
 		cursor: pointer;
-		font-size: 9px;
+		border: 1px solid $editor-lightest;
+		border-radius: 3px;
+		background: #fff;
 
-		i {
-			@include padding-start(5px);
+		&.e-control-tool {
+			height: 20px;
+			border: 0;
 		}
 
 		&-wrapper {
 			display: flex;
-			justify-content: flex-end;
-			flex-grow: 1;
+		}
 
-			.elementor-label-inline > .elementor-control-content > .elementor-control-field > & {
-				width: 100%;
-				padding-bottom: 10px;
-			}
+		.eicon-database {
+			font-size: 12px;
 		}
 	}
 
 	&-value {
-		.elementor-control-tag-area {
-			display: none;
-		}
 
-		.elementor-control-dynamic-switcher {
-			color: $editor-info;
+		.elementor-control-tag-area,
+		.elementor-control-dynamic-switcher,
+		.e-global__popover-toggle {
+			display: none;
 		}
 	}
 }

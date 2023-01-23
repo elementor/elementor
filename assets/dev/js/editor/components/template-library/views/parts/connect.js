@@ -8,12 +8,13 @@ module.exports = Marionette.ItemView.extend( {
 		thumbnails: '#elementor-template-library-connect-thumbnails',
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return this.getOption( 'texts' );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.ui.connect.elementorConnect( {
+			parseUrl: ( url ) => url.replace( '%%template_type%%', this.model.get( 'type' ) ),
 			success: () => {
 				elementor.config.library_connect.is_connected = true;
 
@@ -25,7 +26,7 @@ module.exports = Marionette.ItemView.extend( {
 				} else {
 					$e.run( 'library/close' );
 					elementor.notifications.showToast( {
-						message: elementor.translate( 'connected_successfully' ),
+						message: __( 'Connected successfully.', 'elementor' ),
 					} );
 				}
 			},

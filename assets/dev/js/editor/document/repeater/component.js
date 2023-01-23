@@ -1,17 +1,12 @@
-import BaseComponent from 'elementor-common/components/component';
-import * as Commands from './commands';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'document/repeater';
 	}
 
 	defaultCommands() {
-		return {
-			duplicate: ( args ) => ( new Commands.Duplicate( args ) ).run(),
-			insert: ( args ) => ( new Commands.Insert( args ) ).run(),
-			move: ( args ) => ( new Commands.Move( args ) ).run(),
-			remove: ( args ) => ( new Commands.Remove( args ) ).run(),
-		};
+		return this.importCommands( commands );
 	}
 }

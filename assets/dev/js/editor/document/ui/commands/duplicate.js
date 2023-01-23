@@ -1,12 +1,10 @@
-import Base from '../../commands/base/base';
+export class Duplicate extends $e.modules.CommandBase {
+	apply() {
+		const selectedElements = elementor.selection.getElements();
 
-export class Duplicate extends Base {
-	apply( args ) {
-		const selectedElement = elementor.getCurrentElement();
-
-		if ( selectedElement ) {
+		if ( selectedElements.length ) {
 			return $e.run( 'document/elements/duplicate', {
-				container: selectedElement.getContainer(),
+				containers: selectedElements,
 			} );
 		}
 

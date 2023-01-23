@@ -1,0 +1,21 @@
+$promotion-overlay-icon-size: spacing(20);
+$promotion-overlay-icon-spacing: spacing(16);
+$promotion-overlay-icon-color: theme-colors(light);
+
+.e-site-editor__promotion-overlay {
+	&__link {
+		display: flex;
+		width: 100%;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		text-decoration: none;
+	}
+
+	&__icon {
+		font-size: $promotion-overlay-icon-size;
+		color: $promotion-overlay-icon-color;
+		margin-bottom: $promotion-overlay-icon-spacing;
+	}
+}

@@ -5,6 +5,7 @@
 module.exports = {
 	unit: {
 		configFile: 'karma.conf.js',
+		reporters: [ 'dots', 'fail-fast']
 	},
 	coverage: {
 		configFile: 'karma.conf.js',

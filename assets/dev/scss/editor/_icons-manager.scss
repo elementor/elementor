@@ -88,7 +88,7 @@
 	&__tab {
 
 		&__wrapper {
-			overflow: scroll;
+			overflow: auto;
 			margin: 25px -15px 0;
 			padding: 0 15px 15px;
 		}
@@ -142,15 +142,12 @@
 
 		&__text {
 			width: 300px;
-			color: $editor-darker;
 			font-size: 16px;
 			padding-top: 25px;
 		}
 
 		&__link {
-			color: $editor-accent;
-			padding-top: 20px;
-			font-size: 15px;
+			margin-top: 20px;
 		}
 	}
 }
@@ -231,10 +228,7 @@
 			flex-direction: column;
 			align-items: center;
 			width: 100%;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
+			@include absolute-center;
 			padding: 1px;
 		}
 
@@ -258,12 +252,6 @@
 		font-style: italic;
 		text-decoration: underline;
 	}
-	.dialog-confirm-ok {
-		color: $editor-success;
-	}
-}
-
-#elementor-enable-svg-dialog {
 	.dialog-confirm-ok {
 		color: $editor-success;
 	}

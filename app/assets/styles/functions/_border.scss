@@ -1,0 +1,10 @@
+// Function: Border
+// - @argument: $border-colorm $border-size(default is 1px), $border-style(default is 'solid')
+// - @returns 'border values according to @arguments
+// - use cases:
+// 	- defining a border without specifying default values
+//  - passing semantic values as @arguments
+
+@function border($border-color, $border-size:1px, $border-style:solid){
+	@return #{$border-size} #{$border-style} #{$border-color};
+}

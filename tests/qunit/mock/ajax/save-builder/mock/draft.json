@@ -1,0 +1,19 @@
+{
+	"success": true,
+	"code": 200,
+	"data": {
+		"status": "draft",
+		"config": {
+			"document": {
+				"last_edited": "Last edited on <time>Jan 16, 11:53<\/time> by test",
+				"urls": {
+				},
+				"revisions": {
+				}
+			}
+		},
+		"latest_revisions": [],
+		"revisions_ids": []
+	}
+}
+

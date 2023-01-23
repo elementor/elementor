@@ -1,10 +1,16 @@
-import History from '../../commands/base/history';
-
-export class Import extends History {
+export class Import extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 
 		this.requireArgumentConstructor( 'data', Object, args );
+
+		if ( args.containers ) {
+			throw new TypeError( 'Multi containers are not supported' );
+		}
+
+		if ( args.container ) {
+			this.requireContainer();
+		}
 	}
 
 	getHistory( args ) {
@@ -12,26 +18,28 @@ export class Import extends History {
 
 		return {
 			type: 'add',
-			title: elementor.translate( 'template' ),
+			title: __( 'Template', 'elementor' ),
 			subTitle: model.get( 'title' ),
 		};
 	}
 
 	apply( args ) {
-		const previewContainer = elementor.getPreviewContainer(),
-			{
-				data,
+		const { data,
 				options = args.options || {},
-				at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at,
-			} = args;
+				container = args.container || elementor.getPreviewContainer(),
+		} = args,
+			result = [];
+
+		let at = isNaN( options.at ) ? container.view.collection.length : options.at;
 
 		// Each `data.content`.
-		Object.entries( data.content ).forEach( ( [ index, model ] ) => {
-			$e.run( 'document/elements/create', {
-				container: elementor.getPreviewContainer(),
+		Object.values( data.content ).forEach( ( model ) => {
+			result.push( $e.run( 'document/elements/create', {
+				container,
 				model,
-				options: Object.assign( { at: at + index }, options ),
-			} );
+				options: Object.assign( options, { at } ),
+			} ) );
+			at++;
 		} );
 
 		if ( options.withPageSettings ) {
@@ -43,6 +51,8 @@ export class Import extends History {
 				},
 			} );
 		}
+
+		return result;
 	}
 }
 

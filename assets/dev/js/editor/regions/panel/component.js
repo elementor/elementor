@@ -1,6 +1,10 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
+import * as commandsInternal from './commands/internal/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
+	stateReadyOnce = false;
+
 	getNamespace() {
 		return 'panel';
 	}
@@ -14,32 +18,12 @@ export default class Component extends BaseComponent {
 		};
 	}
 
+	defaultCommandsInternal() {
+		return this.importCommands( commandsInternal );
+	}
+
 	defaultCommands() {
-		return {
-			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
-			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
-			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
-			save: () => elementor.saver.saveDraft(),
-			publish: () => elementor.saver.publish(),
-			exit: () => $e.route( 'panel/menu' ),
-			'change-device-mode': ( args ) => {
-				const devices = [ 'desktop', 'tablet', 'mobile' ];
-				if ( ! args.device ) {
-					const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-					let modeIndex = devices.indexOf( currentDeviceMode );
-
-					modeIndex++;
-
-					if ( modeIndex >= devices.length ) {
-						modeIndex = 0;
-					}
-
-					args.device = devices[ modeIndex ];
-				}
-
-				elementor.changeDeviceMode( args.device );
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {

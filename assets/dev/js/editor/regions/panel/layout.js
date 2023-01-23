@@ -20,10 +20,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	pages: {},
 
 	childEvents: {
-		'click:add': function() {
+		'click:add'() {
 			$e.route( 'panel/elements/categories' );
 		},
-		'editor:destroy': function() {
+		'editor:destroy'() {
 			$e.route( 'panel/elements/categories', {
 				autoFocusSearch: false,
 			} );
@@ -36,8 +36,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	perfectScrollbar: null,
 
-	initialize: function() {
+	initialize() {
 		$e.components.register( new PanelComponent( { manager: this } ) );
+
+		$e.internal( 'panel/state-loading' );
 
 		$e.components.register( new ElementsComponent( { manager: this } ) );
 
@@ -46,7 +48,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.initPages();
 	},
 
-	buildPages: function() {
+	buildPages() {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
@@ -81,7 +83,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return pages;
 	},
 
-	initPages: function() {
+	initPages() {
 		var pages;
 
 		this.getPages = function( page ) {
@@ -101,23 +103,23 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		};
 	},
 
-	getHeaderView: function() {
+	getHeaderView() {
 		return this.getChildView( 'header' );
 	},
 
-	getFooterView: function() {
+	getFooterView() {
 		return this.getChildView( 'footer' );
 	},
 
-	getCurrentPageName: function() {
+	getCurrentPageName() {
 		return this.currentPageName;
 	},
 
-	getCurrentPageView: function() {
+	getCurrentPageView() {
 		return this.currentPageView;
 	},
 
-	setPage: function( page, title, viewOptions ) {
+	setPage( page, title, viewOptions ) {
 		const pages = this.getPages();
 
 		if ( 'elements' === page && ! elementor.userCan( 'design' ) ) {
@@ -154,10 +156,14 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.trigger( 'set:page', this.currentPageView )
 			.trigger( 'set:page:' + page, this.currentPageView );
 
+		if ( elementor.promotion.dialog ) {
+			elementor.promotion.dialog.hide();
+		}
+
 		return this.currentPageView;
 	},
 
-	onBeforeShow: function() {
+	onBeforeShow() {
 		var PanelFooterItemView = require( 'elementor-regions/panel/footer' ),
 			PanelHeaderItemView = require( 'elementor-regions/panel/header' );
 
@@ -179,15 +185,15 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.on( 'show', this.updateScrollbar.bind( this ) );
 	},
 
-	onEditorBeforeShow: function() {
+	onEditorBeforeShow() {
 		_.defer( this.updateScrollbar.bind( this ) );
 	},
 
-	onEditorEmpty: function() {
+	onEditorEmpty() {
 		this.updateScrollbar();
 	},
 
-	updateScrollbar: function() {
+	updateScrollbar() {
 		if ( ! this.perfectScrollbar ) {
 			this.perfectScrollbar = new PerfectScrollbar( this.content.el, {
 				suppressScrollX: true,

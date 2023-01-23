@@ -11,7 +11,6 @@ module.exports = Marionette.ItemView.extend( {
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
-		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
@@ -20,13 +19,13 @@ module.exports = Marionette.ItemView.extend( {
 	events: {
 		'click @ui.menuButtons': 'onMenuButtonsClick',
 		'click @ui.settings': 'onSettingsClick',
-		'click @ui.deviceModeButtons': 'onResponsiveButtonsClick',
+		'click @ui.deviceModeIcon': 'onDeviceModeIconClick',
 		'click @ui.saveTemplate': 'onSaveTemplateClick',
 		'click @ui.history': 'onHistoryClick',
 		'click @ui.navigator': 'onNavigatorClick',
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = {
 			saver: {
 				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver,
@@ -36,15 +35,11 @@ module.exports = Marionette.ItemView.extend( {
 		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	getDeviceModeButton: function( deviceMode ) {
-		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
-	},
-
-	addSubMenuItem: function( subMenuName, itemData ) {
+	addSubMenuItem( subMenuName, itemData ) {
 		const $newItem = jQuery( '<div>', {
 				id: 'elementor-panel-footer-sub-menu-item-' + itemData.name,
 				class: 'elementor-panel-footer-sub-menu-item',
@@ -86,11 +81,17 @@ module.exports = Marionette.ItemView.extend( {
 		return $newItem.appendTo( $subMenu );
 	},
 
-	showSettingsPage: function() {
+	removeSubMenuItem( subMenuName, itemData ) {
+		const $item = jQuery( '#elementor-panel-footer-sub-menu-item-' + itemData.name );
+
+		return $item.remove();
+	},
+
+	showSettingsPage() {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onMenuButtonsClick: function( event ) {
+	onMenuButtonsClick( event ) {
 		var $tool = jQuery( event.currentTarget );
 
 		// If the tool is not toggleable or the click is inside of a tool
@@ -107,38 +108,36 @@ module.exports = Marionette.ItemView.extend( {
 		}
 	},
 
-	onSettingsClick: function() {
+	onSettingsClick() {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onDeviceModeChange: function() {
-		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
-			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+	onDeviceModeIconClick() {
+		if ( elementor.isDeviceModeActive() ) {
+			elementor.changeDeviceMode( 'desktop' );
 
-		this.getDeviceModeButton( previousDeviceMode ).removeClass( 'active' );
+			// Force exit if device mode is already desktop
+			elementor.exitDeviceMode();
+		} else {
+			const deviceView = 'default' === elementor.getPreferences( 'default_device_view' ) ? 'desktop' : elementor.getPreferences( 'default_device_view' );
 
-		this.getDeviceModeButton( currentDeviceMode ).addClass( 'active' );
+			elementor.changeDeviceMode( deviceView );
 
-		// Change the footer icon
-		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
+			if ( 'desktop' === deviceView ) {
+				elementor.enterDeviceMode();
+			}
+		}
 	},
 
-	onResponsiveButtonsClick: function( event ) {
-		var $clickedButton = this.$( event.currentTarget ),
-			newDeviceMode = $clickedButton.data( 'device-mode' );
-
-		elementor.changeDeviceMode( newDeviceMode );
-	},
-
-	onSaveTemplateClick: function() {
+	onSaveTemplateClick() {
 		$e.route( 'library/save-template' );
 	},
 
-	onHistoryClick: function() {
+	onHistoryClick() {
 		$e.route( 'panel/history/actions' );
 	},
 
-	onNavigatorClick: function() {
+	onNavigatorClick() {
 		$e.run( 'navigator/toggle' );
 	},
 } );

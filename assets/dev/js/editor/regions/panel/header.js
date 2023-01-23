@@ -17,15 +17,19 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 		'click @ui.menuButton': 'onClickMenu',
 	},
 
-	setTitle: function( title ) {
+	behaviors() {
+		return elementor.hooks.applyFilters( 'panel/header/behaviors', {}, this );
+	},
+
+	setTitle( title ) {
 		this.ui.title.html( title );
 	},
 
-	onClickAdd: function() {
+	onClickAdd() {
 		$e.route( 'panel/elements/categories' );
 	},
 
-	onClickMenu: function() {
+	onClickMenu() {
 		if ( $e.routes.is( 'panel/menu' ) ) {
 			$e.route( 'panel/elements/categories' );
 		} else {

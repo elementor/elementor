@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\EventTracker\DB as Events_DB_Manager;
+use Elementor\Core\Experiments\Experiments_Reporter;
+use Elementor\Modules\System_Info\Module as System_Info_Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -41,7 +45,6 @@ class Tracker {
 	public static function init() {
 		add_action( 'elementor/tracker/send_event', [ __CLASS__, 'send_tracking_data' ] );
 		add_action( 'admin_init', [ __CLASS__, 'handle_tracker_actions' ] );
-		add_action( 'admin_notices', [ __CLASS__, 'admin_notices' ] );
 	}
 
 	/**
@@ -60,12 +63,16 @@ class Tracker {
 	public static function check_for_settings_optin( $new_value ) {
 		$old_value = get_option( 'elementor_allow_tracking', 'no' );
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
-			self::send_tracking_data( true );
+			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [
+				'opt_in_recalculate_usage',
+				'opt_in_send_tracking_data',
+			] );
 		}
 
 		if ( empty( $new_value ) ) {
 			$new_value = 'no';
 		}
+
 		return $new_value;
 	}
 
@@ -133,6 +140,10 @@ class Tracker {
 
 		$params = self::get_tracking_data( empty( $last_send ) );
 
+		// Tracking data is used for System Info reports, and events should not be included in System Info reports,
+		// so it is added here
+		$params['analytics_events'] = self::get_events();
+
 		add_filter( 'https_ssl_verify', '__return_false' );
 
 		wp_safe_remote_post(
@@ -146,6 +157,9 @@ class Tracker {
 				],
 			]
 		);
+
+		// After sending the event tracking data, we reset the events table.
+		Events_DB_Manager::reset_table();
 	}
 
 	/**
@@ -194,86 +208,6 @@ class Tracker {
 	}
 
 	/**
-	 * Admin notices.
-	 *
-	 * Add Elementor notices to WordPress admin screen to show tracker notice.
-	 *
-	 * Fired by `admin_notices` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 */
-	public static function admin_notices() {
-		// Show tracker notice after 24 hours from installed time.
-		if ( Plugin::$instance->get_install_time() > strtotime( '-24 hours' ) ) {
-			return;
-		}
-
-		if ( '1' === get_option( 'elementor_tracker_notice' ) ) {
-			return;
-		}
-
-		if ( self::is_allow_track() ) {
-			return;
-		}
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		$elementor_pages = new \WP_Query( [
-			'post_type' => 'any',
-			'post_status' => 'publish',
-			'fields' => 'ids',
-			'update_post_meta_cache' => false,
-			'update_post_term_cache' => false,
-			'meta_key' => '_elementor_edit_mode',
-			'meta_value' => 'builder',
-		] );
-
-		if ( 2 > $elementor_pages->post_count ) {
-			return;
-		}
-
-		self::$notice_shown = true;
-
-		// TODO: Skip for development env.
-		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
-		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
-
-		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our non-sensitive plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
-
-		/**
-		 * Tracker admin description text.
-		 *
-		 * Filters the admin notice text for non-sensitive data collection.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $tracker_description_text Description text displayed in admin notice.
-		 */
-		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
-		?>
-		<div class="notice updated elementor-message">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
-					<p class="elementor-message-actions">
-						<a href="<?php echo $optin_url; ?>" class="button button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
-	}
-
-	/**
 	 * @since 2.2.0
 	 * @access public
 	 * @static
@@ -304,12 +238,17 @@ class Tracker {
 	 * @return array The data from system reports.
 	 */
 	private static function get_system_reports_data() {
-		$reports = Plugin::$instance->system_info->load_reports( System_Info\Main::get_allowed_reports() );
+		$reports = Plugin::$instance->system_info->load_reports( System_Info_Module::get_allowed_reports() );
+
+		// The log report should not be sent with the usage data - it is not used and causes bloat.
+		if ( isset( $reports['log'] ) ) {
+			unset( $reports['log'] );
+		}
 
 		$system_reports = [];
 		foreach ( $reports as $report_key => $report_details ) {
 			$system_reports[ $report_key ] = [];
-			foreach ( $report_details['report'] as $sub_report_key => $sub_report_details ) {
+			foreach ( $report_details['report']->get_report() as $sub_report_key => $sub_report_details ) {
 				$system_reports[ $report_key ][ $sub_report_key ] = $sub_report_details['value'];
 			}
 		}
@@ -347,6 +286,36 @@ class Tracker {
 	}
 
 	/**
+	 * Get non elementor post usages.
+	 *
+	 * Retrieve the number of posts that not using elementor.
+
+	 * @return array The number of posts using not used by Elementor grouped by post types
+	 *               and post status.
+	 */
+	public static function get_non_elementor_posts_usage() {
+		global $wpdb;
+
+		$usage = [];
+
+		$results = $wpdb->get_results(
+			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits`
+				FROM {$wpdb->posts} `p`
+				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id` AND  `meta_key` = '_elementor_edit_mode' )
+				WHERE `post_type` != 'elementor_library' AND `meta_value` IS NULL
+				GROUP BY `post_type`, `post_status`;"
+		);
+
+		if ( $results ) {
+			foreach ( $results as $result ) {
+				$usage[ $result->post_type ][ $result->post_status ] = $result->hits;
+			}
+		}
+
+		return $usage;
+	}
+
+	/**
 	 * Get posts usage.
 	 *
 	 * Retrieve the number of posts using Elementor.
@@ -374,12 +343,11 @@ class Tracker {
 
 		if ( $results ) {
 			foreach ( $results as $result ) {
-				$usage[ $result->post_type ][ $result->post_status ] = $result->hits;
+				$usage[ $result->post_type ][ $result->post_status ] = (int) $result->hits;
 			}
 		}
 
 		return $usage;
-
 	}
 
 	/**
@@ -419,27 +387,167 @@ class Tracker {
 	}
 
 	/**
+	 * Get usage of general settings.
+	 * 'Elementor->Settings->General'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_general_usage() {
+		return self::get_tracking_data_from_settings( 'general' );
+	}
+
+	/**
+	 * Get usage of advanced settings.
+	 * 'Elementor->Settings->Advanced'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_advanced_usage() {
+		return self::get_tracking_data_from_settings( 'advanced' );
+	}
+
+	/**
+	 * Get usage of experiments settings.
+	 *
+	 * 'Elementor->Settings->Experiments'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_experiments_usage() {
+		$system_info = Plugin::$instance->system_info;
+
+		/**
+		 * @var $experiments_report Experiments_Reporter
+		 */
+		$experiments_report = $system_info->create_reporter( [
+			'class_name' => Experiments_Reporter::class,
+		] );
+
+		return $experiments_report->get_experiments()['value'];
+	}
+
+	/**
+	 * Get usage of general tools.
+	 * 'Elementor->Tools->General'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_general_usage() {
+		return self::get_tracking_data_from_tools( 'general' );
+	}
+
+	/**
+	 * Get usage of 'version control' tools.
+	 * 'Elementor->Tools->Version Control'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_version_control_usage() {
+		return self::get_tracking_data_from_tools( 'versions' );
+	}
+
+	/**
+	 * Get usage of 'maintenance' tools.
+	 * 'Elementor->Tools->Maintenance'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_maintenance_usage() {
+		return self::get_tracking_data_from_tools( 'maintenance_mode' );
+	}
+
+	/**
+	 * Get library usage extend.
+	 *
+	 * Retrieve the number of Elementor library items saved.
+	 *
+	 * @return array The number of Elementor library items grouped by post types, post status
+	 *               and meta value.
+	 */
+	public static function get_library_usage_extend() {
+		global $wpdb;
+
+		$usage = [];
+
+		$results = $wpdb->get_results(
+			"SELECT `meta_value`, COUNT(`ID`) `hits`, `post_status`
+				FROM {$wpdb->posts} `p`
+				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
+				WHERE `post_type` = 'elementor_library'
+					AND `meta_key` = '_elementor_template_type'
+				GROUP BY `post_type`, `meta_value`, `post_status`;"
+		);
+
+		if ( $results ) {
+			foreach ( $results as $result ) {
+				if ( empty( $usage[ $result->meta_value ] ) ) {
+					$usage[ $result->meta_value ] = [];
+				}
+
+				if ( empty( $usage[ $result->meta_value ][ $result->post_status ] ) ) {
+					$usage[ $result->meta_value ][ $result->post_status ] = 0;
+				}
+
+				$usage[ $result->meta_value ][ $result->post_status ] += $result->hits;
+			}
+		}
+
+		return $usage;
+	}
+
+	public static function get_events() {
+		global $wpdb;
+		$table_name = $wpdb->prefix . Events_DB_Manager::TABLE_NAME;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$results = $wpdb->get_results( "SELECT event_data FROM {$table_name}" );
+
+		$events_data = [];
+
+		foreach ( $results as $event ) {
+			// Results are stored in the database as a JSON string. Since all tracking data is encoded right before
+			// being sent, it is now decoded.
+			$events_data[] = json_decode( $event->event_data, true );
+		}
+
+		return $events_data;
+	}
+
+	/**
 	 * Get the tracking data
 	 *
 	 * Retrieve tracking data and apply filter
 	 *
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @param bool $is_first_time
 	 *
 	 * @return array
 	 */
-	private static function get_tracking_data( $is_first_time = false ) {
+	public static function get_tracking_data( $is_first_time = false ) {
 		$params = [
 			'system' => self::get_system_reports_data(),
 			'site_lang' => get_bloginfo( 'language' ),
 			'email' => get_option( 'admin_email' ),
 			'usages' => [
 				'posts' => self::get_posts_usage(),
+				'non-elementor-posts' => self::get_non_elementor_posts_usage(),
 				'library' => self::get_library_usage(),
+				'settings' => [
+					'general' => self::get_settings_general_usage(),
+					'advanced' => self::get_settings_advanced_usage(),
+					'experiments' => self::get_settings_experiments_usage(),
+				],
+				'tools' => [
+					'general' => self::get_tools_general_usage(),
+					'version' => self::get_tools_version_control_usage(),
+					'maintenance' => self::get_tools_maintenance_usage(),
+				],
+				'library-details' => self::get_library_usage_extend(),
 			],
 			'is_first_time' => $is_first_time,
+			'install_time' => Plugin::instance()->get_install_time(),
 		];
 
 		/**
@@ -455,5 +563,74 @@ class Tracker {
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 
 		return $params;
+	}
+
+	/**
+	 * @param string $tab_name
+	 * @return array
+	 */
+	private static function get_tracking_data_from_settings( $tab_name ) {
+		return self::get_tracking_data_from_settings_page(
+			Plugin::$instance->settings->get_tabs(),
+			$tab_name
+		);
+	}
+
+	/**
+	 * @param string $tab_name
+	 * @return array
+	 */
+	private static function get_tracking_data_from_tools( $tab_name ) {
+		return self::get_tracking_data_from_settings_page(
+			Plugin::$instance->tools->get_tabs(),
+			$tab_name
+		);
+	}
+
+	private static function get_tracking_data_from_settings_page( $tabs, $tab_name ) {
+		$result = [];
+
+		if ( empty( $tabs[ $tab_name ] ) ) {
+			return $result;
+		}
+
+		$tab = $tabs[ $tab_name ];
+
+		foreach ( $tab['sections'] as $section_name => $section ) {
+			foreach ( $section['fields'] as $field_name => $field ) {
+				// Skips fields with '_' prefix.
+				if ( '_' === $field_name[0] ) {
+					continue;
+				}
+
+				$default_value = null;
+				$args = $field['field_args'];
+				switch ( $args['type'] ) {
+					case 'checkbox':
+						$default_value = $args['value'];
+						break;
+
+					case 'select':
+					case 'checkbox_list_cpt':
+						$default_value = $args['std'];
+						break;
+
+					case 'checkbox_list_roles':
+						$default_value = null;
+						break;
+
+					// 'raw_html' is used as action and not as data.
+					case 'raw_html':
+						continue 2; // Skip fields loop.
+
+					default:
+						trigger_error( 'Invalid type: \'' . $args['type'] . '\'' ); // phpcs:ignore
+				}
+
+				$result[ $field_name ] = get_option( 'elementor_' . $field_name, $default_value );
+			}
+		}
+
+		return $result;
 	}
 }

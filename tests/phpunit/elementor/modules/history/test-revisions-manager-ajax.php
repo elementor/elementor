@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\History;
 
 use Elementor\Modules\History\Revisions_Manager;
-use Elementor\Testing\Elementor_Test_AJAX;
+use ElementorEditorTesting\Elementor_Test_AJAX;
 
 class Elementor_Test_Revisions_Manager_Ajax extends Elementor_Test_AJAX {
 
@@ -24,12 +24,12 @@ class Elementor_Test_Revisions_Manager_Ajax extends Elementor_Test_AJAX {
 
 		$ret = apply_filters( 'elementor/documents/ajax_save/return_data', [], $document );
 
-		$this->assertArrayHaveKeys( [
+		$this->assert_array_have_keys( [
 			'config',
 			'latest_revisions',
 			'revisions_ids',
 		], $ret );
-		$this->assertEquals( $child_id, $ret['config']['current_revision_id'] );
+		$this->assertEquals( $child_id, $ret['config']['document']['revisions']['current_id'] );
 		$this->assertEquals( 2, count( $ret['latest_revisions'] ) );
 		$this->assertEquals( [ $parent_id, $child_id ], $ret['revisions_ids'] );
 	}
