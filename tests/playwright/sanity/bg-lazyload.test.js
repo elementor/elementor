@@ -1,9 +1,9 @@
-const { test, expect } = require( '../utilities/test' );
+const { test, expect } = require( '@playwright/test' );
 const { createPage, deletePage } = require( '../utilities/rest-api' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 const EditorPage = require( '../pages/editor-page' );
 
-test.describe( 'Background Lazy Load', () => {
+test.describe.only( 'Background Lazy Load', () => {
 	let pageId;
 
 	test.beforeAll( async ( { browser }, testInfo ) => {

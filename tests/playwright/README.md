@@ -12,11 +12,12 @@ This command runs a WordPress server (using wp-env).
 
 ## Configuring the server
 Our tests require the following configuration:
-1. .htaccess configuration
-2. Theme
+1. Import templates - for now, only the law-firm-about template is required
+2. .htaccess configuration
+3. Theme
 To configure the server, run the following command:
 `npm run test:setup:playwright-sanity`
-This command rewrites .htaccess rules and activates the `hello-elementor` theme
+This command imports the templates, rewrites .htaccess rules and activates the `hello-elementor` theme
 
 ## Running tests
 We have several test packages that can be run separately. The separation has been done in order to parallelize the CI test runs.

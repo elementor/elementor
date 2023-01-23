@@ -6,7 +6,6 @@ log/
 vendor/
 local-site/
 tmp/
-/templates/
 
 # build outputs
 build/
@@ -14,6 +13,7 @@ assets/css/
 assets/js/
 *.log
 *.map
+/templates/
 
 # build tools lock
 yarn.lock
