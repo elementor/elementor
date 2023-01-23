@@ -11,6 +11,10 @@ inputs:
   BUILD_SCRIPT_PATH:
     required: true
     description: 'The full path of the script to build the plugin.'
+  CREATE_NEW_VERSION:
+    required: false
+    description: 'Whether to create a new version or not.'
+    default: 'false'
 
 runs:
   using: "composite"
@@ -23,7 +27,7 @@ runs:
                 exit 1
             fi
 
-            if [ -f "${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}" ];
+            if [ -f "${{ inputs.CREATE_NEW_VERSION }}" ] && [ "${{ inputs.CREATE_NEW_VERSION }}" == "true" ];
               then
                bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
             fi

@@ -102,6 +102,7 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           UPDATE_VERSIONS_SCRIPT_PATH: "./.github/scripts/update-version-elementor-php.sh"
+          CREATE_NEW_VERSION: "true"
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
