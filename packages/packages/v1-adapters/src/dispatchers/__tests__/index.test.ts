@@ -1,15 +1,27 @@
 import { openRoute, runCommand } from '../';
 
+type ExtendedWindow = Window & {
+	$e: {
+		run: jest.Mock;
+		route: jest.Mock;
+	}
+}
+
 describe( '@elementor/v1-adapters/dispatchers', () => {
+	let eRun: jest.Mock, eRoute: jest.Mock;
+
 	beforeEach( () => {
-		( window as any ).$e = {
+		( window as unknown as ExtendedWindow ).$e = {
 			run: jest.fn(),
 			route: jest.fn(),
 		};
+
+		eRun = ( window as unknown as ExtendedWindow ).$e.run;
+		eRoute = ( window as unknown as ExtendedWindow ).$e.route;
 	} );
 
 	afterEach( () => {
-		delete ( window as any ).$e;
+		delete ( window as unknown as { $e?: unknown } ).$e;
 	} );
 
 	it( 'should run a V1 command that returns Promise', () => {
@@ -17,13 +29,13 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		const command = 'editor/documents/open',
 			args = { test: 'arg' };
 
-		( window as any ).$e.run.mockReturnValue( Promise.resolve( 'result' ) );
+		eRun.mockReturnValue( Promise.resolve( 'result' ) );
 
 		// Act.
 		const result = runCommand( command, args );
 
 		// Assert.
-		expect( ( window as any ).$e.run ).toHaveBeenCalledWith( command, args );
+		expect( eRun ).toHaveBeenCalledWith( command, args );
 		expect( result ).toEqual( Promise.resolve( 'result' ) );
 	} );
 
@@ -32,13 +44,13 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		const command = 'editor/documents/open',
 			args = { test: 'arg' };
 
-		( window as any ).$e.run.mockReturnValue( makeJQueryDeferred( 'result' ) );
+		eRun.mockReturnValue( makeJQueryDeferred( 'result' ) );
 
 		// Act.
 		const result = runCommand( command, args );
 
 		// Assert.
-		expect( ( window as any ).$e.run ).toHaveBeenCalledWith( command, args );
+		expect( eRun ).toHaveBeenCalledWith( command, args );
 		expect( result ).toEqual( Promise.resolve( 'result' ) );
 	} );
 
@@ -47,19 +59,19 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		const command = 'editor/documents/open',
 			args = { test: 'arg' };
 
-		( window as any ).$e.run.mockReturnValue( 'result' );
+		eRun.mockReturnValue( 'result' );
 
 		// Act.
 		const result = runCommand( command, args );
 
 		// Assert.
-		expect( ( window as any ).$e.run ).toHaveBeenCalledWith( command, args );
+		expect( eRun ).toHaveBeenCalledWith( command, args );
 		expect( result ).toEqual( Promise.resolve( 'result' ) );
 	} );
 
 	it( 'should reject when trying to run a V1 command and `$e.run()` is unavailable', () => {
 		// Arrange.
-		delete ( window as any ).$e.run;
+		delete ( window as { $e?: unknown } ).$e;
 
 		// Act & Assert.
 		expect( () => runCommand( 'editor/documents/open' ) )
@@ -75,7 +87,7 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		const result = openRoute( route );
 
 		// Assert.
-		expect( ( window as any ).$e.route ).toHaveBeenCalledWith( route );
+		expect( eRoute ).toHaveBeenCalledWith( route );
 		expect( result ).toEqual( Promise.resolve() );
 	} );
 
@@ -83,7 +95,7 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		// Arrange.
 		const route = 'test/route';
 
-		( window as any ).$e.route.mockImplementation( ( r: string ) => {
+		eRoute.mockImplementation( ( r: string ) => {
 			throw `Cannot find ${ r }`;
 		} );
 
@@ -95,7 +107,7 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 
 	it( 'should reject when trying to open a V1 route and `$e.route()` is unavailable', () => {
 		// Arrange.
-		delete ( window as any ).$e.route;
+		delete ( window as { $e?: unknown } ).$e;
 
 		// Act & Assert.
 		expect( () => openRoute( 'test/route' ) )
@@ -104,7 +116,7 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 	} );
 } );
 
-function makeJQueryDeferred( value: any ) {
+function makeJQueryDeferred( value: unknown ) {
 	return {
 		then: () => value,
 		promise: () => value,

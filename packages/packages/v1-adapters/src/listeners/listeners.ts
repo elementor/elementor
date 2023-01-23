@@ -57,7 +57,7 @@ function registerWindowEventListener( event: WindowEventDescriptor['name'], call
 		addListener( event );
 	}
 
-	callbacksByEvent.get( event )!.push( callback );
+	callbacksByEvent.get( event )?.push( callback );
 }
 
 function addListener( event: EventDescriptor['name'] ) {

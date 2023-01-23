@@ -6,7 +6,7 @@ module.exports = {
 	],
 	extends: [
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
-		'plugin:@typescript-eslint/eslint-recommended',
+		'plugin:@typescript-eslint/recommended',
 		'plugin:import/typescript',
 	],
 	settings: {
@@ -26,6 +26,13 @@ module.exports = {
 				message: 'Path import of Elementor dependencies is not allowed, please use the package root (e.g: use "@elementor/locations" instead of "@elementor/locations/src/index.ts").',
 			},
 		],
+
+		// Strict mode.
+		'@typescript-eslint/no-non-null-assertion': [ 'error' ],
+		'@typescript-eslint/no-explicit-any': [ 'error' ],
+
+		// Unused rules.
+		'@typescript-eslint/no-var-requires': [ 'off' ],
 
 		// Disable the js no-unused-vars rule, and enable the TS version.
 		'no-unused-vars': [ 'off' ],

@@ -7,11 +7,15 @@ export function dispatchReadyEvent() {
 }
 
 function getV1LoadingPromise() {
-	if ( ! ( window as any ).__elementorEditorV1LoadingPromise ) {
+	type ExtendedWindow = Window & {
+		__elementorEditorV1LoadingPromise: Promise<void>;
+	};
+
+	if ( ! ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise ) {
 		return Promise.reject( 'Elementor Editor V1 is not loaded' );
 	}
 
-	return ( window as any ).__elementorEditorV1LoadingPromise;
+	return ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise;
 }
 
 export function normalizeEvent( e: ListenerEvent['originalEvent'] ): ListenerEvent {
