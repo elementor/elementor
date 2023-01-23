@@ -125,7 +125,7 @@ class Admin {
 	 */
 	createKitDeletedWidget( options ) {
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: 'e-kit-deleted-dialog',
+			id: 'e-revert-kit-deleted-dialog',
 			headerMessage: sessionStorage.getItem( this.kitNameToRemoveKey ) + __( ' was successfully deleted', 'elementor' ),
 			message: options.message,
 			strings: {
