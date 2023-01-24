@@ -5,11 +5,26 @@ var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
-	behaviors: {
-		Scrubbing: {
-			behaviorClass: Scrubbing,
-			scrubSettings: { intentTime: 800 },
-		},
+	behaviors() {
+		return {
+			...ControlBaseUnitsItemView.prototype.behaviors.apply( this ),
+			Scrubbing: {
+				behaviorClass: Scrubbing,
+				scrubSettings: {
+					intentTime: 800,
+					valueModifier: () => {
+						const currentUnit = this.getControlValue( 'unit' );
+
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.1 : 1;
+					},
+					enhancedNumber: () => {
+						const currentUnit = this.getControlValue( 'unit' );
+
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.5 : 10;
+					},
+				},
+			},
+		};
 	},
 
 	ui() {
