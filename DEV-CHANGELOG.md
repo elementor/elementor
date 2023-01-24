@@ -1,5 +1,38 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.12.0-dev1 - 2023-01-24
+* Fix: Justify Content icons are inverted Dir = "Column" & RTL [ED-8458] (#20866)
+* Fix: Pro Gallery widget won't load unless set to 100% (#20669) [ED-9020] (#20814)
+* Tweak: Remove 'kit by plan' filtering [ED-9138] (#20853)
+* Tweak: Added filter for kits GET request args [ED-9259] (#20891)
+* Fix: Various Carousel widgets are not working in Nested Tabs [ED-9149] (#20845)
+* Fix: Multiple issues when using the converter to convert sections to containers [ED-8880] (#20908)
+* Fix: UI glitch when switching between navigation position options in Loop Carousel [ED-9255] (#20942)
+* Fix: Pro Gallery widget won't load unless set to 100% (#20669) [ED-9020] (#20945)
+* Tweak: Added correlation between starting and ending date in Date and Time rule in Popup [ED-9266] (#20898)
+* Fix: Lazyload not working on loop builder items that fetched after 'load more' action [ED-9183] (#20860)
+* Tweak: Added `generator` meta tag to identify active performance settings & experiments [ED-8870] (#20877)
+* New: Added background image size [ED-2108] (#20786)
+* Tweak: Update site logo widget behavior [ED-9135] (#20925)
+* Fix: Added WC filter to prevent duplicate pages in WC kits [ED-9140] (#20907)
+* Fix: Divider widget disappears when container set to row  [ED-9287] (#20918)
+* Fix: Tab toggle is not working as expected [...] in Tabs widget [ED-9177] (#20972)
+* Tweak: Make the popup more accessible by adding a focus after opening the popup [ED-9067] (#20937)
+* Fix: Admin top bar layout when the WP menu is folded (#21034)
+* New: Upgraded Swiper Library to 8.x.x (Experiment) (#18724) [ED-9242] (#20947)
+* Tweak: Update error messages when replacing URLs [ED-9295] (#20926)
+* Tweak: Update error messages on imports/export processes [ED-9358] (#20985)
+* Tweak: Added a responsive control to the custom image spacing of the Image Carousel [ED-9213] (#20987)
+* Revert "Internal: Add support for disabling lazyload at the document level [ED-8993]" (#21059)
+* Fix: Swiper 5.x minified CSS isn't generated ED-9434 (#21074)
+* Tweak: Updated Google Fonts list with 125 new fonts [ED-9333] (#21073)
+* Tweak: Promote experiments to advanced statuses [ED-9402] (#21048)
+* New: Added copy/paste between sites (cross-domain) [ED-9332] (#21041)
+* Fix: PHP 8.x deprecated features [ED-9480] (#21109)
+* New: Nested Tabs - Refactor show/hide tab content callbacks to be more generic [ED-9454] (#21107)
+* Tweak: Adjusted the increments of `em` and `rem` when scrubbing (#19399) [ED-8551] (#21096)
+* Tweak: Removed PHP deprecation notices [ED-9467] (#21100)
+
 #### 3.11.0-dev3 - 2022-12-28
 * Tweak: Changed tabs' initial container Content Width to Full Width in Tabs widget [ED-9069] (#20788)
 * Fix: Editor - Fix deps in scripts (#20818)
@@ -473,23 +506,3 @@
 * Tweak: Updated changelog to v3.5.4 (#17546)
 * Fix: When trying to import a kit, the general error try-again action is incorrect [ED-6273] (#17513)
 * Tweak: Lightbox - only play a video if it has a registered provider [ED-6293] (#17527)
-
-#### 3.6.0-dev32 - 2022-01-18
-* Tweak: Updated Google Fonts list [ED-6245] (#17496)
-* Tweak: Updated changelog for v3.5.4 (#17498)
-
-#### 3.6.0-dev31 - 2022-01-17
-* Fix: Debug Util - `onError` throws an error because of bad parameters [ED-6190] (#17435)
-* Tweak: Update E-Icons library to v5.14.0 (#17378)
-* Fix: Can't edit the page if Favorite Widgets are used in it (and experiment is enabled) [ED-6166] (#17426)
-
-#### 3.6.0-dev30 - 2022-01-13
-* Tweak: Added a deprecation notice for PHP 5.6 in WP dashboard [ED-5770] (#17273)
-* Fix: Dynamic Tag switcher disappear in RTL (#17469)
-
-#### 3.6.0-dev29 - 2022-01-12
-* Fix: Can’t drag & drop elements inside a container  [ED-6077] (#17320)
-
-#### 3.6.0-dev28 - 2022-01-10
-* Fix: widescreen breakpoint  effects query media order (#17314)
-* Tweak: Adding Responsive option to Text Stroke [ED-5846] (#17235)
