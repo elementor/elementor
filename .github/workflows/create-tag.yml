@@ -6,7 +6,7 @@ on:
     inputs:
       type:
         type: choice
-        description: 'Release type'
+        description: 'Tag Type'
         required: true
         default: 'rc'
         options:
