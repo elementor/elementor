@@ -75,20 +75,24 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 
 	it( 'should re-check whether the route is active when changing it', () => {
 		// Arrange.
-		let route = 'active/route';
-
 		mockedIsRouteActive.mockImplementation( ( r ) => {
 			return 'active/route' === r;
 		} );
 
 		// Act.
-		const { result, rerender } = renderHook( () => useIsRouteActive( route ) );
+		const { result, rerender } = renderHook( ( { route } ) => useIsRouteActive( route ), {
+			initialProps: {
+				route: 'active/route',
+			},
+		} );
 
 		// Assert.
 		expect( result.current ).toBe( true );
 
 		// Act.
-		route = 'inactive/route';
+		rerender( {
+			route: 'inactive/route',
+		} );
 
 		rerender();
 
