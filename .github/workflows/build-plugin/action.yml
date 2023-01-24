@@ -5,16 +5,16 @@ inputs:
   PACKAGE_VERSION:
     required: true
     description: 'The version to inject into the plugin package.json file.'
-  UPDATE_VERSIONS_SCRIPT_PATH:
-    required: true
-    description: 'The path to the script that updates the versions in the plugin PHP files.'
   BUILD_SCRIPT_PATH:
     required: true
     description: 'The full path of the script to build the plugin.'
-  CREATE_NEW_VERSION:
+  UPDATE_VERSION:
     required: false
-    description: 'Whether to create a new version or not.'
+    description: 'Whether to create a new version or not. If true, provide a new version path UPDATE_VERSIONS_SCRIPT_PATH'
     default: 'false'
+  UPDATE_VERSION_SCRIPT_PATH:
+    required: false
+    description: 'The path to the script that updates the version in the plugin PHP files.'
 
 runs:
   using: "composite"
