@@ -231,6 +231,13 @@ class Module extends BaseModule {
 		<?php
 	}
 
+	/**
+	 * Render the last kit thumbnail if exists
+	 *
+	 * @param $last_imported_kit
+	 *
+	 * @return void
+	 */
 	private function render_last_kit_thumbnail( $last_imported_kit ) {
 		if ( empty( $last_imported_kit['kit_thumbnail'] ) ) {
 			return;
