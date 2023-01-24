@@ -533,6 +533,11 @@ class Widget_Icon_List extends Widget_Base {
 						'min' => -15,
 						'max' => 15,
 					],
+					'em' => [
+						'min' => -1,
+						'max' => 1,
+						'step' => 0.1,
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon' => 'top: {{SIZE}}{{UNIT}};',
