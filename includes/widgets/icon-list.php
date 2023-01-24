@@ -513,7 +513,7 @@ class Widget_Icon_List extends Widget_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item' => 'align-items: {{VALUE}};',
+					'{{WRAPPER}}' => '--icon-self-vertical-align: {{VALUE}};',
 				],
 			]
 		);
@@ -523,7 +523,9 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Adjust Vertical Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'condition' => [ 'icon_self_vertical_align!' => 'middle' ],
+				'condition' => [
+					'icon_self_vertical_align' => [ 'top', 'bottom' ],
+				],
 				'size_units' => [ 'px' ],
 				'default' => [
 					'unit' => 'px',

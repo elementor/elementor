@@ -55,9 +55,11 @@
 		}
 
 		&, a {
-			display: flex;
-			align-items: center;
 			font-size: inherit;
+			display: flex;
+
+			$e-icon-self-vertical-align-default: center;
+			align-items: var(--icon-self-vertical-align, $e-icon-self-vertical-align-default);
 		}
 	}
 
