@@ -86,7 +86,7 @@ jobs:
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
-          MESSAGE: "@here Elementor `${{ env.PACKAGE_VERSION }}` Pre release created, please review changes. The build can be found in the artifacts : ${{ env.ACTION_RUN }}"
+          MESSAGE: "@here Elementor `${{ env.PACKAGE_VERSION }}` Pre release created, please review changes."
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNELS: ${{ vars.SLACK_TAG_CHANNELS }}
         
