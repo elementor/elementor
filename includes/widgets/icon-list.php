@@ -523,9 +523,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Adjust Vertical Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'condition' => [
-					'icon_self_vertical_align' => [ 'top', 'bottom' ],
-				],
 				'size_units' => [ 'px' ],
 				'default' => [
 					'unit' => 'px',
