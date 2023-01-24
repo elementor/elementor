@@ -94,8 +94,6 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 			route: 'inactive/route',
 		} );
 
-		rerender();
-
 		// Assert.
 		expect( result.current ).toBe( false );
 	} );
