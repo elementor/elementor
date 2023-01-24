@@ -40,6 +40,12 @@ jobs:
         uses: ./.github/workflows/bump-version
         with:
           CHANNEL: ${{ github.event.inputs.type }}
+      - name: Push version
+        uses : ./.github/workflows/push-new-version
+        with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
       - name: Install Dependencies
         run: |
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
@@ -61,20 +67,32 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-      - name: Push version
-        uses : ./.github/workflows/push-new-version
+      - name: Create Git tag
+        uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
-      - name: Get artifact URL
-        run: |
-          ACTION_RUN="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          echo "ACTION_RUN=${ACTION_RUN}" >> $GITHUB_ENV
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+      - name: Generate changelog
+        uses : ./.github/workflows/generate-changelog
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
+          BASE_TAG_NAME: v${{ env.PREV_PACKAGE_VERSION }}
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.PACKAGE_VERSION }}
+          files: elementor-*.zip
+          prerelease: true
+          body_path: temp-changelog.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
-          MESSAGE: "@here Elementor `${{ env.PACKAGE_VERSION }}` Tag created, please review changes. The build can be found in the artifacts : ${{ env.ACTION_RUN }}"
+          MESSAGE: "@here Elementor `${{ env.PACKAGE_VERSION }}` Pre release created, please review changes. The build can be found in the artifacts : ${{ env.ACTION_RUN }}"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNELS: ${{ vars.SLACK_TAG_CHANNELS }}
         
