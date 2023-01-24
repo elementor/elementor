@@ -91,13 +91,6 @@ export default class Scrubbing extends Marionette.Behavior {
 		return ( movementEvent.ctrlKey || movementEvent.metaKey ) ? SCRUB_ENHANCED : SCRUB_REGULAR;
 	}
 
-	/**
-	 * @param {number}            value
-	 * @param {number}            change
-	 * @param {number | Function} modifier
-	 *
-	 * @return {number}
-	 */
 	getModifiedValue( { value, change, modifier } ) {
 		if ( 'function' === typeof modifier ) {
 			modifier = modifier();
