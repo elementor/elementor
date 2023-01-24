@@ -85,6 +85,7 @@ class Utils {
 	 * Transform a string name to title format.
 	 *
 	 * @param $name
+	 *
 	 * @return string
 	 */
 	public static function transform_name_to_title( $name ): string {
