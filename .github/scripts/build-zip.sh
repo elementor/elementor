@@ -6,7 +6,7 @@ if [[ -z "$PACKAGE_VERSION" ]]; then
 	exit 1
 fi
 
-PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}.zip"
+PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}"
 npx grunt build
 mv build elementor
 zip -r $PLUGIN_ZIP_FILENAME elementor
