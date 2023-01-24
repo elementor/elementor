@@ -386,6 +386,7 @@ class Import {
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
 			'kit_name' => $this->manifest['name'],
+			'kit_thumbnail' => $this->get_manifest_thumbnail(),
 			'kit_source' => $this->settings_referrer,
 			'user_id' => get_current_user_id(),
 			'start_timestamp' => current_time( 'timestamp' ),
@@ -411,6 +412,29 @@ class Import {
 		];
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+	}
+
+	/**
+	 * Get the manifest thumbnail, goes to the home page thumbnail if main doesn't exist
+	 *
+	 * @return string
+	 */
+	private function get_manifest_thumbnail(): string {
+		if ( ! empty( $this->manifest['thumbnail'] ) ) {
+			return $this->manifest['thumbnail'];
+		}
+
+		if ( empty( $this->manifest['content']['page'] ) ) {
+			return '';
+		}
+
+		foreach ( $this->manifest['content']['page'] as $page ) {
+			if ( 'Home' === $page['title'] ) {
+				return $page['thumbnail'];
+			}
+		}
+
+		return '';
 	}
 
 	public function get_runners_name(): array {

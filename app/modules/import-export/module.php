@@ -236,16 +236,20 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$img_attributes = [
-			'id' => 'tab-import-export-kit__kit_thumbnail',
-		];
-
 		?>
-		<img
-			src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ); ?>"
-			alt="<?php echo esc_attr( $last_imported_kit['kit_title'] ); ?>"
-			<?php ElementorUtils::print_html_attributes( $img_attributes ); ?>
-		>
+		<div class="tab-import-export-kit__kit-item-row">
+			<article class="tab-import-export-kit__kit-item">
+				<header>
+					<h3>
+						<?php echo esc_html__( $last_imported_kit['kit_title'] ) ?>
+					</h3>
+				</header>
+				<img
+					src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ) ?>"
+					alt="<?php esc_attr_e( $last_imported_kit['kit_title'], 'elementor' ) ?>"
+				>
+			</article>
+		</div>
 		<?php
 	}
 

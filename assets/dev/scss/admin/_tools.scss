@@ -86,12 +86,36 @@
 }
 
 .tab-import-export-kit__revert {
-	#elementor-import-export__revert_kit {
+
+	.tab-import-export-kit__kit-item {
+		background-color: rgba(255, 255, 255, 0.5);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+		border-radius: 0.1875rem;
+		margin-bottom: 15px;
+		display: inline-block;
+
+		header {
+			border-bottom: 1px solid #f1f3f5;
+			padding: 0.625rem;
+		}
+
+		h3 {
+			font-size: 0.875rem;
+			color: #6d7882;
+			margin: 0;
+		}
+
+		img {
+			width: 330px;
+			height: 315px;
+			padding: 0.625rem 0.625rem;
+		}
+	}
+
+	.button {
 		color: $danger-text;
 		border-color: $danger-text;
+		display: inline-block;
 	}
-	#tab-import-export-kit__kit_thumbnail {
-		margin-bottom: 15px;
-		display: block;
-	}
+
 }
