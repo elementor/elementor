@@ -43,8 +43,6 @@ jobs:
       - name: Install Dependencies
         run: |
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-          ACTION_RUN="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          echo "ACTION_RUN=${ACTION_RUN}" >> $GITHUB_ENV
           npm ci
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
@@ -69,6 +67,10 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
+      - name: Get artifact URL
+        run: |
+          ACTION_RUN="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "ACTION_RUN=${ACTION_RUN}" >> $GITHUB_ENV
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
