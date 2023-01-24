@@ -248,12 +248,12 @@ class Module extends BaseModule {
 			<article class="tab-import-export-kit__kit-item">
 				<header>
 					<h3>
-						<?php echo esc_html__( $last_imported_kit['kit_title'] ) ?>
+						<?php echo esc_html( $last_imported_kit['kit_title'] ); ?>
 					</h3>
 				</header>
 				<img
-					src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ) ?>"
-					alt="<?php esc_attr_e( $last_imported_kit['kit_title'], 'elementor' ) ?>"
+					src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ); ?>"
+					alt="<?php echo esc_attr( $last_imported_kit['kit_title'] ); ?>"
 				>
 			</article>
 		</div>
