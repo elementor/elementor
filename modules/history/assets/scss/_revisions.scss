@@ -4,28 +4,33 @@
 		&__wrapper {
 			display: flex;
 			align-items: center;
-			border: 1px solid $editor-lightest;
+			border: var(--e-admin-border);
+			border-radius: var(--e-admin-border-radius);
 			padding: 10px 15px;
 			margin-bottom: 10px;
 			font-size: 11px;
-			transition: $transition-hover;
+			transition: var(--e-admin-transition-hover);
+
+			&:hover {
+				background-color: var(--e-admin-bg-hover);
+				color: var(--e-admin-color-txt-hover);
+
+				.eicon:before {
+					content:'\e924';
+				}
+			}
 
 			&.current {
-				font-weight: bold;
-			}
 
-			.elementor-revision-item__tools-current {
-				color: $editor-info
+				.eicon:before {
+					content:'\e90e';
+				}
 			}
-		}
-
-		&:hover:not(.elementor-revision-current-preview) {
-			background-color: fade_out($editor-background, 0.7) ;
 		}
 
 		&-loading {
 
-			.elementor-revision-item__tools-current {
+			.eicon:not(.elementor-revision-item__tools-spinner){
 				display: none;
 			}
 		}
@@ -60,12 +65,20 @@
 	}
 
 	&current-preview {
-		background-color: $editor-background;
-	}
-}
 
-#elementor-restore-autosave-dialog.dialog-widget {
-	background-color: rgba(0, 0, 0, 0.3);
+		.elementor-revision-item__wrapper {
+			border-color: var(--e-admin-border-color-active);
+			background-color: var(--e-admin-bg-active);
+			color: var(--e-admin-color-txt-hover);
+		}
+
+		&:not(.elementor-revision-item-loading) {
+
+			.eicon:before {
+				content:'\e8ed';
+			}
+		}
+	}
 }
 
 #elementor-panel-revisions-loading {

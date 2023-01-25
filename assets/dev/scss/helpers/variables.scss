@@ -3,6 +3,8 @@
 //
 
 //Editor Facelift 2023 - Grays
+$black:         #000000;
+$white:         #ffffff;
 $e-gray-0:		#FFFFFF;
 $e-gray-25:		#F9FAFA;
 $e-gray-50:		#F1F2F3;
@@ -16,14 +18,12 @@ $e-gray-700:	#3A3F45;
 $e-gray-800:	#232629;
 $e-gray-900:	#0C0D0E;
 
+//Editor Facelift 2023 - Purples
 $e-purple:		#524CFF;
 $e-purple-tint:	#6661FF;
 $e-purple-shade:#EBEBFF;
 
-//Semantic Colors help with backwards compatible
-$white:         #ffffff;
-$black:         #000000;
-
+//Editor Facelift 2023 - Semantic Colors
 $e-primary:		$e-purple;
 $e-secondary: 	$e-gray-600;
 $e-success:		#16883C;
@@ -31,39 +31,12 @@ $e-danger:		#DD132F;
 $e-info: 		#0077CC;
 $e-warning: 	#FCB92C;
 $e-brand: 		#0600A8;
-
-//Remove
-//$e-primary-bg:	$e-purple-shade;
-//$e-secondary-bg:$e-gray-600;
-//$e-txt-color:		$e-gray-600;
-//$e-txt-color-hover:	$e-gray-700;
-//$e-txt-color-active:$e-gray-900;
-//$e-bg-color-hover:	$e-gray-25;
-//$e-bg-color-active: $e-gray-50;
-//$e-border-color: 	$e-gray-100;
-//$e-border-color-active: $e-gray-900;
-//$e-border: 1px solid var(--e-admin-border-color);
-//$e-btn-bg:				$e-gray-600;
-//$e-btn-color:			$white;
-//$e-btn-bg-hover:		darken($e-btn-bg, 10%);
-//$e-btn-bg-active:		darken($e-btn-bg, 20%);
-//$e-btn-bg-disabled:		$e-gray-100;
-//$e-btn-color-disabled:	$e-gray-300;
-//$e-btn-bg-primary:			$e-primary;
-//$e-btn-bg-primary-hover:	darken($e-btn-bg-primary, 10%);
-//$e-btn-bg-primary-active:	darken($e-btn-bg-primary, 20%);
-//$e-btn-bg-brand:			$e-brand;
-//$e-btn-bg-brand-hover:		darken($e-btn-bg-brand, 10%);
-//$e-btn-bg-brand-active:		darken($e-btn-bg-brand, 20%);
-//$e-btn-bg-danger:			$e-danger;
-//$e-btn-bg-danger-hover:		darken($e-btn-bg-danger, 10%);
-//$e-btn-bg-danger-active:	darken($e-btn-bg-danger, 20%);
-
-// Editor Facelift 2023 - Aliases
 $e-success-bg:	#F2FDF5;
 $e-danger-bg:	#FEF1F4;
 $e-info-bg: 	#F0F7FF;
 $e-warning-bg: 	#FFF9F0;
+
+// Editor Facelift 2023 - Aliases for backwards compatible
 $editor-danger: $e-danger;
 $editor-warning: $e-warning;
 $editor-success: $e-success;
@@ -76,8 +49,6 @@ $editor-alert-danger-bg: $e-danger-bg;
 $editor-alert-warning-bg: $e-warning-bg;
 $editor-alert-info-bg: $e-info-bg;
 $editor-alert-success-bg: $e-success-bg;
-
-$e-global:		$e-purple;
 
 // Primary Colors
 $gray-darkest:  $e-gray-900;

@@ -62,11 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="elementor-revision-item__tools">
-			<# if ( 'current' === type ) { #>
-				<i class="elementor-revision-item__tools-current eicon-star" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Current', 'elementor' ); ?></span>
-			<# } #>
-
+			<span class="eicon" aria-hidden="true"></span>
 			<i class="elementor-revision-item__tools-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 		</div>
 	</div>
