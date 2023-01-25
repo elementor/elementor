@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { useInjectionsAt } from '@elementor/locations';
 import { LOCATION_CANVAS_VIEW } from '../../locations';
 import HorizontalMenu from '../misc/horizontal-menu';
-import Divider from '../public/divider';
+import Divider from '../misc/divider';
 
 export default function LocationCanvasView() {
 	const injections = useInjectionsAt( LOCATION_CANVAS_VIEW );

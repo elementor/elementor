@@ -4,7 +4,10 @@ import { injectIntoTop } from '../../locations';
 
 describe( '@elementor/editor Shell component', () => {
 	it( 'should render', () => {
-		injectIntoTop( () => <div>test</div> );
+		injectIntoTop( {
+			name: 'test',
+			filler: () => <div>test</div>,
+		} );
 
 		const { queryByText } = render( <Shell /> );
 

@@ -1,8 +1,13 @@
-import { Filler, InjectionOptions, Location } from './types';
+import { Filler, InjectionOptions, Location, Name } from './types';
 import { injectInto } from './injections';
 
 export function createInjectIntoFnFor( location: Location ) {
-	return ( filler: Filler, options?: InjectionOptions ) => {
-		return injectInto( location, filler, options );
+	return ( { filler, name, options }: { filler: Filler, name: Name, options?: InjectionOptions } ) => {
+		return injectInto( {
+			location,
+			name,
+			filler,
+			options,
+		} );
 	};
 }

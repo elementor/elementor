@@ -1,11 +1,11 @@
-import { SvgIcon } from '@elementor/ui';
 import { useMenuContext } from '../../contexts/menu-context';
 import PopoverMenuItem from '../misc/popover-menu-item';
 import HorizontalMenuToggleItem from '../misc/horizontal-menu-toggle-item';
+import { ElementType } from 'react';
 
 type Props = {
     title: string;
-	icon: typeof SvgIcon;
+	icon: ElementType;
     selected?: boolean;
 	disabled?: boolean;
 	onClick?: () => void;
@@ -15,17 +15,13 @@ type Props = {
 export default function ToggleAction( { icon: Icon, title, value, ...props }: Props ) {
 	const { type } = useMenuContext();
 
-	if ( type === 'horizontal' ) {
-		return (
-			<HorizontalMenuToggleItem value={ value ?? title } title={ title } { ...props }>
-				{ Icon && <Icon /> }
-			</HorizontalMenuToggleItem>
-		);
-	}
-
-	return (
-		<PopoverMenuItem value={ value ?? title } { ...props }>
-			{ Icon && <Icon /> }
+	return type === 'horizontal' ? (
+		<HorizontalMenuToggleItem value={ value || title } title={ title } { ...props }>
+			<Icon />
+		</HorizontalMenuToggleItem>
+	) : (
+		<PopoverMenuItem { ...props }>
+			<Icon />
 			{ title }
 		</PopoverMenuItem>
 	);

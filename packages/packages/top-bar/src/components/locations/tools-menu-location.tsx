@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useInjectionsAt } from '@elementor/locations';
 import { usePopupState, bindTrigger, bindMenu, SvgIcon } from '@elementor/ui';
-import { LOCATION_TOOLS_MENU } from '../../locations';
+import { LOCATION_TOOLS_MENU_DEFAULT } from '../../locations';
 import HorizontalMenu from '../misc/horizontal-menu';
 import HorizontalMenuItem from '../misc/horizontal-menu-item';
 import PopoverMenu from '../misc/popover-menu';
@@ -9,7 +9,7 @@ import PopoverMenu from '../misc/popover-menu';
 const MAX_HORIZONTAL_ACTIONS = 5;
 
 export default function ToolsMenuLocation() {
-	const injections = useInjectionsAt( LOCATION_TOOLS_MENU );
+	const injections = useInjectionsAt( LOCATION_TOOLS_MENU_DEFAULT );
 
 	const popupState = usePopupState( {
 		variant: 'popover',

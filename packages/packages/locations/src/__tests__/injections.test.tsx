@@ -5,9 +5,22 @@ import Slot from '../components/slot';
 
 describe( '@elementor/locations injections', () => {
 	it( 'should render components based on the location name', () => {
-		injectInto( 'test', () => <div data-testid="element">First div</div> );
-		injectInto( 'test', () => <div data-testid="element">Second div</div> );
-		injectInto( 'test2', () => <div data-testid="element">Should not exists</div> );
+		injectInto( {
+			name: 'test-1',
+			location: 'test',
+			filler: () => <div data-testid="element">First div</div>,
+		} );
+
+		injectInto( {
+			name: 'test-2',
+			location: 'test',
+			filler: () => <div data-testid="element">Second div</div>,
+		} );
+		injectInto( {
+			name: 'test-3',
+			location: 'test2',
+			filler: () => <div data-testid="element">Should not exists</div>,
+		} );
 
 		const { getAllByTestId } = render( <Slot location="test" /> );
 
@@ -19,9 +32,23 @@ describe( '@elementor/locations injections', () => {
 	} );
 
 	it( 'should render components based on priority', () => {
-		injectInto( 'test', () => <div data-testid="element">Third div</div> );
-		injectInto( 'test', () => <div data-testid="element">First div</div>, { priority: 5 } );
-		injectInto( 'test', () => <div data-testid="element">Second div</div>, { priority: 5 } );
+		injectInto( {
+			name: 'test-1',
+			location: 'test',
+			filler: () => <div data-testid="element">Third div</div>,
+		} );
+		injectInto( {
+			name: 'test-2',
+			location: 'test',
+			filler: () => <div data-testid="element">First div</div>,
+			options: { priority: 5 },
+		} );
+		injectInto( {
+			name: 'test-3',
+			location: 'test',
+			filler: () => <div data-testid="element">Second div</div>,
+			options: { priority: 5 },
+		} );
 
 		const { getAllByTestId } = render( <Slot location="test" /> );
 
@@ -40,11 +67,19 @@ describe( '@elementor/locations injections', () => {
 	} );
 
 	it( 'should render lazy components', async () => {
-		injectInto( 'test', () => <div>First div</div> );
+		injectInto( {
+			name: 'test-1',
+			location: 'test',
+			filler: () => <div>First div</div>,
+		} );
 
-		injectInto( 'test', lazy( () => Promise.resolve( {
-			default: () => <div>Second div</div>,
-		} ) ) );
+		injectInto( {
+			name: 'test-2',
+			location: 'test',
+			filler: lazy( () => Promise.resolve( {
+				default: () => <div>Second div</div>,
+			} ) ),
+		} );
 
 		const { queryByText, findByText } = render( <Slot location="test" /> );
 

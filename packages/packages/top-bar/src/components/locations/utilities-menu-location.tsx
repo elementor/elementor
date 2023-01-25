@@ -1,11 +1,11 @@
 import { Fragment } from 'react';
 import { useInjectionsAt } from '@elementor/locations';
 import HorizontalMenu from '../misc/horizontal-menu';
-import { LOCATION_UTILITIES_MENU } from '../../locations';
-import Divider from '../public/divider';
+import { LOCATION_UTILITIES_MENU_DEFAULT } from '../../locations';
+import Divider from '../misc/divider';
 
 export default function UtilitiesMenuLocation() {
-	const injections = useInjectionsAt( LOCATION_UTILITIES_MENU );
+	const injections = useInjectionsAt( LOCATION_UTILITIES_MENU_DEFAULT );
 
 	return (
 		<HorizontalMenu>

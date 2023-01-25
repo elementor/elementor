@@ -20,6 +20,7 @@
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.2.4",
+    "@types/react": "17.0.53",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "@wordpress/eslint-plugin": "^13.7.0",

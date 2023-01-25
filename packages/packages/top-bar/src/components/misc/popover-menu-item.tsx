@@ -35,7 +35,7 @@ const StyledButton = styled( Button )( () => ( {
 	fontWeight: 400,
 
 	'&:hover': {
-		backgroundColor: 'none',
+		backgroundColor: 'transparent',
 		color: '#fff',
 	},
 } ) );

@@ -1,18 +1,17 @@
-import { FC } from 'react';
+import { ComponentType } from 'react';
 
 export type Location = string;
-export type Filler = FC; // TODO: Support class components.
-export type Priority = number;
-export type Id = string;
+export type Filler = ComponentType;
+export type Name = string;
 
 export type InjectionOptions = {
-	priority?: Priority;
-	id?: Id;
+	priority?: number;
+	overwrite?: boolean;
 }
 
 export type Injection = {
 	location: Location;
 	filler: Filler;
-	priority: Priority;
-	id: Id;
+	priority: number;
+	id: string;
 }

@@ -1,15 +1,19 @@
-import { Location, Filler, Injection, InjectionOptions, Id } from './types';
+import { Location, Filler, Injection, InjectionOptions, Name } from './types';
 import FillWrapper from './components/filler-wrapper';
 
-let injections: Map<Id, Injection> = new Map();
-let locationsCurrentIds: Map<Location, number> = new Map();
+let injections: Map<string, Injection> = new Map();
 
-export function injectInto(
-	location: Location,
-	filler: Filler,
-	options?: InjectionOptions
-) {
-	const id = generateId( location, options?.id );
+export function injectInto( { location, filler, name, options = {} }: {
+	location: Location;
+	filler: Filler;
+	name: Name;
+	options?: InjectionOptions;
+} ) {
+	const id = generateId( location, name );
+
+	if ( injections.has( id ) && ! options?.overwrite ) {
+		throw new Error( `Injection with id "${ id }" already exists.` );
+	}
 
 	const injection = {
 		id,
@@ -31,7 +35,6 @@ export function getInjectionsAt( location: string ): Injection[] {
 
 export function resetInjections() {
 	injections = new Map();
-	locationsCurrentIds = new Map();
 }
 
 function wrapFiller( FillerComponent: Filler ) {
@@ -42,14 +45,6 @@ function wrapFiller( FillerComponent: Filler ) {
 	);
 }
 
-function generateId( location: Location, id?: Id ): Id {
-	if ( ! id ) {
-		const nextId = ( locationsCurrentIds.get( location ) || 0 ) + 1;
-
-		locationsCurrentIds.set( location, nextId );
-
-		id = nextId.toString();
-	}
-
-	return `${ location }--${ id }`;
+function generateId( location: Location, name: string ): string {
+	return `${ location }:${ name }`;
 }
