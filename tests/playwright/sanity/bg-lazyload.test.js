@@ -33,7 +33,7 @@ test.describe( 'Background Lazy Load', () => {
 	} );
 
 	test( 'Background lazy load sanity test', async ( { context, page } ) => {
-		const editorPage = new EditorPage( page );
+		const editorPage = new EditorPage( page, testInfo );
 		await editorPage.gotoPostId( pageId );
 		await editorPage.loadTemplate( 'law-firm-about' );
 
