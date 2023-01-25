@@ -21,7 +21,7 @@ const menuNameMap = {
 } as const;
 
 type MenuNameMap = typeof menuNameMap;
-type MenuName = keyof MenuNameMap;
+export type MenuName = keyof MenuNameMap;
 
 type MenuItem<
 	TMenuName extends MenuName,

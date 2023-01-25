@@ -30,7 +30,7 @@ export default function HorizontalMenuItem( { title, ...props }: Props ) {
 	return (
 		<>
 			<Tooltip title={ title }>
-				<Button { ...props } />
+				<Button { ...props } aria-label={ title } />
 			</Tooltip>
 		</>
 	);

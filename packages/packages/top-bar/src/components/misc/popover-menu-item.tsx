@@ -45,14 +45,15 @@ type ExtraProps = {
 	target?: string;
 }
 
-export default function PopoverMenuItem( { children, onClick, href, target, ...props }: MenuItemProps & ExtraProps ) {
+export default function PopoverMenuItem( { children, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
 	return (
-		<StyledMenuItem { ...props }>
+		<StyledMenuItem { ...props } disabled={ disabled }>
 			<StyledButton
 				disableRipple
 				onClick={ onClick }
 				href={ href }
 				target={ target }
+				disabled={ disabled }
 			>
 				{ children }
 			</StyledButton>

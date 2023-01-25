@@ -24,7 +24,7 @@
 
 		/** Aliases for the packages */
 		"paths": {
-			"@elementor/*": ["./packages/*/src"]
-		}
+			"@elementor/*": ["./packages/*/src"],
+		},
 	}
 }

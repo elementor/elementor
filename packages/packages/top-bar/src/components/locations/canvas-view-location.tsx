@@ -4,7 +4,7 @@ import { LOCATION_CANVAS_VIEW } from '../../locations';
 import HorizontalMenu from '../misc/horizontal-menu';
 import Divider from '../misc/divider';
 
-export default function LocationCanvasView() {
+export default function CanvasViewLocation() {
 	const injections = useInjectionsAt( LOCATION_CANVAS_VIEW );
 
 	return (
