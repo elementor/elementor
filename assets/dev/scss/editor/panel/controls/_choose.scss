@@ -14,16 +14,16 @@
 	line-height: $control-unit;
 	text-align: center;
 	border-spacing: 1px;
-	border-radius: 3px;
+	border-radius: var(--e-admin-border-radius);
 	overflow: hidden;
 
 	.elementor-choices-label {
-		border-top: 1px solid $editor-lightest;
-		border-bottom: 1px solid $editor-lightest;
-		@include border-start(1px solid $editor-lightest);
+		border-top: var(--e-admin-border);
+		border-bottom: var(--e-admin-border);
+		@include border-start(var(--e-admin-border));
 		@include border-end(none);
 		font-size: 12px;
-		transition: all .5s;
+		transition: var(--e-admin-transition-hover);
 		cursor: pointer;
 		overflow: hidden;
 
@@ -33,7 +33,7 @@
 		}
 
 		&:last-child {
-			@include border-end(1px solid $editor-lightest);
+			@include border-end(var(--e-admin-border));
 			@include _dimension_side_property(border-top, end, radius, 3px);
 			@include _dimension_side_property(border-bottom, end, radius, 3px);
 		}
@@ -75,7 +75,7 @@
 				.elementor-choices-label {
 
 					&:nth-child(2) {
-						@include border-end(1px solid $editor-lightest);
+						@include border-end(var(--e-admin-border));
 						border-radius: 3px 0 0 3px;
 					}
 
