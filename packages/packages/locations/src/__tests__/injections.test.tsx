@@ -92,4 +92,53 @@ describe( '@elementor/locations injections', () => {
 		expect( queryByText( 'First div' ) ).toBeTruthy();
 		expect( queryByText( 'Second div' ) ).toBeTruthy();
 	} );
+
+	it( 'should throw when inject filler with the same name (without overwrite option)', async () => {
+		injectInto( {
+			name: 'test',
+			location: 'test',
+			filler: () => <div>First div</div>,
+		} );
+
+		expect( () =>
+			injectInto( {
+				name: 'test',
+				location: 'test',
+				filler: () => <div>Second div</div>,
+			} )
+		).toThrow();
+
+		const { queryByText } = render( <Slot location="test" /> );
+
+		expect( queryByText( 'First div' ) ).toBeTruthy();
+		expect( queryByText( 'Second div' ) ).toBeNull();
+	} );
+
+	it( 'should overwrite the filler if has same name', async () => {
+		injectInto( {
+			name: 'test',
+			location: 'test',
+			filler: () => <div>First div</div>,
+		} );
+
+		injectInto( {
+			name: 'test',
+			location: 'test',
+			filler: () => <div>Second div</div>,
+			options: { overwrite: true },
+		} );
+
+		injectInto( {
+			name: 'test-2',
+			location: 'test',
+			filler: () => <div>Third div</div>,
+			options: { overwrite: true },
+		} );
+
+		const { queryByText } = render( <Slot location="test" /> );
+
+		expect( queryByText( 'First div' ) ).toBeNull();
+		expect( queryByText( 'Second div' ) ).toBeTruthy();
+		expect( queryByText( 'Third div' ) ).toBeTruthy();
+	} );
 } );
