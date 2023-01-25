@@ -1,0 +1,7 @@
+{
+  "name": "@elementor/documents",
+  "dependencies": {
+	"@elementor/store": "*",
+	"@elementor/v1-adapters": "*"
+  }
+}
