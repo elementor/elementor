@@ -573,7 +573,7 @@ label.elementor-template-library-order-label {
 		.elementor-template-library-template-delete {
 
 			&:hover {
-				color: $editor-danger;
+				color: $e-danger;
 			}
 		}
 	}
@@ -602,6 +602,10 @@ label.elementor-template-library-order-label {
 		> div {
 			margin: 10px 0;
 			font-size: 11px;
+		}
+
+		a {
+			color: var(--e-admin-color-txt);
 		}
 	}
 
@@ -696,14 +700,13 @@ label.elementor-template-library-order-label {
 
 	&-form {
 		width: 95%;
-		background-color: rgba(255, 255, 255, 0.5);
 		padding: 60px;
-		border: 2px dashed $editor-lightest;
+		border: 2px dashed var(--e-admin-border-color);
 		margin: 35px auto;
-		transition: background-color 0.5s;
+		transition: var(--e-admin-transition-hover);
 
 		&:hover {
-			background-color: rgba(255, 255, 255, 0.9);
+			border-color: var(--e-admin-color-secondary);
 		}
 
 		&-or {
@@ -722,7 +725,7 @@ label.elementor-template-library-order-label {
 		}
 
 		&.elementor-drag-over {
-			border: 3px dashed $editor-accent;
+			border-color: var(--e-admin-color-primary);
 		}
 	}
 

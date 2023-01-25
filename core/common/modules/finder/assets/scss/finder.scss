@@ -8,11 +8,14 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		.dialog-widget-content {
 			$modal-width: 650px;
-
 			width: $modal-width;
 			max-width: 98%;
 			top: 18vh;
 			left: calc( 50% - #{$modal-width} / 2 );
+		}
+
+		.dialog-content {
+			text-align: start;
 		}
 
 		.dialog-message {
@@ -104,15 +107,16 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		a {
 			text-decoration: none;
-			box-shadow: none;
-			outline: none;
 			color: inherit;
 		}
 
 		&.elementor-active {
-			background-color: var(--e-admin-bg-active);
-			box-shadow: none;
-			outline: none;
+			background-color: var(--e-admin-bg-hover);
+			color: var(--e-admin-color-txt-hover);
+
+			a {
+				color: inherit;
+			}
 		}
 
 		&:not(.elementor-active) {

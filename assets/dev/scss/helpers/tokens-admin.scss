@@ -14,6 +14,7 @@
 	--e-admin-color-brand: 			#{$e-brand};
 
 	//Backgrounds
+	--e-admin-bg-default: 			#{$white};
 	--e-admin-bg-primary: 			#{$e-purple-shade};
 	--e-admin-bg-secondary: 		#{$e-gray-600};
 	--e-admin-bg-success: 			#F2FDF5;
@@ -30,7 +31,7 @@
 	--e-admin-border-color: 		#{$e-gray-100};
 	--e-admin-border-color-active: 	#{$e-gray-900};
 	--e-admin-border:				1px solid var(--e-admin-border-color);
-	--e-admin-border-radius: 					3px;
+	--e-admin-border-radius: 		3px;
 
 	//Buttons
 	--e-admin-btn-color: 			#{$white};
@@ -51,6 +52,9 @@
 	--e-admin-btn-bg-danger: 		#{$e-danger};
 	--e-admin-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
 	--e-admin-btn-bg-danger-active:	#{darken($e-danger, 20%)};
+
+	//Fonts
+	--e-admin-font-family:			#{$admin-font-family};
 
 	//Animation
 	--e-admin-transition-hover:		all .3s;
