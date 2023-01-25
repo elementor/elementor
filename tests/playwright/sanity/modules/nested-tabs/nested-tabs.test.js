@@ -11,7 +11,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	} );
 
 	test.afterEach( async () => {
-		pageId = await deletePage( pageId );
+		await deletePage( pageId );
 	} );
 
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
