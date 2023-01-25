@@ -62,8 +62,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="elementor-revision-item__tools">
-			<span class="eicon" aria-hidden="true"></span>
 			<i class="elementor-revision-item__tools-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+
+			<# if ( 'current' === type ) { #>
+				<i class="elementor-revision-item__tools-current eicon-check" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Published', 'elementor' ); ?></span>
+			<# } #>
+
+<!--			<# if ( 'revision' === type ) { #>-->
+<!--				<i class="eicon-undo" aria-hidden="true"></i>-->
+<!--				<span class="elementor-screen-only">--><?php //echo esc_html__( 'Restore', 'elementor' ); ?><!--</span>-->
+<!--			<# } #>-->
+
 		</div>
 	</div>
 </script>
