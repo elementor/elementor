@@ -1,10 +1,13 @@
-import { openRoute, runCommand } from '../';
+import { isRouteActive, openRoute, runCommand } from '../';
 
 describe( '@elementor/v1-adapters/dispatchers', () => {
 	beforeEach( () => {
 		( window as any ).$e = {
 			run: jest.fn(),
 			route: jest.fn(),
+			routes: {
+				isPartOf: jest.fn(),
+			},
 		};
 	} );
 
@@ -101,6 +104,21 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		expect( () => openRoute( 'test/route' ) )
 			.rejects
 			.toEqual( '`$e.route()` is not available' );
+	} );
+
+	it( 'should determine if a route is active', () => {
+		// Arrange.
+		const route = 'test/route';
+
+		( window as any ).$e.routes.isPartOf.mockReturnValue( true );
+
+		// Act.
+		const result = isRouteActive( route );
+
+		// Assert.
+		expect( result ).toEqual( true );
+		expect( ( window as any ).$e.routes.isPartOf ).toHaveBeenCalledTimes( 1 );
+		expect( ( window as any ).$e.routes.isPartOf ).toHaveBeenCalledWith( route );
 	} );
 } );
 

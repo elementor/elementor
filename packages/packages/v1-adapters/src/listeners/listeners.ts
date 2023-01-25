@@ -1,5 +1,11 @@
 import { normalizeEvent } from './utils';
-import { CommandEventDescriptor, EventDescriptor, ListenerCallback, WindowEventDescriptor } from './types';
+import {
+	CommandEventDescriptor,
+	EventDescriptor,
+	ListenerCallback,
+	RouteEventDescriptor,
+	WindowEventDescriptor,
+} from './types';
 
 const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
 let abortController = new AbortController();
@@ -12,19 +18,26 @@ export function listenTo(
 		eventDescriptors = [ eventDescriptors ];
 	}
 
-	eventDescriptors.forEach( ( event ) => {
+	// @see https://github.com/typescript-eslint/typescript-eslint/issues/2841
+	// eslint-disable-next-line array-callback-return -- Clashes with typescript.
+	const cleanups = eventDescriptors.map( ( event ) => {
 		const { type, name } = event;
 
 		switch ( type ) {
 			case 'command':
-				registerCommandListener( name, event.state, callback );
-				break;
+				return registerCommandListener( name, event.state, callback );
+
+			case 'route':
+				return registerRouteListener( name, event.state, callback );
 
 			case 'window-event':
-				registerWindowEventListener( name, callback );
-				break;
+				return registerWindowEventListener( name, callback );
 		}
 	} );
+
+	return () => {
+		cleanups.forEach( ( cleanup ) => cleanup() );
+	};
 }
 
 export function flushListeners() {
@@ -39,8 +52,22 @@ function registerCommandListener(
 	state: CommandEventDescriptor['state'],
 	callback: ListenerCallback
 ) {
-	registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
+	return registerWindowEventListener( `elementor/commands/run/${ state }`, ( e ) => {
 		const shouldRunCallback = e.type === 'command' && e.command === command;
+
+		if ( shouldRunCallback ) {
+			callback( e );
+		}
+	} );
+}
+
+function registerRouteListener(
+	route: RouteEventDescriptor['name'],
+	state: RouteEventDescriptor['state'],
+	callback: ListenerCallback
+) {
+	return registerWindowEventListener( `elementor/routes/${ state }`, ( e ) => {
+		const shouldRunCallback = e.type === 'route' && e.route.startsWith( route );
 
 		if ( shouldRunCallback ) {
 			callback( e );
@@ -58,6 +85,18 @@ function registerWindowEventListener( event: WindowEventDescriptor['name'], call
 	}
 
 	callbacksByEvent.get( event )!.push( callback );
+
+	return () => {
+		const callbacks = callbacksByEvent.get( event );
+
+		if ( ! callbacks?.length ) {
+			return;
+		}
+
+		const filtered = callbacks.filter( ( cb ) => cb !== callback );
+
+		callbacksByEvent.set( event, filtered );
+	};
 }
 
 function addListener( event: EventDescriptor['name'] ) {
