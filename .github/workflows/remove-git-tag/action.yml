@@ -12,4 +12,7 @@ runs:
       run: |
             git tag -d v${PACKAGE_VERSION} || echo "Tag ${PACKAGE_VERSION} not found locally"
             git push origin :refs/tags/v${PACKAGE_VERSION} || echo "Tag ${PACKAGE_VERSION} not found on remote"
+
+            git tag -d release/v${PACKAGE_VERSION} || echo "Tag release/${PACKAGE_VERSION} not found locally"
+            git push origin :refs/tags/release/v${PACKAGE_VERSION} || echo "Tag release/${PACKAGE_VERSION} not found on remote"
       
