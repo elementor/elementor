@@ -83,7 +83,7 @@
 	.elementor-link-dimensions {
 
 		&.unlinked {
-			background-color: $white;
+			background-color: var(--e-admin-bg-default);
 
 			.elementor-linked {
 				display: none;

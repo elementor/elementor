@@ -3,8 +3,7 @@
 //
 
 ::selection {
-	background: $editor-info;
-	color: $white;
+	background: var(--e-admin-bg-primary);
 }
 
 h1,

@@ -6,7 +6,7 @@
 
 	.dialog-widget-content {
 		font-family: $admin-font-family;
-		background-color: $white;
+		background-color: var(--e-admin-bg-default);
 		width: 100%;
 
 		@media (max-width: $library_screen_breakpoint) {
