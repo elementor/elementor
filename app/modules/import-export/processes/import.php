@@ -19,6 +19,9 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Module;
 
 class Import {
+
+	const API_KITS_URL = 'https://my.elementor.com/api/v1/kits-library/kits';
+
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
 	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
@@ -424,13 +427,15 @@ class Import {
 			return $this->manifest['thumbnail'];
 		}
 
-		if ( empty( $this->manifest['content']['page'] ) ) {
+		$response = wp_remote_get( static::API_KITS_URL );
+		if ( is_wp_error( $response ) || \WP_Http::OK !== wp_remote_retrieve_response_code( $response ) ) {
 			return '';
 		}
 
-		foreach ( $this->manifest['content']['page'] as $page ) {
-			if ( 'Home' === $page['title'] ) {
-				return $page['thumbnail'];
+		$kits = json_decode( wp_remote_retrieve_body( $response ) , true );
+		foreach ( $kits as $kit ) {
+			if ( $this->manifest['title'] === $kit['title'] ) {
+				return $kit['thumbnail'];
 			}
 		}
 
