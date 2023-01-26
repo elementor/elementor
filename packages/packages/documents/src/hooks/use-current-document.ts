@@ -1,8 +1,7 @@
 import { useSelector, SliceState } from '@elementor/store';
-import { slice } from '../store';
-import { Document } from '../types';
+import { Document, Slice } from '../types';
 
-type State = SliceState<typeof slice>;
+type State = SliceState<Slice>;
 
 export function useCurrentDocument(): Document | null {
 	return useSelector( ( state: State ) => {

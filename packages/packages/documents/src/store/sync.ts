@@ -1,37 +1,37 @@
-import { slice } from './store';
+import { Document, Slice } from '../types';
 import { dispatch } from '@elementor/store';
-import { fromV1Document, getDocumentsManager, mapWithKeys } from './utils';
-import { commandEndEvent, commandStartEvent, listenTo, v1ReadyEvent } from '@elementor/v1-adapters';
+import { normalizeV1Document, getDocumentsManager } from './utils';
+import { commandEndEvent, CommandEvent, commandStartEvent, listenTo, v1ReadyEvent } from '@elementor/v1-adapters';
 
-const {
-	setDocuments,
-	setCurrentDocumentId,
-	addDocument,
-	updateDocument,
-} = slice.actions;
+export function syncStore( slice: Slice ) {
+	syncDocuments( slice );
+	syncCurrentDocument( slice );
+	syncOnDocumentSave( slice );
+	syncOnDocumentChange( slice );
+}
 
-syncDocuments();
-syncCurrentDocument();
-syncOnDocumentSave();
-syncOnDocumentChange();
+function syncDocuments( slice: Slice ) {
+	const { setDocuments } = slice.actions;
 
-function syncDocuments() {
 	listenTo(
 		v1ReadyEvent(),
 		() => {
-			const documents = mapWithKeys(
-				getDocumentsManager().documents,
-				( [ documentId, documentData ] ) => {
-					return [ documentId, fromV1Document( documentData ) ];
-				}
-			);
+			const normalizedDocuments = Object
+				.entries( getDocumentsManager().documents )
+				.reduce( ( acc: Record<string, Document>, [ id, document ] ) => {
+					acc[ id ] = normalizeV1Document( document );
 
-			dispatch( setDocuments( documents ) );
+					return acc;
+				}, {} );
+
+			dispatch( setDocuments( normalizedDocuments ) );
 		}
 	);
 }
 
-function syncCurrentDocument() {
+function syncCurrentDocument( slice: Slice ) {
+	const { setCurrentDocumentId, addDocument } = slice.actions;
+
 	listenTo(
 		[
 			v1ReadyEvent(),
@@ -41,18 +41,29 @@ function syncCurrentDocument() {
 			const documentsManager = getDocumentsManager();
 
 			dispatch( setCurrentDocumentId( documentsManager.getCurrentId() ) );
-			dispatch( addDocument( fromV1Document( documentsManager.getCurrent() ) ) );
+			dispatch( addDocument( normalizeV1Document( documentsManager.getCurrent() ) ) );
 		}
 	);
 }
 
-function syncOnDocumentSave() {
+function syncOnDocumentSave( slice: Slice ) {
+	const { updateDocument } = slice.actions;
+
 	const setIsSaving = ( isSaving: boolean ) => {
 		const id = getDocumentsManager().getCurrentId();
 
 		dispatch( updateDocument( {
 			id,
 			isSaving,
+		} ) );
+	};
+
+	const setIsSavingDraft = ( isSavingDraft: boolean ) => {
+		const id = getDocumentsManager().getCurrentId();
+
+		dispatch( updateDocument( {
+			id,
+			isSavingDraft,
 		} ) );
 	};
 
@@ -67,16 +78,37 @@ function syncOnDocumentSave() {
 
 	listenTo(
 		commandStartEvent( 'document/save/save' ),
-		() => setIsSaving( true )
+		( e ) => {
+			const event = e as CommandEvent<{ status: string }>;
+
+			/**
+			 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js
+			 */
+			if ( event.args?.status === 'autosave' ) {
+				setIsSavingDraft( true );
+			} else {
+				setIsSaving( true );
+			}
+		}
 	);
 
 	listenTo(
 		commandEndEvent( 'document/save/save' ),
-		() => setIsSaving( false )
+		( e ) => {
+			const event = e as CommandEvent<{ status: string }>;
+
+			if ( event.args.status === 'autosave' ) {
+				setIsSavingDraft( false );
+			} else {
+				setIsSaving( false );
+			}
+		}
 	);
 }
 
-function syncOnDocumentChange() {
+function syncOnDocumentChange( slice: Slice ) {
+	const { updateDocument } = slice.actions;
+
 	const setIsModified = ( isModified: boolean ) => {
 		const id = getDocumentsManager().getCurrentId();
 
@@ -89,8 +121,8 @@ function syncOnDocumentChange() {
 	listenTo(
 		v1ReadyEvent(),
 		() => {
-			const currentDocument = getDocumentsManager().getCurrent(),
-				isAutoSave = currentDocument.config.revisions.current_id !== currentDocument.id;
+			const currentDocument = getDocumentsManager().getCurrent();
+			const isAutoSave = currentDocument.config.revisions.current_id !== currentDocument.id;
 
 			setIsModified( isAutoSave );
 		}
