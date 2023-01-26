@@ -10,6 +10,6 @@ runs:
   steps:
     - shell: bash 
       run: |
-            git tag -d v${PACKAGE_VERSION}
-            git push origin :refs/tags/v${PACKAGE_VERSION}
+            git tag -d v${PACKAGE_VERSION} || echo "Tag ${PACKAGE_VERSION} not found locally"
+            git push origin :refs/tags/v${PACKAGE_VERSION} || echo "Tag ${PACKAGE_VERSION} not found on remote"
       
