@@ -22,12 +22,9 @@ runs:
             npm install --no-package-lock --no-save semver@7.3.4
 
             PACKAGE_VERSION_CLEAN=$(node -p "require('./package.json').version")
-            
             PACKAGE_VERSION=${PACKAGE_VERSION_CLEAN}-${{ inputs.CHANNEL }}-${{ inputs.TYPE }}
 
-            echo "PACKAGE_VERSION=${NEW_PACKAGE_VERSION}" >> $GITHUB_ENV
+            echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
             echo "PACKAGE_VERSION_CLEAN=${PACKAGE_VERSION_CLEAN}" >> $GITHUB_ENV
-            
-            echo "PREV_PACKAGE_VERSION=${PREV_PACKAGE_VERSION}" >> $GITHUB_ENV
-            echo "::set-output name=prev_version::${PREV_PACKAGE_VERSION}"
+  
             echo "PACKAGE_VERSION : ${PACKAGE_VERSION}"
