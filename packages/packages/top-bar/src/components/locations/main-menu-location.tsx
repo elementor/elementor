@@ -7,8 +7,11 @@ import ElementorLogo from '../misc/elementor-logo';
 import Divider from '../misc/divider';
 
 export default function MainMenuLocation() {
-	const defaultInjections = useInjectionsAt( LOCATION_MAIN_MENU_DEFAULT );
-	const existsInjections = useInjectionsAt( LOCATION_MAIN_MENU_EXITS );
+	const injectionsGroups = useInjectionsAt( [
+		LOCATION_MAIN_MENU_DEFAULT,
+		LOCATION_MAIN_MENU_EXITS,
+	] );
+
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'elementor-v2-top-bar-main-menu',
@@ -23,13 +26,16 @@ export default function MainMenuLocation() {
 				/>
 			</IconButton>
 			<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) } spacing="6px">
-				{ defaultInjections.map(
-					( { filler: Filler, id } ) => ( <Filler key={ id } /> )
-				) }
-				{ defaultInjections.length > 0 && existsInjections.length > 0 && <Divider /> }
-				{ existsInjections.map(
-					( { filler: Filler, id } ) => ( <Filler key={ id } /> )
-				) }
+				{
+					injectionsGroups
+						.filter( ( injections ) => injections.length )
+						.map( ( injections, index ) => {
+							return [
+								index > 0 ? <Divider key={ index } /> : null,
+								...injections.map( ( { filler: Filler, id } ) => <Filler key={ id } /> ),
+							];
+						} )
+				}
 			</PopoverMenu>
 		</Box>
 	);
