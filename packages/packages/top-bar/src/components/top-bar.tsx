@@ -20,7 +20,7 @@ export const TopBar = () => {
 	const { save } = useDocumentsActions();
 
 	return (
-		<AppBar position="sticky" sx={ { background: '#000', height: '48px' } }>
+		<AppBar position="sticky" sx={ { background: 'linear-gradient(-90deg, #FFF 140px, #000 140px)', height: '48px' } }>
 			<Grid container direction="row">
 				<Box sx={ { flexGrow: 1, paddingInlineStart: '10px' } }>
 					<IconButton onClick={ () => openRoute( 'panel/menu' ) }>
@@ -42,7 +42,14 @@ export const TopBar = () => {
 						)
 					}
 
-					<Button onClick={ () => save() }>Save</Button>
+					<Button variant="contained"
+						onClick={ () => save() }
+						disabled={ document?.isModified === false }
+						size="large"
+						sx={ {
+							position: 'absolute',
+							right: 0,
+						} }>Publish</Button>
 				</Box>
 			</Grid>
 		</AppBar>
