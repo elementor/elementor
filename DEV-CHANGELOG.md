@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.12.0-dev2 - 2023-01-26
+* Fix: Keyboard actions are not blocked in Nested Tabs [ED-9355] (#21106)
+
 #### 3.12.0-dev1 - 2023-01-24
 * Fix: Justify Content icons are inverted Dir = "Column" & RTL [ED-8458] (#20866)
 * Fix: Pro Gallery widget won't load unless set to 100% (#20669) [ED-9020] (#20814)
@@ -497,12 +500,3 @@
 #### 3.6.0-dev35 - 2022-01-26
 * Tweak: Test Responsive reverse columns control inoperative [ED-5931] (#17341)
 * Tweak: Internal - Import Kit - Allow to override Kit import temp directory path [ED-5914] (#17381)
-
-#### 3.6.0-dev34 - 2022-01-25
-* Tweak: Handle deprecations [ED-5601]  (#17374)
-* Tweak: Change Developer Edition promotional notice triggers [ED-5562] (#17528)
-
-#### 3.6.0-dev33 - 2022-01-24
-* Tweak: Updated changelog to v3.5.4 (#17546)
-* Fix: When trying to import a kit, the general error try-again action is incorrect [ED-6273] (#17513)
-* Tweak: Lightbox - only play a video if it has a registered provider [ED-6293] (#17527)
