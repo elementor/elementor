@@ -6,17 +6,16 @@ on:
     inputs:
       chennel:
         type: choice
-        description: 'Ga, Cloud, Beta.'
+        description: 'The channel to get the version to'
         required: true
         default: 'cloud'
         options:
           - 'ga'
           - 'cloud'
           - 'beta'
-          - 'rc'
       type:
         type: choice
-        description: 'Tag Type'
+        description: 'The type of version to set'
         required: true
         default: 'rc'
         options:
