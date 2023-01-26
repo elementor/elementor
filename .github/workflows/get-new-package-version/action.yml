@@ -1,5 +1,18 @@
-name: Get Current Package Version
-description: Get the version of the package.json file, and set it as an environment variable.
+name: Get New Package Version
+description: Sets the version as ENV variable.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to get the version to (ga, cloud, beta).'
+  TYPE:
+    description: 'The type of version to get (rc, hotfix)'
+    required: true
+
+outputs:
+  prev_version:
+    description: "previous cloud version"
+    value: ${{ steps.bump_version_step.outputs.prev_version }}
 
 runs:
   using: "composite"
@@ -8,6 +21,10 @@ runs:
       run: |
             npm install --no-package-lock --no-save semver@7.3.4
 
-            PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            PACKAGE_VERSION_CLEAN=$(node -p "require('./package.json').version")
+            PACKAGE_VERSION=${PACKAGE_VERSION_CLEAN}-${{ inputs.CHANNEL }}-${{ inputs.TYPE }}
+
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+            echo "PACKAGE_VERSION_CLEAN=${PACKAGE_VERSION_CLEAN}" >> $GITHUB_ENV
+  
             echo "PACKAGE_VERSION : ${PACKAGE_VERSION}"
