@@ -59,9 +59,8 @@ jobs:
       - name: Get Package Version
         uses: ./.github/workflows/get-package-version
         with:
-          ENVIRONMENT: ${{ env.config_deployment_environment }}
-          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
-          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+          CHANNEL: ${{ github.event.inputs.chennel }}
+          TYPE: ${{ github.event.inputs.type }}
       - name: Install Dependencies
         run: |
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
