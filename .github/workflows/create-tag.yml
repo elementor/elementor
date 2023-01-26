@@ -45,16 +45,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
-      # - name: Bump tag version
-      #   uses: ./.github/workflows/bump-version
-      #   with:
-      #     CHANNEL: ${{ github.event.inputs.type }}
-      # - name: Push version
-      #   uses : ./.github/workflows/push-new-version
-      #   with:
-      #     MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-      #     MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-      #     COMMIT_MESSAGE: "Bump ${{ env.PACKAGE_VERSION }}"
       - name: Get Package Version
         uses: ./.github/workflows/get-package-version
         with:
@@ -76,19 +66,23 @@ jobs:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
           path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
+      - name: Remove Git tag
+        uses : ./.github/workflows/remove-git-tag
+        with:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-      # - name: Generate changelog
-      #   uses : ./.github/workflows/generate-changelog
-      #   with:
-      #     TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      #     REPOSITORY: ${{ github.repository }}
-      #     HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
-      #     BASE_TAG_NAME: v${{ env.PREV_PACKAGE_VERSION }}
+      - name: Generate changelog
+        uses : ./.github/workflows/generate-changelog
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
+          BASE_TAG_NAME: main
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
