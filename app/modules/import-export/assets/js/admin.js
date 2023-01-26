@@ -30,20 +30,74 @@ class Admin {
 	 * Constructor
 	 */
 	constructor() {
-		this.addRevertBtnListener();
+		this.configureRevertBtn();
 		this.maybeShowKitReferrerDialog();
 	}
 
 	/**
-	 * AddRevertBtnListener
+	 * ConfigureRevertBtn
 	 */
-	addRevertBtnListener() {
+	configureRevertBtn() {
 		const revertButton = document.getElementById( 'elementor-import-export__revert_kit' );
 		if ( ! revertButton ) {
 			return;
 		}
+		this.addRevertBtnListener( revertButton );
+		this.maybeAddRevertBtnMargin( revertButton );
+	}
 
+	/**
+	 * AddRevertBtnListener
+	 *
+	 * @param {HTMLAnchorElement} revertButton
+	 */
+	addRevertBtnListener( revertButton ) {
 		revertButton.addEventListener( 'click', this.revertBtnOnClick.bind( this ) );
+	}
+
+	/**
+	 * MaybeAddRevertBtnMargin
+	 *
+	 * @param {HTMLAnchorElement} revertButton
+	 */
+	maybeAddRevertBtnMargin( revertButton ) {
+		const referrerKit = new URLSearchParams( revertButton.href ).get( 'referrer_kit' );
+		if ( ! referrerKit ) {
+			return;
+		}
+		revertButton.style.marginBottom = this.calculateMargin( revertButton );
+		this.scrollToBottom();
+	}
+
+	/**
+	 * CalculateMargin
+	 *
+	 * @param {HTMLAnchorElement} revertButton
+	 *
+	 * @return {string}
+	 */
+	calculateMargin( revertButton ) {
+		const adminBar = document.getElementById( 'wpadminbar' );
+		const adminBarHeight = adminBar ? adminBar.offsetHeight : 0;
+
+		const revertKitHeight = revertButton.parentElement.offsetHeight;
+
+		return (
+			document.body.clientHeight -
+			adminBarHeight -
+			revertKitHeight -
+			document.getElementById( 'wpfooter' ).offsetHeight -
+			15 // Extra margin at the top
+		) + 'px';
+	}
+
+	/**
+	 * Scroll to the bottom of the page
+	 */
+	scrollToBottom() {
+		setTimeout( () => {
+			window.scrollTo( 0, document.body.scrollHeight );
+		} );
 	}
 
 	/**
@@ -186,4 +240,4 @@ class Admin {
 	}
 }
 
-new Admin();
+window.onload = () => new Admin();
