@@ -82,7 +82,7 @@ function syncOnDocumentSave( slice: Slice ) {
 			const event = e as CommandEvent<{ status: string }>;
 
 			/**
-			 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js
+			 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js#L18-L22
 			 */
 			if ( event.args?.status === 'autosave' ) {
 				setIsSavingDraft( true );
@@ -97,7 +97,7 @@ function syncOnDocumentSave( slice: Slice ) {
 		( e ) => {
 			const event = e as CommandEvent<{ status: string }>;
 
-			if ( event.args.status === 'autosave' ) {
+			if ( event.args?.status === 'autosave' ) {
 				setIsSavingDraft( false );
 			} else {
 				setIsSaving( false );

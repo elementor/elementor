@@ -1,14 +1,12 @@
 import { render } from '@testing-library/react';
 import TopBar from '../top-bar';
-import { createStore, getStore, StoreProvider, Store, deleteStore } from '@elementor/store';
+import { createStore, StoreProvider, Store, deleteStore } from '@elementor/store';
 
 describe( '@elementor/top-bar TopBar component', () => {
 	let store: Store;
 
 	beforeEach( () => {
-		createStore();
-
-		store = getStore() as Store;
+		store = createStore();
 	} );
 
 	afterEach( () => {
@@ -16,12 +14,14 @@ describe( '@elementor/top-bar TopBar component', () => {
 	} );
 
 	it( 'should render elementor logo', () => {
+		// Act.
 		const { queryByText } = render(
 			<StoreProvider store={ store }>
 				<TopBar />
 			</StoreProvider>
 		);
 
+		// Assert.
 		const logoTitle = queryByText( 'Elementor Logo' );
 
 		expect( logoTitle ).toBeTruthy();

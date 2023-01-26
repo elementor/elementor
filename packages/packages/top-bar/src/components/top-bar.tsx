@@ -44,7 +44,7 @@ export const TopBar = () => {
 
 					<Button variant="contained"
 						onClick={ () => save() }
-						disabled={ document?.isModified === false }
+						disabled={ ! document || ! document.isModified }
 						size="large"
 						sx={ {
 							position: 'absolute',

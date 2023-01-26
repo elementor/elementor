@@ -23,4 +23,3 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 		},
 	};
 }
-

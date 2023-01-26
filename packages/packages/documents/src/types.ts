@@ -8,7 +8,7 @@ export type State = {
 export type Document = {
 	id: number,
 	title: string,
-	status: string, // union?
+	status: string, // TODO: union?
 	isModified: boolean,
 	isSaving: boolean,
 	isSavingDraft: boolean,
