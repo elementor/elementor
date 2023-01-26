@@ -1,4 +1,4 @@
-name: Get Package Version
+name: Get New Package Version
 description: Sets the version as ENV variable.
 
 inputs:

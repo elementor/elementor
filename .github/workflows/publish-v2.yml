@@ -1,0 +1,75 @@
+name: Publish V2
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
+
+on:
+  workflow_dispatch:
+    inputs:
+      chennel:
+        type: choice
+        description: 'The channel to publish to'
+        required: true
+        default: 'cloud'
+        options:
+          - 'ga'
+          - 'cloud'
+          - 'beta'
+      pre_release:
+        type: boolean
+        description: 'Is this a pre-release?'
+        required: false
+
+jobs:
+  publish:
+    needs: bump-version
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - name: Get Current Package Version
+        uses: ./.github/workflows/get-current-package-version
+      - name: Download release assets
+        uses: robinraju/release-downloader@v1.7
+        with:
+          releaseId: ${{ github.ref }}
+          fileName: ${{ github.event.repository.name }}-${{ github.ref }:1}.zip
+          out-file-path: /tmp/${{ github.ref }}
+      - name: Upload zip file to GitHub actions artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.repository.name }}-${{ github.ref }:1}.zip
+          path: /tmp/${{ github.ref }}/${{ github.event.repository.name }}-${{ github.ref }:1}.zip
+          if-no-files-found: error
+      - name: Create Git tag
+        uses : ./.github/workflows/create-git-tag
+        with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          PACKAGE_VERSION: ${{ github.ref }:1}
+      - name: Generate changelog
+        uses : ./.github/workflows/generate-changelog
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: ${{ github.ref }}
+          BASE_TAG_NAME: main
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.PACKAGE_VERSION }}
+          files: elementor-*.zip
+          prerelease: ${{ github.event.inputs.pre_release }}
+          body_path: temp-changelog.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Send slack message
+        uses: ./.github/workflows/slack-notify
+        with:
+          MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
