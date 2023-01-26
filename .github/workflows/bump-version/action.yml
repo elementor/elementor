@@ -1,5 +1,5 @@
-name: Bump Version
-description: Update package.json with the new version number & Sets the version as ENV variable.
+name: Get Package Version
+description: Get the version of the package.json file, and set it as an environment variable.
 
 inputs:
   CHANNEL:
@@ -21,5 +21,6 @@ runs:
             NEW_PACKAGE_VERSION=$(node ./.github/scripts/update-prerelease-version.js ${{ inputs.CHANNEL }})
             PACKAGE_VERSION=$(node -p "require('./package.json').last_${{ inputs.CHANNEL }}_version")
             echo "PACKAGE_VERSION=${NEW_PACKAGE_VERSION}" >> $GITHUB_ENV
+            echo "PREV_PACKAGE_VERSION=${PREV_PACKAGE_VERSION}" >> $GITHUB_ENV
             echo "::set-output name=prev_version::${PREV_PACKAGE_VERSION}"
             echo "PACKAGE_VERSION : ${PACKAGE_VERSION}"
