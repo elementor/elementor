@@ -11,4 +11,3 @@ runs:
     - shell: bash 
       run: |
             git push --delete origin v${PACKAGE_VERSION} || echo "Tag ${PACKAGE_VERSION} not found on remote"
-            git push --delete origin release/v${PACKAGE_VERSION} || echo "Tag release/${PACKAGE_VERSION} not found on remote"

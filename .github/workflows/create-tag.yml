@@ -45,8 +45,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
-      - name: Get Package Version
-        uses: ./.github/workflows/get-package-version
+      - name: Get New Package Version
+        uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ github.event.inputs.chennel }}
           TYPE: ${{ github.event.inputs.type }}
