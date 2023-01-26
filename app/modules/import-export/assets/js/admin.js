@@ -186,4 +186,4 @@ class Admin {
 	}
 }
 
-new Admin(); // TODO makes this script only run on the specific page not all admin
+new Admin();
