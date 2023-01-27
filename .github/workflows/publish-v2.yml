@@ -35,19 +35,20 @@ jobs:
       - name: Get Clean Package Name
         run: |
           CLEAN_PACKAGE_NAME=${{ github.ref }}
+          CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
           CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
           echo "CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME}" >> $GITHUB_ENV
       - name: Download release assets
         uses: robinraju/release-downloader@v1.7
         with:
-          releaseId: ${{ github.ref }})
+          releaseId: v${{ env.CLEAN_PACKAGE_NAME }}
           fileName: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          out-file-path: /tmp/${{ github.ref }}
+          out-file-path: /tmp/${{ env.CLEAN_PACKAGE_NAME }}.zip
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          path: /tmp/${{ github.ref }}/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          path: /tmp/${{ env.CLEAN_PACKAGE_NAME }}.zip
           if-no-files-found: error
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
