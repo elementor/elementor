@@ -37,7 +37,8 @@ jobs:
         uses: robinraju/release-downloader@v1.7
         with:
           releaseId: ${{ github.ref }}
-          fileName: ${{ github.event.repository.name }}-${{ github.ref }:1}.zip
+          # get github.ref without the first char (v)
+          fileName: ${{ github.event.repository.name }}-${{ github.ref[1:] }}.zip
           out-file-path: /tmp/${{ github.ref }}
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
