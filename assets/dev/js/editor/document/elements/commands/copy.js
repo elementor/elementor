@@ -28,6 +28,7 @@ export class Copy extends $e.modules.editor.CommandContainerBase {
 
 		const storageData = {
 			type: 'elementor',
+			siteurl: elementorCommon.config.urls.rest,
 			elements: elementsData,
 		};
 

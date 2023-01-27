@@ -1,6 +1,11 @@
-export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
+import environment from 'elementor-common/utils/environment';
 
+export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	static dialog = null;
+
+	static container = null;
+
+	static options = {};
 
 	getHistory( args ) {
 		return false;
@@ -11,24 +16,37 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			return this.dialog;
 		}
 
+		const $messageContainer = jQuery( '<div>', {
+			class: 'e-dialog-description',
+		} )
+			.html( __( 'To paste the element from your other site.', 'elementor' ) );
+
 		const $inputArea = jQuery( '<input>', {
 			id: 'elementor-paste-area-dialog__input',
 			type: 'text',
-			placeholder: __( 'Paste your JSON data here', 'elementor' ),
 		} )
 			.attr( 'autocomplete', 'off' )
-			.on( 'paste', ( event ) => {
+			.on( 'keypress', ( event ) => {
+				event.preventDefault();
+			} )
+			.on( 'blur', () => {
+				_.defer( () => $inputArea.focus() );
+			} )
+			.on( 'paste', async ( event ) => {
 				event.preventDefault();
 
-				const retVal = $e.run( 'document/ui/paste', {
-					container: elementor.getPreviewContainer(),
+				const $widgetContent = this.getDialog().getElements( 'widgetContent' );
+
+				$widgetContent.addClass( 'e-state-loading' );
+
+				const retVal = await $e.run( 'document/ui/paste', {
+					container: this.container,
 					storageType: 'rawdata',
 					data: event.originalEvent.clipboardData.getData( 'text' ),
-					options: {
-						//at: this.getOption( 'at' ),
-						rebuild: true,
-					},
+					options: this.options,
 				} );
+
+				$widgetContent.removeClass( 'e-state-loading' );
 
 				if ( retVal ) {
 					this.dialog.hide();
@@ -42,12 +60,23 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			id: 'elementor-paste-area-dialog__error',
 			style: `display: none`,
 		} )
-			.html( __( 'Invalid JSON data', 'elementor' ) );
+			.html( __( 'Make sure that both sites are updated to last version of Elementor and have enabled the features relevant to the copied element before trying again.', 'elementor' ) );
+
+		const $loadingArea = jQuery( '<i>', {
+			class: 'eicon-loading eicon-animation-spin',
+		} );
+
+		$messageContainer
+			.append( $inputArea )
+			.append( $errorArea )
+			.append( $loadingArea );
+
+		const ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl';
 
 		this.dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-paste-area-dialog',
-			headerMessage: __( 'Paste Area', 'elementor' ),
-			message: $inputArea,
+			headerMessage: `${ ctrlLabel } + V`,
+			message: $messageContainer,
 			position: {
 				my: 'center center',
 				at: 'center center',
@@ -56,8 +85,12 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 			closeButtonOptions: {
 				iconClass: 'eicon-close',
 			},
-			onShow: function() {
-				$inputArea.after( $errorArea );
+			onShow: () => {
+				$inputArea.focus();
+
+				this.getDialog().getElements( 'widgetContent' ).on( 'click', () => {
+					$inputArea.focus();
+				} );
 			},
 		} );
 
@@ -65,6 +98,11 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
+		this.container = args.container;
+		if ( args.options ) {
+			this.options = args.options;
+		}
+
 		this.getDialog().show();
 	}
 }

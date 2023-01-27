@@ -25,9 +25,11 @@
 	@include end(15px);
 	font-size: 15px;
 	line-height: 1;
+	color: $editor-light;
+	transition: $transition-hover;
 
-	&:not(:hover) {
-		opacity: .4;
+	&:hover {
+		color: $editor-dark;
 	}
 }
 
