@@ -20,7 +20,6 @@ on:
 
 jobs:
   publish:
-    needs: bump-version
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout branch
