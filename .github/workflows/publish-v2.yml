@@ -41,7 +41,7 @@ jobs:
       - name: Download release assets
         uses: robinraju/release-downloader@v1.7
         with:
-          releaseId: v${{ env.CLEAN_PACKAGE_NAME }}
+          tag: v${{ env.CLEAN_PACKAGE_NAME }}
           fileName: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           out-file-path: /tmp/${{ env.CLEAN_PACKAGE_NAME }}.zip
       - name: Upload zip file to GitHub actions artifact
