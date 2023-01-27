@@ -40,18 +40,23 @@ jobs:
           # get github.ref without the first char (v)
           fileName: ${{ github.event.repository.name }}-${{ github.ref[1:] }}.zip
           out-file-path: /tmp/${{ github.ref }}
+      - name: Get Clean Package Name
+        run: |
+          CLEAN_PACKAGE_NAME=${{ github.ref }}
+          CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
+          echo "CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME}" >> $GITHUB_ENV
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.event.repository.name }}-${{ github.ref }:1}.zip
-          path: /tmp/${{ github.ref }}/${{ github.event.repository.name }}-${{ github.ref }:1}.zip
+          path: /tmp/${{ github.ref }}/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           if-no-files-found: error
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          PACKAGE_VERSION: ${{ github.ref }:1}
+          PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_NAME }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
