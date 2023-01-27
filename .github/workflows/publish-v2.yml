@@ -43,7 +43,7 @@ jobs:
         with:
           tag: v${{ env.CLEAN_PACKAGE_NAME }}
           fileName: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          out-file-path: /tmp/${{ env.CLEAN_PACKAGE_NAME }}.zip
+          out-file-path: /tmp/
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
@@ -55,7 +55,7 @@ jobs:
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_NAME }}
+          PACKAGE_VERSION: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-cloudX here@!
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:

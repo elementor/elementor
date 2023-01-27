@@ -22,6 +22,11 @@ runs:
             npm install --no-package-lock --no-save semver@7.3.4
 
             PACKAGE_VERSION_CLEAN=$(node -p "require('./package.json').version")
+
+            CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ inputs.CHANNEL }}")
+
+            node ./.github/scripts/update_channel_version.js ${{ inputs.CHANNEL }}
+
             PACKAGE_VERSION=${PACKAGE_VERSION_CLEAN}-${{ inputs.CHANNEL }}-${{ inputs.TYPE }}
 
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV

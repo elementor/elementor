@@ -5,11 +5,6 @@ inputs:
   CHANNEL:
     required: true
 
-outputs:
-  prev_version:
-    description: "previous cloud version"
-    value: ${{ steps.bump_version_step.outputs.prev_version }}
-
 runs:
   using: "composite"
   steps:
