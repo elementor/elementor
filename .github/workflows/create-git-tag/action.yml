@@ -17,5 +17,5 @@ runs:
         git config user.name ${{ inputs.MAINTAIN_USERNAME }}
         git config user.email ${{ inputs.MAINTAIN_EMAIL }}
         echo "Create tag v${{ inputs.MESSAGE }}"
-        git tag "v${{ inputs.MESSAGE }}"
-        git push origin "v${{ inputs.MESSAGE }}"
+        git tag "${{ inputs.MESSAGE }}"
+        git push origin "${{ inputs.MESSAGE }}"
