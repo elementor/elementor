@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          path: /tmp/${{ env.CLEAN_PACKAGE_NAME }}.zip
+          path: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           if-no-files-found: error
       - name: Get channel version
         run: |

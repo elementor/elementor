@@ -3,10 +3,10 @@
     "slug": "elementor",
     "version": "3.10.1",
     "channels": {
-        "cloud": "0",
+        "cloud": 1,
         "beta": "0"
     },
-    "current_tag_channel" : "",
+    "current_tag_channel": "",
     "author": "Elementor Team",
     "homepage": "https://elementor.com/",
     "scripts": {
