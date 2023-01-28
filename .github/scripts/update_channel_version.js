@@ -5,6 +5,11 @@ const fs = require('fs');
 
 const channel = process.argv[2];
 
+if ( 'ga' === channel ) {
+    console.log( 'Channel is GA, no need to update version' );
+    return;
+}
+
 let packageJson = require('../../package.json');
 
 if ( 'ga' === channel ) {
