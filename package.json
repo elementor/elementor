@@ -3,7 +3,7 @@
     "slug": "elementor",
     "version": "3.10.1",
     "channels": {
-        "cloud": 5,
+        "cloud": 6,
         "beta": "0"
     },
     "current_tag_channel": "",
