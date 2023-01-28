@@ -9,11 +9,6 @@ inputs:
     description: 'The type of version to get (rc, hotfix)'
     required: true
 
-outputs:
-  prev_version:
-    description: "previous cloud version"
-    value: ${{ steps.bump_version_step.outputs.prev_version }}
-
 runs:
   using: "composite"
   steps:
@@ -22,10 +17,6 @@ runs:
             npm install --no-package-lock --no-save semver@7.3.4
 
             PACKAGE_VERSION_CLEAN=$(node -p "require('./package.json').version")
-
-            CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ inputs.CHANNEL }}")
-
-            node ./.github/scripts/update_channel_version.js ${{ inputs.CHANNEL }}
 
             PACKAGE_VERSION=${PACKAGE_VERSION_CLEAN}-${{ inputs.CHANNEL }}-${{ inputs.TYPE }}
 

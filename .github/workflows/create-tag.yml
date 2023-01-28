@@ -45,6 +45,10 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
+      - name: Bump Channel Version
+        uses: ./.github/workflows/bump-channel-version
+        with:
+          CHANNEL: ${{ github.event.inputs.chennel }}
       - name: Get New Package Version
         uses: ./.github/workflows/get-new-package-version
         with:

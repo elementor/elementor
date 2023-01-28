@@ -1,0 +1,20 @@
+name: Bump Channel Version
+description: Bump the version of the current channel, and set it as an environment variable.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to bump the version to (cloud, beta).'
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ inputs.CHANNEL }}")
+            node ./.github/scripts/update_channel_version.js ${{ inputs.CHANNEL }}
+            echo "CHANNEL_VERSION=${CHANNEL_VERSION}" >> $GITHUB_ENV
+            echo "Channel version: ${CHANNEL_VERSION}"
+
+            git commit -am "Bump channel version to $CHANNEL_VERSION"
+            git push
