@@ -6,8 +6,8 @@ inputs:
     required: true
   MAINTAIN_EMAIL:
     required: true
-  PACKAGE_VERSION:
-    required: true
+  MESSAGE:
+    required: false
 
 runs:
   using: "composite"
@@ -16,6 +16,6 @@ runs:
       run: |
         git config user.name ${{ inputs.MAINTAIN_USERNAME }}
         git config user.email ${{ inputs.MAINTAIN_EMAIL }}
-        echo "Create tag v${{ inputs.PACKAGE_VERSION }}"
-        git tag "v${{ inputs.PACKAGE_VERSION }}"
-        git push origin "v${{ inputs.PACKAGE_VERSION }}"
+        echo "Create tag v${{ inputs.MESSAGE }}"
+        git tag "v${{ inputs.MESSAGE }}"
+        git push origin "v${{ inputs.MESSAGE }}"
