@@ -48,6 +48,8 @@ jobs:
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           CHANNEL: ${{ github.event.inputs.chennel }}
       - name: Get New Package Version
         uses: ./.github/workflows/get-new-package-version
