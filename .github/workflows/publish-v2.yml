@@ -22,6 +22,14 @@ jobs:
   publish:
     runs-on: ubuntu-20.04
     steps:
+      - name: Validate Channel To Current Tag
+        run: |
+          echo "CHANNEL=${{ github.event.inputs.chennel }}" >> $GITHUB_ENV
+          echo "CURRENT_TAG=${{ github.ref }}" >> $GITHUB_ENV
+          if [[ $CURRENT_TAG != *$CHANNEL* ]]; then
+            echo "The current tag is not for the channel you want to publish to."
+            exit 1
+          fi
       - name: Checkout branch
         uses: actions/checkout@v3
         with:
