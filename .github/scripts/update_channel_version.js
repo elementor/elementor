@@ -22,6 +22,6 @@ if ( 'ga' === channel ) {
     packageJson.channels[channel] = parseInt(channelVersion) + 1;
 }
 
-fs.writeFileSync('../../package.json', JSON.stringify(packageJson, null, 4));
+fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 4));
 
 console.log("Updated channel version to: " , packageJson.channels);
