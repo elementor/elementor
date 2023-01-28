@@ -67,7 +67,7 @@ jobs:
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          PACKAGE_VERSION: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CHANNEL_VERSION }}
+          MESSAGE: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CHANNEL_VERSION }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
