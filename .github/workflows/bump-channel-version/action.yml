@@ -20,6 +20,7 @@ runs:
             
             CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ inputs.CHANNEL }}")
             node ./.github/scripts/update_channel_version.js ${{ inputs.CHANNEL }}
-
+          
+            CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ inputs.CHANNEL }}")
             git commit -am "Bump channel version to $CHANNEL_VERSION"
             git push
