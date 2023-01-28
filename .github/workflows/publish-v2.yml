@@ -50,12 +50,16 @@ jobs:
           name: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           path: /tmp/${{ env.CLEAN_PACKAGE_NAME }}.zip
           if-no-files-found: error
+      - name: Get channel version
+        run: |
+          CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ github.event.inputs.chennel }}")
+          echo "CHANNEL_VERSION=${CHANNEL_VERSION}" >> $GITHUB_ENV
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          PACKAGE_VERSION: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-cloudX here@!
+          PACKAGE_VERSION: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CHANNEL_VERSION }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
