@@ -22,16 +22,16 @@ jobs:
   publish:
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Validate Channel To Current Ref Branch
         uses : ./.github/workflows/validate-substring
         with:
           STRING: ${{ github.ref }}
           SUBSTRING: ${{ github.event.inputs.chennel }}
           ERROR_MESSAGE: "The channel '${{ github.event.inputs.chennel }}' is not allowed to be published from the branch '${{ github.ref }}'"
-      - name: Checkout branch
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
