@@ -1,0 +1,25 @@
+name: Parse Branch Name
+description: Parse the branch name, and set parts as environment variable.
+
+inputs:
+  BRANCH_NAME:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash 
+      run: |
+            string=${{ inputs.BRANCH_NAME }}
+            PACKAGE_VERSION=$(echo $string | cut -d "/" -f3 | cut -d "-" -f1 | sed -e 's/^v//')
+            CHANNEL=$(echo $string | cut -d "-" -f2)
+            CHANNEL_TYPE=$(echo $string | cut -d "-" -f3)
+
+            CLEAN_PACKAGE_NAME=${{ inputs.REF }}
+            CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
+            CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
+            
+            echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+            echo "CHANNEL=${CHANNEL}" >> $GITHUB_ENV
+            echo "CHANNEL_TYPE=${CHANNEL_TYPE}" >> $GITHUB_ENV
+            echo "CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME}" >> $GITHUB_ENV
