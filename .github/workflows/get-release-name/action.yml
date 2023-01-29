@@ -19,5 +19,5 @@ runs:
 
           VERSION_CHANNEL=$(echo ${{ inputs.CLEAN_PACKAGE_NAME }} | sed 's/-[^-]*$//')
 
-          RELEASE_NAME=${{ inputs.REPO_NAME }}-${ VERSION_CHANNEL }${ CHANNEL_VERSION }
+          RELEASE_NAME=${{ inputs.REPO_NAME }}-${VERSION_CHANNEL}${CHANNEL_VERSION}
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
