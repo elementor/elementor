@@ -10,6 +10,6 @@ export default function Divider() {
 	const { type } = useMenuContext();
 
 	return (
-		<StyledDivider orientation={ type === 'horizontal' ? 'vertical' : 'horizontal' } />
+		<StyledDivider orientation={ type === 'popover' ? 'horizontal' : 'vertical' } />
 	);
 }

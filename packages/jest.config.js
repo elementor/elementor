@@ -20,7 +20,7 @@ module.exports = {
 	moduleNameMapper: {
 		'^@elementor/(?!ui)(.*)$': '<rootDir>/packages/$1/src',
 	},
-	// By default jest will treat everything under `__tests__` as a test file, we only need `__tests__/*.test.ts`.
+	// By default, jest will treat everything under `__tests__` as a test file, we only need `__tests__/*.test.ts`.
 	testMatch: [
 		'<rootDir>/packages/**/__tests__/**/*.test.[jt]s?(x)',
 	],
@@ -32,6 +32,7 @@ module.exports = {
 	// Setup files to run for all the tests.
 	setupFilesAfterEnv: [
 		'<rootDir>/tests/setup-cleaning.ts',
+		'@wordpress/jest-console',
 	],
 	// Code coverage.
 	collectCoverageFrom: [

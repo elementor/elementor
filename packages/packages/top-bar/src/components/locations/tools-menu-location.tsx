@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useInjectionsAt } from '@elementor/locations';
+import { useInjectionsOf } from '@elementor/locations';
 import { __ } from '@wordpress/i18n';
 import { usePopupState, bindTrigger, bindMenu, SvgIcon } from '@elementor/ui';
 import { LOCATION_TOOLS_MENU_DEFAULT } from '../../locations';
@@ -10,7 +10,7 @@ import PopoverMenu from '../misc/popover-menu';
 const MAX_HORIZONTAL_ACTIONS = 5;
 
 export default function ToolsMenuLocation() {
-	const injections = useInjectionsAt( LOCATION_TOOLS_MENU_DEFAULT );
+	const injections = useInjectionsOf( LOCATION_TOOLS_MENU_DEFAULT );
 
 	const popupState = usePopupState( {
 		variant: 'popover',

@@ -3,8 +3,8 @@ import HorizontalMenuItem from '../misc/horizontal-menu-item';
 import PopoverMenuItem from '../misc/popover-menu-item';
 import { ElementType } from 'react';
 
- type Props = {
-    title: string;
+type Props = {
+	title: string;
 	icon: ElementType;
 	disabled?: boolean;
 	onClick?: () => void;

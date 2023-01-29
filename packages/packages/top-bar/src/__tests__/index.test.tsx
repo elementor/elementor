@@ -6,7 +6,7 @@ import {
 	registerAction,
 	registerLink,
 	registerToggleAction,
-} from '../index';
+} from '../locations/index';
 import { render, fireEvent, act } from '@testing-library/react';
 import ToolsMenuLocation from '../components/locations/tools-menu-location';
 import UtilitiesMenuLocation from '../components/locations/utilities-menu-location';
@@ -16,8 +16,6 @@ import CanvasViewLocation from '../components/locations/canvas-view-location';
 import PrimaryActionLocation from '../components/locations/primary-action-location';
 
 describe( '@elementor/top-bar API', () => {
-	// TODO: Make sure there are no animations in material
-
 	describe.each( [
 		{ component: MainMenuLocation, name: 'main' } as const,
 	] )( 'popover menu location: $name', ( { component: Component, name } ) => {
@@ -124,17 +122,11 @@ describe( '@elementor/top-bar API', () => {
 	} );
 
 	it( 'should render tooltip', async () => {
-		registerAction( 'tools', {
-			name: 'test-action',
-			props: {
-				title: 'Test Action',
-				icon: () => <span>a</span>,
-			},
-		} );
+		registerExampleAction( 'tools' );
 
 		const { getByLabelText, queryByRole, findByRole } = render( <ToolsMenuLocation /> );
 
-		const button = getByLabelText( 'Test Action' );
+		const button = getByLabelText( 'Test' );
 
 		expect( queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
 
@@ -145,10 +137,10 @@ describe( '@elementor/top-bar API', () => {
 			);
 		} );
 
-		expect( await findByRole( 'tooltip' ) ).toHaveTextContent( 'Test Action' );
+		expect( await findByRole( 'tooltip' ) ).toHaveTextContent( 'Test' );
 	} );
 
-	it( 'inject into canvas view', () => {
+	it( 'should inject into canvas view', () => {
 		injectIntoCanvasView( {
 			name: 'test',
 			filler: () => <span>test</span>,
@@ -159,7 +151,7 @@ describe( '@elementor/top-bar API', () => {
 		expect( queryByText( 'test' ) ).toBeTruthy();
 	} );
 
-	it( 'inject into primary action', () => {
+	it( 'should inject into primary action', () => {
 		injectIntoPrimaryAction( {
 			name: 'test',
 			filler: () => <span>test</span>,
@@ -226,7 +218,10 @@ describe( '@elementor/top-bar API', () => {
 	} );
 } );
 
-function registerExampleAction( menuName: MenuName, { onClick }: { onClick: () => void } ) {
+function registerExampleAction(
+	menuName: MenuName,
+	{ onClick = () => {} }: { onClick?: () => void } = {}
+) {
 	registerAction(
 		menuName,
 		{

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import useInjectionsAt from '../hooks/use-injections-at';
+import useInjectionsOf from '../hooks/use-injections-of';
 import { Location } from '../types';
 
 export default function Slot( { location }: { location: Location } ) {
-	const injections = useInjectionsAt( location );
+	const injections = useInjectionsOf( location );
 
 	return (
 		<>

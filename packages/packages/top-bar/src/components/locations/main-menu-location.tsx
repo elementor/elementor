@@ -1,13 +1,13 @@
 import { __ } from '@wordpress/i18n';
 import { IconButton, usePopupState, bindMenu, bindTrigger, Box } from '@elementor/ui';
-import { useInjectionsAt } from '@elementor/locations';
+import { useInjectionsOf } from '@elementor/locations';
 import { LOCATION_MAIN_MENU_DEFAULT, LOCATION_MAIN_MENU_EXITS } from '../../locations';
 import PopoverMenu from '../misc/popover-menu';
 import ElementorLogo from '../misc/elementor-logo';
 import Divider from '../misc/divider';
 
 export default function MainMenuLocation() {
-	const injectionsGroups = useInjectionsAt( [
+	const injectionsGroups = useInjectionsOf( [
 		LOCATION_MAIN_MENU_DEFAULT,
 		LOCATION_MAIN_MENU_EXITS,
 	] );

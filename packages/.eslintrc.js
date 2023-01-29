@@ -40,6 +40,8 @@ module.exports = {
 			rules: {
 				// In tests, we are importing dev dependencies of the root directory, so we need to disable this rule.
 				'import/no-extraneous-dependencies': [ 'off' ],
+				// Allow testing the console.
+				'no-console': [ 'off' ],
 			},
 		},
 	],

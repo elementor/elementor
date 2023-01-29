@@ -1,10 +1,12 @@
 import { ReactNode, Suspense } from 'react';
+import ErrorBoundary from './error-boundary';
 
-// TODO: <ErrorBoundary />
 export default function FillerWrapper( { children }: { children: ReactNode } ) {
 	return (
-		<Suspense fallback={ null }>
-			{ children }
-		</Suspense>
+		<ErrorBoundary>
+			<Suspense fallback={ null }>
+				{ children }
+			</Suspense>
+		</ErrorBoundary>
 	);
 }

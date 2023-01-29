@@ -28,10 +28,8 @@ type Props = IconButtonProps & {
 
 export default function HorizontalMenuItem( { title, ...props }: Props ) {
 	return (
-		<>
-			<Tooltip title={ title }>
-				<Button { ...props } aria-label={ title } />
-			</Tooltip>
-		</>
+		<Tooltip title={ title }>
+			<Button { ...props } aria-label={ title } />
+		</Tooltip>
 	);
 }

@@ -11,16 +11,16 @@ const menuNameMap = {
 	main: {
 		default: LOCATION_MAIN_MENU_DEFAULT,
 		exits: LOCATION_MAIN_MENU_EXITS,
-	} as const,
+	},
 	tools: {
 		default: LOCATION_TOOLS_MENU_DEFAULT,
-	} as const,
+	},
 	utilities: {
 		default: LOCATION_UTILITIES_MENU_DEFAULT,
-	} as const,
-} as const;
+	},
+};
 
-type MenuNameMap = typeof menuNameMap;
+type MenuNameMap = Readonly<typeof menuNameMap>;
 export type MenuName = keyof MenuNameMap;
 
 type MenuItem<

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { lazy } from 'react';
-import { injectInto } from '../injections';
+import { injectInto, getInjectionsOf } from '../injections';
 import Slot from '../components/slot';
 
 describe( '@elementor/locations injections', () => {
@@ -16,10 +16,11 @@ describe( '@elementor/locations injections', () => {
 			location: 'test',
 			filler: () => <div data-testid="element">Second div</div>,
 		} );
+
 		injectInto( {
 			name: 'test-3',
 			location: 'test2',
-			filler: () => <div data-testid="element">Should not exists</div>,
+			filler: () => <div data-testid="element">Should not exist</div>,
 		} );
 
 		const { getAllByTestId } = render( <Slot location="test" /> );
@@ -36,13 +37,16 @@ describe( '@elementor/locations injections', () => {
 			name: 'test-1',
 			location: 'test',
 			filler: () => <div data-testid="element">Third div</div>,
+			// Default priority is 10.
 		} );
+
 		injectInto( {
 			name: 'test-2',
 			location: 'test',
 			filler: () => <div data-testid="element">First div</div>,
 			options: { priority: 5 },
 		} );
+
 		injectInto( {
 			name: 'test-3',
 			location: 'test',
@@ -93,25 +97,24 @@ describe( '@elementor/locations injections', () => {
 		expect( queryByText( 'Second div' ) ).toBeTruthy();
 	} );
 
-	it( 'should throw when inject filler with the same name (without overwrite option)', async () => {
+	it( 'should error when injecting filler with the same name (without overwrite option)', async () => {
 		injectInto( {
 			name: 'test',
 			location: 'test',
 			filler: () => <div>First div</div>,
 		} );
 
-		expect( () =>
-			injectInto( {
-				name: 'test',
-				location: 'test',
-				filler: () => <div>Second div</div>,
-			} )
-		).toThrow();
+		injectInto( {
+			name: 'test',
+			location: 'test',
+			filler: () => <div>Second div</div>,
+		} );
 
 		const { queryByText } = render( <Slot location="test" /> );
 
 		expect( queryByText( 'First div' ) ).toBeTruthy();
 		expect( queryByText( 'Second div' ) ).toBeNull();
+		expect( console ).toHaveErrored();
 	} );
 
 	it( 'should overwrite the filler if has same name', async () => {
@@ -140,5 +143,55 @@ describe( '@elementor/locations injections', () => {
 		expect( queryByText( 'First div' ) ).toBeNull();
 		expect( queryByText( 'Second div' ) ).toBeTruthy();
 		expect( queryByText( 'Third div' ) ).toBeTruthy();
+	} );
+
+	it( 'should overwrite and manipulate the priority', () => {
+		injectInto( {
+			name: 'test-1',
+			location: 'test',
+			filler: () => <div />,
+			options: { priority: 5 },
+		} );
+
+		injectInto( {
+			name: 'test-1',
+			location: 'test',
+			filler: () => <div />,
+			options: { overwrite: true },
+		} );
+
+		expect( getInjectionsOf( 'test' ) ).toHaveLength( 1 );
+		expect( getInjectionsOf( 'test' )[ 0 ].priority ).toBe( 5 );
+
+		injectInto( {
+			name: 'test-1',
+			location: 'test',
+			filler: () => <div />,
+			options: { overwrite: true, priority: 20 },
+		} );
+
+		expect( getInjectionsOf( 'test' ) ).toHaveLength( 1 );
+		expect( getInjectionsOf( 'test' )[ 0 ].priority ).toBe( 20 );
+	} );
+
+	it( 'should catch filler errors with error boundary', () => {
+		injectInto( {
+			name: 'test-1',
+			location: 'test',
+			filler: () => {
+				throw new Error( 'Error' );
+			},
+		} );
+
+		injectInto( {
+			name: 'test-2',
+			location: 'test',
+			filler: () => <div>Test</div>,
+		} );
+
+		const { queryByText } = render( <Slot location="test" /> );
+
+		expect( queryByText( 'Test' ) ).toBeTruthy();
+		expect( console ).toHaveErrored();
 	} );
 } );

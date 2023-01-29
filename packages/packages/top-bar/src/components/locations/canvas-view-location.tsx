@@ -1,11 +1,11 @@
 import { Fragment } from 'react';
-import { useInjectionsAt } from '@elementor/locations';
+import { useInjectionsOf } from '@elementor/locations';
 import { LOCATION_CANVAS_VIEW } from '../../locations';
 import HorizontalMenu from '../misc/horizontal-menu';
 import Divider from '../misc/divider';
 
 export default function CanvasViewLocation() {
-	const injections = useInjectionsAt( LOCATION_CANVAS_VIEW );
+	const injections = useInjectionsOf( LOCATION_CANVAS_VIEW );
 
 	return (
 		<HorizontalMenu>

@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, PropsWithChildren, useContext } from 'react';
 
 type MenuContextValue = {
     type: 'horizontal' | 'popover';
@@ -6,7 +6,7 @@ type MenuContextValue = {
 
 const MenuContext = createContext<MenuContextValue>( { type: 'horizontal' } );
 
-export function MenuContextProvider( { type, children }: MenuContextValue & { children: ReactNode } ) {
+export function MenuContextProvider( { type, children }: PropsWithChildren<MenuContextValue> ) {
 	return (
 		<MenuContext.Provider value={ { type } }>
 			{ children }
