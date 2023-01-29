@@ -17,9 +17,7 @@ runs:
           CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ github.event.inputs.chennel }}")
           echo "CHANNEL_VERSION=${CHANNEL_VERSION}" >> $GITHUB_ENV
 
-          CHANNEL_NAME= ${{ inputs.CLEAN_PACKAGE_NAME }}
-          CHANNEL_NAME=${CHANNEL_NAME%-*}
-          echo "CHANNEL_NAME=${CHANNEL_NAME}" >> $GITHUB_ENV
+          VERSION_CHANNEL=$(echo ${{ inputs.CLEAN_PACKAGE_NAME }} | sed 's/-[^-]*$//')
 
-          RELEASE_NAME=${{ inputs.REPO_NAME }}-${ CHANNEL_NAME }${ CHANNEL_VERSION }
+          RELEASE_NAME=${{ inputs.REPO_NAME }}-${ VERSION_CHANNEL }${ CHANNEL_VERSION }
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
