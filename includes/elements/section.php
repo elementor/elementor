@@ -1200,7 +1200,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem', 'vw' 'custom' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
 				'allowed_dimensions' => 'vertical',
 				'placeholder' => [
 					'top' => '',
@@ -1219,7 +1219,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem', 'vw' 'custom' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
