@@ -4,15 +4,6 @@ name: Publish V2
 on:
   workflow_dispatch:
     inputs:
-      chennel:
-        type: choice
-        description: 'The channel to publish to'
-        required: true
-        default: 'cloud'
-        options:
-          - 'ga'
-          - 'cloud'
-          - 'beta'
       pre_release:
         type: boolean
         description: 'Is this a pre-release?'
@@ -26,16 +17,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Validate Channel To Current Ref Branch
-        uses : ./.github/workflows/validate-substring
-        with:
-          STRING: ${{ github.ref }}
-          SUBSTRING: ${{ github.event.inputs.chennel }}
-          ERROR_MESSAGE: "The channel '${{ github.event.inputs.chennel }}' is not allowed to be published from the branch '${{ github.ref }}'"
       - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
+      #parse branch name to get env vars here.
       - name: Get Current Package Version
         uses: ./.github/workflows/get-current-package-version
       - name: Get Clean Package Name
