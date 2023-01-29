@@ -22,14 +22,12 @@ jobs:
   publish:
     runs-on: ubuntu-20.04
     steps:
-      - name: Validate Channel To Current Tag
-        run: |
-          echo "CHANNEL=${{ github.event.inputs.chennel }}" >> $GITHUB_ENV
-          echo "CURRENT_TAG=${{ github.ref }}" >> $GITHUB_ENV
-          if [[ $CURRENT_TAG != *$CHANNEL* ]]; then
-            echo "The current tag is not for the channel you want to publish to."
-            exit 1
-          fi
+      - name: Validate Channel To Current Ref Branch
+        uses : ./.github/workflows/validate-substring
+        with:
+          STRING: ${{ github.ref }}
+          SUBSTRING: ${{ github.event.inputs.chennel }}
+          ERROR_MESSAGE: "The channel '${{ github.event.inputs.chennel }}' is not allowed to be published from the branch '${{ github.ref }}'"
       - name: Checkout branch
         uses: actions/checkout@v3
         with:
@@ -41,11 +39,9 @@ jobs:
       - name: Get Current Package Version
         uses: ./.github/workflows/get-current-package-version
       - name: Get Clean Package Name
-        run: |
-          CLEAN_PACKAGE_NAME=${{ github.ref }}
-          CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
-          CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
-          echo "CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME}" >> $GITHUB_ENV
+        uses : ./.github/workflows/strip-package-name
+        with:
+          STRING: ${{ github.ref }}
       - name: Download release assets
         uses: robinraju/release-downloader@v1.7
         with:
@@ -58,18 +54,17 @@ jobs:
           name: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           path: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           if-no-files-found: error
-      - name: Get channel version
-        run: |
-          CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ github.event.inputs.chennel }}")
-          echo "CHANNEL_VERSION=${CHANNEL_VERSION}" >> $GITHUB_ENV
-          CLEAN_CHANNEL_NAME=$(echo $CHANNEL_VERSION | tr -s '-' | cut -d '-' -f 3)
-          echo "CLEAN_CHANNEL_NAME=${CLEAN_CHANNEL_NAME}" >> $GITHUB_ENV
+      - name: Get Release Name
+        uses : ./.github/workflows/get-release-name
+        with:
+          REPO_NAME: ${{ github.event.repository.name }}
+          CLEAN_PACKAGE_NAME: ${{ env.CLEAN_PACKAGE_NAME }}
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MESSAGE: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CLEAN_CHANNEL_VERSION }}${{ env.CHANNEL_VERSION}}
+          MESSAGE: ${{ env.RELEASE_NAME }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
@@ -80,7 +75,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CHANNEL_VERSION }}
+          tag_name: ${{ env.RELEASE_NAME }}
           files: elementor-*.zip
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: temp-changelog.txt
