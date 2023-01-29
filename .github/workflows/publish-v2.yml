@@ -21,13 +21,10 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
-      #parse branch name to get env vars here.
-      - name: Get Current Package Version
-        uses: ./.github/workflows/get-current-package-version
-      - name: Get Clean Package Name
-        uses : ./.github/workflows/strip-package-name
+      - name: Parse ref branch name
+        uses: ./.github/workflows/parse-branch-name
         with:
-          REF: ${{ github.ref }}
+          BRANCH_NAME: ${{ github.ref }}
       - name: Download release assets
         uses: robinraju/release-downloader@v1.7
         with:
