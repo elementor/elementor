@@ -10,4 +10,4 @@ runs:
   steps:
     - shell: bash 
       run: |
-            git push --delete origin v${PACKAGE_VERSION} || echo "Tag ${PACKAGE_VERSION} not found on remote"
+            git push --delete origin ${PACKAGE_VERSION} || echo "Tag ${PACKAGE_VERSION} not found on remote"
