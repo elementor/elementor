@@ -1,6 +1,9 @@
 name: Create Tag
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, MAINTAIN_TOKEN, and a var: SLACK_TAG_CHANNELS.
 
+env:
+  TYPE: 'rc'
+
 on:
   workflow_dispatch:
     inputs:
@@ -13,14 +16,6 @@ on:
           - 'ga'
           - 'cloud'
           - 'beta'
-      type:
-        type: choice
-        description: 'The type of version to set'
-        required: true
-        default: 'rc'
-        options:
-          - 'rc'
-          - 'hotfix'
 jobs:
   create-tag:
     runs-on: ubuntu-20.04
@@ -55,7 +50,7 @@ jobs:
         uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ github.event.inputs.chennel }}
-          TYPE: ${{ github.event.inputs.type }}
+          TYPE: ${{ env.TYPE }}
       - name: Install Dependencies
         run: |
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
