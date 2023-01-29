@@ -75,13 +75,13 @@ jobs:
       - name: Remove Git tag
         uses : ./.github/workflows/remove-git-tag
         with:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          PACKAGE_VERSION: v${{ env.PACKAGE_VERSION }}
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MESSAGE: ${{ env.PACKAGE_VERSION }}
+          MESSAGE: v${{ env.PACKAGE_VERSION }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
