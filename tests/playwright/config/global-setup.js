@@ -15,7 +15,12 @@ module.exports = async ( config ) => {
 	await page.waitForSelector( 'text=Dashboard' );
 
 	// Save signed-in state to 'storageState.json'.
-	await page.context().storageState( { path: config.storageState } );
+	const storageState = await page.context().storageState( { path: config.storageState } );
+
+	// Save the nonce and storage state in environment variables, to allow use them when creating the API context.
+	process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
+	process.env.STORAGE_STATE = JSON.stringify( storageState );
+	process.env.BASE_URL = config.baseURL;
 
 	await browser.close();
 };
