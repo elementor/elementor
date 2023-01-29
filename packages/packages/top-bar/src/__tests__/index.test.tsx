@@ -20,10 +20,13 @@ describe( '@elementor/top-bar API', () => {
 		{ component: MainMenuLocation, name: 'main' } as const,
 	] )( 'popover menu location: $name', ( { component: Component, name } ) => {
 		it( 'should render an action', () => {
+			// Arrange.
 			const onClick = jest.fn();
 
+			// Act
 			registerExampleAction( name, { onClick } );
 
+			// Assert.
 			const { getByText, getByRole } = render( <Component /> );
 
 			getByRole( 'button' ).click();
@@ -36,8 +39,10 @@ describe( '@elementor/top-bar API', () => {
 		} );
 
 		it( 'should render a toggle action', () => {
+			// Act.
 			registerExampleToggleAction( name );
 
+			// Assert.
 			const { getByRole, getByText } = render( <Component /> );
 
 			getByRole( 'button' ).click();
@@ -59,8 +64,10 @@ describe( '@elementor/top-bar API', () => {
 		} );
 
 		it( 'should render a link', () => {
+			// Act.
 			registerExampleLink( name );
 
+			// Assert.
 			const { getByRole } = render( <Component /> );
 
 			getByRole( 'button' ).click();
@@ -77,10 +84,13 @@ describe( '@elementor/top-bar API', () => {
 		{ component: UtilitiesMenuLocation, name: 'utilities' } as const,
 	] )( 'horizontal menu location: $name', ( { component: Component, name } ) => {
 		it( 'should render an action', () => {
+			// Arrange.
 			const onClick = jest.fn();
 
+			// Act.
 			registerExampleAction( name, { onClick } );
 
+			// Assert.
 			const { getByLabelText } = render( <Component /> );
 
 			getByLabelText( 'Test' ).click();
@@ -89,8 +99,10 @@ describe( '@elementor/top-bar API', () => {
 		} );
 
 		it( 'should render a toggle action', () => {
+			// Act.
 			registerExampleToggleAction( name );
 
+			// Assert.
 			const { getByLabelText } = render( <Component /> );
 
 			const button = getByLabelText( 'Test' );
@@ -109,8 +121,10 @@ describe( '@elementor/top-bar API', () => {
 		} );
 
 		it( 'should render a link', () => {
+			// Act.
 			registerExampleLink( name );
 
+			// Assert.
 			const { getByRole } = render( <Component /> );
 
 			const link = getByRole( 'link' );
@@ -122,8 +136,10 @@ describe( '@elementor/top-bar API', () => {
 	} );
 
 	it( 'should render tooltip', async () => {
+		// Act.
 		registerExampleAction( 'tools' );
 
+		// Assert.
 		const { getByLabelText, queryByRole, findByRole } = render( <ToolsMenuLocation /> );
 
 		const button = getByLabelText( 'Test' );
@@ -141,28 +157,33 @@ describe( '@elementor/top-bar API', () => {
 	} );
 
 	it( 'should inject into canvas view', () => {
+		// Act.
 		injectIntoCanvasView( {
 			name: 'test',
 			filler: () => <span>test</span>,
 		} );
 
+		// Assert.
 		const { queryByText } = render( <CanvasViewLocation /> );
 
 		expect( queryByText( 'test' ) ).toBeTruthy();
 	} );
 
 	it( 'should inject into primary action', () => {
+		// Act.
 		injectIntoPrimaryAction( {
 			name: 'test',
 			filler: () => <span>test</span>,
 		} );
 
+		// Assert.
 		const { queryByText } = render( <PrimaryActionLocation /> );
 
 		expect( queryByText( 'test' ) ).toBeTruthy();
 	} );
 
-	it( 'should render tools buttons in popover after the fifth button', function() {
+	it( 'should render tools buttons in popover after the fifth button', () => {
+		// Arrange.
 		const buttons = [
 			{ name: 'test-1', title: 'Test 1' },
 			{ name: 'test-2', title: 'Test 2' },
@@ -173,6 +194,7 @@ describe( '@elementor/top-bar API', () => {
 			{ name: 'test-7', title: 'Test 7' },
 		];
 
+		// Act.
 		buttons.forEach( ( button ) => {
 			registerAction( 'tools', {
 				name: button.name,
@@ -184,6 +206,7 @@ describe( '@elementor/top-bar API', () => {
 			);
 		} );
 
+		// Assert.
 		const { getAllByRole } = render( <ToolsMenuLocation /> );
 
 		const horizontalButtons = getAllByRole( 'button' );
@@ -199,6 +222,7 @@ describe( '@elementor/top-bar API', () => {
 	} );
 
 	it( 'should render 2 actions in different groups', () => {
+		// Act.
 		registerAction( 'main', {
 			name: 'test-1',
 			props: { title: 'Test 1', icon: () => <span>a</span> },
@@ -210,6 +234,7 @@ describe( '@elementor/top-bar API', () => {
 			props: { title: 'Test 1', icon: () => <span>a</span> },
 		} );
 
+		// Assert.
 		const { getAllByRole, getByRole } = render( <MainMenuLocation /> );
 
 		getByRole( 'button' ).click();

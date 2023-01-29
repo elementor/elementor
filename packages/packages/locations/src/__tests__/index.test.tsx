@@ -5,6 +5,7 @@ import Slot from '../components/slot';
 
 describe( '@elementor/locations injections', () => {
 	it( 'should render components based on the location name', () => {
+		// Arrange.
 		injectInto( {
 			name: 'test-1',
 			location: 'test',
@@ -23,8 +24,10 @@ describe( '@elementor/locations injections', () => {
 			filler: () => <div data-testid="element">Should not exist</div>,
 		} );
 
+		// Act.
 		const { getAllByTestId } = render( <Slot location="test" /> );
 
+		// Assert.
 		const elements = getAllByTestId( 'element' );
 
 		expect( elements ).toHaveLength( 2 );
@@ -33,6 +36,7 @@ describe( '@elementor/locations injections', () => {
 	} );
 
 	it( 'should render components based on priority', () => {
+		// Arrange.
 		injectInto( {
 			name: 'test-1',
 			location: 'test',
@@ -54,8 +58,10 @@ describe( '@elementor/locations injections', () => {
 			options: { priority: 5 },
 		} );
 
+		// Act.
 		const { getAllByTestId } = render( <Slot location="test" /> );
 
+		// Assert.
 		const elements = getAllByTestId( 'element' );
 
 		expect( elements ).toHaveLength( 3 );
@@ -65,12 +71,15 @@ describe( '@elementor/locations injections', () => {
 	} );
 
 	it( 'should render empty slot when there are no fills', () => {
+		// Arrange + Act.
 		const { container } = render( <Slot location="empty" /> );
 
+		// Assert.
 		expect( container.innerHTML ).toBe( '' );
 	} );
 
 	it( 'should render lazy components', async () => {
+		// Arrange.
 		injectInto( {
 			name: 'test-1',
 			location: 'test',
@@ -85,8 +94,10 @@ describe( '@elementor/locations injections', () => {
 			} ) ),
 		} );
 
+		// Act.
 		const { queryByText, findByText } = render( <Slot location="test" /> );
 
+		// Assert.
 		expect( queryByText( 'First div' ) ).toBeTruthy();
 		expect( queryByText( 'Second div' ) ).toBeNull();
 
@@ -98,6 +109,7 @@ describe( '@elementor/locations injections', () => {
 	} );
 
 	it( 'should error when injecting filler with the same name (without overwrite option)', async () => {
+		// Arrange.
 		injectInto( {
 			name: 'test',
 			location: 'test',
@@ -110,14 +122,17 @@ describe( '@elementor/locations injections', () => {
 			filler: () => <div>Second div</div>,
 		} );
 
+		// Act
 		const { queryByText } = render( <Slot location="test" /> );
 
+		// Assert.
 		expect( queryByText( 'First div' ) ).toBeTruthy();
 		expect( queryByText( 'Second div' ) ).toBeNull();
 		expect( console ).toHaveErrored();
 	} );
 
 	it( 'should overwrite the filler if has same name', async () => {
+		// Arrange.
 		injectInto( {
 			name: 'test',
 			location: 'test',
@@ -138,14 +153,17 @@ describe( '@elementor/locations injections', () => {
 			options: { overwrite: true },
 		} );
 
+		// Act
 		const { queryByText } = render( <Slot location="test" /> );
 
+		// Assert.
 		expect( queryByText( 'First div' ) ).toBeNull();
 		expect( queryByText( 'Second div' ) ).toBeTruthy();
 		expect( queryByText( 'Third div' ) ).toBeTruthy();
 	} );
 
 	it( 'should overwrite and manipulate the priority', () => {
+		// Arrange.
 		injectInto( {
 			name: 'test-1',
 			location: 'test',
@@ -160,9 +178,11 @@ describe( '@elementor/locations injections', () => {
 			options: { overwrite: true },
 		} );
 
+		// Act + Assert.
 		expect( getInjectionsOf( 'test' ) ).toHaveLength( 1 );
 		expect( getInjectionsOf( 'test' )[ 0 ].priority ).toBe( 5 );
 
+		// Arrange.
 		injectInto( {
 			name: 'test-1',
 			location: 'test',
@@ -170,11 +190,13 @@ describe( '@elementor/locations injections', () => {
 			options: { overwrite: true, priority: 20 },
 		} );
 
+		// Act + Assert.
 		expect( getInjectionsOf( 'test' ) ).toHaveLength( 1 );
 		expect( getInjectionsOf( 'test' )[ 0 ].priority ).toBe( 20 );
 	} );
 
 	it( 'should catch filler errors with error boundary', () => {
+		// Arrange.
 		injectInto( {
 			name: 'test-1',
 			location: 'test',
@@ -189,8 +211,10 @@ describe( '@elementor/locations injections', () => {
 			filler: () => <div>Test</div>,
 		} );
 
+		// Act.
 		const { queryByText } = render( <Slot location="test" /> );
 
+		// Assert.
 		expect( queryByText( 'Test' ) ).toBeTruthy();
 		expect( console ).toHaveErrored();
 	} );
