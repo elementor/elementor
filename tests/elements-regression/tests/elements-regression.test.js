@@ -45,7 +45,7 @@ test.describe( 'Elements regression', () => {
 				await test.step( `frontend`, async () => {
 					await expect(
 						await frontendPage.screenshotElement( elementId ),
-					).toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+					).toMatchSnapshot( [ 'frontend', widgetType, 'default.jpeg' ] );
 				} );
 
 				await editorPage.resetElementSettings( elementId );
@@ -87,15 +87,14 @@ test.describe( 'Elements regression', () => {
 								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 							} );
 
-							if ( configMediator.canTestControlOnFrontend( widgetType, controlId, valueLabel ) ) {
-								await editorPage.publish();
+							await editorPage.publish();
 
-								await test.step( 'frontend', async () => {
-									await expect(
-										await frontendPage.screenshotElement( elementId ),
-									).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
-								} );
-							}
+							await test.step( 'frontend', async () => {
+								await expect(
+									await frontendPage.screenshotElement( elementId ),
+								).toMatchSnapshot( [ 'frontend', widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							} );
+
 							await control.teardown();
 						} );
 					}
