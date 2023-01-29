@@ -35,7 +35,7 @@ type Props = Omit<ToggleButtonProps, 'onChange'> & {
 	onClick?: () => void;
 }
 
-export default function HorizontalMenuToggleItem( { title, onClick, ...props }: Props ) {
+export default function ToolbarMenuToggleItem( { title, onClick, ...props }: Props ) {
 	return (
 		<Tooltip title={ title }>
 			<Button { ...props } onChange={ onClick } />

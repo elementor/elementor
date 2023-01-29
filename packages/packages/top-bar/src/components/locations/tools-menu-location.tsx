@@ -3,9 +3,9 @@ import { useInjectionsOf } from '@elementor/locations';
 import { __ } from '@wordpress/i18n';
 import { usePopupState, bindTrigger, bindMenu, SvgIcon } from '@elementor/ui';
 import { LOCATION_TOOLS_MENU_DEFAULT } from '../../locations';
-import HorizontalMenu from '../misc/horizontal-menu';
-import HorizontalMenuItem from '../misc/horizontal-menu-item';
-import PopoverMenu from '../misc/popover-menu';
+import ToolbarMenu from '../ui/toolbar-menu';
+import ToolbarMenuItem from '../ui/toolbar-menu-item';
+import PopoverMenu from '../ui/popover-menu';
 
 const MAX_HORIZONTAL_ACTIONS = 5;
 
@@ -14,24 +14,24 @@ export default function ToolsMenuLocation() {
 
 	const popupState = usePopupState( {
 		variant: 'popover',
-		popupId: 'editor-v2-top-bar-tools-more',
+		popupId: 'elementor-editor-top-bar-tools-more',
 	} );
 
 	const horizontalInjections = injections.slice( 0, MAX_HORIZONTAL_ACTIONS );
 	const popoverInjections = injections.slice( MAX_HORIZONTAL_ACTIONS );
 
 	return (
-		<HorizontalMenu>
+		<ToolbarMenu>
 			{ horizontalInjections.map(
 				( { filler: Filler, id } ) => <Filler key={ id } />
 			) }
 			{ popoverInjections.length > 0 && (
 				<>
-					<HorizontalMenuItem { ...bindTrigger( popupState ) } title={ __( 'More', 'elementor' ) }>
-						<SvgIcon viewBox="0 0 24 24">
-							<path d="M11 4.75C11 4.33579 11.3358 4 11.75 4C12.1642 4 12.5 4.33579 12.5 4.75V11H18.75C19.1642 11 19.5 11.3358 19.5 11.75C19.5 12.1642 19.1642 12.5 18.75 12.5H12.5V18.75C12.5 19.1642 12.1642 19.5 11.75 19.5C11.3358 19.5 11 19.1642 11 18.75V12.5H4.75C4.33579 12.5 4 12.1642 4 11.75C4 11.3358 4.33579 11 4.75 11H11V4.75Z" />
+					<ToolbarMenuItem { ...bindTrigger( popupState ) } title={ __( 'More', 'elementor' ) }>
+						<SvgIcon viewBox="0 0 20 20" >
+							<path d="M15.2084 9.16669C15.7837 9.16669 16.25 9.63306 16.25 10.2084C16.25 10.7837 15.7837 11.25 15.2084 11.25C14.6331 11.25 14.1667 10.7837 14.1667 10.2084C14.1667 9.63306 14.6331 9.16669 15.2084 9.16669ZM10.2084 9.16669C10.7837 9.16669 11.25 9.63306 11.25 10.2084C11.25 10.7837 10.7837 11.25 10.2084 11.25C9.63306 11.25 9.16669 10.7836 9.16669 10.2084C9.16669 9.63306 9.63306 9.16669 10.2084 9.16669ZM5.20835 9.16669C5.78365 9.16669 6.25002 9.63306 6.25002 10.2084C6.25002 10.7836 5.78365 11.25 5.20835 11.25C4.63306 11.25 4.16669 10.7836 4.16669 10.2084C4.16669 9.63306 4.63306 9.16669 5.20835 9.16669Z" fill="white" />
 						</SvgIcon>
-					</HorizontalMenuItem>
+					</ToolbarMenuItem>
 					<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) }>
 						{ popoverInjections.map(
 							( { filler: Filler, id } ) => <Filler key={ id } />
@@ -39,6 +39,6 @@ export default function ToolsMenuLocation() {
 					</PopoverMenu>
 				</>
 			) }
-		</HorizontalMenu>
+		</ToolbarMenu>
 	);
 }

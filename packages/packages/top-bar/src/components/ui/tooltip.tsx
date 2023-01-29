@@ -12,6 +12,6 @@ const StyledTooltip = styled( ( { className, children, ...props }: TooltipProps 
 	},
 } ) );
 
-export default function Tooltip( { children, ...props }: TooltipProps ) {
-	return <StyledTooltip { ...props }>{ children }</StyledTooltip>;
+export default function Tooltip( props: TooltipProps ) {
+	return <StyledTooltip { ...props } />;
 }

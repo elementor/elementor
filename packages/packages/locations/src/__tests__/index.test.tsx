@@ -200,22 +200,29 @@ describe( '@elementor/locations injections', () => {
 		injectInto( {
 			name: 'test-1',
 			location: 'test',
+			filler: () => <div>Test 1</div>,
+		} );
+
+		injectInto( {
+			name: 'test-2',
+			location: 'test',
 			filler: () => {
 				throw new Error( 'Error' );
 			},
 		} );
 
 		injectInto( {
-			name: 'test-2',
+			name: 'test-3',
 			location: 'test',
-			filler: () => <div>Test</div>,
+			filler: () => <div>Test 3</div>,
 		} );
 
 		// Act.
 		const { queryByText } = render( <Slot location="test" /> );
 
 		// Assert.
-		expect( queryByText( 'Test' ) ).toBeTruthy();
+		expect( queryByText( 'Test 1' ) ).toBeTruthy();
+		expect( queryByText( 'Test 3' ) ).toBeTruthy();
 		expect( console ).toHaveErrored();
 	} );
 } );

@@ -3,7 +3,7 @@ import ErrorBoundary from './error-boundary';
 
 export default function FillerWrapper( { children }: { children: ReactNode } ) {
 	return (
-		<ErrorBoundary>
+		<ErrorBoundary fallback={ null }>
 			<Suspense fallback={ null }>
 				{ children }
 			</Suspense>

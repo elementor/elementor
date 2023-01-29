@@ -5,7 +5,7 @@ const DEFAULT_PRIORITY = 10;
 
 let injections: Map<string, Injection> = new Map();
 
-export type InjectIntoArgs = {
+type InjectIntoArgs = {
 	location: Location;
 	filler: Filler;
 	name: Name;
@@ -15,9 +15,9 @@ export type InjectIntoArgs = {
 export function injectInto( { location, filler, name, options = {} }: InjectIntoArgs ) {
 	const id = generateId( location, name );
 
-	const injectionWithTheSameId = injections.get( id );
+	const existingInjection = injections.get( id );
 
-	if ( injectionWithTheSameId && ! options?.overwrite ) {
+	if ( existingInjection && ! options?.overwrite ) {
 		// eslint-disable-next-line no-console
 		console.error(
 			`An injection named "${ name }" under location "${ location }" already exists. Did you mean to use "options.overwrite"?`
@@ -26,15 +26,15 @@ export function injectInto( { location, filler, name, options = {} }: InjectInto
 		return;
 	}
 
-	const defaultPriority = injectionWithTheSameId
-		? injectionWithTheSameId.priority
+	const fallbackPriority = existingInjection
+		? existingInjection.priority
 		: DEFAULT_PRIORITY;
 
 	const injection = {
 		id,
 		location,
 		filler: wrapFiller( filler ),
-		priority: options?.priority ?? defaultPriority,
+		priority: options.priority ?? fallbackPriority,
 	};
 
 	injections.set( id, injection );

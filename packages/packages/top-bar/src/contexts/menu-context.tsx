@@ -1,10 +1,10 @@
 import { createContext, PropsWithChildren, useContext } from 'react';
 
 type MenuContextValue = {
-    type: 'horizontal' | 'popover';
+    type: 'toolbar' | 'popover';
 }
 
-const MenuContext = createContext<MenuContextValue>( { type: 'horizontal' } );
+const MenuContext = createContext<MenuContextValue>( { type: 'toolbar' } );
 
 export function MenuContextProvider( { type, children }: PropsWithChildren<MenuContextValue> ) {
 	return (

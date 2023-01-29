@@ -11,6 +11,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	const APP_PACKAGE = 'editor';
 
 	const EXTENSION_PACKAGES = [
+		'elements-panel',
 		'top-bar',
 	];
 

@@ -2,9 +2,9 @@ import { __ } from '@wordpress/i18n';
 import { IconButton, usePopupState, bindMenu, bindTrigger, Box } from '@elementor/ui';
 import { useInjectionsOf } from '@elementor/locations';
 import { LOCATION_MAIN_MENU_DEFAULT, LOCATION_MAIN_MENU_EXITS } from '../../locations';
-import PopoverMenu from '../misc/popover-menu';
-import ElementorLogo from '../misc/elementor-logo';
-import Divider from '../misc/divider';
+import PopoverMenu from '../ui/popover-menu';
+import ElementorLogo from '../ui/elementor-logo';
+import Divider from '../ui/divider';
 
 export default function MainMenuLocation() {
 	const injectionsGroups = useInjectionsOf( [
@@ -31,8 +31,10 @@ export default function MainMenuLocation() {
 						.filter( ( injections ) => injections.length )
 						.map( ( injections, index ) => {
 							return [
-								index > 0 ? <Divider key={ index } /> : null,
-								...injections.map( ( { filler: Filler, id } ) => <Filler key={ id } /> ),
+								index > 0 ? <Divider key={ index } orientation="horizontal" /> : null,
+								...injections.map(
+									( { filler: Filler, id } ) => <Filler key={ id } />
+								),
 							];
 						} )
 				}

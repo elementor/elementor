@@ -1,6 +1,6 @@
 import { useMenuContext } from '../../contexts/menu-context';
-import PopoverMenuItem from '../misc/popover-menu-item';
-import HorizontalMenuToggleItem from '../misc/horizontal-menu-toggle-item';
+import PopoverMenuItem from '../ui/popover-menu-item';
+import ToolbarMenuToggleItem from '../ui/toolbar-menu-toggle-item';
 import { ElementType } from 'react';
 
 type Props = {
@@ -15,10 +15,10 @@ type Props = {
 export default function ToggleAction( { icon: Icon, title, value, ...props }: Props ) {
 	const { type } = useMenuContext();
 
-	return type === 'horizontal' ? (
-		<HorizontalMenuToggleItem value={ value || title } title={ title } { ...props }>
+	return type === 'toolbar' ? (
+		<ToolbarMenuToggleItem value={ value || title } title={ title } { ...props }>
 			<Icon />
-		</HorizontalMenuToggleItem>
+		</ToolbarMenuToggleItem>
 	) : (
 		<PopoverMenuItem { ...props }>
 			<Icon />
