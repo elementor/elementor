@@ -15,7 +15,7 @@ runs:
             CHANNEL=$(echo $string | cut -d "-" -f2)
             CHANNEL_TYPE=$(echo $string | cut -d "-" -f3)
 
-            CLEAN_PACKAGE_NAME=${{ inputs.REF }}
+            CLEAN_PACKAGE_NAME=${{ inputs.BRANCH_NAME }}
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
             
