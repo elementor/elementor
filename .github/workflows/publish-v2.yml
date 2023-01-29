@@ -50,26 +50,26 @@ jobs:
         uses: robinraju/release-downloader@v1.7
         with:
           tag: v${{ env.CLEAN_PACKAGE_NAME }}
-          fileName: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          fileName: ${{ github.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           out-file-path: /tmp/
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          path: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          name: ${{ github.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          path: /tmp/${{ github.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           if-no-files-found: error
       - name: Get channel version
         run: |
           CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ github.event.inputs.chennel }}")
           echo "CHANNEL_VERSION=${CHANNEL_VERSION}" >> $GITHUB_ENV
-          CLEAN_CHANNEL_VERSION=$(echo $CHANNEL_VERSION | tr -s '-' | cut -d '-' -f 3)
-          echo "CLEAN_CHANNEL_VERSION=${CLEAN_CHANNEL_VERSION}" >> $GITHUB_ENV
+          CLEAN_CHANNEL_NAME=$(echo $CHANNEL_VERSION | tr -s '-' | cut -d '-' -f 3)
+          echo "CLEAN_CHANNEL_NAME=${CLEAN_CHANNEL_NAME}" >> $GITHUB_ENV
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MESSAGE: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CLEAN_CHANNEL_VERSION }}
+          MESSAGE: ${{ github.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CLEAN_CHANNEL_VERSION }}${{ env.CHANNEL_VERSION}}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
