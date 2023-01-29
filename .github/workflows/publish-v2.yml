@@ -62,12 +62,14 @@ jobs:
         run: |
           CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ github.event.inputs.chennel }}")
           echo "CHANNEL_VERSION=${CHANNEL_VERSION}" >> $GITHUB_ENV
+          CLEAN_CHANNEL_VERSION=$(echo $CHANNEL_VERSION | tr -s '-' | cut -d '-' -f 3)
+          echo "CLEAN_CHANNEL_VERSION=${CLEAN_CHANNEL_VERSION}" >> $GITHUB_ENV
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MESSAGE: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CHANNEL_VERSION }}
+          MESSAGE: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}-${{ env.CLEAN_CHANNEL_VERSION }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
