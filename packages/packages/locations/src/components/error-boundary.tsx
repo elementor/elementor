@@ -1,12 +1,12 @@
 import { Component, ReactNode } from 'react';
 
 interface Props {
-    children?: ReactNode;
+	children?: ReactNode;
 	fallback: ReactNode;
 }
 
 interface State {
-    hasError: boolean;
+	hasError: boolean;
 }
 
 export default class ErrorBoundary extends Component<Props, State> {

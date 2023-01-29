@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, useContext } from 'react';
 
 type MenuContextValue = {
-    type: 'toolbar' | 'popover';
+	type: 'toolbar' | 'popover';
 }
 
 const MenuContext = createContext<MenuContextValue>( { type: 'toolbar' } );

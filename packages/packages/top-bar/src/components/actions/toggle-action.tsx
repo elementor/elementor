@@ -4,9 +4,9 @@ import ToolbarMenuToggleItem from '../ui/toolbar-menu-toggle-item';
 import { ElementType } from 'react';
 
 type Props = {
-    title: string;
+	title: string;
 	icon: ElementType;
-    selected?: boolean;
+	selected?: boolean;
 	disabled?: boolean;
 	onClick?: () => void;
 	value?: string;

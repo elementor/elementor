@@ -22,8 +22,8 @@ const Button = styled( IconButton )( () => ( {
 } ) );
 
 type Props = IconButtonProps & {
-    title?: string;
-    selected?: boolean;
+	title?: string;
+	selected?: boolean;
 }
 
 export default function ToolbarMenuItem( { title, ...props }: Props ) {

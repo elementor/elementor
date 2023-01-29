@@ -7,7 +7,7 @@ import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuItem from '../ui/toolbar-menu-item';
 import PopoverMenu from '../ui/popover-menu';
 
-const MAX_HORIZONTAL_ACTIONS = 5;
+const MAX_TOOLBAR_ACTIONS = 5;
 
 export default function ToolsMenuLocation() {
 	const injections = useInjectionsOf( LOCATION_TOOLS_MENU_DEFAULT );
@@ -17,12 +17,12 @@ export default function ToolsMenuLocation() {
 		popupId: 'elementor-editor-top-bar-tools-more',
 	} );
 
-	const horizontalInjections = injections.slice( 0, MAX_HORIZONTAL_ACTIONS );
-	const popoverInjections = injections.slice( MAX_HORIZONTAL_ACTIONS );
+	const toolbarInjections = injections.slice( 0, MAX_TOOLBAR_ACTIONS );
+	const popoverInjections = injections.slice( MAX_TOOLBAR_ACTIONS );
 
 	return (
 		<ToolbarMenu>
-			{ horizontalInjections.map(
+			{ toolbarInjections.map(
 				( { filler: Filler, id } ) => <Filler key={ id } />
 			) }
 			{ popoverInjections.length > 0 && (
