@@ -3,7 +3,7 @@ import { AppBar, Grid, Box, IconButton, styled, Button } from '@elementor/ui';
 import ElementorIcon from './icons/elementor-icon';
 import PlusIcon from './icons/plus-icon';
 import { openRoute, useIsRouteActive } from '@elementor/v1-adapters';
-import { useCurrentDocument, useDocumentsActions } from '@elementor/documents';
+import { useCurrentDocument, useCurrentDocumentActions } from '@elementor/documents';
 
 const AppBarAction = styled( IconButton )( ( { theme } ) => ( {
 	borderRadius: '8px',
@@ -17,7 +17,7 @@ export const TopBar = () => {
 	const isActive = useIsRouteActive( 'panel/elements' );
 
 	const document = useCurrentDocument();
-	const { save } = useDocumentsActions();
+	const { save } = useCurrentDocumentActions();
 
 	return (
 		<AppBar position="sticky" sx={ { background: 'linear-gradient(-90deg, #FFF 140px, #000 140px)', height: '48px' } }>

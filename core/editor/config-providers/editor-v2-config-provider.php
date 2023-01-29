@@ -11,11 +11,11 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	const APP_PACKAGE = 'editor';
 
 	const EXTENSION_PACKAGES = [
+		'documents',
 		'top-bar',
 	];
 
 	const UTIL_PACKAGES = [
-		'documents',
 		'locations',
 		'ui',
 		'v1-adapters',

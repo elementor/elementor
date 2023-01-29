@@ -1,4 +1,4 @@
-import { addSlice } from '@elementor/store';
+import { addSlice, PayloadAction } from '@elementor/store';
 import { PartialDocument, State, Document } from '../types';
 
 const initialState: State = {
@@ -11,19 +11,19 @@ export function createSlice() {
 		name: 'documents',
 		initialState,
 		reducers: {
-			setDocuments( state, action: { payload: State['documents'] } ) {
+			setDocuments( state, action: PayloadAction<State['documents']> ) {
 				state.documents = action.payload;
 			},
 
-			setCurrentDocumentId( state, action: { payload: State['currentDocumentId'] } ) {
+			setCurrentDocumentId( state, action: PayloadAction<State['currentDocumentId']> ) {
 				state.currentDocumentId = action.payload;
 			},
 
-			addDocument( state, action: { payload: Document } ) {
+			addDocument( state, action: PayloadAction<Document> ) {
 				state.documents[ action.payload.id ] = action.payload;
 			},
 
-			updateDocument( state, action: { payload: PartialDocument } ) {
+			updateDocument( state, action: PayloadAction<PartialDocument> ) {
 				state.documents[ action.payload.id ] = {
 					...state.documents[ action.payload.id ],
 					...action.payload,

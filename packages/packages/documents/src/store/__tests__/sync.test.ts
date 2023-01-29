@@ -8,7 +8,7 @@ import {
 	dispatchCommandBefore,
 	dispatchV1ReadyEvent,
 	makeDocumentsManager,
-	makeMockDocument,
+	makeMockV1Document,
 } from './test-utils';
 
 type WindowWithV1Loading = Omit<ExtendedWindow, 'elementor'> & {
@@ -43,8 +43,8 @@ describe( '@elementor/documents/store/sync', () => {
 		// Arrange.
 		extendedWindow.elementor = {
 			documents: makeDocumentsManager( [
-				makeMockDocument( 1 ),
-				makeMockDocument( 2 ),
+				makeMockV1Document( 1 ),
+				makeMockV1Document( 2 ),
 			] ),
 		};
 
@@ -93,8 +93,8 @@ describe( '@elementor/documents/store/sync', () => {
 		// Arrange.
 		extendedWindow.elementor = {
 			documents: makeDocumentsManager( [
-				makeMockDocument( 1 ),
-				makeMockDocument( 2 ),
+				makeMockV1Document( 1 ),
+				makeMockV1Document( 2 ),
 			], 2 ),
 		};
 
@@ -102,11 +102,9 @@ describe( '@elementor/documents/store/sync', () => {
 		dispatchEvent();
 
 		// Assert.
-		const storeState = store.getState();
-		const { currentDocumentId } = storeState.documents;
-		const currentDocument = storeState.documents.documents[ currentDocumentId ];
+		const currentDocument = getCurrentDocument( store );
 
-		expect( currentDocumentId ).toBe( 2 );
+		expect( currentDocument.id ).toBe( 2 );
 		expect( currentDocument ).toEqual( {
 			id: 2,
 			title: 'Document 2',
@@ -122,7 +120,7 @@ describe( '@elementor/documents/store/sync', () => {
 
 	it( 'should sync saving state of a document on V1 load', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = makeMockV1Document();
 
 		extendedWindow.elementor = {
 			documents: makeDocumentsManager( [
@@ -140,86 +138,74 @@ describe( '@elementor/documents/store/sync', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		const storeState = store.getState();
-		const { currentDocumentId } = storeState.documents;
-		const currentDocument = storeState.documents.documents[ currentDocumentId ];
-
-		expect( currentDocument.isSaving ).toBe( true );
+		expect( getCurrentDocument( store ).isSaving ).toBe( true );
 	} );
 
 	it( 'should sync saving state of a document on save', () => {
 		// Arrange.
 		extendedWindow.elementor = {
 			documents: makeDocumentsManager( [
-				makeMockDocument(),
+				makeMockV1Document(),
 			] ),
 		};
 
 		// Populate the documents state.
 		dispatchV1ReadyEvent();
 
-		const getCurrentDocument = () => {
-			const storeState = store.getState();
-			const { currentDocumentId } = storeState.documents;
-
-			return storeState.documents.documents[ currentDocumentId ];
-		};
+		// Assert - Default state.
+		expect( getCurrentDocument( store ).isSaving ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save' );
 
-		// Assert.
-		expect( getCurrentDocument().isSaving ).toBe( true );
-		expect( getCurrentDocument().isSavingDraft ).toBe( false );
+		// Assert - On save start.
+		expect( getCurrentDocument( store ).isSaving ).toBe( true );
+		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save' );
 
-		// Assert.
-		expect( getCurrentDocument().isSaving ).toBe( false );
-		expect( getCurrentDocument().isSavingDraft ).toBe( false );
+		// Assert - On save end.
+		expect( getCurrentDocument( store ).isSaving ).toBe( false );
+		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync draft saving state of a document on save', () => {
 		// Arrange.
 		extendedWindow.elementor = {
 			documents: makeDocumentsManager( [
-				makeMockDocument(),
+				makeMockV1Document(),
 			] ),
 		};
 
 		// Populate the documents state.
 		dispatchV1ReadyEvent();
 
-		const getCurrentDocument = () => {
-			const storeState = store.getState();
-			const { currentDocumentId } = storeState.documents;
-
-			return storeState.documents.documents[ currentDocumentId ];
-		};
+		// Assert - Default state.
+		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save', {
 			status: 'autosave',
 		} );
 
-		// Assert.
-		expect( getCurrentDocument().isSaving ).toBe( false );
-		expect( getCurrentDocument().isSavingDraft ).toBe( true );
+		// Assert - On save start.
+		expect( getCurrentDocument( store ).isSaving ).toBe( false );
+		expect( getCurrentDocument( store ).isSavingDraft ).toBe( true );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save', {
 			status: 'autosave',
 		} );
 
-		// Assert.
-		expect( getCurrentDocument().isSaving ).toBe( false );
-		expect( getCurrentDocument().isSavingDraft ).toBe( false );
+		// Assert - On save end.
+		expect( getCurrentDocument( store ).isSaving ).toBe( false );
+		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync modified state of a document on V1 load', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = makeMockV1Document();
 
 		extendedWindow.elementor = {
 			documents: makeDocumentsManager( [ {
@@ -237,16 +223,12 @@ describe( '@elementor/documents/store/sync', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		const storeState = store.getState();
-		const { currentDocumentId } = storeState.documents;
-		const currentDocument = storeState.documents.documents[ currentDocumentId ];
-
-		expect( currentDocument.isModified ).toBe( true );
+		expect( getCurrentDocument( store ).isModified ).toBe( true );
 	} );
 
 	it( 'should sync modified state of a document on document change', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = makeMockV1Document();
 
 		extendedWindow.elementor = {
 			documents: makeDocumentsManager( [
@@ -268,15 +250,20 @@ describe( '@elementor/documents/store/sync', () => {
 			} ] ),
 		};
 
+		// Assert - Default state.
+		expect( getCurrentDocument( store ).isModified ).toBe( false );
+
 		// Act.
 		dispatchCommandAfter( 'document/save/set-is-modified' );
 
-		// Assert.
-		const storeState = store.getState();
-		const { currentDocumentId } = storeState.documents;
-		const currentDocument = storeState.documents.documents[ currentDocumentId ];
-
-		expect( currentDocument.isModified ).toBe( true );
+		// Assert - After change.
+		expect( getCurrentDocument( store ).isModified ).toBe( true );
 	} );
 } );
 
+function getCurrentDocument( store: Store<SliceState<Slice>> ) {
+	const storeState = store.getState();
+	const { currentDocumentId } = storeState.documents;
+
+	return storeState.documents.documents[ currentDocumentId ];
+}

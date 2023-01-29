@@ -44,7 +44,7 @@ export function makeDocumentsManager( documentsArray: V1Document[], current: num
 	};
 }
 
-export function makeMockDocument( id: number = 1 ): V1Document {
+export function makeMockV1Document( id: number = 1 ): V1Document {
 	return {
 		id,
 		config: {

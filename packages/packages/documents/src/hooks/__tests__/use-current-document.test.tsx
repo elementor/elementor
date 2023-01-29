@@ -2,7 +2,7 @@ import { Slice } from '../../types';
 import { PropsWithChildren } from 'react';
 import { createSlice } from '../../store';
 import { renderHook } from '@testing-library/react-hooks';
-import { useCurrentDocument } from '../use-current-document';
+import useCurrentDocument from '../use-current-document';
 import { createStore, deleteStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
 
 describe( '@elementor/documents/hooks/use-current-document', () => {
@@ -39,15 +39,7 @@ describe( '@elementor/documents/hooks/use-current-document', () => {
 		dispatch( slice.actions.setCurrentDocumentId( 1 ) );
 
 		// Act.
-		const wrapper = ( { children }: PropsWithChildren<unknown> ) => (
-			<StoreProvider store={ store }>
-				{ children }
-			</StoreProvider>
-		);
-
-		const { result } = renderHook( () => useCurrentDocument(), {
-			wrapper,
-		} );
+		const { result } = renderHookWithProvider( useCurrentDocument, store );
 
 		// Assert.
 		expect( result.current ).toBe( mockDocument );
@@ -58,17 +50,21 @@ describe( '@elementor/documents/hooks/use-current-document', () => {
 		dispatch( slice.actions.setCurrentDocumentId( 1 ) );
 
 		// Act.
-		const wrapper = ( { children }: PropsWithChildren<unknown> ) => (
-			<StoreProvider store={ store }>
-				{ children }
-			</StoreProvider>
-		);
-
-		const { result } = renderHook( () => useCurrentDocument(), {
-			wrapper,
-		} );
+		const { result } = renderHookWithProvider( useCurrentDocument, store );
 
 		// Assert.
 		expect( result.current ).toBeNull();
 	} );
 } );
+
+function renderHookWithProvider( hook: () => unknown, store: Store ) {
+	const wrapper = ( { children }: PropsWithChildren<unknown> ) => (
+		<StoreProvider store={ store }>
+			{ children }
+		</StoreProvider>
+	);
+
+	return renderHook( hook, {
+		wrapper,
+	} );
+}
