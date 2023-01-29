@@ -41,7 +41,7 @@ jobs:
       - name: Get Clean Package Name
         uses : ./.github/workflows/strip-package-name
         with:
-          STRING: ${{ github.ref }}
+          REF: ${{ github.ref }}
       - name: Download release assets
         uses: robinraju/release-downloader@v1.7
         with:
