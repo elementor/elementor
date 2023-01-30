@@ -10,7 +10,7 @@ html {
 }
 
 html {
-    background-color: #F1F1F1;
+    background-color: var(--e-admin-bg-loading);
 }
 
 iframe,
@@ -27,8 +27,9 @@ a {
 }
 
 body {
-    color: $e-gray-600;
-    font-family: $admin-font-family;
+	background-color: var(--e-admin-bg-default);
+    color: var(--e-admin-color-txt);
+    font-family: var(--e-admin-font-family);
     font-size: 13px;
     font-weight: normal;
     line-height: 1;
@@ -43,7 +44,7 @@ body {
 		@include end(0);
 		height: 100%;
 		width: 0;
-		background-color: $editor-accent;
+		background-color: var(--e-admin-bg-default);
 		transition: width .5s;
 	}
 

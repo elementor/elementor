@@ -2,24 +2,23 @@
 // Forms
 //
 
-input, select, textarea, .e-input-style {
-	border-radius: 3px;
+input,
+select,
+textarea,
+.e-input-style {
+	color: var(--e-admin-color-txt);
+	border-radius: var(--e-admin-border-radius);
 	font-size: 12px;
 	width: 100%;
 	background: none;
 	box-shadow: none;
-	color: $editor-dark;
-	border: 1px solid;
+	border: var(--e-admin-border);
 	outline: none;
-
-	&:not(:focus) {
-		border-color: $editor-lightest;
-	}
 
 	&:focus {
 
 		&, + .elementor-control-dynamic-switcher {
-			border-color: $editor-light;
+			border-color: var(--e-admin-border-color-active);
 		}
 	}
 
@@ -30,8 +29,10 @@ input, select, textarea, .e-input-style {
 
 .elementor-error {
 
-	input, select, textarea {
-		border-color: $editor-warning;
+	input,
+	select,
+	textarea {
+		border-color: var(--e-admin-color-warning);
 	}
 }
 
@@ -56,7 +57,7 @@ input[type="radio"] {
 }
 
 input[disabled] {
-	background-color: $editor-background;
+	background-color: var(--e-admin-bg-hover);
 	cursor: not-allowed;
 	opacity: 1;
 }
