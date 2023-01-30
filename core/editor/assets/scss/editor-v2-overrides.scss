@@ -12,4 +12,5 @@ body {
 
 body.elementor-navigator-docked #elementor-navigator {
 	height: calc(100% - var(--editor-v2-top-bar-height));
+	top: var(--editor-v2-top-bar-height);
 }
