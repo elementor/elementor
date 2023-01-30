@@ -162,7 +162,7 @@ describe( '@elementor/locations injections', () => {
 		expect( queryByText( 'Third div' ) ).toBeTruthy();
 	} );
 
-	it( 'should overwrite and manipulate the priority', () => {
+	it( 'should overwrite the injection priority', () => {
 		// Arrange.
 		injectInto( {
 			name: 'test-1',
@@ -180,19 +180,7 @@ describe( '@elementor/locations injections', () => {
 
 		// Act + Assert.
 		expect( getInjectionsOf( 'test' ) ).toHaveLength( 1 );
-		expect( getInjectionsOf( 'test' )[ 0 ].priority ).toBe( 5 );
-
-		// Arrange.
-		injectInto( {
-			name: 'test-1',
-			location: 'test',
-			filler: () => <div />,
-			options: { overwrite: true, priority: 20 },
-		} );
-
-		// Act + Assert.
-		expect( getInjectionsOf( 'test' ) ).toHaveLength( 1 );
-		expect( getInjectionsOf( 'test' )[ 0 ].priority ).toBe( 20 );
+		expect( getInjectionsOf( 'test' )[ 0 ].priority ).toBe( 10 );
 	} );
 
 	it( 'should catch filler errors with error boundary', () => {

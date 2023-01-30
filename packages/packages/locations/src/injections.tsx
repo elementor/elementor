@@ -15,9 +15,7 @@ type InjectIntoArgs = {
 export function injectInto( { location, filler, name, options = {} }: InjectIntoArgs ) {
 	const id = generateId( location, name );
 
-	const existingInjection = injections.get( id );
-
-	if ( existingInjection && ! options?.overwrite ) {
+	if ( injections.has( id ) && ! options?.overwrite ) {
 		// eslint-disable-next-line no-console
 		console.error(
 			`An injection named "${ name }" under location "${ location }" already exists. Did you mean to use "options.overwrite"?`
@@ -26,15 +24,11 @@ export function injectInto( { location, filler, name, options = {} }: InjectInto
 		return;
 	}
 
-	const fallbackPriority = existingInjection
-		? existingInjection.priority
-		: DEFAULT_PRIORITY;
-
 	const injection = {
 		id,
 		location,
 		filler: wrapFiller( filler ),
-		priority: options.priority ?? fallbackPriority,
+		priority: options.priority ?? DEFAULT_PRIORITY,
 	};
 
 	injections.set( id, injection );

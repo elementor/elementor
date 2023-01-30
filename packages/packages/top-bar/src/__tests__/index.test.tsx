@@ -29,7 +29,7 @@ describe( '@elementor/top-bar API', () => {
 			// Assert.
 			const { getByText, getByRole } = render( <Component /> );
 
-			getByRole( 'button' ).click();
+			getByRole( 'button' ).click(); // Opens the popover menu
 
 			const button = getByText( 'Test' );
 
@@ -45,7 +45,7 @@ describe( '@elementor/top-bar API', () => {
 			// Assert.
 			const { getByRole, getByText } = render( <Component /> );
 
-			getByRole( 'button' ).click();
+			getByRole( 'button' ).click(); // Opens the popover menu
 
 			const menuItem = getByRole( 'menuitem' );
 			const menuItemButton = getByText( 'Test' );
@@ -70,7 +70,7 @@ describe( '@elementor/top-bar API', () => {
 			// Assert.
 			const { getByRole } = render( <Component /> );
 
-			getByRole( 'button' ).click();
+			getByRole( 'button' ).click(); // Opens the popover menu
 
 			const link = getByRole( 'link' );
 

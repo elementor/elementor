@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { SvgIcon } from '@elementor/ui';
 
 registerToggleAction( 'tools', {
-	name: 'elements-panel',
+	name: 'open-elements-panel',
 	useProps: () => {
 		const selected = useIsRouteActive( 'panel/elements' );
 

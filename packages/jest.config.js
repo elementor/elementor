@@ -31,8 +31,7 @@ module.exports = {
 	],
 	// Setup files to run for all the tests.
 	setupFilesAfterEnv: [
-		'<rootDir>/tests/setup-cleaning.ts',
-		'@wordpress/jest-console',
+		'<rootDir>/tests/setup.ts',
 	],
 	// Code coverage.
 	collectCoverageFrom: [
