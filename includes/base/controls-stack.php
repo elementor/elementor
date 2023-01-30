@@ -533,7 +533,7 @@ abstract class Controls_Stack extends Base_Object {
 			return null;
 		}
 
-		$is_valid_cache = isset( $stack['version'] ) && $stack['version'] === static::get_cache_version();
+		$is_valid_cache = isset( $stack['version'] ) && static::get_cache_version() === $stack['version'];
 
 		if ( ! $is_valid_cache ) {
 			return null;
