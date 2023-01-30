@@ -1336,6 +1336,15 @@ label.elementor-template-library-order-label,
 
 .elementor-context-menu-list__item {
 
+	&--disabled {
+
+		.elementor-context-menu-list__item__icon,
+		.elementor-context-menu-list__item__title,
+		.elementor-context-menu-list__item__shortcut {
+			color: $theme-dark-gray-lighter;
+		}
+	}
+
 	&:not(.elementor-context-menu-list__item--disabled):hover {
 		background-color: $theme-dark-gray;
 	}
