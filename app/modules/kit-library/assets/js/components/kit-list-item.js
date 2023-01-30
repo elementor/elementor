@@ -47,7 +47,7 @@ const KitListItem = ( props ) => {
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
 					{
-						subscriptionPlan?.label &&
+						! elementorAppConfig.hasPro && subscriptionPlan?.label &&
 							<Badge
 								variant="sm"
 								className="e-kit-library__kit-item-subscription-plan-badge"
