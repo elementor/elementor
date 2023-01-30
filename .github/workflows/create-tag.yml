@@ -48,6 +48,8 @@ jobs:
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           GITHUB_ACTOR: ${{ github.actor }}
           CHANNEL: ${{ github.event.inputs.chennel }}
           CLEAN_PACKAGE_VERSION: ${{ env.PACKAGE_VERSION_CLEAN }}

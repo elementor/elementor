@@ -11,12 +11,21 @@ inputs:
   CLEAN_PACKAGE_VERSION:
     required: true
     description: 'The current package version.'
+  MAINTAIN_USERNAME:
+    required: true
+    description: 'The username of the maintainer.'
+  MAINTAIN_EMAIL:
+    required: true
+    description: 'The email of the maintainer.'
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
+            git config user.name ${{ inputs.MAINTAIN_USERNAME }}
+            git config user.email ${{ inputs.MAINTAIN_EMAIL }}
+            
             echo "pwd: $(pwd)"
             echo "ls: $(ls)"
             CURRENT_CHANNEL_VERSION=git ls-remote --tags ${{ inputs.GITHUB_ACTOR }} | grep ${{ inputs.CHANNEL }} | grep v${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}'
