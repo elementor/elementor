@@ -293,7 +293,7 @@ class Module extends BaseModule {
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
-			$this->import->init_import_session();
+			$this->import->init_import_session( true );
 
 			return [
 				'session' => $this->import->get_session_id(),
@@ -624,6 +624,7 @@ class Module extends BaseModule {
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
 			'tools_url' => Tools::get_url(),
+			'importSessions' => Revert::get_import_sessions(),
 		];
 
 		$last_import_session = $this->revert->get_last_import_session();
