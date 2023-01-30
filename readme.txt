@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.10.2 - 2023-01-29 =
+
+* Fix: PHP 8.x throws errors and notices in some cases ([#21087](https://github.com/elementor/elementor/issues/21087))
+* Fix: Keyboard actions are not blocked on main tab container in Tabs widget
+
 = 3.10.1 - 2023-01-17 =
 
 * Fix: Child containers inheriting styles from parent container ([#20669](https://github.com/elementor/elementor/issues/20669))
