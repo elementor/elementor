@@ -73,8 +73,10 @@ export default class StretchedElement extends Base {
 	}
 
 	onElementChange( propertyName ) {
-		if ( this.getSettings( 'stretchSettingName' ) === propertyName ) {
-			if ( this.getElementSettings( 'stretch_section' ) ) {
+		const stretchSettingName = this.getSettings( 'stretchSettingName' );
+
+		if ( stretchSettingName === propertyName ) {
+			if ( stretchSettingName ) {
 				this.stretch();
 			} else {
 				this.stretchElement.reset();
