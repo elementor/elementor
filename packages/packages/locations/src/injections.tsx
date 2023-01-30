@@ -1,9 +1,9 @@
 import { Location, Filler, Injection, InjectionOptions, Name } from './types';
-import FillWrapper from './components/filler-wrapper';
+import FillerWrapper from './components/filler-wrapper';
 
 const DEFAULT_PRIORITY = 10;
 
-let injections: Map<string, Injection> = new Map();
+const injections: Map<string, Injection> = new Map();
 
 type InjectIntoArgs = {
 	location: Location;
@@ -12,7 +12,7 @@ type InjectIntoArgs = {
 	options?: InjectionOptions;
 }
 
-export function injectInto( { location, filler, name, options = {} }: InjectIntoArgs ) {
+export function inject( { location, filler, name, options = {} }: InjectIntoArgs ) {
 	const id = generateId( location, name );
 
 	if ( injections.has( id ) && ! options?.overwrite ) {
@@ -36,25 +36,25 @@ export function injectInto( { location, filler, name, options = {} }: InjectInto
 
 export function createInjectorFor( location: Location ) {
 	return ( { filler, name, options }: Omit<InjectIntoArgs, 'location'> ) => {
-		return injectInto( { location, name, filler, options } );
+		return inject( { location, name, filler, options } );
 	};
 }
 
 export function getInjectionsOf( location: string ): Injection[] {
 	return [ ...injections.values() ]
-		.filter( ( { location: fillerLocation } ) => fillerLocation === location )
+		.filter( ( injection ) => injection.location === location )
 		.sort( ( a, b ) => a.priority - b.priority );
 }
 
 export function resetInjections() {
-	injections = new Map();
+	injections.clear();
 }
 
 function wrapFiller( FillerComponent: Filler ) {
 	return () => (
-		<FillWrapper>
+		<FillerWrapper>
 			<FillerComponent />
-		</FillWrapper>
+		</FillerWrapper>
 	);
 }
 

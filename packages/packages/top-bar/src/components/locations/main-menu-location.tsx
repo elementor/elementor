@@ -18,7 +18,7 @@ export default function MainMenuLocation() {
 	} );
 
 	return (
-		<Box sx={ { paddingInline: '4px' } }>
+		<Box sx={ { px: 2 } }>
 			<IconButton { ...bindTrigger( popupState ) }>
 				<ElementorLogo
 					titleAccess={ __( 'Elementor Logo', 'elementor' ) }

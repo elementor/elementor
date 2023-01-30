@@ -17,69 +17,6 @@ import PrimaryActionLocation from '../components/locations/primary-action-locati
 
 describe( '@elementor/top-bar API', () => {
 	describe.each( [
-		{ component: MainMenuLocation, name: 'main' } as const,
-	] )( 'popover menu location: $name', ( { component: Component, name } ) => {
-		it( 'should render an action', () => {
-			// Arrange.
-			const onClick = jest.fn();
-
-			// Act
-			registerExampleAction( name, { onClick } );
-
-			// Assert.
-			const { getByText, getByRole } = render( <Component /> );
-
-			getByRole( 'button' ).click(); // Opens the popover menu
-
-			const button = getByText( 'Test' );
-
-			button.click();
-
-			expect( onClick ).toHaveBeenCalled();
-		} );
-
-		it( 'should render a toggle action', () => {
-			// Act.
-			registerExampleToggleAction( name );
-
-			// Assert.
-			const { getByRole, getByText } = render( <Component /> );
-
-			getByRole( 'button' ).click(); // Opens the popover menu
-
-			const menuItem = getByRole( 'menuitem' );
-			const menuItemButton = getByText( 'Test' );
-
-			expect( menuItem ).not.toHaveClass( 'Mui-selected' );
-
-			menuItemButton.click();
-
-			expect( menuItem ).toHaveClass( 'Mui-selected' );
-
-			menuItemButton.click();
-
-			expect( menuItem ).not.toHaveClass( 'Mui-selected' );
-			expect( menuItem ).toHaveAttribute( 'aria-disabled', 'true' );
-			expect( menuItemButton ).toHaveAttribute( 'disabled' );
-		} );
-
-		it( 'should render a link', () => {
-			// Act.
-			registerExampleLink( name );
-
-			// Assert.
-			const { getByRole } = render( <Component /> );
-
-			getByRole( 'button' ).click(); // Opens the popover menu
-
-			const link = getByRole( 'link' );
-
-			expect( link ).toHaveAttribute( 'href', 'https://elementor.com' );
-			expect( link ).toHaveAttribute( 'target', '_blank' );
-		} );
-	} );
-
-	describe.each( [
 		{ component: ToolsMenuLocation, name: 'tools' } as const,
 		{ component: UtilitiesMenuLocation, name: 'utilities' } as const,
 	] )( 'horizontal menu location: $name', ( { component: Component, name } ) => {
@@ -132,6 +69,67 @@ describe( '@elementor/top-bar API', () => {
 			expect( link ).toHaveAttribute( 'href', 'https://elementor.com' );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
 			expect( link ).toHaveAttribute( 'aria-label', 'Test' );
+		} );
+	} );
+
+	describe( 'popover menu location: main', () => {
+		it( 'should render an action', () => {
+			// Arrange.
+			const onClick = jest.fn();
+
+			// Act
+			registerExampleAction( 'main', { onClick } );
+
+			// Assert.
+			const { getByText, getByRole } = render( <MainMenuLocation /> );
+
+			getByRole( 'button' ).click(); // Opens the popover menu
+
+			const button = getByText( 'Test' );
+
+			button.click();
+
+			expect( onClick ).toHaveBeenCalled();
+		} );
+
+		it( 'should render a toggle action', () => {
+			// Act.
+			registerExampleToggleAction( 'main' );
+
+			// Assert.
+			const { getByRole, getByText } = render( <MainMenuLocation /> );
+
+			getByRole( 'button' ).click(); // Opens the popover menu
+
+			const menuItem = getByRole( 'menuitem' );
+			const menuItemButton = getByText( 'Test' );
+
+			expect( menuItem ).not.toHaveClass( 'Mui-selected' );
+
+			menuItemButton.click();
+
+			expect( menuItem ).toHaveClass( 'Mui-selected' );
+
+			menuItemButton.click();
+
+			expect( menuItem ).not.toHaveClass( 'Mui-selected' );
+			expect( menuItem ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( menuItemButton ).toHaveAttribute( 'disabled' );
+		} );
+
+		it( 'should render a link', () => {
+			// Act.
+			registerExampleLink( 'main' );
+
+			// Assert.
+			const { getByRole } = render( <MainMenuLocation /> );
+
+			getByRole( 'button' ).click(); // Opens the popover menu
+
+			const link = getByRole( 'link' );
+
+			expect( link ).toHaveAttribute( 'href', 'https://elementor.com' );
+			expect( link ).toHaveAttribute( 'target', '_blank' );
 		} );
 	} );
 

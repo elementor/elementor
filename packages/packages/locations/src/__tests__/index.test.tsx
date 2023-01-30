@@ -1,24 +1,24 @@
 import { render } from '@testing-library/react';
 import { lazy } from 'react';
-import { injectInto, getInjectionsOf } from '../injections';
+import { inject, getInjectionsOf } from '../injections';
 import Slot from '../components/slot';
 
 describe( '@elementor/locations injections', () => {
 	it( 'should render components based on the location name', () => {
 		// Arrange.
-		injectInto( {
+		inject( {
 			name: 'test-1',
 			location: 'test',
 			filler: () => <div data-testid="element">First div</div>,
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-2',
 			location: 'test',
 			filler: () => <div data-testid="element">Second div</div>,
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-3',
 			location: 'test2',
 			filler: () => <div data-testid="element">Should not exist</div>,
@@ -37,21 +37,21 @@ describe( '@elementor/locations injections', () => {
 
 	it( 'should render components based on priority', () => {
 		// Arrange.
-		injectInto( {
+		inject( {
 			name: 'test-1',
 			location: 'test',
 			filler: () => <div data-testid="element">Third div</div>,
 			// Default priority is 10.
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-2',
 			location: 'test',
 			filler: () => <div data-testid="element">First div</div>,
 			options: { priority: 5 },
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-3',
 			location: 'test',
 			filler: () => <div data-testid="element">Second div</div>,
@@ -80,13 +80,13 @@ describe( '@elementor/locations injections', () => {
 
 	it( 'should render lazy components', async () => {
 		// Arrange.
-		injectInto( {
+		inject( {
 			name: 'test-1',
 			location: 'test',
 			filler: () => <div>First div</div>,
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-2',
 			location: 'test',
 			filler: lazy( () => Promise.resolve( {
@@ -110,13 +110,13 @@ describe( '@elementor/locations injections', () => {
 
 	it( 'should error when injecting filler with the same name (without overwrite option)', async () => {
 		// Arrange.
-		injectInto( {
+		inject( {
 			name: 'test',
 			location: 'test',
 			filler: () => <div>First div</div>,
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test',
 			location: 'test',
 			filler: () => <div>Second div</div>,
@@ -133,20 +133,20 @@ describe( '@elementor/locations injections', () => {
 
 	it( 'should overwrite the filler if has same name', async () => {
 		// Arrange.
-		injectInto( {
+		inject( {
 			name: 'test',
 			location: 'test',
 			filler: () => <div>First div</div>,
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test',
 			location: 'test',
 			filler: () => <div>Second div</div>,
 			options: { overwrite: true },
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-2',
 			location: 'test',
 			filler: () => <div>Third div</div>,
@@ -164,14 +164,14 @@ describe( '@elementor/locations injections', () => {
 
 	it( 'should overwrite the injection priority', () => {
 		// Arrange.
-		injectInto( {
+		inject( {
 			name: 'test-1',
 			location: 'test',
 			filler: () => <div />,
 			options: { priority: 5 },
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-1',
 			location: 'test',
 			filler: () => <div />,
@@ -185,13 +185,13 @@ describe( '@elementor/locations injections', () => {
 
 	it( 'should catch filler errors with error boundary', () => {
 		// Arrange.
-		injectInto( {
+		inject( {
 			name: 'test-1',
 			location: 'test',
 			filler: () => <div>Test 1</div>,
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-2',
 			location: 'test',
 			filler: () => {
@@ -199,7 +199,7 @@ describe( '@elementor/locations injections', () => {
 			},
 		} );
 
-		injectInto( {
+		inject( {
 			name: 'test-3',
 			location: 'test',
 			filler: () => <div>Test 3</div>,

@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef, ElementType } from 'react';
-import { injectInto } from '@elementor/locations';
+import { inject } from '@elementor/locations';
 import {
 	LOCATION_MAIN_MENU_DEFAULT,
 	LOCATION_MAIN_MENU_EXITS,
@@ -57,7 +57,7 @@ export function createRegisterMenuItemFor<TComponent extends ElementType>( compo
 			return <Component { ...componentProps } />;
 		};
 
-		injectInto( {
+		inject( {
 			location,
 			name,
 			filler: Filler,
