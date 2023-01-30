@@ -418,7 +418,7 @@ class Admin extends App {
 	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
-	 * @since 1.9.0
+	 * @since 3.12.0
 	 * @access public
 	 *
 	 * @param bool $show_versions
@@ -469,7 +469,7 @@ class Admin extends App {
 	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
-	 * @since 1.9.0
+	 * @since 3.12.0
 	 * @access public
 	 *
 	 * @param array $args
@@ -511,7 +511,7 @@ class Admin extends App {
 	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
-	 * @since 1.9.0
+	 * @since 3.12.0
 	 * @access public
 	 *
 	 * @param int $limit_feed
@@ -529,8 +529,8 @@ class Admin extends App {
 			<div class="e-overview__feed">
 				<?php if ( $show_heading ) { ?>
 				<h3 class="e-heading e-divider_bottom"><?php echo esc_html__( 'News & Updates', 'elementor' ); ?></h3>
+				<?php } ?>
 				<ul class="e-overview__posts">
-					<?php } ?>
 					<?php foreach ( $elementor_feed as $feed_item ) { ?>
 						<li class="e-overview__post">
 							<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank">
@@ -554,7 +554,7 @@ class Admin extends App {
 	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
-	 * @since 1.9.0
+	 * @since 3.12.0
 	 * @access public
 	 */
 	public function elementor_dashboard_overview_footer() {
