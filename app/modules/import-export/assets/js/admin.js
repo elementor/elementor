@@ -240,4 +240,6 @@ class Admin {
 	}
 }
 
-window.onload = () => new Admin();
+window.addEventListener( 'load', () => {
+	new Admin();
+} );
