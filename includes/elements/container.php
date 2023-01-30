@@ -422,7 +422,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Min Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'vh', 'custom' ],
+				'size_units' => [ 'px', 'vh', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
