@@ -426,7 +426,7 @@ class Admin extends App {
 	 *
 	 * @return void
 	 */
-	public function elementor_dashboard_overview_header( bool $show_versions = true, bool $show_create_post = true ) {
+	public function elementor_dashboard_overview_header( $show_versions = true, $show_create_post = true ) {
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = esc_html__( 'Create New Page', 'elementor' );
 			$create_new_post_type = 'page';
@@ -477,7 +477,7 @@ class Admin extends App {
 	 *
 	 * @return void
 	 */
-	public function elementor_dashboard_overview_recently_edited( array $args = [], bool $show_heading = true ) {
+	public function elementor_dashboard_overview_recently_edited( $args = [], $show_heading = true ) {
 		$recently_edited_query = Utils::get_recently_edited_posts_query( $args );
 
 		if ( $recently_edited_query->have_posts() ) { ?>
@@ -519,7 +519,7 @@ class Admin extends App {
 	 *
 	 * @return void
 	 */
-	public function elementor_dashboard_overview_news_updates( int $limit_feed = 0, bool $show_heading = true ) {
+	public function elementor_dashboard_overview_news_updates( $limit_feed = 0, $show_heading = true ) {
 		$elementor_feed = Api::get_feed_data();
 		if ( $limit_feed > 0 ) {
 			$elementor_feed = array_slice( $elementor_feed, 0, $limit_feed );
