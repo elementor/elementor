@@ -154,6 +154,19 @@ describe( '@elementor/top-bar API', () => {
 		expect( await findByRole( 'tooltip' ) ).toHaveTextContent( 'Test' );
 	} );
 
+	it( 'should render icon', () => {
+		// Act.
+		registerExampleAction( 'tools' );
+
+		// Assert.
+		const { queryByText } = render( <ToolsMenuLocation /> );
+
+		const icon = queryByText( 'a' );
+
+		expect( icon ).toBeInTheDocument();
+		expect( icon ).toHaveTextContent( 'a' );
+	} );
+
 	it( 'should inject into canvas view', () => {
 		// Act.
 		injectIntoCanvasView( {
