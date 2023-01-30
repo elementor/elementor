@@ -58,8 +58,8 @@
 			font-size: inherit;
 			display: flex;
 
-			$e-icon-self-vertical-align-default: center;
-			align-items: var(--icon-self-vertical-align, $e-icon-self-vertical-align-default);
+			$e-icon-vertical-align-default: center;
+			align-items: var(--icon-vertical-align, $e-icon-vertical-align-default);
 		}
 	}
 
@@ -71,6 +71,7 @@
 	.elementor-icon-list-icon {
 		display: flex;
 		position: relative;
+		top: var(--icon-vertical-align-offset, initial);
 
 		svg {
 			width: $e-icon-list-svg-icon-size;

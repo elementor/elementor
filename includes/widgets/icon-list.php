@@ -493,27 +493,22 @@ class Widget_Icon_List extends Widget_Base {
 				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'top' => [
+					'flex-start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
-					'middle' => [
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-v-align-middle',
 					],
-					'bottom' => [
+					'flex-end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
 				'default' => '',
-				'selectors_dictionary' => [
-					'top' => 'flex-start',
-					'middle' => 'center',
-					'bottom' => 'flex-end',
-				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--icon-self-vertical-align: {{VALUE}};',
+					'{{WRAPPER}}' => '--icon-vertical-align: {{VALUE}};',
 				],
 			]
 		);
@@ -540,7 +535,7 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon' => 'top: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--icon-vertical-align-offset: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

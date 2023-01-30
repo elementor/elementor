@@ -16,13 +16,10 @@ test.describe( 'Icon List', () => {
 		// Select vertical alignment option.
 		await page.locator( '.elementor-control-icon_self_vertical_align .eicon-v-align-top' ).click();
 		// Set vertical offset value.
-		await page.locator( '.elementor-control-icon_vertical_offset input' ).fill( '10' );
-
-		await page.pause();
+		await page.locator( '.elementor-control-icon_vertical_offset .elementor-slider-input input' ).fill( '10' );
 
 		// Assert.
-		// await expect( 'selector' ).toHaveCSS( 'padding-top', '10px' );
-		// await expect( editor.page.locator( '.elementor-control-raw-html.elementor-panel-alert.elementor-panel-alert-info' ) )
-		// 	.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
+		await expect( editor.getFrame().locator( '.elementor-icon-list-item' ).first() ).toHaveCSS( 'align-items', 'flex-start' );
+		await expect( editor.getFrame().locator( '.elementor-icon-list-icon' ).first() ).toHaveCSS( 'top', '10px' );
 	} );
 } );
