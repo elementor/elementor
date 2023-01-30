@@ -4,8 +4,8 @@ const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
 test.describe( 'Icon List', () => {
 	test( 'Test vertical alignment of the icons', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
 
 		// Act.
 		await editor.addWidget( 'icon-list' );

@@ -494,7 +494,7 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'flex-start' => [
-						'title' => esc_html__( 'Start', 'elementor' ),
+						'title' => esc_html__( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 					'center' => [
@@ -502,7 +502,7 @@ class Widget_Icon_List extends Widget_Base {
 						'icon' => 'eicon-v-align-middle',
 					],
 					'flex-end' => [
-						'title' => esc_html__( 'End', 'elementor' ),
+						'title' => esc_html__( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
@@ -535,7 +535,7 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--icon-vertical-align-offset: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--icon-vertical-offset: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
