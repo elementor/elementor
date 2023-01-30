@@ -494,7 +494,7 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'flex-start' => [
-						'title' => esc_html__( 'Top', 'elementor' ),
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 					'center' => [
@@ -502,7 +502,7 @@ class Widget_Icon_List extends Widget_Base {
 						'icon' => 'eicon-v-align-middle',
 					],
 					'flex-end' => [
-						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
