@@ -29,7 +29,7 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'e_controls_cache',
-			'title' => esc_html__( 'Cache Controls1', 'elementor' ),
+			'title' => esc_html__( 'Cache Controls', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_DEV,
 			'generator_tag' => true,
