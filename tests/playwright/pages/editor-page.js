@@ -2,14 +2,41 @@ const { addElement, getElementSelector } = require( '../assets/elements-utils' )
 const BasePage = require( './base-page.js' );
 
 module.exports = class EditorPage extends BasePage {
-	isPanelLoaded = false;
-
 	constructor( page, testInfo, cleanPostId = null ) {
 		super( page, testInfo );
 
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 
 		this.postId = cleanPostId;
+	}
+
+	async gotoPostId( id = this.postId ) {
+		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+
+		await this.ensurePanelLoaded();
+	}
+
+	async loadTemplate( template ) {
+		const templateData = require( `../templates/${ template }.json` );
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, templateData );
+	}
+
+	async cleanContent() {
+		await this.page.evaluate( () => {
+			$e.run( 'document/elements/empty', { force: true } );
+		} );
 	}
 
 	async openNavigator() {
@@ -56,14 +83,8 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async ensurePanelLoaded() {
-		if ( this.isPanelLoaded ) {
-			return;
-		}
-
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
-		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-
-		this.isPanelLoaded = true;
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
 	/**
@@ -411,5 +432,17 @@ module.exports = class EditorPage extends BasePage {
 
 		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	async previewChanges( context ) {
+		const previewPagePromise = context.waitForEvent( 'page' );
+
+		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		await this.page.waitForLoadState( 'networkidle' );
+
+		const previewPage = await previewPagePromise;
+		await previewPage.waitForLoadState();
+
+		return previewPage;
 	}
 };
