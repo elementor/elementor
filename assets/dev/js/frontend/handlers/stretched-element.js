@@ -1,13 +1,12 @@
 import Base from './base';
 
 export default class StretchedElement extends Base {
-	getDefaultSettings() {
-		return {
-			classes: {
-				stretched: 'e-stretched',
-			},
-			stretchSettingName: 'stretch_section',
-		};
+	getStretchedClass() {
+		return 'e-stretched';
+	}
+
+	getStretchSettingName() {
+		return 'stretch_element';
 	}
 
 	bindEvents() {
@@ -34,7 +33,7 @@ export default class StretchedElement extends Base {
 	}
 
 	isActive( settings ) {
-		return elementorFrontend.isEditMode() || settings.$element.hasClass( this.getSettings( 'classes.stretched' ) );
+		return elementorFrontend.isEditMode() || settings.$element.hasClass( this.getStretchedClass() );
 	}
 
 	initStretch() {
@@ -53,7 +52,7 @@ export default class StretchedElement extends Base {
 	}
 
 	stretch() {
-		if ( ! this.getElementSettings( this.getSettings( 'stretchSettingName' ) ) ) {
+		if ( ! this.getElementSettings( this.getStretchSettingName() ) ) {
 			return;
 		}
 
@@ -73,7 +72,7 @@ export default class StretchedElement extends Base {
 	}
 
 	onElementChange( propertyName ) {
-		const stretchSettingName = this.getSettings( 'stretchSettingName' );
+		const stretchSettingName = this.getStretchSettingName();
 
 		if ( stretchSettingName === propertyName ) {
 			if ( stretchSettingName ) {
