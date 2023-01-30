@@ -28,7 +28,7 @@ runs:
             
             echo "pwd: $(pwd)"
             echo "ls: $(ls)"
-            CURRENT_CHANNEL_VERSION=git ls-remote --tags ${{ inputs.GITHUB_ACTOR }} | grep ${{ inputs.CHANNEL }} | grep v${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}'
+            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags ${{ inputs.GITHUB_ACTOR }} | grep ${{ inputs.CHANNEL }} | grep v${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}')
             if [ -z "$CURRENT_CHANNEL_VERSION" ]; then
               CURRENT_CHANNEL_VERSION=0
             fi
