@@ -5,22 +5,24 @@ inputs:
   CHANNEL:
     required: true
     description: 'The channel to bump the version to (cloud, beta).'
-  MAINTAIN_USERNAME:
+  GITHUB_ACTOR:
     required: true
-  MAINTAIN_EMAIL:
+    description: 'The github actor.'
+  CLEAN_PACKAGE_VERSION:
     required: true
+    description: 'The current package version.'
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-            git config user.name ${{ inputs.MAINTAIN_USERNAME }}
-            git config user.email ${{ inputs.MAINTAIN_EMAIL }}
+            echo "pwd: $(pwd)"
+            echo "ls: $(ls)"
+            CURRENT_CHANNEL_VERSION=git ls-remote --tags ${{ inputs.GITHUB_ACTOR }} | grep ${{ inputs.CHANNEL }} | grep v${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}'
+            if [ -z "$CURRENT_CHANNEL_VERSION" ]; then
+              CURRENT_CHANNEL_VERSION=0
+            fi
+            NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
             
-            CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ inputs.CHANNEL }}")
-            node ./.github/scripts/update_channel_version.js ${{ inputs.CHANNEL }}
-          
-            CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ inputs.CHANNEL }}")
-            git commit -am "Bump ${{ inputs.CHANNEL }} version to $CHANNEL_VERSION"
-            git push
+            echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}" >> $GITHUB_ENV
