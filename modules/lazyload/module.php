@@ -38,7 +38,20 @@ class Module extends BaseModule {
 		);
 	}
 
+	private function get_repeater( $controls ) {
+		$repeater = array_filter( $controls, function( $control ) {
+			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
+				return true;
+			}
+		} );
+		if ( empty( $repeater ) ) {
+			return false;
+		}
+		return array_shift( $repeater );
+	}
+
 	private function update_element_attributes( Element_Base $element ) {
+
 		$settings = $element->get_settings_for_display();
 		$controls = $element->get_controls();
 		$lazyload_attribute_name = 'data-e-bg-lazyload';
@@ -47,12 +60,7 @@ class Module extends BaseModule {
 			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
 		} );
 
-		$repeater = array_filter( $controls, function( $control ) {
-			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
-				return true;
-			}
-		} );
-		$repeater = array_shift( $repeater );
+		$repeater = $this->get_repeater( $controls );
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
 
