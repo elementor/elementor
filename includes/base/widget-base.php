@@ -112,6 +112,10 @@ abstract class Widget_Base extends Element_Base {
 		return [ 'general' ];
 	}
 
+	protected function is_stack_cache_enabled() {
+		return true;
+	}
+
 	/**
 	 * Widget base constructor.
 	 *

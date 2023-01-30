@@ -42,6 +42,8 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	const RESPONSIVE_MOBILE = 'mobile';
 
+	private static $cache_version;
+
 	/**
 	 * Generic ID.
 	 *
@@ -492,13 +494,89 @@ abstract class Controls_Stack extends Base_Object {
 	public function get_stack() {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
+		$is_need_to_store_stack_cache = false;
+
+		if ( null === $stack && $this->is_stack_cache_enabled() ) {
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_controls_cache' ) ) {
+				$stack = $this->get_stack_from_cache();
+
+				$is_need_to_store_stack_cache = true;
+			}
+		}
+
 		if ( null === $stack ) {
 			$this->init_controls();
 
-			return Plugin::$instance->controls_manager->get_element_stack( $this );
+			$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
+
+			if ( $is_need_to_store_stack_cache ) {
+				$this->store_stack_cache( $stack );
+			}
 		}
 
 		return $stack;
+	}
+
+	protected function is_stack_cache_enabled() {
+		return false;
+	}
+
+	private function get_stack_from_cache() {
+		$cache_path = $this->get_cache_path();
+		if ( ! file_exists( $cache_path ) ) {
+			return null;
+		}
+
+		$stack = require $cache_path;
+
+		if ( ! is_array( $stack ) ) {
+			return null;
+		}
+
+		$is_valid_cache = isset( $stack['version'] ) && $stack['version'] === static::get_cache_version();
+
+		if ( ! $is_valid_cache ) {
+			return null;
+		}
+
+		Plugin::$instance->controls_manager->overwrite_stack( $this, $stack );
+
+		return $stack;
+	}
+
+	private static function get_cache_version() {
+		if ( null === static::$cache_version ) {
+			$active_plugins = get_option( 'active_plugins' );
+			if ( empty( $active_plugins ) || ! is_array( $active_plugins ) ) {
+				$active_plugins = [];
+			}
+
+			$additional_cache_key = get_option( '_e_controls_stack_cache', '' );
+
+			static::$cache_version = md5( wp_json_encode( $active_plugins ) . $additional_cache_key );
+		}
+
+		return static::$cache_version;
+	}
+
+	private function store_stack_cache( $stack ) {
+		$stack['version'] = static::get_cache_version();
+
+		$output = '<?php' . PHP_EOL;
+		$output .= 'return ' . var_export( $stack, true ) . ';';
+		file_put_contents( $this->get_cache_path(), $output );
+	}
+
+	private function get_cache_path() : string {
+		$base_dir = WP_CONTENT_DIR . '/uploads/elementor/controls/';
+
+		if ( ! is_dir( $base_dir ) ) {
+			wp_mkdir_p( $base_dir );
+		}
+
+		$lang = sanitize_file_name( get_bloginfo( 'language' ) );
+
+		return $base_dir . $this->get_unique_name() . ".{$lang}.php";
 	}
 
 	/**

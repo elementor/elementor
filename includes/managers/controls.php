@@ -729,6 +729,12 @@ class Controls_Manager {
 		];
 	}
 
+	public function overwrite_stack( Controls_Stack $controls_stack, $stack ) {
+		$stack_id = $controls_stack->get_unique_name();
+
+		$this->stacks[ $stack_id ] = $stack;
+	}
+
 	/**
 	 * Remove existing stack from the stacks cache
 	 *
