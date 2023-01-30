@@ -564,7 +564,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		$output = '<?php' . PHP_EOL;
 		$output .= 'return ' . var_export( $stack, true ) . ';';
-		file_put_contents( $this->get_cache_path(), $output );
+		file_put_contents( $this->get_cache_path(), $output, LOCK_EX );
 	}
 
 	private function get_cache_path() : string {
