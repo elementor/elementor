@@ -710,7 +710,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Act.
-		// Activate hover animation.
+		// Set the hover animation.
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-tabs_title_hover' ).click();
 		await page.locator( '.elementor-control-hover_animation .select2' ).click();
@@ -721,19 +721,144 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Test inside editor.
 		await expect( editor.getPreviewFrame().locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
 
-		// Test on front end.
-		// Open front end.
+		// Test on the front end.
+		// Open the front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 		// Test on desktop.
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
+		// Test the hover animation.
+		const tabNormal = await page.locator( '.e-normal:not( .e-active )' ).last();
+		await tabNormal.hover();
+		const tabHover = await tabNormal.evaluate( ( element ) => {
+			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
+
+			return animationValue.includes( 'matrix(' ) ? true : false;
+		} );
+		await expect( tabHover ).toBe( true );
+		// Hover over an active tab.
+		const tabActive = page.locator( '.e-normal.e-active' );
+		await tabActive.hover();
+		await expect( tabActive ).toHaveCSS( 'transform', 'none' );
+
+		// Test on mobile.
 		await page.setViewportSize( viewportSize.mobile );
 		await expect( page.locator( '.e-collapse.e-active' ) ).toHaveClass( 'e-n-tab-title e-collapse elementor-animation-grow e-active' );
+
+		// Reset the original state.
 		await page.setViewportSize( viewportSize.desktop );
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Test the container width type', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+
+		// Assert.
+		// Check if content tab contains the class 'e-con-full'.
+		const containerFullWidthCheck = await editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
+			return element.classList.contains( 'e-con-full' );
+		} );
+		expect( containerFullWidthCheck ).toBe( true );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Test swiper based carousel works as expected when switching to a new tab', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Act.
+		// Add nested-tabs widget.
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		// Add image-carousel widget to tab #2.
+		const activeContainerId = await editTab( editor, 1 );
+		await editor.addWidget( 'image-carousel', activeContainerId );
+		// Add images to the image-carousel widget.
+		await page.locator( '.elementor-control-carousel .elementor-control-gallery-add' ).click();
+		await page.locator( '.media-modal .media-router #menu-item-browse' ).click();
+		for ( let i = 0; i <= 4; i++ ) {
+			await page.locator( `.media-modal .attachments .attachment>>nth=${ i }` ).click();
+		}
+		await page.locator( '.media-toolbar-primary .media-button-gallery' ).click();
+		await page.locator( '.media-toolbar-primary .media-button-insert' ).click();
+		// Modify widget settings.
+		await page.locator( '.elementor-control-slides_to_show select' ).selectOption( '2' );
+		await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
+		await page.locator( '.elementor-control-infinite select' ).selectOption( 'no' );
+		await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
+
+		await editor.publishAndViewPage();
+
+		// Wait for Nested Tabs widget to be initialized and click to activate second tab.
+		await page.waitForSelector( `.e-n-tabs-content .e-con.e-active` );
+		await page.locator( `.e-n-tabs-heading .e-n-tab-title>>nth=1` ).click();
+
+		// Assert.
+		// Check the swiper in the second nested tab has initialized.
+		await expect( await page.locator( `.e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Verify that the tab activation works correctly @latest', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
+
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		// Click on last tab.
+		const lastTab = editor.getPreviewFrame().locator( '.e-n-tabs .e-normal' ).last();
+		await lastTab.click();
+		// Use timeout to ensure that the value doesn't change after a short while.
+		await page.waitForTimeout( 500 );
+
+		// Assert.
+		// Verify that after clicking on the tab, the tab is activated correctly.
+		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
+
+		// Act.
+		const lastContentContainer = editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con` ).last(),
+			lastContentContainerId = await lastContentContainer.getAttribute( 'data-id' );
+		// Add content to the last tab.
+		await editor.addWidget( 'heading', lastContentContainerId );
+		const secondTab = editor.getPreviewFrame().locator( '.e-n-tabs .e-normal:nth-child( 2 )' );
+		await secondTab.click();
+		// Use timeout to ensure that the value doesn't change after a short while.
+		await page.waitForTimeout( 500 );
+
+		// Assert.
+		// Verify that after clicking on the tab, the tab is activated correctly.
+		await expect( secondTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
 
 		await cleanup( wpAdmin );
 	} );
 } );
+
+async function editTab( editor, tabIndex ) {
+	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
+	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
+	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
+	await tabTitle.click();
+	await editor.page.waitForTimeout( 100 );
+	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
+}
 
 const viewportSize = {
     desktop: { width: 1920, height: 1080 },

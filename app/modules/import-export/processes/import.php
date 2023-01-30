@@ -21,8 +21,6 @@ use Elementor\App\Modules\ImportExport\Module;
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
-	const SESSION_DOES_NOT_EXITS_ERROR = 'session-does-not-exits-error';
-
 	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
 
 	/**
@@ -149,7 +147,7 @@ class Import {
 				$path = $elementor_tmp_directory . basename( $path );
 
 				if ( ! is_dir( $path ) ) {
-					throw new \Exception( static::SESSION_DOES_NOT_EXITS_ERROR );
+					throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
 				}
 
 				$this->extracted_directory_path = $path . '/';
@@ -213,7 +211,7 @@ class Import {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
-			throw new \Exception( static::SESSION_DOES_NOT_EXITS_ERROR );
+			throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
 		}
 
 		$import_session = $import_sessions[ $session_id ];
@@ -269,13 +267,12 @@ class Import {
 	 * Execute the import process.
 	 *
 	 * @return array The imported data output.
-	 * @throws \Exception
+	 *
+	 * @throws \Exception If no import runners have been specified.
 	 */
 	public function run() {
-		$start_time = current_time( 'timestamp' );
-
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Please specify import runners.' );
+			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
 
 		$data = [
@@ -287,6 +284,8 @@ class Import {
 			'extracted_directory_path' => $this->extracted_directory_path,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
+
+		$this->init_import_session();
 
 		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
@@ -307,7 +306,7 @@ class Import {
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
-		$this->add_import_session_option( $start_time );
+		$this->finalize_import_session_option();
 
 		$this->save_elements_of_imported_posts();
 
@@ -321,11 +320,12 @@ class Import {
 	 * @param string $runner_name
 	 *
 	 * @return array
-	 * @throws \Exception
+	 *
+	 * @throws \Exception If no export runners have been specified.
 	 */
 	public function run_runner( string $runner_name ): array {
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Please specify import runners.' );
+			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
 
 		$data = [
@@ -346,7 +346,7 @@ class Import {
 		$runner = $this->runners[ $runner_name ];
 
 		if ( empty( $runner ) ) {
-			throw new \Exception( 'Runner not found.' );
+			throw new \Exception( 'Couldn’t execute the import process because the import runner was not found. Try again by specifying an import runner.' );
 		}
 
 		if ( $runner->should_import( $data ) ) {
@@ -380,16 +380,21 @@ class Import {
 	 *
 	 * @return void
 	 */
-	public function init_import_session() {
+	public function init_import_session( $save_instance_data = false ) {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
-			'kit_name' => $this->manifest['name'],
+			'kit_title' => $this->manifest['title'] ?? '',
+			'kit_name' => $this->manifest['name'] ?? '',
+			'kit_thumbnail' => $this->manifest['thumbnail'] ?? '',
 			'kit_source' => $this->settings_referrer,
 			'user_id' => get_current_user_id(),
 			'start_timestamp' => current_time( 'timestamp' ),
-			'instance_data' => [
+		];
+
+		if ( $save_instance_data ) {
+			$import_sessions[ $this->session_id ]['instance_data'] = [
 				'extracted_directory_path' => $this->extracted_directory_path,
 				'runners' => $this->runners,
 				'adapters' => $this->adapters,
@@ -407,8 +412,8 @@ class Import {
 				'documents_elements' => $this->documents_elements,
 				'imported_data' => $this->imported_data,
 				'runners_import_metadata' => $this->runners_import_metadata,
-			],
-		];
+			];
+		}
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
@@ -691,22 +696,6 @@ class Import {
 			$updated_elements = $document->on_import_update_dynamic_content( $document_elements, $this->get_imported_data_replacements() );
 			$document->save( [ 'elements' => $updated_elements ] );
 		}
-	}
-
-	private function add_import_session_option( $start_time ) {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
-
-		$import_sessions[ $this->session_id ] = [
-			'session_id' => $this->session_id,
-			'kit_name' => $this->manifest['name'],
-			'kit_source' => $this->settings_referrer,
-			'user_id' => get_current_user_id(),
-			'start_timestamp' => $start_time,
-			'end_timestamp' => current_time( 'timestamp' ),
-			'runners' => $this->runners_import_metadata,
-		];
-
-		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 
 	private function update_instance_data_in_import_session_option() {
