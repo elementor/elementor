@@ -494,13 +494,13 @@ abstract class Controls_Stack extends Base_Object {
 	public function get_stack() {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
-		$is_need_to_store_stack_cache = false;
+		$should_store_stack_cache = false;
 
 		if ( null === $stack && $this->is_stack_cache_enabled() ) {
 			if ( Plugin::$instance->experiments->is_feature_active( 'e_controls_cache' ) ) {
 				$stack = $this->get_stack_from_cache();
 
-				$is_need_to_store_stack_cache = true;
+				$should_store_stack_cache = true;
 			}
 		}
 
@@ -509,7 +509,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
-			if ( $is_need_to_store_stack_cache ) {
+			if ( $should_store_stack_cache ) {
 				$this->store_stack_cache( $stack );
 			}
 		}

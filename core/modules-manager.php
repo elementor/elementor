@@ -91,6 +91,7 @@ class Modules_Manager {
 			'landing-pages',
 			'compatibility-tag',
 			'generator-tag',
+			'cache-stack-controls',
 			'elements-color-picker',
 			'shapes',
 			'favorites',
