@@ -448,7 +448,7 @@ class Container extends Element_Base {
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 1440,
+						'max' => 10000,
 					],
 				],
 				'selectors' => [

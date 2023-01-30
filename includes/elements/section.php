@@ -335,6 +335,7 @@ class Element_Section extends Element_Base {
 					'default' => esc_html__( 'Default', 'elementor' ),
 					'full' => esc_html__( 'Fit To Screen', 'elementor' ),
 					'min-height' => esc_html__( 'Min Height', 'elementor' ),
+					'max-height' => esc_html__( 'Max Height', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-section-height-',
 				'hide_in_inner' => true,
@@ -354,14 +355,6 @@ class Element_Section extends Element_Base {
 						'min' => 0,
 						'max' => 1440,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
 				'size_units' => [ 'px', 'vh', 'vw', 'custom' ],
 				'selectors' => [
@@ -369,6 +362,31 @@ class Element_Section extends Element_Base {
 				],
 				'condition' => [
 					'height' => [ 'min-height' ],
+				],
+				'hide_in_inner' => true,
+			]
+		);
+
+		$this->add_responsive_control(
+			'custom_max_height',
+			[
+				'label' => esc_html__( 'Maximum Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 400,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10000,
+					],
+				],
+				'size_units' => [ 'px', 'vh', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'max-height: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'height' => [ 'max-height' ],
 				],
 				'hide_in_inner' => true,
 			]
@@ -384,6 +402,7 @@ class Element_Section extends Element_Base {
 					'default' => esc_html__( 'Default', 'elementor' ),
 					'full' => esc_html__( 'Fit To Screen', 'elementor' ),
 					'min-height' => esc_html__( 'Min Height', 'elementor' ),
+					'max-height' => esc_html__( 'Max Height', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-section-height-',
 				'hide_in_top' => true,
@@ -409,6 +428,31 @@ class Element_Section extends Element_Base {
 				],
 				'condition' => [
 					'height_inner' => [ 'min-height' ],
+				],
+				'size_units' => [ 'px', 'vh', 'vw', 'custom' ],
+				'hide_in_top' => true,
+			]
+		);
+
+		$this->add_responsive_control(
+			'custom_max_height_inner',
+			[
+				'label' => esc_html__( 'Maximum Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 400,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10000,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'max-height: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'height_inner' => [ 'max-height' ],
 				],
 				'size_units' => [ 'px', 'vh', 'vw', 'custom' ],
 				'hide_in_top' => true,
