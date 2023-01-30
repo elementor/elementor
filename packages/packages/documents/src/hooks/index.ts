@@ -1,2 +1,2 @@
-export { default as useCurrentDocument } from './use-current-document';
-export { default as useCurrentDocumentActions } from './use-current-document-actions';
+export { default as useActiveDocument } from './use-active-document';
+export { default as useActiveDocumentActions } from './use-active-document-actions';

@@ -1,13 +1,13 @@
 import { renderHook } from '@testing-library/react-hooks';
-import useCurrentDocumentActions from '../use-current-document-actions';
+import useActiveDocumentActions from '../use-active-document-actions';
 import { openRoute, runCommand } from '@elementor/v1-adapters';
 
 jest.mock( '@elementor/v1-adapters' );
 
-describe( '@elementor/documents/hooks/use-documents-actions', () => {
+describe( '@elementor/documents/hooks/use-active-document-actions', () => {
 	it( 'should run documents actions', () => {
 		// Arrange.
-		const { result } = renderHook( () => useCurrentDocumentActions() );
+		const { result } = renderHook( () => useActiveDocumentActions() );
 
 		const {
 			save,
@@ -32,7 +32,7 @@ describe( '@elementor/documents/hooks/use-documents-actions', () => {
 
 	it( 'should return memoized callbacks', () => {
 		// Arrange.
-		const { result, rerender } = renderHook( () => useCurrentDocumentActions() );
+		const { result, rerender } = renderHook( () => useActiveDocumentActions() );
 
 		const {
 			save,

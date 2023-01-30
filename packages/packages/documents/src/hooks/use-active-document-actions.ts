@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { openRoute, runCommand } from '@elementor/v1-adapters';
 
-export default function useCurrentDocumentActions() {
+export default function useActiveDocumentActions() {
 	const save = useCallback( () => runCommand( 'document/save/default' ), [] );
 
 	const saveDraft = useCallback( () => runCommand( 'document/save/draft' ), [] );

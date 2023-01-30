@@ -2,10 +2,10 @@ import { Slice } from '../../types';
 import { PropsWithChildren } from 'react';
 import { createSlice } from '../../store';
 import { renderHook } from '@testing-library/react-hooks';
-import useCurrentDocument from '../use-current-document';
+import useActiveDocument from '../use-active-document';
 import { createStore, deleteStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
 
-describe( '@elementor/documents/hooks/use-current-document', () => {
+describe( '@elementor/documents/hooks/use-active-document', () => {
 	let store: Store<SliceState<Slice>>;
 	let slice: Slice;
 
@@ -35,7 +35,7 @@ describe( '@elementor/documents/hooks/use-current-document', () => {
 		dispatch( slice.actions.activateDocument( mockDocument ) );
 
 		// Act.
-		const { result } = renderHookWithStore( useCurrentDocument, store );
+		const { result } = renderHookWithStore( useActiveDocument, store );
 
 		// Assert.
 		expect( result.current ).toBe( mockDocument );
@@ -43,7 +43,7 @@ describe( '@elementor/documents/hooks/use-current-document', () => {
 
 	it( 'should return null when the current document is not found', () => {
 		// Act.
-		const { result } = renderHookWithStore( useCurrentDocument, store );
+		const { result } = renderHookWithStore( useActiveDocument, store );
 
 		// Assert.
 		expect( result.current ).toBeNull();
