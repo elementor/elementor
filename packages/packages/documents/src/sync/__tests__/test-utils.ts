@@ -63,7 +63,7 @@ export function makeMockV1Document( id: number = 1 ): V1Document {
 			settings: makeSettings( {
 				post_title: 'Document ' + id,
 				post_status: 'publish',
-			} ),
+			} ) as V1Document['container']['settings'],
 		},
 	};
 }

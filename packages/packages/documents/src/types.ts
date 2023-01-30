@@ -1,14 +1,14 @@
 import { createSlice } from './store';
 
 export type State = {
-	documents: Record<Document['id'], Document>,
-	currentDocumentId: Document['id'],
+	entities: Record<Document['id'], Document>,
+	currentId: Document['id'],
 }
 
 export type Document = {
 	id: number,
 	title: string,
-	status: string, // TODO: union?
+	status: 'publish' | 'future' | 'draft' | 'pending' | 'private' | 'trash' | 'auto-draft' | 'inherit',
 	isModified: boolean,
 	isSaving: boolean,
 	isSavingDraft: boolean,
@@ -48,7 +48,7 @@ export type V1Document = {
 	container: {
 		settings: V1Model<{
 			post_title: string,
-			post_status: string,
+			post_status: Document['status'],
 		}>,
 	}
 }

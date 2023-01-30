@@ -1,5 +1,5 @@
-import { syncStore } from '../sync';
-import { createSlice } from '../store';
+import { createSlice } from '../../store';
+import { syncStore } from '../sync-store';
 import { ExtendedWindow, Slice } from '../../types';
 import { flushListeners } from '@elementor/v1-adapters';
 import { createStore, deleteStore, SliceState, Store } from '@elementor/store';
@@ -54,7 +54,7 @@ describe( '@elementor/documents/store/sync', () => {
 		// Assert.
 		const storeState = store.getState();
 
-		expect( storeState.documents.documents ).toEqual( {
+		expect( storeState.documents.entities ).toEqual( {
 			1: {
 				id: 1,
 				title: 'Document 1',
@@ -263,7 +263,7 @@ describe( '@elementor/documents/store/sync', () => {
 
 function getCurrentDocument( store: Store<SliceState<Slice>> ) {
 	const storeState = store.getState();
-	const { currentDocumentId } = storeState.documents;
+	const { currentId } = storeState.documents;
 
-	return storeState.documents.documents[ currentDocumentId ];
+	return storeState.documents.entities[ currentId ];
 }

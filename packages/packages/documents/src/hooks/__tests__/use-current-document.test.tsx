@@ -30,7 +30,7 @@ describe( '@elementor/documents/hooks/use-current-document', () => {
 			userCan: {
 				publish: true,
 			},
-		};
+		} as const;
 
 		dispatch( slice.actions.setDocuments( {
 			1: mockDocument,

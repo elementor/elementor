@@ -1,11 +1,7 @@
-import { useSelector, SliceState } from '@elementor/store';
-import { Document, Slice } from '../types';
-
-type State = SliceState<Slice>;
+import { Document } from '../types';
+import { useSelector } from '@elementor/store';
+import { currentDocument } from '../store/selectors';
 
 export default function useCurrentDocument(): Document | null {
-	return useSelector( ( state: State ) => {
-		// TODO: Weird?
-		return state.documents.documents[ state.documents.currentDocumentId ] || null;
-	} );
+	return useSelector( currentDocument );
 }
