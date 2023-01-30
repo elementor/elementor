@@ -428,10 +428,6 @@ class Container extends Element_Base {
 						'min' => 0,
 						'max' => 1440,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
 				'description' => sprintf(
 					esc_html__( 'To achieve full height Container use %s.', 'elementor' ),
@@ -453,10 +449,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => 0,
 						'max' => 1440,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'selectors' => [
