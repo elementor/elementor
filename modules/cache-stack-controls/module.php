@@ -18,23 +18,22 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		// FIXME: This is a temporary solution, we should use with hook callback instead of this.
-		$this->register_feature();
-
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'clear_cache' ] );
 
 		add_action( 'activated_plugin', [ $this, 'clear_cache' ] );
 		add_action( 'deactivated_plugin', [ $this, 'clear_cache' ] );
+		add_action( 'switch_theme', [ $this, 'clear_cache' ] );
+		add_action( 'upgrader_process_complete', [ $this, 'clear_cache' ] );
 	}
 
-	public function register_feature() {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data() {
+		return [
 			'name' => 'e_controls_cache',
-			'title' => esc_html__( 'Cache Controls', 'elementor' ),
+			'title' => esc_html__( 'Cache Controls1', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_DEV,
 			'generator_tag' => true,
-		] );
+		];
 	}
 
 	public function clear_cache() {
