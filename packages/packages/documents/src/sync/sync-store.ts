@@ -1,6 +1,6 @@
 import { Document, Slice } from '../types';
 import { dispatch } from '@elementor/store';
-import { normalizeV1Document, getDocumentsManager } from './utils';
+import { normalizeV1Document, getV1DocumentsManager } from './utils';
 import { commandEndEvent, CommandEvent, commandStartEvent, listenTo, v1ReadyEvent } from '@elementor/v1-adapters';
 
 export function syncStore( slice: Slice ) {
@@ -17,7 +17,7 @@ function syncDocuments( slice: Slice ) {
 		v1ReadyEvent(),
 		() => {
 			const normalizedDocuments = Object
-				.entries( getDocumentsManager().documents )
+				.entries( getV1DocumentsManager().documents )
 				.reduce( ( acc: Record<string, Document>, [ id, document ] ) => {
 					acc[ id ] = normalizeV1Document( document );
 
@@ -30,7 +30,7 @@ function syncDocuments( slice: Slice ) {
 }
 
 function syncCurrentDocument( slice: Slice ) {
-	const { setCurrentDocumentId, addDocument } = slice.actions;
+	const { activateDocument } = slice.actions;
 
 	listenTo(
 		[
@@ -38,41 +38,23 @@ function syncCurrentDocument( slice: Slice ) {
 			commandEndEvent( 'editor/documents/open' ),
 		],
 		() => {
-			const documentsManager = getDocumentsManager();
+			const documentsManager = getV1DocumentsManager();
+			const currentDocument = normalizeV1Document( documentsManager.getCurrent() );
 
-			dispatch( setCurrentDocumentId( documentsManager.getCurrentId() ) );
-			dispatch( addDocument( normalizeV1Document( documentsManager.getCurrent() ) ) );
+			dispatch( activateDocument( currentDocument ) );
 		}
 	);
 }
 
 function syncOnDocumentSave( slice: Slice ) {
-	const { updateDocument } = slice.actions;
-
-	const setIsSaving = ( isSaving: boolean ) => {
-		const id = getDocumentsManager().getCurrentId();
-
-		dispatch( updateDocument( {
-			id,
-			isSaving,
-		} ) );
-	};
-
-	const setIsSavingDraft = ( isSavingDraft: boolean ) => {
-		const id = getDocumentsManager().getCurrentId();
-
-		dispatch( updateDocument( {
-			id,
-			isSavingDraft,
-		} ) );
-	};
+	const { setIsSaving, setIsSavingDraft } = slice.actions;
 
 	listenTo(
 		v1ReadyEvent(),
 		() => {
-			const { isSaving } = getDocumentsManager().getCurrent().editor;
+			const { isSaving } = getV1DocumentsManager().getCurrent().editor;
 
-			setIsSaving( isSaving );
+			dispatch( setIsSaving( isSaving ) );
 		}
 	);
 
@@ -85,9 +67,9 @@ function syncOnDocumentSave( slice: Slice ) {
 			 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js#L18-L22
 			 */
 			if ( event.args?.status === 'autosave' ) {
-				setIsSavingDraft( true );
+				dispatch( setIsSavingDraft( true ) );
 			} else {
-				setIsSaving( true );
+				dispatch( setIsSaving( true ) );
 			}
 		}
 	);
@@ -98,42 +80,33 @@ function syncOnDocumentSave( slice: Slice ) {
 			const event = e as CommandEvent<{ status: string }>;
 
 			if ( event.args?.status === 'autosave' ) {
-				setIsSavingDraft( false );
+				dispatch( setIsSavingDraft( false ) );
 			} else {
-				setIsSaving( false );
+				dispatch( setIsSaving( false ) );
 			}
 		}
 	);
 }
 
 function syncOnDocumentChange( slice: Slice ) {
-	const { updateDocument } = slice.actions;
-
-	const setIsModified = ( isModified: boolean ) => {
-		const id = getDocumentsManager().getCurrentId();
-
-		dispatch( updateDocument( {
-			id,
-			isModified,
-		} ) );
-	};
+	const { setIsDirty } = slice.actions;
 
 	listenTo(
 		v1ReadyEvent(),
 		() => {
-			const currentDocument = getDocumentsManager().getCurrent();
+			const currentDocument = getV1DocumentsManager().getCurrent();
 			const isAutoSave = currentDocument.config.revisions.current_id !== currentDocument.id;
 
-			setIsModified( isAutoSave );
+			dispatch( setIsDirty( isAutoSave ) );
 		}
 	);
 
 	listenTo(
 		commandEndEvent( 'document/save/set-is-modified' ),
 		() => {
-			const currentDocument = getDocumentsManager().getCurrent();
+			const currentDocument = getV1DocumentsManager().getCurrent();
 
-			setIsModified( currentDocument.editor.isChanged );
+			dispatch( setIsDirty( currentDocument.editor.isChanged ) );
 		}
 	);
 }

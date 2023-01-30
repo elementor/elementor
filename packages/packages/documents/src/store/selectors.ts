@@ -7,5 +7,5 @@ const selectDocumentsSlice = ( state: State ) => state.documents;
 
 export const currentDocument = createSelector(
 	selectDocumentsSlice,
-	( documents ) => documents.entities[ documents.currentId ] || null,
+	( documents ) => documents.entities[ documents.activeId ] || null,
 );

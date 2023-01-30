@@ -2,14 +2,14 @@ import { createSlice } from './store';
 
 export type State = {
 	entities: Record<Document['id'], Document>,
-	currentId: Document['id'],
+	activeId: Document['id'],
 }
 
 export type Document = {
 	id: number,
 	title: string,
 	status: 'publish' | 'future' | 'draft' | 'pending' | 'private' | 'trash' | 'auto-draft' | 'inherit',
-	isModified: boolean,
+	isDirty: boolean,
 	isSaving: boolean,
 	isSavingDraft: boolean,
 	userCan: {

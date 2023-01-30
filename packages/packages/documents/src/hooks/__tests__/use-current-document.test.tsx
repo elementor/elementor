@@ -23,41 +23,34 @@ describe( '@elementor/documents/hooks/use-current-document', () => {
 		const mockDocument = {
 			id: 1,
 			title: 'Document 1',
-			status: 'publish',
-			isModified: false,
+			status: 'publish' as const,
+			isDirty: false,
 			isSaving: false,
 			isSavingDraft: false,
 			userCan: {
 				publish: true,
 			},
-		} as const;
+		};
 
-		dispatch( slice.actions.setDocuments( {
-			1: mockDocument,
-		} ) );
-
-		dispatch( slice.actions.setCurrentDocumentId( 1 ) );
+		dispatch( slice.actions.activateDocument( mockDocument ) );
 
 		// Act.
-		const { result } = renderHookWithProvider( useCurrentDocument, store );
+		const { result } = renderHookWithStore( useCurrentDocument, store );
 
 		// Assert.
 		expect( result.current ).toBe( mockDocument );
 	} );
 
 	it( 'should return null when the current document is not found', () => {
-		// Arrange.
-		dispatch( slice.actions.setCurrentDocumentId( 1 ) );
-
 		// Act.
-		const { result } = renderHookWithProvider( useCurrentDocument, store );
+		const { result } = renderHookWithStore( useCurrentDocument, store );
 
 		// Assert.
 		expect( result.current ).toBeNull();
 	} );
 } );
 
-function renderHookWithProvider( hook: () => unknown, store: Store ) {
+function renderHookWithStore( hook: () => unknown, store: Store ) {
 	const wrapper = ( { children }: PropsWithChildren<unknown> ) => (
 		<StoreProvider store={ store }>
 			{ children }

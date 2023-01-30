@@ -34,7 +34,7 @@ export const TopBar = () => {
 					{
 						document && (
 							<div style={ { position: 'absolute', top: 'calc( ( 48px - 1em ) / 2 )', left: '50%', transform: 'translateX( -50% )' } }>
-								{ document.isModified && '[*] ' }
+								{ document.isDirty && '[*] ' }
 								{ document.title }
 								{ document.isSaving && ' [Saving...] ' }
 								{ document.isSavingDraft && ' [Saving Draft...] ' } ({ document.status })
@@ -44,7 +44,7 @@ export const TopBar = () => {
 
 					<Button variant="contained"
 						onClick={ () => save() }
-						disabled={ ! document || ! document.isModified }
+						disabled={ ! document || ! document.isDirty }
 						size="large"
 						sx={ {
 							position: 'absolute',

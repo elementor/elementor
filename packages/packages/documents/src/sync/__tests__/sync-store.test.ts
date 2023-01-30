@@ -1,6 +1,6 @@
 import { createSlice } from '../../store';
 import { syncStore } from '../sync-store';
-import { ExtendedWindow, Slice } from '../../types';
+import { ExtendedWindow, Slice, V1Document } from '../../types';
 import { flushListeners } from '@elementor/v1-adapters';
 import { createStore, deleteStore, SliceState, Store } from '@elementor/store';
 import {
@@ -16,7 +16,7 @@ type WindowWithV1Loading = Omit<ExtendedWindow, 'elementor'> & {
 	elementor?: ExtendedWindow['elementor'];
 }
 
-describe( '@elementor/documents/store/sync', () => {
+describe( '@elementor/documents/sync/store-sync', () => {
 	let store: Store<SliceState<Slice>>;
 	let slice: Slice;
 	let extendedWindow: WindowWithV1Loading;
@@ -41,12 +41,10 @@ describe( '@elementor/documents/store/sync', () => {
 
 	it( 'should sync documents on V1 load', () => {
 		// Arrange.
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [
-				makeMockV1Document( 1 ),
-				makeMockV1Document( 2 ),
-			] ),
-		};
+		mockV1DocumentsManager( [
+			makeMockV1Document( 1 ),
+			makeMockV1Document( 2 ),
+		] );
 
 		// Act.
 		dispatchV1ReadyEvent();
@@ -59,7 +57,7 @@ describe( '@elementor/documents/store/sync', () => {
 				id: 1,
 				title: 'Document 1',
 				status: 'publish',
-				isModified: false,
+				isDirty: false,
 				isSaving: false,
 				isSavingDraft: false,
 				userCan: {
@@ -70,7 +68,7 @@ describe( '@elementor/documents/store/sync', () => {
 				id: 2,
 				title: 'Document 2',
 				status: 'publish',
-				isModified: false,
+				isDirty: false,
 				isSaving: false,
 				isSavingDraft: false,
 				userCan: {
@@ -91,12 +89,10 @@ describe( '@elementor/documents/store/sync', () => {
 		},
 	] )( 'should sync current document on $type', ( { dispatchEvent } ) => {
 		// Arrange.
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [
-				makeMockV1Document( 1 ),
-				makeMockV1Document( 2 ),
-			], 2 ),
-		};
+		mockV1DocumentsManager( [
+			makeMockV1Document( 1 ),
+			makeMockV1Document( 2 ),
+		], 2 );
 
 		// Act.
 		dispatchEvent();
@@ -109,7 +105,7 @@ describe( '@elementor/documents/store/sync', () => {
 			id: 2,
 			title: 'Document 2',
 			status: 'publish',
-			isModified: false,
+			isDirty: false,
 			isSaving: false,
 			isSavingDraft: false,
 			userCan: {
@@ -122,17 +118,15 @@ describe( '@elementor/documents/store/sync', () => {
 		// Arrange.
 		const mockDocument = makeMockV1Document();
 
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [
-				{
-					...mockDocument,
-					editor: {
-						...mockDocument.editor,
-						isSaving: true,
-					},
+		mockV1DocumentsManager( [
+			{
+				...mockDocument,
+				editor: {
+					...mockDocument.editor,
+					isSaving: true,
 				},
-			] ),
-		};
+			},
+		] );
 
 		// Act.
 		dispatchV1ReadyEvent();
@@ -143,11 +137,9 @@ describe( '@elementor/documents/store/sync', () => {
 
 	it( 'should sync saving state of a document on save', () => {
 		// Arrange.
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [
-				makeMockV1Document(),
-			] ),
-		};
+		mockV1DocumentsManager( [
+			makeMockV1Document(),
+		] );
 
 		// Populate the documents state.
 		dispatchV1ReadyEvent();
@@ -172,11 +164,9 @@ describe( '@elementor/documents/store/sync', () => {
 
 	it( 'should sync draft saving state of a document on save', () => {
 		// Arrange.
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [
-				makeMockV1Document(),
-			] ),
-		};
+		mockV1DocumentsManager( [
+			makeMockV1Document(),
+		] );
 
 		// Populate the documents state.
 		dispatchV1ReadyEvent();
@@ -203,67 +193,67 @@ describe( '@elementor/documents/store/sync', () => {
 		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
 	} );
 
-	it( 'should sync modified state of a document on V1 load', () => {
+	it( 'should sync dirty state of a document on V1 load', () => {
 		// Arrange.
 		const mockDocument = makeMockV1Document();
 
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [ {
-				...mockDocument,
-				config: {
-					...mockDocument.config,
-					revisions: {
-						current_id: 2,
-					},
+		mockV1DocumentsManager( [ {
+			...mockDocument,
+			config: {
+				...mockDocument.config,
+				revisions: {
+					current_id: 2,
 				},
-			} ] ),
-		};
+			},
+		} ] );
 
 		// Act.
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		expect( getCurrentDocument( store ).isModified ).toBe( true );
+		expect( getCurrentDocument( store ).isDirty ).toBe( true );
 	} );
 
 	it( 'should sync modified state of a document on document change', () => {
 		// Arrange.
 		const mockDocument = makeMockV1Document();
 
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [
-				mockDocument,
-			] ),
-		};
+		mockV1DocumentsManager( [
+			mockDocument,
+		] );
 
 		// Populate the documents state.
 		dispatchV1ReadyEvent();
 
 		// Mock a change.
-		extendedWindow.elementor = {
-			documents: makeDocumentsManager( [ {
-				...mockDocument,
-				editor: {
-					...mockDocument.editor,
-					isChanged: true,
-				},
-			} ] ),
-		};
+		mockV1DocumentsManager( [ {
+			...mockDocument,
+			editor: {
+				...mockDocument.editor,
+				isChanged: true,
+			},
+		} ] );
 
 		// Assert - Default state.
-		expect( getCurrentDocument( store ).isModified ).toBe( false );
+		expect( getCurrentDocument( store ).isDirty ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/set-is-modified' );
 
 		// Assert - After change.
-		expect( getCurrentDocument( store ).isModified ).toBe( true );
+		expect( getCurrentDocument( store ).isDirty ).toBe( true );
 	} );
 } );
 
 function getCurrentDocument( store: Store<SliceState<Slice>> ) {
 	const storeState = store.getState();
-	const { currentId } = storeState.documents;
+	const { activeId } = storeState.documents;
 
-	return storeState.documents.entities[ currentId ];
+	return storeState.documents.entities[ activeId ];
+}
+
+function mockV1DocumentsManager( documentsArray: V1Document[], current: number = 1 ) {
+	( window as unknown as WindowWithV1Loading ).elementor = {
+		documents: makeDocumentsManager( documentsArray, current ),
+	};
 }

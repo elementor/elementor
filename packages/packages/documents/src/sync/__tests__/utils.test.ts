@@ -1,4 +1,4 @@
-import { getDocumentsManager } from '../utils';
+import { getV1DocumentsManager } from '../utils';
 
 /**
  * This test exists only because this function is being used only inside event handlers,
@@ -11,7 +11,7 @@ describe( '@elementor/documents/store/utils', () => {
 	it( 'should throw when V1 documents manager is not available', () => {
 		// Act & Assert.
 		expect( () => {
-			getDocumentsManager();
+			getV1DocumentsManager();
 		} ).toThrow( 'Elementor Editor V1 documents manager not found' );
 	} );
 } );
