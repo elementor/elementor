@@ -811,6 +811,29 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Tabs and containers are duplicated correctly @latest', async ( { page }, testInfo ) => {
+		/**
+		 * This test checks that when duplicating a tab that's not the last tab, the duplicated container
+		 * receives the correct index.
+		 */
+			// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs' );
+		await editor.getFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
+
+		await clickTab( editor.getFrame(), 2 );
+
+		// Assert.
+		await expect( editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
+	} );
 } );
 
 async function editTab( editor, tabIndex ) {
