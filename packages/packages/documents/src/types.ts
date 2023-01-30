@@ -13,7 +13,7 @@ export type Document = {
 	isSaving: boolean,
 	isSavingDraft: boolean,
 	userCan: {
-		publish: boolean,
+		publish?: boolean,
 	},
 };
 
