@@ -26,7 +26,7 @@ export function dispatchV1ReadyEvent() {
 	dispatchWindowEvent( 'elementor/v1/initialized' );
 }
 
-export function makeDocumentsManager( documentsArray: V1Document[], current: number = 1 ) {
+export function makeDocumentsManager( documentsArray: V1Document[], current = 1 ) {
 	const documents = documentsArray.reduce( ( acc: Record<number, V1Document>, document ) => {
 		acc[ document.id ] = document;
 
@@ -44,7 +44,7 @@ export function makeDocumentsManager( documentsArray: V1Document[], current: num
 	};
 }
 
-export function makeMockV1Document( id: number = 1 ): V1Document {
+export function makeMockV1Document( id = 1 ): V1Document {
 	return {
 		id,
 		config: {

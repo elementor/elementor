@@ -1,5 +1,5 @@
+import { State, Document } from '../types';
 import { addSlice, PayloadAction } from '@elementor/store';
-import { PartialDocument, State, Document } from '../types';
 
 const initialState: State = {
 	entities: {},
@@ -28,16 +28,8 @@ export function createSlice() {
 				state.entities[ state.activeId ].isSavingDraft = action.payload;
 			},
 
-			setIsDirty( state, action: PayloadAction<Document['isDirty'] | Pick<Document, 'id' | 'isDirty'>> ) {
-				if ( 'boolean' === typeof action.payload ) {
-					state.entities[ state.activeId ].isDirty = action.payload;
-
-					return;
-				}
-
-				const { id = state.activeId, isDirty } = action.payload;
-
-				state.entities[ id ].isDirty = isDirty;
+			setIsDirty( state, action: PayloadAction<Document['isDirty']> ) {
+				state.entities[ state.activeId ].isDirty = action.payload;
 			},
 		},
 	} );

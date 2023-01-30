@@ -214,7 +214,7 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		expect( getCurrentDocument( store ).isDirty ).toBe( true );
 	} );
 
-	it( 'should sync modified state of a document on document change', () => {
+	it( 'should sync dirty state of a document on document change', () => {
 		// Arrange.
 		const mockDocument = makeMockV1Document();
 
@@ -252,7 +252,7 @@ function getCurrentDocument( store: Store<SliceState<Slice>> ) {
 	return storeState.documents.entities[ activeId ];
 }
 
-function mockV1DocumentsManager( documentsArray: V1Document[], current: number = 1 ) {
+function mockV1DocumentsManager( documentsArray: V1Document[], current = 1 ) {
 	( window as unknown as WindowWithV1Loading ).elementor = {
 		documents: makeDocumentsManager( documentsArray, current ),
 	};

@@ -17,7 +17,7 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 		status: documentData.container.settings.get( 'post_status' ),
 		isDirty: documentData.editor.isChanged,
 		isSaving: documentData.editor.isSaving,
-		isSavingDraft: false, // TODO: Is this OK? Can we get any real state?
+		isSavingDraft: false,
 		userCan: {
 			publish: documentData.config.user.can_publish,
 		},
