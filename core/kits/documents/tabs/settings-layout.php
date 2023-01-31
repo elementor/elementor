@@ -52,13 +52,13 @@ class Settings_Layout extends Tab_Base {
 		$this->add_responsive_control(
 			'container_width',
 			[
-			'label' => esc_html__( 'Content Width', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', '%', 'vw' ],
-			'default' => [
-				'unit' => 'px'
-				'size' => '1140',
-			],
+				'label' => esc_html__( 'Content Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw' ],
+				'default' => [
+					'unit' => 'px',
+					'size' => '1140',
+				],
 			'tablet_default' => [
 				'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
 			],
@@ -71,15 +71,15 @@ class Settings_Layout extends Tab_Base {
 					'max' => 1500,
 					'step' => 10,
 				],
-				'%'=> [
-  					'min' => 50,
-  					'max' => 100,
-   					'step' => 1,
+				'%' => [
+ 					'min' => 50,
+					'max' => 100,
+					'step' => 1,
 				],
 				'vw' => [
-   					'min' => 50,
-   					'max' => 100,
-   					'step' => 1,
+					'min' => 50,
+					'max' => 100,
+					'step' => 1,
 				],
 				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140px)', 'elementor' ),
 				'selectors' => [
