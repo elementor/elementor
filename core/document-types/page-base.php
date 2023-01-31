@@ -224,8 +224,8 @@ abstract class PageBase extends Document {
 		$config = parent::get_remote_library_config();
 
 		$config['category'] = '';
-		$config['type'] = 'page';
-		$config['default_route'] = 'templates/pages';
+		$config['type'] = 'block';
+		$config['default_route'] = 'templates/blocks';
 
 		return $config;
 	}
