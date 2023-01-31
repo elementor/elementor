@@ -9,7 +9,7 @@ inputs:
     required: true
     description: 'The full path of the script to build the plugin.'
   UPDATE_VERSION_SCRIPT_PATH:
-    required: true
+    required: false
     description: 'The path to the script that updates the version in the plugin PHP files.'
 
 runs:
@@ -23,7 +23,12 @@ runs:
                 exit 1
             fi
 
-            bash ${{ inputs.UPDATE_VERSION_SCRIPT_PATH }}
+            if [ "${{ inputs.UPDATE_VERSION_SCRIPT_PATH }}" != "" ] && [ "${{ inputs.UPDATE_VERSION_SCRIPT_PATH }}" != "undefined" ];
+              then
+                echo "Running update version script"
+                bash ${{ inputs.UPDATE_VERSION_SCRIPT_PATH }}
+            fi
+            
             bash ${{ inputs.BUILD_SCRIPT_PATH }}
             
       env:
