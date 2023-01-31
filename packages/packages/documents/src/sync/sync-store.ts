@@ -1,7 +1,14 @@
 import { Document, Slice } from '../types';
 import { dispatch } from '@elementor/store';
 import { normalizeV1Document, getV1DocumentsManager } from './utils';
-import { commandEndEvent, CommandEvent, commandStartEvent, listenTo, v1ReadyEvent } from '@elementor/v1-adapters';
+import {
+	commandEndEvent,
+	CommandEvent,
+	commandStartEvent,
+	ListenerEvent,
+	listenTo,
+	v1ReadyEvent,
+} from '@elementor/v1-adapters';
 
 export function syncStore( slice: Slice ) {
 	syncDocuments( slice );
@@ -49,6 +56,19 @@ function syncCurrentDocument( slice: Slice ) {
 function syncOnDocumentSave( slice: Slice ) {
 	const { toggleIsSaving, toggleIsSavingDraft } = slice.actions;
 
+	const handleSave = ( e: ListenerEvent, isSaving: boolean ) => {
+		const event = e as CommandEvent<{ status: string }>;
+
+		/**
+		 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js#L18-L22
+		 */
+		if ( event.args?.status === 'autosave' ) {
+			dispatch( toggleIsSavingDraft( isSaving ) );
+		} else {
+			dispatch( toggleIsSaving( isSaving ) );
+		}
+	};
+
 	listenTo(
 		v1ReadyEvent(),
 		() => {
@@ -60,31 +80,12 @@ function syncOnDocumentSave( slice: Slice ) {
 
 	listenTo(
 		commandStartEvent( 'document/save/save' ),
-		( e ) => {
-			const event = e as CommandEvent<{ status: string }>;
-
-			/**
-			 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js#L18-L22
-			 */
-			if ( event.args?.status === 'autosave' ) {
-				dispatch( toggleIsSavingDraft( true ) );
-			} else {
-				dispatch( toggleIsSaving( true ) );
-			}
-		}
+		( e ) => handleSave( e, true )
 	);
 
 	listenTo(
 		commandEndEvent( 'document/save/save' ),
-		( e ) => {
-			const event = e as CommandEvent<{ status: string }>;
-
-			if ( event.args?.status === 'autosave' ) {
-				dispatch( toggleIsSavingDraft( false ) );
-			} else {
-				dispatch( toggleIsSaving( false ) );
-			}
-		}
+		( e ) => handleSave( e, false )
 	);
 }
 
