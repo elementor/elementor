@@ -12,7 +12,7 @@ export default function KitAlreadyAppliedDialog( props ) {
 			</> }
 			approveButtonText={ __( 'Remove existing Kit', 'elementor' ) }
 			approveButtonColor="primary"
-			approveButtonOnClick={ () => location.href = elementorToolsUrl + '&referrer_kit=' + props.kitId + '#tab-import-export-kit' }
+			approveButtonOnClick={ () => location.href = elementorToolsUrl + '&referrer_kit=' + props.id + '#tab-import-export-kit' }
 			dismissButtonText={ __( 'Apply anyway', 'elementor' ) }
 			dismissButtonOnClick={ props.dismissButtonOnClick }
 			onClose={ props.onClose }
@@ -21,7 +21,7 @@ export default function KitAlreadyAppliedDialog( props ) {
 }
 
 KitAlreadyAppliedDialog.propTypes = {
-	kitId: PropTypes.string.isRequired,
+	id: PropTypes.string.isRequired,
 	dismissButtonOnClick: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
 };

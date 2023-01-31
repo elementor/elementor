@@ -10,7 +10,7 @@ export default function KitDialog( props ) {
 	if ( kitAlreadyApplied && ! applyAnyway ) {
 		return (
 			<KitAlreadyAppliedDialog
-				kitId={ props.kitId }
+				id={ props.id }
 				dismissButtonOnClick={ () => setApplyAnyway( true ) }
 				onClose={ props.onClose }
 			/>
@@ -26,7 +26,7 @@ export default function KitDialog( props ) {
 }
 
 KitDialog.propTypes = {
-	kitId: PropTypes.string.isRequired,
+	id: PropTypes.string.isRequired,
 	downloadLinkData: PropTypes.object.isRequired,
 	onClose: PropTypes.func.isRequired,
 };
