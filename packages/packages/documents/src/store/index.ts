@@ -11,7 +11,7 @@ export function createSlice() {
 		name: 'documents',
 		initialState,
 		reducers: {
-			loadDocuments( state, action: PayloadAction<State['entities']> ) {
+			setDocuments( state, action: PayloadAction<State['entities']> ) {
 				state.entities = action.payload;
 			},
 
@@ -20,16 +20,28 @@ export function createSlice() {
 				state.activeId = action.payload.id;
 			},
 
-			toggleIsSaving( state, action: PayloadAction<Document['isSaving']> ) {
-				state.entities[ state.activeId ].isSaving = action.payload;
+			startSaving( state ) {
+				state.entities[ state.activeId ].isSaving = true;
 			},
 
-			toggleIsSavingDraft( state, action: PayloadAction<Document['isSavingDraft']> ) {
-				state.entities[ state.activeId ].isSavingDraft = action.payload;
+			endSaving( state ) {
+				state.entities[ state.activeId ].isSaving = false;
 			},
 
-			markAsDirty( state, action: PayloadAction<Document['isDirty']> ) {
-				state.entities[ state.activeId ].isDirty = action.payload;
+			startSavingDraft( state ) {
+				state.entities[ state.activeId ].isSavingDraft = true;
+			},
+
+			endSavingDraft( state ) {
+				state.entities[ state.activeId ].isSavingDraft = false;
+			},
+
+			markAsDirty( state ) {
+				state.entities[ state.activeId ].isDirty = true;
+			},
+
+			markAsPristine( state ) {
+				state.entities[ state.activeId ].isDirty = false;
 			},
 		},
 	} );
