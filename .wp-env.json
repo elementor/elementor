@@ -13,6 +13,8 @@
         "elementor-playwright-templates": "./templates/playwright"
     },
     "config": {
-        "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
-    }
+        "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
+        "SCRIPT_DEBUG": false,
+		"WP_DEBUG": false
+	}
 }
