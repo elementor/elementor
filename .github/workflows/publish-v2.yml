@@ -39,9 +39,6 @@ jobs:
           if-no-files-found: error
       - name: Get Release Name
         uses : ./.github/workflows/get-release-name
-        with:
-          REPO_NAME: ${{ github.event.repository.name }}
-          CLEAN_PACKAGE_NAME: ${{ env.CLEAN_PACKAGE_NAME }}
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
