@@ -13,6 +13,7 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
+use Elementor\Tests\Phpunit\Elementor\App\ImportExport\Test_Module;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Import extends Elementor_Test_Base {
@@ -77,6 +78,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		$this->assert_valid_terms_with_elementor_content( $result, $manifest );
 		$this->assert_valid_terms_with_wp_content( $result );
+		Test_Module::assert_valid_import_session( $this, $import->get_session_id() );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );

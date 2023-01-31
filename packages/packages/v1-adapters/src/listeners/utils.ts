@@ -28,6 +28,14 @@ export function normalizeEvent( e: ListenerEvent['originalEvent'] ): ListenerEve
 		};
 	}
 
+	if ( e instanceof CustomEvent && e.detail?.route ) {
+		return {
+			type: 'route',
+			route: e.detail.route,
+			originalEvent: e,
+		};
+	}
+
 	return {
 		type: 'window-event',
 		event: e.type,

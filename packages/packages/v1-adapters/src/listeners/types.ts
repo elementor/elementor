@@ -4,15 +4,27 @@ export type CommandEventDescriptor = {
 	state: 'before' | 'after',
 };
 
+export type RouteEventDescriptor = {
+	type: 'route',
+	name: string,
+	state: 'open' | 'close',
+};
+
 export type WindowEventDescriptor = {
 	type: 'window-event',
 	name: string,
 };
 
-export type CommandEvent = {
+export type CommandEvent<TArgs extends object = {}> = {
 	type: CommandEventDescriptor['type'],
 	command: string,
-	args: object,
+	args: TArgs,
+	originalEvent: CustomEvent,
+};
+
+export type RouteEvent = {
+	type: RouteEventDescriptor['type'],
+	route: string,
 	originalEvent: CustomEvent,
 };
 
@@ -22,8 +34,8 @@ export type WindowEvent = {
 	originalEvent: Event,
 };
 
-export type EventDescriptor = CommandEventDescriptor | WindowEventDescriptor;
+export type EventDescriptor = CommandEventDescriptor | WindowEventDescriptor | RouteEventDescriptor;
 
-export type ListenerEvent = WindowEvent | CommandEvent;
+export type ListenerEvent = WindowEvent | CommandEvent | RouteEvent;
 
 export type ListenerCallback = ( e: ListenerEvent ) => void;
