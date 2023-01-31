@@ -1,11 +1,11 @@
 name: Bump Channel Version
-description: Bump the version of the current channel, and set it as an environment variable.
+description: Bump the version of the current channel, and set it as an environment variable. (The Bump is for the current build only, No changes are made to the repo)
 
 inputs:
   CHANNEL:
     required: true
     description: 'The channel to bump the version to (cloud, beta).'
-  GITHUB_REPOSITORY_OWNER:
+  REPO_NAME:
     required: true
     description: 'Github repository owner.'
   CLEAN_PACKAGE_VERSION:
@@ -28,10 +28,15 @@ runs:
             
             echo "pwd: $(pwd)"
             echo "ls: $(ls)"
-            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep v${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}')
+            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v -E '.*-rc.*' | grep ${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}')
             if [ -z "$CURRENT_CHANNEL_VERSION" ]; then
               CURRENT_CHANNEL_VERSION=0
             fi
             NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
             
             echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}" >> $GITHUB_ENV
+
+            PACKAGE_VERSION=${{ inputs.REPO_NAME }}-${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}-${NEW_CHANNEL_VERSION}
+
+            sed -i -E "s/Version: .*/Version: ${PACKAGE_VERSION}/g" elementor.php
+            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}'/g" elementor.php

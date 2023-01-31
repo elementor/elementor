@@ -50,7 +50,7 @@ jobs:
         with:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
           CLEAN_PACKAGE_VERSION: ${{ env.PACKAGE_VERSION_CLEAN }}
           CHANNEL: ${{ github.event.inputs.chennel }}
       - name: Install Dependencies
