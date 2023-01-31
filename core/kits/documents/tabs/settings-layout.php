@@ -72,7 +72,7 @@ class Settings_Layout extends Tab_Base {
 						'step' => 10,
 					],
 					'%' => [
- 						'min' => 50,
+						'min' => 50,
 						'max' => 100,
 						'step' => 1,
 					],
@@ -81,10 +81,10 @@ class Settings_Layout extends Tab_Base {
 						'max' => 100,
 						'step' => 1,
 					],
-				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140px)', 'elementor' ),
-				'selectors' => [
-					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
-					'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
+					'description' => esc_html__( 'Sets the default width of the content area (Default: 1140px)', 'elementor' ),
+					'selectors' => [
+						'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
+						'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
 					],
 				],
 			]
