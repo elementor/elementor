@@ -84,7 +84,9 @@ test.describe( 'Elements regression', () => {
 							await test.step( 'editor', async () => {
 								await expect(
 									await editorPage.screenshotElement( elementId ),
-								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ], {
+									threshold: 0.02,
+								} );
 							} );
 
 							await editorPage.publish();
@@ -92,7 +94,9 @@ test.describe( 'Elements regression', () => {
 							await test.step( 'frontend', async () => {
 								await expect(
 									await frontendPage.screenshotElement( elementId ),
-								).toMatchSnapshot( [ 'frontend', widgetType, controlId, `${ valueLabel }.jpeg` ] );
+								).toMatchSnapshot( [ 'frontend', widgetType, controlId, `${ valueLabel }.jpeg` ], {
+									threshold: 0.02,
+								} );
 							} );
 
 							await control.teardown();
