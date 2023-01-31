@@ -26,6 +26,7 @@ test( 'Stretch section', async ( { page }, testInfo ) => {
 	const spacerID = await editor.addWidget( 'spacer', sectionID, true );
 	await editor.selectElement( spacerID );
 	await editor.setSliderControlValue( 'space', 200 );
+	await editor.setBackgroundColor( '#cae0bc', spacerID );
 
 	/**
 	 * Test in Editor
