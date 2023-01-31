@@ -54,7 +54,7 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'vw', 'custom' ],
 				'default' => [
 					'unit' => 'px',
 					'size' => '1140',
