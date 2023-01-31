@@ -70,10 +70,6 @@ module.exports = class ConfigProvider {
 			} );
 	}
 
-	canTestControlOnFrontend( widgetType, controlId, valueLabel ) {
-		return ! this.#testConfig.controls[ widgetType ]?.frontend_exclude?.[ controlId ]?.includes( valueLabel );
-	}
-
 	/**
 	 * Get all the dependencies for specific widget type and control id
 	 *
