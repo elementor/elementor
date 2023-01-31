@@ -1,5 +1,5 @@
 name: Get New Release Name
-description: Get the new release name from ${{ inputs.PLUGIN_NAME }}.php (sets by 'Create Rc Tag' action) and set it as an environment variable.
+description: Get the new release name from inputs.PLUGIN_NAME. php (sets by 'Create Rc Tag' action) and set it as an environment variable.
 
 inputs:
   BUILD_ZIP_FILE_PATH:
