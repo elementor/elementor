@@ -8,6 +8,7 @@ import {
 	routeCloseEvent,
 	windowEvent,
 	v1ReadyEvent,
+	ExtendedWindow,
 } from '../';
 
 import {
@@ -324,12 +325,9 @@ describe( '@elementor/v1-adapters/listeners', () => {
 	it( 'should trigger v1 ready when v1 is loaded after v2', async () => {
 		// Arrange.
 		const callback = jest.fn();
+		const extendedWindow = ( window as unknown as ExtendedWindow );
 
-		type ExtendedWindow = Window & {
-			__elementorEditorV1LoadingPromise?: Promise<void>;
-		};
-
-		( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise = new Promise( ( resolve ) => {
+		extendedWindow.__elementorEditorV1LoadingPromise = new Promise( ( resolve ) => {
 			setTimeout( resolve, 1000 );
 		} );
 
@@ -347,7 +345,7 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 
 		// Cleanup.
-		delete ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise;
+		delete extendedWindow.__elementorEditorV1LoadingPromise;
 	} );
 
 	it( 'should throw when v1 is not loaded', async () => {

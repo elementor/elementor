@@ -1,4 +1,4 @@
-import { ListenerEvent } from './types';
+import { ExtendedWindow, ListenerEvent } from './types';
 
 export function dispatchReadyEvent() {
 	return getV1LoadingPromise().then( () => {
@@ -7,15 +7,13 @@ export function dispatchReadyEvent() {
 }
 
 function getV1LoadingPromise() {
-	type ExtendedWindow = Window & {
-		__elementorEditorV1LoadingPromise: Promise<void>;
-	};
+	const v1LoadingPromise = ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise;
 
-	if ( ! ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise ) {
+	if ( ! v1LoadingPromise ) {
 		return Promise.reject( 'Elementor Editor V1 is not loaded' );
 	}
 
-	return ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise;
+	return v1LoadingPromise;
 }
 
 export function normalizeEvent( e: ListenerEvent['originalEvent'] ): ListenerEvent {
