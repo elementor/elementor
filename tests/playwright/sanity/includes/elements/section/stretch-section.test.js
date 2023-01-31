@@ -63,7 +63,7 @@ test( 'Stretch section', async ( { page }, testInfo ) => {
 		window.dispatchEvent( new Event( 'resize' ) );
 	} );
 
-	const sectionElementFE = await editor.getPreviewFrame().locator( `.elementor-element-${ sectionID }` );
+	const sectionElementFE = await page.locator( `.elementor-element-${ sectionID }` );
 
 	// Assert (Stretched).
 	expect( await sectionElementFE.screenshot( {
