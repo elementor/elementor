@@ -9,6 +9,10 @@ export default class StretchedElement extends Base {
 		return 'stretch_element';
 	}
 
+	getStretchActiveValue() {
+		return 'yes';
+	}
+
 	bindEvents() {
 		const handlerID = this.getUniqueHandlerID();
 
@@ -36,23 +40,39 @@ export default class StretchedElement extends Base {
 		return elementorFrontend.isEditMode() || settings.$element.hasClass( this.getStretchedClass() );
 	}
 
-	initStretch() {
-		this.stretch = this.stretch.bind( this );
+	getStretchElementForConfig( childSelector = null ) {
+		if ( childSelector ) {
+			return this.$element.find( childSelector );
+		}
 
-		this.stretchElement = new elementorModules.frontend.tools.StretchElement( {
-			element: this.$element,
+		return this.$element;
+	}
+
+	getStretchElementConfig() {
+		return {
+			element: this.getStretchElementForConfig(),
 			selectors: {
 				container: this.getStretchContainer(),
 			},
-		} );
+		};
+	}
+
+	initStretch() {
+		this.stretch = this.stretch.bind( this );
+
+		this.stretchElement = new elementorModules.frontend.tools.StretchElement( this.getStretchElementConfig() );
 	}
 
 	getStretchContainer() {
 		return elementorFrontend.getKitSettings( 'stretched_section_container' ) || window;
 	}
 
+	isStretchSettingEnabled() {
+		return this.getElementSettings( this.getStretchSettingName() ) === this.getStretchActiveValue();
+	}
+
 	stretch() {
-		if ( ! this.getElementSettings( this.getStretchSettingName() ) ) {
+		if ( ! this.isStretchSettingEnabled() ) {
 			return;
 		}
 
@@ -75,7 +95,7 @@ export default class StretchedElement extends Base {
 		const stretchSettingName = this.getStretchSettingName();
 
 		if ( stretchSettingName === propertyName ) {
-			if ( stretchSettingName ) {
+			if ( this.isStretchSettingEnabled() ) {
 				this.stretch();
 			} else {
 				this.stretchElement.reset();

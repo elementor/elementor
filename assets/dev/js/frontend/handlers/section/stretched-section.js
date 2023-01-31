@@ -6,4 +6,8 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 	getStretchSettingName() {
 		return 'stretch_section';
 	}
+
+	getStretchActiveValue() {
+		return 'section-stretched';
+	}
 }
