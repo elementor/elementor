@@ -14,9 +14,9 @@ runs:
   steps:
     - shell: bash
       run: |
-          OUTPUT_PATH=/tmp/${{ inputs.PLUGIN_NAME }}.php
+          OUTPUT_PATH=/tmp/
           unzip ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php -d $OUTPUT_PATH
-          RELEASE_NAME=$(grep "Version:" $OUTPUT_PATH | awk '{print $3}')
+          RELEASE_NAME=$(grep "Version:" $OUTPUT_PATH/${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php | awk '{print $3}')
 
           if [ -z "$RELEASE_NAME" ]; then
             echo "RELEASE_NAME is empty"
