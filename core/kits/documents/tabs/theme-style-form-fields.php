@@ -157,7 +157,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' 'vw' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					$input_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
