@@ -52,9 +52,11 @@ class Settings_Layout extends Tab_Base {
 		$this->add_responsive_control(
 			'container_width',
 			[
-				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
+				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw' ],
 				'default' => [
+					'unit' => 'px'
 					'size' => '1140',
 				],
 				'tablet_default' => [
@@ -69,8 +71,17 @@ class Settings_Layout extends Tab_Base {
 						'max' => 1500,
 						'step' => 10,
 					],
-				],
-				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+					'%'=> [
+  						'min' => 50,
+  						'max' => 100,
+   						'step' => 1,
+					],
+					'vw' => [
+   						'min' => 50,
+   						'max' => 100,
+   						'step' => 1,
+					],
+				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140px)', 'elementor' ),
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
 					'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
@@ -86,7 +97,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => esc_html__( 'Container Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
-					'size_units' => [ 'px', 'em', '%', 'rem' ],
+					'size_units' => [ 'px', 'em', '%', 'rem', 'vw' ],
 					'default' => [
 						'unit' => 'px',
 					],
