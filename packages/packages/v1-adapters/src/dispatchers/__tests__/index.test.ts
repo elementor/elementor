@@ -4,11 +4,16 @@ type ExtendedWindow = Window & {
 	$e: {
 		run: jest.Mock;
 		route: jest.Mock;
+		routes: {
+			isPartOf: jest.Mock;
+		}
 	}
 }
 
 describe( '@elementor/v1-adapters/dispatchers', () => {
-	let eRun: jest.Mock, eRoute: jest.Mock;
+	let eRun: jest.Mock,
+		eRoute: jest.Mock,
+		eIsPartOf: jest.Mock;
 
 	beforeEach( () => {
 		( window as unknown as ExtendedWindow ).$e = {
@@ -21,6 +26,7 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 
 		eRun = ( window as unknown as ExtendedWindow ).$e.run;
 		eRoute = ( window as unknown as ExtendedWindow ).$e.route;
+		eIsPartOf = ( window as unknown as ExtendedWindow ).$e.routes.isPartOf;
 	} );
 
 	afterEach( () => {
@@ -122,15 +128,15 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		// Arrange.
 		const route = 'test/route';
 
-		( window as any ).$e.routes.isPartOf.mockReturnValue( true );
+		eIsPartOf.mockReturnValue( true );
 
 		// Act.
 		const result = isRouteActive( route );
 
 		// Assert.
 		expect( result ).toEqual( true );
-		expect( ( window as any ).$e.routes.isPartOf ).toHaveBeenCalledTimes( 1 );
-		expect( ( window as any ).$e.routes.isPartOf ).toHaveBeenCalledWith( route );
+		expect( eIsPartOf ).toHaveBeenCalledTimes( 1 );
+		expect( eIsPartOf ).toHaveBeenCalledWith( route );
 	} );
 } );
 

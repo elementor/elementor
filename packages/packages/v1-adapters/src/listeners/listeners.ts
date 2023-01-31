@@ -84,7 +84,7 @@ function registerWindowEventListener( event: WindowEventDescriptor['name'], call
 		addListener( event );
 	}
 
-	callbacksByEvent.get( event )!.push( callback );
+	callbacksByEvent.get( event )?.push( callback );
 
 	return () => {
 		const callbacks = callbacksByEvent.get( event );

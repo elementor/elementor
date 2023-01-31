@@ -15,7 +15,7 @@ export type WindowEventDescriptor = {
 	name: string,
 };
 
-export type CommandEvent<TArgs extends object = {}> = {
+export type CommandEvent<TArgs extends object = object> = {
 	type: CommandEventDescriptor['type'],
 	command: string,
 	args: TArgs,
