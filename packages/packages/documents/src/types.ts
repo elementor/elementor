@@ -5,10 +5,12 @@ export type State = {
 	activeId: Document['id'],
 }
 
+export type DocumentStatus = 'publish' | 'future' | 'draft' | 'pending' | 'private' | 'trash' | 'auto-draft' | 'inherit';
+
 export type Document = {
 	id: number,
 	title: string,
-	status: 'publish' | 'future' | 'draft' | 'pending' | 'private' | 'trash' | 'auto-draft' | 'inherit',
+	status: DocumentStatus,
 	isDirty: boolean,
 	isSaving: boolean,
 	isSavingDraft: boolean,
@@ -48,7 +50,7 @@ export type V1Document = {
 	container: {
 		settings: V1Model<{
 			post_title: string,
-			post_status: Document['status'],
+			post_status: DocumentStatus
 		}>,
 	}
 }

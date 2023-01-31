@@ -5,7 +5,7 @@ type State = SliceState<Slice>;
 
 const selectDocumentsSlice = ( state: State ) => state.documents;
 
-export const currentDocument = createSelector(
+export const activeDocument = createSelector(
 	selectDocumentsSlice,
 	( documents ) => documents.entities[ documents.activeId ] || null,
 );

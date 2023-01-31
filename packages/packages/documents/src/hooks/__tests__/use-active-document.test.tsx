@@ -5,7 +5,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import useActiveDocument from '../use-active-document';
 import { createStore, deleteStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
 
-describe( '@elementor/documents/hooks/use-active-document', () => {
+describe( '@elementor/documents - useActiveDocument', () => {
 	let store: Store<SliceState<Slice>>;
 	let slice: Slice;
 

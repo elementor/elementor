@@ -11,7 +11,7 @@ export function syncStore( slice: Slice ) {
 }
 
 function syncDocuments( slice: Slice ) {
-	const { setDocuments } = slice.actions;
+	const { loadDocuments } = slice.actions;
 
 	listenTo(
 		v1ReadyEvent(),
@@ -24,7 +24,7 @@ function syncDocuments( slice: Slice ) {
 					return acc;
 				}, {} );
 
-			dispatch( setDocuments( normalizedDocuments ) );
+			dispatch( loadDocuments( normalizedDocuments ) );
 		}
 	);
 }
@@ -47,14 +47,14 @@ function syncCurrentDocument( slice: Slice ) {
 }
 
 function syncOnDocumentSave( slice: Slice ) {
-	const { setIsSaving, setIsSavingDraft } = slice.actions;
+	const { toggleIsSaving, toggleIsSavingDraft } = slice.actions;
 
 	listenTo(
 		v1ReadyEvent(),
 		() => {
 			const { isSaving } = getV1DocumentsManager().getCurrent().editor;
 
-			dispatch( setIsSaving( isSaving ) );
+			dispatch( toggleIsSaving( isSaving ) );
 		}
 	);
 
@@ -67,9 +67,9 @@ function syncOnDocumentSave( slice: Slice ) {
 			 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js#L18-L22
 			 */
 			if ( event.args?.status === 'autosave' ) {
-				dispatch( setIsSavingDraft( true ) );
+				dispatch( toggleIsSavingDraft( true ) );
 			} else {
-				dispatch( setIsSaving( true ) );
+				dispatch( toggleIsSaving( true ) );
 			}
 		}
 	);
@@ -80,16 +80,16 @@ function syncOnDocumentSave( slice: Slice ) {
 			const event = e as CommandEvent<{ status: string }>;
 
 			if ( event.args?.status === 'autosave' ) {
-				dispatch( setIsSavingDraft( false ) );
+				dispatch( toggleIsSavingDraft( false ) );
 			} else {
-				dispatch( setIsSaving( false ) );
+				dispatch( toggleIsSaving( false ) );
 			}
 		}
 	);
 }
 
 function syncOnDocumentChange( slice: Slice ) {
-	const { setIsDirty } = slice.actions;
+	const { markAsDirty } = slice.actions;
 
 	listenTo(
 		v1ReadyEvent(),
@@ -97,7 +97,7 @@ function syncOnDocumentChange( slice: Slice ) {
 			const currentDocument = getV1DocumentsManager().getCurrent();
 			const isAutoSave = currentDocument.config.revisions.current_id !== currentDocument.id;
 
-			dispatch( setIsDirty( isAutoSave ) );
+			dispatch( markAsDirty( isAutoSave ) );
 		}
 	);
 
@@ -106,7 +106,7 @@ function syncOnDocumentChange( slice: Slice ) {
 		() => {
 			const currentDocument = getV1DocumentsManager().getCurrent();
 
-			dispatch( setIsDirty( currentDocument.editor.isChanged ) );
+			dispatch( markAsDirty( currentDocument.editor.isChanged ) );
 		}
 	);
 }

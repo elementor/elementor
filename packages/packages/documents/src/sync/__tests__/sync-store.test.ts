@@ -1,5 +1,5 @@
+import { syncStore } from '../';
 import { createSlice } from '../../store';
-import { syncStore } from '../sync-store';
 import { ExtendedWindow, Slice, V1Document } from '../../types';
 import { flushListeners } from '@elementor/v1-adapters';
 import { createStore, deleteStore, SliceState, Store } from '@elementor/store';
@@ -11,15 +11,14 @@ import {
 	makeMockV1Document,
 } from './test-utils';
 
-type WindowWithV1Loading = Omit<ExtendedWindow, 'elementor'> & {
-	__elementorEditorV1LoadingPromise?: Promise<void>;
+type WindowWithOptionalElementor = Omit<ExtendedWindow, 'elementor'> & {
 	elementor?: ExtendedWindow['elementor'];
 }
 
-describe( '@elementor/documents/sync/store-sync', () => {
+describe( '@elementor/documents - Sync Store', () => {
 	let store: Store<SliceState<Slice>>;
 	let slice: Slice;
-	let extendedWindow: WindowWithV1Loading;
+	let extendedWindow: WindowWithOptionalElementor;
 
 	beforeEach( () => {
 		slice = createSlice();
@@ -27,12 +26,10 @@ describe( '@elementor/documents/sync/store-sync', () => {
 
 		syncStore( slice );
 
-		extendedWindow = ( window as unknown as WindowWithV1Loading );
-		extendedWindow.__elementorEditorV1LoadingPromise = Promise.resolve();
+		extendedWindow = ( window as unknown as WindowWithOptionalElementor );
 	} );
 
 	afterEach( () => {
-		delete extendedWindow.__elementorEditorV1LoadingPromise;
 		delete extendedWindow.elementor;
 
 		flushListeners();
@@ -98,7 +95,7 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		dispatchEvent();
 
 		// Assert.
-		const currentDocument = getCurrentDocument( store );
+		const currentDocument = getActiveDocument( store );
 
 		expect( currentDocument.id ).toBe( 2 );
 		expect( currentDocument ).toEqual( {
@@ -132,7 +129,7 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		expect( getCurrentDocument( store ).isSaving ).toBe( true );
+		expect( getActiveDocument( store ).isSaving ).toBe( true );
 	} );
 
 	it( 'should sync saving state of a document on save', () => {
@@ -145,21 +142,21 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert - Default state.
-		expect( getCurrentDocument( store ).isSaving ).toBe( false );
+		expect( getActiveDocument( store ).isSaving ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save' );
 
 		// Assert - On save start.
-		expect( getCurrentDocument( store ).isSaving ).toBe( true );
-		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
+		expect( getActiveDocument( store ).isSaving ).toBe( true );
+		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save' );
 
 		// Assert - On save end.
-		expect( getCurrentDocument( store ).isSaving ).toBe( false );
-		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
+		expect( getActiveDocument( store ).isSaving ).toBe( false );
+		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync draft saving state of a document on save', () => {
@@ -172,7 +169,7 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert - Default state.
-		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
+		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save', {
@@ -180,8 +177,8 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		} );
 
 		// Assert - On save start.
-		expect( getCurrentDocument( store ).isSaving ).toBe( false );
-		expect( getCurrentDocument( store ).isSavingDraft ).toBe( true );
+		expect( getActiveDocument( store ).isSaving ).toBe( false );
+		expect( getActiveDocument( store ).isSavingDraft ).toBe( true );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save', {
@@ -189,8 +186,8 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		} );
 
 		// Assert - On save end.
-		expect( getCurrentDocument( store ).isSaving ).toBe( false );
-		expect( getCurrentDocument( store ).isSavingDraft ).toBe( false );
+		expect( getActiveDocument( store ).isSaving ).toBe( false );
+		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync dirty state of a document on V1 load', () => {
@@ -211,7 +208,7 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		expect( getCurrentDocument( store ).isDirty ).toBe( true );
+		expect( getActiveDocument( store ).isDirty ).toBe( true );
 	} );
 
 	it( 'should sync dirty state of a document on document change', () => {
@@ -235,17 +232,17 @@ describe( '@elementor/documents/sync/store-sync', () => {
 		} ] );
 
 		// Assert - Default state.
-		expect( getCurrentDocument( store ).isDirty ).toBe( false );
+		expect( getActiveDocument( store ).isDirty ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/set-is-modified' );
 
 		// Assert - After change.
-		expect( getCurrentDocument( store ).isDirty ).toBe( true );
+		expect( getActiveDocument( store ).isDirty ).toBe( true );
 	} );
 } );
 
-function getCurrentDocument( store: Store<SliceState<Slice>> ) {
+function getActiveDocument( store: Store<SliceState<Slice>> ) {
 	const storeState = store.getState();
 	const { activeId } = storeState.documents;
 
@@ -253,7 +250,7 @@ function getCurrentDocument( store: Store<SliceState<Slice>> ) {
 }
 
 function mockV1DocumentsManager( documentsArray: V1Document[], current = 1 ) {
-	( window as unknown as WindowWithV1Loading ).elementor = {
+	( window as unknown as WindowWithOptionalElementor ).elementor = {
 		documents: makeDocumentsManager( documentsArray, current ),
 	};
 }

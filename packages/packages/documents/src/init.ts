@@ -1,5 +1,5 @@
 import { createSlice } from './store';
-import { syncStore } from './sync/sync-store';
+import { syncStore } from './sync';
 
 const slice = createSlice();
 

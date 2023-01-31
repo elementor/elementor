@@ -4,7 +4,7 @@ import { openRoute, runCommand } from '@elementor/v1-adapters';
 
 jest.mock( '@elementor/v1-adapters' );
 
-describe( '@elementor/documents/hooks/use-active-document-actions', () => {
+describe( '@elementor/documents - useActiveDocumentActions', () => {
 	it( 'should run documents actions', () => {
 		// Arrange.
 		const { result } = renderHook( () => useActiveDocumentActions() );
