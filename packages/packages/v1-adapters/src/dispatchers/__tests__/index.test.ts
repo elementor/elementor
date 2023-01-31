@@ -16,7 +16,9 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		eIsPartOf: jest.Mock;
 
 	beforeEach( () => {
-		( window as unknown as ExtendedWindow ).$e = {
+		const extendedWindow = window as unknown as ExtendedWindow;
+
+		extendedWindow.$e = {
 			run: jest.fn(),
 			route: jest.fn(),
 			routes: {
@@ -24,9 +26,9 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 			},
 		};
 
-		eRun = ( window as unknown as ExtendedWindow ).$e.run;
-		eRoute = ( window as unknown as ExtendedWindow ).$e.route;
-		eIsPartOf = ( window as unknown as ExtendedWindow ).$e.routes.isPartOf;
+		eRun = extendedWindow.$e.run;
+		eRoute = extendedWindow.$e.route;
+		eIsPartOf = extendedWindow.$e.routes.isPartOf;
 	} );
 
 	afterEach( () => {
