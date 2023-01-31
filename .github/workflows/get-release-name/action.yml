@@ -1,23 +1,16 @@
 name: Get New Release Name
-description: Get the new release name, and set it as an environment variable.
-
-inputs:
-  REPO_NAME:
-    required: true
-    description: 'The repo name to get the new release name for.'
-  CLEAN_PACKAGE_NAME:
-    required: true
-    description: 'The clean package version to get the new release name for.'
+description: Get the new release name from elementor.php (sets by 'Create Rc Tag' action) and set it as an environment variable.
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-          CHANNEL_VERSION=$(node -p "require('./package.json').channels.${{ github.event.inputs.chennel }}")
-          echo "CHANNEL_VERSION=${CHANNEL_VERSION}" >> $GITHUB_ENV
+          RELEASE_NAME=$(grep "Version:" elementor.php | awk '{print $3}')
 
-          VERSION_CHANNEL=$(echo ${{ inputs.CLEAN_PACKAGE_NAME }} | sed 's/-[^-]*$//')
+          if [ -z "$RELEASE_NAME" ]; then
+            echo "RELEASE_NAME is empty"
+            exit 1
+          fi
 
-          RELEASE_NAME=${{ inputs.REPO_NAME }}-${VERSION_CHANNEL}${CHANNEL_VERSION}
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
