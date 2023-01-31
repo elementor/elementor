@@ -54,8 +54,8 @@ test( 'Stretch section', async ( { page }, testInfo ) => {
 	await editor.publishAndViewPage();
 
 	// Act.
-	await editor.getPreviewFrame().evaluate( () => {
-		const sectionWrap = document.querySelector( 'div[data-elementor-type="wp-page"]' );
+	await page.evaluate( () => {
+		const sectionWrap = document.querySelector( 'div[data-elementor-type="wp-post"]' );
 
 		sectionWrap.style.width = '960px';
 		sectionWrap.style.margin = '0 auto';
