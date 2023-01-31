@@ -22,6 +22,8 @@ export type {
 	Middleware,
 } from '@reduxjs/toolkit';
 
+export { createSelector } from '@reduxjs/toolkit';
+
 export { useSelector, useDispatch, Provider as StoreProvider } from 'react-redux';
 
 /**
