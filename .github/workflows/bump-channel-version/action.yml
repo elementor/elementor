@@ -5,18 +5,18 @@ inputs:
   CHANNEL:
     required: true
     description: 'The channel to bump the version to (cloud, beta).'
-  GITHUB_ACTOR:
+  GITHUB_REPOSITORY_OWNER:
     required: true
-    description: 'The github actor.'
+    description: 'Github repository owner.'
   CLEAN_PACKAGE_VERSION:
     required: true
     description: 'The current package version.'
   MAINTAIN_USERNAME:
     required: true
-    description: 'The username of the maintainer.'
+    description: 'username of the maintainer.'
   MAINTAIN_EMAIL:
     required: true
-    description: 'The email of the maintainer.'
+    description: 'email of the maintainer.'
 
 runs:
   using: "composite"
@@ -28,7 +28,7 @@ runs:
             
             echo "pwd: $(pwd)"
             echo "ls: $(ls)"
-            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags ${{ inputs.GITHUB_ACTOR }} | grep ${{ inputs.CHANNEL }} | grep v${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}')
+            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags ${{ inputs.GITHUB_REPOSITORY_OWNER }} | grep ${{ inputs.CHANNEL }} | grep v${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}')
             if [ -z "$CURRENT_CHANNEL_VERSION" ]; then
               CURRENT_CHANNEL_VERSION=0
             fi
