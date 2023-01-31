@@ -97,7 +97,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => esc_html__( 'Container Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
-					'size_units' => [ 'px', 'em', '%', 'rem', 'vw' ],
+					'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
 					'default' => [
 						'unit' => 'px',
 					],
@@ -116,9 +116,11 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control(
 			'space_between_widgets',
 			[
-				'label' => $widgets_space_label . ' (px)',
+				'label' => $widgets_space_label,
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw', 'custom' ],
 				'default' => [
+					'unit' => 'px',
 					'size' => 20,
 				],
 				'range' => [
@@ -126,11 +128,20 @@ class Settings_Layout extends Tab_Base {
 						'min' => 0,
 						'max' => 40,
 					],
+					'%' => [
+						'min' => 0,
+						'max' => 20,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 40,
+					],
 				],
 				'placeholder' => [
-					'size' => '20',
+					'size' => 20,
+					'unit' => 'px',
 				],
-				'description' => esc_html__( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
+				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
 					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
