@@ -11,7 +11,8 @@ runs:
   steps:
     - shell: bash
       run: |
-          RELEASE_NAME=$( unzip -p ${{ inputs.BUILD_ZIP_FILE_PATH }} elementor.php | grep 'Version:' | awk '{print $3}' )
+          unzip ${{ inputs.BUILD_ZIP_FILE_PATH }} elementor.php
+          RELEASE_NAME=$(grep "Version:" elementor.php | awk '{print $3}')
           if [ -z "$RELEASE_NAME" ]; then
             echo "RELEASE_NAME is empty"
             exit 1
