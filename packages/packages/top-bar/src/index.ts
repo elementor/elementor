@@ -2,7 +2,7 @@ export {
 	registerLink,
 	registerAction,
 	registerToggleAction,
-	injectIntoCanvasView,
+	injectIntoCanvasDisplay,
 	injectIntoPrimaryAction,
 } from './locations/index';
 

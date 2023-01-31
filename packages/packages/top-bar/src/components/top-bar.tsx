@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AppBar as BaseAppBar, Box, styled, Grid } from '@elementor/ui';
 import MainMenuLocation from './locations/main-menu-location';
 import ToolsMenuLocation from './locations/tools-menu-location';
-import CanvasViewLocation from './locations/canvas-view-location';
+import CanvasDisplayLocation from './locations/canvas-display-location';
 import UtilitiesMenuLocation from './locations/utilities-menu-location';
 import PrimaryActionLocation from './locations/primary-action-location';
 
@@ -21,7 +21,7 @@ export default function TopBar() {
 					<ToolsMenuLocation />
 				</Grid>
 				<Grid container justifyContent="center">
-					<CanvasViewLocation />
+					<CanvasDisplayLocation />
 				</Grid>
 				<Grid container justifyContent="end">
 					<UtilitiesMenuLocation />

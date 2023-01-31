@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '@testing-library/jest-dom';
 import {
-	injectIntoCanvasView,
+	injectIntoCanvasDisplay,
 	injectIntoPrimaryAction,
 	registerAction,
 	registerLink,
@@ -12,7 +12,7 @@ import ToolsMenuLocation from '../components/locations/tools-menu-location';
 import UtilitiesMenuLocation from '../components/locations/utilities-menu-location';
 import MainMenuLocation from '../components/locations/main-menu-location';
 import { MenuName } from '../locations/register-menu-item';
-import CanvasViewLocation from '../components/locations/canvas-view-location';
+import CanvasDisplayLocation from '../components/locations/canvas-display-location';
 import PrimaryActionLocation from '../components/locations/primary-action-location';
 
 describe( '@elementor/top-bar API', () => {
@@ -169,13 +169,13 @@ describe( '@elementor/top-bar API', () => {
 
 	it( 'should inject into canvas view', () => {
 		// Act.
-		injectIntoCanvasView( {
+		injectIntoCanvasDisplay( {
 			name: 'test',
 			filler: () => <span>test</span>,
 		} );
 
 		// Assert.
-		const { queryByText } = render( <CanvasViewLocation /> );
+		const { queryByText } = render( <CanvasDisplayLocation /> );
 
 		expect( queryByText( 'test' ) ).toBeTruthy();
 	} );

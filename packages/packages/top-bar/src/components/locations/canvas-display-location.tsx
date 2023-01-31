@@ -1,11 +1,11 @@
 import { Fragment } from 'react';
 import { useInjectionsOf } from '@elementor/locations';
-import { LOCATION_CANVAS_VIEW } from '../../locations';
+import { LOCATION_CANVAS_DISPLAY } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import Divider from '../ui/divider';
 
-export default function CanvasViewLocation() {
-	const injections = useInjectionsOf( LOCATION_CANVAS_VIEW );
+export default function CanvasDisplayLocation() {
+	const injections = useInjectionsOf( LOCATION_CANVAS_DISPLAY );
 
 	return (
 		<ToolbarMenu>
