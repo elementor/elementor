@@ -85,6 +85,7 @@ class Settings_Layout extends Tab_Base {
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
 					'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
+					],
 				],
 			]
 		);
