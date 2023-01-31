@@ -59,28 +59,28 @@ class Settings_Layout extends Tab_Base {
 					'unit' => 'px',
 					'size' => '1140',
 				],
-			'tablet_default' => [
-				'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
-			],
-			'mobile_default' => [
-				'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
-			],
-			'range' => [
-				'px' => [
-					'min' => 300,
-					'max' => 1500,
-					'step' => 10,
+				'tablet_default' => [
+					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
 				],
-				'%' => [
- 					'min' => 50,
-					'max' => 100,
-					'step' => 1,
+				'mobile_default' => [
+					'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
 				],
-				'vw' => [
-					'min' => 50,
-					'max' => 100,
-					'step' => 1,
-				],
+				'range' => [
+					'px' => [
+						'min' => 300,
+						'max' => 1500,
+						'step' => 10,
+					],
+					'%' => [
+ 						'min' => 50,
+						'max' => 100,
+						'step' => 1,
+					],
+					'vw' => [
+						'min' => 50,
+						'max' => 100,
+						'step' => 1,
+					],
 				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140px)', 'elementor' ),
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
