@@ -10,6 +10,7 @@ import {
 	makeDocumentsManager,
 	makeMockV1Document,
 } from './test-utils';
+import { selectActiveDocument } from '../../store/selectors';
 
 type WindowWithOptionalElementor = Omit<ExtendedWindow, 'elementor'> & {
 	elementor?: ExtendedWindow['elementor'];
@@ -95,7 +96,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchEvent();
 
 		// Assert.
-		const currentDocument = getActiveDocument( store );
+		const currentDocument = selectActiveDocument( store.getState() );
 
 		expect( currentDocument.id ).toBe( 2 );
 		expect( currentDocument ).toEqual( {
@@ -129,7 +130,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		expect( getActiveDocument( store ).isSaving ).toBe( true );
+		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( true );
 	} );
 
 	it( 'should sync saving state of a document on save', () => {
@@ -142,21 +143,21 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert - Default state.
-		expect( getActiveDocument( store ).isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save' );
 
 		// Assert - On save start.
-		expect( getActiveDocument( store ).isSaving ).toBe( true );
-		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( true );
+		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save' );
 
 		// Assert - On save end.
-		expect( getActiveDocument( store ).isSaving ).toBe( false );
-		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync draft saving state of a document on save', () => {
@@ -169,7 +170,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert - Default state.
-		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save', {
@@ -177,8 +178,8 @@ describe( '@elementor/documents - Sync Store', () => {
 		} );
 
 		// Assert - On save start.
-		expect( getActiveDocument( store ).isSaving ).toBe( false );
-		expect( getActiveDocument( store ).isSavingDraft ).toBe( true );
+		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( true );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save', {
@@ -186,8 +187,8 @@ describe( '@elementor/documents - Sync Store', () => {
 		} );
 
 		// Assert - On save end.
-		expect( getActiveDocument( store ).isSaving ).toBe( false );
-		expect( getActiveDocument( store ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync dirty state of a document on V1 load', () => {
@@ -208,7 +209,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		expect( getActiveDocument( store ).isDirty ).toBe( true );
+		expect( selectActiveDocument( store.getState() ).isDirty ).toBe( true );
 	} );
 
 	it( 'should sync dirty state of a document on document change', () => {
@@ -232,22 +233,15 @@ describe( '@elementor/documents - Sync Store', () => {
 		} ] );
 
 		// Assert - Default state.
-		expect( getActiveDocument( store ).isDirty ).toBe( false );
+		expect( selectActiveDocument( store.getState() ).isDirty ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/set-is-modified' );
 
 		// Assert - After change.
-		expect( getActiveDocument( store ).isDirty ).toBe( true );
+		expect( selectActiveDocument( store.getState() ).isDirty ).toBe( true );
 	} );
 } );
-
-function getActiveDocument( store: Store<SliceState<Slice>> ) {
-	const storeState = store.getState();
-	const { activeId } = storeState.documents;
-
-	return storeState.documents.entities[ activeId ];
-}
 
 function mockV1DocumentsManager( documentsArray: V1Document[], current = 1 ) {
 	( window as unknown as WindowWithOptionalElementor ).elementor = {
