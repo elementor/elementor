@@ -13,7 +13,7 @@ injectIntoCanvasDisplay( {
 	filler: TopBarIndicator,
 } );
 
-// injectIntoPrimaryAction( {
-// 	name: 'top-bar-save',
-// 	filler: TopBarSave,
-// } );
+injectIntoPrimaryAction( {
+	name: 'top-bar-save',
+	filler: TopBarSave,
+} );
