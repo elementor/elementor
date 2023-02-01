@@ -438,8 +438,12 @@ class Import {
 	 * @throws WP_Error_Exception
 	 */
 	private function get_manifest_thumbnail(): string {
-		if ( empty( $this->api_id ) || ! empty( $this->manifest['thumbnail'] ) ) {
+		if ( ! empty( $this->manifest['thumbnail'] ) ) {
 			return $this->manifest['thumbnail'];
+		}
+
+		if ( empty( $this->api_id ) ) {
+			return '';
 		}
 
 		$api = new Kit_Library_Api();
