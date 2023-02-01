@@ -499,7 +499,7 @@ class Admin extends App {
 	 * @param bool $show_heading
 	 *
 	 * @return void
-	 *@since 3.12.0
+	 * @since 3.12.0
 	 * @access public
 	 */
 	public function elementor_dashboard_overview_news_updates( int $limit_feed = 0, bool $show_heading = true ) {
