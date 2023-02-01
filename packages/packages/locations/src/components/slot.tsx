@@ -2,7 +2,11 @@ import * as React from 'react';
 import useInjectionsOf from '../hooks/use-injections-of';
 import { Location } from '../types';
 
-export default function Slot( { location }: { location: Location } ) {
+type Props = {
+	location: Location
+}
+
+export default function Slot( { location }: Props ) {
 	const injections = useInjectionsOf( location );
 
 	return (

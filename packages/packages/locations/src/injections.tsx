@@ -1,18 +1,18 @@
-import { Location, Filler, Injection, InjectionOptions, Name } from './types';
+import { Location, Filler, Injection, InjectionOptions, Name, Id } from './types';
 import FillerWrapper from './components/filler-wrapper';
 
 const DEFAULT_PRIORITY = 10;
 
-const injections: Map<string, Injection> = new Map();
+const injections: Map<Id, Injection> = new Map();
 
-type InjectIntoArgs = {
+type InjectArgs = {
 	location: Location;
 	filler: Filler;
 	name: Name;
 	options?: InjectionOptions;
 }
 
-export function inject( { location, filler, name, options = {} }: InjectIntoArgs ) {
+export function inject( { location, filler, name, options = {} }: InjectArgs ) {
 	const id = generateId( location, name );
 
 	if ( injections.has( id ) && ! options?.overwrite ) {
@@ -35,12 +35,12 @@ export function inject( { location, filler, name, options = {} }: InjectIntoArgs
 }
 
 export function createInjectorFor( location: Location ) {
-	return ( { filler, name, options }: Omit<InjectIntoArgs, 'location'> ) => {
+	return ( { filler, name, options }: Omit<InjectArgs, 'location'> ) => {
 		return inject( { location, name, filler, options } );
 	};
 }
 
-export function getInjectionsOf( location: string ): Injection[] {
+export function getInjectionsOf( location: string ) {
 	return [ ...injections.values() ]
 		.filter( ( injection ) => injection.location === location )
 		.sort( ( a, b ) => a.priority - b.priority );

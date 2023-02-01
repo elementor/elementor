@@ -10,10 +10,6 @@ export default function TopBarSave() {
 			onClick={ () => save() }
 			disabled={ ! document || ! document.isDirty }
 			size="large"
-			sx={ {
-				position: 'absolute',
-				right: 0,
-			} }
 		>
 			Publish
 		</Button>
