@@ -46,7 +46,7 @@ jobs:
         uses : ./.github/workflows/copy-file
         with:
           SOURCE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          DESTINATION_PATH: /tmp/${{ env.RELEASE_NAME }}.zip
+          DESTINATION_PATH: /tmp/${{ env.RELEASE_FILENAME }}.zip
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
@@ -64,7 +64,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_NAME }}
-          files: /tmp/${{ env.RELEASE_NAME }}.zip
+          files: /tmp/${{ env.RELEASE_FILENAME }}.zip
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: temp-changelog.txt
         env:
