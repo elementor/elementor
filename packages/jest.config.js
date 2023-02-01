@@ -36,6 +36,8 @@ module.exports = {
 	// Code coverage.
 	collectCoverageFrom: [
 		'packages/*/src/**/*.{js,jsx,ts,tsx}',
+		// Avoid running coverage on test utils.
+		'!packages/*/src/**/__tests__/**',
 	],
 	coverageThreshold: {
 		global: {
