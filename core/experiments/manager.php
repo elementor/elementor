@@ -402,7 +402,6 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'container',
 			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
-			'tag' => esc_html__( 'Feature', 'elementor' ),
 			'description' => sprintf( esc_html__(
 				'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
 				This experiment replaces the current section/column structure, but you\'ll still keep your existing
