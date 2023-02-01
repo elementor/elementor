@@ -43,9 +43,9 @@ class Import {
 	/**
 	 * The Kit BA-API ID.
 	 *
-	 * @var null|string
+	 * @var string
 	 */
-	private ?string $api_id;
+	private string $api_id;
 
 	/**
 	 * Adapter for the kit compatibility.
@@ -165,7 +165,7 @@ class Import {
 			}
 
 			$this->session_id = basename( $this->extracted_directory_path );
-			$this->api_id = ! empty( $settings['id'] ) ? $settings['id'] : null;
+			$this->api_id = ! empty( $settings['id'] ) ? $settings['id'] : '';
 			$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
 			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 
