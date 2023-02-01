@@ -6,9 +6,9 @@ beforeEach( () => {
 	/* eslint-disable no-console */
 	// The mocks already created at `@wordpress/jest-console`
 	// here it just ensure that nothing will be prompt to the console.
-	jest.mocked( console.error ).mockImplementation( () => {} );
-	jest.mocked( console.warn ).mockImplementation( () => {} );
-	jest.mocked( console.info ).mockImplementation( () => {} );
+	jest.mocked( console.error ).mockImplementation( () => null );
+	jest.mocked( console.warn ).mockImplementation( () => null );
+	jest.mocked( console.info ).mockImplementation( () => null );
 	/* eslint-enable no-console */
 
 	resetInjections();
