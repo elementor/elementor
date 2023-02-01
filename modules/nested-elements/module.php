@@ -21,14 +21,13 @@ class Module extends \Elementor\Core\Base\Module {
 				'<a href="https://go.elementor.com/wp-dash-nested-elements/" target="_blank">',
 				'</a>'
 			),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'dependencies' => [
 				'container',
 			],
 			'new_site' => [
-				'default_active' => false,
-				'minimum_installation_version' => '3.10.0',
+				'default_active' => true,
+				'minimum_installation_version' => '3.12.0',
 			],
 		];
 	}
