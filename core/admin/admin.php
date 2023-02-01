@@ -389,14 +389,11 @@ class Admin extends App {
 	}
 
 	/**
-	 * Elementor dashboard widget.
-	 *
 	 * Displays the Elementor dashboard widget.
 	 *
 	 * Fired by `wp_add_dashboard_widget` function.
 	 *
 	 * @since 1.9.0
-	 * @access public
 	 */
 	public function elementor_dashboard_overview_widget() {
 		?>
@@ -412,21 +409,16 @@ class Admin extends App {
 	}
 
 	/**
-	 * Elementor dashboard widget.
-	 *
 	 * Displays the Elementor dashboard widget - header section.
-	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
-	 * @since 3.12.0
-	 * @access public
-	 *
 	 * @param bool $show_versions
-	 * @param bool $show_create_post
+	 * @param bool $is_create_post_enabled
 	 *
 	 * @return void
+	 * @since 3.12.0
 	 */
-	public function elementor_dashboard_overview_header( $show_versions = true, $show_create_post = true ) {
+	public function elementor_dashboard_overview_header( bool $show_versions = true, bool $is_create_post_enabled = true ) {
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = esc_html__( 'Create New Page', 'elementor' );
 			$create_new_post_type = 'page';
@@ -446,16 +438,16 @@ class Admin extends App {
 					/**
 					 * Elementor dashboard widget after the version.
 					 * Fires after Elementor version display in the dashboard widget.
+					 *
 					 * @since 1.9.0
 					 */
 					do_action( 'elementor/admin/dashboard_overview_widget/after_version' );
 					?>
 				</div>
 			<?php } ?>
-			<?php if ( ! empty( $create_new_post_type ) && $show_create_post ) { ?>
+			<?php if ( ! empty( $create_new_post_type ) && $is_create_post_enabled ) { ?>
 				<div class="e-overview__create">
-					<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?>
-					</a>
+					<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 				</div>
 			<?php } ?>
 		</div>
@@ -463,21 +455,16 @@ class Admin extends App {
 	}
 
 	/**
-	 * Elementor dashboard widget.
-	 *
 	 * Displays the Elementor dashboard widget - recently edited section.
-	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
-	 *
-	 * @since 3.12.0
-	 * @access public
 	 *
 	 * @param array $args
 	 * @param bool $show_heading
 	 *
 	 * @return void
+	 * @since 3.12.0
 	 */
-	public function elementor_dashboard_overview_recently_edited( $args = [], $show_heading = true ) {
+	public function elementor_dashboard_overview_recently_edited( array $args = [], bool $show_heading = true ) {
 		$recently_edited_query = Utils::get_recently_edited_posts_query( $args );
 
 		if ( $recently_edited_query->have_posts() ) { ?>
@@ -505,21 +492,17 @@ class Admin extends App {
 	}
 
 	/**
-	 * Elementor dashboard widget.
-	 *
 	 * Displays the Elementor dashboard widget - news and updates section.
-	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
-	 *
-	 * @since 3.12.0
-	 * @access public
 	 *
 	 * @param int $limit_feed
 	 * @param bool $show_heading
 	 *
 	 * @return void
+	 *@since 3.12.0
+	 * @access public
 	 */
-	public function elementor_dashboard_overview_news_updates( $limit_feed = 0, $show_heading = true ) {
+	public function elementor_dashboard_overview_news_updates( int $limit_feed = 0, bool $show_heading = true ) {
 		$elementor_feed = Api::get_feed_data();
 		if ( $limit_feed > 0 ) {
 			$elementor_feed = array_slice( $elementor_feed, 0, $limit_feed );
@@ -548,14 +531,10 @@ class Admin extends App {
 	}
 
 	/**
-	 * Elementor dashboard widget.
-	 *
 	 * Displays the Elementor dashboard widget - footer section.
-	 *
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
 	 * @since 3.12.0
-	 * @access public
 	 */
 	public function elementor_dashboard_overview_footer() {
 		?>
