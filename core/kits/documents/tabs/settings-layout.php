@@ -54,7 +54,7 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'size' => '1140',
 				],
@@ -69,16 +69,6 @@ class Settings_Layout extends Tab_Base {
 						'min' => 300,
 						'max' => 1500,
 						'step' => 10,
-					],
-					'%' => [
-						'min' => 50,
-						'max' => 100,
-						'step' => 1,
-					],
-					'vw' => [
-						'min' => 50,
-						'max' => 100,
-						'step' => 1,
 					],
 				],
 				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140px)', 'elementor' ),
@@ -118,20 +108,13 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => $widgets_space_label,
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw', 'custom' ],
+				'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
 				'default' => [
+					'unit' => 'px',
 					'size' => 20,
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 40,
-					],
-					'%' => [
-						'min' => 0,
-						'max' => 20,
-					],
-					'vw' => [
 						'min' => 0,
 						'max' => 40,
 					],
