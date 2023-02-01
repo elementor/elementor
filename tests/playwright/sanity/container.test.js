@@ -450,14 +450,14 @@ test.describe( 'Container tests', () => {
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
 	} );
 
-	test.only( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
+			await editor.closeNavigatorIfOpen();
 			const editor = await createCanvasPage( wpAdmin );
 			const container = await addContainerAndHover( editor );
-
 			expect( await container.screenshot( {
 				type: 'jpeg',
 				quality: 100,
