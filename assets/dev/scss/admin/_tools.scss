@@ -112,7 +112,7 @@
 		}
 	}
 
-	.button {
+	.button, .button:hover {
 		color: $danger-text;
 		border-color: $danger-text;
 		display: inline-block;
