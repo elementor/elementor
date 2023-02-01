@@ -109,10 +109,6 @@ class Settings_Layout extends Tab_Base {
 				'label' => $widgets_space_label,
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
-				'default' => [
-					'unit' => 'px',
-					'size' => 20,
-				],
 				'range' => [
 					'px' => [
 						'min' => 0,
