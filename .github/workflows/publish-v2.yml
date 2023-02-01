@@ -72,6 +72,6 @@ jobs:
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
-          MESSAGE: "@here Elementor ${{ env.PACKAGE_VERSION }} has been released! Saddle up partners! :tada:"
+          MESSAGE: "@here Elementor ${{ env.RELEASE_NAME }} has been released! Saddle up partners! :tada:"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
