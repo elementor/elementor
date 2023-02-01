@@ -1,18 +1,21 @@
-import { useActiveDocument } from '../hooks';
+import { useActiveDocument, useActiveDocumentActions } from '../hooks';
+import { Button } from '@elementor/ui';
 
-export function TopBarIndicator() {
+export default function TopBarSave() {
 	const document = useActiveDocument();
-
-	if ( ! document ) {
-		return null;
-	}
+	const { save } = useActiveDocumentActions();
 
 	return (
-		<div style={ { position: 'absolute', top: 'calc( ( 48px - 1em ) / 2 )', left: '50%', transform: 'translateX( -50% )' } }>
-			{ document.isDirty && '[*] ' }
-			{ document.title }
-			{ document.isSaving && ' [Saving...] ' }
-			{ document.isSavingDraft && ' [Saving Draft...] ' } ({ document.status })
-		</div>
+		<Button variant="contained"
+			onClick={ () => save() }
+			disabled={ ! document || ! document.isDirty }
+			size="large"
+			sx={ {
+				position: 'absolute',
+				right: 0,
+			} }
+		>
+			Publish
+		</Button>
 	);
 }
