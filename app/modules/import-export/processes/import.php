@@ -18,9 +18,10 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Module;
 
-class Import {
+use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
+use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
 
-	const API_KITS_URL = 'https://my.elementor.com/api/v1/kits-library/kits';
+class Import {
 
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
@@ -38,6 +39,13 @@ class Import {
 	 * @var string
 	 */
 	private $session_id;
+
+	/**
+	 * The Kit BA-API ID.
+	 *
+	 * @var null|string
+	 */
+	private ?string $api_id;
 
 	/**
 	 * Adapter for the kit compatibility.
@@ -157,6 +165,7 @@ class Import {
 			}
 
 			$this->session_id = basename( $this->extracted_directory_path );
+			$this->api_id = ! empty( $settings['id'] ) ? $settings['id'] : null;
 			$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
 			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 
@@ -425,25 +434,22 @@ class Import {
 	 * Get the manifest thumbnail, goes to the home page thumbnail if main doesn't exist
 	 *
 	 * @return string
+	 *
+	 * @throws WP_Error_Exception
 	 */
 	private function get_manifest_thumbnail(): string {
-		if ( ! empty( $this->manifest['thumbnail'] ) ) {
+		if ( empty( $this->api_id ) || ! empty( $this->manifest['thumbnail'] ) ) {
 			return $this->manifest['thumbnail'];
 		}
 
-		$response = wp_remote_get( static::API_KITS_URL );
-		if ( is_wp_error( $response ) || \WP_Http::OK !== wp_remote_retrieve_response_code( $response ) ) {
-			return '';
+		$api = new Kit_Library_Api();
+		$kit = $api->get_by_id( $this->api_id );
+
+		if ( is_wp_error( $kit ) ) {
+			throw new WP_Error_Exception( $kit );
 		}
 
-		$kits = json_decode( wp_remote_retrieve_body( $response ) , true );
-		foreach ( $kits as $kit ) {
-			if ( $this->manifest['title'] === $kit['title'] ) {
-				return $kit['thumbnail'];
-			}
-		}
-
-		return '';
+		return $kit->thumbnail;
 	}
 
 	public function get_runners_name(): array {
