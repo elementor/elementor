@@ -126,8 +126,15 @@ abstract class Module extends Base_Object {
 	 * @access public
 	 */
 	public function __clone() {
-		// Cloning instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+		_doing_it_wrong(
+			__FUNCTION__,
+			sprintf(
+				/* translators: %s: Class name. */
+				esc_html__( 'Cloning instances of the singleton "%s" class is forbidden.', 'elementor' ),
+				get_class( $this ),
+			),
+			'1.0.0'
+		);
 	}
 
 	/**
@@ -139,8 +146,15 @@ abstract class Module extends Base_Object {
 	 * @access public
 	 */
 	public function __wakeup() {
-		// Unserializing instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+		_doing_it_wrong(
+			__FUNCTION__,
+			sprintf(
+				/* translators: %s: Class name. */
+				esc_html__( 'Unserializing instances of the singleton "%s" class is forbidden.', 'elementor' ),
+				get_class( $this ),
+			),
+			'1.0.0'
+		);
 	}
 
 	/**
