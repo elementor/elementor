@@ -42,6 +42,11 @@ jobs:
         with:
           BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
+      - name: Rename Release zip file to new release name
+        uses : ./.github/workflows/copy-file
+        with:
+          SOURCE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          DESTINATION_PATH: /tmp/${{ env.RELEASE_NAME }}.zip
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
@@ -59,7 +64,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_NAME }}
-          files: elementor-*.zip
+          files: /tmp/${{ env.RELEASE_NAME }}.zip
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: temp-changelog.txt
         env:
