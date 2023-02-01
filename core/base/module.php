@@ -131,7 +131,7 @@ abstract class Module extends Base_Object {
 			sprintf(
 				/* translators: %s: Class name. */
 				esc_html__( 'Cloning instances of the singleton "%s" class is forbidden.', 'elementor' ),
-				get_class( $this ),
+				get_class( $this )
 			),
 			'1.0.0'
 		);
@@ -151,7 +151,7 @@ abstract class Module extends Base_Object {
 			sprintf(
 				/* translators: %s: Class name. */
 				esc_html__( 'Unserializing instances of the singleton "%s" class is forbidden.', 'elementor' ),
-				get_class( $this ),
+				get_class( $this )
 			),
 			'1.0.0'
 		);
