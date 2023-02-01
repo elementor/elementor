@@ -1,0 +1,2 @@
+/*! elementor - v3.10.1 - 31-01-2023 */
+body{--editor-v2-top-bar-height:48px}#elementor-editor-wrapper{height:calc(100vh - var(--editor-v2-top-bar-height))}body.elementor-navigator-docked #elementor-navigator{height:calc(100% - var(--editor-v2-top-bar-height));top:var(--editor-v2-top-bar-height)}
