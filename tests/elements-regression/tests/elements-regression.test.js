@@ -85,7 +85,7 @@ test.describe( 'Elements regression', () => {
 								await expect(
 									await editorPage.screenshotElement( elementId ),
 								).toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ], {
-									threshold: 0.02,
+									maxDiffPixelRatio: 0.02,
 								} );
 							} );
 
@@ -95,7 +95,7 @@ test.describe( 'Elements regression', () => {
 								await expect(
 									await frontendPage.screenshotElement( elementId ),
 								).toMatchSnapshot( [ 'frontend', widgetType, controlId, `${ valueLabel }.jpeg` ], {
-									threshold: 0.02,
+									maxDiffPixelRatio: 0.02,
 								} );
 							} );
 
