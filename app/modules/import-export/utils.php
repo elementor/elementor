@@ -80,4 +80,21 @@ class Utils {
 
 		return array_keys( $post_types );
 	}
+
+	/**
+	 * Transform a string name to title format.
+	 *
+	 * @param $name
+	 *
+	 * @return string
+	 */
+	public static function transform_name_to_title( $name ): string {
+		if ( empty( $name ) ) {
+			return '';
+		}
+
+		$title = str_replace( [ '-', '_' ], ' ', $name );
+
+		return ucwords( $title );
+	}
 }
