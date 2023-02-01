@@ -455,8 +455,8 @@ test.describe( 'Container tests', () => {
 
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
-			await editor.closeNavigatorIfOpen();
 			const editor = await createCanvasPage( wpAdmin );
+			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
 			expect( await container.screenshot( {
 				type: 'jpeg',
