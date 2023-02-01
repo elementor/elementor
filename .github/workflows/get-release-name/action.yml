@@ -23,6 +23,7 @@ runs:
             exit 1
           fi
 
+          # e.g. elementor-3.11.0-cloud20 => v3.11.0-cloud20
           RELEASE_NAME=${RELEASE_NAME/${{ inputs.PLUGIN_NAME }}-/v}
 
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
