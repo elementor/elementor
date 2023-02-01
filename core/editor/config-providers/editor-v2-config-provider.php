@@ -12,6 +12,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	const EXTENSION_PACKAGES = [
 		'documents',
+		'elements-panel',
 		'top-bar',
 	];
 
