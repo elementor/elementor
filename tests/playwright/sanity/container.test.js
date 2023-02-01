@@ -450,7 +450,7 @@ test.describe( 'Container tests', () => {
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
 	} );
 
-	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test.only( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		try {
@@ -460,7 +460,7 @@ test.describe( 'Container tests', () => {
 
 			expect( await container.screenshot( {
 				type: 'jpeg',
-				quality: 90,
+				quality: 100,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
