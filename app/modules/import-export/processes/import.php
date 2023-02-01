@@ -45,7 +45,7 @@ class Import {
 	 *
 	 * @var string
 	 */
-	private string $api_id;
+	private $api_id;
 
 	/**
 	 * Adapter for the kit compatibility.
