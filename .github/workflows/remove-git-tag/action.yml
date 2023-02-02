@@ -10,4 +10,6 @@ runs:
   steps:
     - shell: bash 
       run: |
-            git push --delete origin ${{ inputs.PACKAGE_VERSION }} || echo "Tag ${{ inputs.PACKAGE_VERSION }} not found on remote"
+        #remove force 
+              git tag -d ${{ inputs.PACKAGE_VERSION }} || echo "Tag ${{ inputs.PACKAGE_VERSION }} not found on remote"
+              git push origin :refs/tags/${{ inputs.PACKAGE_VERSION }} || echo "Tag ${{ inputs.PACKAGE_VERSION }} not found on remote"
