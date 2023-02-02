@@ -102,7 +102,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 					const propName = Object.keys( changedModel.changed )[ 0 ];
 
-					self.onEditSettingsChange( propName, changedModel.changed[ propName ], changedModel.attributes.defaultEditRoute );
+					self.onEditSettingsChange( propName, changedModel.changed[ propName ] );
 				},
 			} );
 		}
