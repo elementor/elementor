@@ -1,4 +1,6 @@
 import { resetInjections } from '@elementor/locations';
+import { flushListeners } from '@elementor/v1-adapters';
+import { deleteStore } from '@elementor/store';
 
 import '@wordpress/jest-console';
 
@@ -12,4 +14,6 @@ beforeEach( () => {
 	/* eslint-enable no-console */
 
 	resetInjections();
+	flushListeners();
+	deleteStore();
 } );

@@ -1,15 +1,11 @@
 import { createSlice } from './store';
 
-export type State = {
-	entities: Record<Document['id'], Document>,
-	activeId: Document['id'],
-}
-
 export type DocumentStatus = 'publish' | 'future' | 'draft' | 'pending' | 'private' | 'trash' | 'auto-draft' | 'inherit';
 
 export type Document = {
 	id: number,
 	title: string,
+	type: string,
 	status: DocumentStatus,
 	isDirty: boolean,
 	isSaving: boolean,
@@ -21,13 +17,12 @@ export type Document = {
 
 export type Slice = ReturnType<typeof createSlice>;
 
-export type PartialDocument = Partial<Omit<Document, 'id'>> & Pick<Document, 'id'>;
-
 export type ExtendedWindow = Window & {
 	elementor: {
 		documents: {
 			documents: Record<string, V1Document>,
 			getCurrentId: () => number,
+			getInitialId: () => number,
 			getCurrent: () => V1Document,
 		}
 	}
@@ -36,6 +31,7 @@ export type ExtendedWindow = Window & {
 export type V1Document = {
 	id: number,
 	config: {
+		type: string,
 		user: {
 			can_publish: boolean,
 		},

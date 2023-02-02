@@ -26,7 +26,7 @@ export function dispatchV1ReadyEvent() {
 	dispatchWindowEvent( 'elementor/v1/initialized' );
 }
 
-export function makeDocumentsManager( documentsArray: V1Document[], current = 1 ) {
+export function makeDocumentsManager( documentsArray: V1Document[], current = 1, initial = current ) {
 	const documents = documentsArray.reduce( ( acc: Record<number, V1Document>, document ) => {
 		acc[ document.id ] = document;
 
@@ -38,16 +38,20 @@ export function makeDocumentsManager( documentsArray: V1Document[], current = 1 
 		getCurrentId() {
 			return current;
 		},
+		getInitialId() {
+			return initial;
+		},
 		getCurrent() {
 			return this.documents[ this.getCurrentId() ];
 		},
 	};
 }
 
-export function makeMockV1Document( id = 1 ): V1Document {
+export function makeMockV1Document( { id = 1, type = 'wp-page' } = {} ): V1Document {
 	return {
 		id,
 		config: {
+			type,
 			user: {
 				can_publish: true,
 			},

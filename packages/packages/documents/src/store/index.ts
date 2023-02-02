@@ -1,9 +1,28 @@
-import { State, Document } from '../types';
+import { Document } from '../types';
 import { addSlice, PayloadAction } from '@elementor/store';
+
+type State = {
+	entities: Record<Document['id'], Document>,
+	activeId: Document['id'] | null, // The currently editing document.
+	hostId: Document['id'] | null, // The document that host all the other documents.
+}
 
 const initialState: State = {
 	entities: {},
-	activeId: 0,
+	activeId: null,
+	hostId: null,
+};
+
+const createActiveDocumentReducer = (
+	callback: ( document: Document ) => void
+) => {
+	return ( state: State ) => {
+		if ( ! state.activeId ) {
+			return;
+		}
+
+		callback( state.entities[ state.activeId ] );
+	};
 };
 
 export function createSlice() {
@@ -11,8 +30,14 @@ export function createSlice() {
 		name: 'documents',
 		initialState,
 		reducers: {
-			setDocuments( state, action: PayloadAction<State['entities']> ) {
-				state.entities = action.payload;
+			init( state, { payload } : PayloadAction<{
+				entities: State['entities'],
+				hostId: State['hostId'],
+				activeId: State['activeId'] }>
+			) {
+				state.entities = payload.entities;
+				state.hostId = payload.hostId;
+				state.activeId = payload.activeId;
 			},
 
 			activateDocument( state, action: PayloadAction<Document> ) {
@@ -20,29 +45,20 @@ export function createSlice() {
 				state.activeId = action.payload.id;
 			},
 
-			startSaving( state ) {
-				state.entities[ state.activeId ].isSaving = true;
+			updateActiveDocument( state, action: PayloadAction<Document> ) {
+				if ( ! state.activeId ) {
+					return;
+				}
+
+				state.entities[ state.activeId ] = action.payload;
 			},
 
-			endSaving( state ) {
-				state.entities[ state.activeId ].isSaving = false;
-			},
-
-			startSavingDraft( state ) {
-				state.entities[ state.activeId ].isSavingDraft = true;
-			},
-
-			endSavingDraft( state ) {
-				state.entities[ state.activeId ].isSavingDraft = false;
-			},
-
-			markAsDirty( state ) {
-				state.entities[ state.activeId ].isDirty = true;
-			},
-
-			markAsPristine( state ) {
-				state.entities[ state.activeId ].isDirty = false;
-			},
+			startSaving: createActiveDocumentReducer( ( document ) => document.isSaving = true ),
+			endSaving: createActiveDocumentReducer( ( document ) => document.isSaving = false ),
+			startSavingDraft: createActiveDocumentReducer( ( document ) => document.isSavingDraft = true ),
+			endSavingDraft: createActiveDocumentReducer( ( document ) => document.isSavingDraft = false ),
+			markAsDirty: createActiveDocumentReducer( ( document ) => document.isDirty = true ),
+			markAsPristine: createActiveDocumentReducer( ( document ) => document.isDirty = false ),
 		},
 	} );
 }

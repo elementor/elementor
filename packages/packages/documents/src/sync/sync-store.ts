@@ -11,39 +11,42 @@ import {
 } from '@elementor/v1-adapters';
 
 export function syncStore( slice: Slice ) {
-	syncDocuments( slice );
-	syncCurrentDocument( slice );
+	syncInitialization( slice );
+	syncActiveDocument( slice );
 	syncOnDocumentSave( slice );
 	syncOnDocumentChange( slice );
 }
 
-function syncDocuments( slice: Slice ) {
-	const { setDocuments } = slice.actions;
+function syncInitialization( slice: Slice ) {
+	const { init } = slice.actions;
 
 	listenTo(
 		v1ReadyEvent(),
 		() => {
+			const documentsManager = getV1DocumentsManager();
+
 			const normalizedDocuments = Object
-				.entries( getV1DocumentsManager().documents )
+				.entries( documentsManager.documents )
 				.reduce( ( acc: Record<string, Document>, [ id, document ] ) => {
 					acc[ id ] = normalizeV1Document( document );
 
 					return acc;
 				}, {} );
 
-			dispatch( setDocuments( normalizedDocuments ) );
+			dispatch( init( {
+				entities: normalizedDocuments,
+				hostId: documentsManager.getInitialId(),
+				activeId: documentsManager.getCurrentId(),
+			} ) );
 		}
 	);
 }
 
-function syncCurrentDocument( slice: Slice ) {
+function syncActiveDocument( slice: Slice ) {
 	const { activateDocument } = slice.actions;
 
 	listenTo(
-		[
-			v1ReadyEvent(),
-			commandEndEvent( 'editor/documents/open' ),
-		],
+		commandEndEvent( 'editor/documents/open' ),
 		() => {
 			const documentsManager = getV1DocumentsManager();
 			const currentDocument = normalizeV1Document( documentsManager.getCurrent() );
@@ -54,7 +57,7 @@ function syncCurrentDocument( slice: Slice ) {
 }
 
 function syncOnDocumentSave( slice: Slice ) {
-	const { startSaving, endSaving, startSavingDraft, endSavingDraft } = slice.actions;
+	const { startSaving, endSaving, startSavingDraft, endSavingDraft, updateActiveDocument } = slice.actions;
 
 	const isDraft = ( e: ListenerEvent ) => {
 		const event = e as CommandEvent<{ status: string }>;
@@ -93,28 +96,19 @@ function syncOnDocumentSave( slice: Slice ) {
 		( e ) => {
 			if ( isDraft( e ) ) {
 				dispatch( endSavingDraft() );
-				return;
+			} else {
+				dispatch( endSaving() );
 			}
 
-			dispatch( endSaving() );
+			const activeDocument = normalizeV1Document( getV1DocumentsManager().getCurrent() );
+
+			dispatch( updateActiveDocument( activeDocument ) );
 		}
 	);
 }
 
 function syncOnDocumentChange( slice: Slice ) {
 	const { markAsDirty, markAsPristine } = slice.actions;
-
-	listenTo(
-		v1ReadyEvent(),
-		() => {
-			const currentDocument = getV1DocumentsManager().getCurrent();
-			const isAutoSave = currentDocument.config.revisions.current_id !== currentDocument.id;
-
-			if ( isAutoSave ) {
-				dispatch( markAsDirty() );
-			}
-		}
-	);
 
 	listenTo(
 		commandEndEvent( 'document/save/set-is-modified' ),

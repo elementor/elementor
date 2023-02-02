@@ -14,8 +14,9 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 	return {
 		id: documentData.id,
 		title: documentData.container.settings.get( 'post_title' ),
+		type: documentData.config.type,
 		status: documentData.container.settings.get( 'post_status' ),
-		isDirty: documentData.editor.isChanged,
+		isDirty: documentData.editor.isChanged || documentData.config.revisions.current_id !== documentData.id,
 		isSaving: documentData.editor.isSaving,
 		isSavingDraft: false,
 		userCan: {

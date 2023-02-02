@@ -1,8 +1,7 @@
 import { syncStore } from '../';
 import { createSlice } from '../../store';
 import { ExtendedWindow, Slice, V1Document } from '../../types';
-import { flushListeners } from '@elementor/v1-adapters';
-import { createStore, deleteStore, SliceState, Store } from '@elementor/store';
+import { createStore, SliceState, Store } from '@elementor/store';
 import {
 	dispatchCommandAfter,
 	dispatchCommandBefore,
@@ -32,16 +31,13 @@ describe( '@elementor/documents - Sync Store', () => {
 
 	afterEach( () => {
 		delete extendedWindow.elementor;
-
-		flushListeners();
-		deleteStore();
 	} );
 
 	it( 'should sync documents on V1 load', () => {
 		// Arrange.
 		mockV1DocumentsManager( [
-			makeMockV1Document( 1 ),
-			makeMockV1Document( 2 ),
+			makeMockV1Document( { id: 1 } ),
+			makeMockV1Document( { id: 2 } ),
 		] );
 
 		// Act.
@@ -54,6 +50,7 @@ describe( '@elementor/documents - Sync Store', () => {
 			1: {
 				id: 1,
 				title: 'Document 1',
+				type: 'wp-page',
 				status: 'publish',
 				isDirty: false,
 				isSaving: false,
@@ -65,6 +62,7 @@ describe( '@elementor/documents - Sync Store', () => {
 			2: {
 				id: 2,
 				title: 'Document 2',
+				type: 'wp-page',
 				status: 'publish',
 				isDirty: false,
 				isSaving: false,
@@ -85,11 +83,11 @@ describe( '@elementor/documents - Sync Store', () => {
 			type: 'document open',
 			dispatchEvent: () => dispatchCommandAfter( 'editor/documents/open' ),
 		},
-	] )( 'should sync current document on $type', ( { dispatchEvent } ) => {
+	] )( 'should sync active document on $type', ( { dispatchEvent } ) => {
 		// Arrange.
 		mockV1DocumentsManager( [
-			makeMockV1Document( 1 ),
-			makeMockV1Document( 2 ),
+			makeMockV1Document( { id: 1 } ),
+			makeMockV1Document( { id: 2 } ),
 		], 2 );
 
 		// Act.
@@ -98,10 +96,10 @@ describe( '@elementor/documents - Sync Store', () => {
 		// Assert.
 		const currentDocument = selectActiveDocument( store.getState() );
 
-		expect( currentDocument.id ).toBe( 2 );
 		expect( currentDocument ).toEqual( {
 			id: 2,
 			title: 'Document 2',
+			type: 'wp-page',
 			status: 'publish',
 			isDirty: false,
 			isSaving: false,
@@ -130,7 +128,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( true );
+		expect( selectActiveDocument( store.getState() )?.isSaving ).toBe( true );
 	} );
 
 	it( 'should sync saving state of a document on save', () => {
@@ -143,21 +141,21 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert - Default state.
-		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSaving ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save' );
 
 		// Assert - On save start.
-		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( true );
-		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSaving ).toBe( true );
+		expect( selectActiveDocument( store.getState() )?.isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save' );
 
 		// Assert - On save end.
-		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
-		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync draft saving state of a document on save', () => {
@@ -170,7 +168,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert - Default state.
-		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSavingDraft ).toBe( false );
 
 		// Act.
 		dispatchCommandBefore( 'document/save/save', {
@@ -178,8 +176,8 @@ describe( '@elementor/documents - Sync Store', () => {
 		} );
 
 		// Assert - On save start.
-		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
-		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( true );
+		expect( selectActiveDocument( store.getState() )?.isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSavingDraft ).toBe( true );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save', {
@@ -187,8 +185,8 @@ describe( '@elementor/documents - Sync Store', () => {
 		} );
 
 		// Assert - On save end.
-		expect( selectActiveDocument( store.getState() ).isSaving ).toBe( false );
-		expect( selectActiveDocument( store.getState() ).isSavingDraft ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSaving ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isSavingDraft ).toBe( false );
 	} );
 
 	it( 'should sync dirty state of a document on V1 load', () => {
@@ -209,7 +207,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Assert.
-		expect( selectActiveDocument( store.getState() ).isDirty ).toBe( true );
+		expect( selectActiveDocument( store.getState() )?.isDirty ).toBe( true );
 	} );
 
 	it( 'should sync dirty state of a document on document change', () => {
@@ -233,13 +231,13 @@ describe( '@elementor/documents - Sync Store', () => {
 		} ] );
 
 		// Assert - Default state.
-		expect( selectActiveDocument( store.getState() ).isDirty ).toBe( false );
+		expect( selectActiveDocument( store.getState() )?.isDirty ).toBe( false );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/set-is-modified' );
 
 		// Assert - After change.
-		expect( selectActiveDocument( store.getState() ).isDirty ).toBe( true );
+		expect( selectActiveDocument( store.getState() )?.isDirty ).toBe( true );
 	} );
 } );
 

@@ -24,8 +24,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 	} );
 
 	afterEach( () => {
-		flushListeners();
-
 		jest.useRealTimers();
 	} );
 
