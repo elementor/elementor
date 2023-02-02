@@ -7,7 +7,7 @@ import {
 	RouteEventDescriptor,
 } from '../';
 
-export function useIsRouteActive( route: RouteEventDescriptor['name'] ): boolean {
+export default function useIsRouteActive( route: RouteEventDescriptor['name'] ) {
 	const [ isActive, setIsActive ] = useState( () => isRouteActive( route ) );
 
 	useEffect( () => {

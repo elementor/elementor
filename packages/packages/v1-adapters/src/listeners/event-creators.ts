@@ -42,3 +42,7 @@ export const windowEvent = ( event: WindowEventDescriptor['name'] ): WindowEvent
 export const v1ReadyEvent = () => {
 	return windowEvent( 'elementor/v1/initialized' );
 };
+
+export const editModeChangeEvent = () => {
+	return windowEvent( 'elementor/v1/edit-mode/change' );
+};

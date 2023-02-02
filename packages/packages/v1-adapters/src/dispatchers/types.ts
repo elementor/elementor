@@ -10,4 +10,11 @@ export type ExtendedWindow = Window & {
 			isPartOf: ( route: string ) => boolean;
 		}
 	},
+	elementor: {
+		channels: {
+			dataEditMode: {
+				request: ( key: 'activeMode' ) => 'edit' | 'preview' | 'picker';
+			}
+		}
+	}
 }
