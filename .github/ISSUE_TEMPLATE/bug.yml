@@ -26,7 +26,7 @@ body:
         - 💬 **Description:**In your description, provide examples, screenshots, and screen recordings if you have them (just drag and drop in the field), and save time by describing in detail what happened. The more information you provide, the faster we can find a solution!
         - 👣 **Steps to replicate:** Think of it as explaining to someone over the phone how to replicate your issue. They can't see the problem, so explain it in detail in a way that we can try to replicate your issue in our own environments. Be thorough.
         - 💾 **System info:** Please include the System Info report as outlined in our [guidelines](https://github.com/elementor/elementor/issues/new?assignees=&labels=status%2Fawaiting_triage&template=bug.yml). 
-   - Get your System Info from your WordPress `Dashboard` > `Elementor` > `System info` [learn how to copy it here](https://elementor.com/help/hare-my-system-info/). We can't accept issues without it.
+          - Get your System Info from your WordPress `Dashboard` > `Elementor` > `System info` [learn how to copy it here](https://elementor.com/help/hare-my-system-info/). We can't accept issues without it.
         - ☝️ **One Issue Per Thread:** If you are experiencing more than one bug, submit only **<ins>ONE ISSUE PER THREAD</ins>**, so we can properly track them and reference them without any confusion.
 
         ## THE ISSUE
