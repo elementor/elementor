@@ -35,7 +35,7 @@ module.exports = {
 		{
 			// Development files.
 			files: [
-				'**/@(__mocks__|__tests__|test)/**/*.[tj]s?(x)',
+				'**/@(__mocks__|__tests__|tests|test)/**/*.[tj]s?(x)',
 			],
 			rules: {
 				// In tests, we are importing dev dependencies of the root directory, so we need to disable this rule.
