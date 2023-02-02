@@ -21,7 +21,7 @@ runs:
             latest_date=""
             latest_tag=""
             for tag in $tags; do
-              date=$(git log -1 --pretty=format:"%ai" refs/tags/$tag)
+              date=$(git log -1 --pretty=format:"%ai" $tag)
               if [ -z "$latest_date" ] || [ "$date" \> "$latest_date" ]; then
                 latest_date="$date"
                 latest_tag="$tag"
