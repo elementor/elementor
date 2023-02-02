@@ -5,10 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { SvgIcon } from '@elementor/ui';
 
 export default function init() {
-	registerTopBarActions();
+	registerTopBarMenuItems();
 }
 
-function registerTopBarActions() {
+function registerTopBarMenuItems() {
 	registerToggleAction( 'tools', {
 		name: 'open-elements-panel',
 		useProps: () => {
