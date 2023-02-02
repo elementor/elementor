@@ -10,6 +10,7 @@ const notCompatiblePlugins = [
 	'scroll-magic-addon-for-elementor',
 	'sina-extension-for-elementor',
 	'the-post-grid',
+	'woolentor-addons',
 ];
 
 const pluginsToTest = topPluginsConfig.filter( ( plugin ) => ! notCompatiblePlugins.includes( plugin ) );

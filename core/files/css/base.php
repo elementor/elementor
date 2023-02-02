@@ -327,7 +327,7 @@ abstract class Base extends Base_File {
 
 		$stylesheet = $this->get_stylesheet();
 
-		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [] );
+		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [], $this );
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
