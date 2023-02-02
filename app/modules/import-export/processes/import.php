@@ -39,7 +39,7 @@ class Import {
 	private $session_id;
 
 	/**
-	 * The Kit BA-API ID.
+	 * The Kit ID.
 	 *
 	 * @var string
 	 */
@@ -429,7 +429,7 @@ class Import {
 	}
 
 	/**
-	 * Get the manifest thumbnail, goes to the home page thumbnail if main doesn't exist
+	 * Get the Kit thumbnail, goes to the home page thumbnail if main doesn't exist
 	 *
 	 * @return string
 	 *
