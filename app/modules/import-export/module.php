@@ -171,16 +171,16 @@ class Module extends BaseModule {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
-					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
+					$last_imported_kit['kit_title'] ?? esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>',
-					! empty( $penultimate_imported_kit['kit_title'] ) ? $penultimate_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
+					$penultimate_imported_kit['kit_title'] ?? esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $penultimate_imported_kit['start_timestamp'] )
 				);
 			} else {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
-					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
+					$last_imported_kit['kit_title'] ?? esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>'
 				);

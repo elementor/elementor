@@ -17,12 +17,10 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Module;
-
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
 
 class Import {
-
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
 	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
@@ -45,7 +43,7 @@ class Import {
 	 *
 	 * @var string
 	 */
-	private $api_id;
+	private $kit_id;
 
 	/**
 	 * Adapter for the kit compatibility.
@@ -165,7 +163,7 @@ class Import {
 			}
 
 			$this->session_id = basename( $this->extracted_directory_path );
-			$this->api_id = ! empty( $settings['id'] ) ? $settings['id'] : '';
+			$this->kit_id = $settings['id'] ?? '';
 			$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
 			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 
@@ -399,7 +397,7 @@ class Import {
 			'session_id' => $this->session_id,
 			'kit_title' => $this->manifest['title'] ?? '',
 			'kit_name' => $this->manifest['name'] ?? '',
-			'kit_thumbnail' => $this->get_manifest_thumbnail(),
+			'kit_thumbnail' => $this->get_kit_thumbnail(),
 			'kit_source' => $this->settings_referrer,
 			'user_id' => get_current_user_id(),
 			'start_timestamp' => current_time( 'timestamp' ),
@@ -437,17 +435,17 @@ class Import {
 	 *
 	 * @throws WP_Error_Exception
 	 */
-	private function get_manifest_thumbnail(): string {
+	private function get_kit_thumbnail(): string {
 		if ( ! empty( $this->manifest['thumbnail'] ) ) {
 			return $this->manifest['thumbnail'];
 		}
 
-		if ( empty( $this->api_id ) ) {
+		if ( empty( $this->kit_id ) ) {
 			return '';
 		}
 
 		$api = new Kit_Library_Api();
-		$kit = $api->get_by_id( $this->api_id );
+		$kit = $api->get_by_id( $this->kit_id );
 
 		if ( is_wp_error( $kit ) ) {
 			throw new WP_Error_Exception( $kit );
