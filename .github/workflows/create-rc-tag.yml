@@ -88,7 +88,7 @@ jobs:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
-          BASE_TAG_NAME: main
+          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_NAME }}
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:

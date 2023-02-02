@@ -21,16 +21,14 @@ runs:
             latest_date=""
             latest_tag=""
             for tag in $tags; do
-              date=$(git log -1 --pretty=format:"%ai" $tag)
+              date=$(git log -1 --pretty=format:"%ai" refs/tags/$tag)
               if [ -z "$latest_date" ] || [ "$date" \> "$latest_date" ]; then
                 latest_date="$date"
                 latest_tag="$tag"
               fi
             done
 
-            # Output the latest tag's SHA and name
-            echo "$latest_tag" | awk -F "/" '{print $3}'
-            echo "$latest_tag"
-
+            # Output the latest tag's name
+            PREVIOUS_TAG_NAME=$(echo "$latest_tag" | awk -F "/" '{print $3}')
         fi
         
