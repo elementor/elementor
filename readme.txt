@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.10.1
+Stable tag: 3.10.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.10.2 - 2023-01-29 =
+
+* Fix: PHP 8.x throws errors and notices in some cases ([#21087](https://github.com/elementor/elementor/issues/21087))
+* Fix: Keyboard actions are not blocked on main tab container in Tabs widget
 
 = 3.10.1 - 2023-01-17 =
 

@@ -116,11 +116,7 @@ class Manager extends Base_Object {
 					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
 				}
 
-				if ( ! class_exists( $dependency ) && ! empty( $feature ) ) {
-					$experimental_data['dependencies'][ $key ] = new Wrap_Core_Dependency( $feature );
-				} else {
-					$experimental_data['dependencies'][ $key ] = $dependency::instance();
-				}
+				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
 			}
 		}
 
@@ -333,15 +329,6 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_hidden_wordpress_widgets',
-			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
-			'tag' => esc_html__( 'Improvement', 'elementor' ),
-			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-		] );
-
-		$this->add_feature( [
 			'name' => 'admin_menu_rearrangement',
 			'mutable' => false,
 		] );
@@ -356,7 +343,7 @@ class Manager extends Base_Object {
 				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_RC,
 			'default' => self::STATE_INACTIVE,
 		] );
 
@@ -434,7 +421,7 @@ class Manager extends Base_Object {
 		foreach ( $features as $feature_name => $feature ) {
 			$is_hidden = $feature[ static::TYPE_HIDDEN ];
 			$is_mutable = $feature['mutable'];
-			$should_hide_experiment = ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() );
+			$should_hide_experiment = ! $is_mutable || ( $is_hidden && ! $this->should_show_hidden() ) || $this->has_non_existing_dependency( $feature );
 
 			if ( $should_hide_experiment ) {
 				unset( $features[ $feature_name ] );
@@ -473,7 +460,7 @@ class Manager extends Base_Object {
 
 		$settings->add_tab(
 			'experiments', [
-				'label' => esc_html__( 'Experiments', 'elementor' ),
+				'label' => esc_html__( 'Features', 'elementor' ),
 				'sections' => [
 					'ongoing_experiments' => [
 						'callback' => function() {
@@ -510,34 +497,32 @@ class Manager extends Base_Object {
 	private function render_settings_intro() {
 		?>
 		<h2>
-			<?php echo esc_html__( 'Elementor Experiments', 'elementor' ); ?>
+			<?php echo esc_html__( 'Experiments and Features', 'elementor' ); ?>
 		</h2>
+		<p class="e-experiment__description">
+			<?php
+			printf(
+			/* translators: %1$s Link open tag, %2$s: Link close tag. */
+				esc_html__( 'Personalize your Elementor experience by controlling which features and experiments are active on your site. Help make Elementor better by %1$ssharing your experience and feedback with us%2$s.', 'elementor' ),
+				'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
+				'</a>'
+			);
+			?>
+		</p>
 		<p class="e-experiment__description">
 			<?php
 				printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. %1$sLearn More.%2$s', 'elementor' ),
+					esc_html__( 'To use an experiment or feature on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time. %1$sLearn More.%2$s', 'elementor' ),
 					'<a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">',
 					'</a>'
 				);
 			?>
 		</p>
-		<p class="e-experiment__description">
-			<?php echo esc_html__( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?>
-		</p>
-		<p class="e-experiment__description">
-			<?php
-				printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'Your feedback is important - %1$shelp us%2$s improve these features by sharing your thoughts and inputs.', 'elementor' ),
-					'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
-					'</a>'
-				);
-			?>
-		</p>
+
 		<?php if ( $this->get_features() ) { ?>
-		<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All Experiments', 'elementor' ); ?></button>
-		<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All Experiments', 'elementor' ); ?></button>
+		<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All', 'elementor' ); ?></button>
+		<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All', 'elementor' ); ?></button>
 		<?php } ?>
 		<hr>
 		<h2 class="e-experiment__table-title">
@@ -611,6 +596,15 @@ class Manager extends Base_Object {
 				<span><?php echo esc_html( $dependencies ); ?></span>
 			</div>
 		<?php
+	}
+
+	private function has_non_existing_dependency( $feature ) {
+		$non_existing_dep = ( new Collection( $feature['dependencies'] ?? [] ) )
+			->find( function ( $dependency ) {
+				return $dependency instanceof Non_Existing_Dependency;
+			} );
+
+		return ! ! $non_existing_dep;
 	}
 
 	/**
@@ -802,6 +796,18 @@ class Manager extends Base_Object {
 
 	private function should_show_hidden() {
 		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
+	}
+
+	private function create_dependency_class( $dependency_name, $dependency_args ) {
+		if ( class_exists( $dependency_name ) ) {
+			return $dependency_name::instance();
+		}
+
+		if ( ! empty( $dependency_args ) ) {
+			return new Wrap_Core_Dependency( $dependency_args );
+		}
+
+		return new Non_Existing_Dependency( $dependency_name );
 	}
 
 	public function __construct() {
