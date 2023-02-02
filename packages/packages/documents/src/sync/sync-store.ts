@@ -100,7 +100,9 @@ function syncOnDocumentSave( slice: Slice ) {
 				dispatch( endSaving() );
 			}
 
-			const activeDocument = normalizeV1Document( getV1DocumentsManager().getCurrent() );
+			const activeDocument = normalizeV1Document(
+				getV1DocumentsManager().getCurrent()
+			);
 
 			dispatch( updateActiveDocument( activeDocument ) );
 		}
