@@ -27,14 +27,17 @@ describe( '@elementor/elements-panel - Init', () => {
 		// Arrange.
 		init();
 
+		// Extract the arguments of the first call of `registerToggleAction()` from the top-bar.
 		const args = mockedRegisterToggleAction.mock.calls[ 0 ];
 		const menuName = args[ 0 ];
 		const { name, useProps } = args[ 1 ];
 
+		// Check if `useProps` exists.
 		if ( ! useProps ) {
 			fail( 'useProps is not defined' );
 		}
 
+		// Trigger the `useProps` hook & assert the result.
 		const { result } = renderHook( () => useProps() );
 
 		// Act.
