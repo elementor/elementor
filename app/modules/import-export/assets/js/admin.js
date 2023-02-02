@@ -1,58 +1,30 @@
-/**
- * Class Admin
- */
 class Admin {
 	/**
 	 * Session Storage Key
-	 * Is the user referred from a Kit in the Kit library
 	 *
 	 * @type {string}
 	 */
-	isKitReferredKey = 'elementor-is-kit-referred';
+	KIT_DATA_KEY = 'elementor-kit-data';
 
 	/**
-	 * Session Storage Key
-	 * Identifier of the kit that referred the user from the Kit library
+	 * Contains the ID of the referrer Kit and the name of the Kit to remove. Stored in session storage.
 	 *
-	 * @type {string}
+	 * @type {Object}
 	 */
-	kitReferrerKey = 'elementor-referrer-kit-id';
+	cachedKitData;
 
-	/**
-	 * Session Storage Key
-	 * Name of the last imported Kit that it to be or was removed
-	 *
-	 * @type {string}
-	 */
-	kitNameToRemoveKey = 'elementor-kit-to-remove-name';
-
-	/**
-	 * Constructor
-	 */
 	constructor() {
 		this.configureRevertBtn();
-		this.maybeShowKitReferrerDialog();
+		this.maybeShowReferrerKitDialog();
 	}
 
-	/**
-	 * ConfigureRevertBtn
-	 */
 	configureRevertBtn() {
 		const revertButton = document.getElementById( 'elementor-import-export__revert_kit' );
 		if ( ! revertButton ) {
 			return;
 		}
-		this.addRevertBtnListener( revertButton );
-		this.maybeAddRevertBtnMargin( revertButton );
-	}
-
-	/**
-	 * AddRevertBtnListener
-	 *
-	 * @param {HTMLAnchorElement} revertButton
-	 */
-	addRevertBtnListener( revertButton ) {
 		revertButton.addEventListener( 'click', this.revertBtnOnClick.bind( this ) );
+		this.maybeAddRevertBtnMargin( revertButton );
 	}
 
 	/**
@@ -61,8 +33,8 @@ class Admin {
 	 * @param {HTMLAnchorElement} revertButton
 	 */
 	maybeAddRevertBtnMargin( revertButton ) {
-		const referrerKit = new URLSearchParams( revertButton.href ).get( 'referrer_kit' );
-		if ( ! referrerKit ) {
+		const referrerKitId = new URLSearchParams( revertButton.href ).get( 'referrer_kit' );
+		if ( ! referrerKitId ) {
 			return;
 		}
 		revertButton.style.marginBottom = this.calculateMargin( revertButton );
@@ -108,7 +80,7 @@ class Admin {
 	revertBtnOnClick( event ) {
 		event.preventDefault();
 
-		const kitNameToRemove = this.getKitToRemoveName();
+		const kitNameToRemove = this.getKitNameToRemove();
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
@@ -117,36 +89,25 @@ class Admin {
 				confirm: __( 'Delete', 'elementor' ),
 				cancel: __( 'Cancel', 'elementor' ),
 			},
-			onConfirm: this.onRevertConfirm.bind( this, event.target, kitNameToRemove ),
+			onConfirm: () => this.onRevertConfirm( event.target, kitNameToRemove ),
 		} ).show();
 	}
 
 	onRevertConfirm( revertBtn, kitNameToRemove ) {
-		const referrerKit = new URLSearchParams( revertBtn.href ).get( 'referrer_kit' );
+		const referrerKitId = new URLSearchParams( revertBtn.href ).get( 'referrer_kit' );
 
-		this.setSessionStorage( Boolean( referrerKit ), referrerKit, kitNameToRemove );
+		this.saveToCache( referrerKitId ?? '', kitNameToRemove );
 
 		location.href = revertBtn.href;
 	}
 
-	setSessionStorage( referred, referrerKit, kitNameToRemove ) {
-		sessionStorage.setItem( this.isKitReferredKey, referred ? 'yes' : 'no' );
-		if ( referred ) {
-			sessionStorage.setItem( this.kitReferrerKey, referrerKit );
-		}
-		sessionStorage.setItem( this.kitNameToRemoveKey, kitNameToRemove );
-	}
-
-	/**
-	 * MaybeShowKitReferrerDialog
-	 */
-	maybeShowKitReferrerDialog() {
-		const isKitReferred = sessionStorage.getItem( this.isKitReferredKey );
-		if ( ! isKitReferred ) {
+	maybeShowReferrerKitDialog() {
+		const { referrerKitId } = this.getDataFromCache();
+		if ( ! referrerKitId ) {
 			return;
 		}
 
-		if ( 'no' === isKitReferred ) {
+		if ( 0 === referrerKitId.length ) {
 			this.createKitDeletedWidget( {
 				message: __( 'Try a different Kit or build your site from scratch.', 'elementor' ),
 				strings: {
@@ -157,12 +118,11 @@ class Admin {
 					location.href = elementorAppConfig.base_url + '#/kit-library';
 				},
 			} );
-			this.cleanUp( false );
+			this.clearCache();
 
 			return;
 		}
 
-		const kitReferrerId = sessionStorage.getItem( this.kitReferrerKey );
 		this.createKitDeletedWidget( {
 			message: __( 'You\'re ready to apply a new Kit!', 'elementor' ),
 			strings: {
@@ -170,10 +130,10 @@ class Admin {
 				cancel: __( 'Close', 'elementor' ),
 			},
 			onConfirm: () => {
-				location.href = elementorAppConfig.base_url + '#/kit-library/preview/' + kitReferrerId;
+				location.href = elementorAppConfig.base_url + '#/kit-library/preview/' + referrerKitId;
 			},
 		} );
-		this.cleanUp( true );
+		this.clearCache();
 	}
 
 	/**
@@ -196,35 +156,22 @@ class Admin {
 	}
 
 	/**
-	 * CleanUp
-	 *
-	 * @param {boolean} referred
-	 */
-	cleanUp( referred ) {
-		sessionStorage.removeItem( this.isKitReferredKey );
-		if ( referred ) {
-			sessionStorage.removeItem( this.kitReferrerKey );
-		}
-		sessionStorage.removeItem( this.kitNameToRemoveKey );
-	}
-
-	/**
 	 * Retrieving the last imported kit from the elementorAppConfig global
 	 *
 	 * @return {string}
 	 */
-	getKitToRemoveName() {
+	getKitNameToRemove() {
 		const lastKit = elementorAppConfig[ 'import-export' ].lastImportedSession;
 
-		if ( lastKit?.kit_title ) {
+		if ( lastKit.kit_title ) {
 			return lastKit.kit_title;
 		}
 
-		if ( lastKit?.kit_name ) {
+		if ( lastKit.kit_name ) {
 			return this.convertNameToTitle( lastKit.kit_name );
 		}
 
-		return 'Your Kit';
+		return __( 'Your Kit', 'elementor' );
 	}
 
 	/**
@@ -235,8 +182,28 @@ class Admin {
 	 * @return {string}
 	 */
 	convertNameToTitle( name ) {
-		const words = name.split( /[-_]+/ ).map( ( word ) => word[ 0 ].toUpperCase() + word.substring( 1 ) );
-		return words.join( ' ' );
+		return name
+			.split( /[-_]+/ )
+			.map( ( word ) => word[ 0 ].toUpperCase() + word.substring( 1 ) )
+			.join( ' ' );
+	}
+
+	saveToCache( referrerKitId, kitNameToRemove ) {
+		sessionStorage.setItem( this.KIT_DATA_KEY, JSON.stringify( { referrerKitId, kitNameToRemove } ) );
+	}
+
+	getDataFromCache() {
+		if ( this.cachedKitData ) {
+			return this.cachedKitData;
+		}
+
+		this.cachedKitData = JSON.parse( sessionStorage.getItem( this.KIT_DATA_KEY ) );
+
+		return this.cachedKitData;
+	}
+
+	clearCache() {
+		sessionStorage.removeItem( this.KIT_DATA_KEY );
 	}
 }
 

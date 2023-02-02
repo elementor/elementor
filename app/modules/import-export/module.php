@@ -205,10 +205,9 @@ class Module extends BaseModule {
 
 			<?php
 			if ( $should_show_revert_section ) {
-				$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
-				$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
+
 				$link_attributes = [
-					'href' => $this->maybe_add_referrer_param( $nonced_admin_post_url ),
+					'href' => $this->get_revert_href(),
 					'id' => 'elementor-import-export__revert_kit',
 					'class' => 'button',
 				];
@@ -227,6 +226,12 @@ class Module extends BaseModule {
 			<?php } ?>
 		</div>
 		<?php
+	}
+
+	private function get_revert_href(): string {
+		$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
+		$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
+		return $this->maybe_add_referrer_param( $nonced_admin_post_url );
 	}
 
 	/**
@@ -615,7 +620,7 @@ class Module extends BaseModule {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
-		$config_data = [
+		return [
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'builtinWpPostTypes' => ImportExportUtils::get_builtin_wp_post_types(),
@@ -625,14 +630,8 @@ class Module extends BaseModule {
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
 			'tools_url' => Tools::get_url(),
 			'importSessions' => Revert::get_import_sessions(),
+			'lastImportedSession' => $this->revert->get_last_import_session(),
 		];
-
-		$last_import_session = $this->revert->get_last_import_session();
-		if ( ! empty( $last_import_session ) ) {
-			$config_data['lastImportedSession'] = $last_import_session;
-		}
-
-		return $config_data;
 	}
 
 	/**

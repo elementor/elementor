@@ -7,6 +7,7 @@ export default function KitDialog( props ) {
 	const [ applyAnyway, setApplyAnyway ] = useState( false );
 
 	const kitAlreadyApplied = elementorAppConfig[ 'import-export' ].lastImportedSession;
+
 	if ( kitAlreadyApplied && ! applyAnyway ) {
 		return (
 			<KitAlreadyAppliedDialog
@@ -16,6 +17,7 @@ export default function KitDialog( props ) {
 			/>
 		);
 	}
+
 	return (
 		<ApplyKitDialog
 			downloadLink={ props.downloadLinkData.data.download_link }
