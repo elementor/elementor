@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { editModeChangeEvent, getCurrentEditMode, listenTo } from '../';
 
 export default function useIsPreviewMode() {
-	const [ isActive, setIsActive ] = useState( () => isPreviewMode() );
+	const [ isPreview, setIsPreview ] = useState( () => isPreviewMode() );
 
 	useEffect( () => {
-		const updateState = () => setIsActive( isPreviewMode() );
+		const updateState = () => setIsPreview( isPreviewMode() );
 
 		const cleanup = listenTo(
 			editModeChangeEvent(),
@@ -15,7 +15,7 @@ export default function useIsPreviewMode() {
 		return cleanup;
 	}, [] );
 
-	return isActive;
+	return isPreview;
 }
 
 function isPreviewMode() {
