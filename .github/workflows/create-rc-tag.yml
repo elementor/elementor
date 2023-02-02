@@ -78,6 +78,10 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           MESSAGE: v${{ env.PACKAGE_VERSION }}
+      - name: Get Previous Release
+        uses : ./.github/workflows/get-previous-release
+        with:
+          CHANNEL: ${{ github.event.inputs.chennel }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
