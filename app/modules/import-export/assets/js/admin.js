@@ -103,7 +103,7 @@ class Admin {
 
 	maybeShowReferrerKitDialog() {
 		const { referrerKitId } = this.getDataFromCache();
-		if ( ! referrerKitId ) {
+		if ( undefined === referrerKitId ) {
 			return;
 		}
 
@@ -142,9 +142,11 @@ class Admin {
 	 * @param {Object} options
 	 */
 	createKitDeletedWidget( options ) {
+		const { kitNameToRemove } = this.getDataFromCache();
+
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'e-revert-kit-deleted-dialog',
-			headerMessage: sessionStorage.getItem( this.kitNameToRemoveKey ) + __( ' was successfully deleted', 'elementor' ),
+			headerMessage: kitNameToRemove + __( ' was successfully deleted', 'elementor' ),
 			message: options.message,
 			strings: {
 				confirm: options.strings.confirm,
@@ -199,7 +201,7 @@ class Admin {
 
 		this.cachedKitData = JSON.parse( sessionStorage.getItem( this.KIT_DATA_KEY ) );
 
-		return this.cachedKitData;
+		return this.cachedKitData ?? {};
 	}
 
 	clearCache() {
