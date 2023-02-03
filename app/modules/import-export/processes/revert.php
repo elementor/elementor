@@ -25,8 +25,8 @@ class Revert {
 	 * @throws \Exception
 	 */
 	public function __construct() {
-		$this->import_sessions = $this->get_import_sessions();
-		$this->revert_sessions = $this->get_revert_sessions();
+		$this->import_sessions = self::get_import_sessions();
+		$this->revert_sessions = self::get_revert_sessions();
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Revert {
 		$this->delete_last_import_data();
 	}
 
-	public function get_import_sessions() {
+	public static function get_import_sessions() {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
 		if ( ! $import_sessions ) {
@@ -88,7 +88,7 @@ class Revert {
 		return $import_sessions;
 	}
 
-	public function get_revert_sessions() {
+	public static function get_revert_sessions() {
 		$revert_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS );
 
 		if ( ! $revert_sessions ) {
@@ -135,7 +135,9 @@ class Revert {
 
 		$revert_sessions[] = [
 			'session_id' => $reverted_session['session_id'],
+			'kit_title' => $reverted_session['kit_title'],
 			'kit_name' => $reverted_session['kit_name'],
+			'kit_thumbnail' => $reverted_session['kit_thumbnail'],
 			'source' => $reverted_session['kit_source'],
 			'user_id' => get_current_user_id(),
 			'import_timestamp' => $reverted_session['start_timestamp'],

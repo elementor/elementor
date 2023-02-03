@@ -2,14 +2,41 @@ const { addElement, getElementSelector } = require( '../assets/elements-utils' )
 const BasePage = require( './base-page.js' );
 
 module.exports = class EditorPage extends BasePage {
-	isPanelLoaded = false;
-
 	constructor( page, testInfo, cleanPostId = null ) {
 		super( page, testInfo );
 
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 
 		this.postId = cleanPostId;
+	}
+
+	async gotoPostId( id = this.postId ) {
+		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+
+		await this.ensurePanelLoaded();
+	}
+
+	async loadTemplate( template ) {
+		const templateData = require( `../templates/${ template }.json` );
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, templateData );
+	}
+
+	async cleanContent() {
+		await this.page.evaluate( () => {
+			$e.run( 'document/elements/empty', { force: true } );
+		} );
 	}
 
 	async openNavigator() {
@@ -56,36 +83,32 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async ensurePanelLoaded() {
-		if ( this.isPanelLoaded ) {
-			return;
-		}
-
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
-		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-
-		this.isPanelLoaded = true;
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
 	/**
 	 * Add element to the page using a model.
 	 *
-	 * @param {Object} model     - Model definition.
-	 * @param {string} container - Optional Container to create the element in.
+	 * @param {Object}  model               - Model definition.
+	 * @param {string}  container           - Optional Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Is the container a section.
 	 *
 	 * @return {Promise<*>} Element ID
 	 */
-	async addElement( model, container = null ) {
-		return await this.page.evaluate( addElement, { model, container } );
+	async addElement( model, container = null, isContainerASection = false ) {
+		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string} widgetType
-	 * @param {string} container  - Optional Container to create the element in.
+	 * @param {string}  widgetType
+	 * @param {string}  container           - Optional Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Is the container a section.
 	 */
-	async addWidget( widgetType, container = null ) {
-		return await this.addElement( { widgetType, elType: 'widget' }, container );
+	async addWidget( widgetType, container = null, isContainerASection = false ) {
+		return await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
 	}
 
 	/**
@@ -205,6 +228,18 @@ module.exports = class EditorPage extends BasePage {
 		await this.activatePanelTab( 'advanced' );
 		await this.page.selectOption( '.elementor-control-_element_width >> select', 'initial' );
 		await this.page.locator( '.elementor-control-_element_custom_width .elementor-control-input-wrapper input' ).fill( width );
+	}
+
+	/**
+	 * Set a custom width value to a widget.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string|number} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSliderControlValue( controlId, value ) {
+		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
 	}
 
 	/**
@@ -411,5 +446,17 @@ module.exports = class EditorPage extends BasePage {
 
 		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	async previewChanges( context ) {
+		const previewPagePromise = context.waitForEvent( 'page' );
+
+		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		await this.page.waitForLoadState( 'networkidle' );
+
+		const previewPage = await previewPagePromise;
+		await previewPage.waitForLoadState();
+
+		return previewPage;
 	}
 };

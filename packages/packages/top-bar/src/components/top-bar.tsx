@@ -1,34 +1,33 @@
 import * as React from 'react';
-import { __ } from '@wordpress/i18n';
-import { AppBar, Grid, Box, IconButton, styled } from '@elementor/ui';
-import ElementorIcon from './icons/elementor-icon';
-import PlusIcon from './icons/plus-icon';
-import { openRoute } from '@elementor/v1-adapters';
+import { AppBar as BaseAppBar, Box, styled, Grid } from '@elementor/ui';
+import MainMenuLocation from './locations/main-menu-location';
+import ToolsMenuLocation from './locations/tools-menu-location';
+import CanvasDisplayLocation from './locations/canvas-display-location';
+import UtilitiesMenuLocation from './locations/utilities-menu-location';
+import PrimaryActionLocation from './locations/primary-action-location';
 
-const AppBarAction = styled( IconButton )( ( { theme } ) => ( {
-	borderRadius: '8px',
-	padding: theme.spacing( 2 ),
-	'&:hover': {
-		backgroundColor: 'rgba(255, 255, 255, 0.1)',
-	},
-} ) );
+const AppBar = styled( BaseAppBar )`
+	background-color: #232629;
+	height: 48px;
+	box-shadow: none;
+`;
 
-export const TopBar = () => {
+export default function TopBar() {
 	return (
-		<AppBar position="sticky" sx={ { background: '#000', height: '48px' } }>
-			<Grid container direction="row">
-				<Box sx={ { flexGrow: 1, paddingInlineStart: '10px' } }>
-					<IconButton onClick={ () => openRoute( 'panel/menu' ) }>
-						<ElementorIcon titleAccess={ __( 'Elementor Logo', 'elementor' ) } />
-					</IconButton>
-
-					<AppBarAction onClick={ () => openRoute( 'panel/elements/categories' ) }>
-						<PlusIcon fontSize="small" />
-					</AppBarAction>
-				</Box>
-			</Grid>
+		<AppBar position="sticky">
+			<Box display="grid" gridTemplateColumns="repeat(3, 1fr)">
+				<Grid container>
+					<MainMenuLocation />
+					<ToolsMenuLocation />
+				</Grid>
+				<Grid container justifyContent="center">
+					<CanvasDisplayLocation />
+				</Grid>
+				<Grid container justifyContent="end">
+					<UtilitiesMenuLocation />
+					<PrimaryActionLocation />
+				</Grid>
+			</Box>
 		</AppBar>
 	);
-};
-
-export default TopBar;
+}
