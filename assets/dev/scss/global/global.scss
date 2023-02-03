@@ -4,7 +4,7 @@
 @import "aspect_ratio";
 @import "flatpicker";
 @import "modal-wrapper";
-@import "core/app/modules/site-editor/assets/scss/admin/admin-bar";
+@import "app/modules/site-editor/assets/scss/admin/admin-bar";
 
 .elementor-hidden {
 	display: none;
@@ -45,5 +45,16 @@
 	i {
 		color: #fff;
 		font-size: 1em;
+	}
+}
+
+#e-enable-unfiltered-files-dialog-import-template {
+
+	.dialog-confirm-ok {
+		color: $editor-success;
+	}
+
+	.dialog-confirm-cancel {
+		color: $editor-warning;
 	}
 }

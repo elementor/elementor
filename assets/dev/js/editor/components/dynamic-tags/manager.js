@@ -12,15 +12,15 @@ module.exports = elementorModules.Module.extend( {
 
 	cacheCallbacks: [],
 
-	addCacheRequest: function( tag ) {
+	addCacheRequest( tag ) {
 		this.cacheRequests[ this.createCacheKey( tag ) ] = true;
 	},
 
-	createCacheKey: function( tag ) {
+	createCacheKey( tag ) {
 		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) );
 	},
 
-	loadTagDataFromCache: function( tag ) {
+	loadTagDataFromCache( tag ) {
 		var cacheKey = this.createCacheKey( tag );
 
 		if ( undefined !== this.cache[ cacheKey ] ) {
@@ -32,7 +32,7 @@ module.exports = elementorModules.Module.extend( {
 		}
 	},
 
-	loadCacheRequests: function() {
+	loadCacheRequests() {
 		var cache = this.cache,
 			cacheRequests = this.cacheRequests,
 			cacheCallbacks = this.cacheCallbacks;
@@ -46,7 +46,7 @@ module.exports = elementorModules.Module.extend( {
 				post_id: elementor.config.document.id,
 				tags: Object.keys( cacheRequests ),
 			},
-			success: function( data ) {
+			success( data ) {
 				jQuery.extend( cache, data );
 
 				cacheCallbacks.forEach( function( callback ) {
@@ -56,17 +56,17 @@ module.exports = elementorModules.Module.extend( {
 		} );
 	},
 
-	refreshCacheFromServer: function( callback ) {
+	refreshCacheFromServer( callback ) {
 		this.cacheCallbacks.push( callback );
 
 		this.loadCacheRequests();
 	},
 
-	getConfig: function( key ) {
+	getConfig( key ) {
 		return this.getItems( elementor.config.dynamicTags, key );
 	},
 
-	parseTagsText: function( text, settings, parseCallback ) {
+	parseTagsText( text, settings, parseCallback ) {
 		var self = this;
 
 		if ( 'object' === settings.returnType ) {
@@ -78,7 +78,7 @@ module.exports = elementorModules.Module.extend( {
 		} );
 	},
 
-	parseTagText: function( tagText, settings, parseCallback ) {
+	parseTagText( tagText, settings, parseCallback ) {
 		var tagData = this.tagTextToTagData( tagText );
 
 		if ( ! tagData ) {
@@ -92,7 +92,7 @@ module.exports = elementorModules.Module.extend( {
 		return parseCallback( tagData.id, tagData.name, tagData.settings );
 	},
 
-	tagTextToTagData: function( tagText ) {
+	tagTextToTagData( tagText ) {
 		var tagIDMatch = tagText.match( /id="(.*?(?="))"/ ),
 			tagNameMatch = tagText.match( /name="(.*?(?="))"/ ),
 			tagSettingsMatch = tagText.match( /settings="(.*?(?="]))/ );
@@ -108,7 +108,7 @@ module.exports = elementorModules.Module.extend( {
 		};
 	},
 
-	createTag: function( tagID, tagName, tagSettings ) {
+	createTag( tagID, tagName, tagSettings ) {
 		var tagConfig = this.getConfig( 'tags.' + tagName );
 
 		if ( ! tagConfig ) {
@@ -120,10 +120,10 @@ module.exports = elementorModules.Module.extend( {
 				controls: tagConfig.controls,
 			} );
 
-		return new TagClass( { id: tagID, name: tagName, model: model } );
+		return new TagClass( { id: tagID, name: tagName, model } );
 	},
 
-	getTagDataContent: function( tagID, tagName, tagSettings ) {
+	getTagDataContent( tagID, tagName, tagSettings ) {
 		var tag = this.createTag( tagID, tagName, tagSettings );
 
 		if ( ! tag ) {
@@ -133,25 +133,25 @@ module.exports = elementorModules.Module.extend( {
 		return tag.getContent();
 	},
 
-	tagDataToTagText: function( tagID, tagName, tagSettings ) {
+	tagDataToTagText( tagID, tagName, tagSettings ) {
 		tagSettings = encodeURIComponent( JSON.stringify( ( tagSettings && tagSettings.toJSON( { remove: [ 'default' ] } ) ) || {} ) );
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},
 
-	tagContainerToTagText: function( /**Container*/ container ) {
+	tagContainerToTagText( /** Container*/ container ) {
 		return elementor.dynamicTags.tagDataToTagText(
 			container.view.getOption( 'id' ),
 			container.view.getOption( 'name' ),
-			container.view.model
+			container.view.model,
 		);
 	},
 
-	cleanCache: function() {
+	cleanCache() {
 		this.cache = {};
 	},
 
-	onInit: function() {
+	onInit() {
 		this.loadCacheRequests = _.debounce( this.loadCacheRequests, 300 );
 	},
 } );

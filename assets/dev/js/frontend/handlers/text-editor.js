@@ -1,4 +1,4 @@
-class TextEditor extends elementorModules.frontend.handlers.Base {
+export default class TextEditor extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -21,8 +21,8 @@ class TextEditor extends elementorModules.frontend.handlers.Base {
 
 		return {
 			$paragraph: this.$element.find( selectors.paragraph ),
-			$dropCap: $dropCap,
-			$dropCapLetter: $dropCapLetter,
+			$dropCap,
+			$dropCapLetter,
 		};
 	}
 
@@ -86,7 +86,3 @@ class TextEditor extends elementorModules.frontend.handlers.Base {
 		}
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( TextEditor, { $element: $scope } );
-};

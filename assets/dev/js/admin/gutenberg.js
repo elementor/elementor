@@ -1,10 +1,10 @@
-/* global jQuery, ElementorGutenbergSettings */
+/* global ElementorGutenbergSettings */
 ( function( $ ) {
 	'use strict';
 
 	var ElementorGutenbergApp = {
 
-		cacheElements: function() {
+		cacheElements() {
 			var self = this;
 
 			self.isElementorMode = ElementorGutenbergSettings.isElementorMode;
@@ -25,7 +25,7 @@
 			} );
 		},
 
-		buildPanel: function() {
+		buildPanel() {
 			var self = this;
 
 			if ( ! self.cache.$gutenberg.find( '#elementor-switch-mode' ).length ) {
@@ -45,31 +45,38 @@
 
 					self.animateLoader();
 
-					var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
-					if ( ! documentTitle ) {
-						wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+					// A new post is initialized as an 'auto-draft'.
+					// if the post is not a new post it should not save it to avoid some saving conflict between elementor and gutenberg.
+					const isNewPost = 'auto-draft' === wp.data.select( 'core/editor' ).getCurrentPost().status;
+
+					if ( isNewPost ) {
+						var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
+						if ( ! documentTitle ) {
+							wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+						}
+
+						wp.data.dispatch( 'core/editor' ).savePost();
 					}
 
-					wp.data.dispatch( 'core/editor' ).savePost();
 					self.redirectWhenSave();
 				} );
 			}
 		},
 
-		bindEvents: function() {
+		bindEvents() {
 			var self = this;
 
 			self.cache.$switchModeButton.on( 'click', function() {
 				if ( self.isElementorMode ) {
 					elementorCommon.dialogsManager.createWidget( 'confirm', {
-						message: elementorAdmin.translate( 'back_to_wordpress_editor_message' ),
-						headerMessage: elementorAdmin.translate( 'back_to_wordpress_editor_header' ),
+						message: __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
+						headerMessage: __( 'Back to WordPress Editor', 'elementor' ),
 						strings: {
-							confirm: elementorAdmin.translate( 'yes' ),
-							cancel: elementorAdmin.translate( 'cancel' ),
+							confirm: __( 'Continue', 'elementor' ),
+							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
-						onConfirm: function() {
+						onConfirm() {
 							const wpEditor = wp.data.dispatch( 'core/editor' );
 
 							wpEditor.editPost( { gutenberg_elementor_mode: false } );
@@ -86,7 +93,7 @@
 			} );
 		},
 
-		redirectWhenSave: function() {
+		redirectWhenSave() {
 			var self = this;
 
 			setTimeout( function() {
@@ -98,17 +105,17 @@
 			}, 300 );
 		},
 
-		animateLoader: function() {
+		animateLoader() {
 			this.cache.$editorPanelButton.addClass( 'elementor-animate' );
 		},
 
-		toggleStatus: function() {
+		toggleStatus() {
 			jQuery( 'body' )
 				.toggleClass( 'elementor-editor-active', this.isElementorMode )
 				.toggleClass( 'elementor-editor-inactive', ! this.isElementorMode );
 		},
 
-		init: function() {
+		init() {
 			this.cacheElements();
 		},
 	};

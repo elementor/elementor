@@ -54,11 +54,23 @@ class Module extends BaseApp {
 			return;
 		}
 
+		// Should load 'elementor-admin-bar' before 'admin-bar'
+		wp_dequeue_script( 'admin-bar' );
+
 		wp_enqueue_script(
 			'elementor-admin-bar',
-			$this->get_js_assets_url( 'admin-bar' ),
+			$this->get_js_assets_url( 'elementor-admin-bar' ),
 			[ 'elementor-frontend-modules' ],
 			ELEMENTOR_VERSION,
+			true
+		);
+
+		// This is a core script of WordPress, it is not required to pass the 'ver' argument.
+		wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+			'admin-bar',
+			null,
+			[ 'elementor-admin-bar' ],
+			false,
 			true
 		);
 
@@ -78,13 +90,17 @@ class Module extends BaseApp {
 		}
 
 		/**
-		 * Register admin_bar config to parse later in the frontend and add to the admin bar with JS
+		 * Admin bar settings in the frontend.
 		 *
-		 * @param array $settings the admin_bar config
+		 * Register admin_bar config to parse later in the frontend and add to the admin bar with JS.
 		 *
 		 * @since 3.0.0
+		 *
+		 * @param array $settings the admin_bar config
 		 */
-		return apply_filters( 'elementor/frontend/admin_bar/settings', $settings );
+		$settings = apply_filters( 'elementor/frontend/admin_bar/settings', $settings );
+
+		return $settings;
 	}
 
 	/**
@@ -104,7 +120,7 @@ class Module extends BaseApp {
 
 		return [
 			'id' => 'elementor_edit_page',
-			'title' => __( 'Edit with Elementor', 'elementor' ),
+			'title' => esc_html__( 'Edit with Elementor', 'elementor' ),
 			'href' => $href,
 			'children' => array_map( function ( $document ) {
 				return [
@@ -121,7 +137,7 @@ class Module extends BaseApp {
 	 * Module constructor.
 	 */
 	public function __construct() {
-		add_action( 'elementor/frontend/get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
+		add_action( 'elementor/frontend/before_get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
 		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ], 11 /* after third party scripts */ );
 	}
 }

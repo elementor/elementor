@@ -8,7 +8,7 @@ export const CopyAll = () => {
 				eButtonsCount = 2;
 
 			for ( let i = 0; i < eButtonsCount; ++i ) {
-				ElementsHelper.createButton( eColumn );
+				ElementsHelper.createWidgetButton( eColumn );
 			}
 
 			ElementsHelper.copyAll();

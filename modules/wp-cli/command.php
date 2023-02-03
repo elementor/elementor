@@ -37,13 +37,12 @@ class Command extends \WP_CLI_Command {
 		$network = ! empty( $assoc_args['network'] ) && is_multisite();
 
 		if ( $network ) {
-			/** @var \WP_Site[] $blogs */
-			$blogs = get_sites();
+			$blog_ids = get_sites( [
+				'fields' => 'ids',
+				'number' => 0,
+			] );
 
-			foreach ( $blogs as $keys => $blog ) {
-				// Cast $blog as an array instead of  object
-				$blog_id = $blog->blog_id;
-
+			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
 
 				Plugin::$instance->files_manager->clear_cache();
@@ -78,10 +77,16 @@ class Command extends \WP_CLI_Command {
 	/**
 	 * Replace old URLs with new URLs in all Elementor pages.
 	 *
+	 * [--force]
+	 *      Suppress error messages. instead, return "0 affected rows.".
+	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor replace-urls <old> <new>
 	 *      - This will replace all <old> URLs with the <new> URL.
+	 *
+	 *  2. wp elementor replace-urls <old> <new> --force
+	 *      - This will replace all <old> URLs with the <new> URL without throw errors.
 	 *
 	 * @access public
 	 * @alias replace-urls
@@ -99,7 +104,11 @@ class Command extends \WP_CLI_Command {
 			$results = Utils::replace_urls( $args[0], $args[1] );
 			\WP_CLI::success( $results );
 		} catch ( \Exception $e ) {
-			\WP_CLI::error( $e->getMessage() );
+			if ( isset( $assoc_args['force'] ) ) {
+				\WP_CLI::success( '0 rows affected.' );
+			} else {
+				\WP_CLI::error( $e->getMessage() );
+			}
 		}
 	}
 

@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# if ( closeType ) { #>
 			<div class="elementor-templates-modal__header__close elementor-templates-modal__header__close--{{{ closeType }}} elementor-templates-modal__header__item">
 				<# if ( 'skip' === closeType ) { #>
-				<span><?php echo __( 'Skip', 'elementor' ); ?></span>
+				<span><?php echo esc_html__( 'Skip', 'elementor' ); ?></span>
 				<# } #>
-				<i class="eicon-close" aria-hidden="true" title="<?php echo __( 'Close', 'elementor' ); ?>"></i>
-				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
+				<i class="eicon-close" aria-hidden="true" title="<?php echo esc_html__( 'Close', 'elementor' ); ?>"></i>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 			</div>
 		<# } #>
 		<div id="elementor-template-library-header-tools"></div>

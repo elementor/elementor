@@ -1,0 +1,36 @@
+$e-app-drop-zone-icon-color: tints(400);
+$e-app-drop-zone-icon-dark-color: tints(400);
+$e-app-drop-zone-text-color: tints(500);
+$e-app-drop-zone-text-dark-color: dark-tints(200);
+$e-app-drop-zone-secondary-text-color: tints(600);
+$e-app-drop-zone-secondary-text-dark-color: dark-tints(100);
+
+$root: e-app-drop-zone;
+
+.#{$root} {
+	--e-app-drop-zone-icon-color: #{$e-app-drop-zone-icon-color};
+	--e-app-drop-zone-text-color: #{$e-app-drop-zone-text-color};
+	--e-app-drop-zone-secondary-text-color: #{$e-app-drop-zone-secondary-text-color};
+
+	&__icon {
+		margin-bottom: spacing(44);
+		color: var(--e-app-drop-zone-icon-color);
+		font-size: 60px;
+	}
+
+	&__text {
+		color: var(--e-app-drop-zone-text-color);
+	}
+
+	&__secondary-text {
+		color: var(--e-app-drop-zone-secondary-text-color);
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-drop-zone-icon-color: #{$e-app-drop-zone-icon-dark-color};
+		--e-app-drop-zone-text-color: #{$e-app-drop-zone-text-dark-color};
+		--e-app-drop-zone-secondary-text-color: #{$e-app-drop-zone-secondary-text-dark-color};
+	}
+}
