@@ -13,17 +13,20 @@ export default class HistoryManager {
 	active = true;
 
 	translations = {
+		// Alphabetical order.
 		add: __( 'Added', 'elementor' ),
 		change: __( 'Edited', 'elementor' ),
 		disable: __( 'Disabled', 'elementor' ),
 		duplicate: __( 'Duplicate', 'elementor' ),
 		enable: __( 'Enabled', 'elementor' ),
+		import: __( 'Imported', 'elementor' ),
 		move: __( 'Moved', 'elementor' ),
 		paste: __( 'Pasted', 'elementor' ),
 		paste_style: __( 'Style Pasted', 'elementor' ),
 		remove: __( 'Removed', 'elementor' ),
-		reset_style: __( 'Style Reset', 'elementor' ),
 		reset_settings: __( 'Settings Reset', 'elementor' ),
+		reset_style: __( 'Style Reset', 'elementor' ),
+		selected: __( 'Selected', 'elementor' ),
 	};
 
 	constructor( document ) {
@@ -61,7 +64,7 @@ export default class HistoryManager {
 		this.active = value;
 	}
 
-	getActive( value ) {
+	getActive() {
 		return this.active;
 	}
 
@@ -85,7 +88,7 @@ export default class HistoryManager {
 
 	deleteItem( id ) {
 		const item = this.items.findWhere( {
-			id: id,
+			id,
 		} );
 
 		this.items.remove( item );
@@ -124,12 +127,12 @@ export default class HistoryManager {
 		const id = this.currentItemID ? this.currentItemID : new Date().getTime();
 
 		let currentItem = this.items.findWhere( {
-			id: id,
+			id,
 		} );
 
 		if ( ! currentItem ) {
 			currentItem = new ItemModel( {
-				id: id,
+				id,
 				title: itemData.title,
 				subTitle: itemData.subTitle,
 				action: this.getActionLabel( itemData ),
@@ -181,9 +184,9 @@ export default class HistoryManager {
 			const historyItem = item.get( 'items' ).first();
 
 			if ( historyItem.get( 'restore' ) ) {
-				let container = 'sub-add' === historyItem.get( 'type' ) ?
-					historyItem.get( 'data' ).containerToRestore :
-					historyItem.get( 'container' ) || historyItem.get( 'containers' );
+				let container = 'sub-add' === historyItem.get( 'type' )
+					? historyItem.get( 'data' ).containerToRestore
+					: historyItem.get( 'container' ) || historyItem.get( 'containers' );
 
 				if ( Array.isArray( container ) ) {
 					container = container[ 0 ];

@@ -1,0 +1,31 @@
+.e-onboarding {
+
+	&__page-goodToGo {
+
+		.e-onboarding__page-content-section-title,
+		.e-onboarding__page-content-section-text {
+			text-align: center;
+		}
+	}
+
+	&__cards-grid {
+
+		// Specificity.
+		&.e-onboarding__page-content {
+			margin-top: 48px;
+			margin-bottom: 48px;
+		}
+
+		.e-onboarding__card {
+			max-width: 555px;
+
+			&:not(:last-child) {
+				margin-inline-end: 20px;
+			}
+		}
+	}
+
+	&__good-to-go-footer {
+		justify-content: end;
+	}
+}

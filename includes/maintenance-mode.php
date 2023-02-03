@@ -109,7 +109,18 @@ class Maintenance_Mode {
 
 		$exclude_mode = self::get( 'exclude_mode', [] );
 
-		$is_login_page = apply_filters( 'elementor/maintenance_mode/is_login_page', false );
+		$is_login_page = false;
+
+		/**
+		 * Is login page
+		 *
+		 * Filters whether the maintenance mode displaying the login page or a regular page.
+		 *
+		 * @since 1.0.4
+		 *
+		 * @param bool $is_login_page Whether its a login page.
+		 */
+		$is_login_page = apply_filters( 'elementor/maintenance_mode/is_login_page', $is_login_page );
 
 		if ( $is_login_page ) {
 			return;
@@ -187,48 +198,49 @@ class Maintenance_Mode {
 
 		$tools->add_tab(
 			'maintenance_mode', [
-				'label' => __( 'Maintenance Mode', 'elementor' ),
+				'label' => esc_html__( 'Maintenance Mode', 'elementor' ),
 				'sections' => [
 					'maintenance_mode' => [
 						'callback' => function() {
 							echo '<h2>' . esc_html__( 'Maintenance Mode', 'elementor' ) . '</h2>';
-							echo '<div>' . __( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
+							echo '<div>' . esc_html__( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
 						},
 						'fields' => [
 							'maintenance_mode_mode' => [
-								'label' => __( 'Choose Mode', 'elementor' ),
+								'label' => esc_html__( 'Choose Mode', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
+									'std' => '',
 									'options' => [
-										'' => __( 'Disabled', 'elementor' ),
-										self::MODE_COMING_SOON => __( 'Coming Soon', 'elementor' ),
-										self::MODE_MAINTENANCE => __( 'Maintenance', 'elementor' ),
+										'' => esc_html__( 'Disabled', 'elementor' ),
+										self::MODE_COMING_SOON => esc_html__( 'Coming Soon', 'elementor' ),
+										self::MODE_MAINTENANCE => esc_html__( 'Maintenance', 'elementor' ),
 									],
 									'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
-											  __( 'Choose between Coming Soon mode (returning HTTP 200 code) or Maintenance Mode (returning HTTP 503 code).', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-maintenance-mode-description" data-value="maintenance" style="display: none">' .
-											  __( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-maintenance-mode-description" data-value="coming_soon" style="display: none">' .
-											  __( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
-											  '</div>',
+												esc_html__( 'Choose between Coming Soon mode (returning HTTP 200 code) or Maintenance Mode (returning HTTP 503 code).', 'elementor' ) .
+												'</div>' .
+												'<div class="elementor-maintenance-mode-description" data-value="maintenance" style="display: none">' .
+												esc_html__( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
+												'</div>' .
+												'<div class="elementor-maintenance-mode-description" data-value="coming_soon" style="display: none">' .
+												esc_html__( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
+												'</div>',
 								],
 							],
 							'maintenance_mode_exclude_mode' => [
-								'label' => __( 'Who Can Access', 'elementor' ),
+								'label' => esc_html__( 'Who Can Access', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'select',
 									'std' => 'logged_in',
 									'options' => [
-										'logged_in' => __( 'Logged In', 'elementor' ),
-										'custom' => __( 'Custom', 'elementor' ),
+										'logged_in' => esc_html__( 'Logged In', 'elementor' ),
+										'custom' => esc_html__( 'Custom', 'elementor' ),
 									],
 								],
 							],
 							'maintenance_mode_exclude_roles' => [
-								'label' => __( 'Roles', 'elementor' ),
+								'label' => esc_html__( 'Roles', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'checkbox_list_roles',
@@ -236,10 +248,11 @@ class Maintenance_Mode {
 								'setting_args' => [ __NAMESPACE__ . '\Settings_Validations', 'checkbox_list' ],
 							],
 							'maintenance_mode_template_id' => [
-								'label' => __( 'Choose Template', 'elementor' ),
+								'label' => esc_html__( 'Choose Template', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'select',
+									'std' => '',
 									'show_select' => true,
 									'options' => $templates_options,
 									'desc' => $template_description,
@@ -267,7 +280,7 @@ class Maintenance_Mode {
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-on',
-			'title' => __( 'Maintenance Mode ON', 'elementor' ),
+			'title' => esc_html__( 'Maintenance Mode ON', 'elementor' ),
 			'href' => Tools::get_url() . '#tab-maintenance_mode',
 		] );
 
@@ -276,7 +289,7 @@ class Maintenance_Mode {
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-edit',
 			'parent' => 'elementor-maintenance-on',
-			'title' => __( 'Edit Template', 'elementor' ),
+			'title' => esc_html__( 'Edit Template', 'elementor' ),
 			'href' => $document ? $document->get_edit_url() : '',
 		] );
 	}
@@ -353,9 +366,18 @@ class Maintenance_Mode {
 		}
 
 		?>
-		<a target="_blank" class="elementor-edit-template" style="display: none" href="<?php echo $edit_url; ?>"><?php echo __( 'Edit Template', 'elementor' ); ?></a>
-		<div class="elementor-maintenance-mode-error"><?php echo __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ); ?></div>
-		<div class="elementor-maintenance-mode-error"><?php echo sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ); ?></div>
+		<a target="_blank" class="elementor-edit-template" style="display: none" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html__( 'Edit Template', 'elementor' ); ?></a>
+		<div class="elementor-maintenance-mode-error"><?php echo esc_html__( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ); ?></div>
+		<div class="elementor-maintenance-mode-error">
+			<?php
+				printf(
+					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					esc_html__( 'Select one or go ahead and %1$screate one%2$s now.', 'elementor' ),
+					'<a target="_blank" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) . '">',
+					'</a>'
+				);
+			?>
+		</div>
 		<?php
 	}
 }

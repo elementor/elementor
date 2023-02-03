@@ -1,12 +1,16 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Api;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Responsive\Responsive;
+use Elementor\Core\Schemes\Base;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
+use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +26,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
+
+	public static function _on_each_version( $updater ) {
+		self::recalc_usage_data( $updater );
+		self::remove_remote_info_api_data();
+
+		$uploads_manager = Plugin::$instance->uploads_manager;
+
+		$temp_dir = $uploads_manager->get_temp_dir();
+
+		if ( file_exists( $temp_dir ) ) {
+			$uploads_manager->remove_file_or_dir( $temp_dir );
+		}
+	}
 
 	/**
 	 * Upgrade Elementor 0.3.2
@@ -627,6 +644,10 @@ class Upgrades {
 	 * @return bool
 	 */
 	public static function recalc_usage_data( $updater ) {
+		if ( ! Tracker::is_allow_track() ) {
+			return false;
+		}
+
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
 
@@ -660,12 +681,12 @@ class Upgrades {
 				return;
 			}
 
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
 			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
 			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
-			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
-			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
 
 			$kit_settings = $kit->get_meta( $meta_key );
 
@@ -725,7 +746,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_colors'] ) ) {
 				self::notice( 'System colors already exist. nothing to do.' );
@@ -767,7 +788,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
 				self::notice( 'Custom colors already exist. nothing to do.' );
@@ -806,7 +827,7 @@ class Upgrades {
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => esc_html__( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}
@@ -832,7 +853,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_typography'] ) ) {
 				self::notice( 'System typography already exist. nothing to do.' );
@@ -872,6 +893,112 @@ class Upgrades {
 
 			add_option( 'elementor_experiment-e_dom_optimization', $new_option );
 		}
+	}
+
+	public static function _v_3_2_0_migrate_breakpoints_to_new_system( $updater, $include_revisions = true ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			$kit_settings = $kit->get_meta( SettingsPageManager::META_KEY );
+
+			if ( ! $kit_settings ) {
+				// Nothing to upgrade.
+				return;
+			}
+
+			$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+			$old_mobile_option_key = $prefix . 'md';
+			$old_tablet_option_key = $prefix . 'lg';
+
+			$breakpoint_values = [
+				$old_mobile_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_mobile_option_key ),
+				$old_tablet_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_tablet_option_key ),
+			];
+
+			// Breakpoint values are either a number, or an empty string (empty setting).
+			array_walk( $breakpoint_values, function( &$breakpoint_value, $breakpoint_key ) {
+				if ( $breakpoint_value ) {
+					// If the saved breakpoint value is a number, 1px is reduced because the new breakpoints system is
+					// based on max-width, as opposed to the old breakpoints system that worked based on min-width.
+					$breakpoint_value--;
+				}
+
+				return $breakpoint_value;
+			} );
+
+			$kit_settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ] = $breakpoint_values[ $old_mobile_option_key ];
+			$kit_settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET ] = $breakpoint_values[ $old_tablet_option_key ];
+
+			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+			$page_settings_manager->save_settings( $kit_settings, $kit_id );
+		};
+
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	public static function _v_3_4_8_fix_font_awesome_default_value_from_1_to_yes() {
+		// if `Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY` value is '1', then set it to `yes`.
+		$load_fa4_shim_option = get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY );
+
+		if ( '1' === $load_fa4_shim_option ) {
+			update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
+		}
+	}
+
+	public static function _v_3_5_0_remove_old_elementor_scheme() {
+		global $wpdb;
+
+		$key = Base::SCHEME_OPTION_PREFIX;
+
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
+	}
+
+	public static function _v_3_8_0_fix_php8_image_custom_size() {
+		global $wpdb;
+
+		$attachment_ids = $wpdb->get_col(
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '`
+				WHERE `meta_key` = "_wp_attachment_metadata"
+					AND (
+						`meta_value` LIKE \'%elementor_custom_%\'
+					);'
+		);
+
+		foreach ( $attachment_ids as $attachment_id ) {
+			$attachment_metadata = wp_get_attachment_metadata( $attachment_id );
+			if ( empty( $attachment_metadata['sizes'] ) || ! is_array( $attachment_metadata['sizes'] ) ) {
+				continue;
+			}
+
+			$old_attachment_metadata = $attachment_metadata;
+			foreach ( $attachment_metadata['sizes'] as $size_key => $size_value ) {
+				if ( 0 !== strpos( $size_key, 'elementor_custom_' ) ) {
+					continue;
+				}
+
+				if ( absint( $size_value['width'] ) !== $size_value['width'] ) {
+					$attachment_metadata['sizes'][ $size_key ]['width'] = (int) $size_value['width'];
+				}
+
+				if ( absint( $size_value['height'] ) !== $size_value['height'] ) {
+					$attachment_metadata['sizes'][ $size_key ]['height'] = (int) $size_value['height'];
+				}
+			}
+
+			if ( $old_attachment_metadata['sizes'] === $attachment_metadata['sizes'] ) {
+				continue;
+			}
+
+			wp_update_attachment_metadata( $attachment_id, $attachment_metadata );
+		}
+	}
+
+	public static function remove_remote_info_api_data() {
+		global $wpdb;
+
+		$key = Api::TRANSIENT_KEY_PREFIX;
+
+		return $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
 	}
 
 	/**

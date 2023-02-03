@@ -1,0 +1,16 @@
+.e-onboarding__checklist {
+	padding-inline-start: 0;
+
+	&-item {
+		display: flex;
+		align-items: center;
+		font-size: 12px;
+		margin-bottom: 12px;
+
+		.eicon-check-circle {
+			margin-inline-end: 9px;
+			font-size: 16px;
+			font-weight: 600;
+		}
+	}
+}

@@ -6,7 +6,6 @@ $icon-size: var(--icon-size, 25px);
 $icon-padding: var(--icon-padding, 0.5em);
 $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 
-
 .elementor-widget-social-icons {
 /*TODO: This Grid-0 needs to be removed after PRO is Updated */
 	&.elementor-grid-0, &.elementor-grid-tablet-0, &.elementor-grid-mobile-0 {
@@ -40,6 +39,8 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 }
 
 .elementor-social-icon {
+	--e-social-icon-icon-color: #fff;
+
 	display: inline-flex;
 	background-color: $gray;
 	align-items: center;
@@ -48,7 +49,11 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	cursor: pointer;
 
 	i {
-		color: white;
+		color: var(--e-social-icon-icon-color);
+	}
+
+	svg {
+		fill: var(--e-social-icon-icon-color);
 	}
 
 	&:last-child {

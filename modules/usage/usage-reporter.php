@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Usage;
 
 use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,23 +19,7 @@ class Usage_Reporter extends Base {
 	const RECALC_ACTION = 'elementor_usage_recalc';
 
 	public function get_title() {
-		$title = 'Elements Usage';
-
-		if ( 'html' === $this->_properties['format'] ) {
-			if ( empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not required here.
-				$nonce = wp_create_nonce( self::RECALC_ACTION );
-				$url = add_query_arg( [
-					self::RECALC_ACTION => 1,
-					'_wpnonce' => $nonce,
-				] );
-
-				$title .= '<a id="elementor-usage-recalc" href="' . esc_url( $url ) . '#elementor-usage-recalc" class="box-title-tool">Recalculate</a>';
-			} else {
-				$title .= $this->get_remove_recalc_query_string_script();
-			}
-		}
-
-		return $title;
+		return esc_html__( 'Elements Usage', 'elementor' );
 	}
 
 	public function get_fields() {
@@ -43,12 +28,33 @@ class Usage_Reporter extends Base {
 		];
 	}
 
+	public function print_html_label( $label ) {
+		$title = $this->get_title();
+
+		if ( empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not required here.
+			$nonce = wp_create_nonce( self::RECALC_ACTION );
+			$url = add_query_arg( [
+				self::RECALC_ACTION => 1,
+				'_wpnonce' => $nonce,
+			] );
+
+			$title .= '<a id="elementor-usage-recalc" href="' . esc_url( $url ) . '#elementor-usage-recalc" class="box-title-tool">Recalculate</a>';
+		} else {
+			$title .= $this->get_remove_recalc_query_string_script();
+		}
+
+		parent::print_html_label( $title );
+	}
+
 	public function get_usage() {
 		/** @var Module $module */
 		$module = Module::instance();
 
 		if ( ! empty( $_GET[ self::RECALC_ACTION ] ) ) {
-			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], self::RECALC_ACTION ) ) {
+			// phpcs:ignore
+			$nonce = Utils::get_super_global_value( $_GET, '_wpnonce' );
+
+			if ( ! wp_verify_nonce( $nonce, self::RECALC_ACTION ) ) {
 				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
 					'back_link' => true,
 				] );

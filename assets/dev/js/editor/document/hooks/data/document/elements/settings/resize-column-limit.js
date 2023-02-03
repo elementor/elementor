@@ -21,7 +21,7 @@ export class ResizeColumnLimit extends Dependency {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		return containers.some( ( /**Container*/ container ) => {
+		return containers.some( ( /** Container*/ container ) => {
 			const parentView = container.parent.view,
 				columnView = container.view,
 				currentSize = container.settings.get( '_inline_size' ) ||

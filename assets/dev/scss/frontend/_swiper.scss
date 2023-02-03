@@ -181,8 +181,6 @@ button.swiper-pagination-bullet {
 	padding: 0;
 	box-shadow: none;
 	appearance: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
 }
 
 .swiper-pagination-clickable .swiper-pagination-bullet {
@@ -508,6 +506,12 @@ button.swiper-pagination-bullet {
 	color: $slides_gui;
 	top: 50%;
 	transform: translateY(-50%);
+
+	svg {
+		fill: $slides_gui;
+		height: 1em;
+		width: 1em;
+	}
 
 	&-prev {
 		left: 10px;

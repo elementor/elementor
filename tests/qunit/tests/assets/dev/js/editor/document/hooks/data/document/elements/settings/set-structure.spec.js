@@ -8,7 +8,7 @@ export const SetStructure = () => {
 
 			const structure = '21',
 				eInnerSection = ElementsHelper.createInnerSection(
-					ElementsHelper.createSection( 1, true )
+					ElementsHelper.createSection( 1, true ),
 				);
 
 			ElementsHelper.settings( eInnerSection, { structure } );

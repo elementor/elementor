@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Core\Base;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Base_Object extends Elementor_Test_Base {
 

@@ -4,7 +4,7 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/b
 TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-local',
 
-	ui: function() {
+	ui() {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
 			deleteButton: '.elementor-template-library-template-delete',
 			morePopup: '.elementor-template-library-template-more',
@@ -13,31 +13,31 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		} );
 	},
 
-	events: function() {
+	events() {
 		return _.extend( TemplateLibraryTemplateView.prototype.events.apply( this, arguments ), {
 			'click @ui.deleteButton': 'onDeleteButtonClick',
 			'click @ui.toggleMore': 'onToggleMoreClick',
 		} );
 	},
 
-	onDeleteButtonClick: function() {
+	onDeleteButtonClick() {
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteTemplate( this.model, {
-			onConfirm: function() {
+			onConfirm() {
 				toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
 			},
-			onSuccess: function() {
+			onSuccess() {
 				elementor.templates.showTemplates();
 			},
 		} );
 	},
 
-	onToggleMoreClick: function() {
+	onToggleMoreClick() {
 		this.ui.morePopup.show();
 	},
 
-	onPreviewButtonClick: function() {
+	onPreviewButtonClick() {
 		open( this.model.get( 'url' ), '_blank' );
 	},
 } );

@@ -1,6 +1,4 @@
 module.exports = async function( page ) {
-	const config = require( '../config' );
-	const url = require( 'url' );
 	const fs = require( 'fs' );
 	const path = require( 'path' );
 	const chalk = require( 'chalk' );
@@ -9,7 +7,7 @@ module.exports = async function( page ) {
 	if ( ! fs.existsSync( pathname ) ) {
 		const __dirname = path.resolve();
 		// Remove leading directory markers, and remove ending /file-name.extension if exists
-		pathname.replace( /^\.*\/|\/?[^\/]+\.[a-z]+|\/$/g, '' );
+		pathname.replace( /^\.*\/|\/?[^/]+\.[a-z]+|\/$/g, '' );
 		fs.mkdir( path.resolve( __dirname, pathname ), { recursive: true }, ( e ) => {
 			if ( e ) {
 				// eslint-disable-next-line no-console
@@ -21,25 +19,7 @@ module.exports = async function( page ) {
 		} );
 	}
 
-	page.setRequestInterception( true );
-
 	page
-		.on( 'request', async ( request ) => {
-			const requestUrl = request.url();
-			const configHost = url.parse( config.url_origin, true ).host;
-			const requestHost = url.parse( requestUrl, true ).host;
-
-			if ( 'localhost' === requestHost ) {
-				request.respond( {
-					status: 302,
-					headers: {
-						location: requestUrl.replace( requestHost, configHost ),
-					},
-				} );
-			} else {
-				request.continue();
-			}
-		} )
 		.on( 'console', ( message ) => {
 			const type = message.type().substr( 0, 3 ).toUpperCase();
 			const colors = {
@@ -56,15 +36,24 @@ module.exports = async function( page ) {
 			// eslint-disable-next-line no-console
 			console.log( chalk.red( message ) );
 		} )
-		.on( 'response', async ( response ) => {
-			// eslint-disable-next-line no-console
-			console.log( chalk.green( `${ response.status() } ${ response.url() }` ) );
-		} )
 		.on( 'requestfailed', ( request ) => {
 			// eslint-disable-next-line no-console
 			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) );
 		} )
 		.on( 'load', async () => {
+			// Hack to fix placeholders URLs
+			await page.evaluate( () => {
+				const placeholders = document.querySelectorAll(
+					`[src='http://localhost/wp-content/plugins/elementor/assets/images/placeholder.png']`,
+				);
+				placeholders.forEach( ( img ) => {
+					img.setAttribute(
+						'src',
+						'http://localhost:8080/wp-content/plugins/elementor/assets/images/placeholder.png',
+					);
+				} );
+			} );
+
 			const pageTitle = await page.title();
 			const cdp = await page.target().createCDPSession();
 			const { data } = await cdp.send( 'Page.captureSnapshot', { format: 'mhtml' } );

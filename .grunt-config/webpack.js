@@ -14,6 +14,8 @@ const webpack = require('webpack');
 // Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
 
+const WatchTimePlugin = require('./plugins/watch-time/index');
+
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
@@ -22,49 +24,64 @@ const getChunkName = ( chunkData, environment ) => {
 	return `${ name }[contenthash].bundle${ minSuffix }.js`;
 };
 
-const moduleRules = {
-	rules: [
-		// {
-		// 	enforce: 'pre',
-		// 	test: /\.js$/,
-		// 	exclude: /node_modules/,
-		// 	loader: 'eslint-loader',
-		// 	options: {
-		// 		failOnError: true,
-		// 	}
-		// },
-		{
-			test: /core[/\\]app.*\.(s)?css$/i,
-			use: [
-				{
-					loader: './loaders/app-imports.js',
-				},
-			],
-		},
-		{
-			test: /\.js$/,
-			exclude: /node_modules/,
-			use: [
-				{
-					loader: 'babel-loader',
-					options: {
-						presets: [ '@wordpress/default' ],
-						plugins: [
-							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
-							[ '@babel/plugin-transform-react-jsx', {
-								'pragmaFrag': 'React.Fragment',
-							} ],
-							[ '@babel/plugin-proposal-class-properties' ],
-							[ '@babel/plugin-transform-runtime' ],
-							[ '@babel/plugin-transform-modules-commonjs' ],
-							[ '@babel/plugin-proposal-optional-chaining' ],
-						],
+const getModuleRules = ( presets ) => {
+	return {
+		rules: [
+			{
+				test: /app.*\.(s)?css$/i,
+				use: [
+					{
+						loader: './loaders/app-imports.js',
 					},
-				},
+				],
+			},
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'babel-loader',
+						options: {
+							presets,
+							plugins: [
+								[ '@wordpress/babel-plugin-import-jsx-pragma' ],
+								[ '@babel/plugin-transform-react-jsx', {
+									'pragmaFrag': 'React.Fragment',
+								} ],
+								[ '@babel/plugin-transform-runtime' ],
+								[ '@babel/plugin-transform-modules-commonjs' ],
+							],
+						},
+					},
+				],
+			},
+		],
+	};
+};
+
+const moduleRules = getModuleRules( [ '@wordpress/default' ] );
+
+const frontendRulesPresets = [ [
+	'@babel/preset-env',
+	{
+		targets: {
+			browsers: [
+				'last 1 Android versions',
+				'last 1 ChromeAndroid versions',
+				'last 2 Chrome versions',
+				'last 2 Firefox versions',
+				'Safari >= 14',
+				'iOS >= 14',
+				'last 2 Edge versions',
+				'last 2 Opera versions',
 			],
 		},
-	],
-};
+		"useBuiltIns": "usage",
+		"corejs": "3.23",
+	}
+] ];
+
+const frontendModuleRules = getModuleRules( frontendRulesPresets );
 
 const entry = {
 	'editor': [
@@ -75,32 +92,44 @@ const entry = {
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
+	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
-	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
-	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
-	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
+	'app': path.resolve( __dirname, '../app/assets/js/index.js' ),
+	'app-loader': path.resolve( __dirname, '../app/assets/js/app-loader' ),
+	'app-packages': path.resolve( __dirname, '../app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
+	'admin-modules': path.resolve( __dirname, '../assets/dev/js/admin/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
+	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
+	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/editor/index.js' ),
+	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
+	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
+	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
+	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
+	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 };
 
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
-	'preloaded-elements-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-elements-handlers.js' ), dependOn: 'frontend' },
+	'preloaded-modules': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-modules.js' ), dependOn: 'frontend' },
 };
 
 const externals = {
 	'@wordpress/i18n': 'wp.i18n',
-		react: 'React',
-		'react-dom': 'ReactDOM',
-		'@elementor/app-ui': 'elementorAppPackages.appUi',
-		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-		'@elementor/router': 'elementorAppPackages.router',
+	react: 'React',
+	'react-dom': 'ReactDOM',
+	'@elementor/app-ui': 'elementorAppPackages.appUi',
+	'@elementor/components': 'elementorAppPackages.components',
+	'@elementor/hooks': 'elementorAppPackages.hooks',
+	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+	'@elementor/router': 'elementorAppPackages.router',
 };
 
 const plugins = [
@@ -110,14 +139,14 @@ const plugins = [
 		PropTypes: 'prop-types',
 		__: ['@wordpress/i18n', '__'],
 		sprintf: ['@wordpress/i18n', 'sprintf'],
-	} )
+	} ),
+	new WatchTimePlugin(),
 ];
 
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
 	externals,
-	module: moduleRules,
 	resolve: aliasList,
 };
 
@@ -139,6 +168,7 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		module: moduleRules,
 		plugins: [
 			...plugins,
 		],
@@ -147,6 +177,7 @@ const webpackConfig = [
 	},
 	{
 		...devSharedConfig,
+		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.js' ),
 			...plugins,
@@ -192,6 +223,7 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		module: moduleRules,
 		plugins: [
 			...plugins,
 		],
@@ -206,6 +238,7 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.min.js' ),
 			...plugins,
@@ -248,10 +281,15 @@ const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
 } );
 
+const productionWatchConfig = webpackProductionConfig.map( ( config ) => {
+	return { ...config, watch: true };
+} );
+
 const gruntWebpackConfig = {
 	development: webpackConfig,
 	developmentNoWatch: developmentNoWatchConfig,
-	production: webpackProductionConfig
+	production: webpackProductionConfig,
+	productionWatch: productionWatchConfig,
 };
 
 module.exports = gruntWebpackConfig;

@@ -1,0 +1,86 @@
+@import "//fonts.googleapis.com/css2?family=DM%20Sans&display=swap";
+@import "//fonts.googleapis.com/css2?family=Source%20Serif%20Pro&display=swap";
+
+.e-onboarding {
+	font-family: 'DM Sans', 'Roboto', sans-serif;
+
+	.eps-app__main {
+		justify-content: center;
+		// For small screens, move the scrollbar from the padded content container to the top level main container.
+		overflow-y: auto;
+	}
+
+	&__content {
+		max-width: 1135px;
+		padding: initial;
+		margin: 2.75rem;
+		// For small screens, move the scrollbar from the padded content container to the top level main container.
+		overflow-y: initial;
+	}
+
+	&__checkbox {
+
+		&-label {
+			display: flex;
+			line-height: 18px;
+			margin-bottom: 27px;
+		}
+
+		&-input {
+			margin-inline-end: 14px;
+			width: 16px;
+			height: 16px;
+			border-color: $platform-mid-gray;
+			border-radius: 2px;
+
+			&:checked {
+				background-color: $platform-dark-gray;
+
+				&::after {
+					margin-bottom: 15%;
+					width: 6px;
+					height: 9px;
+					border-width: 0 2px 2px 0;
+				}
+			}
+		}
+	}
+
+	&__feature-list {
+		margin-bottom: 40px;
+	}
+
+	&__text-input {
+		font-size: 14px;
+		width: 325px;
+		padding: 12px 16px;
+		color: $platform-mid-gray;
+		border: 1px solid $platform-gray-light;
+
+		&:focus-visible {
+			outline: initial;
+			border: 1px solid $platform-darker-gray;
+		}
+
+		&::placeholder {
+			color: $platform-gray-lighter;
+		}
+	}
+
+	&__footnote {
+		margin-top: 24px;
+		width: 325px;
+		text-align: center;
+
+		a {
+			text-decoration: underline;
+			color: $platform-darker-gray;
+		}
+	}
+}
+
+#e-app ~ #__wp-uploader-id-2 .media-modal {
+	max-width: 1024px;
+	max-height: 768px;
+	margin: auto;
+}

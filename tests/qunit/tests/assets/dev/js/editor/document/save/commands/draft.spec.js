@@ -1,38 +1,62 @@
 import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
 
-let tempPostStatus;
+let tempPostStatus,
+	tempEditorStatus;
 
 export const Draft = () => {
 	QUnit.module( 'Draft', ( hooks ) => {
 		hooks.before( () => {
 			// Save the 'post_status' before the test, to put it back later.
-			tempPostStatus = elementor.documents.getCurrent().config.settings.settings.post_status;
+			const currentDocument = elementor.documents.getCurrent();
+
+			tempPostStatus = currentDocument.config.settings.settings.post_status;
+			tempEditorStatus = currentDocument.editor.status;
 		} );
 
 		hooks.after( () => {
 			// Put back as it was before.
-			elementor.documents.getCurrent().container.settings.set( 'post_status', tempPostStatus );
+			const currentDocument = elementor.documents.getCurrent();
+
+			currentDocument.container.settings.set( 'post_status', tempPostStatus );
+			currentDocument.editor.status = tempEditorStatus;
 		} );
 
-		QUnit.test( 'Document post_status is "publish", "private" ', async ( assert ) => {
-			const testStatuses = [ 'publish', 'private' ],
-				document = elementor.documents.getCurrent();
+		QUnit.test( 'Document post_status is "publish"', async ( assert ) => {
+			const document = elementor.documents.getCurrent();
 
-			for ( const status of testStatuses ) {
-				ElementsHelper.settings( document.container, {
-					post_status: status,
-				} );
+			document.editor.status = 'open';
 
-				const result = await $e.run( 'document/save/draft' );
+			ElementsHelper.settings( document.container, {
+				post_status: 'publish',
+			} );
 
-				assert.equal( result.data.status, 'inherit' );
+			const result = await $e.run( 'document/save/draft' );
 
-				$e.internal( 'document/save/set-is-modified', { status: false } );
-			}
+			assert.equal( result.data.status, 'inherit' );
+
+			$e.internal( 'document/save/set-is-modified', { status: false } );
+		} );
+
+		QUnit.test( 'Document post_status is "private"', async ( assert ) => {
+			const document = elementor.documents.getCurrent();
+
+			document.editor.status = 'open';
+
+			ElementsHelper.settings( document.container, {
+				post_status: 'private',
+			} );
+
+			const result = await $e.run( 'document/save/draft' );
+
+			assert.equal( result.data.status, 'inherit' );
+
+			$e.internal( 'document/save/set-is-modified', { status: false } );
 		} );
 
 		QUnit.test( 'Document post_status is "draft"', async ( assert ) => {
 			const document = elementor.documents.getCurrent();
+
+			document.editor.status = 'open';
 
 			ElementsHelper.settings( document.container, {
 				post_status: 'draft',
@@ -57,18 +81,19 @@ export const Draft = () => {
 				post_status: 'private',
 			} );
 
-			// TODO: Cannot use `assert.rejects` since its return JQuery promise.
-			assert.expect( 1 );
+			/**
+			 * TODO: Currently the commands mechanism not works as except trigger two catch applies.
+			 * one for `document/save/auto'.
+			 * and another which passed to 'document/save/draft'.
+			 */
+			assert.expect( 2 );
 
-			const deferred = $e.run( 'document/save/draft', { document } );
-
-			// Ensure rejected.
-			deferred.fail( ( message ) => {
-				assert.equal( message, 'Document is not editable' );
-			} );
+			$e.tests.commands.exceptCatchApply( ( e ) => {
+				assert.equal( e, 'Document is not editable' );
+			}, 2 );
 
 			// Put back as it was before.
-			deferred.always( () => {
+			$e.run( 'document/save/draft', { document } ).always( () => {
 				document.editor.status = defaultStatus;
 			} );
 		} );
