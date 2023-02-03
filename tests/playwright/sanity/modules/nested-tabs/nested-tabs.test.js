@@ -879,11 +879,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.addWidget( 'video', contentContainerOneId );
 
 		// Tab 2.
-		tabButtonTwo.click();
+		await tabButtonTwo.click();
 		await editor.addWidget( 'heading', contentContainerTwoId );
 
 		// Tab 3.
-		tabButtonThree.click();
+		await tabButtonThree.click();
 		await editor.addWidget( 'image', contentContainerThreeId );
 		await editor.addWidget( 'text-editor', contentContainerThreeId );
 
@@ -894,23 +894,23 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert
 		// Get content container widths.
 		// Tab 1 & Content Container 1.
-		tabButtonOne.click();
+		await tabButtonOne.click();
 
-		const contentContainerOneWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
+		const contentContainerOneWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=0' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
 		// Tab 2 & Content Container 2.
-		tabButtonTwo.click();
+		await tabButtonTwo.click();
 
-		const contentContainerTwoWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
+		const contentContainerTwoWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=1' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
 		// Tab 3 & Content Container 3.
-		tabButtonThree.click();
+		await tabButtonThree.click();
 
-		const contentContainerThreeWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
+		const contentContainerThreeWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=2' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
