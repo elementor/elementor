@@ -81,6 +81,10 @@
 			&-fields {
 				margin-bottom: 15px;
 				position: relative;
+
+				&.ui-sortable-helper {
+					background-color: $white;
+				}
 			}
 
 			&-row-controls {
@@ -126,24 +130,35 @@
 
 				&:not(:hover) {
 
-					.elementor-repeater-tool-remove,
-					.elementor-repeater-tool-remove--disabled {
-						display: none;
+				  	.elementor-repeater-tool {
+
+						&-remove,
+						&-remove--disabled,
+						&-sort {
+						  display: none;
+						}
 					}
 				}
 			}
 		}
 
 		// Hard selector to override default margin
-		.elementor-control-content {
+		.elementor-repeater-row-controls {
 
-			> .elementor-control-field {
+			> .elementor-control {
 
-				> .elementor-control-input-wrapper {
-					margin-top: 0;
+				> .elementor-control-content {
+
+					> .elementor-control-field {
+
+						> .elementor-control-input-wrapper {
+							margin-top: 0;
+						}
+					}
 				}
 			}
 		}
+
 
 		.elementor-controls-popover {
 			align-self: end;
@@ -167,13 +182,20 @@
 		.elementor-button-wrapper {
 			text-align: center;
 			border-top: 1px solid $editor-background;
-			max-width: 260px;
 			padding-top: 15px;
 		}
 
 		.pickr,
 		.elementor-control-popover-toggle-toggle-label {
 			@include margin-start(5px);
+		}
+
+		.e-sortable-placeholder {
+			background-color: $editor-info;
+			opacity: .9;
+			width: 100%;
+			margin: 8px 0;
+			height: 2px;
 		}
 	}
 
@@ -187,4 +209,6 @@
 	color: $editor-lightest;
 	font-size: 10px;
 	padding: 0 5px;
+	text-align: $end;
+	@include ellipsis;
 }

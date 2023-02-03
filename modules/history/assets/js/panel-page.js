@@ -4,7 +4,7 @@ import TabRevisionsLoadingView from './revisions/panel/loading';
 import TabRevisionsView from './revisions/panel/tab';
 import TabRevisionsEmptyView from './revisions/panel/empty';
 
-module.exports = Marionette.LayoutView.extend( {
+export default Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
 
 	regions: {
@@ -24,13 +24,13 @@ module.exports = Marionette.LayoutView.extend( {
 	 */
 	document: null,
 
-	initialize: function( options ) {
+	initialize( options ) {
 		this.document = options.document || elementor.documents.getCurrent();
 
 		this.initRegionViews();
 	},
 
-	initRegionViews: function() {
+	initRegionViews() {
 		const historyItems = this.document.history.getItems();
 
 		this.regionViews = {
@@ -64,11 +64,11 @@ module.exports = Marionette.LayoutView.extend( {
 		};
 	},
 
-	getCurrentTab: function() {
+	getCurrentTab() {
 		return this.currentTab;
 	},
 
-	showView: function( viewName ) {
+	showView( viewName ) {
 		const viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {},
 			View = viewDetails.view();

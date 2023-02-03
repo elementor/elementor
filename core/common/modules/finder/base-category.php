@@ -3,6 +3,7 @@
 namespace Elementor\Core\Common\Modules\Finder;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -25,6 +26,26 @@ abstract class Base_Category extends Base_Object {
 	 * @return string
 	 */
 	abstract public function get_title();
+
+	/**
+	 * Get a unique category ID.
+	 *
+	 * TODO: Make abstract.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @return string
+	 */
+	public function get_id() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			get_class( $this ) . '::' . __FUNCTION__,
+			'3.5.0',
+			'This method will be replaced with an abstract method.'
+		);
+
+		return '';
+	}
 
 	/**
 	 * Get category items.

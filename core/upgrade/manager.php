@@ -33,11 +33,11 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public function get_plugin_label() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 
 	public function get_updater_label() {
-		return sprintf( '<strong>%s </strong> &#8211;', __( 'Elementor Data Updater', 'elementor' ) );
+		return esc_html__( 'Elementor Data Updater', 'elementor' );
 	}
 
 	public function get_new_version() {
@@ -52,18 +52,6 @@ class Manager extends DB_Upgrades_Manager {
 		return 'Elementor\Core\Upgrade\Upgrades';
 	}
 
-	protected function update_db_version() {
-		parent::update_db_version();
-
-		$installs_history = self::get_installs_history();
-
-		$installs_history[ ELEMENTOR_VERSION ] = time();
-
-		uksort( $installs_history, 'version_compare' );
-
-		update_option( self::INSTALLS_HISTORY_META, $installs_history );
-	}
-
 	public static function get_installs_history() {
 		return get_option( self::INSTALLS_HISTORY_META, [] );
 	}
@@ -71,6 +59,31 @@ class Manager extends DB_Upgrades_Manager {
 	public static function install_compare( $version, $operator ) {
 		$installs_history = self::get_installs_history();
 
-		return version_compare( key( $installs_history ), $version, $operator );
+		return version_compare(
+			key( $installs_history ),
+			$version ? $version : '0.0.0', // when no version assigned
+			$operator
+		);
+	}
+
+	protected function update_db_version() {
+		parent::update_db_version();
+
+		$installs_history = self::get_installs_history();
+
+		$time = time();
+
+		$installs_history[ ELEMENTOR_VERSION ] = $time;
+
+		$old_version = $this->get_current_version();
+
+		// If there was an old version of Elementor, and there's no record for that install yet
+		if ( $old_version && empty( $installs_history[ $old_version ] ) ) {
+			$installs_history[ $old_version ] = $installs_history[ ELEMENTOR_VERSION ] - 1;
+		}
+
+		uksort( $installs_history, 'version_compare' );
+
+		update_option( self::INSTALLS_HISTORY_META, $installs_history );
 	}
 }

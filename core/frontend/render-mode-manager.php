@@ -58,7 +58,7 @@ class Render_Mode_Manager {
 	 */
 	public function register_render_mode( $class_name ) {
 		if ( ! is_subclass_of( $class_name, Render_Mode_Base::class ) ) {
-			throw new \Exception( "'{$class_name}' must extends 'Render_Mode_Base'" );
+			throw new \Exception( "'{$class_name}' must extend 'Render_Mode_Base'." );
 		}
 
 		$this->render_modes[ $class_name::get_name() ] = $class_name;
@@ -76,11 +76,22 @@ class Render_Mode_Manager {
 	}
 
 	/**
+	 * @param Render_Mode_Base $render_mode
+	 *
+	 * @return $this
+	 */
+	private function set_current( Render_Mode_Base $render_mode ) {
+		$this->current = $render_mode;
+
+		return $this;
+	}
+
+	/**
 	 * Set render mode.
 	 *
 	 * @return $this
 	 */
-	private function set_current_render_mode() {
+	private function choose_render_mode() {
 		$post_id = null;
 		$key = null;
 		$nonce = null;
@@ -104,9 +115,9 @@ class Render_Mode_Manager {
 			$key &&
 			array_key_exists( $key, $this->render_modes )
 		) {
-			$this->current = new $this->render_modes[ $key ]( $post_id );
+			$this->set_current( new $this->render_modes[ $key ]( $post_id ) );
 		} else {
-			$this->current = new Render_Mode_Normal( $post_id );
+			$this->set_current( new Render_Mode_Normal( $post_id ) );
 		}
 
 		return $this;
@@ -116,10 +127,16 @@ class Render_Mode_Manager {
 	 * Add actions base on the current render.
 	 *
 	 * @throws \Requests_Exception_HTTP_403
+	 * @throws Status403
 	 */
 	private function add_current_actions() {
 		if ( ! $this->current->get_permissions_callback() ) {
-			throw new \Requests_Exception_HTTP_403();
+			// WP >= 6.2-alpha
+			if ( class_exists( '\WpOrg\Requests\Exception\Http\Status403' ) ) {
+				throw new \WpOrg\Requests\Exception\Http\Status403();
+			} else {
+				throw new \Requests_Exception_HTTP_403();
+			}
 		}
 
 		// Run when 'template-redirect' actually because the the class is instantiate when 'template-redirect' run.
@@ -136,7 +153,7 @@ class Render_Mode_Manager {
 
 		do_action( 'elementor/frontend/render_mode/register', $this );
 
-		$this->set_current_render_mode();
+		$this->choose_render_mode();
 		$this->add_current_actions();
 	}
 }

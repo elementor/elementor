@@ -125,8 +125,7 @@
 	&.elementor-control-dynamic {
 
 		.elementor-control-gallery-clear {
-			border: solid $editor-lightest;
-			border-width: 0 1px;
+			@include border-start(1px solid $editor-lightest);
 		}
 	}
 

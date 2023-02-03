@@ -1,8 +1,8 @@
-import CommandDisableEnable from 'elementor-document/commands/base/command-disable-enable';
+import CommandDisableEnable from 'elementor-document/command-bases/command-disable-enable';
 
 export default class DisableEnable extends CommandDisableEnable {
 	static getName() {
-		return 'dynamic';
+		return 'Dynamic';
 	}
 
 	static getEnableCommand() {
@@ -11,5 +11,9 @@ export default class DisableEnable extends CommandDisableEnable {
 
 	static getDisableCommand() {
 		return 'document/dynamic/disable';
+	}
+
+	getTitle() {
+		return __( 'Dynamic' );
 	}
 }

@@ -1,10 +1,21 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
-	NumberValidator = require( 'elementor-validator/number' ),
 	ControlNumberItemView;
 
 ControlNumberItemView = ControlBaseDataView.extend( {
 
-	registerValidators: function() {
+	behaviors() {
+		return {
+			...ControlBaseDataView.prototype.behaviors.apply( this ),
+			Scrubbing: {
+				behaviorClass: Scrubbing,
+				scrubSettings: { intentTime: 800 },
+			},
+		};
+	},
+
+	registerValidators() {
 		ControlBaseDataView.prototype.registerValidators.apply( this, arguments );
 
 		var validationTerms = {},
@@ -19,8 +30,8 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 		} );
 
 		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
-			this.addValidator( new NumberValidator( {
-				validationTerms: validationTerms,
+			this.addValidator( new this.validatorTypes.Number( {
+				validationTerms,
 			} ) );
 		}
 	},

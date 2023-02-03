@@ -9,11 +9,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 	childViewContainer: '.elementor-panel-menu-items',
 
-	initialize: function() {
+	initialize() {
 		this.collection = new Backbone.Collection( this.model.get( 'items' ) );
 	},
 
-	onChildviewClick: function( childView ) {
+	onChildviewClick( childView ) {
 		const callback = childView.model.get( 'callback' );
 
 		if ( _.isFunction( callback ) ) {

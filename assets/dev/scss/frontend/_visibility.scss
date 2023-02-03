@@ -1,18 +1,47 @@
 .elementor {
-	@media (max-width: $screen-sm-max) {
+	@media (max-width: $screen-mobile-max) {
+		.elementor-hidden-mobile {
+			display: none;
+		}
+
+		// TODO: BC Since 3.4.0 - remove at some point
 		.elementor-hidden-phone {
 			display: none;
 		}
 	}
 
-	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+	@media (min-width: $screen-mobile-extra-min) and (max-width: $screen-mobile-extra-max) {
+		.elementor-hidden-mobile_extra {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-tablet-min) and (max-width: $screen-tablet-max) {
 		.elementor-hidden-tablet {
 			display: none;
 		}
 	}
 
-	@media (min-width: $screen-lg-min) {
+	@media (min-width: $screen-tablet-extra-min) and (max-width: $screen-tablet-extra-max) {
+		.elementor-hidden-tablet_extra {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-laptop-min) and (max-width: $screen-laptop-max) {
+		.elementor-hidden-laptop {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-desktop-min) and (max-width: $screen-desktop-max) {
 		.elementor-hidden-desktop {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-widescreen-min) {
+		.elementor-hidden-widescreen {
 			display: none;
 		}
 	}

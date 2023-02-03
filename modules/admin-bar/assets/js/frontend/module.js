@@ -1,7 +1,7 @@
-/* global elementorAdminBarConfig, jQuery */
+/* global elementorAdminBarConfig */
 class AdminBar extends elementorModules.ViewModule {
 	/**
-	 * @returns {{}}
+	 * @return {{}} settings
 	 */
 	getDefaultSettings() {
 		return {
@@ -25,7 +25,7 @@ class AdminBar extends elementorModules.ViewModule {
 	}
 
 	/**
-	 * @returns {{$adminBar: (jQuery)}}
+	 * @return {{$adminBar: (jQuery)}} elements
 	 */
 	getDefaultElements() {
 		const { adminBar, editMenuItem, newMenuItem } = this.getSettings( 'selectors' );
@@ -49,7 +49,7 @@ class AdminBar extends elementorModules.ViewModule {
 	/**
 	 * Main method that creates the menu base on the config that provided.
 	 *
-	 * @param adminBarConfig
+	 * @param {*} adminBarConfig
 	 */
 	createMenu( adminBarConfig ) {
 		const $items = this.createMenuItems( Object.values( adminBarConfig ) );
@@ -69,8 +69,8 @@ class AdminBar extends elementorModules.ViewModule {
 	/**
 	 * Creates a menu items from array of declaration.
 	 *
-	 * @param items
-	 * @returns {jQuery[]}
+	 * @param {*} items
+	 * @return {jQuery[]} menu items
 	 */
 	createMenuItems( items ) {
 		return items.map( ( item ) => this.createMenuItem( item ) );
@@ -79,8 +79,8 @@ class AdminBar extends elementorModules.ViewModule {
 	/**
 	 * Creates a menu item, both for menu and sub menu.
 	 *
-	 * @param item
-	 * @returns {jQuery}
+	 * @param {*} item
+	 * @return {jQuery} menu item
 	 */
 	createMenuItem( item ) {
 		const children = item.children ? Object.values( item.children ) : [];
@@ -92,12 +92,12 @@ class AdminBar extends elementorModules.ViewModule {
 			html: item.title,
 		} );
 
-		const $subTitle = item.sub_title ?
-			jQuery( '<span>', {
+		const $subTitle = item.sub_title
+			? jQuery( '<span>', {
 				class: this.getSettings( 'classes.adminBarItemSubTitle' ),
 				html: item.sub_title,
-			} ) :
-			null;
+			} )
+			: null;
 
 		const $item = jQuery( item.href ? '<a>' : '<div>', {
 			'aria-haspopup': children.length ? true : null,
@@ -111,16 +111,16 @@ class AdminBar extends elementorModules.ViewModule {
 
 		return jQuery( '<li>', {
 			id,
-			class: children.length ? 'menupop' : '',
+			class: children.length ? 'menupop' : '' + ( item.parent_class || 'elementor-general-section' ),
 		} ).append( [ $item, children.length ? this.createSubMenuItems( id, children ) : null ] );
 	}
 
 	/**
 	 * Creates sub menu items wrapper.
 	 *
-	 * @param parentId
-	 * @param children
-	 * @returns {jQuery}
+	 * @param {string} parentId
+	 * @param {Object} children
+	 * @return {jQuery} sub-menu items
 	 */
 	createSubMenuItems( parentId, children ) {
 		const $list = jQuery( '<ul>', {
@@ -134,4 +134,4 @@ class AdminBar extends elementorModules.ViewModule {
 	}
 }
 
-jQuery( () => new AdminBar() );
+document.addEventListener( 'DOMContentLoaded', () => new AdminBar() );

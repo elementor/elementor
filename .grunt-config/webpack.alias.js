@@ -4,9 +4,9 @@ module.exports = {
 	resolve: {
 		alias: {
 			'elementor': path.resolve( __dirname, '../' ),
-			'elementor-app': path.resolve( __dirname, '../core/app/assets/js' ),
+			'elementor-app': path.resolve( __dirname, '../app/assets/js' ),
 			'elementor-admin': path.resolve( __dirname, '../assets/dev/js/admin' ),
-			'elementor-api': path.resolve( __dirname, '../core/common/assets/js/api' ),
+			'elementor-api': path.resolve( __dirname, '../modules/web-cli/assets/js/' ),
 			'elementor-assets-js': path.resolve( __dirname, '../assets/dev/js' ),
 			'elementor-behaviors': path.resolve( __dirname, '../assets/dev/js/editor/elements/views/behaviors' ),
 			'elementor-common': path.resolve( __dirname, '../core/common/assets/js' ),
@@ -23,10 +23,13 @@ module.exports = {
 			'elementor-revisions': path.resolve( __dirname, '../assets/dev/js/editor/components/revisions' ),
 			'elementor-scss': path.resolve( __dirname, '../assets/dev/scss' ),
 			'elementor-templates': path.resolve( __dirname, '../assets/dev/js/editor/components/template-library' ),
-			'elementor-tests-qunit': path.resolve( __dirname, '../tests/qunit' ),
 			'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
 			'elementor-validator': path.resolve( __dirname, '../assets/dev/js/editor/components/validator' ),
 			'elementor-views': path.resolve( __dirname, '../assets/dev/js/editor/views' ),
+			'@elementor/e-icons': path.resolve( __dirname, '../assets/dev/js/frontend/utils/icons/e-icons' ),
+			'e-styles': path.resolve( __dirname, '../packages/elementor-ui/styles' ),
+			'e-components': path.resolve( __dirname, '../packages/elementor-ui/components' ),
+			'e-utils': path.resolve( __dirname, '../packages/elementor-ui/components/utils' ),
 		},
 	},
 };

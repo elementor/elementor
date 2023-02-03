@@ -19,9 +19,7 @@ var Debug = function() {
 	};
 
 	var onError = function( event ) {
-		var originalEvent = event.originalEvent,
-			error = originalEvent.error;
-
+		const error = event.originalEvent?.error;
 		if ( ! error ) {
 			return;
 		}
@@ -44,9 +42,9 @@ var Debug = function() {
 		self.addError( {
 			type: error.name,
 			message: error.message,
-			url: originalEvent.filename,
-			line: originalEvent.lineno,
-			column: originalEvent.colno,
+			url: event.originalEvent.filename,
+			line: event.originalEvent.lineno,
+			column: event.originalEvent.colno,
 		} );
 	};
 
@@ -77,7 +75,7 @@ var Debug = function() {
 			column: error.columnNumber || error.column,
 			customFields: {
 				category: category || 'general',
-				tag: tag,
+				tag,
 			},
 		};
 
@@ -122,7 +120,7 @@ var Debug = function() {
 				_nonce: elementorCommon.ajax.getSettings( 'nonce' ),
 				data: errorStack,
 			},
-			success: function() {
+			success() {
 				errorStack = [];
 
 				// Restore error handler
