@@ -4,7 +4,7 @@ var Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 ControlsCSSParser = elementorModules.ViewModule.extend( {
 	stylesheet: null,
 
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			id: 0,
 			context: null,
@@ -13,7 +13,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		const id = `elementor-style-${ this.getSettings( 'id' ) }`;
 
 		let $stylesheet = elementor.$previewContents.find( `#${ id }` );
@@ -27,18 +27,17 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	initStylesheet: function() {
-		var breakpoints = elementorFrontend.config.breakpoints;
+	initStylesheet() {
+		const breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 
 		this.stylesheet = new Stylesheet();
 
-		this.stylesheet
-			.addDevice( 'mobile', 0 )
-			.addDevice( 'tablet', breakpoints.md )
-			.addDevice( 'desktop', breakpoints.lg );
+		Object.entries( breakpoints ).forEach( ( [ breakpointName, breakpointConfig ] ) => {
+			this.stylesheet.addDevice( breakpointName, breakpointConfig.value );
+		} );
 	},
 
-	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
+	addStyleRules( styleControls, values, controls, placeholders, replacements ) {
 		// If the current element contains dynamic values, parse these values
 		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
 
@@ -67,7 +66,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addControlStyleRules: function( control, values, controls, placeholders, replacements, globalKeys ) {
+	addControlStyleRules( control, values, controls, placeholders, replacements, globalKeys ) {
 		let globalKey;
 
 		if ( globalKeys ) {
@@ -148,6 +147,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 							elementor.helpers.enqueueFont( parsedValue );
 						}
 
+						if ( '__EMPTY__' === parsedValue ) {
+							parsedValue = '';
+						}
+
 						return parsedValue;
 					} );
 				} catch ( e ) {
@@ -210,9 +213,16 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	parsePropertyPlaceholder: function( control, value, controls, values, placeholder, parserControlName ) {
+	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {
 		if ( parserControlName ) {
-			control = _.findWhere( controls, { name: parserControlName } );
+			if ( control.responsive && controls[ parserControlName ] ) {
+				const deviceSuffix = elementor.conditions.getResponsiveControlDeviceSuffix( control.responsive );
+
+				control = _.findWhere( controls, { name: parserControlName + deviceSuffix } ) ??
+					_.findWhere( controls, { name: parserControlName } );
+			} else {
+				control = _.findWhere( controls, { name: parserControlName } );
+			}
 
 			value = this.getStyleControlValue( control, values );
 		}
@@ -220,13 +230,18 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
 	},
 
-	getStyleControlValue: function( control, values ) {
-		if ( values.__globals__?.[ control.name ] ) {
+	getStyleControlValue( control, values ) {
+		const container = this.getSettings()?.context?.container,
+			isGlobalApplied = container?.isGlobalApplied( control.name ),
+			globalKey = values.__globals__?.[ control.name ] || control.global?.default;
+
+		// Set a global value only if it is applied.
+		if ( isGlobalApplied && globalKey ) {
 			// When the control itself has no global value, but it refers to another control global value
-			return this.getSelectorGlobalValue( control, values.__globals__[ control.name ] );
+			return this.getSelectorGlobalValue( control, globalKey );
 		}
 
-		var value = values[ control.name ];
+		let value = values[ control.name ];
 
 		if ( control.selectors_dictionary ) {
 			value = control.selectors_dictionary[ value ] || value;
@@ -251,9 +266,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		let value;
 
-		// it's a global settings with additional controls in group.
+		// It's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
+			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();
+
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( responsivePrefixRegex, '' );
 
 			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
 				return;
@@ -273,7 +291,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		return value;
 	},
 
-	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControlsItems, controls, placeholders, replacements ) {
+	addRepeaterControlsStyleRules( repeaterValues, repeaterControlsItems, controls, placeholders, replacements ) {
 		repeaterControlsItems.forEach( ( item, index ) => {
 			const itemModel = repeaterValues.models[ index ];
 
@@ -282,12 +300,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				itemModel.attributes,
 				controls,
 				placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
-				replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+				replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] ),
 			);
 		} );
 	},
 
-	addDynamicControlStyleRules: function( value, control ) {
+	addDynamicControlStyleRules( value, control ) {
 		var self = this;
 
 		elementor.dynamicTags.parseTagsText( value, control.dynamic, function( id, name, settings ) {
@@ -308,7 +326,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addStyleToDocument: function( position ) {
+	addStyleToDocument( position ) {
 		const $head = elementor.$previewContents.find( 'head' );
 
 		let insertMethod = 'append',
@@ -331,11 +349,11 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		this.elements.$stylesheetElement.text( this.stylesheet + extraCSS );
 	},
 
-	removeStyleFromDocument: function() {
+	removeStyleFromDocument() {
 		this.elements.$stylesheetElement.remove();
 	},
 
-	onInit: function() {
+	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.initStylesheet();

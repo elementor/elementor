@@ -1,6 +1,4 @@
-import CommandData from 'elementor-api/modules/command-data';
-
-export class Colors extends CommandData {
+export class Colors extends $e.modules.CommandData {
 	static getEndpointFormat() {
 		return 'globals/colors/{id}';
 	}

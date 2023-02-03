@@ -1,0 +1,50 @@
+.e-onboarding__upload-pro {
+	flex-direction: row;
+	justify-content: center;
+	font-family: 'DM Sans', 'Roboto', sans-serif;
+	text-align: center;
+
+	.eps-app__content {
+		overflow-y: hidden;
+		max-width: 1113px;
+		padding: 30px;
+	}
+
+	&-drop-zone {
+		margin-bottom: 24px;
+
+		h1 {
+			font-family: 'Source Serif Pro', 'Roboto', sans-serif;
+		}
+
+		.e-app-drag-drop {
+			padding: 48px;
+		}
+
+		.eps-display-3,
+		.e-app-drop-zone__text,
+		.e-app-drop-zone__secondary-text {
+			margin-bottom: 12px;
+		}
+
+		.e-app-upload-file__button {
+			background-color: $platform-primary;
+			color: $platform-text;
+			padding: 14px 40px;
+			border-color: $platform-primary;
+		}
+	}
+
+	&-get-file {
+		font-size: 12px;
+		margin-top: 24px;
+
+		a {
+			text-decoration: underline;
+		}
+	}
+
+	.e-onboarding__notice {
+		margin-bottom: 0;
+	}
+}

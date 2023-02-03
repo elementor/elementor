@@ -1,5 +1,3 @@
-const originalSwiper = window.Swiper;
-
 export default class Swiper {
 	constructor( container, config ) {
 		this.config = config;
@@ -9,9 +7,27 @@ export default class Swiper {
 			this.config = this.adjustConfig( config );
 		}
 
-		originalSwiper.prototype.adjustConfig = this.adjustConfig;
+		// The Swiper will overlap the column width when applying custom margin values on the column.
+		jQuery( container ).closest( '.elementor-widget-wrap' ).addClass( 'e-swiper-container' );
 
-		return new originalSwiper( container, this.config );
+		jQuery( container ).closest( '.elementor-widget' ).addClass( 'e-widget-swiper' );
+
+		return new Promise( ( resolve ) => {
+			if ( ! elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {
+				return resolve( this.createSwiperInstance( container, this.config ) );
+			}
+
+			elementorFrontend.utils.assetsLoader.load( 'script', 'swiper' )
+				.then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
+		} );
+	}
+
+	createSwiperInstance( container, config ) {
+		const SwiperSource = window.Swiper;
+
+		SwiperSource.prototype.adjustConfig = this.adjustConfig;
+
+		return new SwiperSource( container, config );
 	}
 
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
@@ -22,18 +38,22 @@ export default class Swiper {
 			return config;
 		}
 
-		const elementorBreakpoints = elementorFrontend.config.breakpoints,
-			elementorBreakpointValues = Object.values( elementorBreakpoints );
+		const elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
+			elementorBreakpointValues = elementorFrontend.breakpoints.getBreakpointValues();
 
 		Object.keys( config.breakpoints ).forEach( ( configBPKey ) => {
 			const configBPKeyInt = parseInt( configBPKey );
 			let breakpointToUpdate;
 
 			// The `configBPKeyInt + 1` is a BC Fix for Elementor Pro Carousels from 2.8.0-2.8.3 used with Elementor >= 2.9.0
-			if ( configBPKeyInt === elementorBreakpoints.md || ( configBPKeyInt + 1 ) === elementorBreakpoints.md ) {
+			if ( configBPKeyInt === elementorBreakpoints.mobile.value || ( configBPKeyInt + 1 ) === elementorBreakpoints.mobile.value ) {
 				// This handles the mobile breakpoint. Elementor's default sm breakpoint is never actually used,
 				// so the mobile breakpoint (md) needs to be handled separately and set to the 0 breakpoint (xs)
-				breakpointToUpdate = elementorBreakpoints.xs;
+				breakpointToUpdate = 0;
+			} else if ( elementorBreakpoints.widescreen && ( configBPKeyInt === elementorBreakpoints.widescreen.value || ( configBPKeyInt + 1 ) === elementorBreakpoints.widescreen.value ) ) {
+				// Widescreen is a min-width breakpoint. Since in Swiper >5.0 the breakpoint system is min-width based,
+				// the value we pass to the Swiper instance in this case is the breakpoint from the user, unchanged.
+				breakpointToUpdate = configBPKeyInt;
 			} else {
 				// Find the index of the current config breakpoint in the Elementor Breakpoints array
 				const currentBPIndexInElementorBPs = elementorBreakpointValues.findIndex( ( elementorBP ) => {
@@ -58,5 +78,3 @@ export default class Swiper {
 		return config;
 	}
 }
-
-window.Swiper = Swiper;

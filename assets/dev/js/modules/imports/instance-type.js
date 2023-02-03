@@ -1,5 +1,5 @@
 export default class InstanceType {
-	static [Symbol.hasInstance]( target ) {
+	static [ Symbol.hasInstance ]( target ) {
 		/**
 		 * This is function extending being called each time JS uses instanceOf, since babel use it each time it create new class
 		 * its give's opportunity to mange capabilities of instanceOf operator.
@@ -42,6 +42,10 @@ export default class InstanceType {
 		return result;
 	}
 
+	static getInstanceType() {
+		elementorModules.ForceMethodImplementation();
+	}
+
 	constructor() {
 		// Since anonymous classes sometimes do not get validated by babel, do it manually.
 		let target = new.target;
@@ -53,9 +57,5 @@ export default class InstanceType {
 		}
 
 		prototypes.reverse().forEach( ( proto ) => this instanceof proto );
-	}
-
-	static getInstanceType() {
-		elementorModules.ForceMethodImplementation();
 	}
 }

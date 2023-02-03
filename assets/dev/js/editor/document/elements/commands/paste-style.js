@@ -1,6 +1,7 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class PasteStyle extends CommandHistory {
+/**
+ * @typedef {import('../../../container/container')} Container
+ */
+ export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -41,6 +42,10 @@ export class PasteStyle extends CommandHistory {
 		const { containers = [ args.container ], storageKey = 'clipboard' } = args,
 			storageData = elementorCommon.storage.get( storageKey );
 
+		this.applyPasteStyleData( containers, storageData );
+	}
+
+	applyPasteStyleData( containers, data ) {
 		containers.forEach( ( targetContainer ) => {
 			const targetSettings = targetContainer.settings,
 				targetSettingsAttributes = targetSettings.attributes,
@@ -58,7 +63,7 @@ export class PasteStyle extends CommandHistory {
 					}
 				};
 
-			storageData.forEach( ( sourceModel ) => {
+			data.forEach( ( sourceModel ) => {
 				const sourceSettings = sourceModel.settings;
 
 				addExtraControls( sourceSettings, '__globals__' );
@@ -77,6 +82,7 @@ export class PasteStyle extends CommandHistory {
 					}
 
 					if ( 'object' === typeof controlSourceValue ) {
+						// eslint-disable-next-line array-callback-return
 						const isEqual = Object.keys( controlSourceValue ).some( ( propertyKey ) => {
 							if ( controlSourceValue[ propertyKey ] !== controlTargetValue[ propertyKey ] ) {
 								return false;
@@ -96,26 +102,45 @@ export class PasteStyle extends CommandHistory {
 					diffSettings[ controlName ] = controlSourceValue;
 				} );
 
-				// Moved from `editor/elements/views/base.js` `pasteStyle` function.
-				targetContainer.view.allowRender = false;
-
-				// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-				elementor.channels.data.trigger( 'element:before:paste:style', targetContainer.model );
-
-				$e.run( 'document/elements/settings', {
-					container: targetContainer,
-					settings: diffSettings,
-					options: { external: true },
-				} );
-
-				// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-				elementor.channels.data.trigger( 'element:after:paste:style', targetContainer.model );
-
-				targetContainer.view.allowRender = true;
-
-				targetContainer.render();
+				this.pasteStyle( targetContainer, diffSettings );
 			} );
 		} );
+	}
+
+	/**
+	 * @param {Container} targetContainer
+	 * @param {{}}        settings
+	 */
+	pasteStyle( targetContainer, settings ) {
+		const globals = settings.__globals__;
+
+		if ( globals ) {
+			delete settings.__globals__;
+		}
+
+		$e.run( 'document/elements/settings', {
+			container: targetContainer,
+			settings,
+			options: {
+				external: true,
+				render: false,
+			},
+		} );
+
+		if ( globals ) {
+			$e.run( 'document/globals/settings', {
+				container: targetContainer,
+				settings: globals,
+				options: {
+					external: true,
+					render: false,
+				},
+			} );
+
+			targetContainer.panel.refresh();
+		}
+
+		targetContainer.render();
 	}
 }
 

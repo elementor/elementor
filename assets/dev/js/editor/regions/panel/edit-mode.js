@@ -15,29 +15,29 @@ EditModeItemView = Marionette.ItemView.extend( {
 		'change @ui.previewButton': 'onPreviewButtonChange',
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeChanged );
 	},
 
-	getCurrentMode: function() {
+	getCurrentMode() {
 		return this.ui.previewButton.is( ':checked' ) ? 'preview' : 'edit';
 	},
 
-	setMode: function( mode ) {
+	setMode( mode ) {
 		this.ui.previewButton
 			.prop( 'checked', 'preview' === mode )
 			.trigger( 'change' );
 	},
 
-	toggleMode: function() {
+	toggleMode() {
 		this.setMode( this.ui.previewButton.prop( 'checked' ) ? 'edit' : 'preview' );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.onEditModeChanged();
 	},
 
-	onPreviewButtonChange: function() {
+	onPreviewButtonChange() {
 		const mode = this.getCurrentMode();
 
 		if ( 'edit' === mode ) {
@@ -49,8 +49,8 @@ EditModeItemView = Marionette.ItemView.extend( {
 		}
 	},
 
-	onEditModeChanged: function( activeMode ) {
-		const title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
+	onEditModeChanged( activeMode ) {
+		const title = 'preview' === activeMode ? __( 'Back to Editor', 'elementor' ) : __( 'Preview', 'elementor' );
 
 		this.ui.previewLabel.attr( 'title', title );
 		this.ui.previewLabelA11y.text( title );

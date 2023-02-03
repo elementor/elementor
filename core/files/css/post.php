@@ -192,7 +192,9 @@ class Post extends Base {
 	 * @access public
 	 */
 	public function enqueue() {
-		if ( ! Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
+		$document = Plugin::$instance->documents->get( $this->post_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
 			return;
 		}
 

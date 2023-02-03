@@ -1,0 +1,32 @@
+.elementor-column {
+
+	.elementor-spacer-inner {
+		height: var( --spacer-size );
+	}
+}
+
+.e-con {
+	--container-widget-width: 100%;
+}
+
+.e-con,
+.e-con-inner {
+
+	& > .elementor-widget-spacer {
+		width: var( --container-widget-width, var( --spacer-size ) );
+		--align-self: var( --container-widget-align-self, initial );
+		--flex-shrink: 0;
+
+		& > .elementor-widget-container {
+			height: 100%;
+
+			& > .elementor-spacer {
+				height: 100%;
+
+				& > .elementor-spacer-inner {
+					height: var( --container-widget-height, var( --spacer-size ) );
+				}
+			}
+		}
+	}
+}
