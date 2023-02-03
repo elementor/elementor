@@ -1,0 +1,30 @@
+@import "assets/dev/scss/helpers/variables.scss";
+
+.elementor-control-convert_to_container {
+	.elementor-button {
+		&.e-loading {
+			font-size: 0;
+			width: 42px;
+			position: relative;
+			pointer-events: none;
+
+			&::before {
+				content: '\e8fb'; // eicon-loading
+				font-family: 'eicons';
+				font-size: 12px;
+				animation: eicon-spin 2s infinite linear;
+				display: inline-block;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: -6px;
+				margin-top: -6px;
+			}
+		}
+
+		&[disabled] {
+			background-color: $editor-lightest;
+			pointer-events: none;
+		}
+	}
+}

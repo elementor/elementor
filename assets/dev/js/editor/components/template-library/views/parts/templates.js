@@ -13,7 +13,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	reorderOnSort: true,
 
-	emptyView: function() {
+	emptyView() {
 		var EmptyView = require( 'elementor-templates/views/parts/templates-empty' );
 
 		return new EmptyView();
@@ -35,10 +35,10 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	comparators: {
-		title: function( model ) {
+		title( model ) {
 			return model.get( 'title' ).toLowerCase();
 		},
-		popularityIndex: function( model ) {
+		popularityIndex( model ) {
 			var popularityIndex = model.get( 'popularityIndex' );
 
 			if ( ! popularityIndex ) {
@@ -47,7 +47,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 			return -popularityIndex;
 		},
-		trendIndex: function( model ) {
+		trendIndex( model ) {
 			var trendIndex = model.get( 'trendIndex' );
 
 			if ( ! trendIndex ) {
@@ -58,7 +58,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		},
 	},
 
-	getChildView: function( childModel ) {
+	getChildView( childModel ) {
 		if ( 'remote' === childModel.get( 'source' ) ) {
 			return TemplateLibraryTemplateRemoteView;
 		}
@@ -66,11 +66,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		return TemplateLibraryTemplateLocalView;
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 
-	filter: function( childModel ) {
+	filter( childModel ) {
 		var filterTerms = elementor.templates.getFilterTerms(),
 			passingFilter = true;
 
@@ -103,7 +103,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		return passingFilter;
 	},
 
-	order: function( by, reverseOrder ) {
+	order( by, reverseOrder ) {
 		var comparator = this.comparators[ by ] || by;
 
 		if ( reverseOrder ) {
@@ -115,7 +115,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.sort();
 	},
 
-	reverseOrder: function( comparator ) {
+	reverseOrder( comparator ) {
 		if ( 'function' !== typeof comparator ) {
 			var comparatorValue = comparator;
 
@@ -125,13 +125,13 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		return function( left, right ) {
-			var l = comparator( left ),
-				r = comparator( right );
+			const l = comparator( left );
 
 			if ( undefined === l ) {
 				return -1;
 			}
 
+			const r = comparator( right );
 			if ( undefined === r ) {
 				return 1;
 			}
@@ -146,13 +146,13 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	addSourceData: function() {
+	addSourceData() {
 		var isEmpty = this.children.isEmpty();
 
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
-	setFiltersUI: function() {
+	setFiltersUI() {
 		if ( ! this.select2Instance ) {
 			const $filters = this.$( this.ui.selectFilter ),
 				select2Options = {
@@ -169,7 +169,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	setMasonrySkin: function() {
+	setMasonrySkin() {
 		var masonry = new elementorModules.utils.Masonry( {
 			container: this.$childViewContainer,
 			items: this.$childViewContainer.children(),
@@ -178,11 +178,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$childViewContainer.imagesLoaded( masonry.run.bind( masonry ) );
 	},
 
-	toggleFilterClass: function() {
+	toggleFilterClass() {
 		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
 
-	isPageOrLandingPageTemplates: function() {
+	isPageOrLandingPageTemplates() {
 		const templatesType = elementor.templates.getFilter( 'type' );
 
 		return 'page' === templatesType || 'lp' === templatesType;
@@ -194,7 +194,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onRenderCollection: function() {
+	onRenderCollection() {
 		this.addSourceData();
 
 		this.toggleFilterClass();
@@ -204,26 +204,26 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onBeforeRenderEmpty: function() {
+	onBeforeRenderEmpty() {
 		this.addSourceData();
 	},
 
-	onTextFilterInput: function() {
+	onTextFilterInput() {
 		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
 	},
 
-	onSelectFilterChange: function( event ) {
+	onSelectFilterChange( event ) {
 		var $select = jQuery( event.currentTarget ),
 			filterName = $select.data( 'elementor-filter' );
 
 		elementor.templates.setFilter( filterName, $select.val() );
 	},
 
-	onMyFavoritesFilterChange: function() {
+	onMyFavoritesFilterChange() {
 		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[ 0 ].checked );
 	},
 
-	onOrderLabelsClick: function( event ) {
+	onOrderLabelsClick( event ) {
 		var $clickedInput = jQuery( event.currentTarget.control ),
 			toggle;
 

@@ -33,7 +33,7 @@ class Module extends Base_Module {
 	 * @return string
 	 */
 	protected function get_plugin_label() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 
 	/**
@@ -69,6 +69,7 @@ class Module extends Base_Module {
 			->except( [
 				'elementor/elementor.php',
 				'elementor-beta/elementor-beta.php',
+				'block-builder/block-builder.php',
 			] )
 			->filter( function ( array $data ) {
 				return false !== strpos( strtolower( $data['Name'] ), 'elementor' );

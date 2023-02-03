@@ -144,6 +144,7 @@ class Autoloader {
 			'Stylesheet' => 'includes/stylesheet.php',
 			'System_Info\Main' => 'includes/settings/system-info/main.php',
 			'TemplateLibrary\Classes\Import_Images' => 'includes/template-library/classes/class-import-images.php',
+			'TemplateLibrary\Forms\New_Template_Form' => 'includes/template-library/forms/new-template-form.php',
 			'TemplateLibrary\Manager' => 'includes/template-library/manager.php',
 			'TemplateLibrary\Source_Base' => 'includes/template-library/sources/base.php',
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
@@ -193,36 +194,35 @@ class Autoloader {
 		return ucwords( str_replace( '-', '_', $string ), $delimiter );
 	}
 
+	/**
+	 * Init classes aliases.
+	 *
+	 * When Elementor classes renamed or moved to different folders, developers
+	 * can still use the old names by setting an aliase.
+	 *
+	 * While in deprecation period both classes will work. When the deprecation
+	 * period ends, the alies should be removed from the list of aliases.
+	 *
+	 * Usage:
+	 *
+	 *  self::$classes_aliases = [
+	 *    'Namespace\OldClassName' => [
+	 *      'replacement' => 'Namespace\NewClassName',
+	 *      'version' => '3.0.0',
+	 *    ],
+	 *    'Namespace\OldModule\ClassName' => [
+	 *      'replacement' => 'Namespace\NewModule\ClassName',
+	 *      'version' => '3.5.0',
+	 *    ],
+	 *  ];
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @return void
+	 */
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
-			'Core\Ajax' => [
-				'replacement' => 'Core\Common\Modules\Ajax\Module',
-				'version' => '2.3.0',
-			],
-			'Editor' => [
-				'replacement' => 'Core\Editor\Editor',
-				'version' => '2.6.0',
-			],
-			'Scheme_Base' => [
-				'replacement' => 'Core\Schemes\Base',
-				'version' => '2.8.0',
-			],
-			'Scheme_Color' => [
-				'replacement' => 'Core\Schemes\Color',
-				'version' => '2.8.0',
-			],
-			'Scheme_Color_Picker' => [
-				'replacement' => 'Core\Schemes\Color_Picker',
-				'version' => '2.8.0',
-			],
-			'Schemes_Manager' => [
-				'replacement' => 'Core\Schemes\Manager',
-				'version' => '2.8.0',
-			],
-			'Scheme_Typography' => [
-				'replacement' => 'Core\Schemes\Typography',
-				'version' => '2.8.0',
-			],
 			'System_Info\Main' => [
 				'replacement' => 'Modules\System_Info\Module',
 				'version' => '2.9.0',

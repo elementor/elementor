@@ -4,7 +4,7 @@ export const Copy = () => {
 	QUnit.module( 'Copy', () => {
 		QUnit.test( 'Single Selection', ( assert ) => {
 			const eColumn = ElementsHelper.createSection( 1, true ),
-				eButton = ElementsHelper.createButton( eColumn );
+				eButton = ElementsHelper.createWidgetButton( eColumn );
 
 			ElementsHelper.copy( eButton );
 
@@ -18,7 +18,7 @@ export const Copy = () => {
 				eColumns = [];
 
 			for ( let i = 0; i < columnsCount; i++ ) {
-				eColumns.push( ElementsHelper.createAutoButton() );
+				eColumns.push( ElementsHelper.createWrappedButton() );
 			}
 
 			ElementsHelper.multiCopy( eColumns );

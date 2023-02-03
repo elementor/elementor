@@ -8,5 +8,5 @@ module.exports = Marionette.ItemView.extend( {
 
 	events: {},
 
-	onRender: function() {},
+	onRender() {},
 } );

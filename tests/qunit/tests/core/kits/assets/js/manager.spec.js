@@ -1,4 +1,4 @@
-import API from 'elementor-api';
+import API from 'elementor-api/api';
 
 jQuery( () => {
 	QUnit.module( 'File: core/kits/assets/js/manager.js', ( hooks ) => {

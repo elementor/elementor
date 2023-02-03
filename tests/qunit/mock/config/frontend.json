@@ -11,7 +11,11 @@
 	  "editSettings": {}
 	},
 	"experimentalFeatures": {},
-	"breakpoints": {}
+	"breakpoints": {},
+	"responsive": {
+	  "breakpoints":  {},
+	  "activeBreakpoints": {}
+	}
   },
   "isEditMode": "()"
   "=>" {

@@ -6,13 +6,13 @@ export const Delete = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton1 = ElementsHelper.createButton( eColumn ),
-					eButton2 = ElementsHelper.createButton( eColumn );
+					eButton1 = ElementsHelper.createWidgetButton( eColumn ),
+					eButton2 = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.delete( eButton1 );
 
 				// Validate.
-				assert.equal( eColumn.view.collection.length, 1, 'Button #1 were deleted.' );
+				assert.equal( eColumn.children.length, 1, 'Button #1 were deleted.' );
 
 				// Ensure editor saver.
 				$e.internal( 'document/save/set-is-modified', { status: false } );
@@ -20,14 +20,14 @@ export const Delete = () => {
 				ElementsHelper.delete( eButton2 );
 
 				// Validate.
-				assert.equal( eColumn.view.collection.length, 0, 'Button #2 were deleted.' );
+				assert.equal( eColumn.children.length, 0, 'Button #2 were deleted.' );
 
 				assert.equal( elementor.saver.isEditorChanged(), true,
 					'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidget = ElementsHelper.createAutoButton();
+				const eWidget = ElementsHelper.createWrappedButton();
 
 				ElementsHelper.delete( eWidget );
 
@@ -52,13 +52,13 @@ export const Delete = () => {
 
 		QUnit.test( 'Multiple Selection', ( assert ) => {
 			const eColumn = ElementsHelper.createSection( 1, true ),
-				eButton1 = ElementsHelper.createButton( eColumn ),
-				eButton2 = ElementsHelper.createButton( eColumn );
+				eButton1 = ElementsHelper.createWidgetButton( eColumn ),
+				eButton2 = ElementsHelper.createWidgetButton( eColumn );
 
 			ElementsHelper.multiDelete( [ eButton1, eButton2 ] );
 
 			// Validate.
-			assert.equal( eColumn.view.collection.length, 0, 'Buttons were deleted.' );
+			assert.equal( eColumn.children.length, 0, 'Buttons were deleted.' );
 		} );
 	} );
 };

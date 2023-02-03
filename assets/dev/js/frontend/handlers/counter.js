@@ -17,15 +17,23 @@ export default class Counter extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
 
-		elementorFrontend.waypoint( this.elements.$counterNumber, () => {
-			const data = this.elements.$counterNumber.data(),
-				decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+		this.intersectionObserver = elementorModules.utils.Scroll.scrollObserver( {
+			callback: ( event ) => {
+				if ( event.isInViewport ) {
+					this.intersectionObserver.unobserve( this.elements.$counterNumber[ 0 ] );
 
-			if ( decimalDigits ) {
-				data.rounding = decimalDigits[ 1 ].length;
-			}
+					const data = this.elements.$counterNumber.data(),
+						decimalDigits = data.toValue.toString().match( /\.(.*)/ );
 
-			this.elements.$counterNumber.numerator( data );
+					if ( decimalDigits ) {
+						data.rounding = decimalDigits[ 1 ].length;
+					}
+
+					this.elements.$counterNumber.numerator( data );
+				}
+			},
 		} );
+
+		this.intersectionObserver.observe( this.elements.$counterNumber[ 0 ] );
 	}
 }

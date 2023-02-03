@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\Gutenberg;
 
 use Elementor\Core\Base\Document;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Module extends Elementor_Test_Base {
 	public function test_register_elementor_rest_field() {
 		// Arrange
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$this->act_as_admin();
 
 		$post = $this->factory()->create_and_get_custom_post( [
 			'type' => 'post',

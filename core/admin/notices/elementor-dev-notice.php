@@ -3,6 +3,7 @@ namespace Elementor\Core\Admin\Notices;
 
 use Elementor\User;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,7 +63,10 @@ class Elementor_Dev_Notice extends Base_Notice {
 			! $this->is_elementor_dev_installed() &&
 			! $this->is_install_screen() &&
 			(
-				$this->has_at_least_one_active_experiment() ||
+				(
+					$this->has_at_least_one_active_experiment() &&
+					$this->is_elementor_setting_page()
+				) ||
 				$this->is_promotion_plugins_installed() ||
 				$this->is_promotion_options_enabled()
 			);
@@ -73,20 +77,19 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 */
 	public function get_config() {
 		return [
-			'dismissible' => true,
 			'id' => static::ID,
-			'title' => __( 'Elementor Developer Edition', 'elementor' ),
+			'title' => esc_html__( 'Elementor Developer Edition', 'elementor' ),
 			'description' => __(
 				'Get a sneak peek at our in progress development versions, and help us improve Elementor to perfection. Developer Edition releases contain experimental functionality for testing purposes.',
 				'elementor'
 			),
 			'button' => [
-				'text' => __( 'Install & Activate', 'elementor' ),
+				'text' => esc_html__( 'Install & Activate', 'elementor' ),
 				'url' => wp_nonce_url(
 					self_admin_url( 'update.php?action=install-plugin&plugin=' . static::PLUGIN_SLUG ),
 					'install-plugin_' . static::PLUGIN_SLUG
 				),
-				'class' => 'button',
+				'type' => 'cta',
 			],
 		];
 	}
@@ -146,7 +149,7 @@ class Elementor_Dev_Notice extends Base_Notice {
 	}
 
 	/**
-	 * Checks if is one of the promotion options is enable.
+	 * Checks if is one of the promotion options is enabled.
 	 *
 	 * @return bool
 	 */
@@ -173,5 +176,16 @@ class Elementor_Dev_Notice extends Base_Notice {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks if the current page is elementor settings page
+	 *
+	 * @return bool
+	 */
+	private function is_elementor_setting_page() {
+		$current_screen = get_current_screen();
+
+		return $current_screen && 'toplevel_page_' . Settings::PAGE_ID === $current_screen->id;
 	}
 }

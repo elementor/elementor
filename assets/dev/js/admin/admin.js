@@ -1,5 +1,9 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
+import environment from '../../../../core/common/assets/js/utils/environment';
+import Events from 'elementor-utils/events';
+import FilesUploadHandler from '../editor/utils/files-upload-handler';
+import TemplateControls from './new-template/template-controls.js';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -8,7 +12,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 
 		config: elementorAdminConfig,
 
-		getDefaultElements: function() {
+		getDefaultElements() {
 			var elements = {
 				$switchMode: $( '#elementor-switch-mode' ),
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
@@ -17,10 +21,14 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				$elementorLoader: $( '.elementor-loader' ),
 				$builderEditor: $( '#elementor-editor' ),
 				$importButton: $( '#elementor-import-template-trigger' ),
+				$importNowButton: $( '#e-import-template-action' ),
 				$importArea: $( '#elementor-import-template-area' ),
+				$importForm: $( '#elementor-import-template-form' ),
+				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
+				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 
@@ -35,7 +43,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 			return elements;
 		},
 
-		toggleStatus: function() {
+		toggleStatus() {
 			var isElementorMode = this.isElementorMode();
 
 			elementorCommon.elements.$body
@@ -43,7 +51,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				.toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
 
-		bindEvents: function() {
+		bindEvents() {
 			var self = this;
 
 			self.elements.$switchModeButton.on( 'click', function( event ) {
@@ -58,7 +66,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
-						onConfirm: function() {
+						onConfirm() {
 							self.elements.$switchModeInput.val( '' );
 							self.toggleStatus();
 						},
@@ -91,15 +99,16 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				self.animateLoader();
 			} );
 
-			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss, .elementor-button-notice-dismiss', function( event ) {
+			$( '.e-notice--dismissible' ).on( 'click', '.e-notice__dismiss, .e-notice-dismiss', function( event ) {
 				event.preventDefault();
+
+				const $wrapperElm = $( this ).closest( '.e-notice--dismissible' );
 
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
-					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' ),
+					notice_id: $wrapperElm.data( 'notice_id' ),
 				} );
 
-				var $wrapperElm = $( this ).closest( '.elementor-message-dismissed' );
 				$wrapperElm.fadeTo( 100, 0, function() {
 					$wrapperElm.slideUp( 100, function() {
 						$wrapperElm.remove();
@@ -137,6 +146,29 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 					} );
 			} );
 
+			$( '#elementor-recreate-kit-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success error' ).addClass( 'loading' )
+					.next( '.e-recreate-kit-error-message' ).remove();
+
+				$.post( ajaxurl, {
+					action: 'elementor_recreate_kit',
+					_nonce: $thisButton.data( 'nonce' ),
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} )
+					.fail( function( { responseJSON } ) {
+						$thisButton.removeClass( 'loading' ).addClass( 'error' );
+
+						if ( responseJSON.data?.message ) {
+							$thisButton.after( `<div class="e-recreate-kit-error-message">${ responseJSON.data.message }</div>` );
+						}
+					} );
+			} );
+
 			$( '#elementor-replace-url-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $this = $( this ),
@@ -169,6 +201,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				event.preventDefault();
 				const $updateButton = $( this );
 				$updateButton.addClass( 'loading' );
+
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'confirm_fa_migration_admin_modal',
 					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
@@ -180,15 +213,28 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 					defaultOption: 'confirm',
 					onConfirm: () => {
 						$updateButton.removeClass( 'error' ).addClass( 'loading' );
-						$.post( ajaxurl, $updateButton.data() )
+
+						const {
+							_nonce,
+							action,
+							redirectUrl,
+						} = $updateButton.data();
+
+						$.post( ajaxurl, { action, _nonce } )
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
-								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
-								const redirectTo = ( location.search.split( 'redirect_to=' )[ 1 ] || '' ).split( '&' )[ 0 ];
-								if ( redirectTo ) {
-									location.href = decodeURIComponent( redirectTo );
+
+								const messageElement = document.createElement( 'p' );
+								messageElement.appendChild( document.createTextNode( response.data.message ) );
+
+								$( '#elementor_upgrade_fa_button' ).parent().append( messageElement );
+
+								if ( redirectUrl ) {
+									location.href = decodeURIComponent( redirectUrl );
+
 									return;
 								}
+
 								history.go( -1 );
 							} )
 							.fail( function() {
@@ -202,12 +248,12 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 			} );
 
 			self.elements.$settingsTabs.on( {
-				click: function( event ) {
+				click( event ) {
 					event.preventDefault();
 
 					event.currentTarget.focus(); // Safari does not focus the tab automatically
 				},
-				focus: function() { // Using focus event to enable navigation by tab key
+				focus() { // Using focus event to enable navigation by tab key
 					var hrefWithoutHash = location.href.replace( /#.*/, '' );
 
 					history.pushState( {}, '', hrefWithoutHash + this.hash );
@@ -238,7 +284,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 						confirm: __( 'Continue', 'elementor' ),
 						cancel: __( 'Cancel', 'elementor' ),
 					},
-					onConfirm: function() {
+					onConfirm() {
 						$this.addClass( 'loading' );
 
 						location.href = $this.attr( 'href' );
@@ -274,9 +320,13 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				$descriptions.hide();
 				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
 			} ).trigger( 'change' );
+
+			$( '.elementor_google_font select' ).on( 'change', function() {
+				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
+			} ).trigger( 'change' );
 		},
 
-		onInit: function() {
+		onInit() {
 			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 			this.initTemplatesImport();
@@ -285,56 +335,106 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 
 			this.goToSettingsTabFromHash();
 
-			this.openGetHelpInNewTab();
+			this.openLinksInNewTab();
+
+			this.addUserAgentClasses();
 
 			this.roleManager.init();
 
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
+			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();
 		},
 
-		openGetHelpInNewTab: function() {
-			this.elements.$menuGetHelpLink.attr( 'target', '_blank' );
+		addUserAgentClasses() {
+			const body = document.querySelector( 'body' );
+			Object.entries( environment ).forEach( ( [ key, value ] ) => {
+				if ( ! value ) {
+					return;
+				}
+
+				body.classList.add( 'e--ua-' + key );
+			} );
 		},
 
-		initTemplatesImport: function() {
+		/**
+		 * Open Links in New Tab
+		 *
+		 * Adds a `target="_blank"` attribute to the Admin Dashboard menu items specified in the `elements` array,
+		 * if the elements are found in the DOM. The items in the `elements` array should be jQuery instances.
+		 *
+		 * @since 3.6.0
+		 */
+		openLinksInNewTab() {
+			const elements = [
+				this.elements.$menuGetHelpLink,
+				this.elements.$menuGoProLink,
+			];
+
+			elements.forEach( ( $element ) => {
+				// Only add the attribute if the element is found.
+				if ( $element.length ) {
+					$element.attr( 'target', '_blank' );
+				}
+			} );
+		},
+
+		initTemplatesImport() {
 			if ( ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 
-			var self = this,
+			const self = this,
+				$importForm = self.elements.$importForm,
 				$importButton = self.elements.$importButton,
-				$importArea = self.elements.$importArea;
+				$importArea = self.elements.$importArea,
+				$importNowButton = self.elements.$importNowButton,
+				$importFormFileInput = self.elements.$importFormFileInput;
 
-			self.elements.$formAnchor = $( 'h1' );
+			self.elements.$formAnchor = $( '.wp-header-end' );
 
-			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $importButton );
+			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 
 			self.elements.$formAnchor.after( $importArea );
 
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
 			} );
+
+			$importForm.on( 'submit', ( event ) => {
+				$importNowButton[ 0 ].disabled = true;
+				$importNowButton[ 0 ].value = __( 'Importing...', 'elementor' );
+
+				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+					event.preventDefault();
+
+					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						$importForm.trigger( 'submit' );
+					} );
+
+					enableUnfilteredFilesModal.show();
+				}
+			} );
 		},
 
-		initMaintenanceMode: function() {
+		initMaintenanceMode() {
 			var MaintenanceMode = require( 'elementor-admin/maintenance-mode' );
 
 			this.maintenanceMode = new MaintenanceMode();
 		},
 
-		isElementorMode: function() {
+		isElementorMode() {
 			return ! ! this.elements.$switchModeInput.val();
 		},
 
-		animateLoader: function() {
+		animateLoader() {
 			this.elements.$goToEditLink.addClass( 'elementor-animate' );
 		},
 
-		goToSettingsTabFromHash: function() {
+		goToSettingsTabFromHash() {
 			var hash = location.hash.slice( 1 );
 
 			if ( hash ) {
@@ -342,7 +442,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 			}
 		},
 
-		goToSettingsTab: function( tabName ) {
+		goToSettingsTab( tabName ) {
 			const $pages = this.elements.$settingsFormPages;
 
 			if ( ! $pages.length ) {
@@ -368,7 +468,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 			this.elements.$activeSettingsTab = $activeTab;
 		},
 
-		translate: function( stringKey, templateArgs ) {
+		translate( stringKey, templateArgs ) {
 			return elementorCommon.translate( stringKey, null, templateArgs, this.config.i18n );
 		},
 
@@ -384,7 +484,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				arrowUp: 'dashicons-arrow-up',
 				arrowDown: 'dashicons-arrow-down',
 			},
-			toggle: function( $trigger ) {
+			toggle( $trigger ) {
 				var self = this,
 					$row = $trigger.closest( self.selectors.row ),
 					$toggleHandleIcon = $row.find( self.selectors.toggleHandle ).find( '.dashicons' ),
@@ -398,7 +498,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				}
 				self.updateLabel( $row );
 			},
-			updateLabel: function( $row ) {
+			updateLabel( $row ) {
 				var self = this,
 					$indicator = $row.find( self.selectors.excludedIndicator ),
 					excluded = $row.find( self.selectors.excludedField ).is( ':checked' );
@@ -409,7 +509,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				}
 				self.setAdvancedState( $row, excluded );
 			},
-			setAdvancedState: function( $row, state ) {
+			setAdvancedState( $row, state ) {
 				var self = this,
 					$controls = $row.find( 'input[type="checkbox"]' ).not( self.selectors.excludedField );
 
@@ -417,7 +517,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 					$( input ).prop( 'disabled', state );
 				} );
 			},
-			bind: function() {
+			bind() {
 				var self = this;
 				$( document ).on( 'click', self.selectors.label + ',' + self.selectors.toggleHandle, function( event ) {
 					event.stopPropagation();
@@ -427,7 +527,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 					self.updateLabel( $( this ).closest( self.selectors.row ) );
 				} );
 			},
-			init: function() {
+			init() {
 				var self = this;
 				if ( ! $( 'body[class*="' + self.selectors.body + '"]' ).length ) {
 					return;
@@ -443,6 +543,6 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 	$( function() {
 		window.elementorAdmin = new ElementorAdmin();
 
-		elementorCommon.elements.$window.trigger( 'elementor/admin/init' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/admin/init' );
 	} );
 }( jQuery ) );

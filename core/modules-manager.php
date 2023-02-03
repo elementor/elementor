@@ -90,6 +90,20 @@ class Modules_Manager {
 			'dev-tools',
 			'landing-pages',
 			'compatibility-tag',
+			'elements-color-picker',
+			'shapes',
+			'favorites',
+			'admin-top-bar',
+			'nested-elements',
+			// Depends on Nested Elements module
+			'nested-tabs',
+			'container-converter',
+			'web-cli',
+			'promotions',
+			'notes',
+			'performance-lab',
+			'lazyload',
+			'kit-elements-defaults',
 		];
 	}
 

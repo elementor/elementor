@@ -31,12 +31,18 @@ export class Disable extends DisableEnable {
 
 			// Clear globals.
 			Object.keys( settings ).forEach( ( setting ) =>
-				container.globals.set( setting, '' )
+				container.globals.set( setting, '' ),
 			);
 
-			container.settings.set( '__globals__', container.globals.toJSON() );
-
-			container.renderUI();
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				settings: {
+					__globals__: container.globals.toJSON(),
+				},
+				options: {
+					renderUI: true,
+				},
+			} );
 		} );
 
 		await Promise.all( all );

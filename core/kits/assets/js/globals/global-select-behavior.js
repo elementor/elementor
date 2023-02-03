@@ -389,7 +389,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		$e.run( globalMeta.commandName + '/create', {
 			container: this.view.container,
-			setting: globalMeta.key, // group control name
+			setting: globalMeta.key, // Group control name
 			title: globalMeta.title,
 		} )
 			.then( ( result ) => {
@@ -411,13 +411,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			command = 'document/globals/enable';
 		}
 
-		// colors / typography
+		// Colors / typography
 		settings[ this.view.model.get( 'name' ) ] = this.view.getGlobalCommand() + '?id=' + globalId;
 
 		// Trigger async render.
 		$e.run( command, {
 			container: this.view.options.container,
-			settings: settings,
+			settings,
 		} );
 	}
 

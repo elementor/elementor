@@ -21,8 +21,8 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 
 		return {
 			$paragraph: this.$element.find( selectors.paragraph ),
-			$dropCap: $dropCap,
-			$dropCapLetter: $dropCapLetter,
+			$dropCap,
+			$dropCapLetter,
 		};
 	}
 
