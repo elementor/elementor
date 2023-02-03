@@ -18,7 +18,19 @@ class Theme_Style_Form_Fields extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Form Fields', 'elementor' );
+		return esc_html__( 'Form Fields', 'elementor' );
+	}
+
+	public function get_group() {
+		return 'theme-style';
+	}
+
+	public function get_icon() {
+		return 'eicon-form-horizontal';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-theme-style-form-fields/';
 	}
 
 	protected function register_tab_controls() {
@@ -46,7 +58,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->start_controls_section(
 			'section_form_fields',
 			[
-				'label' => __( 'Form Fields', 'elementor' ),
+				'label' => esc_html__( 'Form Fields', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
@@ -57,14 +69,14 @@ class Theme_Style_Form_Fields extends Tab_Base {
 			'form_label_heading',
 			[
 				'type' => Controls_Manager::HEADING,
-				'label' => __( 'Label', 'elementor' ),
+				'label' => esc_html__( 'Label', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'form_label_color',
 			[
-				'label' => __( 'Color', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'dynamic' => [],
 				'selectors' => [
@@ -76,7 +88,6 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
 				'selector' => $label_selector,
 			]
@@ -86,7 +97,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 			'form_field_heading',
 			[
 				'type' => Controls_Manager::HEADING,
-				'label' => __( 'Field', 'elementor' ),
+				'label' => esc_html__( 'Field', 'elementor' ),
 				'separator' => 'before',
 			]
 		);
@@ -94,7 +105,6 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
 				'selector' => $input_selector,
 			]
@@ -105,7 +115,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->start_controls_tab(
 			'tab_form_field_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -116,7 +126,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->start_controls_tab(
 			'tab_form_field_focus',
 			[
-				'label' => __( 'Focus', 'elementor' ),
+				'label' => esc_html__( 'Focus', 'elementor' ),
 			]
 		);
 
@@ -125,7 +135,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			'form_field_focus_transition_duration',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					$input_selector => 'transition: {{SIZE}}ms',
@@ -146,7 +156,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_responsive_control(
 			'form_field_padding',
 			[
-				'label' => __( 'Padding', 'elementor' ),
+				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
@@ -163,7 +173,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			$prefix . '_text_color',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'dynamic' => [],
 				'selectors' => [
@@ -175,7 +185,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			$prefix . '_background_color',
 			[
-				'label' => __( 'Background Color', 'elementor' ),
+				'label' => esc_html__( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'dynamic' => [],
 				'selectors' => [
@@ -208,9 +218,9 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			$prefix . '_border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					$selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

@@ -33,7 +33,7 @@ class Manager extends CSS_Manager {
 	public function __construct() {
 		parent::__construct();
 
-		// TODO: _deprecated_file( __FILE__, '3.0.0', 'Plugin::$instance->kits_manager->get_active_kit_for_frontend()' );
+		_deprecated_file( __FILE__, '3.0.0', 'Plugin::$instance->kits_manager->get_active_kit_for_frontend()' );
 
 		$name = $this->get_css_file_name();
 
@@ -94,7 +94,7 @@ class Manager extends CSS_Manager {
 	 * @deprecated
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
-		throw new \Exception( __CLASS__ . ' is deprecated. Use Plugin::$instance->kits_manager->get_active_kit_for_frontend()' );
+		throw new \Exception( __CLASS__ . ' is deprecated. Use Plugin::$instance->kits_manager->get_active_kit_for_frontend() instead.' );
 	}
 
 	/**

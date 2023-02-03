@@ -17,7 +17,7 @@ export default class extends elementorModules.common.views.modal.Layout {
 
 	getLogoOptions() {
 		return {
-			title: elementorCommon.translate( 'finder', 'finder' ),
+			title: __( 'Finder', 'elementor' ),
 		};
 	}
 

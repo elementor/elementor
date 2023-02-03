@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * you to add new templates, set custom controls and more.
  *
  * To register new skins for your widget use the `add_skin()` method inside the
- * widget's `_register_skins()` method.
+ * widget's `register_skins()` method.
  *
  * @since 1.0.0
  * @abstract
@@ -125,7 +125,7 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 *
 	 * @param string $control_base_id Control base ID.
 	 *
-	 * @return Widget_Base Widget instance.
+	 * @return mixed
 	 */
 	public function get_instance_value( $control_base_id ) {
 		$control_id = $this->get_control_id( $control_base_id );

@@ -1,6 +1,10 @@
-import CommandBase from 'elementor-api/modules/command-base';
+export class Open extends $e.modules.CommandBase {
+	static getInfo() {
+		return {
+			isSafe: true,
+		};
+	}
 
-export class Open extends CommandBase {
 	apply() {
 		const kit = elementor.documents.get( elementor.config.kit_id );
 
@@ -8,7 +12,7 @@ export class Open extends CommandBase {
 			return jQuery.Deferred().resolve();
 		}
 
-		$e.routes.clearHistory( this.component.getRootContainer() );
+		$e.routes.clearHistory( this.component.getServiceName() );
 
 		this.component.toggleHistoryClass();
 

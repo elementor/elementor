@@ -2,8 +2,8 @@ export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				notice: '#elementor-notice-bar',
-				close: '#elementor-notice-bar__close',
+				notice: '#e-notice-bar',
+				close: '#e-notice-bar__close',
 			},
 		};
 	}

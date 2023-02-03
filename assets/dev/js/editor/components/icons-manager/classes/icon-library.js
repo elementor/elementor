@@ -73,13 +73,13 @@ export default class {
 			elementor.helpers.enqueueEditorStylesheet( libraryConfig.url );
 		}
 
-		//already saved an stored
+		// Already saved an stored
 		if ( store.isValid( libraryConfig ) ) {
 			const data = store.get( store.getKey( libraryConfig ) );
 			return this.normalizeIconList( data );
 		}
 
-		// comes with icons
+		// Comes with icons
 		if ( libraryConfig.icons && libraryConfig.icons.length ) {
 			return this.normalizeIconList( libraryConfig );
 		}

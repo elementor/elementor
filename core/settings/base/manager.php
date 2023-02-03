@@ -268,19 +268,25 @@ abstract class Manager {
 	protected function print_editor_template_content( $name ) {
 		?>
 		<#
-		const tabs = elementor.config.settings.<?php echo $name; ?>.tabs;
+		const tabs = elementor.config.settings.<?php
+			// PHPCS - the variable $name does not contain a user input value.
+			echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>.tabs;
 
 		if ( Object.values( tabs ).length > 1 ) { #>
 			<div class="elementor-panel-navigation">
 				<# _.each( tabs, function( tabTitle, tabSlug ) {
-					$e.bc.ensureTab( 'panel/<?php echo $name; ?>-settings', tabSlug ); #>
+					$e.bc.ensureTab( 'panel/<?php
+						// PHPCS - the variable $name does not contain a user input value.
+						echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					?>-settings', tabSlug ); #>
 					<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 						<a href="#">{{{ tabTitle }}}</a>
 					</div>
 				<# } ); #>
 			</div>
 		<# } #>
-		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<div id="elementor-panel-<?php echo esc_attr( $name ); ?>-settings-controls"></div>
 		<?php
 	}
 
