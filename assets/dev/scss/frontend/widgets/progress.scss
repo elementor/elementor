@@ -73,9 +73,17 @@
 }
 
 // Responsive mode
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-progress-text {
 		@include padding-start(10px);
+	}
+}
+
+.e-con,
+.e-con-inner {
+
+	.elementor-progress-wrapper {
+		height: initial;
 	}
 }

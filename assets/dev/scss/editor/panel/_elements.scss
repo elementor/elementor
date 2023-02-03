@@ -15,7 +15,6 @@
 
 #elementor-panel-elements {
 	overflow: hidden;
-	padding: 0 5px;
 }
 
 #elementor-panel-state-loading {
@@ -31,7 +30,7 @@
 		align-items: center;
 		justify-content: center;
 		background-color: rgba(255, 255, 255, 0.5);
-		z-index: 1;
+		z-index: $second-layer;
 	}
 
 	.eicon-loading {
@@ -40,9 +39,16 @@
 	}
 }
 
+#elementor-panel-elements-search-area {
+	position: sticky;
+	top: 0;
+	padding: 10px;
+	background-color: $editor-background;
+	z-index: $first-layer;
+}
+
 #elementor-panel-elements-search-wrapper {
 	position: relative;
-	margin: 10px 10px 5px;
 }
 
 #elementor-panel-elements-search-input {
@@ -55,8 +61,6 @@
 	transition: all 1s;
 	border-radius: 3px;
 	appearance: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
 
 	+ i {
 		position: absolute;
@@ -81,9 +85,6 @@
 		position: relative;
 
 		&-wrapper {
-			float: $start;
-			width: 50%;
-			padding: 5px;
 			text-align: center;
 			box-sizing: border-box;
 		}
@@ -167,18 +168,16 @@
 			border-bottom: 1px solid $editor-background;
 			font-weight: 500;
 
-			i {
-				color: $editor-light;
-			}
-
 			.eicon-pro-icon {
 				flex-grow: 1;
 				@include margin-start(10px);
 				font-size: 14px;
+				color: $editor-accent;
 			}
 
 			.eicon-close {
 				cursor: pointer;
+				color: $editor-light;
 			}
 		}
 
@@ -191,8 +190,7 @@
 		}
 
 		&-button {
-			width: 100%;
-			padding: 6.5px;
+			padding: 7px 25px;
 			font-size: 12px;
 
 			&::-moz-focus-inner {

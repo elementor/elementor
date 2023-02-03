@@ -1,7 +1,6 @@
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
-export class Settings extends CommandHistoryDebounce {
+export class Settings extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -52,8 +51,7 @@ export class Settings extends CommandHistoryDebounce {
 	}
 
 	apply( args ) {
-		const { settings, containers = [ args.container ], options = {} } = args,
-			{ external, render = true } = options;
+		const { settings, containers = [ args.container ], options = {} } = args;
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
@@ -64,22 +62,14 @@ export class Settings extends CommandHistoryDebounce {
 				container.globals.set( settings );
 			}
 
-			const globalSettings = container.globals.toJSON();
-
-			if ( external ) {
-				container.settings.setExternalChange( '__globals__', globalSettings );
-			} else {
-				container.settings.set( '__globals__', globalSettings );
-			}
-
-			if ( render ) {
-				container.render();
-			}
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				options,
+				settings: {
+					__globals__: container.globals.toJSON(),
+				},
+			} );
 		} );
-	}
-
-	isDataChanged() {
-		return true;
 	}
 }
 

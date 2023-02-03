@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Includes;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Local extends Elementor_Test_Base {
 	/**

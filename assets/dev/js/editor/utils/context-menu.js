@@ -1,7 +1,8 @@
 module.exports = elementorModules.Module.extend( {
 
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
+			context: 'preview',
 			actions: {},
 			classes: {
 				list: 'elementor-context-menu-list',
@@ -19,7 +20,7 @@ module.exports = elementorModules.Module.extend( {
 		};
 	},
 
-	buildActionItem: function( action ) {
+	buildActionItem( action ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
 			$item = jQuery( '<div>', { class: classes.item + ' ' + classes.itemTypePrefix + action.name } ),
@@ -49,7 +50,7 @@ module.exports = elementorModules.Module.extend( {
 		return $item;
 	},
 
-	buildActionsList: function() {
+	buildActionsList() {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
 			groups = self.getSettings( 'groups' ),
@@ -70,19 +71,33 @@ module.exports = elementorModules.Module.extend( {
 		return $list;
 	},
 
-	toggleGroupVisibility: function( group, state ) {
+	toggleGroupVisibility( group, state ) {
 		group.$item.toggleClass( this.getSettings( 'classes.hidden' ), ! state );
 	},
 
-	toggleActionVisibility: function( action, state ) {
+	toggleActionVisibility( action, state ) {
 		action.$item.toggleClass( this.getSettings( 'classes.hidden' ), ! state );
 	},
 
-	toggleActionUsability: function( action, state ) {
+	toggleActionUsability( action, state ) {
 		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
 	},
 
-	isActionEnabled: function( action ) {
+	/**
+	 * Update the action title.
+	 *
+	 * Sometimes the action title should dynamically change. This can be done by passing a function as the `title`
+	 * property when initializing the context-menu, and here it actually invoked and assigned as the title.
+	 *
+	 * @param {*} action
+	 */
+	updateActionTitle( action ) {
+		if ( 'function' === typeof action.title ) {
+			action.$item.find( '.' + this.getSettings( 'classes' ).itemTitle ).text( action.title() );
+		}
+	},
+
+	isActionEnabled( action ) {
 		if ( ! action.callback && ! action.groups ) {
 			return false;
 		}
@@ -90,7 +105,7 @@ module.exports = elementorModules.Module.extend( {
 		return action.isEnabled ? action.isEnabled() : true;
 	},
 
-	runAction: function( action ) {
+	runAction( action ) {
 		if ( ! this.isActionEnabled( action ) ) {
 			return;
 		}
@@ -100,7 +115,7 @@ module.exports = elementorModules.Module.extend( {
 		this.getModal().hide();
 	},
 
-	initModal: function() {
+	initModal() {
 		var modal;
 
 		this.getModal = function() {
@@ -108,7 +123,7 @@ module.exports = elementorModules.Module.extend( {
 				modal = elementorCommon.dialogsManager.createWidget( 'simple', {
 					className: 'elementor-context-menu',
 					message: this.buildActionsList(),
-					iframe: elementor.$preview,
+					iframe: 'preview' === this.getSettings( 'context' ) ? elementor.$preview : null,
 					effects: {
 						hide: 'hide',
 						show: 'show',
@@ -127,7 +142,7 @@ module.exports = elementorModules.Module.extend( {
 		};
 	},
 
-	show: function( event ) {
+	show( event ) {
 		var self = this,
 			modal = self.getModal();
 
@@ -146,6 +161,8 @@ module.exports = elementorModules.Module.extend( {
 
 					self.toggleActionVisibility( action, isActionVisible );
 
+					self.updateActionTitle( action );
+
 					if ( isActionVisible ) {
 						self.toggleActionUsability( action, self.isActionEnabled( action ) );
 					}
@@ -156,11 +173,11 @@ module.exports = elementorModules.Module.extend( {
 		modal.show();
 	},
 
-	destroy: function() {
+	destroy() {
 		this.getModal().destroy();
 	},
 
-	onInit: function() {
+	onInit() {
 		this.initModal();
 	},
 } );
